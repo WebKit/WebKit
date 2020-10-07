@@ -200,6 +200,7 @@ Box* TreeBuilder::createLayoutBox(const ContainerBox& parentContainer, const Ren
         if (is<RenderLineBreak>(renderer)) {
             clonedStyle.setDisplay(DisplayType::Inline);
             clonedStyle.setFloating(Float::No);
+            clonedStyle.setPosition(PositionType::Static);
             childLayoutBox = &createLineBreakBox(downcast<RenderLineBreak>(childRenderer).isWBR(), WTFMove(clonedStyle));
         } else if (is<RenderTable>(renderer)) {
             // Construct the principal table wrapper box (and not the table box itself).

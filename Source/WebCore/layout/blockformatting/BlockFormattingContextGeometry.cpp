@@ -107,7 +107,7 @@ ContentHeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeight
     // 10.6.7 'Auto' heights for block-level formatting context boxes.
     auto isAutoHeight = !overrideVerticalValues.height && !computedHeight(layoutBox);
     if (isAutoHeight && (layoutBox.establishesFormattingContext() && !layoutBox.establishesInlineFormattingContext()))
-        return compute( OverrideVerticalValues { contentHeightForFormattingContextRoot(layoutBox) });
+        return compute( OverrideVerticalValues { contentHeightForFormattingContextRoot(downcast<ContainerBox>(layoutBox)) });
     return compute(overrideVerticalValues);
 }
 

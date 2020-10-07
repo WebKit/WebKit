@@ -1,3 +1,25 @@
+2020-10-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] FormattingContext::Geometry::contentHeightForFormattingContextRoot should take a const ContainerBox&
+        https://bugs.webkit.org/show_bug.cgi?id=217404
+
+        Reviewed by Simon Fraser.
+
+        A formatting context root is always a Layout::ContainerBox (and not just a Layout::Box).
+
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::contentHeightForFormattingContextRoot const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::complicatedCases const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowHorizontalGeometry):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createLayoutBox):
+
 2020-10-06  Devin Rousso  <drousso@apple.com>
 
         CSS hover and "pointer: fine" media queries do not evaluate to true with iOS 13.4 mouse support
