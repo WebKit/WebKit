@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class DeferrableTaskTimer;
 class MediaStreamTrackPrivate;
 
 class WEBCORE_EXPORT MediaRecorderPrivateMock final
@@ -55,6 +56,7 @@ private:
     unsigned m_counter { 0 };
     String m_audioTrackID;
     String m_videoTrackID;
+    DeferrableTaskTimer m_delayCompletingTimer;
 };
 
 } // namespace WebCore
