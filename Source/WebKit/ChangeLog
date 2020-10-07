@@ -1,3 +1,38 @@
+2020-10-07  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Implement a dummy WebAuthenticationAgent
+        https://bugs.webkit.org/show_bug.cgi?id=217401
+        <rdar://problem/70012011>
+
+        Reviewed by Darin Adler.
+
+        Part 1.
+
+        This patch introduces a new dummy WebAuthenticationAgent where in the future it will take over all WebAuthn operations
+        from the UI Process such that we can isolate high privileged entitlements to this standalone daemon and therefore are able
+        offer WebAuthn to third party WKWebView clients. One of the future feautres will require this new process to listen to
+        LaunchEvents, which only daemons can do. That's why it is implemented as a user agent instead of a XPC service.
+
+        This is the first part of establishing such a dummy daemon. What it does is to set up a new build target for the daemon and
+        hook it up with WebKit's build system. One can manually load the launchd plist and load the daemon to verify this change.
+
+        Commands are:
+        launchctl load /to/your/path/com.apple.webkit.WebAuthenticationAgent.plist
+        launchctl start com.apple.webkit.WebAuthenticationAgent.Development
+
+        Covered by manual tests.
+
+        * Configurations/WebAuthenticationAgent.xcconfig: Added.
+        Somehow the executable has a suffix .Development for debug/release builds. Will fix that in the later part.
+        * Daemons/WebAuthenticationAgent/Info.plist: Added.
+        * Daemons/WebAuthenticationAgent/WebAuthenticationAgent.entitlements: Added.
+        * Daemons/WebAuthenticationAgent/com.apple.webkit.WebAuthenticationAgent.plist: Added.
+        The executable location is hardcoded for now. It will be fixed in Part 2 to dynamically point to the right binary.
+        * Daemons/WebAuthenticationAgent/main.mm: Added.
+        (main):
+        * WebKit.xcodeproj/project.pbxproj:
+        Not sure why libWTF.a is needed. Will fix that in the later part.
+
 2020-10-07  Devin Rousso  <drousso@apple.com>
 
         Add missing `#define` for `PENCILKIT_TEXT_INPUT` flag

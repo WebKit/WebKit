@@ -14,6 +14,7 @@
 				BCFFCA8A160D6DEA003DF315 /* Add XPCServices symlink */,
 			);
 			dependencies = (
+				57A9FF0C252C31D6006A2040 /* PBXTargetDependency */,
 				BCA8D46815BCE0D6009DC1F1 /* PBXTargetDependency */,
 				372EBB492017E6CF00085064 /* PBXTargetDependency */,
 				BC82844616B4FF6600A278FE /* PBXTargetDependency */,
@@ -1112,6 +1113,8 @@
 		579F1BF623C80DB600C7D4B4 /* _WKWebAuthenticationAssertionResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 579F1BF423C80DB600C7D4B4 /* _WKWebAuthenticationAssertionResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		579F1BF923C80EC600C7D4B4 /* _WKWebAuthenticationAssertionResponseInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 579F1BF823C80EC600C7D4B4 /* _WKWebAuthenticationAssertionResponseInternal.h */; };
 		579F1BFC23C811CF00C7D4B4 /* APIWebAuthenticationAssertionResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 579F1BFA23C811CF00C7D4B4 /* APIWebAuthenticationAssertionResponse.h */; };
+		57A9FF09252BEAF0006A2040 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57A9FF08252BEAF0006A2040 /* main.mm */; };
+		57A9FF1D252C6CE6006A2040 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 57A9FF15252C6AEF006A2040 /* libWTF.a */; };
 		57AC8F50217FEED90055438C /* HidConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 57AC8F4E217FEED90055438C /* HidConnection.h */; };
 		57B4B46020B504AC00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B4B45E20B504AB00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h */; };
 		57B826412304EB3E00B72EB0 /* NearFieldSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B826402304EB3E00B72EB0 /* NearFieldSPI.h */; };
@@ -1965,6 +1968,13 @@
 			remoteGlobalIDString = C0CE72851247E66800BC0EC4;
 			remoteInfo = "Derived Sources";
 		};
+		57A9FF0B252C31D6006A2040 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 57A9FEFB252BD8AA006A2040;
+			remoteInfo = WebAuthenticationAgent;
+		};
 		BC8283D416B4C01F00A278FE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -2076,6 +2086,15 @@
 			);
 			name = "Copy Shims";
 			runOnlyForDeploymentPostprocessing = 0;
+		};
+		57A9FEFA252BD8AA006A2040 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
 		};
 		7CB16FEE1724BA05007A0A95 /* Copy Plug-in Sandbox Profiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -3912,6 +3931,13 @@
 		579F1BF823C80EC600C7D4B4 /* _WKWebAuthenticationAssertionResponseInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebAuthenticationAssertionResponseInternal.h; sourceTree = "<group>"; };
 		579F1BFA23C811CF00C7D4B4 /* APIWebAuthenticationAssertionResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIWebAuthenticationAssertionResponse.h; sourceTree = "<group>"; };
 		579F1BFB23C811CF00C7D4B4 /* APIWebAuthenticationAssertionResponse.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = APIWebAuthenticationAssertionResponse.cpp; sourceTree = "<group>"; };
+		57A9FEFC252BD8AA006A2040 /* com.apple.WebKit.WebAuthenticationAgent.Development */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = com.apple.WebKit.WebAuthenticationAgent.Development; sourceTree = BUILT_PRODUCTS_DIR; };
+		57A9FF07252BE6E0006A2040 /* WebAuthenticationAgent.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebAuthenticationAgent.xcconfig; sourceTree = "<group>"; };
+		57A9FF08252BEAF0006A2040 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = main.mm; path = Daemons/WebAuthenticationAgent/main.mm; sourceTree = SOURCE_ROOT; };
+		57A9FF0A252BF5C3006A2040 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		57A9FF0D252C397A006A2040 /* com.apple.webkit.WebAuthenticationAgent.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = com.apple.webkit.WebAuthenticationAgent.plist; sourceTree = "<group>"; };
+		57A9FF0F252C5D9D006A2040 /* WebAuthenticationAgent.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WebAuthenticationAgent.entitlements; sourceTree = "<group>"; };
+		57A9FF15252C6AEF006A2040 /* libWTF.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		57AC8F4E217FEED90055438C /* HidConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HidConnection.h; sourceTree = "<group>"; };
 		57AC8F4F217FEED90055438C /* HidConnection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HidConnection.mm; sourceTree = "<group>"; };
 		57B4B45D20B504AB00D4AD79 /* AuthenticationManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AuthenticationManagerCocoa.mm; sourceTree = "<group>"; };
@@ -5436,6 +5462,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		57A9FEF9252BD8AA006A2040 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				57A9FF1D252C6CE6006A2040 /* libWTF.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF560486A6940098B216 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -5484,6 +5518,7 @@
 				2D9FB228237523830049F936 /* com.apple.WebKit.GPU.xpc */,
 				BC8283B116B4BF7700A278FE /* com.apple.WebKit.Networking.xpc */,
 				BC82841F16B4FDF600A278FE /* com.apple.WebKit.Plugin.64.xpc */,
+				57A9FEFC252BD8AA006A2040 /* com.apple.WebKit.WebAuthenticationAgent.Development */,
 				372EBB462017E64300085064 /* com.apple.WebKit.WebContent.Development.xpc */,
 				BC3DE46615A91763008D26FC /* com.apple.WebKit.WebContent.xpc */,
 				1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */,
@@ -5628,6 +5663,7 @@
 				C0CE72DB1247E8F700BC0EC4 /* DerivedSources.make */,
 				1A1D2117191D996C0001619F /* MigrateHeadersFromWebKitLegacy.make */,
 				1A1D2116191D995C0001619F /* postprocess-framework-headers.sh */,
+				57A9FEEF252BB70C006A2040 /* Daemons */,
 				BC2E6E74114196F000A63B1E /* Platform */,
 				1AADDF4B10D82AF000D3D63D /* Shared */,
 				BC032DC310F438260058C15A /* UIProcess */,
@@ -5836,6 +5872,7 @@
 				A1EDD2DC1884B9B500BBFE98 /* SecItemShim.xcconfig */,
 				5183B3931379F85C00E8754E /* Shim.xcconfig */,
 				1A4F976E100E7B6600637A18 /* Version.xcconfig */,
+				57A9FF07252BE6E0006A2040 /* WebAuthenticationAgent.xcconfig */,
 				372EBB4A2017E76000085064 /* WebContentService.Development.xcconfig */,
 				BCACC40E16B0B8A800B6E092 /* WebContentService.xcconfig */,
 				BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */,
@@ -8077,6 +8114,7 @@
 		5750F3292032D4E300389347 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				57A9FF15252C6AEF006A2040 /* libWTF.a */,
 				5750F32A2032D4E500389347 /* LocalAuthentication.framework */,
 				570DAAB0230273D200E8FC04 /* NearField.framework */,
 			);
@@ -8132,6 +8170,25 @@
 				57608299202BDAE200116678 /* WebAuthenticatorCoordinatorProxy.messages.in */,
 			);
 			path = WebAuthentication;
+			sourceTree = "<group>";
+		};
+		57A9FEEF252BB70C006A2040 /* Daemons */ = {
+			isa = PBXGroup;
+			children = (
+				57A9FEF0252BB740006A2040 /* WebAuthenticationAgent */,
+			);
+			path = Daemons;
+			sourceTree = "<group>";
+		};
+		57A9FEF0252BB740006A2040 /* WebAuthenticationAgent */ = {
+			isa = PBXGroup;
+			children = (
+				57A9FF0D252C397A006A2040 /* com.apple.webkit.WebAuthenticationAgent.plist */,
+				57A9FF0A252BF5C3006A2040 /* Info.plist */,
+				57A9FF08252BEAF0006A2040 /* main.mm */,
+				57A9FF0F252C5D9D006A2040 /* WebAuthenticationAgent.entitlements */,
+			);
+			path = WebAuthenticationAgent;
 			sourceTree = "<group>";
 		};
 		57B4B45C20B5048B00D4AD79 /* cocoa */ = {
@@ -11926,6 +11983,23 @@
 			productReference = 510031F61379CACB00C8DFE4 /* SecItemShim.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		57A9FEFB252BD8AA006A2040 /* WebAuthenticationAgent */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 57A9FF00252BD8AB006A2040 /* Build configuration list for PBXNativeTarget "WebAuthenticationAgent" */;
+			buildPhases = (
+				57A9FEF8252BD8AA006A2040 /* Sources */,
+				57A9FEF9252BD8AA006A2040 /* Frameworks */,
+				57A9FEFA252BD8AA006A2040 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WebAuthenticationAgent;
+			productName = WebAuthenticationAgent;
+			productReference = 57A9FEFC252BD8AA006A2040 /* com.apple.WebKit.WebAuthenticationAgent.Development */;
+			productType = "com.apple.product-type.tool";
+		};
 		8DC2EF4F0486A6940098B216 /* WebKit */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "WebKit" */;
@@ -12050,6 +12124,9 @@
 						CreatedOnToolsVersion = 10.1;
 						ProvisioningStyle = Automatic;
 					};
+					57A9FEFB252BD8AA006A2040 = {
+						CreatedOnToolsVersion = 12.0;
+					};
 					E1AC2E2720F7B94C00B0897D = {
 						CreatedOnToolsVersion = 9.3;
 						ProvisioningStyle = Automatic;
@@ -12083,6 +12160,7 @@
 				A7AADA1019395CA9003EA1C7 /* Sandbox Profiles */,
 				E1AC2E2720F7B94C00B0897D /* Unlock Keychain */,
 				5325BDCD21DFF47700A0DEE1 /* Apply Configuration to XCFileLists */,
+				57A9FEFB252BD8AA006A2040 /* WebAuthenticationAgent */,
 			);
 		};
 /* End PBXProject section */
@@ -12692,6 +12770,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		57A9FEF8252BD8AA006A2040 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				57A9FF09252BEAF0006A2040 /* main.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF540486A6940098B216 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -13191,6 +13277,11 @@
 			target = C0CE72851247E66800BC0EC4 /* Derived Sources */;
 			targetProxy = 37F7407812721F740093869B /* PBXContainerItemProxy */;
 		};
+		57A9FF0C252C31D6006A2040 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 57A9FEFB252BD8AA006A2040 /* WebAuthenticationAgent */;
+			targetProxy = 57A9FF0B252C31D6006A2040 /* PBXContainerItemProxy */;
+		};
 		BC8283D516B4C01F00A278FE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BC8283B016B4BF7700A278FE /* Networking */;
@@ -13447,6 +13538,27 @@
 			};
 			name = Production;
 		};
+		57A9FF01252BD8AB006A2040 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 57A9FF07252BE6E0006A2040 /* WebAuthenticationAgent.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		57A9FF02252BD8AB006A2040 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 57A9FF07252BE6E0006A2040 /* WebAuthenticationAgent.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		57A9FF03252BD8AB006A2040 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 57A9FF07252BE6E0006A2040 /* WebAuthenticationAgent.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
 		5D22D69B11A7534600BF30E5 /* Production */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1A4F976A100E7B6600637A18 /* Base.xcconfig */;
@@ -13699,6 +13811,16 @@
 				5325BDCE21DFF47800A0DEE1 /* Debug */,
 				5325BDCF21DFF47800A0DEE1 /* Release */,
 				5325BDD021DFF47800A0DEE1 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		57A9FF00252BD8AB006A2040 /* Build configuration list for PBXNativeTarget "WebAuthenticationAgent" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				57A9FF01252BD8AB006A2040 /* Debug */,
+				57A9FF02252BD8AB006A2040 /* Release */,
+				57A9FF03252BD8AB006A2040 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
