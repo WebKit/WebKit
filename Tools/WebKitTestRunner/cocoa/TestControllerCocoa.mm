@@ -114,28 +114,27 @@ WKPreferencesRef TestController::platformPreferences()
     return (__bridge WKPreferencesRef)globalWebViewConfiguration.preferences;
 }
 
-TestFeatures TestController::platformSpecificFeatureOverridesDefaultsForTest(const TestCommand&) const
+void TestController::platformAddTestOptions(TestOptions& options) const
 {
-    TestFeatures features;
-
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"EnableProcessSwapOnNavigation"])
-        features.boolFeatures.insert({ "enableProcessSwapOnNavigation", true });
+        options.contextOptions.enableProcessSwapOnNavigation = true;
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"EnableProcessSwapOnWindowOpen"])
-        features.boolFeatures.insert({ "enableProcessSwapOnWindowOpen", true });
+        options.contextOptions.enableProcessSwapOnWindowOpen = true;
 
-    return features;
+#if PLATFORM(IOS_FAMILY)
+    if (options.enableInAppBrowserPrivacy)
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
+#endif
 }
 
 void TestController::platformInitializeDataStore(WKPageConfigurationRef, const TestOptions& options)
 {
-    bool useEphemeralSession = options.useEphemeralSession();
-    auto standaloneWebApplicationURL = options.standaloneWebApplicationURL();
-    if (useEphemeralSession || standaloneWebApplicationURL.length()) {
-        auto websiteDataStoreConfig = useEphemeralSession ? [[[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration] autorelease] : [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
-        if (!useEphemeralSession)
+    if (options.useEphemeralSession || options.standaloneWebApplicationURL.length()) {
+        auto websiteDataStoreConfig = options.useEphemeralSession ? [[[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration] autorelease] : [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
+        if (!options.useEphemeralSession)
             configureWebsiteDataStoreTemporaryDirectories((WKWebsiteDataStoreConfigurationRef)websiteDataStoreConfig);
-        if (standaloneWebApplicationURL.length())
-            [websiteDataStoreConfig setStandaloneApplicationURL:[NSURL URLWithString:[NSString stringWithUTF8String:standaloneWebApplicationURL.c_str()]]];
+        if (options.standaloneWebApplicationURL.length())
+            [websiteDataStoreConfig setStandaloneApplicationURL:[NSURL URLWithString:[NSString stringWithUTF8String:options.standaloneWebApplicationURL.c_str()]]];
         m_websiteDataStore = (__bridge WKWebsiteDataStoreRef)[[[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfig] autorelease];
     } else
         m_websiteDataStore = (__bridge WKWebsiteDataStoreRef)globalWebViewConfiguration.websiteDataStore;
@@ -146,33 +145,32 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
     auto copiedConfiguration = adoptNS([globalWebViewConfiguration copy]);
 
 #if PLATFORM(IOS_FAMILY)
-    if (options.useDataDetection())
+    if (options.useDataDetection)
         [copiedConfiguration setDataDetectorTypes:WKDataDetectorTypeAll];
-    if (options.ignoresViewportScaleLimits())
+    if (options.ignoresViewportScaleLimits)
         [copiedConfiguration setIgnoresViewportScaleLimits:YES];
-    if (options.useCharacterSelectionGranularity())
+    if (options.useCharacterSelectionGranularity)
         [copiedConfiguration setSelectionGranularity:WKSelectionGranularityCharacter];
-    if (options.isAppBoundWebView())
+    if (options.isAppBoundWebView)
         [copiedConfiguration setLimitsNavigationsToAppBoundDomains:YES];
 #else
-    [copiedConfiguration _setServiceControlsEnabled:options.enableServiceControls()];
+    [copiedConfiguration _setServiceControlsEnabled:options.enableServiceControls];
 #endif
 
-    if (options.enableAttachmentElement())
+    if (options.enableAttachmentElement)
         [copiedConfiguration _setAttachmentElementEnabled:YES];
 
-    if (options.enableColorFilter())
+    if (options.enableColorFilter)
         [copiedConfiguration _setColorFilterEnabled:YES];
 
     [copiedConfiguration setWebsiteDataStore:(WKWebsiteDataStore *)websiteDataStore()];
 
-    [copiedConfiguration _setAllowTopNavigationToDataURLs:options.allowTopNavigationToDataURLs()];
+    [copiedConfiguration _setAllowTopNavigationToDataURLs:options.allowTopNavigationToDataURLs];
 
     configureContentMode(copiedConfiguration.get(), options);
 
-    auto applicationManifest = options.applicationManifest();
-    if (applicationManifest.length()) {
-        auto manifestPath = [NSString stringWithUTF8String:applicationManifest.c_str()];
+    if (options.applicationManifest.length()) {
+        auto manifestPath = [NSString stringWithUTF8String:options.applicationManifest.c_str()];
         NSString *text = [NSString stringWithContentsOfFile:manifestPath usedEncoding:nullptr error:nullptr];
         [copiedConfiguration _setApplicationManifest:[_WKApplicationManifest applicationManifestFromJSON:text manifestURL:nil documentURL:nil]];
     }
@@ -180,13 +178,13 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
     m_mainWebView = makeUnique<PlatformWebView>(copiedConfiguration.get(), options);
     finishCreatingPlatformWebView(m_mainWebView.get(), options);
 
-    if (options.punchOutWhiteBackgroundsInDarkMode())
+    if (options.punchOutWhiteBackgroundsInDarkMode)
         m_mainWebView->setDrawsBackground(false);
 
-    if (options.editable())
+    if (options.editable)
         m_mainWebView->setEditable(true);
 
-    m_mainWebView->platformView().allowsLinkPreview = options.allowsLinkPreview();
+    m_mainWebView->platformView().allowsLinkPreview = options.allowsLinkPreview;
     [m_mainWebView->platformView() _setShareSheetCompletesImmediatelyWithResolutionForTesting:YES];
 }
 
@@ -205,7 +203,7 @@ PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parent
 void TestController::finishCreatingPlatformWebView(PlatformWebView* view, const TestOptions& options)
 {
 #if PLATFORM(MAC)
-    if (options.shouldShowWebView())
+    if (options.shouldShowWebView)
         [view->platformWindow() orderFront:nil];
     else
         [view->platformWindow() orderBack:nil];
@@ -265,12 +263,12 @@ void TestController::resetContentExtensions()
     }
 }
 
-void TestController::setApplicationBundleIdentifier(const std::string& bundleIdentifier)
+void TestController::setApplicationBundleIdentifier(const String& bundleIdentifier)
 {
-    if (bundleIdentifier.empty())
+    if (bundleIdentifier.isEmpty())
         return;
     
-    [TestRunnerWKWebView _setApplicationBundleIdentifier:(NSString *)toWTFString(bundleIdentifier).createCFString().get()];
+    [TestRunnerWKWebView _setApplicationBundleIdentifier:(NSString *)bundleIdentifier.createCFString().get()];
 }
 
 void TestController::clearApplicationBundleIdentifierTestingOverride()
@@ -288,7 +286,7 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
         TestRunnerWKWebView *platformView = webView->platformView();
         platformView._viewScale = 1;
         platformView._minimumEffectiveDeviceWidth = 0;
-        [platformView _setContinuousSpellCheckingEnabledForTesting:options.shouldShowSpellCheckingDots()];
+        [platformView _setContinuousSpellCheckingEnabledForTesting:options.shouldShowSpellCheckingDots];
         [platformView resetInteractionCallbacks];
         [platformView _resetNavigationGestureStateForTesting];
     }
@@ -299,11 +297,6 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
 void TestController::platformWillRunTest(const TestInvocation& testInvocation)
 {
     setCrashReportApplicationSpecificInformationToURL(testInvocation.url());
-
-#if PLATFORM(IOS_FAMILY)
-    if (testInvocation.options().enableInAppBrowserPrivacy())
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
-#endif
 }
 
 static NSString * const WebArchivePboardType = @"Apple Web Archive pasteboard type";
@@ -494,11 +487,12 @@ bool TestController::isDoingMediaCapture() const
 
 static WKContentMode contentMode(const TestOptions& options)
 {
-    auto mode = options.contentMode();
-    if (mode == "desktop")
+    if (options.contentMode == "desktop"_s)
         return WKContentModeDesktop;
-    if (mode == "mobile")
+
+    if (options.contentMode == "mobile"_s)
         return WKContentModeMobile;
+
     return WKContentModeRecommended;
 }
 

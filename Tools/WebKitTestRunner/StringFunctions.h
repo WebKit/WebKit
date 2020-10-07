@@ -32,7 +32,6 @@
 #include <WebKit/WKStringPrivate.h>
 #include <sstream>
 #include <string>
-#include <vector>
 #include <wtf/Platform.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UniqueArray.h>
@@ -58,11 +57,6 @@ inline WKRetainPtr<WKStringRef> toWK(const JSRetainPtr<JSStringRef>& string)
 inline WKRetainPtr<WKStringRef> toWK(const char* string)
 {
     return adoptWK(WKStringCreateWithUTF8CString(string));
-}
-
-inline WKRetainPtr<WKStringRef> toWK(const std::string& string)
-{
-    return toWK(string.c_str());
 }
 
 inline WKRetainPtr<WKStringRef> toWK(const WTF::String& string)
@@ -120,11 +114,6 @@ inline WTF::String toWTFString(const JSRetainPtr<JSStringRef>& string)
     return toWTFString(string.get());
 }
 
-inline WTF::String toWTFString(const std::string& string)
-{
-    return WTF::String::fromUTF8(string.c_str());
-}
-
 inline WKRetainPtr<WKStringRef> toWKString(JSContextRef context, JSValueRef value)
 {
     return toWK(createJSString(context, value).get());
@@ -134,27 +123,6 @@ inline WTF::String toWTFString(JSContextRef context, JSValueRef value)
 {
     // FIXME: Could make this efficient by using the WTFString inside OpaqueJSString if we wanted to.
     return toWTFString(createJSString(context, value));
-}
-
-template<typename StringType>
-inline std::vector<StringType> split(const StringType& string, char delimiter)
-{
-    std::vector<StringType> result;
-
-    size_t i = 0;
-    while (i < string.size()) {
-        auto foundIndex = string.find_first_of(delimiter, i);
-
-        if (foundIndex != i)
-            result.push_back(string.substr(i, foundIndex - i));
-
-        if (foundIndex == StringType::npos)
-            break;
-
-        i = foundIndex + 1;
-    }
-
-    return result;
 }
 
 } // namespace WTR

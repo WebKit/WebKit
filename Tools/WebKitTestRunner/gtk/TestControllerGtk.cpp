@@ -150,11 +150,9 @@ void TestController::platformResetPreferencesToConsistentValues()
     m_mainWebView->dismissAllPopupMenus();
 }
 
-TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCommand&) const
+void TestController::updatePlatformSpecificTestOptionsForTest(TestOptions& options, const std::string&) const
 {
-    TestFeatures features;
-    features.boolFeatures.insert({ "enableModernMediaControls", false });
-    return features;
+    options.enableModernMediaControls = false;
 }
 
 } // namespace WTR
