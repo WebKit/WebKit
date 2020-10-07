@@ -1,3 +1,16 @@
+2020-10-07  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [GTK][WPE] Remove Apache's mod_bw from install-dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=217441
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        It is not activated in any of Apache configs in LayoutTests, and is not
+        referenced anywhere else.
+
+        * gtk/install-dependencies:
+        * wpe/install-dependencies:
+
 2020-10-07  Karl Rackler  <rackler@apple.com>
 
         Unreviewed, reverting r268115.
