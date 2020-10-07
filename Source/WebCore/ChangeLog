@@ -1,3 +1,22 @@
+2020-10-07  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorder::create should not need to create a MediaRecorderPrivate to validate it can record properly
+        https://bugs.webkit.org/show_bug.cgi?id=217387
+
+        Reviewed by Darin Adler.
+
+        Instead of creating a MediaRecorderPrivate to verify that we can create one, just rely on isTypeSupported.
+        Add a check that page is not null in the create method.
+
+        Remove assertion that we can create a private recorder in start since thgere is no guarantee that the frame might not be detached.
+
+        Test: http/wpt/mediarecorder/MediaRecorder-frame.html
+
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::create):
+        (WebCore::MediaRecorder::createMediaRecorderPrivate):
+        (WebCore::MediaRecorder::startRecording):
+
 2020-10-07  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Add line iterator

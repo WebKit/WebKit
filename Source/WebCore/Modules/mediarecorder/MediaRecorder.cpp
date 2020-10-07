@@ -60,14 +60,12 @@ bool MediaRecorder::isTypeSupported(Document& document, const String& value)
 
 ExceptionOr<Ref<MediaRecorder>> MediaRecorder::create(Document& document, Ref<MediaStream>&& stream, Options&& options)
 {
+    auto* page = document.page();
+    if (!page)
+        return Exception { InvalidStateError };
+
     if (!isTypeSupported(document, options.mimeType))
         return Exception { NotSupportedError, "mimeType is not supported" };
-
-    auto result = MediaRecorder::createMediaRecorderPrivate(document, stream->privateStream(), options);
-    if (result.hasException())
-        return result.releaseException();
-
-    result.releaseReturnValue()->stop();
 
     auto recorder = adoptRef(*new MediaRecorder(document, WTFMove(stream), WTFMove(options)));
     recorder->suspendIfNeeded();
@@ -81,16 +79,12 @@ void MediaRecorder::setCustomPrivateRecorderCreator(CreatorFunction creator)
 
 ExceptionOr<std::unique_ptr<MediaRecorderPrivate>> MediaRecorder::createMediaRecorderPrivate(Document& document, MediaStreamPrivate& stream, const Options& options)
 {
-#if !PLATFORM(COCOA)
-    UNUSED_PARAM(stream);
-#endif
-
-    if (m_customCreator)
-        return m_customCreator(stream, options);
-
     auto* page = document.page();
     if (!page)
         return Exception { InvalidStateError };
+
+    if (m_customCreator)
+        return m_customCreator(stream, options);
 
 #if PLATFORM(COCOA)
     auto result = page->mediaRecorderProvider().createMediaRecorderPrivate(stream, options);
@@ -160,7 +154,6 @@ ExceptionOr<void> MediaRecorder::startRecording(Optional<unsigned> timeSlice)
     ASSERT(!m_private);
     auto result = createMediaRecorderPrivate(*document(), m_stream->privateStream(), m_options);
 
-    ASSERT(!result.hasException());
     if (result.hasException())
         return result.releaseException();
 

@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+    <title>MediaRecorder in frames</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+function withFrame(url)
+{
+    return new Promise((resolve) => {
+        let frame = document.createElement('iframe');
+        frame.src = url;
+        frame.onload = function() { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+}
+
+promise_test(async (t) => {
+    const frame = await withFrame('/');
+    const stream = await navigator.mediaDevices.getUserMedia({ audio : true });
+    const Recorder = frame.contentWindow.MediaRecorder;
+    let recorder1 = new Recorder(stream);
+    let recorder2 = new Recorder(stream);
+
+    recorder1.start();
+
+    frame.remove();
+
+    try {
+        new Recorder(stream);
+        assert_unreached();
+    } catch (e) {
+        assert_equals(e.name, "InvalidStateError");
+    }
+
+    try {
+        recorder2.start();
+        assert_unreached();
+    } catch (e) {
+        assert_equals(e.name, "InvalidStateError");
+    }
+    assert_equals(recorder1.state, "inactive");
+}, "MediaRecorder in detached frames");
+</script>
+</body>
+</html>

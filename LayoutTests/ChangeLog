@@ -1,3 +1,13 @@
+2020-10-07  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorder::create should not need to create a MediaRecorderPrivate to validate it can record properly
+        https://bugs.webkit.org/show_bug.cgi?id=217387
+
+        Reviewed by Darin Adler.
+
+        * http/wpt/mediarecorder/MediaRecorder-frame-expected.txt: Added.
+        * http/wpt/mediarecorder/MediaRecorder-frame.html: Added.
+
 2020-10-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add initial support for inline content to clear intrusive floats
