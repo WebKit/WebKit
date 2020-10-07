@@ -73,6 +73,30 @@ void MediaRecorderPrivate::stop()
     stopRecording();
 }
 
+void MediaRecorderPrivate::pause(CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(!m_pausedAudioSource);
+    ASSERT(!m_pausedVideoSource);
+
+    m_pausedAudioSource = m_audioSource;
+    m_pausedVideoSource = m_videoSource;
+
+    setAudioSource(nullptr);
+    setVideoSource(nullptr);
+
+    pauseRecording(WTFMove(completionHandler));
+}
+
+void MediaRecorderPrivate::resume(CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(m_pausedAudioSource || m_pausedVideoSource);
+
+    setAudioSource(WTFMove(m_pausedAudioSource));
+    setVideoSource(WTFMove(m_pausedVideoSource));
+
+    resumeRecording(WTFMove(completionHandler));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

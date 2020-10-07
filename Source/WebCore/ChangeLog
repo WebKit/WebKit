@@ -1,5 +1,39 @@
 2020-10-07  Youenn Fablet  <youenn@apple.com>
 
+        Add support for MediaRecorder pause/resume
+        https://bugs.webkit.org/show_bug.cgi?id=217375
+
+        Reviewed by Eric Carlson.
+
+        Implement pause and resume as per spec.
+        MediaRecorder basically sends pause/resume order to its backend.
+        The backend then stops observing tracks when paused and resumed observing at resume time.
+        For video, we make sure to compute the frame timestamp so that the recorded video continues to play without interruption.
+
+        Test: http/wpt/mediarecorder/pause-recording.html
+
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::pauseRecording):
+        (WebCore::MediaRecorder::resumeRecording):
+        * Modules/mediarecorder/MediaRecorder.h:
+        * Modules/mediarecorder/MediaRecorder.idl:
+        * platform/mediarecorder/MediaRecorderPrivate.cpp:
+        (WebCore::MediaRecorderPrivate::pause):
+        (WebCore::MediaRecorderPrivate::resume):
+        * platform/mediarecorder/MediaRecorderPrivate.h:
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp:
+        (WebCore::MediaRecorderPrivateAVFImpl::pauseRecording):
+        (WebCore::MediaRecorderPrivateAVFImpl::resumeRecording):
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.h:
+        * platform/mediarecorder/MediaRecorderPrivateMock.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        (WebCore::MediaRecorderPrivateWriter::appendVideoSampleBuffer):
+        (WebCore::MediaRecorderPrivateWriter::pause):
+        (WebCore::MediaRecorderPrivateWriter::resume):
+
+2020-10-07  Youenn Fablet  <youenn@apple.com>
+
         MediaRecorder::create should not need to create a MediaRecorderPrivate to validate it can record properly
         https://bugs.webkit.org/show_bug.cgi?id=217387
 

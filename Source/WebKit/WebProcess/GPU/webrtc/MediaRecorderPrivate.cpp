@@ -141,6 +141,16 @@ void MediaRecorderPrivate::stopRecording()
     m_connection->send(Messages::RemoteMediaRecorder::StopRecording { }, m_identifier);
 }
 
+void MediaRecorderPrivate::pauseRecording(CompletionHandler<void()>&& completionHandler)
+{
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorder::Pause { }, WTFMove(completionHandler), m_identifier);
+}
+
+void MediaRecorderPrivate::resumeRecording(CompletionHandler<void()>&& completionHandler)
+{
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorder::Resume { }, WTFMove(completionHandler), m_identifier);
+}
+
 const String& MediaRecorderPrivate::mimeType() const
 {
     static NeverDestroyed<const String> audioMP4(MAKE_STATIC_STRING_IMPL("audio/mp4"));

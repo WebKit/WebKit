@@ -1,0 +1,4 @@
+
+
+PASS Pausing and resuming the recording should impact the video duration
+

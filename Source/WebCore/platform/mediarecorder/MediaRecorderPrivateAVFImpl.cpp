@@ -137,6 +137,18 @@ void MediaRecorderPrivateAVFImpl::stopRecording()
     m_writer->stopRecording();
 }
 
+void MediaRecorderPrivateAVFImpl::pauseRecording(CompletionHandler<void()>&& completionHandler)
+{
+    m_writer->pause();
+    completionHandler();
+}
+
+void MediaRecorderPrivateAVFImpl::resumeRecording(CompletionHandler<void()>&& completionHandler)
+{
+    m_writer->resume();
+    completionHandler();
+}
+
 void MediaRecorderPrivateAVFImpl::fetchData(FetchDataCallback&& completionHandler)
 {
     m_writer->fetchData([completionHandler = WTFMove(completionHandler), mimeType = mimeType()](auto&& buffer) mutable {

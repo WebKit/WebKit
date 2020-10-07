@@ -1,5 +1,16 @@
 2020-10-07  Youenn Fablet  <youenn@apple.com>
 
+        Add support for MediaRecorder pause/resume
+        https://bugs.webkit.org/show_bug.cgi?id=217375
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/mediacapture-record/MediaRecorder-pause-resume-expected.txt:
+        * web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https-expected.txt:
+        * web-platform-tests/mediacapture-record/idlharness.window-expected.txt:
+
+2020-10-07  Youenn Fablet  <youenn@apple.com>
+
         MediaRecorder::create should not need to create a MediaRecorderPrivate to validate it can record properly
         https://bugs.webkit.org/show_bug.cgi?id=217387
         <rdar://problem/70049616>

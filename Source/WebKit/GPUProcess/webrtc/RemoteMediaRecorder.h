@@ -71,6 +71,8 @@ private:
     void videoSampleAvailable(WebCore::RemoteVideoSample&&);
     void fetchData(CompletionHandler<void(IPC::DataReference&&)>&&);
     void stopRecording();
+    void pause(CompletionHandler<void()>&&);
+    void resume(CompletionHandler<void()>&&);
 
     SharedRingBufferStorage& storage();
 

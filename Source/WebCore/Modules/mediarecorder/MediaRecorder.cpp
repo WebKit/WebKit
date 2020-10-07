@@ -227,6 +227,48 @@ ExceptionOr<void> MediaRecorder::requestData()
     return { };
 }
 
+ExceptionOr<void> MediaRecorder::pauseRecording()
+{
+    if (state() == RecordingState::Inactive)
+        return Exception { InvalidStateError, "The MediaRecorder's state cannot be inactive"_s };
+
+    if (state() == RecordingState::Paused)
+        return { };
+
+    m_state = RecordingState::Paused;
+    m_private->pause([this, pendingActivity = makePendingActivity(*this)]() {
+        if (!m_isActive)
+            return;
+        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this]() mutable {
+            if (!m_isActive)
+                return;
+            dispatchEvent(Event::create(eventNames().pauseEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        });
+    });
+    return { };
+}
+
+ExceptionOr<void> MediaRecorder::resumeRecording()
+{
+    if (state() == RecordingState::Inactive)
+        return Exception { InvalidStateError, "The MediaRecorder's state cannot be inactive"_s };
+
+    if (state() == RecordingState::Recording)
+        return { };
+
+    m_state = RecordingState::Recording;
+    m_private->resume([this, pendingActivity = makePendingActivity(*this)]() {
+        if (!m_isActive)
+            return;
+        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this]() mutable {
+            if (!m_isActive)
+                return;
+            dispatchEvent(Event::create(eventNames().resumeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        });
+    });
+    return { };
+}
+
 void MediaRecorder::fetchData(FetchDataCallback&& callback, TakePrivateRecorder takeRecorder)
 {
     auto& privateRecorder = *m_private;

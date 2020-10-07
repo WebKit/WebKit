@@ -134,6 +134,18 @@ void RemoteMediaRecorder::stopRecording()
     m_writer->stopRecording();
 }
 
+void RemoteMediaRecorder::pause(CompletionHandler<void()>&& completionHandler)
+{
+    m_writer->pause();
+    completionHandler();
+}
+
+void RemoteMediaRecorder::resume(CompletionHandler<void()>&& completionHandler)
+{
+    m_writer->resume();
+    completionHandler();
+}
+
 }
 
 #undef MESSAGE_CHECK

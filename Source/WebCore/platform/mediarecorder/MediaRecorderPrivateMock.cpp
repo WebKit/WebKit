@@ -55,6 +55,16 @@ void MediaRecorderPrivateMock::stopRecording()
 {
 }
 
+void MediaRecorderPrivateMock::pauseRecording(CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
+}
+
+void MediaRecorderPrivateMock::resumeRecording(CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
+}
+
 void MediaRecorderPrivateMock::videoSampleAvailable(MediaSample&)
 {
     auto locker = holdLock(m_bufferLock);

@@ -72,6 +72,9 @@ public:
     void stopRecording();
     void fetchData(CompletionHandler<void(RefPtr<SharedBuffer>&&)>&&);
 
+    void pause();
+    void resume();
+
     void appendData(const char*, size_t);
     void appendData(Ref<SharedBuffer>&&);
 
@@ -134,7 +137,8 @@ private:
     bool m_shouldStopAfterFlushingSamples { false };
     bool m_firstVideoFrame { false };
     Optional<CGAffineTransform> m_videoTransform;
-    CMTime m_firstVideoSampleTime { kCMTimeZero };
+    CMTime m_resumedVideoTime { kCMTimeZero };
+    CMTime m_currentVideoDuration { kCMTimeZero };
     CMTime m_currentAudioSampleTime { kCMTimeZero };
 };
 

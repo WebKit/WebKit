@@ -62,6 +62,8 @@ public:
     virtual const String& mimeType() const = 0;
 
     void stop();
+    void pause(CompletionHandler<void()>&&);
+    void resume(CompletionHandler<void()>&&);
 
     using StartRecordingCallback = CompletionHandler<void(ExceptionOr<String>&&)>;
     virtual void startRecording(StartRecordingCallback&& callback) { callback(String(mimeType())); }
@@ -80,12 +82,16 @@ protected:
 
 private:
     virtual void stopRecording() = 0;
+    virtual void pauseRecording(CompletionHandler<void()>&&) = 0;
+    virtual void resumeRecording(CompletionHandler<void()>&&) = 0;
 
 private:
     bool m_shouldMuteAudio { false };
     bool m_shouldMuteVideo { false };
     RefPtr<RealtimeMediaSource> m_audioSource;
     RefPtr<RealtimeMediaSource> m_videoSource;
+    RefPtr<RealtimeMediaSource> m_pausedAudioSource;
+    RefPtr<RealtimeMediaSource> m_pausedVideoSource;
 };
 
 inline void MediaRecorderPrivate::setAudioSource(RefPtr<RealtimeMediaSource>&& audioSource)

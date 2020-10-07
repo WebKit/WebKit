@@ -71,6 +71,8 @@ public:
     ExceptionOr<void> startRecording(Optional<unsigned>);
     ExceptionOr<void> stopRecording();
     ExceptionOr<void> requestData();
+    ExceptionOr<void> pauseRecording();
+    ExceptionOr<void> resumeRecording();
 
     MediaStream& stream() { return m_stream.get(); }
 

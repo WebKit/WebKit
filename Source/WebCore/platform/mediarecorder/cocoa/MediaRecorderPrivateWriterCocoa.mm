@@ -428,7 +428,7 @@ void MediaRecorderPrivateWriter::appendVideoSampleBuffer(MediaSample& sample)
 {
     if (!m_firstVideoFrame) {
         m_firstVideoFrame = true;
-        m_firstVideoSampleTime = CMClockGetTime(CMClockGetHostTimeClock());
+        m_resumedVideoTime = CMClockGetTime(CMClockGetHostTimeClock());
         if (sample.videoRotation() != MediaSample::VideoRotation::None || sample.videoMirrored()) {
             m_videoTransform = CGAffineTransformMakeRotation(static_cast<int>(sample.videoRotation()) * M_PI / 180);
             if (sample.videoMirrored())
@@ -436,7 +436,8 @@ void MediaRecorderPrivateWriter::appendVideoSampleBuffer(MediaSample& sample)
         }
     }
 
-    CMTime sampleTime = CMTimeSubtract(CMClockGetTime(CMClockGetHostTimeClock()), m_firstVideoSampleTime);
+    auto sampleTime = CMTimeSubtract(CMClockGetTime(CMClockGetHostTimeClock()), m_resumedVideoTime);
+    sampleTime = CMTimeAdd(sampleTime, m_currentVideoDuration);
     if (auto bufferWithCurrentTime = copySampleBufferWithCurrentTimeStamp(sample.platformSample().sample.cmSampleBuffer, sampleTime))
         m_videoCompressor->addSampleBuffer(bufferWithCurrentTime.get());
 }
@@ -595,6 +596,17 @@ void MediaRecorderPrivateWriter::appendData(Ref<SharedBuffer>&& buffer)
         return;
     }
     m_data->append(WTFMove(buffer));
+}
+
+void MediaRecorderPrivateWriter::pause()
+{
+    auto recordingDuration = CMTimeSubtract(CMClockGetTime(CMClockGetHostTimeClock()), m_resumedVideoTime);
+    m_currentVideoDuration = CMTimeAdd(recordingDuration, m_currentVideoDuration);
+}
+
+void MediaRecorderPrivateWriter::resume()
+{
+    m_resumedVideoTime = CMClockGetTime(CMClockGetHostTimeClock());
 }
 
 const String& MediaRecorderPrivateWriter::mimeType() const

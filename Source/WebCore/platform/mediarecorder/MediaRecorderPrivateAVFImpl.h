@@ -55,7 +55,9 @@ private:
     void startRecording(StartRecordingCallback&& callback) final { callback(String(m_writer->mimeType())); }
     const String& mimeType() const final;
 
-    void stopRecording();
+    void stopRecording() final;
+    void pauseRecording(CompletionHandler<void()>&&) final;
+    void resumeRecording(CompletionHandler<void()>&&) final;
 
     Ref<MediaRecorderPrivateWriter> m_writer;
     RetainPtr<CVPixelBufferRef> m_blackFrame;

@@ -61,6 +61,8 @@ private:
     void startRecording(StartRecordingCallback&&) final;
     void audioSamplesAvailable(const WTF::MediaTime&, const WebCore::PlatformAudioData&, const WebCore::AudioStreamDescription&, size_t) final;
     const String& mimeType() const final;
+    void pauseRecording(CompletionHandler<void()>&&) final;
+    void resumeRecording(CompletionHandler<void()>&&) final;
 
     // SharedRingBufferStorage::Client
     void storageChanged(SharedMemory*);
