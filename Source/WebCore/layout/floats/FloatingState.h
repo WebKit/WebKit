@@ -51,11 +51,6 @@ public:
 
     const ContainerBox& root() const { return *m_formattingContextRoot; }
 
-    Optional<PositionInContextRoot> top(const ContainerBox& formattingContextRoot) const;
-    Optional<PositionInContextRoot> leftBottom(const ContainerBox& formattingContextRoot) const;
-    Optional<PositionInContextRoot> rightBottom(const ContainerBox& formattingContextRoot) const;
-    Optional<PositionInContextRoot> bottom(const ContainerBox& formattingContextRoot) const;
-
     class FloatItem {
     public:
         FloatItem(const Box&, BoxGeometry absoluteBoxGeometry);
@@ -89,33 +84,12 @@ public:
 private:
     friend class FloatingContext;
     FloatingState(LayoutState&, const ContainerBox& formattingContextRoot);
-
     LayoutState& layoutState() const { return m_layoutState; }
-
-    Optional<PositionInContextRoot> bottom(const ContainerBox& formattingContextRoot, Clear) const;
 
     LayoutState& m_layoutState;
     WeakPtr<const ContainerBox> m_formattingContextRoot;
     FloatList m_floats;
 };
-
-inline Optional<PositionInContextRoot> FloatingState::leftBottom(const ContainerBox& formattingContextRoot) const
-{ 
-    ASSERT(formattingContextRoot.establishesFormattingContext());
-    return bottom(formattingContextRoot, Clear::Left);
-}
-
-inline Optional<PositionInContextRoot> FloatingState::rightBottom(const ContainerBox& formattingContextRoot) const
-{
-    ASSERT(formattingContextRoot.establishesFormattingContext());
-    return bottom(formattingContextRoot, Clear::Right);
-}
-
-inline Optional<PositionInContextRoot> FloatingState::bottom(const ContainerBox& formattingContextRoot) const
-{
-    ASSERT(formattingContextRoot.establishesFormattingContext());
-    return bottom(formattingContextRoot, Clear::Both);
-}
 
 }
 }

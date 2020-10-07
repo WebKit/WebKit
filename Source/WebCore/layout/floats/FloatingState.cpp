@@ -91,54 +91,6 @@ void FloatingState::append(FloatItem floatItem)
     return m_floats.insert(0, floatItem);
 }
 
-Optional<PositionInContextRoot> FloatingState::bottom(const ContainerBox& formattingContextRoot, Clear type) const
-{
-    if (m_floats.isEmpty())
-        return { };
-
-    // TODO: Currently this is only called once for each formatting context root with floats per layout.
-    // Cache the value if we end up calling it more frequently (and update it at append/remove).
-    Optional<PositionInContextRoot> bottom;
-    for (auto& floatItem : m_floats) {
-        // Ignore floats from ancestor formatting contexts when the floating state is inherited.
-        if (!floatItem.isInFormattingContextOf(formattingContextRoot))
-            continue;
-
-        if ((type == Clear::Left && !floatItem.isLeftPositioned())
-            || (type == Clear::Right && floatItem.isLeftPositioned()))
-            continue;
-
-        auto floatsBottom = floatItem.rectWithMargin().bottom();
-        if (bottom) {
-            bottom = std::max<PositionInContextRoot>(*bottom, { floatsBottom });
-            continue;
-        }
-        bottom = PositionInContextRoot { floatsBottom };
-    }
-    return bottom;
-}
-
-Optional<PositionInContextRoot> FloatingState::top(const ContainerBox& formattingContextRoot) const
-{
-    if (m_floats.isEmpty())
-        return { };
-
-    Optional<PositionInContextRoot> top;
-    for (auto& floatItem : m_floats) {
-        // Ignore floats from ancestor formatting contexts when the floating state is inherited.
-        if (!floatItem.isInFormattingContextOf(formattingContextRoot))
-            continue;
-
-        auto floatTop = floatItem.rectWithMargin().top();
-        if (top) {
-            top = std::min<PositionInContextRoot>(*top, { floatTop });
-            continue;
-        }
-        top = PositionInContextRoot { floatTop };
-    }
-    return top;
-}
-
 }
 }
 #endif

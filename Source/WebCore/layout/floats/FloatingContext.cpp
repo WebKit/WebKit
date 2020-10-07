@@ -245,14 +245,14 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const Horizo
     auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
     if (layoutBox.hasFloatClear()) {
         // The vertical position candidate needs to clear the existing floats in this context.
-        auto floatBottom = [&]() -> Optional<PositionInContextRoot> {
+        auto floatBottom = [&]() -> Optional<LayoutUnit> {
             switch (layoutBox.style().clear()) {
             case Clear::Left:
-                return floatingState().leftBottom(root());
+                return leftBottom();
             case Clear::Right:
-                return floatingState().rightBottom(root());
+                return rightBottom();
             case Clear::Both:
-                return floatingState().bottom(root());
+                return bottom();
             default:
                 ASSERT_NOT_REACHED();
             }
@@ -306,7 +306,7 @@ FloatingContext::ClearancePosition FloatingContext::verticalPositionWithClearanc
     if (isEmpty())
         return { };
 
-    auto bottom = [&](Optional<PositionInContextRoot> floatBottom) -> ClearancePosition {
+    auto bottom = [&](Optional<LayoutUnit> floatBottom) -> ClearancePosition {
         // 'bottom' is in the formatting root's coordinate system.
         if (!floatBottom)
             return { };
@@ -351,16 +351,38 @@ FloatingContext::ClearancePosition FloatingContext::verticalPositionWithClearanc
 
     auto clear = layoutBox.style().clear();
     if (clear == Clear::Left)
-        return bottom(m_floatingState.leftBottom(root()));
+        return bottom(leftBottom());
 
     if (clear == Clear::Right)
-        return bottom(m_floatingState.rightBottom(root()));
+        return bottom(rightBottom());
 
     if (clear == Clear::Both)
-        return bottom(m_floatingState.bottom(root()));
+        return bottom(this->bottom());
 
     ASSERT_NOT_REACHED();
     return { };
+}
+
+Optional<LayoutUnit> FloatingContext::bottom(Clear type) const
+{
+    // TODO: Currently this is only called once for each formatting context root with floats per layout.
+    // Cache the value if we end up calling it more frequently (and update it at append/remove).
+    auto bottom = Optional<LayoutUnit> { };
+    for (auto& floatItem : floatingState().floats()) {
+        if ((type == Clear::Left && !floatItem.isLeftPositioned())
+            || (type == Clear::Right && floatItem.isLeftPositioned()))
+            continue;
+        bottom = !bottom ? floatItem.rectWithMargin().bottom() : std::max(*bottom, floatItem.rectWithMargin().bottom());
+    }
+    return bottom;
+}
+
+Optional<LayoutUnit> FloatingContext::top() const
+{
+    auto top = Optional<LayoutUnit> { };
+    for (auto& floatItem : floatingState().floats())
+        top = !top ? floatItem.rectWithMargin().top() : std::min(*top, floatItem.rectWithMargin().top());
+    return top;
 }
 
 FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTop, LayoutUnit candidateBottom) const
