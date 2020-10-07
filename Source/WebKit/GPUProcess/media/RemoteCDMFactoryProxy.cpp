@@ -117,45 +117,45 @@ void RemoteCDMFactoryProxy::didReceiveSyncCDMInstanceSessionMessage(IPC::Connect
         session->didReceiveSyncMessage(connection, decoder, encoder);
 }
 
-void RemoteCDMFactoryProxy::addProxy(const RemoteCDMIdentifier& id, std::unique_ptr<RemoteCDMProxy>&& proxy)
+void RemoteCDMFactoryProxy::addProxy(const RemoteCDMIdentifier& identifier, std::unique_ptr<RemoteCDMProxy>&& proxy)
 {
-    ASSERT(!m_proxies.contains(id));
-    m_proxies.set(id, WTFMove(proxy));
+    ASSERT(!m_proxies.contains(identifier));
+    m_proxies.set(identifier, WTFMove(proxy));
 }
 
-void RemoteCDMFactoryProxy::removeProxy(const RemoteCDMIdentifier& id)
+void RemoteCDMFactoryProxy::removeProxy(const RemoteCDMIdentifier& identifier)
 {
-    ASSERT(m_proxies.contains(id));
-    m_proxies.remove(id);
+    ASSERT(m_proxies.contains(identifier));
+    m_proxies.remove(identifier);
 }
 
-void RemoteCDMFactoryProxy::addInstance(const RemoteCDMInstanceIdentifier& id, std::unique_ptr<RemoteCDMInstanceProxy>&& instance)
+void RemoteCDMFactoryProxy::addInstance(const RemoteCDMInstanceIdentifier& identifier, std::unique_ptr<RemoteCDMInstanceProxy>&& instance)
 {
-    ASSERT(!m_instances.contains(id));
-    m_instances.set(id, WTFMove(instance));
+    ASSERT(!m_instances.contains(identifier));
+    m_instances.set(identifier, WTFMove(instance));
 }
 
-void RemoteCDMFactoryProxy::removeInstance(const RemoteCDMInstanceIdentifier& id)
+void RemoteCDMFactoryProxy::removeInstance(const RemoteCDMInstanceIdentifier& identifier)
 {
-    ASSERT(m_instances.contains(id));
-    m_instances.remove(id);
+    ASSERT(m_instances.contains(identifier));
+    m_instances.remove(identifier);
 }
 
-RemoteCDMInstanceProxy* RemoteCDMFactoryProxy::getInstance(const RemoteCDMInstanceIdentifier& id)
+RemoteCDMInstanceProxy* RemoteCDMFactoryProxy::getInstance(const RemoteCDMInstanceIdentifier& identifier)
 {
-    return m_instances.get(id);
+    return m_instances.get(identifier);
 }
 
-void RemoteCDMFactoryProxy::addSession(const RemoteCDMInstanceSessionIdentifier& id, std::unique_ptr<RemoteCDMInstanceSessionProxy>&& session)
+void RemoteCDMFactoryProxy::addSession(const RemoteCDMInstanceSessionIdentifier& identifier, std::unique_ptr<RemoteCDMInstanceSessionProxy>&& session)
 {
-    ASSERT(!m_sessions.contains(id));
-    m_sessions.set(id, WTFMove(session));
+    ASSERT(!m_sessions.contains(identifier));
+    m_sessions.set(identifier, WTFMove(session));
 }
 
-void RemoteCDMFactoryProxy::removeSession(const RemoteCDMInstanceSessionIdentifier& id)
+void RemoteCDMFactoryProxy::removeSession(const RemoteCDMInstanceSessionIdentifier& identifier)
 {
-    ASSERT(m_sessions.contains(id));
-    m_sessions.remove(id);
+    ASSERT(m_sessions.contains(identifier));
+    m_sessions.remove(identifier);
 }
 
 }

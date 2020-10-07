@@ -494,11 +494,11 @@ void MediaPlayerPrivateRemote::removeRemoteTextTrack(TrackPrivateRemoteIdentifie
     }
 }
 
-void MediaPlayerPrivateRemote::remoteTextTrackConfigurationChanged(TrackPrivateRemoteIdentifier id, TextTrackPrivateRemoteConfiguration&& configuration)
+void MediaPlayerPrivateRemote::remoteTextTrackConfigurationChanged(TrackPrivateRemoteIdentifier identifier, TextTrackPrivateRemoteConfiguration&& configuration)
 {
-    ASSERT(m_textTracks.contains(id));
+    ASSERT(m_textTracks.contains(identifier));
 
-    if (auto track = m_textTracks.get(id))
+    if (auto track = m_textTracks.get(identifier))
         track->updateConfiguration(WTFMove(configuration));
 }
 
@@ -597,21 +597,21 @@ void MediaPlayerPrivateRemote::addRemoteVideoTrack(TrackPrivateRemoteIdentifier 
     m_player->addVideoTrack(addResult.iterator->value);
 }
 
-void MediaPlayerPrivateRemote::removeRemoteVideoTrack(TrackPrivateRemoteIdentifier id)
+void MediaPlayerPrivateRemote::removeRemoteVideoTrack(TrackPrivateRemoteIdentifier identifier)
 {
-    ASSERT(m_videoTracks.contains(id));
+    ASSERT(m_videoTracks.contains(identifier));
 
-    if (auto* track = m_videoTracks.get(id)) {
+    if (auto* track = m_videoTracks.get(identifier)) {
         m_player->removeVideoTrack(*track);
-        m_videoTracks.remove(id);
+        m_videoTracks.remove(identifier);
     }
 }
 
-void MediaPlayerPrivateRemote::remoteVideoTrackConfigurationChanged(TrackPrivateRemoteIdentifier id, TrackPrivateRemoteConfiguration&& configuration)
+void MediaPlayerPrivateRemote::remoteVideoTrackConfigurationChanged(TrackPrivateRemoteIdentifier identifier, TrackPrivateRemoteConfiguration&& configuration)
 {
-    ASSERT(m_videoTracks.contains(id));
+    ASSERT(m_videoTracks.contains(identifier));
 
-    if (auto track = m_videoTracks.get(id))
+    if (auto track = m_videoTracks.get(identifier))
         track->updateConfiguration(WTFMove(configuration));
 }
 

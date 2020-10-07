@@ -26,13 +26,13 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteMediaResourceManager NotRefCounted {
-    ResponseReceived(WebKit::RemoteMediaResourceIdentifier id, WebCore::ResourceResponse response, bool didPassAccessControlCheck) -> (enum:bool WebCore::ShouldContinuePolicyCheck shouldContinue) Async
-    RedirectReceived(WebKit::RemoteMediaResourceIdentifier id, WebCore::ResourceRequest request, WebCore::ResourceResponse response) -> (WebCore::ResourceRequest returnRequest) Async
-    DataSent(WebKit::RemoteMediaResourceIdentifier id, uint64_t bytesSent, uint64_t totalBytesToBeSent)
-    DataReceived(WebKit::RemoteMediaResourceIdentifier id, IPC::DataReference data)
-    AccessControlCheckFailed(WebKit::RemoteMediaResourceIdentifier id, WebCore::ResourceError error)
-    LoadFailed(WebKit::RemoteMediaResourceIdentifier id, WebCore::ResourceError error)
-    LoadFinished(WebKit::RemoteMediaResourceIdentifier id, WebCore::NetworkLoadMetrics metrics)
+    ResponseReceived(WebKit::RemoteMediaResourceIdentifier identifier, WebCore::ResourceResponse response, bool didPassAccessControlCheck) -> (enum:bool WebCore::ShouldContinuePolicyCheck shouldContinue) Async
+    RedirectReceived(WebKit::RemoteMediaResourceIdentifier identifier, WebCore::ResourceRequest request, WebCore::ResourceResponse response) -> (WebCore::ResourceRequest returnRequest) Async
+    DataSent(WebKit::RemoteMediaResourceIdentifier identifier, uint64_t bytesSent, uint64_t totalBytesToBeSent)
+    DataReceived(WebKit::RemoteMediaResourceIdentifier identifier, IPC::DataReference data)
+    AccessControlCheckFailed(WebKit::RemoteMediaResourceIdentifier identifier, WebCore::ResourceError error)
+    LoadFailed(WebKit::RemoteMediaResourceIdentifier identifier, WebCore::ResourceError error)
+    LoadFinished(WebKit::RemoteMediaResourceIdentifier identifier, WebCore::NetworkLoadMetrics metrics)
 }
 
 #endif

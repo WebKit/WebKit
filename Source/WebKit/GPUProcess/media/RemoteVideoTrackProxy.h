@@ -45,9 +45,9 @@ class RemoteVideoTrackProxy final
     : public ThreadSafeRefCounted<RemoteVideoTrackProxy, WTF::DestructionThread::Main>
     , private WebCore::VideoTrackPrivateClient {
 public:
-    static Ref<RemoteVideoTrackProxy> create(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier id, Ref<IPC::Connection>&& connection, WebCore::VideoTrackPrivate& trackPrivate)
+    static Ref<RemoteVideoTrackProxy> create(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier identifier, Ref<IPC::Connection>&& connection, WebCore::VideoTrackPrivate& trackPrivate)
     {
-        return adoptRef(*new RemoteVideoTrackProxy(player, id, WTFMove(connection), trackPrivate));
+        return adoptRef(*new RemoteVideoTrackProxy(player, identifier, WTFMove(connection), trackPrivate));
     }
 
     TrackPrivateRemoteIdentifier identifier() const { return m_identifier; };

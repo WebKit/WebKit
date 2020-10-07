@@ -70,12 +70,12 @@ bool RemoteCDMFactory::supportsKeySystem(const String& keySystem)
 
 std::unique_ptr<CDMPrivate> RemoteCDMFactory::createCDM(const String& keySystem)
 {
-    RemoteCDMIdentifier id;
+    RemoteCDMIdentifier identifier;
     RemoteCDMConfiguration configuration;
-    gpuProcessConnection().connection().sendSync(Messages::RemoteCDMFactoryProxy::CreateCDM(keySystem), Messages::RemoteCDMFactoryProxy::CreateCDM::Reply(id, configuration), { });
-    if (!id)
+    gpuProcessConnection().connection().sendSync(Messages::RemoteCDMFactoryProxy::CreateCDM(keySystem), Messages::RemoteCDMFactoryProxy::CreateCDM::Reply(identifier, configuration), { });
+    if (!identifier)
         return nullptr;
-    return RemoteCDM::create(makeWeakPtr(this), WTFMove(id), WTFMove(configuration));
+    return RemoteCDM::create(makeWeakPtr(this), WTFMove(identifier), WTFMove(configuration));
 }
 
 void RemoteCDMFactory::addSession(Ref<RemoteCDMInstanceSession>&& session)
@@ -84,10 +84,10 @@ void RemoteCDMFactory::addSession(Ref<RemoteCDMInstanceSession>&& session)
     m_sessions.set(session->identifier(), WTFMove(session));
 }
 
-void RemoteCDMFactory::removeSession(RemoteCDMInstanceSessionIdentifier id)
+void RemoteCDMFactory::removeSession(RemoteCDMInstanceSessionIdentifier identifier)
 {
-    ASSERT(m_sessions.contains(id));
-    m_sessions.remove(id);
+    ASSERT(m_sessions.contains(identifier));
+    m_sessions.remove(identifier);
 }
 
 void RemoteCDMFactory::didReceiveSessionMessage(IPC::Connection& connection, IPC::Decoder& decoder)

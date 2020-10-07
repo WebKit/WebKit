@@ -59,22 +59,22 @@ RemoteMediaPlayerManagerProxy::~RemoteMediaPlayerManagerProxy()
 {
 }
 
-void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier id, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& proxyConfiguration, CompletionHandler<void(RemoteMediaPlayerConfiguration&)>&& completionHandler)
+void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier identifier, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& proxyConfiguration, CompletionHandler<void(RemoteMediaPlayerConfiguration&)>&& completionHandler)
 {
-    ASSERT(!m_proxies.contains(id));
+    ASSERT(!m_proxies.contains(identifier));
 
     RemoteMediaPlayerConfiguration playerConfiguration;
 
-    auto proxy = makeUnique<RemoteMediaPlayerProxy>(*this, id, m_gpuConnectionToWebProcess.connection(), engineIdentifier, WTFMove(proxyConfiguration));
+    auto proxy = makeUnique<RemoteMediaPlayerProxy>(*this, identifier, m_gpuConnectionToWebProcess.connection(), engineIdentifier, WTFMove(proxyConfiguration));
     proxy->getConfiguration(playerConfiguration);
-    m_proxies.add(id, WTFMove(proxy));
+    m_proxies.add(identifier, WTFMove(proxy));
 
     completionHandler(playerConfiguration);
 }
 
-void RemoteMediaPlayerManagerProxy::deleteMediaPlayer(MediaPlayerIdentifier id)
+void RemoteMediaPlayerManagerProxy::deleteMediaPlayer(MediaPlayerIdentifier identifier)
 {
-    if (auto proxy = m_proxies.take(id))
+    if (auto proxy = m_proxies.take(identifier))
         proxy->invalidate();
 }
 
@@ -204,9 +204,9 @@ void RemoteMediaPlayerManagerProxy::didReceiveSyncPlayerMessage(IPC::Connection&
         player->didReceiveSyncMessage(connection, decoder, encoder);
 }
 
-RemoteMediaPlayerProxy* RemoteMediaPlayerManagerProxy::getProxy(const MediaPlayerIdentifier& id)
+RemoteMediaPlayerProxy* RemoteMediaPlayerManagerProxy::getProxy(const MediaPlayerIdentifier& identifier)
 {
-    auto results = m_proxies.find(id);
+    auto results = m_proxies.find(identifier);
     if (results != m_proxies.end())
         return results->value.get();
     return nullptr;

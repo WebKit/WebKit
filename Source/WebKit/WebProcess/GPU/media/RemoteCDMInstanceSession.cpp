@@ -37,14 +37,14 @@ namespace WebKit {
 
 using namespace WebCore;
 
-Ref<RemoteCDMInstanceSession> RemoteCDMInstanceSession::create(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMInstanceSessionIdentifier&& id)
+Ref<RemoteCDMInstanceSession> RemoteCDMInstanceSession::create(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMInstanceSessionIdentifier&& identifier)
 {
-    return adoptRef(*new RemoteCDMInstanceSession(WTFMove(factory), WTFMove(id)));
+    return adoptRef(*new RemoteCDMInstanceSession(WTFMove(factory), WTFMove(identifier)));
 }
 
-RemoteCDMInstanceSession::RemoteCDMInstanceSession(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMInstanceSessionIdentifier&& id)
+RemoteCDMInstanceSession::RemoteCDMInstanceSession(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMInstanceSessionIdentifier&& identifier)
     : m_factory(WTFMove(factory))
-    , m_identifier(WTFMove(id))
+    , m_identifier(WTFMove(identifier))
 {
 }
 

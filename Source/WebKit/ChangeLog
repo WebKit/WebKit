@@ -1,3 +1,118 @@
+2020-10-06  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU process] Don't use 'id' as a parameter or variable name
+        https://bugs.webkit.org/show_bug.cgi?id=206189
+
+        Reviewed by Tim Horton.
+
+        Mass rename `id` to `identifier`.
+
+        No new tests, no functional change.
+
+        * GPUProcess/media/RemoteAudioDestinationManager.cpp:
+        (WebKit::RemoteAudioDestination::create):
+        (WebKit::RemoteAudioDestination::RemoteAudioDestination):
+        (WebKit::RemoteAudioDestinationManager::deleteAudioDestination):
+        (WebKit::RemoteAudioDestinationManager::startAudioDestination):
+        (WebKit::RemoteAudioDestinationManager::stopAudioDestination):
+        * GPUProcess/media/RemoteAudioDestinationManager.messages.in:
+        * GPUProcess/media/RemoteAudioTrackProxy.cpp:
+        (WebKit::RemoteAudioTrackProxy::RemoteAudioTrackProxy):
+        (WebKit::RemoteAudioTrackProxy::configuration):
+        * GPUProcess/media/RemoteAudioTrackProxy.h:
+        * GPUProcess/media/RemoteCDMFactoryProxy.cpp:
+        (WebKit::RemoteCDMFactoryProxy::addProxy):
+        (WebKit::RemoteCDMFactoryProxy::removeProxy):
+        (WebKit::RemoteCDMFactoryProxy::addInstance):
+        (WebKit::RemoteCDMFactoryProxy::removeInstance):
+        (WebKit::RemoteCDMFactoryProxy::getInstance):
+        (WebKit::RemoteCDMFactoryProxy::addSession):
+        (WebKit::RemoteCDMFactoryProxy::removeSession):
+        * GPUProcess/media/RemoteCDMFactoryProxy.messages.in:
+        * GPUProcess/media/RemoteCDMInstanceProxy.messages.in:
+        * GPUProcess/media/RemoteCDMProxy.messages.in:
+        * GPUProcess/media/RemoteLegacyCDMFactoryProxy.cpp:
+        (WebKit::RemoteLegacyCDMFactoryProxy::addProxy):
+        (WebKit::RemoteLegacyCDMFactoryProxy::removeProxy):
+        (WebKit::RemoteLegacyCDMFactoryProxy::addSession):
+        (WebKit::RemoteLegacyCDMFactoryProxy::removeSession):
+        (WebKit::RemoteLegacyCDMFactoryProxy::getSession const):
+        * GPUProcess/media/RemoteLegacyCDMFactoryProxy.messages.in:
+        * GPUProcess/media/RemoteLegacyCDMProxy.messages.in:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::createMediaPlayer):
+        (WebKit::RemoteMediaPlayerManagerProxy::deleteMediaPlayer):
+        (WebKit::RemoteMediaPlayerManagerProxy::getProxy):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in:
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::RemoteMediaPlayerProxy):
+        * GPUProcess/media/RemoteMediaResource.cpp:
+        (WebKit::RemoteMediaResource::create):
+        (WebKit::RemoteMediaResource::RemoteMediaResource):
+        * GPUProcess/media/RemoteMediaResourceManager.cpp:
+        (WebKit::RemoteMediaResourceManager::responseReceived):
+        (WebKit::RemoteMediaResourceManager::redirectReceived):
+        (WebKit::RemoteMediaResourceManager::dataSent):
+        (WebKit::RemoteMediaResourceManager::dataReceived):
+        (WebKit::RemoteMediaResourceManager::accessControlCheckFailed):
+        (WebKit::RemoteMediaResourceManager::loadFailed):
+        (WebKit::RemoteMediaResourceManager::loadFinished):
+        * GPUProcess/media/RemoteMediaResourceManager.messages.in:
+        * GPUProcess/media/RemoteTextTrackProxy.cpp:
+        (WebKit::RemoteTextTrackProxy::RemoteTextTrackProxy):
+        (WebKit::RemoteTextTrackProxy::configuration):
+        * GPUProcess/media/RemoteTextTrackProxy.h:
+        * GPUProcess/media/RemoteVideoTrackProxy.cpp:
+        (WebKit::RemoteVideoTrackProxy::RemoteVideoTrackProxy):
+        (WebKit::RemoteVideoTrackProxy::configuration):
+        * GPUProcess/media/RemoteVideoTrackProxy.h:
+        * GPUProcess/media/TextTrackPrivateRemoteConfiguration.h:
+        (WebKit::TextTrackPrivateRemoteConfiguration::encode const):
+        (WebKit::TextTrackPrivateRemoteConfiguration::decode):
+        * GPUProcess/media/TrackPrivateRemoteConfiguration.h:
+        (WebKit::TrackPrivateRemoteConfiguration::encode const):
+        (WebKit::TrackPrivateRemoteConfiguration::decode):
+        * WebProcess/GPU/media/AudioTrackPrivateRemote.cpp:
+        (WebKit::AudioTrackPrivateRemote::updateConfiguration):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::remoteTextTrackConfigurationChanged):
+        (WebKit::MediaPlayerPrivateRemote::removeRemoteVideoTrack):
+        (WebKit::MediaPlayerPrivateRemote::remoteVideoTrackConfigurationChanged):
+        * WebProcess/GPU/media/RemoteCDM.cpp:
+        (WebKit::RemoteCDM::create):
+        (WebKit::RemoteCDM::RemoteCDM):
+        (WebKit::RemoteCDM::createInstance):
+        * WebProcess/GPU/media/RemoteCDMFactory.cpp:
+        (WebKit::RemoteCDMFactory::createCDM):
+        (WebKit::RemoteCDMFactory::removeSession):
+        * WebProcess/GPU/media/RemoteCDMInstance.cpp:
+        (WebKit::RemoteCDMInstance::create):
+        (WebKit::RemoteCDMInstance::RemoteCDMInstance):
+        (WebKit::RemoteCDMInstance::createSession):
+        * WebProcess/GPU/media/RemoteCDMInstanceSession.cpp:
+        (WebKit::RemoteCDMInstanceSession::create):
+        (WebKit::RemoteCDMInstanceSession::RemoteCDMInstanceSession):
+        * WebProcess/GPU/media/RemoteLegacyCDM.cpp:
+        (WebKit::RemoteLegacyCDM::create):
+        (WebKit::RemoteLegacyCDM::RemoteLegacyCDM):
+        (WebKit::RemoteLegacyCDM::createSession):
+        (WebKit::RemoteLegacyCDM::setPlayerId):
+        * WebProcess/GPU/media/RemoteLegacyCDMFactory.cpp:
+        (WebKit::RemoteLegacyCDMFactory::createCDM):
+        (WebKit::RemoteLegacyCDMFactory::addSession):
+        (WebKit::RemoteLegacyCDMFactory::removeSession):
+        * WebProcess/GPU/media/RemoteLegacyCDMSession.cpp:
+        (WebKit::RemoteLegacyCDMSession::create):
+        (WebKit::RemoteLegacyCDMSession::RemoteLegacyCDMSession):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::deleteRemoteMediaPlayer):
+        * WebProcess/GPU/media/RemoteMediaResourceProxy.cpp:
+        (WebKit::RemoteMediaResourceProxy::RemoteMediaResourceProxy):
+        * WebProcess/GPU/media/TextTrackPrivateRemote.cpp:
+        (WebKit::TextTrackPrivateRemote::updateConfiguration):
+        * WebProcess/GPU/media/VideoTrackPrivateRemote.cpp:
+        (WebKit::VideoTrackPrivateRemote::updateConfiguration):
+
 2020-10-06  Devin Rousso  <drousso@apple.com>
 
         Move platform logic for CSS `hover` and `pointer` media queries outside of WebCore

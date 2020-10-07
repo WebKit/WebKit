@@ -47,10 +47,10 @@ public:
     using AudioDestination = WebCore::AudioDestination;
     using SharedBuffer = WebCore::SharedBuffer;
 
-    static Ref<RemoteAudioDestination> create(GPUConnectionToWebProcess& connection, RemoteAudioDestinationIdentifier id,
+    static Ref<RemoteAudioDestination> create(GPUConnectionToWebProcess& connection, RemoteAudioDestinationIdentifier identifier,
         const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate)
     {
-        return adoptRef(*new RemoteAudioDestination(connection, id, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate));
+        return adoptRef(*new RemoteAudioDestination(connection, identifier, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate));
     }
 
     virtual ~RemoteAudioDestination()
@@ -72,9 +72,9 @@ public:
     unsigned framesPerBuffer() const { return m_destination->framesPerBuffer() ; }
 
 private:
-    RemoteAudioDestination(GPUConnectionToWebProcess& connection, RemoteAudioDestinationIdentifier id, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate)
+    RemoteAudioDestination(GPUConnectionToWebProcess& connection, RemoteAudioDestinationIdentifier identifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate)
         : m_connection(connection)
-        , m_id(id)
+        , m_id(identifier)
         , m_destination(AudioDestination::create(*this, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate))
     {
     }
@@ -118,8 +118,8 @@ private:
             m_protectThisDuringGracefulShutdown = nullptr; // Deletes "this".
             return;
         }
-        callOnMainThread([this, protectedThis = makeRef(*this), isPlaying = m_destination->isPlaying(), id = m_id.toUInt64()] {
-            m_connection.connection().send(Messages::RemoteAudioDestinationProxy::DidChangeIsPlaying(isPlaying), id);
+        callOnMainThread([this, protectedThis = makeRef(*this), isPlaying = m_destination->isPlaying(), identifier = m_id.toUInt64()] {
+            m_connection.connection().send(Messages::RemoteAudioDestinationProxy::DidChangeIsPlaying(isPlaying), identifier);
         });
     }
 
@@ -146,28 +146,28 @@ void RemoteAudioDestinationManager::createAudioDestination(const String& inputDe
     completionHandler(newID, framesPerBuffer);
 }
 
-void RemoteAudioDestinationManager::deleteAudioDestination(RemoteAudioDestinationIdentifier id, CompletionHandler<void()>&& completionHandler)
+void RemoteAudioDestinationManager::deleteAudioDestination(RemoteAudioDestinationIdentifier identifier, CompletionHandler<void()>&& completionHandler)
 {
-    auto destination = m_audioDestinations.take(id);
+    auto destination = m_audioDestinations.take(identifier);
     if (destination)
         destination->scheduleGracefulShutdownIfNeeded();
     completionHandler();
 }
 
-void RemoteAudioDestinationManager::startAudioDestination(RemoteAudioDestinationIdentifier id, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteAudioDestinationManager::startAudioDestination(RemoteAudioDestinationIdentifier identifier, CompletionHandler<void(bool)>&& completionHandler)
 {
     bool isPlaying = false;
-    if (auto* item = m_audioDestinations.get(id)) {
+    if (auto* item = m_audioDestinations.get(identifier)) {
         item->start();
         isPlaying = item->isPlaying();
     }
     completionHandler(isPlaying);
 }
 
-void RemoteAudioDestinationManager::stopAudioDestination(RemoteAudioDestinationIdentifier id, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteAudioDestinationManager::stopAudioDestination(RemoteAudioDestinationIdentifier identifier, CompletionHandler<void(bool)>&& completionHandler)
 {
     bool isPlaying = false;
-    if (auto* item = m_audioDestinations.get(id)) {
+    if (auto* item = m_audioDestinations.get(identifier)) {
         item->stop();
         isPlaying = item->isPlaying();
     }

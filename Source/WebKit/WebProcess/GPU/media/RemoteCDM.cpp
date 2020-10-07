@@ -43,14 +43,14 @@ namespace WebKit {
 
 using namespace WebCore;
 
-std::unique_ptr<RemoteCDM> RemoteCDM::create(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMIdentifier&& id, RemoteCDMConfiguration&& configuration)
+std::unique_ptr<RemoteCDM> RemoteCDM::create(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMIdentifier&& identifier, RemoteCDMConfiguration&& configuration)
 {
-    return std::unique_ptr<RemoteCDM>(new RemoteCDM(WTFMove(factory), WTFMove(id), WTFMove(configuration)));
+    return std::unique_ptr<RemoteCDM>(new RemoteCDM(WTFMove(factory), WTFMove(identifier), WTFMove(configuration)));
 }
 
-RemoteCDM::RemoteCDM(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMIdentifier&& id, RemoteCDMConfiguration&& configuration)
+RemoteCDM::RemoteCDM(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMIdentifier&& identifier, RemoteCDMConfiguration&& configuration)
     : m_factory(WTFMove(factory))
-    , m_identifier(WTFMove(id))
+    , m_identifier(WTFMove(identifier))
     , m_configuration(WTFMove(configuration))
 {
 }
@@ -113,12 +113,12 @@ RefPtr<CDMInstance> RemoteCDM::createInstance()
     if (!m_factory)
         return nullptr;
 
-    RemoteCDMInstanceIdentifier id;
+    RemoteCDMInstanceIdentifier identifier;
     RemoteCDMInstanceConfiguration configuration;
-    m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteCDMProxy::CreateInstance(), Messages::RemoteCDMProxy::CreateInstance::Reply(id, configuration), m_identifier);
-    if (!id)
+    m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteCDMProxy::CreateInstance(), Messages::RemoteCDMProxy::CreateInstance::Reply(identifier, configuration), m_identifier);
+    if (!identifier)
         return nullptr;
-    return RemoteCDMInstance::create(makeWeakPtr(m_factory.get()), WTFMove(id), WTFMove(configuration));
+    return RemoteCDMInstance::create(makeWeakPtr(m_factory.get()), WTFMove(identifier), WTFMove(configuration));
 }
 
 void RemoteCDM::loadAndInitialize()

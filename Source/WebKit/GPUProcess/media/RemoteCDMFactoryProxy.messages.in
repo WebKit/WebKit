@@ -26,7 +26,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 
 messages -> RemoteCDMFactoryProxy NotRefCounted {
-    CreateCDM(String keySystem) -> (WebKit::RemoteCDMIdentifier id, struct WebKit::RemoteCDMConfiguration configuration) Synchronous
+    CreateCDM(String keySystem) -> (WebKit::RemoteCDMIdentifier identifier, struct WebKit::RemoteCDMConfiguration configuration) Synchronous
     SupportsKeySystem(String keySystem) -> (bool result) Synchronous
 }
 

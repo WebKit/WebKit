@@ -112,25 +112,25 @@ std::unique_ptr<CDMPrivateInterface> RemoteLegacyCDMFactory::createCDM(WebCore::
     if (auto player = cdm->mediaPlayer())
         playerId = gpuProcessConnection().mediaPlayerManager().findRemotePlayerId(player->playerPrivate());
 
-    RemoteLegacyCDMIdentifier id;
-    gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMFactoryProxy::CreateCDM(cdm->keySystem(), WTFMove(playerId)), Messages::RemoteLegacyCDMFactoryProxy::CreateCDM::Reply(id), { });
-    if (!id)
+    RemoteLegacyCDMIdentifier identifier;
+    gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMFactoryProxy::CreateCDM(cdm->keySystem(), WTFMove(playerId)), Messages::RemoteLegacyCDMFactoryProxy::CreateCDM::Reply(identifier), { });
+    if (!identifier)
         return nullptr;
-    auto remoteCDM = RemoteLegacyCDM::create(makeWeakPtr(this), id);
-    m_cdms.set(id, makeWeakPtr(remoteCDM.get()));
+    auto remoteCDM = RemoteLegacyCDM::create(makeWeakPtr(this), identifier);
+    m_cdms.set(identifier, makeWeakPtr(remoteCDM.get()));
     return remoteCDM;
 }
 
-void RemoteLegacyCDMFactory::addSession(RemoteLegacyCDMSessionIdentifier id, std::unique_ptr<RemoteLegacyCDMSession>&& session)
+void RemoteLegacyCDMFactory::addSession(RemoteLegacyCDMSessionIdentifier identifier, std::unique_ptr<RemoteLegacyCDMSession>&& session)
 {
-    ASSERT(!m_sessions.contains(id));
-    m_sessions.set(id, WTFMove(session));
+    ASSERT(!m_sessions.contains(identifier));
+    m_sessions.set(identifier, WTFMove(session));
 }
 
-void RemoteLegacyCDMFactory::removeSession(RemoteLegacyCDMSessionIdentifier id)
+void RemoteLegacyCDMFactory::removeSession(RemoteLegacyCDMSessionIdentifier identifier)
 {
-    ASSERT(m_sessions.contains(id));
-    m_sessions.remove(id);
+    ASSERT(m_sessions.contains(identifier));
+    m_sessions.remove(identifier);
 }
 
 RemoteLegacyCDM* RemoteLegacyCDMFactory::findCDM(CDMPrivateInterface* privateInterface) const
@@ -147,7 +147,6 @@ void RemoteLegacyCDMFactory::didReceiveSessionMessage(IPC::Connection& connectio
     if (auto* session = m_sessions.get(makeObjectIdentifier<RemoteLegacyCDMSessionIdentifierType>(decoder.destinationID())))
         session->didReceiveMessage(connection, decoder);
 }
-
 
 }
 

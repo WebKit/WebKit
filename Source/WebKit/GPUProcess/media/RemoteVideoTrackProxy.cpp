@@ -37,9 +37,9 @@ namespace WebKit {
 
 using namespace WebCore;
 
-RemoteVideoTrackProxy::RemoteVideoTrackProxy(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier id, Ref<IPC::Connection>&& connection, VideoTrackPrivate& trackPrivate)
+RemoteVideoTrackProxy::RemoteVideoTrackProxy(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier identifier, Ref<IPC::Connection>&& connection, VideoTrackPrivate& trackPrivate)
     : m_player(player)
-    , m_identifier(id)
+    , m_identifier(identifier)
     , m_webProcessConnection(WTFMove(connection))
     , m_trackPrivate(trackPrivate)
 {
@@ -51,7 +51,7 @@ TrackPrivateRemoteConfiguration& RemoteVideoTrackProxy::configuration()
 {
     static NeverDestroyed<TrackPrivateRemoteConfiguration> configuration;
 
-    configuration->id = m_trackPrivate->id();
+    configuration->identifier = m_trackPrivate->id();
     configuration->label = m_trackPrivate->label();
     configuration->language = m_trackPrivate->language();
     configuration->trackIndex = m_trackPrivate->trackIndex();

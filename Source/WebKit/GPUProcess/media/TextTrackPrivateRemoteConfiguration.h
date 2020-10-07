@@ -34,7 +34,7 @@
 namespace WebKit {
 
 struct TextTrackPrivateRemoteConfiguration {
-    AtomString id;
+    AtomString identifier;
     AtomString label;
     AtomString language;
     AtomString inBandMetadataTrackDispatchType;
@@ -55,7 +55,7 @@ struct TextTrackPrivateRemoteConfiguration {
     template<class Encoder>
     void encode(Encoder& encoder) const
     {
-        encoder << id;
+        encoder << identifier;
         encoder << label;
         encoder << language;
         encoder << inBandMetadataTrackDispatchType;
@@ -75,9 +75,9 @@ struct TextTrackPrivateRemoteConfiguration {
     template <class Decoder>
     static Optional<TextTrackPrivateRemoteConfiguration> decode(Decoder& decoder)
     {
-        Optional<AtomString> id;
-        decoder >> id;
-        if (!id)
+        Optional<AtomString> identifier;
+        decoder >> identifier;
+        if (!identifier)
             return WTF::nullopt;
 
         Optional<AtomString> label;
@@ -151,7 +151,7 @@ struct TextTrackPrivateRemoteConfiguration {
             return WTF::nullopt;
 
         return {{
-            WTFMove(*id),
+            WTFMove(*identifier),
             WTFMove(*label),
             WTFMove(*language),
             WTFMove(*inBandMetadataTrackDispatchType),

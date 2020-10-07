@@ -27,7 +27,7 @@
 
 messages -> RemoteCDMProxy NotRefCounted {
     GetSupportedConfiguration(struct WebCore::CDMKeySystemConfiguration candidateConfiguration, enum:bool WebCore::CDMPrivate::LocalStorageAccess access) -> (Optional<WebCore::CDMKeySystemConfiguration> accumulatedConfiguration) Async
-    CreateInstance() -> (WebKit::RemoteCDMInstanceIdentifier id, struct WebKit::RemoteCDMInstanceConfiguration configuration) Synchronous
+    CreateInstance() -> (WebKit::RemoteCDMInstanceIdentifier identifier, struct WebKit::RemoteCDMInstanceConfiguration configuration) Synchronous
     LoadAndInitialize()
 }
 

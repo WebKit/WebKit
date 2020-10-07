@@ -45,9 +45,9 @@ class RemoteAudioTrackProxy final
     : public ThreadSafeRefCounted<RemoteAudioTrackProxy, WTF::DestructionThread::Main>
     , private WebCore::AudioTrackPrivateClient {
 public:
-    static Ref<RemoteAudioTrackProxy> create(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier id, Ref<IPC::Connection>&& connection, WebCore::AudioTrackPrivate& trackPrivate)
+    static Ref<RemoteAudioTrackProxy> create(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier identifier, Ref<IPC::Connection>&& connection, WebCore::AudioTrackPrivate& trackPrivate)
     {
-        return adoptRef(*new RemoteAudioTrackProxy(player, id, WTFMove(connection), trackPrivate));
+        return adoptRef(*new RemoteAudioTrackProxy(player, identifier, WTFMove(connection), trackPrivate));
     }
 
     TrackPrivateRemoteIdentifier identifier() const { return m_identifier; };

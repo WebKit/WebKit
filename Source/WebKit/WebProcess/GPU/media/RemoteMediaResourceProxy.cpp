@@ -35,10 +35,10 @@
 
 namespace WebKit {
 
-RemoteMediaResourceProxy::RemoteMediaResourceProxy(Ref<IPC::Connection>&& connection, WebCore::PlatformMediaResource& platformMediaResource, RemoteMediaResourceIdentifier id)
+RemoteMediaResourceProxy::RemoteMediaResourceProxy(Ref<IPC::Connection>&& connection, WebCore::PlatformMediaResource& platformMediaResource, RemoteMediaResourceIdentifier identifier)
     : m_connection(WTFMove(connection))
     , m_platformMediaResource(platformMediaResource)
-    , m_id(id)
+    , m_id(identifier)
 {
 }
 

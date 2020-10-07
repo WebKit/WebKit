@@ -41,14 +41,14 @@ namespace WebKit {
 
 using namespace WebCore;
 
-Ref<RemoteCDMInstance> RemoteCDMInstance::create(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMInstanceIdentifier&& id, RemoteCDMInstanceConfiguration&& configuration)
+Ref<RemoteCDMInstance> RemoteCDMInstance::create(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMInstanceIdentifier&& identifier, RemoteCDMInstanceConfiguration&& configuration)
 {
-    return adoptRef(*new RemoteCDMInstance(WTFMove(factory), WTFMove(id), WTFMove(configuration)));
+    return adoptRef(*new RemoteCDMInstance(WTFMove(factory), WTFMove(identifier), WTFMove(configuration)));
 }
 
-RemoteCDMInstance::RemoteCDMInstance(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMInstanceIdentifier&& id, RemoteCDMInstanceConfiguration&& configuration)
+RemoteCDMInstance::RemoteCDMInstance(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMInstanceIdentifier&& identifier, RemoteCDMInstanceConfiguration&& configuration)
     : m_factory(WTFMove(factory))
-    , m_identifier(WTFMove(id))
+    , m_identifier(WTFMove(identifier))
     , m_configuration(WTFMove(configuration))
 {
 }
@@ -86,11 +86,11 @@ RefPtr<WebCore::CDMInstanceSession> RemoteCDMInstance::createSession()
     if (!m_factory)
         return nullptr;
 
-    RemoteCDMInstanceSessionIdentifier id;
-    m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteCDMInstanceProxy::CreateSession(), Messages::RemoteCDMInstanceProxy::CreateSession::Reply(id), m_identifier);
-    if (!id)
+    RemoteCDMInstanceSessionIdentifier identifier;
+    m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteCDMInstanceProxy::CreateSession(), Messages::RemoteCDMInstanceProxy::CreateSession::Reply(identifier), m_identifier);
+    if (!identifier)
         return nullptr;
-    auto session = RemoteCDMInstanceSession::create(makeWeakPtr(m_factory.get()), WTFMove(id));
+    auto session = RemoteCDMInstanceSession::create(makeWeakPtr(m_factory.get()), WTFMove(identifier));
     m_factory->addSession(session.copyRef());
     return session;
 }

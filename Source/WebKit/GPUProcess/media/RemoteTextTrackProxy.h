@@ -47,9 +47,9 @@ class RemoteTextTrackProxy final
     : public ThreadSafeRefCounted<RemoteTextTrackProxy, WTF::DestructionThread::Main>
     , private WebCore::InbandTextTrackPrivateClient {
 public:
-    static Ref<RemoteTextTrackProxy> create(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier id, Ref<IPC::Connection>&& connection, WebCore::InbandTextTrackPrivate& trackPrivate)
+    static Ref<RemoteTextTrackProxy> create(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier identifier, Ref<IPC::Connection>&& connection, WebCore::InbandTextTrackPrivate& trackPrivate)
     {
-        return adoptRef(*new RemoteTextTrackProxy(player, id, WTFMove(connection), trackPrivate));
+        return adoptRef(*new RemoteTextTrackProxy(player, identifier, WTFMove(connection), trackPrivate));
     }
 
     TrackPrivateRemoteIdentifier identifier() const { return m_identifier; };

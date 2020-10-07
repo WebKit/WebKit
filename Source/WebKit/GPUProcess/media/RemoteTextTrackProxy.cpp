@@ -41,9 +41,9 @@ namespace WebKit {
 
 using namespace WebCore;
 
-RemoteTextTrackProxy::RemoteTextTrackProxy(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier id, Ref<IPC::Connection>&& connection, InbandTextTrackPrivate& trackPrivate)
+RemoteTextTrackProxy::RemoteTextTrackProxy(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier identifier, Ref<IPC::Connection>&& connection, InbandTextTrackPrivate& trackPrivate)
     : m_player(player)
-    , m_identifier(id)
+    , m_identifier(identifier)
     , m_webProcessConnection(WTFMove(connection))
     , m_trackPrivate(trackPrivate)
 {
@@ -55,7 +55,7 @@ TextTrackPrivateRemoteConfiguration& RemoteTextTrackProxy::configuration()
 {
     static NeverDestroyed<TextTrackPrivateRemoteConfiguration> configuration;
 
-    configuration->id = m_trackPrivate->id();
+    configuration->identifier = m_trackPrivate->id();
     configuration->label = m_trackPrivate->label();
     configuration->language = m_trackPrivate->language();
     configuration->trackIndex = m_trackPrivate->trackIndex();
