@@ -51,11 +51,11 @@ public:
     LayoutPoint positionForFloat(const Box&, const HorizontalConstraints&) const;
     LayoutPoint positionForNonFloatingFloatAvoider(const Box&, const HorizontalConstraints&) const;
 
-    struct ClearancePosition {
-        Optional<Position> position;
+    struct PositionWithClearance {
+        LayoutUnit position;
         Optional<LayoutUnit> clearance;
     };
-    ClearancePosition verticalPositionWithClearance(const Box&) const;
+    Optional<PositionWithClearance> verticalPositionWithClearance(const Box&) const;
 
     Optional<LayoutUnit> top() const;
     Optional<LayoutUnit> leftBottom() const { return bottom(Clear::Left); }

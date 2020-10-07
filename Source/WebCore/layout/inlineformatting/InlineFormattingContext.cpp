@@ -165,7 +165,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
         if (!lineContentRange.isEmpty()) {
             ASSERT(needsLayoutRange.start < lineContentRange.end);
             isFirstLine = false;
-            lineLogicalTop = lineLogicalRect.bottom();
+            lineLogicalTop = geometry().logicalTopForNextLine(lineContent, lineLogicalRect.bottom(), floatingContext);
             // When the trailing content is partial, we need to reuse the last InlineTextItem.
             auto lastInlineItemNeedsPartialLayout = lineContent.partialTrailingContentLength;
             if (lastInlineItemNeedsPartialLayout) {

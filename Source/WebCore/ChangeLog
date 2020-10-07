@@ -1,5 +1,34 @@
 2020-10-07  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add initial support for inline content to clear intrusive floats
+        https://bugs.webkit.org/show_bug.cgi?id=217418
+
+        Reviewed by Antti Koivisto.
+
+        In this patch we introduce the concept of gaps between lines. These gaps are required
+        to clear intrusive floats when the inline content has the clear property set.
+        (This behavior changed in CSS2. Now the clear property only applies to block-level elements.)
+
+        Adjust the logic in FloatingContext::verticalPositionWithClearance so that it can take an inline level box
+        and make sure that the next line does not start above the clearance position.
+
+        Test: fast/layoutformattingcontext/float-avoiding-br-simple.html
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::geometryForBox const):
+        * layout/FormattingContext.h:
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::absoluteCoordinates const):
+        (WebCore::Layout::FloatingContext::mapTopLeftToFloatingStateRoot const):
+        (WebCore::Layout::FloatingContext::mapPointFromFormattingContextRootToFloatingStateRoot const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::logicalTopForNextLine const):
+
+2020-10-07  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Floating] Move FloatingState::top/bottom functions over to FloatingContext
         https://bugs.webkit.org/show_bug.cgi?id=217411
 

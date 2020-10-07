@@ -70,6 +70,7 @@ private:
             InlineRect logicalRect;
         };
         LineRectAndLineBoxOffset computedLineLogicalRect(const LineBox&, const RenderStyle& rootStyle, const LineBuilder::LineContent&) const;
+        InlineLayoutUnit logicalTopForNextLine(const LineBuilder::LineContent&, InlineLayoutUnit previousLineLogicalBottom, const FloatingContext&) const;
 
         ContentHeightAndMargin inlineBlockHeightAndMargin(const Box&, const HorizontalConstraints&, const OverrideVerticalValues&) const;
         ContentWidthAndMargin inlineBlockWidthAndMargin(const Box&, const HorizontalConstraints&, const OverrideHorizontalValues&);

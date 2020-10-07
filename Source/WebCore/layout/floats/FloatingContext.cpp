@@ -297,56 +297,55 @@ LayoutPoint FloatingContext::positionForNonFloatingFloatAvoider(const Box& layou
     return { floatAvoider.left() - containingBlockTopLeft.x(), floatAvoider.top() - containingBlockTopLeft.y() };
 }
 
-FloatingContext::ClearancePosition FloatingContext::verticalPositionWithClearance(const Box& layoutBox) const
+Optional<FloatingContext::PositionWithClearance> FloatingContext::verticalPositionWithClearance(const Box& layoutBox) const
 {
     ASSERT(layoutBox.hasFloatClear());
-    ASSERT(layoutBox.isBlockLevelBox());
     ASSERT(areFloatsHorizontallySorted(m_floatingState));
 
     if (isEmpty())
         return { };
 
-    auto bottom = [&](Optional<LayoutUnit> floatBottom) -> ClearancePosition {
-        // 'bottom' is in the formatting root's coordinate system.
+    auto bottom = [&](auto floatBottom) -> Optional<PositionWithClearance> {
         if (!floatBottom)
             return { };
-
         // 9.5.2 Controlling flow next to floats: the 'clear' property
         // Then the amount of clearance is set to the greater of:
         //
         // 1. The amount necessary to place the border edge of the block even with the bottom outer edge of the lowest float that is to be cleared.
         // 2. The amount necessary to place the top border edge of the block at its hypothetical position.
-        auto rootRelativeTop = mapTopLeftToFloatingStateRoot(layoutBox).y();
-        auto clearance = *floatBottom - rootRelativeTop;
+        auto logicalTopRelativeToFloatingStateRoot = mapTopLeftToFloatingStateRoot(layoutBox).y();
+        auto clearance = *floatBottom - logicalTopRelativeToFloatingStateRoot;
         if (clearance <= 0)
             return { };
 
-        // Clearance inhibits margin collapsing.
-        if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
-            // Does this box with clearance actually collapse its margin before with the previous inflow box's margin after?
-            auto& formattingState = downcast<BlockFormattingState>(layoutState().formattingStateForBox(layoutBox));
-            auto verticalMargin = formattingState.usedVerticalMargin(layoutBox);
-            if (verticalMargin.collapsedValues.before) {
-                auto previousVerticalMarginAfter = formattingContext().geometryForBox(*previousInFlowSibling).marginAfter();
-                auto collapsedMargin = *verticalMargin.collapsedValues.before;
-                auto nonCollapsedMargin = previousVerticalMarginAfter + marginBefore(verticalMargin);
-                auto marginDifference = nonCollapsedMargin - collapsedMargin;
-                // Move the box to the position where it would be with non-collapsed margins.
-                rootRelativeTop += marginDifference;
-                // Having negative clearance is also normal. It just means that the box with the non-collapsed margins is now lower than it needs to be.
-                clearance -= marginDifference;
+        if (layoutBox.isBlockLevelBox()) {
+            // Clearance inhibits margin collapsing in block formatting context.
+            if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
+                // Does this box with clearance actually collapse its margin before with the previous inflow box's margin after?
+                auto& formattingState = downcast<BlockFormattingState>(layoutState().formattingStateForBox(layoutBox));
+                auto verticalMargin = formattingState.usedVerticalMargin(layoutBox);
+                if (verticalMargin.collapsedValues.before) {
+                    auto previousVerticalMarginAfter = formattingContext().geometryForBox(*previousInFlowSibling).marginAfter();
+                    auto collapsedMargin = *verticalMargin.collapsedValues.before;
+                    auto nonCollapsedMargin = previousVerticalMarginAfter + marginBefore(verticalMargin);
+                    auto marginDifference = nonCollapsedMargin - collapsedMargin;
+                    // Move the box to the position where it would be with non-collapsed margins.
+                    logicalTopRelativeToFloatingStateRoot += marginDifference;
+                    // Having negative clearance is also normal. It just means that the box with the non-collapsed margins is now lower than it needs to be.
+                    clearance -= marginDifference;
+                }
             }
         }
         // Now adjust the box's position with the clearance.
-        rootRelativeTop += clearance;
-        ASSERT(*floatBottom == rootRelativeTop);
+        logicalTopRelativeToFloatingStateRoot += clearance;
+        ASSERT(*floatBottom == logicalTopRelativeToFloatingStateRoot);
 
-        // The return vertical position is in the containing block's coordinate system. Convert it to the formatting root's coordinate system if needed.
+        // The return vertical position needs to be in the containing block's coordinate system.
         if (&layoutBox.containingBlock() == &m_floatingState.root())
-            return { Position { rootRelativeTop }, clearance };
+            return PositionWithClearance { logicalTopRelativeToFloatingStateRoot, clearance };
 
         auto containingBlockRootRelativeTop = mapTopLeftToFloatingStateRoot(layoutBox.containingBlock()).y();
-        return { Position { rootRelativeTop - containingBlockRootRelativeTop }, clearance };
+        return PositionWithClearance { logicalTopRelativeToFloatingStateRoot - containingBlockRootRelativeTop, clearance };
     };
 
     auto clear = layoutBox.style().clear();
@@ -498,7 +497,7 @@ void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAv
 FloatingContext::AbsoluteCoordinateValuesForFloatAvoider FloatingContext::absoluteCoordinates(const Box& floatAvoider) const
 {
     auto& containingBlock = floatAvoider.containingBlock();
-    auto& containingBlockGeometry = formattingContext().geometryForBox(containingBlock, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates);
+    auto& containingBlockGeometry = formattingContext().geometryForBox(containingBlock, FormattingContext::EscapeReason::FloatBoxIsAlwaysRelativeToFloatStateRoot);
     auto absoluteTopLeft = mapTopLeftToFloatingStateRoot(floatAvoider);
 
     if (&containingBlock == &floatingState().root())
@@ -511,9 +510,9 @@ FloatingContext::AbsoluteCoordinateValuesForFloatAvoider FloatingContext::absolu
 LayoutPoint FloatingContext::mapTopLeftToFloatingStateRoot(const Box& floatBox) const
 {
     auto& floatingStateRoot = floatingState().root();
-    auto topLeft = formattingContext().geometryForBox(floatBox, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates).logicalTopLeft();
+    auto topLeft = formattingContext().geometryForBox(floatBox, FormattingContext::EscapeReason::FloatBoxIsAlwaysRelativeToFloatStateRoot).logicalTopLeft();
     for (auto* containingBlock = &floatBox.containingBlock(); containingBlock != &floatingStateRoot; containingBlock = &containingBlock->containingBlock())
-        topLeft.moveBy(formattingContext().geometryForBox(*containingBlock, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates).logicalTopLeft());
+        topLeft.moveBy(formattingContext().geometryForBox(*containingBlock, FormattingContext::EscapeReason::FloatBoxIsAlwaysRelativeToFloatStateRoot).logicalTopLeft());
     return topLeft;
 }
 
@@ -525,7 +524,7 @@ Point FloatingContext::mapPointFromFormattingContextRootToFloatingStateRoot(Poin
         return position;
     auto mappedPosition = position;
     for (auto* containingBlock = &from; containingBlock != &to; containingBlock = &containingBlock->containingBlock())
-        mappedPosition.moveBy(formattingContext().geometryForBox(*containingBlock, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates).logicalTopLeft());
+        mappedPosition.moveBy(formattingContext().geometryForBox(*containingBlock, FormattingContext::EscapeReason::FloatBoxIsAlwaysRelativeToFloatStateRoot).logicalTopLeft());
     return mappedPosition;
 }
 

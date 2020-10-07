@@ -97,7 +97,7 @@ public:
     enum class EscapeReason {
         NeedsGeometryFromEstablishedFormattingContext,
         OutOfFlowBoxNeedsInFlowGeometry,
-        FloatBoxNeedsToBeInAbsoluteCoordinates,
+        FloatBoxIsAlwaysRelativeToFloatStateRoot,
         FindFixedHeightAncestorQuirk,
         DocumentBoxStretchesToViewportQuirk,
         BodyStretchesToViewportQuirk,

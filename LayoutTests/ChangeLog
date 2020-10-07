@@ -1,3 +1,13 @@
+2020-10-07  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add initial support for inline content to clear intrusive floats
+        https://bugs.webkit.org/show_bug.cgi?id=217418
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/float-avoiding-br-simple-expected.html: Added.
+        * fast/layoutformattingcontext/float-avoiding-br-simple.html: Added.
+
 2020-10-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r268085.

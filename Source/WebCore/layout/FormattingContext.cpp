@@ -210,7 +210,7 @@ const BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, Optio
             return true;
         }
 
-        if (*escapeReason == EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates) {
+        if (*escapeReason == EscapeReason::FloatBoxIsAlwaysRelativeToFloatStateRoot) {
             // Float box top/left values are mapped relative to the FloatState's root. Inline formatting contexts(A) inherit floats from parent
             // block formatting contexts(B). Floats in these inline formatting contexts(A) need to be mapped to the parent, block formatting context(B).
             auto& formattingContextRoot = layoutBox.formattingContextRoot();

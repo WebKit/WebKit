@@ -463,6 +463,21 @@ InlineFormattingContext::Geometry::LineRectAndLineBoxOffset InlineFormattingCont
     return { lineBoxOffset, logicalRect };
 }
 
+InlineLayoutUnit InlineFormattingContext::Geometry::logicalTopForNextLine(const LineBuilder::LineContent& lineContent, InlineLayoutUnit previousLineLogicalBottom, const FloatingContext& floatingContext) const
+{
+    // Normally the next line's logical top is the previous line's logical bottom, but when the line ends
+    // with the clear property set, the next line needs to clear the existing floats.
+    if (lineContent.runs.isEmpty())
+        return previousLineLogicalBottom;
+    auto& lastRunLayoutBox = lineContent.runs.last().layoutBox(); 
+    if (lastRunLayoutBox.style().clear() == Clear::None)
+        return previousLineLogicalBottom;
+    auto positionWithClearance = floatingContext.verticalPositionWithClearance(lastRunLayoutBox);
+    if (!positionWithClearance)
+        return previousLineLogicalBottom;
+    return std::max(previousLineLogicalBottom, InlineLayoutUnit(positionWithClearance->position));
+}
+
 ContentWidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(const Box& formattingContextRoot, const HorizontalConstraints& horizontalConstraints, const OverrideHorizontalValues& overrideHorizontalValues)
 {
     ASSERT(formattingContextRoot.isInFlow());
