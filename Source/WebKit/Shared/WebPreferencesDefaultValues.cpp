@@ -283,4 +283,15 @@ bool defaultWebRTCH264LowLatencyEncoderEnabled()
 }
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+bool defaultMediaRecorderEnabled()
+{
+#if HAVE(AVASSETWRITERDELEGATE)
+    return true;
+#else
+    return false;
+#endif // HAVE(AVASSETWRITERDELEGATE)
+}
+#endif // ENABLE(MEDIA_STREAM)
+
 } // namespace WebKit
