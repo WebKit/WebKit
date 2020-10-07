@@ -421,10 +421,19 @@ static inline RetainPtr<CMSampleBufferRef> copySampleBufferWithCurrentTimeStamp(
     return adoptCF(newBuffer);
 }
 
-void MediaRecorderPrivateWriter::appendVideoSampleBuffer(CMSampleBufferRef sampleBuffer)
+void MediaRecorderPrivateWriter::appendVideoSampleBuffer(MediaSample& sample)
 {
+    if (!m_firstVideoFrame) {
+        m_firstVideoFrame = true;
+        if (sample.videoRotation() != MediaSample::VideoRotation::None || sample.videoMirrored()) {
+            auto videoTransform = CGAffineTransformMakeRotation(static_cast<int>(sample.videoRotation()) * M_PI / 180);
+            if (sample.videoMirrored())
+                videoTransform = CGAffineTransformScale(videoTransform, -1, 1);
+            m_videoAssetWriterInput.get().transform = videoTransform;
+        }
+    }
     // FIXME: We should not set the timestamps if they are already set.
-    if (auto bufferWithCurrentTime = copySampleBufferWithCurrentTimeStamp(sampleBuffer))
+    if (auto bufferWithCurrentTime = copySampleBufferWithCurrentTimeStamp(sample.platformSample().sample.cmSampleBuffer))
         m_videoCompressor->addSampleBuffer(bufferWithCurrentTime.get());
 }
 
