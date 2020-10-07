@@ -1,5 +1,18 @@
 2020-10-07  Youenn Fablet  <youenn@apple.com>
 
+        MediaRecorder::create should not need to create a MediaRecorderPrivate to validate it can record properly
+        https://bugs.webkit.org/show_bug.cgi?id=217387
+        <rdar://problem/70049616>
+
+        Unreviewed.
+
+        Rebased test after https://trac.webkit.org/changeset/268125.
+        We should fix the exact name of the exception based on https://github.com/w3c/mediacapture-record/issues/206.
+
+        * web-platform-tests/mediacapture-record/MediaRecorder-detached-context-expected.txt:
+
+2020-10-07  Youenn Fablet  <youenn@apple.com>
+
         Make sure to fire the correct set of events in case MediaRecorder stream has track changes
         https://bugs.webkit.org/show_bug.cgi?id=217316
 
