@@ -46,6 +46,8 @@ class RedBlackTree final {
     WTF_MAKE_NONCOPYABLE(RedBlackTree);
     WTF_MAKE_FAST_ALLOCATED;
 private:
+    static constexpr unsigned s_maximumTreeDepth = 128;
+
     enum Color {
         Red = 1,
         Black
@@ -62,7 +64,9 @@ public:
             if (x->right())
                 return treeMinimum(x->right());
             const NodeType* y = x->parent();
+            unsigned depth = 0;
             while (y && x == y->right()) {
+                RELEASE_ASSERT(++depth <= s_maximumTreeDepth);
                 x = y;
                 y = y->parent();
             }
@@ -75,7 +79,9 @@ public:
             if (x->left())
                 return treeMaximum(x->left());
             const NodeType* y = x->parent();
+            unsigned depth = 0;
             while (y && x == y->left()) {
+                RELEASE_ASSERT(++depth <= s_maximumTreeDepth);
                 x = y;
                 y = y->parent();
             }
@@ -163,7 +169,9 @@ public:
         treeInsert(x);
         x->setColor(Red);
 
+        unsigned depth = 0;
         while (x != m_root && x->parent()->color() == Red) {
+            RELEASE_ASSERT(++depth <= s_maximumTreeDepth);
             if (x->parent() == x->parent()->parent()->left()) {
                 NodeType* y = x->parent()->parent()->right();
                 if (y && y->color() == Red) {
@@ -283,7 +291,9 @@ public:
     
     NodeType* findExact(const KeyType& key) const
     {
+        unsigned depth = 0;
         for (NodeType* current = m_root; current;) {
+            RELEASE_ASSERT(++depth <= s_maximumTreeDepth);
             if (current->key() == key)
                 return current;
             if (key < current->key())
@@ -297,7 +307,9 @@ public:
     NodeType* findLeastGreaterThanOrEqual(const KeyType& key) const
     {
         NodeType* best = nullptr;
+        unsigned depth = 0;
         for (NodeType* current = m_root; current;) {
+            RELEASE_ASSERT(++depth <= s_maximumTreeDepth);
             if (current->key() == key)
                 return current;
             if (current->key() < key)
@@ -313,7 +325,9 @@ public:
     NodeType* findGreatestLessThanOrEqual(const KeyType& key) const
     {
         NodeType* best = nullptr;
+        unsigned depth = 0;
         for (NodeType* current = m_root; current;) {
+            RELEASE_ASSERT(++depth <= s_maximumTreeDepth);
             if (current->key() == key)
                 return current;
             if (current->key() > key)
@@ -333,8 +347,10 @@ public:
             return;
 
         Vector<NodeType*, 16> toIterate;
+        unsigned size = 0;
         toIterate.append(m_root);
         while (toIterate.size()) {
+            RELEASE_ASSERT(++size < std::numeric_limits<unsigned>::max());
             NodeType& current = *toIterate.takeLast();
             bool iterateLeft = false;
             bool iterateRight = false;
@@ -380,29 +396,41 @@ private:
     // node.
     static NodeType* treeMinimum(NodeType* x)
     {
-        while (x->left())
+        unsigned depth = 0;
+        while (x->left()) {
+            RELEASE_ASSERT(++depth <= s_maximumTreeDepth);
             x = x->left();
+        }
         return x;
     }
     
     static NodeType* treeMaximum(NodeType* x)
     {
-        while (x->right())
+        unsigned depth = 0;
+        while (x->right()) {
+            RELEASE_ASSERT(++depth <= s_maximumTreeDepth);
             x = x->right();
+        }
         return x;
     }
 
     static const NodeType* treeMinimum(const NodeType* x)
     {
-        while (x->left())
+        unsigned depth = 0;
+        while (x->left()) {
+            RELEASE_ASSERT(++depth <= s_maximumTreeDepth);
             x = x->left();
+        }
         return x;
     }
     
     static const NodeType* treeMaximum(const NodeType* x)
     {
-        while (x->right())
+        unsigned depth = 0;
+        while (x->right()) {
+            RELEASE_ASSERT(++depth <= s_maximumTreeDepth);
             x = x->right();
+        }
         return x;
     }
 
@@ -415,7 +443,9 @@ private:
         
         NodeType* y = nullptr;
         NodeType* x = m_root;
+        unsigned depth = 0;
         while (x) {
+            RELEASE_ASSERT(++depth <= s_maximumTreeDepth);
             y = x;
             if (z->key() < x->key())
                 x = x->left();
@@ -502,7 +532,9 @@ private:
     // supplied.
     void removeFixup(NodeType* x, NodeType* xParent)
     {
+        unsigned depth = 0;
         while (x != m_root && (!x || x->color() == Black)) {
+            RELEASE_ASSERT(++depth <= s_maximumTreeDepth);
             if (x == xParent->left()) {
                 // Note: the text points out that w can not be null.
                 // The reason is not obvious from simply looking at
