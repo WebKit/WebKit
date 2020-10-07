@@ -56,6 +56,7 @@ namespace WebCore {
 
 class AudioSampleBufferCompressor;
 class AudioStreamDescription;
+class MediaSample;
 class MediaStreamTrackPrivate;
 class PlatformAudioData;
 class VideoSampleBufferCompressor;
@@ -66,7 +67,7 @@ public:
     static RefPtr<MediaRecorderPrivateWriter> create(bool hasAudio, bool hasVideo, const MediaRecorderPrivateOptions&);
     ~MediaRecorderPrivateWriter();
 
-    void appendVideoSampleBuffer(CMSampleBufferRef);
+    void appendVideoSampleBuffer(MediaSample&);
     void appendAudioSampleBuffer(const PlatformAudioData&, const AudioStreamDescription&, const WTF::MediaTime&, size_t);
     void stopRecording();
     void fetchData(CompletionHandler<void(RefPtr<SharedBuffer>&&)>&&);
@@ -129,6 +130,7 @@ private:
 
     bool m_isFlushingSamples { false };
     bool m_shouldStopAfterFlushingSamples { false };
+    bool m_firstVideoFrame { false };
 };
 
 } // namespace WebCore

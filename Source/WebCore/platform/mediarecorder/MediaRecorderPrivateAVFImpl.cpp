@@ -70,7 +70,7 @@ MediaRecorderPrivateAVFImpl::~MediaRecorderPrivateAVFImpl()
 
 void MediaRecorderPrivateAVFImpl::videoSampleAvailable(MediaSample& sampleBuffer)
 {
-    m_writer->appendVideoSampleBuffer(sampleBuffer.platformSample().sample.cmSampleBuffer);
+    m_writer->appendVideoSampleBuffer(sampleBuffer);
 }
 
 void MediaRecorderPrivateAVFImpl::audioSamplesAvailable(const WTF::MediaTime& mediaTime, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount)
