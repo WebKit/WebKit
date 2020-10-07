@@ -131,6 +131,8 @@ private:
     bool m_isFlushingSamples { false };
     bool m_shouldStopAfterFlushingSamples { false };
     bool m_firstVideoFrame { false };
+    CMTime m_firstVideoSampleTime { kCMTimeZero };
+    CMTime m_currentAudioSampleTime { kCMTimeZero };
 };
 
 } // namespace WebCore

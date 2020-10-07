@@ -399,9 +399,8 @@ void MediaRecorderPrivateWriter::clear()
 }
 
 
-static inline RetainPtr<CMSampleBufferRef> copySampleBufferWithCurrentTimeStamp(CMSampleBufferRef originalBuffer)
+static inline RetainPtr<CMSampleBufferRef> copySampleBufferWithCurrentTimeStamp(CMSampleBufferRef originalBuffer, CMTime startTime)
 {
-    CMTime startTime = CMClockGetTime(CMClockGetHostTimeClock());
     CMItemCount count = 0;
     CMSampleBufferGetSampleTimingInfoArray(originalBuffer, 0, nil, &count);
 
@@ -425,6 +424,7 @@ void MediaRecorderPrivateWriter::appendVideoSampleBuffer(MediaSample& sample)
 {
     if (!m_firstVideoFrame) {
         m_firstVideoFrame = true;
+        m_firstVideoSampleTime = CMClockGetTime(CMClockGetHostTimeClock());
         if (sample.videoRotation() != MediaSample::VideoRotation::None || sample.videoMirrored()) {
             auto videoTransform = CGAffineTransformMakeRotation(static_cast<int>(sample.videoRotation()) * M_PI / 180);
             if (sample.videoMirrored())
@@ -432,8 +432,9 @@ void MediaRecorderPrivateWriter::appendVideoSampleBuffer(MediaSample& sample)
             m_videoAssetWriterInput.get().transform = videoTransform;
         }
     }
-    // FIXME: We should not set the timestamps if they are already set.
-    if (auto bufferWithCurrentTime = copySampleBufferWithCurrentTimeStamp(sample.platformSample().sample.cmSampleBuffer))
+
+    CMTime sampleTime = CMTimeSubtract(CMClockGetTime(CMClockGetHostTimeClock()), m_firstVideoSampleTime);
+    if (auto bufferWithCurrentTime = copySampleBufferWithCurrentTimeStamp(sample.platformSample().sample.cmSampleBuffer, sampleTime))
         m_videoCompressor->addSampleBuffer(bufferWithCurrentTime.get());
 }
 
@@ -449,14 +450,14 @@ static inline RetainPtr<CMFormatDescriptionRef> createAudioFormatDescription(con
     return adoptCF(format);
 }
 
-static inline RetainPtr<CMSampleBufferRef> createAudioSampleBuffer(const PlatformAudioData& data, const AudioStreamDescription& description, const WTF::MediaTime& time, size_t sampleCount)
+static inline RetainPtr<CMSampleBufferRef> createAudioSampleBuffer(const PlatformAudioData& data, const AudioStreamDescription& description, CMTime time, size_t sampleCount)
 {
     auto format = createAudioFormatDescription(description);
     if (!format)
         return nullptr;
 
     CMSampleBufferRef sampleBuffer = nullptr;
-    auto error = CMAudioSampleBufferCreateWithPacketDescriptions(kCFAllocatorDefault, NULL, false, NULL, NULL, format.get(), sampleCount, toCMTime(time), NULL, &sampleBuffer);
+    auto error = CMAudioSampleBufferCreateWithPacketDescriptions(kCFAllocatorDefault, NULL, false, NULL, NULL, format.get(), sampleCount, time, NULL, &sampleBuffer);
     if (error) {
         RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateWriter createAudioSampleBufferWithPacketDescriptions failed with %d", error);
         return nullptr;
@@ -471,10 +472,11 @@ static inline RetainPtr<CMSampleBufferRef> createAudioSampleBuffer(const Platfor
     return buffer;
 }
 
-void MediaRecorderPrivateWriter::appendAudioSampleBuffer(const PlatformAudioData& data, const AudioStreamDescription& description, const WTF::MediaTime& time, size_t sampleCount)
+void MediaRecorderPrivateWriter::appendAudioSampleBuffer(const PlatformAudioData& data, const AudioStreamDescription& description, const WTF::MediaTime&, size_t sampleCount)
 {
-    if (auto sampleBuffer = createAudioSampleBuffer(data, description, time, sampleCount))
+    if (auto sampleBuffer = createAudioSampleBuffer(data, description, m_currentAudioSampleTime, sampleCount))
         m_audioCompressor->addSampleBuffer(sampleBuffer.get());
+    m_currentAudioSampleTime = CMTimeAdd(m_currentAudioSampleTime, toCMTime(MediaTime(sampleCount, description.sampleRate())));
 }
 
 void MediaRecorderPrivateWriter::finishedFlushingSamples()
