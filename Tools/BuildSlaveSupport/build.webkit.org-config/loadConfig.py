@@ -37,6 +37,9 @@ import make_passwords_json
 import wkbuild
 
 trunk_filter = ChangeFilter(branch=["trunk", None])
+buildbot_identifiers_re = re.compile('^[a-zA-Z_-][a-zA-Z0-9_-]*$')
+
+STEP_NAME_LENGTH_LIMIT = 50
 
 
 def pickLatestBuild(builder, requests):
@@ -107,6 +110,13 @@ def loadBuilderConfig(c, test_mode_is_enabled=False):
                 factorykwargs[key] = value
 
         builder["factory"] = factory(**factorykwargs)
+
+        for step in builder["factory"].steps:
+            step_name = step[0].name
+            if len(step_name) > STEP_NAME_LENGTH_LIMIT:
+                raise Exception('step name "{}" is longer than maximum allowed by Buildbot ({} characters).'.format(step_name, STEP_NAME_LENGTH_LIMIT))
+            if not buildbot_identifiers_re.match(step_name):
+                raise Exception('step name "{}" is not a valid buildbot identifier.'.format(step_name))
 
         if platform.startswith('mac'):
             builder["category"] = 'AppleMac'
