@@ -67,7 +67,6 @@ ExceptionOr<Ref<MediaRecorder>> MediaRecorder::create(Document& document, Ref<Me
     if (result.hasException())
         return result.releaseException();
 
-    options.mimeType = result.returnValue()->mimeType();
     auto recorder = adoptRef(*new MediaRecorder(document, WTFMove(stream), WTFMove(options)));
     recorder->suspendIfNeeded();
     return recorder;
@@ -164,13 +163,13 @@ ExceptionOr<void> MediaRecorder::startRecording(Optional<unsigned> timeSlice)
         return result.releaseException();
 
     m_private = result.releaseReturnValue();
-    m_private->startRecording([this, pendingActivity = makePendingActivity(*this)](auto&& exception) mutable {
+    m_private->startRecording([this, pendingActivity = makePendingActivity(*this)](auto&& mimeTypeOrException) mutable {
         if (!m_isActive)
             return;
 
-        if (exception) {
+        if (mimeTypeOrException.hasException()) {
             stopRecordingInternal();
-            queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, exception = WTFMove(*exception)]() mutable {
+            queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, exception = mimeTypeOrException.releaseException()]() mutable {
                 if (!m_isActive)
                     return;
                 dispatchError(WTFMove(exception));
@@ -178,9 +177,10 @@ ExceptionOr<void> MediaRecorder::startRecording(Optional<unsigned> timeSlice)
             return;
         }
 
-        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this] {
+        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, mimeType = mimeTypeOrException.releaseReturnValue()]() mutable {
             if (!m_isActive)
                 return;
+            m_options.mimeType = WTFMove(mimeType);
             dispatchEvent(Event::create(eventNames().startEvent, Event::CanBubble::No, Event::IsCancelable::No));
         });
     });

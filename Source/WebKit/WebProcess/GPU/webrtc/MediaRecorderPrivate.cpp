@@ -52,7 +52,7 @@ MediaRecorderPrivate::MediaRecorderPrivate(MediaStreamPrivate& stream, const Med
 {
 }
 
-void MediaRecorderPrivate::startRecording(ErrorCallback&& errorCallback)
+void MediaRecorderPrivate::startRecording(StartRecordingCallback&& callback)
 {
     // FIXME: we will need to implement support for multiple audio/video tracks
     // Currently we only choose the first track as the recorded track.
@@ -61,20 +61,20 @@ void MediaRecorderPrivate::startRecording(ErrorCallback&& errorCallback)
     if (selectedTracks.audioTrack)
         m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(this));
 
-    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { m_identifier, !!selectedTracks.audioTrack, !!selectedTracks.videoTrack, m_options }, [this, weakThis = makeWeakPtr(this), audioTrack = makeRefPtr(selectedTracks.audioTrack), videoTrack = makeRefPtr(selectedTracks.videoTrack), errorCallback = WTFMove(errorCallback)](auto&& exception) mutable {
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { m_identifier, !!selectedTracks.audioTrack, !!selectedTracks.videoTrack, m_options }, [this, weakThis = makeWeakPtr(this), audioTrack = makeRefPtr(selectedTracks.audioTrack), videoTrack = makeRefPtr(selectedTracks.videoTrack), callback = WTFMove(callback)](auto&& exception, String&& mimeType) mutable {
         if (!weakThis) {
-            errorCallback({ });
+            callback(Exception { InvalidStateError });
             return;
         }
         if (exception) {
-            errorCallback(Exception { exception->code, WTFMove(exception->message) });
+            callback(Exception { exception->code, WTFMove(exception->message) });
             return;
         }
         if (audioTrack)
             setAudioSource(&audioTrack->source());
         if (videoTrack)
             setVideoSource(&videoTrack->source());
-        errorCallback({ });
+        callback(WTFMove(mimeType));
     }, 0);
 }
 

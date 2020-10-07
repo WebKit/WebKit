@@ -1,5 +1,76 @@
 2020-10-06  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r267833. rdar://problem/70024626
+
+    MediaRecorder should support MediaRecorderOptions.mimeType
+    https://bugs.webkit.org/show_bug.cgi?id=215018
+    <rdar://problem/66681508>
+    
+    Reviewed by Eric Carlson.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/mediacapture-record/MediaRecorder-mimetype-expected.txt:
+    
+    Source/WebCore:
+    
+    Instead of setting mime type right away, set it just before firing start event as per spec.
+    This will allow in the future to populate exact codec parameters if proven useful.
+    
+    Covered by rebased and updated tests.
+    
+    * Modules/mediarecorder/MediaRecorder.cpp:
+    (WebCore::MediaRecorder::create):
+    (WebCore::MediaRecorder::startRecording):
+    * platform/mediarecorder/MediaRecorderPrivate.h:
+    (WebCore::MediaRecorderPrivate::startRecording):
+    * platform/mediarecorder/MediaRecorderPrivateAVFImpl.h:
+    
+    Source/WebKit:
+    
+    Update code to pass mimeType as part of startRecording callback.
+    
+    * GPUProcess/webrtc/RemoteMediaRecorder.h:
+    (WebKit::RemoteMediaRecorder::mimeType const):
+    * GPUProcess/webrtc/RemoteMediaRecorderManager.cpp:
+    (WebKit::RemoteMediaRecorderManager::createRecorder):
+    * GPUProcess/webrtc/RemoteMediaRecorderManager.h:
+    * GPUProcess/webrtc/RemoteMediaRecorderManager.messages.in:
+    * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+    (WebKit::MediaRecorderPrivate::startRecording):
+    * WebProcess/GPU/webrtc/MediaRecorderPrivate.h:
+    
+    LayoutTests:
+    
+    Update test to expect setting of the mime type after start event.
+    
+    * http/wpt/mediarecorder/mimeType.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@267833 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-01  Youenn Fablet  <youenn@apple.com>
+
+            MediaRecorder should support MediaRecorderOptions.mimeType
+            https://bugs.webkit.org/show_bug.cgi?id=215018
+            <rdar://problem/66681508>
+
+            Reviewed by Eric Carlson.
+
+            Instead of setting mime type right away, set it just before firing start event as per spec.
+            This will allow in the future to populate exact codec parameters if proven useful.
+
+            Covered by rebased and updated tests.
+
+            * Modules/mediarecorder/MediaRecorder.cpp:
+            (WebCore::MediaRecorder::create):
+            (WebCore::MediaRecorder::startRecording):
+            * platform/mediarecorder/MediaRecorderPrivate.h:
+            (WebCore::MediaRecorderPrivate::startRecording):
+            * platform/mediarecorder/MediaRecorderPrivateAVFImpl.h:
+
+2020-10-06  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r267822. rdar://problem/70024621
 
     MediaRecorder should allow setting low bit rates for audio

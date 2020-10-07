@@ -24,11 +24,11 @@
 
 #pragma once
 
-#include <wtf/CompletionHandler.h>
-#include <wtf/Forward.h>
-#include "Exception.h"
+#include "ExceptionOr.h"
 #include "MediaRecorderPrivateOptions.h"
 #include "RealtimeMediaSource.h"
+#include <wtf/CompletionHandler.h>
+#include <wtf/Forward.h>
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -62,8 +62,8 @@ public:
     virtual void stopRecording() = 0;
     virtual const String& mimeType() const = 0;
 
-    using ErrorCallback = CompletionHandler<void(Optional<Exception>&&)>;
-    virtual void startRecording(ErrorCallback&& callback) { callback({ }); }
+    using StartRecordingCallback = CompletionHandler<void(ExceptionOr<String>&&)>;
+    virtual void startRecording(StartRecordingCallback&& callback) { callback(String(mimeType())); }
 
 protected:
     void setAudioSource(RefPtr<RealtimeMediaSource>&&);
