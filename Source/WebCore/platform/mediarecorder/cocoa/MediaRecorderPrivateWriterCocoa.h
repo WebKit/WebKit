@@ -70,7 +70,7 @@ public:
     void appendVideoSampleBuffer(MediaSample&);
     void appendAudioSampleBuffer(const PlatformAudioData&, const AudioStreamDescription&, const WTF::MediaTime&, size_t);
     void stopRecording();
-    void fetchData(CompletionHandler<void(RefPtr<SharedBuffer>&&)>&&);
+    void fetchData(CompletionHandler<void(RefPtr<SharedBuffer>&&, double)>&&);
 
     void pause();
     void resume();
@@ -105,6 +105,7 @@ private:
     void flushCompressedSampleBuffers(CompletionHandler<void()>&&);
 
     void finishedFlushingSamples();
+    void updateTimeCode();
 
     bool m_hasAudio { false };
     bool m_hasVideo { false };
@@ -116,7 +117,7 @@ private:
     RetainPtr<AVAssetWriter> m_writer;
 
     RefPtr<SharedBuffer> m_data;
-    CompletionHandler<void(RefPtr<SharedBuffer>&&)> m_fetchDataCompletionHandler;
+    CompletionHandler<void(RefPtr<SharedBuffer>&&, double)> m_fetchDataCompletionHandler;
 
     RetainPtr<CMFormatDescriptionRef> m_audioFormatDescription;
     std::unique_ptr<AudioSampleBufferCompressor> m_audioCompressor;
@@ -140,6 +141,7 @@ private:
     CMTime m_resumedVideoTime { kCMTimeZero };
     CMTime m_currentVideoDuration { kCMTimeZero };
     CMTime m_currentAudioSampleTime { kCMTimeZero };
+    double m_timeCode { 0 };
 };
 
 } // namespace WebCore

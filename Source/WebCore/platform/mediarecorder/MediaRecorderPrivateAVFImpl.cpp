@@ -151,8 +151,8 @@ void MediaRecorderPrivateAVFImpl::resumeRecording(CompletionHandler<void()>&& co
 
 void MediaRecorderPrivateAVFImpl::fetchData(FetchDataCallback&& completionHandler)
 {
-    m_writer->fetchData([completionHandler = WTFMove(completionHandler), mimeType = mimeType()](auto&& buffer) mutable {
-        completionHandler(WTFMove(buffer), mimeType);
+    m_writer->fetchData([completionHandler = WTFMove(completionHandler), mimeType = mimeType()](auto&& buffer, auto timeCode) mutable {
+        completionHandler(WTFMove(buffer), mimeType, timeCode);
     });
 }
 

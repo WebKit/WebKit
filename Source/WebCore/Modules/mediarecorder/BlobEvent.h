@@ -41,10 +41,10 @@ public:
     };
     
     static Ref<BlobEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
-    static Ref<BlobEvent> create(const AtomString&, CanBubble, IsCancelable, Ref<Blob>&&);
 
     Blob& data() const { return m_blob.get(); }
-    
+    double timecode() const { return m_timecode; }
+
 private:
     BlobEvent(const AtomString&, Init&&, IsTrusted);
     BlobEvent(const AtomString&, CanBubble, IsCancelable, Ref<Blob>&&);
@@ -53,6 +53,7 @@ private:
     EventInterface eventInterface() const final;
     
     Ref<Blob> m_blob;
+    double m_timecode { 0 };
 };
     
 } // namespace WebCore

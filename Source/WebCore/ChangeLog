@@ -1,3 +1,41 @@
+2020-10-07  Youenn Fablet  <youenn@apple.com>
+
+        Add support for BlobEvent.timecode
+        https://bugs.webkit.org/show_bug.cgi?id=217379
+
+        Reviewed by Eric Carlson.
+
+        Expose timecode getter for BlobEvent.
+        Make MediaRecorder backend return the timecode value for each fetch data.
+        For the real backend, compute the timecode as the current audio timestamp for the next fetch data request,
+        or the current video timestamp if only video is captured.
+
+        Covered by rebased test.
+
+        * Modules/mediarecorder/BlobEvent.cpp:
+        (WebCore::BlobEvent::BlobEvent):
+        * Modules/mediarecorder/BlobEvent.h:
+        * Modules/mediarecorder/BlobEvent.idl:
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::createDataAvailableEvent):
+        (WebCore::MediaRecorder::stopRecording):
+        (WebCore::MediaRecorder::requestData):
+        (WebCore::MediaRecorder::fetchData):
+        (WebCore::MediaRecorder::handleTrackChange):
+        (WebCore::MediaRecorder::trackEnded):
+        * Modules/mediarecorder/MediaRecorder.h:
+        * platform/mediarecorder/MediaRecorderPrivate.h:
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp:
+        (WebCore::MediaRecorderPrivateAVFImpl::fetchData):
+        * platform/mediarecorder/MediaRecorderPrivateMock.cpp:
+        (WebCore::MediaRecorderPrivateMock::fetchData):
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        (WebCore::MediaRecorderPrivateWriter::clear):
+        (WebCore::MediaRecorderPrivateWriter::stopRecording):
+        (WebCore::MediaRecorderPrivateWriter::fetchData):
+        (WebCore::MediaRecorderPrivateWriter::updateTimeCode):
+
 2020-10-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Adjust the inline formatting context root's content height when the last line has float clear
