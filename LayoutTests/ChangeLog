@@ -1,3 +1,14 @@
+2020-10-07  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process] Unskip some layout tests
+
+        Unreviewed test gardening.
+
+        * gpu-process/TestExpectations:
+        Unskip the tests that are marked as failure or timeout when the "Media in GPU Process"
+        is not enabled.
+        * media/video-size-intrinsic-scale.html:
+
 2020-10-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, unskip a few dozen canvas-related tests that now pass after recent changes
