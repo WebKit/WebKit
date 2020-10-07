@@ -146,4 +146,9 @@ AudioBuffer* WebAudioBufferList::buffer(uint32_t index) const
     return nullptr;
 }
 
+void WebAudioBufferList::zeroFlatBuffer()
+{
+    memset(m_flatBuffer.data(), 0, m_flatBuffer.capacity());
+}
+
 }

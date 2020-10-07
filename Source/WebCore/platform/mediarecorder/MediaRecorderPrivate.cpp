@@ -36,7 +36,7 @@ MediaRecorderPrivate::AudioVideoSelectedTracks MediaRecorderPrivate::selectTrack
 {
     AudioVideoSelectedTracks selectedTracks;
     stream.forEachTrack([&](auto& track) {
-        if (!track.enabled() || track.ended())
+        if (track.ended())
             return;
         switch (track.type()) {
         case RealtimeMediaSource::Type::Video: {
@@ -54,6 +54,16 @@ MediaRecorderPrivate::AudioVideoSelectedTracks MediaRecorderPrivate::selectTrack
         }
     });
     return selectedTracks;
+}
+
+void MediaRecorderPrivate::checkTrackState(const MediaStreamTrackPrivate& track)
+{
+    if (&track.source() == m_audioSource.get()) {
+        m_shouldMuteAudio = track.muted() || !track.enabled();
+        return;
+    }
+    if (&track.source() == m_videoSource.get())
+        m_shouldMuteVideo = track.muted() || !track.enabled();
 }
 
 } // namespace WebCore
