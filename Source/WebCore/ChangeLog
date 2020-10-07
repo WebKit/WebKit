@@ -1,5 +1,18 @@
 2020-10-07  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Integration] Use display structures (InlineContent) to provide content height and baseline used values
+        https://bugs.webkit.org/show_bug.cgi?id=217437
+
+        Reviewed by Antti Koivisto.
+
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::contentLogicalHeight const):
+        (WebCore::LayoutIntegration::LineLayout::lineCount const):
+        (WebCore::LayoutIntegration::LineLayout::firstLineBaseline const):
+        (WebCore::LayoutIntegration::LineLayout::lastLineBaseline const):
+
+2020-10-07  Zalan Bujtas  <zalan@apple.com>
+
         Add std::max to make sure the line gap is always larger than 0 (see FIXME).
 
         Reviewed by Antti Koivisto.

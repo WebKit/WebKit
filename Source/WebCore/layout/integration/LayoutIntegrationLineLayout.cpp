@@ -222,9 +222,11 @@ LayoutUnit LineLayout::contentLogicalHeight() const
 {
     if (m_paginatedHeight)
         return *m_paginatedHeight;
+    if (!m_inlineContent)
+        return { };
 
-    auto& lines = m_inlineFormattingState.lines();
-    return LayoutUnit { lines.last().logicalBottom() - lines.first().logicalTop() };
+    auto& lines = m_inlineContent->lines;
+    return LayoutUnit { lines.last().rect().maxY() - lines.first().rect().y() };
 }
 
 size_t LineLayout::lineCount() const
@@ -233,31 +235,30 @@ size_t LineLayout::lineCount() const
         return 0;
     if (m_inlineContent->runs.isEmpty())
         return 0;
-    return m_inlineFormattingState.lines().size();
+
+    return m_inlineContent->lines.size();
 }
 
 LayoutUnit LineLayout::firstLineBaseline() const
 {
-    auto& lines = m_inlineFormattingState.lines();
-    if (lines.isEmpty()) {
+    if (!m_inlineContent || m_inlineContent->lines.isEmpty()) {
         ASSERT_NOT_REACHED();
-        return 0_lu;
+        return { };
     }
 
-    auto& firstLine = lines.first();
-    return Layout::toLayoutUnit(firstLine.logicalTop() + firstLine.baseline());
+    auto& firstLine = m_inlineContent->lines.first();
+    return LayoutUnit { firstLine.rect().y() + firstLine.baseline() };
 }
 
 LayoutUnit LineLayout::lastLineBaseline() const
 {
-    auto& lines = m_inlineFormattingState.lines();
-    if (lines.isEmpty()) {
+    if (!m_inlineContent || m_inlineContent->lines.isEmpty()) {
         ASSERT_NOT_REACHED();
-        return 0_lu;
+        return { };
     }
 
-    auto& lastLine = lines.last();
-    return Layout::toLayoutUnit(lastLine.logicalTop() + lastLine.baseline());
+    auto& lastLine = m_inlineContent->lines.last();
+    return LayoutUnit { lastLine.rect().y() + lastLine.baseline() };
 }
 
 void LineLayout::adjustForPagination(RenderBlockFlow& flow)
