@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Test consistency of processing after resume() Test timed out
+PASS Test consistency of processing after resume()
 

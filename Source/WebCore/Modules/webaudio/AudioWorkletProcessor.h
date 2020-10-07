@@ -29,24 +29,30 @@
 #pragma once
 
 #if ENABLE(WEB_AUDIO)
+#include "ExceptionOr.h"
+#include <wtf/Forward.h>
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
+class AudioWorkletProcessorConstructionData;
 class MessagePort;
+class ScriptExecutionContext;
 
-class AudioWorkletProcessor : public RefCounted<AudioWorkletProcessor> {
+class AudioWorkletProcessor : public ThreadSafeRefCounted<AudioWorkletProcessor> {
 public:
-    static Ref<AudioWorkletProcessor> create()
-    {
-        return adoptRef(*new AudioWorkletProcessor);
-    }
+    static ExceptionOr<Ref<AudioWorkletProcessor>> create(ScriptExecutionContext&);
+    ~AudioWorkletProcessor();
 
-    MessagePort* port() { return nullptr; }
+    const String& name() const { return m_name; }
+    MessagePort& port() { return m_port.get(); }
 
 private:
-    AudioWorkletProcessor();
+    explicit AudioWorkletProcessor(const AudioWorkletProcessorConstructionData&);
+
+    String m_name;
+    Ref<MessagePort> m_port;
 };
 
 } // namespace WebCore

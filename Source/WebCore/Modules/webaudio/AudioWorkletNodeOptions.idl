@@ -29,6 +29,7 @@
 [
     Conditional=WEB_AUDIO,
     EnabledBySetting=AudioWorklet,
+    JSGenerateToJSObject
 ] dictionary AudioWorkletNodeOptions : AudioNodeOptions {
     unsigned long numberOfInputs = 1;
     unsigned long numberOfOutputs = 1;

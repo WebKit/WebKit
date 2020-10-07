@@ -33,7 +33,8 @@ namespace WebCore {
 
 // When a message port is transferred, it is represented by a pair of identifiers.
 // The first identifier is the port being transferred and the second is its remote port.
-typedef Vector<std::pair<WebCore::MessagePortIdentifier, WebCore::MessagePortIdentifier>> TransferredMessagePortArray;
+using TransferredMessagePort = std::pair<WebCore::MessagePortIdentifier, WebCore::MessagePortIdentifier>;
+using TransferredMessagePortArray = Vector<TransferredMessagePort>;
 
 struct MessageWithMessagePorts {
     RefPtr<SerializedScriptValue> message;

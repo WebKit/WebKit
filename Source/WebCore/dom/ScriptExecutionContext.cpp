@@ -28,6 +28,8 @@
 #include "config.h"
 #include "ScriptExecutionContext.h"
 
+#include "AudioWorkletGlobalScope.h"
+#include "AudioWorkletThread.h"
 #include "CachedScript.h"
 #include "CommonVM.h"
 #include "DOMTimer.h"
@@ -205,7 +207,11 @@ void ScriptExecutionContext::dispatchMessagePortEvents()
 void ScriptExecutionContext::createdMessagePort(MessagePort& messagePort)
 {
     ASSERT((is<Document>(*this) && isMainThread())
-        || (is<WorkerGlobalScope>(*this) && downcast<WorkerGlobalScope>(*this).thread().thread() == &Thread::current()));
+        || (is<WorkerGlobalScope>(*this) && downcast<WorkerGlobalScope>(*this).thread().thread() == &Thread::current())
+#if ENABLE(WEB_AUDIO)
+        || (is<AudioWorkletGlobalScope>(*this) && downcast<AudioWorkletGlobalScope>(*this).thread().thread() == &Thread::current())
+#endif
+        );
 
     m_messagePorts.add(&messagePort);
 }
@@ -213,8 +219,11 @@ void ScriptExecutionContext::createdMessagePort(MessagePort& messagePort)
 void ScriptExecutionContext::destroyedMessagePort(MessagePort& messagePort)
 {
     ASSERT((is<Document>(*this) && isMainThread())
-        || (is<WorkerGlobalScope>(*this) && downcast<WorkerGlobalScope>(*this).thread().thread() == &Thread::current()));
-
+        || (is<WorkerGlobalScope>(*this) && downcast<WorkerGlobalScope>(*this).thread().thread() == &Thread::current())
+#if ENABLE(WEB_AUDIO)
+        || (is<AudioWorkletGlobalScope>(*this) && downcast<AudioWorkletGlobalScope>(*this).thread().thread() == &Thread::current())
+#endif
+        );
     m_messagePorts.remove(&messagePort);
 }
 

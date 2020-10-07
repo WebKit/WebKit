@@ -29,49 +29,27 @@
 #pragma once
 
 #if ENABLE(WEB_AUDIO)
-#include "WorkerOrWorkletThread.h"
-#include "WorkerRunLoop.h"
-#include "WorkletParameters.h"
-#include <wtf/Forward.h>
-#include <wtf/Lock.h>
-#include <wtf/Threading.h>
+
+#include "MessagePort.h"
+#include <wtf/Ref.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class AudioWorkletGlobalScope;
-class AudioWorkletMessagingProxy;
-
-class AudioWorkletThread : public WorkerOrWorkletThread {
+class AudioWorkletProcessorConstructionData {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<AudioWorkletThread> create(AudioWorkletMessagingProxy& messagingProxy, const WorkletParameters& parameters)
-    {
-        return adoptRef(*new AudioWorkletThread(messagingProxy, parameters));
-    }
-    ~AudioWorkletThread();
+    AudioWorkletProcessorConstructionData(String&& name, Ref<MessagePort>&& port)
+        : m_name(WTFMove(name))
+        , m_port(WTFMove(port))
+    { }
 
-    AudioWorkletGlobalScope* globalScope() const { return m_workletGlobalScope.get(); }
-
-    void start();
-    void stop();
-
-    // WorkerOrWorkletThread.
-    WorkerRunLoop& runLoop() final { return m_runLoop; }
-    WorkerLoaderProxy& workerLoaderProxy() final;
-    Thread* thread() const final { return m_thread.get(); }
-    AudioWorkletMessagingProxy& messagingProxy() { return m_messagingProxy; }
+    const String& name() const { return m_name; }
+    MessagePort& port() const { return m_port.get(); }
 
 private:
-    AudioWorkletThread(AudioWorkletMessagingProxy&, const WorkletParameters&);
-
-    void runEventLoop();
-    void workletThread();
-
-    AudioWorkletMessagingProxy& m_messagingProxy;
-    RefPtr<Thread> m_thread;
-    WorkerRunLoop m_runLoop;
-    WorkletParameters m_parameters;
-    RefPtr<AudioWorkletGlobalScope> m_workletGlobalScope;
-    Lock m_threadCreationAndWorkletGlobalScopeLock;
+    String m_name;
+    Ref<MessagePort> m_port;
 };
 
 } // namespace WebCore

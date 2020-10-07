@@ -31,6 +31,6 @@
     Exposed=AudioWorklet,
     ImplementationLacksVTable
 ] interface AudioWorkletProcessor {
-    constructor();
+    [CallWith=ScriptExecutionContext, MayThrowException] constructor();
     readonly attribute MessagePort port;
 };

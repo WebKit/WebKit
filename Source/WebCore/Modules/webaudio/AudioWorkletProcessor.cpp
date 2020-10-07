@@ -31,10 +31,28 @@
 #if ENABLE(WEB_AUDIO)
 #include "AudioWorkletProcessor.h"
 
+#include "AudioWorkletGlobalScope.h"
+#include "AudioWorkletProcessorConstructionData.h"
+#include "MessagePort.h"
+
 namespace WebCore {
 
-AudioWorkletProcessor::AudioWorkletProcessor()
+ExceptionOr<Ref<AudioWorkletProcessor>> AudioWorkletProcessor::create(ScriptExecutionContext& context)
 {
+    auto constructionData = downcast<AudioWorkletGlobalScope>(context).takePendingProcessorConstructionData();
+    if (!constructionData)
+        return Exception { TypeError, "No pending construction data for this worklet processor"_s };
+
+    return adoptRef(*new AudioWorkletProcessor(*constructionData));
+}
+
+AudioWorkletProcessor::~AudioWorkletProcessor() = default;
+
+AudioWorkletProcessor::AudioWorkletProcessor(const AudioWorkletProcessorConstructionData& constructionData)
+    : m_name(constructionData.name())
+    , m_port(constructionData.port())
+{
+    ASSERT(!isMainThread());
 }
 
 } // namespace WebCore

@@ -31,10 +31,12 @@
 #if ENABLE(WEB_AUDIO)
 
 #include "AudioNode.h"
+#include <wtf/Lock.h>
 
 namespace WebCore {
 
 class AudioParamMap;
+class AudioWorkletProcessor;
 class MessagePort;
 
 struct AudioWorkletNodeOptions;
@@ -42,14 +44,16 @@ struct AudioWorkletNodeOptions;
 class AudioWorkletNode : public AudioNode {
     WTF_MAKE_ISO_ALLOCATED(AudioWorkletNode);
 public:
-    static ExceptionOr<Ref<AudioWorkletNode>> create(BaseAudioContext&, String&& name, AudioWorkletNodeOptions&&);
+    static ExceptionOr<Ref<AudioWorkletNode>> create(JSC::JSGlobalObject&, BaseAudioContext&, String&& name, AudioWorkletNodeOptions&&);
     ~AudioWorkletNode();
 
     AudioParamMap& parameters() { return m_parameters.get(); }
     MessagePort& port() { return m_port.get(); }
 
+    void setProcessor(RefPtr<AudioWorkletProcessor>&&);
+
 private:
-    AudioWorkletNode(BaseAudioContext&, String&& name, AudioWorkletNodeOptions&&, Ref<MessagePort>&&);
+    AudioWorkletNode(BaseAudioContext&, const String& name, AudioWorkletNodeOptions&&, Ref<MessagePort>&&);
 
     // AudioNode.
     void process(size_t framesToProcess) final;
@@ -60,6 +64,8 @@ private:
     String m_name;
     Ref<AudioParamMap> m_parameters;
     Ref<MessagePort> m_port;
+    Lock m_processorLock;
+    RefPtr<AudioWorkletProcessor> m_processor; // Should only be used on the rendering thread.
 };
 
 } // namespace WebCore

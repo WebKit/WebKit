@@ -31,8 +31,11 @@
 #if ENABLE(WEB_AUDIO)
 #include "AudioWorklet.h"
 
+#include "AudioWorkletGlobalScope.h"
 #include "AudioWorkletMessagingProxy.h"
+#include "AudioWorkletNode.h"
 #include "BaseAudioContext.h"
+#include "WorkerRunLoop.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -69,6 +72,19 @@ AudioWorkletMessagingProxy* AudioWorklet::proxy() const
 BaseAudioContext* AudioWorklet::audioContext() const
 {
     return m_audioContext.get();
+}
+
+void AudioWorklet::createProcessor(const String& name, TransferredMessagePort port, Ref<SerializedScriptValue>&& options, AudioWorkletNode& node)
+{
+    auto* proxy = this->proxy();
+    ASSERT(proxy);
+    if (!proxy)
+        return;
+
+    proxy->postTaskForModeToWorkletGlobalScope([name = name.isolatedCopy(), port, options = WTFMove(options), node = makeRef(node)](ScriptExecutionContext& context) mutable {
+        node->setProcessor(downcast<AudioWorkletGlobalScope>(context).createProcessor(name, port, WTFMove(options)));
+        callOnMainThread([node = WTFMove(node)] { });
+    }, WorkerRunLoop::defaultMode());
 }
 
 } // namespace WebCore

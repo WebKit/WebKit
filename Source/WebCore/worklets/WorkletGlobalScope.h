@@ -48,7 +48,9 @@
 namespace WebCore {
 
 class EventLoopTaskGroup;
+class MessagePortChannelProvider;
 class WorkerEventLoop;
+class WorkerMessagePortChannelProvider;
 class WorkerScriptLoader;
 
 struct WorkletParameters;
@@ -70,6 +72,8 @@ public:
 #if ENABLE(WEB_AUDIO)
     virtual bool isAudioWorkletGlobalScope() const { return false; }
 #endif
+
+    MessagePortChannelProvider& messagePortChannelProvider();
 
     EventLoopTaskGroup& eventLoop() final;
 
@@ -176,8 +180,11 @@ private:
     JSC::RuntimeFlags m_jsRuntimeFlags;
     Optional<ScriptSourceCode> m_code;
 
+    std::unique_ptr<WorkerMessagePortChannelProvider> m_messagePortChannelProvider;
+
     RefPtr<WorkerScriptLoader> m_scriptLoader;
     Deque<ScriptFetchJob> m_scriptFetchJobs;
+    HashSet<URL> m_evaluatedModules;
 
     bool m_isClosing { false };
 };

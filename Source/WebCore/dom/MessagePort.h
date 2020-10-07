@@ -92,6 +92,9 @@ public:
 
     void dispatchEvent(Event&) final;
 
+    TransferredMessagePort disentangle();
+    static Ref<MessagePort> entangle(ScriptExecutionContext&, TransferredMessagePort&&);
+
 private:
     explicit MessagePort(ScriptExecutionContext&, const MessagePortIdentifier& local, const MessagePortIdentifier& remote);
 
@@ -103,8 +106,6 @@ private:
     void contextDestroyed() final;
     void stop() final { close(); }
     bool virtualHasPendingActivity() const final;
-
-    void disentangle();
 
     void registerLocalActivity();
 

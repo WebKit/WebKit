@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-class WorkerGlobalScope;
+class WorkerOrWorkletGlobalScope;
 
 class WorkerMessagePortChannelProvider final : public MessagePortChannelProvider {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit WorkerMessagePortChannelProvider(WorkerGlobalScope&);
+    explicit WorkerMessagePortChannelProvider(WorkerOrWorkletGlobalScope&);
     ~WorkerMessagePortChannelProvider();
 
 private:
@@ -49,7 +49,7 @@ private:
     void takeAllMessagesForPort(const MessagePortIdentifier&, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&&) final;
     void checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(HasActivity)>&& callback) final;
 
-    WorkerGlobalScope& m_scope;
+    WorkerOrWorkletGlobalScope& m_scope;
 
     uint64_t m_lastCallbackIdentifier { 0 };
     HashMap<uint64_t, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>> m_takeAllMessagesCallbacks;

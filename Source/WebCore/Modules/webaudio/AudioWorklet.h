@@ -29,11 +29,13 @@
 #pragma once
 
 #if ENABLE(WEB_AUDIO)
+#include "MessagePort.h"
 #include "Worklet.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+class AudioWorkletNode;
 class BaseAudioContext;
 class AudioWorkletMessagingProxy;
 
@@ -44,6 +46,8 @@ public:
 
     AudioWorkletMessagingProxy* proxy() const;
     BaseAudioContext* audioContext() const;
+
+    void createProcessor(const String& name, TransferredMessagePort, Ref<SerializedScriptValue>&&, AudioWorkletNode&);
 
 private:
     explicit AudioWorklet(BaseAudioContext&);

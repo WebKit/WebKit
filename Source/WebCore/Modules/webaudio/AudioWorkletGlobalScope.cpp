@@ -34,6 +34,8 @@
 #include "AudioParamDescriptor.h"
 #include "AudioWorklet.h"
 #include "AudioWorkletMessagingProxy.h"
+#include "AudioWorkletProcessorConstructionData.h"
+#include "JSAudioWorkletProcessor.h"
 #include "JSAudioWorkletProcessorConstructor.h"
 #include "JSDOMConvert.h"
 #include <wtf/CrossThreadCopier.h>
@@ -109,6 +111,35 @@ ExceptionOr<void> AudioWorkletGlobalScope::registerProcessor(String&& name, Ref<
     return { };
 }
 
+RefPtr<AudioWorkletProcessor> AudioWorkletGlobalScope::createProcessor(const String& name, TransferredMessagePort port, Ref<SerializedScriptValue>&& options)
+{
+    auto constructor = m_processorConstructorMap.get(name);
+    ASSERT(constructor);
+    if (!constructor)
+        return nullptr;
+
+    JSC::JSObject* jsConstructor = constructor->callbackData()->callback();
+    auto* globalObject = jsConstructor->globalObject();
+    JSC::VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSC::JSLockHolder lock { globalObject };
+
+    m_pendingProcessorConstructionData = makeUnique<AudioWorkletProcessorConstructionData>(String { name }, MessagePort::entangle(*this, WTFMove(port)));
+
+    JSC::MarkedArgumentBuffer args;
+    auto arg = options->deserialize(*globalObject, globalObject, SerializationErrorMode::NonThrowing);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    args.append(arg);
+    ASSERT(!args.hasOverflowed());
+
+    auto* object = JSC::construct(globalObject, jsConstructor, args, "Failed to construct AudioWorkletProcessor");
+    ASSERT(!!scope.exception() == !object);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    auto& jsProcessor = *JSC::jsCast<JSAudioWorkletProcessor*>(object);
+    return &jsProcessor.wrapped();
+}
+
 void AudioWorkletGlobalScope::prepareForTermination()
 {
     if (auto* defaultTaskGroup = this->defaultTaskGroup())
@@ -130,6 +161,11 @@ void AudioWorkletGlobalScope::prepareForTermination()
 void AudioWorkletGlobalScope::postTask(Task&& task)
 {
     thread().runLoop().postTask(WTFMove(task));
+}
+
+std::unique_ptr<AudioWorkletProcessorConstructionData> AudioWorkletGlobalScope::takePendingProcessorConstructionData()
+{
+    return std::exchange(m_pendingProcessorConstructionData, nullptr);
 }
 
 } // namespace WebCore

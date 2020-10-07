@@ -48,6 +48,7 @@
 #include "StructuredClone.h"
 #include "WebCoreJSClientData.h"
 #include "WorkerGlobalScope.h"
+#include "WorkletGlobalScope.h"
 #include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/CodeBlock.h>
 #include <JavaScriptCore/JSInternalPromise.h>
@@ -344,6 +345,9 @@ JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext& context, DOMWrapp
 
     if (is<WorkerGlobalScope>(context))
         return downcast<WorkerGlobalScope>(context).script()->workerGlobalScopeWrapper();
+
+    if (is<WorkletGlobalScope>(context))
+        return downcast<WorkletGlobalScope>(context).script()->workletGlobalScopeWrapper();
 
     ASSERT_NOT_REACHED();
     return nullptr;

@@ -165,7 +165,7 @@ ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& state, JSC::JSVa
     return { };
 }
 
-void MessagePort::disentangle()
+TransferredMessagePort MessagePort::disentangle()
 {
     ASSERT(m_entangled);
     m_entangled = false;
@@ -180,6 +180,8 @@ void MessagePort::disentangle()
     m_scriptExecutionContext->willDestroyDestructionObserver(*this);
 
     m_scriptExecutionContext = nullptr;
+
+    return { identifier(), remoteIdentifier() };
 }
 
 void MessagePort::registerLocalActivity()
@@ -378,10 +380,8 @@ ExceptionOr<TransferredMessagePortArray> MessagePort::disentanglePorts(Vector<Re
     // Passed-in ports passed validity checks, so we can disentangle them.
     TransferredMessagePortArray portArray;
     portArray.reserveInitialCapacity(ports.size());
-    for (auto& port : ports) {
-        portArray.uncheckedAppend({ port->identifier(), port->remoteIdentifier() });
-        port->disentangle();
-    }
+    for (auto& port : ports)
+        portArray.uncheckedAppend(port->disentangle());
 
     return portArray;
 }
@@ -395,12 +395,16 @@ Vector<RefPtr<MessagePort>> MessagePort::entanglePorts(ScriptExecutionContext& c
 
     Vector<RefPtr<MessagePort>> ports;
     ports.reserveInitialCapacity(transferredPorts.size());
-    for (auto& transferredPort : transferredPorts) {
-        auto port = MessagePort::create(context, transferredPort.first, transferredPort.second);
-        port->entangle();
-        ports.uncheckedAppend(WTFMove(port));
-    }
+    for (auto& transferredPort : transferredPorts)
+        ports.uncheckedAppend(MessagePort::entangle(context, WTFMove(transferredPort)));
     return ports;
+}
+
+Ref<MessagePort> MessagePort::entangle(ScriptExecutionContext& context, TransferredMessagePort&& transferredPort)
+{
+    auto port = MessagePort::create(context, transferredPort.first, transferredPort.second);
+    port->entangle();
+    return port;
 }
 
 bool MessagePort::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)

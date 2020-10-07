@@ -1,8 +1,8 @@
 
 Harness Error (TIMEOUT), message = null
 
-TIMEOUT super() after new AudioWorkletProcessor() Test timed out
-NOTRUN new AudioWorkletProcessor() after super()
-NOTRUN new AudioWorkletProcessor() after new AudioWorkletProcessor()
-NOTRUN Singleton AudioWorkletProcessor
+PASS super() after new AudioWorkletProcessor()
+PASS new AudioWorkletProcessor() after super()
+PASS new AudioWorkletProcessor() after new AudioWorkletProcessor()
+TIMEOUT Singleton AudioWorkletProcessor Test timed out
 

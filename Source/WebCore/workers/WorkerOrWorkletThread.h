@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/ThreadSafeRefCounted.h>
+
 namespace WTF {
 class Thread;
 }
@@ -34,7 +36,7 @@ namespace WebCore {
 class WorkerLoaderProxy;
 class WorkerRunLoop;
 
-class WorkerOrWorkletThread {
+class WorkerOrWorkletThread : public ThreadSafeRefCounted<WorkerOrWorkletThread> {
 public:
     virtual ~WorkerOrWorkletThread() = default;
 

@@ -76,7 +76,7 @@ public:
     WorkerParameters isolatedCopy() const;
 };
 
-class WorkerThread : public ThreadSafeRefCounted<WorkerThread>, public WorkerOrWorkletThread {
+class WorkerThread : public WorkerOrWorkletThread {
 public:
     virtual ~WorkerThread();
 

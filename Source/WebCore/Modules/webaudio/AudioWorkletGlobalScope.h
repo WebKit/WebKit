@@ -30,10 +30,13 @@
 
 #if ENABLE(WEB_AUDIO)
 #include "AudioWorkletThread.h"
+#include "MessagePort.h"
 #include "WorkletGlobalScope.h"
 
 namespace WebCore {
 
+class AudioWorkletProcessorConstructionData;
+class AudioWorkletProcessor;
 class AudioWorkletThread;
 class JSAudioWorkletProcessorConstructor;
 
@@ -49,6 +52,7 @@ public:
     ~AudioWorkletGlobalScope();
 
     ExceptionOr<void> registerProcessor(String&& name, Ref<JSAudioWorkletProcessorConstructor>&&);
+    RefPtr<AudioWorkletProcessor> createProcessor(const String& name, TransferredMessagePort, Ref<SerializedScriptValue>&& options);
 
     void setCurrentFrame(float currentFrame) { m_currentFrame = currentFrame; }
     size_t currentFrame() const { return m_currentFrame; }
@@ -62,6 +66,8 @@ public:
 
     void postTask(Task&&) final;
 
+    std::unique_ptr<AudioWorkletProcessorConstructionData> takePendingProcessorConstructionData();
+
 private:
     AudioWorkletGlobalScope(AudioWorkletThread&, const WorkletParameters&);
 
@@ -72,6 +78,7 @@ private:
     size_t m_currentFrame { 0 };
     const float m_sampleRate;
     HashMap<String, RefPtr<JSAudioWorkletProcessorConstructor>> m_processorConstructorMap;
+    std::unique_ptr<AudioWorkletProcessorConstructionData> m_pendingProcessorConstructionData;
 };
 
 } // namespace WebCore

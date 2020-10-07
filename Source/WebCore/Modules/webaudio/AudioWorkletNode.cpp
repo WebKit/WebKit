@@ -35,17 +35,24 @@
 #include "AudioNodeOutput.h"
 #include "AudioParam.h"
 #include "AudioParamMap.h"
+#include "AudioWorklet.h"
+#include "AudioWorkletMessagingProxy.h"
 #include "AudioWorkletNodeOptions.h"
+#include "AudioWorkletProcessor.h"
 #include "BaseAudioContext.h"
+#include "JSAudioWorkletNodeOptions.h"
 #include "MessageChannel.h"
 #include "MessagePort.h"
+#include "SerializedScriptValue.h"
+#include "WorkerRunLoop.h"
+#include <JavaScriptCore/JSLock.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AudioWorkletNode);
 
-ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(BaseAudioContext& context, String&& name, AudioWorkletNodeOptions&& options)
+ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject& globalObject, BaseAudioContext& context, String&& name, AudioWorkletNodeOptions&& options)
 {
     if (!options.numberOfInputs && !options.numberOfOutputs)
         return Exception { NotSupportedError, "Number of inputs and outputs cannot both be 0"_s };
@@ -69,10 +76,20 @@ ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(BaseAudioContext& co
         return Exception { InvalidStateError, "Context is closed"_s };
 
     auto messageChannel = MessageChannel::create(*context.scriptExecutionContext());
-    // FIXME: Pass messageChannel's port2 to the AudioWorkletProcessor.
+    auto nodeMessagePort = messageChannel->port1();
+    auto processorMessagePort = messageChannel->port2();
+
+    RefPtr<SerializedScriptValue> serializedOptions;
+    {
+        auto lock = JSC::JSLockHolder { &globalObject };
+        auto* jsOptions = convertDictionaryToJS(globalObject, *JSC::jsCast<JSDOMGlobalObject*>(&globalObject), options);
+        serializedOptions = SerializedScriptValue::create(globalObject, jsOptions, SerializationErrorMode::NonThrowing);
+        if (!serializedOptions)
+            serializedOptions = SerializedScriptValue::nullValue();
+    }
 
     auto parameterData = WTFMove(options.parameterData);
-    auto node = adoptRef(*new AudioWorkletNode(context, WTFMove(name), WTFMove(options), *messageChannel->port1()));
+    auto node = adoptRef(*new AudioWorkletNode(context, name, WTFMove(options), *nodeMessagePort));
 
     auto result = node->handleAudioNodeOptions(options, { 2, ChannelCountMode::Max, ChannelInterpretation::Speakers });
     if (result.hasException())
@@ -90,15 +107,18 @@ ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(BaseAudioContext& co
         }
     }
 
+    context.audioWorklet().createProcessor(name, processorMessagePort->disentangle(), serializedOptions.releaseNonNull(), node);
+
     return node;
 }
 
-AudioWorkletNode::AudioWorkletNode(BaseAudioContext& context, String&& name, AudioWorkletNodeOptions&& options, Ref<MessagePort>&& port)
+AudioWorkletNode::AudioWorkletNode(BaseAudioContext& context, const String& name, AudioWorkletNodeOptions&& options, Ref<MessagePort>&& port)
     : AudioNode(context, NodeTypeWorklet)
-    , m_name(WTFMove(name))
+    , m_name(name)
     , m_parameters(AudioParamMap::create())
     , m_port(WTFMove(port))
 {
+    ASSERT(isMainThread());
     for (unsigned i = 0; i < options.numberOfInputs; ++i)
         addInput();
     for (unsigned i = 0; i < options.numberOfOutputs; ++i)
@@ -109,14 +129,30 @@ AudioWorkletNode::AudioWorkletNode(BaseAudioContext& context, String&& name, Aud
 
 AudioWorkletNode::~AudioWorkletNode()
 {
+    ASSERT(isMainThread());
+    {
+        auto locker = holdLock(m_processorLock);
+        if (m_processor) {
+            if (auto* workletProxy = context().audioWorklet().proxy())
+                workletProxy->postTaskForModeToWorkletGlobalScope([m_processor = WTFMove(m_processor)](ScriptExecutionContext&) { }, WorkerRunLoop::defaultMode());
+        }
+    }
     uninitialize();
+}
+
+void AudioWorkletNode::setProcessor(RefPtr<AudioWorkletProcessor>&& processor)
+{
+    ASSERT(!isMainThread());
+    auto locker = holdLock(m_processorLock);
+    m_processor = WTFMove(processor);
 }
 
 void AudioWorkletNode::process(size_t framesToProcess)
 {
+    ASSERT(!isMainThread());
     UNUSED_PARAM(framesToProcess);
 
-    // FIXME: Do actual processing.
+    // FIXME: Do actual processing via m_processor.
     for (unsigned i = 0; i < numberOfOutputs(); ++i)
         output(i)->bus()->zero();
 }
