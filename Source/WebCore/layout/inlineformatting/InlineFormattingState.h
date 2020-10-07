@@ -64,6 +64,9 @@ public:
     InlineLineRuns& lineRuns() { return m_lineRuns; }
     void addLineRun(const LineRun& run) { m_lineRuns.append(run); }
 
+    void setClearGapAfterLastLine(InlineLayoutUnit verticalGap);
+    InlineLayoutUnit clearGapAfterLastLine() const { return m_clearGapAfterLastLine; }
+
     void clearLineAndRuns();
     void shrinkToFit();
 
@@ -73,13 +76,21 @@ private:
     InlineLines m_lines;
     InlineLineBoxes m_lineBoxes;
     InlineLineRuns m_lineRuns;
+    InlineLayoutUnit m_clearGapAfterLastLine { 0 };
 };
+
+inline void InlineFormattingState::setClearGapAfterLastLine(InlineLayoutUnit verticalGap)
+{
+    ASSERT(verticalGap >= 0);
+    m_clearGapAfterLastLine = verticalGap;
+}
 
 inline void InlineFormattingState::clearLineAndRuns()
 {
     m_lines.clear();
     m_lineBoxes.clear();
     m_lineRuns.clear();
+    m_clearGapAfterLastLine = { };
 }
 
 inline void InlineFormattingState::shrinkToFit()

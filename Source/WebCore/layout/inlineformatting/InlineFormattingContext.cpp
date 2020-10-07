@@ -166,6 +166,10 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
             ASSERT(needsLayoutRange.start < lineContentRange.end);
             isFirstLine = false;
             lineLogicalTop = geometry().logicalTopForNextLine(lineContent, lineLogicalRect.bottom(), floatingContext);
+            if (lineContent.isLastLineWithInlineContent) {
+                // The final content height of this inline formatting context should include the cleared floats as well.
+                formattingState().setClearGapAfterLastLine(lineLogicalTop - lineLogicalRect.bottom());
+            }
             // When the trailing content is partial, we need to reuse the last InlineTextItem.
             auto lastInlineItemNeedsPartialLayout = lineContent.partialTrailingContentLength;
             if (lastInlineItemNeedsPartialLayout) {

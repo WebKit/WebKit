@@ -1,3 +1,28 @@
+2020-10-07  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Adjust the inline formatting context root's content height when the last line has float clear
+        https://bugs.webkit.org/show_bug.cgi?id=217432
+
+        Reviewed by Antti Koivisto.
+
+        This patch expands the support for inline content to clear floats (r268122) by taking the clear gap into
+        account when it occurs after the last line (e.g. <div>foobar<br clear=left"></div>).
+        In such cases the inline formatting context's content height needs to be adjusted with the computed clear
+        gap value.
+
+        Test: fast/layoutformattingcontext/float-avoiding-br-last-line.html
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::contentHeightForFormattingContextRoot const):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        * layout/inlineformatting/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::setClearGapAfterLastLine):
+        (WebCore::Layout::InlineFormattingState::clearGapAfterLastLine const):
+        (WebCore::Layout::InlineFormattingState::clearLineAndRuns):
+
 2020-10-07  Youenn Fablet  <youenn@apple.com>
 
         Add support for MediaRecorder pause/resume

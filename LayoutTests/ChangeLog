@@ -1,3 +1,13 @@
+2020-10-07  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Adjust the inline formatting context root's content height when the last line has float clear
+        https://bugs.webkit.org/show_bug.cgi?id=217432
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/float-avoiding-br-last-line-expected.html: Added.
+        * fast/layoutformattingcontext/float-avoiding-br-last-line.html: Added.
+
 2020-10-07  Youenn Fablet  <youenn@apple.com>
 
         Add support for MediaRecorder pause/resume
