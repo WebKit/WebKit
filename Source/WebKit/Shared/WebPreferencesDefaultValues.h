@@ -381,4 +381,8 @@ bool defaultWebMParserEnabled();
 bool defaultWebRTCH264LowLatencyEncoderEnabled();
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+bool defaultMediaRecorderEnabled();
+#endif
+
 } // namespace WebKit

@@ -559,7 +559,7 @@ UseGiantTiles:
 
 MediaRecorderEnabled:
     type: bool
-    defaultValue: false
+    defaultValue: defaultMediaRecorderEnabled()
     webcoreBinding: RuntimeEnabledFeatures
     condition: ENABLE(MEDIA_STREAM)
     humanReadableName: "MediaRecorder"
