@@ -1,13 +1,13 @@
 
-FAIL MediaRecorder sets no default mimeType in the constructor for audio assert_equals: MediaRecorder has no default mimeType expected "" but got "audio/mp4"
-FAIL MediaRecorder sets no default mimeType in the constructor for video assert_equals: MediaRecorder has no default mimeType expected "" but got "video/mp4"
-FAIL MediaRecorder sets no default mimeType in the constructor for audio/video assert_equals: MediaRecorder has no default mimeType expected "" but got "video/mp4"
+PASS MediaRecorder sets no default mimeType in the constructor for audio
+PASS MediaRecorder sets no default mimeType in the constructor for video
+PASS MediaRecorder sets no default mimeType in the constructor for audio/video
 PASS MediaRecorder invalid audio mimeType throws
 PASS MediaRecorder invalid audio mimeType is unsupported
 PASS MediaRecorder invalid video mimeType throws
 PASS MediaRecorder invalid video mimeType is unsupported
 PASS Supported mimeType audio/mp4 is set immediately after constructing
-FAIL Supported mimeType video/mp4 is set immediately after constructing assert_equals: Supported mimeType is set expected "video/mp4" but got "audio/mp4"
+PASS Supported mimeType video/mp4 is set immediately after constructing
 PASS Unsupported mimeType audio/ogg throws
 PASS Unsupported mimeType audio/ogg; codecs="vorbis" throws
 PASS Unsupported mimeType audio/ogg; codecs="opus" throws
@@ -26,9 +26,9 @@ PASS Unsupported mimeType video/webm; codecs="av1, opus" throws
 PASS MediaRecorder sets a nonempty mimeType on 'onstart' for audio
 PASS MediaRecorder sets a nonempty mimeType on 'onstart' for video
 PASS MediaRecorder sets a nonempty mimeType on 'onstart' for audio/video
-FAIL MediaRecorder mimeType is not set before 'onstart' for audio assert_equals: expected "" but got "audio/mp4"
-FAIL MediaRecorder mimeType is not set before 'onstart' for video assert_equals: expected "" but got "video/mp4"
-FAIL MediaRecorder mimeType is not set before 'onstart' for audio/video assert_equals: expected "" but got "video/mp4"
+PASS MediaRecorder mimeType is not set before 'onstart' for audio
+PASS MediaRecorder mimeType is not set before 'onstart' for video
+PASS MediaRecorder mimeType is not set before 'onstart' for audio/video
 PASS MediaRecorder doesn't fire 'onstart' multiple times for audio
 PASS MediaRecorder doesn't fire 'onstart' multiple times for video
 PASS MediaRecorder doesn't fire 'onstart' multiple times for audio/video

@@ -51,15 +51,15 @@ void RemoteMediaRecorderManager::didReceiveRemoteMediaRecorderMessage(IPC::Conne
         recorder->didReceiveMessage(connection, decoder);
 }
 
-void RemoteMediaRecorderManager::createRecorder(MediaRecorderIdentifier identifier, bool recordAudio, bool recordVideo, const MediaRecorderPrivateOptions& options, CompletionHandler<void(Optional<ExceptionData>&&)>&& completionHandler)
+void RemoteMediaRecorderManager::createRecorder(MediaRecorderIdentifier identifier, bool recordAudio, bool recordVideo, const MediaRecorderPrivateOptions& options, CompletionHandler<void(Optional<ExceptionData>&&, String&&)>&& completionHandler)
 {
     ASSERT(!m_recorders.contains(identifier));
     auto recorder = RemoteMediaRecorder::create(m_gpuConnectionToWebProcess, identifier, recordAudio, recordVideo, options);
     if (!recorder)
-        return completionHandler(ExceptionData { NotSupportedError, "Unable to create a recorder with the provided stream"_s });
+        return completionHandler(ExceptionData { NotSupportedError, "Unable to create a recorder with the provided stream"_s }, { });
 
+    completionHandler({ }, recorder->mimeType());
     m_recorders.add(identifier, WTFMove(recorder));
-    completionHandler({ });
 }
 
 void RemoteMediaRecorderManager::releaseRecorder(MediaRecorderIdentifier identifier)
