@@ -32,7 +32,6 @@
 #include "EXTColorBufferFloat.h"
 #include "EXTColorBufferHalfFloat.h"
 #include "EXTFloatBlend.h"
-#include "EXTTextureCompressionRGTC.h"
 #include "EXTTextureFilterAnisotropic.h"
 #include "EventLoop.h"
 #include "ExtensionsGL.h"
@@ -2672,7 +2671,6 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
         return variable.get(); \
     }
 
-    ENABLE_IF_REQUESTED(EXTTextureCompressionRGTC, m_extTextureCompressionRGTC, "EXT_texture_compression_rgtc", enableSupportedExtension("GL_EXT_texture_compression_rgtc"_s));
     ENABLE_IF_REQUESTED(EXTTextureFilterAnisotropic, m_extTextureFilterAnisotropic, "EXT_texture_filter_anisotropic", enableSupportedExtension("GL_EXT_texture_filter_anisotropic"_s));
     ENABLE_IF_REQUESTED(OESTextureFloatLinear, m_oesTextureFloatLinear, "OES_texture_float_linear", enableSupportedExtension("GL_OES_texture_float_linear"_s));
     ENABLE_IF_REQUESTED(WebGLLoseContext, m_webglLoseContext, "WEBGL_lose_context", true);
@@ -2705,8 +2703,6 @@ Optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
     auto& extensions = m_context->getExtensions();
     if (extensions.supports("GL_OES_texture_float_linear"_s))
         result.append("OES_texture_float_linear"_s);
-    if (extensions.supports("GL_EXT_texture_compression_rgtc"_s))
-        result.append("EXT_texture_compression_rgtc"_s);
     if (extensions.supports("GL_EXT_texture_filter_anisotropic"_s))
         result.append("EXT_texture_filter_anisotropic"_s);
     if (WebGLCompressedTextureASTC::supported(*this))

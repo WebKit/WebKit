@@ -1,3 +1,17 @@
+2020-10-07  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r268085.
+        https://bugs.webkit.org/show_bug.cgi?id=217424
+
+        Added broken test webgl/conformance/extensions/s3tc-and-
+        rgtc.html
+
+        Reverted changeset:
+
+        "Support EXT_texture_compression_rgtc WebGL extension"
+        https://bugs.webkit.org/show_bug.cgi?id=217198
+        https://trac.webkit.org/changeset/268085
+
 2020-10-07  Youenn Fablet  <youenn@apple.com>
 
         Make sure to fire the correct set of events in case MediaRecorder stream has track changes

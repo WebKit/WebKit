@@ -35,7 +35,6 @@
 #include "EXTFloatBlend.h"
 #include "EXTFragDepth.h"
 #include "EXTShaderTextureLOD.h"
-#include "EXTTextureCompressionRGTC.h"
 #include "EXTTextureFilterAnisotropic.h"
 #include "EXTsRGB.h"
 #include "ExtensionsGL.h"
@@ -154,7 +153,6 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
         return m_extShaderTextureLOD.get();
     }
     ENABLE_IF_REQUESTED(EXTTextureFilterAnisotropic, m_extTextureFilterAnisotropic, "EXT_texture_filter_anisotropic", enableSupportedExtension("GL_EXT_texture_filter_anisotropic"_s));
-    ENABLE_IF_REQUESTED(EXTTextureCompressionRGTC, m_extTextureCompressionRGTC, "EXT_texture_compression_rgtc", enableSupportedExtension("GL_EXT_texture_compression_rgtc"_s));
     ENABLE_IF_REQUESTED(OESStandardDerivatives, m_oesStandardDerivatives, "OES_standard_derivatives", enableSupportedExtension("GL_OES_standard_derivatives"_s));
     ENABLE_IF_REQUESTED(OESTextureFloat, m_oesTextureFloat, "OES_texture_float", OESTextureFloat::supported(*this));
     ENABLE_IF_REQUESTED(OESTextureFloatLinear, m_oesTextureFloatLinear, "OES_texture_float_linear", enableSupportedExtension("GL_OES_texture_float_linear"_s));
@@ -233,8 +231,6 @@ Optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
         result.append("OES_standard_derivatives"_s);
     if (m_context->getExtensions().supports("GL_EXT_shader_texture_lod"_s) || m_context->getExtensions().supports("GL_ARB_shader_texture_lod"_s))
         result.append("EXT_shader_texture_lod"_s);
-    if (m_context->getExtensions().supports("GL_EXT_texture_compression_rgtc"_s))
-        result.append("EXT_texture_compression_rgtc"_s);
     if (m_context->getExtensions().supports("GL_EXT_texture_filter_anisotropic"_s))
         result.append("EXT_texture_filter_anisotropic"_s);
     if (m_context->getExtensions().supports("GL_OES_vertex_array_object"_s))

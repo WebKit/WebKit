@@ -41,7 +41,6 @@ public:
         EXTBlendMinMaxName,
         EXTFragDepthName,
         EXTShaderTextureLODName,
-        EXTTextureCompressionRGTCName,
         EXTTextureFilterAnisotropicName,
         EXTsRGBName,
         OESTextureFloatName,
