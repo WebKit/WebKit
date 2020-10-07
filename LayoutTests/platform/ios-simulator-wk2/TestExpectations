@@ -144,5 +144,3 @@ webkit.org/b/217184 imported/w3c/web-platform-tests/xhr/event-timeout.any.html [
 webkit.org/b/217414 [ Release ] imported/w3c/web-platform-tests/user-timing/measure-l3.any.html [ Pass Failure ]
 
 webkit.org/b/217419 [ Release ] imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Failure ]
-
-webkit.org/b/217435 fast/images/image-orientation-none-canvas.html [ Pass Failure ]

@@ -1,3 +1,12 @@
+2020-10-07  Karl Rackler  <rackler@apple.com>
+
+        Remove test expectation for fast/images/image-orientation-none-canvas.html while the issue is investigated.
+        https://bugs.webkit.org/show_bug.cgi?id=217435
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2020-10-07  Aditya Keerthi  <akeerthi@apple.com>
 
         [Contact Picker API] Add support for ContactsManager.getProperties()
