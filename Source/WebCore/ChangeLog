@@ -1,3 +1,29 @@
+2020-10-07  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Using CSS wide keywords as a fallback for variable substitution works inconsistently.
+        https://bugs.webkit.org/show_bug.cgi?id=197158
+
+        Reviewed by Darin Adler.
+
+        Enable CSS-wide keywords to be used as variable fallbacks.
+
+        See spec-issue for further discussion:
+        https://github.com/w3c/csswg-drafts/issues/5325
+
+        Patch inspired by Chromium's implementation:
+        https://bugs.chromium.org/p/chromium/issues/detail?id=954963#c5
+
+        Tests: fast/css/variables/css-wide-keywords-in-fallback-inherited-property.html
+               fast/css/variables/css-wide-keywords-in-fallback-non-inherited-property.html
+
+        * css/parser/CSSPropertyParser.cpp: Add `maybeConsumeCSSWideKeyword`
+        function.
+        (WebCore::CSSPropertyParser::parseSingleValue): Before trying to parse
+        the property-specific values for the input `property`, first try parsing the
+        CSS-wide keywords via `maybeConsumeCSSWideKeyword`.
+        (WebCore::CSSPropertyParser::consumeCSSWideKeyword): Refactor to use
+        `maybeConsumeCSSWideKeyword`.
+
 2020-10-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Use display structures (InlineContent) to provide content height and baseline used values

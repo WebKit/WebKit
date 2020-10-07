@@ -1,3 +1,18 @@
+2020-10-07  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Using CSS wide keywords as a fallback for variable substitution works inconsistently.
+        https://bugs.webkit.org/show_bug.cgi?id=197158
+
+        Reviewed by Darin Adler.
+
+        Add tests ensuring CSS-wide keywords are functional as variable
+        fallbacks.
+
+        * fast/css/variables/css-wide-keywords-in-fallback-inherited-property-expected.html: Added.
+        * fast/css/variables/css-wide-keywords-in-fallback-inherited-property.html: Added.
+        * fast/css/variables/css-wide-keywords-in-fallback-non-inherited-property-expected.html: Added.
+        * fast/css/variables/css-wide-keywords-in-fallback-non-inherited-property.html: Added.
+
 2020-10-07  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process] Unskip some layout tests

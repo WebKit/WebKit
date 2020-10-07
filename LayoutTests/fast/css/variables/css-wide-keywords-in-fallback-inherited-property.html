@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        #wrapper { color: blue; }
+
+        #initial { color: var(--unknownVar, initial); }
+        #inherit { color: var(--unknownVar, inherit); }
+        #unset   { color: var(--unknownVar, unset); }
+    </style>
+</head>
+<body>
+<div id="wrapper">
+    <div id="initial">
+        This should be initial colored text via the `initial` keyword.
+    </div>
+    <div id="inherit">
+        This should be blue-colored text via the `inherit` keyword.
+    </div>
+    <div id="unset">
+        This should be blue-colored text via the `unset` keyword.
+    </div>
+</div>
+</body>
+</html>

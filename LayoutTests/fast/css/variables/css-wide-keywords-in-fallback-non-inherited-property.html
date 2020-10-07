@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        div {
+            border-style: solid;
+            border-width: 20px;
+        }
+        #wrapper {
+            border-color: blue;
+            height: 380px;
+            width: 600px
+        }
+        #wrapper > div {
+            height: 60px;
+            width: 520px;
+            margin: 20px;
+        }
+        
+        #initial { border-color: var(--unknownVar, initial); }
+        #inherit { border-color: var(--unknownVar, inherit); }
+        #unset   { border-color: var(--unknownVar, unset); }
+    </style>
+</head>
+<body>
+<div id="wrapper">
+    <div id="initial">
+        This box should have an initial colored 20px border via the `initial` keyword.
+    </div>
+    <div id="inherit">
+        This box should have a blue-colored 20px border via the `inherit` keyword.
+    </div>
+    <div id="unset">
+        This box should have an initial colored 20px border via the `unset` keyword.
+    </div>
+</div>
+</body>
+</html>
