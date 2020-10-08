@@ -2934,22 +2934,16 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 #endif
 }
 
-- (BOOL)requiresAccessoryView
+static bool elementTypeRequiresAccessoryView(WebKit::InputType type)
 {
-    if ([_formInputSession accessoryViewShouldNotShow])
-        return NO;
-
-    if ([_formInputSession customInputAccessoryView])
-        return YES;
-
-    switch (_focusedElementInformation.elementType) {
+    switch (type) {
     case WebKit::InputType::None:
     case WebKit::InputType::Drawing:
     case WebKit::InputType::Date:
     case WebKit::InputType::DateTimeLocal:
     case WebKit::InputType::Month:
     case WebKit::InputType::Time:
-        return NO;
+        return false;
     case WebKit::InputType::Text:
     case WebKit::InputType::Password:
     case WebKit::InputType::Search:
@@ -2967,6 +2961,17 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 #endif
         return !WebKit::currentUserInterfaceIdiomIsPadOrMac();
     }
+}
+
+- (BOOL)requiresAccessoryView
+{
+    if ([_formInputSession accessoryViewShouldNotShow])
+        return NO;
+
+    if ([_formInputSession customInputAccessoryView])
+        return YES;
+
+    return elementTypeRequiresAccessoryView(_focusedElementInformation.elementType);
 }
 
 - (UITextInputAssistantItem *)inputAssistantItem
@@ -5814,13 +5819,10 @@ static bool shouldShowKeyboardForElement(const WebKit::FocusedElementInformation
     if (information.inputMode == WebCore::InputMode::None)
         return false;
 
-    if (information.elementType == WebKit::InputType::Drawing)
-        return false;
-
     if (mayContainSelectableText(information.elementType))
         return true;
 
-    return !WebKit::currentUserInterfaceIdiomIsPadOrMac();
+    return elementTypeRequiresAccessoryView(information.elementType);
 }
 
 static WebCore::FloatRect rectToRevealWhenZoomingToFocusedElement(const WebKit::FocusedElementInformation& elementInfo, const WebKit::EditorState& editorState)

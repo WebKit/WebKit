@@ -1,3 +1,40 @@
+2020-10-08  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Blurring a text input and focusing a date input changes the scrollable area
+        https://bugs.webkit.org/show_bug.cgi?id=217325
+        <rdar://problem/69979171>
+
+        Reviewed by Wenson Hsieh.
+
+        iOS 14 changed the presentation style of date/time pickers on iPhones.
+        Previously, date/time pickers would show up in the keyboard view. Now,
+        pickers are shown in UIContextMenus.
+
+        When the change was made, shouldShowKeyboardForElement in WKContentViewInteraction
+        was not updated to reflect the new behavior, and continued to return
+        true for date/time inputs.
+
+        This inaccuracy led to WKContentView ignoring the UIKeyboardWillHideNotification
+        when blurring a text input and focusing a date input, since it assumed
+        the keyboard would stay presented. Consequently, the UIScrollView
+        adjustments made when presenting the keyboard for the text input are not
+        reverted when presenting the date picker, leading to a permanent change
+        in the scrollable area.
+
+        To fix, update shouldShowKeyboardForElement to return false for date/time
+        inputs. Note that the original patch which changed the behavior
+        correctly updated [WKContentView requiresAccessoryView] but did not
+        update shouldShowKeyboardForElement. To prevent a similar mistake from
+        happening again, the logic which determines which input types have a
+        keyboard view was moved into elementTypeRequiresAccessoryView.
+
+        Test: fast/forms/ios/constant-scroll-area-when-moving-focus-between-fields.html
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (elementTypeRequiresAccessoryView):
+        (-[WKContentView requiresAccessoryView]):
+        (shouldShowKeyboardForElement):
+
 2020-10-08  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Deny access to performance analysis service in the WebContent process
