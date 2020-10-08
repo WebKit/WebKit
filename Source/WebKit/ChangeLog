@@ -1,3 +1,18 @@
+2020-10-08  Peng Liu  <peng.liu6@apple.com>
+
+        RemoteAudioSession::category() returns an incorrect value after category changing
+        https://bugs.webkit.org/show_bug.cgi?id=217459
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, covered by existing tests.
+
+        * WebProcess/GPU/media/RemoteAudioSession.cpp:
+        (WebKit::RemoteAudioSession::setCategory): Update `m_configuration.category`
+        and `m_configuration.routeSharingPolicy` so that RemoteAudioSession::category()
+        will return the correct value.
+        * WebProcess/GPU/media/RemoteAudioSession.h:
+
 2020-10-08  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Blurring a text input and focusing a date input changes the scrollable area

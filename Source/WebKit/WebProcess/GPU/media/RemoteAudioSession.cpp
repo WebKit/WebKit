@@ -65,12 +65,13 @@ IPC::Connection& RemoteAudioSession::connection()
 
 void RemoteAudioSession::setCategory(CategoryType type, RouteSharingPolicy policy)
 {
-    if (type == m_category && policy == m_routeSharingPolicy)
+    if (type == m_configuration.category && policy == m_configuration.routeSharingPolicy)
         return;
 
-    m_category = type;
-    m_routeSharingPolicy = policy;
-    connection().send(Messages::RemoteAudioSessionProxy::SetCategory(m_category, m_routeSharingPolicy), { });
+    m_configuration.category = type;
+    m_configuration.routeSharingPolicy = policy;
+
+    connection().send(Messages::RemoteAudioSessionProxy::SetCategory(type, policy), { });
 }
 
 void RemoteAudioSession::setPreferredBufferSize(size_t size)

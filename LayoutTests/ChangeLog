@@ -1,3 +1,14 @@
+2020-10-08  Peng Liu  <peng.liu6@apple.com>
+
+        RemoteAudioSession::category() returns an incorrect value after category changing
+        https://bugs.webkit.org/show_bug.cgi?id=217459
+
+        Reviewed by Youenn Fablet.
+
+        * gpu-process/TestExpectations: Minor clean-up and unskip some tests after fixing
+        the bug of RemoteAudioSession::category().
+        * platform/mac/media/audio-session-category-audio-autoplay.html:
+
 2020-10-08  Karl Rackler  <rackler@apple.com>
 
         Move test expectations from ios-wk2 to ios-simulator-wk2
