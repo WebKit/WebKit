@@ -139,7 +139,6 @@ static WKWebsiteDataStore *persistentDataStore()
             [configuration.preferences _setEnabled:enabled forInternalDebugFeature:feature];
         }
 
-        configuration._mediaCaptureEnabled = YES;
         configuration.preferences._fullScreenEnabled = YES;
         configuration.preferences._allowsPictureInPictureMediaPlayback = YES;
         configuration.preferences._developerExtrasEnabled = YES;

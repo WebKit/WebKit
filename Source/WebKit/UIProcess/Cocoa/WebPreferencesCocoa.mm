@@ -30,6 +30,10 @@
 #import "WebPreferencesKeys.h"
 #import <wtf/text/StringConcatenate.h>
 
+#if ENABLE(MEDIA_STREAM)
+#include "UserMediaPermissionRequestManagerProxy.h"
+#endif
+
 namespace WebKit {
 
 static inline NSString *makeKey(const String& identifier, const String& keyPrefix, const String& key)
@@ -139,6 +143,15 @@ static void setDebugUInt32ValueIfInUserDefaults(const String& identifier, const 
 void WebPreferences::platformInitializeStore()
 {
     @autoreleasepool {
+#if ENABLE(MEDIA_STREAM)
+        // NOTE: This is set here, and does not setting the default using the 'defaultValue' mechanism, because the
+        // 'defaultValue' must be the same in both the UIProcess and WebProcess, which may not be true for audio
+        // and video capture state as the WebProcess is not entitled to use the camera or microphone by default.
+        // If other preferences need to dynamically set the initial value based on host app state, we should extended
+        // the declarative format rather than adding more special cases here.
+        m_store.setBoolValueForKey(WebPreferencesKey::mediaDevicesEnabledKey(), UserMediaPermissionRequestManagerProxy::permittedToCaptureAudio() || UserMediaPermissionRequestManagerProxy::permittedToCaptureVideo());
+#endif
+
 #define INITIALIZE_DEBUG_PREFERENCE_FROM_NSUSERDEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
         setDebug##TypeName##ValueIfInUserDefaults(m_identifier, m_keyPrefix, m_globalDebugKeyPrefix, WebPreferencesKey::KeyLower##Key(), m_store);
 
