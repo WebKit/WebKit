@@ -305,7 +305,7 @@ void AudioParam::calculateTimelineValues(float* values, unsigned numberOfValues)
 
     // Note we're running control rate at the sample-rate.
     // Pass in the current value as default value.
-    m_value = m_timeline.valuesForTimeRange(startFrame, endFrame, m_value, minValue(), maxValue(), values, numberOfValues, sampleRate, sampleRate);
+    m_value = m_timeline.valuesForFrameRange(startFrame, endFrame, m_value, minValue(), maxValue(), values, numberOfValues, sampleRate, sampleRate);
 }
 
 void AudioParam::connect(AudioNodeOutput* output)

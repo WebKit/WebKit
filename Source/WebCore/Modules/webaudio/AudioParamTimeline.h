@@ -58,7 +58,7 @@ public:
     // controlRate is the rate (number per second) at which parameter values will be calculated.
     // It should equal sampleRate for sample-accurate parameter changes, and otherwise will usually match
     // the render quantum size such that the parameter value changes once per render quantum.
-    float valuesForTimeRange(size_t startFrame, size_t endFrame, float defaultValue, float minValue, float maxValue, float* values, unsigned numberOfValues, double sampleRate, double controlRate);
+    float valuesForFrameRange(size_t startFrame, size_t endFrame, float defaultValue, float minValue, float maxValue, float* values, unsigned numberOfValues, double sampleRate, double controlRate);
 
     bool hasValues() const { return m_events.size(); }
 
@@ -101,7 +101,7 @@ private:
         Seconds time() const { return m_time; }
         float timeConstant() const { return m_timeConstant; }
         Seconds duration() const { return m_duration; }
-        Vector<float>& curve() { return m_curve; }
+        const Vector<float>& curve() const { return m_curve; }
         ParamEvent* savedEvent() { return m_savedEvent.get(); }
 
         void setCancelledValue(float cancelledValue)
@@ -152,16 +152,51 @@ private:
         std::unique_ptr<ParamEvent> m_savedEvent;
     };
 
+    // State of the timeline for the current event.
+    struct AutomationState {
+        // Parameters for the current automation request. Number of
+        // values to be computed for the automation request
+        const unsigned numberOfValues;
+        // Start and end frames for this automation request
+        const size_t startFrame;
+        const size_t endFrame;
+
+        // Sample rate and control rate for this request
+        const double sampleRate;
+        const double controlRate;
+        const double samplingPeriod;
+
+        // Parameters needed for processing the current event.
+        const unsigned fillToFrame;
+        const size_t fillToEndFrame;
+
+        // Value and time for the current event
+        const float value1;
+        const Seconds time1;
+
+        // Value and time for the next event, if any.
+        const float value2;
+        const Seconds time2;
+
+        // The current event, and it's index in the event vector.
+        const ParamEvent* event;
+        const int eventIndex;
+    };
+
     void removeCancelledEvents(size_t firstEventToRemove);
     ExceptionOr<void> insertEvent(UniqueRef<ParamEvent>);
-    float valuesForTimeRangeImpl(size_t startFrame, size_t endFrame, float defaultValue, float* values, unsigned numberOfValues, double sampleRate, double controlRate);
+    float valuesForFrameRangeImpl(size_t startFrame, size_t endFrame, float defaultValue, float* values, unsigned numberOfValues, double sampleRate, double controlRate);
     float linearRampAtTime(Seconds t, float value1, Seconds time1, float value2, Seconds time2);
     float exponentialRampAtTime(Seconds t, float value1, Seconds time1, float value2, Seconds time2);
     float valueCurveAtTime(Seconds t, Seconds time1, Seconds duration, const float* curveData, size_t curveLength);
     void handleCancelValues(ParamEvent&, ParamEvent* nextEvent, float& value2, Seconds& time2, ParamEvent::Type& nextEventType);
     bool isEventCurrent(const ParamEvent&, const ParamEvent* nextEvent, size_t currentFrame, double sampleRate) const;
-    void processLinearRamp(float* values, unsigned& writeIndex, unsigned fillToFrame, float& value, float value1, float value2, Seconds deltaTime, Seconds time1, double samplingPeriod, size_t& currentFrame);
-    void processSetTarget(float* values, unsigned& writeIndex, unsigned fillToFrame, float& value, float target, float discreteTimeConstant);
+
+    void processLinearRamp(const AutomationState&, float* values, size_t& currentFrame, float& value, unsigned& writeIndex);
+    void processExponentialRamp(const AutomationState&, float* values, size_t& currentFrame, float& value, unsigned& writeIndex);
+    void processCancelValues(const AutomationState&, float* values, size_t& currentFrame, float& value, unsigned& writeIndex);
+    void processSetTarget(const AutomationState&, float* values, size_t& currentFrame, float& value, unsigned& writeIndex);
+    void processSetValueCurve(const AutomationState&, float* values, size_t& currentFrame, float& value, unsigned& writeIndex);
     void processSetTargetFollowedByRamp(int eventIndex, ParamEvent*&, ParamEvent::Type nextEventType, size_t currentFrame, double samplingPeriod, double controlRate, float& value);
 
     Vector<UniqueRef<ParamEvent>> m_events;
