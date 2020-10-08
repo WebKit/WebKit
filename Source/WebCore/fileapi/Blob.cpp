@@ -37,6 +37,8 @@
 #include "BlobURL.h"
 #include "File.h"
 #include "JSDOMPromiseDeferred.h"
+#include "ReadableStream.h"
+#include "ReadableStreamSource.h"
 #include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
 #include "ThreadableBlobRegistry.h"
@@ -234,6 +236,48 @@ void Blob::arrayBuffer(ScriptExecutionContext& context, Ref<DeferredPromise>&& p
         }
         promise->resolve<IDLArrayBuffer>(*arrayBuffer);
     });
+}
+
+ExceptionOr<Ref<ReadableStream>> Blob::stream(ScriptExecutionContext& scriptExecutionContext)
+{
+    class BlobStreamSource : public FileReaderLoaderClient, public ReadableStreamSource {
+    public:
+        BlobStreamSource(ScriptExecutionContext& scriptExecutionContext, Blob& blob)
+            : m_loader(makeUniqueRef<FileReaderLoader>(FileReaderLoader::ReadType::ReadAsArrayBuffer, this))
+        {
+            m_loader->start(&scriptExecutionContext, blob);
+        }
+
+    private:
+        // ReadableStreamSource
+        void setActive() final { }
+        void setInactive() final { }
+        void doStart() final { }
+        void doPull() final { }
+        void doCancel() final
+        {
+            m_loader->cancel();
+        }
+
+        // FileReaderLoaderClient
+        void didStartLoading() final { }
+        void didReceiveData() final
+        {
+            controller().enqueue(m_loader->takeRawData());
+        }
+        void didFinishLoading() final
+        {
+            controller().close();
+        }
+        void didFail(ExceptionCode exception) final
+        {
+            controller().error(Exception { exception });
+        }
+
+        UniqueRef<FileReaderLoader> m_loader;
+    };
+
+    return ReadableStream::create(*scriptExecutionContext.execState(), adoptRef(*new BlobStreamSource(scriptExecutionContext, *this)));
 }
 
 #if ASSERT_ENABLED

@@ -50,8 +50,11 @@ namespace WebCore {
 class Blob;
 class BlobLoader;
 class DeferredPromise;
+class ReadableStream;
 class ScriptExecutionContext;
 class SharedBuffer;
+
+template<typename> class ExceptionOr;
 
 using BlobPartVariant = Variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, RefPtr<Blob>, String>;
 
@@ -123,6 +126,7 @@ public:
 
     void text(ScriptExecutionContext&, Ref<DeferredPromise>&&);
     void arrayBuffer(ScriptExecutionContext&, Ref<DeferredPromise>&&);
+    ExceptionOr<Ref<ReadableStream>> stream(ScriptExecutionContext&);
 
 protected:
     WEBCORE_EXPORT explicit Blob(ScriptExecutionContext*);

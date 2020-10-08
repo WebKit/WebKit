@@ -1,3 +1,15 @@
+2020-10-08  Alex Christensen  <achristensen@webkit.org>
+
+        Implement Blob.stream
+        https://bugs.webkit.org/show_bug.cgi?id=217457
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/FileAPI/blob/Blob-stream.any-expected.txt:
+        * web-platform-tests/FileAPI/blob/Blob-stream.any.worker-expected.txt:
+        * web-platform-tests/FileAPI/idlharness-expected.txt:
+        * web-platform-tests/FileAPI/idlharness.worker-expected.txt:
+
 2020-10-08  Rob Buis  <rbuis@igalia.com>
 
         Fix image-loading-lazy-multiple-times.html

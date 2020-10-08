@@ -31,10 +31,11 @@
 #pragma once
 
 #include "ExceptionCode.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class FileReaderLoaderClient {
+class FileReaderLoaderClient : public CanMakeWeakPtr<FileReaderLoaderClient> {
 public:
     virtual ~FileReaderLoaderClient() = default;
 

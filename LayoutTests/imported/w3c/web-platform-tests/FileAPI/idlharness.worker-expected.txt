@@ -13,7 +13,7 @@ PASS Blob interface: existence and properties of interface prototype object's @@
 PASS Blob interface: attribute size
 PASS Blob interface: attribute type
 PASS Blob interface: operation slice(optional long long, optional long long, optional DOMString)
-FAIL Blob interface: operation stream() assert_own_property: interface prototype object missing non-static operation expected property "stream" missing
+PASS Blob interface: operation stream()
 PASS Blob interface: operation text()
 PASS Blob interface: operation arrayBuffer()
 PASS Blob must be primary interface of new Blob(["TEST"])
@@ -22,7 +22,7 @@ PASS Blob interface: new Blob(["TEST"]) must inherit property "size" with the pr
 PASS Blob interface: new Blob(["TEST"]) must inherit property "type" with the proper type
 PASS Blob interface: new Blob(["TEST"]) must inherit property "slice(optional long long, optional long long, optional DOMString)" with the proper type
 PASS Blob interface: calling slice(optional long long, optional long long, optional DOMString) on new Blob(["TEST"]) with too few arguments must throw TypeError
-FAIL Blob interface: new Blob(["TEST"]) must inherit property "stream()" with the proper type assert_inherits: property "stream" not found in prototype chain
+PASS Blob interface: new Blob(["TEST"]) must inherit property "stream()" with the proper type
 PASS Blob interface: new Blob(["TEST"]) must inherit property "text()" with the proper type
 PASS Blob interface: new Blob(["TEST"]) must inherit property "arrayBuffer()" with the proper type
 PASS File interface: existence and properties of interface object
@@ -41,7 +41,7 @@ PASS Blob interface: new File(["myFileBits"], "myFileName") must inherit propert
 PASS Blob interface: new File(["myFileBits"], "myFileName") must inherit property "type" with the proper type
 PASS Blob interface: new File(["myFileBits"], "myFileName") must inherit property "slice(optional long long, optional long long, optional DOMString)" with the proper type
 PASS Blob interface: calling slice(optional long long, optional long long, optional DOMString) on new File(["myFileBits"], "myFileName") with too few arguments must throw TypeError
-FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit property "stream()" with the proper type assert_inherits: property "stream" not found in prototype chain
+PASS Blob interface: new File(["myFileBits"], "myFileName") must inherit property "stream()" with the proper type
 PASS Blob interface: new File(["myFileBits"], "myFileName") must inherit property "text()" with the proper type
 PASS Blob interface: new File(["myFileBits"], "myFileName") must inherit property "arrayBuffer()" with the proper type
 PASS FileList interface: existence and properties of interface object

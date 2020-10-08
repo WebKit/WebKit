@@ -1,5 +1,18 @@
 2020-10-08  Alex Christensen  <achristensen@webkit.org>
 
+        Implement Blob.stream
+        https://bugs.webkit.org/show_bug.cgi?id=217457
+
+        Reviewed by Youenn Fablet.
+
+        * fast/files/blob-stream-error-expected.txt: Added.
+        * fast/files/blob-stream-error.html: Added.
+        * fast/files/blob-stream-frame-expected.txt: Added.
+        * fast/files/blob-stream-frame.html: Added.
+        * fast/files/resources/blob-stream-iframe.html: Added.
+
+2020-10-08  Alex Christensen  <achristensen@webkit.org>
+
         REGRESSION (r267763): [ iOS wk2 ] http/tests/in-app-browser-privacy/non-app-bound-domain-does-not-get-app-bound-session.html is a constant failure
         https://bugs.webkit.org/show_bug.cgi?id=217386
 

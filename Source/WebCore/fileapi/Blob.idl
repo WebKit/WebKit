@@ -43,7 +43,7 @@ typedef (BufferSource or Blob or USVString) BlobPart;
 
     [CallWith=ScriptExecutionContext] Blob slice(optional long long start = 0, optional long long end = 0x7FFFFFFFFFFFFFFF, optional DOMString contentType = "");
 
-    // [NewObject] ReadableStream stream();
+    [NewObject, CallWith=ScriptExecutionContext, MayThrowException] ReadableStream stream();
     [NewObject, CallWith=ScriptExecutionContext] Promise<USVString> text();
     [NewObject, CallWith=ScriptExecutionContext] Promise<ArrayBuffer> arrayBuffer();
 };

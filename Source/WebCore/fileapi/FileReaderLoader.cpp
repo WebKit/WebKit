@@ -56,7 +56,7 @@ const int defaultBufferLength = 32768;
 
 FileReaderLoader::FileReaderLoader(ReadType readType, FileReaderLoaderClient* client)
     : m_readType(readType)
-    , m_client(client)
+    , m_client(makeWeakPtr(client))
     , m_isRawDataConverted(false)
     , m_stringResult(emptyString())
     , m_variableLength(false)
@@ -277,6 +277,11 @@ RefPtr<ArrayBuffer> FileReaderLoader::arrayBufferResult() const
 
     // Otherwise, return a copy.
     return ArrayBuffer::create(*m_rawData);
+}
+
+RefPtr<JSC::ArrayBuffer> FileReaderLoader::takeRawData()
+{
+    return std::exchange(m_rawData, nullptr);
 }
 
 String FileReaderLoader::stringResult()

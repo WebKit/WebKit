@@ -55,7 +55,7 @@ private:
     void invokeCompletionHandler();
 
     using BufferOrString = Variant<String, Ref<SharedBuffer>>;
-    class ClipboardItemTypeLoader : public FileReaderLoaderClient, public RefCounted<ClipboardItemTypeLoader>, public CanMakeWeakPtr<ClipboardItemTypeLoader> {
+    class ClipboardItemTypeLoader : public FileReaderLoaderClient, public RefCounted<ClipboardItemTypeLoader> {
     public:
         static Ref<ClipboardItemTypeLoader> create(const String& type, CompletionHandler<void()>&& completionHandler)
         {
