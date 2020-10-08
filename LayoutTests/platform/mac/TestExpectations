@@ -2241,5 +2241,5 @@ webkit.org/b/217414 [ Release ] imported/w3c/web-platform-tests/user-timing/meas
 
 webkit.org/b/217461 [ Mojave+ ] imported/w3c/web-platform-tests/css/css-masking/clip-path/svg-clipPath.svg [ Skip ]
 
-webkit.org/b/167729 [ Catalina ] imported/w3c/web-platform-tests/css/css-pseudo/text-selection.html [ Failure ]
+webkit.org/b/167729 [ Mojave ] imported/w3c/web-platform-tests/css/css-pseudo/text-selection.html [ Failure ]
 
