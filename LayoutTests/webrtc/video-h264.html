@@ -91,6 +91,25 @@ promise_test(async (test) => {
 
     testImage();
 }, "High H264");
+
+test(() => {
+    let codecs = RTCRtpSender.getCapabilities("video").codecs;
+    codecs = codecs.filter(codec => codec.mimeType === "video/H264");
+    let sdpFmtpLines = codecs.map(codec => codec.sdpFmtpLine);
+
+    assert_true(codecs.some(codec => codec.sdpFmtpLine.includes('42e01f')));
+    assert_true(codecs.some(codec => codec.sdpFmtpLine.includes('640c1f')));
+}, "H264 in RTCRtpSender.getCapabilities");
+
+test(() => {
+    let codecs = RTCRtpReceiver.getCapabilities("video").codecs;
+    codecs = codecs.filter(codec => codec.mimeType === "video/H264");
+    let sdpFmtpLines = codecs.map(codec => codec.sdpFmtpLine);
+
+    assert_true(codecs.some(codec => codec.sdpFmtpLine.includes('42e01f')));
+    assert_true(codecs.some(codec => codec.sdpFmtpLine.includes('640c1f')));
+}, "H264 in RTCRtpReceiver.getCapabilities");
+
         </script>
     </body>
 </html>
