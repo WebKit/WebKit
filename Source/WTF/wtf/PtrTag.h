@@ -200,7 +200,7 @@ inline T tagCodePtr(PtrType ptr)
 }
 
 template<PtrTag tag, typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value>>
-inline PtrType tagCodePtr(PtrType ptr) { return tagCodePtr(ptr, tag); }
+inline PtrType tagCodePtr(PtrType ptr) { return tagCodePtrImpl<PtrTagAction::DebugAssert, PtrType>(ptr, tag); }
 
 template<typename PtrType>
 inline PtrType untagCodePtrImplHelper(PtrType ptr, PtrTag tag)
@@ -229,7 +229,10 @@ inline T untagCodePtr(PtrType ptr)
 }
 
 template<PtrTag tag, typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value>>
-inline PtrType untagCodePtr(PtrType ptr) { return untagCodePtr(ptr, tag); }
+inline PtrType untagCodePtr(PtrType ptr) { return untagCodePtrImpl<PtrTagAction::DebugAssert, PtrType>(ptr, tag); }
+
+template<typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value>>
+inline PtrType untagCodePtr(PtrType ptr, PtrTag tag) { return untagCodePtrImpl<PtrTagAction::DebugAssert, PtrType>(ptr, tag); }
 
 template<PtrTagAction tagAction, typename PtrType>
 inline PtrType retagCodePtrImplHelper(PtrType ptr, PtrTag oldTag, PtrTag newTag)
@@ -278,6 +281,63 @@ inline PtrType retagCodePtr(PtrType ptr, PtrTag oldTag, PtrTag newTag)
 
 template<PtrTag oldTag, PtrTag newTag, typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value>>
 inline PtrType retagCodePtr(PtrType ptr) { return retagCodePtr(ptr, oldTag, newTag); }
+
+template<typename PtrType>
+void assertIsCFunctionPtr(PtrType value)
+{
+    void* ptr = bitwise_cast<void*>(value);
+    WTF_PTRTAG_ASSERT(PtrTagAction::DebugAssert, ptr, CFunctionPtrTag, ptr == tagCodePtrImpl<PtrTagAction::NoAssert>(removeCodePtrTag(ptr), CFunctionPtrTag));
+}
+
+template<typename PtrType>
+void assertIsNullOrCFunctionPtr(PtrType ptr)
+{
+    if (ptr)
+        assertIsCFunctionPtr(ptr);
+}
+
+template<typename PtrType>
+void assertIsNotTagged(PtrType value)
+{
+    void* ptr = bitwise_cast<void*>(value);
+    WTF_PTRTAG_ASSERT(PtrTagAction::DebugAssert, ptr, NoPtrTag, ptr == removeCodePtrTag(ptr));
+}
+
+template<typename PtrType>
+void assertIsTagged(PtrType value)
+{
+    void* ptr = bitwise_cast<void*>(value);
+    WTF_PTRTAG_ASSERT(PtrTagAction::DebugAssert, ptr, AnyPtrTag, ptr != removeCodePtrTag(ptr));
+}
+
+template<typename PtrType>
+void assertIsNullOrTagged(PtrType ptr)
+{
+    if (ptr)
+        assertIsTagged(ptr);
+}
+
+template<PtrTag tag, typename PtrType>
+bool isTaggedWith(PtrType value)
+{
+    void* ptr = bitwise_cast<void*>(value);
+    if (tag == NoPtrTag)
+        return ptr == removeCodePtrTag(ptr);
+    return ptr == tagCodePtrImpl<PtrTagAction::NoAssert>(removeCodePtrTag(ptr), tag);
+}
+
+template<PtrTag tag, typename PtrType>
+void assertIsTaggedWith(PtrType value)
+{
+    WTF_PTRTAG_ASSERT(PtrTagAction::DebugAssert, value, tag, isTaggedWith<tag>(value));
+}
+
+template<PtrTag tag, typename PtrType>
+void assertIsNullOrTaggedWith(PtrType ptr)
+{
+    if (ptr)
+        assertIsTaggedWith<tag>(ptr);
+}
 
 template<PtrTagAction tagAction, typename PtrType>
 inline PtrType tagCFunctionPtrImpl(PtrType ptr, PtrTag tag)
@@ -340,63 +400,6 @@ inline IntType tagInt(IntType ptrInt)
 {
     static_assert(sizeof(IntType) == sizeof(uintptr_t), "");
     return bitwise_cast<IntType>(ptrauth_sign_unauthenticated(bitwise_cast<void*>(ptrInt), ptrauth_key_process_dependent_data, tag));
-}
-
-template<typename PtrType>
-void assertIsCFunctionPtr(PtrType value)
-{
-    void* ptr = bitwise_cast<void*>(value);
-    WTF_PTRTAG_ASSERT(PtrTagAction::DebugAssert, ptr, CFunctionPtrTag, ptr == tagCodePtrImpl<PtrTagAction::NoAssert>(removeCodePtrTag(ptr), CFunctionPtrTag));
-}
-
-template<typename PtrType>
-void assertIsNullOrCFunctionPtr(PtrType ptr)
-{
-    if (ptr)
-        assertIsCFunctionPtr(ptr);
-}
-
-template<typename PtrType>
-void assertIsNotTagged(PtrType value)
-{
-    void* ptr = bitwise_cast<void*>(value);
-    WTF_PTRTAG_ASSERT(PtrTagAction::DebugAssert, ptr, NoPtrTag, ptr == removeCodePtrTag(ptr));
-}
-
-template<typename PtrType>
-void assertIsTagged(PtrType value)
-{
-    void* ptr = bitwise_cast<void*>(value);
-    WTF_PTRTAG_ASSERT(PtrTagAction::DebugAssert, ptr, AnyPtrTag, ptr != removeCodePtrTag(ptr));
-}
-
-template<typename PtrType>
-void assertIsNullOrTagged(PtrType ptr)
-{
-    if (ptr)
-        assertIsTagged(ptr);
-}
-
-template<PtrTag tag, typename PtrType>
-bool isTaggedWith(PtrType value)
-{
-    void* ptr = bitwise_cast<void*>(value);
-    if (tag == NoPtrTag)
-        return ptr == removeCodePtrTag(ptr);
-    return ptr == tagCodePtrImpl<PtrTagAction::NoAssert>(removeCodePtrTag(ptr), tag);
-}
-
-template<PtrTag tag, typename PtrType>
-void assertIsTaggedWith(PtrType value)
-{
-    WTF_PTRTAG_ASSERT(PtrTagAction::DebugAssert, value, tag, isTaggedWith(value, tag));
-}
-
-template<PtrTag tag, typename PtrType>
-void assertIsNullOrTaggedWith(PtrType ptr)
-{
-    if (ptr)
-        assertIsTaggedWith<tag>(ptr);
 }
 
 inline bool usesPointerTagging() { return true; }
