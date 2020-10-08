@@ -28,38 +28,18 @@
 #if ENABLE(GRAPHICS_CONTEXT_GL)
 #import "GraphicsContextGLOpenGL.h"
 
-#if PLATFORM(IOS_FAMILY) && !USE(ANGLE)
-#import "GraphicsContextGLOpenGLESIOS.h"
-#endif
-
-#import "CanvasRenderingContext.h"
-#import "GraphicsContext.h"
+#import "ExtensionsGLANGLE.h"
 #import "GraphicsContextGLOpenGLManager.h"
-#import "HTMLCanvasElement.h"
 #import "HostWindow.h"
-#import "ImageBuffer.h"
 #import "Logging.h"
 #import "OpenGLSoftLinkCocoa.h"
+#import "RuntimeApplicationChecks.h"
+#import "WebCoreThread.h"
 #import "WebGLLayer.h"
-#import "WebGLObject.h"
-#import "WebGLRenderingContextBase.h"
 #import <CoreGraphics/CGBitmapContext.h>
-#import <sys/sysctl.h>
-#import <sysexits.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/text/CString.h>
 
-#if USE(OPENGL_ES)
-#import <OpenGLES/EAGL.h>
-#import <OpenGLES/EAGLDrawable.h>
-#import <OpenGLES/EAGLIOSurface.h>
-#import <OpenGLES/ES2/glext.h>
-#import <QuartzCore/QuartzCore.h>
-#import <pal/spi/ios/OpenGLESSPI.h>
-#elif USE(OPENGL)
-#import <IOKit/IOKitLib.h>
-#import <OpenGL/gl.h>
-#elif USE(ANGLE)
 #define EGL_EGL_PROTOTYPES 0
 // Skip the inclusion of ANGLE's explicit context entry points for now.
 #define GL_ANGLE_explicit_context
@@ -74,33 +54,18 @@ typedef void* GLeglContext;
 #import <ANGLE/entry_points_gles_ext_autogen.h>
 #import <ANGLE/gl2ext.h>
 #import <ANGLE/gl2ext_angle.h>
-#endif
-
-#if USE(OPENGL_ES) || USE(OPENGL)
-#import "ExtensionsGLOpenGL.h"
-#elif USE(ANGLE)
-#import "ExtensionsGLANGLE.h"
-#import "RuntimeApplicationChecks.h"
-#import "WebCoreThread.h"
-#endif
 
 #if PLATFORM(MAC)
 #import "ScreenProperties.h"
-#if USE(OPENGL) || USE(ANGLE)
 #import <OpenGL/CGLRenderers.h>
-#endif
 #endif
 
 namespace WebCore {
 
-namespace {
-
-#if USE(ANGLE)
-
 #if ASSERT_ENABLED
 // Returns true if we have volatile context extension for the particular API or
 // if the particular API is not used.
-bool checkVolatileContextSupportIfDeviceExists(EGLDisplay display, const char* deviceContextVolatileExtension,
+static bool checkVolatileContextSupportIfDeviceExists(EGLDisplay display, const char* deviceContextVolatileExtension,
     const char* deviceContextExtension, EGLint deviceContextType)
 {
     const char *clientExtensions = EGL_QueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS);
@@ -121,7 +86,7 @@ bool checkVolatileContextSupportIfDeviceExists(EGLDisplay display, const char* d
 }
 #endif
 
-EGLDisplay InitializeEGLDisplay()
+static EGLDisplay InitializeEGLDisplay()
 {
     EGLint majorVersion = 0;
     EGLint minorVersion = 0;
@@ -153,20 +118,8 @@ EGLDisplay InitializeEGLDisplay()
     }
     return display;
 }
-#endif
-}
 
 static const unsigned statusCheckThreshold = 5;
-
-// FIXME: This class is currently empty on Mac, but will get populated as
-// the restructuring in https://bugs.webkit.org/show_bug.cgi?id=66903 is done
-class GraphicsContextGLOpenGLPrivate {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    GraphicsContextGLOpenGLPrivate(GraphicsContextGLOpenGL*) { }
-    
-    ~GraphicsContextGLOpenGLPrivate() { }
-};
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 static bool isiOSAppOnMac()
@@ -183,6 +136,7 @@ static bool isiOSAppOnMac()
 #endif
 }
 #endif
+
 
 RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextGLAttributes attrs, HostWindow* hostWindow, GraphicsContextGL::Destination destination)
 {
@@ -215,7 +169,7 @@ Ref<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::createShared(GraphicsConte
     return context;
 }
 
-#if PLATFORM(MAC) && (USE(OPENGL) || USE(ANGLE)) // FIXME: This probably should be just (USE(OPENGL) || USE(ANGLE)) - see <rdar://53062794>.
+#if PLATFORM(MAC) // FIXME: This probably should be just enabled - see <rdar://53062794>.
 
 static void setGPUByRegistryID(CGLContextObj contextObj, CGLPixelFormatObj pixelFormatObj, IORegistryGPUID preferredGPUID)
 {
@@ -263,7 +217,7 @@ static void setGPUByRegistryID(CGLContextObj contextObj, CGLPixelFormatObj pixel
     }
 }
 
-#endif // PLATFORM(MAC) && (USE(OPENGL) || USE(ANGLE))
+#endif // PLATFORM(MAC)
 
 GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attrs, HostWindow* hostWindow, GraphicsContextGL::Destination destination, GraphicsContextGLOpenGL* sharedContext)
     : GraphicsContextGL(attrs, destination, sharedContext)
@@ -276,111 +230,6 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     m_powerPreferenceUsedForCreation = GraphicsContextGLPowerPreference::Default;
 #endif
 
-#if !USE(ANGLE)
-#if USE(OPENGL_ES)
-    if (m_isForWebGL2)
-        m_compiler = ANGLEWebKitBridge(SH_ESSL_OUTPUT, SH_WEBGL2_SPEC);
-    else
-        m_compiler = ANGLEWebKitBridge(SH_ESSL_OUTPUT);
-#else
-    if (m_isForWebGL2)
-        m_compiler = ANGLEWebKitBridge(SH_GLSL_410_CORE_OUTPUT, SH_WEBGL2_SPEC);
-#endif // USE(OPENGL_ES)
-#endif // !USE(ANGLE)
-
-#if USE(OPENGL_ES)
-    UNUSED_PARAM(hostWindow);
-    EAGLRenderingAPI api = m_isForWebGL2 ? kEAGLRenderingAPIOpenGLES3 : kEAGLRenderingAPIOpenGLES2;
-    EAGLContext *contextObj;
-    if (!sharedContext)
-        contextObj = [[EAGLContext alloc] initWithAPI:api];
-    else
-        contextObj = [[EAGLContext alloc] initWithAPI:api sharegroup:static_cast<EAGLContext *>(sharedContext->m_contextObj).sharegroup];
-
-    m_contextObj = static_cast<void *>(contextObj);
-
-    makeContextCurrent();
-
-    if (m_isForWebGL2)
-        ::glEnable(GraphicsContextGL::PRIMITIVE_RESTART_FIXED_INDEX);
-#elif USE(OPENGL)
-
-    bool useMultisampling = attrs.antialias;
-
-    Vector<CGLPixelFormatAttribute> attribs;
-    CGLPixelFormatObj pixelFormatObj = 0;
-    GLint numPixelFormats = 0;
-
-    attribs.append(kCGLPFAAccelerated);
-    attribs.append(kCGLPFAColorSize);
-    attribs.append(static_cast<CGLPixelFormatAttribute>(32));
-    attribs.append(kCGLPFADepthSize);
-    attribs.append(static_cast<CGLPixelFormatAttribute>(32));
-
-    // This attribute, while mentioning offline renderers, is actually
-    // allowing us to request the integrated graphics on a dual GPU
-    // system, and not force the discrete GPU.
-    // See https://developer.apple.com/library/mac/technotes/tn2229/_index.html
-    if (allowOfflineRenderers())
-        attribs.append(kCGLPFAAllowOfflineRenderers);
-
-    if (useMultisampling) {
-        attribs.append(kCGLPFAMultisample);
-        attribs.append(kCGLPFASampleBuffers);
-        attribs.append(static_cast<CGLPixelFormatAttribute>(1));
-        attribs.append(kCGLPFASamples);
-        attribs.append(static_cast<CGLPixelFormatAttribute>(4));
-    }
-
-    if (m_isForWebGL2) {
-        // FIXME: Instead of backing a WebGL2 GraphicsContextGLOpenGL with a OpenGL 4 context, we should instead back it with ANGLE.
-        // Use an OpenGL 4 context for now until the ANGLE backend is ready.
-        attribs.append(kCGLPFAOpenGLProfile);
-        attribs.append(static_cast<CGLPixelFormatAttribute>(kCGLOGLPVersion_GL4_Core));
-    }
-
-    attribs.append(static_cast<CGLPixelFormatAttribute>(0));
-
-    CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
-
-    if (!numPixelFormats)
-        return;
-
-    CGLContextObj cglContext = nullptr;
-    CGLContextObj sharedCGLContext = sharedContext ? static_cast<CGLContextObj>(sharedContext->m_contextObj) : nullptr;
-
-    CGLError err = CGLCreateContext(pixelFormatObj, sharedCGLContext, &cglContext);
-    GLint abortOnBlocklist = 0;
-    CGLSetParameter(cglContext, kCGLCPAbortOnGPURestartStatusBlacklisted, &abortOnBlocklist);
-
-#if PLATFORM(MAC) // FIXME: This probably should be USE(OPENGL) - see <rdar://53062794>.
-
-    auto gpuID = (hostWindow && hostWindow->displayID()) ? gpuIDForDisplay(hostWindow->displayID()) : primaryGPUID();
-    setGPUByRegistryID(cglContext, pixelFormatObj, gpuID);
-
-#else
-    UNUSED_PARAM(hostWindow);
-#endif
-
-    CGLDestroyPixelFormat(pixelFormatObj);
-
-    m_contextObj = cglContext;
-
-    if (err != kCGLNoError || !m_contextObj) {
-        // We were unable to create the context.
-        m_contextObj = 0;
-        return;
-    }
-
-    m_contextObj = cglContext;
-
-    CGLSetCurrentContext(cglContext);
-
-    // WebGL 2 expects ES 3-only PRIMITIVE_RESTART_FIXED_INDEX to be enabled; we must emulate this on non-ES 3 systems.
-    if (m_isForWebGL2)
-        ::glEnable(GraphicsContextGL::PRIMITIVE_RESTART);
-
-#elif USE(ANGLE)
     m_displayObj = InitializeEGLDisplay();
     if (m_displayObj == EGL_NO_DISPLAY)
         return;
@@ -494,8 +343,6 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     UNUSED_PARAM(hostWindow);
 #endif
 
-#endif // #elif USE(ANGLE)
-
     validateAttributes();
     attrs = contextAttributes(); // They may have changed during validation.
 
@@ -505,33 +352,11 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
 #ifndef NDEBUG
         [m_webGLLayer setName:@"WebGL Layer"];
 #endif
-#if USE(ANGLE)
         [m_webGLLayer setEGLDisplay:m_displayObj config:m_configObj];
-#endif
     END_BLOCK_OBJC_EXCEPTIONS
 
-#if USE(OPENGL)
-    if (useMultisampling)
-        ::glEnable(GL_MULTISAMPLE);
-#endif
-
     // Create the texture that will be used for the framebuffer.
-#if USE(OPENGL_ES)
-    ::glGenRenderbuffers(1, &m_texture);
-#elif USE(OPENGL)
-    ::glGenTextures(1, &m_texture);
-    // We bind to GL_TEXTURE_RECTANGLE_EXT rather than TEXTURE_2D because
-    // that's what is required for a texture backed by IOSurface.
-    ::glBindTexture(GL_TEXTURE_RECTANGLE_EXT, m_texture);
-    ::glTexParameteri(GL_TEXTURE_RECTANGLE_EXT, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    ::glTexParameteri(GL_TEXTURE_RECTANGLE_EXT, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    ::glTexParameteri(GL_TEXTURE_RECTANGLE_EXT, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    ::glTexParameteri(GL_TEXTURE_RECTANGLE_EXT, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    ::glBindTexture(GL_TEXTURE_RECTANGLE_EXT, 0);
-
-#elif USE(ANGLE)
-
-    GLenum textureTarget = GraphicsContextGL::IOSurfaceTextureTarget();
+    GLenum textureTarget = IOSurfaceTextureTarget();
 
     gl::GenTextures(1, &m_texture);
     gl::BindTexture(textureTarget, m_texture);
@@ -540,27 +365,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     gl::BindTexture(textureTarget, 0);
-#else
-#error Unsupported configuration
-#endif
 
-#if USE(OPENGL) || USE(OPENGL_ES)
-    // Create the framebuffer object.
-    ::glGenFramebuffersEXT(1, &m_fbo);
-    ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
-
-    if (!attrs.antialias && (attrs.stencil || attrs.depth))
-        ::glGenRenderbuffersEXT(1, &m_depthStencilBuffer);
-
-    // If necessary, create another framebuffer for the multisample results.
-    if (attrs.antialias) {
-        ::glGenFramebuffersEXT(1, &m_multisampleFBO);
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
-        ::glGenRenderbuffersEXT(1, &m_multisampleColorBuffer);
-        if (attrs.stencil || attrs.depth)
-            ::glGenRenderbuffersEXT(1, &m_multisampleDepthStencilBuffer);
-    }
-#elif USE(ANGLE)
     gl::GenFramebuffers(1, &m_fbo);
     gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     m_state.boundDrawFBO = m_state.boundReadFBO = m_fbo;
@@ -589,43 +394,8 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
         // Create an FBO with which to perform BlitFramebuffer from one texture to the other.
         gl::GenFramebuffers(1, &m_preserveDrawingBufferFBO);
     }
-#endif // USE(ANGLE)
 
-#if !USE(ANGLE)
-    // ANGLE shader compiler initialization.
-
-    ShBuiltInResources ANGLEResources;
-    sh::InitBuiltInResources(&ANGLEResources);
-
-    getIntegerv(GraphicsContextGL::MAX_VERTEX_ATTRIBS, &ANGLEResources.MaxVertexAttribs);
-    getIntegerv(GraphicsContextGL::MAX_VERTEX_UNIFORM_VECTORS, &ANGLEResources.MaxVertexUniformVectors);
-    getIntegerv(GraphicsContextGL::MAX_VARYING_VECTORS, &ANGLEResources.MaxVaryingVectors);
-    getIntegerv(GraphicsContextGL::MAX_VERTEX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxVertexTextureImageUnits);
-    getIntegerv(GraphicsContextGL::MAX_COMBINED_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxCombinedTextureImageUnits);
-    getIntegerv(GraphicsContextGL::MAX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxTextureImageUnits);
-    getIntegerv(GraphicsContextGL::MAX_FRAGMENT_UNIFORM_VECTORS, &ANGLEResources.MaxFragmentUniformVectors);
-
-    // Always set to 1 for OpenGL ES.
-    ANGLEResources.MaxDrawBuffers = 1;
-    
-    GCGLint range[2], precision;
-    getShaderPrecisionFormat(GraphicsContextGL::FRAGMENT_SHADER, GraphicsContextGL::HIGH_FLOAT, range, &precision);
-    ANGLEResources.FragmentPrecisionHigh = (range[0] || range[1] || precision);
-
-    m_compiler.setResources(ANGLEResources);
-#endif // !USE(ANGLE)
-    
-#if USE(OPENGL)
-    ::glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-    if (!isGLES2Compliant())
-        ::glEnable(GL_POINT_SPRITE);
-#endif
-
-#if USE(OPENGL) || USE(OPENGL_ES)
-    ::glClearColor(0, 0, 0, 0);
-#elif USE(ANGLE)
     gl::ClearColor(0, 0, 0, 0);
-#endif
 
     LOG(WebGL, "Created a GraphicsContextGLOpenGL (%p).", this);
 }
@@ -637,27 +407,8 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
     if (m_contextObj) {
         GraphicsContextGLAttributes attrs = contextAttributes();
         makeContextCurrent(); // TODO: check result.
-#if USE(OPENGL_ES)
-        [static_cast<EAGLContext *>(m_contextObj) renderbufferStorage:GL_RENDERBUFFER fromDrawable:nil];
-        ::glDeleteRenderbuffers(1, &m_texture);
-#elif USE(OPENGL)
-        ::glDeleteTextures(1, &m_texture);
-#elif USE(ANGLE)
         gl::DeleteTextures(1, &m_texture);
-#endif
 
-#if USE(OPENGL) || USE(OPENGL_ES)
-        if (attrs.antialias) {
-            ::glDeleteRenderbuffersEXT(1, &m_multisampleColorBuffer);
-            if (attrs.stencil || attrs.depth)
-                ::glDeleteRenderbuffersEXT(1, &m_multisampleDepthStencilBuffer);
-            ::glDeleteFramebuffersEXT(1, &m_multisampleFBO);
-        } else {
-            if (attrs.stencil || attrs.depth)
-                ::glDeleteRenderbuffersEXT(1, &m_depthStencilBuffer);
-        }
-        ::glDeleteFramebuffersEXT(1, &m_fbo);
-#elif USE(ANGLE)
         if (attrs.antialias) {
             gl::DeleteRenderbuffers(1, &m_multisampleColorBuffer);
             if (attrs.stencil || attrs.depth)
@@ -672,27 +423,17 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
             gl::DeleteTextures(1, &m_preserveDrawingBufferTexture);
         if (m_preserveDrawingBufferFBO)
             gl::DeleteFramebuffers(1, &m_preserveDrawingBufferFBO);
-#endif
 
-#if USE(OPENGL_ES)
-        [EAGLContext setCurrentContext:0];
-        [static_cast<EAGLContext *>(m_contextObj) release];
-#elif USE(OPENGL)
-        CGLSetCurrentContext(0);
-        CGLDestroyContext(cglContext);
-#elif USE(ANGLE)
         [m_webGLLayer releaseGLResources];
         EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         EGL_DestroyContext(m_displayObj, m_contextObj);
-#endif
         [m_webGLLayer setContext:nullptr];
     }
 
     LOG(WebGL, "Destroyed a GraphicsContextGLOpenGL (%p).", this);
 }
 
-#if USE(ANGLE)
-GCGLenum GraphicsContextGL::IOSurfaceTextureTarget()
+GCGLenum GraphicsContextGLOpenGL::IOSurfaceTextureTarget()
 {
 #if PLATFORM(MACCATALYST)
     if (isiOSAppOnMac())
@@ -705,7 +446,7 @@ GCGLenum GraphicsContextGL::IOSurfaceTextureTarget()
 #endif
 }
 
-GCGLenum GraphicsContextGL::IOSurfaceTextureTargetQuery()
+GCGLenum GraphicsContextGLOpenGL::IOSurfaceTextureTargetQuery()
 {
 #if PLATFORM(MACCATALYST)
     if (isiOSAppOnMac())
@@ -718,58 +459,31 @@ GCGLenum GraphicsContextGL::IOSurfaceTextureTargetQuery()
 #endif
 }
 
-GCGLint GraphicsContextGL::EGLIOSurfaceTextureTarget()
+GCGLint GraphicsContextGLOpenGL::EGLIOSurfaceTextureTarget()
 {
 #if PLATFORM(MACCATALYST)
     if (isiOSAppOnMac())
-        return 0x305F; // EGL_TEXTURE_2D
-    return 0x345B; // EGL_TEXTURE_RECTANGLE_ANGLE
+        return EGL_TEXTURE_2D;
+    return EGL_TEXTURE_RECTANGLE_ANGLE;
 #elif PLATFORM(MAC)
-    return 0x345B; // EGL_TEXTURE_RECTANGLE_ANGLE
+    return EGL_TEXTURE_RECTANGLE_ANGLE;
 #else
-    return 0x305F; // EGL_TEXTURE_2D
+    return EGL_TEXTURE_2D;
 #endif
 }
-#endif
-
-#if USE(OPENGL_ES)
-void GraphicsContextGLOpenGL::setRenderbufferStorageFromDrawable(GCGLsizei width, GCGLsizei height)
-{
-    // We need to make a call to setBounds below to update the backing store size but we also
-    // do not want to clobber the bounds set during layout.
-    CGRect previousBounds = [m_webGLLayer.get() bounds];
-
-    [m_webGLLayer setBounds:CGRectMake(0, 0, width, height)];
-    [m_webGLLayer setOpaque:!contextAttributes().alpha];
-
-    [static_cast<EAGLContext *>(m_contextObj) renderbufferStorage:GL_RENDERBUFFER fromDrawable:static_cast<id<EAGLDrawable>>(m_webGLLayer.get())];
-
-    [m_webGLLayer setBounds:previousBounds];
-}
-#endif
 
 bool GraphicsContextGLOpenGL::makeContextCurrent()
 {
     if (!m_contextObj)
         return false;
-
-#if USE(OPENGL_ES)
-    if ([EAGLContext currentContext] != m_contextObj)
-        return [EAGLContext setCurrentContext:static_cast<EAGLContext*>(m_contextObj)];
-#elif USE(OPENGL)
-    CGLContextObj currentContext = CGLGetCurrentContext();
-    if (currentContext != m_contextObj)
-        return CGLSetCurrentContext(static_cast<CGLContextObj>(m_contextObj)) == kCGLNoError;
-#elif USE(ANGLE)
     // ANGLE has an early out for case where nothing changes. Calling MakeCurrent
     // is important to set volatile platform context. See InitializeEGLDisplay().
     if (!EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, m_contextObj))
         return false;
-#endif
     return true;
 }
 
-#if PLATFORM(IOS_FAMILY) && USE(ANGLE)
+#if PLATFORM(IOS_FAMILY)
 bool GraphicsContextGLOpenGL::releaseCurrentContext(ReleaseBehavior releaseBehavior)
 {
     // At the moment this function is relevant only when web thread lock owns the GraphicsContextGLOpenGL current context.
@@ -811,14 +525,9 @@ void GraphicsContextGLOpenGL::checkGPUStatus()
         LOG(WebGL, "Pretending the GPU has reset (%p). Lose the context.", this);
         m_failNextStatusCheck = false;
         forceContextLost();
-#if USE(OPENGL)
-        CGLSetCurrentContext(0);
-#elif USE(OPENGL_ES)
-        [EAGLContext setCurrentContext:0];
-#elif USE(ANGLE)
+
         EGL_BindAPI(EGL_OPENGL_ES_API);
         EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-#endif
         return;
     }
 
@@ -829,94 +538,10 @@ void GraphicsContextGLOpenGL::checkGPUStatus()
     m_statusCheckCount = (m_statusCheckCount + 1) % statusCheckThreshold;
 
     GLint restartStatus = 0;
-#if USE(OPENGL)
-    CGLContextObj cglContext = static_cast<CGLContextObj>(platformGraphicsContextGL());
-    CGLGetParameter(cglContext, kCGLCPGPURestartStatus, &restartStatus);
-    if (restartStatus == kCGLCPGPURestartStatusBlacklisted) {
-        LOG(WebGL, "The GPU has blocklisted us (%p). Terminating.", this);
-        exit(EX_OSERR);
-    }
-    if (restartStatus == kCGLCPGPURestartStatusCaused) {
-        LOG(WebGL, "The GPU has reset us (%p). Lose the context.", this);
-        forceContextLost();
-        CGLSetCurrentContext(0);
-    }
-#elif USE(OPENGL_ES)
-    EAGLContext* currentContext = static_cast<EAGLContext*>(PlatformGraphicsContextGL());
-    [currentContext getParameter:kEAGLCPGPURestartStatus to:&restartStatus];
-    if (restartStatus == kEAGLCPGPURestartStatusCaused || restartStatus == kEAGLCPGPURestartStatusBlacklisted) {
-        LOG(WebGL, "The GPU has either reset or blocklisted us (%p). Lose the context.", this);
-        forceContextLost();
-        [EAGLContext setCurrentContext:0];
-    }
-#elif USE(ANGLE)
     // FIXME: check via KHR_robustness.
     restartStatus = 0;
-#endif
 }
 
-#if USE(OPENGL_ES)
-void GraphicsContextGLOpenGL::presentRenderbuffer()
-{
-    makeContextCurrent();
-    if (contextAttributes().antialias)
-        resolveMultisamplingIfNecessary();
-
-    ::glFlush();
-    ::glBindRenderbuffer(GL_RENDERBUFFER, m_texture);
-    [static_cast<EAGLContext*>(m_contextObj) presentRenderbuffer:GL_RENDERBUFFER];
-    [EAGLContext setCurrentContext:nil];
-}
-#endif
-
-bool GraphicsContextGLOpenGL::texImageIOSurface2D(GCGLenum target, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, IOSurfaceRef surface, GCGLuint plane)
-{
-#if USE(OPENGL)
-    CGLContextObj cglContext = static_cast<CGLContextObj>(platformGraphicsContextGL());
-    return kCGLNoError == CGLTexImageIOSurface2D(cglContext, target, internalFormat, width, height, format, type, surface, plane);
-#elif USE(OPENGL_ES) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-    return [static_cast<EAGLContext *>(platformGraphicsContextGL()) texImageIOSurface:surface target:target internalFormat:internalFormat width:width height:height format:format type:type plane:plane];
-#else
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(internalFormat);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
-    UNUSED_PARAM(format);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(surface);
-    UNUSED_PARAM(plane);
-    return false;
-#endif
-}
-
-#if USE(OPENGL)
-bool GraphicsContextGLOpenGL::allocateIOSurfaceBackingStore(IntSize size)
-{
-    LOG(WebGL, "GraphicsContextGLOpenGL::allocateIOSurfaceBackingStore at %d x %d. (%p)", size.width(), size.height(), this);
-    return [m_webGLLayer allocateIOSurfaceBackingStoreWithSize:size usingAlpha:contextAttributes().alpha];
-}
-
-void GraphicsContextGLOpenGL::updateFramebufferTextureBackingStoreFromLayer()
-{
-    LOG(WebGL, "GraphicsContextGLOpenGL::updateFramebufferTextureBackingStoreFromLayer(). (%p)", this);
-    [m_webGLLayer bindFramebufferToNextAvailableSurface];
-}
-
-void GraphicsContextGLOpenGL::updateCGLContext()
-{
-    if (!m_contextObj)
-        return;
-
-    LOG(WebGL, "Detected a mux switch or display reconfiguration. Call CGLUpdateContext. (%p)", this);
-
-    makeContextCurrent();
-    CGLUpdateContext(static_cast<CGLContextObj>(m_contextObj));
-    m_hasSwitchedToHighPerformanceGPU = true;
-}
-
-#endif // USE(OPENGL)
-
-#if USE(OPENGL) || USE(ANGLE)
 void GraphicsContextGLOpenGL::setContextVisibility(bool isVisible)
 {
     if (m_powerPreferenceUsedForCreation == GraphicsContextGLPowerPreference::HighPerformance) {
@@ -926,9 +551,6 @@ void GraphicsContextGLOpenGL::setContextVisibility(bool isVisible)
             GraphicsContextGLOpenGLManager::sharedManager().removeContextRequiringHighPerformance(this);
     }
 }
-#endif // USE(OPENGL) || USE(ANGLE)
-
-#if USE(ANGLE)
 
 #if PLATFORM(MAC)
 void GraphicsContextGLOpenGL::updateCGLContext()
@@ -960,8 +582,6 @@ void GraphicsContextGLOpenGL::updateFramebufferTextureBackingStoreFromLayer()
     LOG(WebGL, "GraphicsContextGLOpenGL::updateFramebufferTextureBackingStoreFromLayer(). (%p)", this);
     [m_webGLLayer bindFramebufferToNextAvailableSurface];
 }
-
-#endif // USE(ANGLE)
 
 bool GraphicsContextGLOpenGL::isGLES2Compliant() const
 {
@@ -1003,7 +623,6 @@ void GraphicsContextGLOpenGL::screenDidChange(PlatformDisplayID displayID)
 {
     if (!m_contextObj)
         return;
-#if USE(ANGLE)
     if (!m_hasSwitchedToHighPerformanceGPU) {
         EGLDeviceEXT device = nullptr;
         EGL_QueryDisplayAttribEXT(m_displayObj, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&device));
@@ -1013,14 +632,6 @@ void GraphicsContextGLOpenGL::screenDidChange(PlatformDisplayID displayID)
         EGL_QueryDeviceAttribEXT(device, EGL_CGL_PIXEL_FORMAT_ANGLE, reinterpret_cast<EGLAttrib*>(&pixelFormat));
         setGPUByRegistryID(cglContext, pixelFormat, gpuIDForDisplay(displayID));
     }
-#else
-#if USE(OPENGL)
-    if (!m_hasSwitchedToHighPerformanceGPU) {
-        CGLContextObj cglContext = static_cast<CGLContextObj>(m_contextObj);
-        setGPUByRegistryID(cglContext, CGLGetPixelFormat(cglContext), gpuIDForDisplay(displayID));
-    }
-#endif
-#endif // USE(ANGLE)
 }
 #endif // !PLATFORM(MAC)
 

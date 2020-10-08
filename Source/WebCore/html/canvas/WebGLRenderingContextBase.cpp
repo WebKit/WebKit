@@ -721,13 +721,6 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     if (extensions.supports("GL_EXT_debug_marker"_s))
         extensions.pushGroupMarkerEXT("WebGLRenderingContext"_s);
 
-#if ENABLE(WEBGL2) && PLATFORM(MAC) && !USE(ANGLE)
-    // glTexStorage() was only added to Core in OpenGL 4.2.
-    // However, according to https://developer.apple.com/opengl/capabilities/ all Apple GPUs support this extension.
-    if (attributes.isWebGL2 && !extensions.supports("GL_ARB_texture_storage"))
-        return nullptr;
-#endif
-
     std::unique_ptr<WebGLRenderingContextBase> renderingContext;
 #if ENABLE(WEBGL2)
     if (type == "webgl2")
@@ -4347,7 +4340,7 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
     void* data = pixels.baseAddress();
 
 #if USE(ANGLE)
-        GLsizei length, columns, rows;
+        GCGLsizei length, columns, rows;
         m_context->makeContextCurrent();
         m_context->getExtensions().readnPixelsRobustANGLE(x, y, width, height, format, type, pixels.byteLength(), &length, &columns, &rows, data, false);
 #else

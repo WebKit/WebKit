@@ -214,7 +214,7 @@ String ExtensionsGLOpenGLCommon::getTranslatedShaderSourceANGLE(PlatformGLObject
 
 void ExtensionsGLOpenGLCommon::initializeAvailableExtensions()
 {
-#if (PLATFORM(COCOA) && USE(OPENGL)) || (PLATFORM(GTK) && !USE(OPENGL_ES))
+#if PLATFORM(GTK) && !USE(OPENGL_ES)
     if (m_useIndexedGetString) {
         GLint numExtensions = 0;
         ::glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);

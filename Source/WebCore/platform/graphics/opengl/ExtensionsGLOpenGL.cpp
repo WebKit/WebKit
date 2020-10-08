@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ExtensionsGLOpenGL.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL) && (USE(OPENGL) || (PLATFORM(COCOA) && USE(OPENGL_ES)))
+#if ENABLE(GRAPHICS_CONTEXT_GL) && USE(OPENGL)
 
 #include "GraphicsContextGLOpenGL.h"
 
@@ -36,10 +36,6 @@
 #include <OpenGLES/ES2/glext.h>
 #elif USE(OPENGL)
 #include <OpenGL/gl.h>
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-#include "GraphicsContextGLOpenGLESIOS.h"
 #endif
 
 namespace WebCore {
@@ -54,21 +50,7 @@ ExtensionsGLOpenGL::~ExtensionsGLOpenGL() = default;
 
 void ExtensionsGLOpenGL::blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter)
 {
-#if PLATFORM(COCOA) && USE(OPENGL_ES)
-    UNUSED_PARAM(srcX0);
-    UNUSED_PARAM(srcY0);
-    UNUSED_PARAM(srcX1);
-    UNUSED_PARAM(srcY1);
-    UNUSED_PARAM(dstX0);
-    UNUSED_PARAM(dstY0);
-    UNUSED_PARAM(dstX1);
-    UNUSED_PARAM(dstY1);
-    UNUSED_PARAM(mask);
-    UNUSED_PARAM(filter);
-    ::glResolveMultisampleFramebufferAPPLE();
-#else
     ::glBlitFramebufferEXT(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
-#endif
 }
 
 void ExtensionsGLOpenGL::renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
@@ -80,7 +62,7 @@ PlatformGLObject ExtensionsGLOpenGL::createVertexArrayOES()
 {
     m_context->makeContextCurrent();
     GLuint array = 0;
-#if PLATFORM(GTK) || PLATFORM(WIN) || (PLATFORM(COCOA) && USE(OPENGL_ES))
+#if PLATFORM(GTK) || PLATFORM(WIN)
     if (isVertexArrayObjectSupported())
         glGenVertexArrays(1, &array);
 #elif defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
@@ -95,7 +77,7 @@ void ExtensionsGLOpenGL::deleteVertexArrayOES(PlatformGLObject array)
         return;
 
     m_context->makeContextCurrent();
-#if PLATFORM(GTK) || PLATFORM(WIN) || (PLATFORM(COCOA) && USE(OPENGL_ES))
+#if PLATFORM(GTK) || PLATFORM(WIN)
     if (isVertexArrayObjectSupported())
         glDeleteVertexArrays(1, &array);
 #elif defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
@@ -109,7 +91,7 @@ GCGLboolean ExtensionsGLOpenGL::isVertexArrayOES(PlatformGLObject array)
         return GL_FALSE;
 
     m_context->makeContextCurrent();
-#if PLATFORM(GTK) || PLATFORM(WIN) || (PLATFORM(COCOA) && USE(OPENGL_ES))
+#if PLATFORM(GTK) || PLATFORM(WIN)
     if (isVertexArrayObjectSupported())
         return glIsVertexArray(array);
 #elif defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
@@ -121,7 +103,7 @@ GCGLboolean ExtensionsGLOpenGL::isVertexArrayOES(PlatformGLObject array)
 void ExtensionsGLOpenGL::bindVertexArrayOES(PlatformGLObject array)
 {
     m_context->makeContextCurrent();
-#if PLATFORM(GTK) || PLATFORM(WIN) || (PLATFORM(COCOA) && USE(OPENGL_ES))
+#if PLATFORM(GTK) || PLATFORM(WIN)
     if (isVertexArrayObjectSupported())
         glBindVertexArray(array);
 #elif defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
@@ -156,30 +138,17 @@ bool ExtensionsGLOpenGL::supportsExtension(const String& name)
     if (name == "GL_ANGLE_framebuffer_blit")
         return m_availableExtensions.contains("GL_EXT_framebuffer_blit");
     if (name == "GL_ANGLE_framebuffer_multisample")
-#if PLATFORM(IOS_FAMILY)
-        return m_availableExtensions.contains("GL_APPLE_framebuffer_multisample");
-#else
         return m_availableExtensions.contains("GL_EXT_framebuffer_multisample");
-#endif
-
     if (name == "GL_ANGLE_instanced_arrays") {
         return (m_availableExtensions.contains("GL_ARB_instanced_arrays") || m_availableExtensions.contains("GL_EXT_instanced_arrays"))
             && (m_availableExtensions.contains("GL_ARB_draw_instanced") || m_availableExtensions.contains("GL_EXT_draw_instanced"));
     }
 
     if (name == "GL_EXT_sRGB")
-#if PLATFORM(IOS_FAMILY)
-        return m_availableExtensions.contains("GL_EXT_sRGB");
-#else
         return m_availableExtensions.contains("GL_EXT_texture_sRGB") && (m_availableExtensions.contains("GL_EXT_framebuffer_sRGB") || m_availableExtensions.contains("GL_ARB_framebuffer_sRGB"));
-#endif
 
     if (name == "GL_EXT_frag_depth")
-#if PLATFORM(MAC)
-        return true;
-#else
         return m_availableExtensions.contains("GL_EXT_frag_depth");
-#endif
 
     // Desktop GL always supports GL_OES_rgb8_rgba8.
     if (name == "GL_OES_rgb8_rgba8")
@@ -194,8 +163,6 @@ bool ExtensionsGLOpenGL::supportsExtension(const String& name)
     if (name == "GL_OES_vertex_array_object") {
 #if (PLATFORM(GTK))
         return m_availableExtensions.contains("GL_ARB_vertex_array_object");
-#elif PLATFORM(IOS_FAMILY)
-        return m_availableExtensions.contains("GL_OES_vertex_array_object");
 #else
         return m_availableExtensions.contains("GL_APPLE_vertex_array_object");
 #endif
@@ -216,9 +183,7 @@ bool ExtensionsGLOpenGL::supportsExtension(const String& name)
         return m_availableExtensions.contains("GL_EXT_texture_filter_anisotropic");
 
     if (name == "GL_EXT_draw_buffers") {
-#if PLATFORM(IOS_FAMILY)
-        return m_availableExtensions.contains(name);
-#elif PLATFORM(MAC) || PLATFORM(GTK)
+#if PLATFORM(GTK)
         return m_availableExtensions.contains("GL_ARB_draw_buffers");
 #else
         // FIXME: implement support for other platforms.
@@ -226,26 +191,13 @@ bool ExtensionsGLOpenGL::supportsExtension(const String& name)
 #endif
     }
 
-#if PLATFORM(IOS_FAMILY) || PLATFORM(IOS_FAMILY_SIMULATOR)
-    if (name == "GL_EXT_packed_depth_stencil")
-        return m_availableExtensions.contains("GL_OES_packed_depth_stencil");
-
-    if (name == "GL_OES_compressed_ETC1_RGB8_texture"
-        || name == "GL_ANGLE_compressed_texture_etc") {
-        // Implicitly enabled with ES 3.0 contexts.
-        return m_context->m_isForWebGL2;
-    }
-#endif
-
     return m_availableExtensions.contains(name);
 }
 
 void ExtensionsGLOpenGL::drawBuffersEXT(GCGLsizei n, const GCGLenum* bufs)
 {
     //  FIXME: implement support for other platforms.
-#if PLATFORM(MAC)
-    ::glDrawBuffersARB(n, bufs);
-#elif PLATFORM(GTK)
+#if PLATFORM(GTK)
     ::glDrawBuffers(n, bufs);
 #else
     UNUSED_PARAM(n);
@@ -258,8 +210,6 @@ void ExtensionsGLOpenGL::drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLs
     m_context->makeContextCurrent();
 #if PLATFORM(GTK)
     ::glDrawArraysInstanced(mode, first, count, primcount);
-#elif PLATFORM(COCOA)
-    ::glDrawArraysInstancedARB(mode, first, count, primcount);
 #else
     UNUSED_PARAM(mode);
     UNUSED_PARAM(first);
@@ -273,8 +223,6 @@ void ExtensionsGLOpenGL::drawElementsInstanced(GCGLenum mode, GCGLsizei count, G
     m_context->makeContextCurrent();
 #if PLATFORM(GTK)
     ::glDrawElementsInstanced(mode, count, type, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)), primcount);
-#elif PLATFORM(COCOA)
-    ::glDrawElementsInstancedARB(mode, count, type, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)), primcount);
 #else
     UNUSED_PARAM(mode);
     UNUSED_PARAM(count);
@@ -289,8 +237,6 @@ void ExtensionsGLOpenGL::vertexAttribDivisor(GCGLuint index, GCGLuint divisor)
     m_context->makeContextCurrent();
 #if PLATFORM(GTK)
     ::glVertexAttribDivisor(index, divisor);
-#elif PLATFORM(COCOA)
-    ::glVertexAttribDivisorARB(index, divisor);
 #else
     UNUSED_PARAM(index);
     UNUSED_PARAM(divisor);
@@ -303,7 +249,7 @@ String ExtensionsGLOpenGL::getExtensions()
     return String(reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS)));
 }
 
-#if PLATFORM(GTK) || PLATFORM(WIN) || (PLATFORM(COCOA) && USE(OPENGL_ES))
+#if PLATFORM(GTK) || PLATFORM(WIN)
 bool ExtensionsGLOpenGL::isVertexArrayObjectSupported()
 {
     static const bool supportsVertexArrayObject = supports("GL_OES_vertex_array_object");
@@ -313,4 +259,4 @@ bool ExtensionsGLOpenGL::isVertexArrayObjectSupported()
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_GL) && (USE(OPENGL) || (PLATFORM(COCOA) && USE(OPENGL_ES)))
+#endif // ENABLE(GRAPHICS_CONTEXT_GL) && USE(OPENGL)
