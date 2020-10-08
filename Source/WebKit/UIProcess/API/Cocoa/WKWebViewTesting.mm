@@ -226,6 +226,16 @@
 #endif
 }
 
+- (double)_mediaCaptureReportingDelayForTesting
+{
+    return _page->mediaCaptureReportingDelay().value();
+}
+
+- (void)_setMediaCaptureReportingDelayForTesting:(double)captureReportingDelay
+{
+    _page->setMediaCaptureReportingDelay(Seconds(captureReportingDelay));
+}
+
 - (void)_doAfterProcessingAllPendingMouseEvents:(dispatch_block_t)action
 {
     _page->doAfterProcessingAllPendingMouseEvents([action = makeBlockPtr(action)] {
