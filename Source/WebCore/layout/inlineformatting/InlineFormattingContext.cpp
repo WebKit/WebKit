@@ -143,7 +143,7 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
 
 void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::InlineItemRange needsLayoutRange, const ConstraintsForInFlowContent& constraints)
 {
-    auto lineLogicalTop = constraints.vertical.logicalTop;
+    InlineLayoutUnit lineLogicalTop = constraints.vertical.logicalTop;
     struct PreviousLine {
         LineBuilder::InlineItemRange range;
         size_t overflowContentLength { 0 };
@@ -157,7 +157,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
         // Turn previous line's overflow content length into the next line's leading content partial length.
         // "sp[<-line break->]lit_content" -> overflow length: 11 -> leading partial content length: 11.
         auto partialLeadingContentLength = previousLine ? previousLine->overflowContentLength : 0;
-        auto initialLineConstraints = ConstraintsForInFlowContent { constraints.horizontal, { lineLogicalTop, makeOptional(toLayoutUnit(quirks().initialLineHeight())) } };
+        auto initialLineConstraints = InlineRect { lineLogicalTop, constraints.horizontal.logicalLeft, constraints.horizontal.logicalWidth, quirks().initialLineHeight() };
         auto lineContent = lineBuilder.layoutInlineContent(needsLayoutRange, partialLeadingContentLength, initialLineConstraints, isFirstLine);
         auto lineLogicalRect = computeGeometryForLineContent(lineContent, constraints.horizontal);
 
@@ -168,8 +168,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
             lineLogicalTop = geometry().logicalTopForNextLine(lineContent, lineLogicalRect.bottom(), floatingContext);
             if (lineContent.isLastLineWithInlineContent) {
                 // The final content height of this inline formatting context should include the cleared floats as well.
-                // FIXME: Arithmetic overflow due to lineLogicalTop being a LayoutUnit type while this is mostly InlineLayoutUnit(float) territory.
-                formattingState().setClearGapAfterLastLine(std::max<InlineLayoutUnit>(0, lineLogicalTop - lineLogicalRect.bottom()));
+                formattingState().setClearGapAfterLastLine(lineLogicalTop - lineLogicalRect.bottom());
             }
             // When the trailing content is partial, we need to reuse the last InlineTextItem.
             auto lastInlineItemNeedsPartialLayout = lineContent.partialTrailingContentLength;
@@ -192,7 +191,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
         ASSERT(lineContent.runs.isEmpty());
         ASSERT(lineContent.hasIntrusiveFloat);
         // Move the next line below the intrusive float.
-        auto floatConstraints = floatingContext.constraints(lineLogicalTop, toLayoutUnit(lineLogicalRect.bottom()));
+        auto floatConstraints = floatingContext.constraints(toLayoutUnit(lineLogicalTop), toLayoutUnit(lineLogicalRect.bottom()));
         ASSERT(floatConstraints.left || floatConstraints.right);
         static auto inifitePoint = PointInContextRoot::max();
         // In case of left and right constraints, we need to pick the one that's closer to the current line.

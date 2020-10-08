@@ -312,15 +312,15 @@ LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext,
 {
 }
 
-LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange& needsLayoutRange, size_t partialLeadingContentLength, const FormattingContext::ConstraintsForInFlowContent& initialConstraints, bool isFirstLine)
+LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange& needsLayoutRange, size_t partialLeadingContentLength, const InlineRect& lineLogicalConstraints, bool isFirstLine)
 {
-    auto usedConstraints = constraintsForLine(initialConstraints, isFirstLine);
+    auto usedConstraints = constraintsForLine(lineLogicalConstraints, isFirstLine);
     initialize(usedConstraints);
 
     auto committedContent = placeInlineContent(needsLayoutRange, partialLeadingContentLength);
     auto committedRange = close(needsLayoutRange, committedContent);
 
-    auto lineLogicalTopLeft = InlineLayoutPoint { usedConstraints.logicalLeft, initialConstraints.vertical.logicalTop };
+    auto lineLogicalTopLeft = InlineLayoutPoint { usedConstraints.logicalLeft, lineLogicalConstraints.top() };
     auto isLastLine = isLastLineWithInlineContent(committedRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
     return LineContent { committedRange, committedContent.partialTrailingContentLength, m_floats, m_contentIsConstrainedByFloat
         , lineLogicalTopLeft
@@ -419,17 +419,17 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
     return lineRange;
 }
 
-LineBuilder::UsedConstraints LineBuilder::constraintsForLine(const FormattingContext::ConstraintsForInFlowContent& initialConstraints, bool isFirstLine)
+LineBuilder::UsedConstraints LineBuilder::constraintsForLine(const InlineRect& lineLogicalConstraints, bool isFirstLine)
 {
-    auto lineLogicalLeft = initialConstraints.horizontal.logicalLeft;
-    auto lineLogicalTop = initialConstraints.vertical.logicalTop;
-    auto lineLogicalRight = lineLogicalLeft + initialConstraints.horizontal.logicalWidth;
+    auto lineLogicalLeft = lineLogicalConstraints.left();
+    auto lineLogicalTop = lineLogicalConstraints.top();
+    auto lineLogicalRight = lineLogicalLeft + lineLogicalConstraints.width();
     auto lineIsConstrainedByFloat = false;
 
     // Check for intruding floats and adjust logical left/available width for this line accordingly.
     if (!m_floatingContext.isEmpty()) {
         // FIXME: Add support for variable line height, where the intrusive floats should be probed as the line height grows.
-        auto floatConstraints = m_floatingContext.constraints(toLayoutUnit(lineLogicalTop), toLayoutUnit(lineLogicalTop + *initialConstraints.vertical.logicalHeight));
+        auto floatConstraints = m_floatingContext.constraints(toLayoutUnit(lineLogicalTop), toLayoutUnit(lineLogicalTop + lineLogicalConstraints.height()));
         // Check if these values actually constrain the line.
         if (floatConstraints.left && floatConstraints.left->x <= lineLogicalLeft)
             floatConstraints.left = { };
@@ -448,7 +448,7 @@ LineBuilder::UsedConstraints LineBuilder::constraintsForLine(const FormattingCon
             lineLogicalLeft = floatConstraints.left->x;
         } else if (floatConstraints.right) {
             // Right float boxes may overflow the containing block on the left.
-            lineLogicalRight = std::max(lineLogicalLeft, floatConstraints.right->x);
+            lineLogicalRight = std::max<InlineLayoutUnit>(lineLogicalLeft, floatConstraints.right->x);
         }
     }
 
@@ -487,7 +487,7 @@ LineBuilder::UsedConstraints LineBuilder::constraintsForLine(const FormattingCon
         auto textIndent = root.style().textIndent();
         if (textIndent == RenderStyle::initialTextIndent())
             return { };
-        return { minimumValueForLength(textIndent, initialConstraints.horizontal.logicalWidth) };
+        return { minimumValueForLength(textIndent, lineLogicalConstraints.width()) };
     };
     lineLogicalLeft += computedTextIndent();
     return UsedConstraints { lineLogicalLeft, lineLogicalRight - lineLogicalLeft, lineIsConstrainedByFloat };
