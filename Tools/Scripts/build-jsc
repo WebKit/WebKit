@@ -59,7 +59,6 @@ my $cli = 0;
 my $makeArgs = "";
 my @cmakeArgs;
 my $buildDir = "";
-my $copyLibraries = 1;
 my $startTime = time();
 my $useCCache = -1;
 
@@ -87,7 +86,6 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]analyze                Toggle code static analysis (default: $shouldRunStaticAnalyzer)
   --[no-]coverage               Toggle code coverage support (default: $coverageSupport)
   --[no-]ftl-jit                Toggle FTL JIT support (default: $ftlJIT)
-  --[no-]copy-libraries         Toggle whether to copy libraries (default: $copyLibraries)
   --cloop                       Use C Loop interpreter (default: $forceCLoop)
   --cli                         Build the new jsc command line interface (default: $cli)
   --makeargs=<arguments>        Optional Makefile flags
@@ -104,7 +102,6 @@ my %options = (
     'ftl-jit!' => \$ftlJIT,
     'cloop!' => \$forceCLoop,
     'cli!' => \$cli,
-    'copy-libraries!' => \$copyLibraries,
     'makeargs=s' => \$makeArgs,
     'cmakeargs=s' => \@cmakeArgs,
     'build-dir=s' => \$buildDir,
@@ -202,13 +199,6 @@ if (isAppleCocoaWebKit()) {
             my $option = option($_->{define}, ${$_->{value}}, $_->{default});
             push @options, $option unless $option eq "";
         }
-    }
-
-    if ($copyLibraries) {
-        my @copyLibrariesArgs = ("perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory");
-        push @copyLibrariesArgs, "--device" if willUseIOSDeviceSDK();
-        push @copyLibrariesArgs, productDir();
-        (system(@copyLibrariesArgs) == 0) or die;
     }
 }
 

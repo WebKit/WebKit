@@ -1,4 +1,4 @@
-MODULES = WebKitLibraries Source Tools
+MODULES = Source Tools
 
 define build_target_for_each_module
 	for dir in $(MODULES); do \
