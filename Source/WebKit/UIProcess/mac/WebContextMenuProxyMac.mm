@@ -43,6 +43,7 @@
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #import <pal/spi/mac/NSWindowSPI.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 
 @interface WKUserDataWrapper : NSObject {
