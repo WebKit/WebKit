@@ -2238,3 +2238,5 @@ imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-002.html [ 
 imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-004.html [ ImageOnlyFailure ]
 
 webkit.org/b/217414 [ Release ] imported/w3c/web-platform-tests/user-timing/measure-l3.any.html [ Pass Failure ]
+
+webkit.org/b/217461 [ Mojave+ ] imported/w3c/web-platform-tests/css/css-masking/clip-path/svg-clipPath.svg [ Skip ]
