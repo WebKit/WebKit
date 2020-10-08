@@ -73,6 +73,17 @@ FAIL transform: non-invertible matrices in matched transform lists (non-invertib
 PASS transform: non-invertible matrices in matched transform lists (invertible onto non-invertible)
 FAIL transform: non-invertible matrices in mismatched transform lists (non-invertible onto invertible) assert_approx_equals: expected matrix(1, 1, 1, 1, 100, 100) but got matrix(1, 1, 1, 1, 150, 50): The value should be matrix(1, 1, 1, 1, 100, 100) at 0ms but got matrix(1, 1, 1, 1, 150, 50) expected 100 +/- 0.0001 but got 150
 PASS transform: non-invertible matrices in mismatched transform lists (invertible onto non-invertible)
+PASS rotate (type: rotateList) has testAccumulation function
+FAIL rotate without rotation axes assert_equals: The value should be -45deg at 0ms expected "-45deg" but got "-90deg"
+FAIL rotate with underlying transform assert_equals: The value should be x 45deg at 0ms expected "x 45deg" but got "1 0 0 90deg"
+FAIL rotate with different rotation axes assert_approx_equals: expected 0.707107 0 0.707107 90deg but got 0 1 0 90deg: The value should be 0.707107 0 0.707107 90deg at 500ms but got 0 1 0 90deg expected 0.707107 +/- 0.0001 but got 0
+PASS translate (type: translateList) has testAccumulation function
+FAIL translate assert_equals: The value should be -100px at 0ms expected "-100px" but got "-200px"
+FAIL translate with transform assert_equals: The value should be -100px at 0ms expected "-100px" but got "-200px"
+PASS scale (type: scaleList) has testAccumulation function
+FAIL scale with two unspecified values assert_equals: The value should be -2 at 0ms expected "-2" but got "-3"
+FAIL scale with one unspecified value assert_equals: The value should be -2 at 0ms expected "-2" but got "-3"
+FAIL scale assert_equals: The value should be 0 -1 -2 at 0ms expected "0 -1 -2" but got "-1 -2 -3"
 PASS visibility (type: visibility) has testAccumulation function
 PASS visibility: onto "visible"
 PASS visibility: onto "hidden"

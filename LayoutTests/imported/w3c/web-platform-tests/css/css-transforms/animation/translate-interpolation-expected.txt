@@ -1,28 +1,28 @@
 
-FAIL CSS Transitions: property <translate> from [-100px] to [100px] at (-1) should be [-300px] assert_equals: expected "- 300 0 " but got "100 0 "
-FAIL CSS Transitions: property <translate> from [-100px] to [100px] at (0) should be [-100px] assert_equals: expected "- 100 0 " but got "100 0 "
-FAIL CSS Transitions: property <translate> from [-100px] to [100px] at (0.25) should be [-50px] assert_equals: expected "- 50 0 " but got "100 0 "
-FAIL CSS Transitions: property <translate> from [-100px] to [100px] at (0.75) should be [50px] assert_equals: expected "50 0 " but got "100 0 "
+PASS CSS Transitions: property <translate> from [-100px] to [100px] at (-1) should be [-300px]
+PASS CSS Transitions: property <translate> from [-100px] to [100px] at (0) should be [-100px]
+PASS CSS Transitions: property <translate> from [-100px] to [100px] at (0.25) should be [-50px]
+PASS CSS Transitions: property <translate> from [-100px] to [100px] at (0.75) should be [50px]
 PASS CSS Transitions: property <translate> from [-100px] to [100px] at (1) should be [100px]
-FAIL CSS Transitions: property <translate> from [-100px] to [100px] at (2) should be [300px] assert_equals: expected "300 0 " but got "100 0 "
-FAIL CSS Transitions with transition: all: property <translate> from [-100px] to [100px] at (-1) should be [-300px] assert_equals: expected "- 300 0 " but got "100 0 "
-FAIL CSS Transitions with transition: all: property <translate> from [-100px] to [100px] at (0) should be [-100px] assert_equals: expected "- 100 0 " but got "100 0 "
-FAIL CSS Transitions with transition: all: property <translate> from [-100px] to [100px] at (0.25) should be [-50px] assert_equals: expected "- 50 0 " but got "100 0 "
-FAIL CSS Transitions with transition: all: property <translate> from [-100px] to [100px] at (0.75) should be [50px] assert_equals: expected "50 0 " but got "100 0 "
+PASS CSS Transitions: property <translate> from [-100px] to [100px] at (2) should be [300px]
+PASS CSS Transitions with transition: all: property <translate> from [-100px] to [100px] at (-1) should be [-300px]
+PASS CSS Transitions with transition: all: property <translate> from [-100px] to [100px] at (0) should be [-100px]
+PASS CSS Transitions with transition: all: property <translate> from [-100px] to [100px] at (0.25) should be [-50px]
+PASS CSS Transitions with transition: all: property <translate> from [-100px] to [100px] at (0.75) should be [50px]
 PASS CSS Transitions with transition: all: property <translate> from [-100px] to [100px] at (1) should be [100px]
-FAIL CSS Transitions with transition: all: property <translate> from [-100px] to [100px] at (2) should be [300px] assert_equals: expected "300 0 " but got "100 0 "
-FAIL CSS Animations: property <translate> from [-100px] to [100px] at (-1) should be [-300px] assert_equals: expected "- 300 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [-100px] to [100px] at (0) should be [-100px] assert_equals: expected "- 100 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [-100px] to [100px] at (0.25) should be [-50px] assert_equals: expected "- 50 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [-100px] to [100px] at (0.75) should be [50px] assert_equals: expected "50 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [-100px] to [100px] at (1) should be [100px] assert_equals: expected "100 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [-100px] to [100px] at (2) should be [300px] assert_equals: expected "300 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100px] to [100px] at (-1) should be [-300px] assert_equals: expected "- 300 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100px] to [100px] at (0) should be [-100px] assert_equals: expected "- 100 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100px] to [100px] at (0.25) should be [-50px] assert_equals: expected "- 50 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100px] to [100px] at (0.75) should be [50px] assert_equals: expected "50 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100px] to [100px] at (1) should be [100px] assert_equals: expected "100 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100px] to [100px] at (2) should be [300px] assert_equals: expected "300 0 " but got "10 0 "
+PASS CSS Transitions with transition: all: property <translate> from [-100px] to [100px] at (2) should be [300px]
+PASS CSS Animations: property <translate> from [-100px] to [100px] at (-1) should be [-300px]
+PASS CSS Animations: property <translate> from [-100px] to [100px] at (0) should be [-100px]
+PASS CSS Animations: property <translate> from [-100px] to [100px] at (0.25) should be [-50px]
+PASS CSS Animations: property <translate> from [-100px] to [100px] at (0.75) should be [50px]
+PASS CSS Animations: property <translate> from [-100px] to [100px] at (1) should be [100px]
+PASS CSS Animations: property <translate> from [-100px] to [100px] at (2) should be [300px]
+PASS Web Animations: property <translate> from [-100px] to [100px] at (-1) should be [-300px]
+PASS Web Animations: property <translate> from [-100px] to [100px] at (0) should be [-100px]
+PASS Web Animations: property <translate> from [-100px] to [100px] at (0.25) should be [-50px]
+PASS Web Animations: property <translate> from [-100px] to [100px] at (0.75) should be [50px]
+PASS Web Animations: property <translate> from [-100px] to [100px] at (1) should be [100px]
+PASS Web Animations: property <translate> from [-100px] to [100px] at (2) should be [300px]
 PASS CSS Transitions: property <translate> from [-100%] to [100%] at (-1) should be [-300%]
 PASS CSS Transitions: property <translate> from [-100%] to [100%] at (0) should be [-100%]
 PASS CSS Transitions: property <translate> from [-100%] to [100%] at (0.25) should be [-50%]
@@ -35,138 +35,138 @@ PASS CSS Transitions with transition: all: property <translate> from [-100%] to 
 PASS CSS Transitions with transition: all: property <translate> from [-100%] to [100%] at (0.75) should be [50%]
 PASS CSS Transitions with transition: all: property <translate> from [-100%] to [100%] at (1) should be [100%]
 PASS CSS Transitions with transition: all: property <translate> from [-100%] to [100%] at (2) should be [300%]
-FAIL CSS Animations: property <translate> from [-100%] to [100%] at (-1) should be [-300%] assert_equals: expected "0 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [-100%] to [100%] at (0) should be [-100%] assert_equals: expected "0 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [-100%] to [100%] at (0.25) should be [-50%] assert_equals: expected "0 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [-100%] to [100%] at (0.75) should be [50%] assert_equals: expected "0 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [-100%] to [100%] at (1) should be [100%] assert_equals: expected "0 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [-100%] to [100%] at (2) should be [300%] assert_equals: expected "0 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100%] to [100%] at (-1) should be [-300%] assert_equals: expected "0 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100%] to [100%] at (0) should be [-100%] assert_equals: expected "0 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100%] to [100%] at (0.25) should be [-50%] assert_equals: expected "0 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100%] to [100%] at (0.75) should be [50%] assert_equals: expected "0 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100%] to [100%] at (1) should be [100%] assert_equals: expected "0 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100%] to [100%] at (2) should be [300%] assert_equals: expected "0 0 " but got "10 0 "
-FAIL CSS Transitions: property <translate> from [-100px -50px] to [100px 50px] at (-1) should be [-300px -150px] assert_equals: expected "- 300 - 150 " but got "100 50 "
-FAIL CSS Transitions: property <translate> from [-100px -50px] to [100px 50px] at (0) should be [-100px -50px] assert_equals: expected "- 100 - 50 " but got "100 50 "
-FAIL CSS Transitions: property <translate> from [-100px -50px] to [100px 50px] at (0.25) should be [-50px -25px] assert_equals: expected "- 50 - 25 " but got "100 50 "
-FAIL CSS Transitions: property <translate> from [-100px -50px] to [100px 50px] at (0.75) should be [50px 25px] assert_equals: expected "50 25 " but got "100 50 "
+PASS CSS Animations: property <translate> from [-100%] to [100%] at (-1) should be [-300%]
+PASS CSS Animations: property <translate> from [-100%] to [100%] at (0) should be [-100%]
+PASS CSS Animations: property <translate> from [-100%] to [100%] at (0.25) should be [-50%]
+PASS CSS Animations: property <translate> from [-100%] to [100%] at (0.75) should be [50%]
+PASS CSS Animations: property <translate> from [-100%] to [100%] at (1) should be [100%]
+PASS CSS Animations: property <translate> from [-100%] to [100%] at (2) should be [300%]
+PASS Web Animations: property <translate> from [-100%] to [100%] at (-1) should be [-300%]
+PASS Web Animations: property <translate> from [-100%] to [100%] at (0) should be [-100%]
+PASS Web Animations: property <translate> from [-100%] to [100%] at (0.25) should be [-50%]
+PASS Web Animations: property <translate> from [-100%] to [100%] at (0.75) should be [50%]
+PASS Web Animations: property <translate> from [-100%] to [100%] at (1) should be [100%]
+PASS Web Animations: property <translate> from [-100%] to [100%] at (2) should be [300%]
+PASS CSS Transitions: property <translate> from [-100px -50px] to [100px 50px] at (-1) should be [-300px -150px]
+PASS CSS Transitions: property <translate> from [-100px -50px] to [100px 50px] at (0) should be [-100px -50px]
+PASS CSS Transitions: property <translate> from [-100px -50px] to [100px 50px] at (0.25) should be [-50px -25px]
+PASS CSS Transitions: property <translate> from [-100px -50px] to [100px 50px] at (0.75) should be [50px 25px]
 PASS CSS Transitions: property <translate> from [-100px -50px] to [100px 50px] at (1) should be [100px 50px]
-FAIL CSS Transitions: property <translate> from [-100px -50px] to [100px 50px] at (2) should be [300px 150px] assert_equals: expected "300 150 " but got "100 50 "
-FAIL CSS Transitions with transition: all: property <translate> from [-100px -50px] to [100px 50px] at (-1) should be [-300px -150px] assert_equals: expected "- 300 - 150 " but got "100 50 "
-FAIL CSS Transitions with transition: all: property <translate> from [-100px -50px] to [100px 50px] at (0) should be [-100px -50px] assert_equals: expected "- 100 - 50 " but got "100 50 "
-FAIL CSS Transitions with transition: all: property <translate> from [-100px -50px] to [100px 50px] at (0.25) should be [-50px -25px] assert_equals: expected "- 50 - 25 " but got "100 50 "
-FAIL CSS Transitions with transition: all: property <translate> from [-100px -50px] to [100px 50px] at (0.75) should be [50px 25px] assert_equals: expected "50 25 " but got "100 50 "
+PASS CSS Transitions: property <translate> from [-100px -50px] to [100px 50px] at (2) should be [300px 150px]
+PASS CSS Transitions with transition: all: property <translate> from [-100px -50px] to [100px 50px] at (-1) should be [-300px -150px]
+PASS CSS Transitions with transition: all: property <translate> from [-100px -50px] to [100px 50px] at (0) should be [-100px -50px]
+PASS CSS Transitions with transition: all: property <translate> from [-100px -50px] to [100px 50px] at (0.25) should be [-50px -25px]
+PASS CSS Transitions with transition: all: property <translate> from [-100px -50px] to [100px 50px] at (0.75) should be [50px 25px]
 PASS CSS Transitions with transition: all: property <translate> from [-100px -50px] to [100px 50px] at (1) should be [100px 50px]
-FAIL CSS Transitions with transition: all: property <translate> from [-100px -50px] to [100px 50px] at (2) should be [300px 150px] assert_equals: expected "300 150 " but got "100 50 "
-FAIL CSS Animations: property <translate> from [-100px -50px] to [100px 50px] at (-1) should be [-300px -150px] assert_equals: expected "- 300 - 150 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [-100px -50px] to [100px 50px] at (0) should be [-100px -50px] assert_equals: expected "- 100 - 50 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [-100px -50px] to [100px 50px] at (0.25) should be [-50px -25px] assert_equals: expected "- 50 - 25 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [-100px -50px] to [100px 50px] at (0.75) should be [50px 25px] assert_equals: expected "50 25 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [-100px -50px] to [100px 50px] at (1) should be [100px 50px] assert_equals: expected "100 50 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [-100px -50px] to [100px 50px] at (2) should be [300px 150px] assert_equals: expected "300 150 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100px -50px] to [100px 50px] at (-1) should be [-300px -150px] assert_equals: expected "- 300 - 150 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100px -50px] to [100px 50px] at (0) should be [-100px -50px] assert_equals: expected "- 100 - 50 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100px -50px] to [100px 50px] at (0.25) should be [-50px -25px] assert_equals: expected "- 50 - 25 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100px -50px] to [100px 50px] at (0.75) should be [50px 25px] assert_equals: expected "50 25 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100px -50px] to [100px 50px] at (1) should be [100px 50px] assert_equals: expected "100 50 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100px -50px] to [100px 50px] at (2) should be [300px 150px] assert_equals: expected "300 150 " but got "10 0 "
-FAIL CSS Transitions: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (-1) should be [140px 80px 20px] assert_equals: expected "140 80 20 " but got "300 400 500 "
-FAIL CSS Transitions: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0) should be [220px 240px 260px] assert_equals: expected "220 240 260 " but got "300 400 500 "
-FAIL CSS Transitions: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.125) should be [230px 260px 290px] assert_equals: expected "230 260 290 " but got "300 400 500 "
-FAIL CSS Transitions: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.875) should be [290px 380px 470px] assert_equals: expected "290 380 470 " but got "300 400 500 "
+PASS CSS Transitions with transition: all: property <translate> from [-100px -50px] to [100px 50px] at (2) should be [300px 150px]
+PASS CSS Animations: property <translate> from [-100px -50px] to [100px 50px] at (-1) should be [-300px -150px]
+PASS CSS Animations: property <translate> from [-100px -50px] to [100px 50px] at (0) should be [-100px -50px]
+PASS CSS Animations: property <translate> from [-100px -50px] to [100px 50px] at (0.25) should be [-50px -25px]
+PASS CSS Animations: property <translate> from [-100px -50px] to [100px 50px] at (0.75) should be [50px 25px]
+PASS CSS Animations: property <translate> from [-100px -50px] to [100px 50px] at (1) should be [100px 50px]
+PASS CSS Animations: property <translate> from [-100px -50px] to [100px 50px] at (2) should be [300px 150px]
+PASS Web Animations: property <translate> from [-100px -50px] to [100px 50px] at (-1) should be [-300px -150px]
+PASS Web Animations: property <translate> from [-100px -50px] to [100px 50px] at (0) should be [-100px -50px]
+PASS Web Animations: property <translate> from [-100px -50px] to [100px 50px] at (0.25) should be [-50px -25px]
+PASS Web Animations: property <translate> from [-100px -50px] to [100px 50px] at (0.75) should be [50px 25px]
+PASS Web Animations: property <translate> from [-100px -50px] to [100px 50px] at (1) should be [100px 50px]
+PASS Web Animations: property <translate> from [-100px -50px] to [100px 50px] at (2) should be [300px 150px]
+PASS CSS Transitions: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (-1) should be [140px 80px 20px]
+PASS CSS Transitions: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0) should be [220px 240px 260px]
+PASS CSS Transitions: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.125) should be [230px 260px 290px]
+PASS CSS Transitions: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.875) should be [290px 380px 470px]
 PASS CSS Transitions: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (1) should be [300px 400px 500px]
-FAIL CSS Transitions: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (2) should be [380px 560px 740px] assert_equals: expected "380 560 740 " but got "300 400 500 "
-FAIL CSS Transitions with transition: all: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (-1) should be [140px 80px 20px] assert_equals: expected "140 80 20 " but got "300 400 500 "
-FAIL CSS Transitions with transition: all: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0) should be [220px 240px 260px] assert_equals: expected "220 240 260 " but got "300 400 500 "
-FAIL CSS Transitions with transition: all: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.125) should be [230px 260px 290px] assert_equals: expected "230 260 290 " but got "300 400 500 "
-FAIL CSS Transitions with transition: all: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.875) should be [290px 380px 470px] assert_equals: expected "290 380 470 " but got "300 400 500 "
+PASS CSS Transitions: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (2) should be [380px 560px 740px]
+PASS CSS Transitions with transition: all: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (-1) should be [140px 80px 20px]
+PASS CSS Transitions with transition: all: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0) should be [220px 240px 260px]
+PASS CSS Transitions with transition: all: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.125) should be [230px 260px 290px]
+PASS CSS Transitions with transition: all: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.875) should be [290px 380px 470px]
 PASS CSS Transitions with transition: all: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (1) should be [300px 400px 500px]
-FAIL CSS Transitions with transition: all: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (2) should be [380px 560px 740px] assert_equals: expected "380 560 740 " but got "300 400 500 "
-FAIL CSS Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (-1) should be [140px 80px 20px] assert_equals: expected "140 80 20 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0) should be [220px 240px 260px] assert_equals: expected "220 240 260 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.125) should be [230px 260px 290px] assert_equals: expected "230 260 290 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.875) should be [290px 380px 470px] assert_equals: expected "290 380 470 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (1) should be [300px 400px 500px] assert_equals: expected "300 400 500 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (2) should be [380px 560px 740px] assert_equals: expected "380 560 740 " but got "10 0 "
-FAIL Web Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (-1) should be [140px 80px 20px] assert_equals: expected "140 80 20 " but got "10 0 "
-FAIL Web Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0) should be [220px 240px 260px] assert_equals: expected "220 240 260 " but got "10 0 "
-FAIL Web Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.125) should be [230px 260px 290px] assert_equals: expected "230 260 290 " but got "10 0 "
-FAIL Web Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.875) should be [290px 380px 470px] assert_equals: expected "290 380 470 " but got "10 0 "
-FAIL Web Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (1) should be [300px 400px 500px] assert_equals: expected "300 400 500 " but got "10 0 "
-FAIL Web Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (2) should be [380px 560px 740px] assert_equals: expected "380 560 740 " but got "10 0 "
-FAIL CSS Transitions: property <translate> from [0px] to [-100px -50px 100px] at (-1) should be [100px 50px -100px] assert_equals: expected "100 50 - 100 " but got "- 100 - 50 100 "
-FAIL CSS Transitions: property <translate> from [0px] to [-100px -50px 100px] at (0) should be [0px] assert_equals: expected "0 0 " but got "- 100 - 50 100 "
-FAIL CSS Transitions: property <translate> from [0px] to [-100px -50px 100px] at (0.25) should be [-25px -12.5px 25px] assert_equals: expected "- 25 - 12.5 25 " but got "- 100 - 50 100 "
-FAIL CSS Transitions: property <translate> from [0px] to [-100px -50px 100px] at (0.75) should be [-75px -37.5px 75px] assert_equals: expected "- 75 - 37.5 75 " but got "- 100 - 50 100 "
+PASS CSS Transitions with transition: all: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (2) should be [380px 560px 740px]
+PASS CSS Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (-1) should be [140px 80px 20px]
+PASS CSS Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0) should be [220px 240px 260px]
+PASS CSS Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.125) should be [230px 260px 290px]
+PASS CSS Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.875) should be [290px 380px 470px]
+PASS CSS Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (1) should be [300px 400px 500px]
+PASS CSS Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (2) should be [380px 560px 740px]
+PASS Web Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (-1) should be [140px 80px 20px]
+PASS Web Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0) should be [220px 240px 260px]
+PASS Web Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.125) should be [230px 260px 290px]
+PASS Web Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.875) should be [290px 380px 470px]
+PASS Web Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (1) should be [300px 400px 500px]
+PASS Web Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (2) should be [380px 560px 740px]
+PASS CSS Transitions: property <translate> from [0px] to [-100px -50px 100px] at (-1) should be [100px 50px -100px]
+PASS CSS Transitions: property <translate> from [0px] to [-100px -50px 100px] at (0) should be [0px]
+PASS CSS Transitions: property <translate> from [0px] to [-100px -50px 100px] at (0.25) should be [-25px -12.5px 25px]
+PASS CSS Transitions: property <translate> from [0px] to [-100px -50px 100px] at (0.75) should be [-75px -37.5px 75px]
 PASS CSS Transitions: property <translate> from [0px] to [-100px -50px 100px] at (1) should be [-100px -50px 100px]
-FAIL CSS Transitions: property <translate> from [0px] to [-100px -50px 100px] at (2) should be [-200px -100px 200px] assert_equals: expected "- 200 - 100 200 " but got "- 100 - 50 100 "
-FAIL CSS Transitions with transition: all: property <translate> from [0px] to [-100px -50px 100px] at (-1) should be [100px 50px -100px] assert_equals: expected "100 50 - 100 " but got "- 100 - 50 100 "
-FAIL CSS Transitions with transition: all: property <translate> from [0px] to [-100px -50px 100px] at (0) should be [0px] assert_equals: expected "0 0 " but got "- 100 - 50 100 "
-FAIL CSS Transitions with transition: all: property <translate> from [0px] to [-100px -50px 100px] at (0.25) should be [-25px -12.5px 25px] assert_equals: expected "- 25 - 12.5 25 " but got "- 100 - 50 100 "
-FAIL CSS Transitions with transition: all: property <translate> from [0px] to [-100px -50px 100px] at (0.75) should be [-75px -37.5px 75px] assert_equals: expected "- 75 - 37.5 75 " but got "- 100 - 50 100 "
+PASS CSS Transitions: property <translate> from [0px] to [-100px -50px 100px] at (2) should be [-200px -100px 200px]
+PASS CSS Transitions with transition: all: property <translate> from [0px] to [-100px -50px 100px] at (-1) should be [100px 50px -100px]
+PASS CSS Transitions with transition: all: property <translate> from [0px] to [-100px -50px 100px] at (0) should be [0px]
+PASS CSS Transitions with transition: all: property <translate> from [0px] to [-100px -50px 100px] at (0.25) should be [-25px -12.5px 25px]
+PASS CSS Transitions with transition: all: property <translate> from [0px] to [-100px -50px 100px] at (0.75) should be [-75px -37.5px 75px]
 PASS CSS Transitions with transition: all: property <translate> from [0px] to [-100px -50px 100px] at (1) should be [-100px -50px 100px]
-FAIL CSS Transitions with transition: all: property <translate> from [0px] to [-100px -50px 100px] at (2) should be [-200px -100px 200px] assert_equals: expected "- 200 - 100 200 " but got "- 100 - 50 100 "
-FAIL CSS Animations: property <translate> from [0px] to [-100px -50px 100px] at (-1) should be [100px 50px -100px] assert_equals: expected "100 50 - 100 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [0px] to [-100px -50px 100px] at (0) should be [0px] assert_equals: expected "0 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [0px] to [-100px -50px 100px] at (0.25) should be [-25px -12.5px 25px] assert_equals: expected "- 25 - 12.5 25 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [0px] to [-100px -50px 100px] at (0.75) should be [-75px -37.5px 75px] assert_equals: expected "- 75 - 37.5 75 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [0px] to [-100px -50px 100px] at (1) should be [-100px -50px 100px] assert_equals: expected "- 100 - 50 100 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [0px] to [-100px -50px 100px] at (2) should be [-200px -100px 200px] assert_equals: expected "- 200 - 100 200 " but got "10 0 "
-FAIL Web Animations: property <translate> from [0px] to [-100px -50px 100px] at (-1) should be [100px 50px -100px] assert_equals: expected "100 50 - 100 " but got "10 0 "
-FAIL Web Animations: property <translate> from [0px] to [-100px -50px 100px] at (0) should be [0px] assert_equals: expected "0 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [0px] to [-100px -50px 100px] at (0.25) should be [-25px -12.5px 25px] assert_equals: expected "- 25 - 12.5 25 " but got "10 0 "
-FAIL Web Animations: property <translate> from [0px] to [-100px -50px 100px] at (0.75) should be [-75px -37.5px 75px] assert_equals: expected "- 75 - 37.5 75 " but got "10 0 "
-FAIL Web Animations: property <translate> from [0px] to [-100px -50px 100px] at (1) should be [-100px -50px 100px] assert_equals: expected "- 100 - 50 100 " but got "10 0 "
-FAIL Web Animations: property <translate> from [0px] to [-100px -50px 100px] at (2) should be [-200px -100px 200px] assert_equals: expected "- 200 - 100 200 " but got "10 0 "
-FAIL CSS Transitions: property <translate> from [-100px -50px 100px] to [0px] at (-1) should be [-200px -100px 200px] assert_equals: expected "- 200 - 100 200 " but got "0 0 "
-FAIL CSS Transitions: property <translate> from [-100px -50px 100px] to [0px] at (0) should be [-100px -50px 100px] assert_equals: expected "- 100 - 50 100 " but got "0 0 "
-FAIL CSS Transitions: property <translate> from [-100px -50px 100px] to [0px] at (0.25) should be [-75px -37.5px 75px] assert_equals: expected "- 75 - 37.5 75 " but got "0 0 "
-FAIL CSS Transitions: property <translate> from [-100px -50px 100px] to [0px] at (0.75) should be [-25px -12.5px 25px] assert_equals: expected "- 25 - 12.5 25 " but got "0 0 "
+PASS CSS Transitions with transition: all: property <translate> from [0px] to [-100px -50px 100px] at (2) should be [-200px -100px 200px]
+PASS CSS Animations: property <translate> from [0px] to [-100px -50px 100px] at (-1) should be [100px 50px -100px]
+PASS CSS Animations: property <translate> from [0px] to [-100px -50px 100px] at (0) should be [0px]
+PASS CSS Animations: property <translate> from [0px] to [-100px -50px 100px] at (0.25) should be [-25px -12.5px 25px]
+PASS CSS Animations: property <translate> from [0px] to [-100px -50px 100px] at (0.75) should be [-75px -37.5px 75px]
+PASS CSS Animations: property <translate> from [0px] to [-100px -50px 100px] at (1) should be [-100px -50px 100px]
+PASS CSS Animations: property <translate> from [0px] to [-100px -50px 100px] at (2) should be [-200px -100px 200px]
+PASS Web Animations: property <translate> from [0px] to [-100px -50px 100px] at (-1) should be [100px 50px -100px]
+PASS Web Animations: property <translate> from [0px] to [-100px -50px 100px] at (0) should be [0px]
+PASS Web Animations: property <translate> from [0px] to [-100px -50px 100px] at (0.25) should be [-25px -12.5px 25px]
+PASS Web Animations: property <translate> from [0px] to [-100px -50px 100px] at (0.75) should be [-75px -37.5px 75px]
+PASS Web Animations: property <translate> from [0px] to [-100px -50px 100px] at (1) should be [-100px -50px 100px]
+PASS Web Animations: property <translate> from [0px] to [-100px -50px 100px] at (2) should be [-200px -100px 200px]
+PASS CSS Transitions: property <translate> from [-100px -50px 100px] to [0px] at (-1) should be [-200px -100px 200px]
+PASS CSS Transitions: property <translate> from [-100px -50px 100px] to [0px] at (0) should be [-100px -50px 100px]
+PASS CSS Transitions: property <translate> from [-100px -50px 100px] to [0px] at (0.25) should be [-75px -37.5px 75px]
+PASS CSS Transitions: property <translate> from [-100px -50px 100px] to [0px] at (0.75) should be [-25px -12.5px 25px]
 PASS CSS Transitions: property <translate> from [-100px -50px 100px] to [0px] at (1) should be [0px]
-FAIL CSS Transitions: property <translate> from [-100px -50px 100px] to [0px] at (2) should be [100px 50px -100px] assert_equals: expected "100 50 - 100 " but got "0 0 "
-FAIL CSS Transitions with transition: all: property <translate> from [-100px -50px 100px] to [0px] at (-1) should be [-200px -100px 200px] assert_equals: expected "- 200 - 100 200 " but got "0 0 "
-FAIL CSS Transitions with transition: all: property <translate> from [-100px -50px 100px] to [0px] at (0) should be [-100px -50px 100px] assert_equals: expected "- 100 - 50 100 " but got "0 0 "
-FAIL CSS Transitions with transition: all: property <translate> from [-100px -50px 100px] to [0px] at (0.25) should be [-75px -37.5px 75px] assert_equals: expected "- 75 - 37.5 75 " but got "0 0 "
-FAIL CSS Transitions with transition: all: property <translate> from [-100px -50px 100px] to [0px] at (0.75) should be [-25px -12.5px 25px] assert_equals: expected "- 25 - 12.5 25 " but got "0 0 "
+PASS CSS Transitions: property <translate> from [-100px -50px 100px] to [0px] at (2) should be [100px 50px -100px]
+PASS CSS Transitions with transition: all: property <translate> from [-100px -50px 100px] to [0px] at (-1) should be [-200px -100px 200px]
+PASS CSS Transitions with transition: all: property <translate> from [-100px -50px 100px] to [0px] at (0) should be [-100px -50px 100px]
+PASS CSS Transitions with transition: all: property <translate> from [-100px -50px 100px] to [0px] at (0.25) should be [-75px -37.5px 75px]
+PASS CSS Transitions with transition: all: property <translate> from [-100px -50px 100px] to [0px] at (0.75) should be [-25px -12.5px 25px]
 PASS CSS Transitions with transition: all: property <translate> from [-100px -50px 100px] to [0px] at (1) should be [0px]
-FAIL CSS Transitions with transition: all: property <translate> from [-100px -50px 100px] to [0px] at (2) should be [100px 50px -100px] assert_equals: expected "100 50 - 100 " but got "0 0 "
-FAIL CSS Animations: property <translate> from [-100px -50px 100px] to [0px] at (-1) should be [-200px -100px 200px] assert_equals: expected "- 200 - 100 200 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [-100px -50px 100px] to [0px] at (0) should be [-100px -50px 100px] assert_equals: expected "- 100 - 50 100 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [-100px -50px 100px] to [0px] at (0.25) should be [-75px -37.5px 75px] assert_equals: expected "- 75 - 37.5 75 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [-100px -50px 100px] to [0px] at (0.75) should be [-25px -12.5px 25px] assert_equals: expected "- 25 - 12.5 25 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [-100px -50px 100px] to [0px] at (1) should be [0px] assert_equals: expected "0 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [-100px -50px 100px] to [0px] at (2) should be [100px 50px -100px] assert_equals: expected "100 50 - 100 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100px -50px 100px] to [0px] at (-1) should be [-200px -100px 200px] assert_equals: expected "- 200 - 100 200 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100px -50px 100px] to [0px] at (0) should be [-100px -50px 100px] assert_equals: expected "- 100 - 50 100 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100px -50px 100px] to [0px] at (0.25) should be [-75px -37.5px 75px] assert_equals: expected "- 75 - 37.5 75 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100px -50px 100px] to [0px] at (0.75) should be [-25px -12.5px 25px] assert_equals: expected "- 25 - 12.5 25 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100px -50px 100px] to [0px] at (1) should be [0px] assert_equals: expected "0 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [-100px -50px 100px] to [0px] at (2) should be [100px 50px -100px] assert_equals: expected "100 50 - 100 " but got "10 0 "
-FAIL CSS Transitions: property <translate> from [480px 400px 320px] to [240% 160%] at (-1) should be [calc(960px - 240%) calc(800px - 160%) 640px] assert_equals: expected "960 800 640 " but got "0 0 "
-FAIL CSS Transitions: property <translate> from [480px 400px 320px] to [240% 160%] at (0) should be [480px 400px 320px] assert_equals: expected "480 400 320 " but got "0 0 "
-FAIL CSS Transitions: property <translate> from [480px 400px 320px] to [240% 160%] at (0.125) should be [calc(420px + 30%) calc(350px + 20%) 280px] assert_equals: expected "420 350 280 " but got "0 0 "
-FAIL CSS Transitions: property <translate> from [480px 400px 320px] to [240% 160%] at (0.875) should be [calc(210% + 60px) calc(140% + 50px) 40px] assert_equals: expected "60 50 40 " but got "0 0 "
+PASS CSS Transitions with transition: all: property <translate> from [-100px -50px 100px] to [0px] at (2) should be [100px 50px -100px]
+PASS CSS Animations: property <translate> from [-100px -50px 100px] to [0px] at (-1) should be [-200px -100px 200px]
+PASS CSS Animations: property <translate> from [-100px -50px 100px] to [0px] at (0) should be [-100px -50px 100px]
+PASS CSS Animations: property <translate> from [-100px -50px 100px] to [0px] at (0.25) should be [-75px -37.5px 75px]
+PASS CSS Animations: property <translate> from [-100px -50px 100px] to [0px] at (0.75) should be [-25px -12.5px 25px]
+PASS CSS Animations: property <translate> from [-100px -50px 100px] to [0px] at (1) should be [0px]
+PASS CSS Animations: property <translate> from [-100px -50px 100px] to [0px] at (2) should be [100px 50px -100px]
+PASS Web Animations: property <translate> from [-100px -50px 100px] to [0px] at (-1) should be [-200px -100px 200px]
+PASS Web Animations: property <translate> from [-100px -50px 100px] to [0px] at (0) should be [-100px -50px 100px]
+PASS Web Animations: property <translate> from [-100px -50px 100px] to [0px] at (0.25) should be [-75px -37.5px 75px]
+PASS Web Animations: property <translate> from [-100px -50px 100px] to [0px] at (0.75) should be [-25px -12.5px 25px]
+PASS Web Animations: property <translate> from [-100px -50px 100px] to [0px] at (1) should be [0px]
+PASS Web Animations: property <translate> from [-100px -50px 100px] to [0px] at (2) should be [100px 50px -100px]
+FAIL CSS Transitions: property <translate> from [480px 400px 320px] to [240% 160%] at (-1) should be [calc(960px - 240%) calc(800px - 160%) 640px] assert_equals: expected "960px 800px 640 " but got "480px 400px 640 "
+PASS CSS Transitions: property <translate> from [480px 400px 320px] to [240% 160%] at (0) should be [480px 400px 320px]
+PASS CSS Transitions: property <translate> from [480px 400px 320px] to [240% 160%] at (0.125) should be [calc(420px + 30%) calc(350px + 20%) 280px]
+PASS CSS Transitions: property <translate> from [480px 400px 320px] to [240% 160%] at (0.875) should be [calc(210% + 60px) calc(140% + 50px) 40px]
 PASS CSS Transitions: property <translate> from [480px 400px 320px] to [240% 160%] at (1) should be [240% 160%]
-FAIL CSS Transitions: property <translate> from [480px 400px 320px] to [240% 160%] at (2) should be [calc(480% - 480px) calc(320% - 400px) -320px] assert_equals: expected "- 480 - 400 - 320 " but got "0 0 "
-FAIL CSS Transitions with transition: all: property <translate> from [480px 400px 320px] to [240% 160%] at (-1) should be [calc(960px - 240%) calc(800px - 160%) 640px] assert_equals: expected "960 800 640 " but got "0 0 "
-FAIL CSS Transitions with transition: all: property <translate> from [480px 400px 320px] to [240% 160%] at (0) should be [480px 400px 320px] assert_equals: expected "480 400 320 " but got "0 0 "
-FAIL CSS Transitions with transition: all: property <translate> from [480px 400px 320px] to [240% 160%] at (0.125) should be [calc(420px + 30%) calc(350px + 20%) 280px] assert_equals: expected "420 350 280 " but got "0 0 "
-FAIL CSS Transitions with transition: all: property <translate> from [480px 400px 320px] to [240% 160%] at (0.875) should be [calc(210% + 60px) calc(140% + 50px) 40px] assert_equals: expected "60 50 40 " but got "0 0 "
+FAIL CSS Transitions: property <translate> from [480px 400px 320px] to [240% 160%] at (2) should be [calc(480% - 480px) calc(320% - 400px) -320px] assert_equals: expected "- 480px - 400px - 320 " but got "0px 0px - 320 "
+FAIL CSS Transitions with transition: all: property <translate> from [480px 400px 320px] to [240% 160%] at (-1) should be [calc(960px - 240%) calc(800px - 160%) 640px] assert_equals: expected "960px 800px 640 " but got "480px 400px 640 "
+PASS CSS Transitions with transition: all: property <translate> from [480px 400px 320px] to [240% 160%] at (0) should be [480px 400px 320px]
+PASS CSS Transitions with transition: all: property <translate> from [480px 400px 320px] to [240% 160%] at (0.125) should be [calc(420px + 30%) calc(350px + 20%) 280px]
+PASS CSS Transitions with transition: all: property <translate> from [480px 400px 320px] to [240% 160%] at (0.875) should be [calc(210% + 60px) calc(140% + 50px) 40px]
 PASS CSS Transitions with transition: all: property <translate> from [480px 400px 320px] to [240% 160%] at (1) should be [240% 160%]
-FAIL CSS Transitions with transition: all: property <translate> from [480px 400px 320px] to [240% 160%] at (2) should be [calc(480% - 480px) calc(320% - 400px) -320px] assert_equals: expected "- 480 - 400 - 320 " but got "0 0 "
-FAIL CSS Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (-1) should be [calc(960px - 240%) calc(800px - 160%) 640px] assert_equals: expected "960 800 640 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (0) should be [480px 400px 320px] assert_equals: expected "480 400 320 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (0.125) should be [calc(420px + 30%) calc(350px + 20%) 280px] assert_equals: expected "420 350 280 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (0.875) should be [calc(210% + 60px) calc(140% + 50px) 40px] assert_equals: expected "60 50 40 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (1) should be [240% 160%] assert_equals: expected "0 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (2) should be [calc(480% - 480px) calc(320% - 400px) -320px] assert_equals: expected "- 480 - 400 - 320 " but got "10 0 "
-FAIL Web Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (-1) should be [calc(960px - 240%) calc(800px - 160%) 640px] assert_equals: expected "960 800 640 " but got "10 0 "
-FAIL Web Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (0) should be [480px 400px 320px] assert_equals: expected "480 400 320 " but got "10 0 "
-FAIL Web Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (0.125) should be [calc(420px + 30%) calc(350px + 20%) 280px] assert_equals: expected "420 350 280 " but got "10 0 "
-FAIL Web Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (0.875) should be [calc(210% + 60px) calc(140% + 50px) 40px] assert_equals: expected "60 50 40 " but got "10 0 "
-FAIL Web Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (1) should be [240% 160%] assert_equals: expected "0 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (2) should be [calc(480% - 480px) calc(320% - 400px) -320px] assert_equals: expected "- 480 - 400 - 320 " but got "10 0 "
+FAIL CSS Transitions with transition: all: property <translate> from [480px 400px 320px] to [240% 160%] at (2) should be [calc(480% - 480px) calc(320% - 400px) -320px] assert_equals: expected "- 480px - 400px - 320 " but got "0px 0px - 320 "
+FAIL CSS Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (-1) should be [calc(960px - 240%) calc(800px - 160%) 640px] assert_equals: expected "960px 800px 640 " but got "480px 400px 640 "
+PASS CSS Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (0) should be [480px 400px 320px]
+PASS CSS Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (0.125) should be [calc(420px + 30%) calc(350px + 20%) 280px]
+PASS CSS Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (0.875) should be [calc(210% + 60px) calc(140% + 50px) 40px]
+PASS CSS Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (1) should be [240% 160%]
+FAIL CSS Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (2) should be [calc(480% - 480px) calc(320% - 400px) -320px] assert_equals: expected "- 480px - 400px - 320 " but got "0px 0px - 320 "
+FAIL Web Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (-1) should be [calc(960px - 240%) calc(800px - 160%) 640px] assert_equals: expected "960px 800px 640 " but got "480px 400px 640 "
+PASS Web Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (0) should be [480px 400px 320px]
+PASS Web Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (0.125) should be [calc(420px + 30%) calc(350px + 20%) 280px]
+PASS Web Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (0.875) should be [calc(210% + 60px) calc(140% + 50px) 40px]
+PASS Web Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (1) should be [240% 160%]
+FAIL Web Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (2) should be [calc(480% - 480px) calc(320% - 400px) -320px] assert_equals: expected "- 480px - 400px - 320 " but got "0px 0px - 320 "
 PASS CSS Transitions: property <translate> from [none] to [none] at (-1) should be [none]
 PASS CSS Transitions: property <translate> from [none] to [none] at (0) should be [none]
 PASS CSS Transitions: property <translate> from [none] to [none] at (0.125) should be [none]
@@ -179,232 +179,232 @@ PASS CSS Transitions with transition: all: property <translate> from [none] to [
 PASS CSS Transitions with transition: all: property <translate> from [none] to [none] at (0.875) should be [none]
 PASS CSS Transitions with transition: all: property <translate> from [none] to [none] at (1) should be [none]
 PASS CSS Transitions with transition: all: property <translate> from [none] to [none] at (2) should be [none]
-FAIL CSS Animations: property <translate> from [none] to [none] at (-1) should be [none] assert_equals: expected "none " but got "10 0 "
-FAIL CSS Animations: property <translate> from [none] to [none] at (0) should be [none] assert_equals: expected "none " but got "10 0 "
-FAIL CSS Animations: property <translate> from [none] to [none] at (0.125) should be [none] assert_equals: expected "none " but got "10 0 "
-FAIL CSS Animations: property <translate> from [none] to [none] at (0.875) should be [none] assert_equals: expected "none " but got "10 0 "
-FAIL CSS Animations: property <translate> from [none] to [none] at (1) should be [none] assert_equals: expected "none " but got "10 0 "
-FAIL CSS Animations: property <translate> from [none] to [none] at (2) should be [none] assert_equals: expected "none " but got "10 0 "
-FAIL Web Animations: property <translate> from [none] to [none] at (-1) should be [none] assert_equals: expected "none " but got "10 0 "
-FAIL Web Animations: property <translate> from [none] to [none] at (0) should be [none] assert_equals: expected "none " but got "10 0 "
-FAIL Web Animations: property <translate> from [none] to [none] at (0.125) should be [none] assert_equals: expected "none " but got "10 0 "
-FAIL Web Animations: property <translate> from [none] to [none] at (0.875) should be [none] assert_equals: expected "none " but got "10 0 "
-FAIL Web Animations: property <translate> from [none] to [none] at (1) should be [none] assert_equals: expected "none " but got "10 0 "
-FAIL Web Animations: property <translate> from [none] to [none] at (2) should be [none] assert_equals: expected "none " but got "10 0 "
-FAIL CSS Transitions: property <translate> from [none] to [8px 80% 800px] at (-1) should be [-8px -80% -800px] assert_equals: expected "- 8 0 - 800 " but got "8 0 800 "
-FAIL CSS Transitions: property <translate> from [none] to [8px 80% 800px] at (0) should be [0px] assert_equals: expected "0 0 " but got "8 0 800 "
-FAIL CSS Transitions: property <translate> from [none] to [8px 80% 800px] at (0.125) should be [1px 10% 100px] assert_equals: expected "1 0 100 " but got "8 0 800 "
-FAIL CSS Transitions: property <translate> from [none] to [8px 80% 800px] at (0.875) should be [7px 70% 700px] assert_equals: expected "7 0 700 " but got "8 0 800 "
+PASS CSS Animations: property <translate> from [none] to [none] at (-1) should be [none]
+PASS CSS Animations: property <translate> from [none] to [none] at (0) should be [none]
+PASS CSS Animations: property <translate> from [none] to [none] at (0.125) should be [none]
+PASS CSS Animations: property <translate> from [none] to [none] at (0.875) should be [none]
+PASS CSS Animations: property <translate> from [none] to [none] at (1) should be [none]
+PASS CSS Animations: property <translate> from [none] to [none] at (2) should be [none]
+PASS Web Animations: property <translate> from [none] to [none] at (-1) should be [none]
+PASS Web Animations: property <translate> from [none] to [none] at (0) should be [none]
+PASS Web Animations: property <translate> from [none] to [none] at (0.125) should be [none]
+PASS Web Animations: property <translate> from [none] to [none] at (0.875) should be [none]
+PASS Web Animations: property <translate> from [none] to [none] at (1) should be [none]
+PASS Web Animations: property <translate> from [none] to [none] at (2) should be [none]
+PASS CSS Transitions: property <translate> from [none] to [8px 80% 800px] at (-1) should be [-8px -80% -800px]
+PASS CSS Transitions: property <translate> from [none] to [8px 80% 800px] at (0) should be [0px]
+PASS CSS Transitions: property <translate> from [none] to [8px 80% 800px] at (0.125) should be [1px 10% 100px]
+PASS CSS Transitions: property <translate> from [none] to [8px 80% 800px] at (0.875) should be [7px 70% 700px]
 PASS CSS Transitions: property <translate> from [none] to [8px 80% 800px] at (1) should be [8px 80% 800px]
-FAIL CSS Transitions: property <translate> from [none] to [8px 80% 800px] at (2) should be [16px 160% 1600px] assert_equals: expected "16 0 1600 " but got "8 0 800 "
-FAIL CSS Transitions with transition: all: property <translate> from [none] to [8px 80% 800px] at (-1) should be [-8px -80% -800px] assert_equals: expected "- 8 0 - 800 " but got "8 0 800 "
-FAIL CSS Transitions with transition: all: property <translate> from [none] to [8px 80% 800px] at (0) should be [0px] assert_equals: expected "0 0 " but got "8 0 800 "
-FAIL CSS Transitions with transition: all: property <translate> from [none] to [8px 80% 800px] at (0.125) should be [1px 10% 100px] assert_equals: expected "1 0 100 " but got "8 0 800 "
-FAIL CSS Transitions with transition: all: property <translate> from [none] to [8px 80% 800px] at (0.875) should be [7px 70% 700px] assert_equals: expected "7 0 700 " but got "8 0 800 "
+PASS CSS Transitions: property <translate> from [none] to [8px 80% 800px] at (2) should be [16px 160% 1600px]
+PASS CSS Transitions with transition: all: property <translate> from [none] to [8px 80% 800px] at (-1) should be [-8px -80% -800px]
+PASS CSS Transitions with transition: all: property <translate> from [none] to [8px 80% 800px] at (0) should be [0px]
+PASS CSS Transitions with transition: all: property <translate> from [none] to [8px 80% 800px] at (0.125) should be [1px 10% 100px]
+PASS CSS Transitions with transition: all: property <translate> from [none] to [8px 80% 800px] at (0.875) should be [7px 70% 700px]
 PASS CSS Transitions with transition: all: property <translate> from [none] to [8px 80% 800px] at (1) should be [8px 80% 800px]
-FAIL CSS Transitions with transition: all: property <translate> from [none] to [8px 80% 800px] at (2) should be [16px 160% 1600px] assert_equals: expected "16 0 1600 " but got "8 0 800 "
-FAIL CSS Animations: property <translate> from [none] to [8px 80% 800px] at (-1) should be [-8px -80% -800px] assert_equals: expected "- 8 0 - 800 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [none] to [8px 80% 800px] at (0) should be [0px] assert_equals: expected "0 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [none] to [8px 80% 800px] at (0.125) should be [1px 10% 100px] assert_equals: expected "1 0 100 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [none] to [8px 80% 800px] at (0.875) should be [7px 70% 700px] assert_equals: expected "7 0 700 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [none] to [8px 80% 800px] at (1) should be [8px 80% 800px] assert_equals: expected "8 0 800 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [none] to [8px 80% 800px] at (2) should be [16px 160% 1600px] assert_equals: expected "16 0 1600 " but got "10 0 "
-FAIL Web Animations: property <translate> from [none] to [8px 80% 800px] at (-1) should be [-8px -80% -800px] assert_equals: expected "- 8 0 - 800 " but got "10 0 "
-FAIL Web Animations: property <translate> from [none] to [8px 80% 800px] at (0) should be [0px] assert_equals: expected "0 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [none] to [8px 80% 800px] at (0.125) should be [1px 10% 100px] assert_equals: expected "1 0 100 " but got "10 0 "
-FAIL Web Animations: property <translate> from [none] to [8px 80% 800px] at (0.875) should be [7px 70% 700px] assert_equals: expected "7 0 700 " but got "10 0 "
-FAIL Web Animations: property <translate> from [none] to [8px 80% 800px] at (1) should be [8px 80% 800px] assert_equals: expected "8 0 800 " but got "10 0 "
-FAIL Web Animations: property <translate> from [none] to [8px 80% 800px] at (2) should be [16px 160% 1600px] assert_equals: expected "16 0 1600 " but got "10 0 "
-FAIL CSS Transitions: property <translate> from neutral to [20px] at (-1) should be [0px] assert_equals: expected "0 0 " but got "20 0 "
-FAIL CSS Transitions: property <translate> from neutral to [20px] at (0) should be [10px] assert_equals: expected "10 0 " but got "20 0 "
-FAIL CSS Transitions: property <translate> from neutral to [20px] at (0.25) should be [12.5px] assert_equals: expected "12.5 0 " but got "20 0 "
-FAIL CSS Transitions: property <translate> from neutral to [20px] at (0.75) should be [17.5px] assert_equals: expected "17.5 0 " but got "20 0 "
+PASS CSS Transitions with transition: all: property <translate> from [none] to [8px 80% 800px] at (2) should be [16px 160% 1600px]
+PASS CSS Animations: property <translate> from [none] to [8px 80% 800px] at (-1) should be [-8px -80% -800px]
+PASS CSS Animations: property <translate> from [none] to [8px 80% 800px] at (0) should be [0px]
+PASS CSS Animations: property <translate> from [none] to [8px 80% 800px] at (0.125) should be [1px 10% 100px]
+PASS CSS Animations: property <translate> from [none] to [8px 80% 800px] at (0.875) should be [7px 70% 700px]
+PASS CSS Animations: property <translate> from [none] to [8px 80% 800px] at (1) should be [8px 80% 800px]
+PASS CSS Animations: property <translate> from [none] to [8px 80% 800px] at (2) should be [16px 160% 1600px]
+PASS Web Animations: property <translate> from [none] to [8px 80% 800px] at (-1) should be [-8px -80% -800px]
+PASS Web Animations: property <translate> from [none] to [8px 80% 800px] at (0) should be [0px]
+PASS Web Animations: property <translate> from [none] to [8px 80% 800px] at (0.125) should be [1px 10% 100px]
+PASS Web Animations: property <translate> from [none] to [8px 80% 800px] at (0.875) should be [7px 70% 700px]
+PASS Web Animations: property <translate> from [none] to [8px 80% 800px] at (1) should be [8px 80% 800px]
+PASS Web Animations: property <translate> from [none] to [8px 80% 800px] at (2) should be [16px 160% 1600px]
+PASS CSS Transitions: property <translate> from neutral to [20px] at (-1) should be [0px]
+PASS CSS Transitions: property <translate> from neutral to [20px] at (0) should be [10px]
+PASS CSS Transitions: property <translate> from neutral to [20px] at (0.25) should be [12.5px]
+PASS CSS Transitions: property <translate> from neutral to [20px] at (0.75) should be [17.5px]
 PASS CSS Transitions: property <translate> from neutral to [20px] at (1) should be [20px]
-FAIL CSS Transitions: property <translate> from neutral to [20px] at (2) should be [30px] assert_equals: expected "30 0 " but got "20 0 "
-FAIL CSS Transitions with transition: all: property <translate> from neutral to [20px] at (-1) should be [0px] assert_equals: expected "0 0 " but got "20 0 "
-FAIL CSS Transitions with transition: all: property <translate> from neutral to [20px] at (0) should be [10px] assert_equals: expected "10 0 " but got "20 0 "
-FAIL CSS Transitions with transition: all: property <translate> from neutral to [20px] at (0.25) should be [12.5px] assert_equals: expected "12.5 0 " but got "20 0 "
-FAIL CSS Transitions with transition: all: property <translate> from neutral to [20px] at (0.75) should be [17.5px] assert_equals: expected "17.5 0 " but got "20 0 "
+PASS CSS Transitions: property <translate> from neutral to [20px] at (2) should be [30px]
+PASS CSS Transitions with transition: all: property <translate> from neutral to [20px] at (-1) should be [0px]
+PASS CSS Transitions with transition: all: property <translate> from neutral to [20px] at (0) should be [10px]
+PASS CSS Transitions with transition: all: property <translate> from neutral to [20px] at (0.25) should be [12.5px]
+PASS CSS Transitions with transition: all: property <translate> from neutral to [20px] at (0.75) should be [17.5px]
 PASS CSS Transitions with transition: all: property <translate> from neutral to [20px] at (1) should be [20px]
-FAIL CSS Transitions with transition: all: property <translate> from neutral to [20px] at (2) should be [30px] assert_equals: expected "30 0 " but got "20 0 "
-FAIL CSS Animations: property <translate> from neutral to [20px] at (-1) should be [0px] assert_equals: expected "0 0 " but got "10 0 "
+PASS CSS Transitions with transition: all: property <translate> from neutral to [20px] at (2) should be [30px]
+PASS CSS Animations: property <translate> from neutral to [20px] at (-1) should be [0px]
 PASS CSS Animations: property <translate> from neutral to [20px] at (0) should be [10px]
-FAIL CSS Animations: property <translate> from neutral to [20px] at (0.25) should be [12.5px] assert_equals: expected "12.5 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from neutral to [20px] at (0.75) should be [17.5px] assert_equals: expected "17.5 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from neutral to [20px] at (1) should be [20px] assert_equals: expected "20 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from neutral to [20px] at (2) should be [30px] assert_equals: expected "30 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from neutral to [20px] at (-1) should be [0px] assert_equals: expected "0 0 " but got "10 0 "
-PASS Web Animations: property <translate> from neutral to [20px] at (0) should be [10px]
-FAIL Web Animations: property <translate> from neutral to [20px] at (0.25) should be [12.5px] assert_equals: expected "12.5 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from neutral to [20px] at (0.75) should be [17.5px] assert_equals: expected "17.5 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from neutral to [20px] at (1) should be [20px] assert_equals: expected "20 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from neutral to [20px] at (2) should be [30px] assert_equals: expected "30 0 " but got "10 0 "
-FAIL CSS Transitions: property <translate> from [initial] to [200px 100px 200px] at (-1) should be [-200px -100px -200px] assert_equals: expected "- 200 - 100 - 200 " but got "200 100 200 "
-FAIL CSS Transitions: property <translate> from [initial] to [200px 100px 200px] at (0) should be [0px] assert_equals: expected "0 0 " but got "200 100 200 "
-FAIL CSS Transitions: property <translate> from [initial] to [200px 100px 200px] at (0.25) should be [50px 25px 50px] assert_equals: expected "50 25 50 " but got "200 100 200 "
-FAIL CSS Transitions: property <translate> from [initial] to [200px 100px 200px] at (0.75) should be [150px 75px 150px] assert_equals: expected "150 75 150 " but got "200 100 200 "
+PASS CSS Animations: property <translate> from neutral to [20px] at (0.25) should be [12.5px]
+PASS CSS Animations: property <translate> from neutral to [20px] at (0.75) should be [17.5px]
+PASS CSS Animations: property <translate> from neutral to [20px] at (1) should be [20px]
+PASS CSS Animations: property <translate> from neutral to [20px] at (2) should be [30px]
+PASS Web Animations: property <translate> from neutral to [20px] at (-1) should be [0px]
+FAIL Web Animations: property <translate> from neutral to [20px] at (0) should be [10px] assert_equals: expected "10px " but got "none "
+FAIL Web Animations: property <translate> from neutral to [20px] at (0.25) should be [12.5px] assert_equals: expected "12.5px " but got "5px "
+FAIL Web Animations: property <translate> from neutral to [20px] at (0.75) should be [17.5px] assert_equals: expected "17.5px " but got "16.25px "
+PASS Web Animations: property <translate> from neutral to [20px] at (1) should be [20px]
+FAIL Web Animations: property <translate> from neutral to [20px] at (2) should be [30px] assert_equals: expected "30px " but got "20px "
+PASS CSS Transitions: property <translate> from [initial] to [200px 100px 200px] at (-1) should be [-200px -100px -200px]
+PASS CSS Transitions: property <translate> from [initial] to [200px 100px 200px] at (0) should be [0px]
+PASS CSS Transitions: property <translate> from [initial] to [200px 100px 200px] at (0.25) should be [50px 25px 50px]
+PASS CSS Transitions: property <translate> from [initial] to [200px 100px 200px] at (0.75) should be [150px 75px 150px]
 PASS CSS Transitions: property <translate> from [initial] to [200px 100px 200px] at (1) should be [200px 100px 200px]
-FAIL CSS Transitions: property <translate> from [initial] to [200px 100px 200px] at (2) should be [400px 200px 400px] assert_equals: expected "400 200 400 " but got "200 100 200 "
-FAIL CSS Transitions with transition: all: property <translate> from [initial] to [200px 100px 200px] at (-1) should be [-200px -100px -200px] assert_equals: expected "- 200 - 100 - 200 " but got "200 100 200 "
-FAIL CSS Transitions with transition: all: property <translate> from [initial] to [200px 100px 200px] at (0) should be [0px] assert_equals: expected "0 0 " but got "200 100 200 "
-FAIL CSS Transitions with transition: all: property <translate> from [initial] to [200px 100px 200px] at (0.25) should be [50px 25px 50px] assert_equals: expected "50 25 50 " but got "200 100 200 "
-FAIL CSS Transitions with transition: all: property <translate> from [initial] to [200px 100px 200px] at (0.75) should be [150px 75px 150px] assert_equals: expected "150 75 150 " but got "200 100 200 "
+PASS CSS Transitions: property <translate> from [initial] to [200px 100px 200px] at (2) should be [400px 200px 400px]
+PASS CSS Transitions with transition: all: property <translate> from [initial] to [200px 100px 200px] at (-1) should be [-200px -100px -200px]
+PASS CSS Transitions with transition: all: property <translate> from [initial] to [200px 100px 200px] at (0) should be [0px]
+PASS CSS Transitions with transition: all: property <translate> from [initial] to [200px 100px 200px] at (0.25) should be [50px 25px 50px]
+PASS CSS Transitions with transition: all: property <translate> from [initial] to [200px 100px 200px] at (0.75) should be [150px 75px 150px]
 PASS CSS Transitions with transition: all: property <translate> from [initial] to [200px 100px 200px] at (1) should be [200px 100px 200px]
-FAIL CSS Transitions with transition: all: property <translate> from [initial] to [200px 100px 200px] at (2) should be [400px 200px 400px] assert_equals: expected "400 200 400 " but got "200 100 200 "
-FAIL CSS Animations: property <translate> from [initial] to [200px 100px 200px] at (-1) should be [-200px -100px -200px] assert_equals: expected "- 200 - 100 - 200 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [initial] to [200px 100px 200px] at (0) should be [0px] assert_equals: expected "0 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [initial] to [200px 100px 200px] at (0.25) should be [50px 25px 50px] assert_equals: expected "50 25 50 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [initial] to [200px 100px 200px] at (0.75) should be [150px 75px 150px] assert_equals: expected "150 75 150 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [initial] to [200px 100px 200px] at (1) should be [200px 100px 200px] assert_equals: expected "200 100 200 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [initial] to [200px 100px 200px] at (2) should be [400px 200px 400px] assert_equals: expected "400 200 400 " but got "10 0 "
-FAIL Web Animations: property <translate> from [initial] to [200px 100px 200px] at (-1) should be [-200px -100px -200px] assert_equals: expected "- 200 - 100 - 200 " but got "10 0 "
-FAIL Web Animations: property <translate> from [initial] to [200px 100px 200px] at (0) should be [0px] assert_equals: expected "0 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [initial] to [200px 100px 200px] at (0.25) should be [50px 25px 50px] assert_equals: expected "50 25 50 " but got "10 0 "
-FAIL Web Animations: property <translate> from [initial] to [200px 100px 200px] at (0.75) should be [150px 75px 150px] assert_equals: expected "150 75 150 " but got "10 0 "
-FAIL Web Animations: property <translate> from [initial] to [200px 100px 200px] at (1) should be [200px 100px 200px] assert_equals: expected "200 100 200 " but got "10 0 "
-FAIL Web Animations: property <translate> from [initial] to [200px 100px 200px] at (2) should be [400px 200px 400px] assert_equals: expected "400 200 400 " but got "10 0 "
-FAIL CSS Transitions: property <translate> from [200px 100px 400px] to [initial] at (-1) should be [400px 200px 800px] assert_equals: expected "400 200 800 " but got "none "
-FAIL CSS Transitions: property <translate> from [200px 100px 400px] to [initial] at (0) should be [200px 100px 400px] assert_equals: expected "200 100 400 " but got "none "
-FAIL CSS Transitions: property <translate> from [200px 100px 400px] to [initial] at (0.25) should be [150px 75px 300px] assert_equals: expected "150 75 300 " but got "none "
-FAIL CSS Transitions: property <translate> from [200px 100px 400px] to [initial] at (0.75) should be [50px 25px 100px] assert_equals: expected "50 25 100 " but got "none "
-FAIL CSS Transitions: property <translate> from [200px 100px 400px] to [initial] at (1) should be [0px] assert_equals: expected "0 0 " but got "none "
-FAIL CSS Transitions: property <translate> from [200px 100px 400px] to [initial] at (2) should be [-200px -100px -400px] assert_equals: expected "- 200 - 100 - 400 " but got "none "
-FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 400px] to [initial] at (-1) should be [400px 200px 800px] assert_equals: expected "400 200 800 " but got "none "
-FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 400px] to [initial] at (0) should be [200px 100px 400px] assert_equals: expected "200 100 400 " but got "none "
-FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 400px] to [initial] at (0.25) should be [150px 75px 300px] assert_equals: expected "150 75 300 " but got "none "
-FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 400px] to [initial] at (0.75) should be [50px 25px 100px] assert_equals: expected "50 25 100 " but got "none "
-FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 400px] to [initial] at (1) should be [0px] assert_equals: expected "0 0 " but got "none "
-FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 400px] to [initial] at (2) should be [-200px -100px -400px] assert_equals: expected "- 200 - 100 - 400 " but got "none "
-FAIL CSS Animations: property <translate> from [200px 100px 400px] to [initial] at (-1) should be [400px 200px 800px] assert_equals: expected "400 200 800 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [200px 100px 400px] to [initial] at (0) should be [200px 100px 400px] assert_equals: expected "200 100 400 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [200px 100px 400px] to [initial] at (0.25) should be [150px 75px 300px] assert_equals: expected "150 75 300 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [200px 100px 400px] to [initial] at (0.75) should be [50px 25px 100px] assert_equals: expected "50 25 100 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [200px 100px 400px] to [initial] at (1) should be [0px] assert_equals: expected "0 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [200px 100px 400px] to [initial] at (2) should be [-200px -100px -400px] assert_equals: expected "- 200 - 100 - 400 " but got "10 0 "
-FAIL Web Animations: property <translate> from [200px 100px 400px] to [initial] at (-1) should be [400px 200px 800px] assert_equals: expected "400 200 800 " but got "10 0 "
-FAIL Web Animations: property <translate> from [200px 100px 400px] to [initial] at (0) should be [200px 100px 400px] assert_equals: expected "200 100 400 " but got "10 0 "
-FAIL Web Animations: property <translate> from [200px 100px 400px] to [initial] at (0.25) should be [150px 75px 300px] assert_equals: expected "150 75 300 " but got "10 0 "
-FAIL Web Animations: property <translate> from [200px 100px 400px] to [initial] at (0.75) should be [50px 25px 100px] assert_equals: expected "50 25 100 " but got "10 0 "
-FAIL Web Animations: property <translate> from [200px 100px 400px] to [initial] at (1) should be [0px] assert_equals: expected "0 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [200px 100px 400px] to [initial] at (2) should be [-200px -100px -400px] assert_equals: expected "- 200 - 100 - 400 " but got "10 0 "
-FAIL CSS Transitions: property <translate> from [unset] to [20px] at (-1) should be [-20px] assert_equals: expected "- 20 0 " but got "20 0 "
-FAIL CSS Transitions: property <translate> from [unset] to [20px] at (0) should be [0px] assert_equals: expected "0 0 " but got "20 0 "
-FAIL CSS Transitions: property <translate> from [unset] to [20px] at (0.25) should be [5px] assert_equals: expected "5 0 " but got "20 0 "
-FAIL CSS Transitions: property <translate> from [unset] to [20px] at (0.75) should be [15px] assert_equals: expected "15 0 " but got "20 0 "
+PASS CSS Transitions with transition: all: property <translate> from [initial] to [200px 100px 200px] at (2) should be [400px 200px 400px]
+PASS CSS Animations: property <translate> from [initial] to [200px 100px 200px] at (-1) should be [-200px -100px -200px]
+PASS CSS Animations: property <translate> from [initial] to [200px 100px 200px] at (0) should be [0px]
+PASS CSS Animations: property <translate> from [initial] to [200px 100px 200px] at (0.25) should be [50px 25px 50px]
+PASS CSS Animations: property <translate> from [initial] to [200px 100px 200px] at (0.75) should be [150px 75px 150px]
+PASS CSS Animations: property <translate> from [initial] to [200px 100px 200px] at (1) should be [200px 100px 200px]
+PASS CSS Animations: property <translate> from [initial] to [200px 100px 200px] at (2) should be [400px 200px 400px]
+PASS Web Animations: property <translate> from [initial] to [200px 100px 200px] at (-1) should be [-200px -100px -200px]
+PASS Web Animations: property <translate> from [initial] to [200px 100px 200px] at (0) should be [0px]
+PASS Web Animations: property <translate> from [initial] to [200px 100px 200px] at (0.25) should be [50px 25px 50px]
+PASS Web Animations: property <translate> from [initial] to [200px 100px 200px] at (0.75) should be [150px 75px 150px]
+PASS Web Animations: property <translate> from [initial] to [200px 100px 200px] at (1) should be [200px 100px 200px]
+PASS Web Animations: property <translate> from [initial] to [200px 100px 200px] at (2) should be [400px 200px 400px]
+PASS CSS Transitions: property <translate> from [200px 100px 400px] to [initial] at (-1) should be [400px 200px 800px]
+PASS CSS Transitions: property <translate> from [200px 100px 400px] to [initial] at (0) should be [200px 100px 400px]
+PASS CSS Transitions: property <translate> from [200px 100px 400px] to [initial] at (0.25) should be [150px 75px 300px]
+PASS CSS Transitions: property <translate> from [200px 100px 400px] to [initial] at (0.75) should be [50px 25px 100px]
+PASS CSS Transitions: property <translate> from [200px 100px 400px] to [initial] at (1) should be [0px]
+PASS CSS Transitions: property <translate> from [200px 100px 400px] to [initial] at (2) should be [-200px -100px -400px]
+PASS CSS Transitions with transition: all: property <translate> from [200px 100px 400px] to [initial] at (-1) should be [400px 200px 800px]
+PASS CSS Transitions with transition: all: property <translate> from [200px 100px 400px] to [initial] at (0) should be [200px 100px 400px]
+PASS CSS Transitions with transition: all: property <translate> from [200px 100px 400px] to [initial] at (0.25) should be [150px 75px 300px]
+PASS CSS Transitions with transition: all: property <translate> from [200px 100px 400px] to [initial] at (0.75) should be [50px 25px 100px]
+PASS CSS Transitions with transition: all: property <translate> from [200px 100px 400px] to [initial] at (1) should be [0px]
+PASS CSS Transitions with transition: all: property <translate> from [200px 100px 400px] to [initial] at (2) should be [-200px -100px -400px]
+PASS CSS Animations: property <translate> from [200px 100px 400px] to [initial] at (-1) should be [400px 200px 800px]
+PASS CSS Animations: property <translate> from [200px 100px 400px] to [initial] at (0) should be [200px 100px 400px]
+PASS CSS Animations: property <translate> from [200px 100px 400px] to [initial] at (0.25) should be [150px 75px 300px]
+PASS CSS Animations: property <translate> from [200px 100px 400px] to [initial] at (0.75) should be [50px 25px 100px]
+PASS CSS Animations: property <translate> from [200px 100px 400px] to [initial] at (1) should be [0px]
+PASS CSS Animations: property <translate> from [200px 100px 400px] to [initial] at (2) should be [-200px -100px -400px]
+PASS Web Animations: property <translate> from [200px 100px 400px] to [initial] at (-1) should be [400px 200px 800px]
+PASS Web Animations: property <translate> from [200px 100px 400px] to [initial] at (0) should be [200px 100px 400px]
+PASS Web Animations: property <translate> from [200px 100px 400px] to [initial] at (0.25) should be [150px 75px 300px]
+PASS Web Animations: property <translate> from [200px 100px 400px] to [initial] at (0.75) should be [50px 25px 100px]
+PASS Web Animations: property <translate> from [200px 100px 400px] to [initial] at (1) should be [0px]
+PASS Web Animations: property <translate> from [200px 100px 400px] to [initial] at (2) should be [-200px -100px -400px]
+PASS CSS Transitions: property <translate> from [unset] to [20px] at (-1) should be [-20px]
+PASS CSS Transitions: property <translate> from [unset] to [20px] at (0) should be [0px]
+PASS CSS Transitions: property <translate> from [unset] to [20px] at (0.25) should be [5px]
+PASS CSS Transitions: property <translate> from [unset] to [20px] at (0.75) should be [15px]
 PASS CSS Transitions: property <translate> from [unset] to [20px] at (1) should be [20px]
-FAIL CSS Transitions: property <translate> from [unset] to [20px] at (2) should be [40px] assert_equals: expected "40 0 " but got "20 0 "
-FAIL CSS Transitions with transition: all: property <translate> from [unset] to [20px] at (-1) should be [-20px] assert_equals: expected "- 20 0 " but got "20 0 "
-FAIL CSS Transitions with transition: all: property <translate> from [unset] to [20px] at (0) should be [0px] assert_equals: expected "0 0 " but got "20 0 "
-FAIL CSS Transitions with transition: all: property <translate> from [unset] to [20px] at (0.25) should be [5px] assert_equals: expected "5 0 " but got "20 0 "
-FAIL CSS Transitions with transition: all: property <translate> from [unset] to [20px] at (0.75) should be [15px] assert_equals: expected "15 0 " but got "20 0 "
+PASS CSS Transitions: property <translate> from [unset] to [20px] at (2) should be [40px]
+PASS CSS Transitions with transition: all: property <translate> from [unset] to [20px] at (-1) should be [-20px]
+PASS CSS Transitions with transition: all: property <translate> from [unset] to [20px] at (0) should be [0px]
+PASS CSS Transitions with transition: all: property <translate> from [unset] to [20px] at (0.25) should be [5px]
+PASS CSS Transitions with transition: all: property <translate> from [unset] to [20px] at (0.75) should be [15px]
 PASS CSS Transitions with transition: all: property <translate> from [unset] to [20px] at (1) should be [20px]
-FAIL CSS Transitions with transition: all: property <translate> from [unset] to [20px] at (2) should be [40px] assert_equals: expected "40 0 " but got "20 0 "
-FAIL CSS Animations: property <translate> from [unset] to [20px] at (-1) should be [-20px] assert_equals: expected "- 20 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [unset] to [20px] at (0) should be [0px] assert_equals: expected "0 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [unset] to [20px] at (0.25) should be [5px] assert_equals: expected "5 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [unset] to [20px] at (0.75) should be [15px] assert_equals: expected "15 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [unset] to [20px] at (1) should be [20px] assert_equals: expected "20 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [unset] to [20px] at (2) should be [40px] assert_equals: expected "40 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [unset] to [20px] at (-1) should be [-20px] assert_equals: expected "- 20 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [unset] to [20px] at (0) should be [0px] assert_equals: expected "0 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [unset] to [20px] at (0.25) should be [5px] assert_equals: expected "5 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [unset] to [20px] at (0.75) should be [15px] assert_equals: expected "15 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [unset] to [20px] at (1) should be [20px] assert_equals: expected "20 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [unset] to [20px] at (2) should be [40px] assert_equals: expected "40 0 " but got "10 0 "
-FAIL CSS Transitions: property <translate> from [inherit] to [200px 100px 200px] at (-1) should be [0px 300px 400px] assert_equals: expected "0 300 400 " but got "200 100 200 "
-FAIL CSS Transitions: property <translate> from [inherit] to [200px 100px 200px] at (0) should be [100px 200px 300px] assert_equals: expected "100 200 300 " but got "200 100 200 "
-FAIL CSS Transitions: property <translate> from [inherit] to [200px 100px 200px] at (0.25) should be [125px 175px 275px] assert_equals: expected "125 175 275 " but got "200 100 200 "
-FAIL CSS Transitions: property <translate> from [inherit] to [200px 100px 200px] at (0.75) should be [175px 125px 225px] assert_equals: expected "175 125 225 " but got "200 100 200 "
+PASS CSS Transitions with transition: all: property <translate> from [unset] to [20px] at (2) should be [40px]
+PASS CSS Animations: property <translate> from [unset] to [20px] at (-1) should be [-20px]
+PASS CSS Animations: property <translate> from [unset] to [20px] at (0) should be [0px]
+PASS CSS Animations: property <translate> from [unset] to [20px] at (0.25) should be [5px]
+PASS CSS Animations: property <translate> from [unset] to [20px] at (0.75) should be [15px]
+PASS CSS Animations: property <translate> from [unset] to [20px] at (1) should be [20px]
+PASS CSS Animations: property <translate> from [unset] to [20px] at (2) should be [40px]
+PASS Web Animations: property <translate> from [unset] to [20px] at (-1) should be [-20px]
+PASS Web Animations: property <translate> from [unset] to [20px] at (0) should be [0px]
+PASS Web Animations: property <translate> from [unset] to [20px] at (0.25) should be [5px]
+PASS Web Animations: property <translate> from [unset] to [20px] at (0.75) should be [15px]
+PASS Web Animations: property <translate> from [unset] to [20px] at (1) should be [20px]
+PASS Web Animations: property <translate> from [unset] to [20px] at (2) should be [40px]
+PASS CSS Transitions: property <translate> from [inherit] to [200px 100px 200px] at (-1) should be [0px 300px 400px]
+PASS CSS Transitions: property <translate> from [inherit] to [200px 100px 200px] at (0) should be [100px 200px 300px]
+PASS CSS Transitions: property <translate> from [inherit] to [200px 100px 200px] at (0.25) should be [125px 175px 275px]
+PASS CSS Transitions: property <translate> from [inherit] to [200px 100px 200px] at (0.75) should be [175px 125px 225px]
 PASS CSS Transitions: property <translate> from [inherit] to [200px 100px 200px] at (1) should be [200px 100px 200px]
-FAIL CSS Transitions: property <translate> from [inherit] to [200px 100px 200px] at (2) should be [300px 0px 100px] assert_equals: expected "300 0 100 " but got "200 100 200 "
-FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [200px 100px 200px] at (-1) should be [0px 300px 400px] assert_equals: expected "0 300 400 " but got "200 100 200 "
-FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [200px 100px 200px] at (0) should be [100px 200px 300px] assert_equals: expected "100 200 300 " but got "200 100 200 "
-FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [200px 100px 200px] at (0.25) should be [125px 175px 275px] assert_equals: expected "125 175 275 " but got "200 100 200 "
-FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [200px 100px 200px] at (0.75) should be [175px 125px 225px] assert_equals: expected "175 125 225 " but got "200 100 200 "
+PASS CSS Transitions: property <translate> from [inherit] to [200px 100px 200px] at (2) should be [300px 0px 100px]
+PASS CSS Transitions with transition: all: property <translate> from [inherit] to [200px 100px 200px] at (-1) should be [0px 300px 400px]
+PASS CSS Transitions with transition: all: property <translate> from [inherit] to [200px 100px 200px] at (0) should be [100px 200px 300px]
+PASS CSS Transitions with transition: all: property <translate> from [inherit] to [200px 100px 200px] at (0.25) should be [125px 175px 275px]
+PASS CSS Transitions with transition: all: property <translate> from [inherit] to [200px 100px 200px] at (0.75) should be [175px 125px 225px]
 PASS CSS Transitions with transition: all: property <translate> from [inherit] to [200px 100px 200px] at (1) should be [200px 100px 200px]
-FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [200px 100px 200px] at (2) should be [300px 0px 100px] assert_equals: expected "300 0 100 " but got "200 100 200 "
-FAIL CSS Animations: property <translate> from [inherit] to [200px 100px 200px] at (-1) should be [0px 300px 400px] assert_equals: expected "0 300 400 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [inherit] to [200px 100px 200px] at (0) should be [100px 200px 300px] assert_equals: expected "100 200 300 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [inherit] to [200px 100px 200px] at (0.25) should be [125px 175px 275px] assert_equals: expected "125 175 275 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [inherit] to [200px 100px 200px] at (0.75) should be [175px 125px 225px] assert_equals: expected "175 125 225 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [inherit] to [200px 100px 200px] at (1) should be [200px 100px 200px] assert_equals: expected "200 100 200 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [inherit] to [200px 100px 200px] at (2) should be [300px 0px 100px] assert_equals: expected "300 0 100 " but got "10 0 "
-FAIL Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (-1) should be [0px 300px 400px] assert_equals: expected "0 300 400 " but got "10 0 "
-FAIL Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (0) should be [100px 200px 300px] assert_equals: expected "100 200 300 " but got "10 0 "
-FAIL Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (0.25) should be [125px 175px 275px] assert_equals: expected "125 175 275 " but got "10 0 "
-FAIL Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (0.75) should be [175px 125px 225px] assert_equals: expected "175 125 225 " but got "10 0 "
-FAIL Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (1) should be [200px 100px 200px] assert_equals: expected "200 100 200 " but got "10 0 "
-FAIL Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (2) should be [300px 0px 100px] assert_equals: expected "300 0 100 " but got "10 0 "
-FAIL CSS Transitions: property <translate> from [200px 100px 200px] to [inherit] at (-1) should be [300px 0px 100px] assert_equals: expected "300 0 100 " but got "100 200 300 "
-FAIL CSS Transitions: property <translate> from [200px 100px 200px] to [inherit] at (0) should be [200px 100px 200px] assert_equals: expected "200 100 200 " but got "100 200 300 "
-FAIL CSS Transitions: property <translate> from [200px 100px 200px] to [inherit] at (0.25) should be [175px 125px 225px] assert_equals: expected "175 125 225 " but got "100 200 300 "
-FAIL CSS Transitions: property <translate> from [200px 100px 200px] to [inherit] at (0.75) should be [125px 175px 275px] assert_equals: expected "125 175 275 " but got "100 200 300 "
+PASS CSS Transitions with transition: all: property <translate> from [inherit] to [200px 100px 200px] at (2) should be [300px 0px 100px]
+PASS CSS Animations: property <translate> from [inherit] to [200px 100px 200px] at (-1) should be [0px 300px 400px]
+PASS CSS Animations: property <translate> from [inherit] to [200px 100px 200px] at (0) should be [100px 200px 300px]
+PASS CSS Animations: property <translate> from [inherit] to [200px 100px 200px] at (0.25) should be [125px 175px 275px]
+PASS CSS Animations: property <translate> from [inherit] to [200px 100px 200px] at (0.75) should be [175px 125px 225px]
+PASS CSS Animations: property <translate> from [inherit] to [200px 100px 200px] at (1) should be [200px 100px 200px]
+PASS CSS Animations: property <translate> from [inherit] to [200px 100px 200px] at (2) should be [300px 0px 100px]
+FAIL Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (-1) should be [0px 300px 400px] assert_equals: expected "0px 300px 400 " but got "- 180px - 100px - 200 "
+FAIL Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (0) should be [100px 200px 300px] assert_equals: expected "100px 200px 300 " but got "- 180px - 100px - 200 "
+FAIL Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (0.25) should be [125px 175px 275px] assert_equals: expected "125px 175px 275 " but got "- 85px - 50px - 100 "
+FAIL Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (0.75) should be [175px 125px 225px] assert_equals: expected "175px 125px 225 " but got "128.75px 62.5px 125 "
+PASS Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (1) should be [200px 100px 200px]
+FAIL Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (2) should be [300px 0px 100px] assert_equals: expected "300px 0px 100 " but got "200px 100px 200 "
+PASS CSS Transitions: property <translate> from [200px 100px 200px] to [inherit] at (-1) should be [300px 0px 100px]
+PASS CSS Transitions: property <translate> from [200px 100px 200px] to [inherit] at (0) should be [200px 100px 200px]
+PASS CSS Transitions: property <translate> from [200px 100px 200px] to [inherit] at (0.25) should be [175px 125px 225px]
+PASS CSS Transitions: property <translate> from [200px 100px 200px] to [inherit] at (0.75) should be [125px 175px 275px]
 PASS CSS Transitions: property <translate> from [200px 100px 200px] to [inherit] at (1) should be [100px 200px 300px]
-FAIL CSS Transitions: property <translate> from [200px 100px 200px] to [inherit] at (2) should be [0px 300px 400px] assert_equals: expected "0 300 400 " but got "100 200 300 "
-FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 200px] to [inherit] at (-1) should be [300px 0px 100px] assert_equals: expected "300 0 100 " but got "100 200 300 "
-FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 200px] to [inherit] at (0) should be [200px 100px 200px] assert_equals: expected "200 100 200 " but got "100 200 300 "
-FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 200px] to [inherit] at (0.25) should be [175px 125px 225px] assert_equals: expected "175 125 225 " but got "100 200 300 "
-FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 200px] to [inherit] at (0.75) should be [125px 175px 275px] assert_equals: expected "125 175 275 " but got "100 200 300 "
+PASS CSS Transitions: property <translate> from [200px 100px 200px] to [inherit] at (2) should be [0px 300px 400px]
+PASS CSS Transitions with transition: all: property <translate> from [200px 100px 200px] to [inherit] at (-1) should be [300px 0px 100px]
+PASS CSS Transitions with transition: all: property <translate> from [200px 100px 200px] to [inherit] at (0) should be [200px 100px 200px]
+PASS CSS Transitions with transition: all: property <translate> from [200px 100px 200px] to [inherit] at (0.25) should be [175px 125px 225px]
+PASS CSS Transitions with transition: all: property <translate> from [200px 100px 200px] to [inherit] at (0.75) should be [125px 175px 275px]
 PASS CSS Transitions with transition: all: property <translate> from [200px 100px 200px] to [inherit] at (1) should be [100px 200px 300px]
-FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 200px] to [inherit] at (2) should be [0px 300px 400px] assert_equals: expected "0 300 400 " but got "100 200 300 "
-FAIL CSS Animations: property <translate> from [200px 100px 200px] to [inherit] at (-1) should be [300px 0px 100px] assert_equals: expected "300 0 100 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [200px 100px 200px] to [inherit] at (0) should be [200px 100px 200px] assert_equals: expected "200 100 200 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [200px 100px 200px] to [inherit] at (0.25) should be [175px 125px 225px] assert_equals: expected "175 125 225 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [200px 100px 200px] to [inherit] at (0.75) should be [125px 175px 275px] assert_equals: expected "125 175 275 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [200px 100px 200px] to [inherit] at (1) should be [100px 200px 300px] assert_equals: expected "100 200 300 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [200px 100px 200px] to [inherit] at (2) should be [0px 300px 400px] assert_equals: expected "0 300 400 " but got "10 0 "
-FAIL Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (-1) should be [300px 0px 100px] assert_equals: expected "300 0 100 " but got "10 0 "
-FAIL Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (0) should be [200px 100px 200px] assert_equals: expected "200 100 200 " but got "10 0 "
-FAIL Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (0.25) should be [175px 125px 225px] assert_equals: expected "175 125 225 " but got "10 0 "
-FAIL Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (0.75) should be [125px 175px 275px] assert_equals: expected "125 175 275 " but got "10 0 "
-FAIL Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (1) should be [100px 200px 300px] assert_equals: expected "100 200 300 " but got "10 0 "
-FAIL Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (2) should be [0px 300px 400px] assert_equals: expected "0 300 400 " but got "10 0 "
-FAIL CSS Transitions: property <translate> from [initial] to [inherit] at (-1) should be [-100px -200px -300px] assert_equals: expected "- 100 - 200 - 300 " but got "100 200 300 "
-FAIL CSS Transitions: property <translate> from [initial] to [inherit] at (0) should be [0px] assert_equals: expected "0 0 " but got "100 200 300 "
-FAIL CSS Transitions: property <translate> from [initial] to [inherit] at (0.25) should be [25px 50px 75px] assert_equals: expected "25 50 75 " but got "100 200 300 "
-FAIL CSS Transitions: property <translate> from [initial] to [inherit] at (0.75) should be [75px 150px 225px] assert_equals: expected "75 150 225 " but got "100 200 300 "
+PASS CSS Transitions with transition: all: property <translate> from [200px 100px 200px] to [inherit] at (2) should be [0px 300px 400px]
+PASS CSS Animations: property <translate> from [200px 100px 200px] to [inherit] at (-1) should be [300px 0px 100px]
+PASS CSS Animations: property <translate> from [200px 100px 200px] to [inherit] at (0) should be [200px 100px 200px]
+PASS CSS Animations: property <translate> from [200px 100px 200px] to [inherit] at (0.25) should be [175px 125px 225px]
+PASS CSS Animations: property <translate> from [200px 100px 200px] to [inherit] at (0.75) should be [125px 175px 275px]
+PASS CSS Animations: property <translate> from [200px 100px 200px] to [inherit] at (1) should be [100px 200px 300px]
+PASS CSS Animations: property <translate> from [200px 100px 200px] to [inherit] at (2) should be [0px 300px 400px]
+FAIL Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (-1) should be [300px 0px 100px] assert_equals: expected "300px 0px 100 " but got "390px 200px 400 "
+PASS Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (0) should be [200px 100px 200px]
+FAIL Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (0.25) should be [175px 125px 225px] assert_equals: expected "175px 125px 225 " but got "200px 100px 200 "
+FAIL Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (0.75) should be [125px 175px 275px] assert_equals: expected "125px 175px 275 " but got "200px 100px 200 "
+FAIL Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (1) should be [100px 200px 300px] assert_equals: expected "100px 200px 300 " but got "200px 100px 200 "
+FAIL Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (2) should be [0px 300px 400px] assert_equals: expected "0px 300px 400 " but got "200px 100px 200 "
+PASS CSS Transitions: property <translate> from [initial] to [inherit] at (-1) should be [-100px -200px -300px]
+PASS CSS Transitions: property <translate> from [initial] to [inherit] at (0) should be [0px]
+PASS CSS Transitions: property <translate> from [initial] to [inherit] at (0.25) should be [25px 50px 75px]
+PASS CSS Transitions: property <translate> from [initial] to [inherit] at (0.75) should be [75px 150px 225px]
 PASS CSS Transitions: property <translate> from [initial] to [inherit] at (1) should be [100px 200px 300px]
-FAIL CSS Transitions: property <translate> from [initial] to [inherit] at (2) should be [200px 400px 600px] assert_equals: expected "200 400 600 " but got "100 200 300 "
-FAIL CSS Transitions with transition: all: property <translate> from [initial] to [inherit] at (-1) should be [-100px -200px -300px] assert_equals: expected "- 100 - 200 - 300 " but got "100 200 300 "
-FAIL CSS Transitions with transition: all: property <translate> from [initial] to [inherit] at (0) should be [0px] assert_equals: expected "0 0 " but got "100 200 300 "
-FAIL CSS Transitions with transition: all: property <translate> from [initial] to [inherit] at (0.25) should be [25px 50px 75px] assert_equals: expected "25 50 75 " but got "100 200 300 "
-FAIL CSS Transitions with transition: all: property <translate> from [initial] to [inherit] at (0.75) should be [75px 150px 225px] assert_equals: expected "75 150 225 " but got "100 200 300 "
+PASS CSS Transitions: property <translate> from [initial] to [inherit] at (2) should be [200px 400px 600px]
+PASS CSS Transitions with transition: all: property <translate> from [initial] to [inherit] at (-1) should be [-100px -200px -300px]
+PASS CSS Transitions with transition: all: property <translate> from [initial] to [inherit] at (0) should be [0px]
+PASS CSS Transitions with transition: all: property <translate> from [initial] to [inherit] at (0.25) should be [25px 50px 75px]
+PASS CSS Transitions with transition: all: property <translate> from [initial] to [inherit] at (0.75) should be [75px 150px 225px]
 PASS CSS Transitions with transition: all: property <translate> from [initial] to [inherit] at (1) should be [100px 200px 300px]
-FAIL CSS Transitions with transition: all: property <translate> from [initial] to [inherit] at (2) should be [200px 400px 600px] assert_equals: expected "200 400 600 " but got "100 200 300 "
-FAIL CSS Animations: property <translate> from [initial] to [inherit] at (-1) should be [-100px -200px -300px] assert_equals: expected "- 100 - 200 - 300 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [initial] to [inherit] at (0) should be [0px] assert_equals: expected "0 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [initial] to [inherit] at (0.25) should be [25px 50px 75px] assert_equals: expected "25 50 75 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [initial] to [inherit] at (0.75) should be [75px 150px 225px] assert_equals: expected "75 150 225 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [initial] to [inherit] at (1) should be [100px 200px 300px] assert_equals: expected "100 200 300 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [initial] to [inherit] at (2) should be [200px 400px 600px] assert_equals: expected "200 400 600 " but got "10 0 "
-FAIL Web Animations: property <translate> from [initial] to [inherit] at (-1) should be [-100px -200px -300px] assert_equals: expected "- 100 - 200 - 300 " but got "10 0 "
-FAIL Web Animations: property <translate> from [initial] to [inherit] at (0) should be [0px] assert_equals: expected "0 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [initial] to [inherit] at (0.25) should be [25px 50px 75px] assert_equals: expected "25 50 75 " but got "10 0 "
-FAIL Web Animations: property <translate> from [initial] to [inherit] at (0.75) should be [75px 150px 225px] assert_equals: expected "75 150 225 " but got "10 0 "
-FAIL Web Animations: property <translate> from [initial] to [inherit] at (1) should be [100px 200px 300px] assert_equals: expected "100 200 300 " but got "10 0 "
-FAIL Web Animations: property <translate> from [initial] to [inherit] at (2) should be [200px 400px 600px] assert_equals: expected "200 400 600 " but got "10 0 "
-FAIL CSS Transitions: property <translate> from [inherit] to [initial] at (-1) should be [200px 400px 600px] assert_equals: expected "200 400 600 " but got "none "
-FAIL CSS Transitions: property <translate> from [inherit] to [initial] at (0) should be [100px 200px 300px] assert_equals: expected "100 200 300 " but got "none "
-FAIL CSS Transitions: property <translate> from [inherit] to [initial] at (0.25) should be [75px 150px 225px] assert_equals: expected "75 150 225 " but got "none "
-FAIL CSS Transitions: property <translate> from [inherit] to [initial] at (0.75) should be [25px 50px 75px] assert_equals: expected "25 50 75 " but got "none "
-FAIL CSS Transitions: property <translate> from [inherit] to [initial] at (1) should be [0px] assert_equals: expected "0 0 " but got "none "
-FAIL CSS Transitions: property <translate> from [inherit] to [initial] at (2) should be [-100px -200px -300px] assert_equals: expected "- 100 - 200 - 300 " but got "none "
-FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [initial] at (-1) should be [200px 400px 600px] assert_equals: expected "200 400 600 " but got "none "
-FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [initial] at (0) should be [100px 200px 300px] assert_equals: expected "100 200 300 " but got "none "
-FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [initial] at (0.25) should be [75px 150px 225px] assert_equals: expected "75 150 225 " but got "none "
-FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [initial] at (0.75) should be [25px 50px 75px] assert_equals: expected "25 50 75 " but got "none "
-FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [initial] at (1) should be [0px] assert_equals: expected "0 0 " but got "none "
-FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [initial] at (2) should be [-100px -200px -300px] assert_equals: expected "- 100 - 200 - 300 " but got "none "
-FAIL CSS Animations: property <translate> from [inherit] to [initial] at (-1) should be [200px 400px 600px] assert_equals: expected "200 400 600 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [inherit] to [initial] at (0) should be [100px 200px 300px] assert_equals: expected "100 200 300 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [inherit] to [initial] at (0.25) should be [75px 150px 225px] assert_equals: expected "75 150 225 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [inherit] to [initial] at (0.75) should be [25px 50px 75px] assert_equals: expected "25 50 75 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [inherit] to [initial] at (1) should be [0px] assert_equals: expected "0 0 " but got "10 0 "
-FAIL CSS Animations: property <translate> from [inherit] to [initial] at (2) should be [-100px -200px -300px] assert_equals: expected "- 100 - 200 - 300 " but got "10 0 "
-FAIL Web Animations: property <translate> from [inherit] to [initial] at (-1) should be [200px 400px 600px] assert_equals: expected "200 400 600 " but got "10 0 "
-FAIL Web Animations: property <translate> from [inherit] to [initial] at (0) should be [100px 200px 300px] assert_equals: expected "100 200 300 " but got "10 0 "
-FAIL Web Animations: property <translate> from [inherit] to [initial] at (0.25) should be [75px 150px 225px] assert_equals: expected "75 150 225 " but got "10 0 "
-FAIL Web Animations: property <translate> from [inherit] to [initial] at (0.75) should be [25px 50px 75px] assert_equals: expected "25 50 75 " but got "10 0 "
-FAIL Web Animations: property <translate> from [inherit] to [initial] at (1) should be [0px] assert_equals: expected "0 0 " but got "10 0 "
-FAIL Web Animations: property <translate> from [inherit] to [initial] at (2) should be [-100px -200px -300px] assert_equals: expected "- 100 - 200 - 300 " but got "10 0 "
+PASS CSS Transitions with transition: all: property <translate> from [initial] to [inherit] at (2) should be [200px 400px 600px]
+PASS CSS Animations: property <translate> from [initial] to [inherit] at (-1) should be [-100px -200px -300px]
+PASS CSS Animations: property <translate> from [initial] to [inherit] at (0) should be [0px]
+PASS CSS Animations: property <translate> from [initial] to [inherit] at (0.25) should be [25px 50px 75px]
+PASS CSS Animations: property <translate> from [initial] to [inherit] at (0.75) should be [75px 150px 225px]
+PASS CSS Animations: property <translate> from [initial] to [inherit] at (1) should be [100px 200px 300px]
+PASS CSS Animations: property <translate> from [initial] to [inherit] at (2) should be [200px 400px 600px]
+FAIL Web Animations: property <translate> from [initial] to [inherit] at (-1) should be [-100px -200px -300px] assert_equals: expected "- 100px - 200px - 300 " but got "- 10px "
+PASS Web Animations: property <translate> from [initial] to [inherit] at (0) should be [0px]
+FAIL Web Animations: property <translate> from [initial] to [inherit] at (0.25) should be [25px 50px 75px] assert_equals: expected "25px 50px 75 " but got "none "
+FAIL Web Animations: property <translate> from [initial] to [inherit] at (0.75) should be [75px 150px 225px] assert_equals: expected "75px 150px 225 " but got "none "
+FAIL Web Animations: property <translate> from [initial] to [inherit] at (1) should be [100px 200px 300px] assert_equals: expected "100px 200px 300 " but got "none "
+FAIL Web Animations: property <translate> from [initial] to [inherit] at (2) should be [200px 400px 600px] assert_equals: expected "200px 400px 600 " but got "none "
+PASS CSS Transitions: property <translate> from [inherit] to [initial] at (-1) should be [200px 400px 600px]
+PASS CSS Transitions: property <translate> from [inherit] to [initial] at (0) should be [100px 200px 300px]
+PASS CSS Transitions: property <translate> from [inherit] to [initial] at (0.25) should be [75px 150px 225px]
+PASS CSS Transitions: property <translate> from [inherit] to [initial] at (0.75) should be [25px 50px 75px]
+PASS CSS Transitions: property <translate> from [inherit] to [initial] at (1) should be [0px]
+PASS CSS Transitions: property <translate> from [inherit] to [initial] at (2) should be [-100px -200px -300px]
+PASS CSS Transitions with transition: all: property <translate> from [inherit] to [initial] at (-1) should be [200px 400px 600px]
+PASS CSS Transitions with transition: all: property <translate> from [inherit] to [initial] at (0) should be [100px 200px 300px]
+PASS CSS Transitions with transition: all: property <translate> from [inherit] to [initial] at (0.25) should be [75px 150px 225px]
+PASS CSS Transitions with transition: all: property <translate> from [inherit] to [initial] at (0.75) should be [25px 50px 75px]
+PASS CSS Transitions with transition: all: property <translate> from [inherit] to [initial] at (1) should be [0px]
+PASS CSS Transitions with transition: all: property <translate> from [inherit] to [initial] at (2) should be [-100px -200px -300px]
+PASS CSS Animations: property <translate> from [inherit] to [initial] at (-1) should be [200px 400px 600px]
+PASS CSS Animations: property <translate> from [inherit] to [initial] at (0) should be [100px 200px 300px]
+PASS CSS Animations: property <translate> from [inherit] to [initial] at (0.25) should be [75px 150px 225px]
+PASS CSS Animations: property <translate> from [inherit] to [initial] at (0.75) should be [25px 50px 75px]
+PASS CSS Animations: property <translate> from [inherit] to [initial] at (1) should be [0px]
+PASS CSS Animations: property <translate> from [inherit] to [initial] at (2) should be [-100px -200px -300px]
+FAIL Web Animations: property <translate> from [inherit] to [initial] at (-1) should be [200px 400px 600px] assert_equals: expected "200px 400px 600 " but got "20px "
+FAIL Web Animations: property <translate> from [inherit] to [initial] at (0) should be [100px 200px 300px] assert_equals: expected "100px 200px 300 " but got "20px "
+FAIL Web Animations: property <translate> from [inherit] to [initial] at (0.25) should be [75px 150px 225px] assert_equals: expected "75px 150px 225 " but got "15px "
+FAIL Web Animations: property <translate> from [inherit] to [initial] at (0.75) should be [25px 50px 75px] assert_equals: expected "25px 50px 75 " but got "3.75px "
+PASS Web Animations: property <translate> from [inherit] to [initial] at (1) should be [0px]
+FAIL Web Animations: property <translate> from [inherit] to [initial] at (2) should be [-100px -200px -300px] assert_equals: expected "- 100px - 200px - 300 " but got "none "
 

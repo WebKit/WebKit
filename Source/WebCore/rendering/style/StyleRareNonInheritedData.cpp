@@ -81,6 +81,9 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , justifyItems(RenderStyle::initialJustifyItems())
     , justifySelf(RenderStyle::initialSelfAlignment())
     , customProperties(StyleCustomPropertyData::create())
+    , rotate(RenderStyle::initialRotate())
+    , scale(RenderStyle::initialScale())
+    , translate(RenderStyle::initialTranslate())
     , touchActions(RenderStyle::initialTouchActions())
     , pageSizeType(PAGE_SIZE_AUTO)
     , transformStyle3D(static_cast<unsigned>(RenderStyle::initialTransformStyle3D()))
@@ -173,6 +176,9 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , justifySelf(o.justifySelf)
     , customProperties(o.customProperties)
     , customPaintWatchedProperties(o.customPaintWatchedProperties ? makeUnique<HashSet<String>>(*o.customPaintWatchedProperties) : nullptr)
+    , rotate(o.rotate)
+    , scale(o.scale)
+    , translate(o.translate)
     , touchActions(o.touchActions)
     , pageSizeType(o.pageSizeType)
     , transformStyle3D(o.transformStyle3D)
@@ -285,6 +291,9 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && borderFit == o.borderFit
         && textCombine == o.textCombine
         && textDecorationStyle == o.textDecorationStyle
+        && arePointingToEqualData(rotate, o.rotate)
+        && arePointingToEqualData(scale, o.scale)
+        && arePointingToEqualData(translate, o.translate)
         && touchActions == o.touchActions
 #if ENABLE(CSS_COMPOSITING)
         && effectiveBlendMode == o.effectiveBlendMode

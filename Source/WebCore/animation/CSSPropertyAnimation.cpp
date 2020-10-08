@@ -135,6 +135,114 @@ static inline TransformOperations blendFunc(const CSSPropertyBlendingClient* ani
     return to.blendByUsingMatrixInterpolation(from, progress, is<RenderBox>(animation->renderer()) ? downcast<RenderBox>(*animation->renderer()).borderBoxRect().size() : LayoutSize());
 }
 
+static RefPtr<ScaleTransformOperation> blendFunc(const CSSPropertyBlendingClient* client, ScaleTransformOperation* from, ScaleTransformOperation* to, double progress)
+{
+    if (!from && !to)
+        return nullptr;
+
+    RefPtr<ScaleTransformOperation> identity;
+    if (!from) {
+        identity = ScaleTransformOperation::create(1, 1, 1, to->type());
+        from = identity.get();
+    } else if (!to) {
+        identity = ScaleTransformOperation::create(1, 1, 1, from->type());
+        to = identity.get();
+    }
+
+    // Ensure the two transforms have the same type.
+    if (!from->isSameType(*to)) {
+        RefPtr<ScaleTransformOperation> normalizedFrom;
+        RefPtr<ScaleTransformOperation> normalizedTo;
+        if (from->is3DOperation() || to->is3DOperation()) {
+            normalizedFrom = ScaleTransformOperation::create(from->x(), from->y(), from->z(), TransformOperation::SCALE_3D);
+            normalizedTo = ScaleTransformOperation::create(to->x(), to->y(), to->z(), TransformOperation::SCALE_3D);
+        } else {
+            normalizedFrom = ScaleTransformOperation::create(from->x(), from->y(), TransformOperation::SCALE);
+            normalizedTo = ScaleTransformOperation::create(to->x(), to->y(), TransformOperation::SCALE);
+        }
+        return blendFunc(client, normalizedFrom.get(), normalizedTo.get(), progress);
+    }
+
+    auto blendedOperation = to->blend(from, progress);
+    if (is<ScaleTransformOperation>(blendedOperation.get())) {
+        auto& scale = downcast<ScaleTransformOperation>(blendedOperation.get());
+        return ScaleTransformOperation::create(scale.x(), scale.y(), scale.z(), scale.type());
+    }
+    return nullptr;
+}
+
+static RefPtr<RotateTransformOperation> blendFunc(const CSSPropertyBlendingClient* client, RotateTransformOperation* from, RotateTransformOperation* to, double progress)
+{
+    if (!from && !to)
+        return nullptr;
+
+    RefPtr<RotateTransformOperation> identity;
+    if (!from) {
+        identity = RotateTransformOperation::create(0, to->type());
+        from = identity.get();
+    } else if (!to) {
+        identity = RotateTransformOperation::create(0, from->type());
+        to = identity.get();
+    }
+
+    // Ensure the two transforms have the same type.
+    if (!from->isSameType(*to)) {
+        RefPtr<RotateTransformOperation> normalizedFrom;
+        RefPtr<RotateTransformOperation> normalizedTo;
+        if (from->is3DOperation() || to->is3DOperation()) {
+            normalizedFrom = RotateTransformOperation::create(from->x(), from->y(), from->z(), from->angle(), TransformOperation::ROTATE_3D);
+            normalizedTo = RotateTransformOperation::create(to->x(), to->y(), to->z(), to->angle(), TransformOperation::ROTATE_3D);
+        } else {
+            normalizedFrom = RotateTransformOperation::create(from->angle(), TransformOperation::ROTATE);
+            normalizedTo = RotateTransformOperation::create(to->angle(), TransformOperation::ROTATE);
+        }
+        return blendFunc(client, normalizedFrom.get(), normalizedTo.get(), progress);
+    }
+
+    auto blendedOperation = to->blend(from, progress);
+    if (is<RotateTransformOperation>(blendedOperation.get())) {
+        auto& rotate = downcast<RotateTransformOperation>(blendedOperation.get());
+        return RotateTransformOperation::create(rotate.x(), rotate.y(), rotate.z(), rotate.angle(), rotate.type());
+    }
+    return nullptr;
+}
+
+static RefPtr<TranslateTransformOperation> blendFunc(const CSSPropertyBlendingClient* client, TranslateTransformOperation* from, TranslateTransformOperation* to, double progress)
+{
+    if (!from && !to)
+        return nullptr;
+
+    RefPtr<TranslateTransformOperation> identity;
+    if (!from) {
+        identity = TranslateTransformOperation::create(Length(0, Fixed), Length(0, Fixed), Length(0, Fixed), to->type());
+        from = identity.get();
+    } else if (!to) {
+        identity = TranslateTransformOperation::create(Length(0, Fixed), Length(0, Fixed), Length(0, Fixed), from->type());
+        to = identity.get();
+    }
+
+    // Ensure the two transforms have the same type.
+    if (!from->isSameType(*to)) {
+        RefPtr<TranslateTransformOperation> normalizedFrom;
+        RefPtr<TranslateTransformOperation> normalizedTo;
+        if (from->is3DOperation() || to->is3DOperation()) {
+            normalizedFrom = TranslateTransformOperation::create(from->x(), from->y(), from->z(), TransformOperation::TRANSLATE_3D);
+            normalizedTo = TranslateTransformOperation::create(to->x(), to->y(), to->z(), TransformOperation::TRANSLATE_3D);
+        } else {
+            normalizedFrom = TranslateTransformOperation::create(from->x(), from->y(), TransformOperation::TRANSLATE);
+            normalizedTo = TranslateTransformOperation::create(to->x(), to->y(), TransformOperation::TRANSLATE);
+        }
+        return blendFunc(client, normalizedFrom.get(), normalizedTo.get(), progress);
+    }
+
+    Ref<TransformOperation> blendedOperation = to->blend(from, progress);
+    if (is<TranslateTransformOperation>(blendedOperation.get())) {
+        TranslateTransformOperation& translate = downcast<TranslateTransformOperation>(blendedOperation.get());
+        return TranslateTransformOperation::create(translate.x(), translate.y(), translate.z(), translate.type());
+    }
+    return nullptr;
+}
+
 static inline RefPtr<ClipPathOperation> blendFunc(const CSSPropertyBlendingClient*, ClipPathOperation* from, ClipPathOperation* to, double progress)
 {
     if (!from || !to)
@@ -730,6 +838,51 @@ public:
     void blend(const CSSPropertyBlendingClient* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
         dst->setTransform(blendFunc(anim, a->transform(), b->transform(), progress));
+    }
+};
+
+class PropertyWrapperScale final : public RefCountedPropertyWrapper<ScaleTransformOperation> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    PropertyWrapperScale()
+        : RefCountedPropertyWrapper<ScaleTransformOperation>(CSSPropertyScale, &RenderStyle::scale, &RenderStyle::setScale)
+    {
+    }
+
+private:
+    bool equals(const RenderStyle* a, const RenderStyle* b) const final
+    {
+        return arePointingToEqualData((a->*m_getter)(), (b->*m_getter)());
+    }
+};
+
+class PropertyWrapperRotate final : public RefCountedPropertyWrapper<RotateTransformOperation> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    PropertyWrapperRotate()
+        : RefCountedPropertyWrapper<RotateTransformOperation>(CSSPropertyRotate, &RenderStyle::rotate, &RenderStyle::setRotate)
+    {
+    }
+
+private:
+    bool equals(const RenderStyle* a, const RenderStyle* b) const final
+    {
+        return arePointingToEqualData((a->*m_getter)(), (b->*m_getter)());
+    }
+};
+
+class PropertyWrapperTranslate final : public RefCountedPropertyWrapper<TranslateTransformOperation> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    PropertyWrapperTranslate()
+        : RefCountedPropertyWrapper<TranslateTransformOperation>(CSSPropertyTranslate, &RenderStyle::translate, &RenderStyle::setTranslate)
+    {
+    }
+
+private:
+    bool equals(const RenderStyle* a, const RenderStyle* b) const final
+    {
+        return arePointingToEqualData((a->*m_getter)(), (b->*m_getter)());
     }
 };
 
@@ -1644,7 +1797,11 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 
         new PropertyWrapperAcceleratedOpacity(),
         new PropertyWrapperAcceleratedTransform(),
-        
+
+        new PropertyWrapperScale,
+        new PropertyWrapperRotate,
+        new PropertyWrapperTranslate,
+
         new PropertyWrapperFilter(CSSPropertyFilter, &RenderStyle::filter, &RenderStyle::setFilter),
 #if ENABLE(FILTERS_LEVEL_2)
         new PropertyWrapperFilter(CSSPropertyWebkitBackdropFilter, &RenderStyle::backdropFilter, &RenderStyle::setBackdropFilter),

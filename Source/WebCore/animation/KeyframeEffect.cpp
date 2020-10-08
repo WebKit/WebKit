@@ -294,8 +294,13 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
 
 static inline ExceptionOr<void> processIterableKeyframes(JSGlobalObject& lexicalGlobalObject, Strong<JSObject>&& keyframesInput, JSValue method, Vector<KeyframeEffect::ParsedKeyframe>& parsedKeyframes)
 {
+    auto* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext();
+    if (!is<Document>(scriptExecutionContext))
+        return { };
+    CSSParserContext parserContext(downcast<Document>(*scriptExecutionContext));
+
     // 1. Let iter be GetIterator(object, method).
-    forEachInIterable(lexicalGlobalObject, keyframesInput.get(), method, [&parsedKeyframes](VM& vm, JSGlobalObject& lexicalGlobalObject, JSValue nextValue) -> ExceptionOr<void> {
+    forEachInIterable(lexicalGlobalObject, keyframesInput.get(), method, [&parsedKeyframes, &parserContext](VM& vm, JSGlobalObject& lexicalGlobalObject, JSValue nextValue) -> ExceptionOr<void> {
         // Steps 2 through 6 are already implemented by forEachInIterable().
         auto scope = DECLARE_THROW_SCOPE(vm);
         if (!nextValue || !nextValue.isObject()) {
@@ -337,7 +342,7 @@ static inline ExceptionOr<void> processIterableKeyframes(JSGlobalObject& lexical
             // there should only ever be a single value for a given property.
             ASSERT(propertyAndValue.values.size() == 1);
             auto stringValue = propertyAndValue.values[0];
-            if (keyframeOutput.style->setProperty(cssPropertyId, stringValue))
+            if (keyframeOutput.style->setProperty(cssPropertyId, stringValue, false, parserContext))
                 keyframeOutput.unparsedStyle.set(cssPropertyId, stringValue);
         }
 
@@ -357,6 +362,11 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
         return processKeyframeLikeObjectResult.releaseException();
     auto propertyIndexedKeyframe = processKeyframeLikeObjectResult.returnValue();
 
+    auto* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext();
+    if (!is<Document>(scriptExecutionContext))
+        return { };
+    CSSParserContext parserContext(downcast<Document>(*scriptExecutionContext));
+
     // 2. For each member, m, in property-indexed keyframe, perform the following steps:
     for (auto& m : propertyIndexedKeyframe.propertiesAndValues) {
         // 1. Let property name be the key for m.
@@ -373,7 +383,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
             // 1. Let k be a new keyframe with a null keyframe offset.
             KeyframeEffect::ParsedKeyframe k;
             // 2. Add the property-value pair, property name → v, to k.
-            if (k.style->setProperty(propertyName, v))
+            if (k.style->setProperty(propertyName, v, false, parserContext))
                 k.unparsedStyle.set(propertyName, v);
             // 3. Append k to property keyframes.
             propertyKeyframes.append(WTFMove(k));

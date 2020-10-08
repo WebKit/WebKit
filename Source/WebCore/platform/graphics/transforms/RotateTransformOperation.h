@@ -53,8 +53,11 @@ public:
 
     bool operator==(const TransformOperation&) const override;
 
+    Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) final;
+
+    bool isIdentity() const final { return !m_angle; }
+
 private:
-    bool isIdentity() const override { return m_angle == 0; }
     bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
     bool isRepresentableIn2D() const final { return (!m_x && !m_y) || !m_angle; }
 
@@ -66,8 +69,6 @@ private:
             transform.rotate3d(m_x, m_y, m_z, m_angle);
         return false;
     }
-
-    Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
 
     void dump(WTF::TextStream&) const final;
 

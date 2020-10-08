@@ -68,6 +68,18 @@ FAIL transform: matrix3d assert_approx_equals: expected matrix3d(0.853553, 0.146
 FAIL transform: non-invertible matrices assert_approx_equals: expected matrix(-1, 0, 0, -1, 250, 0) but got matrix(-1, 0, 0, -1, 200, 0): The value should be matrix(-1, 0, 0, -1, 250, 0) at 0ms but got matrix(-1, 0, 0, -1, 200, 0) expected 250 +/- 0.0001 but got 200
 FAIL transform: non-invertible matrices in matched transform lists assert_approx_equals: expected matrix(0, -1, 1, 0, 250, 0) but got matrix(0, -1, 1, 0, 200, 0): The value should be matrix(0, -1, 1, 0, 250, 0) at 0ms but got matrix(0, -1, 1, 0, 200, 0) expected 250 +/- 0.0001 but got 200
 FAIL transform: non-invertible matrices in mismatched transform lists assert_approx_equals: expected matrix(-2, 0, 0, -2, 250, 0) but got matrix(-2, 0, 0, -2, 200, 0): The value should be matrix(-2, 0, 0, -2, 250, 0) at 0ms but got matrix(-2, 0, 0, -2, 200, 0) expected 250 +/- 0.0001 but got 200
+PASS rotate (type: rotateList) has testAddition function
+FAIL rotate without rotation axes assert_equals: The value should be -45deg at 0ms expected "-45deg" but got "-90deg"
+FAIL rotate with underlying transform assert_equals: The value should be y 45deg at 0ms expected "y 45deg" but got "0 1 0 90deg"
+FAIL rotate with different rotation axes assert_approx_equals: expected 0.57735 0.57735 0.57735 135deg but got 0 1 0 135deg: The value should be 0.57735 0.57735 0.57735 135deg at 500ms but got 0 1 0 135deg expected 0.57735 +/- 0.0001 but got 0
+PASS translate (type: translateList) has testAddition function
+FAIL translate assert_equals: The value should be -100px at 0ms expected "-100px" but got "-200px"
+FAIL translate with underlying transform assert_equals: The value should be -100px at 0ms expected "-100px" but got "-200px"
+FAIL translate with underlying percentage value assert_equals: The value should be calc(50% - 200px) at 0ms expected "calc(50% - 200px)" but got "-200px"
+PASS scale (type: scaleList) has testAddition function
+FAIL scale with two unspecified values assert_equals: The value should be -6 at 0ms expected "-6" but got "-3"
+FAIL scale with one unspecified value assert_equals: The value should be -6 at 0ms expected "-6" but got "-3"
+FAIL scale assert_equals: The value should be -2 -4 -6 at 0ms expected "-2 -4 -6" but got "-1 -2 -3"
 PASS visibility (type: visibility) has testAddition function
 PASS visibility: onto "visible"
 PASS visibility: onto "hidden"

@@ -62,14 +62,14 @@ public:
         return m_x.isPercent() || m_y.isPercent();
     }
 
+    bool isIdentity() const final { return !floatValueForLength(m_x, 1) && !floatValueForLength(m_y, 1) && !floatValueForLength(m_z, 1); }
+
+    bool operator==(const TransformOperation&) const final;
+
+    Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) final;
+
 private:
-    bool isIdentity() const override { return !floatValueForLength(m_x, 1) && !floatValueForLength(m_y, 1) && !floatValueForLength(m_z, 1); }
-
     bool isRepresentableIn2D() const final { return m_z.isZero(); }
-
-    bool operator==(const TransformOperation&) const override;
-
-    Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
 
     void dump(WTF::TextStream&) const final;
 

@@ -1,3 +1,23 @@
+2020-10-07  Antoine Quint  <graouts@webkit.org>
+
+        Add support for non-accelerated animation of individual transform properties
+        https://bugs.webkit.org/show_bug.cgi?id=217429
+        <rdar://problem/70046645>
+
+        Reviewed by Darin Adler.
+
+        Update WPT expectations after adding support for animating the rotate, scale and translate properties.
+
+        * web-platform-tests/css/css-transforms/animation/rotate-composition-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/rotate-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/scale-composition-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/scale-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/translate-composition-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/translate-interpolation-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt:
+
 2020-10-07  Chris Dumez  <cdumez@apple.com>
 
         Constructing a AudioWorkletNode should construct an AudioWorkletProcessor on the Worklet thread

@@ -614,7 +614,8 @@ static Ref<CSSValue> computedTransform(RenderObject* renderer, const RenderStyle
 
 static Ref<CSSValue> computedTranslate(RenderObject* renderer, const RenderStyle& style)
 {
-    if (!rendererCanBeTransformed(renderer) || !style.translate())
+    auto* translate = style.translate();
+    if (!translate || !rendererCanBeTransformed(renderer) || translate->isIdentity())
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
 
     FloatRect pixelSnappedRect;
@@ -622,15 +623,16 @@ static Ref<CSSValue> computedTranslate(RenderObject* renderer, const RenderStyle
         pixelSnappedRect = snapRectToDevicePixels(downcast<RenderBox>(*renderer).borderBoxRect(), renderer->document().deviceScaleFactor());
 
     TransformationMatrix transform;
-    style.translate()->apply(transform, pixelSnappedRect.size());
+    translate->apply(transform, pixelSnappedRect.size());
 
     auto list = CSSValueList::createSpaceSeparated();
     if (transform.isAffine()) {
-        list->append(zoomAdjustedNumberValue(transform.e(), style));
-        list->append(zoomAdjustedNumberValue(transform.f(), style));
+        list->append(zoomAdjustedPixelValue(transform.e(), style));
+        if (transform.f())
+            list->append(zoomAdjustedPixelValue(transform.f(), style));
     } else {
-        list->append(zoomAdjustedNumberValue(transform.m41(), style));
-        list->append(zoomAdjustedNumberValue(transform.m42(), style));
+        list->append(zoomAdjustedPixelValue(transform.m41(), style));
+        list->append(zoomAdjustedPixelValue(transform.m42(), style));
         list->append(zoomAdjustedNumberValue(transform.m43(), style));
     }
 
@@ -640,31 +642,45 @@ static Ref<CSSValue> computedTranslate(RenderObject* renderer, const RenderStyle
 static Ref<CSSValue> computedScale(RenderObject* renderer, const RenderStyle& style)
 {
     auto* scale = style.scale();
-    if (!rendererCanBeTransformed(renderer) || !scale)
-        return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
-
     auto& cssValuePool = CSSValuePool::singleton();
+    if (!scale || !rendererCanBeTransformed(renderer) || scale->isIdentity())
+        return cssValuePool.createIdentifierValue(CSSValueNone);
+
     auto list = CSSValueList::createSpaceSeparated();
     list->append(cssValuePool.createValue(scale->x(), CSSUnitType::CSS_NUMBER));
-    list->append(cssValuePool.createValue(scale->y(), CSSUnitType::CSS_NUMBER));
-    if (scale->is3DOperation())
+    if (scale->z() != 1) {
+        list->append(cssValuePool.createValue(scale->y(), CSSUnitType::CSS_NUMBER));
         list->append(cssValuePool.createValue(scale->z(), CSSUnitType::CSS_NUMBER));
+    } else if (scale->x() != scale->y())
+        list->append(cssValuePool.createValue(scale->y(), CSSUnitType::CSS_NUMBER));
     return list;
 }
 
 static Ref<CSSValue> computedRotate(RenderObject* renderer, const RenderStyle& style)
 {
     auto* rotate = style.rotate();
-    if (!rotate || !rendererCanBeTransformed(renderer))
-        return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
-
     auto& cssValuePool = CSSValuePool::singleton();
+    if (!rotate || !rendererCanBeTransformed(renderer) || rotate->isIdentity())
+        return cssValuePool.createIdentifierValue(CSSValueNone);
+
     auto list = CSSValueList::createSpaceSeparated();
-    if (rotate->x() || rotate->y() || rotate->z() != 1) {
+
+    bool hasImplicitX = !rotate->x();
+    bool hasImplicitY = !rotate->y();
+    bool hasImplicitZ = rotate->z() == 1;
+
+    if (!hasImplicitX && hasImplicitY && hasImplicitZ)
+        list->append(cssValuePool.createIdentifierValue(CSSValueX));
+    else if (hasImplicitX && !hasImplicitY && hasImplicitZ)
+        list->append(cssValuePool.createIdentifierValue(CSSValueY));
+    else if (hasImplicitX && hasImplicitY && !hasImplicitZ)
+        list->append(cssValuePool.createIdentifierValue(CSSValueZ));
+    else if (!hasImplicitX || !hasImplicitY || !hasImplicitZ) {
         list->append(cssValuePool.createValue(rotate->x(), CSSUnitType::CSS_NUMBER));
         list->append(cssValuePool.createValue(rotate->y(), CSSUnitType::CSS_NUMBER));
         list->append(cssValuePool.createValue(rotate->z(), CSSUnitType::CSS_NUMBER));
     }
+
     list->append(cssValuePool.createValue(rotate->angle(), CSSUnitType::CSS_DEG));
 
     return list;

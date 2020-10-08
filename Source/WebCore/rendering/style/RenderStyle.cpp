@@ -692,6 +692,11 @@ static bool rareNonInheritedDataChangeRequiresLayout(const StyleRareNonInherited
         }
     }
 
+    if (!arePointingToEqualData(first.scale, second.scale)
+        || !arePointingToEqualData(first.rotate, second.rotate)
+        || !arePointingToEqualData(first.translate, second.translate))
+        changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::Transform);
+
     if (first.grid != second.grid
         || first.gridItem != second.gridItem)
         return true;

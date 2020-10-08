@@ -83,6 +83,20 @@ FAIL transform: non-invertible matrices assert_approx_equals: expected matrix(-1
 FAIL transform: non-invertible matrices in matched transform lists assert_approx_equals: expected matrix(0, -1, 1, 0, 250, 0) but got matrix(-0.229966, -0.692507, 0.329012, -0.3263, 162.600147, 62.44985): The value should be matrix(0, -1, 1, 0, 250, 0) at 499ms but got matrix(-0.229966, -0.692507, 0.329012, -0.3263, 162.600147, 62.44985) expected 0 +/- 0.0001 but got -0.229966
 FAIL transform: non-invertible matrices in mismatched transform lists assert_approx_equals: expected matrix(-2, 0, 0, -2, 250, 0) but got matrix(0.457235, 1.576158, -1.117609, -0.657221, 112.65025, 49.9): The value should be matrix(-2, 0, 0, -2, 250, 0) at 499ms but got matrix(0.457235, 1.576158, -1.117609, -0.657221, 112.65025, 49.9) expected -2 +/- 0.0001 but got 0.457235
 PASS transform: perspective
+PASS rotate (type: rotateList) has testInterpolation function
+PASS rotate without rotation axes
+FAIL rotate with rotation axes assert_equals: The value should be y 45deg at 500ms expected "y 45deg" but got "0 1 0 45deg"
+FAIL rotate with rotation axes and range over 360 degrees assert_equals: The value should be y 180deg at 250ms expected "y 180deg" but got "0 1 0 180deg"
+FAIL rotate with different rotation axes assert_approx_equals: expected 0 0.707107 0.707107 45deg but got 0 1 0 45deg: The value should be 0 0.707107 0.707107 45deg at 500ms but got 0 1 0 45deg expected 0.707107 +/- 0.0001 but got 1
+PASS translate (type: translateList) has testInterpolation function
+PASS translate with two unspecified values
+PASS translate with one unspecified value
+FAIL translate with all three values specified assert_equals: The value should be 300px 100px 200px at 500ms expected "300px 100px 200px" but got "300px 100px 200"
+FAIL translate with combination of percentages and lengths assert_equals: The value should be calc(0% + 200px) calc(25% - 50.5px) 200px at 500ms expected "calc(0% + 200px) calc(25% - 50.5px) 200px" but got "200px -50.5px 200"
+PASS scale (type: scaleList) has testInterpolation function
+PASS scale with two unspecified values
+PASS scale with one unspecified value
+PASS scale
 PASS visibility (type: visibility) has testInterpolation function
 PASS visibility uses visibility animation when animating from "visible" to "hidden"
 PASS visibility uses visibility animation when animating from "hidden" to "visible"
