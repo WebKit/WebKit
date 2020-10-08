@@ -1,3 +1,15 @@
+2020-10-08  Hector Lopez  <hector_i_lopez@apple.com>
+
+        Unreviewed, reverting r268155.
+
+        This reverts r268155 becasue it broke internal builds
+
+        Reverted changeset:
+
+        "[WebAuthn] Implement a dummy WebAuthenticationAgent"
+        https://bugs.webkit.org/show_bug.cgi?id=217401
+        https://trac.webkit.org/changeset/268155
+
 2020-10-08  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r267763): [ iOS wk2 ] http/tests/in-app-browser-privacy/non-app-bound-domain-does-not-get-app-bound-session.html is a constant failure
