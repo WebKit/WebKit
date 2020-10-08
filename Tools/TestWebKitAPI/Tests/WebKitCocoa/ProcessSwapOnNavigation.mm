@@ -6856,3 +6856,49 @@ TEST(ProcessSwap, ResizeWebViewDuringCrossSiteProvisionalNavigation)
         TestWebKitAPI::Util::run(&finishedRunningScript);
     }];
 }
+
+TEST(WebProcessCache, ClearWhenEnteringCache)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().usesWebProcessCache = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    @autoreleasepool {
+        auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 800) configuration:webViewConfiguration.get()]);
+        auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 800) configuration:webViewConfiguration.get()]);
+        auto webView3 = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 800) configuration:webViewConfiguration.get()]);
+
+        auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+        [webView1 setNavigationDelegate:delegate.get()];
+        [webView2 setNavigationDelegate:delegate.get()];
+        [webView3 setNavigationDelegate:delegate.get()];
+
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+        [webView1 loadRequest:request];
+
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+
+        request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
+        [webView2 loadRequest:request];
+
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+
+        request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.google.com/main.html"]];
+        [webView3 loadRequest:request];
+
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+    }
+
+    TestWebKitAPI::Util::spinRunLoop();
+
+    // Clear the WebProcess cache while the processes are being checked for responsiveness.
+    [processPool _clearWebProcessCache];
+}
