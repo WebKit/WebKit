@@ -48,7 +48,10 @@ function test()
                 ProtocolTest.expectThat(others.length > 0, "Event should have other worker threads.");
                 ProtocolTest.expectGreaterThan(workers[0].usage, 0, "Worker 1 usage should be greater than zero.");
                 ProtocolTest.expectGreaterThan(workers[1].usage, 0, "Worker 2 usage should be greater than zero.");
-                ProtocolTest.expectGreaterThanOrEqual(messageObject.params.event.usage, workers[0].usage + workers[1].usage, "Total usage should be greater than or equal to the sum of both worker threads.");
+                // Round to 4 decimal digits.
+                let totalUsage = Number(messageObject.params.event.usage.toFixed(4));
+                let workersUsage = Number((workers[0].usage + workers[1].usage).toFixed(4));
+                ProtocolTest.expectGreaterThanOrEqual(totalUsage, workersUsage, "Total usage should be greater than or equal to the sum of both worker threads.");
 
                 InspectorProtocol.sendCommand("CPUProfiler.stopTracking", {});
             }).catch(reject);
