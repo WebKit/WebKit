@@ -120,21 +120,20 @@ void TestController::platformAddTestOptions(TestOptions& options) const
         options.contextOptions.enableProcessSwapOnNavigation = true;
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"EnableProcessSwapOnWindowOpen"])
         options.contextOptions.enableProcessSwapOnWindowOpen = true;
-
-#if PLATFORM(IOS_FAMILY)
-    if (options.enableInAppBrowserPrivacy)
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
-#endif
 }
 
 void TestController::platformInitializeDataStore(WKPageConfigurationRef, const TestOptions& options)
 {
-    if (options.useEphemeralSession || options.standaloneWebApplicationURL.length()) {
+    if (options.useEphemeralSession || options.standaloneWebApplicationURL.length() || options.enableInAppBrowserPrivacy) {
         auto websiteDataStoreConfig = options.useEphemeralSession ? [[[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration] autorelease] : [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
         if (!options.useEphemeralSession)
             configureWebsiteDataStoreTemporaryDirectories((WKWebsiteDataStoreConfigurationRef)websiteDataStoreConfig);
         if (options.standaloneWebApplicationURL.length())
             [websiteDataStoreConfig setStandaloneApplicationURL:[NSURL URLWithString:[NSString stringWithUTF8String:options.standaloneWebApplicationURL.c_str()]]];
+#if PLATFORM(IOS_FAMILY)
+        if (options.enableInAppBrowserPrivacy)
+            [websiteDataStoreConfig setEnableInAppBrowserPrivacyForTesting:YES];
+#endif
         m_websiteDataStore = (__bridge WKWebsiteDataStoreRef)[[[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfig] autorelease];
     } else
         m_websiteDataStore = (__bridge WKWebsiteDataStoreRef)globalWebViewConfiguration.websiteDataStore;

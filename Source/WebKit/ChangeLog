@@ -1,3 +1,27 @@
+2020-10-08  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r267763): [ iOS wk2 ] http/tests/in-app-browser-privacy/non-app-bound-domain-does-not-get-app-bound-session.html is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=217386
+
+        Reviewed by Brent Fulgham.
+
+        Use SPI instead of NSUserDefaults to turn on test mode for app browser privacy.
+        This is more reliable with the timing change of when a WebsiteDataStore's parameters are sent to the network process.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration enableInAppBrowserPrivacyForTesting]):
+        (-[_WKWebsiteDataStoreConfiguration setEnableInAppBrowserPrivacyForTesting:]):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::platformSetNetworkParameters):
+        (WebKit::WebsiteDataStore::ensureAppBoundDomains const):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy const):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::enableInAppBrowserPrivacyForTesting const):
+        (WebKit::WebsiteDataStoreConfiguration::setEnableInAppBrowserPrivacyForTesting):
+
 2020-10-08  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebKit::WebProcessCache::clear()

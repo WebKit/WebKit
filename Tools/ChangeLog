@@ -1,3 +1,16 @@
+2020-10-08  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r267763): [ iOS wk2 ] http/tests/in-app-browser-privacy/non-app-bound-domain-does-not-get-app-bound-session.html is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=217386
+
+        Reviewed by Brent Fulgham.
+
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformAddTestOptions const):
+        (WTR::TestController::platformInitializeDataStore):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+
 2020-10-08  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Support custom version information

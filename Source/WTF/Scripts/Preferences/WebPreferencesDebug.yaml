@@ -89,18 +89,6 @@ ForceAlwaysUserScalable:
     WebKit:
       default: false
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
-# FIXME: The 'Is' prefix is inconsistent with most other preferences and should be removed.
-IsInAppBrowserPrivacyEnabled:
-  type: bool
-  humanReadableName: "In-App Browser Privacy"
-  humanReadableDescription: "Enable In-App Browser Privacy"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: WebKit::defaultInAppBrowserPrivacy()
-
 LogsPageMessagesToSystemConsoleEnabled:
   type: bool
   defaultValue:

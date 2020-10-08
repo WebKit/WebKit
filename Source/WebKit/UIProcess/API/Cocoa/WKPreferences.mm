@@ -355,16 +355,6 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setLargeImageAsyncDecodingEnabled(_largeImageAsyncDecodingEnabled);
 }
 
-- (BOOL)_inAppBrowserPrivacyEnabled
-{
-    return _preferences->isInAppBrowserPrivacyEnabled();
-}
-
-- (void)_setInAppBrowserPrivacyEnabled:(BOOL)enabled
-{
-    _preferences->setIsInAppBrowserPrivacyEnabled(enabled);
-}
-
 - (BOOL)_needsInAppBrowserPrivacyQuirks
 {
     return _preferences->needsInAppBrowserPrivacyQuirks();

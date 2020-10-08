@@ -466,6 +466,16 @@ static void checkURLArgument(NSURL *url)
     _configuration->setStandaloneApplicationURL(url);
 }
 
+- (BOOL)enableInAppBrowserPrivacyForTesting
+{
+    return _configuration->enableInAppBrowserPrivacyForTesting();
+}
+
+- (void)setEnableInAppBrowserPrivacyForTesting:(BOOL)enable
+{
+    _configuration->setEnableInAppBrowserPrivacyForTesting(enable);
+}
+
 - (BOOL)allLoadsBlockedByDeviceManagementRestrictionsForTesting
 {
     return _configuration->allLoadsBlockedByDeviceManagementRestrictionsForTesting();

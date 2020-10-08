@@ -163,6 +163,9 @@ public:
     const URL& standaloneApplicationURL() const { return m_standaloneApplicationURL; }
     void setStandaloneApplicationURL(URL&& url) { m_standaloneApplicationURL = WTFMove(url); }
 
+    bool enableInAppBrowserPrivacyForTesting() const { return m_enableInAppBrowserPrivacyForTesting; }
+    void setEnableInAppBrowserPrivacyForTesting(bool value) { m_enableInAppBrowserPrivacyForTesting = value; }
+    
 private:
     IsPersistent m_isPersistent { IsPersistent::No };
 
@@ -208,6 +211,7 @@ private:
     bool m_requiresSecureHTTPSProxyConnection { false };
     unsigned m_testSpeedMultiplier { 1 };
     URL m_standaloneApplicationURL;
+    bool m_enableInAppBrowserPrivacyForTesting { false };
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
 #endif

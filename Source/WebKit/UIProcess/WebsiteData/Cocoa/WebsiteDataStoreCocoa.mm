@@ -116,7 +116,6 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
         else
             firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies;
     }
-    m_isInAppBrowserPrivacyTestModeEnabled = [defaults boolForKey:[NSString stringWithFormat:@"WebKitDebug%@", WebPreferencesKey::isInAppBrowserPrivacyEnabledKey().createCFString().get()]];
 
     auto* manualPrevalentResource = [defaults stringForKey:@"ITPManualPrevalentResource"];
     if (manualPrevalentResource) {
@@ -479,9 +478,8 @@ void WebsiteDataStore::addTestDomains() const
 void WebsiteDataStore::ensureAppBoundDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&, const HashSet<String>&)>&& completionHandler) const
 {
     if (hasInitializedAppBoundDomains) {
-        if (m_isInAppBrowserPrivacyTestModeEnabled) {
+        if (m_configuration->enableInAppBrowserPrivacyForTesting())
             addTestDomains();
-        }
         completionHandler(appBoundDomains(), appBoundSchemes());
         return;
     }
@@ -491,9 +489,8 @@ void WebsiteDataStore::ensureAppBoundDomains(CompletionHandler<void(const HashSe
     appBoundDomainQueue().dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] () mutable {
         RunLoop::main().dispatch([this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] () mutable {
             ASSERT(hasInitializedAppBoundDomains);
-            if (m_isInAppBrowserPrivacyTestModeEnabled) {
+            if (m_configuration->enableInAppBrowserPrivacyForTesting())
                 addTestDomains();
-            }
             completionHandler(appBoundDomains(), appBoundSchemes());
         });
     });
