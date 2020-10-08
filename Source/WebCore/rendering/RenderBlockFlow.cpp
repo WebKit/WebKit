@@ -2630,6 +2630,8 @@ void RenderBlockFlow::clearFloats(Clear clear)
     case Clear::None:
         break;
     }
+    // FIXME: The float search tree has floored float box position (see FloatingObjects::intervalForFloatingObject).
+    newY = newY.floor();
     if (height() < newY)
         setLogicalHeight(newY);
 }

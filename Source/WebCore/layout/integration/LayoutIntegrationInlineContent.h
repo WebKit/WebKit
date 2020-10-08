@@ -54,6 +54,7 @@ struct InlineContent : public RefCounted<InlineContent> {
 
     Runs runs;
     Lines lines;
+    float clearGapAfterLastLine { 0 };
 
     const Line& lineForRun(const Run& run) const { return lines[run.lineIndex()]; }
     WTF::IteratorRange<const Run*> runsForRect(const LayoutRect&) const;

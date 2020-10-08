@@ -180,6 +180,7 @@ void LineLayout::constructContent()
         }
     };
     constructDisplayLine();
+    displayInlineContent.clearGapAfterLastLine = m_inlineFormattingState.clearGapAfterLastLine();
     displayInlineContent.shrinkToFit();
     m_inlineFormattingState.shrinkToFit();
 }
@@ -204,7 +205,7 @@ void LineLayout::prepareFloatingState()
             : Layout::FloatingState::FloatItem::Position::Left;
         auto boxGeometry = Layout::BoxGeometry { };
         // FIXME: We are flooring here for legacy compatibility.
-        //        See FloatingObjects::intervalForFloatingObject.
+        //        See FloatingObjects::intervalForFloatingObject and RenderBlockFlow::clearFloats.
         auto y = rect.y().floor();
         auto maxY = rect.maxY().floor();
         boxGeometry.setLogicalTopLeft({ rect.x(), y });
@@ -226,7 +227,7 @@ LayoutUnit LineLayout::contentLogicalHeight() const
         return { };
 
     auto& lines = m_inlineContent->lines;
-    return LayoutUnit { lines.last().rect().maxY() - lines.first().rect().y() };
+    return LayoutUnit { lines.last().rect().maxY() - lines.first().rect().y() + m_inlineContent->clearGapAfterLastLine };
 }
 
 size_t LineLayout::lineCount() const

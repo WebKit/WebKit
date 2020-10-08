@@ -43,7 +43,6 @@ public:
     float baseline() const { return m_baseline; }
     float horizontalAlignmentOffset() const { return m_horizontalAlignmentOffset; }
 
-
 private:
     FloatRect m_rect;
     FloatRect m_scrollableOverflow;
