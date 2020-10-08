@@ -1,3 +1,29 @@
+2020-10-08  Saagar Jha  <saagar@saagarjha.com>
+
+        Replace unqualified use of PlatformDisplayID in WebViewImpl
+        https://bugs.webkit.org/show_bug.cgi?id=217422
+
+        Reviewed by Youenn Fablet.
+
+        WebViewImpl utilizes things from WebCore but doesn't use the namespace, instead choosing to
+        qualify each reference. However, there is one use of WebCore::PlatformDisplayID that
+        doesn't use the the namespace qualifier. Usually this "works" because the code is in the
+        WebKit namespace, and other files that get included above this one often contain code of
+        the form
+
+        namespace WebKit {
+        using WebCore;
+        // code
+        }
+
+        which hides the issue by making PlatformDisplayID visible to this file as well without the
+        prefix. If we use auto none of this matters because it'll deduce the prefix even if
+        WebViewImpl.mm ends up near the top of a unified source file, before another file with the
+        using declaration shows up.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::windowDidChangeScreen): Replace PlatformDisplayID with auto.
+
 2020-10-07  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove the build warning below since r238330.
