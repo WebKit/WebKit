@@ -1,5 +1,65 @@
 2020-10-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r267844. rdar://problem/70056601
+
+    Prevent media capture unless the application has correct data for system permission prompt
+    https://bugs.webkit.org/show_bug.cgi?id=217104
+    <rdar://problem/69761929>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebKit:
+    
+    Tested manually with MiniBrowser.
+    
+    * SourcesCocoa.txt:
+    * UIProcess/Cocoa/UIDelegate.mm:
+    (WebKit::requestAVCaptureAccessForMediaType): Renamed from requestAccessForMediaType.
+    (WebKit::UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest): Deny
+    requests of the application is not permitted to capture. Restructure logic to
+    make it easier to understand.
+    (WebKit::requestAccessForMediaType): Deleted.
+    
+    * UIProcess/Cocoa/UserMediaPermissionRequestManagerProxy.mm: Added.
+    (WebKit::UserMediaPermissionRequestManagerProxy::permittedToCaptureAudio): Check
+    for required Info.plist string.
+    (WebKit::UserMediaPermissionRequestManagerProxy::permittedToCaptureVideo): Ditto.
+    
+    * UIProcess/Cocoa/WebPageProxyCocoa.mm: Update for unified build.
+    
+    * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+    (WebKit::UserMediaPermissionRequestManagerProxy::permittedToCaptureAudio):
+    (WebKit::UserMediaPermissionRequestManagerProxy::permittedToCaptureVideo):
+    * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    Tools:
+    
+    * MiniBrowser/mac/Info.plist: Add necessary entitlements and usage strings.
+    
+    * MobileMiniBrowser/MobileMiniBrowserFramework/WebViewController.m:
+    (-[WebViewController createWebView]): Setting the private capture preference is
+    not necessary because we set configuration._mediaCaptureEnabled.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@267844 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-01  Eric Carlson  <eric.carlson@apple.com>
+
+            Prevent media capture unless the application has correct data for system permission prompt
+            https://bugs.webkit.org/show_bug.cgi?id=217104
+            <rdar://problem/69761929>
+
+            Reviewed by Darin Adler.
+
+            * MiniBrowser/mac/Info.plist: Add necessary entitlements and usage strings.
+
+            * MobileMiniBrowser/MobileMiniBrowserFramework/WebViewController.m:
+            (-[WebViewController createWebView]): Setting the private capture preference is
+            not necessary because we set configuration._mediaCaptureEnabled.
+
+2020-10-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r267563. rdar://problem/70056594
 
     Introduce WKWebViewConfiguration mediaCaptureEnabled
