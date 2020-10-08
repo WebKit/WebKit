@@ -55,8 +55,8 @@
 		<true/>
 	</dict>
     <key>NSCameraUsageDescription</key>
-    <string>Recording random videos</string>
+    <string>Recording video on behalf of websites</string>
     <key>NSMicrophoneUsageDescription</key>
-    <string>Recording random audio</string>
+    <string>Recording audio on behalf of websites</string>
 </dict>
 </plist>
