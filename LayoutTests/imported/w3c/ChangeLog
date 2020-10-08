@@ -1,3 +1,14 @@
+2020-10-08  Rob Buis  <rbuis@igalia.com>
+
+        Fix image-loading-lazy-multiple-times.html
+        https://bugs.webkit.org/show_bug.cgi?id=216979
+
+        Reviewed by Youenn Fablet.
+
+        Add improved test result.
+
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-multiple-times-expected.txt:
+
 2020-10-07  Antoine Quint  <graouts@webkit.org>
 
         Add support for non-accelerated animation of individual transform properties
