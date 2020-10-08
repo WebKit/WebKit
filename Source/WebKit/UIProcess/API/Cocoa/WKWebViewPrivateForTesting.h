@@ -48,6 +48,7 @@ typedef enum {
 - (void)_disableBackForwardSnapshotVolatilityForTesting;
 
 - (void)_denyNextUserMediaRequest;
+@property (nonatomic, setter=_setMediaCaptureReportingDelayForTesting:) double _mediaCaptureReportingDelayForTesting WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (BOOL)_beginBackSwipeForTesting;
 - (BOOL)_completeBackSwipeForTesting;
