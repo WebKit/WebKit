@@ -2623,7 +2623,7 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchCharWithUnknownKeyType, char*, (JSGlobal
         }
     }
 
-    assertIsTaggedWith(result, JSSwitchPtrTag);
+    assertIsTaggedWith<JSSwitchPtrTag>(result);
     return reinterpret_cast<char*>(result);
 }
 
@@ -2643,7 +2643,7 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchImmWithUnknownKeyType, char*, (VM* vmPoi
         result = jumpTable.ctiForValue(static_cast<int32_t>(key.asDouble())).executableAddress();
     else
         result = jumpTable.ctiDefault.executableAddress();
-    assertIsTaggedWith(result, JSSwitchPtrTag);
+    assertIsTaggedWith<JSSwitchPtrTag>(result);
     return reinterpret_cast<char*>(result);
 }
 
@@ -2668,7 +2668,7 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchStringWithUnknownKeyType, char*, (JSGlob
     } else
         result = jumpTable.ctiDefault.executableAddress();
 
-    assertIsTaggedWith(result, JSSwitchPtrTag);
+    assertIsTaggedWith<JSSwitchPtrTag>(result);
     return reinterpret_cast<char*>(result);
 }
 

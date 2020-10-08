@@ -48,14 +48,14 @@ static SUPPRESS_ASAN ALWAYS_INLINE void addPointers(HashMap<void*, void*>& map, 
     for (const uintptr_t* current = beginHost; current != endHost; ++current) {
         void* codePtr = removeCodePtrTag(bitwise_cast<void*>(*current));
         if (codePtr) {
-            auto result = map.add(codePtr, tagCodePtr(codePtr, JSEntryPtrTag));
+            auto result = map.add(codePtr, tagCodePtr<JSEntryPtrTag>(codePtr));
             ASSERT(result.isNewEntry);
         }
     }
     for (const uintptr_t* current = beginOperations; current != endOperations; ++current) {
         void* codePtr = removeCodePtrTag(bitwise_cast<void*>(*current));
         if (codePtr) {
-            auto result = map.add(codePtr, tagCodePtr(codePtr, OperationPtrTag));
+            auto result = map.add(codePtr, tagCodePtr<OperationPtrTag>(codePtr));
             ASSERT(result.isNewEntry);
         }
     }

@@ -187,15 +187,15 @@ namespace JSC {
         ALWAYS_INLINE void update(uint32_t value)
         {
             uint64_t input = value ^ m_hash;
-            uint64_t a = static_cast<uint32_t>(tagInt(input, static_cast<PtrTag>(0)) >> 39);
-            uint64_t b = tagInt(input, static_cast<PtrTag>(0xb7e151628aed2a6a)) >> 23;
+            uint64_t a = static_cast<uint32_t>(tagInt<static_cast<PtrTag>(0)>(input) >> 39);
+            uint64_t b = tagInt<static_cast<PtrTag>(0xb7e151628aed2a6a)>(input) >> 23;
             m_hash = a ^ b;
         }
         uint32_t finalHash() const
         {
             uint64_t hash = m_hash;
-            uint64_t a = static_cast<uint32_t>(tagInt(hash, static_cast<PtrTag>(0xbf7158809cf4f3c7)) >> 39);
-            uint64_t b = tagInt(hash, static_cast<PtrTag>(0x62e7160f38b4da56)) >> 23;
+            uint64_t a = static_cast<uint32_t>(tagInt<static_cast<PtrTag>(0xbf7158809cf4f3c7)>(hash) >> 39);
+            uint64_t b = tagInt<static_cast<PtrTag>(0x62e7160f38b4da56)>(hash) >> 23;
             return static_cast<uint32_t>(a ^ b);
         }
     private:

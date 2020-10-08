@@ -50,6 +50,7 @@ using PtrTag = WTF::PtrTag;
     v(OperationPtrTag) \
     v(OSREntryPtrTag) \
     v(OSRExitPtrTag) \
+    v(PutValuePtrTag) \
     v(SlowPathPtrTag) \
     v(WasmEntryPtrTag) \
     v(Yarr8BitPtrTag) \

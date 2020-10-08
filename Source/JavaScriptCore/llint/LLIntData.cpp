@@ -62,9 +62,9 @@ void initialize()
 #endif // ENABLE(WEBASSEMBLY)
 
     for (int i = 0; i < numOpcodeIDs + numWasmOpcodeIDs; ++i) {
-        g_jscConfig.llint.opcodeMap[i] = tagCodePtr(g_jscConfig.llint.opcodeMap[i], BytecodePtrTag);
-        g_jscConfig.llint.opcodeMapWide16[i] = tagCodePtr(g_jscConfig.llint.opcodeMapWide16[i], BytecodePtrTag);
-        g_jscConfig.llint.opcodeMapWide32[i] = tagCodePtr(g_jscConfig.llint.opcodeMapWide32[i], BytecodePtrTag);
+        g_jscConfig.llint.opcodeMap[i] = tagCodePtr<BytecodePtrTag>(g_jscConfig.llint.opcodeMap[i]);
+        g_jscConfig.llint.opcodeMapWide16[i] = tagCodePtr<BytecodePtrTag>(g_jscConfig.llint.opcodeMapWide16[i]);
+        g_jscConfig.llint.opcodeMapWide32[i] = tagCodePtr<BytecodePtrTag>(g_jscConfig.llint.opcodeMapWide32[i]);
     }
 
     ASSERT(llint_throw_from_slow_path_trampoline < UINT8_MAX);

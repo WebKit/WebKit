@@ -1,3 +1,22 @@
+2020-10-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Restrict more ptr-tagging and avoid using OperationPtrTag for JIT code
+        https://bugs.webkit.org/show_bug.cgi?id=217460
+
+        Reviewed by Saam Barati.
+
+        * wtf/PlatformRegisters.cpp:
+        (WTF::threadStateLRInternal):
+        (WTF::threadStatePCInternal):
+        * wtf/PtrTag.h:
+        (WTF::tagCFunctionPtr):
+        (WTF::tagCFunction):
+        (WTF::untagCFunctionPtr):
+        (WTF::tagInt):
+        (WTF::isTaggedWith):
+        (WTF::assertIsTaggedWith):
+        (WTF::assertIsNullOrTaggedWith):
+
 2020-10-07  Keith Rollin  <krollin@apple.com>
 
         Update post-processing rules for headers to not unnecessarily change timestamps

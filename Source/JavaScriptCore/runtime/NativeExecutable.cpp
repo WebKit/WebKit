@@ -60,10 +60,10 @@ void NativeExecutable::finishCreation(VM& vm, Ref<JITCode>&& callThunk, Ref<JITC
     m_jitCodeForConstructWithArityCheck = m_jitCodeForConstruct->addressForCall(MustCheckArity);
     m_name = name;
 
-    assertIsTaggedWith(m_jitCodeForCall->addressForCall(ArityCheckNotRequired).executableAddress(), JSEntryPtrTag);
-    assertIsTaggedWith(m_jitCodeForConstruct->addressForCall(ArityCheckNotRequired).executableAddress(), JSEntryPtrTag);
-    assertIsTaggedWith(m_jitCodeForCallWithArityCheck.executableAddress(), JSEntryPtrTag);
-    assertIsTaggedWith(m_jitCodeForConstructWithArityCheck.executableAddress(), JSEntryPtrTag);
+    assertIsTaggedWith<JSEntryPtrTag>(m_jitCodeForCall->addressForCall(ArityCheckNotRequired).executableAddress());
+    assertIsTaggedWith<JSEntryPtrTag>(m_jitCodeForConstruct->addressForCall(ArityCheckNotRequired).executableAddress());
+    assertIsTaggedWith<JSEntryPtrTag>(m_jitCodeForCallWithArityCheck.executableAddress());
+    assertIsTaggedWith<JSEntryPtrTag>(m_jitCodeForConstructWithArityCheck.executableAddress());
 }
 
 NativeExecutable::NativeExecutable(VM& vm, TaggedNativeFunction function, TaggedNativeFunction constructor)

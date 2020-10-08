@@ -1,3 +1,66 @@
+2020-10-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Restrict more ptr-tagging and avoid using OperationPtrTag for JIT code
+        https://bugs.webkit.org/show_bug.cgi?id=217460
+
+        Reviewed by Saam Barati.
+
+        This patch makes tagging / untagging pointer functions solid by using PtrTag in template parameter.
+        Later, we will introduce compile time behavior change for different kind of PtrTag so that we can insert OperationPtrTag validation
+        when tagging a function with OperationPtrTag.
+
+        We also found that FTL is tagging JIT code with OperationPtrTag wrongly. We should tag it with JITThunkPtrTag.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::getLinkerAddress):
+        * assembler/AssemblerBuffer.h:
+        (JSC::ARM64EHash::update):
+        (JSC::ARM64EHash::finalHash const):
+        * assembler/JITOperationList.cpp:
+        (JSC::addPointers):
+        * assembler/MacroAssemblerARM64.cpp:
+        (JSC::MacroAssembler::probe):
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodePtr::MacroAssemblerCodePtr):
+        (JSC::MacroAssemblerCodePtr::createFromExecutableAddress):
+        * assembler/testmasm.cpp:
+        (JSC::testProbeModifiesProgramCounter):
+        * b3/air/testair.cpp:
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::callWithoutSideEffects):
+        (JSC::FTL::Output::operation):
+        * ftl/FTLSlowPathCall.cpp:
+        (JSC::FTL::SlowPathCallContext::makeCall):
+        * jit/JITCode.cpp:
+        (JSC::JITCodeWithCodeRef::executableAddressAtOffset):
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        * jit/JITOperations.cpp:
+        * jit/Repatch.cpp:
+        (JSC::readPutICCallTarget):
+        (JSC::ftlThunkAwareRepatchCall):
+        (JSC::tryCacheGetBy):
+        (JSC::tryCachePutByID):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        * llint/LLIntPCRanges.h:
+        (JSC::LLInt::isLLIntPC):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setUpCall):
+        * llint/LLIntThunks.cpp:
+        (JSC::LLInt::generateThunkWithJumpTo):
+        * runtime/MachineContext.h:
+        (JSC::MachineContext::instructionPointer):
+        * runtime/NativeExecutable.cpp:
+        (JSC::NativeExecutable::finishCreation):
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::setCustomValue):
+        (JSC::PutPropertySlot::setCustomAccessor):
+        (JSC::PutPropertySlot::customSetter const):
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::emitCCall):
+        * wasm/WasmSlowPaths.cpp:
+
 2020-10-07  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Revert String.prototype.item
