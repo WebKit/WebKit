@@ -66,6 +66,52 @@ Optional<BoundaryPoint> makeBoundaryPointAfterNode(Node& node)
     return BoundaryPoint { *parent, node.computeNodeIndex() + 1 };
 }
 
+static bool isOffsetBeforeChild(ContainerNode& container, unsigned offset, Node& child)
+{
+    if (!offset)
+        return true;
+    // If the container is not the parent, the child is part of a shadow tree, which we sort between offset 0 and offset 1.
+    if (child.parentNode() != &container)
+        return false;
+    unsigned currentOffset = 0;
+    for (auto currentChild = container.firstChild(); currentChild && currentChild != &child; currentChild = currentChild->nextSibling()) {
+        if (offset <= ++currentOffset)
+            return true;
+    }
+    return false;
+}
+
+static PartialOrdering order(unsigned a, unsigned b)
+{
+    if (a < b)
+        return PartialOrdering::less;
+    if (a > b)
+        return PartialOrdering::greater;
+    return PartialOrdering::equivalent;
+}
+
+PartialOrdering documentOrder(const BoundaryPoint& a, const BoundaryPoint& b)
+{
+    if (a.container.ptr() == b.container.ptr())
+        return order(a.offset, b.offset);
+
+    for (auto ancestor = b.container.ptr(); ancestor; ) {
+        auto nextAncestor = ancestor->parentInComposedTree();
+        if (nextAncestor == a.container.ptr())
+            return isOffsetBeforeChild(*nextAncestor, a.offset, *ancestor) ? PartialOrdering::less : PartialOrdering::greater;
+        ancestor = nextAncestor;
+    }
+
+    for (auto ancestor = a.container.ptr(); ancestor; ) {
+        auto nextAncestor = ancestor->parentInComposedTree();
+        if (nextAncestor == b.container.ptr())
+            return isOffsetBeforeChild(*nextAncestor, b.offset, *ancestor) ? PartialOrdering::greater : PartialOrdering::less;
+        ancestor = nextAncestor;
+    }
+
+    return documentOrder(a.container, b.container);
+}
+
 Optional<SimpleRange> makeRangeSelectingNode(Node& node)
 {
     auto parent = node.parentNode();
