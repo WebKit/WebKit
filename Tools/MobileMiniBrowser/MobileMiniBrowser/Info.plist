@@ -54,5 +54,11 @@
 		<key>NSAllowsArbitraryLoadsInWebContent</key>
 		<true/>
 	</dict>
+    <key>com.apple.security.device.camera</key>
+    <true/>
+    <key>com.apple.security.device.microphone</key>
+    <true/>
+    <key>NSCameraUsageDescription</key>
+    <string>Camera usage description</string>
 </dict>
 </plist>

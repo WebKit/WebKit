@@ -24,17 +24,15 @@
  */
 
 #import "config.h"
-#import "WKUserMediaCaptureAccessAlert.h"
+#import "UserMediaPermissionRequestProxy.h"
 
 #if ENABLE(MEDIA_STREAM)
 
+#import "UserMediaPermissionRequestManagerProxy.h"
 #import "WKWebViewInternal.h"
-#import "WKWebViewPrivate.h"
-#import "WebPageProxy.h"
 #import <WebCore/LocalizedStrings.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/URLHelpers.h>
-#import <wtf/text/WTFString.h>
 
 namespace WebKit {
 
@@ -44,12 +42,8 @@ static NSString* visibleDomain(const String& host)
     return startsWithLettersIgnoringASCIICase(domain, "www.") ? domain.substring(4) : domain;
 }
 
-static NSString *alertMessageText(API::SecurityOrigin& topLevelOrigin, _WKCaptureDevices devices)
+static NSString *alertMessageText(const WebCore::SecurityOrigin& origin, bool shouldAskUserForAccessToMicrophone, bool shouldAskUserForAccessToCamera)
 {
-    bool shouldAskUserForAccessToCamera = devices & _WKCaptureDeviceCamera;
-    bool shouldAskUserForAccessToMicrophone = devices & _WKCaptureDeviceMicrophone;
-
-    auto& origin = topLevelOrigin.securityOrigin();
     if (origin.protocol() != "http" && origin.protocol() != "https")
         return nil;
 
@@ -62,16 +56,35 @@ static NSString *alertMessageText(API::SecurityOrigin& topLevelOrigin, _WKCaptur
     return nil;
 }
 
-void presentUserMediaCaptureAccessAlert(WKWebView *webView, API::SecurityOrigin& topLevelOrigin, _WKCaptureDevices devices, CompletionHandler<void(bool)>&& completionHandler)
+void UserMediaPermissionRequestProxy::doDefaultAction()
 {
-    auto *alertTitle = alertMessageText(topLevelOrigin, devices);
-    if (!alertTitle) {
-        completionHandler(false);
+    ASSERT(m_manager);
+    if (!m_manager) {
+        deny();
+        return;
+    }
+    auto *webView = fromWebPageProxy(m_manager->page());
+    if (!webView) {
+        deny();
+        return;
+    }
+    if (requiresDisplayCapture()) {
+        // FIXME: Implement getDisplayMedia prompt, for now deny.
+        deny();
         return;
     }
 
-    auto completionBlock = makeBlockPtr([completionHandler = WTFMove(completionHandler)](bool shouldAllow) mutable {
-        completionHandler(shouldAllow);
+    auto *alertTitle = alertMessageText(topLevelDocumentSecurityOrigin(), requiresAudioCapture(), requiresVideoCapture());
+    if (!alertTitle) {
+        deny();
+        return;
+    }
+
+    auto completionBlock = makeBlockPtr([this, protectedThis = makeRef(*this)](bool shouldAllow) mutable {
+        if (!shouldAllow)
+            deny();
+        else
+            allow();
     });
 
     NSString *allowButtonString = WEB_UI_STRING_KEY(@"Allow", "Allow (usermedia)", @"Allow button title in user media prompt");
@@ -105,4 +118,14 @@ void presentUserMediaCaptureAccessAlert(WKWebView *webView, API::SecurityOrigin&
 
 } // namespace WebKit
 
-#endif // ENABLE(DEVICE_ORIENTATION)
+#else
+
+namespace WebKit {
+
+void UserMediaPermissionRequestProxy::doDefaultAction()
+{
+    ASSERT_NOT_REACHED();
+}
+
+}
+#endif // ENABLE(MEDIA_STREAM)

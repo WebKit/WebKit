@@ -95,6 +95,13 @@ void UserMediaPermissionRequestProxy::deny(UserMediaAccessDenialReason reason)
     invalidate();
 }
 
+#if !PLATFORM(COCOA)
+void UserMediaPermissionRequestProxy::doDefaultAction()
+{
+    deny();
+}
+#endif
+
 void UserMediaPermissionRequestProxy::invalidate()
 {
     m_manager = nullptr;
