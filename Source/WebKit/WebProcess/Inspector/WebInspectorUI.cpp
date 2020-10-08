@@ -85,6 +85,7 @@ void WebInspectorUI::updateConnection()
 #if USE(UNIX_DOMAIN_SOCKETS)
     IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
     IPC::Connection::Identifier connectionIdentifier(socketPair.server);
+    UNUSED_PARAM(connectionIdentifier);
     IPC::Attachment connectionClientPort(socketPair.client);
 #elif OS(DARWIN)
     mach_port_t listeningPort = MACH_PORT_NULL;
@@ -95,6 +96,7 @@ void WebInspectorUI::updateConnection()
         CRASH();
 
     IPC::Connection::Identifier connectionIdentifier(listeningPort);
+    UNUSED_PARAM(connectionIdentifier);
     IPC::Attachment connectionClientPort(listeningPort, MACH_MSG_TYPE_MOVE_SEND);
 #elif PLATFORM(WIN)
     IPC::Connection::Identifier connectionIdentifier, connClient;

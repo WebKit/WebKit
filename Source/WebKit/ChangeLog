@@ -1,3 +1,13 @@
+2020-10-07  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove the build warning below since r238330.
+        warning: unused variable ‘connectionIdentifier’ [-Wunused-variable]
+
+        No new tests, no new behaviors.
+
+        * WebProcess/Inspector/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::updateConnection):
+
 2020-10-07  Keith Rollin  <krollin@apple.com>
 
         Update post-processing rules for headers to not unnecessarily change timestamps
