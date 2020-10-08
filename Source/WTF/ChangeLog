@@ -1,3 +1,36 @@
+2020-10-08  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r268052. rdar://problem/70097377
+
+    Enable video capture in WebProcess by default on MacOS
+    https://bugs.webkit.org/show_bug.cgi?id=217385
+    <rdar://problem/69999542>
+    
+    Reviewed by Sam Weinig.
+    
+    Source/WebKit:
+    
+    Manually tested in MiniBrowser.
+    
+    * Shared/WebPreferencesDefaultValues.cpp:
+    * Shared/WebPreferencesDefaultValues.h:
+    
+    Source/WTF:
+    
+    * Scripts/Preferences/WebPreferencesInternal.yaml:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268052 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-06  Youenn Fablet  <youenn@apple.com>
+
+            Enable video capture in WebProcess by default on MacOS
+            https://bugs.webkit.org/show_bug.cgi?id=217385
+            <rdar://problem/69999542>
+
+            Reviewed by Sam Weinig.
+
+            * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2020-10-06  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r267870. rdar://problem/70025703
