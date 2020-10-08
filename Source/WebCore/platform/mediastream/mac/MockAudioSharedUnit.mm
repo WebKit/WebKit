@@ -94,7 +94,7 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&&
     if (!device)
         return { "No mock microphone device"_s };
 
-    MockAudioSharedUnit::singleton().setSampleRate(WTF::get<MockMicrophoneProperties>(device->properties).defaultSampleRate);
+    MockAudioSharedUnit::singleton().setDeviceID(deviceID);
     return CoreAudioCaptureSource::createForTesting(WTFMove(deviceID),  WTFMove(name), WTFMove(hashSalt), constraints, MockAudioSharedUnit::singleton());
 }
 
@@ -110,13 +110,20 @@ MockAudioSharedUnit::MockAudioSharedUnit()
 {
 }
 
+void MockAudioSharedUnit::resetSampleRate()
+{
+    if (auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(m_deviceID))
+        setSampleRate(WTF::get<MockMicrophoneProperties>(device->properties).defaultSampleRate);
+}
+
 bool MockAudioSharedUnit::hasAudioUnit() const
 {
     return m_hasAudioUnit;
 }
 
-void MockAudioSharedUnit::setCaptureDevice(String&&, uint32_t)
+void MockAudioSharedUnit::setCaptureDevice(String&& deviceID, uint32_t)
 {
+    m_deviceID = WTFMove(deviceID);
     reconfigureAudioUnit();
 }
 
