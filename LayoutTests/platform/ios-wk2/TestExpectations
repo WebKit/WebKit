@@ -1899,9 +1899,5 @@ webkit.org/b/217268 imported/w3c/web-platform-tests/mathml/relations/css-styling
 
 webkit.org/b/217268 imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001.html [ Failure ]
 
-webkit.org/b/217357 http/wpt/cache-storage/cache-quota-after-restart.any.html [ Pass Failure ]
-
 webkit.org/b/217408 http/tests/cache-storage/page-cache-domcache-pending-promise.html [ Pass Failure ]
-
-webkit.org/b/217412 http/wpt/cache-storage/cache-quota.any.html [ Pass Failure ]
 
