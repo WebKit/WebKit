@@ -191,7 +191,9 @@ enum class RenderingUpdateStep : uint16_t {
     CursorUpdate                    = 1 << 10,
     EventRegionUpdate               = 1 << 11,
     LayerFlush                      = 1 << 12,
+#if ENABLE(ASYNC_SCROLLING)
     ScrollingTreeUpdate             = 1 << 13,
+#endif
 };
 
 constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
@@ -215,7 +217,9 @@ constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
 
 constexpr auto allRenderingUpdateSteps = updateRenderingSteps | OptionSet<RenderingUpdateStep> {
     RenderingUpdateStep::LayerFlush,
+#if ENABLE(ASYNC_SCROLLING)
     RenderingUpdateStep::ScrollingTreeUpdate,
+#endif
 };
 
 

@@ -3364,7 +3364,9 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
     case RenderingUpdateStep::CursorUpdate: ts << "CursorUpdate"; break;
     case RenderingUpdateStep::EventRegionUpdate: ts << "EventRegionUpdate"; break;
     case RenderingUpdateStep::LayerFlush: ts << "LayerFlush"; break;
+#if ENABLE(ASYNC_SCROLLING)
     case RenderingUpdateStep::ScrollingTreeUpdate: ts << "ScrollingTreeUpdate"; break;
+#endif
     }
     return ts;
 }
