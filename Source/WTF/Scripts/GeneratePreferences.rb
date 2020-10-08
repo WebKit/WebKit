@@ -214,11 +214,18 @@ class Preferences
   def renderTemplate(templateFile, outputDirectory)
     puts "Generating output for template file: #{templateFile}"
 
-    resultFile = File.basename(templateFile, ".erb")
+    resultFile = File.join(outputDirectory, File.basename(templateFile, ".erb"))
+    tempResultFile = resultFile + ".tmp"
 
     output = ERB.new(File.read(templateFile), 0, "-").result(binding)
-    File.open(File.join(outputDirectory, resultFile), "w+") do |f|
+    File.open(tempResultFile, "w+") do |f|
       f.write(output)
+    end
+    if (!File.exist?(resultFile) || IO::read(resultFile) != IO::read(tempResultFile))
+      FileUtils.move(tempResultFile, resultFile)
+    else
+      FileUtils.remove_file(tempResultFile)
+      FileUtils.uptodate?(resultFile, [templateFile]) or FileUtils.touch(resultFile)
     end
   end
 end

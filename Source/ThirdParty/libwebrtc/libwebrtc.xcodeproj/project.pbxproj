@@ -3902,7 +3902,7 @@
 			outputFiles = (
 				"${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.o",
 			);
-			script = "${BUILT_PRODUCTS_DIR}/yasm -fmacho64 -I ${SRCROOT}/Source/third_party/libvpx/source/config -I ${SRCROOT}/Source/third_party/libvpx/source/config/mac/x64 -I ${SRCROOT}/Source/third_party/libvpx/source/libvpx -o ${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.o ${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.asm\n";
+			script = "SOURCE_DIR=\"${SRCROOT}/Source/third_party/libvpx/source\"\nSOURCE_FILE=\"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.asm\"\nOBJECT_FILE=\"${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.o\"\n\"${BUILT_PRODUCTS_DIR}/yasm\" -fmacho64 -I \"${SOURCE_DIR}/config\" -I \"${SOURCE_DIR}/config/mac/x64\" -I \"${SOURCE_DIR}/libvpx\" -o \"${OBJECT_FILE}.tmp\" \"${SOURCE_FILE}\"\ncmp -s \"${OBJECT_FILE}.tmp\" \"${OBJECT_FILE}\" && rm -f \"${OBJECT_FILE}.tmp\" || mv \"${OBJECT_FILE}.tmp\" \"${OBJECT_FILE}\"\n[[ \"${SOURCE_FILE}\" -nt \"${OBJECT_FILE}\" ]] && touch \"${OBJECT_FILE}\" || true\n";
 		};
 /* End PBXBuildRule section */
 

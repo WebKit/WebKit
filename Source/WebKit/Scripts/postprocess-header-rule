@@ -39,10 +39,14 @@ function process_definitions () {
 }
 
 function rewrite_headers () {
-    ditto "${1}" "${2}"
+    SOURCE_FILE="${1}"
+    WORK_FILE="${2}.tmp"
+    DEST_FILE="${2}"
 
-    if [[ ! -z `grep '#import <WebKitAdditions/.*\.h>' "${2}"` ]]; then
-        python "${SRCROOT}/mac/replace-webkit-additions-includes.py" "${2}" "${BUILT_PRODUCTS_DIR}" "${SDKROOT}" || exit $?
+    ditto "${SOURCE_FILE}" "${WORK_FILE}"
+
+    if [[ ! -z `grep '#import <WebKitAdditions/.*\.h>' "${WORK_FILE}"` ]]; then
+        python "${SRCROOT}/mac/replace-webkit-additions-includes.py" "${WORK_FILE}" "${BUILT_PRODUCTS_DIR}" "${SDKROOT}" || exit $?
     fi
 
     if [[ "${WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED}" != "YES" ]]; then
@@ -75,16 +79,16 @@ function rewrite_headers () {
 
         SED_OPTIONS+=(${OTHER_SED_OPTIONS[*]})
 
-        sed -i .tmp -E "${SED_OPTIONS[@]}" "${2}" || exit $?
+        sed -i '' -E "${SED_OPTIONS[@]}" "${WORK_FILE}" || exit $?
     fi
 
-    HEADER_NAME=$(basename "${2}")
+    HEADER_NAME=$(basename "${WORK_FILE}" '.tmp')
     if [[ "${HEADER_NAME}" == "WKBase.h" ]]; then
-        unifdef -B -D__APPLE__ -UBUILDING_GTK__ -UBUILDING_WPE__ -UUSE_SOUP -o "${2}".unifdef "${2}"
+        unifdef -B -D__APPLE__ -UBUILDING_GTK__ -UBUILDING_WPE__ -UUSE_SOUP -o "${WORK_FILE}".unifdef "${WORK_FILE}"
 
         case $? in
-            0) rm "${2}".unifdef ;;
-            1) mv "${2}"{.unifdef,} ;;
+            0) rm "${WORK_FILE}".unifdef ;;
+            1) mv "${WORK_FILE}"{.unifdef,} ;;
             *) exit 1
         esac
     fi
@@ -96,14 +100,17 @@ function rewrite_headers () {
             UNIFDEF_OPTIONS="-DWK_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED"
         fi
 
-        unifdef -B ${UNIFDEF_OPTIONS} -o "${2}".unifdef "${2}"
+        unifdef -B ${UNIFDEF_OPTIONS} -o "${WORK_FILE}".unifdef "${WORK_FILE}"
 
         case $? in
-            0) rm "${2}".unifdef ;;
-            1) mv "${2}"{.unifdef,} ;;
+            0) rm "${WORK_FILE}".unifdef ;;
+            1) mv "${WORK_FILE}"{.unifdef,} ;;
             *) exit 1
         esac
     fi
+
+    cmp -s "${WORK_FILE}" "${DEST_FILE}" && rm -f "${WORK_FILE}" || mv "${WORK_FILE}" "${DEST_FILE}"
+    [[ "${SOURCE_FILE}" -nt "${DEST_FILE}" ]] && touch "${DEST_FILE}" || true
 }
 
 DEFINITIONS_PATH=usr/local/include/WebKitAdditions/Scripts/postprocess-framework-headers-definitions

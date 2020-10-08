@@ -28,8 +28,11 @@ if [[ -z "${SCRIPT_HEADER_VISIBILITY}" ]]; then
     exit 0
 fi
 
-ditto "${SCRIPT_INPUT_FILE}" "${SCRIPT_OUTPUT_FILE_0}"
-header="${SCRIPT_OUTPUT_FILE_0}"
+SOURCE_FILE="${SCRIPT_INPUT_FILE}"
+WORK_FILE="${SCRIPT_OUTPUT_FILE_0}.tmp"
+DEST_FILE="${SCRIPT_OUTPUT_FILE_0}"
+
+ditto "${SOURCE_FILE}" "${WORK_FILE}"
 
 if [[ ${USE_INTERNAL_SDK} == "YES" ]]; then
     USE_APPLE_INTERNAL_SDK=1
@@ -59,22 +62,21 @@ do
     fi
 done
 
-unifdef -B ${unifdefOptions} -o "${header}.unifdef" "${header}"
+unifdef -B ${unifdefOptions} -o "${WORK_FILE}.unifdef" "${WORK_FILE}"
 case $? in
-    0) rm "${header}".unifdef ;;
-    1) mv "${header}"{.unifdef,} ;;
+    0) rm "${WORK_FILE}".unifdef ;;
+    1) mv "${WORK_FILE}"{.unifdef,} ;;
     *) exit 1 ;;
 esac
 
-if [[ "${header}" == "./WebKitAvailability.h" ]]; then
+HEADER_NAME=$(basename "${WORK_FILE}" '.tmp')
+if [[ "${HEADER_NAME}" == "WebKitAvailability.h" ]]; then
     exit 0
 fi
 
 if [[ ${WK_PLATFORM_NAME} != macosx ]]; then
-    sed -E -e "s/ *WEBKIT_((CLASS_|ENUM_)?(AVAILABLE|DEPRECATED))_MAC\([^)]+\)//g" < "${header}" > "${header}.sed"
-    if cmp -s "${header}" "${header}.sed"; then
-        rm "${header}.sed"
-    else
-        mv "${header}.sed" "${header}"
-    fi
+    sed -i '' -E -e "s/ *WEBKIT_((CLASS_|ENUM_)?(AVAILABLE|DEPRECATED))_MAC\([^)]+\)//g" "${WORK_FILE}"
 fi
+
+cmp -s "${WORK_FILE}" "${DEST_FILE}" && rm -f "${WORK_FILE}" || mv "${WORK_FILE}" "${DEST_FILE}"
+[[ "${SOURCE_FILE}" -nt "${DEST_FILE}" ]] && touch "${DEST_FILE}" || true

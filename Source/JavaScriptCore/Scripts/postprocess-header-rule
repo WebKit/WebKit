@@ -44,6 +44,10 @@ function process_definitions () {
 }
 
 function rewrite_headers () {
+    local SOURCE_FILE="${1}"
+    local WORK_FILE="${2}.tmp"
+    local DEST_FILE="${2}"
+
     if [[ "${PLATFORM_NAME}" == "macosx" ]]; then
         [[ -n ${OSX_VERSION} ]] || OSX_VERSION=${MACOSX_DEPLOYMENT_TARGET}
         [[ -n ${IOS_VERSION} ]] || IOS_VERSION="NA"
@@ -80,8 +84,9 @@ function rewrite_headers () {
 
     SED_OPTIONS+=(${OTHER_SED_OPTIONS[*]})
 
-    ditto "${1}" "${2}"
-    sed -i .tmp -E "${SED_OPTIONS[@]}" "${2}" || exit $?
+    sed -E "${SED_OPTIONS[@]}" "${SOURCE_FILE}" > "${WORK_FILE}" || exit $?
+    cmp -s "${WORK_FILE}" "${DEST_FILE}" && rm -f "${WORK_FILE}" || mv "${WORK_FILE}" "${DEST_FILE}"
+    [[ "${SOURCE_FILE}" -nt "${DEST_FILE}" ]] && touch "${DEST_FILE}" || true
 }
 
 DEFINITIONS_PATH=usr/local/include/WebKitAdditions/Scripts/postprocess-framework-headers-definitions

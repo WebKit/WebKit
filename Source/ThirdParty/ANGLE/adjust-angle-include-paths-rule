@@ -21,6 +21,10 @@
 
 if [[ -n "${SCRIPT_HEADER_VISIBILITY}" ]]
 then
+    SOURCE_FILE="${SCRIPT_INPUT_FILE}"
+    WORK_FILE="${SCRIPT_OUTPUT_FILE_0}.tmp"
+    DEST_FILE="${SCRIPT_OUTPUT_FILE_0}"
+
     sed \
         -e 's/^#include [<"]EGL\/\(.*\)[>"]/#include <ANGLE\/\1>/' \
         -e 's/^#include [<"]GLES\/\(.*\)[>"]/#include <ANGLE\/\1>/' \
@@ -29,7 +33,8 @@ then
         -e 's/^#include [<"]KHR\/\(.*\)[>"]/#include <ANGLE\/\1>/' \
         -e 's/^#include [<"]export.h[>"]/#include <ANGLE\/export.h>/' \
         -e 's/^#include "\(eglext_angle\|gl2ext_angle\|ShaderVars\).h"/#include <ANGLE\/\1.h>/' \
-        "${SCRIPT_INPUT_FILE}" > "${SCRIPT_OUTPUT_FILE_0}"
-    echo "Postprocessed ANGLE header: ${SCRIPT_OUTPUT_FILE_0}"
+        "${SOURCE_FILE}" > "${WORK_FILE}"
+    cmp -s "${WORK_FILE}" "${DEST_FILE}" && rm -f "${WORK_FILE}" || mv "${WORK_FILE}" "${DEST_FILE}"
+    [[ "${SOURCE_FILE}" -nt "${DEST_FILE}" ]] && touch "${DEST_FILE}" || true
 fi
 exit 0
