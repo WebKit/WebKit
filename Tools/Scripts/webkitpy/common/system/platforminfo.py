@@ -37,7 +37,8 @@ from webkitcorepy import Version
 
 from webkitpy.common.memoized import memoized
 from webkitpy.common.version_name_map import PUBLIC_TABLE, INTERNAL_TABLE, VersionNameMap
-from webkitpy.common.system.executive import Executive, ScriptError
+from webkitpy.common.system.executive import ScriptError
+from webkitpy.port.config import apple_additions
 
 
 _log = logging.getLogger(__name__)
@@ -67,7 +68,11 @@ class PlatformInfo(object):
         self._is_cygwin = sys_module.platform == 'cygwin'
 
         if self.os_name.startswith('mac'):
-            self.os_version = Version.from_string(self._executive.run_command(['sw_vers', '-productVersion']).rstrip())
+            # Work around for <rdar://problem/70069051>
+            if apple_additions() and getattr(apple_additions(), 'os_version', None):
+                self.os_version = apple_additions().os_version(self._executive)
+            else:
+                self.os_version = Version.from_string(self._executive.run_command(['sw_vers', '-productVersion']).rstrip())
         elif self.os_name.startswith('win'):
             self.os_version = self._win_version()
         else:
