@@ -1,3 +1,12 @@
+2020-10-08  Noam Rosenthal  <noam@webkit.org>
+
+        REGRESSION (r268138): [ iOS Mojave+ ] imported/w3c/web-platform-tests/css/css-masking/clip-path/svg-clipPath.svg is missing expected results
+        https://bugs.webkit.org/show_bug.cgi?id=217461
+        <rdar://problem/70074200>
+
+        Unreviewed, skipping a test resource file.
+
+        * TestExpectations:
 2020-10-08  Youenn Fablet  <youenn@apple.com>
 
         Add a test case to verify WebRTC getCapabilities expose H264 profiles

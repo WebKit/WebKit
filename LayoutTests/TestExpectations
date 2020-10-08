@@ -2040,6 +2040,9 @@ imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-reference-bo
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-svg-invalidate.html [ ImageOnlyFailure ]
 webkit.org/b/104442 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-change-from-empty.html [ ImageOnlyFailure ]
 
+# A support file for a test
+imported/w3c/web-platform-tests/css/css-masking/clip-path/svg-clipPath.svg [ Skip ]
+
 imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-001.html
 imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-002.html
 imported/w3c/web-platform-tests/css/css-multicol/large-actual-column-count.html
