@@ -26,11 +26,43 @@
 #import "config.h"
 #import "UserMediaPermissionRequestManagerProxy.h"
 
+#import "SandboxUtilities.h"
+#import "TCCSPI.h"
+#import <wtf/SoftLinking.h>
+#import <wtf/spi/darwin/SandboxSPI.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK(TCC)
+SOFT_LINK(TCC, TCCAccessPreflight, TCCAccessPreflightResult, (CFStringRef service, CFDictionaryRef options), (service, options))
+SOFT_LINK(TCC, TCCAccessPreflightWithAuditToken, TCCAccessPreflightResult, (CFStringRef service, audit_token_t token, CFDictionaryRef options), (service, token, options))
+SOFT_LINK_CONSTANT(TCC, kTCCServiceMicrophone, CFStringRef)
+SOFT_LINK_CONSTANT(TCC, kTCCServiceCamera, CFStringRef)
+
 namespace WebKit {
 
 bool UserMediaPermissionRequestManagerProxy::permittedToCaptureAudio()
 {
 #if ENABLE(MEDIA_STREAM)
+
+#if PLATFORM(MAC)
+    static std::once_flag onceFlag;
+    static bool entitled = true;
+    std::call_once(onceFlag, [] {
+        if (!currentProcessIsSandboxed())
+            return;
+
+        int result = sandbox_check(getpid(), "device-microphone", SANDBOX_FILTER_NONE);
+        entitled = !result;
+        if (result == -1)
+            WTFLogAlways("Error checking 'device-microphone' sandbox access, errno=%ld", (long)errno);
+    });
+    if (!entitled)
+        return false;
+#endif // PLATFORM(MAC)
+
+    static TCCAccessPreflightResult access = TCCAccessPreflight(getkTCCServiceMicrophone(), NULL);
+    if (access == kTCCAccessPreflightGranted)
+        return true;
+
     static bool isPermitted = dynamic_objc_cast<NSString>(NSBundle.mainBundle.infoDictionary[@"NSMicrophoneUsageDescription"]).length;
     return isPermitted;
 #else
@@ -41,6 +73,27 @@ bool UserMediaPermissionRequestManagerProxy::permittedToCaptureAudio()
 bool UserMediaPermissionRequestManagerProxy::permittedToCaptureVideo()
 {
 #if ENABLE(MEDIA_STREAM)
+
+#if PLATFORM(MAC)
+    static std::once_flag onceFlag;
+    static bool entitled = true;
+    std::call_once(onceFlag, [] {
+        if (!currentProcessIsSandboxed())
+            return;
+
+        int result = sandbox_check(getpid(), "device-camera", SANDBOX_FILTER_NONE);
+        entitled = !result;
+        if (result == -1)
+            WTFLogAlways("Error checking 'device-camera' sandbox access, errno=%ld", (long)errno);
+    });
+    if (!entitled)
+        return false;
+#endif // PLATFORM(MAC)
+
+    static TCCAccessPreflightResult access = TCCAccessPreflight(getkTCCServiceCamera(), NULL);
+    if (access == kTCCAccessPreflightGranted)
+        return true;
+
     static bool isPermitted = dynamic_objc_cast<NSString>(NSBundle.mainBundle.infoDictionary[@"NSCameraUsageDescription"]).length;
     return isPermitted;
 #else
