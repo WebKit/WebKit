@@ -1,3 +1,74 @@
+2020-10-07  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r267414. rdar://problem/70056613
+
+    Implement a default prompt for getUserMedia
+    https://bugs.webkit.org/show_bug.cgi?id=216821
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Manually tested by running Minibrowser.
+    
+    * en.lproj/Localizable.strings:
+    
+    Source/WebKit:
+    
+    Move preferences used by WebRTC develop menu to internals.
+    This allows having them in MiniBrowser.
+    
+    Enable video capture in UIProcess by default for non Safari applications.
+    Add support for a getUserMedia prompt, very similar to iOS current prompt.
+    Use the prompt in case the application does not implement any of the two delegates.
+    
+    * Shared/WebPreferences.yaml:
+    * Shared/WebPreferencesDefaultValues.cpp:
+    (WebKit::defaultCaptureVideoInUIProcessEnabled):
+    * Shared/WebPreferencesDefaultValues.h:
+    * Shared/WebPreferencesExperimental.yaml:
+    * Shared/WebPreferencesInternal.yaml:
+    * UIProcess/Cocoa/UIDelegate.h:
+    * UIProcess/Cocoa/UIDelegate.mm:
+    (WebKit::UIDelegate::setDelegate):
+    (WebKit::requestUserMediaAuthorizationForFrame):
+    (WebKit::UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest):
+    * UIProcess/Cocoa/WKUserMediaCaptureAccessAlert.h: Added.
+    * UIProcess/Cocoa/WKUserMediaCaptureAccessAlert.mm: Added.
+    (WebKit::visibleDomain):
+    (WebKit::alertMessageText):
+    (WebKit::presentUserMediaCaptureAccessAlert):
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    Tools:
+    
+    Remove getUserMedia delegate implementations to use WebKit built-in prompt.
+    Add camera and microphone entitlements to allow using real cameras and microphones.
+    Keep using mock devices as the default.
+    
+    * MiniBrowser/MiniBrowser.entitlements:
+    * MiniBrowser/mac/WK2BrowserWindowController.m:
+    (-[WK2BrowserWindowController _webView:requestMediaCaptureAuthorization:decisionHandler:]): Deleted.
+    (-[WK2BrowserWindowController _webView:includeSensitiveMediaDeviceDetails:]): Deleted.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@267414 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-22  Youenn Fablet  <youenn@apple.com>
+
+            Implement a default prompt for getUserMedia
+            https://bugs.webkit.org/show_bug.cgi?id=216821
+
+            Reviewed by Eric Carlson.
+
+            Remove getUserMedia delegate implementations to use WebKit built-in prompt.
+            Add camera and microphone entitlements to allow using real cameras and microphones.
+            Keep using mock devices as the default.
+
+            * MiniBrowser/MiniBrowser.entitlements:
+            * MiniBrowser/mac/WK2BrowserWindowController.m:
+            (-[WK2BrowserWindowController _webView:requestMediaCaptureAuthorization:decisionHandler:]): Deleted.
+            (-[WK2BrowserWindowController _webView:includeSensitiveMediaDeviceDetails:]): Deleted.
+
 2020-10-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cherry-pick r267448. rdar://problem/69727369

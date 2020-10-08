@@ -873,16 +873,6 @@ static NSSet *dataTypes()
 {
 }
 
-- (void)_webView:(WKWebView *)webView requestMediaCaptureAuthorization: (_WKCaptureDevices)devices decisionHandler:(void (^)(BOOL authorized))decisionHandler
-{
-    decisionHandler(true);
-}
-
-- (void)_webView:(WKWebView *)webView includeSensitiveMediaDeviceDetails:(void (^)(BOOL includeSensitiveDetails))decisionHandler
-{
-    decisionHandler(false);
-}
-
 - (IBAction)saveAsPDF:(id)sender
 {
     NSSavePanel *panel = [NSSavePanel savePanel];
