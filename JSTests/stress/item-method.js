@@ -47,21 +47,3 @@ for (const TA of [Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Ar
   shouldBe(ta.item(null), ta[0]);
   shouldBe(ta.item({ valueOf: () => -1 }), ta[ta.length - 1]);
 }
-
-shouldBe(String.prototype.item.length, 1);
-shouldThrowTypeError(() => String.prototype.item.call(undefined));
-shouldThrowTypeError(() => String.prototype.item.call(null));
-
-const string = 'abc';
-// intentionally go one too far to ensure that we get undefined instead of wrapping
-for (let i = 0; i <= string.length; i++) {
-  shouldBe(string.item(i), string[i]);
-  shouldBe(string.item(-i - 1), string[string.length - i - 1]);
-}
-shouldBe(string.item(), string[0]);
-shouldBe(string.item(null), string[0]);
-shouldBe(string.item({ valueOf: () => -1 }), string[string.length - 1]);
-
-const emojiPseudoString = { toString: () => '😅' };
-shouldBe(String.prototype.item.call(emojiPseudoString, 0), '\u{d83d}');
-shouldBe(String.prototype.item.call(emojiPseudoString, -1), '\u{de05}');

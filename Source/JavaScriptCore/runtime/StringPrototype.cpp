@@ -90,7 +90,6 @@ const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, &st
 /* Source for StringConstructor.lut.h
 @begin stringPrototypeTable
     concat        JSBuiltin    DontEnum|Function 1
-    item          JSBuiltin    DontEnum|Function 1
     match         JSBuiltin    DontEnum|Function 1
     matchAll      JSBuiltin    DontEnum|Function 1
     padStart      JSBuiltin    DontEnum|Function 1

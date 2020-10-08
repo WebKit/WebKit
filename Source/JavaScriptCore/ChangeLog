@@ -1,3 +1,19 @@
+2020-10-07  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Revert String.prototype.item
+        https://bugs.webkit.org/show_bug.cgi?id=217449
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch reverts the String part of r267814, as it has been shown to be web-incompatible:
+        https://github.com/tc39/proposal-item-method/issues/31
+
+        Thankfully, this was the inessential part of the proposal; the core parts (Array and %TypedArray%) remain for now.
+
+        * builtins/StringPrototype.js:
+        (item): Deleted.
+        * runtime/StringPrototype.cpp:
+
 2020-10-07  Keith Rollin  <krollin@apple.com>
 
         Update post-processing rules for headers to not unnecessarily change timestamps
