@@ -1,5 +1,117 @@
 2020-10-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r267081. rdar://problem/70056594
+
+    End of media capture should not be reported before 3 seconds of the start of capture
+    https://bugs.webkit.org/show_bug.cgi?id=216415
+    Source/WebCore:
+    
+    Reviewed by Eric Carlson.
+    
+    Add a timer that allows taking a function and a delay as parameter.
+    Covered by added API test.
+    
+    * platform/Timer.h:
+    (WebCore::DeferrableTaskTimer::fired):
+    (WebCore::DeferrableTaskTimer::doTask):
+    (WebCore::DeferrableTaskTimer::cancel):
+    
+    Source/WebKit:
+    
+    <rdar://problem/68512358>
+    
+    Reviewed by Eric Carlson.
+    
+    Add support for delaying of end of capture notification to the application.
+    This allows to ensure that a capture indicator stays for long enough for the user to notice it.
+    A capture indicator should be visible to the user for at least three seconds.
+    
+    A timer is scheduled when starting a capture and there is no ongoing capture.
+    As long as the timer is active, the capture state cannot be transitioned to no capture.
+    Other transitions are allowed.
+    Once the timer kicks in, any capture state update is done synchronously.
+    Ensure to update the capture state when the timer kicks in.
+    
+    Note that even navigations will not allow transitioning the capture state sooner.
+    This is done to ensure a page does not try to capture one frame before navigating to another page.
+    In practice, very few pages should navigate quickly after starting capture.
+    
+    * UIProcess/API/C/WKPage.cpp:
+    (WKPageGetMediaState):
+    (WKPageSetMediaCaptureReportingDelayForTesting):
+    * UIProcess/API/C/WKPagePrivate.h:
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView _mediaCaptureState]):
+    * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+    * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+    (-[WKWebView _mediaCaptureReportingDelayForTesting]):
+    (-[WKWebView _setMediaCaptureReportingDelayForTesting:]):
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::updatePlayingMediaDidChange):
+    (WebKit::WebPageProxy::updateReportedMediaCaptureState):
+    * UIProcess/WebPageProxy.h:
+    (WebKit::WebPageProxy::reportedMediaCaptureState const):
+    (WebKit::WebPageProxy::mediaCaptureReportingDelay const):
+    (WebKit::WebPageProxy::setMediaCaptureReportingDelay):
+    
+    Tools:
+    
+    Reviewed by Eric Carlson.
+    
+    * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+    (TestWebKitAPI::TEST):
+    * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+    (-[GetUserMediaUIDelegate _webView:mediaCaptureStateDidChange:]):
+    Add a notCapturing boolean and wait for the notification before going back to the capturing page.
+    Decrease delay to 1 second to make the test run faster.
+    * WebKitTestRunner/TestController.cpp:
+    (WTR::TestController::resetStateToConsistentValues):
+    Make sure to set media capture state delay to zero.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@267081 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-15  Youenn Fablet  <youenn@apple.com>
+
+            End of media capture should not be reported before 3 seconds of the start of capture
+            https://bugs.webkit.org/show_bug.cgi?id=216415
+            <rdar://problem/68512358>
+
+            Reviewed by Eric Carlson.
+
+            Add support for delaying of end of capture notification to the application.
+            This allows to ensure that a capture indicator stays for long enough for the user to notice it.
+            A capture indicator should be visible to the user for at least three seconds.
+
+            A timer is scheduled when starting a capture and there is no ongoing capture.
+            As long as the timer is active, the capture state cannot be transitioned to no capture.
+            Other transitions are allowed.
+            Once the timer kicks in, any capture state update is done synchronously.
+            Ensure to update the capture state when the timer kicks in.
+
+            Note that even navigations will not allow transitioning the capture state sooner.
+            This is done to ensure a page does not try to capture one frame before navigating to another page.
+            In practice, very few pages should navigate quickly after starting capture.
+
+            * UIProcess/API/C/WKPage.cpp:
+            (WKPageGetMediaState):
+            (WKPageSetMediaCaptureReportingDelayForTesting):
+            * UIProcess/API/C/WKPagePrivate.h:
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _mediaCaptureState]):
+            * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+            * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+            (-[WKWebView _mediaCaptureReportingDelayForTesting]):
+            (-[WKWebView _setMediaCaptureReportingDelayForTesting:]):
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::updatePlayingMediaDidChange):
+            (WebKit::WebPageProxy::updateReportedMediaCaptureState):
+            * UIProcess/WebPageProxy.h:
+            (WebKit::WebPageProxy::reportedMediaCaptureState const):
+            (WebKit::WebPageProxy::mediaCaptureReportingDelay const):
+            (WebKit::WebPageProxy::setMediaCaptureReportingDelay):
+
+2020-10-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r267568. rdar://problem/70056584
 
     Implement default behavior for getUserMedia requests in case where there is no delegate set
