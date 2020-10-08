@@ -4278,6 +4278,7 @@ storage/indexeddb/request-leak-private.html [ Skip ]
 storage/indexeddb/request-leak.html [ Skip ]
 
 webkit.org/b/194711 fast/replaced/encrypted-pdf-as-object-and-embed.html [ Failure ]
+webkit.org/b/194711 fast/replaced/pdf-as-embed-with-no-mime-type-is-not-blank.html [ Failure ]
 
 webkit.org/b/195461 http/tests/referrer-policy-iframe/no-referrer/cross-origin-http-http.html [ Failure ]
 webkit.org/b/195461 http/tests/referrer-policy-iframe/no-referrer/same-origin.html [ Failure ]
