@@ -1,3 +1,12 @@
+2020-10-08  Karl Rackler  <rackler@apple.com>
+
+        REGRESSION (r268138): [ Mojave+ wk1 ] imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-descendant-text-mutated-001.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=217478
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-10-08  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Blurring a text input and focusing a date input changes the scrollable area
