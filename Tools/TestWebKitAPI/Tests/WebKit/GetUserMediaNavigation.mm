@@ -73,7 +73,7 @@ TEST(WebKit, NavigateDuringGetUserMediaPrompt)
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     auto preferences = [configuration preferences];
     preferences._mediaCaptureRequiresSecureConnection = NO;
-    preferences._mediaDevicesEnabled = YES;
+    configuration.get()._mediaCaptureEnabled = YES;
     preferences._mockCaptureDevicesEnabled = YES;
     auto webView = [[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
     auto delegate = adoptNS([[NavigationWhileGetUserMediaPromptDisplayedUIDelegate alloc] init]);
@@ -90,7 +90,7 @@ TEST(WebKit, NavigateDuringDeviceEnumeration)
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     auto preferences = [configuration preferences];
     preferences._mediaCaptureRequiresSecureConnection = NO;
-    preferences._mediaDevicesEnabled = YES;
+    configuration.get()._mediaCaptureEnabled = YES;
     preferences._mockCaptureDevicesEnabled = YES;
     auto webView = [[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
     auto delegate = adoptNS([[NavigationWhileGetUserMediaPromptDisplayedUIDelegate alloc] init]);
@@ -116,7 +116,7 @@ TEST(WebKit, DeviceIdHashSaltsDirectory)
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     auto preferences = [configuration preferences];
     preferences._mediaCaptureRequiresSecureConnection = NO;
-    preferences._mediaDevicesEnabled = YES;
+    configuration.get()._mediaCaptureEnabled = YES;
     preferences._mockCaptureDevicesEnabled = YES;
     auto webView = [[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
     auto delegate = adoptNS([[NavigationWhileGetUserMediaPromptDisplayedUIDelegate alloc] init]);
