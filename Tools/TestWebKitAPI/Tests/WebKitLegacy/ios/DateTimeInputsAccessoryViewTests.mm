@@ -49,14 +49,15 @@ static bool didFinishLoad = false;
 
 @end
 
-static void setDatePickerMode(id, SEL)
+static UITableViewCell * cellForRowAtIndexPath(id, SEL)
 {
+    return [[[UITableViewCell alloc] init] autorelease];
 }
 
 static void runTestWithInputType(NSString *type)
 {
     TestWebKitAPI::IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
-    InstanceMethodSwizzler overrideSetDatePickerMode { [UIDatePicker class], @selector(setDatePickerMode:), reinterpret_cast<IMP>(setDatePickerMode) };
+    InstanceMethodSwizzler overrideCellForRowAtIndexPath { [UITableView class], @selector(cellForRowAtIndexPath:), reinterpret_cast<IMP>(cellForRowAtIndexPath) };
 
     NSInteger width = 800;
     NSInteger height = 600;
