@@ -69,6 +69,16 @@ LineIterator& LineIterator::traversePrevious()
     return *this;
 }
 
+bool LineIterator::operator==(const LineIterator& other) const
+{
+    if (m_line.m_pathVariant.index() != other.m_line.m_pathVariant.index())
+        return false;
+
+    return WTF::switchOn(m_line.m_pathVariant, [&](const auto& path) {
+        return path == WTF::get<std::decay_t<decltype(path)>>(other.m_line.m_pathVariant);
+    });
+}
+
 }
 }
 

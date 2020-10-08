@@ -111,6 +111,8 @@ public:
     unsigned localEndOffset() const;
     unsigned length() const;
 
+    unsigned offsetForPosition(float x) const;
+
     bool isLastTextRunOnLine() const;
     bool isLastTextRun() const;
 
@@ -331,6 +333,13 @@ inline unsigned PathTextRun::length() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.length();
+    });
+}
+
+inline unsigned PathTextRun::offsetForPosition(float x) const
+{
+    return WTF::switchOn(m_pathVariant, [&](auto& path) {
+        return path.offsetForPosition(x);
     });
 }
 

@@ -37,6 +37,7 @@
 #include "HTMLParserIdioms.h"
 #include "Hyphenation.h"
 #include "InlineTextBox.h"
+#include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationRunIterator.h"
 #include "Range.h"
 #include "RenderBlock.h"
@@ -452,10 +453,184 @@ Position RenderText::positionForPoint(const LayoutPoint& point)
     return positionForPoint(point, nullptr).deepEquivalent();
 }
 
+enum ShouldAffinityBeDownstream { AlwaysDownstream, AlwaysUpstream, UpstreamIfPositionIsNotAtStart };
+
+static bool lineDirectionPointFitsInBox(int pointLineDirection, const LayoutIntegration::TextRunIterator& textRun, ShouldAffinityBeDownstream& shouldAffinityBeDownstream)
+{
+    shouldAffinityBeDownstream = AlwaysDownstream;
+
+    // the x coordinate is equal to the left edge of this box
+    // the affinity must be downstream so the position doesn't jump back to the previous line
+    // except when box is the first box in the line
+    if (pointLineDirection <= textRun->logicalLeft()) {
+        shouldAffinityBeDownstream = !textRun.previousOnLine() ? UpstreamIfPositionIsNotAtStart : AlwaysDownstream;
+        return true;
+    }
+
+#if !PLATFORM(IOS_FAMILY)
+    // and the x coordinate is to the left of the right edge of this box
+    // check to see if position goes in this box
+    if (pointLineDirection < textRun->logicalRight()) {
+        shouldAffinityBeDownstream = UpstreamIfPositionIsNotAtStart;
+        return true;
+    }
+#endif
+
+    // box is first on line
+    // and the x coordinate is to the left of the first text box left edge
+    if (!textRun.previousOnLineIgnoringLineBreak() && pointLineDirection < textRun->logicalLeft())
+        return true;
+
+    if (!textRun.nextOnLineIgnoringLineBreak()) {
+        // box is last on line
+        // and the x coordinate is to the right of the last text box right edge
+        // generate VisiblePosition, use Affinity::Upstream affinity if possible
+        shouldAffinityBeDownstream = UpstreamIfPositionIsNotAtStart;
+        return true;
+    }
+
+    return false;
+}
+
+static VisiblePosition createVisiblePositionForBox(const LayoutIntegration::RunIterator& run, unsigned offset, ShouldAffinityBeDownstream shouldAffinityBeDownstream)
+{
+    auto affinity = VisiblePosition::defaultAffinity;
+    switch (shouldAffinityBeDownstream) {
+    case AlwaysDownstream:
+        affinity = Affinity::Downstream;
+        break;
+    case AlwaysUpstream:
+        affinity = Affinity::Upstream;
+        break;
+    case UpstreamIfPositionIsNotAtStart:
+        affinity = offset > run->minimumCaretOffset() ? Affinity::Upstream : Affinity::Downstream;
+        break;
+    }
+    return run->renderer().createVisiblePosition(offset, affinity);
+}
+
+static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const LayoutIntegration::TextRunIterator& run, unsigned offset, ShouldAffinityBeDownstream shouldAffinityBeDownstream)
+{
+    ASSERT(offset >= 0);
+
+    if (offset && offset < run->length())
+        return createVisiblePositionForBox(run, run->localStartOffset() + offset, shouldAffinityBeDownstream);
+
+    bool positionIsAtStartOfBox = !offset;
+    if (positionIsAtStartOfBox == run->isLeftToRightDirection()) {
+        // offset is on the left edge
+
+        auto previousRun = run.previousOnLineIgnoringLineBreak();
+        if ((previousRun && previousRun->bidiLevel() == run->bidiLevel())
+            || run->renderer().containingBlock()->style().direction() == run->direction()) // FIXME: left on 12CBA
+            return createVisiblePositionForBox(run, run->leftmostCaretOffset(), shouldAffinityBeDownstream);
+
+        if (previousRun && previousRun->bidiLevel() > run->bidiLevel()) {
+            // e.g. left of B in aDC12BAb
+            auto leftmostRun = previousRun;
+            for (; previousRun; previousRun.traversePreviousOnLineIgnoringLineBreak()) {
+                if (previousRun->bidiLevel() <= run->bidiLevel())
+                    break;
+                leftmostRun = previousRun;
+            }
+            return createVisiblePositionForBox(leftmostRun, leftmostRun->rightmostCaretOffset(), shouldAffinityBeDownstream);
+        }
+
+        if (!previousRun || previousRun->bidiLevel() < run->bidiLevel()) {
+            // e.g. left of D in aDC12BAb
+            LayoutIntegration::RunIterator rightmostRun = run;
+            for (auto nextRun = run.nextOnLineIgnoringLineBreak(); nextRun; nextRun.traverseNextOnLineIgnoringLineBreak()) {
+                if (nextRun->bidiLevel() < run->bidiLevel())
+                    break;
+                rightmostRun = nextRun;
+            }
+            return createVisiblePositionForBox(rightmostRun,
+                run->isLeftToRightDirection() ? rightmostRun->maximumCaretOffset() : rightmostRun->minimumCaretOffset(), shouldAffinityBeDownstream);
+        }
+
+        return createVisiblePositionForBox(run, run->rightmostCaretOffset(), shouldAffinityBeDownstream);
+    }
+
+    auto nextRun = run.nextOnLineIgnoringLineBreak();
+    if ((nextRun && nextRun->bidiLevel() == run->bidiLevel())
+        || run->renderer().containingBlock()->style().direction() == run->direction())
+        return createVisiblePositionForBox(run, run->rightmostCaretOffset(), shouldAffinityBeDownstream);
+
+    // offset is on the right edge
+    if (nextRun && nextRun->bidiLevel() > run->bidiLevel()) {
+        // e.g. right of C in aDC12BAb
+        auto rightmostRun = nextRun;
+        for (; nextRun; nextRun.traverseNextOnLineIgnoringLineBreak()) {
+            if (nextRun->bidiLevel() <= run->bidiLevel())
+                break;
+            rightmostRun = nextRun;
+        }
+
+        return createVisiblePositionForBox(rightmostRun, rightmostRun->leftmostCaretOffset(), shouldAffinityBeDownstream);
+    }
+
+    if (!nextRun || nextRun->bidiLevel() < run->bidiLevel()) {
+        // e.g. right of A in aDC12BAb
+        LayoutIntegration::RunIterator leftmostRun = run;
+        for (auto previousRun = run.previousOnLineIgnoringLineBreak(); previousRun; previousRun.traversePreviousOnLineIgnoringLineBreak()) {
+            if (previousRun->bidiLevel() < run->bidiLevel())
+                break;
+            leftmostRun = previousRun;
+        }
+
+        return createVisiblePositionForBox(leftmostRun,
+            run->isLeftToRightDirection() ? leftmostRun->minimumCaretOffset() : leftmostRun->maximumCaretOffset(), shouldAffinityBeDownstream);
+    }
+
+    return createVisiblePositionForBox(run, run->leftmostCaretOffset(), shouldAffinityBeDownstream);
+}
+
+
 VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, const RenderFragmentContainer*)
 {
-    ensureLineBoxes();
-    return m_lineBoxes.positionForPoint(*this, point);
+    auto firstRun = LayoutIntegration::firstTextRunFor(*this);
+
+    if (!firstRun || !text().length())
+        return createVisiblePosition(0, Affinity::Downstream);
+
+    LayoutUnit pointLineDirection = firstRun->isHorizontal() ? point.x() : point.y();
+    LayoutUnit pointBlockDirection = firstRun->isHorizontal() ? point.y() : point.x();
+    bool blocksAreFlipped = style().isFlippedBlocksWritingMode();
+
+    LayoutIntegration::TextRunIterator lastRun;
+    for (auto run = firstRun; run; run.traverseNextTextRun()) {
+        if (run->isLineBreak() && !run.previousOnLine() && run.nextOnLine() && !run.nextOnLine()->isLineBreak())
+            run.traverseNextTextRun();
+
+        auto line = run.line();
+        LayoutUnit top = std::min(line->selectionTopForHitTesting(), line->top());
+        if (pointBlockDirection > top || (!blocksAreFlipped && pointBlockDirection == top)) {
+            LayoutUnit bottom = line->selectionBottom();
+            if (auto nextLine = line.next())
+                bottom = std::min(bottom, nextLine->top());
+
+            if (pointBlockDirection < bottom || (blocksAreFlipped && pointBlockDirection == bottom)) {
+                ShouldAffinityBeDownstream shouldAffinityBeDownstream;
+#if PLATFORM(IOS_FAMILY)
+                if (pointLineDirection != run->logicalLeft() && point.x() < run->rect().x() + run->logicalWidth()) {
+                    int half = run->rect().x() + run->logicalWidth() / 2;
+                    auto affinity = point.x() < half ? Affinity::Downstream : Affinity::Upstream;
+                    return createVisiblePosition(run->offsetForPosition(pointLineDirection) + run->localStartOffset(), affinity);
+                }
+#endif
+                if (lineDirectionPointFitsInBox(pointLineDirection, run, shouldAffinityBeDownstream))
+                    return createVisiblePositionAfterAdjustingOffsetForBiDi(run, run->offsetForPosition(pointLineDirection), shouldAffinityBeDownstream);
+            }
+        }
+        lastRun = run;
+    }
+
+    if (lastRun) {
+        ShouldAffinityBeDownstream shouldAffinityBeDownstream;
+        lineDirectionPointFitsInBox(pointLineDirection, lastRun, shouldAffinityBeDownstream);
+        return createVisiblePositionAfterAdjustingOffsetForBiDi(lastRun, lastRun->offsetForPosition(pointLineDirection) + lastRun->localStartOffset(), shouldAffinityBeDownstream);
+    }
+    return createVisiblePosition(0, Affinity::Downstream);
 }
 
 LayoutRect RenderText::localCaretRect(InlineBox* inlineBox, unsigned caretOffset, LayoutUnit* extraWidthToEndOfLine)

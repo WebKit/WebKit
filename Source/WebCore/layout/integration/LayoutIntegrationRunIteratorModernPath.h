@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FontCascade.h"
 #include "LayoutIntegrationInlineContent.h"
 
 namespace WebCore {
@@ -62,7 +63,7 @@ public:
     bool isLineBreak() const { return run().isLineBreak(); }
 
     unsigned minimumCaretOffset() const { return isText() ? localStartOffset() : 0; }
-    unsigned maximumCaretOffset() const { return isText() ? localStartOffset() : 1; }
+    unsigned maximumCaretOffset() const { return isText() ? localEndOffset() : 1; }
 
     unsigned char bidiLevel() const { return 0; }
 
@@ -79,6 +80,31 @@ public:
     unsigned localStartOffset() const { return run().textContent()->start(); }
     unsigned localEndOffset() const { return run().textContent()->end(); }
     unsigned length() const { return run().textContent()->length(); }
+
+    inline unsigned offsetForPosition(float x) const
+    {
+        if (isLineBreak())
+            return 0;
+        auto rect = this->rect();
+        auto localX = x - rect.x();
+        if (localX > rect.width())
+            return length();
+        if (localX < 0)
+            return 0;
+
+        auto& style = run().style();
+
+        auto createTextRun = [&] {
+            auto expansion = run().expansion();
+            auto xPos = rect.x() - (line().rect().x() + line().horizontalAlignmentOffset());
+            TextRun textRun { text(), xPos, expansion.horizontalExpansion, expansion.behavior };
+            textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
+            return textRun;
+        };
+
+        bool includePartialGlyphs = true;
+        return run().style().fontCascade().offsetForPosition(createTextRun(), localX, includePartialGlyphs);
+    }
 
     bool isLastTextRunOnLine() const
     {
@@ -138,7 +164,11 @@ public:
     void traversePreviousOnLine()
     {
         ASSERT(!atEnd());
-        ASSERT(m_runIndex);
+
+        if (!m_runIndex) {
+            setAtEnd();
+            return;
+        }
 
         auto oldLineIndex = run().lineIndex();
 

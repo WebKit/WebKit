@@ -54,6 +54,7 @@ public:
 
     unsigned char bidiLevel() const { return m_inlineBox->bidiLevel(); }
 
+
     bool useLineBreakBoxRenderTreeDumpQuirk() const
     {
         return !m_inlineBox->behavesLikeText();
@@ -64,6 +65,8 @@ public:
     unsigned localStartOffset() const { return inlineTextBox()->start(); }
     unsigned localEndOffset() const { return inlineTextBox()->end(); }
     unsigned length() const { return inlineTextBox()->len(); }
+
+    inline unsigned offsetForPosition(float x) const { return inlineTextBox()->offsetForPosition(x); }
 
     bool isLastTextRunOnLine() const
     {

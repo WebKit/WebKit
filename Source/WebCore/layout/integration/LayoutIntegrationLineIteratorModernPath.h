@@ -47,7 +47,11 @@ public:
     ModernLinePath& operator=(const ModernLinePath&) = default;
     ModernLinePath& operator=(ModernLinePath&&) = default;
 
-    FloatRect rect() const { return verticallyRoundedRect(line().rect()); }
+    LayoutUnit top() const { return LayoutUnit::fromFloatRound(line().rect().y()); }
+    LayoutUnit bottom() const { return LayoutUnit::fromFloatRound(line().rect().maxY()); }
+    LayoutUnit selectionTop() const { return top(); }
+    LayoutUnit selectionTopForHitTesting() const { return top(); }
+    LayoutUnit selectionBottom() const { return bottom(); }
 
     void traverseNext()
     {
@@ -59,7 +63,11 @@ public:
     void traversePrevious()
     {
         ASSERT(!atEnd());
-        ASSERT(m_lineIndex);
+
+        if (!m_lineIndex) {
+            setAtEnd();
+            return;
+        }
 
         --m_lineIndex;
     }

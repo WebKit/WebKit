@@ -43,7 +43,11 @@ public:
     LegacyLinePath& operator=(const LegacyLinePath&) = default;
     LegacyLinePath& operator=(LegacyLinePath&&) = default;
 
-    FloatRect rect() const { return m_rootInlineBox->frameRect(); }
+    LayoutUnit top() const { return m_rootInlineBox->lineTop(); }
+    LayoutUnit bottom() const { return m_rootInlineBox->lineBottom(); }
+    LayoutUnit selectionTop() const { return m_rootInlineBox->selectionTop(); }
+    LayoutUnit selectionTopForHitTesting() const { return m_rootInlineBox->selectionTop(RootInlineBox::ForHitTesting::Yes); }
+    LayoutUnit selectionBottom() const { return m_rootInlineBox->selectionBottom(); }
 
     void traverseNext()
     {
