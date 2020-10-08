@@ -92,6 +92,8 @@ Ref<PageConfiguration> PageConfiguration::copy() const
     copy->m_loadsFromNetwork = this->m_loadsFromNetwork;
     copy->m_limitsNavigationsToAppBoundDomains = this->m_limitsNavigationsToAppBoundDomains;
 
+    copy->m_mediaCaptureEnabled = this->m_mediaCaptureEnabled;
+
     return copy;
 }
 

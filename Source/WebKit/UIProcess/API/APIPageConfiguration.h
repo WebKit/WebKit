@@ -160,6 +160,9 @@ public:
     bool limitsNavigationsToAppBoundDomains() const { return m_limitsNavigationsToAppBoundDomains; }
     void setLimitsNavigationsToAppBoundDomains(bool limits) { m_limitsNavigationsToAppBoundDomains = limits; }
 
+    void setMediaCaptureEnabled(bool value) { m_mediaCaptureEnabled = value; }
+    bool mediaCaptureEnabled() const { return m_mediaCaptureEnabled; }
+
     void setShouldRelaxThirdPartyCookieBlocking(WebCore::ShouldRelaxThirdPartyCookieBlocking value) { m_shouldRelaxThirdPartyCookieBlocking = value; }
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_shouldRelaxThirdPartyCookieBlocking; }
     
@@ -206,6 +209,9 @@ private:
     bool m_loadsSubresources { true };
     bool m_loadsFromNetwork { true };
     bool m_limitsNavigationsToAppBoundDomains { false };
+
+    bool m_mediaCaptureEnabled { false };
+
     WebCore::ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
 };
 
