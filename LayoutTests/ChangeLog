@@ -1,3 +1,13 @@
+2020-10-08  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Deny access to performance analysis service in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=217452
+
+        Reviewed by Youenn Fablet.
+
+        * fast/sandbox/mac/sandbox-mach-lookup-expected.txt:
+        * fast/sandbox/mac/sandbox-mach-lookup.html:
+
 2020-10-08  Noam Rosenthal  <noam@webkit.org>
 
         REGRESSION (r268138): [ iOS Mojave+ ] imported/w3c/web-platform-tests/css/css-masking/clip-path/svg-clipPath.svg is missing expected results

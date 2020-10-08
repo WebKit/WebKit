@@ -10,4 +10,5 @@ PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebConte
 PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.system.logger") is false
 PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.awdd") is false
 PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.cookied") is false
+PASS internals.hasSandboxMachLookupAccessToXPCServiceName("com.apple.WebKit.WebContent", "com.apple.PerformanceAnalysis.animationperfd") is false
 

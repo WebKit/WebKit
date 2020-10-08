@@ -459,7 +459,6 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
     (with report) (with telemetry-backtrace)
 #endif
-    (xpc-service-name "com.apple.PerformanceAnalysis.animationperfd")
     (xpc-service-name "com.apple.audio.SandboxHelper")
     (xpc-service-name "com.apple.hiservices-xpcservice")
     (xpc-service-name "com.apple.print.normalizerd")

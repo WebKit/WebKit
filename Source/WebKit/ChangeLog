@@ -1,3 +1,17 @@
+2020-10-08  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Deny access to performance analysis service in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=217452
+        <rdar://problem/68878318>
+
+        Reviewed by Youenn Fablet.
+
+        It has been confirmed that mach-lookup to 'com.apple.PerformanceAnalysis.animationperfd' can be denied in the WebContent process on macOS.
+
+        Test: fast/sandbox/sandbox-mach-lookup.html
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-10-08  Saagar Jha  <saagar@saagarjha.com>
 
         Replace unqualified use of PlatformDisplayID in WebViewImpl
