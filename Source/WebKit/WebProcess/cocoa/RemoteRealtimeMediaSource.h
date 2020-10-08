@@ -30,6 +30,11 @@
 #include <WebCore/CaptureDevice.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
+#include <wtf/Deque.h>
+
+namespace IPC {
+class Connection;
+}
 
 namespace WebCore {
 class CAAudioStreamDescription;
