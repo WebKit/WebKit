@@ -177,7 +177,6 @@ void* URLContext = &URLContext;
 {
     WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
 
-    configuration.preferences._mediaDevicesEnabled = YES;
     configuration.preferences._mockCaptureDevicesEnabled = YES;
 
     WKWebView *webView = [[WKWebView alloc] initWithFrame:self.webViewContainer.bounds configuration:configuration];
