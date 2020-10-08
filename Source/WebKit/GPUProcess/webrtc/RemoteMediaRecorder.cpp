@@ -136,4 +136,6 @@ void RemoteMediaRecorder::stopRecording()
 
 }
 
+#undef MESSAGE_CHECK
+
 #endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
