@@ -1,3 +1,15 @@
+2020-10-08  David Quesada  <david_quesada@apple.com>
+
+        WKWebViewConfiguration._shouldRelaxThirdPartyCookieBlocking should be available on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=217443
+        rdar://problem/69900089
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _setShouldRelaxThirdPartyCookieBlocking:]):
+            Allow this method to be used by Safari and SafariViewService on iOS-family platforms.
+
 2020-10-08  Peng Liu  <peng.liu6@apple.com>
 
         RemoteAudioSession::category() returns an incorrect value after category changing

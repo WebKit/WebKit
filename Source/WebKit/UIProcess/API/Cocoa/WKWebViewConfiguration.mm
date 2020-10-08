@@ -1269,9 +1269,11 @@ static _WKWebViewCategory toWKWebViewCategory(WebKit::WebViewCategory category)
     bool allowed = WebCore::applicationBundleIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s;
 #if PLATFORM(MAC)
     allowed = allowed || WebCore::MacApplication::isSafari();
+#elif PLATFORM(IOS_FAMILY)
+    allowed = allowed || WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isSafariViewService();
 #endif
     if (!allowed)
-        [NSException raise:NSObjectNotAvailableException format:@"_shouldRelaxThirdPartyCookieBlocking may only be used by Mac Safari."];
+        [NSException raise:NSObjectNotAvailableException format:@"_shouldRelaxThirdPartyCookieBlocking may only be used by Safari."];
 
     _pageConfiguration->setShouldRelaxThirdPartyCookieBlocking(relax ? WebCore::ShouldRelaxThirdPartyCookieBlocking::Yes : WebCore::ShouldRelaxThirdPartyCookieBlocking::No);
 }
