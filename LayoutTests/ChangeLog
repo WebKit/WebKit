@@ -1,3 +1,12 @@
+2020-10-08  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process] Cannot activate or deactivate an audio session
+        https://bugs.webkit.org/show_bug.cgi?id=217492
+
+        Reviewed by Eric Carlson.
+
+        * gpu-process/TestExpectations:
+
 2020-10-08  Alex Christensen  <achristensen@webkit.org>
 
         Implement Blob.stream

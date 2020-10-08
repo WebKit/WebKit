@@ -1,3 +1,15 @@
+2020-10-08  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process] Cannot activate or deactivate an audio session
+        https://bugs.webkit.org/show_bug.cgi?id=217492
+
+        Reviewed by Eric Carlson.
+
+        No new tests, covered by existing tests.
+
+        * WebProcess/GPU/media/RemoteAudioSession.cpp:
+        (WebKit::RemoteAudioSession::tryToSetActiveInternal):
+
 2020-10-08  Hector Lopez  <hector_i_lopez@apple.com>
 
         Unreviewed, reverting r268155.

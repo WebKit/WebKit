@@ -83,6 +83,8 @@ bool RemoteAudioSession::tryToSetActiveInternal(bool active)
 {
     bool succeeded;
     connection().sendSync(Messages::RemoteAudioSessionProxy::TryToSetActive(active), Messages::RemoteAudioSessionProxy::TryToSetActive::Reply(succeeded), { });
+    if (succeeded)
+        m_configuration.isActive = active;
     return succeeded;
 }
 
