@@ -136,4 +136,6 @@ void RemoteAudioMediaStreamTrackRenderer::audioSamplesAvailable(MediaTime time, 
 
 }
 
+#undef MESSAGE_CHECK
+
 #endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
