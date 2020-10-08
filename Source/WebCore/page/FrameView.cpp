@@ -4577,12 +4577,24 @@ void FrameView::checkAndDispatchDidReachVisuallyNonEmptyState()
                 return false;
 
             auto& resources = resourceLoader.allCachedResources();
+            bool shouldWaitForScriptIfEmpty = false;
+#if ENABLE(INTERSECTION_OBSERVER)
+            shouldWaitForScriptIfEmpty = !document.numberOfIntersectionObservers();
+#endif
+            bool isLoadingScript = false;
             for (auto& resource : resources) {
                 if (resource.value->isLoaded())
                     continue;
-                if (resource.value->type() == CachedResource::Type::CSSStyleSheet || resource.value->type() == CachedResource::Type::FontResource)
+                auto type = resource.value->type();
+                if (type == CachedResource::Type::CSSStyleSheet || type == CachedResource::Type::FontResource)
                     return true;
+                if (type == CachedResource::Type::Script)
+                    isLoadingScript = true;
             }
+
+            if (shouldWaitForScriptIfEmpty && !m_visuallyNonEmptyPixelCount && isLoadingScript)
+                return true;
+
             return false;
         };
 
