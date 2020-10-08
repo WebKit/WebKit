@@ -34,6 +34,7 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 
 static bool wasPrompted = false;
 static bool shouldDeny = false;
@@ -101,7 +102,7 @@ public:
 
         auto preferences = [m_configuration preferences];
         preferences._mediaCaptureRequiresSecureConnection = NO;
-        preferences._mediaDevicesEnabled = YES;
+        m_configuration.get()._mediaCaptureEnabled = YES;
         preferences._mockCaptureDevicesEnabled = YES;
         preferences._screenCaptureEnabled = YES;
 

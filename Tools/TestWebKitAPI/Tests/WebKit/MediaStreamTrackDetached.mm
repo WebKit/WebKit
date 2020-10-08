@@ -33,6 +33,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 
 static bool hasRecievedCorrectCaptureState = false;
@@ -68,7 +69,7 @@ TEST(WebKit, MediaStreamTrackDetached)
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     auto preferences = [configuration preferences];
     preferences._mediaCaptureRequiresSecureConnection = NO;
-    preferences._mediaDevicesEnabled = YES;
+    configuration.get()._mediaCaptureEnabled = YES;
     preferences._mockCaptureDevicesEnabled = YES;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
     auto delegate = adoptNS([[MediaStreamTrackDetachedUIDelegate alloc] init]);
