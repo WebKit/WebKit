@@ -1,3 +1,15 @@
+2020-10-08  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Missing Exif Orientation support
+        https://bugs.webkit.org/show_bug.cgi?id=95299
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Update expectations after partial EXIF support
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-10-08  Diego Pino Garcia  <dpino@igalia.com>
 
         Web Inspector: inspector/cpu-profiler/threads.html, use only 4 decimal digits to compare total and workers usage

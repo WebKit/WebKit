@@ -71,6 +71,11 @@ bool isAcceleratedContext(PlatformContextCairo&);
 
 } // namespace State
 
+enum class OrientationSizing {
+    Normal,
+    WidthAsHeight
+};
+
 struct FillSource {
     FillSource() = default;
     explicit FillSource(const GraphicsContextState&);
@@ -140,7 +145,7 @@ void drawGlyphs(PlatformContextCairo&, const FillSource&, const StrokeSource&, c
 
 void drawNativeImage(PlatformContextCairo&, cairo_surface_t*, const FloatRect&, const FloatRect&, const ImagePaintingOptions&, float, const ShadowState&);
 void drawPattern(PlatformContextCairo&, cairo_surface_t*, const IntSize&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const ImagePaintingOptions&);
-WEBCORE_EXPORT void drawSurface(PlatformContextCairo&, cairo_surface_t*, const FloatRect&, const FloatRect&, InterpolationQuality, float, const ShadowState&);
+WEBCORE_EXPORT void drawSurface(PlatformContextCairo&, cairo_surface_t*, const FloatRect&, const FloatRect&, InterpolationQuality, float, const ShadowState&, OrientationSizing operationSizing = OrientationSizing::Normal);
 
 void drawRect(PlatformContextCairo&, const FloatRect&, float, const Color&, StrokeStyle, const Color&);
 void drawLine(PlatformContextCairo&, const FloatPoint&, const FloatPoint&, StrokeStyle, const Color&, float, bool);
