@@ -47,6 +47,8 @@ public:
     enum class UserMediaAccessDenialReason { NoConstraints, UserMediaDisabled, NoCaptureDevices, InvalidConstraint, HardwareError, PermissionDenied, OtherFailure };
     void deny(UserMediaAccessDenialReason = UserMediaAccessDenialReason::UserMediaDisabled);
 
+    void doDefaultAction();
+
     void invalidate();
     bool isPending() const { return m_manager; }
 
