@@ -213,7 +213,6 @@ private:
         bool webViewFullscreenMayReturnToInline : 1;
         bool webViewDidEnterFullscreen : 1;
         bool webViewDidExitFullscreen : 1;
-        bool webViewRequestMediaCaptureAuthorizationForFrameDecisionHandler : 1;
         bool webViewIsMediaCaptureAuthorizedForFrameDecisionHandler : 1;
         bool webViewMediaCaptureStateDidChange : 1;
         bool webViewDidChangeFontAttributes : 1;

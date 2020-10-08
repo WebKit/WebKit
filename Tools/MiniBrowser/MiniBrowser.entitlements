@@ -22,5 +22,9 @@
 	<array>
 		<string>(allow mach-issue-extension (require-all (extension-class &quot;com.apple.webkit.extension.mach&quot;)))</string>
 	</array>
+	<key>com.apple.security.device.camera</key>
+	<true/>
+	<key>com.apple.security.device.microphone</key>
+	<true/>
 </dict>
 </plist>
