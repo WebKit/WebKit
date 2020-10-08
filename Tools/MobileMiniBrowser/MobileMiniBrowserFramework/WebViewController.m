@@ -28,6 +28,7 @@
 #import "TabViewController.h"
 #import <WebKit/WKNavigation.h>
 #import <WebKit/WKNavigationDelegate.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
 
@@ -175,6 +176,10 @@ void* URLContext = &URLContext;
 - (WKWebView *)createWebView
 {
     WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
+
+    configuration.preferences._mediaDevicesEnabled = YES;
+    configuration.preferences._mockCaptureDevicesEnabled = YES;
+
     WKWebView *webView = [[WKWebView alloc] initWithFrame:self.webViewContainer.bounds configuration:configuration];
     webView.navigationDelegate = self;
     webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
