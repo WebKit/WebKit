@@ -1,0 +1,16 @@
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+promise_test(async() => {
+    let stream = await navigator.mediaDevices.getUserMedia({audio : true });
+    assert_equals(stream.getAudioTracks()[0].getSettings().volume, 1, "test1");
+
+    stream = await navigator.mediaDevices.getUserMedia({audio : { volume : 0 } });
+    assert_equals(stream.getAudioTracks()[0].getSettings().volume, 0);
+
+    stream = await navigator.mediaDevices.getUserMedia({audio : true });
+    assert_equals(stream.getAudioTracks()[0].getSettings().volume, 1, "test3");
+}, "Volume should be reset to default value if not specified explicitly");
+</script>
+</body>
