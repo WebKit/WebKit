@@ -2240,3 +2240,6 @@ imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-004.html [ 
 webkit.org/b/217414 [ Release ] imported/w3c/web-platform-tests/user-timing/measure-l3.any.html [ Pass Failure ]
 
 webkit.org/b/217461 [ Mojave+ ] imported/w3c/web-platform-tests/css/css-masking/clip-path/svg-clipPath.svg [ Skip ]
+
+webkit.org/b/167729 [ Catalina ] imported/w3c/web-platform-tests/css/css-pseudo/text-selection.html [ Failure ]
+
