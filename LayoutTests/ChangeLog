@@ -1,3 +1,12 @@
+2020-10-08  Hector Lopez  <hector_i_lopez@apple.com>
+
+        Add Mojave specific result
+        https://bugs.webkit.org/show_bug.cgi?id=167729
+
+        Unreviewed test gardening.
+
+        * platform/mac-mojave/imported/w3c/web-platform-tests/css/css-pseudo/text-selection-expected.txt: Added.
+
 2020-10-08  Alex Christensen  <achristensen@webkit.org>
 
         FileReader.result should return null if it isn't done yet
