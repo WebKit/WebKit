@@ -2184,6 +2184,10 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoOutput()
 
     m_videoOutput = adoptNS([PAL::allocAVPlayerItemVideoOutputInstance() initWithPixelBufferAttributes:nil]);
     ASSERT(m_videoOutput);
+    if (!m_videoOutput) {
+        ERROR_LOG(LOGIDENTIFIER, "-[AVPlayerItemVideoOutput initWithPixelBufferAttributes:] failed!");
+        return;
+    }
 
     m_videoOutputDelegate = adoptNS([[WebCoreAVFPullDelegate alloc] init]);
     [m_videoOutput setDelegate:m_videoOutputDelegate.get() queue:globalPullDelegateQueue()];
