@@ -60,52 +60,52 @@ void UserMediaPermissionRequestProxy::doDefaultAction()
 {
     ASSERT(m_manager);
     if (!m_manager) {
-        deny();
+        deny(UserMediaAccessDenialReason::PermissionDenied);
         return;
     }
     auto *webView = fromWebPageProxy(m_manager->page());
     if (!webView) {
-        deny();
+        deny(UserMediaAccessDenialReason::PermissionDenied);
         return;
     }
     if (requiresDisplayCapture()) {
         // FIXME: Implement getDisplayMedia prompt, for now deny.
-        deny();
+        deny(UserMediaAccessDenialReason::PermissionDenied);
         return;
     }
 
     auto *alertTitle = alertMessageText(topLevelDocumentSecurityOrigin(), requiresAudioCapture(), requiresVideoCapture());
     if (!alertTitle) {
-        deny();
+        deny(UserMediaAccessDenialReason::PermissionDenied);
         return;
     }
 
     auto completionBlock = makeBlockPtr([this, protectedThis = makeRef(*this)](bool shouldAllow) mutable {
         if (!shouldAllow)
-            deny();
+            deny(UserMediaAccessDenialReason::PermissionDenied);
         else
             allow();
     });
 
-    NSString *allowButtonString = WEB_UI_STRING_KEY(@"Allow", "Allow (usermedia)", @"Allow button title in user media prompt");
     NSString *doNotAllowButtonString = WEB_UI_STRING_KEY(@"Don’t Allow", "Don’t Allow (usermedia)", @"Disallow button title in user media prompt");
+    NSString *allowButtonString = WEB_UI_STRING_KEY(@"Allow", "Allow (usermedia)", @"Allow button title in user media prompt");
 
 #if PLATFORM(MAC)
     auto alert = adoptNS([NSAlert new]);
     [alert setMessageText:alertTitle];
-    [alert addButtonWithTitle:allowButtonString];
     [alert addButtonWithTitle:doNotAllowButtonString];
+    [alert addButtonWithTitle:allowButtonString];
     [alert beginSheetModalForWindow:webView.window completionHandler:[completionBlock](NSModalResponse returnCode) {
-        auto shouldAllow = returnCode == NSAlertFirstButtonReturn;
+        auto shouldAllow = returnCode == NSAlertSecondButtonReturn;
         completionBlock(shouldAllow);
     }];
 #else
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:alertTitle message:nil preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction* allowAction = [UIAlertAction actionWithTitle:allowButtonString style:UIAlertActionStyleCancel handler:[completionBlock](UIAlertAction *action) {
+    UIAlertAction* allowAction = [UIAlertAction actionWithTitle:allowButtonString style:UIAlertActionStyleDefault handler:[completionBlock](UIAlertAction *action) {
         completionBlock(true);
     }];
 
-    UIAlertAction* doNotAllowAction = [UIAlertAction actionWithTitle:doNotAllowButtonString style:UIAlertActionStyleDefault handler:[completionBlock](UIAlertAction *action) {
+    UIAlertAction* doNotAllowAction = [UIAlertAction actionWithTitle:doNotAllowButtonString style:UIAlertActionStyleCancel handler:[completionBlock](UIAlertAction *action) {
         completionBlock(false);
     }];
 
