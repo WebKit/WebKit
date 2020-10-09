@@ -1,3 +1,7 @@
+2020-10-09  Russell Epstein  <repstein@apple.com>
+
+        Revert r267539. rdar://problem/70148261
+
 2020-10-05  Rob Buis  <rbuis@igalia.com>
 
         Make xhr.response more conforming to the specification

@@ -1,3 +1,7 @@
+2020-10-09  Russell Epstein  <repstein@apple.com>
+
+        Revert r267539. rdar://problem/70148261
+
 2020-09-24  Youenn Fablet  <youenn@apple.com>
 
         Add libwebrtc.dylib version check
