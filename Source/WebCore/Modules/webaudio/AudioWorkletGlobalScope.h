@@ -61,7 +61,7 @@ public:
 
     double currentTime() const { return m_sampleRate > 0.0 ? m_currentFrame / static_cast<double>(m_sampleRate) : 0.0; }
 
-    AudioWorkletThread& thread() { return m_thread.get(); }
+    AudioWorkletThread& thread() const;
     void prepareForTermination();
 
     void postTask(Task&&) final;
@@ -72,9 +72,7 @@ private:
     AudioWorkletGlobalScope(AudioWorkletThread&, const WorkletParameters&);
 
     bool isAudioWorkletGlobalScope() const final { return true; }
-    AudioWorkletThread* workerOrWorkletThread() final { return m_thread.ptr(); }
 
-    Ref<AudioWorkletThread> m_thread;
     size_t m_currentFrame { 0 };
     const float m_sampleRate;
     HashMap<String, RefPtr<JSAudioWorkletProcessorConstructor>> m_processorConstructorMap;

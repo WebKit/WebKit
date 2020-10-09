@@ -46,8 +46,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(AudioWorkletGlobalScope);
 
 AudioWorkletGlobalScope::AudioWorkletGlobalScope(AudioWorkletThread& thread, const WorkletParameters& parameters)
-    : WorkletGlobalScope(parameters)
-    , m_thread(thread)
+    : WorkletGlobalScope(thread, parameters)
     , m_sampleRate(parameters.sampleRate)
 {
     ASSERT(!isMainThread());
@@ -166,6 +165,11 @@ void AudioWorkletGlobalScope::postTask(Task&& task)
 std::unique_ptr<AudioWorkletProcessorConstructionData> AudioWorkletGlobalScope::takePendingProcessorConstructionData()
 {
     return std::exchange(m_pendingProcessorConstructionData, nullptr);
+}
+
+AudioWorkletThread& AudioWorkletGlobalScope::thread() const
+{
+    return *static_cast<AudioWorkletThread*>(workerOrWorkletThread());
 }
 
 } // namespace WebCore

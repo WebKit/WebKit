@@ -38,7 +38,7 @@ public:
 
     virtual bool isClosing() const = 0;
     virtual WorkerOrWorkletScriptController* script() = 0;
-    virtual WorkerOrWorkletThread* workerOrWorkletThread() = 0;
+    virtual WorkerOrWorkletThread* workerOrWorkletThread() const = 0;
 
     unsigned long createUniqueIdentifier() { return m_uniqueIdentifier++; }
 

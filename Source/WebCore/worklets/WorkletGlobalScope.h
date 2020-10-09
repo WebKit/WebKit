@@ -88,7 +88,7 @@ public:
 
     WorkletScriptController* script() final { return m_script.get(); }
     void clearScript() { m_script = nullptr; }
-    WorkerOrWorkletThread* workerOrWorkletThread() override { return nullptr; }
+    WorkerOrWorkletThread* workerOrWorkletThread() const final { return m_thread.get(); }
 
     void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&) final;
 
@@ -100,7 +100,7 @@ public:
     // WorkerOrWorkletGlobalScope.
     bool isClosing() const final { return m_isClosing; }
 
-    bool isContextThread() const final { return true; }
+    bool isContextThread() const final;
     bool isSecureContext() const final { return false; }
 
     JSC::RuntimeFlags jsRuntimeFlags() const { return m_jsRuntimeFlags; }
@@ -113,7 +113,7 @@ public:
     const Document* responsibleDocument() const { return m_document.get(); }
 
 protected:
-    WorkletGlobalScope(const WorkletParameters&);
+    WorkletGlobalScope(WorkerOrWorkletThread&, const WorkletParameters&);
     WorkletGlobalScope(Document&, Ref<JSC::VM>&&, ScriptSourceCode&&);
     WorkletGlobalScope(const WorkletGlobalScope&) = delete;
     WorkletGlobalScope(WorkletGlobalScope&&) = delete;
@@ -168,6 +168,7 @@ private:
     void didCompleteScriptFetchJob(ScriptFetchJob&&, Optional<Exception>);
 
     WeakPtr<Document> m_document;
+    RefPtr<WorkerOrWorkletThread> m_thread;
 
     std::unique_ptr<WorkletScriptController> m_script;
 

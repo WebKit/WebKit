@@ -164,7 +164,7 @@ private:
     void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier) final;
 
     bool isWorkerGlobalScope() const final { return true; }
-    WorkerThread* workerOrWorkletThread() final { return &m_thread; }
+    WorkerThread* workerOrWorkletThread() const final { return &m_thread; }
 
     ScriptExecutionContext* scriptExecutionContext() const final { return const_cast<WorkerGlobalScope*>(this); }
     URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final;
