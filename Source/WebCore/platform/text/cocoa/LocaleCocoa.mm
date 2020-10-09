@@ -160,7 +160,7 @@ String LocaleCocoa::shortMonthFormat()
 {
     if (!m_shortMonthFormat.isNull())
         return m_shortMonthFormat;
-    m_shortMonthFormat = [NSDateFormatter dateFormatFromTemplate:@"yyyyMMM" options:0 locale:m_locale.get()];
+    m_shortMonthFormat = [NSDateFormatter dateFormatFromTemplate:@"yM" options:0 locale:m_locale.get()];
     return m_shortMonthFormat;
 }
 

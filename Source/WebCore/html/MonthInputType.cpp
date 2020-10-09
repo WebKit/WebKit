@@ -33,10 +33,12 @@
 #include "MonthInputType.h"
 
 #include "DateComponents.h"
+#include "DateTimeFieldsState.h"
 #include "Decimal.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
+#include "PlatformLocale.h"
 #include "StepRange.h"
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
@@ -139,13 +141,18 @@ bool MonthInputType::isValidFormat(OptionSet<DateTimeFormatValidationResults> re
     return results.containsAll({ DateTimeFormatValidationResults::HasYear, DateTimeFormatValidationResults::HasMonth });
 }
 
-String MonthInputType::formatDateTimeFieldsState(const DateTimeFieldsState&) const
+String MonthInputType::formatDateTimeFieldsState(const DateTimeFieldsState& state) const
 {
-    return emptyString();
+    if (!state.year || !state.month)
+        return emptyString();
+
+    return makeString(pad('0', 4, *state.year), '-', pad('0', 2, *state.month));
 }
 
-void MonthInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const
+void MonthInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents&) const
 {
+    layoutParameters.dateTimeFormat = layoutParameters.locale.shortMonthFormat();
+    layoutParameters.fallbackDateTimeFormat = "yyyy-MM"_s;
 }
 
 } // namespace WebCore

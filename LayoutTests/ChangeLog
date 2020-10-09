@@ -1,3 +1,20 @@
+2020-10-09  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Add editability to input type=month
+        https://bugs.webkit.org/show_bug.cgi?id=217481
+        <rdar://problem/70097164>
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations:
+        * fast/forms/month/month-editable-components/month-editable-components-focus-and-blur-events-expected.txt: Added.
+        * fast/forms/month/month-editable-components/month-editable-components-focus-and-blur-events.html: Added.
+        * fast/forms/month/month-editable-components/month-editable-components-keyboard-events-expected.txt: Added.
+        * fast/forms/month/month-editable-components/month-editable-components-keyboard-events.html: Added.
+        * fast/forms/month/month-editable-components/month-editable-components-mouse-events-expected.txt: Added.
+        * fast/forms/month/month-editable-components/month-editable-components-mouse-events.html: Added.
+        * platform/mac-wk2/TestExpectations:
+
 2020-10-09  Hector Lopez  <hector_i_lopez@apple.com>
 
         ASSERTION FAILED: REGRESSION(r268052?): WTF::CompletionHandler<void ()>::~CompletionHandler(): Completion handler should always be called !m_function
