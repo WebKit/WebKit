@@ -223,7 +223,7 @@ void FileReader::fireEvent(const AtomString& type)
 
 Optional<Variant<String, RefPtr<JSC::ArrayBuffer>>> FileReader::result() const
 {
-    if (!m_loader || m_error)
+    if (!m_loader || m_error || m_state != DONE)
         return WTF::nullopt;
     if (m_readType == FileReaderLoader::ReadAsArrayBuffer) {
         auto result = m_loader->arrayBufferResult();

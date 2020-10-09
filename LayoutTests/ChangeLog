@@ -1,3 +1,13 @@
+2020-10-08  Alex Christensen  <achristensen@webkit.org>
+
+        FileReader.result should return null if it isn't done yet
+        https://bugs.webkit.org/show_bug.cgi?id=217484
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/files/read-file-async-expected.txt:
+        * fast/files/workers/worker-read-file-async-expected.txt:
+
 2020-10-08  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process] Cannot activate or deactivate an audio session
