@@ -64,7 +64,7 @@ private:
     void setPreferredBufferSize(size_t) final;
     bool tryToSetActiveInternal(bool) final;
 
-    CategoryType category() const final { return m_configuration.category; }
+    CategoryType category() const final;
     WebCore::RouteSharingPolicy routeSharingPolicy() const final { return m_configuration.routeSharingPolicy; }
     String routingContextUID() const final { return m_configuration.routingContextUID; }
     float sampleRate() const final { return m_configuration.sampleRate; }
