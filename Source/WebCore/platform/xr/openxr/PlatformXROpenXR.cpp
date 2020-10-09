@@ -26,6 +26,7 @@
 #if USE_OPENXR
 #include <openxr/openxr_platform.h>
 #include <wtf/Optional.h>
+#include <wtf/Scope.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/WTFString.h>
 #endif // USE_OPENXR
@@ -210,9 +211,12 @@ Instance::Instance()
 {
 }
 
-void Instance::enumerateImmersiveXRDevices()
+void Instance::enumerateImmersiveXRDevices(CompletionHandler<void(const Vector<std::unique_ptr<Device>>& devices)>&& callback)
 {
 #if USE_OPENXR
+    auto callbackOnExit = makeScopeExit([&]() {
+        callback({ });
+    });
     if (m_impl->xrInstance() == XR_NULL_HANDLE) {
         LOG(XR, "%s Unable to enumerate XR devices. No XrInstance present\n", __FUNCTION__);
         return;
@@ -233,6 +237,8 @@ void Instance::enumerateImmersiveXRDevices()
 #endif
 
     m_immersiveXRDevices.append(makeUnique<OpenXRDevice>(systemId, m_impl->xrInstance()));
+    callback(m_immersiveXRDevices);
+    callbackOnExit.release();
 #endif // USE_OPENXR
 }
 

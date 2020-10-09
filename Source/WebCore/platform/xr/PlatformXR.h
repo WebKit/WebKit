@@ -20,6 +20,7 @@
 
 #include "IntSize.h"
 #include <memory>
+#include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
@@ -74,8 +75,8 @@ class Instance {
 public:
     static Instance& singleton();
 
-    void enumerateImmersiveXRDevices();
-    const Vector<std::unique_ptr<Device>>& immersiveXRDevices() const { return m_immersiveXRDevices; }
+    void enumerateImmersiveXRDevices(CompletionHandler<void(const Vector<std::unique_ptr<Device>>&)>&&);
+
 private:
     friend LazyNeverDestroyed<Instance>;
     Instance();

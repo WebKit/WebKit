@@ -69,7 +69,7 @@ public:
     void requestSession(Document&, XRSessionMode, const XRSessionInit&, RequestSessionPromise&&);
 
     // This is also needed by WebGLRenderingContextBase::makeXRCompatible() and HTMLCanvasElement::createContextWebGL().
-    void ensureImmersiveXRDeviceIsSelected();
+    void ensureImmersiveXRDeviceIsSelected(CompletionHandler<void()>&&);
     bool hasActiveImmersiveXRDevice() { return !!m_activeImmersiveDevice; }
 
     void sessionEnded(WebXRSession&);
@@ -94,7 +94,7 @@ private:
 
     using FeaturesArray = PlatformXR::Device::ListOfEnabledFeatures;
     using JSFeaturesArray = Vector<JSC::JSValue>;
-    PlatformXR::Device* obtainCurrentDevice(XRSessionMode, const JSFeaturesArray& requiredFeatures, const JSFeaturesArray& optionalFeatures);
+    void obtainCurrentDevice(XRSessionMode, const JSFeaturesArray& requiredFeatures, const JSFeaturesArray& optionalFeatures, CompletionHandler<void(PlatformXR::Device*)>&&);
 
     bool immersiveSessionRequestIsAllowedForGlobalObject(DOMWindow&, Document&) const;
     bool inlineSessionRequestIsAllowedForGlobalObject(DOMWindow&, Document&, const XRSessionInit&) const;

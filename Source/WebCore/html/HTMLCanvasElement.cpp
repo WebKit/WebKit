@@ -433,7 +433,9 @@ WebGLRenderingContextBase* HTMLCanvasElement::createContextWebGL(const String& t
     // https://immersive-web.github.io/webxr/#xr-compatible
     if (attrs.xrCompatible) {
         if (auto* window = document().domWindow())
-            NavigatorWebXR::xr(window->navigator()).ensureImmersiveXRDeviceIsSelected();
+            // FIXME: how to make this sync without blocking the main thread?
+            // For reference: https://immersive-web.github.io/webxr/#ref-for-dom-webglcontextattributes-xrcompatible
+            NavigatorWebXR::xr(window->navigator()).ensureImmersiveXRDeviceIsSelected([]() { });
     }
 #endif
 

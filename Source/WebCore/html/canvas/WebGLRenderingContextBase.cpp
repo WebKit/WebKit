@@ -3907,45 +3907,51 @@ bool WebGLRenderingContextBase::linkProgramWithoutInvalidatingAttribLocations(We
 // https://immersive-web.github.io/webxr/#dom-webglrenderingcontextbase-makexrcompatible
 void WebGLRenderingContextBase::makeXRCompatible(MakeXRCompatiblePromise&& promise)
 {
-    auto rejectPromiseWithInvalidStateError = makeScopeExit([&] () {
-        m_isXRCompatible = false;
-        promise.reject(Exception { InvalidStateError });
-    });
-
     // Returning an exception in these two checks is not part of the spec.
     auto canvas = htmlCanvas();
-    if (!canvas)
+    if (!canvas) {
+        m_isXRCompatible = false;
+        promise.reject(Exception { InvalidStateError });
         return;
+    }
 
     auto* window = canvas->document().domWindow();
-    if (!window)
+    if (!window) {
+        m_isXRCompatible = false;
+        promise.reject(Exception { InvalidStateError });
         return;
+    }
 
     // 1. Let promise be a new Promise.
     // 2. Let context be the target WebGLRenderingContextBase object.
     // 3. Ensure an immersive XR device is selected.
     auto& xrSystem = NavigatorWebXR::xr(window->navigator());
-    xrSystem.ensureImmersiveXRDeviceIsSelected();
+    xrSystem.ensureImmersiveXRDeviceIsSelected([this, protectedThis = makeRef(*this), promise = WTFMove(promise), protectedXrSystem = makeRef(xrSystem)]() mutable {
+        auto rejectPromiseWithInvalidStateError = makeScopeExit([&]() {
+            m_isXRCompatible = false;
+            promise.reject(Exception { InvalidStateError });
+        });
 
-    // 4. Set context’s XR compatible boolean as follows:
-    //    If context’s WebGL context lost flag is set
-    //      Set context’s XR compatible boolean to false and reject promise with an InvalidStateError.
-    if (isContextLostOrPending())
-        return;
+        // 4. Set context’s XR compatible boolean as follows:
+        //    If context’s WebGL context lost flag is set
+        //      Set context’s XR compatible boolean to false and reject promise with an InvalidStateError.
+        if (isContextLostOrPending())
+            return;
 
-    // If the immersive XR device is null
-    //    Set context’s XR compatible boolean to false and reject promise with an InvalidStateError.
-    if (!xrSystem.hasActiveImmersiveXRDevice())
-        return;
+        // If the immersive XR device is null
+        //    Set context’s XR compatible boolean to false and reject promise with an InvalidStateError.
+        if (!protectedXrSystem->hasActiveImmersiveXRDevice())
+            return;
 
-    // If context’s XR compatible boolean is true. Resolve promise.
-    // If context was created on a compatible graphics adapter for the immersive XR device
-    //  Set context’s XR compatible boolean to true and resolve promise.
-    // Otherwise: Queue a task on the WebGL task source to perform the following steps:
-    // TODO: add a way to verify that we're using a compatible graphics adapter.
-    m_isXRCompatible = true;
-    promise.resolve();
-    rejectPromiseWithInvalidStateError.release();
+        // If context’s XR compatible boolean is true. Resolve promise.
+        // If context was created on a compatible graphics adapter for the immersive XR device
+        //  Set context’s XR compatible boolean to true and resolve promise.
+        // Otherwise: Queue a task on the WebGL task source to perform the following steps:
+        // FIXME: add a way to verify that we're using a compatible graphics adapter.
+        m_isXRCompatible = true;
+        promise.resolve();
+        rejectPromiseWithInvalidStateError.release();
+    });
 }
 #endif
 

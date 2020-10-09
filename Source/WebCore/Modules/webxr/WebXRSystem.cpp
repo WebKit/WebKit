@@ -69,59 +69,72 @@ WebXRSystem::WebXRSystem(ScriptExecutionContext& scriptExecutionContext)
 WebXRSystem::~WebXRSystem() = default;
 
 // https://immersive-web.github.io/webxr/#ensures-an-immersive-xr-device-is-selected
-void WebXRSystem::ensureImmersiveXRDeviceIsSelected()
+void WebXRSystem::ensureImmersiveXRDeviceIsSelected(CompletionHandler<void()>&& callback)
 {
     // Don't ask platform code for XR devices, we're using simulated ones.
-    if (UNLIKELY(m_testingDevices))
+    if (UNLIKELY(m_testingDevices)) {
+        callback();
         return;
+    }
 
-    if (m_activeImmersiveDevice)
+    if (m_activeImmersiveDevice) {
+        callback();
         return;
+    }
 
     // https://immersive-web.github.io/webxr/#enumerate-immersive-xr-devices
     auto& platformXR = PlatformXR::Instance::singleton();
     bool isFirstXRDevicesEnumeration = !m_immersiveXRDevicesHaveBeenEnumerated;
-    platformXR.enumerateImmersiveXRDevices();
-    m_immersiveXRDevicesHaveBeenEnumerated = true;
-    const Vector<std::unique_ptr<PlatformXR::Device>>& immersiveXRDevices = platformXR.immersiveXRDevices();
+    platformXR.enumerateImmersiveXRDevices([this, protectedThis = makeRef(*this), isFirstXRDevicesEnumeration, callback = WTFMove(callback)](auto& immersiveXRDevices) mutable {
+        m_immersiveXRDevicesHaveBeenEnumerated = true;
 
-    // https://immersive-web.github.io/webxr/#select-an-immersive-xr-device
-    auto* oldDevice = m_activeImmersiveDevice.get();
-    if (immersiveXRDevices.isEmpty()) {
-        m_activeImmersiveDevice = nullptr;
-        return;
-    }
-    if (immersiveXRDevices.size() == 1) {
-        m_activeImmersiveDevice = makeWeakPtr(immersiveXRDevices.first().get());
-        return;
-    }
+        // https://immersive-web.github.io/webxr/#select-an-immersive-xr-device
+        auto* oldDevice = m_activeImmersiveDevice.get();
+        if (immersiveXRDevices.isEmpty()) {
+            m_activeImmersiveDevice = nullptr;
+            callback();
+            return;
+        }
+        if (immersiveXRDevices.size() == 1) {
+            m_activeImmersiveDevice = makeWeakPtr(immersiveXRDevices.first().get());
+            callback();
+            return;
+        }
 
-    if (m_activeImmersiveSession && oldDevice && immersiveXRDevices.findMatching([&] (auto& entry) { return entry.get() == oldDevice; }) != notFound)
-        ASSERT(m_activeImmersiveDevice.get() == oldDevice);
-    else {
-        // TODO: implement a better UA selection mechanism if required.
-        m_activeImmersiveDevice = makeWeakPtr(immersiveXRDevices.first().get());
-    }
+        if (m_activeImmersiveSession && oldDevice && immersiveXRDevices.findMatching([&](auto& entry) { return entry.get() == oldDevice; }) != notFound)
+            ASSERT(m_activeImmersiveDevice.get() == oldDevice);
+        else {
+            // FIXME: implement a better UA selection mechanism if required.
+            m_activeImmersiveDevice = makeWeakPtr(immersiveXRDevices.first().get());
+        }
 
-    if (isFirstXRDevicesEnumeration || m_activeImmersiveDevice.get() == oldDevice)
-        return;
+        if (isFirstXRDevicesEnumeration || m_activeImmersiveDevice.get() == oldDevice) {
+            callback();
+            return;
+        }
 
-    // TODO: 7. Shut down any active XRSessions.
-    // TODO: 8. Set the XR compatible boolean of all WebGLRenderingContextBase instances to false.
-    // TODO: 9. Queue a task to fire an event named devicechange on the context object.
+        // FIXME: 7. Shut down any active XRSessions.
+        // FIXME: 8. Set the XR compatible boolean of all WebGLRenderingContextBase instances to false.
+        // FIXME: 9. Queue a task to fire an event named devicechange on the context object.
+
+        callback();
+    });
 }
 
-
-PlatformXR::Device* WebXRSystem::obtainCurrentDevice(XRSessionMode mode, const JSFeaturesArray& requiredFeatures, const JSFeaturesArray& optionalFeatures)
+void WebXRSystem::obtainCurrentDevice(XRSessionMode mode, const JSFeaturesArray& requiredFeatures, const JSFeaturesArray& optionalFeatures, CompletionHandler<void(PlatformXR::Device*)>&& callback)
 {
     if (mode == XRSessionMode::ImmersiveAr || mode == XRSessionMode::ImmersiveVr) {
-        ensureImmersiveXRDeviceIsSelected();
-        return m_activeImmersiveDevice.get();
+        ensureImmersiveXRDeviceIsSelected([this, callback = WTFMove(callback)]() mutable {
+            callback(m_activeImmersiveDevice.get());
+        });
+        return;
     }
-    if (!requiredFeatures.isEmpty() || !optionalFeatures.isEmpty())
-        return m_inlineXRDevice.get();
+    if (!requiredFeatures.isEmpty() || !optionalFeatures.isEmpty()) {
+        callback(m_inlineXRDevice.get());
+        return;
+    }
 
-    return &m_defaultInlineDevice;
+    callback(&m_defaultInlineDevice);
 }
 
 
@@ -144,10 +157,8 @@ void WebXRSystem::isSessionSupported(XRSessionMode mode, IsSessionSupportedPromi
     }
 
     // 4. Run the following steps in parallel:
-    scriptExecutionContext()->postTask([this, promise = WTFMove(promise), mode] (ScriptExecutionContext&) mutable {
-        // 4.1 Ensure an immersive XR device is selected.
-        ensureImmersiveXRDeviceIsSelected();
-
+    // 4.1 Ensure an immersive XR device is selected.
+    ensureImmersiveXRDeviceIsSelected([this, promise = WTFMove(promise), mode]() mutable {
         // 4.2 If the immersive XR device is null, resolve promise with false and abort these steps.
         if (!m_activeImmersiveDevice) {
             promise.resolve(false);
@@ -360,69 +371,64 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
     }
 
     // 5. Run the following steps in parallel:
-    queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [this, document = makeWeakPtr(document), immersive, init, mode, promise = WTFMove(promise)] () mutable {
-        // 5.1 Let requiredFeatures be options' requiredFeatures.
-        // 5.2 Let optionalFeatures be options' optionalFeatures.
-        // 5.3 Set device to the result of obtaining the current device for mode, requiredFeatures, and optionalFeatures.
-        auto* device = obtainCurrentDevice(mode, init.requiredFeatures, init.optionalFeatures);
-
-        // 5.4 Queue a task to perform the following steps:
-        queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [this, document = WTFMove(document), device = makeWeakPtr(device), immersive, init, mode, promise = WTFMove(promise)] () mutable {
-            auto rejectPromiseWithNotSupportedError = makeScopeExit([&] () {
-                promise.reject(Exception { NotSupportedError });
-                m_pendingImmersiveSession = false;
-            });
-
-            // 5.4.1 If device is null or device's list of supported modes does not contain mode, run the following steps:
-            //  - Reject promise with a "NotSupportedError" DOMException.
-            //  - If immersive is true, set pending immersive session to false.
-            //  - Abort these steps.
-            if (!device || !device->supports(mode))
-                return;
-
-            auto* globalObject = document ? document->execState() : nullptr;
-            if (!globalObject)
-                return;
-
-            // WebKit does not currently support the Permissions API. https://w3c.github.io/permissions/
-            // However we do implement here the permission request algorithm without the
-            // Permissions API bits as it handles, among others, the session features parsing. We also
-            // do it here before creating the session as there is no need to do it on advance.
-            // TODO: we just perform basic checks without asking any permission to the user so far. Maybe we should implement
-            // a mechanism similar to what others do involving passing a message to the UI process.
-
-            // 5.4.4 Let descriptor be an XRPermissionDescriptor initialized with session, requiredFeatures, and optionalFeatures
-            // 5.4.5 Let status be an XRPermissionStatus, initially null
-            // 5.4.6 Request the xr permission with descriptor and status.
-            // 5.4.7 If status' state is "denied" run the following steps: (same as above in 5.4.1)
-            if (!isXRPermissionGranted(mode, init, device.get(), *globalObject))
-                return;
-
-            // 5.4.2 Let session be a new XRSession object.
-            // 5.4.3 Initialize the session with session, mode, and device.
-            auto session = WebXRSession::create(*document, *this, mode, *device);
-
-            // 5.4.8 Potentially set the active immersive session as follows:
-            if (immersive) {
-                m_activeImmersiveSession = session.copyRef();
-                m_pendingImmersiveSession = false;
-            } else
-                m_inlineSessions.add(session.copyRef());
-
-            // 5.4.9 Resolve promise with session.
-            promise.resolve(session);
-            rejectPromiseWithNotSupportedError.release();
-
-            // TODO:
-            // 5.4.10 Queue a task to perform the following steps: NOTE: These steps ensure that initial inputsourceschange
-            // events occur after the initial session is resolved.
-            //     1. Set session's promise resolved flag to true.
-            //     2. Let sources be any existing input sources attached to session.
-            //     3. If sources is non-empty, perform the following steps:
-            //        1. Set session's list of active XR input sources to sources.
-            //        2. Fire an XRInputSourcesChangeEvent named inputsourceschange on session with added set to sources.
-
+    // 5.1 Let requiredFeatures be options' requiredFeatures.
+    // 5.2 Let optionalFeatures be options' optionalFeatures.
+    // 5.3 Set device to the result of obtaining the current device for mode, requiredFeatures, and optionalFeatures.
+    // 5.4 Queue a task to perform the following steps:
+    obtainCurrentDevice(mode, init.requiredFeatures, init.optionalFeatures, [this, protectedDocument = makeRef(document), immersive, init, mode, promise = WTFMove(promise)](auto* device) mutable {
+        auto rejectPromiseWithNotSupportedError = makeScopeExit([&]() {
+            promise.reject(Exception { NotSupportedError });
+            m_pendingImmersiveSession = false;
         });
+
+        // 5.4.1 If device is null or device's list of supported modes does not contain mode, run the following steps:
+        //  - Reject promise with a "NotSupportedError" DOMException.
+        //  - If immersive is true, set pending immersive session to false.
+        //  - Abort these steps.
+        if (!device || !device->supports(mode))
+            return;
+
+        auto* globalObject = protectedDocument->execState();
+        if (!globalObject)
+            return;
+
+        // WebKit does not currently support the Permissions API. https://w3c.github.io/permissions/
+        // However we do implement here the permission request algorithm without the
+        // Permissions API bits as it handles, among others, the session features parsing. We also
+        // do it here before creating the session as there is no need to do it on advance.
+        // FIXME: we just perform basic checks without asking any permission to the user so far. Maybe we should implement
+        // a mechanism similar to what others do involving passing a message to the UI process.
+
+        // 5.4.4 Let descriptor be an XRPermissionDescriptor initialized with session, requiredFeatures, and optionalFeatures
+        // 5.4.5 Let status be an XRPermissionStatus, initially null
+        // 5.4.6 Request the xr permission with descriptor and status.
+        // 5.4.7 If status' state is "denied" run the following steps: (same as above in 5.4.1)
+        if (!isXRPermissionGranted(mode, init, device, *globalObject))
+            return;
+
+        // 5.4.2 Let session be a new XRSession object.
+        // 5.4.3 Initialize the session with session, mode, and device.
+        auto session = WebXRSession::create(protectedDocument.get(), *this, mode, *device);
+
+        // 5.4.8 Potentially set the active immersive session as follows:
+        if (immersive) {
+            m_activeImmersiveSession = session.copyRef();
+            m_pendingImmersiveSession = false;
+        } else
+            m_inlineSessions.add(session.copyRef());
+
+        // 5.4.9 Resolve promise with session.
+        promise.resolve(WTFMove(session));
+        rejectPromiseWithNotSupportedError.release();
+
+        // FIXME:
+        // 5.4.10 Queue a task to perform the following steps: NOTE: These steps ensure that initial inputsourceschange
+        // events occur after the initial session is resolved.
+        //     1. Set session's promise resolved flag to true.
+        //     2. Let sources be any existing input sources attached to session.
+        //     3. If sources is non-empty, perform the following steps:
+        //        1. Set session's list of active XR input sources to sources.
+        //        2. Fire an XRInputSourcesChangeEvent named inputsourceschange on session with added set to sources.
     });
 }
 
