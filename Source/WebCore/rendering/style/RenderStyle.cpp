@@ -1379,36 +1379,21 @@ void RenderStyle::setHasAttrContent()
     SET_VAR(m_rareNonInheritedData, hasAttrContent, true);
 }
 
-static inline bool requireTransformOrigin(const Vector<RefPtr<TransformOperation>>& transformOperations, RenderStyle::ApplyTransformOrigin applyOrigin)
+static inline bool requireTransformOrigin(const TransformOperations& transformOperations, OptionSet<RenderStyle::TransformOperationOption> options)
 {
     // The transform-origin property brackets the transform with translate operations.
     // When the only transform is a translation, the transform-origin is irrelevant.
-
-    if (applyOrigin != RenderStyle::IncludeTransformOrigin)
-        return false;
-
-    for (auto& operation : transformOperations) {
-        // FIXME: Use affectedByTransformOrigin().
-        auto type = operation->type();
-        if (type != TransformOperation::TRANSLATE
-            && type != TransformOperation::TRANSLATE_3D
-            && type != TransformOperation::TRANSLATE_X
-            && type != TransformOperation::TRANSLATE_Y
-            && type != TransformOperation::TRANSLATE_Z)
-            return true;
-    }
-
-    return false;
+    return options.contains(RenderStyle::TransformOperationOption::TransformOrigin) && transformOperations.affectedByTransformOrigin();
 }
 
-void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRect& boundingBox, ApplyTransformOrigin applyOrigin) const
+void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
     // https://www.w3.org/TR/css-transforms-2/#ctm
     // The transformation matrix is computed from the transform, transform-origin, translate, rotate, scale, and offset properties as follows:
     // 1. Start with the identity matrix.
 
-    auto& operations = m_rareNonInheritedData->transform->operations.operations();
-    bool applyTransformOrigin = m_rareNonInheritedData->rotate || m_rareNonInheritedData->scale || requireTransformOrigin(operations, applyOrigin);
+    auto& transformOperations = m_rareNonInheritedData->transform->operations;
+    bool applyTransformOrigin = m_rareNonInheritedData->rotate || m_rareNonInheritedData->scale || requireTransformOrigin(transformOperations, options);
 
     // 2. Translate by the computed X, Y, and Z values of transform-origin.
     FloatPoint3D originTranslate;
@@ -1419,21 +1404,27 @@ void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRec
     }
 
     // 3. Translate by the computed X, Y, and Z values of translate.
-    if (TransformOperation* translate = m_rareNonInheritedData->translate.get())
-        translate->apply(transform, boundingBox.size());
+    if (options.contains(RenderStyle::TransformOperationOption::Translate)) {
+        if (TransformOperation* translate = m_rareNonInheritedData->translate.get())
+            translate->apply(transform, boundingBox.size());
+    }
 
     // 4. Rotate by the computed <angle> about the specified axis of rotate.
-    if (TransformOperation* rotate = m_rareNonInheritedData->rotate.get())
-        rotate->apply(transform, boundingBox.size());
+    if (options.contains(RenderStyle::TransformOperationOption::Rotate)) {
+        if (TransformOperation* rotate = m_rareNonInheritedData->rotate.get())
+            rotate->apply(transform, boundingBox.size());
+    }
 
     // 5. Scale by the computed X, Y, and Z values of scale.
-    if (TransformOperation* scale = m_rareNonInheritedData->scale.get())
-        scale->apply(transform, boundingBox.size());
+    if (options.contains(RenderStyle::TransformOperationOption::Scale)) {
+        if (TransformOperation* scale = m_rareNonInheritedData->scale.get())
+            scale->apply(transform, boundingBox.size());
+    }
 
     // 6. Translate and rotate by the transform specified by offset. (FIXME: we don't support the offset property)
 
     // 7. Multiply by each of the transform functions in transform from left to right.
-    for (auto& operation : operations)
+    for (auto& operation : transformOperations.operations())
         operation->apply(transform, boundingBox.size());
 
     // 8. Translate by the negated computed X, Y and Z values of transform-origin.

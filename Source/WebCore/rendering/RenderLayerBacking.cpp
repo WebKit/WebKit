@@ -631,7 +631,7 @@ void RenderLayerBacking::updateTransform(const RenderStyle& style)
     TransformationMatrix t;
     if (m_owningLayer.hasTransform()) {
         auto& renderBox = downcast<RenderBox>(renderer());
-        style.applyTransform(t, snapRectToDevicePixels(renderBox.borderBoxRect(), deviceScaleFactor()), RenderStyle::ExcludeTransformOrigin);
+        style.applyTransform(t, snapRectToDevicePixels(renderBox.borderBoxRect(), deviceScaleFactor()), RenderStyle::individualTransformOperations);
         makeMatrixRenderable(t, compositor().canRender3DTransforms());
     }
     
@@ -3483,7 +3483,7 @@ bool RenderLayerBacking::getCurrentTransform(const GraphicsLayer* graphicsLayer,
         return false;
 
     if (m_owningLayer.hasTransform()) {
-        transform = m_owningLayer.currentTransform(RenderStyle::ExcludeTransformOrigin);
+        transform = m_owningLayer.currentTransform(RenderStyle::individualTransformOperations);
         return true;
     }
     return false;

@@ -1,3 +1,17 @@
+2020-10-09  Antoine Quint  <graouts@webkit.org>
+
+        CSS transform computed style should not reflect individual transform properties
+        https://bugs.webkit.org/show_bug.cgi?id=217473
+        <rdar://problem/70091605>
+
+        Reviewed by Simon Fraser.
+
+        Add a newly-authored WPT test to check that setting individual transform properties does not interfere with the
+        computed style for the "transform" property.
+
+        * web-platform-tests/css/css-transforms/transform-and-individual-transform-properties-computed-style-expected.txt: Added.
+        * web-platform-tests/css/css-transforms/transform-and-individual-transform-properties-computed-style.html: Added.
+
 2020-10-09  Martin Robinson  <mrobinson@webkit.org>
 
         Import scroll-snap WPT tests from upstream

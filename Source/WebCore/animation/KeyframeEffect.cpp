@@ -1873,7 +1873,7 @@ bool KeyframeEffect::computeTransformedExtentViaTransformList(const FloatRect& r
 bool KeyframeEffect::computeTransformedExtentViaMatrix(const FloatRect& rendererBox, const RenderStyle& style, LayoutRect& bounds) const
 {
     TransformationMatrix transform;
-    style.applyTransform(transform, rendererBox, RenderStyle::IncludeTransformOrigin);
+    style.applyTransform(transform, rendererBox);
     if (!transform.isAffine())
         return false;
 
