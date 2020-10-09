@@ -1614,9 +1614,9 @@ void WebPageProxy::processWillBecomeForeground()
 void WebPageProxy::isUserFacingChanged(bool isUserFacing)
 {
     if (!isUserFacing)
-        suspendAllMediaPlayback();
+        suspendAllMediaPlayback([] { });
     else
-        resumeAllMediaPlayback();
+        resumeAllMediaPlayback([] { });
 }
 #endif
 

@@ -1,3 +1,13 @@
+2020-10-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Promote WKWebView media playback SPI to API
+        https://bugs.webkit.org/show_bug.cgi?id=217335
+
+        Unreviewed build fix for macCatalyst.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::isUserFacingChanged):
+
 2020-10-09  Simon Fraser  <simon.fraser@apple.com>
 
         Refactor wheel event coalescing into its own class
