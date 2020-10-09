@@ -86,7 +86,7 @@ using namespace WebCore;
 
 static HashSet<NetworkProcessProxy*>& networkProcessesSet()
 {
-    RELEASE_ASSERT(RunLoop::isMain());
+    ASSERT(RunLoop::isMain());
     static NeverDestroyed<HashSet<NetworkProcessProxy*>> set;
     return set;
 }

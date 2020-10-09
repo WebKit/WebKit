@@ -1,3 +1,13 @@
+2020-10-09  Alex Christensen  <achristensen@webkit.org>
+
+        Change RELEASE_ASSERT to ASSERT in networkProcessesSet
+        https://bugs.webkit.org/show_bug.cgi?id=217524
+        <rdar://problem/70115841>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+
 2020-10-09  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Issue sandbox extension for icon service when attachment element is enabled
