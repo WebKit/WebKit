@@ -1,3 +1,13 @@
+2020-10-08  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r267763): SHOULD NEVER BE REACHED in WebKit::contentRuleListsFromIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=217499
+
+        There was an invalid assertion. NBD.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::contentRuleListsFromIdentifier):
+
 2020-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make it possible to send an arbitrary IPC message from JavaScript

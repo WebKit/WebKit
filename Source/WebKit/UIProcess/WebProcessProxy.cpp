@@ -1804,10 +1804,8 @@ static Vector<std::pair<String, WebCompiledContentRuleListData>> contentRuleList
     }
 
     auto* userContentController = WebUserContentControllerProxy::get(*userContentControllerIdentifier);
-    if (!userContentController) {
-        ASSERT_NOT_REACHED();
+    if (!userContentController)
         return { };
-    }
 
     return userContentController->contentRuleListData();
 }
