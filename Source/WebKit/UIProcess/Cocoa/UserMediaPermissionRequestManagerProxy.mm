@@ -28,7 +28,13 @@
 
 #import "SandboxUtilities.h"
 #import "TCCSPI.h"
-#import <wtf/SoftLinking.h>
+#import "WebPageProxy.h"
+#import "WebPreferences.h"
+#import <WebCore/RuntimeApplicationChecks.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+
+#import <pal/cocoa/AVFoundationSoftLink.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(TCC)
@@ -100,5 +106,61 @@ bool UserMediaPermissionRequestManagerProxy::permittedToCaptureVideo()
     return false;
 #endif
 }
+
+#if ENABLE(MEDIA_STREAM)
+static void requestAVCaptureAccessForMediaType(CompletionHandler<void(BOOL authorized)>&& completionHandler, AVMediaType type)
+{
+    auto decisionHandler = makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL authorized) mutable {
+        if (!isMainThread()) {
+            callOnMainThread([completionHandler = WTFMove(completionHandler), authorized]() mutable {
+                completionHandler(authorized);
+            });
+            return;
+        }
+        completionHandler(authorized);
+    });
+    [PAL::getAVCaptureDeviceClass() requestAccessForMediaType:type completionHandler:decisionHandler.get()];
+}
+
+void UserMediaPermissionRequestManagerProxy::requestSystemValidation(const WebPageProxy& page, UserMediaPermissionRequestProxy& request, CompletionHandler<void(bool)>&& callback)
+{
+    if (page.preferences().mockCaptureDevicesEnabled()) {
+        callback(true);
+        return;
+    }
+
+    // FIXME: Add TCC entitlement check for screensharing.
+    bool requiresAudioCapture = request.requiresAudioCapture();
+    bool requiresVideoCapture = request.requiresVideoCapture();
+
+    auto microphoneAuthorizationStatus = !requiresAudioCapture ? AVAuthorizationStatusAuthorized : [PAL::getAVCaptureDeviceClass() authorizationStatusForMediaType:AVMediaTypeAudio];
+    if (microphoneAuthorizationStatus == AVAuthorizationStatusDenied || microphoneAuthorizationStatus == AVAuthorizationStatusRestricted) {
+        callback(false);
+        return;
+    }
+
+    auto cameraAuthorizationStatus = !requiresVideoCapture ? AVAuthorizationStatusAuthorized : [PAL::getAVCaptureDeviceClass() authorizationStatusForMediaType:AVMediaTypeVideo];
+    if (cameraAuthorizationStatus == AVAuthorizationStatusDenied || cameraAuthorizationStatus == AVAuthorizationStatusRestricted) {
+        callback(false);
+        return;
+    }
+
+    bool requiresVideoTCCPrompt = requiresVideoCapture && cameraAuthorizationStatus == AVAuthorizationStatusNotDetermined;
+    auto completionHandler = requiresVideoTCCPrompt ? [request = makeRef(request), callback = WTFMove(callback)](bool isOK) mutable {
+        if (!isOK) {
+            callback(false);
+            return;
+        }
+        requestAVCaptureAccessForMediaType(WTFMove(callback), AVMediaTypeVideo);
+    } : WTFMove(callback);
+
+    bool requiresAudioTCCPrompt = requiresAudioCapture && microphoneAuthorizationStatus == AVAuthorizationStatusNotDetermined;
+    if (!requiresAudioTCCPrompt) {
+        completionHandler(true);
+        return;
+    }
+    requestAVCaptureAccessForMediaType(WTFMove(completionHandler), AVMediaTypeAudio);
+}
+#endif // ENABLE(MEDIA_STREAM)
 
 } // namespace WebKit
