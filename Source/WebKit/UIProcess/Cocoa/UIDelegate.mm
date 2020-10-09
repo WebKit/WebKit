@@ -906,9 +906,15 @@ void UIDelegate::UIClient::didChangeFontAttributes(const WebCore::FontAttributes
     [privateUIDelegate _webView:m_uiDelegate.m_webView didChangeFontAttributes:fontAttributes.createDictionary().get()];
 }
 
-#if ENABLE(MEDIA_STREAM)
-static void requestUserMediaAuthorizationForFrame(const WebFrameProxy& frame, API::SecurityOrigin& topLevelOrigin, UserMediaPermissionRequestProxy& request, id <WKUIDelegatePrivate> delegate, WKWebView& webView)
+void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProxy& page, WebFrameProxy& frame, API::SecurityOrigin& userMediaOrigin, API::SecurityOrigin& topLevelOrigin, UserMediaPermissionRequestProxy& request)
 {
+#if ENABLE(MEDIA_STREAM)
+    auto delegate = (id <WKUIDelegatePrivate>)m_uiDelegate.m_delegate.get();
+    if (!delegate) {
+        request.doDefaultAction();
+        return;
+    }
+
     bool respondsToRequestMediaCaptureAuthorization = [delegate respondsToSelector:@selector(_webView:requestMediaCaptureAuthorization:decisionHandler:)];
     bool respondsToRequestUserMediaAuthorizationForDevices = [delegate respondsToSelector:@selector(_webView:requestUserMediaAuthorizationForDevices:url:mainFrameURL:decisionHandler:)];
 
@@ -944,109 +950,14 @@ static void requestUserMediaAuthorizationForFrame(const WebFrameProxy& frame, AP
 
     // FIXME: Provide a specific delegate for display capture.
     if (!request.requiresDisplayCapture() && respondsToRequestMediaCaptureAuthorization) {
-        [delegate _webView:&webView requestMediaCaptureAuthorization:devices decisionHandler:decisionHandler.get()];
+        [delegate _webView:m_uiDelegate.m_webView requestMediaCaptureAuthorization:devices decisionHandler:decisionHandler.get()];
         return;
     }
 
     URL requestFrameURL { frame.url() };
     URL mainFrameURL { frame.page()->mainFrame()->url() };
 
-    [delegate _webView:&webView requestUserMediaAuthorizationForDevices:devices url:requestFrameURL mainFrameURL:mainFrameURL decisionHandler:decisionHandler.get()];
-}
-
-static void requestAVCaptureAccessForMediaType(CompletionHandler<void(BOOL authorized)>&& completionHandler, AVMediaType type)
-{
-    auto decisionHandler = makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL authorized) mutable {
-        if (!isMainThread()) {
-            callOnMainThread([completionHandler = WTFMove(completionHandler), authorized]() mutable {
-                completionHandler(authorized);
-            });
-            return;
-        }
-        completionHandler(authorized);
-    });
-    [PAL::getAVCaptureDeviceClass() requestAccessForMediaType:type completionHandler:decisionHandler.get()];
-}
-#endif
-
-void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProxy& page, WebFrameProxy& frame, API::SecurityOrigin& userMediaOrigin, API::SecurityOrigin& topLevelOrigin, UserMediaPermissionRequestProxy& request)
-{
-#if ENABLE(MEDIA_STREAM)
-    auto delegate = m_uiDelegate.m_delegate.get();
-    if (!delegate) {
-        request.deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::UserMediaDisabled);
-        return;
-    }
-
-    bool requiresAudioCapture = request.requiresAudioCapture();
-    bool requiresVideoCapture = request.requiresVideoCapture();
-    bool requiresDisplayCapture = request.requiresDisplayCapture();
-    if (!requiresAudioCapture && !requiresVideoCapture && !requiresDisplayCapture) {
-        request.deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::NoConstraints);
-        return;
-    }
-
-    bool usingMockCaptureDevices = page.preferences().mockCaptureDevicesEnabled();
-    if (!usingMockCaptureDevices) {
-        if (requiresAudioCapture && !UserMediaPermissionRequestManagerProxy::permittedToCaptureAudio()) {
-            request.deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
-            return;
-        }
-        if (requiresVideoCapture && !UserMediaPermissionRequestManagerProxy::permittedToCaptureVideo()) {
-            request.deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
-            return;
-        }
-    }
-
-    auto microphoneAuthorizationStatus = usingMockCaptureDevices || !requiresAudioCapture ? AVAuthorizationStatusAuthorized : [PAL::getAVCaptureDeviceClass() authorizationStatusForMediaType:AVMediaTypeAudio];
-    if (microphoneAuthorizationStatus == AVAuthorizationStatusDenied || microphoneAuthorizationStatus == AVAuthorizationStatusRestricted) {
-        request.deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
-        return;
-    }
-    
-    auto cameraAuthorizationStatus = usingMockCaptureDevices || !requiresVideoCapture ? AVAuthorizationStatusAuthorized : [PAL::getAVCaptureDeviceClass() authorizationStatusForMediaType:AVMediaTypeVideo];
-    if (cameraAuthorizationStatus == AVAuthorizationStatusDenied || cameraAuthorizationStatus == AVAuthorizationStatusRestricted) {
-        request.deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
-        return;
-    }
-    
-    auto requestCameraAuthorization = [weakThis = makeWeakPtr(this), frame = makeRef(frame), protectedRequest = makeRef(request), webView = RetainPtr<WKWebView>(m_uiDelegate.m_webView), topLevelOrigin = makeRef(topLevelOrigin), cameraAuthorizationStatus]() mutable {
-        if (!weakThis) {
-            protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
-            return;
-        }
-        if (!protectedRequest->requiresVideoCapture() || cameraAuthorizationStatus == AVAuthorizationStatusAuthorized) {
-            requestUserMediaAuthorizationForFrame(frame, topLevelOrigin, protectedRequest, (id <WKUIDelegatePrivate>)weakThis->m_uiDelegate.m_delegate.get(), *webView.get());
-            return;
-        }
-
-        auto tccPromptCompletionHandler = [weakThis = WTFMove(weakThis), frame = WTFMove(frame), protectedRequest = WTFMove(protectedRequest), webView = WTFMove(webView), topLevelOrigin = WTFMove(topLevelOrigin)](BOOL authorized) {
-            if (!authorized || !weakThis) {
-                protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
-                return;
-            }
-            requestUserMediaAuthorizationForFrame(frame, topLevelOrigin, protectedRequest, (id <WKUIDelegatePrivate>)weakThis->m_uiDelegate.m_delegate.get(), *webView.get());
-        };
-
-        ASSERT(cameraAuthorizationStatus == AVAuthorizationStatusNotDetermined);
-        requestAVCaptureAccessForMediaType(WTFMove(tccPromptCompletionHandler), AVMediaTypeVideo);
-    };
-
-    if (!requiresAudioCapture || microphoneAuthorizationStatus == AVAuthorizationStatusAuthorized) {
-        requestCameraAuthorization();
-        return;
-    }
-
-    auto tccPromptCompletionHandler = [protectedRequest = makeRef(request), requestCameraAuthorization = WTFMove(requestCameraAuthorization)](BOOL authorized) mutable {
-        if (!authorized) {
-            protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
-            return;
-        };
-        requestCameraAuthorization();
-    };
-
-    ASSERT(microphoneAuthorizationStatus == AVAuthorizationStatusNotDetermined);
-    requestAVCaptureAccessForMediaType(WTFMove(tccPromptCompletionHandler), AVMediaTypeAudio);
+    [delegate _webView:m_uiDelegate.m_webView requestUserMediaAuthorizationForDevices:devices url:requestFrameURL mainFrameURL:mainFrameURL decisionHandler:decisionHandler.get()];
 #endif
 }
 
