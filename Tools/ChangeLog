@@ -1,3 +1,23 @@
+2020-10-09  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION: [Mac Release] 2 Cookie API are failing
+        https://bugs.webkit.org/show_bug.cgi?id=217393
+
+        Reviewed by Chris Dumez.
+
+        If bad things happen when running API tests, the TestWebKitAPI default cookie storage can get stuck with
+        a cookie accept policy of never, which causes future tests to fail.  All existing tests restore the cookie
+        accept policy to what it was before the test started, but once a machine gets into a bad state, there's nothing
+        to reset it to the default state.  Some of our test bots have gotten into this bad state, causing 2 cookie API
+        tests to fail.  To fix this, set the cookie accept policy to its default value before running these two tests.
+        I verified this works by getting my computer into this bad state, verifying repeated API test runs don't fix it,
+        and verified this brings the computer back into a good state and causes the API tests to pass again.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/CookiePrivateBrowsing.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm:
+        (TestWebKitAPI::TEST):
+
 2020-10-09  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Support unicode contributor names

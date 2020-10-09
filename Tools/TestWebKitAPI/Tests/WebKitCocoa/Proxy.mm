@@ -32,9 +32,11 @@
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
+#import <WebKit/WKHTTPCookieStorePrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringConcatenateNumbers.h>
 
@@ -187,6 +189,12 @@ namespace TestWebKitAPI {
 
 TEST(WebKit, RelaxThirdPartyCookieBlocking)
 {
+    __block bool setDefaultCookieAcceptPolicy = false;
+    [[WKWebsiteDataStore defaultDataStore].httpCookieStore _setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain completionHandler:^{
+        setDefaultCookieAcceptPolicy = true;
+    }];
+    Util::run(&setDefaultCookieAcceptPolicy);
+
     auto runTest = [] (bool shouldRelaxThirdPartyCookieBlocking) {
         HTTPServer server([connectionCount = 0, shouldRelaxThirdPartyCookieBlocking] (Connection connection) mutable {
             ++connectionCount;

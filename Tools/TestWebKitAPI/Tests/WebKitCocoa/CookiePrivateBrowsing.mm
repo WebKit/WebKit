@@ -28,10 +28,12 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKHTTPCookieStorePrivate.h>
 #import <WebKit/WKProcessPool.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringConcatenateNumbers.h>
 #import <wtf/text/WTFString.h>
@@ -75,6 +77,12 @@ TEST(WebKit, CookiePrivateBrowsing)
 
 TEST(WebKit, CookieCacheSyncAcrossProcess)
 {
+    __block bool setDefaultCookieAcceptPolicy = false;
+    [[WKWebsiteDataStore defaultDataStore].httpCookieStore _setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain completionHandler:^{
+        setDefaultCookieAcceptPolicy = true;
+    }];
+    TestWebKitAPI::Util::run(&setDefaultCookieAcceptPolicy);
+
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
     auto view1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
