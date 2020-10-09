@@ -1,3 +1,18 @@
+2020-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make it possible to send an arbitrary IPC message from JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=217423
+        <rdar://problem/69969351>
+
+        Reviewed by Geoffrey Garen.
+
+        Added a helper function to get uint64_t out of BigInt.
+
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::toUint64Heap): Added.
+        * runtime/JSBigInt.h:
+        (JSC::JSBigInt::toUint64): Added.
+
 2020-10-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Restrict more ptr-tagging and avoid using OperationPtrTag for JIT code

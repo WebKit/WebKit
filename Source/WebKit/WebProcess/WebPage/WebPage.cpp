@@ -789,6 +789,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebProcess::singleton().ensureGPUProcessConnection().updateParameters(parameters);
 #endif
 
+#if ENABLE(IPC_TESTING_API)
+    m_visitedLinkTableID = parameters.visitedLinkTableID;
+#endif
+
 #if ENABLE(VP9)
     if (parameters.shouldEnableVP9Decoder)
         WebProcess::singleton().enableVP9Decoder();
@@ -3783,6 +3787,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     static_cast<WebMediaStrategy&>(platformStrategies()->mediaStrategy()).setUseGPUProcess(settings.useGPUProcessForMediaEnabled());
     WebProcess::singleton().supplement<RemoteMediaPlayerManager>()->updatePreferences(settings);
     WebProcess::singleton().setUseGPUProcessForMedia(settings.useGPUProcessForMediaEnabled());
+#endif
+
+#if ENABLE(IPC_TESTING_API)
+    m_ipcTestingAPIEnabled = store.getBoolValueForKey(WebPreferencesKey::ipcTestingAPIEnabledKey());
 #endif
 }
 

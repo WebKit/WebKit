@@ -1,3 +1,78 @@
+2020-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make it possible to send an arbitrary IPC message from JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=217423
+        <rdar://problem/69969351>
+
+        Reviewed by Geoffrey Garen.
+
+        This patch introduces the JavaScript API (window.IPC) to send IPC out of WebContent process.
+        The feature is compiled in under ASAN and Debug builds and can be enabled at runtime.
+
+        window.IPC has two methods: sendMessage and sendSyncMessage which sends an async and sync IPC respectively.
+        It takes the destination process name (UI, GPU, or Networking), the destination ID (e.g. WebPageProxy ID),
+        message ID, timeout for sendSyncMessage, and optionally IPC message arguments. The message arguments can be
+        passed in as a TypedArray or ArrayBuffer, or a JavaScript array that recursively describes encoded objects.
+
+        Each object can be either a TypedArray or ArrayBuffer, which will be treated as encoded message, an array
+        which will be encoded as a Vector with each item within the array encoded recursively, or a dictionary which
+        describes a specific type.
+
+        When a specific type is described via a dictionary, "value" is encoed based on "type" as follows:
+         - When "type" is "String", "value" is encoded as a WTF::String, treating null or undefined as a null string.
+         - When "type" is "bool", "int8_t", "int16_t", "int32_t", "int64_t", "uint8_t", "uint16_t", "uint32_t",
+           or "uint64_t", "value" (which can be BigInt or a number) is encoded as the respective C++ type.
+         - When "type" is "RGBA", "value" is used as PackedColor::RGBA to construct WebCore::Color to be encoded.
+         - When "type" is "IntRect" or "FloatRect", "x", "y", "width", and "height" are treated as respective values
+           of IntRect or FloatRect C++ objects, and the constructed *Rect is encoded. 
+         - When "type" is "FrameInfoData", the context object's WebFrame's FrameInfoData is encoded.
+
+        The list of IPC messages are exposed on window.IPC.messages, and VisitedLinkStore ID, WebPageProxy ID,
+        and frame identifiers are also exposed as static variables on window.IPC.
+
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld): Inject the API if enabled.
+        * WebProcess/WebPage/IPCTestingAPI.cpp: Added.
+        (WebKit::IPCTestingAPI::JSIPC::create): Added.
+        (WebKit::IPCTestingAPI::JSIPC::webFrame): Added.
+        (WebKit::IPCTestingAPI::JSIPC::JSIPC): Added.
+        (WebKit::IPCTestingAPI::JSIPC::wrapperClass): Added.
+        (WebKit::IPCTestingAPI::JSIPC::unwrap): Added.
+        (WebKit::IPCTestingAPI::JSIPC::toWrapped): Added.
+        (WebKit::IPCTestingAPI::JSIPC::initialize): Added.
+        (WebKit::IPCTestingAPI::JSIPC::finalize): Added.
+        (WebKit::IPCTestingAPI::JSIPC::staticFunctions): Added.
+        (WebKit::IPCTestingAPI::JSIPC::staticValues): Added.
+        (WebKit::IPCTestingAPI::convertToUint64): Added.
+        (WebKit::IPCTestingAPI::processTargetFromArgument): Added.
+        (WebKit::IPCTestingAPI::destinationIDFromArgument): Added.
+        (WebKit::IPCTestingAPI::messageIDFromArgument): Added.
+        (WebKit::IPCTestingAPI::encodeTypedArray): Added.
+        (WebKit::IPCTestingAPI::createTypeError): Added.
+        (WebKit::IPCTestingAPI::encodeRectType): Added.
+        (WebKit::IPCTestingAPI::encodeIntegralType): Added.
+        (WebKit::IPCTestingAPI::VectorEncodeHelper::encode const): Added.
+        (WebKit::IPCTestingAPI::encodeArgument): Added.
+        (WebKit::IPCTestingAPI::JSIPC::sendMessage): Added.
+        (WebKit::IPCTestingAPI::JSIPC::sendSyncMessage): Added.
+        (WebKit::IPCTestingAPI::JSIPC::visitedLinkStoreID): Added.
+        (WebKit::IPCTestingAPI::JSIPC::webPageProxyID): Added.
+        (WebKit::IPCTestingAPI::JSIPC::frameIdentifier): Added.
+        (WebKit::IPCTestingAPI::JSIPC::retrieveID): Added.
+        (WebKit::IPCTestingAPI::JSIPC::messages): Added.
+        (WebKit::IPCTestingAPI::inject):
+        * WebProcess/WebPage/IPCTestingAPI.h: Added.
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::ipcTestingAPIEnabled const):
+        (WebKit::WebPage::webPageProxyID const):
+        (WebKit::WebPage::visitedLinkTableID const):
+
 2020-10-08  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process] Cannot activate or deactivate an audio session

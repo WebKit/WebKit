@@ -652,6 +652,7 @@ WebProcess/WebCoreSupport/WebSpeechSynthesisClient.cpp
 WebProcess/WebPage/DrawingArea.cpp
 WebProcess/WebPage/EventDispatcher.cpp
 WebProcess/WebPage/FindController.cpp
+WebProcess/WebPage/IPCTestingAPI.cpp
 WebProcess/WebPage/PageBanner.cpp
 WebProcess/WebPage/VisitedLinkTableController.cpp
 WebProcess/WebPage/WebBackForwardListProxy.cpp

@@ -73,7 +73,7 @@ public:
     static JSBigInt* tryCreateFrom(VM&, int32_t value);
     static JSBigInt* createFrom(JSGlobalObject*, uint32_t value);
     static JSBigInt* createFrom(JSGlobalObject*, int64_t value);
-    static JSBigInt* createFrom(JSGlobalObject*, uint64_t value);
+    JS_EXPORT_PRIVATE static JSBigInt* createFrom(JSGlobalObject*, uint64_t value);
     static JSBigInt* createFrom(JSGlobalObject*, bool value);
     static JSBigInt* createFrom(JSGlobalObject*, double value);
 
@@ -422,6 +422,20 @@ public:
     static JSValue asUintN(JSGlobalObject*, uint64_t numberOfBits, int32_t bigIntAsInt32);
 #endif
 
+    static Optional<uint64_t> toUint64(JSValue bigInt)
+    {
+        ASSERT(bigInt.isBigInt());
+#if USE(BIGINT32)
+        if (bigInt.isBigInt32()) {
+            auto value = bigInt.bigInt32AsInt32();
+            if (value < 0)
+                return WTF::nullopt;
+            return value;
+        }
+#endif
+        return toUint64Heap(jsCast<JSBigInt*>(bigInt));
+    }
+
     Digit digit(unsigned);
     void setDigit(unsigned, Digit); // Use only when initializing.
     JS_EXPORT_PRIVATE JSBigInt* rightTrim(JSGlobalObject*);
@@ -575,6 +589,8 @@ private:
     static ImplResult truncateToNBits(JSGlobalObject*, int32_t, BigIntImpl);
     template <typename BigIntImpl>
     static ImplResult truncateAndSubFromPowerOfTwo(JSGlobalObject*, int32_t, BigIntImpl, bool resultSign);
+
+    JS_EXPORT_PRIVATE static Optional<uint64_t> toUint64Heap(JSBigInt*);
 
     inline static size_t offsetOfData()
     {

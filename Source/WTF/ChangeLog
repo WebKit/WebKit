@@ -1,3 +1,19 @@
+2020-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make it possible to send an arbitrary IPC message from JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=217423
+        <rdar://problem/69969351>
+
+        Reviewed by Geoffrey Garen.
+
+        Added a compile time flag (ENABLE_IPC_TESTING_API) and a runtime flag (IPCTestingAPIEnabled)
+        for the JavaScript API to test IPC.
+
+        * Scripts/GeneratePreferences.rb:
+        (Preference::nameLower): Keep IPC uppercase.
+        * Scripts/Preferences/WebPreferencesInternal.yaml: Added IPCTestingAPIEnabled.
+        * wtf/PlatformEnable.h: Added ENABLE_IPC_TESTING_API.
+
 2020-10-08  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r267763): [ iOS wk2 ] http/tests/in-app-browser-privacy/non-app-bound-domain-does-not-get-app-bound-session.html is a constant failure

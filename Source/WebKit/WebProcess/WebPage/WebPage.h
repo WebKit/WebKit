@@ -1339,6 +1339,12 @@ public:
 
     void updateCORSDisablingPatterns(Vector<String>&&);
 
+#if ENABLE(IPC_TESTING_API)
+    bool ipcTestingAPIEnabled() const { return m_ipcTestingAPIEnabled; }
+    uint64_t webPageProxyID() const { return messageSenderDestinationID(); }
+    uint64_t visitedLinkTableID() const { return m_visitedLinkTableID; }
+#endif
+
     void getProcessDisplayName(CompletionHandler<void(String&&)>&&);
 
     WebCore::AllowsContentJavaScript allowsContentJavaScriptFromMostRecentNavigation() const { return m_allowsContentJavaScriptFromMostRecentNavigation; }
@@ -2171,6 +2177,11 @@ private:
     bool m_canUseCredentialStorage { true };
 
     Vector<String> m_corsDisablingPatterns;
+
+#if ENABLE(IPC_TESTING_API)
+    bool m_ipcTestingAPIEnabled { false };
+    uint64_t m_visitedLinkTableID;
+#endif
 };
 
 #if !PLATFORM(IOS_FAMILY)

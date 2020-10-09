@@ -32,6 +32,7 @@
 #include "FindController.h"
 #include "FormDataReference.h"
 #include "FrameInfoData.h"
+#include "IPCTestingAPI.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleDOMWindowExtension.h"
 #include "InjectedBundleNavigationAction.h"
@@ -1742,6 +1743,11 @@ void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld& 
     WebPage* webPage = m_frame->page();
     if (!webPage)
         return;
+
+#if ENABLE(IPC_TESTING_API)
+    if (world.isNormal() && webPage->ipcTestingAPIEnabled())
+        IPCTestingAPI::inject(*webPage, m_frame.get(), world);
+#endif
 
     webPage->injectedBundleLoaderClient().didClearWindowObjectForFrame(*webPage, m_frame, world);
 

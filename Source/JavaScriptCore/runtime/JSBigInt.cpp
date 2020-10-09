@@ -3049,6 +3049,29 @@ JSValue JSBigInt::asUintN(JSGlobalObject* globalObject, uint64_t n, int32_t bigI
 }
 #endif
 
+Optional<uint64_t> JSBigInt::toUint64Heap(JSBigInt* bigInt)
+{
+    auto length = bigInt->length();
+    if (!length)
+        return 0;
+    if (bigInt->sign())
+        return WTF::nullopt;
+
+    static_assert(sizeof(uint64_t) == sizeof(Digit) || sizeof(uint64_t) == sizeof(Digit) * 2, "Digit must be either 32-bit or 64-bit");
+    if (sizeof(uint64_t) == sizeof(Digit)) {
+        if (length > 1)
+            return WTF::nullopt;
+        return bigInt->digit(0);
+    }
+
+    if (length > 2)
+        return WTF::nullopt;
+    uint64_t result = bigInt->digit(0);
+    if (length == 1)
+        result += static_cast<uint64_t>(bigInt->digit(0)) << 32;
+    return result;
+}
+
 static ALWAYS_INLINE unsigned computeHash(JSBigInt::Digit* digits, unsigned length, bool sign)
 {
     Hasher hasher;
