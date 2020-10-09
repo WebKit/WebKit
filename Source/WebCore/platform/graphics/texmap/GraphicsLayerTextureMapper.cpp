@@ -272,6 +272,15 @@ void GraphicsLayerTextureMapper::setContentsRect(const FloatRect& value)
     notifyChange(ContentsRectChange);
 }
 
+void GraphicsLayerTextureMapper::setContentsClippingRect(const FloatRoundedRect& rect)
+{
+    if (rect == m_contentsClippingRect)
+        return;
+
+    GraphicsLayer::setContentsClippingRect(rect);
+    notifyChange(ContentsRectChange);
+}
+
 void GraphicsLayerTextureMapper::setContentsToSolidColor(const Color& color)
 {
     if (color == m_solidColor)
@@ -425,8 +434,10 @@ void GraphicsLayerTextureMapper::commitLayerChanges()
     if (m_changeMask & Preserves3DChange)
         m_layer.setPreserves3D(preserves3D());
 
-    if (m_changeMask & ContentsRectChange)
+    if (m_changeMask & ContentsRectChange) {
         m_layer.setContentsRect(contentsRect());
+        m_layer.setContentsClippingRect(contentsClippingRect());
+    }
 
     if (m_changeMask & MasksToBoundsChange)
         m_layer.setMasksToBounds(masksToBounds());

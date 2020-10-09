@@ -66,6 +66,7 @@ public:
     void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) override;
     void setContentsNeedsDisplay() override;
     void setContentsRect(const FloatRect&) override;
+    void setContentsClippingRect(const FloatRoundedRect&) override;
 
     bool addAnimation(const KeyframeValueList&, const FloatSize&, const Animation*, const String&, double) override;
     void pauseAnimation(const String&, double) override;
