@@ -2140,7 +2140,8 @@ bool RenderElement::checkForRepaintDuringLayout() const
 
 ImageOrientation RenderElement::imageOrientation() const
 {
-    return style().imageOrientation();
+    auto* imageElement = is<HTMLImageElement>(element()) ? downcast<HTMLImageElement>(element()) : nullptr;
+    return (imageElement && !imageElement->allowsOrientationOverride()) ? ImageOrientation(ImageOrientation::FromImage) : style().imageOrientation();
 }
 
 void RenderElement::adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded()

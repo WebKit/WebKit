@@ -1,3 +1,13 @@
+2020-10-09  Noam Rosenthal  <noam@webkit.org>
+
+        CSS image-orientation: none should be ignored for cross-origin images
+        https://bugs.webkit.org/show_bug.cgi?id=217294
+
+        Reviewed by Youenn Fablet.
+
+        * http/wpt/css/css-images/image-orientation/image-orientation-none-cross-origin-canvas.html: Added.
+        * http/wpt/css/css-images/image-orientation/image-orientation-none-cross-origin-canvas-expected.html: Added.
+
 2020-10-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Stop clamping text-underline-offset to 0

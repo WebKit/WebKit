@@ -140,6 +140,8 @@ public:
     String referrerPolicyForBindings() const;
     ReferrerPolicy referrerPolicy() const;
 
+    bool allowsOrientationOverride() const;
+
 protected:
     HTMLImageElement(const QualifiedName&, Document&, HTMLFormElement* = nullptr);
 

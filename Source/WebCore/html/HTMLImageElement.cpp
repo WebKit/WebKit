@@ -681,6 +681,12 @@ String HTMLImageElement::crossOrigin() const
     return parseCORSSettingsAttribute(attributeWithoutSynchronization(crossoriginAttr));
 }
 
+bool HTMLImageElement::allowsOrientationOverride() const
+{
+    auto* image = cachedImage();
+    return !image || image->isOriginClean(&(document().securityOrigin()));
+}
+
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 void HTMLImageElement::setAttachmentElement(Ref<HTMLAttachmentElement>&& attachment)

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CSS Images Module Level 3: image-orientation: none</title>
+<link rel="author" title="Noam Rosenthal" href="mailto:noam@webkit.org">
+<link rel="help" href="https://github.com/w3c/csswg-drafts/issues/5165">
+<meta name=fuzzy content="10;100">
+<style>
+    body {
+        overflow: hidden;
+        image-orientation: none;
+    }
+    img {display: none}
+    canvas {
+        width: 100px;
+        height: 100px;
+    }
+    .no-orient { image-orientation: none; }
+</style>
+<body>
+</body>
+<script>
+    function createImage({cors, src, orientation}) {
+        const img = document.createElement('img');
+        img.src = src
+        return img
+    }
+
+    const src1 = 'support/exif-orientation-1-ul.jpg';
+    const src2 = 'support/exif-orientation-3-lr.jpg';
+    [src1, src2].forEach(src => {
+        const img = document.createElement('img')
+        img.src = src
+
+        document.body.appendChild(img)
+    })
+
+    window.onload = async () => {
+        const images = {
+            red: new Array(3).fill(createImage({src: src2})),
+            green: new Array(5).fill(createImage({src: src1}))
+        }
+
+        await Promise.all([])
+
+        const dimension = 5
+
+        Object.keys(images).forEach(key => {
+            const p = document.createElement('p')
+            p.innerText = `The following canvases should be ${key}`
+            document.body.appendChild(p)
+            images[key].forEach(image => {
+                const canvas = document.createElement('canvas')
+                canvas.width = canvas.height = dimension
+                const ctx = canvas.getContext('2d')
+                ctx.drawImage(image, 0, 0)
+                document.body.appendChild(canvas)
+            })
+        })
+
+    }
+</script>
+</head>
+</html>

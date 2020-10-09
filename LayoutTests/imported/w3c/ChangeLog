@@ -1,3 +1,14 @@
+2020-10-09  Noam Rosenthal  <noam@webkit.org>
+
+        CSS image-orientation: none should be ignored for cross-origin images
+        https://bugs.webkit.org/show_bug.cgi?id=217294
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/css/css-images/image-orientation/image-orientation-none-cross-origin-expected.html: Added.
+        * web-platform-tests/css/css-images/image-orientation/image-orientation-none-cross-origin.html: Added.
+                Imported a new W3C test for remote image with image-orientation.
+
 2020-10-08  Alex Christensen  <achristensen@webkit.org>
 
         FileReader.result should return null if it isn't done yet
