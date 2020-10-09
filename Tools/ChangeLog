@@ -1,3 +1,22 @@
+2020-10-09  Alex Christensen  <achristensen@webkit.org>
+
+        Use sendWithAsyncReply for NetworkProcess::CancelDownload
+        https://bugs.webkit.org/show_bug.cgi?id=217420
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (-[WaitUntilDownloadCanceledDelegate _download:didFailWithError:]):
+        (-[DownloadMonitorTestDelegate _download:didFailWithError:]):
+        (-[DownloadMonitorTestDelegate waitForDidFail]):
+        (-[DownloadMonitorTestDelegate stopWaitingForDidFail]):
+        (TestWebKitAPI::monitorDelegate):
+        (TestWebKitAPI::webViewWithDownloadMonitorSpeedMultiplier):
+        (TestWebKitAPI::downloadAtRate):
+        (TestWebKitAPI::TEST):
+        (-[WaitUntilDownloadCanceledDelegate _downloadDidCancel:]): Deleted.
+        (-[DownloadMonitorTestDelegate _downloadDidCancel:]): Deleted.
+
 2020-10-09  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Fix tests compilation warnings with deprecated API

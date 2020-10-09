@@ -46,7 +46,7 @@ static NSString * const countOfBytesReceivedKeyPath = @"countOfBytesReceived";
 - (void)performCancel
 {
     if (m_download)
-        m_download->cancel();
+        m_download->cancel([](auto&) { }, WebKit::Download::IgnoreDidFailCallback::No);
     m_download = nullptr;
 }
 

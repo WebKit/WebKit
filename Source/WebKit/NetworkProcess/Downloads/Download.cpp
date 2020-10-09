@@ -86,20 +86,31 @@ Download::~Download()
     m_downloadManager.didDestroyDownload();
 }
 
-void Download::cancel()
+void Download::cancel(CompletionHandler<void(const IPC::DataReference&)>&& completionHandler, IgnoreDidFailCallback ignoreDidFailCallback)
 {
     RELEASE_ASSERT(isMainThread());
 
-    if (m_wasCanceled)
-        return;
-    m_wasCanceled = true;
+    // URLSession:task:didCompleteWithError: is still called after cancelByProducingResumeData's completionHandler.
+    // If this cancel request came from the API, we do not want to send DownloadProxy::DidFail because the
+    // completionHandler will inform the API that the cancellation succeeded.
+    m_ignoreDidFailCallback = ignoreDidFailCallback;
+
+    auto completionHandlerWrapper = [this, weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)] (const IPC::DataReference& resumeData) mutable {
+        completionHandler(resumeData);
+        if (!weakThis || m_ignoreDidFailCallback == IgnoreDidFailCallback::No)
+            return;
+        RELEASE_LOG_IF_ALLOWED("didCancel: (id = %" PRIu64 ")", downloadID().toUInt64());
+        if (auto extension = std::exchange(m_sandboxExtension, nullptr))
+            extension->revoke();
+        m_downloadManager.downloadFinished(*this);
+    };
 
     if (m_download) {
         m_download->cancel();
-        didCancel({ });
+        completionHandlerWrapper({ });
         return;
     }
-    platformCancelNetworkLoad();
+    platformCancelNetworkLoad(WTFMove(completionHandlerWrapper));
 }
 
 void Download::didReceiveChallenge(const WebCore::AuthenticationChallenge& challenge, ChallengeCompletionHandler&& completionHandler)
@@ -145,23 +156,13 @@ void Download::didFinish()
 
 void Download::didFail(const ResourceError& error, const IPC::DataReference& resumeData)
 {
+    if (m_ignoreDidFailCallback == IgnoreDidFailCallback::Yes)
+        return;
+
     RELEASE_LOG_IF_ALLOWED("didFail: (id = %" PRIu64 ", isTimeout = %d, isCancellation = %d, errCode = %d)",
         downloadID().toUInt64(), error.isTimeout(), error.isCancellation(), error.errorCode());
 
     send(Messages::DownloadProxy::DidFail(error, resumeData));
-
-    if (m_sandboxExtension) {
-        m_sandboxExtension->revoke();
-        m_sandboxExtension = nullptr;
-    }
-    m_downloadManager.downloadFinished(*this);
-}
-
-void Download::didCancel(const IPC::DataReference& resumeData)
-{
-    RELEASE_LOG_IF_ALLOWED("didCancel: (id = %" PRIu64 ")", downloadID().toUInt64());
-
-    send(Messages::DownloadProxy::DidCancel(resumeData));
 
     if (m_sandboxExtension) {
         m_sandboxExtension->revoke();
@@ -190,8 +191,9 @@ bool Download::isAlwaysOnLoggingAllowed() const
 }
 
 #if !PLATFORM(COCOA)
-void Download::platformCancelNetworkLoad()
+void Download::platformCancelNetworkLoad(CompletionHandler<void(const IPC::DataReference&)>&& completionHandler)
 {
+    completionHandler({ });
 }
 
 void Download::platformDestroyDownload()

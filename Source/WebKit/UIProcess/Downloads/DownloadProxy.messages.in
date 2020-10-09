@@ -31,5 +31,4 @@ messages -> DownloadProxy {
     DidCreateDestination(String path)
     DidFinish()
     DidFail(WebCore::ResourceError error, IPC::DataReference resumeData)
-    DidCancel(IPC::DataReference resumeData)
 }

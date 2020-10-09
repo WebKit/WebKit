@@ -61,10 +61,22 @@ DownloadProxy::DownloadProxy(DownloadProxyMap& downloadProxyMap, WebsiteDataStor
 
 DownloadProxy::~DownloadProxy() = default;
 
+static RefPtr<API::Data> createData(const IPC::DataReference& data)
+{
+    if (data.isEmpty())
+        return nullptr;
+    return API::Data::create(data.data(), data.size());
+}
+
 void DownloadProxy::cancel()
 {
-    if (m_dataStore)
-        m_dataStore->networkProcess().send(Messages::NetworkProcess::CancelDownload(m_downloadID), 0);
+    if (m_dataStore) {
+        m_dataStore->networkProcess().sendWithAsyncReply(Messages::NetworkProcess::CancelDownload(m_downloadID), [this, protectedThis = makeRef(*this)] (const IPC::DataReference& resumeData) {
+            m_resumeData = createData(resumeData);
+            m_client->didCancel(*this);
+            m_downloadProxyMap.downloadFinished(*this);
+        });
+    }
 }
 
 void DownloadProxy::invalidate()
@@ -161,29 +173,11 @@ void DownloadProxy::didFinish()
     m_downloadProxyMap.downloadFinished(*this);
 }
 
-static RefPtr<API::Data> createData(const IPC::DataReference& data)
-{
-    if (data.isEmpty())
-        return 0;
-
-    return API::Data::create(data.data(), data.size());
-}
-
 void DownloadProxy::didFail(const ResourceError& error, const IPC::DataReference& resumeData)
 {
     m_resumeData = createData(resumeData);
 
     m_client->didFail(*this, error);
-
-    // This can cause the DownloadProxy object to be deleted.
-    m_downloadProxyMap.downloadFinished(*this);
-}
-
-void DownloadProxy::didCancel(const IPC::DataReference& resumeData)
-{
-    m_resumeData = createData(resumeData);
-
-    m_client->didCancel(*this);
 
     // This can cause the DownloadProxy object to be deleted.
     m_downloadProxyMap.downloadFinished(*this);

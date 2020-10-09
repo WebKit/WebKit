@@ -73,7 +73,6 @@ public:
         virtual IPC::Connection* downloadProxyConnection() = 0;
         virtual IPC::Connection* parentProcessConnectionForDownloads() = 0;
         virtual AuthenticationManager& downloadsAuthenticationManager() = 0;
-        virtual void pendingDownloadCanceled(DownloadID) = 0;
         virtual NetworkSession* networkSession(PAL::SessionID) const = 0;
         virtual void ref() const = 0;
         virtual void deref() const = 0;
@@ -89,7 +88,7 @@ public:
 
     void resumeDownload(PAL::SessionID, DownloadID, const IPC::DataReference& resumeData, const String& path, SandboxExtension::Handle&&);
 
-    void cancelDownload(DownloadID);
+    void cancelDownload(DownloadID, CompletionHandler<void(const IPC::DataReference&)>&&);
 #if PLATFORM(COCOA)
     void publishDownloadProgress(DownloadID, const URL&, SandboxExtension::Handle&&);
 #endif

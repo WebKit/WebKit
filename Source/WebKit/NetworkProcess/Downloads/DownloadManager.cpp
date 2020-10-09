@@ -109,15 +109,19 @@ void DownloadManager::resumeDownload(PAL::SessionID sessionID, DownloadID downlo
 #endif
 }
 
-void DownloadManager::cancelDownload(DownloadID downloadID)
+void DownloadManager::cancelDownload(DownloadID downloadID, CompletionHandler<void(const IPC::DataReference&)>&& completionHandler)
 {
     if (auto* download = m_downloads.get(downloadID)) {
         ASSERT(!m_pendingDownloads.contains(downloadID));
-        download->cancel();
+        download->cancel(WTFMove(completionHandler), Download::IgnoreDidFailCallback::Yes);
         return;
     }
-    if (auto pendingDownload = m_pendingDownloads.take(downloadID))
-        pendingDownload->cancel();
+    if (auto pendingDownload = m_pendingDownloads.take(downloadID)) {
+        pendingDownload->cancel(WTFMove(completionHandler));
+        return;
+    }
+    ASSERT_NOT_REACHED();
+    completionHandler({ });
 }
 
 #if PLATFORM(COCOA)

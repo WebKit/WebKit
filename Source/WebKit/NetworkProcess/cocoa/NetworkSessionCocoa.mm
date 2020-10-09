@@ -769,11 +769,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
         }
 
         auto resumeDataReference = resumeData ? IPC::DataReference { static_cast<const uint8_t*>(resumeData.bytes), resumeData.length } : IPC::DataReference { };
-
-        if (download->wasCanceled())
-            download->didCancel(resumeDataReference);
-        else
-            download->didFail(error, resumeDataReference);
+        download->didFail(error, resumeDataReference);
     }
 }
 

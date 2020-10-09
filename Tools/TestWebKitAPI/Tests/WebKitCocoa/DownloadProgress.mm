@@ -487,7 +487,7 @@ TEST(DownloadProgress, CancelDownloadWhenProgressIsCanceled)
     [testRunner.get() subscribeAndWaitForProgress];
     [testRunner.get() receiveData:50];
     [testRunner.get().progress cancel];
-    [testRunner.get() waitForDownloadCanceled];
+    [testRunner.get() waitForDownloadFailed];
     [testRunner.get() waitToLoseProgress];
 
     [testRunner.get() tearDown];

@@ -31,6 +31,7 @@
 #import "WKDownloadProgress.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NSProgressSPI.h>
+#import <wtf/BlockPtr.h>
 
 namespace WebKit {
 
@@ -79,17 +80,13 @@ void Download::resume(const IPC::DataReference& resumeData, const String& path, 
     [m_downloadTask resume];
 }
     
-void Download::platformCancelNetworkLoad()
+void Download::platformCancelNetworkLoad(CompletionHandler<void(const IPC::DataReference&)>&& completionHandler)
 {
     ASSERT(m_downloadTask);
-
-    // The download's resume data is accessed in the network session delegate
-    // method -URLSession:task:didCompleteWithError: instead of inside this block,
-    // to avoid race conditions between the two. Calling -cancel is not sufficient
-    // here because CFNetwork won't provide the resume data unless we ask for it.
-    [m_downloadTask cancelByProducingResumeData:^(NSData *resumeData) {
-        UNUSED_PARAM(resumeData);
-    }];
+    [m_downloadTask cancelByProducingResumeData:makeBlockPtr([completionHandler = WTFMove(completionHandler)] (NSData *resumeData) mutable {
+        auto resumeDataReference = resumeData ? IPC::DataReference { static_cast<const uint8_t*>(resumeData.bytes), resumeData.length } : IPC::DataReference { };
+        completionHandler(resumeDataReference);
+    }).get()];
 }
 
 void Download::platformDestroyDownload()

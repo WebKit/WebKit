@@ -2071,9 +2071,9 @@ void NetworkProcess::resumeDownload(PAL::SessionID sessionID, DownloadID downloa
     downloadManager().resumeDownload(sessionID, downloadID, resumeData, path, WTFMove(sandboxExtensionHandle));
 }
 
-void NetworkProcess::cancelDownload(DownloadID downloadID)
+void NetworkProcess::cancelDownload(DownloadID downloadID, CompletionHandler<void(const IPC::DataReference&)>&& completionHandler)
 {
-    downloadManager().cancelDownload(downloadID);
+    downloadManager().cancelDownload(downloadID, WTFMove(completionHandler));
 }
 
 #if PLATFORM(COCOA)
@@ -2088,11 +2088,6 @@ void NetworkProcess::continueWillSendRequest(DownloadID downloadID, WebCore::Res
     downloadManager().continueWillSendRequest(downloadID, WTFMove(request));
 }
 
-void NetworkProcess::pendingDownloadCanceled(DownloadID downloadID)
-{
-    downloadProxyConnection()->send(Messages::DownloadProxy::DidCancel({ }), downloadID.toUInt64());
-}
-
 void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTask, ResponseCompletionHandler&& completionHandler, const ResourceResponse& response)
 {
     uint64_t destinationID = networkDataTask.pendingDownloadID().toUInt64();
@@ -2105,11 +2100,8 @@ void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTas
 
     downloadProxyConnection()->sendWithAsyncReply(Messages::DownloadProxy::DecideDestinationWithSuggestedFilename(suggestedFilename), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler), networkDataTask = makeRef(networkDataTask)] (String&& destination, SandboxExtension::Handle&& sandboxExtensionHandle, AllowOverwrite allowOverwrite) mutable {
         auto downloadID = networkDataTask->pendingDownloadID();
-        if (destination.isEmpty()) {
-            downloadManager().cancelDownload(downloadID);
-            completionHandler(PolicyAction::Ignore);
-            return;
-        }
+        if (destination.isEmpty())
+            return completionHandler(PolicyAction::Ignore);
         networkDataTask->setPendingDownloadLocation(destination, WTFMove(sandboxExtensionHandle), allowOverwrite == AllowOverwrite::Yes);
         completionHandler(PolicyAction::Download);
         if (networkDataTask->state() == NetworkDataTask::State::Canceling || networkDataTask->state() == NetworkDataTask::State::Completed)

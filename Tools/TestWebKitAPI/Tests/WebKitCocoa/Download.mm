@@ -769,8 +769,10 @@ static bool didDownloadStart;
     [download.originatingWebView _killWebContentProcessAndResetState];
 }
 
-- (void)_downloadDidCancel:(_WKDownload *)download
+- (void)_download:(_WKDownload *)download didFailWithError:(NSError *)error
 {
+    EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
+    EXPECT_EQ(error.code, NSURLErrorCancelled);
     isDone = true;
 }
 
@@ -798,22 +800,40 @@ TEST(_WKDownload, CrashAfterDownloadDidFinishWhenDownloadProxyHoldsTheLastRefOnW
 }
 
 static bool receivedData;
-static bool didCancel;
 static RetainPtr<NSString> destination;
 
 @interface DownloadMonitorTestDelegate : NSObject <_WKDownloadDelegate>
+- (void)waitForDidFail;
+- (void)stopWaitingForDidFail;
 @end
 
-@implementation DownloadMonitorTestDelegate
+@implementation DownloadMonitorTestDelegate {
+    bool didFail;
+}
 
 - (void)_downloadDidStart:(_WKDownload *)download
 {
     didDownloadStart = true;
 }
 
-- (void)_downloadDidCancel:(_WKDownload *)download
+- (void)_download:(_WKDownload *)download didFailWithError:(NSError *)error
 {
-    didCancel = true;
+    EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
+    EXPECT_EQ(error.code, NSURLErrorCancelled);
+    didFail = true;
+}
+
+- (void)waitForDidFail
+{
+    didFail = false;
+    while (!didFail)
+        TestWebKitAPI::Util::spinRunLoop();
+}
+
+- (void)stopWaitingForDidFail
+{
+    EXPECT_FALSE(didFail);
+    didFail = true;
 }
 
 - (void)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename completionHandler:(void (^)(BOOL allowOverwrite, NSString *destination))completionHandler
@@ -859,10 +879,15 @@ void respondSlowly(int socket, double kbps, bool& terminateServer)
     }
 }
 
+static RetainPtr<DownloadMonitorTestDelegate> monitorDelegate()
+{
+    static auto delegate = adoptNS([DownloadMonitorTestDelegate new]);
+    return delegate;
+}
+
 RetainPtr<WKWebView> webViewWithDownloadMonitorSpeedMultiplier(size_t multiplier)
 {
     static auto navigationDelegate = adoptNS([DownloadNavigationDelegate new]);
-    static auto downloadDelegate = adoptNS([DownloadMonitorTestDelegate new]);
     auto processPoolConfiguration = adoptNS([_WKProcessPoolConfiguration new]);
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
     _WKWebsiteDataStoreConfiguration *dataStoreConfiguration = [[_WKWebsiteDataStoreConfiguration new] autorelease];
@@ -871,7 +896,7 @@ RetainPtr<WKWebView> webViewWithDownloadMonitorSpeedMultiplier(size_t multiplier
     [webViewConfiguration setWebsiteDataStore:[[[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration] autorelease]];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     [webView setNavigationDelegate:navigationDelegate.get()];
-    [webView configuration].processPool._downloadDelegate = downloadDelegate.get();
+    [webView configuration].processPool._downloadDelegate = monitorDelegate().get();
     return webView;
 }
 
@@ -892,8 +917,7 @@ void downloadAtRate(double desiredKbps, unsigned speedMultiplier, AppReturnsToFo
     [[webView configuration].websiteDataStore _synthesizeAppIsBackground:YES];
     if (returnToForeground == AppReturnsToForeground::Yes)
         [[webView configuration].websiteDataStore _synthesizeAppIsBackground:NO];
-    didCancel = false;
-    Util::run(&didCancel);
+    [monitorDelegate() waitForDidFail];
     terminateServer = true;
     [[NSFileManager defaultManager] removeItemAtURL:[NSURL fileURLWithPath:destination.get() isDirectory:NO] error:nil];
 }
@@ -908,8 +932,7 @@ TEST(_WKDownload, DISABLED_DownloadMonitorSurvive)
 {
     __block BOOL timeoutReached = NO;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        EXPECT_FALSE(didCancel);
-        didCancel = true;
+        [monitorDelegate() stopWaitingForDidFail];
         timeoutReached = YES;
     });
 
@@ -923,8 +946,7 @@ TEST(_WKDownload, DownloadMonitorReturnToForeground)
 {
     __block BOOL timeoutReached = NO;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        EXPECT_FALSE(didCancel);
-        didCancel = true;
+        [monitorDelegate() stopWaitingForDidFail];
         timeoutReached = YES;
     });
     downloadAtRate(0.5, 120, AppReturnsToForeground::Yes);

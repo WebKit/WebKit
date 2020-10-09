@@ -403,7 +403,6 @@ private:
     IPC::Connection* downloadProxyConnection() override;
     IPC::Connection* parentProcessConnectionForDownloads() override { return parentProcessConnection(); }
     AuthenticationManager& downloadsAuthenticationManager() override;
-    void pendingDownloadCanceled(DownloadID) override;
 
     // Message Handlers
     void didReceiveSyncNetworkProcessMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
@@ -424,7 +423,7 @@ private:
 
     void downloadRequest(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, Optional<NavigatingToAppBoundDomain>, const String& suggestedFilename);
     void resumeDownload(PAL::SessionID, DownloadID, const IPC::DataReference& resumeData, const String& path, SandboxExtension::Handle&&);
-    void cancelDownload(DownloadID);
+    void cancelDownload(DownloadID, CompletionHandler<void(const IPC::DataReference&)>&&);
 #if PLATFORM(COCOA)
     void publishDownloadProgress(DownloadID, const URL&, SandboxExtension::Handle&&);
 #endif
