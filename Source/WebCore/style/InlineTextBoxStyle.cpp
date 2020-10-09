@@ -60,9 +60,9 @@ float computeUnderlineOffset(TextUnderlinePosition underlinePosition, TextUnderl
     case TextUnderlinePosition::Auto:
         if (underlineOffset.isAuto())
             return fontMetrics.ascent() + gap;
-        return fontMetrics.ascent() + std::max(0.0f, underlineOffset.lengthValue());
+        return fontMetrics.ascent() + underlineOffset.lengthValue();
     case TextUnderlinePosition::FromFont:
-        return fontMetrics.ascent() + std::max(0.0f, fontMetrics.underlinePosition() + underlineOffset.lengthOr(0));
+        return fontMetrics.ascent() + fontMetrics.underlinePosition() + underlineOffset.lengthOr(0);
     case TextUnderlinePosition::Under: {
         ASSERT(inlineTextBox);
         // Position underline relative to the bottom edge of the lowest element's content box.
