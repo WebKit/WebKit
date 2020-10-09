@@ -46,6 +46,7 @@
 #include "LibWebRTCProvider.h"
 #include "LoadParameters.h"
 #include "Logging.h"
+#include "MediaPlaybackState.h"
 #include "MediaRecorderProvider.h"
 #include "NetscapePlugin.h"
 #include "NetworkConnectionToWebProcessMessages.h"
@@ -806,19 +807,34 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     updateThrottleState();
 }
 
-void WebPage::stopAllMediaPlayback()
+void WebPage::requestMediaPlaybackState(CompletionHandler<void(WebKit::MediaPlaybackState)>&& completionHandler)
 {
-    m_page->stopAllMediaPlayback();
+    if (!m_page->mediaPlaybackExists())
+        return completionHandler(MediaPlaybackState::NoMediaPlayback);
+    if (m_page->mediaPlaybackIsPaused())
+        return completionHandler(MediaPlaybackState::MediaPlaybackPaused);
+    if (m_page->mediaPlaybackIsSuspended())
+        return completionHandler(MediaPlaybackState::MediaPlaybackSuspended);
+
+    completionHandler(MediaPlaybackState::MediaPlaybackPlaying);
 }
 
-void WebPage::suspendAllMediaPlayback()
+void WebPage::pauseAllMediaPlayback(CompletionHandler<void(void)>&& completionHandler)
+{
+    m_page->pauseAllMediaPlayback();
+    completionHandler();
+}
+
+void WebPage::suspendAllMediaPlayback(CompletionHandler<void(void)>&& completionHandler)
 {
     m_page->suspendAllMediaPlayback();
+    completionHandler();
 }
 
-void WebPage::resumeAllMediaPlayback()
+void WebPage::resumeAllMediaPlayback(CompletionHandler<void(void)>&& completionHandler)
 {
     m_page->resumeAllMediaPlayback();
+    completionHandler();
 }
 
 void WebPage::suspendAllMediaBuffering()

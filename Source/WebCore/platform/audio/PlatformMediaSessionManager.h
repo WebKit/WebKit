@@ -88,7 +88,8 @@ public:
     WEBCORE_EXPORT void processWillSuspend();
     WEBCORE_EXPORT void processDidResume();
 
-    void stopAllMediaPlaybackForDocument(DocumentIdentifier);
+    bool mediaPlaybackIsPaused(DocumentIdentifier);
+    void pauseAllMediaPlaybackForDocument(DocumentIdentifier);
     WEBCORE_EXPORT void stopAllMediaPlaybackForProcess();
 
     void suspendAllMediaPlaybackForDocument(DocumentIdentifier);
@@ -143,6 +144,7 @@ public:
     WEBCORE_EXPORT void processDidReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*);
 
     bool isInterrupted() const { return m_interrupted; }
+    bool hasNoSession() const;
 
 protected:
     friend class PlatformMediaSession;
@@ -168,7 +170,6 @@ protected:
 #endif
 
     int countActiveAudioCaptureSources();
-    bool hasNoSession() const;
 
     bool computeSupportsSeeking() const;
 

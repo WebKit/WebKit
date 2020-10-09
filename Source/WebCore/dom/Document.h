@@ -1113,7 +1113,9 @@ public:
     void unregisterForVisibilityStateChangedCallbacks(VisibilityChangeClient&);
 
 #if ENABLE(VIDEO)
-    void stopAllMediaPlayback();
+    bool mediaPlaybackExists();
+    bool mediaPlaybackIsPaused();
+    void pauseAllMediaPlayback();
     void suspendAllMediaPlayback();
     void resumeAllMediaPlayback();
     void suspendAllMediaBuffering();

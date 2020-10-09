@@ -459,11 +459,22 @@ void PlatformMediaSessionManager::processSystemDidWake()
     });
 }
 
-void PlatformMediaSessionManager::stopAllMediaPlaybackForDocument(DocumentIdentifier documentIdentifier)
+void PlatformMediaSessionManager::pauseAllMediaPlaybackForDocument(DocumentIdentifier documentIdentifier)
 {
     forEachDocumentSession(documentIdentifier, [](auto& session) {
         session.pauseSession();
     });
+}
+
+
+bool PlatformMediaSessionManager::mediaPlaybackIsPaused(DocumentIdentifier documentIdentifier)
+{
+    bool mediaPlaybackIsPaused = false;
+    forEachDocumentSession(documentIdentifier, [&mediaPlaybackIsPaused](auto& session) {
+        if (session.state() == PlatformMediaSession::Paused)
+            mediaPlaybackIsPaused = true;
+    });
+    return mediaPlaybackIsPaused;
 }
 
 void PlatformMediaSessionManager::stopAllMediaPlaybackForProcess()

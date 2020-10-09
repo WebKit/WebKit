@@ -6020,40 +6020,60 @@ void WebPageProxy::stopMediaCapture()
 #endif
 }
 
-void WebPageProxy::stopAllMediaPlayback()
+void WebPageProxy::requestMediaPlaybackState(CompletionHandler<void(WebKit::MediaPlaybackState)>&& completionHandler)
 {
-    if (!hasRunningProcess())
+    if (!hasRunningProcess()) {
+        completionHandler({ });
         return;
+    }
 
-    send(Messages::WebPage::StopAllMediaPlayback());
+    sendWithAsyncReply(Messages::WebPage::RequestMediaPlaybackState(), WTFMove(completionHandler));
 }
 
-void WebPageProxy::suspendAllMediaPlayback()
+void WebPageProxy::pauseAllMediaPlayback(CompletionHandler<void(void)>&& completionHandler)
+{
+    if (!hasRunningProcess()) {
+        completionHandler();
+        return;
+    }
+
+    sendWithAsyncReply(Messages::WebPage::PauseAllMediaPlayback(), WTFMove(completionHandler));
+}
+
+void WebPageProxy::suspendAllMediaPlayback(CompletionHandler<void(void)>&& completionHandler)
 {
     m_suspendMediaPlaybackCounter++;
-    if (m_mediaPlaybackIsSuspended)
+    if (m_mediaPlaybackIsSuspended) {
+        completionHandler();
         return;
+    }
     m_mediaPlaybackIsSuspended = true;
 
-    if (!hasRunningProcess())
+    if (!hasRunningProcess()) {
+        completionHandler();
         return;
+    }
 
-    send(Messages::WebPage::SuspendAllMediaPlayback());
+    sendWithAsyncReply(Messages::WebPage::SuspendAllMediaPlayback(), WTFMove(completionHandler));
 }
 
-void WebPageProxy::resumeAllMediaPlayback()
+void WebPageProxy::resumeAllMediaPlayback(CompletionHandler<void(void)>&& completionHandler)
 {
     if (m_suspendMediaPlaybackCounter > 0)
         m_suspendMediaPlaybackCounter--;
 
-    if (!m_mediaPlaybackIsSuspended || m_suspendMediaPlaybackCounter)
+    if (!m_mediaPlaybackIsSuspended || m_suspendMediaPlaybackCounter) {
+        completionHandler();
         return;
+    }
     m_mediaPlaybackIsSuspended = false;
 
-    if (!hasRunningProcess())
+    if (!hasRunningProcess()) {
+        completionHandler();
         return;
+    }
 
-    send(Messages::WebPage::ResumeAllMediaPlayback());
+    sendWithAsyncReply(Messages::WebPage::ResumeAllMediaPlayback(), WTFMove(completionHandler));
 }
 
 void WebPageProxy::setMayStartMediaWhenInWindow(bool mayStartMedia)

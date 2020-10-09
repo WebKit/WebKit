@@ -38,6 +38,7 @@
 #include "GeolocationPermissionRequestManagerProxy.h"
 #include "HiddenPageThrottlingAutoIncreasesCounter.h"
 #include "LayerTreeContext.h"
+#include "MediaPlaybackState.h"
 #include "MessageSender.h"
 #include "NotificationPermissionRequestManagerProxy.h"
 #include "PDFPluginIdentifier.h"
@@ -1334,9 +1335,10 @@ public:
     bool mediaCaptureEnabled() const { return m_mediaCaptureEnabled; }
     void stopMediaCapture();
 
-    void stopAllMediaPlayback();
-    void suspendAllMediaPlayback();
-    void resumeAllMediaPlayback();
+    void pauseAllMediaPlayback(CompletionHandler<void(void)>&&);
+    void suspendAllMediaPlayback(CompletionHandler<void(void)>&&);
+    void resumeAllMediaPlayback(CompletionHandler<void(void)>&&);
+    void requestMediaPlaybackState(CompletionHandler<void(WebKit::MediaPlaybackState)>&&);
 
 #if ENABLE(POINTER_LOCK)
     void didAllowPointerLock();

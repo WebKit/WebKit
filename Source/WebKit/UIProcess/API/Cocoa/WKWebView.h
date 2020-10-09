@@ -25,6 +25,8 @@
 
 #import <WebKit/WKFoundation.h>
 
+#import <WebKit/WKMediaPlaybackState.h>
+
 #if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
 #else
@@ -320,6 +322,35 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  The above function text will create a promise that will fulfull with the value 42 after a one second delay, wait for it to resolve, then return the fulfillment value of 42.
 */
 - (void)callAsyncJavaScript:(NSString *)functionBody arguments:(nullable NSDictionary<NSString *, id> *)arguments inFrame:(nullable WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^ _Nullable)(_Nullable id, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/*! @abstract Closes all out-of-window media presentations in a WKWebView.
+ @discussion Includes picture-in-picture and fullscreen.
+ */
+- (void)closeAllMediaPresentations WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/*! @abstract Pauses media playback in WKWebView.
+ @discussion Pauses media playback. Media in the page can be restarted by calling play() on a media element or resume() on an AudioContext.
+ */
+- (void)pauseAllMediaPlayback:(void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/*! @abstract Suspends media playback in WKWebView.
+ @discussion Pauses media playback and blocks all attempts by the page to resume until resumeAllMediaPlayback is called. This should always be called in pairs with resumeAllMediaPlayback.
+ */
+- (void)suspendAllMediaPlayback:(void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/*! @abstract Resumes media playback in WKWebView.
+ @discussion This should always be called in pairs with suspendAllMediaPlayback.
+ */
+- (void)resumeAllMediaPlayback:(void (^ _Nullable)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/*! @abstract Get the current media playback state of a WKWebView.
+ @param completionHandler A block to invoke with the return value of the function call.
+ @discussion If media playback exists, WKMediaPlaybackState will be one of three
+ values: WKMediaPlaybackPaused, WKMediaPlaybackSuspended, or WKMediaPlaybackPlaying.
+ If no media playback exists in the current WKWebView, WKMediaPlaybackState will equal
+ WKNoMediaPlayback.
+ */
+- (void)requestMediaPlaybackState:(void (^)(WKMediaPlaybackState))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! @abstract Get a snapshot for the visible viewport of WKWebView.
  @param snapshotConfiguration An object that specifies how the snapshot is configured.

@@ -1,3 +1,17 @@
+2020-10-09  Kate Cheney  <katherine_cheney@apple.com>
+
+        Promote WKWebView media playback SPI to API
+        https://bugs.webkit.org/show_bug.cgi?id=217335
+        <rdar://problem/63406100>
+
+        Reviewed by Jer Noble.
+
+        Add API testing coverage for new API. Also converted testing to
+        use the new API instead of SPI.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/StopSuspendResumeAllMedia.mm:
+        (TestWebKitAPI::TEST):
+
 2020-10-09  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Use webkitcorepy's auto installer for pytest packages

@@ -702,7 +702,7 @@ Document::~Document()
         m_cachedResourceLoader->setDocument(nullptr);
 
 #if ENABLE(VIDEO)
-    stopAllMediaPlayback();
+    pauseAllMediaPlayback();
 #endif
 
     // We must call clearRareData() here since a Document class inherits TreeScope
@@ -1796,10 +1796,24 @@ void Document::forEachMediaElement(const Function<void(HTMLMediaElement&)>& func
         function(element);
 }
 
-void Document::stopAllMediaPlayback()
+bool Document::mediaPlaybackExists()
 {
     if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        platformMediaSessionManager->stopAllMediaPlaybackForDocument(identifier());
+        return !platformMediaSessionManager->hasNoSession();
+    return false;
+}
+
+bool Document::mediaPlaybackIsPaused()
+{
+    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
+        return platformMediaSessionManager->mediaPlaybackIsPaused(identifier());
+    return false;
+}
+
+void Document::pauseAllMediaPlayback()
+{
+    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
+        platformMediaSessionManager->pauseAllMediaPlaybackForDocument(identifier());
 }
 
 void Document::suspendAllMediaPlayback()

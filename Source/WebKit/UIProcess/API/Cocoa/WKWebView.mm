@@ -63,6 +63,7 @@
 #import "WKFindResultInternal.h"
 #import "WKHistoryDelegatePrivate.h"
 #import "WKLayoutMode.h"
+#import "WKMediaPlaybackState.h"
 #import "WKNSData.h"
 #import "WKNSURLExtras.h"
 #import "WKNavigationDelegate.h"
@@ -863,6 +864,76 @@ static bool validateArgument(id argument)
     }
 
     return false;
+}
+
+- (void)closeAllMediaPresentations
+{
+#if ENABLE(FULLSCREEN_API)
+    if (auto videoFullscreenManager = _page->videoFullscreenManager()) {
+        videoFullscreenManager->forEachSession([] (auto& model, auto& interface) {
+            model.requestFullscreenMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeNone);
+        });
+    }
+
+    if (auto fullScreenManager = _page->fullScreenManager(); fullScreenManager && fullScreenManager->isFullScreen())
+        fullScreenManager->close();
+#endif
+}
+
+- (void)pauseAllMediaPlayback:(void (^)(void))completionHandler
+{
+    if (!completionHandler) {
+        _page->pauseAllMediaPlayback([] { });
+        return;
+    }
+
+    _page->pauseAllMediaPlayback(makeBlockPtr(completionHandler));
+}
+
+- (void)suspendAllMediaPlayback:(void (^)(void))completionHandler
+{
+    if (!completionHandler) {
+        _page->suspendAllMediaPlayback([] { });
+        return;
+    }
+    _page->suspendAllMediaPlayback(makeBlockPtr(completionHandler));
+}
+
+- (void)resumeAllMediaPlayback:(void (^)(void))completionHandler
+{
+    if (!completionHandler) {
+        _page->resumeAllMediaPlayback([] { });
+        return;
+    }
+    _page->resumeAllMediaPlayback(makeBlockPtr(completionHandler));
+}
+
+static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState mediaPlaybackState)
+{
+    switch (mediaPlaybackState) {
+    case WebKit::MediaPlaybackState::NoMediaPlayback:
+        return WKMediaPlaybackStateNone;
+    case WebKit::MediaPlaybackState::MediaPlaybackPaused:
+        return WKMediaPlaybackStatePaused;
+    case WebKit::MediaPlaybackState::MediaPlaybackSuspended:
+        return WKMediaPlaybackStateSuspended;
+    case WebKit::MediaPlaybackState::MediaPlaybackPlaying:
+        return WKMediaPlaybackStatePlaying;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return WKMediaPlaybackStateNone;
+}
+
+- (void)requestMediaPlaybackState:(void (^)(WKMediaPlaybackState))completionHandler
+{
+    if (!completionHandler)
+        return;
+
+    return _page->requestMediaPlaybackState([completionHandler = makeBlockPtr(completionHandler)] (auto&& mediaPlaybackState) {
+        completionHandler(toWKMediaPlaybackState(mediaPlaybackState));
+    });
 }
 
 static RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails& details)
@@ -1853,16 +1924,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_closeAllMediaPresentations
 {
-#if ENABLE(FULLSCREEN_API)
-    if (auto videoFullscreenManager = _page->videoFullscreenManager()) {
-        videoFullscreenManager->forEachSession([] (auto& model, auto& interface) {
-            model.requestFullscreenMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeNone);
-        });
-    }
-
-    if (auto fullScreenManager = _page->fullScreenManager(); fullScreenManager && fullScreenManager->isFullScreen())
-        fullScreenManager->close();
-#endif
+    [self closeAllMediaPresentations];
 }
 
 - (void)_stopMediaCapture
@@ -1872,17 +1934,17 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_stopAllMediaPlayback
 {
-    _page->stopAllMediaPlayback();
+    [self pauseAllMediaPlayback:nil];
 }
 
 - (void)_suspendAllMediaPlayback
 {
-    _page->suspendAllMediaPlayback();
+    [self suspendAllMediaPlayback:nil];
 }
 
 - (void)_resumeAllMediaPlayback
 {
-    _page->resumeAllMediaPlayback();
+    [self resumeAllMediaPlayback:nil];
 }
 
 - (NSURL *)_unreachableURL

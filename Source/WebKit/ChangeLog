@@ -1,3 +1,52 @@
+2020-10-09  Kate Cheney  <katherine_cheney@apple.com>
+
+        Promote WKWebView media playback SPI to API
+        https://bugs.webkit.org/show_bug.cgi?id=217335
+        <rdar://problem/63406100>
+
+        Reviewed by Jer Noble.
+
+        Currently the only way to interact with video in WKWebView is by injecting
+        JavaScript into a page. It would be useful to promote various media
+        playback SPI to API to make this easier for clients, including adding
+        completion handlers to the new API calls. Along with this,
+        we should add new API to check for media playback state.
+        This patch keeps the SPI around for compatibility.
+
+        * Shared/API/Cocoa/WebKit.h:
+        * Shared/MediaPlaybackState.h: Added.
+        * UIProcess/API/Cocoa/WKMediaPlaybackState.h: Added.
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView closeAllMediaPresentations]):
+        (-[WKWebView pauseAllMediaPlayback:]):
+        (-[WKWebView suspendAllMediaPlayback:]):
+        (-[WKWebView resumeAllMediaPlayback:]):
+        (toWKMediaPlaybackState):
+        (-[WKWebView requestMediaPlaybackState:]):
+        (-[WKWebView _closeAllMediaPresentations]):
+        (-[WKWebView _stopAllMediaPlayback]):
+        (-[WKWebView _suspendAllMediaPlayback]):
+        (-[WKWebView _resumeAllMediaPlayback]):
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController _showPhishingAlert]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestMediaPlaybackState):
+        (WebKit::WebPageProxy::pauseAllMediaPlayback):
+        (WebKit::WebPageProxy::suspendAllMediaPlayback):
+        (WebKit::WebPageProxy::resumeAllMediaPlayback):
+        (WebKit::WebPageProxy::stopAllMediaPlayback): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestMediaPlaybackState):
+        (WebKit::WebPage::pauseAllMediaPlayback):
+        (WebKit::WebPage::suspendAllMediaPlayback):
+        (WebKit::WebPage::resumeAllMediaPlayback):
+        (WebKit::WebPage::stopAllMediaPlayback): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-10-09  Alex Christensen  <achristensen@webkit.org>
 
         Use sendWithAsyncReply for NetworkProcess::CancelDownload

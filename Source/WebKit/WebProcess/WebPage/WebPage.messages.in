@@ -378,9 +378,10 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     CaptureDevicesChanged()
 #endif
 
-    StopAllMediaPlayback();
-    SuspendAllMediaPlayback();
-    ResumeAllMediaPlayback();
+    RequestMediaPlaybackState() -> (enum:uint8_t WebKit::MediaPlaybackState state) Async
+    PauseAllMediaPlayback() -> () Async
+    SuspendAllMediaPlayback() -> () Async
+    ResumeAllMediaPlayback() -> () Async
 
     # Notification
     DidReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed)
