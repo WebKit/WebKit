@@ -1,3 +1,12 @@
+2020-10-01  Matt Lewis  <jlewis3@apple.com>
+
+        Move EWS to new SDKs: tvOS 14, and watchOS 7.
+        https://bugs.webkit.org/show_bug.cgi?id=217145
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/ews-build/config.json:
+
 2020-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make it possible to send an arbitrary IPC message from JavaScript
