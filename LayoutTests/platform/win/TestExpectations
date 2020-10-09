@@ -700,6 +700,10 @@ fast/visual-viewport/zoomed-fixed-scroll-down-then-up.html [ Failure ]
 webkit.org/b/77568 fast/text/locale-shaping.html [ ImageOnlyFailure ]
 webkit.org/b/77568 fast/text/locale-shaping-complex.html [ ImageOnlyFailure ]
 
+# WebAssembly doesn't exist on Windows
+fast/frames/detached-frame-wasm-resolve.html [ Skip ]
+fast/history/page-cache-wasm-promise-resolve.html [ Skip ]
+
 ################################################################################
 ###########    End Missing Functionality Prevents Testing         ##############
 ################################################################################

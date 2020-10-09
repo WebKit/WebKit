@@ -1,3 +1,22 @@
+2020-10-09  Keith Miller  <keith_miller@apple.com>
+
+        Finalizers shouldn't run if events can't fire
+        https://bugs.webkit.org/show_bug.cgi?id=214508
+
+        Reviewed by Ryosuke Niwa.
+
+        Add tests that check we don't run any tasks from JSC's event loop while contexts
+        are suspended/stopped. Also skip the WASM tests on Win because WASM doesn't work
+        there.
+
+        * fast/frames/detached-frame-wasm-resolve-expected.txt: Added.
+        * fast/frames/detached-frame-wasm-resolve.html: Added.
+        * fast/history/page-cache-active-finalization-registry-callback-expected.txt: Added.
+        * fast/history/page-cache-active-finalization-registry-callback.html: Added.
+        * fast/history/page-cache-wasm-promise-resolve-expected.txt: Added.
+        * fast/history/page-cache-wasm-promise-resolve.html: Added.
+        * platform/win/TestExpectations:
+
 2020-10-09  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for accessibility tests keyevents-posted-for-increment-actions.html and keyevents-for-increment-actions-with-node-removal.html in isolated tree mode.

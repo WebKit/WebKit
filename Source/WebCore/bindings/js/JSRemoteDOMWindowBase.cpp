@@ -48,6 +48,8 @@ const GlobalObjectMethodTable JSRemoteDOMWindowBase::s_globalObjectMethodTable =
     nullptr, // moduleLoaderEvaluate
     nullptr, // promiseRejectionTracker
     nullptr, // reportUncaughtExceptionAtEventLoop
+    &currentScriptExecutionOwner,
+    &scriptExecutionStatus,
     nullptr, // defaultLanguage
     nullptr, // compileStreaming
     nullptr, // instantiateStreaming

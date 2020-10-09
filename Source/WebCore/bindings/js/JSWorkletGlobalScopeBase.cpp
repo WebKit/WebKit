@@ -56,6 +56,8 @@ const GlobalObjectMethodTable JSWorkletGlobalScopeBase::s_globalObjectMethodTabl
     nullptr, // moduleLoaderEvaluate
     &promiseRejectionTracker,
     &reportUncaughtExceptionAtEventLoop,
+    &currentScriptExecutionOwner,
+    &scriptExecutionStatus,
     &defaultLanguage,
     nullptr, // compileStreaming
     nullptr, // instantiateStreaming
@@ -98,6 +100,12 @@ void JSWorkletGlobalScopeBase::destroy(JSCell* cell)
 ScriptExecutionContext* JSWorkletGlobalScopeBase::scriptExecutionContext() const
 {
     return m_wrapped.get();
+}
+
+JSC::ScriptExecutionStatus JSWorkletGlobalScopeBase::scriptExecutionStatus(JSC::JSGlobalObject* globalObject, JSC::JSObject* owner)
+{
+    ASSERT_UNUSED(owner, globalObject == owner);
+    return jsCast<JSWorkletGlobalScopeBase*>(globalObject)->scriptExecutionContext()->jscScriptExecutionStatus();
 }
 
 bool JSWorkletGlobalScopeBase::supportsRichSourceInfo(const JSGlobalObject* object)

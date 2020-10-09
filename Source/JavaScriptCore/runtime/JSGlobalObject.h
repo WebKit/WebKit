@@ -195,6 +195,12 @@ enum class JSPromiseRejectionOperation : unsigned {
     Handle, // When a handler is added to a rejected promise for the first time.
 };
 
+enum class ScriptExecutionStatus {
+    Running,
+    Suspended,
+    Stopped,
+};
+
 struct GlobalObjectMethodTable {
     typedef bool (*SupportsRichSourceInfoFunctionPtr)(const JSGlobalObject*);
     SupportsRichSourceInfoFunctionPtr supportsRichSourceInfo;
@@ -231,6 +237,13 @@ struct GlobalObjectMethodTable {
 
     typedef void (*ReportUncaughtExceptionAtEventLoopPtr)(JSGlobalObject*, Exception*);
     ReportUncaughtExceptionAtEventLoopPtr reportUncaughtExceptionAtEventLoop;
+
+    // For most contexts this is just the global object. For JSDOMWindow, however, this is the JSDocument.
+    typedef JSObject* (*CurrentScriptExecutionOwnerPtr)(JSGlobalObject*);
+    CurrentScriptExecutionOwnerPtr currentScriptExecutionOwner;
+
+    typedef ScriptExecutionStatus (*ScriptExecutionStatusPtr)(JSGlobalObject*, JSObject* scriptExecutionOwner);
+    ScriptExecutionStatusPtr scriptExecutionStatus;
 
     typedef String (*DefaultLanguageFunctionPtr)();
     DefaultLanguageFunctionPtr defaultLanguage;
@@ -853,6 +866,8 @@ public:
     JSObject* unhandledRejectionCallback() const { return m_unhandledRejectionCallback.get(); }
 
     static void reportUncaughtExceptionAtEventLoop(JSGlobalObject*, Exception*);
+    static JSObject* currentScriptExecutionOwner(JSGlobalObject* global) { return global; }
+    static ScriptExecutionStatus scriptExecutionStatus(JSGlobalObject*, JSObject*) { return ScriptExecutionStatus::Running; }
 
     JSObject* arrayBufferConstructor() const { return m_arrayBufferStructure.constructor(this); }
 

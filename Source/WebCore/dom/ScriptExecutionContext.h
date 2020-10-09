@@ -44,6 +44,7 @@ class CallFrame;
 class Exception;
 class JSPromise;
 class VM;
+enum class ScriptExecutionStatus;
 }
 
 namespace Inspector {
@@ -135,6 +136,8 @@ public:
 
     bool activeDOMObjectsAreSuspended() const { return m_activeDOMObjectsAreSuspended; }
     bool activeDOMObjectsAreStopped() const { return m_activeDOMObjectsAreStopped; }
+
+    JSC::ScriptExecutionStatus jscScriptExecutionStatus() const;
 
     // Called from the constructor and destructors of ActiveDOMObject.
     void didCreateActiveDOMObject(ActiveDOMObject&);

@@ -1,3 +1,41 @@
+2020-10-09  Keith Miller  <keith_miller@apple.com>
+
+        Finalizers shouldn't run if events can't fire
+        https://bugs.webkit.org/show_bug.cgi?id=214508
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch makes it so the DeferredWorkTimer won't run scheduled
+        tasks if those would not have run if they were scheduled in
+        WebCore. To do this there is now a concept of a
+        ScriptExecutionOwner. The ScriptExecutionOwner is almost always
+        the same as the global object of the pending task (referred to as
+        the ticket). The only exception to this is if the global object
+        is a JSDOMWindowBase, then the ScriptExecutionOwner is the
+        Document's JS wrapper. To tell the status of a
+        ScriptExecutionOwner, the DeferredWorkTimer calls a virtual
+        function on the global object of the ticket, for JSC-only this
+        just always returns Running. For WebCore, we ask the
+        ScriptExecutionContext associated with the ScriptExecutionOwner.
+
+        * API/JSAPIGlobalObject.cpp:
+        * API/JSAPIGlobalObject.mm:
+        * jsc.cpp:
+        * runtime/DeferredWorkTimer.cpp:
+        (JSC::DeferredWorkTimer::doWork):
+        (JSC::DeferredWorkTimer::addPendingWork):
+        (JSC::DeferredWorkTimer::hasDependancyInPendingWork):
+        (JSC::DeferredWorkTimer::didResumeScriptExecutionOwner):
+        * runtime/DeferredWorkTimer.h:
+        * runtime/JSFinalizationRegistry.cpp:
+        (JSC::JSFinalizationRegistry::create):
+        (JSC::JSFinalizationRegistry::finishCreation):
+        * runtime/JSFinalizationRegistry.h:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::currentScriptExecutionOwner):
+        (JSC::JSGlobalObject::scriptExecutionStatus):
+
 2020-10-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, reland r268170

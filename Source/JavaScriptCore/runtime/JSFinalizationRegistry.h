@@ -89,7 +89,7 @@ private:
     {
     }
 
-    JS_EXPORT_PRIVATE void finishCreation(VM&, JSObject* callback);
+    JS_EXPORT_PRIVATE void finishCreation(VM&, JSGlobalObject*, JSObject* callback);
 
     static String toStringName(const JSObject*, JSGlobalObject*);
 

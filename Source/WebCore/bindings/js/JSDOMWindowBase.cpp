@@ -35,6 +35,7 @@
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMGlobalObjectTask.h"
 #include "JSDOMWindowCustom.h"
+#include "JSDocument.h"
 #include "JSFetchResponse.h"
 #include "JSMicrotaskCallback.h"
 #include "JSNode.h"
@@ -80,6 +81,8 @@ const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = {
     &moduleLoaderEvaluate,
     &promiseRejectionTracker,
     &reportUncaughtExceptionAtEventLoop,
+    &currentScriptExecutionOwner,
+    &scriptExecutionStatus,
     &defaultLanguage,
 #if ENABLE(WEBASSEMBLY)
     &compileStreaming,
@@ -229,6 +232,17 @@ void JSDOMWindowBase::queueMicrotaskToEventLoop(JSGlobalObject& object, Ref<JSC:
         UserGestureIndicator gestureIndicator(userGestureToken, UserGestureToken::GestureScope::MediaOnly, UserGestureToken::IsPropagatedFromFetch::Yes);
         callback->call();
     });
+}
+
+JSC::JSObject* JSDOMWindowBase::currentScriptExecutionOwner(JSGlobalObject* object)
+{
+    JSDOMWindowBase* thisObject = static_cast<JSDOMWindowBase*>(object);
+    return jsCast<JSObject*>(toJS(thisObject, thisObject, thisObject->wrapped().document()));
+}
+
+JSC::ScriptExecutionStatus JSDOMWindowBase::scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject* owner)
+{
+    return jsCast<JSDocument*>(owner)->wrapped().jscScriptExecutionStatus();
 }
 
 void JSDOMWindowBase::willRemoveFromWindowProxy()

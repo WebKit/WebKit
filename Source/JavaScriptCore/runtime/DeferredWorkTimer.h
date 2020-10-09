@@ -51,18 +51,19 @@ public:
     bool hasDependancyInPendingWork(Ticket, JSCell* dependency);
     bool cancelPendingWork(Ticket);
 
+    // If the script execution owner your ticket is associated with gets canceled
+    // the Task will not be called and will be deallocated. So it's important
+    // to make sure your memory ownership model won't leak memory when
+    // this occurs. The easiest way is to make sure everything is either owned
+    // by a GC'd value in dependencies or by the Task lambda.
     using Task = Function<void()>;
     void scheduleWorkSoon(Ticket, Task&&);
+    void didResumeScriptExecutionOwner();
 
     void stopRunningTasks() { m_runTasks = false; }
-
     void runRunLoop();
 
-    static Ref<DeferredWorkTimer> create(VM& vm)
-    {
-        return adoptRef(*new DeferredWorkTimer(vm));
-    }
-
+    static Ref<DeferredWorkTimer> create(VM& vm) { return adoptRef(*new DeferredWorkTimer(vm)); }
 private:
     DeferredWorkTimer(VM&);
 
@@ -71,7 +72,11 @@ private:
     bool m_shouldStopRunLoopWhenAllTicketsFinish { false };
     bool m_currentlyRunningTask { false };
     Deque<std::tuple<Ticket, Task>> m_tasks;
-    HashMap<Ticket, Vector<Strong<JSCell>>> m_pendingTickets;
+    struct TicketData {
+        Vector<Strong<JSCell>> dependencies;
+        Strong<JSObject> scriptExecutionOwner;
+    };
+    HashMap<Ticket, TicketData> m_pendingTickets;
 };
 
 } // namespace JSC

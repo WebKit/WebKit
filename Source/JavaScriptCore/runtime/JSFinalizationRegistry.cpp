@@ -42,11 +42,11 @@ Structure* JSFinalizationRegistry::createStructure(VM& vm, JSGlobalObject* globa
 JSFinalizationRegistry* JSFinalizationRegistry::create(VM& vm, Structure* structure, JSObject* callback)
 {
     JSFinalizationRegistry* instance = new (NotNull, allocateCell<JSFinalizationRegistry>(vm.heap)) JSFinalizationRegistry(vm, structure);
-    instance->finishCreation(vm, callback);
+    instance->finishCreation(vm, structure->globalObject(), callback);
     return instance;
 }
 
-void JSFinalizationRegistry::finishCreation(VM& vm, JSObject* callback)
+void JSFinalizationRegistry::finishCreation(VM& vm, JSGlobalObject* globalObject, JSObject* callback)
 {
     Base::finishCreation(vm);
     ASSERT(callback->isCallable(vm));
@@ -54,6 +54,10 @@ void JSFinalizationRegistry::finishCreation(VM& vm, JSObject* callback)
     for (unsigned index = 0; index < values.size(); ++index)
         Base::internalField(index).setWithoutWriteBarrier(values[index]);
     internalField(Field::Callback).setWithoutWriteBarrier(callback);
+
+    // Make sure we init the DOM wrapper for our document since it must be allocated before finalizeUnconditionally is called. finalizeUnconditionally,
+    // is called during the GC flip so no JS objects can be allocated there. This only works because we no longer weakly hold on to DOM wrappers.
+    globalObject->globalObjectMethodTable()->currentScriptExecutionOwner(globalObject);
 }
 
 void JSFinalizationRegistry::visitChildren(JSCell* cell, SlotVisitor& visitor)

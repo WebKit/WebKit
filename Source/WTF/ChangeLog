@@ -1,3 +1,24 @@
+2020-10-09  Keith Miller  <keith_miller@apple.com>
+
+        Finalizers shouldn't run if events can't fire
+        https://bugs.webkit.org/show_bug.cgi?id=214508
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a DropLockScope to make it easier to drop a lock for a short
+        piece of code.  Also, instead of deleting int Locker constructor
+        we should just delete the underlying type of the
+        NoLockingNecessary enum.
+
+        * wtf/Locker.h:
+        (WTF::Locker::~Locker):
+        (WTF::Locker::unlockEarly):
+        (WTF::Locker::Locker):
+        (WTF::Locker::operator=):
+        (WTF::Locker::unlock):
+        (WTF::DropLockForScope::DropLockForScope):
+        (WTF::DropLockForScope::~DropLockForScope):
+
 2020-10-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, reland r268170

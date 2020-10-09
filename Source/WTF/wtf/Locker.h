@@ -31,6 +31,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/Atomics.h>
 #include <wtf/Compiler.h>
+#include <wtf/ForbidHeapAllocation.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadSanitizerSupport.h>
 
@@ -51,7 +52,10 @@ protected:
     }
 };
 
-template <typename T> class Locker : public AbstractLocker {
+template<typename T> class DropLockForScope;
+
+template<typename T>
+class Locker : public AbstractLocker {
 public:
     explicit Locker(T& lockable) : m_lockable(&lockable) { lock(); }
     explicit Locker(T* lockable) : m_lockable(lockable) { lock(); }
@@ -63,15 +67,11 @@ public:
     // be accessed concurrently.
     Locker(NoLockingNecessaryTag) : m_lockable(nullptr) { }
     
-    Locker(int) = delete;
+    Locker(std::underlying_type_t<NoLockingNecessaryTag>) = delete;
 
     ~Locker()
     {
-        compilerFence();
-        if (m_lockable) {
-            TSAN_ANNOTATE_HAPPENS_BEFORE(m_lockable);
-            m_lockable->unlock();
-        }
+        unlock();
     }
     
     static Locker tryLock(T& lockable)
@@ -88,8 +88,7 @@ public:
     
     void unlockEarly()
     {
-        TSAN_ANNOTATE_HAPPENS_BEFORE(m_lockable);
-        m_lockable->unlock();
+        unlock();
         m_lockable = nullptr;
     }
     
@@ -98,21 +97,31 @@ public:
     Locker(Locker&& other)
         : m_lockable(other.m_lockable)
     {
+        ASSERT(&other != this);
         other.m_lockable = nullptr;
     }
     
     Locker& operator=(Locker&& other)
     {
-        if (m_lockable) {
-            TSAN_ANNOTATE_HAPPENS_BEFORE(m_lockable);
-            m_lockable->unlock();
-        }
+        ASSERT(&other != this);
         m_lockable = other.m_lockable;
         other.m_lockable = nullptr;
         return *this;
     }
     
 private:
+    template<typename>
+    friend class DropLockForScope;
+
+    void unlock()
+    {
+        compilerFence();
+        if (m_lockable) {
+            TSAN_ANNOTATE_HAPPENS_BEFORE(m_lockable);
+            m_lockable->unlock();
+        }
+    }
+
     void lock()
     {
         if (m_lockable) {
@@ -151,6 +160,25 @@ Locker<LockType> tryHoldLock(LockType& lock)
     return Locker<LockType>::tryLock(lock);
 }
 
+template<typename LockType>
+class DropLockForScope : private AbstractLocker {
+    WTF_FORBID_HEAP_ALLOCATION(DropLockForScope);
+public:
+    DropLockForScope(Locker<LockType>& lock)
+        : m_lock(lock)
+    {
+        m_lock.unlock();
+    }
+
+    ~DropLockForScope()
+    {
+        m_lock.lock();
+    }
+
+private:
+    Locker<LockType>& m_lock;
+};
+
 }
 
 using WTF::AbstractLocker;
@@ -159,3 +187,4 @@ using WTF::NoLockingNecessaryTag;
 using WTF::NoLockingNecessary;
 using WTF::holdLock;
 using WTF::holdLockIf;
+using WTF::DropLockForScope;
