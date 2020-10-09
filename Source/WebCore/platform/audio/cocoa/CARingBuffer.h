@@ -76,7 +76,7 @@ public:
     WEBCORE_EXPORT Error store(const AudioBufferList*, size_t frameCount, uint64_t startFrame);
 
     enum FetchMode { Copy, Mix };
-    WEBCORE_EXPORT Error fetch(AudioBufferList*, size_t frameCount, uint64_t startFrame, FetchMode mode = Copy);
+    WEBCORE_EXPORT Error fetch(AudioBufferList*, size_t frameCount, uint64_t startFrame, FetchMode = Copy);
 
     WEBCORE_EXPORT void flush();
 

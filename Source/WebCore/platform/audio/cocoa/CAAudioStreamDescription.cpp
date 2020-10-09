@@ -32,7 +32,7 @@ CAAudioStreamDescription::CAAudioStreamDescription()
     : m_streamDescription({ })
 {
 }
-    
+
 CAAudioStreamDescription::~CAAudioStreamDescription() = default;
 
 CAAudioStreamDescription::CAAudioStreamDescription(const AudioStreamBasicDescription &desc)
@@ -152,6 +152,104 @@ bool operator==(const AudioStreamBasicDescription& a, const AudioStreamBasicDesc
         && a.mBytesPerFrame == b.mBytesPerFrame
         && a.mChannelsPerFrame == b.mChannelsPerFrame
         && a.mBitsPerChannel == b.mBitsPerChannel;
+}
+
+double CAAudioStreamDescription::sampleRate() const
+{
+    return m_streamDescription.mSampleRate;
+}
+
+bool CAAudioStreamDescription::isPCM() const
+{
+    return m_streamDescription.mFormatID == kAudioFormatLinearPCM;
+}
+
+bool CAAudioStreamDescription::isInterleaved() const
+{
+    return !(m_streamDescription.mFormatFlags & kAudioFormatFlagIsNonInterleaved);
+}
+
+bool CAAudioStreamDescription::isSignedInteger() const
+{
+    return isPCM() && (m_streamDescription.mFormatFlags & kAudioFormatFlagIsSignedInteger);
+}
+
+bool CAAudioStreamDescription::isFloat() const
+{
+    return isPCM() && (m_streamDescription.mFormatFlags & kAudioFormatFlagIsFloat);
+}
+
+bool CAAudioStreamDescription::isNativeEndian() const
+{
+    return isPCM() && (m_streamDescription.mFormatFlags & kAudioFormatFlagIsBigEndian) == kAudioFormatFlagsNativeEndian;
+}
+
+uint32_t CAAudioStreamDescription::numberOfInterleavedChannels() const
+{
+    return isInterleaved() ? m_streamDescription.mChannelsPerFrame : 1;
+}
+
+uint32_t CAAudioStreamDescription::numberOfChannelStreams() const
+{
+    return isInterleaved() ? 1 : m_streamDescription.mChannelsPerFrame;
+}
+
+uint32_t CAAudioStreamDescription::numberOfChannels() const
+{
+    return m_streamDescription.mChannelsPerFrame;
+}
+
+uint32_t CAAudioStreamDescription::sampleWordSize() const
+{
+    return (m_streamDescription.mBytesPerFrame > 0 && numberOfInterleavedChannels()) ? m_streamDescription.mBytesPerFrame / numberOfInterleavedChannels() :  0;
+}
+
+uint32_t CAAudioStreamDescription::bytesPerFrame() const
+{
+    return m_streamDescription.mBytesPerFrame;
+}
+
+uint32_t CAAudioStreamDescription::bytesPerPacket() const
+{
+    return m_streamDescription.mBytesPerPacket;
+}
+
+uint32_t CAAudioStreamDescription::formatFlags() const
+{
+    return m_streamDescription.mFormatFlags;
+}
+
+bool CAAudioStreamDescription::operator==(const AudioStreamBasicDescription& other) const
+{
+    return m_streamDescription == other;
+}
+
+bool CAAudioStreamDescription::operator!=(const AudioStreamBasicDescription& other) const
+{
+    return !operator==(other);
+}
+
+bool CAAudioStreamDescription::operator==(const AudioStreamDescription& other) const
+{
+    if (other.platformDescription().type != PlatformDescription::CAAudioStreamBasicType)
+        return false;
+
+    return operator==(*WTF::get<const AudioStreamBasicDescription*>(other.platformDescription().description));
+}
+
+bool CAAudioStreamDescription::operator!=(const AudioStreamDescription& other) const
+{
+    return !operator==(other);
+}
+
+const AudioStreamBasicDescription& CAAudioStreamDescription::streamDescription() const
+{
+    return m_streamDescription;
+}
+
+AudioStreamBasicDescription& CAAudioStreamDescription::streamDescription()
+{
+    return m_streamDescription;
 }
 
 }

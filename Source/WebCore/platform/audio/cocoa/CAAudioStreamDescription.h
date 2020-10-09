@@ -35,9 +35,7 @@ inline bool operator!=(const AudioStreamBasicDescription& a, const AudioStreamBa
 
 class WEBCORE_EXPORT CAAudioStreamDescription final : public AudioStreamDescription {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-
     CAAudioStreamDescription();
     CAAudioStreamDescription(const AudioStreamBasicDescription&);
     CAAudioStreamDescription(double, uint32_t, PCMFormat, bool);
@@ -47,36 +45,28 @@ public:
 
     PCMFormat format() const final;
 
-    double sampleRate() const final { return m_streamDescription.mSampleRate; }
-    bool isPCM() const final { return m_streamDescription.mFormatID == kAudioFormatLinearPCM; }
-    bool isInterleaved() const final { return !(m_streamDescription.mFormatFlags & kAudioFormatFlagIsNonInterleaved); }
-    bool isSignedInteger() const final { return isPCM() && (m_streamDescription.mFormatFlags & kAudioFormatFlagIsSignedInteger); }
-    bool isFloat() const final { return isPCM() && (m_streamDescription.mFormatFlags & kAudioFormatFlagIsFloat); }
-    bool isNativeEndian() const final { return isPCM() && (m_streamDescription.mFormatFlags & kAudioFormatFlagIsBigEndian) == kAudioFormatFlagsNativeEndian; }
+    double sampleRate() const final;
+    bool isPCM() const final;
+    bool isInterleaved() const final;
+    bool isSignedInteger() const final;
+    bool isFloat() const final;
+    bool isNativeEndian() const final;
 
-    uint32_t numberOfInterleavedChannels() const final { return isInterleaved() ? m_streamDescription.mChannelsPerFrame : 1; }
-    uint32_t numberOfChannelStreams() const final { return isInterleaved() ? 1 : m_streamDescription.mChannelsPerFrame; }
-    uint32_t numberOfChannels() const final { return m_streamDescription.mChannelsPerFrame; }
-    uint32_t sampleWordSize() const final {
-        return (m_streamDescription.mBytesPerFrame > 0 && numberOfInterleavedChannels()) ? m_streamDescription.mBytesPerFrame / numberOfInterleavedChannels() :  0;
-    }
-    uint32_t bytesPerFrame() const { return m_streamDescription.mBytesPerFrame; }
-    uint32_t bytesPerPacket() const { return m_streamDescription.mBytesPerPacket; }
-    uint32_t formatFlags() const { return m_streamDescription.mFormatFlags; }
+    uint32_t numberOfInterleavedChannels() const final;
+    uint32_t numberOfChannelStreams() const final;
+    uint32_t numberOfChannels() const final;
+    uint32_t sampleWordSize() const final;
+    uint32_t bytesPerFrame() const;
+    uint32_t bytesPerPacket() const;
+    uint32_t formatFlags() const;
 
-    bool operator==(const AudioStreamBasicDescription& other) const { return m_streamDescription == other; }
-    bool operator!=(const AudioStreamBasicDescription& other) const { return !operator == (other); }
-    bool operator==(const AudioStreamDescription& other) const
-    {
-        if (other.platformDescription().type != PlatformDescription::CAAudioStreamBasicType)
-            return false;
+    bool operator==(const AudioStreamBasicDescription& other) const;
+    bool operator!=(const AudioStreamBasicDescription& other) const;
+    bool operator==(const AudioStreamDescription& other) const;
+    bool operator!=(const AudioStreamDescription& other) const;
 
-        return operator==(*WTF::get<const AudioStreamBasicDescription*>(other.platformDescription().description));
-    }
-    bool operator!=(const AudioStreamDescription& other) const { return !operator == (other); }
-
-    const AudioStreamBasicDescription& streamDescription() const { return m_streamDescription; }
-    AudioStreamBasicDescription& streamDescription() { return m_streamDescription; }
+    const AudioStreamBasicDescription& streamDescription() const;
+    AudioStreamBasicDescription& streamDescription();
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, CAAudioStreamDescription&);

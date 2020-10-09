@@ -203,6 +203,10 @@ page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm
 page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm
 platform/audio/AudioSession.cpp
 platform/audio/cocoa/AudioDestinationCocoa.cpp
+platform/audio/cocoa/AudioSampleBufferList.cpp
+platform/audio/cocoa/AudioSampleDataSource.mm
+platform/audio/cocoa/CAAudioStreamDescription.cpp
+platform/audio/cocoa/CARingBuffer.cpp
 platform/audio/cocoa/MediaSessionManagerCocoa.mm
 platform/audio/cocoa/WebAudioBufferList.cpp
 platform/audio/ios/AudioDestinationIOS.cpp @no-unify
@@ -214,11 +218,7 @@ platform/audio/mac/AudioBusMac.mm
 platform/audio/mac/AudioDestinationMac.cpp
 platform/audio/mac/AudioFileReaderMac.cpp
 platform/audio/mac/AudioHardwareListenerMac.cpp
-platform/audio/mac/AudioSampleBufferList.cpp
-platform/audio/mac/AudioSampleDataSource.mm
 platform/audio/mac/AudioSessionMac.mm
-platform/audio/mac/CAAudioStreamDescription.cpp
-platform/audio/mac/CARingBuffer.cpp
 platform/audio/mac/FFTFrameMac.cpp
 platform/cf/KeyedDecoderCF.cpp
 platform/cf/KeyedEncoderCF.cpp
