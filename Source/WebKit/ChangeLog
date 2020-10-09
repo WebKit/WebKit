@@ -1,5 +1,20 @@
 2020-10-09  Youenn Fablet  <youenn@apple.com>
 
+        Switch Allow/Don't Allow buttons in getUserMedia prompt
+        https://bugs.webkit.org/show_bug.cgi?id=217513
+        <rdar://problem/70134429>
+
+        Reviewed by Eric Carlson.
+
+        Return NotAllowedError instead of SecurityError in case user denies with default prompt.
+        Make sure to have the Allow button in iOS prompt on the right instead of the left.
+        Tested in MiniBrowser and MobileMiniBrowser.
+
+        * UIProcess/Cocoa/UserMediaPermissionRequestProxy.mm:
+        (WebKit::UserMediaPermissionRequestProxy::doDefaultAction):
+
+2020-10-09  Youenn Fablet  <youenn@apple.com>
+
         Implement TCC checks in UserMediaPermissionRequestManagerProxy
         https://bugs.webkit.org/show_bug.cgi?id=217508
         <rdar://problem/70129993>
