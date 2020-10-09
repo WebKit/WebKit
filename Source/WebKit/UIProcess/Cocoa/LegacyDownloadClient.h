@@ -47,9 +47,9 @@ public:
 private:
     // From API::DownloadClient
     void didStart(DownloadProxy&) final;
-    void didReceiveResponse(DownloadProxy&, const WebCore::ResourceResponse&) final;
+    void didReceiveResponse(DownloadProxy&, const WebCore::ResourceResponse&);
     void didReceiveData(DownloadProxy&, uint64_t, uint64_t, uint64_t) final;
-    void decideDestinationWithSuggestedFilename(DownloadProxy&, const String& suggestedFilename, Function<void(AllowOverwrite, String)>&&) final;
+    void decideDestinationWithSuggestedFilename(DownloadProxy&, const WebCore::ResourceResponse&, const String& suggestedFilename, CompletionHandler<void(AllowOverwrite, String)>&&) final;
     void didFinish(DownloadProxy&) final;
     void didFail(DownloadProxy&, const WebCore::ResourceError&) final;
     void didCancel(DownloadProxy&) final;

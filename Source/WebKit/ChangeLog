@@ -1,3 +1,30 @@
+2020-10-09  Alex Christensen  <achristensen@webkit.org>
+
+        Merge DownloadProxy::DidReceiveResponse and DownloadProxy::DecideDestinationWithSuggestedFilename into one message
+        https://bugs.webkit.org/show_bug.cgi?id=217519
+
+        Reviewed by Youenn Fablet.
+
+        No change in behavior.  The current API has them as separate callbacks so we can have them as separate messages,
+        but future API probably won't, so let's merge them.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::findPendingDownloadLocation):
+        * UIProcess/API/APIDownloadClient.h:
+        (API::DownloadClient::didReceiveAuthenticationChallenge):
+        (API::DownloadClient::decideDestinationWithSuggestedFilename):
+        (API::DownloadClient::didReceiveResponse): Deleted.
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetDownloadClient):
+        * UIProcess/Cocoa/LegacyDownloadClient.h:
+        * UIProcess/Cocoa/LegacyDownloadClient.mm:
+        (WebKit::LegacyDownloadClient::decideDestinationWithSuggestedFilename):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilename):
+        (WebKit::DownloadProxy::didReceiveResponse): Deleted.
+        * UIProcess/Downloads/DownloadProxy.h:
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+
 2020-10-09  Kate Cheney  <katherine_cheney@apple.com>
 
         Promote WKWebView media playback SPI to API
