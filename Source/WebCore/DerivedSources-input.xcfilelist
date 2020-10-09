@@ -951,6 +951,7 @@ $(PROJECT_DIR)/html/canvas/EXTColorBufferHalfFloat.idl
 $(PROJECT_DIR)/html/canvas/EXTFloatBlend.idl
 $(PROJECT_DIR)/html/canvas/EXTFragDepth.idl
 $(PROJECT_DIR)/html/canvas/EXTShaderTextureLOD.idl
+$(PROJECT_DIR)/html/canvas/EXTTextureCompressionRGTC.idl
 $(PROJECT_DIR)/html/canvas/EXTTextureFilterAnisotropic.idl
 $(PROJECT_DIR)/html/canvas/EXTsRGB.idl
 $(PROJECT_DIR)/html/canvas/ImageBitmapRenderingContext.idl
