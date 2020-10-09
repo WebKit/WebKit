@@ -32,9 +32,9 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-class LegacyPath {
+class RunIteratorLegacyPath {
 public:
-    LegacyPath(const InlineBox* inlineBox, Vector<const InlineTextBox*>&& sortedInlineTextBoxes = { }, size_t sortedInlineTextBoxIndex = 0)
+    RunIteratorLegacyPath(const InlineBox* inlineBox, Vector<const InlineTextBox*>&& sortedInlineTextBoxes = { }, size_t sortedInlineTextBoxIndex = 0)
         : m_inlineBox(inlineBox)
         , m_sortedInlineTextBoxes(WTFMove(sortedInlineTextBoxes))
         , m_sortedInlineTextBoxIndex(sortedInlineTextBoxIndex)
@@ -98,7 +98,7 @@ public:
         m_inlineBox = m_inlineBox->previousLeafOnLine();
     }
 
-    bool operator==(const LegacyPath& other) const { return m_inlineBox == other.m_inlineBox; }
+    bool operator==(const RunIteratorLegacyPath& other) const { return m_inlineBox == other.m_inlineBox; }
 
     bool atEnd() const { return !m_inlineBox; }
     void setAtEnd() { m_inlineBox = nullptr; }
@@ -115,7 +115,7 @@ private:
     size_t m_sortedInlineTextBoxIndex { 0 };
 };
 
-inline const InlineTextBox* LegacyPath::nextInlineTextBoxInTextOrder() const
+inline const InlineTextBox* RunIteratorLegacyPath::nextInlineTextBoxInTextOrder() const
 {
     if (!m_sortedInlineTextBoxes.isEmpty()) {
         if (m_sortedInlineTextBoxIndex + 1 < m_sortedInlineTextBoxes.size())

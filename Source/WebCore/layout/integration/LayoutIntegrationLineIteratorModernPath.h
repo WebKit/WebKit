@@ -34,18 +34,18 @@ namespace WebCore {
 
 namespace LayoutIntegration {
 
-class ModernLinePath {
+class LineIteratorModernPath {
 public:
-    ModernLinePath(const InlineContent& inlineContent, size_t lineIndex)
+    LineIteratorModernPath(const InlineContent& inlineContent, size_t lineIndex)
         : m_inlineContent(&inlineContent)
         , m_lineIndex(lineIndex)
     {
         ASSERT(lineIndex <= lines().size());
     }
-    ModernLinePath(ModernLinePath&&) = default;
-    ModernLinePath(const ModernLinePath&) = default;
-    ModernLinePath& operator=(const ModernLinePath&) = default;
-    ModernLinePath& operator=(ModernLinePath&&) = default;
+    LineIteratorModernPath(LineIteratorModernPath&&) = default;
+    LineIteratorModernPath(const LineIteratorModernPath&) = default;
+    LineIteratorModernPath& operator=(const LineIteratorModernPath&) = default;
+    LineIteratorModernPath& operator=(LineIteratorModernPath&&) = default;
 
     LayoutUnit top() const { return LayoutUnit::fromFloatRound(line().rect().y()); }
     LayoutUnit bottom() const { return LayoutUnit::fromFloatRound(line().rect().maxY()); }
@@ -72,7 +72,7 @@ public:
         --m_lineIndex;
     }
 
-    bool operator==(const ModernLinePath& other) const { return m_inlineContent == other.m_inlineContent && m_lineIndex == other.m_lineIndex; }
+    bool operator==(const LineIteratorModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_lineIndex == other.m_lineIndex; }
 
     bool atEnd() const { return m_lineIndex == lines().size(); }
     void setAtEnd() { m_lineIndex = lines().size(); }

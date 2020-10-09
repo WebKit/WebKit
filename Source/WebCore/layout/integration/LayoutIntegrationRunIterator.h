@@ -48,9 +48,9 @@ class PathRun {
 public:
     using PathVariant = Variant<
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-        ModernPath,
+        RunIteratorModernPath,
 #endif
-        LegacyPath
+        RunIteratorLegacyPath
     >;
 
     PathRun(PathVariant&&);
@@ -92,9 +92,9 @@ protected:
 
     // To help with debugging.
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    ModernPath& modernPath();
+    const RunIteratorModernPath& modernPath() const;
 #endif
-    LegacyPath& legacyPath();
+    const RunIteratorLegacyPath& legacyPath() const;
 
     PathVariant m_pathVariant;
 };
@@ -121,7 +121,7 @@ public:
 
 class RunIterator {
 public:
-    RunIterator() : m_run(LegacyPath { nullptr, { } }) { };
+    RunIterator() : m_run(RunIteratorLegacyPath { nullptr, { } }) { };
     RunIterator(PathRun::PathVariant&&);
 
     explicit operator bool() const { return !atEnd(); }

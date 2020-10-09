@@ -313,7 +313,7 @@ TextRunIterator LineLayout::textRunsFor(const RenderText& renderText) const
     if (!firstIndex)
         return { };
 
-    return { LayoutIntegration::ModernPath(*m_inlineContent, *firstIndex) };
+    return { RunIteratorModernPath(*m_inlineContent, *firstIndex) };
 }
 
 RunIterator LineLayout::runFor(const RenderElement& renderElement) const
@@ -326,7 +326,7 @@ RunIterator LineLayout::runFor(const RenderElement& renderElement) const
     for (size_t i = 0; i < m_inlineContent->runs.size(); ++i) {
         auto& run =  m_inlineContent->runs[i];
         if (&run.layoutBox() == layoutBox)
-            return { LayoutIntegration::ModernPath(*m_inlineContent, i) };
+            return { RunIteratorModernPath(*m_inlineContent, i) };
     }
 
     return { };

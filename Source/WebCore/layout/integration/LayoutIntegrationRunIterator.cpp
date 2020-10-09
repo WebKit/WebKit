@@ -86,12 +86,12 @@ LineRunIterator RunIterator::previousOnLineIgnoringLineBreak() const
 
 LineIterator RunIterator::line() const
 {
-    return WTF::switchOn(m_run.m_pathVariant, [](const LegacyPath& path) {
-        return LineIterator(LegacyLinePath(&path.rootInlineBox()));
+    return WTF::switchOn(m_run.m_pathVariant, [](const RunIteratorLegacyPath& path) {
+        return LineIterator(LineIteratorLegacyPath(&path.rootInlineBox()));
     }
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    , [](const ModernPath& path) {
-        return LineIterator(ModernLinePath(*path.m_inlineContent, path.run().lineIndex()));
+    , [](const RunIteratorModernPath& path) {
+        return LineIterator(LineIteratorModernPath(*path.m_inlineContent, path.run().lineIndex()));
     }
 #endif
     );
@@ -177,7 +177,7 @@ TextRunIterator firstTextRunFor(const RenderText& text)
     }
 #endif
 
-    return { LegacyPath { text.firstTextBox() } };
+    return { RunIteratorLegacyPath { text.firstTextBox() } };
 }
 
 TextRunIterator firstTextRunInTextOrderFor(const RenderText& text)
@@ -188,7 +188,7 @@ TextRunIterator firstTextRunInTextOrderFor(const RenderText& text)
             sortedTextBoxes.append(textBox);
         std::sort(sortedTextBoxes.begin(), sortedTextBoxes.end(), InlineTextBox::compareByStart);
         auto* first = sortedTextBoxes[0];
-        return { LegacyPath { first, WTFMove(sortedTextBoxes), 0 } };
+        return { RunIteratorLegacyPath { first, WTFMove(sortedTextBoxes), 0 } };
     }
 
     return firstTextRunFor(text);
@@ -207,7 +207,7 @@ RunIterator runFor(const RenderLineBreak& renderElement)
             return layoutFormattingContextLineLayout->runFor(renderElement);
     }
 #endif
-    return { LegacyPath(renderElement.inlineBoxWrapper()) };
+    return { RunIteratorLegacyPath(renderElement.inlineBoxWrapper()) };
 }
 
 RunIterator runFor(const RenderBox& renderElement)
@@ -218,7 +218,7 @@ RunIterator runFor(const RenderBox& renderElement)
             return layoutFormattingContextLineLayout->runFor(renderElement);
     }
 #endif
-    return { LegacyPath(renderElement.inlineBoxWrapper()) };
+    return { RunIteratorLegacyPath(renderElement.inlineBoxWrapper()) };
 }
 
 LineRunIterator lineRun(const RunIterator& runIterator)
@@ -227,15 +227,15 @@ LineRunIterator lineRun(const RunIterator& runIterator)
 }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-ModernPath& PathRun::modernPath()
+const RunIteratorModernPath& PathRun::modernPath() const
 {
-    return WTF::get<ModernPath>(m_pathVariant);
+    return WTF::get<RunIteratorModernPath>(m_pathVariant);
 }
 #endif
 
-LegacyPath& PathRun::legacyPath()
+const RunIteratorLegacyPath& PathRun::legacyPath() const
 {
-    return WTF::get<LegacyPath>(m_pathVariant);
+    return WTF::get<RunIteratorLegacyPath>(m_pathVariant);
 }
 
 }

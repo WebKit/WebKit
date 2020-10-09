@@ -39,18 +39,14 @@ inline FloatRect verticallyRoundedRect(const FloatRect& rect)
     return { FloatPoint(rect.x(), roundf(rect.y())), rect.size() };
 }
 
-class ModernPath {
+class RunIteratorModernPath {
 public:
-    ModernPath(const InlineContent& inlineContent, size_t startIndex)
+    RunIteratorModernPath(const InlineContent& inlineContent, size_t startIndex)
         : m_inlineContent(&inlineContent)
         , m_runIndex(startIndex)
     {
 
     }
-    ModernPath(ModernPath&&) = default;
-    ModernPath(const ModernPath&) = default;
-    ModernPath& operator=(const ModernPath&) = default;
-    ModernPath& operator=(ModernPath&&) = default;
 
     bool isText() const { return !!run().textContent(); }
 
@@ -178,7 +174,7 @@ public:
             setAtEnd();
     }
 
-    bool operator==(const ModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_runIndex == other.m_runIndex; }
+    bool operator==(const RunIteratorModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_runIndex == other.m_runIndex; }
 
     bool atEnd() const { return m_runIndex == runs().size() || !run().hasUnderlyingLayout(); }
     void setAtEnd() { m_runIndex = runs().size(); }

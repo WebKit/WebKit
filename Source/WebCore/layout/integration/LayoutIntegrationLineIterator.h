@@ -42,9 +42,9 @@ class PathLine {
 public:
     using PathVariant = Variant<
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-        ModernLinePath,
+        LineIteratorModernPath,
 #endif
-        LegacyLinePath
+        LineIteratorLegacyPath
     >;
 
     PathLine(PathVariant&&);
@@ -63,7 +63,7 @@ protected:
 
 class LineIterator {
 public:
-    LineIterator() : m_line(LegacyLinePath { nullptr }) { };
+    LineIterator() : m_line(LineIteratorLegacyPath { nullptr }) { };
     LineIterator(PathLine::PathVariant&&);
 
     LineIterator& operator++() { return traverseNext(); }
