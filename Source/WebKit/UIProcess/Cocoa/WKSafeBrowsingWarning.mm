@@ -253,6 +253,7 @@ static ViewType *makeLabel(NSAttributedString *attributedString)
     label.attributedText = attributedString;
     label.lineBreakMode = NSLineBreakByWordWrapping;
     label.numberOfLines = 0;
+    label.accessibilityTraits = UIAccessibilityTraitHeader;
     return label;
 #endif
 }

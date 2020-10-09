@@ -1,3 +1,15 @@
+2020-10-09  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Mark malware safe browser as a header for VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=217505
+
+        Reviewed by Sam Weinig.
+
+        Mark this UI element as a header for VoiceOver on iOS.
+
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+        (makeLabel):
+
 2020-10-09  Alex Christensen  <achristensen@webkit.org>
 
         Change RELEASE_ASSERT to ASSERT in networkProcessesSet
