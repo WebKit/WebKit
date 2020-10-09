@@ -23,6 +23,10 @@
         height: 50px;
     }
 </style>
+<script>
+    if (window.internals)
+        internals.settings.setCanvasUsesAcceleratedDrawing(false);
+</script>
 <body>
     <b>CanvasRenderingContext2D.drawImage() should ignore the image's EXIF orientation if its style image-orientation is set to "none".</b>
     <br>

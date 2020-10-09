@@ -1,3 +1,159 @@
+2020-10-08  Sam Weinig  <weinig@apple.com>
+
+        Refactor TestOptions code in WebKitTestRunner to make it easier to rationalize and extend
+        https://bugs.webkit.org/show_bug.cgi?id=217390
+
+        Reviewed by Darin Adler.
+
+        Refactors TestOptions code in WebKitTestRunner to make it clear how options coming in at 
+        different levels are treated and what precedence each has. The order is (from least to most):
+        
+        - Global features passed to WebKitTestRunner via the command line (e.g. --show-touches)
+        - Hardcoded features based on the path of the test being run (hopefully we can remove all soon)
+        - Hardcoded platform specific defaults (currently only used by macOS for useThreadedScrolling).
+        - Features from the test headers within the test itself.
+        - Finally, a second chance for more platform specific defaults (currenly only used the Cocoa ports
+          for setting enableProcessSwapOnNavigation and enableProcessSwapOnWindowOpen based on NSUserDefaults.)
+
+        To make this change work, and pave the way for future autogeneration of some of these test options,
+        the TestOptions struct (now class) was overhauled. Instead of storing the state itself, TestOptions
+        is now an immutable owner of a TestFeatures object. TestFeatures is a simple struct that contains maps 
+        of option keys to values and can be merged with other TestFeatures objects. TestOptions takes a 
+        TestFeatures at construction, and exposes getters for all keys, as well as defaults for when they are
+        not in the maps. In future changes, I would like to remove many of these (the ones that correspond
+        with WebKit preferences anyway) and have the keys and values automatically dealt with by WKPreferences.
+
+        * WebKitTestRunner/Options.cpp:
+        * WebKitTestRunner/Options.h:
+        Switch to std::unordered_map for consistency and ease of conversion.
+
+        * WebKitTestRunner/PlatformWebView.h:
+        (WTR::PlatformWebView::viewSupportsOptions const):
+        Update to call new TestOptions functions.
+
+        * WebKitTestRunner/StringFunctions.h:
+        (WTR::toWK):
+        (WTR::toWTFString):
+        Add conversions for std::string.
+
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        Replace some bools with a new global TestFeatures instance that forms the base of
+        all TestFeatures merges.
+        
+        (WTR::TestController::generateContextConfiguration const):
+        (WTR::TestController::generatePageConfiguration):
+        (WTR::TestController::createWebViewWithOptions):
+        (WTR::TestController::ensureViewSupportsOptionsForTest):
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        (WTR::TestController::resetStateToConsistentValues):
+        Update to call new TestOptions functions.
+        
+        (WTR::TestController::createTestURL):
+        Expose as a static member function on TestController for use in other files.
+        
+        (WTR::TestController::testOptionsForTest const):
+        Rework to be a sequence of TestFeatures merges.
+        
+        (WTR::TestController::updateWebViewSizeForTest):
+        (WTR::TestController::updateWindowScaleForTest):
+        Update to call new TestOptions functions.
+        
+        (WTR::createTestURL): Deleted.
+        (WTR::parseBooleanTestHeaderValue): Deleted.
+        (WTR::parseStringTestHeaderValueAsRelativePath): Deleted.
+        (WTR::parseStringTestHeaderValueAsURL): Deleted.
+        (WTR::updateTestOptionsFromTestHeader): Deleted.
+        (WTR::TestController::platformAddTestOptions const): Deleted.
+        Moved TestOptions parsing to TestOptions.cpp
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::createTestSettingsDictionary):
+        Update to call new TestOptions functions.
+
+        * WebKitTestRunner/TestOptions.h:
+        Reworks TestOptions to be an immutable owner of a TestFeatures struct, which is a set
+        of maps that map feature string keys, to values of type bool, double, string or string vector.
+
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::merge):
+        Merges two TestFeatures objects. If both contain the same key, the 'additional'
+        TestFeatures overrides the 'base' TestFeatures.
+
+        (WTR::dumpFeatures):
+        Helper to dump features to stderr, useful for debugging.
+
+        (WTR::keyType):
+        Helper for parser to know which value parser to use.
+
+        (WTR::parseBooleanTestHeaderValue):
+        (WTR::parseStringTestHeaderValueAsRelativePath):
+        (WTR::parseStringTestHeaderValueAsURL):
+        Value parsers moved from TestController.cpp
+
+        (WTR::parseTestHeader):
+        Header parser moved from TestController.cpp. Update to now return
+        a TestFeatures object and use keyType to pick value parser rather
+        than inlining the if statements.
+        
+        (WTR::hardcodedFeaturesBasedOnPathForTest):
+        Moved from the TestOptions contructor and reworked to return a TestFeatures
+        object to be merged by the caller.
+
+        (WTR::featureDefaultsFromTestHeaderForTest):
+        Creates a TestFeatures for the test headers of the current test.
+
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformSpecificFeatureOverridesDefaultsForTest const):
+        Reworked to now return a TestFeatures object that will be merged, rather than updating
+        a TestOptions. Moves enableInAppBrowserPrivacy work to TestController::platformWillRunTest
+        where it is more appropriate.
+
+        (WTR::TestController::platformInitializeDataStore):
+        (WTR::TestController::platformCreateWebView):
+        (WTR::TestController::finishCreatingPlatformWebView):
+        (WTR::TestController::setApplicationBundleIdentifier):
+        (WTR::TestController::cocoaResetStateToConsistentValues):
+        (WTR::contentMode):
+        Update to call new TestOptions functions.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        (WTR::TestController::platformConfigureViewForTest):
+        Update to call new TestOptions functions.
+        
+        (WTR::TestController::platformSpecificFeatureDefaultsForTest const):
+        (WTR::TestController::updatePlatformSpecificTestOptionsForTest const): Deleted.
+        Moved GeneratedTouchesDebugWindow work to TestController::platformConfigureViewForTest
+        where it is more appropriate and removed shouldShowTouches setting as that is done
+        globally now. 
+        
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView):
+        Update to call new TestOptions functions.
+
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformSpecificFeatureDefaultsForTest const):
+        (WTR::TestController::updatePlatformSpecificTestOptionsForTest const): Deleted.
+        Remove shouldUseRemoteLayerTree and shouldShowWebView, as those are now done globally,
+        and re-implemented useThreadedScrolling to use boolFeatures.
+
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::TestController::platformSpecificFeatureDefaultsForTest const):
+        (WTR::TestController::updatePlatformSpecificTestOptionsForTest const): Deleted.
+        Updated for new signature.
+
+        * WebKitTestRunner/wpe/TestControllerWPE.cpp:
+        (WTR::TestController::platformSpecificFeatureDefaultsForTest const):
+        (WTR::TestController::updatePlatformSpecificTestOptionsForTest const): Deleted.
+        Updated for new signature.
+
+        * WebKitTestRunner/gtk/TestControllerGTK.cpp:
+        (WTR::TestController::platformSpecificFeatureDefaultsForTest const):
+        (WTR::TestController::updatePlatformSpecificTestOptionsForTest const): Deleted.
+        Updated for new signature.
+
 2020-10-08  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r267763): [ iOS wk2 ] http/tests/in-app-browser-privacy/non-app-bound-domain-does-not-get-app-bound-session.html is a constant failure

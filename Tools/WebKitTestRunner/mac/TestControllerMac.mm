@@ -172,11 +172,11 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
     return true;
 }
 
-void TestController::updatePlatformSpecificTestOptionsForTest(TestOptions& options, const std::string&) const
+TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCommand&) const
 {
-    options.useThreadedScrolling = true;
-    options.useRemoteLayerTree = shouldUseRemoteLayerTree();
-    options.shouldShowWebView = shouldShowWebView();
+    TestFeatures features;
+    features.boolFeatures.insert({ "useThreadedScrolling", true });
+    return features;
 }
 
 void TestController::configureContentExtensionForTest(const TestInvocation& test)

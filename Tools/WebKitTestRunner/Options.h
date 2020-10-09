@@ -31,8 +31,8 @@
 #include <set>
 #include <stdio.h>
 #include <string>
+#include <unordered_map>
 #include <vector>
-#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -57,8 +57,8 @@ struct Options {
 #endif
     std::vector<std::string> paths;
     std::set<std::string> allowedHosts;
-    HashMap<String, bool> internalFeatures;
-    HashMap<String, bool> experimentalFeatures;
+    std::unordered_map<std::string, bool> internalFeatures;
+    std::unordered_map<std::string, bool> experimentalFeatures;
 };
 
 class Option {
