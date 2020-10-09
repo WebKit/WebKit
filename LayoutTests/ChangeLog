@@ -1,3 +1,12 @@
+2020-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, unskip several canvas-related layout test directories when enabling GPU process
+
+        The vast majority of tests in these directories now pass; we can now enable these directories by default, and
+        track the remaining tests as individual failures.
+
+        * gpu-process/TestExpectations:
+
 2020-10-08  James Darpinian  <jdarpinian@chromium.org>
 
         Support EXT_texture_compression_rgtc WebGL extension
