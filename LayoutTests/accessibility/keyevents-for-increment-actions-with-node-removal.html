@@ -1,5 +1,4 @@
 <html>
-<html>
 <head>
 <script src="../resources/js-test-pre.js"></script>
 </head>
@@ -15,8 +14,10 @@
 
 <p id="description"></p>
 <div id="console"></div>
-     
+
 <script>
+    description("This test makes sure if a keydown event removes the node, bad things don't happen.");
+
     function handleKeyUp(event) {
         debug("Key up should NOT be reached");
     }
@@ -30,8 +31,7 @@
     }
 
     if (window.accessibilityController) {
-        jsTestIsAsync = true;
-        description("This test makes sure if a keydown event removes the node, bad things don't happen.");
+        window.jsTestIsAsync = true;
 
         document.getElementById("slider").addEventListener('keydown', handleKeyDown);
         document.getElementById("slider").addEventListener('keyup', handleKeyUp);
@@ -40,8 +40,7 @@
         var axSlider = accessibilityController.accessibleElementById("slider");
         axSlider.increment();
     }
- </script>
-
+</script>
 <script src="../resources/js-test-post.js"></script>
 </body>
 </html>

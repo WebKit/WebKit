@@ -451,8 +451,8 @@ private:
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override { return String(); }
     Optional<SimpleRange> misspellingRange(const SimpleRange&, AccessibilitySearchDirection) const override { return WTF::nullopt; }
     FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const override { return FloatRect(); }
-    void increment() override { }
-    void decrement() override { }
+    void increment() override;
+    void decrement() override;
     bool performDismissAction() override;
     void scrollToMakeVisible() const override { }
     void scrollToMakeVisibleWithSubFocus(const IntRect&) const override { }

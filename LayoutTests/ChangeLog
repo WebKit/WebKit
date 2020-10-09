@@ -1,3 +1,17 @@
+2020-10-09  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for accessibility tests keyevents-posted-for-increment-actions.html and keyevents-for-increment-actions-with-node-removal.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=217501
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/keyevents-for-increment-actions-with-node-removal.html:
+        Removed extra <html> tag and minor spacing and reordering to make it
+        more consistent with other accessibility tests.
+        * accessibility/keyevents-posted-for-increment-actions.html:
+        Corrected number of expected key events from 4 to 8.
+        Same minor spacing and ordering changes.
+
 2020-10-09  Martin Robinson  <mrobinson@webkit.org>
 
         Import scroll-snap WPT tests from upstream

@@ -962,6 +962,20 @@ bool AXIsolatedObject::press()
     return false;
 }
 
+void AXIsolatedObject::increment()
+{
+    performFunctionOnMainThread([](AXCoreObject* axObject) {
+        axObject->increment();
+    });
+}
+
+void AXIsolatedObject::decrement()
+{
+    performFunctionOnMainThread([](AXCoreObject* axObject) {
+        axObject->decrement();
+    });
+}
+
 bool AXIsolatedObject::performDefaultAction()
 {
     ASSERT_NOT_REACHED();

@@ -1,5 +1,4 @@
 <html>
-<html>
 <head>
 <script src="../resources/js-test-pre.js"></script>
 </head>
@@ -15,29 +14,30 @@
 
 <p id="description"></p>
 <div id="console"></div>
-     
+
 <script>
+    description("This test verifies that the increment/decrement actions post keyboard events that are correct for LTR and orientation.");
+
     var keyCount = 0;
     function handleKeyDown(event) {
         debug("Keycode received: identifier: " + event.keyIdentifier + " key name: " + event.key);
         event.preventDefault();
         event.stopPropagation();
+
         keyCount++;
-        if (keyCount == 4) {
+        if (keyCount == 8)
             finishJSTest();
-        }
-     }
+    }
 
     if (window.accessibilityController) {
-        jsTestIsAsync = true;
-        description("This test verifies that the increment/decrement actions post keyboard events that are correct for LTR and orientation.");
+        window.jsTestIsAsync = true;
 
         document.getElementById("slider").addEventListener('keydown', handleKeyDown);
 
         // Get the parent element.
         var axSlider = accessibilityController.accessibleElementById("slider");
-        
-        debug("Increment/Decrement - LTR");    
+
+        debug("Increment/Decrement - LTR");
         incrementDecrement();
 
         debug("Increment/Decrement - RTL");
@@ -56,8 +56,7 @@
             axSlider.decrement();
         }
     }
- </script>
-
+</script>
 <script src="../resources/js-test-post.js"></script>
 </body>
 </html>
