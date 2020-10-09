@@ -291,7 +291,6 @@ void LineLayout::adjustForPagination(RenderBlockFlow& flow)
 void LineLayout::collectOverflow(RenderBlockFlow& flow)
 {
     ASSERT(&flow == &m_flow);
-    ASSERT(!flow.hasOverflowClip());
 
     for (auto& line : inlineContent()->lines) {
         flow.addLayoutOverflow(Layout::toLayoutRect(line.scrollableOverflow()));

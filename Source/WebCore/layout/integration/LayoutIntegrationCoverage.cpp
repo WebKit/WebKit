@@ -191,13 +191,13 @@ static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBlockFlow& fl
 static OptionSet<AvoidanceReason> canUseForStyle(const RenderStyle& style, IncludeReasons includeReasons)
 {
     OptionSet<AvoidanceReason> reasons;
+    if ((style.overflowX() != Overflow::Visible && style.overflowX() != Overflow::Hidden)
+        || (style.overflowY() != Overflow::Visible && style.overflowY() != Overflow::Hidden))
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasOverflowNotVisible, reasons, includeReasons);
     if (style.textOverflow() == TextOverflow::Ellipsis)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextOverflow, reasons, includeReasons);
     if (style.textUnderlinePosition() != TextUnderlinePosition::Auto || !style.textUnderlineOffset().isAuto() || !style.textDecorationThickness().isAuto())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedUnderlineDecoration, reasons, includeReasons);
-    // Non-visible overflow should be pretty easy to support.
-    if (style.overflowX() != Overflow::Visible || style.overflowY() != Overflow::Visible)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasOverflowNotVisible, reasons, includeReasons);
     if (!style.isLeftToRightDirection())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsNotLTR, reasons, includeReasons);
     if (!(style.lineBoxContain().contains(LineBoxContain::Block)))
