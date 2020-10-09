@@ -571,7 +571,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     if (!parameters.crossOriginAccessControlCheckEnabled)
         CrossOriginAccessControlCheckDisabler::singleton().setCrossOriginAccessControlCheckEnabled(false);
 
-#if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(IOS_FAMILY)
+#if ENABLE(ATTACHMENT_ELEMENT)
     if (parameters.frontboardExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.frontboardExtensionHandle);
     if (parameters.iconServicesExtensionHandle)

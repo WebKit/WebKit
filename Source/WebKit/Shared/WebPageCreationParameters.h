@@ -156,6 +156,8 @@ struct WebPageCreationParameters {
     double viewportConfigurationMinimumEffectiveDeviceWidth;
     WebCore::FloatSize viewportConfigurationViewSize;
     Optional<WebCore::ViewportArguments> overrideViewportArguments;
+#endif
+#if ENABLE(ATTACHMENT_ELEMENT)
     Optional<SandboxExtension::Handle> frontboardExtensionHandle;
     Optional<SandboxExtension::Handle> iconServicesExtensionHandle;
 #endif

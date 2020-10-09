@@ -998,6 +998,7 @@
             "com.apple.cfprefsd.daemon"
             "com.apple.containermanagerd"
             "com.apple.diagnosticd"
+            "com.apple.iconservices"
             "com.apple.tccd"
             "com.apple.BluetoothServices"
 

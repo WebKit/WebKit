@@ -94,6 +94,9 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << viewportConfigurationMinimumEffectiveDeviceWidth;
     encoder << viewportConfigurationViewSize;
     encoder << overrideViewportArguments;
+#endif
+
+#if ENABLE(ATTACHMENT_ELEMENT)
     encoder << frontboardExtensionHandle;
     encoder << iconServicesExtensionHandle;
 #endif
@@ -322,7 +325,9 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!overrideViewportArguments)
         return WTF::nullopt;
     parameters.overrideViewportArguments = WTFMove(*overrideViewportArguments);
+#endif
 
+#if ENABLE(ATTACHMENT_ELEMENT)
     Optional<Optional<SandboxExtension::Handle>> frontboardExtensionHandle;
     decoder >> frontboardExtensionHandle;
     if (!frontboardExtensionHandle)

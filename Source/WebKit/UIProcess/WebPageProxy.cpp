@@ -7923,11 +7923,13 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.themeName = pageClient().themeName();
 #endif
 
-#if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(IOS_FAMILY)
+#if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(COCOA)
     if (m_preferences->attachmentElementEnabled() && !m_process->hasIssuedAttachmentElementRelatedSandboxExtensions()) {
         SandboxExtension::Handle handle;
+#if PLATFORM(IOS_FAMILY)
         SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices"_s, WTF::nullopt, handle);
         parameters.frontboardExtensionHandle = WTFMove(handle);
+#endif
         SandboxExtension::createHandleForMachLookup("com.apple.iconservices"_s, WTF::nullopt, handle);
         parameters.iconServicesExtensionHandle = WTFMove(handle);
         m_process->setHasIssuedAttachmentElementRelatedSandboxExtensions();
