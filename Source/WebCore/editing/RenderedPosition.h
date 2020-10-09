@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationRunIterator.h"
 #include "TextAffinity.h"
 
@@ -48,6 +49,8 @@ public:
     bool isEquivalent(const RenderedPosition&) const;
 
     bool isNull() const { return !m_renderer; }
+    LayoutIntegration::LineIterator line() const { return m_run ? m_run.line() : LayoutIntegration::LineIterator(); }
+
     RootInlineBox* rootBox() { return m_run ? &m_run->legacyInlineBox()->root() : nullptr; }
 
     unsigned char bidiLevelOnLeft() const;

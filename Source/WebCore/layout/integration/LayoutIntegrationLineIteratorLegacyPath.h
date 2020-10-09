@@ -64,6 +64,30 @@ public:
     bool atEnd() const { return !m_rootInlineBox; }
     void setAtEnd() { m_rootInlineBox = nullptr; }
 
+    RunIteratorLegacyPath firstRun() const
+    {
+        return { m_rootInlineBox->firstLeafDescendant() };
+    }
+
+    RunIteratorLegacyPath lastRun() const
+    {
+        return { m_rootInlineBox->lastLeafDescendant() };
+    }
+
+    RunIteratorLegacyPath logicalStartRunWithNode() const
+    {
+        InlineBox* box = nullptr;
+        m_rootInlineBox->getLogicalStartBoxWithNode(box);
+        return { box };
+    }
+
+    RunIteratorLegacyPath logicalEndRunWithNode() const
+    {
+        InlineBox* box = nullptr;
+        m_rootInlineBox->getLogicalEndBoxWithNode(box);
+        return { box };
+    }
+
 private:
 
     const RootInlineBox* m_rootInlineBox;

@@ -170,13 +170,15 @@ void LineLayout::constructContent()
             auto overflowHeight = std::max(line.logicalHeight(), lineBoxLogicalBottom);
             auto scrollableOverflowRect = FloatRect { line.logicalLeft(), line.logicalTop(), overflowWidth, overflowHeight };
 
+            auto firstRunIndex = runIndex;
             auto lineInkOverflowRect = scrollableOverflowRect;
             while (runIndex < runs.size() && runs[runIndex].lineIndex() == lineIndex)
                 lineInkOverflowRect.unite(runs[runIndex++].inkOverflow());
+            auto runCount = runIndex - firstRunIndex;
             auto lineRect = FloatRect { line.logicalRect() };
             // Painting code (specifically TextRun's xPos) needs the line box offset to be able to compute tab positions.
             lineRect.setX(lineBoxLogicalRect.left());
-            displayInlineContent.lines.append({ lineRect, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.horizontalAlignmentOffset() });
+            displayInlineContent.lines.append({ firstRunIndex, runCount, lineRect, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.horizontalAlignmentOffset() });
         }
     };
     constructDisplayLine();

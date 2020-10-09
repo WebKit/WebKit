@@ -777,8 +777,8 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
     if (c.isNull())
         return VisiblePosition();
 
-    RootInlineBox* rootBox = RenderedPosition(c).rootBox();
-    if (!rootBox) {
+    auto line = RenderedPosition(c).line();
+    if (!line) {
         // There are VisiblePositions at offset 0 in blocks without
         // RootInlineBoxes, like empty editable blocks and bordered blocks.
         Position p = c.deepEquivalent();
@@ -789,28 +789,29 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
     }
 
     Node* startNode;
-    InlineBox* startBox;
+    LayoutIntegration::LineRunIterator startRun;
     if (mode == UseLogicalOrdering) {
-        startNode = rootBox->getLogicalStartBoxWithNode(startBox);
-        if (!startNode)
+        startRun = line.logicalStartRunWithNode();
+        if (!startRun)
             return VisiblePosition();
+        startNode = startRun->renderer().node();
     } else {
         // Generated content (e.g. list markers and CSS :before and :after pseudoelements) have no corresponding DOM element,
         // and so cannot be represented by a VisiblePosition. Use whatever follows instead.
-        startBox = rootBox->firstLeafDescendant();
+        startRun = line.firstRun();
         while (true) {
-            if (!startBox)
+            if (!startRun)
                 return VisiblePosition();
 
-            startNode = startBox->renderer().nonPseudoNode();
+            startNode = startRun->renderer().nonPseudoNode();
             if (startNode)
                 break;
 
-            startBox = startBox->nextLeafOnLine();
+            startRun.traverseNextOnLine();
         }
     }
 
-    return is<Text>(*startNode) ? Position(downcast<Text>(startNode), downcast<InlineTextBox>(*startBox).start())
+    return is<Text>(*startNode) ? Position(downcast<Text>(startNode), downcast<LayoutIntegration::PathTextRun>(*startRun).localStartOffset())
         : positionBeforeNode(startNode);
 }
 
@@ -852,8 +853,8 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
     if (c.isNull())
         return VisiblePosition();
 
-    RootInlineBox* rootBox = RenderedPosition(c).rootBox();
-    if (!rootBox) {
+    auto line = RenderedPosition(c).line();
+    if (!line) {
         // There are VisiblePositions at offset 0 in blocks without
         // RootInlineBoxes, like empty editable blocks and bordered blocks.
         Position p = c.deepEquivalent();
@@ -863,35 +864,36 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
     }
 
     Node* endNode;
-    InlineBox* endBox;
+    LayoutIntegration::LineRunIterator endRun;
     if (mode == UseLogicalOrdering) {
-        endNode = rootBox->getLogicalEndBoxWithNode(endBox);
-        if (!endNode)
+        endRun = line.logicalEndRunWithNode();
+        if (!endRun)
             return VisiblePosition();
+        endNode = endRun->renderer().node();
     } else {
         // Generated content (e.g. list markers and CSS :before and :after pseudoelements) have no corresponding DOM element,
         // and so cannot be represented by a VisiblePosition. Use whatever precedes instead.
-        endBox = rootBox->lastLeafDescendant();
+        endRun = line.lastRun();
         while (true) {
-            if (!endBox)
+            if (!endRun)
                 return VisiblePosition();
 
-            endNode = endBox->renderer().nonPseudoNode();
+            endNode = endRun->renderer().nonPseudoNode();
             if (endNode)
                 break;
             
-            endBox = endBox->previousLeafOnLine();
+            endRun.traversePreviousOnLine();
         }
     }
 
     Position pos;
     if (is<HTMLBRElement>(*endNode))
         pos = positionBeforeNode(endNode);
-    else if (is<InlineTextBox>(*endBox) && is<Text>(*endNode)) {
-        auto& endTextBox = downcast<InlineTextBox>(*endBox);
-        int endOffset = endTextBox.start();
-        if (!endTextBox.isLineBreak())
-            endOffset += endTextBox.len();
+    else if (is<LayoutIntegration::PathTextRun>(*endRun) && is<Text>(*endNode)) {
+        auto& endTextRun = downcast<LayoutIntegration::PathTextRun>(*endRun);
+        int endOffset = endTextRun.localStartOffset();
+        if (!endTextRun.isLineBreak())
+            endOffset += endTextRun.length();
         pos = Position(downcast<Text>(endNode), endOffset);
     } else
         pos = positionAfterNode(endNode);

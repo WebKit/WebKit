@@ -127,6 +127,8 @@ static Ref<InlineContent> makeAdjustedContent(const InlineContent& inlineContent
     auto adjustedLine = [&](const Line& line, float offset)
     {
         return Line {
+            line.firstRunIndex(),
+            line.runCount(),
             moveVertically(line.rect(), offset),
             moveVertically(line.scrollableOverflow(), offset),
             moveVertically(line.inkOverflow(), offset),

@@ -41,11 +41,15 @@ inline FloatRect verticallyRoundedRect(const FloatRect& rect)
 
 class RunIteratorModernPath {
 public:
+    RunIteratorModernPath(const InlineContent& inlineContent)
+        : m_inlineContent(&inlineContent)
+    {
+        setAtEnd();
+    }
     RunIteratorModernPath(const InlineContent& inlineContent, size_t startIndex)
         : m_inlineContent(&inlineContent)
         , m_runIndex(startIndex)
     {
-
     }
 
     bool isText() const { return !!run().textContent(); }

@@ -34,6 +34,7 @@ namespace WebCore {
 namespace LayoutIntegration {
 
 class LineIterator;
+class LineRunIterator;
 class PathIterator;
 
 struct EndLineIterator { };
@@ -85,6 +86,11 @@ public:
     const PathLine* operator->() const { return &m_line; }
 
     bool atEnd() const;
+
+    LineRunIterator firstRun() const;
+    LineRunIterator lastRun() const;
+    LineRunIterator logicalStartRunWithNode() const;
+    LineRunIterator logicalEndRunWithNode() const;
 
 private:
     PathLine m_line;

@@ -79,6 +79,35 @@ bool LineIterator::operator==(const LineIterator& other) const
     });
 }
 
+LineRunIterator LineIterator::firstRun() const
+{
+    return WTF::switchOn(m_line.m_pathVariant, [](auto& path) -> RunIterator {
+        return { path.firstRun() };
+    });
+}
+
+LineRunIterator LineIterator::lastRun() const
+{
+    return WTF::switchOn(m_line.m_pathVariant, [](auto& path) -> RunIterator {
+        return { path.lastRun() };
+    });
+}
+
+LineRunIterator LineIterator::logicalStartRunWithNode() const
+{
+    return WTF::switchOn(m_line.m_pathVariant, [](auto& path) -> RunIterator {
+        return { path.logicalStartRunWithNode() };
+    });
+}
+
+LineRunIterator LineIterator::logicalEndRunWithNode() const
+{
+    return WTF::switchOn(m_line.m_pathVariant, [](auto& path) -> RunIterator {
+        return { path.logicalEndRunWithNode() };
+    });
+}
+
+
 }
 }
 
