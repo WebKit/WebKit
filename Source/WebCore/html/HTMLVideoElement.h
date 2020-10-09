@@ -34,8 +34,11 @@
 namespace WebCore {
 
 class HTMLImageLoader;
+class ImageBuffer;
 class RenderVideo;
 class PictureInPictureObserver;
+
+enum class ShouldAccelerate : bool;
 
 class HTMLVideoElement final : public HTMLMediaElement, public Supplementable<HTMLVideoElement> {
     WTF_MAKE_ISO_ALLOCATED(HTMLVideoElement);
@@ -66,6 +69,8 @@ public:
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
     void webkitRequestFullscreen() override;
 #endif
+
+    std::unique_ptr<ImageBuffer> createBufferForPainting(const FloatSize&, ShouldAccelerate) const;
 
     // Used by canvas to gain raw pixel access
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);

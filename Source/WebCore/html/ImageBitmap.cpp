@@ -487,8 +487,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     auto sourceRectangle = maybeSourceRectangle.releaseReturnValue();
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle, options);
-    auto bitmapData = ImageBuffer::create(FloatSize(outputSize.width(), outputSize.height()), bufferRenderingMode);
-
+    auto bitmapData = video->createBufferForPainting(outputSize, bufferRenderingMode == RenderingMode::Accelerated ? ShouldAccelerate::Yes : ShouldAccelerate::No);
     if (!bitmapData) {
         resolveWithBlankImageBuffer(!taintsOrigin(scriptExecutionContext.securityOrigin(), *video), WTFMove(promise));
         return;

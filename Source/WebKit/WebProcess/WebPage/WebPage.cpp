@@ -7220,6 +7220,8 @@ bool WebPage::shouldUseRemoteRenderingFor(RenderingPurpose purpose)
     switch (purpose) {
     case RenderingPurpose::Canvas:
         return m_shouldRenderCanvasInGPUProcess;
+    case RenderingPurpose::MediaPainting:
+        return m_page->settings().useGPUProcessForMediaEnabled();
     default:
         break;
     }

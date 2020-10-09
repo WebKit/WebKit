@@ -37,6 +37,7 @@
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "ImageBuffer.h"
 #include "Logging.h"
 #include "Page.h"
 #include "PictureInPictureSupport.h"
@@ -288,6 +289,13 @@ void HTMLVideoElement::updateDisplayState()
         setDisplayMode(Video);
     else if (displayMode() < Poster)
         setDisplayMode(Poster);
+}
+
+std::unique_ptr<ImageBuffer> HTMLVideoElement::createBufferForPainting(const FloatSize& size, ShouldAccelerate shouldAccelerate) const
+{
+    auto* hostWindow = document().view() && document().view()->root() ? document().view()->root()->hostWindow() : nullptr;
+    auto shouldUseDisplayList = document().settings().displayListDrawingEnabled() ? ShouldUseDisplayList::Yes : ShouldUseDisplayList::No;
+    return ImageBuffer::create(size, shouldAccelerate, shouldUseDisplayList, RenderingPurpose::MediaPainting, 1, ColorSpace::SRGB, hostWindow);
 }
 
 void HTMLVideoElement::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& destRect)

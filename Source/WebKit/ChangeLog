@@ -1,3 +1,15 @@
+2020-10-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GPU Process] Add additional support for painting video elements to 2D contexts
+        https://bugs.webkit.org/show_bug.cgi?id=217532
+
+        Reviewed by Tim Horton.
+
+        See WebCore/ChangeLog for more details.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::shouldUseRemoteRenderingFor):
+
 2020-10-09  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process] Enable audio routing arbitration on Mac

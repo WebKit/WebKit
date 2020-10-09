@@ -29,7 +29,8 @@ namespace WebCore {
 
 enum class RenderingPurpose : uint8_t {
     Unspecified,
-    Canvas
+    Canvas,
+    MediaPainting
 };
 
 enum class ShouldAccelerate : bool { No, Yes };

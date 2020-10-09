@@ -1954,7 +1954,8 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(H
         return RefPtr<CanvasPattern> { CanvasPattern::create(BitmapImage::create(WTFMove(nativeImage)), repeatX, repeatY, originClean) };
 #endif
 
-    auto imageBuffer = ImageBuffer::create(size(videoElement), drawingContext() ? drawingContext()->renderingMode() : RenderingMode::Accelerated);
+    auto shouldAccelerate = !drawingContext() || drawingContext()->isAcceleratedContext() ? ShouldAccelerate::Yes : ShouldAccelerate::No;
+    auto imageBuffer = videoElement.createBufferForPainting(size(videoElement), shouldAccelerate);
     if (!imageBuffer)
         return nullptr;
 
