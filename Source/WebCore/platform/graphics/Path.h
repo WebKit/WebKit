@@ -233,9 +233,13 @@ public:
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<Path> decode(Decoder&);
 
+#if ENABLE(INLINE_PATH_DATA)
+    template<typename DataType> const DataType& inlineData() const;
+    template<typename DataType> bool hasInlineData() const;
+#endif
+
 private:
 #if ENABLE(INLINE_PATH_DATA)
-    template<typename DataType> bool hasInlineData() const;
     bool hasAnyInlineData() const;
     Optional<FloatRect> boundingRectFromInlineData() const;
 #endif
@@ -411,6 +415,11 @@ template<class Decoder> Optional<Path> Path::decode(Decoder& decoder)
 template <typename DataType> inline bool Path::hasInlineData() const
 {
     return WTF::holds_alternative<DataType>(m_inlineData);
+}
+
+template<typename DataType> inline const DataType& Path::inlineData() const
+{
+    return WTF::get<DataType>(m_inlineData);
 }
 
 inline bool Path::hasAnyInlineData() const

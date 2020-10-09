@@ -888,6 +888,14 @@ void GraphicsContext::strokePath(const Path& path)
 
     if (m_state.strokePattern)
         applyStrokePattern();
+
+    if (path.hasInlineData<LineData>()) {
+        auto& lineData = path.inlineData<LineData>();
+        CGPoint points[2] { lineData.start, lineData.end };
+        CGContextStrokeLineSegments(context, points, 2);
+        return;
+    }
+
 #if USE_DRAW_PATH_DIRECT
     CGContextDrawPathDirect(context, kCGPathStroke, path.platformPath(), nullptr);
 #else
