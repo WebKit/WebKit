@@ -1,0 +1,13 @@
+
+FAIL Snaps to the snap position if the snap area doesn't cover the snapport on x. assert_equals: expected 200 but got 10
+PASS Snaps to the snap position if the snap area covers the snapport on x on the right border.
+PASS Snaps to the snap position if the snap area covers the snapport on x on the left border.
+FAIL Snaps if the distance between the previous(400) and next(800) snap positions is smaller than snapport(500) on x. assert_equals: expected 400 but got 500
+FAIL Snaps if the distance between the previous(400) and next(800) snap positions is smaller than snapport(500) on y. assert_equals: expected 400 but got 500
+PASS Snap to current scroll position which is a valid snap position, as the snap area covers snapport on x and the distance between the previous(800) and next(1400) is larger than snapport(500).
+PASS Snap to current scroll position which is a valid snap position, as the snap area covers snapport on y and the distance between the previous(800) and next(1400) is larger than snapport(500).
+PASS Snap to current scroll position which is a valid snap position, as the snap area covers snapport on x and there is no subsequent snap positions.
+PASS Snap to current scroll position which is a valid snap position, as the snap area covers snapport on y and there is no subsequent snap positions.
+PASS Don't snap back even if scrollTo tries to scroll to positions which are outside of the scroll range and if a snap target element covers the snaport
+FAIL Snap to current scroll position on x as the area is covering x axis.However, we snap to the specified snap position on y as the area is not covering y axis. assert_equals: expected 200 but got 100
+

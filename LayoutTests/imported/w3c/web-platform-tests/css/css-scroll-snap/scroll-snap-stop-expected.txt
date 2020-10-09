@@ -1,0 +1,6 @@
+
+FAIL A scroll with intended direction and end position should not pass a snap area with scroll-snap-stop: always. assert_equals: expected 100 but got 300
+FAIL A scroll with intended end position should always choose the closest snap position regardless of the scroll-snap-stop value. assert_equals: expected 200 but got 300
+FAIL A scroll outside bounds in the snapping axis with intended direction and end position should not pass a snap area with scroll-snap-stop: always. assert_equals: expected 100 but got 1715
+FAIL A scroll outside bounds in the non-snapping axis with intended direction and end position should not pass a snap area with scroll-snap-stop: always. assert_equals: expected 100 but got 300
+

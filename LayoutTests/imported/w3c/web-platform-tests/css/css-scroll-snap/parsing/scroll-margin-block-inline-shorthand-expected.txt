@@ -1,0 +1,14 @@
+
+FAIL e.style['scroll-margin-block'] = "10px 20px" should set scroll-margin-block-end assert_equals: scroll-margin-block-end should be canonical expected (string) "20px" but got (undefined) undefined
+FAIL e.style['scroll-margin-block'] = "10px 20px" should set scroll-margin-block-start assert_equals: scroll-margin-block-start should be canonical expected (string) "10px" but got (undefined) undefined
+FAIL e.style['scroll-margin-block'] = "10px 20px" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['scroll-margin-block'] = "30px" should set scroll-margin-block-end assert_equals: scroll-margin-block-end should be canonical expected (string) "30px" but got (undefined) undefined
+FAIL e.style['scroll-margin-block'] = "30px" should set scroll-margin-block-start assert_equals: scroll-margin-block-start should be canonical expected (string) "30px" but got (undefined) undefined
+FAIL e.style['scroll-margin-block'] = "30px" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['scroll-margin-inline'] = "50px 60px" should set scroll-margin-inline-end assert_equals: scroll-margin-inline-end should be canonical expected (string) "60px" but got (undefined) undefined
+FAIL e.style['scroll-margin-inline'] = "50px 60px" should set scroll-margin-inline-start assert_equals: scroll-margin-inline-start should be canonical expected (string) "50px" but got (undefined) undefined
+FAIL e.style['scroll-margin-inline'] = "50px 60px" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['scroll-margin-inline'] = "-40px" should set scroll-margin-inline-end assert_equals: scroll-margin-inline-end should be canonical expected (string) "-40px" but got (undefined) undefined
+FAIL e.style['scroll-margin-inline'] = "-40px" should set scroll-margin-inline-start assert_equals: scroll-margin-inline-start should be canonical expected (string) "-40px" but got (undefined) undefined
+FAIL e.style['scroll-margin-inline'] = "-40px" should not set unrelated longhands assert_true: expected true got false
+

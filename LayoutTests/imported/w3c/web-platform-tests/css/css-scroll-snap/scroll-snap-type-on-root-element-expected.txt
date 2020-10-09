@@ -1,0 +1,5 @@
+
+FAIL The scroll-snap-type on the root element is applied assert_equals: expected 515 but got 800
+FAIL The writing-mode (vertical-lr) on the body is used assert_equals: inline should snap expected 515 but got 800
+FAIL The writing-mode (horizontal-tb) on the body is used  assert_equals: inline should snap expected 100 but got 200
+

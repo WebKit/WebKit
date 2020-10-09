@@ -1,0 +1,22 @@
+
+PASS e.style['scroll-padding'] = "10px" should set scroll-padding-bottom
+PASS e.style['scroll-padding'] = "10px" should set scroll-padding-left
+PASS e.style['scroll-padding'] = "10px" should set scroll-padding-right
+PASS e.style['scroll-padding'] = "10px" should set scroll-padding-top
+PASS e.style['scroll-padding'] = "10px" should not set unrelated longhands
+FAIL e.style['scroll-padding'] = "auto 20px" should set scroll-padding-bottom assert_equals: scroll-padding-bottom should be canonical expected "auto" but got ""
+FAIL e.style['scroll-padding'] = "auto 20px" should set scroll-padding-left assert_equals: scroll-padding-left should be canonical expected "20px" but got ""
+FAIL e.style['scroll-padding'] = "auto 20px" should set scroll-padding-right assert_equals: scroll-padding-right should be canonical expected "20px" but got ""
+FAIL e.style['scroll-padding'] = "auto 20px" should set scroll-padding-top assert_equals: scroll-padding-top should be canonical expected "auto" but got ""
+FAIL e.style['scroll-padding'] = "auto 20px" should not set unrelated longhands assert_true: expected true got false
+PASS e.style['scroll-padding'] = "1px 2px 3px" should set scroll-padding-bottom
+PASS e.style['scroll-padding'] = "1px 2px 3px" should set scroll-padding-left
+PASS e.style['scroll-padding'] = "1px 2px 3px" should set scroll-padding-right
+PASS e.style['scroll-padding'] = "1px 2px 3px" should set scroll-padding-top
+PASS e.style['scroll-padding'] = "1px 2px 3px" should not set unrelated longhands
+PASS e.style['scroll-padding'] = "1% 2px 3px 0" should set scroll-padding-bottom
+PASS e.style['scroll-padding'] = "1% 2px 3px 0" should set scroll-padding-left
+PASS e.style['scroll-padding'] = "1% 2px 3px 0" should set scroll-padding-right
+PASS e.style['scroll-padding'] = "1% 2px 3px 0" should set scroll-padding-top
+PASS e.style['scroll-padding'] = "1% 2px 3px 0" should not set unrelated longhands
+

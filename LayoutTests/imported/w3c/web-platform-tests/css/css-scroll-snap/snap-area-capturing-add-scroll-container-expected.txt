@@ -1,0 +1,4 @@
+
+FAIL Making an element scrollable should make it capture the correct descendant snap areas' snap points. assert_equals: expected 500 but got 10
+FAIL Attaching a new element that is scrollable should assign the correct snap areas to it. assert_equals: expected 300 but got 10
+

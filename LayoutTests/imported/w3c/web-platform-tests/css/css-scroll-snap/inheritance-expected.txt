@@ -1,0 +1,40 @@
+
+FAIL Property scroll-margin-block-end has initial value 0px assert_true: scroll-margin-block-end doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-margin-block-end does not inherit assert_true: expected true got false
+FAIL Property scroll-margin-block-start has initial value 0px assert_true: scroll-margin-block-start doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-margin-block-start does not inherit assert_true: expected true got false
+FAIL Property scroll-margin-bottom has initial value 0px assert_true: scroll-margin-bottom doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-margin-bottom does not inherit assert_true: expected true got false
+FAIL Property scroll-margin-inline-end has initial value 0px assert_true: scroll-margin-inline-end doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-margin-inline-end does not inherit assert_true: expected true got false
+FAIL Property scroll-margin-inline-start has initial value 0px assert_true: scroll-margin-inline-start doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-margin-inline-start does not inherit assert_true: expected true got false
+FAIL Property scroll-margin-left has initial value 0px assert_true: scroll-margin-left doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-margin-left does not inherit assert_true: expected true got false
+FAIL Property scroll-margin-right has initial value 0px assert_true: scroll-margin-right doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-margin-right does not inherit assert_true: expected true got false
+FAIL Property scroll-margin-top has initial value 0px assert_true: scroll-margin-top doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-margin-top does not inherit assert_true: expected true got false
+FAIL Property scroll-padding-block-end has initial value auto assert_true: scroll-padding-block-end doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-block-end does not inherit assert_true: expected true got false
+FAIL Property scroll-padding-block-start has initial value auto assert_true: scroll-padding-block-start doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-block-start does not inherit assert_true: expected true got false
+FAIL Property scroll-padding-bottom has initial value auto assert_equals: expected "auto" but got "0px"
+PASS Property scroll-padding-bottom does not inherit
+FAIL Property scroll-padding-inline-end has initial value auto assert_true: scroll-padding-inline-end doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline-end does not inherit assert_true: expected true got false
+FAIL Property scroll-padding-inline-start has initial value auto assert_true: scroll-padding-inline-start doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline-start does not inherit assert_true: expected true got false
+FAIL Property scroll-padding-left has initial value auto assert_equals: expected "auto" but got "0px"
+PASS Property scroll-padding-left does not inherit
+FAIL Property scroll-padding-right has initial value auto assert_equals: expected "auto" but got "0px"
+PASS Property scroll-padding-right does not inherit
+FAIL Property scroll-padding-top has initial value auto assert_equals: expected "auto" but got "0px"
+PASS Property scroll-padding-top does not inherit
+FAIL Property scroll-snap-align has initial value none assert_equals: expected "none" but got "none none"
+PASS Property scroll-snap-align does not inherit
+FAIL Property scroll-snap-stop has initial value normal assert_true: scroll-snap-stop doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-snap-stop does not inherit assert_true: expected true got false
+PASS Property scroll-snap-type has initial value none
+FAIL Property scroll-snap-type does not inherit assert_equals: expected "inline" but got "inline proximity"
+

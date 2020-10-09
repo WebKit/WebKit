@@ -518,6 +518,7 @@ webkit.org/b/60731 fast/css-grid-layout/ [ Skip ]
 
 # TODO ENABLE(CSS_SCROLL_SNAP) is disabled.
 css3/scroll-snap/ [ Skip ]
+imported/w3c/web-platform-tests/css/css-scroll-snap [ Skip ]
 
 # JSC does not support setIsolatedWorldSecurityOrigin
 webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html [ Skip ]

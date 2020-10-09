@@ -1,0 +1,3 @@
+
+FAIL Adding a new snap area while already snapped should not make the scroller snap to it. assert_equals: expected 100 but got 0
+

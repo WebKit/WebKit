@@ -1,0 +1,9 @@
+
+FAIL Property scroll-snap-align value 'none' assert_equals: expected "none" but got "none none"
+FAIL Property scroll-snap-align value 'start' assert_equals: expected "start" but got "start start"
+FAIL Property scroll-snap-align value 'end' assert_equals: expected "end" but got "end end"
+FAIL Property scroll-snap-align value 'center' assert_equals: expected "center" but got "center center"
+PASS Property scroll-snap-align value 'start none'
+PASS Property scroll-snap-align value 'center end'
+FAIL Property scroll-snap-align value 'start start' assert_equals: expected "start" but got "start start"
+

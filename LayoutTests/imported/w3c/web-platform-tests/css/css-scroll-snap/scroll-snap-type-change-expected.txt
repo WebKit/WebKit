@@ -1,0 +1,4 @@
+
+FAIL scroll-snap-type on HTML should control snapping behavior and changing it takes effect assert_equals: scrolling should snap expected 200 but got 100
+FAIL scroll-snap-type on DIV should control snapping behavior and changing it takes effect assert_equals: scrolling should snap expected 200 but got 100
+

@@ -1,0 +1,3 @@
+
+FAIL Making a snap container not scrollable should promote the next scrollable ancestor to become a snap container. assert_equals: expected 300 but got 10
+

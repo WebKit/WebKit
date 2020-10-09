@@ -1,0 +1,5 @@
+
+FAIL Changing the scroller's snap type to y should make it resnap on the y-axis. assert_equals: expected 100 but got 0
+FAIL Changing the scroller's snap type to x should make it resnap on the x-axis. assert_equals: expected 100 but got 0
+FAIL Changing the scroller's snap type axis should make it resnap. assert_equals: expected 100 but got 0
+

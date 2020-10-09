@@ -637,6 +637,7 @@ webkit.org/b/211563 fast/text-indicator/text-indicator-estimated-color-with-impl
 
 # Not yet supported on WPE
 Bug(WPE) css3/scroll-snap [ Skip ]
+Bug(WPE) imported/w3c/web-platform-tests/css/css-scroll-snap [ Skip ]
 
 # Only enabled on Mac/iOS so far.
 Bug(WPE) contentfiltering/ [ Skip ]

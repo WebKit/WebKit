@@ -1,0 +1,22 @@
+
+FAIL e.style['scroll-margin'] = "10px" should set scroll-margin-bottom assert_equals: scroll-margin-bottom should be canonical expected (string) "10px" but got (undefined) undefined
+FAIL e.style['scroll-margin'] = "10px" should set scroll-margin-left assert_equals: scroll-margin-left should be canonical expected (string) "10px" but got (undefined) undefined
+FAIL e.style['scroll-margin'] = "10px" should set scroll-margin-right assert_equals: scroll-margin-right should be canonical expected (string) "10px" but got (undefined) undefined
+FAIL e.style['scroll-margin'] = "10px" should set scroll-margin-top assert_equals: scroll-margin-top should be canonical expected (string) "10px" but got (undefined) undefined
+FAIL e.style['scroll-margin'] = "10px" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['scroll-margin'] = "30px 20px" should set scroll-margin-bottom assert_equals: scroll-margin-bottom should be canonical expected (string) "30px" but got (undefined) undefined
+FAIL e.style['scroll-margin'] = "30px 20px" should set scroll-margin-left assert_equals: scroll-margin-left should be canonical expected (string) "20px" but got (undefined) undefined
+FAIL e.style['scroll-margin'] = "30px 20px" should set scroll-margin-right assert_equals: scroll-margin-right should be canonical expected (string) "20px" but got (undefined) undefined
+FAIL e.style['scroll-margin'] = "30px 20px" should set scroll-margin-top assert_equals: scroll-margin-top should be canonical expected (string) "30px" but got (undefined) undefined
+FAIL e.style['scroll-margin'] = "30px 20px" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['scroll-margin'] = "1px 2px 3px" should set scroll-margin-bottom assert_equals: scroll-margin-bottom should be canonical expected (string) "3px" but got (undefined) undefined
+FAIL e.style['scroll-margin'] = "1px 2px 3px" should set scroll-margin-left assert_equals: scroll-margin-left should be canonical expected (string) "2px" but got (undefined) undefined
+FAIL e.style['scroll-margin'] = "1px 2px 3px" should set scroll-margin-right assert_equals: scroll-margin-right should be canonical expected (string) "2px" but got (undefined) undefined
+FAIL e.style['scroll-margin'] = "1px 2px 3px" should set scroll-margin-top assert_equals: scroll-margin-top should be canonical expected (string) "1px" but got (undefined) undefined
+FAIL e.style['scroll-margin'] = "1px 2px 3px" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['scroll-margin'] = "-1px 2px 3px 0" should set scroll-margin-bottom assert_equals: scroll-margin-bottom should be canonical expected (string) "3px" but got (undefined) undefined
+FAIL e.style['scroll-margin'] = "-1px 2px 3px 0" should set scroll-margin-left assert_equals: scroll-margin-left should be canonical expected (string) "0px" but got (undefined) undefined
+FAIL e.style['scroll-margin'] = "-1px 2px 3px 0" should set scroll-margin-right assert_equals: scroll-margin-right should be canonical expected (string) "2px" but got (undefined) undefined
+FAIL e.style['scroll-margin'] = "-1px 2px 3px 0" should set scroll-margin-top assert_equals: scroll-margin-top should be canonical expected (string) "-1px" but got (undefined) undefined
+FAIL e.style['scroll-margin'] = "-1px 2px 3px 0" should not set unrelated longhands assert_true: expected true got false
+

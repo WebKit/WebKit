@@ -1,3 +1,183 @@
+2020-10-09  Martin Robinson  <mrobinson@webkit.org>
+
+        Import scroll-snap WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=217467
+
+        Reviewed by Youenn Fablet.
+
+        * resources/import-expectations.json: Add scroll snap import directive.
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-scroll-snap/META.yml: Added.
+        * web-platform-tests/css/css-scroll-snap/inheritance-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/inheritance.html: Added.
+        * web-platform-tests/css/css-scroll-snap/input/keyboard-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/input/keyboard.html: Added.
+        * web-platform-tests/css/css-scroll-snap/input/w3c-import.log: Added.
+        * web-platform-tests/css/css-scroll-snap/nested-scrollIntoView-snaps-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/nested-scrollIntoView-snaps.html: Added.
+        * web-platform-tests/css/css-scroll-snap/no-snap-position-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/no-snap-position.html: Added.
+        * web-platform-tests/css/css-scroll-snap/overflowing-snap-areas-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/overflowing-snap-areas.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-margin-block-inline-computed-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-margin-block-inline-computed.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-margin-block-inline-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-margin-block-inline-invalid.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-margin-block-inline-shorthand-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-margin-block-inline-shorthand.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-margin-block-inline-valid-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-margin-block-inline-valid.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-margin-computed-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-margin-computed.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-margin-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-margin-invalid.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-margin-shorthand-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-margin-shorthand.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-margin-valid-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-margin-valid.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-block-inline-computed-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-block-inline-computed.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-block-inline-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-block-inline-invalid.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-block-inline-shorthand-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-block-inline-shorthand.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-block-inline-valid-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-block-inline-valid.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-computed-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-computed.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-invalid.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-shorthand-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-shorthand.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-valid-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-valid.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-align-computed-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-align-computed.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-align-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-align-invalid.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-align-valid-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-align-valid.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-stop-computed-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-stop-computed.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-stop-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-stop-invalid.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-stop-valid-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-stop-valid.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-type-computed-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-type-computed.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-type-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-type-invalid.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-type-valid-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-type-valid.html: Added.
+        * web-platform-tests/css/css-scroll-snap/parsing/w3c-import.log: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-margin-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-margin.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-padding-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-padding.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-stop-change-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-stop-change.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-stop-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-stop.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-type-change-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-type-change.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-type-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-type-on-root-element-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-type-on-root-element.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-type.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-align-001-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-align-001.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-align-002-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-align-002.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-align-003-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-align-003.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-margin-001-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-margin-001.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-margin-002-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-margin-002.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-margin-003-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-margin-003.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-margin-004-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-margin-004.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-padding-001-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-padding-001.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-padding-002-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-padding-002.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-padding-003-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-padding-003.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-snap-001-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-snap-001.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-snap-002-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-snap-002.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-snap-003-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-snap-003.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scrollTo-scrollBy-snaps-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/scrollTo-scrollBy-snaps.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/direction-rtl-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/direction-rtl.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/w3c-import.log: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/writing-mode-horizontal-tb-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/writing-mode-horizontal-tb.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/writing-mode-vertical-lr-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/writing-mode-vertical-lr.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/writing-mode-vertical-rl-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/writing-mode-vertical-rl.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/adding-only-snap-area-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/adding-only-snap-area.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/adding-snap-area-while-snapped-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/adding-snap-area-while-snapped.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/changing-scroll-snap-align-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/changing-scroll-snap-align.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/changing-scroll-snap-type-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/changing-scroll-snap-type.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/move-current-target-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/move-current-target.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/remove-current-target-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/remove-current-target.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/snap-to-different-targets-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/snap-to-different-targets.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/w3c-import.log: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-area-capturing-add-scroll-container-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-area-capturing-add-scroll-container.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-area-capturing-remove-scroll-container-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-area-capturing-remove-scroll-container.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-inline-block-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-inline-block.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-to-transformed-target-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-to-transformed-target.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-both-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-both.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-margin-both-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-margin-both.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-margin-x-axis-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-margin-x-axis.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-margin-y-axis-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-margin-y-axis.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-x-axis-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-x-axis.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-y-axis-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-y-axis.html: Added.
+        * web-platform-tests/css/css-scroll-snap/support/common.css: Added.
+        (body):
+        (#scroller):
+        (.snap):
+        (#space):
+        (.left):
+        (.top):
+        (.right):
+        (.bottom):
+        * web-platform-tests/css/css-scroll-snap/support/common.js: Added.
+        (async keyPress):
+        (waitForAnimationEnd.):
+        (waitForAnimationEnd):
+        * web-platform-tests/css/css-scroll-snap/support/scroll-target-align-001-iframe.html: Added.
+        * web-platform-tests/css/css-scroll-snap/support/scroll-target-margin-001-iframe.html: Added.
+        * web-platform-tests/css/css-scroll-snap/support/scroll-target-padding-001-iframe.html: Added.
+        * web-platform-tests/css/css-scroll-snap/support/scroll-target-snap-001-iframe.html: Added.
+        * web-platform-tests/css/css-scroll-snap/support/w3c-import.log: Added.
+        * web-platform-tests/css/css-scroll-snap/unreachable-snap-positions-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/unreachable-snap-positions.html: Added.
+        * web-platform-tests/css/css-scroll-snap/w3c-import.log: Added.
+
 2020-10-09  Noam Rosenthal  <noam@webkit.org>
 
         CSS image-orientation: none should be ignored for cross-origin images

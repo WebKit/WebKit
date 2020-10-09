@@ -1,0 +1,5 @@
+
+FAIL Snaps to the transformed snap start position assert_equals: expected 350 but got 10
+FAIL Snaps to the transformed snap end position assert_equals: expected 50 but got 10
+FAIL Snaps to visible top left position of the transformed box assert_equals: expected 0 but got 10
+

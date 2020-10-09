@@ -1,0 +1,3 @@
+
+FAIL Removing the current snap target should make the scroller snap to a new target. assert_equals: expected 100 but got 0
+

@@ -1,0 +1,4 @@
+
+FAIL Property scroll-snap-stop value 'normal' assert_true: scroll-snap-stop doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-snap-stop value 'always' assert_true: scroll-snap-stop doesn't seem to be supported in the computed style expected true got false
+
