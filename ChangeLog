@@ -1,3 +1,12 @@
+2020-10-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][GraphicsLayerTextureMapper] backdrop-filter support
+        https://bugs.webkit.org/show_bug.cgi?id=217081
+
+        Reviewed by Don Olmstead.
+
+        * Source/cmake/OptionsWin.cmake: Turn ENABLE_FILTERS_LEVEL_2 on for WinCairo.
+
 2020-10-08  Keith Rollin  <krollin@apple.com>
 
         Remove copy-webkitlibraries-to-product-directory
