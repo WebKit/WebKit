@@ -85,23 +85,19 @@ private:
 class SinglePaintFrequencyTracking {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SinglePaintFrequencyTracking(PaintFrequencyTracker& paintFrequencyTracker, MonotonicTime timestamp, bool track = true)
+    SinglePaintFrequencyTracking(PaintFrequencyTracker& paintFrequencyTracker, MonotonicTime timestamp)
         : m_paintFrequencyTracker(paintFrequencyTracker)
-        , m_track(track)
     {
-        if (m_track)
-            m_paintFrequencyTracker.begin(timestamp);
+        m_paintFrequencyTracker.begin(timestamp ? timestamp : MonotonicTime::now());
     }
 
     ~SinglePaintFrequencyTracking()
     {
-        if (m_track)
-            m_paintFrequencyTracker.end();
+        m_paintFrequencyTracker.end();
     }
 
 private:
     PaintFrequencyTracker& m_paintFrequencyTracker;
-    bool m_track;
 };
 
 }
