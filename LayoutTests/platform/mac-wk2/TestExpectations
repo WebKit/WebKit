@@ -1328,3 +1328,5 @@ webkit.org/b/217193 [ Mojave+ Release ] inspector/console/queryHolders.html [ Pa
 webkit.org/b/217262 [ Catalina ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Pass Failure ]
 
 webkit.org/b/217525 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-stop.html [ Pass Failure ]
+
+webkit.org/b/217540 compositing/animation/repaint-after-clearing-shared-backing.html [ Pass ImageOnlyFailure ]
