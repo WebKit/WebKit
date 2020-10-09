@@ -295,7 +295,8 @@ void LineLayout::collectOverflow(RenderBlockFlow& flow)
 
     for (auto& line : inlineContent()->lines) {
         flow.addLayoutOverflow(Layout::toLayoutRect(line.scrollableOverflow()));
-        flow.addVisualOverflow(Layout::toLayoutRect(line.inkOverflow()));
+        if (!flow.hasOverflowClip())
+            flow.addVisualOverflow(Layout::toLayoutRect(line.inkOverflow()));
     }
 }
 
