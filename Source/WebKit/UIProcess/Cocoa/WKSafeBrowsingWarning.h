@@ -61,7 +61,7 @@ using RectType = CGRect;
 @end
 
 #if PLATFORM(MAC)
-@interface WKSafeBrowsingWarning : WKSafeBrowsingBox<NSTextViewDelegate>
+@interface WKSafeBrowsingWarning : WKSafeBrowsingBox<NSTextViewDelegate, NSAccessibilityGroup>
 #else
 @interface WKSafeBrowsingWarning : UIScrollView<UITextViewDelegate>
 #endif
