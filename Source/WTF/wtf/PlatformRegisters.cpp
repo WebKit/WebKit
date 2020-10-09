@@ -39,7 +39,7 @@ void* threadStateLRInternal(PlatformRegisters& regs)
     void* candidateLR = arm_thread_state64_get_lr_fptr(regs);
 
 #if USE(UNTAGGED_THREAD_STATE_PTR)
-    if (candidateLR && isTaggedWith(candidateLR, CFunctionPtrTag))
+    if (candidateLR && isTaggedWith<CFunctionPtrTag>(candidateLR))
         return retagCodePtr<CFunctionPtrTag, PlatformRegistersLRPtrTag>(candidateLR);
     candidateLR = bitwise_cast<void*>(arm_thread_state64_get_lr(regs));
     if (!candidateLR)
@@ -56,7 +56,7 @@ void* threadStatePCInternal(PlatformRegisters& regs)
     void* candidatePC = arm_thread_state64_get_pc_fptr(regs);
 
 #if USE(UNTAGGED_THREAD_STATE_PTR)
-    if (candidatePC && isTaggedWith(candidatePC, CFunctionPtrTag))
+    if (candidatePC && isTaggedWith<CFunctionPtrTag>(candidatePC))
         return retagCodePtr<CFunctionPtrTag, PlatformRegistersPCPtrTag>(candidatePC);
     candidatePC = bitwise_cast<void*>(arm_thread_state64_get_pc(regs));
     if (!candidatePC)

@@ -99,7 +99,7 @@ std::unique_ptr<B3::Compilation> compile(B3::Procedure& proc)
 template<typename T, typename... Arguments>
 T invoke(const B3::Compilation& code, Arguments... arguments)
 {
-    void* executableAddress = untagCFunctionPtr(code.code().executableAddress(), B3CompilationPtrTag);
+    void* executableAddress = untagCFunctionPtr<B3CompilationPtrTag>(code.code().executableAddress());
     T (*function)(Arguments...) = bitwise_cast<T(*)(Arguments...)>(executableAddress);
     return function(arguments...);
 }

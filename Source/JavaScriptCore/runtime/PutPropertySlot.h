@@ -66,14 +66,14 @@ public:
         m_offset = offset;
     }
 
-    void setCustomValue(JSObject* base, FunctionPtr<OperationPtrTag> function)
+    void setCustomValue(JSObject* base, PutValueFunc function)
     {
         m_type = CustomValue;
         m_base = base;
         m_putFunction = function;
     }
 
-    void setCustomAccessor(JSObject* base, FunctionPtr<OperationPtrTag> function)
+    void setCustomAccessor(JSObject* base, PutValueFunc function)
     {
         m_type = CustomAccessor;
         m_base = base;
@@ -97,7 +97,7 @@ public:
         m_isStrictMode = value;
     }
 
-    FunctionPtr<OperationPtrTag> customSetter() const
+    FunctionPtr<PutValuePtrTag> customSetter() const
     {
         ASSERT(isCacheableCustom());
         return m_putFunction;
@@ -137,7 +137,7 @@ private:
     Type m_type;
     uint8_t m_context;
     CacheabilityType m_cacheability;
-    FunctionPtr<OperationPtrTag> m_putFunction;
+    FunctionPtr<PutValuePtrTag> m_putFunction;
 };
 
 } // namespace JSC

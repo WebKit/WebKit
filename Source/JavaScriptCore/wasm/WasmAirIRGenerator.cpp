@@ -598,7 +598,7 @@ private:
         Inst inst(CCall, origin);
 
         Tmp callee = g64();
-        append(block, Move, Arg::immPtr(tagCFunctionPtr<void*>(func, OperationPtrTag)), callee);
+        append(block, Move, Arg::immPtr(tagCFunctionPtr<void*, OperationPtrTag>(func)), callee);
         inst.args.append(callee);
 
         if (result)

@@ -82,7 +82,7 @@ void genericUnwind(VM& vm, CallFrame* callFrame)
 
     ASSERT(bitwise_cast<uintptr_t>(callFrame) < bitwise_cast<uintptr_t>(vm.topEntryFrame));
 
-    assertIsTaggedWith(catchRoutine, ExceptionHandlerPtrTag);
+    assertIsTaggedWith<ExceptionHandlerPtrTag>(catchRoutine);
     vm.callFrameForCatch = callFrame;
     vm.targetMachinePCForThrow = catchRoutine;
     vm.targetInterpreterPCForThrow = catchPCForInterpreter;

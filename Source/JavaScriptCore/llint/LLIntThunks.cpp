@@ -52,7 +52,7 @@ static MacroAssemblerCodeRef<tag> generateThunkWithJumpTo(LLIntCode target, cons
 {
     JSInterfaceJIT jit;
 
-    assertIsTaggedWith(target, JSEntryPtrTag);
+    assertIsTaggedWith<JSEntryPtrTag>(target);
 
 #if ENABLE(WEBASSEMBLY)
     CCallHelpers::RegisterID scratch = Wasm::wasmCallingConvention().prologueScratchGPRs[0];

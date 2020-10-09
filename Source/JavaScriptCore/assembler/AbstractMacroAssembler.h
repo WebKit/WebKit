@@ -877,7 +877,7 @@ public:
     template<PtrTag tag>
     static void* getLinkerAddress(void* code, AssemblerLabel label)
     {
-        return tagCodePtr(AssemblerType::getRelocatedAddress(code, label), tag);
+        return tagCodePtr<tag>(AssemblerType::getRelocatedAddress(code, label));
     }
 
     static unsigned getLinkerCallReturnOffset(Call call)

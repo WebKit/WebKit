@@ -278,7 +278,7 @@ public:
         : m_value(value)
 #endif
     {
-        assertIsTaggedWith(value, tag);
+        assertIsTaggedWith<tag>(value);
         ASSERT(value);
 #if CPU(ARM_THUMB2)
         ASSERT(!(reinterpret_cast<uintptr_t>(value) & 1));
@@ -290,7 +290,7 @@ public:
     {
         ASSERT(value);
         ASSERT_VALID_CODE_POINTER(value);
-        assertIsTaggedWith(value, tag);
+        assertIsTaggedWith<tag>(value);
         MacroAssemblerCodePtr result;
         result.m_value = value;
         return result;

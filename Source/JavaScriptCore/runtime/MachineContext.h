@@ -457,7 +457,7 @@ inline Optional<MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>> instructionPoi
         return makeOptional(MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>(nullptr));
     if (!usesPointerTagging())
         return makeOptional(MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>(value));
-    if (isTaggedWith(value, PlatformRegistersPCPtrTag))
+    if (isTaggedWith<PlatformRegistersPCPtrTag>(value))
         return makeOptional(MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>(value));
     return WTF::nullopt;
 }
