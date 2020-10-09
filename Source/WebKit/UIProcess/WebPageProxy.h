@@ -1234,6 +1234,7 @@ public:
 
     WebBackForwardCache& backForwardCache() const;
 
+    const WebPreferences& preferences() const { return m_preferences; }
     WebPreferences& preferences() { return m_preferences; }
     void setPreferences(WebPreferences&);
 

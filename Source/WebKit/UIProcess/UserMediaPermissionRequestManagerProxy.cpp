@@ -553,6 +553,23 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionValidRequ
         return;
     }
 
+    requestSystemValidation(m_page, *m_currentUserMediaRequest, [weakThis = makeWeakPtr(this)](bool isOK) {
+        if (!weakThis)
+            return;
+
+        if (!isOK) {
+            weakThis->denyRequest(*weakThis->m_currentUserMediaRequest, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
+            return;
+        }
+        weakThis->decidePolicyForUserMediaPermissionRequest();
+    });
+}
+
+void UserMediaPermissionRequestManagerProxy::decidePolicyForUserMediaPermissionRequest()
+{
+    if (!m_currentUserMediaRequest)
+        return;
+
     // If page navigated, there is no need to call the page client for authorization.
     auto* webFrame = m_page.process().webFrame(m_currentUserMediaRequest->frameID());
 
@@ -566,6 +583,13 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionValidRequ
     auto topLevelOrigin = API::SecurityOrigin::create(m_currentUserMediaRequest->topLevelDocumentSecurityOrigin());
     m_page.uiClient().decidePolicyForUserMediaPermissionRequest(m_page, *webFrame, WTFMove(userMediaOrigin), WTFMove(topLevelOrigin), *m_currentUserMediaRequest);
 }
+
+#if !PLATFORM(COCOA)
+void UserMediaPermissionRequestManagerProxy::requestSystemValidation(const WebPageProxy&, UserMediaPermissionRequestProxy&, CompletionHandler<void(bool)>&& callback)
+{
+    callback(true);
+}
+#endif
 
 void UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo(FrameIdentifier frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(PermissionInfo)>&& handler)
 {
