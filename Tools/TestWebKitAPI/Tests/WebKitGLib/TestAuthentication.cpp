@@ -439,7 +439,8 @@ public:
         gProxyServerPort = soup_uri_get_port(m_proxyServer.baseURI());
         GUniquePtr<char> proxyURI(soup_uri_to_string(m_proxyServer.baseURI(), FALSE));
         WebKitNetworkProxySettings* settings = webkit_network_proxy_settings_new(proxyURI.get(), nullptr);
-        webkit_web_context_set_network_proxy_settings(m_webContext.get(), WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
+        auto* websiteDataManager = webkit_web_context_get_website_data_manager(m_webContext.get());
+        webkit_website_data_manager_set_network_proxy_settings(websiteDataManager, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
         webkit_network_proxy_settings_free(settings);
     }
 

@@ -1,3 +1,16 @@
+2020-10-09  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Fix tests compilation warnings with deprecated API
+        https://bugs.webkit.org/show_bug.cgi?id=217504
+
+        Reviewed by Carlos Garcia Campos.
+
+        webkit_web_context_set_network_proxy_settings() is deprecated in favor of
+        webkit_website_data_manager_set_network_proxy_settings().
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestAuthentication.cpp:
+        (ProxyAuthenticationTest::ProxyAuthenticationTest):
+
 2020-10-09  Paulo Matos  <pmatos@igalia.com>
 
         Add armv8l arch to generic arm umbrella architecture variable
