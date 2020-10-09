@@ -161,8 +161,6 @@ static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBlockFlow& fl
     bool flowIsJustified = style.textAlign() == TextAlignMode::Justify;
     for (const auto& textRenderer : childrenOfType<RenderText>(flow)) {
         // FIXME: Do not return until after checking all children.
-        if (textRenderer.text().isEmpty())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsEmpty, reasons, includeReasons);
         if (textRenderer.isCombineText())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsCombineText, reasons, includeReasons);
         if (textRenderer.isCounter())

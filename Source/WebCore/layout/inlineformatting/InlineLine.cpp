@@ -264,10 +264,10 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
 {
     auto& style = inlineTextItem.style();
     auto willCollapseCompletely = [&] {
-        if (!inlineTextItem.isCollapsible())
-            return false;
         if (inlineTextItem.isEmptyContent())
             return true;
+        if (!inlineTextItem.isCollapsible())
+            return false;
         // Check if the last item is collapsed as well.
         for (auto& run : WTF::makeReversedRange(m_runs)) {
             if (run.isBox())
