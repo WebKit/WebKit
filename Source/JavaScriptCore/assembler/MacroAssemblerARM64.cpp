@@ -545,7 +545,7 @@ void MacroAssembler::probe(Probe::Function function, void* arg)
     move(TrustedImmPtr(tagCFunction<OperationPtrTag>(ctiMasmProbeTrampoline)), x26);
     move(TrustedImmPtr(tagCFunction<JITProbeExecutorPtrTag>(Probe::executeProbe)), x28);
 #if CPU(ARM64E)
-    assertIsTaggedWith<JITProbePtrTag>(function);
+    ASSERT(isTaggedWith(function, JITProbePtrTag));
 #endif
     move(TrustedImmPtr(reinterpret_cast<void*>(function)), x24);
     move(TrustedImmPtr(arg), x25);

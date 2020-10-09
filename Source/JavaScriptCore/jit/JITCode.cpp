@@ -116,7 +116,7 @@ JITCodeWithCodeRef::~JITCodeWithCodeRef()
 void* JITCodeWithCodeRef::executableAddressAtOffset(size_t offset)
 {
     RELEASE_ASSERT(m_ref);
-    assertIsTaggedWith<JSEntryPtrTag>(m_ref.code().executableAddress());
+    assertIsTaggedWith(m_ref.code().executableAddress(), JSEntryPtrTag);
     if (!offset)
         return m_ref.code().executableAddress();
 

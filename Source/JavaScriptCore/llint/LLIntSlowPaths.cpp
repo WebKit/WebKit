@@ -155,7 +155,7 @@ inline JSValue getOperand(CallFrame* callFrame, VirtualRegister operand) { retur
     } while (false)
 
 #define LLINT_CALL_END_IMPL(callFrame, callTarget, callTargetTag) \
-    LLINT_RETURN_TWO((retagCodePtr<callTargetTag, SlowPathPtrTag>(callTarget)), (callFrame))
+    LLINT_RETURN_TWO(retagCodePtr((callTarget), callTargetTag, SlowPathPtrTag), (callFrame))
 
 #define LLINT_CALL_THROW(globalObject, exceptionToThrow) do {                   \
         JSGlobalObject* __ct_globalObject = (globalObject);                                  \
@@ -1722,7 +1722,7 @@ inline SlowPathReturnType setUpCall(CallFrame* calleeFrame, CodeSpecializationKi
                 callLinkInfo->link(vm, callerCodeBlock, internalFunction, codePtr);
             }
 
-            assertIsTaggedWith<JSEntryPtrTag>(codePtr.executableAddress());
+            assertIsTaggedWith(codePtr.executableAddress(), JSEntryPtrTag);
             LLINT_CALL_RETURN(globalObject, calleeFrame, codePtr.executableAddress(), JSEntryPtrTag);
         }
         RELEASE_AND_RETURN(throwScope, handleHostCall(calleeFrame, calleeAsValue, kind));
@@ -1765,7 +1765,7 @@ inline SlowPathReturnType setUpCall(CallFrame* calleeFrame, CodeSpecializationKi
             codeBlock->linkIncomingCall(callFrame, callLinkInfo);
     }
 
-    assertIsTaggedWith<JSEntryPtrTag>(codePtr.executableAddress());
+    assertIsTaggedWith(codePtr.executableAddress(), JSEntryPtrTag);
     LLINT_CALL_RETURN(globalObject, calleeFrame, codePtr.executableAddress(), JSEntryPtrTag);
 }
 

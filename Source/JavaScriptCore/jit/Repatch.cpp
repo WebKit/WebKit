@@ -73,16 +73,15 @@ namespace JSC {
 
 static FunctionPtr<CFunctionPtrTag> readPutICCallTarget(CodeBlock* codeBlock, CodeLocationCall<JSInternalPtrTag> call)
 {
+    FunctionPtr<OperationPtrTag> target = MacroAssembler::readCallTarget<OperationPtrTag>(call);
 #if ENABLE(FTL_JIT)
     if (codeBlock->jitType() == JITType::FTLJIT) {
-        FunctionPtr<JITThunkPtrTag> target = MacroAssembler::readCallTarget<JITThunkPtrTag>(call);
-        MacroAssemblerCodePtr<JITThunkPtrTag> thunk = MacroAssemblerCodePtr<JITThunkPtrTag>::createFromExecutableAddress(target.executableAddress());
+        MacroAssemblerCodePtr<JITThunkPtrTag> thunk = MacroAssemblerCodePtr<OperationPtrTag>::createFromExecutableAddress(target.executableAddress()).retagged<JITThunkPtrTag>();
         return codeBlock->vm().ftlThunks->keyForSlowPathCallThunk(thunk).callTarget().retagged<CFunctionPtrTag>();
     }
 #else
     UNUSED_PARAM(codeBlock);
 #endif // ENABLE(FTL_JIT)
-    FunctionPtr<OperationPtrTag> target = MacroAssembler::readCallTarget<OperationPtrTag>(call);
     return target.retagged<CFunctionPtrTag>();
 }
 
@@ -92,8 +91,8 @@ void ftlThunkAwareRepatchCall(CodeBlock* codeBlock, CodeLocationCall<JSInternalP
     if (codeBlock->jitType() == JITType::FTLJIT) {
         VM& vm = codeBlock->vm();
         FTL::Thunks& thunks = *vm.ftlThunks;
-        FunctionPtr<JITThunkPtrTag> target = MacroAssembler::readCallTarget<JITThunkPtrTag>(call);
-        auto slowPathThunk = MacroAssemblerCodePtr<JITThunkPtrTag>::createFromExecutableAddress(target.executableAddress());
+        FunctionPtr<OperationPtrTag> target = MacroAssembler::readCallTarget<OperationPtrTag>(call);
+        auto slowPathThunk = MacroAssemblerCodePtr<JITThunkPtrTag>::createFromExecutableAddress(target.retaggedExecutableAddress<JITThunkPtrTag>());
         FTL::SlowPathCallKey key = thunks.keyForSlowPathCallThunk(slowPathThunk);
         key = key.withCallTarget(newCalleeFunction);
         MacroAssembler::repatchCall(call, FunctionPtr<OperationPtrTag>(thunks.getSlowPathCallThunk(vm, key).retaggedCode<OperationPtrTag>()));
@@ -406,7 +405,7 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
 
                     newCase = GetterSetterAccessCase::create(
                         vm, codeBlock, type, propertyName, offset, structure, conditionSet, loadTargetFromProxy,
-                        slot.watchpointSet(), slot.isCacheableCustom() ? FunctionPtr<OperationPtrTag>(slot.customGetter()) : nullptr,
+                        slot.watchpointSet(), slot.isCacheableCustom() ? slot.customGetter() : nullptr,
                         slot.isCacheableCustom() && slot.slotBase() != baseValue ? slot.slotBase() : nullptr,
                         domAttribute, WTFMove(prototypeAccessChain));
                 }
@@ -742,7 +741,7 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
 
                 newCase = GetterSetterAccessCase::create(
                     vm, codeBlock, slot.isCustomAccessor() ? AccessCase::CustomAccessorSetter : AccessCase::CustomValueSetter, oldStructure, propertyName,
-                    invalidOffset, conditionSet, WTFMove(prototypeAccessChain), isProxy, slot.customSetter().retagged<OperationPtrTag>(), slot.base() != baseValue ? slot.base() : nullptr);
+                    invalidOffset, conditionSet, WTFMove(prototypeAccessChain), isProxy, slot.customSetter(), slot.base() != baseValue ? slot.base() : nullptr);
             } else {
                 ASSERT(slot.isCacheableSetter());
                 ObjectPropertyConditionSet conditionSet;

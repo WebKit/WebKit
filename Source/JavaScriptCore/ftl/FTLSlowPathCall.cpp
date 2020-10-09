@@ -120,14 +120,14 @@ SlowPathCallKey SlowPathCallContext::keyWithTarget(FunctionPtr<CFunctionPtrTag> 
 SlowPathCall SlowPathCallContext::makeCall(VM& vm, FunctionPtr<CFunctionPtrTag> callTarget)
 {
     SlowPathCallKey key = keyWithTarget(callTarget);
-    SlowPathCall result = SlowPathCall(m_jit.call(JITThunkPtrTag), key);
+    SlowPathCall result = SlowPathCall(m_jit.call(OperationPtrTag), key);
 
     m_jit.addLinkTask(
         [result, &vm] (LinkBuffer& linkBuffer) {
             MacroAssemblerCodeRef<JITThunkPtrTag> thunk =
                 vm.ftlThunks->getSlowPathCallThunk(vm, result.key());
 
-            linkBuffer.link(result.call(), CodeLocationLabel<JITThunkPtrTag>(thunk.code()));
+            linkBuffer.link(result.call(), CodeLocationLabel<OperationPtrTag>(thunk.retaggedCode<OperationPtrTag>()));
         });
     
     return result;

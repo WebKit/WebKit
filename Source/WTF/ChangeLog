@@ -1,3 +1,21 @@
+2020-10-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r268170 and r268190.
+        https://bugs.webkit.org/show_bug.cgi?id=217502
+
+        Crash on ARM64E exclusively
+
+        Reverted changesets:
+
+        "[JSC] Restrict more ptr-tagging and avoid using
+        OperationPtrTag for JIT code"
+        https://bugs.webkit.org/show_bug.cgi?id=217460
+        https://trac.webkit.org/changeset/268170
+
+        "Unreviewed, build fix for ARM64E"
+        https://bugs.webkit.org/show_bug.cgi?id=217460
+        https://trac.webkit.org/changeset/268190
+
 2020-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make it possible to send an arbitrary IPC message from JavaScript
