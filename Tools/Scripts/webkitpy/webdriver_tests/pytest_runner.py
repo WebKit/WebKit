@@ -29,8 +29,6 @@ import tempfile
 
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
-import webkitpy.thirdparty.autoinstalled.pytest
-import webkitpy.thirdparty.autoinstalled.pytest_timeout
 import pytest
 from _pytest.main import EXIT_INTERNALERROR
 
