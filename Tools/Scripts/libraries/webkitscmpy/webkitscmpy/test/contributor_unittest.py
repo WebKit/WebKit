@@ -22,6 +22,7 @@
 
 import unittest
 
+from webkitcorepy import string_utils
 from webkitscmpy import Contributor
 
 
@@ -129,4 +130,10 @@ class TestContributor(unittest.TestCase):
         self.assertEqual(
             sorted([Contributor('Jonathan Bedard'), Contributor('Aakash Jain')]),
             [Contributor('Aakash Jain'), Contributor('Jonathan Bedard')],
+        )
+
+    def test_unicode(self):
+        self.assertEqual(
+            str(Contributor(u'Michael Br\u00fcning', ['michael.bruning@digia.com'])),
+            string_utils.encode(u'Michael Br\u00fcning <michael.bruning@digia.com>', target_type=str),
         )

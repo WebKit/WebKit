@@ -22,6 +22,8 @@
 
 import re
 
+from webkitcorepy import string_utils
+
 
 class Contributor(object):
     GIT_AUTHOR_RE = re.compile(r'Author: (?P<author>.*) <(?P<email>[^@]+@[^@]+)(@.*)?>')
@@ -74,8 +76,8 @@ class Contributor(object):
         return contributor
 
     def __init__(self, name, emails=None):
-        self.name = name
-        self.emails = emails or []
+        self.name = string_utils.decode(name)
+        self.emails = list(filter(string_utils.decode, emails or []))
 
     @property
     def email(self):
@@ -84,7 +86,10 @@ class Contributor(object):
         return self.emails[0]
 
     def __repr__(self):
-        return '{} <{}>'.format(self.name, self.email)
+        return '{} <{}>'.format(
+            string_utils.encode(self.name, target_type=str),
+            string_utils.encode(self.email, target_type=str),
+        )
 
     def __hash__(self):
         return hash(self.name)
