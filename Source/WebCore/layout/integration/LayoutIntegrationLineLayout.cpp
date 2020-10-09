@@ -165,10 +165,19 @@ void LineLayout::constructContent()
             auto& line = lines[lineIndex];
             auto& lineBoxLogicalRect = line.lineBoxLogicalRect();
             // FIXME: This is where the logical to physical translate should happen.
-            auto overflowWidth = std::max(line.logicalWidth(), lineBoxLogicalRect.width());
+            auto overflowWidth = [&] {
+                // FIXME: It's the copy of the lets-adjust-overflow-for-the-caret behavior from ComplexLineLayout::addOverflowFromInlineChildren.
+                auto endPadding = m_flow.hasOverflowClip() ? m_flow.paddingEnd() : 0_lu;
+                if (!endPadding)
+                    endPadding = m_flow.endPaddingWidthForCaret();
+                if (m_flow.hasOverflowClip() && !endPadding && m_flow.element() && m_flow.element()->isRootEditableElement())
+                    endPadding = 1;
+                auto lineBoxLogicalWidth = lineBoxLogicalRect.width() + endPadding;
+                return std::max(line.logicalWidth(), lineBoxLogicalWidth);
+            };
             auto lineBoxLogicalBottom = (lineBoxLogicalRect.top() - line.logicalTop()) + lineBoxLogicalRect.height();
             auto overflowHeight = std::max(line.logicalHeight(), lineBoxLogicalBottom);
-            auto scrollableOverflowRect = FloatRect { line.logicalLeft(), line.logicalTop(), overflowWidth, overflowHeight };
+            auto scrollableOverflowRect = FloatRect { line.logicalLeft(), line.logicalTop(), overflowWidth(), overflowHeight };
 
             auto firstRunIndex = runIndex;
             auto lineInkOverflowRect = scrollableOverflowRect;
