@@ -374,7 +374,7 @@ sub determineNativeArchitecture(;$$)
         $output = "arm64";
     }
 
-    $output = "arm" if $output eq "armv7l";
+    $output = "arm" if $output =~ m/^armv[78]l$/;
     $nativeArchitectureMap{"$target:$port"} = $output;
 }
 

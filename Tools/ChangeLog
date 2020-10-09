@@ -1,3 +1,17 @@
+2020-10-09  Paulo Matos  <pmatos@igalia.com>
+
+        Add armv8l arch to generic arm umbrella architecture variable
+        https://bugs.webkit.org/show_bug.cgi?id=217470
+
+        Reviewed by Adrian Perez de Castro.
+
+        The armv8l architecture specifies a system running an arm64 kernel
+        but running in 32bit user land. Therefore for JSC purposes armv8l and
+        armv7l are arm (32bit) architectures.
+
+        * Scripts/webkitdirs.pm:
+        (determineNativeArchitecture):
+
 2020-10-01  Matt Lewis  <jlewis3@apple.com>
 
         Move EWS to new SDKs: tvOS 14, and watchOS 7.
