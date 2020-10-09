@@ -211,6 +211,7 @@ Shared/API/c/WKRenderLayer.cpp
 Shared/API/c/WKRenderObject.cpp
 Shared/WebTouchEvent.cpp @no-unify
 Shared/WebUserContentControllerDataTypes.cpp
+Shared/WebWheelEventCoalescer.cpp
 Shared/WebWheelEvent.cpp @no-unify
 Shared/WebsiteDataStoreParameters.cpp
 Shared/WebsitePoliciesData.cpp

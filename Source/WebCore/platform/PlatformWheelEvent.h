@@ -270,7 +270,7 @@ inline FloatPoint PlatformWheelEvent::swipeVelocity() const
 
 #endif // ENABLE(KINETIC_SCROLLING)
 
-WTF::TextStream& operator<<(WTF::TextStream&, const PlatformWheelEvent&);
-WTF::TextStream& operator<<(WTF::TextStream&, WheelEventProcessingSteps);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PlatformWheelEvent&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WheelEventProcessingSteps);
 
 } // namespace WebCore

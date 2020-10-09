@@ -1,3 +1,48 @@
+2020-10-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Refactor wheel event coalescing into its own class
+        https://bugs.webkit.org/show_bug.cgi?id=217523
+
+        Reviewed by Sam Weinig.
+        
+        WebPageProxy had some confusing code for coalescing wheel events, first added in r116466.
+        To prepare this code for partial re-use in another place, factor it into its own class, WebWheelEventCoalescer.
+
+        WebWheelEventCoalescer holds a queue of pending NativeWebWheelEvents, and a queue of sequences of
+        NativeWebWheelEvents, where each sequence has been coalesced into a single WebWeelEvent which was
+        sent to the Web Process.
+
+        When the UI process receives a message back from the Web Process, it calls takeOldestEventBeingProcessed()
+        which removes the first sequence from m_eventsBeingProcessed. This code has to track NativeWebWheelEvents, because
+        we need to dig the NSEvent out of the NativeWebWheelEvent at this stage.
+
+        * Platform/Logging.h: Add a WheelEvents log channel.
+        * Shared/NativeWebWheelEvent.h:
+        * Shared/WebWheelEventCoalescer.cpp: Added.
+        (WebKit::operator<<):
+        (WebKit::WebWheelEventCoalescer::canCoalesce):
+        (WebKit::WebWheelEventCoalescer::coalesce):
+        (WebKit::WebWheelEventCoalescer::shouldDispatchEventNow const):
+        (WebKit::WebWheelEventCoalescer::nextEventToDispatch):
+        (WebKit::WebWheelEventCoalescer::shouldDispatchEvent):
+        (WebKit::WebWheelEventCoalescer::takeOldestEventBeingProcessed):
+        (WebKit::WebWheelEventCoalescer::clear):
+        * Shared/WebWheelEventCoalescer.h: Added.
+        (WebKit::WebWheelEventCoalescer::hasEventsBeingProcessed const):
+        * Sources.txt:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleWheelEvent):
+        (WebKit::WebPageProxy::wheelEventCoalescer):
+        (WebKit::WebPageProxy::didReceiveEvent):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        (WebKit::canCoalesce): Deleted.
+        (WebKit::coalesce): Deleted.
+        (WebKit::coalescedWheelEvent): Deleted.
+        (WebKit::WebPageProxy::processNextQueuedWheelEvent): Deleted.
+        (WebKit::WebPageProxy::shouldProcessWheelEventNow const): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-10-09  Per Arne Vollan  <pvollan@apple.com>
 
         [GPU Process] Use correct GPU runtime settings when creating the dynamic IOKit sandbox extensions for the WebContent process

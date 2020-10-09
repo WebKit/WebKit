@@ -2235,6 +2235,8 @@
 		0F45A334239D89AF00294ABF /* WKWebViewTestingMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewTestingMac.mm; sourceTree = "<group>"; };
 		0F45A33B239D8CC400294ABF /* WKWebViewPrivateForTesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewPrivateForTesting.h; sourceTree = "<group>"; };
 		0F45A33C239D8CC400294ABF /* WKWebViewTesting.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewTesting.mm; sourceTree = "<group>"; };
+		0F5403002531006E00082BB9 /* WebWheelEventCoalescer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebWheelEventCoalescer.cpp; sourceTree = "<group>"; };
+		0F5403012531006E00082BB9 /* WebWheelEventCoalescer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebWheelEventCoalescer.h; sourceTree = "<group>"; };
 		0F59478D187B3B3A00437857 /* RemoteScrollingCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteScrollingCoordinator.h; sourceTree = "<group>"; };
 		0F59478E187B3B3A00437857 /* RemoteScrollingCoordinator.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteScrollingCoordinator.messages.in; sourceTree = "<group>"; };
 		0F59478F187B3B3A00437857 /* RemoteScrollingCoordinator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteScrollingCoordinator.mm; sourceTree = "<group>"; };
@@ -6211,6 +6213,8 @@
 				4960A3BC23C5286400961842 /* WebViewCategory.h */,
 				C0337DD0127A2980008FF4F4 /* WebWheelEvent.cpp */,
 				0F4000FD2527D69D00E91DA7 /* WebWheelEvent.h */,
+				0F5403002531006E00082BB9 /* WebWheelEventCoalescer.cpp */,
+				0F5403012531006E00082BB9 /* WebWheelEventCoalescer.h */,
 			);
 			path = Shared;
 			sourceTree = "<group>";

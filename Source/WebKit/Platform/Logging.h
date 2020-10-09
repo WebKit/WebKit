@@ -100,6 +100,7 @@ extern "C" {
     M(VisibleRects) \
     M(WebGL) \
     M(WebRTC) \
+    M(WheelEvents) \
 
 WEBKIT2_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
 

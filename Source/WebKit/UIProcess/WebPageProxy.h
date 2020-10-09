@@ -327,6 +327,7 @@ class WebURLSchemeHandler;
 class WebUserContentControllerProxy;
 class WebViewDidMoveToWindowObserver;
 class WebWheelEvent;
+class WebWheelEventCoalescer;
 class WebsiteDataStore;
 
 struct WebBackForwardListCounts;
@@ -2231,9 +2232,9 @@ private:
 
     void setRenderTreeSize(uint64_t treeSize) { m_renderTreeSize = treeSize; }
 
-    void processNextQueuedWheelEvent();
     void sendWheelEvent(const WebWheelEvent&);
-    bool shouldProcessWheelEventNow(const WebWheelEvent&) const;
+
+    WebWheelEventCoalescer& wheelEventCoalescer();
 
 #if ENABLE(TOUCH_EVENTS)
     void updateTouchEventTracking(const WebTouchEvent&);
@@ -2577,10 +2578,10 @@ private:
     bool m_shouldSuppressSOAuthorizationInAllNavigationPolicyDecision { false };
 #endif
 
+    std::unique_ptr<WebWheelEventCoalescer> m_wheelEventCoalescer;
+
     Deque<NativeWebMouseEvent> m_mouseEventQueue;
     Deque<NativeWebKeyboardEvent> m_keyEventQueue;
-    Deque<NativeWebWheelEvent> m_wheelEventQueue;
-    Deque<std::unique_ptr<Vector<NativeWebWheelEvent>>> m_currentlyProcessedWheelEvents;
 #if ENABLE(MAC_GESTURE_EVENTS)
     Deque<NativeWebGestureEvent> m_gestureEventQueue;
 #endif
