@@ -1,3 +1,70 @@
+2020-10-09  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r268256. rdar://problem/70142054
+
+    Implement TCC checks in UserMediaPermissionRequestManagerProxy
+    https://bugs.webkit.org/show_bug.cgi?id=217508
+    <rdar://problem/70129993>
+    
+    Reviewed by Eric Carlson.
+    
+    TCC checks must be done before asking the page client to decide whether to grant or not camera and/or microphone.
+    This ensures that, should the default action be done (default prompt), for instance in case the WKWebView application does not provide any delegate,
+    the TCC checks will happen before the default prompt.
+    
+    For that reason, we move the TCC checks from UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest to UserMediaPermissionRequestManagerProxy::requestSystemValidation.
+    
+    Manually tested in Safari and MiniBrowser.
+    
+    * UIProcess/Cocoa/UIDelegate.mm:
+    (WebKit::UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest):
+    (WebKit::requestUserMediaAuthorizationForFrame): Deleted.
+    (WebKit::requestAVCaptureAccessForMediaType): Deleted.
+    * UIProcess/Cocoa/UserMediaPermissionRequestManagerProxy.mm:
+    (WebKit::requestAVCaptureAccessForMediaType):
+    (WebKit::UserMediaPermissionRequestManagerProxy::requestSystemValidation):
+    * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+    (WebKit::UserMediaPermissionRequestManagerProxy::processUserMediaPermissionValidRequest):
+    (WebKit::UserMediaPermissionRequestManagerProxy::decidePolicyForUserMediaPermissionRequest):
+    (WebKit::UserMediaPermissionRequestManagerProxy::requestSystemValidation):
+    * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+    * UIProcess/WebPageProxy.h:
+    (WebKit::WebPageProxy::preferences const):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268256 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-09  Youenn Fablet  <youenn@apple.com>
+
+            Implement TCC checks in UserMediaPermissionRequestManagerProxy
+            https://bugs.webkit.org/show_bug.cgi?id=217508
+            <rdar://problem/70129993>
+
+            Reviewed by Eric Carlson.
+
+            TCC checks must be done before asking the page client to decide whether to grant or not camera and/or microphone.
+            This ensures that, should the default action be done (default prompt), for instance in case the WKWebView application does not provide any delegate,
+            the TCC checks will happen before the default prompt.
+
+            For that reason, we move the TCC checks from UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest to UserMediaPermissionRequestManagerProxy::requestSystemValidation.
+
+            Manually tested in Safari and MiniBrowser.
+
+            * UIProcess/Cocoa/UIDelegate.mm:
+            (WebKit::UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest):
+            (WebKit::requestUserMediaAuthorizationForFrame): Deleted.
+            (WebKit::requestAVCaptureAccessForMediaType): Deleted.
+            * UIProcess/Cocoa/UserMediaPermissionRequestManagerProxy.mm:
+            (WebKit::requestAVCaptureAccessForMediaType):
+            (WebKit::UserMediaPermissionRequestManagerProxy::requestSystemValidation):
+            * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+            (WebKit::UserMediaPermissionRequestManagerProxy::processUserMediaPermissionValidRequest):
+            (WebKit::UserMediaPermissionRequestManagerProxy::decidePolicyForUserMediaPermissionRequest):
+            (WebKit::UserMediaPermissionRequestManagerProxy::requestSystemValidation):
+            * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+            * UIProcess/WebPageProxy.h:
+            (WebKit::WebPageProxy::preferences const):
+
 2020-10-08  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r268052. rdar://problem/70097377
