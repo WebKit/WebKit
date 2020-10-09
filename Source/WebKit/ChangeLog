@@ -1,3 +1,18 @@
+2020-10-09  Per Arne Vollan  <pvollan@apple.com>
+
+        [GPU Process] Use correct GPU runtime settings when creating the dynamic IOKit sandbox extensions for the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=217491
+        <rdar://problem/70066087>
+
+        Reviewed by Youenn Fablet.
+
+        Currently, the creation of the dynamic IOKit sandbox extensions for the WebContent process is incorrectly using the same GPU
+        runtime settings as when creating Media related dynamic mach-lookup extensions. There are several other GPU runtime flags
+        that needs to be checked before creating the extensions.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+
 2020-10-09  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Mark malware safe browser as a header for VoiceOver
