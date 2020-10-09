@@ -47,6 +47,10 @@ class Svn(Scm):
 
     def __init__(self, path, dev_branches=None, prod_branches=None):
         super(Svn, self).__init__(path, dev_branches=dev_branches, prod_branches=prod_branches)
+
+        self._root_path = self.path
+        self._root_path = self.info(cached=False).get('Working Copy Root Path')
+
         if not self.root_path:
             raise OSError('Provided path {} is not a svn repository'.format(path))
 
@@ -66,7 +70,7 @@ class Svn(Scm):
         additional_args = ['^/branches/{}'.format(branch)] if branch and branch != self.default_branch else []
         additional_args += ['-r', str(revision)] if revision else []
 
-        info_result = run([self.executable, 'info'] + additional_args, cwd=self.path, capture_output=True, encoding='utf-8')
+        info_result = run([self.executable, 'info'] + additional_args, cwd=self.root_path, capture_output=True, encoding='utf-8')
         if info_result.returncode:
             return {}
 
@@ -82,7 +86,7 @@ class Svn(Scm):
 
     @property
     def root_path(self):
-        return self.info(cached=True).get('Working Copy Root Path')
+        return self._root_path
 
     @property
     def default_branch(self):
@@ -96,7 +100,7 @@ class Svn(Scm):
         return self.info()['Relative URL'][2:]
 
     def list(self, category):
-        list_result = run([self.executable, 'list', '^/{}'.format(category)], cwd=self.path, capture_output=True, encoding='utf-8')
+        list_result = run([self.executable, 'list', '^/{}'.format(category)], cwd=self.root_path, capture_output=True, encoding='utf-8')
         if list_result.returncode:
             return []
         return [element.rstrip('/') for element in list_result.stdout.splitlines()]
@@ -138,7 +142,7 @@ class Svn(Scm):
 
             log = subprocess.Popen(
                 [self.executable, 'log', '-q', branch_arg],
-                cwd=self.path,
+                cwd=self.root_path,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 **kwargs
@@ -192,7 +196,7 @@ class Svn(Scm):
         return self._commit_count(revision=self._metadata_cache[branch][0], branch=self.default_branch)
 
     def remote(self, name=None):
-        return self.info()['Repository Root']
+        return self.info(cached=True)['Repository Root']
 
     def _branch_for(self, revision):
         candidates = [branch for branch, revisions in self._metadata_cache.items() if branch != 'version' and revision in revisions]
@@ -204,7 +208,7 @@ class Svn(Scm):
 
         process = run(
             [self.executable, 'log', '-v', '-q', self.remote(), '-r', str(revision), '-l', '1'],
-            cwd=self.path, capture_output=True, encoding='utf-8',
+            cwd=self.root_path, capture_output=True, encoding='utf-8',
         )
 
         # If we didn't get a valid answer from the remote, but we found a matching candidate, we return that.
@@ -229,7 +233,7 @@ class Svn(Scm):
 
         if len(partial) <= 3:
             raise self.Exception('Malformed set  of edited files')
-        partial = partial[2:]
+        partial = partial[2:].split(' ')[0]
         return partial.split('/')[2 if partial.startswith('/branches') else 1]
 
     def commit(self, hash=None, revision=None, identifier=None, branch=None):
@@ -272,7 +276,7 @@ class Svn(Scm):
                 branch = self.default_branch
 
             revision = self._metadata_cache[branch][identifier]
-            info = self.info(branch=branch, revision=revision)
+            info = self.info(cached=True, branch=branch, revision=revision)
             branch = self._branch_for(revision)
 
         elif revision:
@@ -280,7 +284,7 @@ class Svn(Scm):
                 raise ValueError('Cannot define both branch and revision')
             revision = Commit._parse_revision(revision, do_assert=True)
             branch = self._branch_for(revision)
-            info = self.info(branch=branch, revision=revision)
+            info = self.info(cached=True, branch=branch, revision=revision)
 
         else:
             branch = branch or self.branch
@@ -318,7 +322,7 @@ class Svn(Scm):
 
         branch_arg = '^/{}{}'.format('' if branch == self.default_branch else 'branches/', branch)
         log = run(
-            [self.executable, 'log', '-l', '1', '-r', str(revision), branch_arg], cwd=self.path,
+            [self.executable, 'log', '-l', '1', '-r', str(revision), branch_arg], cwd=self.root_path,
             capture_output=True, encoding='utf-8',
         )
         split_log = log.stdout.splitlines()
@@ -330,7 +334,7 @@ class Svn(Scm):
                     break
 
             author = Contributor.from_scm_log(author_line)
-            message = '\n'.join(split_log[3:])
+            message = '\n'.join(split_log[3:-1])
         else:
             self.log('Failed to connect to remote, cannot compute commit message')
             email = info['Last Changed Author']

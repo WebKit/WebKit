@@ -1,3 +1,23 @@
+2020-10-09  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Handle svn info run from directory
+        https://bugs.webkit.org/show_bug.cgi?id=217521
+        <rdar://problem/70144173>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn.__init__): Set the root_path, so that svn info is run from the top level.
+        (Svn.info): Rely on root_path, not path.
+        (Svn.root_path): Use self._root_path instead of self.info() call.
+        (Svn.list): Rely on root_path, not path.
+        (Svn._cache_revisions):  Ditto.
+        (Svn.remote): The repository root will not change during a single command invocation.
+        (Svn._branch_for): Handle initial branch commits, which. may have non-standard change lists.
+        (Svn.commit): Rely on root_path, not path, certain svn info calls will not change during
+        the invocation of a single program.
+
 2020-10-09  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION: [Mac Release] 2 Cookie API are failing
