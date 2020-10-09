@@ -1,3 +1,12 @@
+2020-10-09  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ iOS Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-stop.html is a constant timeout
+        https://bugs.webkit.org/show_bug.cgi?id=217538
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-10-09  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Add editability to input type=month
