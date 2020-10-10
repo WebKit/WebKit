@@ -1,3 +1,19 @@
+2020-10-10  Oriol Brufau  <obrufau@igalia.com>
+
+        Fix mac expectations for text-selection.html
+        https://bugs.webkit.org/show_bug.cgi?id=217475
+
+        Reviewed by Alexey Proskuryakov.
+
+        In Mojave this test produces a different result than in other platforms.
+        r268233 already added a Mojave-specific expected.txt, this patch removes
+        the failure from TestExpectations and removes the Mac-specific
+        expected.txt, which is identical to the non-platform-specific one.
+
+
+        * platform/mac/TestExpectations:
+        * platform/mac/imported/w3c/web-platform-tests/css/css-pseudo/text-selection-expected.txt: Removed.
+
 2020-10-09  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS wk2 Debug ] editing/mac/spelling/autocorrection-contraction.html is a constant timeout
