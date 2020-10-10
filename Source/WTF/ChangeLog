@@ -1,3 +1,41 @@
+2020-10-10  Sam Weinig  <weinig@apple.com>
+
+        Use WebPreference definitions from shared configuration files in WebCore (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=217551
+
+        Reviewed by Darin Adler.
+
+        This begins using the WebPreferences*.yaml files for the generation of 
+        WebCore's Settings and InternalSettings classes. In this first part, we 
+        only are moving settings that already exist in the WebPreferences*.yaml 
+        files. A subsequent change will migrate the remaining additional settings
+        over.
+
+        To do this we must add default values for 'WebCore', which are unfortunately
+        still needed for things like the empty client based SVGImage and sanitizing 
+        web content functionality. We only need default WebCore values for preferences 
+        that are bound to WebCore::Settings. It would be good to eliminate the need
+        for these eventually, but that is not a goal of this change.
+
+        This also adds some new keys from WebCore's Settings.yaml:
+        - 'webcoreOnChange: *' called by WebCore::Settings when the setting changes.
+        - 'inspectorOverride: true' used to allow the inspector to override the setting.
+        - 'webcoreImplementation: custom' used to indicate that WebCore::SettingsBase 
+          implements the setting.
+        - 'webcoreGetter: *' used to provide an alternate name for the getter in WebCore::Settings.
+        - 'webcoreExcludeFromInternalSettings: true' used to exclude from WebCore's InternalSettings
+          bindings.
+
+        * Scripts/GeneratePreferences.rb:
+        Adds check that if the preference is bound to WebCore, it includes defaults for all
+        three front generators, 'WebKit', WebKitLegacy', and 'WebCore'.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+        * Scripts/Preferences/WebPreferencesDebug.yaml:
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+        Migrates defaults and additional keys from Settings.yaml.
+
 2020-10-09  Keith Miller  <keith_miller@apple.com>
 
         Finalizers shouldn't run if events can't fire

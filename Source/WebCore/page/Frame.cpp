@@ -534,7 +534,7 @@ bool Frame::selectionChangeCallbacksDisabled() const
 
 bool Frame::requestDOMPasteAccess()
 {
-    if (m_settings->javaScriptCanAccessClipboard() && m_settings->DOMPasteAllowed())
+    if (m_settings->javaScriptCanAccessClipboard() && m_settings->domPasteAllowed())
         return true;
 
     if (!m_doc)

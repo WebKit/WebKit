@@ -1,7 +1,7 @@
 /*
  * THIS FILE WAS AUTOMATICALLY GENERATED, DO NOT EDIT.
  *
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@ namespace WebCore {
 
 InternalSettingsGenerated::InternalSettingsGenerated(Page* page)
     : m_page(page)
-<%- for @setting in @settings do -%>
+<%- for @setting in @allSettingsSet.settings do -%>
 <%- if @setting.excludeFromInternalSettings == false and @setting.idlType -%>
 <%- if @setting.conditional -%>
 #if <%= @setting.conditional %>
@@ -55,7 +55,7 @@ InternalSettingsGenerated::~InternalSettingsGenerated()
 
 void InternalSettingsGenerated::resetToConsistentState()
 {
-<%- for @setting in @settings do -%>
+<%- for @setting in @allSettingsSet.settings do -%>
 <%- if @setting.excludeFromInternalSettings == false and @setting.idlType -%>
 <%- if @setting.conditional -%>
 #if <%= @setting.conditional %>
@@ -68,7 +68,7 @@ void InternalSettingsGenerated::resetToConsistentState()
 <%- end -%>
 }
 
-<%- for @setting in @settings do -%>
+<%- for @setting in @allSettingsSet.settings do -%>
 <%- if @setting.excludeFromInternalSettings == false and @setting.idlType -%>
 void InternalSettingsGenerated::<%= @setting.setterFunctionName %>(<%= @setting.parameterType %> <%= @setting.name %>)
 {

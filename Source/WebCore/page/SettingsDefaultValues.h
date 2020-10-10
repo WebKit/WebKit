@@ -68,7 +68,6 @@ static const bool defaultMediaDataLoadsAutomatically = false;
 static const bool defaultShouldRespectImageOrientation = true;
 static const bool defaultImageSubsamplingEnabled = true;
 static const bool defaultScrollingTreeIncludesFrames = true;
-static const bool defaultMediaControlsScaleWithPageZoom = true;
 static const bool defaultQuickTimePluginReplacementEnabled = true;
 static const bool defaultRequiresUserGestureToLoadVideo = true;
 #else
@@ -82,21 +81,15 @@ static const bool defaultMediaDataLoadsAutomatically = true;
 static const bool defaultShouldRespectImageOrientation = false;
 static const bool defaultImageSubsamplingEnabled = false;
 static const bool defaultScrollingTreeIncludesFrames = false;
-static const bool defaultMediaControlsScaleWithPageZoom = true;
 static const bool defaultQuickTimePluginReplacementEnabled = false;
 static const bool defaultRequiresUserGestureToLoadVideo = false;
 #endif
 
-static const bool defaultAllowsPictureInPictureMediaPlayback = true;
-
-static const double defaultIncrementalRenderingSuppressionTimeoutInSeconds = 5;
 #if USE(UNIFIED_TEXT_CHECKING)
 static const bool defaultUnifiedTextCheckerEnabled = true;
 #else
 static const bool defaultUnifiedTextCheckerEnabled = false;
 #endif
-static const bool defaultSmartInsertDeleteEnabled = true;
-static const bool defaultSelectTrailingWhitespaceEnabled = false;
 
 #if ENABLE(VIDEO) && (USE(AVFOUNDATION) || USE(GSTREAMER) || USE(MEDIA_FOUNDATION))
 static const bool defaultMediaEnabled = true;

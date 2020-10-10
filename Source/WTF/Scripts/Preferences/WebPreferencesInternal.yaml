@@ -37,6 +37,8 @@ AllowViewportShrinkToFitContent:
       default: false
     WebKit:
       default: true
+    WebCore:
+      default: true
 
 AlwaysZoomOnDoubleTap:
   type: bool
@@ -60,6 +62,8 @@ ApplePayRemoteUIEnabled:
       default: false
     WebKit:
       default: true
+    WebCore:
+      default: true
 
 AriaReflectionEnabled:
   type: bool
@@ -74,6 +78,7 @@ AriaReflectionEnabled:
 
 AsyncFrameScrollingEnabled:
   type: bool
+  webcoreOnChange: setNeedsRelayoutAllFrames
   humanReadableName: "Async Frame Scrolling"
   humanReadableDescription: "Perform frame scrolling off the main thread"
   defaultValue:
@@ -83,9 +88,12 @@ AsyncFrameScrollingEnabled:
       "USE(NICOSIA)": true
       "PLATFORM(IOS_FAMILY)": true
       default: WebKit::defaultAsyncFrameScrollingEnabled()
+    WebCore:
+      default: false
 
 AsyncOverflowScrollingEnabled:
   type: bool
+  webcoreOnChange: setNeedsRelayoutAllFrames
   humanReadableName: "Async Overflow Scrolling"
   humanReadableDescription: "Perform overflow scrolling off the main thread"
   defaultValue:
@@ -94,6 +102,8 @@ AsyncOverflowScrollingEnabled:
     WebKit:
       "PLATFORM(IOS_FAMILY)": true
       default: WebKit::defaultAsyncFrameScrollingEnabled()
+    WebCore:
+      default: false
 
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 BlockingOfSmallPluginsEnabled:
@@ -104,6 +114,8 @@ BlockingOfSmallPluginsEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 CSSLogicalEnabled:
@@ -127,6 +139,8 @@ CSSOMViewScrollingAPIEnabled:
     WebKit:
       "PLATFORM(IOS_FAMILY)": WebKit::defaultCSSOMViewScrollingAPIEnabled()
       default: true
+    WebCore:
+      default: false
 
 CaptureAudioInGPUProcessEnabled:
   type: bool
@@ -182,6 +196,8 @@ DOMPasteAccessRequestsEnabled:
     WebKit:
       "PLATFORM(IOS) || PLATFORM(MAC)": true
       default: false
+    WebCore:
+      default: false
 
 # FIXME: This is on by default in WebKit2 (for everything but WatchOS). Perhaps we should consider turning it on for WebKitLegacy as well.
 DataListElementEnabled:
@@ -209,10 +225,11 @@ DateTimeInputsEditableComponentsEnabled:
     WebKit:
       "PLATFORM(MAC)": true
       default: false
+    WebCore:
+      default: false
 
 EnterKeyHintEnabled:
   type: bool
-  defaultValue: DEFAULT_ENTER_KEY_HINT_ENABLED
   humanReadableName: "Enter Key Hint"
   humanReadableDescription: "Enable the enterKeyHint HTML attribute"
   defaultValue:
@@ -220,6 +237,8 @@ EnterKeyHintEnabled:
       default: false
     WebKit:
       "PLATFORM(COCOA)": true
+      default: false
+    WebCore:
       default: false
 
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
@@ -268,15 +287,21 @@ FullScreenEnabled:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 ICECandidateFilteringEnabled:
   type: bool
+  webcoreOnChange: iceCandidateFilteringEnabledChanged
+  inspectorOverride: true
   humanReadableName: "Enable ICE Candidate Filtering"
   humanReadableDescription: "Enable ICE Candidate Filtering"
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 IPCTestingAPIEnabled:
@@ -301,6 +326,8 @@ InputTypeColorEnabled:
     WebKit:
       "PLATFORM(WATCHOS)": false
       default: true
+    WebCore:
+      default: false
 
 InputTypeDateEnabled:
   type: bool
@@ -314,7 +341,9 @@ InputTypeDateEnabled:
     WebKit:
       "PLATFORM(MACCATALYST) || PLATFORM(APPLETV)": false
       default: true
-  
+    WebCore:
+      default: false
+
 InputTypeDateTimeLocalEnabled:
   type: bool
   humanReadableName: "datetime-local Inputs"
@@ -327,6 +356,8 @@ InputTypeDateTimeLocalEnabled:
     WebKit:
       "PLATFORM(MACCATALYST) || PLATFORM(APPLETV)": false
       default: true
+    WebCore:
+      default: false
 
 InputTypeMonthEnabled:
   type: bool
@@ -339,6 +370,8 @@ InputTypeMonthEnabled:
       default: false
     WebKit:
       "!PLATFORM(MAC) && !PLATFORM(MACCATALYST) && !PLATFORM(APPLETV)": true
+      default: false
+    WebCore:
       default: false
 
 InputTypeTimeEnabled:
@@ -353,6 +386,8 @@ InputTypeTimeEnabled:
     WebKit:
       "PLATFORM(MACCATALYST) || PLATFORM(APPLETV)": false
       default: true
+    WebCore:
+      default: false
 
 InputTypeWeekEnabled:
   type: bool
@@ -365,6 +400,8 @@ InputTypeWeekEnabled:
     WebKit:
       "!PLATFORM(MAC) && !PLATFORM(MACCATALYST) && !PLATFORM(APPLETV)": true
       default: false
+    WebCore:
+      default: false
 
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 IsFirstPartyWebsiteDataRemovalLiveOnTestingEnabled:
@@ -376,6 +413,8 @@ IsFirstPartyWebsiteDataRemovalLiveOnTestingEnabled:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 IsFirstPartyWebsiteDataRemovalReproTestingEnabled:
@@ -386,6 +425,8 @@ IsFirstPartyWebsiteDataRemovalReproTestingEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 KeygenElementEnabled:
@@ -426,6 +467,7 @@ LayoutFormattingContextIntegrationEnabled:
 
 LegacyOverflowScrollingTouchEnabled:
   type: bool
+  webcoreOnChange: setNeedsRelayoutAllFrames
   humanReadableName: "Legacy -webkit-overflow-scrolling property"
   humanReadableDescription: "Support the legacy -webkit-overflow-scrolling CSS property"
   condition: ENABLE(OVERFLOW_SCROLLING_TOUCH)
@@ -433,6 +475,8 @@ LegacyOverflowScrollingTouchEnabled:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 LineHeightUnitsEnabled:
@@ -448,7 +492,6 @@ LineHeightUnitsEnabled:
 
 LiveRangeSelectionEnabled:
   type: bool
-  defaultValue: false
   humanReadableName: "Live Ranges in Selection"
   humanReadableDescription: "Live range behavior for ranges in the Selection object"
   defaultValue:
@@ -456,9 +499,12 @@ LiveRangeSelectionEnabled:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 MediaCaptureRequiresSecureConnection:
   type: bool
+  inspectorOverride: true
   humanReadableName: "Limit Media Capture to Secure Sites"
   humanReadableDescription: "Limit Media Capture to Secure Sites"
   condition: ENABLE(MEDIA_STREAM)
@@ -467,10 +513,13 @@ MediaCaptureRequiresSecureConnection:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: true
 
 MockCaptureDevicesEnabled:
   type: bool
-  defaultValue: DEFAULT_MOCK_CAPTURE_DEVICES_ENABLED
+  webcoreOnChange: mockCaptureDevicesEnabledChanged
+  inspectorOverride: true
   condition: ENABLE(MEDIA_STREAM)
   humanReadableName: "Enable Mock Capture Devices"
   humanReadableDescription: "Enable Mock Capture Devices"
@@ -479,6 +528,8 @@ MockCaptureDevicesEnabled:
       default: false
     WebKit:
       "PLATFORM(IOS_FAMILY_SIMULATOR)": true
+      default: false
+    WebCore:
       default: false
 
 MouseEventsSimulationEnabled:
@@ -528,6 +579,8 @@ PrefixedWebAudioEnabled:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 RestrictedHTTPResponseAccess:
@@ -561,6 +614,8 @@ SelectionAcrossShadowBoundariesEnabled:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: true
 
 # FIXME: This is not implemented for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 ServiceWorkersEnabled:
@@ -579,12 +634,15 @@ ServiceWorkersEnabled:
 
 SimpleLineLayoutEnabled:
   type: bool
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
   humanReadableName: "Simple line layout"
   humanReadableDescription: "Enable simple line layout path (SLL)"
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
@@ -598,10 +656,13 @@ SpeakerSelectionRequiresUserGesture:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: true
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 TextAutosizingUsesIdempotentMode:
   type: bool
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
   humanReadableName: "Idempotent Text Autosizing"
   humanReadableDescription: "Use idempotent text autosizing mode"
   condition: ENABLE(TEXT_AUTOSIZING)
@@ -611,17 +672,20 @@ TextAutosizingUsesIdempotentMode:
     WebKit:
       "PLATFORM(IOS_FAMILY)": defaultTextAutosizingUsesIdempotentMode()
       default: false
+    WebCore:
+      default: false
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 UndoManagerAPIEnabled:
   type: bool
-  defaultValue: false
   humanReadableName: "UndoManager DOM API"
   humanReadableDescription: "Enable the UndoManager DOM API"
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 UseGPUProcessForCanvasRenderingEnabled:
@@ -655,6 +719,10 @@ UseGPUProcessForMediaEnabled:
   defaultValue:
     WebKit:
       default: defaultUseGPUProcessForMediaEnabled()
+    WebKitLegacy:
+      default: false
+    WebCore:
+      default: false
 
 UseGPUProcessForWebGLEnabled:
   type: bool

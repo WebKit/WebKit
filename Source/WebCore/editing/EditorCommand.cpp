@@ -1227,7 +1227,7 @@ static bool supportedCopyCut(Frame* frame)
 static bool defaultValueForSupportedPaste(Frame& frame)
 {
     auto& settings = frame.settings();
-    if (settings.javaScriptCanAccessClipboard() && settings.DOMPasteAllowed())
+    if (settings.javaScriptCanAccessClipboard() && settings.domPasteAllowed())
         return true;
 
     return settings.domPasteAccessRequestsEnabled();
@@ -1370,7 +1370,7 @@ static bool enabledInRichlyEditableText(Frame& frame, Event*, EditorCommandSourc
 static bool allowPasteFromDOM(Frame& frame)
 {
     auto& settings = frame.settings();
-    if (settings.javaScriptCanAccessClipboard() && settings.DOMPasteAllowed())
+    if (settings.javaScriptCanAccessClipboard() && settings.domPasteAllowed())
         return true;
 
     return settings.domPasteAccessRequestsEnabled() && UserGestureIndicator::processingUserGesture();

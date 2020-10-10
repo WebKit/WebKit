@@ -1821,7 +1821,7 @@ void WebPage::sendViewportAttributesChanged(const ViewportArguments& viewportArg
     // Recalculate the recommended layout size, when the available size (device pixel) changes.
     Settings& settings = m_page->settings();
 
-    int minimumLayoutFallbackWidth = std::max(settings.layoutFallbackWidth(), m_viewSize.width());
+    int minimumLayoutFallbackWidth = std::max<int>(settings.layoutFallbackWidth(), m_viewSize.width());
 
     // If unset  we use the viewport dimensions. This fits with the behavior of desktop browsers.
     int deviceWidth = (settings.deviceWidth() > 0) ? settings.deviceWidth() : m_viewSize.width();

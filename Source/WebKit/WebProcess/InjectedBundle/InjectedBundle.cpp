@@ -267,18 +267,6 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
 #endif
 
     // Map the names used in LayoutTests with the names used in WebCore::Settings and WebPreferencesStore.
-#define FOR_EACH_OVERRIDE_BOOL_PREFERENCE(macro) \
-    macro(WebKitJavaEnabled, JavaEnabled, javaEnabled) \
-    macro(WebKitJavaScriptEnabled, ScriptEnabled, javaScriptEnabled) \
-    macro(WebKitPluginsEnabled, PluginsEnabled, pluginsEnabled) \
-    macro(WebKitWebAudioEnabled, WebAudioEnabled, webAudioEnabled) \
-    macro(WebKitWebGLEnabled, WebGLEnabled, webGLEnabled) \
-    macro(WebKitXSSAuditorEnabled, XSSAuditorEnabled, xssAuditorEnabled) \
-    macro(WebKitShouldRespectImageOrientation, ShouldRespectImageOrientation, shouldRespectImageOrientation) \
-    macro(WebKitDisplayImagesKey, LoadsImagesAutomatically, loadsImagesAutomatically) \
-    macro(WebKitLargeImageAsyncDecodingEnabled, LargeImageAsyncDecodingEnabled, largeImageAsyncDecodingEnabled) \
-    macro(WebKitAnimatedImageAsyncDecodingEnabled, AnimatedImageAsyncDecodingEnabled, animatedImageAsyncDecodingEnabled) \
-    \
 
 #define OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES(TestRunnerName, SettingsName, WebPreferencesName) \
     if (preference == #TestRunnerName) { \
@@ -288,12 +276,22 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         return; \
     }
 
-    FOR_EACH_OVERRIDE_BOOL_PREFERENCE(OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES)
-
+    OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES(WebKitAnimatedImageAsyncDecodingEnabled, AnimatedImageAsyncDecodingEnabled, animatedImageAsyncDecodingEnabled)
+    OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES(WebKitDisplayImagesKey, LoadsImagesAutomatically, loadsImagesAutomatically)
     OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES(WebKitHiddenPageDOMTimerThrottlingEnabled, HiddenPageDOMTimerThrottlingEnabled, hiddenPageDOMTimerThrottlingEnabled)
+    OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES(WebKitJavaEnabled, JavaEnabled, javaEnabled)
+    OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES(WebKitJavaScriptEnabled, ScriptEnabled, javaScriptEnabled)
+    OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES(WebKitLargeImageAsyncDecodingEnabled, LargeImageAsyncDecodingEnabled, largeImageAsyncDecodingEnabled)
+    OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES(WebKitPluginsEnabled, PluginsEnabled, pluginsEnabled)
+    OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES(WebKitShouldRespectImageOrientation, ShouldRespectImageOrientation, shouldRespectImageOrientation)
+    OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES(WebKitWebGLEnabled, WebGLEnabled, webGLEnabled)
+    OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES(WebKitXSSAuditorEnabled, XSSAuditorEnabled, xssAuditorEnabled)
+
+#if ENABLE(WEB_AUDIO)
+    OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES(WebKitWebAudioEnabled, WebAudioEnabled, webAudioEnabled)
+#endif
 
 #undef OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES
-#undef FOR_EACH_OVERRIDE_BOOL_PREFERENCE
 }
 
 void InjectedBundle::setAllowUniversalAccessFromFileURLs(WebPageGroupProxy* pageGroup, bool enabled)

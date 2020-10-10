@@ -51,13 +51,18 @@ Accelerated2dCanvasEnabled:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 AcceleratedCompositingEnabled:
   type: bool
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 AggressiveTileRetentionEnabled:
@@ -67,6 +72,8 @@ AggressiveTileRetentionEnabled:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 AllowCrossOriginSubresourcesToAskForCredentials:
   type: bool
@@ -74,6 +81,8 @@ AllowCrossOriginSubresourcesToAskForCredentials:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 AllowFileAccessFromFileURLs:
@@ -83,6 +92,8 @@ AllowFileAccessFromFileURLs:
       default: true
     WebKit:
       default: false
+    WebCore:
+      default: true
 
 AllowMediaContentTypesRequiringHardwareSupportAsFallback:
   type: bool
@@ -94,6 +105,8 @@ AllowMediaContentTypesRequiringHardwareSupportAsFallback:
     WebKit:
       "PLATFORM(COCOA)": true
       default: false
+    WebCore:
+      default: false
 
 AllowMultiElementImplicitSubmission:
   type: bool
@@ -103,6 +116,8 @@ AllowMultiElementImplicitSubmission:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 AllowSettingAnyXHRHeaderFromFileURLs:
   type: bool
@@ -110,6 +125,8 @@ AllowSettingAnyXHRHeaderFromFileURLs:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 AllowTopNavigationToDataURLs:
@@ -119,6 +136,8 @@ AllowTopNavigationToDataURLs:
       default: true
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 AllowUniversalAccessFromFileURLs:
   type: bool
@@ -127,6 +146,8 @@ AllowUniversalAccessFromFileURLs:
       default: true
     WebKit:
       default: false
+    WebCore:
+      default: true
 
 AllowsAirPlayForMediaPlayback:
   type: bool
@@ -136,6 +157,8 @@ AllowsAirPlayForMediaPlayback:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 AllowsInlineMediaPlayback:
@@ -148,6 +171,10 @@ AllowsInlineMediaPlayback:
     WebKit:
       "PLATFORM(IOS_FAMILY)": false
       default: true
+    WebCore:
+      default: true
+    WebCore:
+      default: defaultAllowsInlineMediaPlayback
 
 AllowsInlineMediaPlaybackAfterFullscreen:
   type: bool
@@ -158,6 +185,8 @@ AllowsInlineMediaPlaybackAfterFullscreen:
     WebKit:
       "PLATFORM(IOS_FAMILY)": true
       default: false
+    WebCore:
+      default: true
 
 AllowsPictureInPictureMediaPlayback:
   type: bool
@@ -168,6 +197,8 @@ AllowsPictureInPictureMediaPlayback:
     WebKit:
       "PLATFORM(IOS_FAMILY)": true
       default: false
+    WebCore:
+      default: true
 
 AlwaysUseAcceleratedOverflowScroll:
   type: bool
@@ -176,6 +207,8 @@ AlwaysUseAcceleratedOverflowScroll:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 AnimatedImageAsyncDecodingEnabled:
   type: bool
@@ -183,6 +216,8 @@ AnimatedImageAsyncDecodingEnabled:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
@@ -193,6 +228,8 @@ ApplePayCapabilityDisclosureAllowed:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
@@ -206,6 +243,8 @@ ApplePayEnabled:
     WebKit:
       "ENABLE(APPLE_PAY_REMOTE_UI)": true
       default: false
+    WebCore:
+      default: defaultApplePayEnabled
 
 ArtificialPluginInitializationDelayEnabled:
   type: bool
@@ -238,6 +277,8 @@ AsynchronousSpellCheckingEnabled:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 AttachmentElementEnabled:
   type: bool
@@ -252,10 +293,14 @@ AttachmentElementEnabled:
 AuthorAndUserStylesEnabled:
   type: bool
   webKitLegacyPreferenceKey: WebKitAuthorAndUserStylesEnabledPreferenceKey
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
+  inspectorOverride: true
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 AutostartOriginPlugInSnapshottingEnabled:
@@ -264,6 +309,8 @@ AutostartOriginPlugInSnapshottingEnabled:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 BackForwardCacheSupportsPlugins:
@@ -274,6 +321,8 @@ BackForwardCacheSupportsPlugins:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: false
 
 BackspaceKeyNavigationEnabled:
   type: bool
@@ -283,6 +332,8 @@ BackspaceKeyNavigationEnabled:
       default: true
     WebKit:
       "PLATFORM(IOS_FAMILY)": false
+      default: true
+    WebCore:
       default: true
 
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
@@ -295,6 +346,8 @@ BeaconAPIEnabled:
       default: false
     WebKit:
       default: true
+    WebCore:
+      default: false
 
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
 CacheAPIEnabled:
@@ -314,6 +367,8 @@ CanvasUsesAcceleratedDrawing:
       default: false
     WebKit:
       default: true
+    WebCore:
+      default: false
 
 CaretBrowsingEnabled:
   type: bool
@@ -322,15 +377,21 @@ CaretBrowsingEnabled:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 ColorFilterEnabled:
   type: bool
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
+# FIXME: This needs a more clear name to explain that it is a CSS related preference. (Maybe we need namespacing? CSS.ConstantPropertiesEnabled?)
 ConstantPropertiesEnabled:
   type: bool
   defaultValue:
@@ -338,6 +399,8 @@ ConstantPropertiesEnabled:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: false
 
 ContentChangeObserverEnabled:
   type: bool
@@ -347,6 +410,8 @@ ContentChangeObserverEnabled:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: defaultContentChangeObserverEnabled()
 
 # FIXME: This is handled via WebView SPI rather than WebPreferences for WebKitLegacy. We should change the SPI to lookup the WebPreferences value instead.
 CookieEnabled:
@@ -355,10 +420,15 @@ CookieEnabled:
   defaultValue:
     WebKit:
       default: true
+    WebKitLegacy:
+      default: true
+    WebCore:
+      default: true
 
 CursiveFontFamily:
   type: String
   webKitLegacyPreferenceKey: WebKitCursiveFont
+  webcoreImplementation: custom
   defaultValue:
     WebKitLegacy:
       "PLATFORM(IOS_FAMILY)": '"Snell Roundhand"'
@@ -367,6 +437,8 @@ CursiveFontFamily:
       "PLATFORM(COCOA) && PLATFORM(IOS_FAMILY)": '"Snell Roundhand"'
       "PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)": '"Apple Chancery"'
       default: '"Comic Sans MS"'
+    WebCore:
+      default: '""'
 
 CustomPasteboardDataEnabled:
   type: bool
@@ -382,10 +454,13 @@ CustomPasteboardDataEnabled:
   
 DNSPrefetchingEnabled:
   type: bool
+  webcoreOnChange: dnsPrefetchingEnabledChanged
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 DOMPasteAllowed:
@@ -396,6 +471,8 @@ DOMPasteAllowed:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 DOMTimersThrottlingEnabled:
   type: bool
@@ -404,6 +481,8 @@ DOMTimersThrottlingEnabled:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 # FIXME: There is no custom binding implemented for WebKitLegacy.
@@ -427,6 +506,8 @@ DataTransferItemsEnabled:
     WebKit:
       "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
+    WebCore:
+      default: false
 
 DatabasesEnabled:
   type: bool
@@ -440,18 +521,24 @@ DatabasesEnabled:
 
 DefaultFixedFontSize:
   type: double
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
   defaultValue:
     WebKitLegacy:
       default: 13
     WebKit:
+      default: 13
+    WebCore:
       default: 13
 
 DefaultFontSize:
   type: double
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
   defaultValue:
     WebKitLegacy:
       default: 16
     WebKit:
+      default: 16
+    WebCore:
       default: 16
 
 DefaultTextEncodingName:
@@ -461,6 +548,8 @@ DefaultTextEncodingName:
       default: '"ISO-8859-1"'
     WebKit:
       default: WebCore::defaultTextEncodingNameForSystemLanguage()
+    WebCore:
+      default:
 
 DeferredCSSParserEnabled:
   type: bool
@@ -469,6 +558,8 @@ DeferredCSSParserEnabled:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 DeviceHeight:
   type: uint32_t
@@ -476,6 +567,8 @@ DeviceHeight:
     WebKitLegacy:
       default: 0
     WebKit:
+      default: 0
+    WebCore:
       default: 0
 
 DeviceOrientationEventEnabled:
@@ -486,6 +579,8 @@ DeviceOrientationEventEnabled:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: true
 
 DeviceOrientationPermissionAPIEnabled:
   type: bool
@@ -495,6 +590,8 @@ DeviceOrientationPermissionAPIEnabled:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 DeviceWidth:
   type: uint32_t
@@ -503,6 +600,8 @@ DeviceWidth:
       default: 0
     WebKit:
       default: 0
+    WebCore:
+      default: 0
 
 DiagnosticLoggingEnabled:
   type: bool
@@ -510,6 +609,8 @@ DiagnosticLoggingEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 DirectoryUploadEnabled:
@@ -532,6 +633,8 @@ DisabledAdaptationsMetaTagEnabled:
     WebKit:
       "PLATFORM(WATCHOS)": true
       default: false
+    WebCore:
+      default: false
 
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 DownloadAttributeEnabled:
@@ -542,6 +645,8 @@ DownloadAttributeEnabled:
       default: false
     WebKit:
       default: true
+    WebCore:
+      default: false
 
 EditableLinkBehavior:
   type: uint32_t
@@ -559,6 +664,8 @@ EnableInheritURIQueryComponent:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 EncryptedMediaAPIEnabled:
   type: bool
@@ -568,6 +675,8 @@ EncryptedMediaAPIEnabled:
       default: false
     WebKit:
       default: true
+    WebCore:
+      default: false
 
 EnumeratingAllNetworkInterfacesEnabled:
   type: bool
@@ -584,26 +693,34 @@ FTPDirectoryTemplatePath:
       default: '""'
     WebKit:
       default: '""'
+    WebCore:
+      default: '""'
 
 FantasyFontFamily:
   type: String
   webKitLegacyPreferenceKey: WebKitFantasyFont
+  webcoreImplementation: custom
   defaultValue:
     WebKitLegacy:
       default: '"Papyrus"'
     WebKit:
       "PLATFORM(COCOA)": '"Papyrus"'
       default: '"Impact"'
+    WebCore:
+      default: '""'
 
 FixedFontFamily:
   type: String
   webKitLegacyPreferenceKey: WebKitFixedFont
+  webcoreImplementation: custom
   defaultValue:
     WebKitLegacy:
       default: '"Courier"'
     WebKit:
       "PLATFORM(COCOA)": '"Courier"'
       default: '"Courier New"'
+    WebCore:
+      default: '""'
 
 ForceCompositingMode:
   type: bool
@@ -620,6 +737,8 @@ ForceFTPDirectoryListings:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 ForceUpdateScrollbarsOnMainThreadForPerformanceTesting:
   type: bool
@@ -627,6 +746,8 @@ ForceUpdateScrollbarsOnMainThreadForPerformanceTesting:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 # FIXME: We should make autogeneration smart enough to deal with enums to avoid explicitly casting in this file and custom binding to WebCore.
@@ -660,6 +781,8 @@ GamepadsEnabled:
       default: false
     WebKit:
       default: true
+    WebCore:
+      default: false
 
 HTTPEquivEnabled:
   type: bool
@@ -669,31 +792,42 @@ HTTPEquivEnabled:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: true
 
 HiddenPageCSSAnimationSuspensionEnabled:
   type: bool
+  webcoreOnChange: hiddenPageCSSAnimationSuspensionEnabledChanged
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
       "PLATFORM(COCOA) || PLATFORM(GTK)": true
       default: false
+    WebCore:
+      default: false
 
 HiddenPageDOMTimerThrottlingAutoIncreases:
   type: bool
+  webcoreOnChange: hiddenPageDOMTimerThrottlingStateChanged
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 HiddenPageDOMTimerThrottlingEnabled:
   type: bool
+  webcoreOnChange: hiddenPageDOMTimerThrottlingStateChanged
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
       "PLATFORM(COCOA) || PLATFORM(GTK)": true
+      default: false
+    WebCore:
       default: false
 
 HyperlinkAuditingEnabled:
@@ -703,6 +837,8 @@ HyperlinkAuditingEnabled:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: false
 
 ImageControlsEnabled:
   type: bool
@@ -711,6 +847,8 @@ ImageControlsEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 InactiveMediaCaptureSteamRepromptIntervalInMinutes:
@@ -729,6 +867,8 @@ IncompleteImageBorderEnabled:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 IncrementalRenderingSuppressionTimeout:
   type: double
@@ -738,6 +878,8 @@ IncrementalRenderingSuppressionTimeout:
     WebKitLegacy:
       default: 5
     WebKit:
+      default: 5
+    WebCore:
       default: 5
 
 InlineMediaPlaybackRequiresPlaysInlineAttribute:
@@ -749,6 +891,8 @@ InlineMediaPlaybackRequiresPlaysInlineAttribute:
     WebKit:
       "PLATFORM(IOS_FAMILY)": true
       default: false
+    WebCore:
+      default: defaultInlineMediaPlaybackRequiresPlaysInlineAttribute
 
 InputEventsEnabled:
   type: bool
@@ -758,6 +902,8 @@ InputEventsEnabled:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 InspectorAdditionsEnabled:
@@ -820,6 +966,10 @@ InteractiveFormValidationEnabled:
   defaultValue:
     WebKit:
       default: true
+    WebKitLegacy:
+      default: false
+    WebCore:
+      default: false
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
 InterruptAudioOnPageVisibilityChangeEnabled:
@@ -830,6 +980,8 @@ InterruptAudioOnPageVisibilityChangeEnabled:
       default: false
     WebKit:
       default: WebCore::RealtimeMediaSourceCenter::shouldInterruptAudioOnPageVisibilityChange()
+    WebCore:
+      default: false
 
 InvisibleAutoplayNotPermitted:
   type: bool
@@ -839,6 +991,8 @@ InvisibleAutoplayNotPermitted:
       default: false
     WebKit:
       "PLATFORM(IOS_FAMILY)": true
+      default: false
+    WebCore:
       default: false
 
 IsAccessibilityIsolatedTreeEnabled:
@@ -851,6 +1005,8 @@ IsAccessibilityIsolatedTreeEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
@@ -867,20 +1023,26 @@ ItpDebugModeEnabled:
 
 JavaEnabled:
   type: bool
+  webcoreGetter: isJavaEnabled
   defaultValue:
     WebKitLegacy:
       "PLATFORM(IOS_FAMILY)": false
       default: true
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 JavaEnabledForLocalFiles:
   type: bool
+  webcoreGetter: isJavaEnabledForLocalFiles
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
       default: false
+    WebCore:
+      default: true
 
 JavaScriptCanAccessClipboard:
   type: bool
@@ -888,6 +1050,8 @@ JavaScriptCanAccessClipboard:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 JavaScriptCanOpenWindowsAutomatically:
@@ -899,16 +1063,23 @@ JavaScriptCanOpenWindowsAutomatically:
     WebKit:
       "PLATFORM(IOS_FAMILY)": false
       default: true
-  
+    WebCore:
+      default: false
+
 JavaScriptEnabled:
   type: bool
+  inspectorOverride: true
+  webcoreGetter: isScriptEnabled
   webcoreName: scriptEnabled
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: false
 
+# NOTE: Clients should use per-navigation "allowsContentJavaScript" policies instead
 JavaScriptMarkupEnabled:
   type: bool
   webcoreName: scriptMarkupEnabled
@@ -916,6 +1087,8 @@ JavaScriptMarkupEnabled:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 JavaScriptRuntimeFlags:
@@ -935,6 +1108,8 @@ LargeImageAsyncDecodingEnabled:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: true
 
 LayoutFallbackWidth:
   type: uint32_t
@@ -943,16 +1118,21 @@ LayoutFallbackWidth:
       default: 980
     WebKit:
       default: 980
+    WebCore:
+      default: 980
 
 LayoutViewportHeightExpansionFactor:
   type: double
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
   defaultValue:
     WebKitLegacy:
       default: 0
     WebKit:
       "PLATFORM(WATCHOS)": 1
       default: 0
-  
+    WebCore:
+      default: 0
+
 LegacyEncryptedMediaAPIEnabled:
   type: bool
   humanReadableName: "Enable Legacy EME API"
@@ -962,6 +1142,8 @@ LegacyEncryptedMediaAPIEnabled:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 LinkPreconnect:
@@ -973,6 +1155,8 @@ LinkPreconnect:
     WebKit:
       "ENABLE(SERVER_PRECONNECT)": true
       default: false
+    WebCore:
+      default: false
 
 LinkPreloadEnabled:
   type: bool
@@ -981,16 +1165,24 @@ LinkPreloadEnabled:
       default: false
     WebKit:
       default: true
+    WebCore:
+      default: true
 
+# This only suppresses the network load of the image URL. A cached image will still be rendered if requested.
 LoadsImagesAutomatically:
   type: bool
+  webcoreOnChange: imagesEnabledChanged
   webKitLegacyPreferenceKey: WebKitDisplayImagesKey
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: false
 
+# This preference only affects site icon image loading if the LoadsImagesAutomatically preference is false and
+# this preference is true. All other permutations still heed LoadsImagesAutomatically preference.
 LoadsSiteIconsIgnoringImageLoadingPreference:
   type: bool
   webKitLegacyPreferenceKey: WebKitLoadSiteIconsKey
@@ -999,6 +1191,8 @@ LoadsSiteIconsIgnoringImageLoadingPreference:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 LocalFileContentSniffingEnabled:
@@ -1009,6 +1203,8 @@ LocalFileContentSniffingEnabled:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 LocalStorageEnabled:
   type: bool
@@ -1018,6 +1214,8 @@ LocalStorageEnabled:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: false
 
 LongRunningMediaCaptureStreamRepromptIntervalInHours:
   type: double
@@ -1043,6 +1241,8 @@ MainContentUserGestureOverrideEnabled:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 MaxParseDuration:
   type: double
@@ -1052,6 +1252,8 @@ MaxParseDuration:
       default: -1
     WebKit:
       default: -1
+    WebCore:
+      default: -1
 
 MediaCapabilitiesEnabled:
   type: bool
@@ -1060,13 +1262,19 @@ MediaCapabilitiesEnabled:
       default: false
     WebKit:
       default: true
+    WebCore:
+      default: false
 
 MediaContentTypesRequiringHardwareSupport:
   type: String
+  webcoreExcludeFromInternalSettings: true
+  webcoreImplementation: custom
   defaultValue:
     WebKitLegacy:
       default: '""'
     WebKit:
+      default: '""'
+    WebCore:
       default: '""'
 
 MediaControlsScaleWithPageZoom:
@@ -1078,7 +1286,9 @@ MediaControlsScaleWithPageZoom:
     WebKit:
       "PLATFORM(IOS_FAMILY)": false
       default: true
-  
+    WebCore:
+      default: true
+
 MediaDataLoadsAutomatically:
   type: bool
   defaultValue:
@@ -1088,6 +1298,8 @@ MediaDataLoadsAutomatically:
     WebKit:
       "PLATFORM(IOS_FAMILY)": false
       default: true
+    WebCore:
+      default: defaultMediaDataLoadsAutomatically
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
 MediaDevicesEnabled:
@@ -1098,6 +1310,8 @@ MediaDevicesEnabled:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 MediaEnabled:
   type: bool
@@ -1107,6 +1321,8 @@ MediaEnabled:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: defaultMediaEnabled
 
 MediaPreloadingEnabled:
   type: bool
@@ -1114,6 +1330,8 @@ MediaPreloadingEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 MediaSourceEnabled:
@@ -1126,8 +1344,11 @@ MediaSourceEnabled:
       "PLATFORM(COCOA) && PLATFORM(MAC)": true
       "PLATFORM(COCOA) && !PLATFORM(MAC)": false
       default: true
+    WebCore:
+      default: platformDefaultMediaSourceEnabled()
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
+# FIXME: Seems to be unused. Remove once verified.
 MediaStreamEnabled:
   type: bool
   condition: ENABLE(MEDIA_STREAM)
@@ -1136,6 +1357,8 @@ MediaStreamEnabled:
       default: false
     WebKit:
       default: true
+    WebCore:
+      default: true
 
 MediaUserGestureInheritsFromDocument:
   type: bool
@@ -1143,6 +1366,8 @@ MediaUserGestureInheritsFromDocument:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 MenuItemElementEnabled:
@@ -1156,19 +1381,25 @@ MenuItemElementEnabled:
 
 MinimumFontSize:
   type: double
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
   defaultValue:
     WebKitLegacy:
       default: 0
     WebKit:
+      default: 0
+    WebCore:
       default: 0
 
 MinimumLogicalFontSize:
   type: double
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
   defaultValue:
     WebKitLegacy:
       default: 9
     WebKit:
       default: 9
+    WebCore:
+      default: 0
 
 MinimumZoomFontSize:
   type: double
@@ -1180,6 +1411,8 @@ MinimumZoomFontSize:
     WebKit:
       "PLATFORM(WATCHOS)": 30
       default: 15
+    WebCore:
+      default: defaultMinimumZoomFontSize()
 
 MockCaptureDevicesPromptEnabled:
   type: bool
@@ -1213,11 +1446,14 @@ ModernMediaControlsEnabled:
 NeedsSiteSpecificQuirks:
   type: bool
   webKitLegacyPreferenceKey: WebKitUseSiteSpecificSpoofing
+  inspectorOverride: true
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
       default: true
+    WebCore:
+      default: false
 
 NeedsStorageAccessFromFileURLsQuirk:
   type: bool
@@ -1225,6 +1461,8 @@ NeedsStorageAccessFromFileURLsQuirk:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 NotificationsEnabled:
@@ -1235,6 +1473,8 @@ NotificationsEnabled:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: true
 
 OfflineWebApplicationCacheEnabled:
   type: bool
@@ -1243,6 +1483,8 @@ OfflineWebApplicationCacheEnabled:
       default: false
     WebKit:
       default: true
+    WebCore:
+      default: false
 
 PDFPluginEnabled:
   type: bool
@@ -1268,6 +1510,8 @@ PaginateDuringLayoutEnabled:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 PassiveTouchListenersAsDefaultOnDocument:
   type: bool
@@ -1277,6 +1521,8 @@ PassiveTouchListenersAsDefaultOnDocument:
       default: true
     WebKit:
       "PLATFORM(IOS_FAMILY)": WebKit::defaultPassiveTouchListenersAsDefaultOnDocument()
+      default: true
+    WebCore:
       default: true
 
 PasswordEchoDuration:
@@ -1289,6 +1535,8 @@ PasswordEchoDuration:
       default: 1
     WebKit:
       default: 2
+    WebCore:
+      default: 1
 
 PasswordEchoEnabled:
   type: bool
@@ -1299,6 +1547,8 @@ PasswordEchoEnabled:
       default: false
     WebKit:
       "PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)": true
+      default: false
+    WebCore:
       default: false
 
 PeerConnectionEnabled:
@@ -1314,6 +1564,7 @@ PeerConnectionEnabled:
 PictographFontFamily:
   type: String
   webKitLegacyPreferenceKey: WebKitPictographFont
+  webcoreImplementation: custom
   defaultValue:
     WebKitLegacy:
       "PLATFORM(IOS_FAMILY)": '"AppleColorEmoji"'
@@ -1322,6 +1573,8 @@ PictographFontFamily:
       "PLATFORM(COCOA) && PLATFORM(IOS_FAMILY)": '"AppleColorEmoji"'
       "PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)": '"Apple Color Emoji"'
       default: '"Times"'
+    WebCore:
+      default: '""'
 
 PictureInPictureAPIEnabled:
   type: bool
@@ -1331,6 +1584,8 @@ PictureInPictureAPIEnabled:
       default: false
     WebKit:
       default: true
+    WebCore:
+      default: true
 
 PlugInSnapshottingEnabled:
   type: bool
@@ -1339,13 +1594,19 @@ PlugInSnapshottingEnabled:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 PluginsEnabled:
   type: bool
+  webcoreGetter: arePluginsEnabled
+  webcoreOnChange: pluginsEnabledChanged
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 PrimaryPlugInSnapshotDetectionEnabled:
@@ -1355,13 +1616,18 @@ PrimaryPlugInSnapshotDetectionEnabled:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: true
 
 PunchOutWhiteBackgroundsInDarkMode:
   type: bool
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 RequestAnimationFrameEnabled:
@@ -1370,6 +1636,8 @@ RequestAnimationFrameEnabled:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 RequiresUserGestureForAudioPlayback:
@@ -1411,6 +1679,8 @@ RequiresUserGestureToLoadVideo:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: defaultRequiresUserGestureToLoadVideo
   
 SafeBrowsingEnabled:
   type: bool
@@ -1423,11 +1693,14 @@ SafeBrowsingEnabled:
 SansSerifFontFamily:
   type: String
   webKitLegacyPreferenceKey: WebKitSansSerifFont
+  webcoreImplementation: custom
   defaultValue:
     WebKitLegacy:
       default: '"Helvetica"'
     WebKit:
       default: '"Helvetica"'
+    WebCore:
+      default: '""'
 
 ScrollAnimatorEnabled:
   type: bool
@@ -1437,10 +1710,13 @@ ScrollAnimatorEnabled:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: true
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
 ScrollingPerformanceLoggingEnabled:
   type: bool
+  webcoreOnChange: scrollingPerformanceLoggingEnabledChanged
   webcoreBinding: custom
   defaultValue:
     WebKitLegacy:
@@ -1455,6 +1731,10 @@ SelectTrailingWhitespaceEnabled:
   defaultValue:
     WebKit:
       default: false
+    WebKitLegacy:
+      default: false
+    WebCore:
+      default: false
 
 SelectionPaintingWithoutSelectionGapsEnabled:
   type: bool
@@ -1463,15 +1743,20 @@ SelectionPaintingWithoutSelectionGapsEnabled:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 SerifFontFamily:
   type: String
   webKitLegacyPreferenceKey: WebKitSerifFont
+  webcoreImplementation: custom
   defaultValue:
     WebKitLegacy:
       default: '"Times"'
     WebKit:
       default: '"Times"'
+    WebCore:
+      default: '""'
 
 ServiceControlsEnabled:
   type: bool
@@ -1480,6 +1765,8 @@ ServiceControlsEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 ServiceWorkerEntitlementDisabledForTesting:
@@ -1492,10 +1779,13 @@ ServiceWorkerEntitlementDisabledForTesting:
 
 ShouldAllowUserInstalledFonts:
   type: bool
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 ShouldConvertPositionStyleOnCopy:
@@ -1505,6 +1795,8 @@ ShouldConvertPositionStyleOnCopy:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 ShouldDecidePolicyBeforeLoadingQuickLookPreview:
   type: bool
@@ -1512,6 +1804,8 @@ ShouldDecidePolicyBeforeLoadingQuickLookPreview:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 ShouldDisplayCaptions:
@@ -1522,6 +1816,8 @@ ShouldDisplayCaptions:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 ShouldDisplaySubtitles:
   type: bool
@@ -1530,6 +1826,8 @@ ShouldDisplaySubtitles:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 ShouldDisplayTextDescriptions:
@@ -1540,14 +1838,19 @@ ShouldDisplayTextDescriptions:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 ShouldEnableTextAutosizingBoost:
   type: bool
+  webcoreOnChange: shouldEnableTextAutosizingBoostChanged
   condition: ENABLE(TEXT_AUTOSIZING)
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
@@ -1557,6 +1860,8 @@ ShouldIgnoreMetaViewport:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 ShouldPrintBackgrounds:
@@ -1569,6 +1874,8 @@ ShouldPrintBackgrounds:
     WebKit:
       "PLATFORM(IOS_FAMILY)": true
       default: false
+    WebCore:
+      default: false
 
 ShouldRespectImageOrientation:
   type: bool
@@ -1579,6 +1886,8 @@ ShouldRespectImageOrientation:
     WebKit:
       "PLATFORM(IOS_FAMILY)": true
       default: false
+    WebCore:
+      default: defaultShouldRespectImageOrientation
 
 ShouldRestrictBaseURLSchemes:
   type: bool
@@ -1587,6 +1896,8 @@ ShouldRestrictBaseURLSchemes:
       default: WebKit::defaultShouldRestrictBaseURLSchemes()
     WebKit:
       default: false
+    WebCore:
+      default: true
 
 ShouldSuppressTextInputFromEditingDuringProvisionalNavigation:
   type: bool
@@ -1594,6 +1905,8 @@ ShouldSuppressTextInputFromEditingDuringProvisionalNavigation:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
@@ -1605,6 +1918,8 @@ ShouldUseServiceWorkerShortTimeout:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 ShowsToolTipOverTruncatedText:
   type: bool
@@ -1612,6 +1927,8 @@ ShowsToolTipOverTruncatedText:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 ShowsURLsInToolTipsEnabled:
@@ -1623,6 +1940,8 @@ ShowsURLsInToolTipsEnabled:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 # FIXME: This is handled via WebView SPI rather than WebPreferences for WebKitLegacy. We should change the SPI to lookup the WebPreferences value instead.
 SmartInsertDeleteEnabled:
@@ -1631,6 +1950,10 @@ SmartInsertDeleteEnabled:
   defaultValue:
     WebKit:
       default: true
+    WebKitLegacy:
+      default: true
+    WebCore:
+      default: true
 
 SnapshotAllPlugIns:
   type: bool
@@ -1638,6 +1961,8 @@ SnapshotAllPlugIns:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 SourceBufferChangeTypeEnabled:
@@ -1648,6 +1973,8 @@ SourceBufferChangeTypeEnabled:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: true
 
 SpatialNavigationEnabled:
   type: bool
@@ -1655,6 +1982,8 @@ SpatialNavigationEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 Standalone:
@@ -1665,16 +1994,21 @@ Standalone:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 StandardFontFamily:
   type: String
   webKitLegacyPreferenceKey: WebKitStandardFont
+  webcoreImplementation: custom
   defaultValue:
     WebKitLegacy:
       default: '"Times"'
     WebKit:
       "PLATFORM(WATCHOS)": '"system-ui"'
       default: '"Times"'
+    WebCore:
+      default: '""'
 
 StorageAccessAPIEnabled:
   type: bool
@@ -1683,9 +2017,12 @@ StorageAccessAPIEnabled:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: true
 
 StorageBlockingPolicy:
   type: uint32_t
+  webcoreOnChange: storageBlockingPolicyChanged
   webcoreBinding: custom
   defaultValue:
     WebKitLegacy:
@@ -1700,6 +2037,8 @@ SubresourceIntegrityEnabled:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: true
 
 SuppressesIncrementalRendering:
   type: bool
@@ -1707,6 +2046,8 @@ SuppressesIncrementalRendering:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 # FIXME: There is no custom binding implemented for WebKitLegacy.
@@ -1727,6 +2068,8 @@ SystemPreviewEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 # FIXME: This should be reconciled with 'TabsToLinks'.
@@ -1758,6 +2101,8 @@ TelephoneNumberParsingEnabled:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 TemporaryTileCohortRetentionEnabled:
   type: bool
@@ -1767,18 +2112,24 @@ TemporaryTileCohortRetentionEnabled:
     WebKit:
       "PLATFORM(IOS_FAMILY)": false
       default: true
+    WebCore:
+      default: true
 
 TextAreasAreResizable:
   type: bool
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
       "PLATFORM(IOS_FAMILY)": false
       default: true
+    WebCore:
+      default: false
 
 TextAutosizingEnabled:
   type: bool
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
   condition: ENABLE(TEXT_AUTOSIZING)
   defaultValue:
     WebKitLegacy:
@@ -1787,6 +2138,8 @@ TextAutosizingEnabled:
     WebKit:
       "PLATFORM(IOS_FAMILY)": true
       default: false
+    WebCore:
+      default: defaultTextAutosizingEnabled()
 
 ThreadedScrollingEnabled:
   type: bool
@@ -1803,6 +2156,8 @@ UseGiantTiles:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 UseLegacyTextAlignPositionedElementBehavior:
   type: bool
@@ -1810,6 +2165,8 @@ UseLegacyTextAlignPositionedElementBehavior:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 # FIXME: There is no custom binding implemented for WebKitLegacy.
@@ -1824,11 +2181,15 @@ UserInterfaceDirectionPolicy:
 
 UsesBackForwardCache:
   type: bool
+  webcoreOnChange: usesBackForwardCacheChanged
+  webcoreExcludeFromInternalSettings: true
   webKitLegacyPreferenceKey: WebKitUsesPageCachePreferenceKey
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 UsesEncodingDetector:
@@ -1838,6 +2199,8 @@ UsesEncodingDetector:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 VideoQualityIncludesDisplayCompositingEnabled:
   type: bool
@@ -1846,6 +2209,8 @@ VideoQualityIncludesDisplayCompositingEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 ViewGestureDebuggingEnabled:
@@ -1865,6 +2230,8 @@ ViewportFitEnabled:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: false
 
 WantsBalancedSetDefersLoadingBehavior:
   type: bool
@@ -1872,6 +2239,8 @@ WantsBalancedSetDefersLoadingBehavior:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 WebArchiveDebugModeEnabled:
@@ -1883,6 +2252,8 @@ WebArchiveDebugModeEnabled:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
 
 WebAudioEnabled:
   type: bool
@@ -1893,6 +2264,8 @@ WebAudioEnabled:
       default: false
     WebKit:
       default: true
+    WebCore:
+      default: false
 
 WebGLEnabled:
   type: bool
@@ -1901,13 +2274,18 @@ WebGLEnabled:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: false
 
 WebSecurityEnabled:
   type: bool
+  inspectorOverride: true
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
@@ -1921,6 +2299,8 @@ WebShareEnabled:
     WebKit:
       "PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)": true
       default: false
+    WebCore:
+      default: false
 
 XSSAuditorEnabled:
   type: bool
@@ -1929,3 +2309,5 @@ XSSAuditorEnabled:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: false

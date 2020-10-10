@@ -203,11 +203,20 @@ macro(GENERATE_SETTINGS_MACROS _infile _outfile)
         ${WEBCORE_DIR}/Scripts/SettingsTemplates/Settings.h.erb
     )
 
+    set(WTF_WEB_PREFERENCES
+        ${WTF_SCRIPTS_DIR}/Preferences/WebPreferences.yaml
+        ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml
+        ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml
+        ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml
+    )
+
+    set_source_files_properties(${WTF_WEB_PREFERENCES} PROPERTIES GENERATED TRUE)
+
     add_custom_command(
         OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/${_outfile} ${_extra_output}
         MAIN_DEPENDENCY ${_infile}
-        DEPENDS ${NAMES_GENERATOR} ${GENERATE_SETTINGS_SCRIPTS} ${SCRIPTS_BINDINGS}
-        COMMAND ${RUBY_EXECUTABLE} ${NAMES_GENERATOR} --input ${_infile} --outputDir ${WebCore_DERIVED_SOURCES_DIR}
+        DEPENDS ${NAMES_GENERATOR} ${GENERATE_SETTINGS_SCRIPTS} ${SCRIPTS_BINDINGS} ${WTF_WEB_PREFERENCES} WTF_CopyPreferences
+        COMMAND ${RUBY_EXECUTABLE} ${NAMES_GENERATOR} --additionalSettings ${_infile} --base ${WTF_SCRIPTS_DIR}/Preferences/WebPreferences.yaml --debug ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml --experimental ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml --internal ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml --outputDir ${WebCore_DERIVED_SOURCES_DIR}
         VERBATIM ${_args})
 endmacro()
 

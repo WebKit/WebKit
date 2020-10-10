@@ -1,3 +1,15 @@
+2020-10-10  Sam Weinig  <weinig@apple.com>
+
+        Use WebPreference definitions from shared configuration files in WebCore (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=217551
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::sendViewportAttributesChanged):
+        Add explicit type to support layoutFallbackWidth now being an unsigned int
+        in Settings (it was already an unsigned int at the WebKit level).
+
 2020-10-10  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Build broken with ENABLE_GAMEPAD enabled
