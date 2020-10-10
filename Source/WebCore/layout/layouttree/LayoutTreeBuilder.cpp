@@ -508,14 +508,21 @@ static void outputLayoutTree(const LayoutState* layoutState, TextStream& stream,
     }
 }
 
-void showLayoutTree(const Box& layoutBox, const LayoutState* layoutState)
+String layoutTreeAsText(const Box& layoutBox, const LayoutState* layoutState)
 {
     TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
 
     auto& initialContainingBlock = layoutBox.initialContainingBlock();
     outputLayoutBox(stream, initialContainingBlock, layoutState ? &layoutState->geometryForBox(initialContainingBlock) : nullptr, 0);
     outputLayoutTree(layoutState, stream, initialContainingBlock, 1);
-    WTFLogAlways("%s", stream.release().utf8().data());
+    
+    return stream.release();
+}
+
+void showLayoutTree(const Box& layoutBox, const LayoutState* layoutState)
+{
+    auto treeAsText = layoutTreeAsText(layoutBox, layoutState);
+    WTFLogAlways("%s", treeAsText.utf8().data());
 }
 
 void showLayoutTree(const Box& layoutBox)

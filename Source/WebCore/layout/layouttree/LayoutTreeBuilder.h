@@ -77,6 +77,7 @@ private:
 };
 
 #if ENABLE(TREE_DEBUGGING)
+String layoutTreeAsText(const Box&, const LayoutState*);
 void showLayoutTree(const Box&, const LayoutState*);
 void showLayoutTree(const Box&);
 void printLayoutTreeForLiveDocuments();

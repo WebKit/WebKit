@@ -64,6 +64,7 @@ private:
 };
 
 #if ENABLE(TREE_DEBUGGING)
+String displayTreeAsText(const Box&);
 void showDisplayTree(const Box&);
 #endif
 

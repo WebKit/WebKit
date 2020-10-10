@@ -58,10 +58,7 @@ std::unique_ptr<Tree> TreeBuilder::build(const Layout::LayoutState& layoutState)
 
     auto& rootLayoutBox = layoutState.root();
 
-#if ENABLE(TREE_DEBUGGING)
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "Building display tree for:");
-    showLayoutTree(rootLayoutBox, &layoutState);
-#endif
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "Building display tree for:\n" << layoutTreeAsText(rootLayoutBox, &layoutState));
 
     auto geometry = layoutState.geometryForBox(rootLayoutBox);
     auto rootDisplayBox = displayBoxForRootBox(geometry, rootLayoutBox);
@@ -74,10 +71,7 @@ std::unique_ptr<Tree> TreeBuilder::build(const Layout::LayoutState& layoutState)
     auto offset = toLayoutSize(borderBox.location());
     recursiveBuildDisplayTree(layoutState, offset, *rootLayoutBox.firstChild(), *rootDisplayContainerBox);
 
-#if ENABLE(TREE_DEBUGGING)
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "Display tree:");
-    showDisplayTree(*rootDisplayContainerBox);
-#endif
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "Display tree:\n" << displayTreeAsText(*rootDisplayContainerBox));
 
     return makeUnique<Tree>(WTFMove(rootDisplayContainerBox));
 }
@@ -215,11 +209,17 @@ static void outputDisplayTree(TextStream& stream, const Box& displayBox, unsigne
     }
 }
 
-void showDisplayTree(const Box& box)
+String displayTreeAsText(const Box& box)
 {
     TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
     outputDisplayTree(stream, box, 1);
-    WTFLogAlways("%s", stream.release().utf8().data());
+    return stream.release();
+}
+
+void showDisplayTree(const Box& box)
+{
+    auto treeAsText = displayTreeAsText(box);
+    WTFLogAlways("%s", treeAsText.utf8().data());
 }
 
 #endif
