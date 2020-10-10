@@ -62,15 +62,15 @@ private:
     std::unique_ptr<ManetteGamepad> removeGamepadForDevice(ManetteDevice*);
 
     unsigned indexForNewlyConnectedDevice();
-    void connectionDelayTimerFired();
+    void initialGamepadsConnectedTimerFired();
     void inputNotificationTimerFired();
 
     Vector<PlatformGamepad*> m_gamepadVector;
     HashMap<ManetteDevice*, std::unique_ptr<ManetteGamepad>> m_gamepadMap;
-    bool m_shouldDispatchCallbacks { false };
+    bool m_initialGamepadsConnected { false };
 
     GRefPtr<ManetteMonitor> m_monitor;
-    RunLoop::Timer<ManetteGamepadProvider> m_connectionDelayTimer;
+    RunLoop::Timer<ManetteGamepadProvider> m_initialGamepadsConnectedTimer;
     RunLoop::Timer<ManetteGamepadProvider> m_inputNotificationTimer;
 };
 

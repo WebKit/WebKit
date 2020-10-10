@@ -39,7 +39,7 @@ class WebPageProxy;
 class WebProcessPool;
 class GamepadData;
 
-class UIGamepadProvider : public WebCore::GamepadProviderClient {
+class UIGamepadProvider final : public WebCore::GamepadProviderClient {
 public:
     static UIGamepadProvider& singleton();
 

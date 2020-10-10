@@ -58,16 +58,11 @@ static void onDeviceDisconnected(ManetteMonitor*, ManetteDevice* device, Manette
 
 ManetteGamepadProvider::ManetteGamepadProvider()
     : m_monitor(adoptGRef(manette_monitor_new()))
-    , m_connectionDelayTimer(RunLoop::current(), this, &ManetteGamepadProvider::connectionDelayTimerFired)
+    , m_initialGamepadsConnectedTimer(RunLoop::current(), this, &ManetteGamepadProvider::initialGamepadsConnectedTimerFired)
     , m_inputNotificationTimer(RunLoop::current(), this, &ManetteGamepadProvider::inputNotificationTimerFired)
 {
     g_signal_connect(m_monitor.get(), "device-connected", G_CALLBACK(onDeviceConnected), this);
     g_signal_connect(m_monitor.get(), "device-disconnected", G_CALLBACK(onDeviceDisconnected), this);
-
-    ManetteDevice* device;
-    GUniquePtr<ManetteMonitorIter> iter(manette_monitor_iterate(m_monitor.get()));
-    while (manette_monitor_iter_next(iter.get(), &device))
-        deviceConnected(device);
 }
 
 ManetteGamepadProvider::~ManetteGamepadProvider()
@@ -88,8 +83,16 @@ void ManetteGamepadProvider::startMonitoringGamepads(GamepadProviderClient& clie
     ASSERT(m_gamepadVector.isEmpty());
     ASSERT(m_gamepadMap.isEmpty());
 
-    m_shouldDispatchCallbacks = false;
-    m_connectionDelayTimer.startOneShot(connectionDelayInterval);
+    m_initialGamepadsConnected = false;
+
+    // Any connections we are notified of within the connectionDelayInterval of listening likely represent
+    // devices that were already connected, so we suppress notifying clients of these.
+    m_initialGamepadsConnectedTimer.startOneShot(connectionDelayInterval);
+
+    ManetteDevice* device;
+    GUniquePtr<ManetteMonitorIter> iter(manette_monitor_iterate(m_monitor.get()));
+    while (manette_monitor_iter_next(iter.get(), &device))
+        deviceConnected(device);
 }
 
 void ManetteGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
@@ -100,7 +103,7 @@ void ManetteGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& clien
     if (shouldCloseAndUnscheduleManager) {
         m_gamepadVector.clear();
         m_gamepadMap.clear();
-        m_connectionDelayTimer.stop();
+        m_initialGamepadsConnectedTimer.stop();
     }
 }
 
@@ -128,21 +131,19 @@ void ManetteGamepadProvider::deviceConnected(ManetteDevice* device)
     m_gamepadVector[index] = gamepad.get();
     m_gamepadMap.set(device, WTFMove(gamepad));
 
-    if (!m_shouldDispatchCallbacks) {
+    if (!m_initialGamepadsConnected) {
         // This added device is the result of us starting to monitor gamepads.
         // We'll get notified of all connected devices during this current spin of the runloop
-        // and we don't want to tell the client about any of them.
-        // The m_connectionDelayTimer fires in a subsequent spin of the runloop after which
-        // any connection events are actual new devices.
-        m_connectionDelayTimer.startOneShot(0_s);
-
-        LOG(Gamepad, "Device %p was added while suppressing callbacks, so this should be an 'already connected' event", device);
-
-        return;
+        // and the client should be told they were already connected.
+        // The m_initialGamepadsConnectedTimer fires in a subsequent spin of the runloop after which
+        // any connection events are actual new devices and can trigger gamepad visibility.
+        if (!m_initialGamepadsConnectedTimer.isActive())
+            m_initialGamepadsConnectedTimer.startOneShot(0_s);
     }
 
+    auto eventVisibility = m_initialGamepadsConnected ? EventMakesGamepadsVisible::Yes : EventMakesGamepadsVisible::No;
     for (auto& client : m_clients)
-        client->platformGamepadConnected(*m_gamepadVector[index]);
+        client->platformGamepadConnected(*m_gamepadVector[index], eventVisibility);
 }
 
 void ManetteGamepadProvider::deviceDisconnected(ManetteDevice* device)
@@ -151,10 +152,6 @@ void ManetteGamepadProvider::deviceDisconnected(ManetteDevice* device)
 
     std::unique_ptr<ManetteGamepad> removedGamepad = removeGamepadForDevice(device);
     ASSERT(removedGamepad);
-
-    // Any time we get a device removed callback we know it's a real event and not an 'already connected' event.
-    // We should always stop suppressing callbacks when we receive such an event.
-    m_shouldDispatchCallbacks = true;
 
     for (auto& client : m_clients)
         client->platformGamepadDisconnected(*removedGamepad);
@@ -169,17 +166,14 @@ unsigned ManetteGamepadProvider::indexForNewlyConnectedDevice()
     return index;
 }
 
-void ManetteGamepadProvider::connectionDelayTimerFired()
+void ManetteGamepadProvider::initialGamepadsConnectedTimerFired()
 {
-    m_shouldDispatchCallbacks = true;
-
-    for (auto* client : m_clients)
-        client->setInitialConnectedGamepads(m_gamepadVector);
+    m_initialGamepadsConnected = true;
 }
 
 void ManetteGamepadProvider::inputNotificationTimerFired()
 {
-    if (!m_shouldDispatchCallbacks)
+    if (!m_initialGamepadsConnected)
         return;
 
     dispatchPlatformGamepadInputActivity();

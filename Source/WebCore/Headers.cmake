@@ -1091,6 +1091,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/gamepad/GamepadProvider.h
     platform/gamepad/GamepadProviderClient.h
     platform/gamepad/PlatformGamepad.h
+    platform/gamepad/SharedGamepadValue.h
 
     platform/graphics/AlphaPremultiplication.h
     platform/graphics/ANGLEWebKitBridge.h

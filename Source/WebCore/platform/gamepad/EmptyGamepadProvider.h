@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class EmptyGamepadProvider : public GamepadProvider {
+class EmptyGamepadProvider final : public GamepadProvider {
 public:
     ~EmptyGamepadProvider() final { }
 
