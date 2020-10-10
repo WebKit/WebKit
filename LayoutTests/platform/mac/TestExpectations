@@ -2071,7 +2071,7 @@ webkit.org/b/209692 [ BigSur+ ] fast/text/text-security-disc-bullet-pua.html [ I
 # <rdar://problem/63545884> [20A279] DQ bots have editing/mac/spelling/accept-misspelled-candidate.html and editing/mac/spelling/autocorrection-contraction.html failing
 [ BigSur+ ] editing/mac/spelling/accept-misspelled-candidate.html [ Pass Failure ]
 [ BigSur+ Release ] editing/mac/spelling/autocorrection-contraction.html [ Pass Failure ]
-[ BigSur+ Debug ] editing/mac/spelling/autocorrection-contraction.html [ Timeout Pass Failure ]
+[ Debug ] editing/mac/spelling/autocorrection-contraction.html [ Timeout Pass Failure ]
 
 # <rdar://problem/63554876> [20A279] DQ is seeing media/video-currentTime.html flaky failing
 [ BigSur+ ] media/video-currentTime.html [ Pass Failure ]
