@@ -961,24 +961,23 @@ ExceptionOr<void> ContainerNode::replaceChildren(Vector<NodeOrString>&& vector)
     auto result = convertNodesOrStringsIntoNode(WTFMove(vector));
     if (result.hasException())
         return result.releaseException();
-
-    RefPtr<Node> node = result.releaseReturnValue();
-    if (!node)
-        return { };
+    auto node = result.releaseReturnValue();
 
     // step 2
-    auto validityCheckResult = ensurePreInsertionValidity(*node, nullptr);
-    if (validityCheckResult.hasException())
-        return validityCheckResult.releaseException();
+    if (node) {
+        if (auto checkResult = ensurePreInsertionValidity(*node, nullptr); checkResult.hasException())
+            return checkResult;
+    }
 
     // step 3
-    Ref<ContainerNode> protectedThis(*this);
+    auto protectedThis = makeRef(*this);
     ChildListMutationScope mutation(*this);
     removeAllChildrenWithScriptAssertion(ChildChangeSource::API, DeferChildrenChanged::No);
 
-    auto insertResult = appendChildWithoutPreInsertionValidityCheck(*node);
-    if (insertResult.hasException())
-        return insertResult.releaseException();
+    if (node) {
+        if (auto appendResult = appendChildWithoutPreInsertionValidityCheck(*node); appendResult.hasException())
+            return appendResult;
+    }
 
     rebuildSVGExtensionsElementsIfNecessary();
     dispatchSubtreeModifiedEvent();

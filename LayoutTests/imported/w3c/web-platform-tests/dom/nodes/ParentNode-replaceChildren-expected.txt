@@ -13,6 +13,7 @@ PASS Element.replaceChildren() with null as an argument, on a parent having no c
 PASS Element.replaceChildren() with undefined as an argument, on a parent having no child.
 PASS Element.replaceChildren() with only text as an argument, on a parent having no child.
 PASS Element.replaceChildren() with only one element as an argument, on a parent having no child.
+PASS Element.replaceChildren() without any argument, on a parent having a child.
 PASS Element.replaceChildren() with null as an argument, on a parent having a child.
 PASS Element.replaceChildren() with one element and text as argument, on a parent having a child.
 PASS Element.replaceChildren() should move nodes in the right order
@@ -21,6 +22,7 @@ PASS DocumentFragment.replaceChildren() with null as an argument, on a parent ha
 PASS DocumentFragment.replaceChildren() with undefined as an argument, on a parent having no child.
 PASS DocumentFragment.replaceChildren() with only text as an argument, on a parent having no child.
 PASS DocumentFragment.replaceChildren() with only one element as an argument, on a parent having no child.
+PASS DocumentFragment.replaceChildren() without any argument, on a parent having a child.
 PASS DocumentFragment.replaceChildren() with null as an argument, on a parent having a child.
 PASS DocumentFragment.replaceChildren() with one element and text as argument, on a parent having a child.
 PASS DocumentFragment.replaceChildren() should move nodes in the right order

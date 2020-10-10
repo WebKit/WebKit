@@ -1,3 +1,14 @@
+2020-10-10  Darin Adler  <darin@apple.com>
+
+        replaceChildren() (with no arguments) silently does nothing rather than removing the children
+        https://bugs.webkit.org/show_bug.cgi?id=217537
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/dom/nodes/ParentNode-replaceChildren-expected.txt:
+        * web-platform-tests/dom/nodes/ParentNode-replaceChildren.html:
+        Added a test of replaceChildren without any argument, on a parent having a child.
+
 2020-10-09  Antoine Quint  <graouts@webkit.org>
 
         CSS transform computed style should not reflect individual transform properties
