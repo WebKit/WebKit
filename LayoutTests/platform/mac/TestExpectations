@@ -2243,3 +2243,4 @@ webkit.org/b/217461 [ Mojave+ ] imported/w3c/web-platform-tests/css/css-masking/
 
 webkit.org/b/167729 [ Mojave ] imported/w3c/web-platform-tests/css/css-pseudo/text-selection.html [ Failure ]
 
+webkit.org/b/217542 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https.html [ Pass Failure ]
