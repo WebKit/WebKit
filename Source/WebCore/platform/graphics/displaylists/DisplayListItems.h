@@ -1102,24 +1102,21 @@ Optional<Ref<ClipToDrawingCommands>> ClipToDrawingCommands::decode(Decoder& deco
 
 class DrawGlyphs : public DrawingItem {
 public:
-    static Ref<DrawGlyphs> create(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& blockLocation, const FloatSize& localAnchor, FontSmoothingMode smoothingMode)
+    static Ref<DrawGlyphs> create(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
     {
-        return adoptRef(*new DrawGlyphs(font, glyphs, advances, count, blockLocation, localAnchor, smoothingMode));
+        return adoptRef(*new DrawGlyphs(font, glyphs, advances, count, localAnchor, smoothingMode));
     }
 
-    static Ref<DrawGlyphs> create(const Font& font, Vector<GlyphBufferGlyph, 128>&& glyphs, Vector<GlyphBufferAdvance, 128>&& advances, const FloatPoint& blockLocation, const FloatSize& localAnchor, FontSmoothingMode smoothingMode)
+    static Ref<DrawGlyphs> create(const Font& font, Vector<GlyphBufferGlyph, 128>&& glyphs, Vector<GlyphBufferAdvance, 128>&& advances, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
     {
-        return adoptRef(*new DrawGlyphs(font, WTFMove(glyphs), WTFMove(advances), blockLocation, localAnchor, smoothingMode));
+        return adoptRef(*new DrawGlyphs(font, WTFMove(glyphs), WTFMove(advances), localAnchor, smoothingMode));
     }
 
     WEBCORE_EXPORT virtual ~DrawGlyphs();
 
-    const FloatPoint& blockLocation() const { return m_blockLocation; }
-    void setBlockLocation(const FloatPoint& blockLocation) { m_blockLocation = blockLocation; }
+    const FloatPoint& localAnchor() const { return m_localAnchor; }
 
-    const FloatSize& localAnchor() const { return m_localAnchor; }
-
-    FloatPoint anchorPoint() const { return m_blockLocation + m_localAnchor; }
+    FloatPoint anchorPoint() const { return m_localAnchor; }
 
     const Vector<GlyphBufferGlyph, 128>& glyphs() const { return m_glyphs; }
 
@@ -1127,8 +1124,8 @@ public:
     template<class Decoder> static Optional<Ref<DrawGlyphs>> decode(Decoder&);
 
 private:
-    DrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& blockLocation, const FloatSize& localAnchor, FontSmoothingMode);
-    WEBCORE_EXPORT DrawGlyphs(const Font&, Vector<GlyphBufferGlyph, 128>&&, Vector<GlyphBufferAdvance, 128>&&, const FloatPoint& blockLocation, const FloatSize& localAnchor, FontSmoothingMode);
+    DrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode);
+    WEBCORE_EXPORT DrawGlyphs(const Font&, Vector<GlyphBufferGlyph, 128>&&, Vector<GlyphBufferAdvance, 128>&&, const FloatPoint& localAnchor, FontSmoothingMode);
 
     void computeBounds();
 
@@ -1142,8 +1139,7 @@ private:
     Vector<GlyphBufferGlyph, 128> m_glyphs;
     Vector<GlyphBufferAdvance, 128> m_advances;
     FloatRect m_bounds;
-    FloatPoint m_blockLocation;
-    FloatSize m_localAnchor;
+    FloatPoint m_localAnchor;
     FontSmoothingMode m_smoothingMode;
 };
 
@@ -1153,7 +1149,6 @@ void DrawGlyphs::encode(Encoder& encoder) const
     encoder << m_font;
     encoder << m_glyphs;
     encoder << m_advances;
-    encoder << m_blockLocation;
     encoder << m_localAnchor;
     encoder << m_smoothingMode;
 }
@@ -1179,12 +1174,7 @@ Optional<Ref<DrawGlyphs>> DrawGlyphs::decode(Decoder& decoder)
     if (glyphs->size() != advances->size())
         return WTF::nullopt;
 
-    Optional<FloatPoint> blockLocation;
-    decoder >> blockLocation;
-    if (!blockLocation)
-        return WTF::nullopt;
-
-    Optional<FloatSize> localAnchor;
+    Optional<FloatPoint> localAnchor;
     decoder >> localAnchor;
     if (!localAnchor)
         return WTF::nullopt;
@@ -1194,7 +1184,7 @@ Optional<Ref<DrawGlyphs>> DrawGlyphs::decode(Decoder& decoder)
     if (!smoothingMode)
         return WTF::nullopt;
 
-    return DrawGlyphs::create(font->get(), WTFMove(*glyphs), WTFMove(*advances), *blockLocation, *localAnchor, *smoothingMode);
+    return DrawGlyphs::create(font->get(), WTFMove(*glyphs), WTFMove(*advances), *localAnchor, *smoothingMode);
 }
 
 class DrawImage : public DrawingItem {

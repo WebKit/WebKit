@@ -542,22 +542,20 @@ static TextStream& operator<<(TextStream& ts, const ClipToDrawingCommands& item)
     return ts;
 }
 
-DrawGlyphs::DrawGlyphs(const Font& font, Vector<GlyphBufferGlyph, 128>&& glyphs, Vector<GlyphBufferAdvance, 128>&& advances, const FloatPoint& blockLocation, const FloatSize& localAnchor, FontSmoothingMode smoothingMode)
+DrawGlyphs::DrawGlyphs(const Font& font, Vector<GlyphBufferGlyph, 128>&& glyphs, Vector<GlyphBufferAdvance, 128>&& advances, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
     : DrawingItem(ItemType::DrawGlyphs)
     , m_font(const_cast<Font&>(font))
     , m_glyphs(WTFMove(glyphs))
     , m_advances(WTFMove(advances))
-    , m_blockLocation(blockLocation)
     , m_localAnchor(localAnchor)
     , m_smoothingMode(smoothingMode)
 {
     computeBounds();
 }
 
-DrawGlyphs::DrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& blockLocation, const FloatSize& localAnchor, FontSmoothingMode smoothingMode)
+DrawGlyphs::DrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
     : DrawingItem(ItemType::DrawGlyphs)
     , m_font(const_cast<Font&>(font))
-    , m_blockLocation(blockLocation)
     , m_localAnchor(localAnchor)
     , m_smoothingMode(smoothingMode)
 {
@@ -591,7 +589,7 @@ void DrawGlyphs::computeBounds()
     // the glyph lies entirely within its [(ascent + descent), advance] rect.
     float ascent = m_font->fontMetrics().floatAscent();
     float descent = m_font->fontMetrics().floatDescent();
-    FloatPoint current = toFloatPoint(localAnchor());
+    FloatPoint current = localAnchor();
     size_t numGlyphs = m_glyphs.size();
     for (size_t i = 0; i < numGlyphs; ++i) {
         GlyphBufferAdvance advance = m_advances[i];
@@ -604,16 +602,13 @@ void DrawGlyphs::computeBounds()
 
 Optional<FloatRect> DrawGlyphs::localBounds(const GraphicsContext&) const
 {
-    FloatRect localBounds = m_bounds;
-    localBounds.move(m_blockLocation.x(), m_blockLocation.y());
-    return localBounds;
+    return m_bounds;
 }
 
 static TextStream& operator<<(TextStream& ts, const DrawGlyphs& item)
 {
     ts << static_cast<const DrawingItem&>(item);
     // FIXME: dump more stuff.
-    ts.dumpProperty("block-location", item.blockLocation());
     ts.dumpProperty("local-anchor", item.localAnchor());
     ts.dumpProperty("anchor-point", item.anchorPoint());
     ts.dumpProperty("length", item.glyphs().size());
