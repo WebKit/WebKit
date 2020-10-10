@@ -61,6 +61,8 @@ public:
 
     size_t itemCount() const { return m_displayList.itemCount(); }
 
+    void appendItemAndUpdateExtent(Ref<DrawingItem>&&);
+
     class Observer {
     public:
         virtual ~Observer() { }
@@ -144,7 +146,8 @@ private:
 
     FloatRect roundToDevicePixels(const FloatRect&, GraphicsContext::RoundingMode) override;
 
-    Item& appendItem(Ref<Item>&&);
+    template<typename ItemType>
+    ItemType& appendItem(Ref<ItemType>&&);
     void willAppendItem(const Item&);
 
     FloatRect extentFromLocalBounds(const FloatRect&) const;

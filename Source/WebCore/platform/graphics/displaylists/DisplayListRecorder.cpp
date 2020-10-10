@@ -111,43 +111,37 @@ void Recorder::setMiterLimit(float miterLimit)
 
 void Recorder::drawGlyphs(const Font& font, const GlyphBuffer& glyphBuffer, unsigned from, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawGlyphs::create(font, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs, FloatPoint(), toFloatSize(startPoint), smoothingMode)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(DrawGlyphs::create(font, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs, FloatPoint(), toFloatSize(startPoint), smoothingMode));
 }
 
 ImageDrawResult Recorder::drawImage(Image& image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& imagePaintingOptions)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawImage::create(image, destination, source, imagePaintingOptions)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(DrawImage::create(image, destination, source, imagePaintingOptions));
     return ImageDrawResult::DidRecord;
 }
 
 ImageDrawResult Recorder::drawTiledImage(Image& image, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions& imagePaintingOptions)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawTiledImage::create(image, destination, source, tileSize, spacing, imagePaintingOptions)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(DrawTiledImage::create(image, destination, source, tileSize, spacing, imagePaintingOptions));
     return ImageDrawResult::DidRecord;
 }
 
 ImageDrawResult Recorder::drawTiledImage(Image& image, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule hRule, Image::TileRule vRule, const ImagePaintingOptions& imagePaintingOptions)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawTiledScaledImage::create(image, destination, source, tileScaleFactor, hRule, vRule, imagePaintingOptions)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(DrawTiledScaledImage::create(image, destination, source, tileScaleFactor, hRule, vRule, imagePaintingOptions));
     return ImageDrawResult::DidRecord;
 }
 
 #if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
 void Recorder::drawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawNativeImage::create(image, imageSize, destRect, srcRect, options)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(DrawNativeImage::create(image, imageSize, destRect, srcRect, options));
 }
 #endif
 
 void Recorder::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawPattern::create(image, destRect, tileRect, patternTransform, phase, spacing, options)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(DrawPattern::create(image, destRect, tileRect, patternTransform, phase, spacing, options));
 }
 
 void Recorder::save()
@@ -208,8 +202,7 @@ AffineTransform Recorder::getCTM(GraphicsContext::IncludeDeviceScale)
 
 void Recorder::beginTransparencyLayer(float opacity)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(BeginTransparencyLayer::create(opacity)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(BeginTransparencyLayer::create(opacity));
 }
 
 void Recorder::endTransparencyLayer()
@@ -219,122 +212,102 @@ void Recorder::endTransparencyLayer()
 
 void Recorder::drawRect(const FloatRect& rect, float borderThickness)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawRect::create(rect, borderThickness)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(DrawRect::create(rect, borderThickness));
 }
 
 void Recorder::drawLine(const FloatPoint& point1, const FloatPoint& point2)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawLine::create(point1, point2)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(DrawLine::create(point1, point2));
 }
 
 void Recorder::drawLinesForText(const FloatPoint& point, float thickness, const DashArray& widths, bool printing, bool doubleLines)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawLinesForText::create(FloatPoint(), toFloatSize(point), thickness, widths, printing, doubleLines)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(DrawLinesForText::create(FloatPoint(), toFloatSize(point), thickness, widths, printing, doubleLines));
 }
 
 void Recorder::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawDotsForDocumentMarker::create(rect, style)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(DrawDotsForDocumentMarker::create(rect, style));
 }
 
 void Recorder::drawEllipse(const FloatRect& rect)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawEllipse::create(rect)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(DrawEllipse::create(rect));
 }
 
 void Recorder::drawPath(const Path& path)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawPath::create(path)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(DrawPath::create(path));
 }
 
 void Recorder::drawFocusRing(const Path& path, float width, float offset, const Color& color)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawFocusRingPath::create(path, width, offset, color)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(DrawFocusRingPath::create(path, width, offset, color));
 }
 
 void Recorder::drawFocusRing(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawFocusRingRects::create(rects, width, offset, color)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(DrawFocusRingRects::create(rects, width, offset, color));
 }
 
 void Recorder::fillRect(const FloatRect& rect)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(FillRect::create(rect)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(FillRect::create(rect));
 }
 
 void Recorder::fillRect(const FloatRect& rect, const Color& color)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(FillRectWithColor::create(rect, color)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(FillRectWithColor::create(rect, color));
 }
 
 void Recorder::fillRect(const FloatRect& rect, Gradient& gradient)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(FillRectWithGradient::create(rect, gradient)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(FillRectWithGradient::create(rect, gradient));
 }
 
 void Recorder::fillRect(const FloatRect& rect, const Color& color, CompositeOperator op, BlendMode blendMode)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(FillCompositedRect::create(rect, color, op, blendMode)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(FillCompositedRect::create(rect, color, op, blendMode));
 }
 
 void Recorder::fillRoundedRect(const FloatRoundedRect& rect, const Color& color, BlendMode blendMode)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(FillRoundedRect::create(rect, color, blendMode)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(FillRoundedRect::create(rect, color, blendMode));
 }
 
 void Recorder::fillRectWithRoundedHole(const FloatRect& rect, const FloatRoundedRect& roundedHoleRect, const Color& color)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(FillRectWithRoundedHole::create(rect, roundedHoleRect, color)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(FillRectWithRoundedHole::create(rect, roundedHoleRect, color));
 }
 
 void Recorder::fillPath(const Path& path)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(FillPath::create(path)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(FillPath::create(path));
 }
 
 void Recorder::fillEllipse(const FloatRect& rect)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(FillEllipse::create(rect)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(FillEllipse::create(rect));
 }
 
 void Recorder::strokeRect(const FloatRect& rect, float lineWidth)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(StrokeRect::create(rect, lineWidth)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(StrokeRect::create(rect, lineWidth));
 }
 
 void Recorder::strokePath(const Path& path)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(StrokePath::create(path)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(StrokePath::create(path));
 }
 
 void Recorder::strokeEllipse(const FloatRect& rect)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(StrokeEllipse::create(rect)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(StrokeEllipse::create(rect));
 }
 
 void Recorder::clearRect(const FloatRect& rect)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(ClearRect::create(rect)));
-    updateItemExtent(newItem);
+    appendItemAndUpdateExtent(ClearRect::create(rect));
 }
 
 #if USE(CG)
@@ -407,10 +380,17 @@ FloatRect Recorder::roundToDevicePixels(const FloatRect& rect, GraphicsContext::
     return rect;
 }
 
-Item& Recorder::appendItem(Ref<Item>&& item)
+void Recorder::appendItemAndUpdateExtent(Ref<DrawingItem>&& item)
+{
+    auto& newItem = appendItem(WTFMove(item));
+    updateItemExtent(newItem);
+}
+
+template<typename ItemType>
+ItemType& Recorder::appendItem(Ref<ItemType>&& item)
 {
     willAppendItem(item.get());
-    return m_displayList.append(WTFMove(item));
+    return downcast<ItemType>(m_displayList.append(WTFMove(item)));
 }
 
 void Recorder::updateItemExtent(DrawingItem& item) const
