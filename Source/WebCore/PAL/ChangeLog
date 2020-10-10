@@ -1,3 +1,14 @@
+2020-10-09  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] AirPlay menu does not show up when AirPlay button is clicked
+        https://bugs.webkit.org/show_bug.cgi?id=217536
+        <rdar://problem/69973777>
+
+        Reviewed by Eric Carlson.
+
+        * pal/cocoa/AVFoundationSoftLink.h:
+        * pal/cocoa/AVFoundationSoftLink.mm:
+
 2020-10-02  Youenn Fablet  <youenn@apple.com>
 
         Add AVAssetWriter SPI header
