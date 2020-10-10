@@ -248,10 +248,22 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     // FIXME: For tests that disable SLL and expect to get CLL.
     if (!flow.settings().simpleLineLayoutEnabled())
         SET_REASON_AND_RETURN_IF_NEEDED(FeatureIsDisabled, reasons, includeReasons);
-    if (!flow.parent())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNoParent, reasons, includeReasons);
-    if (!flow.firstChild())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNoChild, reasons, includeReasons);
+    auto establishesInlineFormattingContext = [&] {
+        if (flow.isRenderView()) {
+            // RenderView initiates a block formatting context.
+            return false;
+        }
+        ASSERT(flow.parent());
+        // FIXME: This should really get the first _inflow_ child.
+        auto* firstChild = flow.firstChild();
+        if (!firstChild) {
+            // Empty block containers do not initiate inline formatting context.
+            return false;
+        }
+        return firstChild->isInline() || firstChild->isInlineBlockOrInlineTable();
+    };
+    if (!establishesInlineFormattingContext())
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowDoesNotEstablishInlineFormattingContext, reasons, includeReasons);
     if (flow.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow) {
         auto* fragmentedFlow = flow.enclosingFragmentedFlow();
         if (!is<RenderMultiColumnFlow>(fragmentedFlow))
