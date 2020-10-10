@@ -59,8 +59,6 @@ public:
 
     static std::unique_ptr<FormattingContext> createFormattingContext(const ContainerBox& formattingContextRoot, LayoutState&);
 
-    // FIXME: This is temporary. 
-    static void paint(const LayoutState&, GraphicsContext&, const IntRect& dirtyRect);
 #ifndef NDEBUG
     // For testing purposes only
     static void verifyAndOutputMismatchingLayoutTree(const LayoutState&, const RenderView&);

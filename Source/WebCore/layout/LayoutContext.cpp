@@ -30,7 +30,6 @@
 
 #include "BlockFormattingContext.h"
 #include "BlockFormattingState.h"
-#include "DisplayPainter.h"
 #include "FlexFormattingContext.h"
 #include "FlexFormattingState.h"
 #include "InlineFormattingContext.h"
@@ -142,11 +141,6 @@ std::unique_ptr<FormattingContext> LayoutContext::createFormattingContext(const 
     }
 
     CRASH();
-}
-
-void LayoutContext::paint(const LayoutState& layoutState, GraphicsContext& context, const IntRect& dirtyRect)
-{
-    Display::Painter::paint(layoutState, context, dirtyRect);
 }
 
 }

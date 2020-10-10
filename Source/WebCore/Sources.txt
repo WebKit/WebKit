@@ -1454,7 +1454,6 @@ layout/blockformatting/BlockMarginCollapse.cpp
 layout/blockformatting/PrecomputedBlockMarginCollapse.cpp
 layout/blockformatting/tablewrapper/TableWrapperBlockFormattingContext.cpp
 layout/blockformatting/tablewrapper/TableWrapperBlockFormattingContextQuirks.cpp
-layout/displaytree/DisplayPainter.cpp
 layout/flexformatting/FlexFormattingContext.cpp
 layout/flexformatting/FlexFormattingContextGeometry.cpp
 layout/flexformatting/FlexFormattingState.cpp
