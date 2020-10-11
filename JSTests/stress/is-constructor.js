@@ -26,6 +26,7 @@ assert(isConstructor(function(){}.bind(null), {}));
 // Builtin constructors.
 assert(isConstructor(Array));
 assert(isConstructor(ArrayBuffer));
+assert(isConstructor(BigInt));
 assert(isConstructor(Boolean));
 assert(isConstructor(Date));
 assert(isConstructor(Error));

@@ -55,9 +55,10 @@ const ClassInfo BigIntConstructor::s_info = { "Function", &Base::s_info, &bigInt
 */
 
 static JSC_DECLARE_HOST_FUNCTION(callBigIntConstructor);
+static JSC_DECLARE_HOST_FUNCTION(constructBigIntConstructor);
 
 BigIntConstructor::BigIntConstructor(VM& vm, Structure* structure)
-    : InternalFunction(vm, structure, callBigIntConstructor, nullptr)
+    : InternalFunction(vm, structure, callBigIntConstructor, constructBigIntConstructor)
 {
 }
 
@@ -127,6 +128,13 @@ JSC_DEFINE_HOST_FUNCTION(callBigIntConstructor, (JSGlobalObject* globalObject, C
     }
 
     RELEASE_AND_RETURN(scope, JSValue::encode(toBigInt(globalObject, primitive)));
+}
+
+JSC_DEFINE_HOST_FUNCTION(constructBigIntConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    return throwVMError(globalObject, scope, createNotAConstructorError(globalObject, callFrame->jsCallee()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(bigIntConstructorFuncAsUintN, (JSGlobalObject* globalObject, CallFrame* callFrame))

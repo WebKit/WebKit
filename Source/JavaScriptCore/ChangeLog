@@ -1,5 +1,20 @@
 2020-10-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] BigInt constructor should be constructible while it always throws an error
+        https://bugs.webkit.org/show_bug.cgi?id=217575
+
+        Reviewed by Darin Adler.
+
+        In terms of the spec, BigInt constructor should be a constructor. So we should put constructBigIntConstructor function instead of nullptr.
+        But it should always throw a TypeError. Error message looks a bit awkward ("TypeError: function is not a constructor..."), but this looks
+        most intuitive to users. Note that V8 and SpiderMonkey throw similar messages ("is not a constructor").
+
+        * runtime/BigIntConstructor.cpp:
+        (JSC::BigIntConstructor::BigIntConstructor):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2020-10-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] LowerCase when LanguageTag checks duplicate variants
         https://bugs.webkit.org/show_bug.cgi?id=217571
 
