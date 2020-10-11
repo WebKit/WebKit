@@ -32,16 +32,11 @@
 namespace WebCore {
 namespace Layout {
 
-LineBox::InlineBox::InlineBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize, InlineLayoutUnit baseline)
+LineBox::InlineLevelBox::InlineLevelBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize, InlineLayoutUnit baseline, Type type)
     : m_layoutBox(makeWeakPtr(layoutBox))
     , m_logicalRect({ }, logicalLeft, logicalSize.width(), logicalSize.height())
     , m_baseline(baseline)
-{
-}
-
-LineBox::InlineBox::InlineBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
-    : m_layoutBox(makeWeakPtr(layoutBox))
-    , m_logicalRect({ }, logicalLeft, logicalWidth, { })
+    , m_type(type)
 {
 }
 
@@ -51,22 +46,23 @@ LineBox::LineBox(InlineLayoutUnit contentLogicalWidth, IsLineVisuallyEmpty isLin
 {
 }
 
-void LineBox::addRootInlineBox(std::unique_ptr<InlineBox>&& rootInlineBox)
+void LineBox::addRootInlineBox(std::unique_ptr<InlineLevelBox>&& rootInlineBox)
 {
     std::exchange(m_rootInlineBox, WTFMove(rootInlineBox));
-    m_inlineBoxRectMap.set(&m_rootInlineBox->layoutBox(), m_rootInlineBox.get());
+    m_inlineLevelBoxRectMap.set(&m_rootInlineBox->layoutBox(), m_rootInlineBox.get());
 }
 
-void LineBox::addInlineBox(std::unique_ptr<InlineBox>&& inlineBox)
+void LineBox::addInlineLevelBox(std::unique_ptr<InlineLevelBox>&& inlineLevelBox)
 {
-    m_inlineBoxRectMap.set(&inlineBox->layoutBox(), inlineBox.get());
-    m_nonRootInlineBoxList.append(WTFMove(inlineBox));
+    m_inlineLevelBoxRectMap.set(&inlineLevelBox->layoutBox(), inlineLevelBox.get());
+    m_nonRootInlineLevelBoxList.append(WTFMove(inlineLevelBox));
 }
 
 InlineRect LineBox::logicalRectForTextRun(const Line::Run& run) const
 {
     ASSERT(run.isText() || run.isLineBreak());
-    auto& parentInlineBox = inlineBoxForLayoutBox(run.layoutBox().parent());
+    auto& parentInlineBox = inlineLevelBoxForLayoutBox(run.layoutBox().parent());
+    ASSERT(parentInlineBox.isInlineBox());
     auto& fontMetrics = parentInlineBox.fontMetrics();
     auto runlogicalTop = parentInlineBox.logicalTop() + parentInlineBox.baseline() - fontMetrics.ascent();
     InlineLayoutUnit logicalHeight = fontMetrics.height();
