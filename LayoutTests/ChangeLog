@@ -1,3 +1,17 @@
+2020-10-11  Rob Buis  <rbuis@igalia.com>
+
+        Various test-cases from Gecko assert with ASSERTION FAILED: tagName == mmultiscriptsTag or ASSERTION FAILED: tagName == mrootTag
+        https://bugs.webkit.org/show_bug.cgi?id=202804
+
+        Reviewed by Frédéric Wang.
+
+        Reduce Gecko test crashes into two tests.
+
+        * mathml/scripts-with-prefixes-expected.txt: Added.
+        * mathml/scripts-with-prefixes.xhtml: Added.
+        * mathml/square-roots-with-prefixes-expected.txt: Added.
+        * mathml/square-roots-with-prefixes.xhtml: Added.
+
 2020-10-10  Darin Adler  <darin@apple.com>
 
         REGRESSION (r267761): editing/mac/spelling/autocorrection-contraction.html is a constant timeout on macOS wk2 Debug

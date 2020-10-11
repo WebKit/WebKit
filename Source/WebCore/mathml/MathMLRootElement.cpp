@@ -40,9 +40,9 @@ using namespace MathMLNames;
 
 static RootType rootTypeOf(const QualifiedName& tagName)
 {
-    if (tagName == msqrtTag)
+    if (tagName.matches(msqrtTag))
         return RootType::SquareRoot;
-    ASSERT(tagName == mrootTag);
+    ASSERT(tagName.matches(mrootTag));
     return RootType::RootWithIndex;
 }
 

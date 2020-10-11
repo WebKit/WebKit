@@ -40,19 +40,19 @@ using namespace MathMLNames;
 
 static MathMLScriptsElement::ScriptType scriptTypeOf(const QualifiedName& tagName)
 {
-    if (tagName == msubTag)
+    if (tagName.matches(msubTag))
         return MathMLScriptsElement::ScriptType::Sub;
-    if (tagName == msupTag)
+    if (tagName.matches(msupTag))
         return MathMLScriptsElement::ScriptType::Super;
-    if (tagName == msubsupTag)
+    if (tagName.matches(msubsupTag))
         return MathMLScriptsElement::ScriptType::SubSup;
-    if (tagName == munderTag)
+    if (tagName.matches(munderTag))
         return MathMLScriptsElement::ScriptType::Under;
-    if (tagName == moverTag)
+    if (tagName.matches(moverTag))
         return MathMLScriptsElement::ScriptType::Over;
-    if (tagName == munderoverTag)
+    if (tagName.matches(munderoverTag))
         return MathMLScriptsElement::ScriptType::UnderOver;
-    ASSERT(tagName == mmultiscriptsTag);
+    ASSERT(tagName.matches(mmultiscriptsTag));
     return MathMLScriptsElement::ScriptType::Multiscripts;
 }
 
