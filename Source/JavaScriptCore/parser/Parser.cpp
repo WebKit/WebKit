@@ -288,6 +288,8 @@ Expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>
         features |= ShadowsArgumentsFeature;
     if (m_seenTaggedTemplate)
         features |= NoEvalCacheFeature;
+    if (scope->hasNonSimpleParameterList())
+        features |= NonSimpleParameterListFeature;
 
 #if ASSERT_ENABLED
     if (m_parsingBuiltin && isProgramParseMode(parseMode)) {

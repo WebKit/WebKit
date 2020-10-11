@@ -1246,8 +1246,6 @@ test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
-test/built-ins/ThrowTypeError/unique-per-realm-non-simple.js:
-  default: 'Test262Error: callee.get Expected SameValue(«function () {'
 test/built-ins/TypedArray/prototype/slice/detached-buffer-zero-count-custom-ctor-other-targettype.js:
   default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
   strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'

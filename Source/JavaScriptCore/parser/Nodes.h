@@ -1870,7 +1870,6 @@ namespace JSC {
         int startStartOffset() const { return m_startStartOffset; }
         int startLineStartOffset() const { return m_startLineStartOffset; }
 
-        void setFeatures(CodeFeatures features) { m_features = features; }
         CodeFeatures features() { return m_features; }
         InnerArrowFunctionCodeFeatures innerArrowFunctionCodeFeatures() { return m_innerArrowFunctionCodeFeatures; }
         bool doAnyInnerArrowFunctionsUseAnyFeature() { return m_innerArrowFunctionCodeFeatures != NoInnerArrowFunctionFeatures; }
@@ -1885,7 +1884,6 @@ namespace JSC {
         bool usesArguments() const { return (m_features & ArgumentsFeature) && !(m_features & ShadowsArgumentsFeature); }
         bool usesArrowFunction() const { return m_features & ArrowFunctionFeature; }
         bool isStrictMode() const { return m_features & StrictModeFeature; }
-        void setUsesArguments() { m_features |= ArgumentsFeature; }
         bool usesThis() const { return m_features & ThisFeature; }
         bool usesSuperCall() const { return m_features & SuperCallFeature; }
         bool usesSuperProperty() const { return m_features & SuperPropertyFeature; }
@@ -1895,6 +1893,7 @@ namespace JSC {
         bool captures(UniquedStringImpl* uid) { return m_varDeclarations.captures(uid); }
         bool captures(const Identifier& ident) { return captures(ident.impl()); }
         bool hasSloppyModeHoistedFunction(UniquedStringImpl* uid) const { return m_sloppyModeHoistedFunctions.contains(uid); }
+        bool usesNonSimpleParameterList() const { return m_features & NonSimpleParameterListFeature; }
 
         bool needsNewTargetRegisterForThisScope() const
         {

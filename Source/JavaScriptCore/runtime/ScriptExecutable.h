@@ -64,6 +64,7 @@ public:
     DerivedContextType derivedContextType() const { return static_cast<DerivedContextType>(m_derivedContextType); }
     EvalContextType evalContextType() const { return static_cast<EvalContextType>(m_evalContextType); }
     bool isInStrictContext() const { return m_features & StrictModeFeature; }
+    bool usesNonSimpleParameterList() const { return m_features & NonSimpleParameterListFeature; }
 
     void setNeverInline(bool value) { m_neverInline = value; }
     void setNeverOptimize(bool value) { m_neverOptimize = value; }

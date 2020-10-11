@@ -180,7 +180,7 @@ bool ClonedArguments::getOwnPropertySlot(JSObject* object, JSGlobalObject* globa
         bool isStrictMode = executable->isInStrictContext();
 
         if (ident == vm.propertyNames->callee) {
-            if (isStrictMode) {
+            if (isStrictMode || executable->usesNonSimpleParameterList()) {
                 slot.setGetterSlot(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::Accessor, thisObject->globalObject(vm)->throwTypeErrorArgumentsCalleeAndCallerGetterSetter());
                 return true;
             }
@@ -251,7 +251,7 @@ void ClonedArguments::materializeSpecials(JSGlobalObject* globalObject)
     FunctionExecutable* executable = jsCast<FunctionExecutable*>(m_callee->executable());
     bool isStrictMode = executable->isInStrictContext();
     
-    if (isStrictMode)
+    if (isStrictMode || executable->usesNonSimpleParameterList())
         putDirectAccessor(globalObject, vm.propertyNames->callee, this->globalObject(vm)->throwTypeErrorArgumentsCalleeAndCallerGetterSetter(), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
     else
         putDirect(vm, vm.propertyNames->callee, JSValue(m_callee.get()));
