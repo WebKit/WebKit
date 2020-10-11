@@ -53,6 +53,7 @@ bool MediaRecorder::isTypeSupported(Document& document, const String& value)
     return page && page->mediaRecorderProvider().isSupported(value);
 #else
     UNUSED_PARAM(document);
+    UNUSED_PARAM(value);
     return false;
 #endif
 
