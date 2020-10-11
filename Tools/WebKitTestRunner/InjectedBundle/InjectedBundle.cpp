@@ -104,6 +104,7 @@ void InjectedBundle::initialize(WKBundleRef bundle, WKTypeRef initializationUser
     WKBundleSetClient(m_bundle, &client.base);
     WKBundleSetServiceWorkerProxyCreationCallback(m_bundle, WebCoreTestSupport::setupNewlyCreatedServiceWorker);
     platformInitialize(initializationUserData);
+    WebCoreTestSupport::populateJITOperations();
 
     activateFonts();
 }
