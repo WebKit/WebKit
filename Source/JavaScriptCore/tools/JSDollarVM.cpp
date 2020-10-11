@@ -671,6 +671,7 @@ static const struct CompactHashIndex staticCustomAccessorTableIndex[2] = {
 };
 
 static JSC_DECLARE_CUSTOM_GETTER(testStaticAccessorGetter);
+static JSC_DECLARE_CUSTOM_SETTER(testStaticAccessorPutter);
 
 JSC_DEFINE_CUSTOM_GETTER(testStaticAccessorGetter, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
@@ -685,7 +686,7 @@ JSC_DEFINE_CUSTOM_GETTER(testStaticAccessorGetter, (JSGlobalObject* globalObject
     return JSValue::encode(jsUndefined());
 }
 
-static bool testStaticAccessorPutter(JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value)
+JSC_DEFINE_CUSTOM_SETTER(testStaticAccessorPutter, (JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value))
 {
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
@@ -746,13 +747,16 @@ public:
     }
 };
 
-static EncodedJSValue testStaticValueGetter(JSGlobalObject*, EncodedJSValue, PropertyName)
+static JSC_DECLARE_CUSTOM_GETTER(testStaticValueGetter);
+static JSC_DECLARE_CUSTOM_SETTER(testStaticValuePutter);
+
+JSC_DEFINE_CUSTOM_GETTER(testStaticValueGetter, (JSGlobalObject*, EncodedJSValue, PropertyName))
 {
     DollarVMAssertScope assertScope;
     return JSValue::encode(jsUndefined());
 }
 
-static bool testStaticValuePutter(JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value)
+JSC_DEFINE_CUSTOM_SETTER(testStaticValuePutter, (JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value))
 {
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
