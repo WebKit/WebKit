@@ -20,6 +20,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import unittest
 
 from datetime import datetime
@@ -209,3 +210,49 @@ PRINTED
         Contributor.clear()
         with self.assertRaises(ValueError):
             Commit(revision=1, identifier=1, author='Jonathan Bedard')
+
+    def test_branch_point(self):
+        self.assertEqual('0', str(Commit(identifier=0)))
+        self.assertEqual('0@branch-a', str(Commit(identifier=0, branch='branch-a')))
+        self.assertEqual('1234.0@branch-a', str(Commit(branch_point=1234, identifier=0, branch='branch-a')))
+
+    def test_json_encode(self):
+        Contributor.clear()
+        contributor = Contributor.from_scm_log('Author: Jonathan Bedard <jbedard@apple.com>')
+
+        self.assertDictEqual(
+            dict(
+                revision=1,
+                hash='c3bd784f8b88bd03f64467ddd3304ed8be28acbe',
+                branch='main',
+                identifier='1@main',
+                timestamp=1000,
+                author='jbedard@apple.com',
+                message='Message',
+            ), json.loads(json.dumps(Commit(
+                revision=1,
+                hash='c3bd784f8b88bd03f64467ddd3304ed8be28acbe',
+                identifier='1@main',
+                timestamp=1000,
+                author=contributor,
+                message='Message'
+            ), cls=Commit.Encoder))
+        )
+
+    def test_json_decode(self):
+        Contributor.clear()
+        contributor = Contributor.from_scm_log('Author: Jonathan Bedard <jbedard@apple.com>')
+
+        commit_a = Commit(
+            revision=1,
+            hash='c3bd784f8b88bd03f64467ddd3304ed8be28acbe',
+            identifier='1@main',
+            timestamp=1000,
+            author=contributor,
+            message='Message'
+        )
+
+        dictionary = json.loads(json.dumps(commit_a, cls=Commit.Encoder))
+        commit_b = Commit(**dictionary)
+
+        self.assertEqual(commit_a, commit_b)

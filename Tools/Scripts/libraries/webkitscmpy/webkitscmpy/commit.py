@@ -20,6 +20,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import six
 import re
 
@@ -32,6 +33,26 @@ class Commit(object):
     REVISION_RE = re.compile(r'^[Rr]?(?P<revision>\d+)$')
     IDENTIFIER_RE = re.compile(r'^((?P<branch_point>\d+)\.)?(?P<identifier>-?\d+)(@(?P<branch>\S+))?$')
     NUMBER_RE = re.compile(r'^-?\d*$')
+
+    class Encoder(json.JSONEncoder):
+
+        def default(self, obj):
+            if not isinstance(obj, Commit):
+                return super(Commit.Encoder, self).default(obj)
+
+            result = dict()
+            for attribute in ['hash', 'revision', 'branch', 'timestamp', 'message']:
+                value = getattr(obj, attribute, None)
+                if value is not None:
+                    result[attribute] = value
+
+            if obj.author:
+                result['author'] = obj.author.email or obj.author.name
+
+            if obj.identifier is not None:
+                result['identifier'] = str(obj)
+
+            return result
 
     @classmethod
     def _parse_hash(cls, hash, do_assert=False):
@@ -214,15 +235,15 @@ class Commit(object):
         return result
 
     def __repr__(self):
-        if self.branch_point and self.identifier and self.branch:
+        if self.branch_point and self.identifier is not None and self.branch:
             return '{}.{}@{}'.format(self.branch_point, self.identifier, self.branch)
-        if self.identifier and self.branch:
+        if self.identifier is not None and self.branch:
             return '{}@{}'.format(self.identifier, self.branch)
         if self.revision:
             return 'r{}'.format(self.revision)
         if self.hash:
             return self.hash[:12]
-        if self.identifier:
+        if self.identifier is not None:
             return str(self.identifier)
         raise ValueError('Incomplete commit format')
 
