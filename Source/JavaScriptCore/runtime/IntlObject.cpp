@@ -1015,7 +1015,7 @@ static VariantCode parseVariantCode(StringView string)
     static_assert(sizeof(VariantCode) == sizeof(Code));
     Code code { };
     for (unsigned index = 0; index < string.length(); ++index)
-        code.characters[index] = string[index];
+        code.characters[index] = toASCIILower(string[index]);
     VariantCode result = bitwise_cast<VariantCode>(code);
     ASSERT(result); // Not possible since some characters exist.
     ASSERT(result != static_cast<VariantCode>(-1)); // Not possible since all characters are ASCII (not Latin-1).

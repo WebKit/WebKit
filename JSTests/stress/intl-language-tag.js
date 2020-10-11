@@ -96,4 +96,15 @@ shouldThrow(() => Intl.getCanonicalLocales("en-US-t-en-GB-a0-000-a1-000-001-xxxx
 shouldThrow(() => Intl.getCanonicalLocales("en-US-t-en-GB-a0-000-a1"), RangeError);
 shouldThrow(() => Intl.getCanonicalLocales("en-US-t-en-GB-a0-a1"), RangeError);
 shouldThrow(() => Intl.getCanonicalLocales("en-US-t-en-GBBBBBBBBBB"), RangeError);
+
+shouldThrow(() => Intl.getCanonicalLocales("en-US-variant0-variant0"), RangeError);
+shouldThrow(() => Intl.getCanonicalLocales("en-US-Variant0-variant0"), RangeError);
+shouldThrow(() => Intl.getCanonicalLocales("en-US-VARIANt0-VARIANT0"), RangeError);
+shouldThrow(() => Intl.getCanonicalLocales("en-US-variant0-testing-variant0"), RangeError);
+shouldThrow(() => Intl.getCanonicalLocales("en-US-Variant0-testing-variant0"), RangeError);
+
 shouldThrow(() => Intl.getCanonicalLocales("en-US-t-en-GB-variant0-variant0"), RangeError);
+shouldThrow(() => Intl.getCanonicalLocales("en-US-t-en-GB-Variant0-variant0"), RangeError);
+shouldThrow(() => Intl.getCanonicalLocales("en-US-t-en-GB-VARIANt0-VARIANT0"), RangeError);
+shouldThrow(() => Intl.getCanonicalLocales("en-US-t-en-GB-variant0-testing-variant0"), RangeError);
+shouldThrow(() => Intl.getCanonicalLocales("en-US-t-en-GB-Variant0-testing-variant0"), RangeError);

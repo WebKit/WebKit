@@ -1,3 +1,16 @@
+2020-10-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] LowerCase when LanguageTag checks duplicate variants
+        https://bugs.webkit.org/show_bug.cgi?id=217571
+
+        Reviewed by Ross Kirsling.
+
+        Since Unicode LanguageTag is case insensitive, we need to recognize "VARIANT0" and "variant0" are the same language tag variants.
+        To achieve that, we perform toASCIILower when computing VariantCode.
+
+        * runtime/IntlObject.cpp:
+        (JSC::parseVariantCode):
+
 2020-10-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Assert Operation and HostFunction are in JITOperationsList
