@@ -203,7 +203,7 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         ASSERT(messageBody);
         auto messageBodyDictionary = dictionaryValue(messageBody);
         m_dumpPixels = booleanValue(messageBodyDictionary, "DumpPixels");
-        m_timeout = Seconds::fromMilliseconds(WKUInt64GetValue(static_cast<WKUInt64Ref>(value(messageBodyDictionary, "Timeout"))));
+        m_timeout = Seconds::fromMilliseconds(uint64Value(messageBodyDictionary, "Timeout"));
         m_dumpJSConsoleLogInStdErr = booleanValue(messageBodyDictionary, "DumpJSConsoleLogInStdErr");
         WKBundlePagePostMessage(page, toWK("Ack").get(), toWK("BeginTest").get());
         beginTesting(messageBodyDictionary, BegingTestingMode::New);

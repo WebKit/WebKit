@@ -1,3 +1,27 @@
+2020-10-10  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r267761): editing/mac/spelling/autocorrection-contraction.html is a constant timeout on macOS wk2 Debug
+        https://bugs.webkit.org/show_bug.cgi?id=217548
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestRunnerShared/Bindings/JSBasics.cpp:
+        (WTR::objectProperty): Use JSValueIsObject instead of JSValueToObject. The latter
+        function is *very* slow when passed undefined or null, creating an exception object
+        every time, even when we pass nullptr to indicate that we don't want the exception
+        object, and also invoking debugging machinery to inform the "inspector" about this
+        exception, which results in logging to the console while running tests. This
+        inefficiency is something we can fix in JavaScriptCore if we like, and makes it a
+        bad idea to call the function on undefined and null. And also points out the problem
+        with passing exceptions to anyone except the caller: there's no reason the inspector
+        needs to know about the exception in a case like this. Because the uses of this
+        function in the test runners don't need that behavior of converting non-object values
+        to objects, it was best just to stop using JSValueToObject entirely.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage): Use uint64Value here. Just something
+        missed in my earlier refactoring and spotted while debugging.
+
 2020-10-11  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Support json encoding of Commit object

@@ -89,7 +89,7 @@ double numericProperty(JSContextRef context, JSObjectRef object, const char* nam
 JSObjectRef objectProperty(JSContextRef context, JSObjectRef object, const char* name)
 {
     auto value = property(context, object, name);
-    return value ? JSValueToObject(context, property(context, object, name), nullptr) : nullptr;
+    return value && JSValueIsObject(context, value) ? const_cast<JSObjectRef>(value) : nullptr;
 }
 
 JSObjectRef objectProperty(JSContextRef context, JSObjectRef object, std::initializer_list<const char*> names)

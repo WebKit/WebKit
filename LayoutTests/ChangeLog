@@ -1,3 +1,25 @@
+2020-10-10  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r267761): editing/mac/spelling/autocorrection-contraction.html is a constant timeout on macOS wk2 Debug
+        https://bugs.webkit.org/show_bug.cgi?id=217548
+
+        Reviewed by Alexey Proskuryakov.
+
+        * editing/mac/spelling/autocorrection-contraction-expected.html: Added.
+        * editing/mac/spelling/autocorrection-contraction-expected.png: Removed.
+        * editing/mac/spelling/autocorrection-contraction-expected.txt: Removed.
+        * editing/mac/spelling/autocorrection-contraction.html: Simplified this and changed it to a ref test.
+        * platform/mac-wk2/editing/mac/spelling/autocorrection-contraction-expected.png: Removed.
+        * platform/mac-wk2/editing/mac/spelling/autocorrection-contraction-expected.txt: Removed.
+        * platform/win/editing/mac/spelling/autocorrection-contraction-expected.txt: Removed.
+
+        * platform/mac/TestExpectations: Remove failure and timeout expectations for autocorrection-contraction.html.
+        Both because the slowness in WebKitTestRunner causing the timeout issue was fixed, and because the new
+        reference test is unlikely to be flaky.
+
+        * platform/wk2/TestExpectations: Removed timeout expectations for two other tests affected by the same
+        bug in WebKitTestRunner.
+
 2020-10-10  Oriol Brufau  <obrufau@igalia.com>
 
         Fix mac expectations for text-selection.html
