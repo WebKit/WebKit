@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "JSCPtrTag.h"
 #include "Options.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/PtrTag.h>
 
 namespace JSC {
 
@@ -70,7 +70,7 @@ private:
     HashMap<void*, void*> m_validatedOperations;
 };
 
-extern LazyNeverDestroyed<JITOperationList> jitOperationList;
+JS_EXPORT_PRIVATE extern LazyNeverDestroyed<JITOperationList> jitOperationList;
 
 inline JITOperationList& JITOperationList::instance()
 {

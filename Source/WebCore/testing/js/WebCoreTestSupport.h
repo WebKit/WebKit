@@ -67,4 +67,6 @@ void setupNewlyCreatedServiceWorker(uint64_t serviceWorkerIdentifier) TEST_SUPPO
     
 void setAdditionalSupportedImageTypesForTesting(const WTF::String&) TEST_SUPPORT_EXPORT;
 
+void populateJITOperations() TEST_SUPPORT_EXPORT;
+
 } // namespace WebCoreTestSupport

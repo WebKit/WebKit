@@ -1,3 +1,49 @@
+2020-10-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Assert Operation and HostFunction are in JITOperationsList
+        https://bugs.webkit.org/show_bug.cgi?id=217500
+
+        Reviewed by Saam Barati.
+
+        This patch makes tagCodePtr etc. take PtrTag only from template parameter.
+        As a result, we can easily customize special verification process for specific PtrTag.
+        By leveraging this feature, we introduce HostFunction / JITOperation assertions for HostFunctionPtrTag and OperationPtrTag.
+
+        We also add tagCodePtrWithStackPointerForJITCall and untagCodePtrWithStackPointerForJITCall, they are used only when we need
+        to tag a pointer with stack pointer which is a dynamic PtrTag.
+
+        * wtf/PtrTag.cpp:
+        (WTF::tagForPtr):
+        * wtf/PtrTag.h:
+        (WTF::tagNativeCodePtrImpl):
+        (WTF::untagNativeCodePtrImpl):
+        (WTF::PtrTagTraits::tagCodePtr):
+        (WTF::PtrTagTraits::untagCodePtr):
+        (WTF::registerPtrTagLookup):
+        (WTF::reportBadTag):
+        (WTF::removeCodePtrTag):
+        (WTF::tagCodePtrImpl):
+        (WTF::tagCodePtr):
+        (WTF::untagCodePtrImpl):
+        (WTF::untagCodePtr):
+        (WTF::retagCodePtrImplHelper):
+        (WTF::retagCodePtrImpl):
+        (WTF::retagCodePtr):
+        (WTF::assertIsCFunctionPtr):
+        (WTF::isTaggedWith):
+        (WTF::tagCFunctionPtrImpl):
+        (WTF::tagCFunctionPtr):
+        (WTF::tagCFunction):
+        (WTF::untagCFunctionPtrImpl):
+        (WTF::untagCFunctionPtr):
+        (WTF::tagArrayPtr):
+        (WTF::untagArrayPtr):
+        (WTF::removeArrayPtrTag):
+        (WTF::retagArrayPtr):
+        (WTF::tagCodePtrWithStackPointerForJITCall):
+        (WTF::untagCodePtrWithStackPointerForJITCall):
+        (WTF::untagCodePtrImplHelper): Deleted.
+
 2020-10-10  Sam Weinig  <weinig@apple.com>
 
         Use WebPreference definitions from shared configuration files in WebCore (Part 1)

@@ -1610,7 +1610,8 @@ void testLateRegister()
     CHECK(invoke<uint64_t>(*code) == result);
 }
 
-void interpreterPrint(Vector<intptr_t>* stream, intptr_t value)
+JSC_DECLARE_JIT_OPERATION(interpreterPrint, void, (Vector<intptr_t>* stream, intptr_t value));
+JSC_DEFINE_JIT_OPERATION(interpreterPrint, void, (Vector<intptr_t>* stream, intptr_t value))
 {
     stream->append(value);
 }

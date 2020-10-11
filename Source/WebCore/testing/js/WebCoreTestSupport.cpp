@@ -43,6 +43,7 @@
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/CallFrame.h>
 #include <JavaScriptCore/IdentifierInlines.h>
+#include <JavaScriptCore/JITOperationList.h>
 #include <JavaScriptCore/JSValueRef.h>
 #include <wtf/URLParser.h>
 
@@ -238,5 +239,22 @@ void setAdditionalSupportedImageTypesForTesting(const WTF::String& imageTypes)
     WebCore::setAdditionalSupportedImageTypesForTesting(imageTypes);
 }
 #endif
+
+#if ENABLE(JIT_OPERATION_VALIDATION)
+extern const uintptr_t startOfHostFunctionsInWebCoreTestSupport __asm("section$start$__DATA_CONST$__jsc_host");
+extern const uintptr_t endOfHostFunctionsInWebCoreTestSupport __asm("section$end$__DATA_CONST$__jsc_host");
+extern const uintptr_t startOfJITOperationsInWebCoreTestSupport __asm("section$start$__DATA_CONST$__jsc_ops");
+extern const uintptr_t endOfJITOperationsInWebCoreTestSupport __asm("section$end$__DATA_CONST$__jsc_ops");
+#endif
+
+void populateJITOperations()
+{
+#if ENABLE(JIT_OPERATION_VALIDATION)
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
+        JSC::JITOperationList::populatePointersInEmbedder(&startOfHostFunctionsInWebCoreTestSupport, &endOfHostFunctionsInWebCoreTestSupport, &startOfJITOperationsInWebCoreTestSupport, &endOfJITOperationsInWebCoreTestSupport);
+    });
+#endif
+}
 
 }

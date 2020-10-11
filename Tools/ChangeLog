@@ -1,3 +1,19 @@
+2020-10-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Assert Operation and HostFunction are in JITOperationsList
+        https://bugs.webkit.org/show_bug.cgi?id=217500
+
+        Reviewed by Saam Barati.
+
+        This patch turned out that WebCoreTestSupport has its own JIT operations. So we need to populate them in test harness specially.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpRenderTree):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (main):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+
 2020-10-09  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Handle svn info run from directory

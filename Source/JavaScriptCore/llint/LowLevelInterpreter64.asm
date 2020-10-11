@@ -324,10 +324,10 @@ macro makeHostFunctionCall(entry, protoCallFrame, temp1, temp2)
     elsif X86_64_WIN
         # We need to allocate 32 bytes on the stack for the shadow space.
         subp 32, sp
-        call temp1, JSEntryPtrTag
+        call temp1, HostFunctionPtrTag
         addp 32, sp
     else
-        call temp1, JSEntryPtrTag
+        call temp1, HostFunctionPtrTag
     end
 end
 
@@ -2341,10 +2341,10 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     else
         if X86_64_WIN
             subp 32, sp
-            call executableOffsetToFunction[a2], JSEntryPtrTag
+            call executableOffsetToFunction[a2], HostFunctionPtrTag
             addp 32, sp
         else
-            call executableOffsetToFunction[a2], JSEntryPtrTag
+            call executableOffsetToFunction[a2], HostFunctionPtrTag
         end
     end
 
@@ -2379,10 +2379,10 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
     else
         if X86_64_WIN
             subp 32, sp
-            call offsetOfFunction[a2], JSEntryPtrTag
+            call offsetOfFunction[a2], HostFunctionPtrTag
             addp 32, sp
         else
-            call offsetOfFunction[a2], JSEntryPtrTag
+            call offsetOfFunction[a2], HostFunctionPtrTag
         end
     end
 

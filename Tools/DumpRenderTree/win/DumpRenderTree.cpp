@@ -46,6 +46,7 @@
 #include "WorkQueue.h"
 
 #include <CoreFoundation/CoreFoundation.h>
+#include <JavaScriptCore/InitializeThreading.h>
 #include <JavaScriptCore/Options.h>
 #include <JavaScriptCore/TestRunnerUtils.h>
 #include <WebKitLegacy/WebKit.h>
@@ -1601,6 +1602,10 @@ int main(int argc, const char* argv[])
     setDefaultsToConsistentValuesForTesting();
 
     Vector<const char*> tests = initializeGlobalsFromCommandLineOptions(argc, argv);
+
+    JSC::initialize();
+    WTF::initializeMainThread();
+    WebCoreTestSupport::populateJITOperations();
 
     // FIXME - need to make DRT pass with Windows native controls <http://bugs.webkit.org/show_bug.cgi?id=25592>
     COMPtr<IWebPreferences> tmpPreferences;

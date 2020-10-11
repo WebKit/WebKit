@@ -255,6 +255,7 @@ const ArithProfileNumberNumber = constexpr (BinaryArithProfile::observedNumberNu
 # Pointer Tags
 const BytecodePtrTag = constexpr BytecodePtrTag
 const JSEntryPtrTag = constexpr JSEntryPtrTag
+const HostFunctionPtrTag = constexpr HostFunctionPtrTag
 const ExceptionHandlerPtrTag = constexpr ExceptionHandlerPtrTag
 const NoPtrTag = constexpr NoPtrTag
 const SlowPathPtrTag = constexpr SlowPathPtrTag

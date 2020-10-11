@@ -1,3 +1,66 @@
+2020-10-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Assert Operation and HostFunction are in JITOperationsList
+        https://bugs.webkit.org/show_bug.cgi?id=217500
+
+        Reviewed by Saam Barati.
+
+        We make JSC PtrTag more restricted. We add the following information for each PtrTag.
+
+            1. What code target is tagged with this PtrTag? Native or JIT.
+            2. What uses this PtrTag when invoking code? Native, JIT, or None.
+
+        And we will verify via JIT-caging.
+
+        This patch adds HostFunctionPtrTag and sign host functions with it. Previously, it was signed with JSEntryPtrTag,
+        and this is wrong since it is used for JS entry thunks. And we introduce assertion that function is registered in
+        JITOperationList when signing function with OperationPtrTag or HostFunctionPtrTag.
+
+        We also annotate all operations in testb3 so that testb3 can work with OperationPtrTag / HostFunctionPtrTag assertions.
+
+        * assembler/JITOperationList.cpp:
+        (JSC::addPointers):
+        * assembler/JITOperationList.h:
+        * b3/testb3_1.cpp:
+        (main):
+        * b3/testb3_5.cpp:
+        (JSC_DEFINE_JIT_OPERATION):
+        (simpleFunction): Deleted.
+        (functionWithHellaArguments): Deleted.
+        (functionWithHellaArguments2): Deleted.
+        (functionWithHellaArguments3): Deleted.
+        (simpleFunctionDouble): Deleted.
+        (simpleFunctionFloat): Deleted.
+        (functionWithHellaDoubleArguments): Deleted.
+        (functionWithHellaFloatArguments): Deleted.
+        * b3/testb3_6.cpp:
+        (JSC_DEFINE_JIT_OPERATION):
+        (interpreterPrint): Deleted.
+        * b3/testb3_7.cpp:
+        (JSC_DEFINE_JIT_OPERATION):
+        (oneFunction): Deleted.
+        (noOpFunction): Deleted.
+        (functionNineArgs): Deleted.
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOperations.cpp:
+        * jit/JITOperations.cpp:
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSCPtrTag.cpp:
+        (JSC::tagForPtr):
+        (JSC::ptrTagName):
+        * runtime/JSCPtrTag.h:
+        (JSC::tagJSCCodePtrImpl):
+        (JSC::untagJSCCodePtrImpl):
+        * runtime/NativeFunction.h:
+        (JSC::TaggedNativeFunction::TaggedNativeFunction):
+        (JSC::TaggedNativeFunction::operator NativeFunction):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::doOSREntry):
+
 2020-10-09  Keith Miller  <keith_miller@apple.com>
 
         Enable WeakRefs/FinalizationRegistries by default.
