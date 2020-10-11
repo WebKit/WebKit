@@ -42,13 +42,13 @@ struct LineData {
 };
 
 struct ArcData {
-    FloatPoint offset;
+    FloatPoint start;
     FloatPoint center;
     float radius { 0 };
     float startAngle { 0 };
     float endAngle { 0 };
     bool clockwise { false };
-    bool hasOffset { false };
+    bool hasStart { false };
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<ArcData> decode(Decoder&);
@@ -113,19 +113,19 @@ template<class Decoder> Optional<LineData> LineData::decode(Decoder& decoder)
 
 template<class Encoder> void ArcData::encode(Encoder& encoder) const
 {
-    encoder << offset;
+    encoder << start;
     encoder << center;
     encoder << radius;
     encoder << startAngle;
     encoder << endAngle;
     encoder << clockwise;
-    encoder << hasOffset;
+    encoder << hasStart;
 }
 
 template<class Decoder> Optional<ArcData> ArcData::decode(Decoder& decoder)
 {
     ArcData data;
-    if (!decoder.decode(data.offset))
+    if (!decoder.decode(data.start))
         return WTF::nullopt;
 
     if (!decoder.decode(data.center))
@@ -143,7 +143,7 @@ template<class Decoder> Optional<ArcData> ArcData::decode(Decoder& decoder)
     if (!decoder.decode(data.clockwise))
         return WTF::nullopt;
 
-    if (!decoder.decode(data.hasOffset))
+    if (!decoder.decode(data.hasStart))
         return WTF::nullopt;
 
     return data;

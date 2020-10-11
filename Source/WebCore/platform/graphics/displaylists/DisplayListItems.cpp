@@ -1289,7 +1289,7 @@ Optional<FloatRect> StrokePath::localBounds(const GraphicsContext& context) cons
     // FIXME: Need to take stroke thickness into account correctly, via CGPathByStrokingPath().
     float strokeThickness = context.strokeThickness();
 
-    FloatRect bounds = m_path.boundingRect();
+    FloatRect bounds = m_path.fastBoundingRect();
     bounds.expand(strokeThickness, strokeThickness);
     return bounds;
 }

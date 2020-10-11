@@ -289,8 +289,8 @@ void Path::addArc(const FloatPoint& point, float radius, float startAngle, float
     if (isNull() || hasInlineData<MoveData>()) {
         ArcData arc;
         if (hasAnyInlineData()) {
-            arc.hasOffset = true;
-            arc.offset = WTF::get<MoveData>(m_inlineData).location;
+            arc.hasStart = true;
+            arc.start = WTF::get<MoveData>(m_inlineData).location;
         }
         arc.center = point;
         arc.radius = radius;
@@ -386,7 +386,7 @@ FloatRect Path::fastBoundingRect() const
         return { };
 
 #if ENABLE(INLINE_PATH_DATA)
-    if (auto rect = boundingRectFromInlineData())
+    if (auto rect = fastBoundingRectFromInlineData())
         return *rect;
 #endif
 
@@ -395,14 +395,31 @@ FloatRect Path::fastBoundingRect() const
 
 #if ENABLE(INLINE_PATH_DATA)
 
+Optional<FloatRect> Path::fastBoundingRectFromInlineData() const
+{
+    if (hasInlineData<ArcData>()) {
+        auto& arc = inlineData<ArcData>();
+        auto diameter = 2 * arc.radius;
+        FloatRect approximateBounds { arc.center, FloatSize(diameter, diameter) };
+        approximateBounds.move(-arc.radius, -arc.radius);
+        if (arc.hasStart)
+            approximateBounds.extend(arc.start);
+        return approximateBounds;
+    }
+
+    return boundingRectFromInlineData();
+}
+
 Optional<FloatRect> Path::boundingRectFromInlineData() const
 {
+    // FIXME: Add logic to compute the exact bounding rect for an arc in inline data.
+
     if (hasInlineData<MoveData>())
         return FloatRect { };
 
     if (hasInlineData<LineData>()) {
         FloatRect result;
-        auto& line = WTF::get<LineData>(m_inlineData);
+        auto& line = inlineData<LineData>();
         result.fitToPoints(line.start, line.end);
         return result;
     }

@@ -241,6 +241,7 @@ public:
 private:
 #if ENABLE(INLINE_PATH_DATA)
     bool hasAnyInlineData() const;
+    Optional<FloatRect> fastBoundingRectFromInlineData() const;
     Optional<FloatRect> boundingRectFromInlineData() const;
 #endif
 
