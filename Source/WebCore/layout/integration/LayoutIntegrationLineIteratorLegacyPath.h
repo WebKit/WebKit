@@ -26,6 +26,7 @@
 #pragma once
 
 #include "LayoutIntegrationInlineContent.h"
+#include "LayoutIntegrationRunIteratorLegacyPath.h"
 #include "RootInlineBox.h"
 
 namespace WebCore {

@@ -160,6 +160,7 @@ LineRunIterator& LineRunIterator::traversePreviousOnLineIgnoringLineBreak()
     return *this;
 }
 
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 static const RenderBlockFlow* lineLayoutSystemFlowForRenderer(const RenderObject& renderer)
 {
     // In currently supported cases the renderer is always direct child of the flow.
@@ -167,6 +168,7 @@ static const RenderBlockFlow* lineLayoutSystemFlowForRenderer(const RenderObject
         return nullptr;
     return downcast<RenderBlockFlow>(renderer.parent());
 }
+#endif
 
 TextRunIterator firstTextRunFor(const RenderText& text)
 {

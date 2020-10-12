@@ -27,6 +27,7 @@
 #include "LayoutIntegrationLineIterator.h"
 
 #include "LayoutIntegrationLineLayout.h"
+#include "LayoutIntegrationRunIterator.h"
 
 namespace WebCore {
 namespace LayoutIntegration {
