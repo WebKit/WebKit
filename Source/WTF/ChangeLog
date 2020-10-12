@@ -1,3 +1,15 @@
+2020-10-11  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        GeneratePreferences.rb is noisy
+        https://bugs.webkit.org/show_bug.cgi?id=217589
+
+        Reviewed by Sam Weinig.
+
+        Don't print anything when the script is successful. Since it runs during the build, it
+        should only print errors.
+
+        * Scripts/GeneratePreferences.rb:
+
 2020-10-11  Luming Yin  <luming_yin@apple.com>
 
         Strip patch version from TARGET_MAC_OS_X_VERSION_MAJOR when building for macOS Big Sur 

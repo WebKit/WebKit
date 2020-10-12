@@ -215,8 +215,6 @@ class Preferences
   end
 
   def renderTemplate(templateFile, outputDirectory)
-    puts "Generating output for template file: #{templateFile}"
-
     resultFile = File.join(outputDirectory, File.basename(templateFile, ".erb"))
     tempResultFile = resultFile + ".tmp"
 
