@@ -33,20 +33,6 @@
 
 namespace WebKit {
 
-<%- for @pref in @internalFeatures do -%>
-void WebPreferences::set<%= @pref.name %>(const bool& value)
-{
-    if (!m_store.setBoolValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key(), value))
-        return;
-    updateBoolValueForInternalDebugFeatureKey(WebPreferencesKey::<%= @pref.nameLower %>Key(), value);
-}
-
-bool WebPreferences::<%= @pref.nameLower %>() const
-{
-    return m_store.getBoolValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key());
-}
-
-<%- end -%>
 const Vector<RefPtr<API::Object>>& WebPreferences::internalDebugFeatures()
 {
     static NeverDestroyed<Vector<RefPtr<API::Object>>> features(std::initializer_list<RefPtr<API::Object>> {

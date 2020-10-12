@@ -148,7 +148,6 @@ void TestController::platformResetPreferencesToConsistentValues()
     WKPreferencesSetTextAutosizingEnabled(preferences, false);
     WKPreferencesSetTextAutosizingUsesIdempotentMode(preferences, false);
     WKPreferencesSetContentChangeObserverEnabled(preferences, false);
-    [(__bridge WKPreferences *)preferences _setShouldIgnoreMetaViewport:NO];
 }
 
 bool TestController::platformResetStateToConsistentValues(const TestOptions& options)
@@ -268,9 +267,6 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
     [[GeneratedTouchesDebugWindow sharedGeneratedTouchesDebugWindow] setShouldShowTouches:test.options().shouldShowTouches()];
 
     TestRunnerWKWebView *webView = mainWebView()->platformView();
-
-    if (test.options().shouldIgnoreMetaViewport())
-        webView.configuration.preferences._shouldIgnoreMetaViewport = YES;
 
     if (!test.options().useFlexibleViewport())
         return;

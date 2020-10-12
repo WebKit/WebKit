@@ -101,54 +101,51 @@ void merge(TestFeatures& base, TestFeatures additional)
 static const std::unordered_map<std::string, bool>& boolDefaultsMap()
 {
     static std::unordered_map<std::string, bool> map {
-        { "useThreadedScrolling", false },
-        { "useAcceleratedDrawing", false },
-        { "useRemoteLayerTree", false },
-        { "shouldShowWebView", false },
-        { "useFlexibleViewport", false },
-        { "useDataDetection", false },
-        { "useMockScrollbars", true },
-        { "needsSiteSpecificQuirks", false },
-        { "ignoresViewportScaleLimits", false },
-        { "useCharacterSelectionGranularity", false },
-        { "enableAttachmentElement", false },
-        { "enableIntersectionObserver", false },
-        { "useEphemeralSession", false },
-        { "enableMenuItemElement", false },
-        { "enableKeygenElement", false },
-        { "enableModernMediaControls", true },
-        { "enablePointerLock", false },
-        { "enableWebAuthentication", true },
-        { "enableWebAuthenticationLocalAuthenticator", true },
-        { "enableInspectorAdditions", false },
-        { "shouldShowTouches", false },
-        { "dumpJSConsoleLogInStdErr", false },
         { "allowCrossOriginSubresourcesToAskForCredentials", false },
-        { "domPasteAllowed", true },
-        { "enableColorFilter", false },
-        { "punchOutWhiteBackgroundsInDarkMode", false },
-        { "runSingly", false },
-        { "checkForWorldLeaks", false },
-        { "shouldIgnoreMetaViewport", false },
-        { "spellCheckingDots", false },
-        { "enableServiceControls", false },
-        { "editable", false },
-        { "shouldHandleRunOpenPanel", true },
-        { "shouldPresentPopovers", true },
-        { "enableAppNap", false },
-        { "enableBackForwardCache", false },
-        { "allowsLinkPreview", true },
-        { "enableCaptureVideoInUIProcess", false },
-        { "enableCaptureVideoInGPUProcess", false },
-        { "enableCaptureAudioInUIProcess", false },
-        { "enableCaptureAudioInGPUProcess", false },
         { "allowTopNavigationToDataURLs", true },
+        { "allowsLinkPreview", true },
+        { "domPasteAllowed", true },
+        { "dumpJSConsoleLogInStdErr", false },
+        { "editable", false },
+        { "enableAppNap", false },
+        { "enableAttachmentElement", false },
+        { "enableBackForwardCache", false },
+        { "enableCaptureAudioInGPUProcess", false },
+        { "enableCaptureAudioInUIProcess", false },
+        { "enableCaptureVideoInGPUProcess", false },
+        { "enableCaptureVideoInUIProcess", false },
+        { "enableColorFilter", false },
         { "enableInAppBrowserPrivacy", false },
-        { "isAppBoundWebView", false },
-        { "ignoreSynchronousMessagingTimeouts", false },
+        { "enableInspectorAdditions", false },
+        { "enableKeygenElement", false },
+        { "enableMenuItemElement", false },
+        { "enableModernMediaControls", true },
         { "enableProcessSwapOnNavigation", true },
         { "enableProcessSwapOnWindowOpen", false },
-        { "useServiceWorkerShortTimeout", false }
+        { "enableServiceControls", false },
+        { "enableWebAuthentication", true },
+        { "enableWebAuthenticationLocalAuthenticator", true },
+        { "ignoreSynchronousMessagingTimeouts", false },
+        { "ignoresViewportScaleLimits", false },
+        { "isAppBoundWebView", false },
+        { "needsSiteSpecificQuirks", false },
+        { "punchOutWhiteBackgroundsInDarkMode", false },
+        { "runSingly", false },
+        { "shouldHandleRunOpenPanel", true },
+        { "shouldIgnoreMetaViewport", false },
+        { "shouldPresentPopovers", true },
+        { "shouldShowTouches", false },
+        { "shouldShowWebView", false },
+        { "spellCheckingDots", false },
+        { "useAcceleratedDrawing", false },
+        { "useCharacterSelectionGranularity", false },
+        { "useDataDetection", false },
+        { "useEphemeralSession", false },
+        { "useFlexibleViewport", false },
+        { "useMockScrollbars", true },
+        { "useRemoteLayerTree", false },
+        { "useServiceWorkerShortTimeout", false },
+        { "useThreadedScrolling", false },
     };
     return map;
 }
@@ -158,8 +155,8 @@ static const std::unordered_map<std::string, double>& doubleDefaultsMap()
     static std::unordered_map<std::string, double> map {
         { "contentInset.top", 0 },
         { "deviceScaleFactor", 1 },
+        { "viewHeight", 600 },
         { "viewWidth", 800 },
-        { "viewHeight", 600 }
     };
     return map;
 }
@@ -167,12 +164,12 @@ static const std::unordered_map<std::string, double>& doubleDefaultsMap()
 static const std::unordered_map<std::string, std::string>& stringDefaultsMap()
 {
     static std::unordered_map<std::string, std::string> map {
-        { "applicationManifest", { } },
-        { "jscOptions", { } },
         { "additionalSupportedImageTypes", { } },
-        { "standaloneWebApplicationURL", { } },
+        { "applicationBundleIdentifier", { } },
+        { "applicationManifest", { } },
         { "contentMode", { } },
-        { "applicationBundleIdentifier", { } }
+        { "jscOptions", { } },
+        { "standaloneWebApplicationURL", { } },
     };
     return map;
 }
@@ -180,7 +177,7 @@ static const std::unordered_map<std::string, std::string>& stringDefaultsMap()
 static const std::unordered_map<std::string, std::vector<std::string>>& stringVectorDefaultsMap()
 {
     static std::unordered_map<std::string, std::vector<std::string>> map {
-        { "language", { } }
+        { "language", { } },
     };
     return map;
 }
@@ -198,65 +195,62 @@ enum class KeyType : uint8_t {
 static const std::unordered_map<std::string, KeyType>& keyTypeMap()
 {
     static std::unordered_map<std::string, KeyType> map {
-        { "useThreadedScrolling", KeyType::Bool },
-        { "useAcceleratedDrawing", KeyType::Bool },
-        { "useRemoteLayerTree", KeyType::Bool },
-        { "shouldShowWebView", KeyType::Bool },
-        { "useFlexibleViewport", KeyType::Bool },
-        { "useDataDetection", KeyType::Bool },
-        { "useMockScrollbars", KeyType::Bool },
-        { "needsSiteSpecificQuirks", KeyType::Bool },
-        { "ignoresViewportScaleLimits", KeyType::Bool },
-        { "useCharacterSelectionGranularity", KeyType::Bool },
-        { "enableAttachmentElement", KeyType::Bool },
-        { "enableIntersectionObserver", KeyType::Bool },
-        { "useEphemeralSession", KeyType::Bool },
-        { "enableMenuItemElement", KeyType::Bool },
-        { "enableKeygenElement", KeyType::Bool },
-        { "enableModernMediaControls", KeyType::Bool },
-        { "enablePointerLock", KeyType::Bool },
-        { "enableWebAuthentication", KeyType::Bool },
-        { "enableWebAuthenticationLocalAuthenticator", KeyType::Bool },
-        { "enableInspectorAdditions", KeyType::Bool },
-        { "shouldShowTouches", KeyType::Bool },
-        { "dumpJSConsoleLogInStdErr", KeyType::Bool },
         { "allowCrossOriginSubresourcesToAskForCredentials", KeyType::Bool },
-        { "domPasteAllowed", KeyType::Bool },
-        { "enableColorFilter", KeyType::Bool },
-        { "punchOutWhiteBackgroundsInDarkMode", KeyType::Bool },
-        { "runSingly", KeyType::Bool },
-        { "checkForWorldLeaks", KeyType::Bool },
-        { "shouldIgnoreMetaViewport", KeyType::Bool },
-        { "spellCheckingDots", KeyType::Bool },
-        { "enableServiceControls", KeyType::Bool },
-        { "editable", KeyType::Bool },
-        { "shouldHandleRunOpenPanel", KeyType::Bool },
-        { "shouldPresentPopovers", KeyType::Bool },
-        { "enableAppNap", KeyType::Bool },
-        { "enableBackForwardCache", KeyType::Bool },
-        { "allowsLinkPreview", KeyType::Bool },
-        { "enableCaptureVideoInUIProcess", KeyType::Bool },
-        { "enableCaptureVideoInGPUProcess", KeyType::Bool },
-        { "enableCaptureAudioInUIProcess", KeyType::Bool },
-        { "enableCaptureAudioInGPUProcess", KeyType::Bool },
         { "allowTopNavigationToDataURLs", KeyType::Bool },
+        { "allowsLinkPreview", KeyType::Bool },
+        { "domPasteAllowed", KeyType::Bool },
+        { "dumpJSConsoleLogInStdErr", KeyType::Bool },
+        { "editable", KeyType::Bool },
+        { "enableAppNap", KeyType::Bool },
+        { "enableAttachmentElement", KeyType::Bool },
+        { "enableBackForwardCache", KeyType::Bool },
+        { "enableCaptureAudioInGPUProcess", KeyType::Bool },
+        { "enableCaptureAudioInUIProcess", KeyType::Bool },
+        { "enableCaptureVideoInGPUProcess", KeyType::Bool },
+        { "enableCaptureVideoInUIProcess", KeyType::Bool },
+        { "enableColorFilter", KeyType::Bool },
         { "enableInAppBrowserPrivacy", KeyType::Bool },
-        { "isAppBoundWebView", KeyType::Bool },
-        { "ignoreSynchronousMessagingTimeouts", KeyType::Bool },
+        { "enableInspectorAdditions", KeyType::Bool },
+        { "enableKeygenElement", KeyType::Bool },
+        { "enableMenuItemElement", KeyType::Bool },
+        { "enableModernMediaControls", KeyType::Bool },
         { "enableProcessSwapOnNavigation", KeyType::Bool },
         { "enableProcessSwapOnWindowOpen", KeyType::Bool },
+        { "enableServiceControls", KeyType::Bool },
+        { "enableWebAuthentication", KeyType::Bool },
+        { "enableWebAuthenticationLocalAuthenticator", KeyType::Bool },
+        { "ignoreSynchronousMessagingTimeouts", KeyType::Bool },
+        { "ignoresViewportScaleLimits", KeyType::Bool },
+        { "isAppBoundWebView", KeyType::Bool },
+        { "needsSiteSpecificQuirks", KeyType::Bool },
+        { "punchOutWhiteBackgroundsInDarkMode", KeyType::Bool },
+        { "runSingly", KeyType::Bool },
+        { "shouldHandleRunOpenPanel", KeyType::Bool },
+        { "shouldIgnoreMetaViewport", KeyType::Bool },
+        { "shouldPresentPopovers", KeyType::Bool },
+        { "shouldShowTouches", KeyType::Bool },
+        { "shouldShowWebView", KeyType::Bool },
+        { "spellCheckingDots", KeyType::Bool },
+        { "useAcceleratedDrawing", KeyType::Bool },
+        { "useCharacterSelectionGranularity", KeyType::Bool },
+        { "useDataDetection", KeyType::Bool },
+        { "useEphemeralSession", KeyType::Bool },
+        { "useFlexibleViewport", KeyType::Bool },
+        { "useMockScrollbars", KeyType::Bool },
+        { "useRemoteLayerTree", KeyType::Bool },
         { "useServiceWorkerShortTimeout", KeyType::Bool },
+        { "useThreadedScrolling", KeyType::Bool },
     
         { "contentInset.top", KeyType::Double },
         { "deviceScaleFactor", KeyType::Double },
-        { "viewWidth", KeyType::Double },
         { "viewHeight", KeyType::Double },
+        { "viewWidth", KeyType::Double },
 
-        { "jscOptions", KeyType::String },
         { "additionalSupportedImageTypes", KeyType::String },
-        { "contentMode", KeyType::String },
         { "applicationBundleIdentifier", KeyType::String },
         { "applicationManifest", KeyType::StringRelativePath },
+        { "contentMode", KeyType::String },
+        { "jscOptions", KeyType::String },
         { "standaloneWebApplicationURL", KeyType::StringURL },
 
         { "language", KeyType::StringVector },
@@ -484,6 +478,44 @@ bool TestOptions::hasSameInitializationOptions(const TestOptions& options) const
         }
     }
     return true;
+}
+
+#define FOR_EACH_BOOL_WK_PREFERENCE(macro) \
+    macro(enableCaptureVideoInUIProcess, CaptureVideoInUIProcessEnabled) \
+    macro(enableCaptureVideoInGPUProcess, CaptureVideoInGPUProcessEnabled) \
+    macro(enableCaptureAudioInUIProcess, CaptureAudioInUIProcessEnabled) \
+    macro(enableCaptureAudioInGPUProcess, CaptureAudioInGPUProcessEnabled) \
+    macro(useAcceleratedDrawing, AcceleratedDrawingEnabled) \
+    macro(useMockScrollbars, MockScrollbarsEnabled) \
+    macro(needsSiteSpecificQuirks, NeedsSiteSpecificQuirks) \
+    macro(enableAttachmentElement, AttachmentElementEnabled) \
+    macro(enableMenuItemElement, MenuItemElementEnabled) \
+    macro(enableKeygenElement, KeygenElementEnabled) \
+    macro(enableModernMediaControls, ModernMediaControlsEnabled) \
+    macro(enableWebAuthentication, WebAuthenticationEnabled) \
+    macro(enableWebAuthenticationLocalAuthenticator, WebAuthenticationLocalAuthenticatorEnabled) \
+    macro(enableInspectorAdditions, InspectorAdditionsEnabled) \
+    macro(allowCrossOriginSubresourcesToAskForCredentials, AllowCrossOriginSubresourcesToAskForCredentials) \
+    macro(domPasteAllowed, DOMPasteAllowed) \
+    macro(enableColorFilter, ColorFilterEnabled) \
+    macro(punchOutWhiteBackgroundsInDarkMode, PunchOutWhiteBackgroundsInDarkMode) \
+    macro(shouldIgnoreMetaViewport, ShouldIgnoreMetaViewport) \
+    macro(enableAppNap, PageVisibilityBasedProcessSuppressionEnabled) \
+    macro(enableBackForwardCache, UsesBackForwardCache) \
+    macro(enableServiceControls, ServiceControlsEnabled) \
+    macro(allowTopNavigationToDataURLs, AllowTopNavigationToDataURLs) \
+    macro(useServiceWorkerShortTimeout, ShouldUseServiceWorkerShortTimeout) \
+\
+
+std::vector<std::pair<std::string, bool>> TestOptions::boolWKPreferences() const
+{
+    return {
+#define ADD_VALUE(testOptionsKey, preferencesKey) { #preferencesKey, boolFeatureValue(#testOptionsKey) },
+
+FOR_EACH_BOOL_WK_PREFERENCE(ADD_VALUE)
+
+#undef ADD_VALUE
+    };
 }
 
 template<typename T>

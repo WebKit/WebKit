@@ -55,6 +55,13 @@ WK_EXPORT void WKPreferencesSetExperimentalFeatureForKey(WKPreferencesRef, bool,
 WK_EXPORT void WKPreferencesResetAllInternalDebugFeatures(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetInternalDebugFeatureForKey(WKPreferencesRef, bool, WKStringRef);
 
+// The following generic setter functions are only intended for use by testing infrastructure.
+WK_EXPORT void WKPreferencesSetBoolValueForKey(WKPreferencesRef preferencesRef, bool value, WKStringRef key);
+WK_EXPORT void WKPreferencesSetDoubleValueForKey(WKPreferencesRef preferencesRef, double value, WKStringRef key);
+WK_EXPORT void WKPreferencesSetUInt32ValueForKey(WKPreferencesRef preferencesRef, uint32_t value, WKStringRef key);
+WK_EXPORT void WKPreferencesSetStringValueForKey(WKPreferencesRef preferencesRef, WKStringRef value, WKStringRef key);
+
+// For Test Runner Use only.
 WK_EXPORT void WKPreferencesResetTestRunnerOverrides(WKPreferencesRef preferencesRef);
 
 // Defaults to false.

@@ -59,6 +59,7 @@ public:
 
     const WebPreferencesStore& store() const { return m_store; }
 
+    // Implemented in generated file WebPreferencesGetterSetters.cpp.
     FOR_EACH_WEBKIT_PREFERENCE(DECLARE_PREFERENCE_GETTER_AND_SETTERS)
     FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DECLARE_PREFERENCE_GETTER_AND_SETTERS)
     FOR_EACH_WEBKIT_INTERNAL_DEBUG_FEATURE_PREFERENCE(DECLARE_PREFERENCE_GETTER_AND_SETTERS)
@@ -77,6 +78,10 @@ public:
     void resetAllInternalDebugFeatures();
 
     // Exposed for WebKitTestRunner use only.
+    void setBoolValueForKey(const String&, bool value);
+    void setDoubleValueForKey(const String&, double value);
+    void setUInt32ValueForKey(const String&, uint32_t value);
+    void setStringValueForKey(const String&, const String& value);
     void forceUpdate() { update(); }
 
 private:

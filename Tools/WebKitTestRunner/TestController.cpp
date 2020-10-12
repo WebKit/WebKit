@@ -463,14 +463,14 @@ void TestController::initialize(int argc, const char* argv[])
     m_gcBetweenTests = options.gcBetweenTests;
     m_shouldDumpPixelsForAllTests = options.shouldDumpPixelsForAllTests;
     m_forceComplexText = options.forceComplexText;
-    m_shouldUseAcceleratedDrawing = options.shouldUseAcceleratedDrawing;
     m_paths = options.paths;
     m_allowedHosts = options.allowedHosts;
     m_checkForWorldLeaks = options.checkForWorldLeaks;
     m_allowAnyHTTPSCertificateForAllowedHosts = options.allowAnyHTTPSCertificateForAllowedHosts;
-    
+
     m_globalFeatures.internalDebugFeatures = options.internalFeatures;
     m_globalFeatures.experimentalFeatures = options.experimentalFeatures;
+    m_globalFeatures.boolFeatures.insert({ "useAcceleratedDrawing", options.shouldUseAcceleratedDrawing });
     m_globalFeatures.boolFeatures.insert({ "useRemoteLayerTree", options.shouldUseRemoteLayerTree });
     m_globalFeatures.boolFeatures.insert({ "shouldShowWebView", options.shouldShowWebView });
     m_globalFeatures.boolFeatures.insert({ "shouldShowTouches", options.shouldShowTouches });
@@ -653,6 +653,8 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
     // Some preferences (notably mock scroll bars setting) currently cannot be re-applied to an existing view, so we need to set them now.
     // FIXME: Migrate these preferences to WKContextConfigurationRef.
     resetPreferencesToConsistentValues(options);
+
+    WKHTTPCookieStoreDeleteAllCookies(WKWebsiteDataStoreGetHTTPCookieStore(websiteDataStore()), nullptr, nullptr);
 
     platformCreateWebView(configuration.get(), options);
     WKPageUIClientV14 pageUIClient = {
@@ -841,37 +843,23 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesResetAllInternalDebugFeatures(preferences);
 
     // Set internal features that have different default values for testing.
-
     WKPreferencesSetInternalDebugFeatureForKey(preferences, false, toWK("AsyncOverflowScrollingEnabled").get());
     WKPreferencesSetInternalDebugFeatureForKey(preferences, false, toWK("AsyncFrameScrollingEnabled").get());
-
-#if ENABLE(INPUT_TYPE_DATE)
     WKPreferencesSetInternalDebugFeatureForKey(preferences, true, toWK("InputTypeDateEnabled").get());
-#endif
-#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
     WKPreferencesSetInternalDebugFeatureForKey(preferences, true, toWK("InputTypeDateTimeLocalEnabled").get());
-#endif
-#if ENABLE(INPUT_TYPE_MONTH)
     WKPreferencesSetInternalDebugFeatureForKey(preferences, true, toWK("InputTypeMonthEnabled").get());
-#endif
-#if ENABLE(INPUT_TYPE_TIME)
     WKPreferencesSetInternalDebugFeatureForKey(preferences, true, toWK("InputTypeTimeEnabled").get());
-#endif
-#if ENABLE(INPUT_TYPE_WEEK)
     WKPreferencesSetInternalDebugFeatureForKey(preferences, true, toWK("InputTypeWeekEnabled").get());
-#endif
+    WKPreferencesSetInternalDebugFeatureForKey(preferences, false, toWK("SpeakerSelectionRequiresUserGesture").get());
 
     for (const auto& [key, value]  : options.internalDebugFeatures())
         WKPreferencesSetInternalDebugFeatureForKey(preferences, value, toWK(key).get());
 
-#if PLATFORM(COCOA)
-    WKPreferencesSetCaptureVideoInUIProcessEnabled(preferences, options.enableCaptureVideoInUIProcess());
-    WKPreferencesSetCaptureVideoInGPUProcessEnabled(preferences, options.enableCaptureVideoInGPUProcess());
-    WKPreferencesSetCaptureAudioInUIProcessEnabled(preferences, options.enableCaptureAudioInUIProcess());
-    WKPreferencesSetCaptureAudioInGPUProcessEnabled(preferences, options.enableCaptureAudioInGPUProcess());
-#endif
+    for (const auto& [key, value] : options.boolWKPreferences())
+        WKPreferencesSetBoolValueForKey(preferences, value, toWK(key).get());
+
+    // FIXME: Convert these to default values for TestOptions.
     WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.contextOptions().shouldEnableProcessSwapOnNavigation());
-    WKPreferencesSetPageVisibilityBasedProcessSuppressionEnabled(preferences, options.enableAppNap());
     WKPreferencesSetOfflineWebApplicationCacheEnabled(preferences, true);
     WKPreferencesSetSubpixelAntialiasedLayerTextEnabled(preferences, false);
     WKPreferencesSetXSSAuditorEnabled(preferences, false);
@@ -882,13 +870,9 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetJavaScriptRuntimeFlags(preferences, kWKJavaScriptRuntimeFlagsAllEnabled);
     WKPreferencesSetJavaScriptCanOpenWindowsAutomatically(preferences, true);
     WKPreferencesSetJavaScriptCanAccessClipboard(preferences, true);
-    WKPreferencesSetDOMPasteAllowed(preferences, options.domPasteAllowed());
     WKPreferencesSetUniversalAccessFromFileURLsAllowed(preferences, true);
     WKPreferencesSetFileAccessFromFileURLsAllowed(preferences, true);
-    WKPreferencesSetTopNavigationToDataURLsAllowed(preferences, options.allowTopNavigationToDataURLs());
-#if ENABLE(FULLSCREEN_API)
     WKPreferencesSetFullScreenEnabled(preferences, true);
-#endif
     WKPreferencesSetAsynchronousPluginInitializationEnabled(preferences, false);
     WKPreferencesSetAsynchronousPluginInitializationEnabledForAllPlugins(preferences, false);
     WKPreferencesSetArtificialPluginInitializationDelayEnabled(preferences, false);
@@ -897,22 +881,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetDataTransferItemsEnabled(preferences, true);
     WKPreferencesSetCustomPasteboardDataEnabled(preferences, true);
     WKPreferencesSetDialogElementEnabled(preferences, true);
-
-    WKPreferencesSetMockScrollbarsEnabled(preferences, options.useMockScrollbars());
-    WKPreferencesSetNeedsSiteSpecificQuirks(preferences, options.needsSiteSpecificQuirks());
-    WKPreferencesSetAttachmentElementEnabled(preferences, options.enableAttachmentElement());
-    WKPreferencesSetMenuItemElementEnabled(preferences, options.enableMenuItemElement());
-    WKPreferencesSetKeygenElementEnabled(preferences, options.enableKeygenElement());
-    WKPreferencesSetModernMediaControlsEnabled(preferences, options.enableModernMediaControls());
-    WKPreferencesSetWebAuthenticationEnabled(preferences, options.enableWebAuthentication());
-    WKPreferencesSetWebAuthenticationLocalAuthenticatorEnabled(preferences, options.enableWebAuthenticationLocalAuthenticator());
-    WKPreferencesSetAllowCrossOriginSubresourcesToAskForCredentials(preferences, options.allowCrossOriginSubresourcesToAskForCredentials());
-    WKPreferencesSetColorFilterEnabled(preferences, options.enableColorFilter());
-    WKPreferencesSetPunchOutWhiteBackgroundsInDarkMode(preferences, options.punchOutWhiteBackgroundsInDarkMode());
-    WKPreferencesSetPageCacheEnabled(preferences, options.enableBackForwardCache());
-
     WKPreferencesSetDefaultTextEncodingName(preferences, toWK("ISO-8859-1").get());
-
     WKPreferencesSetMinimumFontSize(preferences, 0);
     WKPreferencesSetStandardFontFamily(preferences, toWK("Times").get());
     WKPreferencesSetCursiveFontFamily(preferences, toWK("Apple Chancery").get());
@@ -922,21 +891,13 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetSansSerifFontFamily(preferences, toWK("Helvetica").get());
     WKPreferencesSetSerifFontFamily(preferences, toWK("Times").get());
     WKPreferencesSetAsynchronousSpellCheckingEnabled(preferences, false);
-#if ENABLE(MEDIA_SOURCE)
     WKPreferencesSetMediaSourceEnabled(preferences, true);
     WKPreferencesSetSourceBufferChangeTypeEnabled(preferences, true);
-#endif
     WKPreferencesSetHighlightAPIEnabled(preferences, true);
-
     WKPreferencesSetHiddenPageDOMTimerThrottlingEnabled(preferences, false);
     WKPreferencesSetHiddenPageCSSAnimationSuspensionEnabled(preferences, false);
-
-    WKPreferencesSetAcceleratedDrawingEnabled(preferences, m_shouldUseAcceleratedDrawing || options.useAcceleratedDrawing());
-    // FIXME: We should be testing the default.
-    WKPreferencesSetStorageBlockingPolicy(preferences, kWKAllowAllStorage);
-
+    WKPreferencesSetStorageBlockingPolicy(preferences, kWKAllowAllStorage); // FIXME: We should be testing the default.
     WKPreferencesSetIsNSURLSessionWebSocketEnabled(preferences, false);
-
     WKPreferencesSetFetchAPIKeepAliveEnabled(preferences, true);
     WKPreferencesSetMediaPreloadingEnabled(preferences, true);
     WKPreferencesSetExposeSpeakersEnabled(preferences, true);
@@ -945,38 +906,22 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetRemotePlaybackEnabled(preferences, true);
     WKPreferencesSetBeaconAPIEnabled(preferences, true);
     WKPreferencesSetDirectoryUploadEnabled(preferences, true);
-
-    WKHTTPCookieStoreDeleteAllCookies(WKWebsiteDataStoreGetHTTPCookieStore(websiteDataStore()), nullptr, nullptr);
-
     WKPreferencesSetMockCaptureDevicesEnabled(preferences, true);
-    
     WKPreferencesSetLargeImageAsyncDecodingEnabled(preferences, false);
-
-    WKPreferencesSetInspectorAdditionsEnabled(preferences, options.enableInspectorAdditions());
-
     WKPreferencesSetStorageAccessAPIEnabled(preferences, true);
-    
     WKPreferencesSetAccessibilityObjectModelEnabled(preferences, true);
     WKPreferencesSetCSSOMViewScrollingAPIEnabled(preferences, true);
     WKPreferencesSetMediaCapabilitiesEnabled(preferences, true);
-
     WKPreferencesSetRestrictedHTTPResponseAccess(preferences, true);
-
     WKPreferencesSetServerTimingEnabled(preferences, true);
-
     WKPreferencesSetWebSQLDisabled(preferences, false);
-
     WKPreferencesSetMediaPlaybackRequiresUserGesture(preferences, false);
     WKPreferencesSetVideoPlaybackRequiresUserGesture(preferences, false);
     WKPreferencesSetAudioPlaybackRequiresUserGesture(preferences, false);
-    WKPreferencesSetInternalDebugFeatureForKey(preferences, false, WKStringCreateWithUTF8CString("SpeakerSelectionRequiresUserGesture"));
-
-    WKPreferencesSetShouldUseServiceWorkerShortTimeout(preferences, options.useServiceWorkerShortTimeout());
-
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     WKPreferencesSetIsAccessibilityIsolatedTreeEnabled(preferences, accessibilityIsolatedTreeMode());
 #endif
-    
+
     platformResetPreferencesToConsistentValues();
 }
 
@@ -1009,22 +954,18 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     if (!jscOptions.empty())
         setValue(resetMessageBody, "JSCOptions", jscOptions.c_str());
 
-#if PLATFORM(COCOA)
-    WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(options.additionalSupportedImageTypes().c_str());
-#endif
-
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), toWK("Reset").get(), resetMessageBody.get());
 
     WKContextSetShouldUseFontSmoothing(TestController::singleton().context(), false);
-
     WKContextSetCacheModel(TestController::singleton().context(), kWKCacheModelDocumentBrowser);
 
     WKWebsiteDataStoreClearCachedCredentials(websiteDataStore());
-
     WKWebsiteDataStoreResetServiceWorkerFetchTimeoutForTesting(websiteDataStore());
 
     WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(websiteDataStore(), true);
     WKWebsiteDataStoreClearAllDeviceOrientationPermissions(websiteDataStore());
+
+    WKHTTPCookieStoreDeleteAllCookies(WKWebsiteDataStoreGetHTTPCookieStore(websiteDataStore()), nullptr, nullptr);
 
     clearIndexedDatabases();
     clearLocalStorage();
@@ -1035,7 +976,6 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     resetQuota();
 
     WKContextClearCurrentModifierStateForTesting(TestController::singleton().context());
-
     WKContextSetUseSeparateServiceWorkerProcess(TestController::singleton().context(), false);
 
     WKPageSetMockCameraOrientation(m_mainWebView->page(), 0);
@@ -1050,10 +990,6 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     // FIXME: Is this needed? Nothing in TestController changes preferences during tests, and if there is
     // some other code doing this, it should probably be responsible for cleanup too.
     resetPreferencesToConsistentValues(options);
-
-#if PLATFORM(GTK)
-    WKTextCheckerContinuousSpellCheckingEnabledStateChanged(true);
-#endif
 
     // Make sure the view is in the window (a test can unparent it).
     m_mainWebView->addToWindow();
@@ -2832,11 +2768,6 @@ PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parent
 WKContextRef TestController::platformAdjustContext(WKContextRef context, WKContextConfigurationRef)
 {
     return context;
-}
-
-bool TestController::platformResetStateToConsistentValues(const TestOptions&)
-{
-    return true;
 }
 
 unsigned TestController::imageCountInGeneralPasteboard() const

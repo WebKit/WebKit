@@ -136,6 +136,11 @@ void TestController::platformResetPreferencesToConsistentValues()
 {
 }
 
+bool TestController::platformResetStateToConsistentValues(const TestOptions&)
+{
+    return true;
+}
+
 TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCommand&) const
 {
     TestFeatures features;

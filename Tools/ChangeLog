@@ -1,3 +1,93 @@
+2020-10-11  Sam Weinig  <weinig@apple.com>
+
+        [Preferences] Introduce string based SPI for WKPreferences to allow tests to change internal behavior without always adding additional SPI
+        https://bugs.webkit.org/show_bug.cgi?id=217582
+
+        Reviewed by Darin Adler.
+
+        Adopt new WebKit SPI to set preferences using the keys defined in the WebPreferences*.yaml 
+        files. 
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        Remove need for m_shouldUseAcceleratedDrawing by merging it into the global feature set.
+
+        (WTR::TestController::createWebViewWithOptions):
+        Move WKHTTPCookieStoreDeleteAllCookies() call out of resetPreferencesToConsistentValues
+        where it did not make sense.
+
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        Replace preference setters that used values from TestOptions with use of the new
+        WKPreferencesSetBoolValueForKey SPI. Also removes some unnecessary #ifdefs, as the API
+        it was guarding is always available, though may just be a no-op if the feature is disabled.
+
+        (WTR::TestController::resetStateToConsistentValues):
+        Move Cocoa specific call to WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting to
+        TestControllerCocoa.mm and Gtk specific call to WKTextCheckerContinuousSpellCheckingEnabledStateChanged
+        to TestControllerGtk.cpp.
+
+        * WebKitTestRunner/TestController.h:
+        Remove unimplemented globalFeatureDefaultsForTest() function and now unused m_shouldUseAcceleratedDrawing
+        member variable.
+
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::boolWKPreferences const):
+        Add helper to get all the bool options in TestOptions that correspond with WebKit preferences.
+
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::useAcceleratedDrawing const): Deleted.
+        (WTR::TestOptions::useMockScrollbars const): Deleted.
+        (WTR::TestOptions::needsSiteSpecificQuirks const): Deleted.
+        (WTR::TestOptions::enableIntersectionObserver const): Deleted.
+        (WTR::TestOptions::enableMenuItemElement const): Deleted.
+        (WTR::TestOptions::enableKeygenElement const): Deleted.
+        (WTR::TestOptions::enableModernMediaControls const): Deleted.
+        (WTR::TestOptions::enablePointerLock const): Deleted.
+        (WTR::TestOptions::enableWebAuthentication const): Deleted.
+        (WTR::TestOptions::enableWebAuthenticationLocalAuthenticator const): Deleted.
+        (WTR::TestOptions::enableInspectorAdditions const): Deleted.
+        (WTR::TestOptions::allowCrossOriginSubresourcesToAskForCredentials const): Deleted.
+        (WTR::TestOptions::domPasteAllowed const): Deleted.
+        (WTR::TestOptions::enableColorFilter const): Deleted.
+        (WTR::TestOptions::checkForWorldLeaks const): Deleted.
+        (WTR::TestOptions::shouldIgnoreMetaViewport const): Deleted.
+        (WTR::TestOptions::enableServiceControls const): Deleted.
+        (WTR::TestOptions::enableAppNap const): Deleted.
+        (WTR::TestOptions::enableBackForwardCache const): Deleted.
+        (WTR::TestOptions::enableCaptureVideoInUIProcess const): Deleted.
+        (WTR::TestOptions::enableCaptureVideoInGPUProcess const): Deleted.
+        (WTR::TestOptions::enableCaptureAudioInUIProcess const): Deleted.
+        (WTR::TestOptions::enableCaptureAudioInGPUProcess const): Deleted.
+        Remove all getters that are now replaced by boolWKPreferences.
+        Also, sorts all the lists to make it easier to find things.
+
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration):
+        (WTR::TestController::platformCreateWebView):
+        Remove setting of configuration values that also covered by boolWKPreferences.
+
+        (WTR::TestController::cocoaResetStateToConsistentValues):
+        Move Cocoa specific call here.
+
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        Move Gtk specific call here.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetPreferencesToConsistentValues):
+        (WTR::TestController::platformConfigureViewForTest):
+        Remove setting of configuration values that also covered by boolWKPreferences.
+
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        Moved default no-op implementation from TestController.cpp now that not all
+        non-Cocoa platforms use the same implementation.
+
+        * WebKitTestRunner/wpe/TestControllerWPE.cpp:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        Moved default no-op implementation from TestController.cpp now that not all
+        non-Cocoa platforms use the same implementation.
+
 2020-10-11  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         -Wdeprecated-declarations caused by WKTR using WKBundlePostSynchronousMessage

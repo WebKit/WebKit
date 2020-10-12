@@ -353,9 +353,10 @@ WEB_PREFERENCES_TEMPLATES = \
     $(WebKit2)/Scripts/PreferencesTemplates/WebPageUpdatePreferences.cpp.erb \
     $(WebKit2)/Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb \
     $(WebKit2)/Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.cpp.erb \
+    $(WebKit2)/Scripts/PreferencesTemplates/WebPreferencesGetterSetters.cpp.erb \
     $(WebKit2)/Scripts/PreferencesTemplates/WebPreferencesInternalDebugFeatures.cpp.erb \
-    $(WebKit2)/Scripts/PreferencesTemplates/WebPreferencesKeys.h.erb \
     $(WebKit2)/Scripts/PreferencesTemplates/WebPreferencesKeys.cpp.erb \
+    $(WebKit2)/Scripts/PreferencesTemplates/WebPreferencesKeys.h.erb \
     $(WebKit2)/Scripts/PreferencesTemplates/WebPreferencesStoreDefaultsMap.cpp.erb \
 #
 WEB_PREFERENCES_FILES = $(basename $(notdir $(WEB_PREFERENCES_TEMPLATES)))

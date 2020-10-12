@@ -102,6 +102,34 @@ void WebPreferences::update()
         webPageProxy->preferencesDidChange();
 }
 
+void WebPreferences::setBoolValueForKey(const String& key, bool value)
+{
+    if (!m_store.setBoolValueForKey(key, value))
+        return;
+    updateBoolValueForKey(key, value);
+}
+
+void WebPreferences::setDoubleValueForKey(const String& key, double value)
+{
+    if (!m_store.setDoubleValueForKey(key, value))
+        return;
+    updateDoubleValueForKey(key, value);
+}
+
+void WebPreferences::setUInt32ValueForKey(const String& key, uint32_t value)
+{
+    if (!m_store.setUInt32ValueForKey(key, value))
+        return;
+    updateUInt32ValueForKey(key, value);
+}
+
+void WebPreferences::setStringValueForKey(const String& key, const String& value)
+{
+    if (!m_store.setStringValueForKey(key, value))
+        return;
+    updateStringValueForKey(key, value);
+}
+
 void WebPreferences::updateStringValueForKey(const String& key, const String& value)
 {
     platformUpdateStringValueForKey(key, value);
@@ -154,30 +182,6 @@ void WebPreferences::deleteKey(const String& key)
     platformDeleteKey(key);
     update(); // FIXME: Only send over the changed key and value.
 }
-
-#define DEFINE_PREFERENCE_GETTER_AND_SETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
-    void WebPreferences::set##KeyUpper(const Type& value) \
-    { \
-        if (!m_store.set##TypeName##ValueForKey(WebPreferencesKey::KeyLower##Key(), value)) \
-            return; \
-        update##TypeName##ValueForKey(WebPreferencesKey::KeyLower##Key(), value); \
-    } \
-    \
-    void WebPreferences::delete##KeyUpper() \
-    { \
-        deleteKey(WebPreferencesKey::KeyLower##Key()); \
-    } \
-    \
-    Type WebPreferences::KeyLower() const \
-    { \
-        return m_store.get##TypeName##ValueForKey(WebPreferencesKey::KeyLower##Key()); \
-    } \
-
-FOR_EACH_WEBKIT_PREFERENCE(DEFINE_PREFERENCE_GETTER_AND_SETTERS)
-FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DEFINE_PREFERENCE_GETTER_AND_SETTERS)
-
-#undef DEFINE_PREFERENCE_GETTER_AND_SETTERS
-
 
 void WebPreferences::registerDefaultBoolValueForKey(const String& key, bool value)
 {

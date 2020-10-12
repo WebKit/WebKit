@@ -1,3 +1,36 @@
+2020-10-11  Sam Weinig  <weinig@apple.com>
+
+        [Preferences] Introduce string based SPI for WKPreferences to allow tests to change internal behavior without always adding additional SPI
+        https://bugs.webkit.org/show_bug.cgi?id=217582
+
+        Reviewed by Darin Adler.
+
+        Add SPI for setting any WebKit preference using the key as defined in the WebPreferences*.yaml
+        files. This will allow adding testing of non-default behavior that we don't necessarily want to
+        expose via its own API or SPI.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Scripts/PreferencesTemplates/WebPreferencesGetterSetters.cpp.erb: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+        Add new generated file, WebPreferencesGetterSetters.cpp.
+
+        * Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.cpp.erb:
+        * Scripts/PreferencesTemplates/WebPreferencesInternalDebugFeatures.cpp.erb:
+        Moved getter/setter definitions to WebPreferencesGetterSetters.cpp.erb
+
+        * UIProcess/WebPreferences.cpp:
+        * UIProcess/WebPreferences.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetBoolValueForKey):
+        (WKPreferencesSetDoubleValueForKey):
+        (WKPreferencesSetUInt32ValueForKey):
+        (WKPreferencesSetStringValueForKey):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        Expose new SPI.
+
 2020-10-11  Luming Yin  <luming_yin@apple.com>
 
         Strip patch version from TARGET_MAC_OS_X_VERSION_MAJOR when building for macOS Big Sur 

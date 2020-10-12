@@ -369,6 +369,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebPaymentCoordinatorProxyMessagesR
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebPreferencesCombined.yaml
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebPreferencesDefinitions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebPreferencesExperimentalFeatures.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebPreferencesGetterSetters.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebPreferencesInternalDebugFeatures.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebPreferencesKeys.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebPreferencesKeys.h

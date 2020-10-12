@@ -32,6 +32,7 @@
 #import "TestInvocation.h"
 #import "TestRunnerWKWebView.h"
 #import "TestWebsiteDataStoreDelegate.h"
+#import "WebCoreTestSupport.h"
 #import <Foundation/Foundation.h>
 #import <Security/SecItem.h>
 #import <WebKit/WKContextConfigurationRef.h>
@@ -158,18 +159,12 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
         [copiedConfiguration setSelectionGranularity:WKSelectionGranularityCharacter];
     if (options.isAppBoundWebView())
         [copiedConfiguration setLimitsNavigationsToAppBoundDomains:YES];
-#else
-    [copiedConfiguration _setServiceControlsEnabled:options.enableServiceControls()];
 #endif
 
     if (options.enableAttachmentElement())
         [copiedConfiguration _setAttachmentElementEnabled:YES];
 
-    if (options.enableColorFilter())
-        [copiedConfiguration _setColorFilterEnabled:YES];
-
     [copiedConfiguration setWebsiteDataStore:(WKWebsiteDataStore *)websiteDataStore()];
-
     [copiedConfiguration _setAllowTopNavigationToDataURLs:options.allowTopNavigationToDataURLs()];
 
     configureContentMode(copiedConfiguration.get(), options);
@@ -298,6 +293,8 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
     }
 
     [globalWebsiteDataStoreDelegateClient setAllowRaisingQuota:YES];
+
+    WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(options.additionalSupportedImageTypes().c_str());
 }
 
 void TestController::platformWillRunTest(const TestInvocation& testInvocation)

@@ -87,68 +87,47 @@ public:
         };
     }
 
-    bool useThreadedScrolling() const { return boolFeatureValue("useThreadedScrolling"); }
-    bool useAcceleratedDrawing() const { return boolFeatureValue("useAcceleratedDrawing"); }
-    bool useRemoteLayerTree() const { return boolFeatureValue("useRemoteLayerTree"); }
-    bool shouldShowWebView() const { return boolFeatureValue("shouldShowWebView"); }
-    bool useFlexibleViewport() const { return boolFeatureValue("useFlexibleViewport"); }
-    bool useDataDetection() const { return boolFeatureValue("useDataDetection"); }
-    bool useMockScrollbars() const { return boolFeatureValue("useMockScrollbars"); }
-    bool needsSiteSpecificQuirks() const { return boolFeatureValue("needsSiteSpecificQuirks"); }
-    bool ignoresViewportScaleLimits() const { return boolFeatureValue("ignoresViewportScaleLimits"); }
-    bool useCharacterSelectionGranularity() const { return boolFeatureValue("useCharacterSelectionGranularity"); }
-    bool enableAttachmentElement() const { return boolFeatureValue("enableAttachmentElement"); }
-    bool enableIntersectionObserver() const { return boolFeatureValue("enableIntersectionObserver"); }
-    bool useEphemeralSession() const { return boolFeatureValue("useEphemeralSession"); }
-    bool enableMenuItemElement() const { return boolFeatureValue("enableMenuItemElement"); }
-    bool enableKeygenElement() const { return boolFeatureValue("enableKeygenElement"); }
-    bool enableModernMediaControls() const { return boolFeatureValue("enableModernMediaControls"); }
-    bool enablePointerLock() const { return boolFeatureValue("enablePointerLock"); }
-    bool enableWebAuthentication() const { return boolFeatureValue("enableWebAuthentication"); }
-    bool enableWebAuthenticationLocalAuthenticator() const { return boolFeatureValue("enableWebAuthenticationLocalAuthenticator"); }
-    bool enableInspectorAdditions() const { return boolFeatureValue("enableInspectorAdditions"); }
-    bool shouldShowTouches() const { return boolFeatureValue("shouldShowTouches"); }
-    bool dumpJSConsoleLogInStdErr() const { return boolFeatureValue("dumpJSConsoleLogInStdErr"); }
-    bool allowCrossOriginSubresourcesToAskForCredentials() const { return boolFeatureValue("allowCrossOriginSubresourcesToAskForCredentials"); }
-    bool domPasteAllowed() const { return boolFeatureValue("domPasteAllowed"); }
-    bool enableColorFilter() const { return boolFeatureValue("enableColorFilter"); }
-    bool punchOutWhiteBackgroundsInDarkMode() const { return boolFeatureValue("punchOutWhiteBackgroundsInDarkMode"); }
-    bool runSingly() const { return boolFeatureValue("runSingly"); }
-    bool checkForWorldLeaks() const { return boolFeatureValue("checkForWorldLeaks"); }
-    bool shouldIgnoreMetaViewport() const { return boolFeatureValue("shouldIgnoreMetaViewport"); }
-    bool shouldShowSpellCheckingDots() const { return boolFeatureValue("spellCheckingDots"); }
-    bool enableServiceControls() const { return boolFeatureValue("enableServiceControls"); }
-    bool editable() const { return boolFeatureValue("editable"); }
-    bool shouldHandleRunOpenPanel() const { return boolFeatureValue("shouldHandleRunOpenPanel"); }
-    bool shouldPresentPopovers() const { return boolFeatureValue("shouldPresentPopovers"); }
-    bool enableAppNap() const { return boolFeatureValue("enableAppNap"); }
-    bool enableBackForwardCache() const { return boolFeatureValue("enableBackForwardCache"); }
-    bool allowsLinkPreview() const { return boolFeatureValue("allowsLinkPreview"); }
-    bool enableCaptureVideoInUIProcess() const { return boolFeatureValue("enableCaptureVideoInUIProcess"); }
-    bool enableCaptureVideoInGPUProcess() const { return boolFeatureValue("enableCaptureVideoInGPUProcess"); }
-    bool enableCaptureAudioInUIProcess() const { return boolFeatureValue("enableCaptureAudioInUIProcess"); }
-    bool enableCaptureAudioInGPUProcess() const { return boolFeatureValue("enableCaptureAudioInGPUProcess"); }
     bool allowTopNavigationToDataURLs() const { return boolFeatureValue("allowTopNavigationToDataURLs"); }
+    bool allowsLinkPreview() const { return boolFeatureValue("allowsLinkPreview"); }
+    bool dumpJSConsoleLogInStdErr() const { return boolFeatureValue("dumpJSConsoleLogInStdErr"); }
+    bool editable() const { return boolFeatureValue("editable"); }
+    bool enableAttachmentElement() const { return boolFeatureValue("enableAttachmentElement"); }
     bool enableInAppBrowserPrivacy() const { return boolFeatureValue("enableInAppBrowserPrivacy"); }
-    bool isAppBoundWebView() const { return boolFeatureValue("isAppBoundWebView"); }
-    bool ignoreSynchronousMessagingTimeouts() const { return boolFeatureValue("ignoreSynchronousMessagingTimeouts"); }
     bool enableProcessSwapOnNavigation() const { return boolFeatureValue("enableProcessSwapOnNavigation"); }
     bool enableProcessSwapOnWindowOpen() const { return boolFeatureValue("enableProcessSwapOnWindowOpen"); }
+    bool ignoreSynchronousMessagingTimeouts() const { return boolFeatureValue("ignoreSynchronousMessagingTimeouts"); }
+    bool ignoresViewportScaleLimits() const { return boolFeatureValue("ignoresViewportScaleLimits"); }
+    bool isAppBoundWebView() const { return boolFeatureValue("isAppBoundWebView"); }
+    bool punchOutWhiteBackgroundsInDarkMode() const { return boolFeatureValue("punchOutWhiteBackgroundsInDarkMode"); }
+    bool runSingly() const { return boolFeatureValue("runSingly"); }
+    bool shouldHandleRunOpenPanel() const { return boolFeatureValue("shouldHandleRunOpenPanel"); }
+    bool shouldPresentPopovers() const { return boolFeatureValue("shouldPresentPopovers"); }
+    bool shouldShowSpellCheckingDots() const { return boolFeatureValue("spellCheckingDots"); }
+    bool shouldShowTouches() const { return boolFeatureValue("shouldShowTouches"); }
+    bool shouldShowWebView() const { return boolFeatureValue("shouldShowWebView"); }
+    bool useCharacterSelectionGranularity() const { return boolFeatureValue("useCharacterSelectionGranularity"); }
+    bool useDataDetection() const { return boolFeatureValue("useDataDetection"); }
+    bool useEphemeralSession() const { return boolFeatureValue("useEphemeralSession"); }
+    bool useFlexibleViewport() const { return boolFeatureValue("useFlexibleViewport"); }
+    bool useRemoteLayerTree() const { return boolFeatureValue("useRemoteLayerTree"); }
     bool useServiceWorkerShortTimeout() const { return boolFeatureValue("useServiceWorkerShortTimeout"); }
+    bool useThreadedScrolling() const { return boolFeatureValue("useThreadedScrolling"); }
     double contentInsetTop() const { return doubleFeatureValue("contentInset.top"); }
     double deviceScaleFactor() const { return doubleFeatureValue("deviceScaleFactor"); }
-    double viewWidth() const { return doubleFeatureValue("viewWidth"); }
     double viewHeight() const { return doubleFeatureValue("viewHeight"); }
-    std::string applicationManifest() const { return stringFeatureValue("applicationManifest"); }
-    std::string jscOptions() const { return stringFeatureValue("jscOptions"); }
+    double viewWidth() const { return doubleFeatureValue("viewWidth"); }
     std::string additionalSupportedImageTypes() const { return stringFeatureValue("additionalSupportedImageTypes"); }
-    std::string standaloneWebApplicationURL() const { return stringFeatureValue("standaloneWebApplicationURL"); }
-    std::string contentMode() const { return stringFeatureValue("contentMode"); }
     std::string applicationBundleIdentifier() const { return stringFeatureValue("applicationBundleIdentifier"); }
+    std::string applicationManifest() const { return stringFeatureValue("applicationManifest"); }
+    std::string contentMode() const { return stringFeatureValue("contentMode"); }
+    std::string jscOptions() const { return stringFeatureValue("jscOptions"); }
+    std::string standaloneWebApplicationURL() const { return stringFeatureValue("standaloneWebApplicationURL"); }
     std::vector<std::string> overrideLanguages() const { return stringVectorFeatureValue("language"); }
 
     const std::unordered_map<std::string, bool>& experimentalFeatures() const { return m_features.experimentalFeatures; }
     const std::unordered_map<std::string, bool>& internalDebugFeatures() const { return m_features.internalDebugFeatures; }
+
+    std::vector<std::pair<std::string, bool>> boolWKPreferences() const;
 
     bool hasSameInitializationOptions(const TestOptions&) const;
 

@@ -1312,6 +1312,7 @@
 		7CE4D2281A4916C200C7F152 /* WebProcessPoolMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE4D2261A4916C200C7F152 /* WebProcessPoolMessages.h */; };
 		7CE9CE101FA0767A000177DE /* WebPageUpdatePreferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE9CE0F1FA0764D000177DE /* WebPageUpdatePreferences.cpp */; };
 		7CEB00DD1FA69ABE0065473B /* WebPreferencesExperimentalFeatures.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB00DC1FA69A890065473B /* WebPreferencesExperimentalFeatures.cpp */; };
+		7CF1907125338F3800ABE183 /* WebPreferencesGetterSetters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF1907025338EFF00ABE183 /* WebPreferencesGetterSetters.cpp */; };
 		7CF47FF717275B71008ACB91 /* WKBundlePageBanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CF47FF517275B71008ACB91 /* WKBundlePageBanner.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CF47FFB17275C57008ACB91 /* PageBanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CF47FF917275C57008ACB91 /* PageBanner.h */; };
 		7CF47FFF17276AE3008ACB91 /* WKBundlePageBannerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CF47FFD17276AE3008ACB91 /* WKBundlePageBannerMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4332,6 +4333,7 @@
 		7CE9CE0F1FA0764D000177DE /* WebPageUpdatePreferences.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebPageUpdatePreferences.cpp; path = DerivedSources/WebKit2/WebPageUpdatePreferences.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CEB00DC1FA69A890065473B /* WebPreferencesExperimentalFeatures.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebPreferencesExperimentalFeatures.cpp; path = DerivedSources/WebKit2/WebPreferencesExperimentalFeatures.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CEFA9601AC0999300B910FD /* APIContentRuleListStoreCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = APIContentRuleListStoreCocoa.mm; sourceTree = "<group>"; };
+		7CF1907025338EFF00ABE183 /* WebPreferencesGetterSetters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebPreferencesGetterSetters.cpp; path = DerivedSources/WebKit2/WebPreferencesGetterSetters.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CF47FF417275B71008ACB91 /* WKBundlePageBanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundlePageBanner.cpp; sourceTree = "<group>"; };
 		7CF47FF517275B71008ACB91 /* WKBundlePageBanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundlePageBanner.h; sourceTree = "<group>"; };
 		7CF47FF917275C57008ACB91 /* PageBanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageBanner.h; sourceTree = "<group>"; };
@@ -10259,6 +10261,7 @@
 				1AB1F7951D1B3613007C9BD1 /* WebPaymentCoordinatorProxyMessages.h */,
 				7CDE73A31F9DAB6500390312 /* WebPreferencesDefinitions.h */,
 				7CEB00DC1FA69A890065473B /* WebPreferencesExperimentalFeatures.cpp */,
+				7CF1907025338EFF00ABE183 /* WebPreferencesGetterSetters.cpp */,
 				31B362982141F6E0007BFA53 /* WebPreferencesInternalDebugFeatures.cpp */,
 				7CB100EE1FA2D74A001729EE /* WebPreferencesKeys.cpp */,
 				7CB100EF1FA2D74B001729EE /* WebPreferencesKeys.h */,
@@ -13161,6 +13164,7 @@
 				2D92A78D212B6AB100F493FD /* WebPlatformTouchPoint.cpp in Sources */,
 				2D91344E212CF9F000128AFD /* WebPluginInfoProvider.cpp in Sources */,
 				7CEB00DD1FA69ABE0065473B /* WebPreferencesExperimentalFeatures.cpp in Sources */,
+				7CF1907125338F3800ABE183 /* WebPreferencesGetterSetters.cpp in Sources */,
 				31B362992141F6E8007BFA53 /* WebPreferencesInternalDebugFeatures.cpp in Sources */,
 				7CB100F11FA3858A001729EE /* WebPreferencesKeys.cpp in Sources */,
 				7CB100F41FA38592001729EE /* WebPreferencesStoreDefaultsMap.cpp in Sources */,
