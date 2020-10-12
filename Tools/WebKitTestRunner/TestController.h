@@ -644,13 +644,4 @@ private:
 #endif
 };
 
-struct TestCommand {
-    std::string pathOrURL;
-    std::string absolutePath;
-    std::string expectedPixelHash;
-    WTF::Seconds timeout;
-    bool shouldDumpPixels { false };
-    bool dumpJSConsoleLogInStdErr { false };
-};
-
 } // namespace WTR

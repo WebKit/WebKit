@@ -30,6 +30,7 @@
 #include "EventSenderProxy.h"
 #include "Options.h"
 #include "PlatformWebView.h"
+#include "TestCommand.h"
 #include "TestInvocation.h"
 #include "WebCoreTestSupport.h"
 #include <JavaScriptCore/InitializeThreading.h>
@@ -1236,24 +1237,6 @@ void TestController::setAllowsAnySSLCertificate(bool allows)
 }
 #endif
 
-static std::string testPath(WKURLRef url)
-{
-    auto scheme = adoptWK(WKURLCopyScheme(url));
-    if (WKStringIsEqualToUTF8CStringIgnoringCase(scheme.get(), "file")) {
-        auto path = adoptWK(WKURLCopyPath(url));
-        auto buffer = std::vector<char>(WKStringGetMaximumUTF8CStringSize(path.get()));
-        auto length = WKStringGetUTF8CString(path.get(), buffer.data(), buffer.size());
-        RELEASE_ASSERT(length > 0);
-#if OS(WINDOWS)
-        // Remove the first '/' if it starts with something like "/C:/".
-        if (length >= 4 && buffer[0] == '/' && buffer[2] == ':' && buffer[3] == '/')
-            return std::string(buffer.data() + 1, length - 1);
-#endif
-        return std::string(buffer.data(), length - 1);
-    }
-    return std::string();
-}
-
 WKURLRef TestController::createTestURL(const char* pathOrURL)
 {
     if (strstr(pathOrURL, "http://") || strstr(pathOrURL, "https://") || strstr(pathOrURL, "file://"))
@@ -1297,7 +1280,7 @@ TestOptions TestController::testOptionsForTest(const TestCommand& command) const
     TestFeatures features = m_globalFeatures;
     merge(features, hardcodedFeaturesBasedOnPathForTest(command));
     merge(features, platformSpecificFeatureDefaultsForTest(command));
-    merge(features, featureDefaultsFromTestHeaderForTest(command));
+    merge(features, featureDefaultsFromTestHeaderForTest(command, TestOptions::keyTypeMapping()));
     merge(features, platformSpecificFeatureOverridesDefaultsForTest(command));
 
     return TestOptions { features };
@@ -1343,6 +1326,24 @@ static void contentExtensionStoreCallback(WKUserContentFilterRef filter, uint32_
     context->filter = filter ? adoptWK(filter) : nullptr;
     context->done = true;
     context->testController.notifyDone();
+}
+
+static std::string testPath(WKURLRef url)
+{
+    auto scheme = adoptWK(WKURLCopyScheme(url));
+    if (WKStringIsEqualToUTF8CStringIgnoringCase(scheme.get(), "file")) {
+        auto path = adoptWK(WKURLCopyPath(url));
+        auto buffer = std::vector<char>(WKStringGetMaximumUTF8CStringSize(path.get()));
+        auto length = WKStringGetUTF8CString(path.get(), buffer.data(), buffer.size());
+        RELEASE_ASSERT(length > 0);
+#if OS(WINDOWS)
+        // Remove the first '/' if it starts with something like "/C:/".
+        if (length >= 4 && buffer[0] == '/' && buffer[2] == ':' && buffer[3] == '/')
+            return std::string(buffer.data() + 1, length - 1);
+#endif
+        return std::string(buffer.data(), length - 1);
+    }
+    return std::string();
 }
 
 static std::string contentExtensionJSONPath(WKURLRef url)
@@ -1430,97 +1431,13 @@ void TestController::resetContentExtensions()
 
 #endif // !ENABLE(CONTENT_EXTENSIONS)
 
-class CommandTokenizer {
-public:
-    explicit CommandTokenizer(const std::string& input)
-        : m_input(input)
-    {
-        pump();
-    }
-
-    bool hasNext() const;
-    std::string next();
-
-private:
-    void pump();
-    static const char kSeparator = '\'';
-    const std::string& m_input;
-    std::string m_next;
-    size_t m_posNextSeparator { 0 };
-};
-
-void CommandTokenizer::pump()
-{
-    if (m_posNextSeparator == std::string::npos || m_posNextSeparator == m_input.size()) {
-        m_next = std::string();
-        return;
-    }
-    size_t start = m_posNextSeparator ? m_posNextSeparator + 1 : 0;
-    m_posNextSeparator = m_input.find(kSeparator, start);
-    size_t size = m_posNextSeparator == std::string::npos ? std::string::npos : m_posNextSeparator - start;
-    m_next = std::string(m_input, start, size);
-}
-
-std::string CommandTokenizer::next()
-{
-    ASSERT(hasNext());
-
-    std::string oldNext = m_next;
-    pump();
-    return oldNext;
-}
-
-bool CommandTokenizer::hasNext() const
-{
-    return !m_next.empty();
-}
-
-NO_RETURN static void die(const std::string& inputLine)
-{
-    fprintf(stderr, "Unexpected input line: %s\n", inputLine.c_str());
-    exit(1);
-}
-
-static TestCommand parseInputLine(const std::string& inputLine)
-{
-    TestCommand result;
-    CommandTokenizer tokenizer(inputLine);
-    if (!tokenizer.hasNext())
-        die(inputLine);
-
-    std::string arg = tokenizer.next();
-    result.pathOrURL = arg;
-    while (tokenizer.hasNext()) {
-        arg = tokenizer.next();
-        if (arg == std::string("--timeout")) {
-            std::string timeoutToken = tokenizer.next();
-            result.timeout = Seconds::fromMilliseconds(atoi(timeoutToken.c_str()));
-        } else if (arg == std::string("-p") || arg == std::string("--pixel-test")) {
-            result.shouldDumpPixels = true;
-            if (tokenizer.hasNext())
-                result.expectedPixelHash = tokenizer.next();
-        } else if (arg == std::string("--dump-jsconsolelog-in-stderr"))
-            result.dumpJSConsoleLogInStdErr = true;
-        else if (arg == std::string("--absolutePath"))
-            result.absolutePath = tokenizer.next();
-        else
-            die(inputLine);
-    }
-    
-    if (result.absolutePath.empty()) {
-        // Gross. Need to reduce conversions between all the string types and URLs.
-        result.absolutePath = testPath(adoptWK(TestController::createTestURL(result.pathOrURL.c_str())).get());
-    }
-
-    return result;
-}
-
 bool TestController::runTest(const char* inputLine)
 {
     AutodrainedPool pool;
-    
+
     WKTextCheckerSetTestingMode(true);
-    TestCommand command = parseInputLine(std::string(inputLine));
+    
+    auto command = parseInputLine(std::string(inputLine));
 
     m_state = RunningTest;
     

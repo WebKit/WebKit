@@ -25,28 +25,13 @@
 
 #pragma once
 
+#include "TestFeatures.h"
 #include <optional>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 namespace WTR {
-
-struct TestCommand;
-
-struct TestFeatures {
-    std::unordered_map<std::string, bool> experimentalFeatures;
-    std::unordered_map<std::string, bool> internalDebugFeatures;
-    std::unordered_map<std::string, bool> boolFeatures;
-    std::unordered_map<std::string, double> doubleFeatures;
-    std::unordered_map<std::string, std::string> stringFeatures;
-    std::unordered_map<std::string, std::vector<std::string>> stringVectorFeatures;
-};
-
-void merge(TestFeatures& base, TestFeatures additional);
-
-TestFeatures hardcodedFeaturesBasedOnPathForTest(const TestCommand&);
-TestFeatures featureDefaultsFromTestHeaderForTest(const TestCommand&);
 
 struct ContextOptions {
     std::vector<std::string> overrideLanguages;
@@ -74,6 +59,8 @@ struct ContextOptions {
 
 class TestOptions {
 public:
+    static const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMapping();
+
     explicit TestOptions(TestFeatures);
 
     ContextOptions contextOptions() const

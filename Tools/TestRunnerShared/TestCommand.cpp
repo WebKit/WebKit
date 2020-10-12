@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,27 +10,23 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
-#include "DumpRenderTree.h"
+#include "TestCommand.h"
 
-#include <algorithm>
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string>
+namespace WTR {
 
 class CommandTokenizer {
 public:
@@ -96,19 +92,43 @@ TestCommand parseInputLine(const std::string& inputLine)
     while (tokenizer.hasNext()) {
         arg = tokenizer.next();
         if (arg == "--timeout") {
-            std::string timeoutToken = tokenizer.next();
-            result.timeout = atoi(timeoutToken.c_str());
+            auto timeoutToken = tokenizer.next();
+            result.timeout = Seconds::fromMilliseconds(atoi(timeoutToken.c_str()));
         } else if (arg == "-p" || arg == "--pixel-test") {
             result.shouldDumpPixels = true;
             if (tokenizer.hasNext())
                 result.expectedPixelHash = tokenizer.next();
-        } else if (arg == "--dump-jsconsolelog-in-stderr")
+        } else if (arg == std::string("--dump-jsconsolelog-in-stderr"))
             result.dumpJSConsoleLogInStdErr = true;
         else if (arg == std::string("--absolutePath"))
             result.absolutePath = tokenizer.next();
         else
             die(inputLine);
     }
+    
+    if (result.absolutePath.empty())
+        result.absolutePath = testPath(result.pathOrURL);
 
     return result;
+}
+
+std::filesystem::path testPath(const std::string& pathOrURL)
+{
+    if (pathOrURL.find("http://") == 0 || pathOrURL.find("https://") == 0)
+        return { };
+
+    if (pathOrURL.find("file://") == 0)
+        return pathOrURL.substr(strlen("file:/"));
+
+    return std::filesystem::absolute(pathOrURL);
+}
+
+std::string testURLString(const std::string& pathOrURL)
+{
+    if (pathOrURL.find("http://") == 0 || pathOrURL.find("https://") == 0 || pathOrURL.find("file://") == 0)
+        return pathOrURL;
+
+    return "file://" + std::filesystem::absolute(pathOrURL).generic_string();
+}
+
 }

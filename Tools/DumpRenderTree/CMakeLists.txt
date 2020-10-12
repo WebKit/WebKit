@@ -10,7 +10,6 @@ set(DumpRenderTree_SOURCES
     AccessibilityTextMarker.cpp
     AccessibilityUIElement.cpp
     CyclicRedundancyCheck.cpp
-    DumpRenderTreeCommon.cpp
     GCController.cpp
     JavaScriptThreading.cpp
     PixelDumpSupport.cpp

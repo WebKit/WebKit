@@ -25,7 +25,11 @@
 
 #pragma once
 
+#include "TestFeatures.h"
 #include <string>
+#include <unordered_map>
+
+namespace WTR {
 
 struct TestOptions {
     bool enableAttachmentElement { false };
@@ -61,6 +65,11 @@ struct TestOptions {
     std::string jscOptions;
     std::string additionalSupportedImageTypes;
 
-    TestOptions(const std::string& pathOrURL, const std::string& absolutePath);
+    explicit TestOptions(TestFeatures);
     bool webViewIsCompatibleWithOptions(const TestOptions&) const;
+    
+    static const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMapping();
 };
+
+}
+

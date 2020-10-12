@@ -1,3 +1,62 @@
+2020-10-12  Sam Weinig  <weinig@apple.com>
+
+        Share TestFeatures and TestCommand infrastructure between DumpRenderTree and WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=217614
+
+        Reviewed by Dean Jackson.
+
+        Move TestFeatures and TestCommand code from WebKitTestRunner to TestRunnerShared
+        and adopt shared code in both WebKitTestRunner and DumpRenderTree.
+        
+        This allows us to remove duplicate argument and test header parsing code and
+        avoid updating both when we want want change things.
+        
+        To support different sets of test header options, featureDefaultsFromTestHeaderForTest now
+        has a parameter for a key type map, rather than the old hardcoded set. This allows
+        WebKitTestRunner and DumpRenderTree, which currently have slightly different options
+        to continue to behave in the same way. Eventually, it will probably make sense to have these
+        mostly generated from the WebPreferences*.yaml configuration files.
+
+        Matching precedent, shared files use the WTR namespace. 
+
+        * DumpRenderTree/CMakeLists.txt:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * TestRunnerShared/CMakeLists.txt:
+        * WebKitTestRunner/CMakeLists.txt:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * DumpRenderTree/DumpRenderTree.h:
+        Removes TestCommand and parseInputLine now that they come from shared TestCommand.h
+
+        * DumpRenderTree/DumpRenderTreeCommon.cpp: Removed.
+        Moved contents to shared TestCommand.cpp
+        
+        * DumpRenderTree/TestOptions.cpp:
+        * DumpRenderTree/TestOptions.h:
+        Adopt model from WebKitTestRunner and use initialization from TestFeatures.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        Adopt shared TestFeatures and TestCommand infrastructure. Construct TestOptions
+        in a similar manner to WebKitTestRunner by merging together hardcoded / path based
+        features and test header based features.
+ 
+        * DumpRenderTree/mac/UIDelegate.h:
+        * DumpRenderTree/mac/UIDelegate.mm:
+        Update for new namespace.
+
+        * TestRunnerShared/TestCommand.cpp: Added.
+        * TestRunnerShared/TestCommand.h: Added.
+        * TestRunnerShared/TestFeatures.cpp: Added.
+        * TestRunnerShared/TestFeatures.h: Added.
+        * WebKitTestRunner/TestController.cpp:
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestOptions.cpp:
+        * WebKitTestRunner/TestOptions.h:
+        Moved from WebKitTestRunner. Generalized to TestFeatures to take a key type map,
+        rather than hard coding it. Replace use of WebKit types, like WKURLRef, with std::string
+        and std::filesystem::path.
+
 2020-10-12  Luming Yin  <luming_yin@apple.com>
 
         [macOS] Workaround for MAC_OS_X_VERSION_MAJOR incorrectly including minor version when building 

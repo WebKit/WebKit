@@ -50,6 +50,8 @@
 #import "PolicyDelegate.h"
 #import "PoseAsClass.h"
 #import "ResourceLoadDelegate.h"
+#import "TestCommand.h"
+#import "TestFeatures.h"
 #import "TestOptions.h"
 #import "TestRunner.h"
 #import "UIDelegate.h"
@@ -189,7 +191,7 @@ volatile bool done;
 NavigationController* gNavigationController = nullptr;
 RefPtr<TestRunner> gTestRunner;
 
-Optional<TestOptions> mainFrameTestOptions;
+Optional<WTR::TestOptions> mainFrameTestOptions;
 WebFrame *mainFrame = nil;
 // This is the topmost frame that is loading, during a given load, or nil when no load is 
 // in progress.  Usually this is the same as the main frame, but not always.  In the case
@@ -966,7 +968,7 @@ static void resetWebPreferencesToConsistentValues()
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
 }
 
-static void setWebPreferencesForTestOptions(const TestOptions& options)
+static void setWebPreferencesForTestOptions(const WTR::TestOptions& options)
 {
     WebPreferences *preferences = [WebPreferences standardPreferences];
 
@@ -1816,7 +1818,7 @@ static bool shouldUseEphemeralSession(const char* pathOrURL)
     return strstr(pathOrURL, "w3c/IndexedDB-private-browsing");
 }
 
-static void setJSCOptions(const TestOptions& options)
+static void setJSCOptions(const WTR::TestOptions& options)
 {
     static WTF::StringBuilder savedOptions;
 
@@ -1832,7 +1834,7 @@ static void setJSCOptions(const TestOptions& options)
 }
 
 enum class ResetTime { BeforeTest, AfterTest };
-static void resetWebViewToConsistentState(const TestOptions& options, ResetTime resetTime)
+static void resetWebViewToConsistentState(const WTR::TestOptions& options, ResetTime resetTime)
 {
     setJSCOptions(options);
 
@@ -1967,11 +1969,20 @@ static NSURL *computeTestURL(NSString *pathOrURLString, NSString **relativeTestP
     return [NSURL fileURLWithPath:absolutePath];
 }
 
+static WTR::TestOptions testOptionsForTest(const WTR::TestCommand& command)
+{
+    WTR::TestFeatures features;
+    WTR::merge(features, WTR::hardcodedFeaturesBasedOnPathForTest(command));
+    WTR::merge(features, WTR::featureDefaultsFromTestHeaderForTest(command, WTR::TestOptions::keyTypeMapping()));
+
+    return WTR::TestOptions { WTFMove(features) };
+}
+
 static void runTest(const string& inputLine)
 {
     ASSERT(!inputLine.empty());
 
-    TestCommand command = parseInputLine(inputLine);
+    auto command = WTR::parseInputLine(inputLine);
     const string& pathOrURL = command.pathOrURL;
     dumpPixelsForCurrentTest = command.shouldDumpPixels || dumpPixelsForAllTests;
 
@@ -1993,7 +2004,7 @@ static void runTest(const string& inputLine)
     auto message = makeString("CRASHING TEST: ", testPath.UTF8String);
     WTF::setCrashLogMessage(message.utf8().data());
 
-    TestOptions options { [url isFileURL] ? [url fileSystemRepresentation] : pathOrURL, command.absolutePath };
+    auto options = testOptionsForTest(command);
 
     if (!mainFrameTestOptions || !options.webViewIsCompatibleWithOptions(mainFrameTestOptions.value())) {
         if (mainFrame)
@@ -2006,7 +2017,7 @@ static void runTest(const string& inputLine)
     const char* testURL([[url absoluteString] UTF8String]);
     gTestRunner = TestRunner::create(testURL, command.expectedPixelHash);
     gTestRunner->setAllowedHosts(allowedHosts);
-    gTestRunner->setCustomTimeout(command.timeout);
+    gTestRunner->setCustomTimeout(command.timeout.milliseconds());
     gTestRunner->setDumpJSConsoleLogInStdErr(command.dumpJSConsoleLogInStdErr || options.dumpJSConsoleLogInStdErr);
 
     resetWebViewToConsistentState(options, ResetTime::BeforeTest);

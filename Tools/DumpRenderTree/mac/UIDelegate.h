@@ -47,6 +47,6 @@
 - (void)resetWindowOrigin;
 - (void)didSetMockGeolocationPermission;
 - (int)numberOfPendingGeolocationPermissionRequests;
-- (void)resetToConsistentStateBeforeTesting:(const TestOptions&)options;
+- (void)resetToConsistentStateBeforeTesting:(const WTR::TestOptions&)options;
 
 @end

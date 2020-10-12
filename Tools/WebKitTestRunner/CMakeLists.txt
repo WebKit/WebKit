@@ -28,6 +28,7 @@ set(WebKitTestRunner_LIBRARIES
 
 set(WebKitTestRunner_INCLUDE_DIRECTORIES
     ${CMAKE_BINARY_DIR}
+    ${WebKitTestRunner_SHARED_DIR}
     ${WebKitTestRunner_BINDINGS_DIR}
     ${WebKitTestRunner_DERIVED_SOURCES_DIR}/UIScriptContext
     ${WebKitTestRunner_DIR}

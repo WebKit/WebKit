@@ -54,14 +54,3 @@ extern RefPtr<TestRunner> gTestRunner;
 void dump();
 void displayWebView();
 void displayAndTrackRepaintsWebView();
-
-struct TestCommand {
-    std::string pathOrURL;
-    std::string absolutePath;
-    bool shouldDumpPixels { false };
-    std::string expectedPixelHash;
-    int timeout { 30000 }; // in ms
-    bool dumpJSConsoleLogInStdErr { false };
-};
-
-TestCommand parseInputLine(const std::string&);

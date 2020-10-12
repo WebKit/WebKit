@@ -58,7 +58,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     windowOrigin = NSZeroPoint;
 }
 
-- (void)resetToConsistentStateBeforeTesting:(const TestOptions&)options
+- (void)resetToConsistentStateBeforeTesting:(const WTR::TestOptions&)options
 {
     m_enableDragDestinationActionLoad = options.enableDragDestinationActionLoad;
 }
