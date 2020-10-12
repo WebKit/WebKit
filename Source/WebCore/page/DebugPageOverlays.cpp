@@ -91,6 +91,10 @@ private:
 
 bool MouseWheelRegionOverlay::updateRegion()
 {
+#if ENABLE(WHEEL_EVENT_REGIONS)
+    // Wheel event regions are painted via RenderLayerBacking::paintDebugOverlays().
+    return false;
+#else
     auto region = makeUnique<Region>();
     
     for (const Frame* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
@@ -107,6 +111,7 @@ bool MouseWheelRegionOverlay::updateRegion()
     bool regionChanged = !m_region || !(*m_region == *region);
     m_region = WTFMove(region);
     return regionChanged;
+#endif
 }
 
 class NonFastScrollableRegionOverlay final : public RegionOverlay {

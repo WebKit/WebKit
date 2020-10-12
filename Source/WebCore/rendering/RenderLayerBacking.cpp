@@ -3326,9 +3326,9 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
 
     GraphicsContextStateSaver stateSaver(context);
 
-    // The region is offset by contentOffsetInCompositingLayer() so undo that.
-    auto contentOffset = roundedIntSize(contentOffsetInCompositingLayer());
-    context.translate(-contentOffset);
+    // The region is offset by offsetFromRenderer() so undo that.
+    auto contentOffset = roundedIntSize(graphicsLayer->offsetFromRenderer());
+    context.translate(contentOffset);
 
     auto visibleDebugOverlayRegions = renderer().settings().visibleDebugOverlayRegions();
     if (visibleDebugOverlayRegions & (TouchActionRegion | WheelEventHandlerRegion)) {
@@ -3367,7 +3367,7 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
 #if ENABLE(WHEEL_EVENT_REGIONS)
     if (visibleDebugOverlayRegions & WheelEventHandlerRegion) {
         for (auto type : { EventListenerRegionType::Wheel, EventListenerRegionType::NonPassiveWheel }) {
-            auto fillPattern = patternForEventListenerRegionType(type, contentOffsetInCompositingLayer(), context);
+            auto fillPattern = patternForEventListenerRegionType(type, graphicsLayer->offsetFromRenderer(), context);
             context.setFillPattern(fillPattern.releaseNonNull());
 
             auto& region = graphicsLayer->eventRegion().eventListenerRegionForType(type);
