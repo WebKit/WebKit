@@ -1,3 +1,14 @@
+2020-10-12  Andy Estes  <aestes@apple.com>
+
+        [macCatalyst] Enable WKPDFView
+        https://bugs.webkit.org/show_bug.cgi?id=217403
+        <rdar://problem/48217791>
+
+        Reviewed by Tim Horton.
+
+        * wtf/PlatformEnableCocoa.h: Enabled WKPDFView when building for the Catalyst variant on
+        Big Sur or later.
+
 2020-10-12  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         -Wsign-compare warnings in URL.cpp and URLParser.cpp

@@ -97,6 +97,8 @@ WK_PDFKIT_LDFLAGS_iphoneos = -framework PDFKit;
 WK_PDFKIT_LDFLAGS_iphoneos[sdk=iphone*11.*] = ;
 WK_PDFKIT_LDFLAGS_iphonesimulator = $(WK_PDFKIT_LDFLAGS_iphoneos);
 WK_PDFKIT_LDFLAGS_iphonesimulator[sdk=iphone*11.*] = ;
+WK_PDFKIT_LDFLAGS_maccatalyst = $(WK_PDFKIT_LDFLAGS_maccatalyst$(WK_MACOS_1100));
+WK_PDFKIT_LDFLAGS_maccatalyst_SINCE_1100 = $(WK_PDFKIT_LDFLAGS_iphoneos);
 
 WK_SAFE_BROWSING_LDFLAGS = $(WK_SAFE_BROWSING_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_SAFE_BROWSING_LDFLAGS_iphoneos = -framework SafariSafeBrowsing;
