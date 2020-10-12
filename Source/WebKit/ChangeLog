@@ -1,3 +1,19 @@
+2020-10-11  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        -Wreorder in MediaPlayerPrivateRemote.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=217590
+
+        Reviewed by Eric Carlson.
+
+        Reorder initializer list to avoid misleading initialization order.
+
+        It might be nicer to actually reorder the member variables in the class itself, which would
+        probably be safe, but that would be a behavior change and I'd rather avoid changing
+        behavior.
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote):
+
 2020-10-11  Luming Yin  <luming_yin@apple.com>
 
         Ignore deployment suffix and identifier when computing major OS version for macOS 
