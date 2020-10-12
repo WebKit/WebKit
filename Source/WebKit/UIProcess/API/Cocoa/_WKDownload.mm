@@ -26,6 +26,7 @@
 #import "config.h"
 #import "_WKDownloadInternal.h"
 
+#import "APIDownloadClient.h"
 #import "DownloadProxy.h"
 #import "WKFrameInfoInternal.h"
 #import "WKNSData.h"
@@ -45,7 +46,9 @@
 
 - (void)cancel
 {
-    _download->cancel();
+    _download->cancel([download = makeRef(*_download)] (auto*) {
+        download->client().legacyDidCancel(download.get());
+    });
 }
 
 - (void)publishProgressAtURL:(NSURL *)URL
@@ -79,7 +82,7 @@
 
 - (NSData *)resumeData
 {
-    return WebKit::wrapper(_download->resumeData());
+    return WebKit::wrapper(_download->legacyResumeData());
 }
 
 - (WKFrameInfo *)originatingFrame

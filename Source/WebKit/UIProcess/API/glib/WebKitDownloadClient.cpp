@@ -112,7 +112,7 @@ private:
         webkitWebContextRemoveDownload(&downloadProxy);
     }
 
-    void didCancel(DownloadProxy& downloadProxy) override
+    void legacyDidCancel(DownloadProxy& downloadProxy) override
     {
         GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
         webkitDownloadCancelled(download.get());

@@ -251,7 +251,7 @@ void LegacyDownloadClient::didFail(DownloadProxy& downloadProxy, const WebCore::
         [m_delegate _download:wrapper(downloadProxy) didFailWithError:error.nsError()];
 }
 
-void LegacyDownloadClient::didCancel(DownloadProxy& downloadProxy)
+void LegacyDownloadClient::legacyDidCancel(DownloadProxy& downloadProxy)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {

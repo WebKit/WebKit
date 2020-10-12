@@ -68,15 +68,16 @@ static RefPtr<API::Data> createData(const IPC::DataReference& data)
     return API::Data::create(data.data(), data.size());
 }
 
-void DownloadProxy::cancel()
+void DownloadProxy::cancel(CompletionHandler<void(API::Data*)>&& completionHandler)
 {
     if (m_dataStore) {
-        m_dataStore->networkProcess().sendWithAsyncReply(Messages::NetworkProcess::CancelDownload(m_downloadID), [this, protectedThis = makeRef(*this)] (const IPC::DataReference& resumeData) {
-            m_resumeData = createData(resumeData);
-            m_client->didCancel(*this);
+        m_dataStore->networkProcess().sendWithAsyncReply(Messages::NetworkProcess::CancelDownload(m_downloadID), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (const IPC::DataReference& resumeData) mutable {
+            m_legacyResumeData = createData(resumeData);
+            completionHandler(m_legacyResumeData.get());
             m_downloadProxyMap.downloadFinished(*this);
         });
-    }
+    } else
+        completionHandler(nullptr);
 }
 
 void DownloadProxy::invalidate()
@@ -170,7 +171,7 @@ void DownloadProxy::didFinish()
 
 void DownloadProxy::didFail(const ResourceError& error, const IPC::DataReference& resumeData)
 {
-    m_resumeData = createData(resumeData);
+    m_legacyResumeData = createData(resumeData);
 
     m_client->didFail(*this, error);
 

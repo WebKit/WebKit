@@ -52,7 +52,7 @@ private:
     void decideDestinationWithSuggestedFilename(DownloadProxy&, const WebCore::ResourceResponse&, const String& suggestedFilename, CompletionHandler<void(AllowOverwrite, String)>&&) final;
     void didFinish(DownloadProxy&) final;
     void didFail(DownloadProxy&, const WebCore::ResourceError&) final;
-    void didCancel(DownloadProxy&) final;
+    void legacyDidCancel(DownloadProxy&) final;
     void willSendRequest(DownloadProxy&, WebCore::ResourceRequest&&, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&) final;
     void didReceiveAuthenticationChallenge(DownloadProxy&, AuthenticationChallengeProxy&) final;
     void didCreateDestination(DownloadProxy&, const String&) final;

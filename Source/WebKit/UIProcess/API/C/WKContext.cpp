@@ -229,7 +229,7 @@ void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadCli
                 return;
             m_client.didFail(m_context, WebKit::toAPI(&downloadProxy), WebKit::toAPI(error), m_client.base.clientInfo);
         }
-        void didCancel(WebKit::DownloadProxy& downloadProxy) final
+        void legacyDidCancel(WebKit::DownloadProxy& downloadProxy) final
         {
             if (!m_client.didCancel)
                 return;

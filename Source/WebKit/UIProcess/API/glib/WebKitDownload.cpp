@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitDownload.h"
 
+#include "APIDownloadClient.h"
 #include "DownloadProxy.h"
 #include "WebErrors.h"
 #include "WebKitDownloadPrivate.h"
@@ -538,7 +539,9 @@ void webkit_download_cancel(WebKitDownload* download)
     g_return_if_fail(WEBKIT_IS_DOWNLOAD(download));
 
     download->priv->isCancelled = true;
-    download->priv->download->cancel();
+    download->priv->download->cancel([download = makeRef(*download->priv->download)] (auto*) {
+        download->client().legacyDidCancel(download.get());
+    });
 }
 
 /**

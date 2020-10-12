@@ -61,7 +61,7 @@ public:
     virtual void didCreateDestination(WebKit::DownloadProxy&, const WTF::String&) { }
     virtual void didFinish(WebKit::DownloadProxy&) { }
     virtual void didFail(WebKit::DownloadProxy&, const WebCore::ResourceError&) { }
-    virtual void didCancel(WebKit::DownloadProxy&) { }
+    virtual void legacyDidCancel(WebKit::DownloadProxy&) { }
     virtual void processDidCrash(WebKit::DownloadProxy&) { }
     virtual void willSendRequest(WebKit::DownloadProxy&, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler) { completionHandler(WTFMove(request)); }
 };
