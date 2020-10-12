@@ -1,3 +1,21 @@
+2020-10-12  Tim Horton  <timothy_horton@apple.com>
+
+        Cursor window is transparent - but not hidden - when `cursor: none` is specified
+        https://bugs.webkit.org/show_bug.cgi?id=217639
+        <rdar://problem/70006186>
+
+        Reviewed by Simon Fraser.
+
+        * Platform/spi/mac/AppKitSPI.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::setCursor):
+        Adopt new AppKit SPI to actually hide the cursor when we set it to the "none" shape.
+        This hiding lives until the next time the app-global cursor shape is changed by any client.]
+        We'll re-set it the next time we set the "none" shape.
+
+        This is important, because on some platforms, hiding the cursor is a performance improvement
+        over simply making it transparent.
+
 2020-10-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [GPU Process]: Replace "ImageBufferIdentifier" by a generic identifier named "RemoteResourceIdentifier"
