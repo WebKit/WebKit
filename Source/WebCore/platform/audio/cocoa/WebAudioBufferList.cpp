@@ -148,7 +148,7 @@ AudioBuffer* WebAudioBufferList::buffer(uint32_t index) const
 
 void WebAudioBufferList::zeroFlatBuffer()
 {
-    memset(m_flatBuffer.data(), 0, m_flatBuffer.capacity());
+    memset(m_flatBuffer.data(), 0, m_flatBuffer.size());
 }
 
 }
