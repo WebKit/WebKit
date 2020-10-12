@@ -58,10 +58,10 @@ public:
     ~ImageBufferCairoGLSurfaceBackend();
 
     PlatformLayer* platformLayer() const override;
-    bool copyToPlatformTexture(GCGLenum target, PlatformGLObject destinationTexture, GCGLenum internalformat, bool premultiplyAlpha, bool flipY) override;
+    bool copyToPlatformTexture(GraphicsContextGLOpenGL&, GCGLenum target, PlatformGLObject destinationTexture, GCGLenum internalformat, bool premultiplyAlpha, bool flipY) const override;
 
 private:
-    ImageBufferCairoGLSurfaceBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace, RefPtr<cairo_surface_t>&&);
+    ImageBufferCairoGLSurfaceBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace, RefPtr<cairo_surface_t>&&, uint32_t texture);
 
 #if USE(COORDINATED_GRAPHICS)
     void createCompositorBuffer();
@@ -79,12 +79,11 @@ private:
 #else
     RefPtr<TextureMapperPlatformLayerProxy> m_platformLayerProxy;
 #endif
-    uint32_t m_texture;
+    uint32_t m_texture { 0 };
     RefPtr<cairo_surface_t> m_compositorSurface;
     RefPtr<cairo_t> m_compositorCr;
     uint32_t m_compositorTexture { 0 };
 #endif
-    uint32_t m_texture { 0 };
 };
 
 } // namespace WebCore
