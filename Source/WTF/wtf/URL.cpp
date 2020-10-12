@@ -107,7 +107,7 @@ bool URL::hasSpecialScheme() const
 unsigned URL::pathStart() const
 {
     unsigned start = m_hostEnd + m_portLength;
-    if (start == m_schemeEnd + 1
+    if (start == m_schemeEnd + 1U
         && start + 1 < m_string.length()
         && m_string[start] == '/' && m_string[start + 1] == '.')
         start += 2;

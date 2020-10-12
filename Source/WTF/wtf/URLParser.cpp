@@ -2498,7 +2498,7 @@ bool URLParser::needsNonSpecialDotSlash() const
 {
     auto pathStart = m_url.m_hostEnd + m_url.m_portLength;
     return !m_urlIsSpecial
-        && pathStart == m_url.m_schemeEnd + 1
+        && pathStart == m_url.m_schemeEnd + 1U
         && pathStart + 1 < m_url.m_string.length()
         && m_url.m_string[pathStart] == '/'
         && m_url.m_string[pathStart + 1] == '/';

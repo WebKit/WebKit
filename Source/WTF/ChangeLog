@@ -1,3 +1,17 @@
+2020-10-12  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        -Wsign-compare warnings in URL.cpp and URLParser.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=217583
+
+        Using unsigned literals where required.
+
+        Reviewed by Darin Adler.
+
+        * wtf/URL.cpp:
+        (WTF::URL::pathStart const):
+        * wtf/URLParser.cpp:
+        (WTF::URLParser::needsNonSpecialDotSlash const):
+
 2020-10-12  Luming Yin  <luming_yin@apple.com>
 
         [macOS] Workaround for MAC_OS_X_VERSION_MAJOR incorrectly including minor version when building 
