@@ -98,9 +98,11 @@ void Path::createCGPath() const
             CGPathAddLineToPoint(m_path.get(), nullptr, line.end.x(), line.end.y());
         },
         [&](const ArcData& arc) {
-            if (arc.hasStart)
+            if (arc.type == ArcData::Type::LineAndArc || arc.type == ArcData::Type::ClosedLineAndArc)
                 CGPathMoveToPoint(m_path.get(), nullptr, arc.start.x(), arc.start.y());
             CGPathAddArc(m_path.get(), nullptr, arc.center.x(), arc.center.y(), arc.radius, arc.startAngle, arc.endAngle, arc.clockwise);
+            if (arc.type == ArcData::Type::ClosedLineAndArc)
+                CGPathAddLineToPoint(m_path.get(), nullptr, arc.start.x(), arc.start.y());
         },
         [&](const QuadCurveData& curve) {
             CGPathMoveToPoint(m_path.get(), nullptr, curve.startPoint.x(), curve.startPoint.y());

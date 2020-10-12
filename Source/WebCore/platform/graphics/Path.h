@@ -241,6 +241,7 @@ public:
 private:
 #if ENABLE(INLINE_PATH_DATA)
     bool hasAnyInlineData() const;
+    template<typename DataType> DataType& inlineData();
     Optional<FloatRect> fastBoundingRectFromInlineData() const;
     Optional<FloatRect> boundingRectFromInlineData() const;
 #endif
@@ -419,6 +420,11 @@ template <typename DataType> inline bool Path::hasInlineData() const
 }
 
 template<typename DataType> inline const DataType& Path::inlineData() const
+{
+    return WTF::get<DataType>(m_inlineData);
+}
+
+template<typename DataType> inline DataType& Path::inlineData()
 {
     return WTF::get<DataType>(m_inlineData);
 }
