@@ -148,3 +148,5 @@ webkit.org/b/217462 [ Release ] imported/w3c/web-platform-tests/service-workers/
 webkit.org/b/217357 http/wpt/cache-storage/cache-quota-after-restart.any.html [ Pass Failure ]
 
 webkit.org/b/217412 http/wpt/cache-storage/cache-quota.any.html [ Pass Failure ]
+
+webkit.org/b/217610 imported/blink/fast/css/zoomed-intrinsic-width.html [ Failure ]

@@ -1,3 +1,12 @@
+2020-10-12  Karl Rackler  <rackler@apple.com>
+
+        REGRESSION (r268294): [ iOS wk2 ] imported/blink/fast/css/zoomed-intrinsic-width.html is a constant image failure
+        https://bugs.webkit.org/show_bug.cgi?id=217610
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2020-10-12  Martin Robinson  <mrobinson@igalia.com>
 
         Improve serialization of scroll-snap-type
