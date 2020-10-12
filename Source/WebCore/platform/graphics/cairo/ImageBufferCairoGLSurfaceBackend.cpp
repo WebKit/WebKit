@@ -32,8 +32,6 @@
 
 #if USE(CAIRO) && ENABLE(ACCELERATED_2D_CANVAS)
 
-namespace WebCore {
-
 #include "GLContext.h"
 #include "TextureMapperGL.h"
 #include <wtf/IsoMallocInlines.h>
@@ -60,6 +58,8 @@ namespace WebCore {
 #include "TextureMapperPlatformLayerProxy.h"
 #endif
 
+namespace WebCore {
+
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferCairoGLSurfaceBackend);
 
 static inline void clearSurface(cairo_surface_t* surface)
@@ -80,7 +80,7 @@ std::unique_ptr<ImageBufferCairoGLSurfaceBackend> ImageBufferCairoGLSurfaceBacke
 
     // We must generate the texture ourselves, because there is no Cairo API for extracting it
     // from a pre-existing surface.
-    uint32_t texture
+    uint32_t texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -98,7 +98,7 @@ std::unique_ptr<ImageBufferCairoGLSurfaceBackend> ImageBufferCairoGLSurfaceBacke
     cairo_gl_device_set_thread_aware(device, FALSE);
 
     auto surface = adoptRef(cairo_gl_surface_create_for_texture(device, CAIRO_CONTENT_COLOR_ALPHA, texture, backendSize.width(), backendSize.height()));
-    if (cairo_surface_status(surface) != CAIRO_STATUS_SUCCESS)
+    if (cairo_surface_status(surface.get()) != CAIRO_STATUS_SUCCESS)
         return nullptr;
 
     clearSurface(surface.get());
@@ -145,7 +145,7 @@ ImageBufferCairoGLSurfaceBackend::~ImageBufferCairoGLSurfaceBackend()
         previousActiveContext->makeContextCurrent();
 }
 
-PlatformLayer* ImageBuffer::platformLayer() const
+PlatformLayer* ImageBufferCairoGLSurfaceBackend::platformLayer() const
 {
 #if USE(NICOSIA)
     return m_nicosiaLayer.get();
@@ -156,7 +156,7 @@ PlatformLayer* ImageBuffer::platformLayer() const
     return nullptr;
 }
 
-bool ImageBufferCairoGLSurfaceBackend::copyToPlatformTexture(GCGLenum target, PlatformGLObject destinationTexture, GCGLenum internalformat, bool premultiplyAlpha, bool flipY)
+bool ImageBufferCairoGLSurfaceBackend::copyToPlatformTexture(GraphicsContextGLOpenGL&, GCGLenum target, PlatformGLObject destinationTexture, GCGLenum internalformat, bool premultiplyAlpha, bool flipY) const
 {
     ASSERT_WITH_MESSAGE(m_resolutionScale == 1.0, "Since the HiDPI Canvas feature is removed, the resolution factor here is always 1.");
     if (premultiplyAlpha || flipY)
@@ -165,7 +165,7 @@ bool ImageBufferCairoGLSurfaceBackend::copyToPlatformTexture(GCGLenum target, Pl
     if (!m_texture)
         return false;
 
-    GC3Denum bindTextureTarget;
+    GCGLenum bindTextureTarget;
     switch (target) {
     case GL_TEXTURE_2D:
         bindTextureTarget = GL_TEXTURE_2D;
