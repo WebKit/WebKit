@@ -1,3 +1,15 @@
+2020-10-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        OpToPropertyKey only accepts temporary for destination
+        https://bugs.webkit.org/show_bug.cgi?id=217471
+
+        Reviewed by Saam Barati.
+
+        propertyName register can be constant. We should create temporary register if it is necessary for the destination.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ObjectPatternNode::bindValue const):
+
 2020-10-12  Luming Yin  <luming_yin@apple.com>
 
         [macOS] Workaround for MAC_OS_X_VERSION_MAJOR incorrectly including minor version when building 
