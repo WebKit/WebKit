@@ -340,7 +340,7 @@ static inline void appendEndsPreviousSampleDurationMarker(AVAssetWriterInput *as
         RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateWriter appendSampleBuffer to writer input failed");
 }
 
-void MediaRecorderPrivateWriter::flushCompressedSampleBuffers(CompletionHandler<void()>&& completionHandler)
+void MediaRecorderPrivateWriter::flushCompressedSampleBuffers(Function<void()>&& callback)
 {
     bool hasPendingAudioSamples = !m_pendingAudioSampleQueue.isEmpty();
     bool hasPendingVideoSamples = !m_pendingVideoSampleQueue.isEmpty();
@@ -352,15 +352,15 @@ void MediaRecorderPrivateWriter::flushCompressedSampleBuffers(CompletionHandler<
     }
 
     if (!hasPendingAudioSamples && !hasPendingVideoSamples) {
-        completionHandler();
+        callback();
         return;
     }
 
     ASSERT(!m_isFlushingSamples);
     m_isFlushingSamples = true;
-    auto block = makeBlockPtr([this, weakThis = makeWeakPtr(*this), hasPendingAudioSamples, hasPendingVideoSamples, audioSampleQueue = WTFMove(m_pendingAudioSampleQueue), videoSampleQueue = WTFMove(m_pendingVideoSampleQueue), completionHandler = WTFMove(completionHandler)]() mutable {
+    auto block = makeBlockPtr([this, weakThis = makeWeakPtr(*this), hasPendingAudioSamples, hasPendingVideoSamples, audioSampleQueue = WTFMove(m_pendingAudioSampleQueue), videoSampleQueue = WTFMove(m_pendingVideoSampleQueue), callback = WTFMove(callback)]() mutable {
         if (!weakThis) {
-            completionHandler();
+            callback();
             return;
         }
 
@@ -380,7 +380,7 @@ void MediaRecorderPrivateWriter::flushCompressedSampleBuffers(CompletionHandler<
             [m_videoAssetWriterInput markAsFinished];
         }
         m_isFlushingSamples = false;
-        completionHandler();
+        callback();
         finishedFlushingSamples();
     });
 
@@ -549,47 +549,41 @@ void MediaRecorderPrivateWriter::stopRecording()
 
 void MediaRecorderPrivateWriter::fetchData(CompletionHandler<void(RefPtr<SharedBuffer>&&, double)>&& completionHandler)
 {
-    if (m_isStopping) {
-        m_fetchDataCompletionHandler = WTFMove(completionHandler);
+    m_fetchDataCompletionHandler = WTFMove(completionHandler);
+
+    if (m_isStopping)
+        return;
+
+    if (!m_hasStartedWriting) {
+        completeFetchData();
         return;
     }
 
-    if (m_hasStartedWriting) {
-        flushCompressedSampleBuffers([this, weakThis = makeWeakPtr(this), completionHandler = WTFMove(completionHandler)]() mutable {
-            if (!weakThis) {
-                completionHandler(nullptr, 0);
-                return;
-            }
+    flushCompressedSampleBuffers([weakThis = makeWeakPtr(this)]() mutable {
+        if (!weakThis)
+            return;
 
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            [m_writer flush];
-            ALLOW_DEPRECATED_DECLARATIONS_END
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        [weakThis->m_writer flush];
+        ALLOW_DEPRECATED_DECLARATIONS_END
 
-            callOnMainThread([this, weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler)]() mutable {
-                if (!weakThis) {
-                    completionHandler(nullptr, 0);
-                    return;
-                }
-
-                completionHandler(std::exchange(m_data, nullptr), m_timeCode);
-                updateTimeCode();
-            });
+        callOnMainThread([weakThis = WTFMove(weakThis)] {
+            if (weakThis)
+                weakThis->completeFetchData();
         });
-        return;
-    }
-
-    completionHandler(std::exchange(m_data, nullptr), m_timeCode);
-    updateTimeCode();
+    });
 }
 
-void MediaRecorderPrivateWriter::updateTimeCode()
+void MediaRecorderPrivateWriter::completeFetchData()
 {
-    if (m_hasAudio) {
+    auto currentTimeCode = m_timeCode;
+    if (m_hasAudio)
         m_timeCode = CMTimeGetSeconds(m_currentAudioSampleTime);
-        return;
+    else {
+        auto sampleTime = CMTimeSubtract(CMClockGetTime(CMClockGetHostTimeClock()), m_resumedVideoTime);
+        m_timeCode = CMTimeGetSeconds(CMTimeAdd(sampleTime, m_currentVideoDuration));
     }
-    auto sampleTime = CMTimeSubtract(CMClockGetTime(CMClockGetHostTimeClock()), m_resumedVideoTime);
-    m_timeCode = CMTimeGetSeconds(CMTimeAdd(sampleTime, m_currentVideoDuration));
+    m_fetchDataCompletionHandler(std::exchange(m_data, nullptr), currentTimeCode);
 }
 
 void MediaRecorderPrivateWriter::appendData(const char* data, size_t size)
