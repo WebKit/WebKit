@@ -243,7 +243,9 @@ template<typename T> void postMessage(const char* name, const WKRetainPtr<T>& va
 
 template<typename T> void postSynchronousMessage(const char* name, const WKRetainPtr<T>& value)
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), toWK(name).get(), value.get(), nullptr);
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 template<typename T> void postPageMessage(const char* name, const WKRetainPtr<T>& value)

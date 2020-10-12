@@ -1,3 +1,15 @@
+2020-10-11  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        -Wdeprecated-declarations caused by WKTR using WKBundlePostSynchronousMessage
+        https://bugs.webkit.org/show_bug.cgi?id=217591
+
+        Reviewed by Darin Adler.
+
+        Use ALLOW_DEPRECATED_DECLARATIONS_BEGIN/END.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (WTR::postSynchronousMessage):
+
 2020-10-11  Darin Adler  <darin@apple.com>
 
         [macOS] Harden more build configurations against macOS versions 11 and higher as well as inclusion of patch versions
