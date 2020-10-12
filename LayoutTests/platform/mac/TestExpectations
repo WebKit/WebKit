@@ -2241,3 +2241,5 @@ webkit.org/b/217461 [ Mojave+ ] imported/w3c/web-platform-tests/css/css-masking/
 webkit.org/b/217542 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https.html [ Pass Failure ]
 
 webkit.org/b/217543 webaudio/OfflineAudioContext/onstatechange.html [ Pass Failure ]
+
+webkit.org/b/209073 [ Debug ] inspector/injected-script/avoid-getter-invocation.html [ Timeout ]
