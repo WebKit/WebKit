@@ -118,12 +118,21 @@ else:
                 stdout, stderr = process.communicate(input)
 
         except Timeout.Exception:
-            process.kill()
-            stdout, stderr = process.communicate()
+            process.terminate()
+            deadline = time.time() + .5
+            while process.poll() is None and time.time() < deadline:
+                time.sleep(.1)
+            if process.poll() is None:
+                process.kill()
+                stdout, stderr = '', ''
+            else:
+                stdout, stderr = process.communicate()
             raise TimeoutExpired(popenargs[0], timeout, output=decode(stdout), stderr=decode(stderr))
+
         except BaseException:
             process.kill()
             raise
+
         finally:
             process.wait()
 

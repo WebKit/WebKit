@@ -1,3 +1,15 @@
+2020-10-12  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Attempt to terminate stuck processes before killing them
+        https://bugs.webkit.org/show_bug.cgi?id=217632
+        <rdar://problem/70222803>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/subprocess_utils.py:
+        (run): Killed processes will sometimes not have stdout or stderr, while terminated processes often will.
+
 2020-10-12  Luming Yin  <luming_yin@apple.com>
 
         [macOS] Workaround for MAC_OS_X_VERSION_MAJOR incorrectly including minor version when building 
