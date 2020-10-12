@@ -1,3 +1,12 @@
+2020-10-12  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS iOS ] 2 imported/w3c/web-platform-tests/service-workers/service-worker/* tests are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=217617
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2020-10-12  Youenn Fablet  <youenn@apple.com>
 
         [ iOS ] 2 mediacapture-record tests are a constant failure
