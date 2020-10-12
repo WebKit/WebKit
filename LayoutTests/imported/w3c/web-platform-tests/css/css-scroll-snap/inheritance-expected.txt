@@ -36,5 +36,5 @@ PASS Property scroll-snap-align does not inherit
 FAIL Property scroll-snap-stop has initial value normal assert_true: scroll-snap-stop doesn't seem to be supported in the computed style expected true got false
 FAIL Property scroll-snap-stop does not inherit assert_true: expected true got false
 PASS Property scroll-snap-type has initial value none
-FAIL Property scroll-snap-type does not inherit assert_equals: expected "inline" but got "inline proximity"
+PASS Property scroll-snap-type does not inherit
 

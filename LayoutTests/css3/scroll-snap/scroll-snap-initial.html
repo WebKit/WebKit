@@ -159,7 +159,7 @@
 
         var noInitial = document.getElementById('noInitial');
         shouldBeEmptyString("noInitial.style['scroll-snap-type']");
-        shouldBeEqualToString("window.getComputedStyle(noInitial).getPropertyValue('scroll-snap-type')", "both proximity");
+        shouldBeEqualToString("window.getComputedStyle(noInitial).getPropertyValue('scroll-snap-type')", "both");
         shouldBeEmptyString("noInitial.style['scroll-padding']");
         shouldBeEqualToString("window.getComputedStyle(noInitial).getPropertyValue('scroll-padding')", "20px");
         shouldBeEmptyString("noInitial.style['scroll-snap-margin']");
@@ -179,7 +179,7 @@
 
         var initialPadding = document.getElementById('initialPadding');
         shouldBeEmptyString("initialPadding.style['scroll-snap-type']");
-        shouldBeEqualToString("window.getComputedStyle(initialPadding).getPropertyValue('scroll-snap-type')", "both proximity");
+        shouldBeEqualToString("window.getComputedStyle(initialPadding).getPropertyValue('scroll-snap-type')", "both");
         shouldBeEqualToString("initialPadding.style['scroll-padding']", "initial");
         shouldBeEqualToString("window.getComputedStyle(initialPadding).getPropertyValue('scroll-padding')", "0px");
         shouldBeEmptyString("initialPadding.style['scroll-snap-margin']");
@@ -189,7 +189,7 @@
 
         var initialMargin = document.getElementById('initialMargin');
         shouldBeEmptyString("initialMargin.style['scroll-snap-type']");
-        shouldBeEqualToString("window.getComputedStyle(initialMargin).getPropertyValue('scroll-snap-type')", "both proximity");
+        shouldBeEqualToString("window.getComputedStyle(initialMargin).getPropertyValue('scroll-snap-type')", "both");
         shouldBeEmptyString("initialMargin.style['scroll-padding']");
         shouldBeEqualToString("window.getComputedStyle(initialMargin).getPropertyValue('scroll-padding')", "20px");
         shouldBeEqualToString("initialMargin.style['scroll-snap-margin']", "initial");
@@ -199,7 +199,7 @@
 
         var initialAlign = document.getElementById('initialAlign');
         shouldBeEmptyString("initialAlign.style['scroll-snap-type']");
-        shouldBeEqualToString("window.getComputedStyle(initialAlign).getPropertyValue('scroll-snap-type')", "both proximity");
+        shouldBeEqualToString("window.getComputedStyle(initialAlign).getPropertyValue('scroll-snap-type')", "both");
         shouldBeEmptyString("initialAlign.style['scroll-padding']");
         shouldBeEqualToString("window.getComputedStyle(initialAlign).getPropertyValue('scroll-padding')", "20px");
         shouldBeEmptyString("initialAlign.style['scroll-snap-margin']");

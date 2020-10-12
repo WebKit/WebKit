@@ -1,10 +1,10 @@
 
 PASS Property scroll-snap-type value 'none'
-FAIL Property scroll-snap-type value 'x' assert_equals: expected "x" but got "x proximity"
-FAIL Property scroll-snap-type value 'y' assert_equals: expected "y" but got "y proximity"
-FAIL Property scroll-snap-type value 'block' assert_equals: expected "block" but got "block proximity"
-FAIL Property scroll-snap-type value 'inline' assert_equals: expected "inline" but got "inline proximity"
-FAIL Property scroll-snap-type value 'both' assert_equals: expected "both" but got "both proximity"
+PASS Property scroll-snap-type value 'x'
+PASS Property scroll-snap-type value 'y'
+PASS Property scroll-snap-type value 'block'
+PASS Property scroll-snap-type value 'inline'
+PASS Property scroll-snap-type value 'both'
 PASS Property scroll-snap-type value 'y mandatory'
-FAIL Property scroll-snap-type value 'inline proximity' assert_equals: expected "inline" but got "inline proximity"
+PASS Property scroll-snap-type value 'inline proximity'
 

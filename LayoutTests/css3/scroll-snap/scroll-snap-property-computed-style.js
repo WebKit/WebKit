@@ -30,7 +30,7 @@ testComputedScrollSnapRule("axis following strictness", "scroll-snap-type", "man
 // Valid declarations
 testComputedScrollSnapRule("initial value", "scroll-snap-type", "initial", "none");
 testComputedScrollSnapRule("only strictness", "scroll-snap-type", "mandatory", "both mandatory");
-testComputedScrollSnapRule("only axis", "scroll-snap-type", "both", "both proximity");
+testComputedScrollSnapRule("only axis", "scroll-snap-type", "both", "both");
 testComputedScrollSnapRule("none", "scroll-snap-type", "none", "none");
 testComputedScrollSnapRule("strictness following axis", "scroll-snap-type", "inline mandatory", "inline mandatory");
 

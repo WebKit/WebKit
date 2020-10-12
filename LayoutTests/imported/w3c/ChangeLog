@@ -1,3 +1,15 @@
+2020-10-12  Martin Robinson  <mrobinson@igalia.com>
+
+        Improve serialization of scroll-snap-type
+        https://bugs.webkit.org/show_bug.cgi?id=217469
+
+        Reviewed by Simon Fraser.
+
+        Improve serialization of scroll-snap-type
+
+        * web-platform-tests/css/css-scroll-snap/inheritance-expected.txt: Tests now passing.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-type-computed-expected.txt: Ditto.
+
 2020-10-10  Darin Adler  <darin@apple.com>
 
         replaceChildren() (with no arguments) silently does nothing rather than removing the children

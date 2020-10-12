@@ -1,3 +1,20 @@
+2020-10-12  Martin Robinson  <mrobinson@igalia.com>
+
+        Improve serialization of scroll-snap-type
+        https://bugs.webkit.org/show_bug.cgi?id=217469
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-scroll-snap/inheritance-expected.txt: Tests now passing.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-type-computed-expected.txt: Ditto.
+        * css3/scroll-snap/scroll-snap-inherit-expected.txt: Update test to reflect new serialization.
+        * css3/scroll-snap/scroll-snap-inherit.html: Ditto.
+        * css3/scroll-snap/scroll-snap-initial-expected.txt: Ditto.
+        * css3/scroll-snap/scroll-snap-initial.html: Ditto.
+        * css3/scroll-snap/scroll-snap-property-computed-style-expected.txt: Ditto.
+        * css3/scroll-snap/scroll-snap-property-computed-style.js: Ditto.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-then-proximity-expected.txt: Ditto.
+
 2020-10-11  Rob Buis  <rbuis@igalia.com>
 
         Various test-cases from Gecko assert with ASSERTION FAILED: tagName == mmultiscriptsTag or ASSERTION FAILED: tagName == mrootTag

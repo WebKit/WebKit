@@ -1104,7 +1104,8 @@ static Ref<CSSValueList> valueForScrollSnapType(const ScrollSnapType& type)
         value->append(CSSValuePool::singleton().createValue(CSSValueNone));
     else {
         value->append(CSSPrimitiveValue::create(type.axis));
-        value->append(CSSPrimitiveValue::create(type.strictness));
+        if (type.strictness != ScrollSnapStrictness::Proximity)
+            value->append(CSSPrimitiveValue::create(type.strictness));
     }
     return value;
 }

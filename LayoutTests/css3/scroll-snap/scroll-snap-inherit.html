@@ -179,7 +179,7 @@
 
         var inheritType = document.getElementById('inheritType');
         shouldBeEqualToString("inheritType.style['scroll-snap-type']", "inherit");
-        shouldBeEqualToString("window.getComputedStyle(inheritType).getPropertyValue('scroll-snap-type')", "x proximity");
+        shouldBeEqualToString("window.getComputedStyle(inheritType).getPropertyValue('scroll-snap-type')", "x");
         shouldBeEmptyString("inheritType.style['scroll-snap-align']");
         shouldBeEqualToString("window.getComputedStyle(inheritType).getPropertyValue('scroll-snap-align')", "center center");
         shouldBeEmptyString("inheritType.style['scroll-padding']");
@@ -255,7 +255,7 @@
 
         var inheritAll = document.getElementById('inheritAll');
         shouldBeEqualToString("inheritAll.style['scroll-snap-type']", "inherit");
-        shouldBeEqualToString("window.getComputedStyle(inheritAll).getPropertyValue('scroll-snap-type')", "x proximity");
+        shouldBeEqualToString("window.getComputedStyle(inheritAll).getPropertyValue('scroll-snap-type')", "x");
         shouldBeEqualToString("inheritAll.style['scroll-snap-align']", "inherit");
         shouldBeEqualToString("window.getComputedStyle(inheritAll).getPropertyValue('scroll-snap-align')", "start end");
         shouldBeEqualToString("inheritAll.style['scroll-padding']", "inherit");
