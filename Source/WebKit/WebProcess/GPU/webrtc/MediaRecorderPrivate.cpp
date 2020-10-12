@@ -61,13 +61,13 @@ void MediaRecorderPrivate::startRecording(StartRecordingCallback&& callback)
     if (selectedTracks.audioTrack)
         m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(this));
 
-    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { m_identifier, !!selectedTracks.audioTrack, !!selectedTracks.videoTrack, m_options }, [this, weakThis = makeWeakPtr(this), audioTrack = makeRefPtr(selectedTracks.audioTrack), videoTrack = makeRefPtr(selectedTracks.videoTrack), callback = WTFMove(callback)](auto&& exception, String&& mimeType) mutable {
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { m_identifier, !!selectedTracks.audioTrack, !!selectedTracks.videoTrack, m_options }, [this, weakThis = makeWeakPtr(this), audioTrack = makeRefPtr(selectedTracks.audioTrack), videoTrack = makeRefPtr(selectedTracks.videoTrack), callback = WTFMove(callback)](auto&& exception, String&& mimeType, unsigned audioBitRate, unsigned videoBitRate) mutable {
         if (!weakThis) {
-            callback(Exception { InvalidStateError });
+            callback(Exception { InvalidStateError }, 0, 0);
             return;
         }
         if (exception) {
-            callback(Exception { exception->code, WTFMove(exception->message) });
+            callback(Exception { exception->code, WTFMove(exception->message) }, 0, 0);
             return;
         }
         if (!m_isStopped) {
@@ -76,7 +76,7 @@ void MediaRecorderPrivate::startRecording(StartRecordingCallback&& callback)
             if (videoTrack)
                 setVideoSource(&videoTrack->source());
         }
-        callback(WTFMove(mimeType));
+        callback(WTFMove(mimeType), audioBitRate, videoBitRate);
     }, 0);
 }
 

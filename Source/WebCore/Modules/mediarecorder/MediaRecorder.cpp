@@ -103,6 +103,8 @@ MediaRecorder::MediaRecorder(Document& document, Ref<MediaStream>&& stream, Opti
     , m_stream(WTFMove(stream))
     , m_timeSliceTimer([this] { requestData(); })
 {
+    MediaRecorderPrivate::updateOptions(m_options);
+
     m_tracks = WTF::map(m_stream->getTracks(), [] (auto&& track) -> Ref<MediaStreamTrackPrivate> {
         return track->privateTrack();
     });
@@ -159,7 +161,7 @@ ExceptionOr<void> MediaRecorder::startRecording(Optional<unsigned> timeSlice)
         return result.releaseException();
 
     m_private = result.releaseReturnValue();
-    m_private->startRecording([this, pendingActivity = makePendingActivity(*this)](auto&& mimeTypeOrException) mutable {
+    m_private->startRecording([this, pendingActivity = makePendingActivity(*this)](auto&& mimeTypeOrException, unsigned audioBitsPerSecond, unsigned videoBitsPerSecond) mutable {
         if (!m_isActive)
             return;
 
@@ -173,10 +175,13 @@ ExceptionOr<void> MediaRecorder::startRecording(Optional<unsigned> timeSlice)
             return;
         }
 
-        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, mimeType = mimeTypeOrException.releaseReturnValue()]() mutable {
+        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, mimeType = mimeTypeOrException.releaseReturnValue(), audioBitsPerSecond, videoBitsPerSecond]() mutable {
             if (!m_isActive)
                 return;
             m_options.mimeType = WTFMove(mimeType);
+            m_options.audioBitsPerSecond = audioBitsPerSecond;
+            m_options.videoBitsPerSecond = videoBitsPerSecond;
+
             dispatchEvent(Event::create(eventNames().startEvent, Event::CanBubble::No, Event::IsCancelable::No));
         });
     });

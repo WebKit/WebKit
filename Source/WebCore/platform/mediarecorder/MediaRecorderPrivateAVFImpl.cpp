@@ -77,6 +77,13 @@ MediaRecorderPrivateAVFImpl::~MediaRecorderPrivateAVFImpl()
 {
 }
 
+void MediaRecorderPrivateAVFImpl::startRecording(StartRecordingCallback&& callback)
+{
+    // FIMXE: In case of of audio recording, we should wait for the audio compression to start to give back the exact bit rate.
+    // FIXME: Add support to options.bitsPerSecond as well.
+    callback(String(m_writer->mimeType()), m_writer->audioBitRate(), m_writer->videoBitRate());
+}
+
 void MediaRecorderPrivateAVFImpl::videoSampleAvailable(MediaSample& sampleBuffer)
 {
     if (shouldMuteVideo()) {

@@ -31,6 +31,7 @@
 #include "AudioSampleBufferCompressor.h"
 #include "AudioStreamDescription.h"
 #include "Logging.h"
+#include "MediaRecorderPrivate.h"
 #include "MediaRecorderPrivateOptions.h"
 #include "MediaStreamTrackPrivate.h"
 #include "VideoSampleBufferCompressor.h"
@@ -621,6 +622,16 @@ const String& MediaRecorderPrivateWriter::mimeType() const
     static NeverDestroyed<const String> videoMP4(MAKE_STATIC_STRING_IMPL("video/mp4"));
     // FIXME: we will need to support MIME type codecs parameter values.
     return m_hasVideo ? videoMP4 : audioMP4;
+}
+
+unsigned MediaRecorderPrivateWriter::audioBitRate() const
+{
+    return m_audioCompressor ? m_audioCompressor->bitRate() : 0;
+}
+
+unsigned MediaRecorderPrivateWriter::videoBitRate() const
+{
+    return m_videoCompressor ? m_videoCompressor->bitRate() : 0;
 }
 
 } // namespace WebCore

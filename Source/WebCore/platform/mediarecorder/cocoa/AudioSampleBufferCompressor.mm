@@ -527,6 +527,11 @@ RetainPtr<CMSampleBufferRef> AudioSampleBufferCompressor::takeOutputSampleBuffer
     return adoptCF((CMSampleBufferRef)(const_cast<void*>(CMBufferQueueDequeueAndRetain(m_outputBufferQueue.get()))));
 }
 
+unsigned AudioSampleBufferCompressor::bitRate() const
+{
+    return m_outputBitRate.valueOr(0);
+}
+
 }
 
 #endif // ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)

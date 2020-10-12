@@ -1,3 +1,22 @@
+2020-10-12  Youenn Fablet  <youenn@apple.com>
+
+        Add support for MediaRecorder bitrate getters
+        https://bugs.webkit.org/show_bug.cgi?id=217383
+
+        Reviewed by Eric Carlson.
+
+        Pipe up bit rates through IPC
+
+        * GPUProcess/webrtc/RemoteMediaRecorder.h:
+        (WebKit::RemoteMediaRecorder::audioBitRate const):
+        (WebKit::RemoteMediaRecorder::videoBitRate const):
+        * GPUProcess/webrtc/RemoteMediaRecorderManager.cpp:
+        (WebKit::RemoteMediaRecorderManager::createRecorder):
+        * GPUProcess/webrtc/RemoteMediaRecorderManager.h:
+        * GPUProcess/webrtc/RemoteMediaRecorderManager.messages.in:
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        (WebKit::MediaRecorderPrivate::startRecording):
+
 2020-10-12  Luming Yin  <luming_yin@apple.com>
 
         [macOS] Workaround for MAC_OS_X_VERSION_MAJOR incorrectly including minor version when building 

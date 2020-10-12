@@ -61,7 +61,7 @@ public:
 private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void createRecorder(MediaRecorderIdentifier, bool recordAudio, bool recordVideo, const WebCore::MediaRecorderPrivateOptions&, CompletionHandler<void(Optional<WebCore::ExceptionData>&&, String&&)>&&);
+    void createRecorder(MediaRecorderIdentifier, bool recordAudio, bool recordVideo, const WebCore::MediaRecorderPrivateOptions&, CompletionHandler<void(Optional<WebCore::ExceptionData>&&, String&&, unsigned, unsigned)>&&);
     void releaseRecorder(MediaRecorderIdentifier);
 
     GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;

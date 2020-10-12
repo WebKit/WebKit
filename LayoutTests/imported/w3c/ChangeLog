@@ -1,3 +1,13 @@
+2020-10-12  Youenn Fablet  <youenn@apple.com>
+
+        Add support for MediaRecorder bitrate getters
+        https://bugs.webkit.org/show_bug.cgi?id=217383
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/mediacapture-record/MediaRecorder-bitrate.https-expected.txt:
+        * web-platform-tests/mediacapture-record/idlharness.window-expected.txt:
+
 2020-10-12  Martin Robinson  <mrobinson@igalia.com>
 
         Improve serialization of scroll-snap-type

@@ -16,8 +16,8 @@ PASS MediaRecorder interface: attribute ondataavailable
 PASS MediaRecorder interface: attribute onpause
 PASS MediaRecorder interface: attribute onresume
 PASS MediaRecorder interface: attribute onerror
-FAIL MediaRecorder interface: attribute videoBitsPerSecond assert_true: The prototype object must have a property "videoBitsPerSecond" expected true got false
-FAIL MediaRecorder interface: attribute audioBitsPerSecond assert_true: The prototype object must have a property "audioBitsPerSecond" expected true got false
+PASS MediaRecorder interface: attribute videoBitsPerSecond
+PASS MediaRecorder interface: attribute audioBitsPerSecond
 FAIL MediaRecorder interface: attribute audioBitrateMode assert_true: The prototype object must have a property "audioBitrateMode" expected true got false
 PASS MediaRecorder interface: operation start(optional unsigned long)
 PASS MediaRecorder interface: operation stop()
@@ -36,8 +36,8 @@ PASS MediaRecorder interface: [object MediaRecorder] must inherit property "onda
 PASS MediaRecorder interface: [object MediaRecorder] must inherit property "onpause" with the proper type
 PASS MediaRecorder interface: [object MediaRecorder] must inherit property "onresume" with the proper type
 PASS MediaRecorder interface: [object MediaRecorder] must inherit property "onerror" with the proper type
-FAIL MediaRecorder interface: [object MediaRecorder] must inherit property "videoBitsPerSecond" with the proper type assert_inherits: property "videoBitsPerSecond" not found in prototype chain
-FAIL MediaRecorder interface: [object MediaRecorder] must inherit property "audioBitsPerSecond" with the proper type assert_inherits: property "audioBitsPerSecond" not found in prototype chain
+PASS MediaRecorder interface: [object MediaRecorder] must inherit property "videoBitsPerSecond" with the proper type
+PASS MediaRecorder interface: [object MediaRecorder] must inherit property "audioBitsPerSecond" with the proper type
 FAIL MediaRecorder interface: [object MediaRecorder] must inherit property "audioBitrateMode" with the proper type assert_inherits: property "audioBitrateMode" not found in prototype chain
 PASS MediaRecorder interface: [object MediaRecorder] must inherit property "start(optional unsigned long)" with the proper type
 PASS MediaRecorder interface: calling start(optional unsigned long) on [object MediaRecorder] with too few arguments must throw TypeError

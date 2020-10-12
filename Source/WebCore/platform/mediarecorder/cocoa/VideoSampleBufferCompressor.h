@@ -46,6 +46,8 @@ public:
     CMSampleBufferRef getOutputSampleBuffer();
     RetainPtr<CMSampleBufferRef> takeOutputSampleBuffer();
 
+    unsigned bitRate() const;
+
 private:
     explicit VideoSampleBufferCompressor(CMVideoCodecType);
 

@@ -41,8 +41,8 @@ enum RecordingState { "inactive", "recording", "paused" };
     attribute EventHandler onpause;
     attribute EventHandler onresume;
     attribute EventHandler onerror;
-    // readonly attribute unsigned long videoBitsPerSecond;
-    // readonly attribute unsigned long audioBitsPerSecond;
+    readonly attribute unsigned long videoBitsPerSecond;
+    readonly attribute unsigned long audioBitsPerSecond;
     // readonly attribute BitrateMode audioBitrateMode;
 
     [MayThrowException, ImplementedAs=startRecording] undefined start(optional unsigned long timeslice);

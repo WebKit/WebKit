@@ -184,5 +184,10 @@ RetainPtr<CMSampleBufferRef> VideoSampleBufferCompressor::takeOutputSampleBuffer
     return adoptCF((CMSampleBufferRef)(const_cast<void*>(CMBufferQueueDequeueAndRetain(m_outputBufferQueue.get()))));
 }
 
+unsigned VideoSampleBufferCompressor::bitRate() const
+{
+    return m_outputBitRate.valueOr(0);
+}
+
 }
 #endif

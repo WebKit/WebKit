@@ -32,6 +32,9 @@
 
 namespace WebCore {
 
+constexpr unsigned LargeAudioBitRate = 192000;
+constexpr unsigned LargeVideoBitRate = 10000000;
+
 MediaRecorderPrivate::AudioVideoSelectedTracks MediaRecorderPrivate::selectTracks(MediaStreamPrivate& stream)
 {
     AudioVideoSelectedTracks selectedTracks;
@@ -95,6 +98,15 @@ void MediaRecorderPrivate::resume(CompletionHandler<void()>&& completionHandler)
     setVideoSource(WTFMove(m_pausedVideoSource));
 
     resumeRecording(WTFMove(completionHandler));
+}
+
+void MediaRecorderPrivate::updateOptions(MediaRecorderPrivateOptions& options)
+{
+    // FIXME: Add support for options.bitsPerSecond.
+    if (!options.audioBitsPerSecond)
+        options.audioBitsPerSecond = LargeAudioBitRate;
+    if (!options.videoBitsPerSecond)
+        options.videoBitsPerSecond = LargeVideoBitRate;
 }
 
 } // namespace WebCore

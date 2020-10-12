@@ -79,6 +79,8 @@ public:
     void appendData(Ref<SharedBuffer>&&);
 
     const String& mimeType() const;
+    unsigned audioBitRate() const;
+    unsigned videoBitRate() const;
 
 private:
     MediaRecorderPrivateWriter(bool hasAudio, bool hasVideo);

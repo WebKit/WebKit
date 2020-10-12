@@ -45,6 +45,8 @@ class MediaStreamTrackPrivate;
 class PlatformAudioData;
 class SharedBuffer;
 
+struct MediaRecorderPrivateOptions;
+
 class MediaRecorderPrivate
     : public RealtimeMediaSource::AudioSampleObserver
     , public RealtimeMediaSource::VideoSampleObserver {
@@ -65,11 +67,13 @@ public:
     void pause(CompletionHandler<void()>&&);
     void resume(CompletionHandler<void()>&&);
 
-    using StartRecordingCallback = CompletionHandler<void(ExceptionOr<String>&&)>;
-    virtual void startRecording(StartRecordingCallback&& callback) { callback(String(mimeType())); }
+    using StartRecordingCallback = CompletionHandler<void(ExceptionOr<String>&&, unsigned, unsigned)>;
+    virtual void startRecording(StartRecordingCallback&& callback) { callback(String(mimeType()), 0, 0); }
 
     void trackMutedChanged(MediaStreamTrackPrivate& track) { checkTrackState(track); }
     void trackEnabledChanged(MediaStreamTrackPrivate& track) { checkTrackState(track); }
+
+    static void updateOptions(MediaRecorderPrivateOptions&);
 
 protected:
     void setAudioSource(RefPtr<RealtimeMediaSource>&&);

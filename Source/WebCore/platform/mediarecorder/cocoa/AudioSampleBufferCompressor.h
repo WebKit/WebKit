@@ -45,6 +45,8 @@ public:
     CMSampleBufferRef getOutputSampleBuffer();
     RetainPtr<CMSampleBufferRef> takeOutputSampleBuffer();
 
+    unsigned bitRate() const;
+
 private:
     AudioSampleBufferCompressor();
     bool initialize(CMBufferQueueTriggerCallback, void* callbackObject);
