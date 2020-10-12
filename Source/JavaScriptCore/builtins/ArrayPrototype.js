@@ -450,6 +450,7 @@ function sortBucketSort(array, dst, bucket, depth)
     }
 
     var buckets = [ ];
+    @setPrototypeDirect.@call(buckets, null);
     for (var i = 0; i < bucket.length; ++i) {
         var entry = bucket[i];
         var string = entry.string;
