@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,12 +27,12 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayBox.h"
+#include "DisplayBoxModelBox.h"
 
 namespace WebCore {
 namespace Display {
 
-class ContainerBox : public Box {
+class ContainerBox : public BoxModelBox {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ContainerBox);
 public:
     ContainerBox(AbsoluteFloatRect borderBox, Style&&);

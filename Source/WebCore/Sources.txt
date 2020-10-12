@@ -802,6 +802,7 @@ css/typedom/TypedOMCSSUnitValue.cpp
 css/typedom/TypedOMCSSUnparsedValue.cpp
 cssjit/SelectorCompiler.cpp
 display/css/DisplayBox.cpp
+display/css/DisplayBoxModelBox.cpp
 display/css/DisplayContainerBox.cpp
 display/css/DisplayCSSPainter.cpp
 display/css/DisplayImageBox.cpp

@@ -24,19 +24,26 @@
  */
 
 #include "config.h"
-#include "DisplayReplacedBox.h"
+#include "DisplayBoxModelBox.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Display {
 
-ReplacedBox::ReplacedBox(AbsoluteFloatRect borderBox, Style&& displayStyle, OptionSet<Flags> flags, AbsoluteFloatRect replacedContentRect)
-    : BoxModelBox(borderBox, WTFMove(displayStyle), flags)
-    , m_replacedContentRect(replacedContentRect)
+BoxModelBox::BoxModelBox(AbsoluteFloatRect borderBox, Style&& displayStyle, OptionSet<Flags> flags)
+    : Box(borderBox, WTFMove(displayStyle), flags | Flags::BoxModelBox)
 {
+}
+
+String BoxModelBox::debugDescription() const
+{
+    TextStream stream;
+    stream << "display box model box " << absoluteBorderBoxRect() << " (" << this << ")";
+    return stream.release();
 }
 
 } // namespace Display

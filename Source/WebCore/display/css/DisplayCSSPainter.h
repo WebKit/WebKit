@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,19 +38,20 @@ class IntRect;
 namespace Display {
 
 class Box;
+class BoxModelBox;
 class ContainerBox;
 class Tree;
 
 class CSSPainter {
 public:
-    static void paintStackingContext(const Box&, GraphicsContext&, const IntRect& dirtyRect);
+    static void paintStackingContext(const BoxModelBox&, GraphicsContext&, const IntRect& dirtyRect);
     
     static void paintTree(const Tree&, GraphicsContext&, const IntRect& dirtyRect);
 
 
 private:
     static void paintBox(const Box&, GraphicsContext&, const IntRect& dirtyRect);
-    static void paintBoxDecorations(const Box&, GraphicsContext&);
+    static void paintBoxDecorations(const BoxModelBox&, GraphicsContext&);
     static void paintBoxContent(const Box&, GraphicsContext&);
 
     enum class PaintPhase {
@@ -61,7 +62,7 @@ private:
     static void recursivePaintDescendants(const ContainerBox&, GraphicsContext&, PaintPhase);
 
     static bool isStackingContextPaintingBoundary(const Box&);
-    static void recursiveCollectLayers(const ContainerBox&, Vector<const Box*>& negativeZOrderList, Vector<const Box*>& positiveZOrderList);
+    static void recursiveCollectLayers(const ContainerBox&, Vector<const BoxModelBox*>& negativeZOrderList, Vector<const BoxModelBox*>& positiveZOrderList);
 };
 
 } // namespace Display

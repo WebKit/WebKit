@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,11 +43,11 @@
 namespace WebCore {
 namespace Display {
 
-void CSSPainter::paintBoxDecorations(const Box& displayBox, GraphicsContext& context)
+void CSSPainter::paintBoxDecorations(const BoxModelBox& displayBox, GraphicsContext& context)
 {
     // FIXME: Table decoration painting is special.
 
-    auto borderBoxRect = displayBox.borderBoxFrame();
+    auto borderBoxRect = displayBox.absoluteBorderBoxRect();
     
     const auto& style = displayBox.style();
 
@@ -125,7 +125,7 @@ void CSSPainter::paintBoxContent(const Box& box, GraphicsContext& context)
             return;
 
         auto& style = box.style();
-        auto textRect = box.borderBoxFrame();
+        auto textRect = box.absoluteBoxRect();
 
         context.setStrokeColor(style.color());
         context.setFillColor(style.color());
@@ -144,8 +144,9 @@ void CSSPainter::paintBoxContent(const Box& box, GraphicsContext& context)
 
 void CSSPainter::paintBox(const Box& box, GraphicsContext& context, const IntRect& dirtyRect)
 {
-    auto relativeRect = box.borderBoxFrame();
-    if (!dirtyRect.intersects(enclosingIntRect(relativeRect)))
+    auto absoluteRect = box.absoluteBoxRect();
+    // FIXME: Need to account for visual overflow.
+    if (!dirtyRect.intersects(enclosingIntRect(absoluteRect)))
         return;
 
     if (is<ImageBox>(box)) {
@@ -158,7 +159,9 @@ void CSSPainter::paintBox(const Box& box, GraphicsContext& context, const IntRec
             context.drawImage(*image, imageRect);
     }
 
-    paintBoxDecorations(box, context);
+    if (is<BoxModelBox>(box))
+        paintBoxDecorations(downcast<BoxModelBox>(box), context);
+
     paintBoxContent(box, context);
 }
 
@@ -172,12 +175,12 @@ void CSSPainter::recursivePaintDescendants(const ContainerBox& containerBox, Gra
 
         switch (paintPhase) {
         case PaintPhase::BlockBackgrounds:
-            if (!box.style().isFloating() && !box.style().isPositioned())
-                paintBoxDecorations(box, context);
+            if (!box.style().isFloating() && !box.style().isPositioned() && is<BoxModelBox>(box))
+                paintBoxDecorations(downcast<BoxModelBox>(box), context);
             break;
         case PaintPhase::Floats:
-            if (box.style().isFloating() && !box.style().isPositioned())
-                paintBoxDecorations(box, context);
+            if (box.style().isFloating() && !box.style().isPositioned() && is<BoxModelBox>(box))
+                paintBoxDecorations(downcast<BoxModelBox>(box), context);
             break;
         case PaintPhase::BlockForegrounds:
             if (!box.style().isFloating() && !box.style().isPositioned())
@@ -188,11 +191,10 @@ void CSSPainter::recursivePaintDescendants(const ContainerBox& containerBox, Gra
     }
 }
 
-void CSSPainter::paintStackingContext(const Box& contextRoot, GraphicsContext& context, const IntRect& dirtyRect)
+void CSSPainter::paintStackingContext(const BoxModelBox& contextRoot, GraphicsContext& context, const IntRect& dirtyRect)
 {
     UNUSED_PARAM(dirtyRect);
     
-    // Here the paintOffset represents the offset of the top left of contextRoot's borderBoxFrame relative to the root.
     paintBoxDecorations(contextRoot, context);
 
     auto paintDescendants = [&](const ContainerBox& containerBox) {
@@ -218,12 +220,12 @@ void CSSPainter::paintStackingContext(const Box& contextRoot, GraphicsContext& c
     if (is<ContainerBox>(contextRoot)) {
         auto& containerBox = downcast<ContainerBox>(contextRoot);
 
-        Vector<const Box*> negativeZOrderList;
-        Vector<const Box*> positiveZOrderList;
+        Vector<const BoxModelBox*> negativeZOrderList;
+        Vector<const BoxModelBox*> positiveZOrderList;
     
         recursiveCollectLayers(containerBox, negativeZOrderList, positiveZOrderList);
 
-        auto compareZIndex = [] (const Box* a, const Box* b) {
+        auto compareZIndex = [] (const BoxModelBox* a, const BoxModelBox* b) {
             return a->style().zIndex().valueOr(0) < b->style().zIndex().valueOr(0);
         };
 
@@ -257,16 +259,18 @@ bool CSSPainter::isStackingContextPaintingBoundary(const Box& box)
     return box.style().isStackingContext();
 }
 
-void CSSPainter::recursiveCollectLayers(const ContainerBox& containerBox, Vector<const Box*>& negativeZOrderList, Vector<const Box*>& positiveZOrderList)
+void CSSPainter::recursiveCollectLayers(const ContainerBox& containerBox, Vector<const BoxModelBox*>& negativeZOrderList, Vector<const BoxModelBox*>& positiveZOrderList)
 {
     for (const auto* child = containerBox.firstChild(); child; child = child->nextSibling()) {
-        if (child->style().participatesInZOrderSorting()) {
-            auto zIndex = child->style().zIndex().valueOr(0);
+        if (child->style().participatesInZOrderSorting() && is<BoxModelBox>(*child)) {
+            auto& childBox = downcast<BoxModelBox>(*child);
+
+            auto zIndex = childBox.style().zIndex().valueOr(0);
 
             if (zIndex < 0)
-                negativeZOrderList.append(child);
+                negativeZOrderList.append(&childBox);
             else
-                positiveZOrderList.append(child);
+                positiveZOrderList.append(&childBox);
         }
 
         if (isStackingContextPaintingBoundary(*child))

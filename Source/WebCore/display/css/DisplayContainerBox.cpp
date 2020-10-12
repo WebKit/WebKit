@@ -35,7 +35,7 @@ namespace WebCore {
 namespace Display {
 
 ContainerBox::ContainerBox(AbsoluteFloatRect borderBox, Style&& displayStyle)
-    : Box(borderBox, WTFMove(displayStyle), { Flags::ContainerBox })
+    : BoxModelBox(borderBox, WTFMove(displayStyle), { Flags::ContainerBox })
 {
 }
 
@@ -47,7 +47,7 @@ void ContainerBox::setFirstChild(std::unique_ptr<Box>&& box)
 String ContainerBox::debugDescription() const
 {
     TextStream stream;
-    stream << "container box " << borderBoxFrame() << " (" << this << ")";
+    stream << "container box " << absoluteBorderBoxRect() << " (" << this << ")";
     return stream.release();
 }
 

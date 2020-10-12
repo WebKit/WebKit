@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,8 +34,8 @@
 namespace WebCore {
 namespace Display {
 
-Box::Box(AbsoluteFloatRect borderBox, Style&& displayStyle, OptionSet<Flags> flags)
-    : m_borderBoxFrame(borderBox)
+Box::Box(AbsoluteFloatRect absoluteRect, Style&& displayStyle, OptionSet<Flags> flags)
+    : m_absoluteBoxRect(absoluteRect)
     , m_style(WTFMove(displayStyle))
     , m_flags(flags)
 {
@@ -49,7 +49,7 @@ void Box::setNextSibling(std::unique_ptr<Box>&& box)
 String Box::debugDescription() const
 {
     TextStream stream;
-    stream << "display box " << borderBoxFrame() << " (" << this << ")";
+    stream << "display box " << absoluteBoxRect() << " (" << this << ")";
     return stream.release();
 }
 

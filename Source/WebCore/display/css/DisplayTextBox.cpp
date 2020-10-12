@@ -45,7 +45,7 @@ String TextBox::debugDescription() const
 {
     TextStream stream;
 
-    stream << "text box " << borderBoxFrame() << " (" << this << ")";
+    stream << "text box " << absoluteBoxRect() << " (" << this << ")";
     if (text()) {
         auto textContent = text()->content().substring(text()->start(), text()->length());
         textContent.replaceWithLiteral('\\', "\\\\");

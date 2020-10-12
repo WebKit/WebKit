@@ -27,58 +27,27 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayStyle.h"
-#include "FloatRect.h"
-#include <wtf/IsoMalloc.h>
-#include <wtf/OptionSet.h>
+#include "DisplayBox.h"
 
 namespace WebCore {
 namespace Display {
 
-// FIXME: Make this a strong type.
-using AbsoluteFloatRect = FloatRect;
-
-class Box {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Box);
+// A box in the sense of the CSS Box Model.
+// This box can draw backgrounds and borders.
+class BoxModelBox : public Box {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BoxModelBox);
 public:
-    enum class Flags : uint8_t {
-        BoxModelBox     = 1 << 0,
-        ContainerBox    = 1 << 1,
-        ImageBox        = 1 << 2,
-        TextBox         = 1 << 3,
-    };
+    BoxModelBox(AbsoluteFloatRect borderBox, Style&&, OptionSet<Flags> = { });
+    virtual ~BoxModelBox() = default;
 
-    Box(AbsoluteFloatRect, Style&&, OptionSet<Flags> = { });
-    virtual ~Box() = default;
-
-    const Style& style() const { return m_style; }
-
-    AbsoluteFloatRect absoluteBoxRect() const { return m_absoluteBoxRect; }
-
-    bool isBoxModelBox() const { return m_flags.contains(Flags::BoxModelBox); }
-    bool isContainerBox() const { return m_flags.contains(Flags::ContainerBox); }
-    bool isImageBox() const { return m_flags.contains(Flags::ImageBox); }
-    bool isReplacedBox() const { return m_flags.contains(Flags::ImageBox); /* and other types later. */ }
-    bool isTextBox() const { return m_flags.contains(Flags::TextBox); }
-
-    const Box* nextSibling() const { return m_nextSibling.get(); }
-    void setNextSibling(std::unique_ptr<Box>&&);
+    AbsoluteFloatRect absoluteBorderBoxRect() const { return absoluteBoxRect(); }
 
     virtual String debugDescription() const;
-
-private:
-    AbsoluteFloatRect m_absoluteBoxRect;
-    Style m_style;
-    std::unique_ptr<Box> m_nextSibling;
-    OptionSet<Flags> m_flags;
 };
 
 } // namespace Display
 } // namespace WebCore
 
-#define SPECIALIZE_TYPE_TRAITS_DISPLAY_BOX(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Display::ToValueTypeName) \
-    static bool isType(const WebCore::Display::Box& box) { return box.predicate; } \
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_DISPLAY_BOX(BoxModelBox, isBoxModelBox())
 
 #endif // ENABLE(LAYOUT_FORMATTING_CONTEXT)

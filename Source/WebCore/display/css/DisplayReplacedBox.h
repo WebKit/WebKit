@@ -27,12 +27,12 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayBox.h"
+#include "DisplayBoxModelBox.h"
 
 namespace WebCore {
 namespace Display {
 
-class ReplacedBox : public Box {
+class ReplacedBox : public BoxModelBox {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ReplacedBox);
 public:
     ReplacedBox(AbsoluteFloatRect borderBox, Style&&, OptionSet<Flags>, AbsoluteFloatRect replacedContentRect);

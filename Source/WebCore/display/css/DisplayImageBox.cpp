@@ -47,7 +47,7 @@ void ImageBox::setImage(Image* image)
 String ImageBox::debugDescription() const
 {
     TextStream stream;
-    stream << "image box " << borderBoxFrame() << " (" << this << ") replaced content rect: " << replacedContentRect() << " image: " << m_image.get();
+    stream << "image box " << absoluteBorderBoxRect() << " (" << this << ") replaced content rect: " << replacedContentRect() << " image: " << m_image.get();
     return stream.release();
 }
 

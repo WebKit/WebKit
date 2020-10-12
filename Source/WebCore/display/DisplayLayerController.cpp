@@ -80,7 +80,7 @@ void LayerController::prepareForDisplay(std::unique_ptr<Display::Tree>&& display
     ASSERT(displayTree);
     m_displayTree = WTFMove(displayTree);
 
-    auto viewSize = m_displayTree->rootBox().borderBoxFrame().size();
+    auto viewSize = m_displayTree->rootBox().absoluteBorderBoxRect().size();
     // FIXME: Do overflow etc.
     auto contentSize = viewSize;
 
