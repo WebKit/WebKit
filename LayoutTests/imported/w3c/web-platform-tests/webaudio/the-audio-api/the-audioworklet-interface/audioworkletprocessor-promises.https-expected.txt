@@ -1,4 +1,3 @@
 
-FAIL test assert_true: Microtask checkpoints are performed
-                       in between render quantum expected true got false
+PASS test
 

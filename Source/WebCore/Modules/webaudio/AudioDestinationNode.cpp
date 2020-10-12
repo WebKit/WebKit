@@ -79,6 +79,12 @@ void AudioDestinationNode::render(AudioBus*, AudioBus* destinationBus, size_t nu
     // Let the context take care of any business at the start of each render quantum.
     context().handlePreRenderTasks(outputPosition);
 
+    RefPtr<AudioWorkletGlobalScope> workletGlobalScope;
+    if (auto* audioWorkletProxy = context().audioWorklet().proxy())
+        workletGlobalScope = audioWorkletProxy->workletThread().globalScope();
+    if (workletGlobalScope)
+        workletGlobalScope->handlePreRenderTasks();
+
     // This will cause the node(s) connected to us to process, which in turn will pull on their input(s),
     // all the way backwards through the rendering graph.
     AudioBus* renderedBus = input(0)->pull(destinationBus, numberOfFrames);
@@ -99,12 +105,8 @@ void AudioDestinationNode::render(AudioBus*, AudioBus* destinationBus, size_t nu
     // Advance current sample-frame.
     m_currentSampleFrame += numberOfFrames;
 
-    if (auto* audioWorkletProxy = context().audioWorklet().proxy()) {
-        // We are on the audio rendering thread, which is the AudioWorketThread since AudioWorklet is
-        // active. It is therefore safe to interact with the AudioWorkletGlobalScope directly.
-        if (auto* audioWorkletGlobalScope = audioWorkletProxy->workletThread().globalScope())
-            audioWorkletGlobalScope->setCurrentFrame(m_currentSampleFrame);
-    }
+    if (workletGlobalScope)
+        workletGlobalScope->handlePostRenderTasks(m_currentSampleFrame);
 
     setIsSilent(destinationBus->isSilent());
 

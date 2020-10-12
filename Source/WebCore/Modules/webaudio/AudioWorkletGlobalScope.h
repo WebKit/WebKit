@@ -54,7 +54,6 @@ public:
     ExceptionOr<void> registerProcessor(String&& name, Ref<JSAudioWorkletProcessorConstructor>&&);
     RefPtr<AudioWorkletProcessor> createProcessor(const String& name, TransferredMessagePort, Ref<SerializedScriptValue>&& options);
 
-    void setCurrentFrame(float currentFrame) { m_currentFrame = currentFrame; }
     size_t currentFrame() const { return m_currentFrame; }
 
     float sampleRate() const { return m_sampleRate; }
@@ -68,6 +67,9 @@ public:
 
     std::unique_ptr<AudioWorkletProcessorConstructionData> takePendingProcessorConstructionData();
 
+    void handlePreRenderTasks();
+    void handlePostRenderTasks(size_t currentFrame);
+
 private:
     AudioWorkletGlobalScope(AudioWorkletThread&, const WorkletParameters&);
 
@@ -77,6 +79,7 @@ private:
     const float m_sampleRate;
     HashMap<String, RefPtr<JSAudioWorkletProcessorConstructor>> m_processorConstructorMap;
     std::unique_ptr<AudioWorkletProcessorConstructionData> m_pendingProcessorConstructionData;
+    Optional<JSC::JSLockHolder> m_lockDuringRendering;
 };
 
 } // namespace WebCore

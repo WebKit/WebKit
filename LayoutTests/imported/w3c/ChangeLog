@@ -1,5 +1,16 @@
 2020-10-12  Chris Dumez  <cdumez@apple.com>
 
+        AudioWorkletGlobalScope should perform a microtask checkpoint after each rendering quantum
+        https://bugs.webkit.org/show_bug.cgi?id=217624
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline WPT test now that it is passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-promises.https-expected.txt:
+
+2020-10-12  Chris Dumez  <cdumez@apple.com>
+
         Calling AudioContext.resume() right after AudioContext.suspend() should not be a no-op
         https://bugs.webkit.org/show_bug.cgi?id=217628
 
