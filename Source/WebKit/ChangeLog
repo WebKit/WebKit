@@ -1,3 +1,10 @@
+2020-10-12  Andy Estes  <aestes@apple.com>
+
+        Unreviewed build fix after r268367.
+
+        * Configurations/WebKit.xcconfig: Corrected the definition of
+        WK_PDFKIT_LDFLAGS_maccatalyst.
+
 2020-10-12  Tim Horton  <timothy_horton@apple.com>
 
         Cursor window is transparent - but not hidden - when `cursor: none` is specified
