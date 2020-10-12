@@ -32,6 +32,8 @@
 #include "HTMLImageElement.h"
 #include "HTMLParserIdioms.h"
 #include "InlineElementBox.h"
+#include "LayoutIntegrationLineIterator.h"
+#include "LayoutIntegrationRunIterator.h"
 #include "LayoutRepainter.h"
 #include "RenderBlock.h"
 #include "RenderFragmentedFlow.h"
@@ -619,13 +621,14 @@ void RenderReplaced::computePreferredLogicalWidths()
 
 VisiblePosition RenderReplaced::positionForPoint(const LayoutPoint& point, const RenderFragmentContainer* fragment)
 {
-    // FIXME: This code is buggy if the replaced element is relative positioned.
-    InlineBox* box = inlineBoxWrapper();
-    const RootInlineBox* rootBox = box ? &box->root() : 0;
-    
-    LayoutUnit top = rootBox ? rootBox->selectionTop(RootInlineBox::ForHitTesting::Yes) : logicalTop();
-    LayoutUnit bottom = rootBox ? rootBox->selectionBottom() : logicalBottom();
-    
+    auto [top, bottom] = [&] {
+        if (auto run = LayoutIntegration::runFor(*this)) {
+            auto line = run.line();
+            return std::make_pair(line->selectionTopForHitTesting(), line->selectionBottom());
+        }
+        return std::make_pair(logicalTop(), logicalBottom());
+    }();
+
     LayoutUnit blockDirectionPosition = isHorizontalWritingMode() ? point.y() + y() : point.x() + x();
     LayoutUnit lineDirectionPosition = isHorizontalWritingMode() ? point.x() + x() : point.y() + y();
     
