@@ -27,6 +27,7 @@
  */
 
 [
+    ActiveDOMObject,
     Conditional=WEB_AUDIO,
     EnabledBySetting=AudioWorklet,
     Exposed=Window,

@@ -30,6 +30,7 @@
 
 #if ENABLE(WEB_AUDIO)
 
+#include "ActiveDOMObject.h"
 #include "AudioNode.h"
 #include <wtf/Lock.h>
 
@@ -39,9 +40,13 @@ class AudioParamMap;
 class AudioWorkletProcessor;
 class MessagePort;
 
+struct AudioParamDescriptor;
 struct AudioWorkletNodeOptions;
 
-class AudioWorkletNode : public AudioNode {
+template<typename> class AudioArray;
+typedef AudioArray<float> AudioFloatArray;
+
+class AudioWorkletNode : public AudioNode, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(AudioWorkletNode);
 public:
     static ExceptionOr<Ref<AudioWorkletNode>> create(JSC::JSGlobalObject&, BaseAudioContext&, String&& name, AudioWorkletNodeOptions&&);
@@ -51,21 +56,41 @@ public:
     MessagePort& port() { return m_port.get(); }
 
     void setProcessor(RefPtr<AudioWorkletProcessor>&&);
+    void initializeAudioParameters(const Vector<AudioParamDescriptor>&, const Optional<Vector<WTF::KeyValuePair<String, double>>>& paramValues);
 
 private:
     AudioWorkletNode(BaseAudioContext&, const String& name, AudioWorkletNodeOptions&&, Ref<MessagePort>&&);
 
+    enum class ProcessorError { ConstructorError, ProcessError };
+    void fireProcessorErrorOnMainThread(ProcessorError);
+    void didFinishProcessingOnRenderingThread(bool threwException);
+
     // AudioNode.
     void process(size_t framesToProcess) final;
-    double tailTime() const final { return 0; } // FIXME: Return a correct value.
+    double tailTime() const final { return m_tailTime; }
     double latencyTime() const final { return 0; }
     bool requiresTailProcessing() const final { return true; }
+    void checkNumberOfChannelsForInput(AudioNodeInput*) final;
+    void updatePullStatus() final;
+
+    // ActiveDOMObject.
+    const char* activeDOMObjectName() const final;
+    bool virtualHasPendingActivity() const final;
 
     String m_name;
     Ref<AudioParamMap> m_parameters;
     Ref<MessagePort> m_port;
-    Lock m_processorLock;
+    Lock m_processLock;
     RefPtr<AudioWorkletProcessor> m_processor; // Should only be used on the rendering thread.
+    HashMap<String, std::unique_ptr<AudioFloatArray>> m_paramValuesMap;
+
+    // Keeps the reference of AudioBus objects from AudioNodeInput and AudioNodeOutput in order
+    // to pass them to AudioWorkletProcessor.
+    Vector<RefPtr<AudioBus>> m_inputs;
+    Vector<Ref<AudioBus>> m_outputs;
+
+    double m_tailTime { std::numeric_limits<double>::infinity() };
+    bool m_wasOutputChannelCountGiven { false };
 };
 
 } // namespace WebCore

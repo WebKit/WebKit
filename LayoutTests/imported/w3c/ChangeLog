@@ -1,3 +1,28 @@
+2020-10-12  Chris Dumez  <cdumez@apple.com>
+
+        Use AudioWorkletProcessor to process audio
+        https://bugs.webkit.org/show_bug.cgi?id=217531
+
+        Reviewed by Youenn Fablet and Saam Barati.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/active-processing.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-automatic-pull.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-disconnected-input.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-onerror.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-output-channel-count.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-process-frozen-array.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-process-zero-outputs.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-promises.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/process-getter.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processor-construction-port.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/simple-input-output.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-channelmergernode-interface/active-processing.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/cors-check.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/no-cors.https-expected.txt:
+
 2020-10-12  Youenn Fablet  <youenn@apple.com>
 
         Add support for MediaRecorder bitrate getters

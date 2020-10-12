@@ -328,19 +328,19 @@ bool MessagePort::virtualHasPendingActivity() const
 
     // If we're not in the middle of asking the remote port about collectability, do so now.
     if (!m_isAskingRemoteAboutGC) {
-        RefPtr<WorkerThread> workerThread;
-        if (is<WorkerGlobalScope>(*m_scriptExecutionContext))
-            workerThread = &downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread();
+        RefPtr<WorkerOrWorkletThread> workerOrWorkletThread;
+        if (is<WorkerOrWorkletGlobalScope>(*m_scriptExecutionContext))
+            workerOrWorkletThread = downcast<WorkerOrWorkletGlobalScope>(*m_scriptExecutionContext).workerOrWorkletThread();
 
-        callOnMainThread([remoteIdentifier = m_remoteIdentifier, weakThis = makeWeakPtr(const_cast<MessagePort*>(this)), workerThread = WTFMove(workerThread)]() mutable {
-            MessagePortChannelProvider::singleton().checkRemotePortForActivity(remoteIdentifier, [weakThis = WTFMove(weakThis), workerThread = WTFMove(workerThread)](auto hasActivity) mutable {
-                if (!workerThread) {
+        callOnMainThread([remoteIdentifier = m_remoteIdentifier, weakThis = makeWeakPtr(const_cast<MessagePort*>(this)), workerOrWorkletThread = WTFMove(workerOrWorkletThread)]() mutable {
+            MessagePortChannelProvider::singleton().checkRemotePortForActivity(remoteIdentifier, [weakThis = WTFMove(weakThis), workerOrWorkletThread = WTFMove(workerOrWorkletThread)](auto hasActivity) mutable {
+                if (!workerOrWorkletThread) {
                     if (weakThis)
                         weakThis->updateActivity(hasActivity);
                     return;
                 }
 
-                workerThread->runLoop().postTaskForMode([weakThis = WTFMove(weakThis), hasActivity](auto&) mutable {
+                workerOrWorkletThread->runLoop().postTaskForMode([weakThis = WTFMove(weakThis), hasActivity](auto&) mutable {
                     if (weakThis)
                         weakThis->updateActivity(hasActivity);
                 }, WorkerRunLoop::defaultMode());

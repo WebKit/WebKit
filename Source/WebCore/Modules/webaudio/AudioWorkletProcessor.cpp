@@ -31,11 +31,79 @@
 #if ENABLE(WEB_AUDIO)
 #include "AudioWorkletProcessor.h"
 
+#include "AudioBus.h"
+#include "AudioChannel.h"
 #include "AudioWorkletGlobalScope.h"
 #include "AudioWorkletProcessorConstructionData.h"
+#include "JSCallbackData.h"
+#include "JSDOMExceptionHandling.h"
 #include "MessagePort.h"
+#include <JavaScriptCore/JSMap.h>
+#include <JavaScriptCore/JSTypedArrays.h>
+#include <wtf/GetPtr.h>
 
 namespace WebCore {
+
+using namespace JSC;
+
+static JSFloat32Array* constructJSFloat32Array(JSGlobalObject& globalObject, unsigned length, const float* data = nullptr)
+{
+    auto* jsArray = JSFloat32Array::create(&globalObject, globalObject.typedArrayStructure(TypeFloat32), length);
+    if (data)
+        memcpy(jsArray->typedVector(), data, sizeof(float) * length);
+    return jsArray;
+}
+
+static JSMap* constructJSMap(VM& vm, JSGlobalObject& globalObject, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap)
+{
+    auto* map = JSMap::create(&globalObject, vm, globalObject.mapStructure());
+    for (auto& pair : paramValuesMap)
+        map->set(&globalObject, jsStringWithCache(vm, pair.key), constructJSFloat32Array(globalObject, pair.value->size(), pair.value->data()));
+    return map;
+}
+
+enum class ShouldPopulateWithBusData : bool { No, Yes };
+static JSArray* constructFrozenJSArray(VM& vm, JSGlobalObject& globalObject, JSC::ThrowScope& scope, AudioBus* bus, ShouldPopulateWithBusData shouldPopulateWithBusData)
+{
+    unsigned numberOfChannels = bus ? bus->numberOfChannels() : 0;
+    auto* channelsData = JSArray::create(vm, globalObject.originalArrayStructureForIndexingType(ArrayWithContiguous), numberOfChannels);
+    for (unsigned j = 0; j < numberOfChannels; ++j) {
+        auto* channel = bus->channel(j);
+        channelsData->setIndexQuickly(vm, j, constructJSFloat32Array(globalObject, channel->length(), shouldPopulateWithBusData == ShouldPopulateWithBusData::Yes ? channel->data() : nullptr));
+    }
+    JSC::objectConstructorFreeze(&globalObject, channelsData);
+    EXCEPTION_ASSERT_UNUSED(scope, !scope.exception());
+    return channelsData;
+}
+
+template <typename T>
+static JSArray* constructFrozenJSArray(VM& vm, JSGlobalObject& globalObject, const Vector<T>& buses, ShouldPopulateWithBusData shouldPopulateWithBusData)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto* array = JSArray::create(vm, globalObject.originalArrayStructureForIndexingType(ArrayWithContiguous), buses.size());
+    for (unsigned i = 0; i < buses.size(); ++i)
+        array->setIndexQuickly(vm, i, constructFrozenJSArray(vm, globalObject, scope, WTF::getPtr(buses[i]), shouldPopulateWithBusData));
+    JSC::objectConstructorFreeze(&globalObject, array);
+    EXCEPTION_ASSERT(!scope.exception());
+    return array;
+}
+
+static void copyDataFromJSArrayToBuses(JSGlobalObject& globalObject, JSArray& jsArray, Vector<Ref<AudioBus>>& buses)
+{
+    // We can safely make assumptions about the structure of the JSArray since we use frozen arrays.
+    for (unsigned i = 0; i < buses.size(); ++i) {
+        auto& bus = buses[i];
+        auto* channelsArray = jsCast<JSArray*>(jsArray.getIndex(&globalObject, i));
+        for (unsigned j = 0; j < bus->numberOfChannels(); ++j) {
+            auto* channel = bus->channel(j);
+            auto* jsChannelData = jsCast<JSFloat32Array*>(channelsArray->getIndex(&globalObject, j));
+            if (jsChannelData->length() == channel->length())
+                memcpy(channel->mutableData(), jsChannelData->typedVector(), sizeof(float) * channel->length());
+            else
+                channel->zero();
+        }
+    }
+}
 
 ExceptionOr<Ref<AudioWorkletProcessor>> AudioWorkletProcessor::create(ScriptExecutionContext& context)
 {
@@ -53,6 +121,42 @@ AudioWorkletProcessor::AudioWorkletProcessor(const AudioWorkletProcessorConstruc
     , m_port(constructionData.port())
 {
     ASSERT(!isMainThread());
+}
+
+bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap, bool& threwException)
+{
+    ASSERT(m_processCallback);
+    auto& globalObject = *m_processCallback->globalObject();
+    ASSERT(globalObject.scriptExecutionContext());
+    ASSERT(globalObject.scriptExecutionContext()->isContextThread());
+
+    auto& vm = globalObject.vm();
+    JSLockHolder lock(vm);
+
+    MarkedArgumentBuffer args;
+    // FIXME: We should consider caching the JSArrays & JSMap and only update their items
+    // every time process() is called, for performance reasons.
+    args.append(constructFrozenJSArray(vm, globalObject, inputs, ShouldPopulateWithBusData::Yes));
+    auto* ouputJSArray = constructFrozenJSArray(vm, globalObject, outputs, ShouldPopulateWithBusData::No);
+    args.append(ouputJSArray);
+    args.append(constructJSMap(vm, globalObject, paramValuesMap));
+
+    NakedPtr<JSC::Exception> returnedException;
+    auto result = m_processCallback->invokeCallback(jsUndefined(), args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "process"), returnedException);
+    if (returnedException) {
+        reportException(&globalObject, returnedException);
+        threwException = true;
+        return false;
+    }
+
+    copyDataFromJSArrayToBuses(globalObject, *ouputJSArray, outputs);
+
+    return result.toBoolean(&globalObject);
+}
+
+void AudioWorkletProcessor::setProcessCallback(std::unique_ptr<JSCallbackDataStrong>&& processCallback)
+{
+    m_processCallback = WTFMove(processCallback);
 }
 
 } // namespace WebCore

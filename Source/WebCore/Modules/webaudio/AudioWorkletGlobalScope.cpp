@@ -118,7 +118,7 @@ RefPtr<AudioWorkletProcessor> AudioWorkletGlobalScope::createProcessor(const Str
         return nullptr;
 
     JSC::JSObject* jsConstructor = constructor->callbackData()->callback();
-    auto* globalObject = jsConstructor->globalObject();
+    auto* globalObject = constructor->callbackData()->globalObject();
     JSC::VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSC::JSLockHolder lock { globalObject };
@@ -136,6 +136,8 @@ RefPtr<AudioWorkletProcessor> AudioWorkletGlobalScope::createProcessor(const Str
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     auto& jsProcessor = *JSC::jsCast<JSAudioWorkletProcessor*>(object);
+    jsProcessor.wrapped().setProcessCallback(makeUnique<JSCallbackDataStrong>(&jsProcessor, globalObject));
+
     return &jsProcessor.wrapped();
 }
 

@@ -1,8 +1,9 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS # AUDIT TASK RUNNER STARTED.
-TIMEOUT Executing "check-zero-outputs" Test timed out
-NOTRUN Audit report
+PASS Executing "check-zero-outputs"
+PASS Audit report
 PASS > [check-zero-outputs]
+PASS   |outputs| has been all zeros for 1 seconds as expected. is true.
+PASS < [check-zero-outputs] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

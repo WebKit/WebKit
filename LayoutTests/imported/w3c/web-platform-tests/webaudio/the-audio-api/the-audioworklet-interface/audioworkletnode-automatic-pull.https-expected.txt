@@ -1,8 +1,10 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS # AUDIT TASK RUNNER STARTED.
-TIMEOUT Executing "setup-worklet" Test timed out
-NOTRUN Audit report
+PASS Executing "setup-worklet"
+PASS Audit report
 PASS > [setup-worklet]
+PASS   The first half of the captured buffer contains only the constant 0.5.
+PASS   The second half of the captured buffer contains only the constant 0.
+PASS < [setup-worklet] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

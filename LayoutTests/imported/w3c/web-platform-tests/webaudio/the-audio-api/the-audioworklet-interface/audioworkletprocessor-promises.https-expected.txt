@@ -1,5 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT test Test timed out
+FAIL test assert_true: Microtask checkpoints are performed
+                       in between render quantum expected true got false
 

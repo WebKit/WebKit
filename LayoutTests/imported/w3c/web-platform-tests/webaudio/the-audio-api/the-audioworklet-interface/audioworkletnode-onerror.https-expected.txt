@@ -1,9 +1,16 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS # AUDIT TASK RUNNER STARTED.
-TIMEOUT Executing "constructor-error" Test timed out
-NOTRUN Executing "process-error"
-NOTRUN Audit report
+PASS Executing "constructor-error"
+PASS Executing "process-error"
+PASS Audit report
 PASS > [constructor-error]
+PASS   onprocessorerror argument should be an ErrorEvent when
+                the constructor of AudioWorkletProcessor has an error. is true.
+PASS < [constructor-error] All assertions passed. (total 1 assertions)
+PASS > [process-error]
+PASS   onprocessorerror argument should be an ErrorEvent when
+                the process method of the AudioWorkletProcessor method
+                has an error. is true.
+PASS < [process-error] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

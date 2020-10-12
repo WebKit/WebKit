@@ -29,6 +29,7 @@
 #pragma once
 
 #if ENABLE(WEB_AUDIO)
+#include "AudioArray.h"
 #include "ExceptionOr.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
@@ -36,7 +37,9 @@
 
 namespace WebCore {
 
+class AudioBus;
 class AudioWorkletProcessorConstructionData;
+class JSCallbackDataStrong;
 class MessagePort;
 class ScriptExecutionContext;
 
@@ -48,11 +51,16 @@ public:
     const String& name() const { return m_name; }
     MessagePort& port() { return m_port.get(); }
 
+    bool process(const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap, bool& threwException);
+
+    void setProcessCallback(std::unique_ptr<JSCallbackDataStrong>&&);
+
 private:
     explicit AudioWorkletProcessor(const AudioWorkletProcessorConstructionData&);
 
     String m_name;
     Ref<MessagePort> m_port;
+    std::unique_ptr<JSCallbackDataStrong> m_processCallback;
 };
 
 } // namespace WebCore

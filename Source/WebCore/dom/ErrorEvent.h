@@ -47,6 +47,11 @@ public:
         return adoptRef(*new ErrorEvent(message, fileName, lineNumber, columnNumber, error));
     }
 
+    static Ref<ErrorEvent> create(const AtomString& type, const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber, JSC::Strong<JSC::Unknown> error)
+    {
+        return adoptRef(*new ErrorEvent(type, message, fileName, lineNumber, columnNumber, error));
+    }
+
     struct Init : EventInit {
         String message;
         String filename;
@@ -76,6 +81,7 @@ public:
     RefPtr<SerializedScriptValue> trySerializeError(JSC::JSGlobalObject&);
 
 private:
+    ErrorEvent(const AtomString& type, const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber, JSC::Strong<JSC::Unknown> error);
     ErrorEvent(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber, JSC::Strong<JSC::Unknown> error);
     ErrorEvent(const AtomString&, const Init&, IsTrusted);
 
