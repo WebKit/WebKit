@@ -34,20 +34,20 @@
 namespace WebKit {
 using namespace WebCore;
 
-RemoteImageBufferMessageHandlerProxy::RemoteImageBufferMessageHandlerProxy(RemoteRenderingBackendProxy& remoteRenderingBackendProxy, ImageBufferIdentifier imageBufferIdentifier)
+RemoteImageBufferMessageHandlerProxy::RemoteImageBufferMessageHandlerProxy(RemoteRenderingBackendProxy& remoteRenderingBackendProxy, WebCore::RemoteResourceIdentifier remoteResourceIdentifier)
     : m_remoteRenderingBackendProxy(remoteRenderingBackendProxy)
-    , m_imageBufferIdentifier(imageBufferIdentifier)
+    , m_remoteResourceIdentifier(remoteResourceIdentifier)
 {
 }
 
 void RemoteImageBufferMessageHandlerProxy::createBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, ImageBufferBackendHandle handle)
 {
-    m_remoteRenderingBackendProxy.send(Messages::RemoteRenderingBackend::CreateImageBufferBackend(logicalSize, backendSize, resolutionScale, colorSpace, WTFMove(handle), m_imageBufferIdentifier), m_remoteRenderingBackendProxy.renderingBackendIdentifier());
+    m_remoteRenderingBackendProxy.send(Messages::RemoteRenderingBackend::CreateImageBufferBackend(logicalSize, backendSize, resolutionScale, colorSpace, WTFMove(handle), m_remoteResourceIdentifier), m_remoteRenderingBackendProxy.renderingBackendIdentifier());
 }
 
 void RemoteImageBufferMessageHandlerProxy::commitFlushContext(ImageBufferFlushIdentifier flushIdentifier)
 {
-    m_remoteRenderingBackendProxy.send(Messages::RemoteRenderingBackend::CommitImageBufferFlushContext(flushIdentifier, m_imageBufferIdentifier), m_remoteRenderingBackendProxy.renderingBackendIdentifier());
+    m_remoteRenderingBackendProxy.send(Messages::RemoteRenderingBackend::CommitImageBufferFlushContext(flushIdentifier, m_remoteResourceIdentifier), m_remoteRenderingBackendProxy.renderingBackendIdentifier());
 }
 
 } // namespace WebKit

@@ -29,11 +29,11 @@
 
 #include <wtf/ObjectIdentifier.h>
 
-namespace WebKit {
+namespace WebCore {
 
-enum ImageBufferIdentifierType { };
-using ImageBufferIdentifier = ObjectIdentifier<ImageBufferIdentifierType>;
+enum RemoteResourceIdentifierType { };
+using RemoteResourceIdentifier = ObjectIdentifier<RemoteResourceIdentifierType>;
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // ENABLE(GPU_PROCESS)

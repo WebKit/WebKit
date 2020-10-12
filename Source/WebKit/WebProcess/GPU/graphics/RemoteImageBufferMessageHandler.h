@@ -29,10 +29,10 @@
 
 #include "ImageBufferBackendHandle.h"
 #include "ImageBufferFlushIdentifier.h"
-#include "ImageBufferIdentifier.h"
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DisplayList.h>
 #include <WebCore/FloatSize.h>
+#include <WebCore/RemoteResourceIdentifier.h>
 #include <WebCore/RenderingMode.h>
 
 namespace WebCore {
@@ -48,7 +48,7 @@ class RemoteImageBufferMessageHandler {
 public:
     virtual ~RemoteImageBufferMessageHandler();
 
-    ImageBufferIdentifier imageBufferIdentifier() const { return m_imageBufferIdentifier; }
+    WebCore::RemoteResourceIdentifier remoteResourceIdentifier() const { return m_remoteResourceIdentifier; }
 
     // Messages to be received. See RemoteRenderingBackend.messages.in.
     virtual void createBackend(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle) = 0;
@@ -72,7 +72,7 @@ protected:
 
 private:
     WeakPtr<RemoteRenderingBackend> m_remoteRenderingBackend;
-    ImageBufferIdentifier m_imageBufferIdentifier { ImageBufferIdentifier::generate() };
+    WebCore::RemoteResourceIdentifier m_remoteResourceIdentifier { WebCore::RemoteResourceIdentifier::generate() };
 
     ImageBufferFlushIdentifier m_sentFlushIdentifier;
     ImageBufferFlushIdentifier m_receivedFlushIdentifier;

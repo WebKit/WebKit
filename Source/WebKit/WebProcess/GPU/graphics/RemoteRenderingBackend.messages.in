@@ -23,8 +23,8 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteRenderingBackend NotRefCounted {
-    void CreateImageBufferBackend(WebCore::FloatSize logicalSize, WebCore::IntSize backendSize, float resolutionScale, WebCore::ColorSpace colorSpace, WebKit::ImageBufferBackendHandle handle, WebKit::ImageBufferIdentifier imageBufferIdentifier)
-    void CommitImageBufferFlushContext(WebKit::ImageBufferFlushIdentifier flushIdentifier, WebKit::ImageBufferIdentifier imageBufferIdentifier)
+    void CreateImageBufferBackend(WebCore::FloatSize logicalSize, WebCore::IntSize backendSize, float resolutionScale, WebCore::ColorSpace colorSpace, WebKit::ImageBufferBackendHandle handle, WebCore::RemoteResourceIdentifier remoteResourceIdentifier)
+    void CommitImageBufferFlushContext(WebKit::ImageBufferFlushIdentifier flushIdentifier, WebCore::RemoteResourceIdentifier remoteResourceIdentifier)
 }
 
 #endif // ENABLE(GPU_PROCESS)

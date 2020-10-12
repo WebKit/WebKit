@@ -90,35 +90,35 @@ std::unique_ptr<ImageBuffer> RemoteRenderingBackend::createImageBuffer(const Flo
 {
     if (shouldAccelerate == ShouldAccelerate::Yes) {
         if (auto imageBuffer = AcceleratedRemoteImageBuffer::create(size, RenderingMode::RemoteAccelerated, resolutionScale, colorSpace, *this)) {
-            m_imageBufferMessageHandlerMap.add(imageBuffer->imageBufferIdentifier(), imageBuffer.get());
+            m_imageBufferMessageHandlerMap.add(imageBuffer->remoteResourceIdentifier(), imageBuffer.get());
             return imageBuffer;
         }
     }
 
     if (auto imageBuffer = UnacceleratedRemoteImageBuffer::create(size, RenderingMode::RemoteUnaccelerated, resolutionScale, colorSpace, *this)) {
-        m_imageBufferMessageHandlerMap.add(imageBuffer->imageBufferIdentifier(), imageBuffer.get());
+        m_imageBufferMessageHandlerMap.add(imageBuffer->remoteResourceIdentifier(), imageBuffer.get());
         return imageBuffer;
     }
 
     return nullptr;
 }
 
-void RemoteRenderingBackend::releaseImageBuffer(ImageBufferIdentifier imageBufferIdentifier)
+void RemoteRenderingBackend::releaseRemoteResource(RemoteResourceIdentifier remoteResourceIdentifier)
 {
     // CreateImageBuffer message should have been received before this one.
-    bool found = m_imageBufferMessageHandlerMap.remove(imageBufferIdentifier);
+    bool found = m_imageBufferMessageHandlerMap.remove(remoteResourceIdentifier);
     ASSERT_UNUSED(found, found);
 }
 
-void RemoteRenderingBackend::createImageBufferBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, ImageBufferBackendHandle handle, ImageBufferIdentifier imageBufferIdentifier)
+void RemoteRenderingBackend::createImageBufferBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, ImageBufferBackendHandle handle, RemoteResourceIdentifier remoteResourceIdentifier)
 {
-    if (auto imageBuffer = m_imageBufferMessageHandlerMap.get(imageBufferIdentifier))
+    if (auto imageBuffer = m_imageBufferMessageHandlerMap.get(remoteResourceIdentifier))
         imageBuffer->createBackend(logicalSize, backendSize, resolutionScale, colorSpace, WTFMove(handle));
 }
 
-void RemoteRenderingBackend::commitImageBufferFlushContext(ImageBufferFlushIdentifier flushIdentifier, ImageBufferIdentifier imageBufferIdentifier)
+void RemoteRenderingBackend::commitImageBufferFlushContext(ImageBufferFlushIdentifier flushIdentifier, RemoteResourceIdentifier remoteResourceIdentifier)
 {
-    if (auto imageBuffer = m_imageBufferMessageHandlerMap.get(imageBufferIdentifier))
+    if (auto imageBuffer = m_imageBufferMessageHandlerMap.get(remoteResourceIdentifier))
         imageBuffer->commitFlushContext(flushIdentifier);
 }
 

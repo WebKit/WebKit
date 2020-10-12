@@ -23,11 +23,11 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteRenderingBackendProxy NotRefCounted {
-    void CreateImageBuffer(WebCore::FloatSize logicalSize, WebCore::RenderingMode renderingMode, float resolutionScale, WebCore::ColorSpace colorSpace, WebKit::ImageBufferIdentifier imageBufferIdentifier)
-    void ReleaseImageBuffer(WebKit::ImageBufferIdentifier imageBufferIdentifier)
-    void FlushImageBufferDrawingContext(WebCore::DisplayList::DisplayList displayList, WebKit::ImageBufferIdentifier imageBufferIdentifier)
-    void FlushImageBufferDrawingContextAndCommit(WebCore::DisplayList::DisplayList displayList, WebKit::ImageBufferFlushIdentifier flushIdentifier, WebKit::ImageBufferIdentifier imageBufferIdentifier)
-    GetImageData(enum:uint8_t WebCore::AlphaPremultiplication outputFormat, WebCore::IntRect srcRect, WebKit::ImageBufferIdentifier imageBufferIdentifier) -> (IPC::ImageDataReference imageData) Synchronous
+    void CreateImageBuffer(WebCore::FloatSize logicalSize, WebCore::RenderingMode renderingMode, float resolutionScale, WebCore::ColorSpace colorSpace, WebCore::RemoteResourceIdentifier remoteResourceIdentifier)
+    void FlushImageBufferDrawingContext(WebCore::DisplayList::DisplayList displayList, WebCore::RemoteResourceIdentifier remoteResourceIdentifier)
+    void FlushImageBufferDrawingContextAndCommit(WebCore::DisplayList::DisplayList displayList, WebKit::ImageBufferFlushIdentifier flushIdentifier, WebCore::RemoteResourceIdentifier remoteResourceIdentifier)
+    GetImageData(enum:uint8_t WebCore::AlphaPremultiplication outputFormat, WebCore::IntRect srcRect, WebCore::RemoteResourceIdentifier remoteResourceIdentifier) -> (IPC::ImageDataReference imageData) Synchronous
+    void ReleaseRemoteResource(WebCore::RemoteResourceIdentifier remoteResourceIdentifier)
 }
 
 #endif // ENABLE(GPU_PROCESS)

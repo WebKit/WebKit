@@ -1,3 +1,51 @@
+2020-10-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [GPU Process]: Replace "ImageBufferIdentifier" by a generic identifier named "RemoteResourceIdentifier"
+        https://bugs.webkit.org/show_bug.cgi?id=217550
+
+        Reviewed by Simon Fraser.
+
+        GPU Process needs a universal identifier for drawing cached resources and 
+        drawing buffers and layers. The meaning of RemoteResourceIdentifier will
+        depend on the context it is used in.
+
+        * GPUProcess/graphics/RemoteImageBufferMessageHandlerProxy.cpp:
+        (WebKit::RemoteImageBufferMessageHandlerProxy::RemoteImageBufferMessageHandlerProxy):
+        (WebKit::RemoteImageBufferMessageHandlerProxy::createBackend):
+        (WebKit::RemoteImageBufferMessageHandlerProxy::commitFlushContext):
+        * GPUProcess/graphics/RemoteImageBufferMessageHandlerProxy.h:
+        * GPUProcess/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::create):
+        (WebKit::RemoteImageBufferProxy::RemoteImageBufferProxy):
+        * GPUProcess/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::createImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::releaseRemoteResource):
+        (WebKit::RemoteRenderingBackendProxy::getImageData):
+        (WebKit::RemoteRenderingBackendProxy::flushImageBufferDrawingContext):
+        (WebKit::RemoteRenderingBackendProxy::flushImageBufferDrawingContextAndCommit):
+        (WebKit::RemoteRenderingBackendProxy::releaseImageBuffer): Deleted.
+        * GPUProcess/graphics/RemoteRenderingBackendProxy.h:
+        * GPUProcess/graphics/RemoteRenderingBackendProxy.messages.in:
+        * Scripts/webkit/messages.py:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/RemoteImageBufferMessageHandler.cpp:
+        (WebKit::RemoteImageBufferMessageHandler::RemoteImageBufferMessageHandler):
+        (WebKit::RemoteImageBufferMessageHandler::~RemoteImageBufferMessageHandler):
+        (WebKit::RemoteImageBufferMessageHandler::getImageData const):
+        (WebKit::RemoteImageBufferMessageHandler::flushDrawingContext):
+        (WebKit::RemoteImageBufferMessageHandler::flushDrawingContextAndWaitCommit):
+        * WebProcess/GPU/graphics/RemoteImageBufferMessageHandler.h:
+        (WebKit::RemoteImageBufferMessageHandler::remoteResourceIdentifier const):
+        (WebKit::RemoteImageBufferMessageHandler::imageBufferIdentifier const): Deleted.
+        * WebProcess/GPU/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::createImageBuffer):
+        (WebKit::RemoteRenderingBackend::releaseRemoteResource):
+        (WebKit::RemoteRenderingBackend::createImageBufferBackend):
+        (WebKit::RemoteRenderingBackend::commitImageBufferFlushContext):
+        (WebKit::RemoteRenderingBackend::releaseImageBuffer): Deleted.
+        * WebProcess/GPU/graphics/RemoteRenderingBackend.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackend.messages.in:
+
 2020-10-12  Luming Yin  <luming_yin@apple.com>
 
         [macOS] Workaround for MAC_OS_X_VERSION_MAJOR incorrectly including minor version when building 

@@ -29,7 +29,6 @@
 
 #include "ImageBufferBackendHandle.h"
 #include "ImageBufferFlushIdentifier.h"
-#include "ImageBufferIdentifier.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "RemoteImageBufferMessageHandler.h"
@@ -37,6 +36,7 @@
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DisplayList.h>
 #include <WebCore/FloatSize.h>
+#include <WebCore/RemoteResourceIdentifier.h>
 #include <WebCore/RenderingMode.h>
 #include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
@@ -62,7 +62,7 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     std::unique_ptr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::ShouldAccelerate, float resolutionScale, WebCore::ColorSpace);
-    void releaseImageBuffer(ImageBufferIdentifier);
+    void releaseRemoteResource(WebCore::RemoteResourceIdentifier);
 
     bool waitForCreateImageBufferBackend();
     bool waitForCommitImageBufferFlushContext();
@@ -71,10 +71,10 @@ private:
     RemoteRenderingBackend();
 
     // Messages to be received.
-    void createImageBufferBackend(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle, ImageBufferIdentifier);
-    void commitImageBufferFlushContext(ImageBufferFlushIdentifier, ImageBufferIdentifier);
+    void createImageBufferBackend(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle, WebCore::RemoteResourceIdentifier);
+    void commitImageBufferFlushContext(ImageBufferFlushIdentifier, WebCore::RemoteResourceIdentifier);
 
-    using ImageBufferMessageHandlerMap = HashMap<ImageBufferIdentifier, RemoteImageBufferMessageHandler*>;
+    using ImageBufferMessageHandlerMap = HashMap<WebCore::RemoteResourceIdentifier, RemoteImageBufferMessageHandler*>;
     ImageBufferMessageHandlerMap m_imageBufferMessageHandlerMap;
     RenderingBackendIdentifier m_renderingBackendIdentifier { RenderingBackendIdentifier::generate() };
 };

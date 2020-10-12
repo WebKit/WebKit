@@ -29,10 +29,10 @@
 
 #include "ImageBufferBackendHandle.h"
 #include "ImageBufferFlushIdentifier.h"
-#include "ImageBufferIdentifier.h"
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DisplayList.h>
 #include <WebCore/FloatSize.h>
+#include <WebCore/RemoteResourceIdentifier.h>
 
 namespace WebCore {
 enum class AlphaPremultiplication : uint8_t;
@@ -53,7 +53,7 @@ public:
     virtual RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect) const = 0;
 
 protected:
-    RemoteImageBufferMessageHandlerProxy(RemoteRenderingBackendProxy&, ImageBufferIdentifier);
+    RemoteImageBufferMessageHandlerProxy(RemoteRenderingBackendProxy&, WebCore::RemoteResourceIdentifier);
 
     // Messages to be sent. See RemoteRenderingBackend.messages.in.
     void createBackend(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle);
@@ -63,7 +63,7 @@ protected:
 
 private:
     RemoteRenderingBackendProxy& m_remoteRenderingBackendProxy;
-    ImageBufferIdentifier m_imageBufferIdentifier;
+    WebCore::RemoteResourceIdentifier m_remoteResourceIdentifier;
 };
 
 } // namespace WebKit

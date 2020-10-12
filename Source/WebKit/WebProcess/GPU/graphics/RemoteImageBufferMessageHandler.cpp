@@ -40,7 +40,7 @@ RemoteImageBufferMessageHandler::RemoteImageBufferMessageHandler(const FloatSize
     : m_remoteRenderingBackend(makeWeakPtr(remoteRenderingBackend))
 {
     // Create the RemoteImageBufferProxy.
-    m_remoteRenderingBackend->send(Messages::RemoteRenderingBackendProxy::CreateImageBuffer(size, renderingMode, resolutionScale, colorSpace, m_imageBufferIdentifier), m_remoteRenderingBackend->renderingBackendIdentifier());
+    m_remoteRenderingBackend->send(Messages::RemoteRenderingBackendProxy::CreateImageBuffer(size, renderingMode, resolutionScale, colorSpace, m_remoteResourceIdentifier), m_remoteRenderingBackend->renderingBackendIdentifier());
 }
 
 RemoteImageBufferMessageHandler::~RemoteImageBufferMessageHandler()
@@ -48,13 +48,13 @@ RemoteImageBufferMessageHandler::~RemoteImageBufferMessageHandler()
     // Release the RemoteImageBufferProxy.
     if (!m_remoteRenderingBackend)
         return;
-    m_remoteRenderingBackend->send(Messages::RemoteRenderingBackendProxy::ReleaseImageBuffer(m_imageBufferIdentifier), m_remoteRenderingBackend->renderingBackendIdentifier());
+    m_remoteRenderingBackend->send(Messages::RemoteRenderingBackendProxy::ReleaseRemoteResource(m_remoteResourceIdentifier), m_remoteRenderingBackend->renderingBackendIdentifier());
 }
 
 RefPtr<ImageData> RemoteImageBufferMessageHandler::getImageData(AlphaPremultiplication outputFormat, const IntRect& srcRect) const
 {
     IPC::ImageDataReference imageDataReference;
-    m_remoteRenderingBackend->sendSync(Messages::RemoteRenderingBackendProxy::GetImageData(outputFormat, srcRect, m_imageBufferIdentifier), Messages::RemoteRenderingBackendProxy::GetImageData::Reply(imageDataReference), m_remoteRenderingBackend->renderingBackendIdentifier(), 1_s);
+    m_remoteRenderingBackend->sendSync(Messages::RemoteRenderingBackendProxy::GetImageData(outputFormat, srcRect, m_remoteResourceIdentifier), Messages::RemoteRenderingBackendProxy::GetImageData::Reply(imageDataReference), m_remoteRenderingBackend->renderingBackendIdentifier(), 1_s);
     return imageDataReference.buffer();
 }
 
@@ -75,7 +75,7 @@ void RemoteImageBufferMessageHandler::flushDrawingContext(WebCore::DisplayList::
     if (!m_remoteRenderingBackend)
         return;
     
-    m_remoteRenderingBackend->send(Messages::RemoteRenderingBackendProxy::FlushImageBufferDrawingContext(displayList, m_imageBufferIdentifier), m_remoteRenderingBackend->renderingBackendIdentifier());
+    m_remoteRenderingBackend->send(Messages::RemoteRenderingBackendProxy::FlushImageBufferDrawingContext(displayList, m_remoteResourceIdentifier), m_remoteRenderingBackend->renderingBackendIdentifier());
     displayList.clear();
 }
 
@@ -84,7 +84,7 @@ void RemoteImageBufferMessageHandler::flushDrawingContextAndWaitCommit(WebCore::
     if (!m_remoteRenderingBackend)
         return;
     m_sentFlushIdentifier = ImageBufferFlushIdentifier::generate();
-    m_remoteRenderingBackend->send(Messages::RemoteRenderingBackendProxy::FlushImageBufferDrawingContextAndCommit(displayList, m_sentFlushIdentifier, m_imageBufferIdentifier), m_remoteRenderingBackend->renderingBackendIdentifier());
+    m_remoteRenderingBackend->send(Messages::RemoteRenderingBackendProxy::FlushImageBufferDrawingContextAndCommit(displayList, m_sentFlushIdentifier, m_remoteResourceIdentifier), m_remoteRenderingBackend->renderingBackendIdentifier());
     displayList.clear();
     waitForCommitImageBufferFlushContext();
 }
