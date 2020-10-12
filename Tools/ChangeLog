@@ -1,3 +1,19 @@
+2020-10-11  Darin Adler  <darin@apple.com>
+
+        [macOS] Harden more build configurations against macOS versions 11 and higher as well as inclusion of patch versions
+        https://bugs.webkit.org/show_bug.cgi?id=217595
+
+        Reviewed by Alexey Proskuryakov.
+
+        * ContentExtensionTester/Configurations/Base.xcconfig: Updated to same idiom used elsewhere.
+        * DumpRenderTree/mac/Configurations/Base.xcconfig: Ditto.
+        * ImageDiff/cg/Configurations/Base.xcconfig: Ditto.
+        * WebKitTestRunner/Configurations/Base.xcconfig: Ditto.
+        * lldb/lldbWebKitTester/Configurations/Base.xcconfig: Ditto.
+
+        * Scripts/webkitpy/common/config/contributors.json: Added contributor Luming Yin, an engineer who works on Safari at
+        Apple who has been contributing build fixes like these.
+
 2020-10-10  Darin Adler  <darin@apple.com>
 
         REGRESSION (r267761): editing/mac/spelling/autocorrection-contraction.html is a constant timeout on macOS wk2 Debug
