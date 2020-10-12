@@ -323,10 +323,6 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediastreamaudiosourc
 # This test is timing out due to lack of support for SharedArrayBuffer.
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-postmessage-sharedarraybuffer.https.html [ Skip ]
 
-# This test is timing out because it calls suspend() then resume() one without yielding. suspend() sets state to suspended asynchronously
-# so resume() does not know there is a pending suspend() and returns early.
-imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/process-parameters.https.html [ Skip ]
-
 # This WebAudio test is timing out, potentially due to an AudioWorklet bug.
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/no-cors.https.html [ Skip ]
 

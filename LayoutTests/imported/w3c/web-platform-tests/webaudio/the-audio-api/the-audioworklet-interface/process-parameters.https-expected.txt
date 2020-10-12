@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT 3 inputs; 0 outputs Test timed out
-NOTRUN 0 inputs; 3 outputs
+PASS 3 inputs; 0 outputs
+PASS 0 inputs; 3 outputs
 

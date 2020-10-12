@@ -18,29 +18,16 @@ function runTest() {
 
     context = new AudioContext();
 
-    var isSuspended = false;
+    shouldBeEqualToString("context.state", "suspended");
     context.suspend().then(function() {
         testPassed('context resolve callback called');
-        isSuspended = true;
+        shouldBeEqualToString("context.state", "suspended");
+        finishJSTest();
     }, function() {
         testFailed('context reject callback called');
-    });
-
-    if (isSuspended)
-        testFailed('context resolve callback called synchronously');
- 
-    var resolvePromise;
-    var promise = new Promise(function(resolve, reject) {
-        resolvePromise = resolve;
-    });
-    promise.then(function() {
-        if (isSuspended)
-            testPassed('JS promise callback called after context callback');
-        else
-            testFailed('JS promise callback called before context callback');
         finishJSTest();
     });
-    resolvePromise();
+    shouldBeEqualToString("context.state", "suspended");
 }
 
 runTest();

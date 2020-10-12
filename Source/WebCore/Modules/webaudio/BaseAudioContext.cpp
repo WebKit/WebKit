@@ -312,12 +312,10 @@ void BaseAudioContext::addReaction(State state, DOMPromiseDeferred<void>&& promi
 
 void BaseAudioContext::setState(State state)
 {
-    if (m_state == state)
-        return;
-
-    m_state = state;
-
-    queueTaskToDispatchEvent(*this, TaskSource::MediaElement, Event::create(eventNames().statechangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+    if (m_state != state) {
+        m_state = state;
+        queueTaskToDispatchEvent(*this, TaskSource::MediaElement, Event::create(eventNames().statechangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+    }
 
     size_t stateIndex = static_cast<size_t>(state);
     if (stateIndex >= m_stateReactions.size())
@@ -1192,13 +1190,8 @@ void BaseAudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
         return;
     }
 
-    m_wasSuspendedByScript = true;
-    if (m_state == State::Suspended) {
-        promise.resolve();
-        return;
-    }
-
     addReaction(State::Suspended, WTFMove(promise));
+    m_wasSuspendedByScript = true;
 
     if (!willPausePlayback())
         return;
@@ -1219,11 +1212,6 @@ void BaseAudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
 {
     if (isOfflineContext() || m_isStopScheduled) {
         promise.reject(InvalidStateError);
-        return;
-    }
-
-    if (m_state == State::Running) {
-        promise.resolve();
         return;
     }
 

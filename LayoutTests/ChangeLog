@@ -1,5 +1,19 @@
 2020-10-12  Chris Dumez  <cdumez@apple.com>
 
+        Calling AudioContext.resume() right after AudioContext.suspend() should not be a no-op
+        https://bugs.webkit.org/show_bug.cgi?id=217628
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations:
+        Unskip test that is no longer timing out.
+
+        * webaudio/audiocontext-promise-expected.txt:
+        * webaudio/audiocontext-promise.html:
+        Udpate existing layout test to reflect behavior change.
+
+2020-10-12  Chris Dumez  <cdumez@apple.com>
+
         Use AudioWorkletProcessor to process audio
         https://bugs.webkit.org/show_bug.cgi?id=217531
 

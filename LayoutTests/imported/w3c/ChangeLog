@@ -1,5 +1,16 @@
 2020-10-12  Chris Dumez  <cdumez@apple.com>
 
+        Calling AudioContext.resume() right after AudioContext.suspend() should not be a no-op
+        https://bugs.webkit.org/show_bug.cgi?id=217628
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT test that is now passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/process-parameters.https-expected.txt:
+
+2020-10-12  Chris Dumez  <cdumez@apple.com>
+
         Use AudioWorkletProcessor to process audio
         https://bugs.webkit.org/show_bug.cgi?id=217531
 
