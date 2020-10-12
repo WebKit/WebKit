@@ -1,3 +1,35 @@
+2020-10-11  Darin Adler  <darin@apple.com>
+
+        Selection API: Update some more tests to not *require* non-standard behavior
+        https://bugs.webkit.org/show_bug.cgi?id=217597
+
+        Reviewed by Anders Carlsson.
+
+        * editing/mac/selection/doubleclick-should-not-expand-across-lines-expected.txt:
+        * editing/mac/selection/doubleclick-should-not-expand-across-lines.html:
+        Updated this test and its result to not rely in getSelection() returning a selection
+        inside a textarea element. Doing that is non-standard incorrect behavior. Instead,
+        use the selectionStart, selectionEnd, and value methods on the textarea element to
+        check the same thing in a standard way.
+
+        * editing/selection/DOMSelection-DocumentType-expected.txt: Removed.
+        * editing/selection/DOMSelection-DocumentType.html: Removed.
+        * editing/selection/addRange.html: Removed.
+        * editing/selection/legal-positions-expected.txt: Removed.
+        * editing/selection/legal-positions.html: Removed.
+        * editing/selection/selection-invalid-offset-expected.txt: Removed.
+        * editing/selection/selection-invalid-offset.html: Removed.
+        * platform/gtk/editing/selection/addRange-expected.png: Removed.
+        * platform/gtk/editing/selection/addRange-expected.txt: Removed.
+        * platform/ios/editing/selection/addRange-expected.txt: Removed.
+        * platform/mac/editing/selection/addRange-expected.png: Removed.
+        * platform/mac/editing/selection/addRange-expected.txt: Removed.
+        * platform/win/editing/selection/addRange-expected.txt: Removed.
+        * platform/wincairo/editing/selection/addRange-expected.txt: Removed.
+        These test results expect and require incorrect non-standard behavior.
+        In most cases they also cover things that are tested by web-platform-tests.
+        So we don't need to keep these tests around.
+
 2020-10-12  Karl Rackler  <rackler@apple.com>
 
         REGRESSION (r268294): [ iOS wk2 ] imported/blink/fast/css/zoomed-intrinsic-width.html is a constant image failure

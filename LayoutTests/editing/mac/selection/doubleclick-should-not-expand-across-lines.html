@@ -64,7 +64,7 @@ var y = rect.top + 10;
 
 textarea.value = 'more  \n \ntext';
 doubleClickAt(x, y);
-selectionShouldBe('more');
+shouldBeEqualToString('textarea.value.substring(textarea.selectionStart, textarea.selectionEnd)', 'more');
 
 document.body.removeChild(textarea);
 
