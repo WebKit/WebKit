@@ -1,3 +1,12 @@
+2020-10-12  Darin Adler  <darin@apple.com>
+
+        Eliminate some "using namespace WebCore" cases in global scope
+        https://bugs.webkit.org/show_bug.cgi?id=217644
+
+        Reviewed by Tim Horton.
+
+        * Storage/WebStorageTrackerClient.h: Remove "using namespace WebCore".
+
 2020-10-12  Luming Yin  <luming_yin@apple.com>
 
         [macOS] Workaround for MAC_OS_X_VERSION_MAJOR incorrectly including minor version when building 

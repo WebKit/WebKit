@@ -65,9 +65,9 @@
 #include <WebCore/HTMLDataListElement.h>
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+
+using namespace WebCore;
 
 template <typename T>
 static JSObjectRef toJSArray(JSContextRef context, const Vector<T>& data, JSValueRef (*converter)(JSContextRef, const T&), JSValueRef* exception)

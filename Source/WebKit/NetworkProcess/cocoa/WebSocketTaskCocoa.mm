@@ -37,9 +37,9 @@
 #import <WebCore/WebSocketChannel.h>
 #import <wtf/BlockPtr.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+
+using namespace WebCore;
 
 WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, RetainPtr<NSURLSessionWebSocketTask>&& task)
     : m_channel(channel)

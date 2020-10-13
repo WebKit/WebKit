@@ -1,3 +1,15 @@
+2020-10-12  Darin Adler  <darin@apple.com>
+
+        Eliminate some "using namespace WebCore" cases in global scope
+        https://bugs.webkit.org/show_bug.cgi?id=217644
+
+        Reviewed by Tim Horton.
+
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.mm:
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        Move "using namespace WebCore" inside WebKit namespace.
+
 2020-10-12  Tim Horton  <timothy_horton@apple.com>
 
         Fix the macCatalyst build ("reference to 'Rect' is ambiguous")

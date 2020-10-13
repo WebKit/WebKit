@@ -26,15 +26,13 @@
 #import "StorageTrackerClient.h"
 #import <WebCore/SecurityOrigin.h>
 
-using namespace WebCore;
-
 class WebStorageTrackerClient : public WebCore::StorageTrackerClient {
 public:
     static WebStorageTrackerClient* sharedWebStorageTrackerClient();
     
     virtual ~WebStorageTrackerClient();
     void dispatchDidModifyOrigin(const String& originIdentifier) override;
-    virtual void dispatchDidModifyOrigin(SecurityOrigin*);
+    virtual void dispatchDidModifyOrigin(WebCore::SecurityOrigin*);
 
 private:
     WebStorageTrackerClient();
