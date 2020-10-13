@@ -22,6 +22,7 @@
 
 
 import re
+import six
 
 from webkitcorepy import run, decorators, TimeoutExpired
 from webkitscmpy.local import Scm
@@ -87,6 +88,11 @@ class Git(Scm):
     def default_branch(self):
         result = run([self.executable, 'rev-parse', '--abbrev-ref', 'origin/HEAD'], cwd=self.path, capture_output=True, encoding='utf-8')
         if result.returncode:
+            candidates = self.branches
+            if 'master' in candidates:
+                return 'master'
+            if 'main' in candidates:
+                return 'main'
             return None
         return '/'.join(result.stdout.rstrip().split('/')[1:])
 
@@ -250,3 +256,24 @@ class Git(Scm):
             author=Contributor.from_scm_log(log.stdout.splitlines()[1]),
             message='\n'.join(line[4:] for line in log.stdout.splitlines()[4:]),
         )
+
+    def find(self, argument):
+        if not isinstance(argument, six.string_types):
+            raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
+
+        parsed_commit = Commit.parse(argument, do_assert=False)
+        if parsed_commit:
+            return self.commit(
+                hash=parsed_commit.hash,
+                revision=parsed_commit.revision,
+                identifier=parsed_commit.identifier,
+                branch=parsed_commit.branch,
+            )
+
+        output = run(
+            [self.executable, 'rev-parse', argument],
+            cwd=self.root_path, capture_output=True, encoding='utf-8',
+        )
+        if output.returncode:
+            raise ValueError("'{}' is not an arguement recognized by git".format(argument))
+        return self.commit(hash=output.stdout.rstrip())

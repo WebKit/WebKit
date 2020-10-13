@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -20,44 +22,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitscmpy import version
-from setuptools import setup
+import os
+import webkitpy
+import sys
 
+from webkitscmpy import program
 
-def readme():
-    with open('README.md') as f:
-        return f.read()
+sys.exit(program.main(path=os.path.dirname(__file__)))
 
-
-setup(
-    name='webkitscmpy',
-    version=str(version),
-    description='Library designed to interact with git and svn repositories.',
-    long_description=readme(),
-    classifiers=[
-        'Development Status :: 1 - Planning',
-        'Intended Audience :: Developers',
-        'License :: Other/Proprietary License',
-        'Operating System :: MacOS',
-        'Natural Language :: English',
-        'Programming Language :: Python :: 3',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-    ],
-    keywords='git svn',
-    url='https://svn.webkit.org/repository/webkit/trunk/Tools/Scripts/libraries/webkitscmpy',
-    author='Jonathan Bedard',
-    author_email='jbedard@apple.com',
-    license='Modified BSD',
-    packages=[
-        'webkitscmpy',
-        'webkitscmpy.local',
-        'webkitscmpy.mocks',
-        'webkitscmpy.mocks.local',
-        'webkitscmpy.program',
-        'webkitscmpy.test',
-    ],
-    scripts=['git-webkit'],
-    install_requires=['python-dateutil', 'webkitcorepy'],
-    include_package_data=True,
-    zip_safe=False,
-)

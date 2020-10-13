@@ -37,7 +37,7 @@ from webkitscmpy import Commit, Contributor, Version
 
 
 class Svn(Scm):
-    executable = '/usr/local/bin/svn'
+    executable = '/usr/bin/svn' if os.path.exists('/usr/bin/svn') else '/usr/local/bin/svn'
     LOG_RE = re.compile(r'r(?P<revision>\d+) \| (?P<email>.*) \| (?P<date>.*)')
     CACHE_VERSION = Version(1)
 

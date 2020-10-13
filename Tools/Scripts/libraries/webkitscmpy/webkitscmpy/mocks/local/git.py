@@ -221,6 +221,13 @@ nothing to commit, working tree clean
                     stdout='origin/{}\n'.format(default_branch),
                 ),
             ), mocks.Subprocess.Route(
+                local.Git.executable, 'rev-parse', '.*',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: mocks.ProcessCompletion(
+                    returncode=0,
+                    stdout='{}\n'.format(self.find(args[2]).hash),
+                ) if self.find(args[2]) else mocks.ProcessCompletion(returncode=128)
+            ), mocks.Subprocess.Route(
                 local.Git.executable, 'log', re.compile(r'.+'), '-1',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(

@@ -1,3 +1,52 @@
+2020-10-13  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Add `git-webkit find`
+        https://bugs.webkit.org/show_bug.cgi?id=217534
+        <rdar://problem/70152431>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/git-webkit: Added.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/arguments.py:
+        (NoAction.__call__):
+        (CountAction): Create an action to increment or decrement a variable by a value.
+        (CallbackAction): Create an action which will trigger a callback when set.
+        (LoggingGroup): Create a group which allows the user to change logging behavior.
+        * Scripts/libraries/webkitscmpy/git-webkit: Added.
+        * Scripts/libraries/webkitscmpy/setup.py: Add webkitscmpy.program and git-webkit.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/commit.py:
+        (Commit): Make the 12 character hash based on a class variable.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.default_branch): Fallback to 'master' or 'main' if the remote isn't available.
+        (Git.find): Use git to match branches and tags to a hash instead of trying to do it ourselves.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/scm.py:
+        (Scm.find): Add function to convert generic string arguments to a commit, and then find that commit in
+        the repository.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn): Support a few different SVN binary paths.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py: Add rev-parse branch/tag/HEAD -> hash conversion.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program.py: Added.
+        (Command): Base class for all commands.
+        (Find):
+        (Find.parser): Configure parser for 'find' sub-program.
+        (Find.main): Given an identifier, revision, hash or branch name, find and print the matching commit from
+        (main): Entry point to git-<project> scripts.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/find_unittest.py: Added.
+        (TestFind):
+        (TestFind.test_basic_git):
+        (TestFind.test_basic_git_svn):
+        (TestFind.test_basic_svn):
+        (TestFind.test_branch_tilde):
+        (TestFind.test_identifier_git):
+        (TestFind.test_identifier_git_svn):
+        (TestFind.test_identifier_svn):
+        (TestFind.test_hash):
+        (TestFind.test_revision_svn):
+        (TestFind.test_revision_git_svn):
+        (TestFind.test_standard):
+
 2020-10-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         IPC testing JS API should expose a reply and describe the list of arguments for each message

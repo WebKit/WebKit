@@ -23,10 +23,11 @@
 
 import logging
 import re
+import six
 import sys
 
 from logging import NullHandler
-from webkitscmpy import log
+from webkitscmpy import log, Commit
 
 
 class Scm(object):
@@ -48,7 +49,7 @@ class Scm(object):
             return local.Git(path)
         if local.Svn.is_checkout(path):
             return local.Svn(path)
-        raise OSError('{} is not a known SCM type')
+        raise OSError("'{}' is not a known SCM type".format(path))
 
     def __init__(self, path, dev_branches=None, prod_branches=None):
         if not isinstance(path, str):
@@ -88,6 +89,44 @@ class Scm(object):
 
     def remote(self, name=None):
         raise NotImplementedError()
+
+    def find(self, argument):
+        if not isinstance(argument, six.string_types):
+            raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
+
+        offset = 0
+        if '~' in argument:
+            for s in argument.split('~')[1:]:
+                if s and not s.isdigit():
+                    raise ValueError("'{}' is not a valid argument to Scm.find()".format(argument))
+                offset += int(s) if s else 1
+            argument = argument.split('~')[0]
+
+        if argument == 'HEAD':
+            result = self.commit()
+
+        elif argument in self.branches:
+            result = self.commit(branch=argument)
+
+        else:
+            if offset:
+                raise ValueError("'~' offsets are not supported for revisions and identifiers")
+
+            parsed_commit = Commit.parse(argument)
+            return self.commit(
+                hash=parsed_commit.hash,
+                revision=parsed_commit.revision,
+                identifier=parsed_commit.identifier,
+                branch=parsed_commit.branch,
+            )
+
+        if not offset:
+            return result
+
+        return self.commit(
+            identifier=result.identifier - offset,
+            branch=result.branch,
+        )
 
     def commit(self, hash=None, revision=None, identifier=None, branch=None):
         raise NotImplementedError()

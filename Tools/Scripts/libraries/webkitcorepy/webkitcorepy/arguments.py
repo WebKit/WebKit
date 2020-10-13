@@ -21,6 +21,9 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import argparse
+import logging
+
+from webkitcorepy import log
 
 
 class NoAction(argparse.Action):
@@ -29,3 +32,57 @@ class NoAction(argparse.Action):
 
     def __call__(self, parser, namespace, values, option_string=None):
         setattr(namespace, self.dest, False if option_string.startswith('--no') else True)
+
+
+def CountAction(value=1):
+    class Action(argparse.Action):
+        def __init__(self, option_strings, dest, **kwargs):
+            super(Action, self).__init__(option_strings, dest, nargs=0, **kwargs)
+
+        def __call__(self, parser, namespace, values, option_string):
+            setattr(namespace, self.dest, getattr(namespace, self.dest) + value)
+
+    return Action
+
+
+def CallbackAction(action, callback=lambda namespace: None):
+    class Action(action):
+        def __call__(self, parser, namespace, values, option_strings):
+            super(Action, self).__call__(parser, namespace, values, option_strings)
+            callback(namespace)
+
+    return Action
+
+
+def LoggingGroup(parser, loggers=None, default=logging.WARNING, help='{} amount of logging'):
+    if not isinstance(parser, argparse.ArgumentParser):
+        raise ValueError('Provided parser is not a {}'.format(type(argparse.ArgumentParser)))
+
+    if not loggers:
+        loggers = [logging.getLogger(), log]
+    for logger in loggers:
+        logger.setLevel(default)
+
+    def verbose_callback(namespace):
+        verbosity = getattr(namespace, 'verbose')
+        log_level = default - verbosity * 10
+
+        setattr(namespace, 'log_level', log_level)
+
+        for logger in loggers:
+            logger.setLevel(log_level)
+
+    group = parser.add_argument_group('Logging')
+    group.add_argument(
+        '--verbose', '-v',
+        dest='verbose', default=0,
+        help=help.format('Increase'),
+        action=CallbackAction(CountAction(value=1), callback=verbose_callback),
+    )
+    group.add_argument(
+        '--quiet', '-q',
+        dest='verbose', default=0,
+        help=help.format('Decrease'),
+        action=CallbackAction(CountAction(value=-1), callback=verbose_callback),
+    )
+    return group
