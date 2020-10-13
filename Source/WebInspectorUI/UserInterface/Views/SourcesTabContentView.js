@@ -46,7 +46,7 @@ WI.SourcesTabContentView = class SourcesTabContentView extends WI.ContentBrowser
     {
         return {
             identifier: SourcesTabContentView.Type,
-            image: "Images/Sources.svg",
+            image: WI.debuggerManager.paused ? "Images/SourcesPaused.svg" : "Images/Sources.svg",
             displayName: WI.UIString("Sources", "Sources Tab Name", "Name of Sources Tab"),
         };
     }
