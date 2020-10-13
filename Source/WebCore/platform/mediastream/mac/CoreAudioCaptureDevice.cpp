@@ -80,6 +80,7 @@ CoreAudioCaptureDevice::CoreAudioCaptureDevice(uint32_t deviceID, const String& 
     : CaptureDevice(persistentID, deviceType, label, groupID)
     , m_deviceID(deviceID)
 {
+    setEnabled(isAlive());
 }
 
 Vector<AudioDeviceID> CoreAudioCaptureDevice::relatedAudioDeviceIDs(AudioDeviceID deviceID)
