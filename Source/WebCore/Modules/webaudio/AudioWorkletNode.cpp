@@ -77,8 +77,8 @@ ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject&
         return Exception { InvalidStateError, "No ScriptProcessor was registered with this name"_s };
     auto& parameterDescriptors = it->value;
 
-    if (context.isClosed() || !context.scriptExecutionContext())
-        return Exception { InvalidStateError, "Context is closed"_s };
+    if (!context.scriptExecutionContext())
+        return Exception { InvalidStateError, "Audio context's frame is detached"_s };
 
     auto messageChannel = MessageChannel::create(*context.scriptExecutionContext());
     auto nodeMessagePort = messageChannel->port1();

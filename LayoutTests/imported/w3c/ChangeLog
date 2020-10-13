@@ -1,5 +1,16 @@
 2020-10-13  Chris Dumez  <cdumez@apple.com>
 
+        It should be possible to create an AudioWorkletNode for a context that has finished rendering
+        https://bugs.webkit.org/show_bug.cgi?id=217666
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline WPT test that is now passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/suspended-context-messageport.https-expected.txt:
+
+2020-10-13  Chris Dumez  <cdumez@apple.com>
+
         'parameters' argument to AudioWorkletProcessor.process() is not spec-compliant
         https://bugs.webkit.org/show_bug.cgi?id=217637
 

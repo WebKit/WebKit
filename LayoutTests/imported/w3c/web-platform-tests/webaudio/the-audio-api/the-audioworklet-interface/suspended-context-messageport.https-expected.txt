@@ -1,5 +1,5 @@
 
 PASS realtime suspended
 PASS offline before start
-FAIL offline on complete promise_test: Unhandled rejection with value: object "InvalidStateError: Context is closed"
+PASS offline on complete
 
