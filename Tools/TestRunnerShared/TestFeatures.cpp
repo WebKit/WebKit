@@ -33,22 +33,25 @@
 
 namespace WTR {
 
+template<typename T> void merge(std::unordered_map<std::string, T>& base, const std::unordered_map<std::string, T>& additional)
+{
+    for (auto [key, value] : additional)
+        base.insert_or_assign(key, value);
+}
+
 void merge(TestFeatures& base, TestFeatures additional)
 {
     // FIXME: This should use std::unordered_map::merge when it is available for all ports.
-
-    for (auto [key, value] : additional.experimentalFeatures)
-        base.experimentalFeatures.insert_or_assign(key, value);
-    for (auto [key, value] : additional.internalDebugFeatures)
-        base.internalDebugFeatures.insert_or_assign(key, value);
-    for (auto [key, value] : additional.boolFeatures)
-        base.boolFeatures.insert_or_assign(key, value);
-    for (auto [key, value] : additional.doubleFeatures)
-        base.doubleFeatures.insert_or_assign(key, value);
-    for (auto [key, value] : additional.stringFeatures)
-        base.stringFeatures.insert_or_assign(key, value);
-    for (auto [key, value] : additional.stringVectorFeatures)
-        base.stringVectorFeatures.insert_or_assign(key, value);
+    merge(base.experimentalFeatures, additional.experimentalFeatures);
+    merge(base.internalDebugFeatures, additional.internalDebugFeatures);
+    merge(base.boolWebPreferenceFeatures, additional.boolWebPreferenceFeatures);
+    merge(base.doubleWebPreferenceFeatures, additional.doubleWebPreferenceFeatures);
+    merge(base.uint32WebPreferenceFeatures, additional.uint32WebPreferenceFeatures);
+    merge(base.stringWebPreferenceFeatures, additional.stringWebPreferenceFeatures);
+    merge(base.boolTestRunnerFeatures, additional.boolTestRunnerFeatures);
+    merge(base.doubleTestRunnerFeatures, additional.doubleTestRunnerFeatures);
+    merge(base.stringTestRunnerFeatures, additional.stringTestRunnerFeatures);
+    merge(base.stringVectorTestRunnerFeatures, additional.stringVectorTestRunnerFeatures);
 }
 
 static bool pathContains(const std::string& pathOrURL, const char* substring)
@@ -100,16 +103,16 @@ TestFeatures hardcodedFeaturesBasedOnPathForTest(const TestCommand& command)
     TestFeatures features;
 
     if (shouldMakeViewportFlexible(command.pathOrURL))
-        features.boolFeatures.insert({ "useFlexibleViewport", true });
+        features.boolTestRunnerFeatures.insert({ "useFlexibleViewport", true });
     if (shouldUseEphemeralSession(command.pathOrURL))
-        features.boolFeatures.insert({ "useEphemeralSession", true });
+        features.boolTestRunnerFeatures.insert({ "useEphemeralSession", true });
     if (shouldDumpJSConsoleLogInStdErr(command.pathOrURL))
-        features.boolFeatures.insert({ "dumpJSConsoleLogInStdErr", true });
+        features.boolTestRunnerFeatures.insert({ "dumpJSConsoleLogInStdErr", true });
     if (auto deviceScaleFactor = overrideDeviceScaleFactorForTest(command.pathOrURL); deviceScaleFactor != std::nullopt)
-        features.doubleFeatures.insert({ "deviceScaleFactor", deviceScaleFactor.value() });
+        features.doubleTestRunnerFeatures.insert({ "deviceScaleFactor", deviceScaleFactor.value() });
     if (auto viewWidthAndHeight = overrideViewWidthAndHeightForTest(command.pathOrURL); viewWidthAndHeight != std::nullopt) {
-        features.doubleFeatures.insert({ "viewWidth", viewWidthAndHeight->first });
-        features.doubleFeatures.insert({ "viewHeight", viewWidthAndHeight->second });
+        features.doubleTestRunnerFeatures.insert({ "viewWidth", viewWidthAndHeight->first });
+        features.doubleTestRunnerFeatures.insert({ "viewHeight", viewWidthAndHeight->second });
     }
 
     return features;
@@ -129,6 +132,11 @@ static bool parseBooleanTestHeaderValue(const std::string& value)
 static double parseDoubleTestHeaderValue(const std::string& value)
 {
     return std::stod(value);
+}
+
+static uint32_t parseUInt32TestHeaderValue(const std::string& value)
+{
+    return std::stoi(value);
 }
 
 static std::string parseStringTestHeaderValueAsRelativePath(const std::string& value, const std::filesystem::path& testPath)
@@ -216,24 +224,38 @@ static TestFeatures parseTestHeader(std::filesystem::path path, const std::unord
         }
 
         switch (keyType(key)) {
-        case TestHeaderKeyType::Bool:
-            features.boolFeatures.insert({ key, parseBooleanTestHeaderValue(value) });
+        case TestHeaderKeyType::BoolWebPreference:
+            features.boolWebPreferenceFeatures.insert({ key, parseBooleanTestHeaderValue(value) });
             break;
-        case TestHeaderKeyType::Double:
-            features.doubleFeatures.insert({ key, parseDoubleTestHeaderValue(value) });
+        case TestHeaderKeyType::DoubleWebPreference:
+            features.doubleWebPreferenceFeatures.insert({ key, parseDoubleTestHeaderValue(value) });
             break;
-        case TestHeaderKeyType::String:
-            features.stringFeatures.insert({ key, value });
+        case TestHeaderKeyType::UInt32WebPreference:
+            features.uint32WebPreferenceFeatures.insert({ key, parseUInt32TestHeaderValue(value) });
             break;
-        case TestHeaderKeyType::StringRelativePath:
-            features.stringFeatures.insert({ key, parseStringTestHeaderValueAsRelativePath(value, path) });
+        case TestHeaderKeyType::StringWebPreference:
+            features.stringWebPreferenceFeatures.insert({ key, value });
             break;
-        case TestHeaderKeyType::StringURL:
-            features.stringFeatures.insert({ key, parseStringTestHeaderValueAsURL(value) });
+
+        case TestHeaderKeyType::BoolTestRunner:
+            features.boolTestRunnerFeatures.insert({ key, parseBooleanTestHeaderValue(value) });
             break;
-        case TestHeaderKeyType::StringVector:
-            features.stringVectorFeatures.insert({ key, parseStringTestHeaderValueAsStringVector(value) });
+        case TestHeaderKeyType::DoubleTestRunner:
+            features.doubleTestRunnerFeatures.insert({ key, parseDoubleTestHeaderValue(value) });
             break;
+        case TestHeaderKeyType::StringTestRunner:
+            features.stringTestRunnerFeatures.insert({ key, value });
+            break;
+        case TestHeaderKeyType::StringRelativePathTestRunner:
+            features.stringTestRunnerFeatures.insert({ key, parseStringTestHeaderValueAsRelativePath(value, path) });
+            break;
+        case TestHeaderKeyType::StringURLTestRunner:
+            features.stringTestRunnerFeatures.insert({ key, parseStringTestHeaderValueAsURL(value) });
+            break;
+        case TestHeaderKeyType::StringVectorTestRunner:
+            features.stringVectorTestRunnerFeatures.insert({ key, parseStringTestHeaderValueAsStringVector(value) });
+            break;
+
         case TestHeaderKeyType::Unknown:
             LOG_ERROR("Unknown key, '%s, in test header in %s", key.c_str(), path.c_str());
             break;

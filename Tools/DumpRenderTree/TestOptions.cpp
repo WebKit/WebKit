@@ -27,33 +27,32 @@
 #include "TestOptions.h"
 
 #include "TestFeatures.h"
-#include <fstream>
 #include <string>
 
 namespace WTR {
 
 const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMapping()
 {
-    static std::unordered_map<std::string, TestHeaderKeyType> map {
-        { "allowCrossOriginSubresourcesToAskForCredentials", TestHeaderKeyType::Bool },
-        { "allowTopNavigationToDataURLs", TestHeaderKeyType::Bool },
-        { "dumpJSConsoleLogInStdErr", TestHeaderKeyType::Bool },
-        { "enableAttachmentElement", TestHeaderKeyType::Bool },
-        { "enableBackForwardCache", TestHeaderKeyType::Bool },
-        { "enableColorFilter", TestHeaderKeyType::Bool },
-        { "enableDragDestinationActionLoad", TestHeaderKeyType::Bool },
-        { "enableInspectorAdditions", TestHeaderKeyType::Bool },
-        { "enableIntersectionObserver", TestHeaderKeyType::Bool },
-        { "enableKeygenElement", TestHeaderKeyType::Bool },
-        { "enableMenuItemElement", TestHeaderKeyType::Bool },
-        { "enableModernMediaControls", TestHeaderKeyType::Bool },
-        { "enablePointerLock", TestHeaderKeyType::Bool },
-        { "layerBackedWebView", TestHeaderKeyType::Bool },
-        { "useAcceleratedDrawing", TestHeaderKeyType::Bool },
-        { "useEphemeralSession", TestHeaderKeyType::Bool },
+    static const std::unordered_map<std::string, TestHeaderKeyType> map {
+        { "AcceleratedDrawingEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "AllowCrossOriginSubresourcesToAskForCredentials", TestHeaderKeyType::BoolWebPreference },
+        { "AllowTopNavigationToDataURLs", TestHeaderKeyType::BoolWebPreference },
+        { "AttachmentElementEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "ColorFilterEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "InspectorAdditionsEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "IntersectionObserverEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "KeygenElementEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "MenuItemElementEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "ModernMediaControlsEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "UsesBackForwardCache", TestHeaderKeyType::BoolWebPreference },
 
-        { "additionalSupportedImageTypes", TestHeaderKeyType::String },
-        { "jscOptions", TestHeaderKeyType::String },
+        { "dumpJSConsoleLogInStdErr", TestHeaderKeyType::BoolTestRunner },
+        { "enableDragDestinationActionLoad", TestHeaderKeyType::BoolTestRunner },
+        { "layerBackedWebView", TestHeaderKeyType::BoolTestRunner },
+        { "useEphemeralSession", TestHeaderKeyType::BoolTestRunner },
+
+        { "additionalSupportedImageTypes", TestHeaderKeyType::StringTestRunner },
+        { "jscOptions", TestHeaderKeyType::StringTestRunner },
     };
 
     return map;
@@ -69,25 +68,25 @@ template<typename T> static void setValueIfSetInMap(T& valueToSet, std::string k
 
 TestOptions::TestOptions(TestFeatures testFeatures)
 {
-    setValueIfSetInMap(allowCrossOriginSubresourcesToAskForCredentials, "allowCrossOriginSubresourcesToAskForCredentials", testFeatures.boolFeatures);
-    setValueIfSetInMap(allowTopNavigationToDataURLs, "allowTopNavigationToDataURLs", testFeatures.boolFeatures);
-    setValueIfSetInMap(dumpJSConsoleLogInStdErr, "dumpJSConsoleLogInStdErr", testFeatures.boolFeatures);
-    setValueIfSetInMap(enableAttachmentElement, "enableAttachmentElement", testFeatures.boolFeatures);
-    setValueIfSetInMap(enableBackForwardCache, "enableBackForwardCache", testFeatures.boolFeatures);
-    setValueIfSetInMap(enableColorFilter, "enableColorFilter", testFeatures.boolFeatures);
-    setValueIfSetInMap(enableDragDestinationActionLoad, "enableDragDestinationActionLoad", testFeatures.boolFeatures);
-    setValueIfSetInMap(enableInspectorAdditions, "enableInspectorAdditions", testFeatures.boolFeatures);
-    setValueIfSetInMap(enableIntersectionObserver, "enableIntersectionObserver", testFeatures.boolFeatures);
-    setValueIfSetInMap(enableKeygenElement, "enableKeygenElement", testFeatures.boolFeatures);
-    setValueIfSetInMap(enableMenuItemElement, "enableMenuItemElement", testFeatures.boolFeatures);
-    setValueIfSetInMap(enableModernMediaControls, "enableModernMediaControls", testFeatures.boolFeatures);
-    setValueIfSetInMap(enablePointerLock, "enablePointerLock", testFeatures.boolFeatures);
-    setValueIfSetInMap(layerBackedWebView, "layerBackedWebView", testFeatures.boolFeatures);
-    setValueIfSetInMap(useAcceleratedDrawing, "useAcceleratedDrawing", testFeatures.boolFeatures);
-    setValueIfSetInMap(useEphemeralSession, "useEphemeralSession", testFeatures.boolFeatures);
+    setValueIfSetInMap(allowCrossOriginSubresourcesToAskForCredentials, "AllowCrossOriginSubresourcesToAskForCredentials", testFeatures.boolWebPreferenceFeatures);
+    setValueIfSetInMap(allowTopNavigationToDataURLs, "AllowTopNavigationToDataURLs", testFeatures.boolWebPreferenceFeatures);
+    setValueIfSetInMap(enableAcceleratedDrawing, "AcceleratedDrawingEnabled", testFeatures.boolWebPreferenceFeatures);
+    setValueIfSetInMap(enableAttachmentElement, "AttachmentElementEnabled", testFeatures.boolWebPreferenceFeatures);
+    setValueIfSetInMap(enableBackForwardCache, "UsesBackForwardCache", testFeatures.boolWebPreferenceFeatures);
+    setValueIfSetInMap(enableColorFilter, "ColorFilterEnabled", testFeatures.boolWebPreferenceFeatures);
+    setValueIfSetInMap(enableInspectorAdditions, "InspectorAdditionsEnabled", testFeatures.boolWebPreferenceFeatures);
+    setValueIfSetInMap(enableIntersectionObserver, "IntersectionObserverEnabled", testFeatures.boolWebPreferenceFeatures);
+    setValueIfSetInMap(enableKeygenElement, "KeygenElementEnabled", testFeatures.boolWebPreferenceFeatures);
+    setValueIfSetInMap(enableMenuItemElement, "MenuItemElementEnabled", testFeatures.boolWebPreferenceFeatures);
+    setValueIfSetInMap(enableModernMediaControls, "ModernMediaControlsEnabled", testFeatures.boolWebPreferenceFeatures);
 
-    setValueIfSetInMap(additionalSupportedImageTypes, "additionalSupportedImageTypes", testFeatures.stringFeatures);
-    setValueIfSetInMap(jscOptions, "jscOptions", testFeatures.stringFeatures);
+    setValueIfSetInMap(enableDragDestinationActionLoad, "enableDragDestinationActionLoad", testFeatures.boolTestRunnerFeatures);
+    setValueIfSetInMap(dumpJSConsoleLogInStdErr, "dumpJSConsoleLogInStdErr", testFeatures.boolTestRunnerFeatures);
+    setValueIfSetInMap(layerBackedWebView, "layerBackedWebView", testFeatures.boolTestRunnerFeatures);
+    setValueIfSetInMap(useEphemeralSession, "useEphemeralSession", testFeatures.boolTestRunnerFeatures);
+
+    setValueIfSetInMap(additionalSupportedImageTypes, "additionalSupportedImageTypes", testFeatures.stringTestRunnerFeatures);
+    setValueIfSetInMap(jscOptions, "jscOptions", testFeatures.stringTestRunnerFeatures);
 
     setValueIfSetInMap(enableCSSLogical, "CSSLogicalEnabled", testFeatures.internalDebugFeatures);
     setValueIfSetInMap(enableLineHeightUnits, "LineHeightUnitsEnabled", testFeatures.internalDebugFeatures);

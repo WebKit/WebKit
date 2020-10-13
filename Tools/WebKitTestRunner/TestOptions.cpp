@@ -33,59 +33,66 @@
 
 namespace WTR {
 
-static const std::unordered_map<std::string, bool>& boolDefaultsMap()
+static const std::unordered_map<std::string, bool>& boolWebPreferencesDefaultsMap()
 {
     static std::unordered_map<std::string, bool> map {
-        { "allowCrossOriginSubresourcesToAskForCredentials", false },
-        { "allowTopNavigationToDataURLs", true },
+        { "AcceleratedDrawingEnabled", false },
+        { "AllowCrossOriginSubresourcesToAskForCredentials", false },
+        { "AllowTopNavigationToDataURLs", true },
+        { "AttachmentElementEnabled", false },
+        { "CaptureAudioInGPUProcessEnabled", false },
+        { "CaptureAudioInUIProcessEnabled", false },
+        { "CaptureVideoInGPUProcessEnabled", false },
+        { "CaptureVideoInUIProcessEnabled", false },
+        { "ColorFilterEnabled", false },
+        { "DOMPasteAllowed", true },
+        { "InspectorAdditionsEnabled", false },
+        { "KeygenElementEnabled", false },
+        { "MenuItemElementEnabled", false },
+        { "MockScrollbarsEnabled", true },
+        { "ModernMediaControlsEnabled", true },
+        { "NeedsSiteSpecificQuirks", false },
+        { "PageVisibilityBasedProcessSuppressionEnabled", false },
+        { "PunchOutWhiteBackgroundsInDarkMode", false },
+        { "ServiceControlsEnabled", false },
+        { "ShouldIgnoreMetaViewport", false },
+        { "ShouldUseServiceWorkerShortTimeout", false },
+        { "UsesBackForwardCache", false },
+        { "WebAuthenticationEnabled", true },
+        { "WebAuthenticationLocalAuthenticatorEnabled", true },
+    };
+    return map;
+}
+
+static const std::unordered_map<std::string, bool>& boolTestRunnerDefaultsMap()
+{
+    static std::unordered_map<std::string, bool> map {
         { "allowsLinkPreview", true },
-        { "domPasteAllowed", true },
         { "dumpJSConsoleLogInStdErr", false },
         { "editable", false },
-        { "enableAppNap", false },
-        { "enableAttachmentElement", false },
-        { "enableBackForwardCache", false },
-        { "enableCaptureAudioInGPUProcess", false },
-        { "enableCaptureAudioInUIProcess", false },
-        { "enableCaptureVideoInGPUProcess", false },
-        { "enableCaptureVideoInUIProcess", false },
-        { "enableColorFilter", false },
         { "enableInAppBrowserPrivacy", false },
-        { "enableInspectorAdditions", false },
-        { "enableKeygenElement", false },
-        { "enableMenuItemElement", false },
-        { "enableModernMediaControls", true },
         { "enableProcessSwapOnNavigation", true },
         { "enableProcessSwapOnWindowOpen", false },
-        { "enableServiceControls", false },
-        { "enableWebAuthentication", true },
-        { "enableWebAuthenticationLocalAuthenticator", true },
         { "ignoreSynchronousMessagingTimeouts", false },
         { "ignoresViewportScaleLimits", false },
         { "isAppBoundWebView", false },
-        { "needsSiteSpecificQuirks", false },
-        { "punchOutWhiteBackgroundsInDarkMode", false },
         { "runSingly", false },
         { "shouldHandleRunOpenPanel", true },
-        { "shouldIgnoreMetaViewport", false },
         { "shouldPresentPopovers", true },
         { "shouldShowTouches", false },
         { "shouldShowWebView", false },
         { "spellCheckingDots", false },
-        { "useAcceleratedDrawing", false },
         { "useCharacterSelectionGranularity", false },
         { "useDataDetection", false },
         { "useEphemeralSession", false },
         { "useFlexibleViewport", false },
-        { "useMockScrollbars", true },
         { "useRemoteLayerTree", false },
-        { "useServiceWorkerShortTimeout", false },
         { "useThreadedScrolling", false },
     };
     return map;
 }
 
-static const std::unordered_map<std::string, double>& doubleDefaultsMap()
+static const std::unordered_map<std::string, double>& doubleTestRunnerDefaultsMap()
 {
     static std::unordered_map<std::string, double> map {
         { "contentInset.top", 0 },
@@ -96,7 +103,7 @@ static const std::unordered_map<std::string, double>& doubleDefaultsMap()
     return map;
 }
 
-static const std::unordered_map<std::string, std::string>& stringDefaultsMap()
+static const std::unordered_map<std::string, std::string>& stringTestRunnerDefaultsMap()
 {
     static std::unordered_map<std::string, std::string> map {
         { "additionalSupportedImageTypes", { } },
@@ -109,7 +116,7 @@ static const std::unordered_map<std::string, std::string>& stringDefaultsMap()
     return map;
 }
 
-static const std::unordered_map<std::string, std::vector<std::string>>& stringVectorDefaultsMap()
+static const std::unordered_map<std::string, std::vector<std::string>>& stringVectorTestRunnerDefaultsMap()
 {
     static std::unordered_map<std::string, std::vector<std::string>> map {
         { "language", { } },
@@ -120,65 +127,66 @@ static const std::unordered_map<std::string, std::vector<std::string>>& stringVe
 const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMapping()
 {
     static std::unordered_map<std::string, TestHeaderKeyType> map {
-        { "allowCrossOriginSubresourcesToAskForCredentials", TestHeaderKeyType::Bool },
-        { "allowTopNavigationToDataURLs", TestHeaderKeyType::Bool },
-        { "allowsLinkPreview", TestHeaderKeyType::Bool },
-        { "domPasteAllowed", TestHeaderKeyType::Bool },
-        { "dumpJSConsoleLogInStdErr", TestHeaderKeyType::Bool },
-        { "editable", TestHeaderKeyType::Bool },
-        { "enableAppNap", TestHeaderKeyType::Bool },
-        { "enableAttachmentElement", TestHeaderKeyType::Bool },
-        { "enableBackForwardCache", TestHeaderKeyType::Bool },
-        { "enableCaptureAudioInGPUProcess", TestHeaderKeyType::Bool },
-        { "enableCaptureAudioInUIProcess", TestHeaderKeyType::Bool },
-        { "enableCaptureVideoInGPUProcess", TestHeaderKeyType::Bool },
-        { "enableCaptureVideoInUIProcess", TestHeaderKeyType::Bool },
-        { "enableColorFilter", TestHeaderKeyType::Bool },
-        { "enableInAppBrowserPrivacy", TestHeaderKeyType::Bool },
-        { "enableInspectorAdditions", TestHeaderKeyType::Bool },
-        { "enableKeygenElement", TestHeaderKeyType::Bool },
-        { "enableMenuItemElement", TestHeaderKeyType::Bool },
-        { "enableModernMediaControls", TestHeaderKeyType::Bool },
-        { "enableProcessSwapOnNavigation", TestHeaderKeyType::Bool },
-        { "enableProcessSwapOnWindowOpen", TestHeaderKeyType::Bool },
-        { "enableServiceControls", TestHeaderKeyType::Bool },
-        { "enableWebAuthentication", TestHeaderKeyType::Bool },
-        { "enableWebAuthenticationLocalAuthenticator", TestHeaderKeyType::Bool },
-        { "ignoreSynchronousMessagingTimeouts", TestHeaderKeyType::Bool },
-        { "ignoresViewportScaleLimits", TestHeaderKeyType::Bool },
-        { "isAppBoundWebView", TestHeaderKeyType::Bool },
-        { "needsSiteSpecificQuirks", TestHeaderKeyType::Bool },
-        { "punchOutWhiteBackgroundsInDarkMode", TestHeaderKeyType::Bool },
-        { "runSingly", TestHeaderKeyType::Bool },
-        { "shouldHandleRunOpenPanel", TestHeaderKeyType::Bool },
-        { "shouldIgnoreMetaViewport", TestHeaderKeyType::Bool },
-        { "shouldPresentPopovers", TestHeaderKeyType::Bool },
-        { "shouldShowTouches", TestHeaderKeyType::Bool },
-        { "shouldShowWebView", TestHeaderKeyType::Bool },
-        { "spellCheckingDots", TestHeaderKeyType::Bool },
-        { "useAcceleratedDrawing", TestHeaderKeyType::Bool },
-        { "useCharacterSelectionGranularity", TestHeaderKeyType::Bool },
-        { "useDataDetection", TestHeaderKeyType::Bool },
-        { "useEphemeralSession", TestHeaderKeyType::Bool },
-        { "useFlexibleViewport", TestHeaderKeyType::Bool },
-        { "useMockScrollbars", TestHeaderKeyType::Bool },
-        { "useRemoteLayerTree", TestHeaderKeyType::Bool },
-        { "useServiceWorkerShortTimeout", TestHeaderKeyType::Bool },
-        { "useThreadedScrolling", TestHeaderKeyType::Bool },
+        { "AcceleratedDrawingEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "AllowCrossOriginSubresourcesToAskForCredentials", TestHeaderKeyType::BoolWebPreference },
+        { "AllowTopNavigationToDataURLs", TestHeaderKeyType::BoolWebPreference },
+        { "AttachmentElementEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "CaptureAudioInGPUProcessEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "CaptureAudioInUIProcessEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "CaptureVideoInGPUProcessEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "CaptureVideoInUIProcessEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "ColorFilterEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "DOMPasteAllowed", TestHeaderKeyType::BoolWebPreference },
+        { "InspectorAdditionsEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "KeygenElementEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "MenuItemElementEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "MockScrollbarsEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "ModernMediaControlsEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "NeedsSiteSpecificQuirks", TestHeaderKeyType::BoolWebPreference },
+        { "PageVisibilityBasedProcessSuppressionEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "PunchOutWhiteBackgroundsInDarkMode", TestHeaderKeyType::BoolWebPreference },
+        { "ServiceControlsEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "ShouldIgnoreMetaViewport", TestHeaderKeyType::BoolWebPreference },
+        { "ShouldUseServiceWorkerShortTimeout", TestHeaderKeyType::BoolWebPreference },
+        { "UsesBackForwardCache", TestHeaderKeyType::BoolWebPreference },
+        { "WebAuthenticationEnabled", TestHeaderKeyType::BoolWebPreference },
+        { "WebAuthenticationLocalAuthenticatorEnabled", TestHeaderKeyType::BoolWebPreference },
+
+        { "allowsLinkPreview", TestHeaderKeyType::BoolTestRunner },
+        { "dumpJSConsoleLogInStdErr", TestHeaderKeyType::BoolTestRunner },
+        { "editable", TestHeaderKeyType::BoolTestRunner },
+        { "enableInAppBrowserPrivacy", TestHeaderKeyType::BoolTestRunner },
+        { "enableProcessSwapOnNavigation", TestHeaderKeyType::BoolTestRunner },
+        { "enableProcessSwapOnWindowOpen", TestHeaderKeyType::BoolTestRunner },
+        { "ignoreSynchronousMessagingTimeouts", TestHeaderKeyType::BoolTestRunner },
+        { "ignoresViewportScaleLimits", TestHeaderKeyType::BoolTestRunner },
+        { "isAppBoundWebView", TestHeaderKeyType::BoolTestRunner },
+        { "runSingly", TestHeaderKeyType::BoolTestRunner },
+        { "shouldHandleRunOpenPanel", TestHeaderKeyType::BoolTestRunner },
+        { "shouldPresentPopovers", TestHeaderKeyType::BoolTestRunner },
+        { "shouldShowTouches", TestHeaderKeyType::BoolTestRunner },
+        { "shouldShowWebView", TestHeaderKeyType::BoolTestRunner },
+        { "spellCheckingDots", TestHeaderKeyType::BoolTestRunner },
+        { "useCharacterSelectionGranularity", TestHeaderKeyType::BoolTestRunner },
+        { "useDataDetection", TestHeaderKeyType::BoolTestRunner },
+        { "useEphemeralSession", TestHeaderKeyType::BoolTestRunner },
+        { "useFlexibleViewport", TestHeaderKeyType::BoolTestRunner },
+        { "useRemoteLayerTree", TestHeaderKeyType::BoolTestRunner },
+        { "useThreadedScrolling", TestHeaderKeyType::BoolTestRunner },
     
-        { "contentInset.top", TestHeaderKeyType::Double },
-        { "deviceScaleFactor", TestHeaderKeyType::Double },
-        { "viewHeight", TestHeaderKeyType::Double },
-        { "viewWidth", TestHeaderKeyType::Double },
+        { "contentInset.top", TestHeaderKeyType::DoubleTestRunner },
+        { "deviceScaleFactor", TestHeaderKeyType::DoubleTestRunner },
+        { "viewHeight", TestHeaderKeyType::DoubleTestRunner },
+        { "viewWidth", TestHeaderKeyType::DoubleTestRunner },
 
-        { "additionalSupportedImageTypes", TestHeaderKeyType::String },
-        { "applicationBundleIdentifier", TestHeaderKeyType::String },
-        { "applicationManifest", TestHeaderKeyType::StringRelativePath },
-        { "contentMode", TestHeaderKeyType::String },
-        { "jscOptions", TestHeaderKeyType::String },
-        { "standaloneWebApplicationURL", TestHeaderKeyType::StringURL },
+        { "additionalSupportedImageTypes", TestHeaderKeyType::StringTestRunner },
+        { "applicationBundleIdentifier", TestHeaderKeyType::StringTestRunner },
+        { "applicationManifest", TestHeaderKeyType::StringRelativePathTestRunner },
+        { "contentMode", TestHeaderKeyType::StringTestRunner },
+        { "jscOptions", TestHeaderKeyType::StringTestRunner },
+        { "standaloneWebApplicationURL", TestHeaderKeyType::StringURLTestRunner },
 
-        { "language", TestHeaderKeyType::StringVector },
+        { "language", TestHeaderKeyType::StringVectorTestRunner },
     };
 
     return map;
@@ -195,74 +203,36 @@ bool TestOptions::hasSameInitializationOptions(const TestOptions& options) const
         return false;
     if (m_features.internalDebugFeatures != options.m_features.internalDebugFeatures)
         return false;
-
-    for (auto [key, keyType] : keyTypeMapping()) {
-        switch (keyType) {
-        case TestHeaderKeyType::Bool:
-            if (boolFeatureValue(key) != options.boolFeatureValue(key))
-                return false;
-            break;
-        case TestHeaderKeyType::Double:
-            if (doubleFeatureValue(key) != options.doubleFeatureValue(key))
-                return false;
-            break;
-        case TestHeaderKeyType::String:
-        case TestHeaderKeyType::StringRelativePath:
-        case TestHeaderKeyType::StringURL:
-            if (stringFeatureValue(key) != options.stringFeatureValue(key))
-                return false;
-            break;
-        case TestHeaderKeyType::StringVector:
-            if (stringVectorFeatureValue(key) != options.stringVectorFeatureValue(key))
-                return false;
-            break;
-        case TestHeaderKeyType::Unknown:
-            ASSERT_NOT_REACHED();
-        }
-    }
+    if (m_features.boolWebPreferenceFeatures != options.m_features.boolWebPreferenceFeatures)
+        return false;
+    if (m_features.doubleWebPreferenceFeatures != options.m_features.doubleWebPreferenceFeatures)
+        return false;
+    if (m_features.uint32WebPreferenceFeatures != options.m_features.uint32WebPreferenceFeatures)
+        return false;
+    if (m_features.stringWebPreferenceFeatures != options.m_features.stringWebPreferenceFeatures)
+        return false;
+    if (m_features.boolTestRunnerFeatures != options.m_features.boolTestRunnerFeatures)
+        return false;
+    if (m_features.doubleTestRunnerFeatures != options.m_features.doubleTestRunnerFeatures)
+        return false;
+    if (m_features.stringTestRunnerFeatures != options.m_features.stringTestRunnerFeatures)
+        return false;
+    if (m_features.stringVectorTestRunnerFeatures != options.m_features.stringVectorTestRunnerFeatures)
+        return false;
     return true;
 }
 
-#define FOR_EACH_BOOL_WK_PREFERENCE(macro) \
-    macro(enableCaptureVideoInUIProcess, CaptureVideoInUIProcessEnabled) \
-    macro(enableCaptureVideoInGPUProcess, CaptureVideoInGPUProcessEnabled) \
-    macro(enableCaptureAudioInUIProcess, CaptureAudioInUIProcessEnabled) \
-    macro(enableCaptureAudioInGPUProcess, CaptureAudioInGPUProcessEnabled) \
-    macro(useAcceleratedDrawing, AcceleratedDrawingEnabled) \
-    macro(useMockScrollbars, MockScrollbarsEnabled) \
-    macro(needsSiteSpecificQuirks, NeedsSiteSpecificQuirks) \
-    macro(enableAttachmentElement, AttachmentElementEnabled) \
-    macro(enableMenuItemElement, MenuItemElementEnabled) \
-    macro(enableKeygenElement, KeygenElementEnabled) \
-    macro(enableModernMediaControls, ModernMediaControlsEnabled) \
-    macro(enableWebAuthentication, WebAuthenticationEnabled) \
-    macro(enableWebAuthenticationLocalAuthenticator, WebAuthenticationLocalAuthenticatorEnabled) \
-    macro(enableInspectorAdditions, InspectorAdditionsEnabled) \
-    macro(allowCrossOriginSubresourcesToAskForCredentials, AllowCrossOriginSubresourcesToAskForCredentials) \
-    macro(domPasteAllowed, DOMPasteAllowed) \
-    macro(enableColorFilter, ColorFilterEnabled) \
-    macro(punchOutWhiteBackgroundsInDarkMode, PunchOutWhiteBackgroundsInDarkMode) \
-    macro(shouldIgnoreMetaViewport, ShouldIgnoreMetaViewport) \
-    macro(enableAppNap, PageVisibilityBasedProcessSuppressionEnabled) \
-    macro(enableBackForwardCache, UsesBackForwardCache) \
-    macro(enableServiceControls, ServiceControlsEnabled) \
-    macro(allowTopNavigationToDataURLs, AllowTopNavigationToDataURLs) \
-    macro(useServiceWorkerShortTimeout, ShouldUseServiceWorkerShortTimeout) \
-\
-
 std::vector<std::pair<std::string, bool>> TestOptions::boolWKPreferences() const
 {
-    return {
-#define ADD_VALUE(testOptionsKey, preferencesKey) { #preferencesKey, boolFeatureValue(#testOptionsKey) },
+    std::vector<std::pair<std::string, bool>> result;
 
-FOR_EACH_BOOL_WK_PREFERENCE(ADD_VALUE)
+    for (auto [key, defaultValue] : boolWebPreferencesDefaultsMap())
+        result.push_back({ key, boolWebPreferenceFeatureValue(key) });
 
-#undef ADD_VALUE
-    };
+    return result;
 }
 
-template<typename T>
-T featureValue(std::string key, const std::unordered_map<std::string, T>& map, const std::unordered_map<std::string, T>& defaultsMap)
+template<typename T> T featureValue(std::string key, const std::unordered_map<std::string, T>& map, const std::unordered_map<std::string, T>& defaultsMap)
 {
     auto it = map.find(key);
     if (it != map.end())
@@ -273,21 +243,25 @@ T featureValue(std::string key, const std::unordered_map<std::string, T>& map, c
     return defaultsMapIt->second;
 }
 
-bool TestOptions::boolFeatureValue(std::string key) const
+bool TestOptions::boolWebPreferenceFeatureValue(std::string key) const
 {
-    return featureValue(key, m_features.boolFeatures, boolDefaultsMap());
+    return featureValue(key, m_features.boolWebPreferenceFeatures, boolWebPreferencesDefaultsMap());
 }
-double TestOptions::doubleFeatureValue(std::string key) const
+bool TestOptions::boolTestRunnerFeatureValue(std::string key) const
 {
-    return featureValue(key, m_features.doubleFeatures, doubleDefaultsMap());
+    return featureValue(key, m_features.boolTestRunnerFeatures, boolTestRunnerDefaultsMap());
 }
-std::string TestOptions::stringFeatureValue(std::string key) const
+double TestOptions::doubleTestRunnerFeatureValue(std::string key) const
 {
-    return featureValue(key, m_features.stringFeatures, stringDefaultsMap());
+    return featureValue(key, m_features.doubleTestRunnerFeatures, doubleTestRunnerDefaultsMap());
 }
-std::vector<std::string> TestOptions::stringVectorFeatureValue(std::string key) const
+std::string TestOptions::stringTestRunnerFeatureValue(std::string key) const
 {
-    return featureValue(key, m_features.stringVectorFeatures, stringVectorDefaultsMap());
+    return featureValue(key, m_features.stringTestRunnerFeatures, stringTestRunnerDefaultsMap());
+}
+std::vector<std::string> TestOptions::stringVectorTestRunnerFeatureValue(std::string key) const
+{
+    return featureValue(key, m_features.stringVectorTestRunnerFeatures, stringVectorTestRunnerDefaultsMap());
 }
 
 }

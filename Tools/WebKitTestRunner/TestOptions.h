@@ -74,42 +74,43 @@ public:
         };
     }
 
-    bool allowTopNavigationToDataURLs() const { return boolFeatureValue("allowTopNavigationToDataURLs"); }
-    bool allowsLinkPreview() const { return boolFeatureValue("allowsLinkPreview"); }
-    bool dumpJSConsoleLogInStdErr() const { return boolFeatureValue("dumpJSConsoleLogInStdErr"); }
-    bool editable() const { return boolFeatureValue("editable"); }
-    bool enableAttachmentElement() const { return boolFeatureValue("enableAttachmentElement"); }
-    bool enableInAppBrowserPrivacy() const { return boolFeatureValue("enableInAppBrowserPrivacy"); }
-    bool enableProcessSwapOnNavigation() const { return boolFeatureValue("enableProcessSwapOnNavigation"); }
-    bool enableProcessSwapOnWindowOpen() const { return boolFeatureValue("enableProcessSwapOnWindowOpen"); }
-    bool ignoreSynchronousMessagingTimeouts() const { return boolFeatureValue("ignoreSynchronousMessagingTimeouts"); }
-    bool ignoresViewportScaleLimits() const { return boolFeatureValue("ignoresViewportScaleLimits"); }
-    bool isAppBoundWebView() const { return boolFeatureValue("isAppBoundWebView"); }
-    bool punchOutWhiteBackgroundsInDarkMode() const { return boolFeatureValue("punchOutWhiteBackgroundsInDarkMode"); }
-    bool runSingly() const { return boolFeatureValue("runSingly"); }
-    bool shouldHandleRunOpenPanel() const { return boolFeatureValue("shouldHandleRunOpenPanel"); }
-    bool shouldPresentPopovers() const { return boolFeatureValue("shouldPresentPopovers"); }
-    bool shouldShowSpellCheckingDots() const { return boolFeatureValue("spellCheckingDots"); }
-    bool shouldShowTouches() const { return boolFeatureValue("shouldShowTouches"); }
-    bool shouldShowWebView() const { return boolFeatureValue("shouldShowWebView"); }
-    bool useCharacterSelectionGranularity() const { return boolFeatureValue("useCharacterSelectionGranularity"); }
-    bool useDataDetection() const { return boolFeatureValue("useDataDetection"); }
-    bool useEphemeralSession() const { return boolFeatureValue("useEphemeralSession"); }
-    bool useFlexibleViewport() const { return boolFeatureValue("useFlexibleViewport"); }
-    bool useRemoteLayerTree() const { return boolFeatureValue("useRemoteLayerTree"); }
-    bool useServiceWorkerShortTimeout() const { return boolFeatureValue("useServiceWorkerShortTimeout"); }
-    bool useThreadedScrolling() const { return boolFeatureValue("useThreadedScrolling"); }
-    double contentInsetTop() const { return doubleFeatureValue("contentInset.top"); }
-    double deviceScaleFactor() const { return doubleFeatureValue("deviceScaleFactor"); }
-    double viewHeight() const { return doubleFeatureValue("viewHeight"); }
-    double viewWidth() const { return doubleFeatureValue("viewWidth"); }
-    std::string additionalSupportedImageTypes() const { return stringFeatureValue("additionalSupportedImageTypes"); }
-    std::string applicationBundleIdentifier() const { return stringFeatureValue("applicationBundleIdentifier"); }
-    std::string applicationManifest() const { return stringFeatureValue("applicationManifest"); }
-    std::string contentMode() const { return stringFeatureValue("contentMode"); }
-    std::string jscOptions() const { return stringFeatureValue("jscOptions"); }
-    std::string standaloneWebApplicationURL() const { return stringFeatureValue("standaloneWebApplicationURL"); }
-    std::vector<std::string> overrideLanguages() const { return stringVectorFeatureValue("language"); }
+    bool allowTopNavigationToDataURLs() const { return boolWebPreferenceFeatureValue("AllowTopNavigationToDataURLs"); }
+    bool enableAttachmentElement() const { return boolWebPreferenceFeatureValue("AttachmentElementEnabled"); }
+    bool punchOutWhiteBackgroundsInDarkMode() const { return boolWebPreferenceFeatureValue("PunchOutWhiteBackgroundsInDarkMode"); }
+    bool useServiceWorkerShortTimeout() const { return boolWebPreferenceFeatureValue("ShouldUseServiceWorkerShortTimeout"); }
+
+    bool allowsLinkPreview() const { return boolTestRunnerFeatureValue("allowsLinkPreview"); }
+    bool dumpJSConsoleLogInStdErr() const { return boolTestRunnerFeatureValue("dumpJSConsoleLogInStdErr"); }
+    bool editable() const { return boolTestRunnerFeatureValue("editable"); }
+    bool enableInAppBrowserPrivacy() const { return boolTestRunnerFeatureValue("enableInAppBrowserPrivacy"); }
+    bool enableProcessSwapOnNavigation() const { return boolTestRunnerFeatureValue("enableProcessSwapOnNavigation"); }
+    bool enableProcessSwapOnWindowOpen() const { return boolTestRunnerFeatureValue("enableProcessSwapOnWindowOpen"); }
+    bool ignoreSynchronousMessagingTimeouts() const { return boolTestRunnerFeatureValue("ignoreSynchronousMessagingTimeouts"); }
+    bool ignoresViewportScaleLimits() const { return boolTestRunnerFeatureValue("ignoresViewportScaleLimits"); }
+    bool isAppBoundWebView() const { return boolTestRunnerFeatureValue("isAppBoundWebView"); }
+    bool runSingly() const { return boolTestRunnerFeatureValue("runSingly"); }
+    bool shouldHandleRunOpenPanel() const { return boolTestRunnerFeatureValue("shouldHandleRunOpenPanel"); }
+    bool shouldPresentPopovers() const { return boolTestRunnerFeatureValue("shouldPresentPopovers"); }
+    bool shouldShowSpellCheckingDots() const { return boolTestRunnerFeatureValue("spellCheckingDots"); }
+    bool shouldShowTouches() const { return boolTestRunnerFeatureValue("shouldShowTouches"); }
+    bool shouldShowWebView() const { return boolTestRunnerFeatureValue("shouldShowWebView"); }
+    bool useCharacterSelectionGranularity() const { return boolTestRunnerFeatureValue("useCharacterSelectionGranularity"); }
+    bool useDataDetection() const { return boolTestRunnerFeatureValue("useDataDetection"); }
+    bool useEphemeralSession() const { return boolTestRunnerFeatureValue("useEphemeralSession"); }
+    bool useFlexibleViewport() const { return boolTestRunnerFeatureValue("useFlexibleViewport"); }
+    bool useRemoteLayerTree() const { return boolTestRunnerFeatureValue("useRemoteLayerTree"); }
+    bool useThreadedScrolling() const { return boolTestRunnerFeatureValue("useThreadedScrolling"); }
+    double contentInsetTop() const { return doubleTestRunnerFeatureValue("contentInset.top"); }
+    double deviceScaleFactor() const { return doubleTestRunnerFeatureValue("deviceScaleFactor"); }
+    double viewHeight() const { return doubleTestRunnerFeatureValue("viewHeight"); }
+    double viewWidth() const { return doubleTestRunnerFeatureValue("viewWidth"); }
+    std::string additionalSupportedImageTypes() const { return stringTestRunnerFeatureValue("additionalSupportedImageTypes"); }
+    std::string applicationBundleIdentifier() const { return stringTestRunnerFeatureValue("applicationBundleIdentifier"); }
+    std::string applicationManifest() const { return stringTestRunnerFeatureValue("applicationManifest"); }
+    std::string contentMode() const { return stringTestRunnerFeatureValue("contentMode"); }
+    std::string jscOptions() const { return stringTestRunnerFeatureValue("jscOptions"); }
+    std::string standaloneWebApplicationURL() const { return stringTestRunnerFeatureValue("standaloneWebApplicationURL"); }
+    std::vector<std::string> overrideLanguages() const { return stringVectorTestRunnerFeatureValue("language"); }
 
     const std::unordered_map<std::string, bool>& experimentalFeatures() const { return m_features.experimentalFeatures; }
     const std::unordered_map<std::string, bool>& internalDebugFeatures() const { return m_features.internalDebugFeatures; }
@@ -119,10 +120,11 @@ public:
     bool hasSameInitializationOptions(const TestOptions&) const;
 
 private:
-    bool boolFeatureValue(std::string key) const;
-    double doubleFeatureValue(std::string key) const;
-    std::string stringFeatureValue(std::string key) const;
-    std::vector<std::string> stringVectorFeatureValue(std::string key) const;
+    bool boolWebPreferenceFeatureValue(std::string key) const;
+    bool boolTestRunnerFeatureValue(std::string key) const;
+    double doubleTestRunnerFeatureValue(std::string key) const;
+    std::string stringTestRunnerFeatureValue(std::string key) const;
+    std::vector<std::string> stringVectorTestRunnerFeatureValue(std::string key) const;
 
     TestFeatures m_features;
 };

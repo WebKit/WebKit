@@ -1,3 +1,31 @@
+2020-10-13  Sam Weinig  <weinig@apple.com>
+
+        [Testing] Rename test header commands to match names in WebPreferences*.yaml
+        https://bugs.webkit.org/show_bug.cgi?id=217654
+
+        Reviewed by Simon Fraser.
+
+        Renames all the test header commands (e.g. useAcceleratedDrawing) to match name in
+        WebPreferences*.yaml files (e.g. AcceleratedDrawingEnabled).
+        
+        Also splits up TestFeatures into test runner specific features (e.g. runSingly) that
+        don't have a WebPreferences counterpart, and WebPreferences specific features. This
+        will allow future patches to support arbritrary WebPreferences more easily.
+
+        * DumpRenderTree/TestOptions.cpp:
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setWebPreferencesForTestOptions):
+        * TestRunnerShared/TestFeatures.cpp:
+        * TestRunnerShared/TestFeatures.h:
+        * WebKitTestRunner/TestController.cpp:
+        * WebKitTestRunner/TestOptions.cpp:
+        * WebKitTestRunner/TestOptions.h:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        * WebKitTestRunner/wpe/TestControllerWPE.cpp:
+
 2020-10-13  Peng Liu  <peng.liu6@apple.com>
 
         Clean up the API tests of CARingBuffer

@@ -175,7 +175,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
 TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCommand&) const
 {
     TestFeatures features;
-    features.boolFeatures.insert({ "useThreadedScrolling", true });
+    features.boolTestRunnerFeatures.insert({ "useThreadedScrolling", true });
     return features;
 }
 

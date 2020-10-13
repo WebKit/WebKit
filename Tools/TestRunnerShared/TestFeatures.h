@@ -37,10 +37,16 @@ struct TestCommand;
 struct TestFeatures {
     std::unordered_map<std::string, bool> experimentalFeatures;
     std::unordered_map<std::string, bool> internalDebugFeatures;
-    std::unordered_map<std::string, bool> boolFeatures;
-    std::unordered_map<std::string, double> doubleFeatures;
-    std::unordered_map<std::string, std::string> stringFeatures;
-    std::unordered_map<std::string, std::vector<std::string>> stringVectorFeatures;
+
+    std::unordered_map<std::string, bool> boolWebPreferenceFeatures;
+    std::unordered_map<std::string, double> doubleWebPreferenceFeatures;
+    std::unordered_map<std::string, uint32_t> uint32WebPreferenceFeatures;
+    std::unordered_map<std::string, std::string> stringWebPreferenceFeatures;
+
+    std::unordered_map<std::string, bool> boolTestRunnerFeatures;
+    std::unordered_map<std::string, double> doubleTestRunnerFeatures;
+    std::unordered_map<std::string, std::string> stringTestRunnerFeatures;
+    std::unordered_map<std::string, std::vector<std::string>> stringVectorTestRunnerFeatures;
 };
 
 void merge(TestFeatures& base, TestFeatures additional);
@@ -48,12 +54,18 @@ void merge(TestFeatures& base, TestFeatures additional);
 TestFeatures hardcodedFeaturesBasedOnPathForTest(const TestCommand&);
 
 enum class TestHeaderKeyType : uint8_t {
-    Bool,
-    Double,
-    String,
-    StringRelativePath,
-    StringURL,
-    StringVector,
+    BoolWebPreference,
+    DoubleWebPreference,
+    UInt32WebPreference,
+    StringWebPreference,
+
+    BoolTestRunner,
+    DoubleTestRunner,
+    StringTestRunner,
+    StringRelativePathTestRunner,
+    StringURLTestRunner,
+    StringVectorTestRunner,
+
     Unknown
 };
 TestFeatures featureDefaultsFromTestHeaderForTest(const TestCommand&, const std::unordered_map<std::string, TestHeaderKeyType>&);

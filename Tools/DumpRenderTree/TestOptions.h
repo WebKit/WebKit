@@ -33,14 +33,13 @@ namespace WTR {
 
 struct TestOptions {
     bool enableAttachmentElement { false };
-    bool useAcceleratedDrawing { false };
+    bool enableAcceleratedDrawing { false };
     bool enableIntersectionObserver { false };
     bool useEphemeralSession { false };
     bool enableBackForwardCache { false };
     bool enableMenuItemElement { false };
     bool enableKeygenElement { false };
     bool enableModernMediaControls { true };
-    bool enablePointerLock { false };
     bool enableDragDestinationActionLoad { false };
     bool layerBackedWebView { false };
     bool enableInspectorAdditions { false };

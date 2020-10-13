@@ -973,7 +973,7 @@ static void setWebPreferencesForTestOptions(const WTR::TestOptions& options)
     WebPreferences *preferences = [WebPreferences standardPreferences];
 
     preferences.attachmentElementEnabled = options.enableAttachmentElement;
-    preferences.acceleratedDrawingEnabled = options.useAcceleratedDrawing;
+    preferences.acceleratedDrawingEnabled = options.enableAcceleratedDrawing;
     preferences.menuItemElementEnabled = options.enableMenuItemElement;
     preferences.keygenElementEnabled = options.enableKeygenElement;
     preferences.modernMediaControlsEnabled = options.enableModernMediaControls;
