@@ -623,7 +623,6 @@ def headers_for_type(type):
         'WebCore::PasteboardURL': ['<WebCore/Pasteboard.h>'],
         'WebCore::PasteboardWebContent': ['<WebCore/Pasteboard.h>'],
         'WebCore::PaymentAuthorizationResult': ['<WebCore/ApplePaySessionPaymentRequest.h>'],
-        'WebCore::PaymentMethodUpdate': ['<WebCore/ApplePaySessionPaymentRequest.h>'],
         'WebCore::PlatformTextTrackData': ['<WebCore/PlatformTextTrack.h>'],
         'WebCore::PluginInfo': ['<WebCore/PluginData.h>'],
         'WebCore::PluginLoadClientPolicy': ['<WebCore/PluginData.h>'],
@@ -687,7 +686,7 @@ def headers_for_type(type):
         'struct WebKit::WebUserScriptData': ['"WebUserContentControllerDataTypes.h"'],
         'struct WebKit::WebUserStyleSheetData': ['"WebUserContentControllerDataTypes.h"'],
         'struct WebKit::WebScriptMessageHandlerData': ['"WebUserContentControllerDataTypes.h"'],
-        'webrtc::WebKitEncodedFrameInfo': ['<webrtc/sdk/WebKit/WebKitEncoder.h>'],
+        'webrtc::WebKitEncodedFrameInfo': ['<webrtc/sdk/WebKit/WebKitEncoder.h>', '<WebCore/LibWebRTCEnumTraits.h>'],
         'webrtc::WebKitRTPFragmentationHeader': ['<webrtc/sdk/WebKit/WebKitEncoder.h>'],
     }
 
@@ -714,13 +713,7 @@ def headers_for_type(type):
     return headers
 
 
-def generate_message_handler(receiver):
-    header_conditions = {
-        '"%s"' % messages_header_filename(receiver): [None],
-        '"HandleMessage.h"': [None],
-        '"Decoder.h"': [None],
-    }
-
+def collect_header_conditions_for_receiver(receiver, header_conditions):
     type_conditions = {}
     for parameter in receiver.iterparameters():
         if not parameter.type in type_conditions:
@@ -763,6 +756,30 @@ def generate_message_handler(receiver):
                         header_conditions[header] = []
                     header_conditions[header].append(message.condition)
 
+    return header_conditions
+
+
+def generate_header_includes_from_conditions(header_conditions):
+    result = []
+    for header in sorted(header_conditions):
+        if header_conditions[header] and not None in header_conditions[header]:
+            result.append('#if %s\n' % ' || '.join(sorted(set(header_conditions[header]))))
+            result += ['#include %s\n' % header]
+            result.append('#endif\n')
+        else:
+            result += ['#include %s\n' % header]
+    return result
+
+
+def generate_message_handler(receiver):
+    header_conditions = {
+        '"%s"' % messages_header_filename(receiver): [None],
+        '"HandleMessage.h"': [None],
+        '"Decoder.h"': [None],
+    }
+
+    collect_header_conditions_for_receiver(receiver, header_conditions)
+
     result = []
 
     result.append(_license_header)
@@ -773,13 +790,7 @@ def generate_message_handler(receiver):
         result.append('#if %s\n\n' % receiver.condition)
 
     result.append('#include "%s.h"\n\n' % receiver.name)
-    for header in sorted(header_conditions):
-        if header_conditions[header] and not None in header_conditions[header]:
-            result.append('#if %s\n' % ' || '.join(sorted(set(header_conditions[header]))))
-            result += ['#include %s\n' % header]
-            result.append('#endif\n')
-        else:
-            result += ['#include %s\n' % header]
+    result += generate_header_includes_from_conditions(header_conditions)
     result.append('\n')
 
     delayed_or_async_messages = []
@@ -1043,4 +1054,131 @@ def generate_message_names_implementation(receivers):
     result.append('};\n')
     result.append('\n')
     result.append('} // namespace IPC\n')
+    return ''.join(result)
+
+
+def generate_js_value_conversion_function(result, receivers, function_name, argument_type, predicate=lambda message: True):
+    result.append('Optional<JSC::JSValue> %s(JSC::JSGlobalObject* globalObject, MessageName name, Decoder& decoder)\n' % function_name)
+    result.append('{\n')
+    result.append('    switch (name) {\n')
+    for receiver in receivers:
+        if receiver.condition:
+            result.append('#if %s\n' % receiver.condition)
+        prevision_message_condition = None
+        for message in receiver.messages:
+            if not predicate(message):
+                continue
+            if prevision_message_condition != message.condition:
+                if prevision_message_condition:
+                    result.append('#endif\n')
+                if message.condition:
+                    result.append('#if %s\n' % message.condition)
+            prevision_message_condition = message.condition
+            result.append('    case MessageName::%s_%s:\n' % (receiver.name, message.name))
+            result.append('        return jsValueForDecodedArguments<Messages::%s::%s::%s>(globalObject, decoder);\n' % (receiver.name, message.name, argument_type))
+        if prevision_message_condition:
+            result.append('#endif\n')
+        if receiver.condition:
+            result.append('#endif\n')
+    result.append('    default:\n')
+    result.append('        break;\n')
+    result.append('    }\n')
+    result.append('    return WTF::nullopt;\n')
+    result.append('}\n')
+
+
+def generate_js_argument_descriptions(receivers, function_name, arguments_from_message):
+    result = []
+    result.append('Optional<Vector<ArgumentDescription>> %s(MessageName name)\n' % function_name)
+    result.append('{\n')
+    result.append('    switch (name) {\n')
+    for receiver in receivers:
+        if receiver.condition:
+            result.append('#if %s\n' % receiver.condition)
+        prevision_message_condition = None
+        for message in receiver.messages:
+            argument_list = arguments_from_message(message)
+            if argument_list is None:
+                continue
+            if prevision_message_condition != message.condition:
+                if prevision_message_condition:
+                    result.append('#endif\n')
+                if message.condition:
+                    result.append('#if %s\n' % message.condition)
+            prevision_message_condition = message.condition
+            result.append('    case MessageName::%s_%s:\n' % (receiver.name, message.name))
+
+            if not len(argument_list):
+                result.append('        return Vector<ArgumentDescription> { };\n')
+                continue
+
+            result.append('        return Vector<ArgumentDescription> {\n')
+            for argument in argument_list:
+                argument_type = argument.type
+                enum_type = None
+                is_optional = False
+                if argument.kind.startswith('enum:'):
+                    enum_type = '"%s"' % argument_type
+                    argument_type = argument.kind[5:]
+                if argument_type.startswith('Optional<') and argument_type.endswith('>'):
+                    argument_type = argument_type[9:-1]
+                    is_optional = True
+                result.append('            {"%s", "%s", %s, %s},\n' % (argument.name, argument_type, enum_type or 'nullptr', 'true' if is_optional else 'false'))
+            result.append('        };\n')
+        if prevision_message_condition:
+            result.append('#endif\n')
+        if receiver.condition:
+            result.append('#endif\n')
+    result.append('    default:\n')
+    result.append('        break;\n')
+    result.append('    }\n')
+    result.append('    return WTF::nullopt;\n')
+    result.append('}\n')
+    return result
+
+
+def generate_message_argument_description_implementation(receivers, receiver_headers):
+    header_conditions = {
+        '"JSIPCBinding.h"': [None]
+    }
+    for receiver in receivers:
+        header_conditions['"%s"' % messages_header_filename(receiver)] = [None]
+        collect_header_conditions_for_receiver(receiver, header_conditions)
+
+    result = []
+    result.append(_license_header)
+    result.append('#include "config.h"\n')
+    result.append('#include "MessageArgumentDescriptions.h"\n')
+    result.append('\n')
+    result.append('#if ENABLE(IPC_TESTING_API)\n')
+    result.append('\n')
+    result += generate_header_includes_from_conditions(header_conditions)
+    result.append('\n')
+
+    for header in receiver_headers:
+        result.append('#include "%s"\n' % (header))
+
+    result.append('\n')
+    result.append('namespace IPC {\n')
+    result.append('\n')
+
+    generate_js_value_conversion_function(result, receivers, 'jsValueForArguments', 'Arguments')
+
+    result.append('\n')
+
+    generate_js_value_conversion_function(result, receivers, 'jsValueForReplyArguments', 'ReplyArguments', lambda message: message.reply_parameters is not None and (message.has_attribute(SYNCHRONOUS_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE)))
+
+    result.append('\n')
+
+    result += generate_js_argument_descriptions(receivers, 'messageArgumentDescriptions', lambda message: message.parameters)
+
+    result.append('\n')
+
+    result += generate_js_argument_descriptions(receivers, 'messageReplyArgumentDescriptions', lambda message: message.reply_parameters if message.has_attribute(SYNCHRONOUS_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE) else None)
+
+    result.append('\n')
+
+    result.append('} // namespace WebKit\n')
+    result.append('\n')
+    result.append('#endif\n')
     return ''.join(result)

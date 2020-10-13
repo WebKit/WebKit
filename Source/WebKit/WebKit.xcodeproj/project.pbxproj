@@ -1424,6 +1424,9 @@
 		9B1229CD23FF25F2008CA751 /* RemoteAudioDestinationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B1229CB23FF25F2008CA751 /* RemoteAudioDestinationManager.h */; };
 		9B1229CE23FF25F2008CA751 /* RemoteAudioDestinationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B1229CC23FF25F2008CA751 /* RemoteAudioDestinationManager.cpp */; };
 		9B1229D223FF2BCC008CA751 /* RemoteAudioDestinationIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B1229D023FF2A5E008CA751 /* RemoteAudioDestinationIdentifier.h */; };
+		9B47908D25314D8300EC11AB /* MessageArgumentDescriptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B47908C25314D8300EC11AB /* MessageArgumentDescriptions.h */; };
+		9B47908F253151CC00EC11AB /* JSIPCBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B47908E253151CC00EC11AB /* JSIPCBinding.h */; };
+		9B4790912531563200EC11AB /* MessageArgumentDescriptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B4790902531563200EC11AB /* MessageArgumentDescriptions.cpp */; };
 		9B5499AD2362A6F900DF8BA5 /* _WKTextManipulationConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B5499AC2362A6F600DF8BA5 /* _WKTextManipulationConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B5499B22362A7EC00DF8BA5 /* _WKTextManipulationExclusionRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B5499B02362A7EC00DF8BA5 /* _WKTextManipulationExclusionRule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B5BEC262400F4A90070C6EF /* WebMediaStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B5BEC242400F4A90070C6EF /* WebMediaStrategy.h */; };
@@ -4529,6 +4532,9 @@
 		9B1229CC23FF25F2008CA751 /* RemoteAudioDestinationManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioDestinationManager.cpp; sourceTree = "<group>"; };
 		9B1229CF23FF2814008CA751 /* RemoteAudioDestinationManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteAudioDestinationManager.messages.in; sourceTree = "<group>"; };
 		9B1229D023FF2A5E008CA751 /* RemoteAudioDestinationIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioDestinationIdentifier.h; sourceTree = "<group>"; };
+		9B47908C25314D8300EC11AB /* MessageArgumentDescriptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageArgumentDescriptions.h; sourceTree = "<group>"; };
+		9B47908E253151CC00EC11AB /* JSIPCBinding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSIPCBinding.h; sourceTree = "<group>"; };
+		9B4790902531563200EC11AB /* MessageArgumentDescriptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageArgumentDescriptions.cpp; path = MessageArgumentDescriptions.cpp; sourceTree = "<group>"; };
 		9B5499AC2362A6F600DF8BA5 /* _WKTextManipulationConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKTextManipulationConfiguration.h; sourceTree = "<group>"; };
 		9B5499AE2362A7A700DF8BA5 /* _WKTextManipulationConfiguration.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKTextManipulationConfiguration.mm; sourceTree = "<group>"; };
 		9B5499B02362A7EC00DF8BA5 /* _WKTextManipulationExclusionRule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKTextManipulationExclusionRule.h; sourceTree = "<group>"; };
@@ -6463,6 +6469,8 @@
 				4151E5C31FBB90A900E47E2D /* FormDataReference.h */,
 				C0CE72AC1247E78D00BC0EC4 /* HandleMessage.h */,
 				1C9AF36124134D2300D3EC02 /* ImageDataReference.h */,
+				9B47908E253151CC00EC11AB /* JSIPCBinding.h */,
+				9B47908C25314D8300EC11AB /* MessageArgumentDescriptions.h */,
 				1AC4C82816B876A90069DCCD /* MessageFlags.h */,
 				1A3EED11161A53D600AEB4F5 /* MessageReceiver.h */,
 				1A3EED0C161A535300AEB4F5 /* MessageReceiverMap.cpp */,
@@ -10088,6 +10096,7 @@
 				07E19EF823D401F00094FFB4 /* MediaPlayerPrivateRemoteMessageReceiver.cpp */,
 				07E19EF923D401F00094FFB4 /* MediaPlayerPrivateRemoteMessages.h */,
 				07E19EFA23D401F00094FFB4 /* MediaPlayerPrivateRemoteMessagesReplies.h */,
+				9B4790902531563200EC11AB /* MessageArgumentDescriptions.cpp */,
 				51DD9F2616367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp */,
 				51DD9F2716367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h */,
 				52F060DD1654317500F3281B /* NetworkContentRuleListManagerMessageReceiver.cpp */,
@@ -10941,6 +10950,7 @@
 				A5E391FD2183C1F800C8FB31 /* InspectorTargetProxy.h in Headers */,
 				C5BCE5DF1C50766A00CDE3FA /* InteractionInformationAtPosition.h in Headers */,
 				2D4D2C811DF60BF3002EB10C /* InteractionInformationRequest.h in Headers */,
+				9B47908F253151CC00EC11AB /* JSIPCBinding.h in Headers */,
 				1AE49A4911FFA8CE0048B464 /* JSNPMethod.h in Headers */,
 				1AE4987811FF7FAA0048B464 /* JSNPObject.h in Headers */,
 				C1663E5B24AEAA2F00C6A3B2 /* LaunchServicesDatabaseXPCConstants.h in Headers */,
@@ -10977,6 +10987,7 @@
 				07E19EFC23D401F10094FFB4 /* MediaPlayerPrivateRemoteMessages.h in Headers */,
 				07E19EFD23D401F10094FFB4 /* MediaPlayerPrivateRemoteMessagesReplies.h in Headers */,
 				51933DEF1965EB31008AC3EA /* MenuUtilities.h in Headers */,
+				9B47908D25314D8300EC11AB /* MessageArgumentDescriptions.h in Headers */,
 				1AC4C82916B876A90069DCCD /* MessageFlags.h in Headers */,
 				1A3EED12161A53D600AEB4F5 /* MessageReceiver.h in Headers */,
 				1A3EED0F161A535400AEB4F5 /* MessageReceiverMap.h in Headers */,
@@ -12848,6 +12859,7 @@
 				449D90DA21FDC30B00F677C0 /* LocalAuthenticationSoftLink.mm in Sources */,
 				2D92A779212B6A6100F493FD /* Logging.cpp in Sources */,
 				07E19EFB23D401F10094FFB4 /* MediaPlayerPrivateRemoteMessageReceiver.cpp in Sources */,
+				9B4790912531563200EC11AB /* MessageArgumentDescriptions.cpp in Sources */,
 				2D92A781212B6A7100F493FD /* MessageReceiverMap.cpp in Sources */,
 				2D92A782212B6A7100F493FD /* MessageSender.cpp in Sources */,
 				2D92A77A212B6A6100F493FD /* Module.cpp in Sources */,

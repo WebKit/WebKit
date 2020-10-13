@@ -72,6 +72,7 @@ public:
 
     static std::unique_ptr<Decoder> unwrapForTesting(Decoder&);
 
+    const uint8_t* buffer() const { return m_buffer; }
     size_t length() const { return m_bufferEnd - m_buffer; }
 
     WARN_UNUSED_RETURN bool isValid() const { return m_bufferPos != nullptr; }

@@ -659,6 +659,7 @@ GPUProcessProxyMessageReceiver.cpp
 GPUProcessMessageReceiver.cpp
 LibWebRTCCodecsProxyMessageReceiver.cpp
 LibWebRTCCodecsMessageReceiver.cpp
+MessageArgumentDescriptions.cpp @no-unify
 MessageNames.cpp
 RemoteAudioDestinationManagerMessageReceiver.cpp
 RemoteAudioDestinationProxyMessageReceiver.cpp

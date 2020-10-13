@@ -428,6 +428,7 @@ macro(GENERATE_MESSAGE_SOURCES _output_source _inputs)
 
     add_custom_command(
         OUTPUT
+            ${WebKit_DERIVED_SOURCES_DIR}/MessageArgumentDescriptions.cpp
             ${WebKit_DERIVED_SOURCES_DIR}/MessageNames.cpp
             ${WebKit_DERIVED_SOURCES_DIR}/MessageNames.h
             ${_outputs}

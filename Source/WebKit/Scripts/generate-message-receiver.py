@@ -34,6 +34,7 @@ def main(argv):
 
     first_arg = True
     second_arg = False
+    receiver_header_files = []
     for parameter in argv:
         if first_arg:
             first_arg = False
@@ -53,7 +54,9 @@ def main(argv):
         with open('%sMessageReceiver.cpp' % receiver_name, "w+") as implementation_output:
             implementation_output.write(webkit.messages.generate_message_handler(receiver))
 
-        with open('%sMessages.h' % receiver_name, "w+") as header_output:
+        receiver_message_header = '%sMessages.h' % receiver_name
+        receiver_header_files.append(receiver_message_header)
+        with open(receiver_message_header, "w+") as header_output:
             header_output.write(webkit.messages.generate_messages_header(receiver))
 
         with open('%sMessagesReplies.h' % receiver_name, "w+") as reply_header_output:
@@ -64,6 +67,9 @@ def main(argv):
 
     with open('MessageNames.cpp', "w+") as message_names_implementation_output:
         message_names_implementation_output.write(webkit.messages.generate_message_names_implementation(receivers))
+
+    with open('MessageArgumentDescriptions.cpp', "w+") as message_descriptions_implementation_output:
+        message_descriptions_implementation_output.write(webkit.messages.generate_message_argument_description_implementation(receivers, receiver_header_files))
 
     return 0
 
