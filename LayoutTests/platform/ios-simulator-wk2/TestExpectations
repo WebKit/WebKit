@@ -147,4 +147,4 @@ webkit.org/b/217357 http/wpt/cache-storage/cache-quota-after-restart.any.html [ 
 
 webkit.org/b/217412 http/wpt/cache-storage/cache-quota.any.html [ Pass Failure ]
 
-webkit.org/b/217610 imported/blink/fast/css/zoomed-intrinsic-width.html [ Failure ]
+webkit.org/b/217643 imported/w3c/web-platform-tests/css/css-flexbox/auto-margins-001.html [ Pass ImageOnlyFailure ]

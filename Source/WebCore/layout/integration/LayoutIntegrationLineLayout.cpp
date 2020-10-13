@@ -124,12 +124,12 @@ void LineLayout::constructContent()
         auto initialContaingBlockSize = m_layoutState.viewportSize();
         for (auto& lineRun : m_inlineFormattingState.lineRuns()) {
             auto& layoutBox = lineRun.layoutBox();
-            auto computedInkOverflow = [&] (const auto& logicalRect) {
+            auto computedInkOverflow = [&] (auto runRect) {
                 // FIXME: Add support for non-text ink overflow.
                 if (!lineRun.text())
-                    return logicalRect;
+                    return runRect;
                 auto& style = layoutBox.style();
-                auto inkOverflow = logicalRect;
+                auto inkOverflow = runRect;
                 auto strokeOverflow = std::ceil(style.computedStrokeWidth(ceiledIntSize(initialContaingBlockSize)));
                 inkOverflow.inflate(strokeOverflow);
 
@@ -140,18 +140,20 @@ void LineLayout::constructContent()
                 }
                 return inkOverflow;
             };
-            auto logicalRect = FloatRect { lineRun.logicalRect() };
+            auto runRect = FloatRect { lineRun.logicalRect() };
             // Inline boxes are relative to the line box while final Runs need to be relative to the parent Box
             // FIXME: Shouldn't we just leave them be relative to the line box?
             auto lineIndex = lineRun.lineIndex();
-            auto& lineBoxLogicalRect = m_inlineFormattingState.lines()[lineIndex].lineBoxLogicalRect();
-            logicalRect.moveBy({ lineBoxLogicalRect.left(), lineBoxLogicalRect.top() });
+            auto lineBoxLogicalRect = m_inlineFormattingState.lines()[lineIndex].lineBoxLogicalRect();
+            runRect.moveBy({ lineBoxLogicalRect.left(), lineBoxLogicalRect.top() });
+            // InlineTree rounds y position to integral value, see InlineFlowBox::placeBoxesInBlockDirection.
+            runRect.setY(roundToInt(runRect.y()));
 
             WTF::Optional<Run::TextContent> textContent;
             if (auto text = lineRun.text())
                 textContent = Run::TextContent { text->start(), text->length(), text->content(), text->needsHyphen() };
             auto expansion = Run::Expansion { lineRun.expansion().behavior, lineRun.expansion().horizontalExpansion };
-            auto displayRun = Run { lineIndex, layoutBox, logicalRect, computedInkOverflow(logicalRect), expansion, textContent };
+            auto displayRun = Run { lineIndex, layoutBox, runRect, computedInkOverflow(runRect), expansion, textContent };
             displayInlineContent.runs.append(displayRun);
         }
     };
@@ -163,7 +165,7 @@ void LineLayout::constructContent()
         size_t runIndex = 0;
         for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
             auto& line = lines[lineIndex];
-            auto& lineBoxLogicalRect = line.lineBoxLogicalRect();
+            auto lineBoxLogicalRect = line.lineBoxLogicalRect();
             // FIXME: This is where the logical to physical translate should happen.
             auto overflowWidth = [&] {
                 // FIXME: It's the copy of the lets-adjust-overflow-for-the-caret behavior from ComplexLineLayout::addOverflowFromInlineChildren.
@@ -187,6 +189,8 @@ void LineLayout::constructContent()
             auto lineRect = FloatRect { line.logicalRect() };
             // Painting code (specifically TextRun's xPos) needs the line box offset to be able to compute tab positions.
             lineRect.setX(lineBoxLogicalRect.left());
+            // InlineTree rounds y position to integral value, see InlineFlowBox::placeBoxesInBlockDirection.
+            lineRect.setY(roundToInt(lineRect.y()));
             displayInlineContent.lines.append({ firstRunIndex, runCount, lineRect, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.horizontalAlignmentOffset() });
         }
     };
