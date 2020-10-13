@@ -1,3 +1,13 @@
+2020-10-13  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][MediaFoundation] Many test cases are timing out by waiting for events
+        https://bugs.webkit.org/show_bug.cgi?id=217463
+
+        Reviewed by Don Olmstead.
+
+        * platform/wincairo/TestExpectations: Unskip media tests. Marked
+        failing tests.
+
 2020-10-13  Truitt Savell  <tsavell@apple.com>
 
         REGRESSION: [ Mac ] inspector/audit/basic-async.htm is flaky timeout

@@ -65,7 +65,6 @@ MediaPlayerPrivateMediaFoundation::MediaPlayerPrivateMediaFoundation(MediaPlayer
     , m_paused(true)
     , m_hasAudio(false)
     , m_hasVideo(false)
-    , m_preparingToPlay(false)
     , m_volume(1.0)
     , m_networkState(MediaPlayer::NetworkState::Empty)
     , m_readyState(MediaPlayer::ReadyState::HaveNothing)
@@ -175,8 +174,6 @@ void MediaPlayerPrivateMediaFoundation::cancelLoad()
 void MediaPlayerPrivateMediaFoundation::play()
 {
     m_paused = !startSession();
-
-    m_preparingToPlay = false;
 }
 
 void MediaPlayerPrivateMediaFoundation::pause()
@@ -215,8 +212,7 @@ void MediaPlayerPrivateMediaFoundation::setVisible(bool visible)
 
 bool MediaPlayerPrivateMediaFoundation::seeking() const
 {
-    // We assume seeking is immediately complete.
-    return false;
+    return m_seeking;
 }
 
 void MediaPlayerPrivateMediaFoundation::seek(float time)
@@ -230,7 +226,8 @@ void MediaPlayerPrivateMediaFoundation::seek(float time)
     ASSERT_UNUSED(hr, SUCCEEDED(hr));
     PropVariantClear(&propVariant);
 
-    m_player->timeChanged();
+    m_seeking = true;
+    m_sessionEnded = false;
 }
 
 void MediaPlayerPrivateMediaFoundation::setRate(float rate)
@@ -266,10 +263,28 @@ float MediaPlayerPrivateMediaFoundation::duration() const
 
 float MediaPlayerPrivateMediaFoundation::currentTime() const
 {
-    if (!m_presenter)
-        return 0.0f;
+    if (m_sessionEnded)
+        return duration();
+    if (!m_mediaSession)
+        return 0;
+    COMPtr<IMFClock> clock;
+    HRESULT hr = m_mediaSession->GetClock(&clock);
+    if (FAILED(hr))
+        return 0;
 
-    return m_presenter->currentTime();
+    LONGLONG clockTime;
+    MFTIME systemTime;
+    hr = clock->GetCorrelatedTime(0, &clockTime, &systemTime);
+    if (FAILED(hr))
+        return 0;
+
+    // clockTime is in 100 nanoseconds, we need to convert to seconds.
+    float currentTime = clockTime / tenMegahertz;
+
+    if (currentTime > m_maxTimeLoaded)
+        m_maxTimeLoaded = currentTime;
+
+    return currentTime;
 }
 
 bool MediaPlayerPrivateMediaFoundation::paused() const
@@ -320,8 +335,8 @@ float MediaPlayerPrivateMediaFoundation::maxTimeSeekable() const
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaFoundation::buffered() const
 { 
     auto ranges = makeUnique<PlatformTimeRanges>();
-    if (m_presenter && m_presenter->maxTimeLoaded() > 0)
-        ranges->add(MediaTime::zeroTime(), MediaTime::createWithDouble(m_presenter->maxTimeLoaded()));
+    if (maxTimeLoaded() > 0)
+        ranges->add(MediaTime::zeroTime(), MediaTime::createWithDouble(maxTimeLoaded()));
     return ranges;
 }
 
@@ -333,23 +348,6 @@ bool MediaPlayerPrivateMediaFoundation::didLoadingProgress() const
 void MediaPlayerPrivateMediaFoundation::setSize(const IntSize& size)
 {
     m_size = size;
-
-    auto videoDisplay = this->videoDisplay();
-    if (!videoDisplay)
-        return;
-
-    FrameView* view = nullptr;
-    float deviceScaleFactor = 1.0f;
-    if (m_player && m_player->cachedResourceLoader() && m_player->cachedResourceLoader()->document()) {
-        view = m_player->cachedResourceLoader()->document()->view();
-        deviceScaleFactor = m_player->cachedResourceLoader()->document()->deviceScaleFactor();
-    }
-
-    int w = m_size.width() * deviceScaleFactor;
-    int h = m_size.height() * deviceScaleFactor;
-
-    RECT rc = { 0, 0, w, h };
-    videoDisplay->SetVideoPosition(nullptr, &rc);
 }
 
 void MediaPlayerPrivateMediaFoundation::paint(GraphicsContext& context, const FloatRect& rect)
@@ -429,8 +427,18 @@ bool MediaPlayerPrivateMediaFoundation::endCreatedMediaSource(IMFAsyncResult* as
     COMPtr<IUnknown> source;
 
     HRESULT hr = m_sourceResolver->EndCreateObjectFromURL(asyncResult, &objectType, &source);
-    if (FAILED(hr))
+    if (FAILED(hr)) {
+        callOnMainThread([this, weakPtr = m_weakThis, hr] {
+            if (!weakPtr)
+                return;
+            if (hr == MF_E_UNSUPPORTED_BYTESTREAM_TYPE)
+                m_networkState = MediaPlayer::NetworkState::FormatError;
+            else
+                m_networkState = MediaPlayer::NetworkState::NetworkError;
+            m_player->networkStateChanged();
+        });
         return false;
+    }
 
     hr = source->QueryInterface(IID_PPV_ARGS(&m_mediaSource));
     if (FAILED(hr))
@@ -465,6 +473,21 @@ bool MediaPlayerPrivateMediaFoundation::endGetEvent(IMFAsyncResult* asyncResult)
     hr = event->GetType(&mediaEventType);
     if (FAILED(hr))
         return false;
+
+    HRESULT status;
+    hr = event->GetStatus(&status);
+    if (FAILED(hr))
+        return false;
+
+    if (status == MF_E_TOPO_CODEC_NOT_FOUND) {
+        callOnMainThread([this, weakPtr = m_weakThis] {
+            if (!weakPtr)
+                return;
+            m_networkState = MediaPlayer::NetworkState::FormatError;
+            m_player->networkStateChanged();
+        });
+        return false;
+    }
 
     switch (mediaEventType) {
     case MESessionTopologySet: {
@@ -515,11 +538,14 @@ bool MediaPlayerPrivateMediaFoundation::endGetEvent(IMFAsyncResult* asyncResult)
     case MEMediaSample:
         break;
 
-    case MEError: {
-        HRESULT status = S_OK;
-        event->GetStatus(&status);
-        break;
-    }
+    case MEError:
+        callOnMainThread([this, weakPtr = m_weakThis] {
+            if (!weakPtr)
+                return;
+            m_networkState = MediaPlayer::NetworkState::DecodeError;
+            m_player->networkStateChanged();
+        });
+        return false;
     }
 
     if (mediaEventType != MESessionClosed) {
@@ -750,9 +776,8 @@ void MediaPlayerPrivateMediaFoundation::updateReadyState()
     MediaPlayer::ReadyState oldReadyState = m_readyState;
     if (percentageOfPlaybackBufferFilled >= 100) {
         m_readyState = MediaPlayer::ReadyState::HaveEnoughData;
-        if (m_preparingToPlay) {
+        if (m_paused) {
             pause();
-            m_preparingToPlay = false;
         }
     } else if (percentageOfPlaybackBufferFilled > 0)
         m_readyState = MediaPlayer::ReadyState::HaveFutureData;
@@ -786,18 +811,11 @@ void MediaPlayerPrivateMediaFoundation::onCreatedMediaSource()
 void MediaPlayerPrivateMediaFoundation::onTopologySet()
 {
     // This method is called on the main thread as a result of load() being called.
-
-    if (auto videoDisplay = this->videoDisplay()) {
-        RECT rc = { 0, 0, m_size.width(), m_size.height() };
-        videoDisplay->SetVideoPosition(nullptr, &rc);
-    }
-
     // It is expected that we start buffering data from the network now.
     // We call startSession() to start buffering video data.
-    // When we have received enough data, we pause, so that we don't actually start the playback.
-    ASSERT(m_paused);
-    ASSERT(!m_preparingToPlay);
-    m_preparingToPlay = startSession();
+    // When we have received enough data, we pause if it is not
+    // playing, so that we don't actually start the playback.
+    startSession();
 }
 
 void MediaPlayerPrivateMediaFoundation::onBufferingStarted()
@@ -812,16 +830,33 @@ void MediaPlayerPrivateMediaFoundation::onBufferingStopped()
 
 void MediaPlayerPrivateMediaFoundation::onSessionStarted()
 {
+    m_sessionEnded = false;
+    if (m_seeking) {
+        m_seeking = false;
+        if (m_paused)
+            m_mediaSession->Pause();
+        m_player->timeChanged();
+        return;
+    }
+
+    if (auto videoDisplay = this->videoDisplay()) {
+        RECT rc = { 0, 0, m_size.width(), m_size.height() };
+        videoDisplay->SetVideoPosition(nullptr, &rc);
+    }
+
     updateReadyState();
 }
 
 void MediaPlayerPrivateMediaFoundation::onSessionEnded()
 {
+    m_sessionEnded = true;
     m_networkState = MediaPlayer::NetworkState::Loaded;
     m_player->networkStateChanged();
 
     m_paused = true;
     m_player->playbackStateChanged();
+
+    m_player->timeChanged();
 }
 
 MediaPlayerPrivateMediaFoundation::AsyncCallback::AsyncCallback(MediaPlayerPrivateMediaFoundation* mediaPlayer, bool event)
@@ -1373,27 +1408,6 @@ void MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::paintCurrentFrame(
 {
     if (m_presenterEngine)
         m_presenterEngine->paintCurrentFrame(context, r);
-}
-
-float MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::currentTime()
-{
-    if (!m_clock)
-        return 0.0f;
-
-    LONGLONG clockTime;
-    MFTIME systemTime;
-    HRESULT hr = m_clock->GetCorrelatedTime(0, &clockTime, &systemTime);
-
-    if (FAILED(hr))
-        return 0.0f;
-
-    // clockTime is in 100 nanoseconds, we need to convert to seconds.
-    float currentTime = clockTime / tenMegahertz;
-
-    if (currentTime > m_maxTimeLoaded)
-        m_maxTimeLoaded = currentTime;
-
-    return currentTime;
 }
 
 bool MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::isActive() const
