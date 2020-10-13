@@ -1,5 +1,9 @@
 2020-10-13  Russell Epstein  <repstein@apple.com>
 
+        Revert r268206. rdar://problem/70258921
+
+2020-10-13  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r268308. rdar://problem/70259013
 
     [Mac] AirPlay menu does not show up when AirPlay button is clicked
