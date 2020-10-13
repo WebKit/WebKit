@@ -39,7 +39,7 @@
 
 namespace WebKit {
 
-class RemoteCaptureSampleManager : public IPC::Connection::ThreadMessageReceiver {
+class RemoteCaptureSampleManager : public IPC::Connection::ThreadMessageReceiverRefCounted {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteCaptureSampleManager();

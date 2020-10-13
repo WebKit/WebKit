@@ -33,6 +33,8 @@
 #include "WebProcessSupplement.h"
 #include <WebCore/AudioDestination.h>
 #include <WebCore/AudioIOCallback.h>
+#include <wtf/CrossThreadQueue.h>
+#include <wtf/Threading.h>
 
 #if PLATFORM(COCOA)
 #include <WebCore/CARingBuffer.h>
@@ -40,12 +42,13 @@
 
 namespace WebKit {
 
-class RemoteAudioDestinationProxy : public WebCore::AudioDestination, private IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+class RemoteAudioDestinationProxy : public WebCore::AudioDestination, public IPC::Connection::ThreadMessageReceiver {
     WTF_MAKE_NONCOPYABLE(RemoteAudioDestinationProxy);
 public:
     using AudioBus = WebCore::AudioBus;
     using AudioIOCallback = WebCore::AudioIOCallback;
+    using WebCore::AudioDestination::ref;
+    using WebCore::AudioDestination::deref;
 
     static Ref<AudioDestination> create(AudioIOCallback&, const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate);
 
@@ -68,12 +71,19 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
+    // IPC::Connection::ThreadMessageReceiver
+    void dispatchToThread(Function<void()>&&) final;
+    void refMessageReceiver() final { WebCore::AudioDestination::ref(); }
+    void derefMessageReceiver() final { WebCore::AudioDestination::deref(); }
+
     AudioIOCallback& m_callback;
     float m_sampleRate { 0. };
     unsigned m_framesPerBuffer { 0 };
     RemoteAudioDestinationIdentifier m_destinationID;
     bool m_isPlaying { false };
     Function<void(Function<void()>&&)> m_dispatchToRenderThread;
+    RefPtr<Thread> m_renderThread;
+    CrossThreadQueue<Function<void()>> m_threadTaskQueue;
 };
 
 } // namespace WebKit

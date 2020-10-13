@@ -1,3 +1,14 @@
+2020-10-13  Chris Dumez  <cdumez@apple.com>
+
+        WebAudio tests are crashing in debug when enabling the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=217663
+
+        Reviewed by Geoff Garen.
+
+        Unskip webaudio tests when the GPU process is enabled.
+
+        * gpu-process/TestExpectations:
+
 2020-10-13  Karl Rackler  <rackler@apple.com>
 
         REGRESSION (iOS 14): [ iOS wk2 ] service-workers-spinning tests are flaky failures

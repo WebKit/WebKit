@@ -1,3 +1,67 @@
+2020-10-13  Chris Dumez  <cdumez@apple.com>
+
+        WebAudio tests are crashing in debug when enabling the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=217663
+
+        Reviewed by Geoff Garen.
+
+        WebAudio tests were crashing in debug when enabling the GPU process because it did audio
+        processing on the WebContent process's main thread. To address the issue, I made
+        RemoteAudioDestinationProxy a ThreadMessageReceiver so that it receives IPC on an audio
+        thread instead of the main thread. IPC messages are processed directly on the AudioWorklet
+        thread when active or on an audio thread constructed by RemoteAudioDestinationProxy
+        otherwise.
+
+        * GPUProcess/media/RemoteAudioDestinationManager.cpp:
+        (WebKit::RemoteAudioDestination::RemoteAudioDestination):
+        Use a PushPullFIFO structure in render() to avoid hanging the audio rendering thread
+        on a semaphore. Hanging the rendering thread was terrible for performance and was also
+        a source of deadlock since the underlying framework is holding a lock while render() is
+        called. We could process a RemoteAudioDestination::CreateAudioDestination sync IPC on the
+        main thread and deadlock on that lock.
+
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.h:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager.h:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.h:
+        * NetworkProcess/IndexedDB/WebIDBServer.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        * WebProcess/Network/webrtc/LibWebRTCNetwork.h:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.h:
+        Use ThreadMessageReceiverRefCounted instead of ThreadMessageReceiver since those classes
+        do not provide their own RefCounting.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::addWorkQueueMessageReceiver):
+        (IPC::Connection::removeWorkQueueMessageReceiver):
+        (IPC::Connection::addThreadMessageReceiver):
+        (IPC::Connection::removeThreadMessageReceiver):
+        (IPC::Connection::processIncomingMessage):
+        (IPC::Connection::dispatchMessageToWorkQueueReceiver):
+        (IPC::Connection::dispatchMessageToThreadReceiver):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::ThreadMessageReceiver::ref):
+        (IPC::Connection::ThreadMessageReceiver::deref):
+        - Add support for passing a destinationID when registering a WorkQueueMessageReceiver or a
+          ThreadMessageReceiver, similarly to regular MessageReceivers. This was needed here since
+          The GPUProcess sends IPC messages to the RemoteAudioDestinationProxy with a given
+          destinationID and since RemoteAudioDestinationProxy is now a ThreadMessageReceiver.
+        - Stop having ThreadMessageReceiver subclass ThreadSafeRefCounted since
+          RemoteAudioDestinationProxy already subclasses ThreadSafeRefCounted indirectly. A new
+          ThreadMessageReceiverRefCounted class was added for convenience for existing code that
+          relied on its refcounting.
+
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::RemoteAudioDestinationProxy):
+        (WebKit::RemoteAudioDestinationProxy::~RemoteAudioDestinationProxy):
+        (WebKit::RemoteAudioDestinationProxy::start):
+        (WebKit::RemoteAudioDestinationProxy::stop):
+        (WebKit::RemoteAudioDestinationProxy::renderBuffer):
+        (WebKit::RemoteAudioDestinationProxy::didChangeIsPlaying):
+        (WebKit::RemoteAudioDestinationProxy::dispatchToThread):
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.h:
+        Use a PushPullFIFO container in render() to avoid handing the audio rendering thread on
+        a semaphore while the Render IPC is getting processed by the WebProcess.
+
 2020-10-13  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS 14] Hang in -[WKUserDefaults _notifyObserversOfChangeFromValuesForKeys:toValuesForKeys:]

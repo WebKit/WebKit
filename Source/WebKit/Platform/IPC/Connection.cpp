@@ -311,23 +311,25 @@ void Connection::setShouldExitOnSyncMessageSendFailure(bool shouldExitOnSyncMess
     m_shouldExitOnSyncMessageSendFailure = shouldExitOnSyncMessageSendFailure;
 }
 
-void Connection::addWorkQueueMessageReceiver(ReceiverName messageReceiverName, WorkQueue& workQueue, WorkQueueMessageReceiver* workQueueMessageReceiver)
+void Connection::addWorkQueueMessageReceiver(ReceiverName messageReceiverName, WorkQueue& workQueue, WorkQueueMessageReceiver* workQueueMessageReceiver, uint64_t destinationID)
 {
     ASSERT(RunLoop::isMain());
 
     auto locker = holdLock(m_workQueueMessageReceiversMutex);
-    ASSERT(!m_workQueueMessageReceivers.contains(messageReceiverName));
+    auto key = std::make_pair(static_cast<uint8_t>(messageReceiverName), destinationID);
+    ASSERT(!m_workQueueMessageReceivers.contains(key));
 
-    m_workQueueMessageReceivers.add(messageReceiverName, std::make_pair(&workQueue, workQueueMessageReceiver));
+    m_workQueueMessageReceivers.add(key, std::make_pair(&workQueue, workQueueMessageReceiver));
 }
 
-void Connection::removeWorkQueueMessageReceiver(ReceiverName messageReceiverName)
+void Connection::removeWorkQueueMessageReceiver(ReceiverName messageReceiverName, uint64_t destinationID)
 {
     ASSERT(RunLoop::isMain());
 
     auto locker = holdLock(m_workQueueMessageReceiversMutex);
-    ASSERT(m_workQueueMessageReceivers.contains(messageReceiverName));
-    m_workQueueMessageReceivers.remove(messageReceiverName);
+    auto key = std::make_pair(static_cast<uint8_t>(messageReceiverName), destinationID);
+    ASSERT(m_workQueueMessageReceivers.contains(key));
+    m_workQueueMessageReceivers.remove(key);
 }
 
 void Connection::dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceiver& workQueueMessageReceiver, Decoder& decoder)
@@ -357,24 +359,26 @@ void Connection::dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceive
         sendSyncReply(WTFMove(replyEncoder));
 }
 
-void Connection::addThreadMessageReceiver(ReceiverName messageReceiverName, ThreadMessageReceiver* threadMessageReceiver)
+void Connection::addThreadMessageReceiver(ReceiverName messageReceiverName, ThreadMessageReceiver* threadMessageReceiver, uint64_t destinationID)
 {
     ASSERT(RunLoop::isMain());
 
     auto locker = holdLock(m_threadMessageReceiversLock);
-    ASSERT(!m_threadMessageReceivers.contains(messageReceiverName));
+    auto key = std::make_pair(static_cast<uint8_t>(messageReceiverName), destinationID);
+    ASSERT(!m_threadMessageReceivers.contains(key));
 
-    m_threadMessageReceivers.add(messageReceiverName, threadMessageReceiver);
+    m_threadMessageReceivers.add(key, threadMessageReceiver);
 }
 
-void Connection::removeThreadMessageReceiver(ReceiverName messageReceiverName)
+void Connection::removeThreadMessageReceiver(ReceiverName messageReceiverName, uint64_t destinationID)
 {
     ASSERT(RunLoop::isMain());
 
     auto locker = holdLock(m_threadMessageReceiversLock);
-    ASSERT(m_threadMessageReceivers.contains(messageReceiverName));
+    auto key = std::make_pair(static_cast<uint8_t>(messageReceiverName), destinationID);
+    ASSERT(m_threadMessageReceivers.contains(key));
 
-    m_threadMessageReceivers.remove(messageReceiverName);
+    m_threadMessageReceivers.remove(key);
 }
 
 void Connection::dispatchThreadMessageReceiverMessage(ThreadMessageReceiver& threadMessageReceiver, Decoder& decoder)
@@ -713,7 +717,8 @@ void Connection::processIncomingMessage(std::unique_ptr<Decoder> message)
         return;
     }
 
-    if (!WorkQueueMessageReceiverMap::isValidKey(message->messageReceiverName()) || !ThreadMessageReceiverMap::isValidKey(message->messageReceiverName())) {
+    auto threadedReceiverKey = std::make_pair(static_cast<uint8_t>(message->messageReceiverName()), message->destinationID());
+    if (!WorkQueueMessageReceiverMap::isValidKey(threadedReceiverKey) || !ThreadMessageReceiverMap::isValidKey(threadedReceiverKey)) {
         RunLoop::main().dispatch([protectedThis = makeRef(*this), messageName = message->messageName()]() mutable {
             protectedThis->dispatchDidReceiveInvalidMessage(messageName);
         });
@@ -1004,7 +1009,8 @@ void Connection::dispatchMessage(Decoder& decoder)
 bool Connection::dispatchMessageToWorkQueueReceiver(std::unique_ptr<Decoder>& message)
 {
     auto locker = holdLock(m_workQueueMessageReceiversMutex);
-    auto it = m_workQueueMessageReceivers.find(message->messageReceiverName());
+    auto key = std::make_pair(static_cast<uint8_t>(message->messageReceiverName()), message->destinationID());
+    auto it = m_workQueueMessageReceivers.find(key);
     if (it != m_workQueueMessageReceivers.end()) {
         it->value.first->dispatch([protectedThis = makeRef(*this), workQueueMessageReceiver = it->value.second, decoder = WTFMove(message)]() mutable {
             protectedThis->dispatchWorkQueueMessageReceiverMessage(*workQueueMessageReceiver, *decoder);
@@ -1019,7 +1025,8 @@ bool Connection::dispatchMessageToThreadReceiver(std::unique_ptr<Decoder>& messa
     RefPtr<ThreadMessageReceiver> protectedThreadMessageReceiver;
     {
         auto locker = holdLock(m_threadMessageReceiversLock);
-        protectedThreadMessageReceiver = m_threadMessageReceivers.get(message->messageReceiverName());
+        auto key = std::make_pair(static_cast<uint8_t>(message->messageReceiverName()), message->destinationID());
+        protectedThreadMessageReceiver = m_threadMessageReceivers.get(key);
     }
 
     if (protectedThreadMessageReceiver) {

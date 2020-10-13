@@ -1068,10 +1068,12 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/audio/AudioSession.h
     platform/audio/AudioSourceProvider.h
     platform/audio/AudioStreamDescription.h
+    platform/audio/AudioUtilities.h
     platform/audio/NowPlayingInfo.h
     platform/audio/PlatformAudioData.h
     platform/audio/PlatformMediaSession.h
     platform/audio/PlatformMediaSessionManager.h
+    platform/audio/PushPullFIFO.h
 
     platform/encryptedmedia/CDMEncryptionScheme.h
     platform/encryptedmedia/CDMFactory.h

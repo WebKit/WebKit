@@ -42,7 +42,7 @@ namespace WebKit {
 
 class RemoteAudioMediaStreamTrackRenderer;
 
-class RemoteAudioMediaStreamTrackRendererManager final : public IPC::Connection::ThreadMessageReceiver {
+class RemoteAudioMediaStreamTrackRendererManager final : public IPC::Connection::ThreadMessageReceiverRefCounted {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteAudioMediaStreamTrackRendererManager> create(GPUConnectionToWebProcess& process) { return adoptRef(*new RemoteAudioMediaStreamTrackRendererManager(process)); }

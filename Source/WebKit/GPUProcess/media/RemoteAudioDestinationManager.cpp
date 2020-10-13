@@ -35,11 +35,16 @@
 #include <WebCore/AudioBus.h>
 #include <WebCore/AudioDestination.h>
 #include <WebCore/AudioIOCallback.h>
+#include <WebCore/AudioUtilities.h>
+#include <WebCore/PushPullFIFO.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 namespace WebKit {
+
+// This FIFO size matches to one in AudioDestinationCocoa.cpp and was imported from Blink.
+constexpr size_t fifoSize = 96 * WebCore::AudioUtilities::renderQuantumSize;
 
 class RemoteAudioDestination : public ThreadSafeRefCounted<RemoteAudioDestination>, public WebCore::AudioIOCallback {
 public:
@@ -76,16 +81,23 @@ private:
         : m_connection(connection)
         , m_id(identifier)
         , m_destination(AudioDestination::create(*this, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate))
+        , m_fifo(numberOfOutputChannels, fifoSize)
     {
     }
 
-    void render(AudioBus* sourceBus, AudioBus* destinationBus, size_t framesToProcess, const WebCore::AudioIOPosition& outputPosition) override
+    void render(AudioBus*, AudioBus* destinationBus, size_t framesToProcess, const WebCore::AudioIOPosition& outputPosition) override
     {
+        ASSERT(!isMainThread());
+
         if (m_protectThisDuringGracefulShutdown)
             return;
 
-        auto protectedThis = makeRef(*this);
-        BinarySemaphore renderSemaphore;
+        {
+            auto locker = holdLock(m_fifoLock);
+            framesToProcess = m_fifo.pull(destinationBus, framesToProcess);
+        }
+        if (!framesToProcess)
+            return;
 
         Vector<Ref<SharedMemory>> buffers;
         for (unsigned i = 0; i < destinationBus->numberOfChannels(); ++i) {
@@ -93,21 +105,19 @@ private:
             buffers.append(*memory);
         }
 
-        // FIXME: Replace this code with a ring buffer. At least this happens in audio thread.
-        ASSERT(!isMainThread());
-        callOnMainThread([this, framesToProcess, outputPosition, &buffers, &renderSemaphore] {
+        // FIXME: It is unfortunate we have to dispatch to the main thead here. We should be able to IPC straight from the
+        // render thread but this is not supported by sendWithAsyncReply().
+        callOnMainThread([this, protectedThis = makeRef(*this), framesToProcess, outputPosition, buffers = WTFMove(buffers)]() mutable {
             RemoteAudioBusData busData { framesToProcess, outputPosition, buffers.map([](auto& memory) { return memory.copyRef(); }) };
             ASSERT(framesToProcess);
-            m_connection.connection().sendWithAsyncReply(Messages::RemoteAudioDestinationProxy::RenderBuffer(busData), [&]() {
-                renderSemaphore.signal();
+            m_connection.connection().sendWithAsyncReply(Messages::RemoteAudioDestinationProxy::RenderBuffer(busData), [this, protectedThis = WTFMove(protectedThis), buffers = WTFMove(buffers), framesToProcess]() {
+                auto audioBus = AudioBus::create(buffers.size(), framesToProcess, false);
+                for (unsigned i = 0; i < buffers.size(); ++i)
+                    audioBus->setChannelMemory(i, static_cast<float*>(buffers[i]->data()), framesToProcess);
+                auto locker = holdLock(m_fifoLock);
+                m_fifo.push(audioBus.get());
             }, m_id.toUInt64());
         });
-        renderSemaphore.wait();
-
-        auto audioBus = AudioBus::create(buffers.size(), framesToProcess, false);
-        for (unsigned i = 0; i < buffers.size(); ++i)
-            audioBus->setChannelMemory(i, (float*)buffers[i]->data(), framesToProcess);
-        destinationBus->copyFrom(*audioBus);
     }
 
     void isPlayingDidChange() override
@@ -127,6 +137,8 @@ private:
     RemoteAudioDestinationIdentifier m_id;
     RefPtr<AudioDestination> m_destination;
     RefPtr<RemoteAudioDestination> m_protectThisDuringGracefulShutdown;
+    Lock m_fifoLock;
+    WebCore::PushPullFIFO m_fifo;
 };
 
 RemoteAudioDestinationManager::RemoteAudioDestinationManager(GPUConnectionToWebProcess& connection)

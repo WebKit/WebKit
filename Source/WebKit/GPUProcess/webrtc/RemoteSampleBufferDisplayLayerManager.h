@@ -46,7 +46,7 @@ namespace WebKit {
 class GPUConnectionToWebProcess;
 class RemoteSampleBufferDisplayLayer;
 
-class RemoteSampleBufferDisplayLayerManager final : public IPC::Connection::ThreadMessageReceiver {
+class RemoteSampleBufferDisplayLayerManager final : public IPC::Connection::ThreadMessageReceiverRefCounted {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteSampleBufferDisplayLayerManager> create(GPUConnectionToWebProcess& connection) { return adoptRef(*new RemoteSampleBufferDisplayLayerManager(connection)); }

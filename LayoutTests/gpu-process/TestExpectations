@@ -306,10 +306,8 @@ imported/w3c/web-platform-tests/mst-content-hint/MediaStreamTrack-contentHint.ht
 imported/w3c/web-platform-tests/picture-in-picture/mediastream.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https.html [ Skip ]
 
-imported/w3c/web-platform-tests/webaudio [ Skip ]
 imported/w3c/web-platform-tests/webrtc [ Skip ]
 
-webaudio [ Skip ]
 webrtc [ Skip ]
 
 webgl [ Skip ]

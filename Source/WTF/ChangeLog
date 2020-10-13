@@ -1,3 +1,17 @@
+2020-10-13  Chris Dumez  <cdumez@apple.com>
+
+        WebAudio tests are crashing in debug when enabling the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=217663
+
+        Reviewed by Geoff Garen.
+
+        * wtf/CrossThreadQueue.h:
+        (WTF::CrossThreadQueue<DataType>::waitForMessage):
+        If CrossThreadQueue::kill() gets called while another thread is waiting on a
+        CrossThreadQueue::waitForMessage() call, make it so that waitForMessage()
+        returns a default-constructed DataType instead of crashing trying to
+        dequeue (since the queue is empty).
+
 2020-10-13  Keith Rollin  <krollin@apple.com>
 
         Remove leftover MACOSX_DEPLOYMENT_TARGET_macosx support

@@ -80,6 +80,8 @@ DataType CrossThreadQueue<DataType>::waitForMessage()
 
         m_condition.wait(m_lock);
     }
+    if (m_killed)
+        return { };
 
     return m_queue.takeFirst();
 }

@@ -60,7 +60,16 @@ RemoteAudioDestinationProxy::RemoteAudioDestinationProxy(AudioIOCallback& callba
     connection.connection().sendSync(
         Messages::RemoteAudioDestinationManager::CreateAudioDestination(inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate),
         Messages::RemoteAudioDestinationManager::CreateAudioDestination::Reply(destinationID, framesPerBuffer), 0);
-    connection.messageReceiverMap().addMessageReceiver(Messages::RemoteAudioDestinationProxy::messageReceiverName(), destinationID.toUInt64(), *this);
+
+    auto offThreadRendering = [this, protectedThis = makeRef(*this)]() mutable {
+        while (!m_threadTaskQueue.isKilled()) {
+            if (auto task = m_threadTaskQueue.waitForMessage())
+                task();
+        }
+    };
+    m_renderThread = Thread::create("RemoteAudioDestinationProxy render thread", WTFMove(offThreadRendering), ThreadType::Audio);
+
+    connection.connection().addThreadMessageReceiver(Messages::RemoteAudioDestinationProxy::messageReceiverName(), this, destinationID.toUInt64());
 
     m_destinationID = destinationID;
     m_framesPerBuffer = framesPerBuffer;
@@ -69,12 +78,15 @@ RemoteAudioDestinationProxy::RemoteAudioDestinationProxy(AudioIOCallback& callba
 RemoteAudioDestinationProxy::~RemoteAudioDestinationProxy()
 {
     auto& connection =  WebProcess::singleton().ensureGPUProcessConnection();
-    connection.messageReceiverMap().removeMessageReceiver(Messages::RemoteAudioDestinationProxy::messageReceiverName(), m_destinationID.toUInt64());
+    connection.connection().removeThreadMessageReceiver(Messages::RemoteAudioDestinationProxy::messageReceiverName(), m_destinationID.toUInt64());
 
     connection.connection().sendWithAsyncReply(
         Messages::RemoteAudioDestinationManager::DeleteAudioDestination(m_destinationID), [] {
         // Can't remove this from proxyMap() here because the object would have been already deleted.
     });
+
+    m_threadTaskQueue.kill();
+    m_renderThread->waitForCompletion();
 }
 
 void RemoteAudioDestinationProxy::start(Function<void(Function<void()>&&)>&& dispatchToRenderThread)
@@ -95,30 +107,30 @@ void RemoteAudioDestinationProxy::stop()
 
 void RemoteAudioDestinationProxy::renderBuffer(const WebKit::RemoteAudioBusData& audioBusData, CompletionHandler<void()>&& completionHandler)
 {
-    // FIXME: This does rendering on the main thread when AudioWorklet is not active, which is likely not a good idea.
-    ASSERT(isMainThread());
+    ASSERT(!isMainThread());
     ASSERT(audioBusData.framesToProcess);
     ASSERT(audioBusData.channelBuffers.size());
     auto audioBus = AudioBus::create(audioBusData.channelBuffers.size(), audioBusData.framesToProcess, false);
     for (unsigned i = 0; i < audioBusData.channelBuffers.size(); ++i)
         audioBus->setChannelMemory(i, (float*)audioBusData.channelBuffers[i]->data(), audioBusData.framesToProcess);
 
-    auto doRender = [this, protectedThis = makeRef(*this), audioBus = WTFMove(audioBus), framesToProcess = audioBusData.framesToProcess, outputPosition = audioBusData.outputPosition] {
-        m_callback.render(0, audioBus.get(), framesToProcess, outputPosition);
-    };
-    if (m_dispatchToRenderThread) {
-        m_dispatchToRenderThread([doRender = WTFMove(doRender), completionHandler = WTFMove(completionHandler)]() mutable {
-            doRender();
-            callOnMainThread(WTFMove(completionHandler));
-        });
-    } else {
-        doRender();
-        completionHandler();
-    }
+    m_callback.render(0, audioBus.get(), audioBusData.framesToProcess, audioBusData.outputPosition);
+    completionHandler();
 }
 
 void RemoteAudioDestinationProxy::didChangeIsPlaying(bool isPlaying)
 {
+    ASSERT(!isMainThread());
+}
+
+// IPC::Connection::ThreadMessageReceiver
+void RemoteAudioDestinationProxy::dispatchToThread(Function<void()>&& task)
+{
+    if (m_dispatchToRenderThread) {
+        m_dispatchToRenderThread(WTFMove(task));
+        return;
+    }
+    m_threadTaskQueue.append(WTFMove(task));
 }
 
 } // namespace WebKit

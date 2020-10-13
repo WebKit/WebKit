@@ -60,7 +60,7 @@ class NetworkRTCResolver;
 class NetworkSession;
 struct RTCPacketOptions;
 
-class NetworkRTCProvider : public rtc::MessageHandler, public IPC::Connection::ThreadMessageReceiver {
+class NetworkRTCProvider : public rtc::MessageHandler, public IPC::Connection::ThreadMessageReceiverRefCounted {
 public:
     static Ref<NetworkRTCProvider> create(NetworkConnectionToWebProcess& connection) { return adoptRef(*new NetworkRTCProvider(connection)); }
     ~NetworkRTCProvider();

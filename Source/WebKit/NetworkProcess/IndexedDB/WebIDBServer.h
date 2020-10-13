@@ -43,7 +43,7 @@ class IDBServer;
 
 namespace WebKit {
 
-class WebIDBServer final : public CrossThreadTaskHandler, public IPC::Connection::ThreadMessageReceiver {
+class WebIDBServer final : public CrossThreadTaskHandler, public IPC::Connection::ThreadMessageReceiverRefCounted {
 public:
     static Ref<WebIDBServer> create(PAL::SessionID, const String& directory, WebCore::IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&&);
 

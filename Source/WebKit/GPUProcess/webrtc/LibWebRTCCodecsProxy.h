@@ -51,7 +51,7 @@ namespace WebKit {
 
 class GPUConnectionToWebProcess;
 
-class LibWebRTCCodecsProxy : public IPC::Connection::ThreadMessageReceiver {
+class LibWebRTCCodecsProxy : public IPC::Connection::ThreadMessageReceiverRefCounted {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<LibWebRTCCodecsProxy> create(GPUConnectionToWebProcess& process) { return adoptRef(*new LibWebRTCCodecsProxy(process)); }

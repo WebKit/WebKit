@@ -45,19 +45,19 @@ public:
     static constexpr size_t maxFIFOLength { 65536 };
 
     // |fifoLength| cannot exceed |maxFIFOLength|. Otherwise it crashes.
-    PushPullFIFO(unsigned numberOfChannels, size_t fifoLength);
-    ~PushPullFIFO();
+    WEBCORE_EXPORT PushPullFIFO(unsigned numberOfChannels, size_t fifoLength);
+    WEBCORE_EXPORT ~PushPullFIFO();
 
     // Pushes the rendered frames by WebAudio engine.
     //  - The |inputBus| length is 128 frames (1 render quantum), fixed.
     //  - In case of overflow (FIFO full while push), the existing frames in FIFO
     //    will be overwritten and |indexRead| will be forcibly moved to
     //    |indexWrite| to avoid reading overwritten frames.
-    void push(const AudioBus* inputBus);
+    WEBCORE_EXPORT void push(const AudioBus* inputBus);
 
     // Pulls |framesRequested| by the audio device thread and returns the actual
     // number of frames to be rendered by the source. (i.e. WebAudio graph)
-    size_t pull(AudioBus* outputBus, size_t framesRequested);
+    WEBCORE_EXPORT size_t pull(AudioBus* outputBus, size_t framesRequested);
 
     size_t framesAvailable() const { return m_framesAvailable; }
     size_t length() const { return m_fifoLength; }

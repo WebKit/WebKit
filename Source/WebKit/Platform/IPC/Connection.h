@@ -117,9 +117,26 @@ public:
     class WorkQueueMessageReceiver : public MessageReceiver, public ThreadSafeRefCounted<WorkQueueMessageReceiver> {
     };
 
-    class ThreadMessageReceiver : public MessageReceiver, public ThreadSafeRefCounted<ThreadMessageReceiver> {
+    class ThreadMessageReceiver : public MessageReceiver {
     public:
-        virtual void dispatchToThread(WTF::Function<void()>&&) { };
+        virtual void dispatchToThread(WTF::Function<void()>&&) = 0;
+
+        void ref() { refMessageReceiver(); }
+        void deref() { derefMessageReceiver(); }
+
+    protected:
+        virtual void refMessageReceiver() = 0;
+        virtual void derefMessageReceiver() = 0;
+    };
+
+    class ThreadMessageReceiverRefCounted : public ThreadMessageReceiver, public ThreadSafeRefCounted<ThreadMessageReceiverRefCounted> {
+    public:
+        using ThreadSafeRefCounted::ref;
+        using ThreadSafeRefCounted::deref;
+
+    private:
+        void refMessageReceiver() final { ThreadSafeRefCounted::ref(); }
+        void derefMessageReceiver() final { ThreadSafeRefCounted::deref(); }
     };
 
 #if USE(UNIX_DOMAIN_SOCKETS)
@@ -190,11 +207,11 @@ public:
     typedef void (*DidCloseOnConnectionWorkQueueCallback)(Connection*);
     void setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback);
 
-    void addWorkQueueMessageReceiver(ReceiverName, WorkQueue&, WorkQueueMessageReceiver*);
-    void removeWorkQueueMessageReceiver(ReceiverName);
+    void addWorkQueueMessageReceiver(ReceiverName, WorkQueue&, WorkQueueMessageReceiver*, uint64_t destinationID = 0);
+    void removeWorkQueueMessageReceiver(ReceiverName, uint64_t destinationID = 0);
 
-    void addThreadMessageReceiver(ReceiverName, ThreadMessageReceiver*);
-    void removeThreadMessageReceiver(ReceiverName);
+    void addThreadMessageReceiver(ReceiverName, ThreadMessageReceiver*, uint64_t destinationID = 0);
+    void removeThreadMessageReceiver(ReceiverName, uint64_t destinationID = 0);
 
     bool open();
     void invalidate();
@@ -349,11 +366,11 @@ private:
     Ref<WorkQueue> m_connectionQueue;
 
     Lock m_workQueueMessageReceiversMutex;
-    using WorkQueueMessageReceiverMap = HashMap<ReceiverName, std::pair<RefPtr<WorkQueue>, RefPtr<WorkQueueMessageReceiver>>, WTF::IntHash<ReceiverName>, WTF::StrongEnumHashTraits<ReceiverName>>;
+    using WorkQueueMessageReceiverMap = HashMap<std::pair<uint8_t, uint64_t>, std::pair<RefPtr<WorkQueue>, RefPtr<WorkQueueMessageReceiver>>>;
     WorkQueueMessageReceiverMap m_workQueueMessageReceivers;
 
     Lock m_threadMessageReceiversLock;
-    using ThreadMessageReceiverMap = HashMap<ReceiverName, RefPtr<ThreadMessageReceiver>, WTF::IntHash<ReceiverName>, WTF::StrongEnumHashTraits<ReceiverName>>;
+    using ThreadMessageReceiverMap = HashMap<std::pair<uint8_t, uint64_t>, RefPtr<ThreadMessageReceiver>>;
     ThreadMessageReceiverMap m_threadMessageReceivers;
 
     unsigned m_inSendSyncCount;
