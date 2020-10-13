@@ -479,14 +479,8 @@ void AudioNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
 {
     ASSERT(context().isAudioThread() && context().isGraphOwner());
 
-    for (auto& savedInput : m_inputs) {
-        if (input == savedInput.get()) {
-            input->updateInternalBus();
-            return;
-        }
-    }
-
-    ASSERT_NOT_REACHED();
+    ASSERT(m_inputs.findMatching([&](auto& associatedInput) { return associatedInput.get() == input; }) != notFound);
+    input->updateInternalBus();
 }
 
 bool AudioNode::propagatesSilence() const
