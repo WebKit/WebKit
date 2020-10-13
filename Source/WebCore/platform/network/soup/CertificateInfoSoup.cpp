@@ -32,6 +32,8 @@
 #include <ResourceError.h>
 #include <ResourceResponse.h>
 #include <libsoup/soup.h>
+#include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GUniquePtr.h>
 
 namespace WebCore {
 
@@ -59,6 +61,47 @@ CertificateInfo::CertificateInfo(GTlsCertificate* certificate, GTlsCertificateFl
 }
 
 CertificateInfo::~CertificateInfo() = default;
+
+static GRefPtr<GTlsCertificate> createCertificate(GByteArray* bytes, GTlsCertificate* issuer)
+{
+    gpointer cert = g_initable_new(g_tls_backend_get_certificate_type(g_tls_backend_get_default()),
+        nullptr, nullptr,
+        "certificate", bytes,
+        "issuer", issuer,
+        nullptr);
+    RELEASE_ASSERT(cert);
+    return adoptGRef(G_TLS_CERTIFICATE(cert));
+}
+
+CertificateInfo CertificateInfo::isolatedCopy() const
+{
+    // We can only copy the public portions, so this can only be used for server certificates, not
+    // for client certificates. Sadly, other ports don't have this restriction, and there is no way
+    // to assert that we are not messing up here because we can't know how callers are using the
+    // certificate. So be careful?
+    //
+    // We should add g_tls_certificate_copy() to GLib so that we can copy the private portion too.
+
+    Vector<GRefPtr<GByteArray>> certificateBytes;
+    GTlsCertificate* cert = m_certificate.get();
+    if (!cert)
+        return CertificateInfo();
+
+    do {
+        GRefPtr<GByteArray> der;
+        g_object_get(cert, "certificate", &der.outPtr(), nullptr);
+
+        GRefPtr<GByteArray> copy = adoptGRef(g_byte_array_new());
+        g_byte_array_append(copy.get(), der->data, der->len);
+        certificateBytes.append(WTFMove(copy));
+    } while ((cert = g_tls_certificate_get_issuer(cert)));
+
+    auto finalCertificateIndex = certificateBytes.size() - 1;
+    GRefPtr<GTlsCertificate> copy = createCertificate(certificateBytes[finalCertificateIndex].get(), nullptr);
+    for (ssize_t i = finalCertificateIndex - 1; i >= 0; i--)
+        copy = createCertificate(certificateBytes[i].get(), copy.get());
+    return CertificateInfo(copy.get(), m_tlsErrors);
+}
 
 } // namespace WebCore
 
