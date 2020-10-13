@@ -56,6 +56,8 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     SetHasMouseDevice(bool hasMouseDevice)
 #endif
 
+    SetHasStylusDevice(bool hasStylusDevice)
+
     # Plug-ins.
     DidAddPlugInAutoStartOriginHash(uint32_t hash, WallTime expirationTime)
     ResetPlugInAutoStartOriginHashes(HashMap<uint32_t,WallTime> hashes)

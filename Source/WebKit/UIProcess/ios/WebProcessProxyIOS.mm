@@ -31,6 +31,7 @@
 #import "AccessibilitySupportSPI.h"
 #import "WKFullKeyboardAccessWatcher.h"
 #import "WKMouseDeviceObserver.h"
+#import "WKStylusDeviceObserver.h"
 #import "WebProcessMessages.h"
 
 namespace WebKit {
@@ -38,16 +39,20 @@ namespace WebKit {
 void WebProcessProxy::platformInitialize()
 {
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
-    if (WebProcessProxy::allProcesses().size() == 1)
-        [[WKMouseDeviceObserver sharedInstance] start];
+    [[WKMouseDeviceObserver sharedInstance] start];
+#endif
+#if HAVE(PENCILKIT_TEXT_INPUT)
+    [[WKStylusDeviceObserver sharedInstance] start];
 #endif
 }
 
 void WebProcessProxy::platformDestroy()
 {
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
-    if (WebProcessProxy::allProcesses().isEmpty())
-        [[WKMouseDeviceObserver sharedInstance] stop];
+    [[WKMouseDeviceObserver sharedInstance] stop];
+#endif
+#if HAVE(PENCILKIT_TEXT_INPUT)
+    [[WKStylusDeviceObserver sharedInstance] stop];
 #endif
 }
 

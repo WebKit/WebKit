@@ -1386,6 +1386,7 @@
 		93E6A4EE1BC5DD3900F8A0E7 /* _WKHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E6A4ED1BC5DD3900F8A0E7 /* _WKHitTestResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F549B41E3174B7000E7239 /* WKSnapshotConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F549B31E3174B7000E7239 /* WKSnapshotConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		950F2880252414EA00B74F1C /* WKMouseDeviceObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 950F287E252414E900B74F1C /* WKMouseDeviceObserver.h */; };
+		9593675F252E5E3100D3F0A0 /* WKStylusDeviceObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 9593675D252E5E3000D3F0A0 /* WKStylusDeviceObserver.h */; };
 		95C943912523C0D00054F3D5 /* BaseBoardSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 95C943902523C0D00054F3D5 /* BaseBoardSPI.h */; };
 		99036AE223A949CF0000B06A /* _WKInspectorDebuggableInfoInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 99036AE123A949CE0000B06A /* _WKInspectorDebuggableInfoInternal.h */; };
 		99036AE523A958750000B06A /* APIDebuggableInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 99036AE323A958740000B06A /* APIDebuggableInfo.h */; };
@@ -4462,6 +4463,8 @@
 		93F549B51E3174DA000E7239 /* WKSnapshotConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKSnapshotConfiguration.mm; sourceTree = "<group>"; };
 		950F287E252414E900B74F1C /* WKMouseDeviceObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKMouseDeviceObserver.h; path = ios/WKMouseDeviceObserver.h; sourceTree = "<group>"; };
 		950F287F252414EA00B74F1C /* WKMouseDeviceObserver.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKMouseDeviceObserver.mm; path = ios/WKMouseDeviceObserver.mm; sourceTree = "<group>"; };
+		9593675D252E5E3000D3F0A0 /* WKStylusDeviceObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKStylusDeviceObserver.h; path = ios/WKStylusDeviceObserver.h; sourceTree = "<group>"; };
+		9593675E252E5E3100D3F0A0 /* WKStylusDeviceObserver.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKStylusDeviceObserver.mm; path = ios/WKStylusDeviceObserver.mm; sourceTree = "<group>"; };
 		95C943902523C0D00054F3D5 /* BaseBoardSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseBoardSPI.h; sourceTree = "<group>"; };
 		99036AE123A949CE0000B06A /* _WKInspectorDebuggableInfoInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspectorDebuggableInfoInternal.h; sourceTree = "<group>"; };
 		99036AE323A958740000B06A /* APIDebuggableInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIDebuggableInfo.h; sourceTree = "<group>"; };
@@ -7088,6 +7091,8 @@
 				A1046EA02079263100F0C5D8 /* WKPDFView.mm */,
 				0FCB4E4418BBE044000FCFC9 /* WKScrollView.h */,
 				0FCB4E4518BBE044000FCFC9 /* WKScrollView.mm */,
+				9593675D252E5E3000D3F0A0 /* WKStylusDeviceObserver.h */,
+				9593675E252E5E3100D3F0A0 /* WKStylusDeviceObserver.mm */,
 				CE5B4C8621B73D870022E64F /* WKSyntheticFlagsChangedWebEvent.h */,
 				CE5B4C8721B73D870022E64F /* WKSyntheticFlagsChangedWebEvent.mm */,
 				26F10BE619187E2E001D0E68 /* WKSyntheticTapGestureRecognizer.h */,
@@ -11813,6 +11818,7 @@
 				BC407606124FF0270068F20A /* WKString.h in Headers */,
 				BC40761A124FF0370068F20A /* WKStringCF.h in Headers */,
 				BC9099801256A98200083756 /* WKStringPrivate.h in Headers */,
+				9593675F252E5E3100D3F0A0 /* WKStylusDeviceObserver.h in Headers */,
 				CE5B4C8821B73D870022E64F /* WKSyntheticFlagsChangedWebEvent.h in Headers */,
 				26F10BE819187E2E001D0E68 /* WKSyntheticTapGestureRecognizer.h in Headers */,
 				316B8B642054B55800BD4A62 /* WKSystemPreviewView.h in Headers */,

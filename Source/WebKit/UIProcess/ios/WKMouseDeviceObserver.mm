@@ -33,6 +33,7 @@
 
 @implementation WKMouseDeviceObserver {
     BOOL _hasMouseDevice;
+    size_t _startCount;
     RetainPtr<id<BSInvalidatable>> _token;
 }
 
@@ -44,28 +45,24 @@
     return instance;
 }
 
-- (void)dealloc
-{
-    [self stop];
-
-    [super dealloc];
-}
-
 #pragma mark - BKSMousePointerDeviceObserver state
 
 - (void)start
 {
-    if (_token)
+    if (++_startCount > 1)
         return;
 
+    ASSERT(!_token);
     _token = [[BKSMousePointerService sharedInstance] addPointerDeviceObserver:self];
 }
 
 - (void)stop
 {
-    if (!_token)
+    ASSERT(_startCount > 1);
+    if (--_startCount)
         return;
 
+    ASSERT(_token);
     [_token invalidate];
     _token = nil;
 }

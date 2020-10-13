@@ -406,6 +406,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     m_fullKeyboardAccessEnabled = parameters.fullKeyboardAccessEnabled;
 
+    m_hasStylusDevice = parameters.hasStylusDevice;
+
     for (auto& scheme : parameters.urlSchemesRegisteredAsEmptyDocument)
         registerURLSchemeAsEmptyDocument(scheme);
 
@@ -1063,6 +1065,16 @@ void WebProcess::setHasMouseDevice(bool hasMouseDevice)
 }
 
 #endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+
+void WebProcess::setHasStylusDevice(bool hasStylusDevice)
+{
+    if (hasStylusDevice == m_hasStylusDevice)
+        return;
+
+    m_hasStylusDevice = hasStylusDevice;
+
+    Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
+}
 
 #if ENABLE(GAMEPAD)
 

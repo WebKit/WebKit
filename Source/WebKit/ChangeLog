@@ -1,3 +1,73 @@
+2020-10-12  Devin Rousso  <drousso@apple.com>
+
+        CSS "any-pointer:fine" media query false on iPad/Pencil
+        https://bugs.webkit.org/show_bug.cgi?id=212580
+        <rdar://problem/63813283>
+
+        Reviewed by Wenson Hsieh.
+
+        Use `+[UIScribbleInteraction isPencilInputExpected]` as a proxy for the presence of stylus
+        devices as there's no way of directly querying for connected stylus devices (especially if
+        there is no active connection). When the value is changed to `YES`, notify all WebProcess
+        immediately. When the value is changed to `NO`, use an `NSTimer` to delay notifying all
+        WebProcess for 10min in case the user starts using their stylus again.
+
+        For live-on/tweaking purposes this 10min timeout can be adjusted before the UIProcess is
+        created with the `WKStylusDeviceObserverChangeTimeInterval` key in `NSUserDefaults`.
+
+        * UIProcess/ios/WKStylusDeviceObserver.h: Added.
+        * UIProcess/ios/WKStylusDeviceObserver.mm: Added.
+        (+[WKStylusDeviceObserver sharedInstance]):
+        (-[WKStylusDeviceObserver init]):
+        (-[WKStylusDeviceObserver setHasStylusDevice:]):
+        (-[WKStylusDeviceObserver start]):
+        (-[WKStylusDeviceObserver stop]):
+        (-[WKStylusDeviceObserver observeValueForKeyPath:ofObject:change:context:]):
+        (-[WKStylusDeviceObserver startChangeTimer:]):
+        (-[WKStylusDeviceObserver changeTimerFired:]):
+        Use ObjC KVO to listen for changes to `+[UIScribbleInteraction isPencilInputExpected]`.
+
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::notifyHasStylusDeviceChanged): Added.
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        (WebKit::WebProcessProxy::platformInitialize):
+        (WebKit::WebProcessProxy::platformDestroy):
+        Tell the shared `WKStylusDeviceObserver` to start listening when creating the WebProcess.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        Use the current state of the shared `WKStylusDeviceObserver` when creating WebProcess
+        instead of sending a `SetHasStylusDevice` message immediately after the WebProcess is
+        created.
+
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::hasStylusDevice const): Added.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setHasStylusDevice): Added.
+        (WebKit::WebProcess::initializeWebProcess):
+        Update style (including `any-pointer`) whenever stylus devices change.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::hasStylusDevice): Added.
+        (WebKit::WebPage::pointerCharacteristicsOfAllAvailablePointingDevices const):
+        Include `fine` when there is a stylus device.
+
+        * UIProcess/ios/WKMouseDeviceObserver.h:
+        * UIProcess/ios/WKMouseDeviceObserver.mm:
+        (-[WKMouseDeviceObserver start]):
+        (-[WKMouseDeviceObserver stop]):
+        (-[WKMouseDeviceObserver dealloc]): Removed.
+        Drive-by: use a count of `start`/`stop` instead of `WebProcessProxy::allProcesses` size.
+
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-10-12  Darin Adler  <darin@apple.com>
 
         Eliminate some "using namespace WebCore" cases in global scope

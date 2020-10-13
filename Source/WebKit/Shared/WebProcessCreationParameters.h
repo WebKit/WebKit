@@ -120,6 +120,7 @@ struct WebProcessCreationParameters {
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
     bool hasMouseDevice { false };
 #endif
+    bool hasStylusDevice { false };
     bool memoryCacheDisabled { false };
     bool attrStyleEnabled { false };
     bool useGPUProcessForMediaEnabled { false };

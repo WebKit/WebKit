@@ -829,6 +829,7 @@
 		93F56DA71E5F9174003EDE84 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C83E0331D0A5F2700FEBCF3 /* libicucore.dylib */; };
 		93F56DA91E5F919D003EDE84 /* WKWebViewSnapshot.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93F56DA81E5F9181003EDE84 /* WKWebViewSnapshot.mm */; };
 		93F7E86F14DC8E5C00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F7E86E14DC8E5B00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp */; };
+		950E4CC1252E75240071659F /* iOSStylusSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 950E4CC0252E75230071659F /* iOSStylusSupport.mm */; };
 		95B6B3B7251EBF2F00FC4382 /* MediaDocument.mm in Sources */ = {isa = PBXBuildFile; fileRef = 95B6B3B6251EBF2F00FC4382 /* MediaDocument.mm */; };
 		9984FACC1CFFAF60008D198C /* WKWebViewTextInput.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9984FACA1CFFAEEE008D198C /* WKWebViewTextInput.mm */; };
 		9984FACE1CFFB090008D198C /* editable-body.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9984FACD1CFFB038008D198C /* editable-body.html */; };
@@ -2439,6 +2440,7 @@
 		93F56DA81E5F9181003EDE84 /* WKWebViewSnapshot.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewSnapshot.mm; sourceTree = "<group>"; };
 		93F7E86B14DC8E4D00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewFirstVisuallyNonEmptyLayoutFrames.cpp; sourceTree = "<group>"; };
 		93F7E86E14DC8E5B00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp; sourceTree = "<group>"; };
+		950E4CC0252E75230071659F /* iOSStylusSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iOSStylusSupport.mm; sourceTree = "<group>"; };
 		95B6B3B6251EBF2F00FC4382 /* MediaDocument.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaDocument.mm; sourceTree = "<group>"; };
 		9984FACA1CFFAEEE008D198C /* WKWebViewTextInput.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewTextInput.mm; sourceTree = "<group>"; };
 		9984FACD1CFFB038008D198C /* editable-body.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "editable-body.html"; sourceTree = "<group>"; };
@@ -3272,6 +3274,7 @@
 				CED73D35246F204C00DAE327 /* InsertTextAlternatives.mm */,
 				2DB0232E1E4E871800707123 /* InteractionDeadlockAfterCrash.mm */,
 				2D116E1223E0CB3900208900 /* iOSMouseSupport.mm */,
+				950E4CC0252E75230071659F /* iOSStylusSupport.mm */,
 				9B6D9FF8252EFDE500A51640 /* IPCTestingAPI.mm */,
 				5C69BDD41F82A7EB000F4F4B /* JavaScriptDuringNavigation.mm */,
 				5C0160C021A132320077FA32 /* JITEnabled.mm */,
@@ -5229,6 +5232,7 @@
 				7A909A821D877480007E10F8 /* IntRectTests.cpp in Sources */,
 				7A909A831D877480007E10F8 /* IntSizeTests.cpp in Sources */,
 				2D116E1323E0CB3A00208900 /* iOSMouseSupport.mm in Sources */,
+				950E4CC1252E75240071659F /* iOSStylusSupport.mm in Sources */,
 				9B6D9FF9252EFDE500A51640 /* IPCTestingAPI.mm in Sources */,
 				5C0BF8931DD599BD00B00328 /* IsNavigationActionTrusted.mm in Sources */,
 				CD5FF49F2162E943004BD86F /* ISOBox.cpp in Sources */,

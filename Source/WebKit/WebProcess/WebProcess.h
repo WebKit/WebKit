@@ -192,6 +192,9 @@ public:
     void setHasMouseDevice(bool);
 #endif
 
+    bool hasStylusDevice() const { return m_hasStylusDevice; }
+    void setHasStylusDevice(bool);
+
     WebFrame* webFrame(WebCore::FrameIdentifier) const;
     Vector<WebFrame*> webFrames() const;
     void addWebFrame(WebCore::FrameIdentifier, WebFrame*);
@@ -562,6 +565,8 @@ private:
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
     bool m_hasMouseDevice { false };
 #endif
+
+    bool m_hasStylusDevice { false };
 
     HashMap<WebCore::FrameIdentifier, WebFrame*> m_frameMap;
 

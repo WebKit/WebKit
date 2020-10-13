@@ -1147,6 +1147,12 @@ void WebProcessProxy::windowServerConnectionStateChanged()
         page->activityStateDidChange(ActivityState::IsVisuallyIdle);
 }
 
+void WebProcessProxy::notifyHasStylusDeviceChanged(bool hasStylusDevice)
+{
+    for (auto* webProcessProxy : WebProcessProxy::allProcesses().values())
+        webProcessProxy->send(Messages::WebProcess::SetHasStylusDevice(hasStylusDevice), 0);
+}
+
 void WebProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void(WebsiteData)>&& completionHandler)
 {
     ASSERT(canSendMessage());

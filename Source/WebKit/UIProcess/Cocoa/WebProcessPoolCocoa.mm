@@ -41,6 +41,7 @@
 #import "UserInterfaceIdiom.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKMouseDeviceObserver.h"
+#import "WKStylusDeviceObserver.h"
 #import "WebBackForwardCache.h"
 #import "WebMemoryPressureHandler.h"
 #import "WebPageGroup.h"
@@ -515,6 +516,10 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
     parameters.hasMouseDevice = [[WKMouseDeviceObserver sharedInstance] hasMouseDevice];
+#endif
+
+#if HAVE(PENCILKIT_TEXT_INPUT)
+    parameters.hasStylusDevice = [[WKStylusDeviceObserver sharedInstance] hasStylusDevice];
 #endif
 }
 

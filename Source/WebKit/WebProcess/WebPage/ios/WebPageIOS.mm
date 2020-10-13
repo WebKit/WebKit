@@ -4018,7 +4018,7 @@ Optional<PointerCharacteristics> WebPage::pointerCharacteristicsOfPrimaryPointin
 OptionSet<PointerCharacteristics> WebPage::pointerCharacteristicsOfAllAvailablePointingDevices() const
 {
     OptionSet<PointerCharacteristics> result(PointerCharacteristics::Coarse);
-    if (hasMouseDevice())
+    if (hasMouseDevice() || WebProcess::singleton().hasStylusDevice())
         result.add(PointerCharacteristics::Fine);
     return result;
 }

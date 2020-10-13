@@ -23,27 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+#if HAVE(PENCILKIT_TEXT_INPUT)
 
-#import "BackBoardServicesSPI.h"
+@interface WKStylusDeviceObserver : NSObject
 
-namespace WebKit {
-class WebProcessProxy;
-}
-
-@interface WKMouseDeviceObserver : NSObject<BKSMousePointerDeviceObserver>
-
-+ (WKMouseDeviceObserver *)sharedInstance;
++ (WKStylusDeviceObserver *)sharedInstance;
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
 - (void)start;
 - (void)stop;
 
-@property (nonatomic, readonly) BOOL hasMouseDevice;
-
-- (void)_setHasMouseDeviceForTesting:(BOOL)hasMouseDevice;
+@property (nonatomic, readonly) BOOL hasStylusDevice;
 
 @end
 
-#endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+#endif // HAVE(PENCILKIT_TEXT_INPUT)
