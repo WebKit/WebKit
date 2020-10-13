@@ -44,6 +44,7 @@ public:
     LineBox build(const LineBuilder::LineContent&);
 
 private:
+    void setVerticalGeometryForInlineBox(LineBox::InlineLevelBox&) const;
     void constructInlineLevelBoxes(LineBox&, const Line::RunList&);
     void adjustInlineBoxesLogicalHeight(LineBox&);
     void alignInlineLevelBoxesVerticallyAndComputeLineBoxHeight(LineBox&);
@@ -163,37 +164,39 @@ LineBox LineBoxBuilder::build(const LineBuilder::LineContent& lineContent)
     return lineBox;
 }
 
+void LineBoxBuilder::setVerticalGeometryForInlineBox(LineBox::InlineLevelBox& inlineLevelBox) const
+{
+    ASSERT(inlineLevelBox.isInlineBox() || inlineLevelBox.isLineBreakBox());
+    auto& fontMetrics = inlineLevelBox.fontMetrics();
+    InlineLayoutUnit logicalHeight = fontMetrics.height();
+    InlineLayoutUnit baseline = fontMetrics.ascent();
+
+    inlineLevelBox.setLogicalHeight(logicalHeight);
+    inlineLevelBox.setBaseline(baseline);
+    inlineLevelBox.setDescent(logicalHeight - baseline);
+    if (auto lineSpacing = fontMetrics.lineSpacing() - logicalHeight)
+        inlineLevelBox.setLineSpacing(lineSpacing);
+    inlineLevelBox.setIsNonEmpty();
+}
+
 void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::RunList& runs)
 {
-    auto adjustVerticalGeometryForNonEmptyInlineBox = [](auto& inlineBox) {
-        // Inline box vertical geometry is driven by either child inline boxes (see adjustInlineBoxesLogicalHeight)
-        // or the text runs' font metrics (text runs don't generate inline boxes).
-        ASSERT(!inlineBox.isEmpty());
-        ASSERT(inlineBox.isInlineBox());
-        auto& fontMetrics = inlineBox.fontMetrics();
-        InlineLayoutUnit logicalHeight = fontMetrics.height();
-        InlineLayoutUnit baseline = fontMetrics.ascent();
-
-        inlineBox.setLogicalHeight(logicalHeight);
-        inlineBox.setBaseline(baseline);
-        inlineBox.setDescent(logicalHeight - baseline);
-        if (auto lineSpacing = fontMetrics.lineSpacing() - logicalHeight)
-            inlineBox.setLineSpacing(lineSpacing);
-    };
     auto horizontalAligmentOffset = lineBox.horizontalAlignmentOffset().valueOr(InlineLayoutUnit { });
-    auto constructRootInlineBox = [&] {
+
+    auto createRootInlineBox = [&] {
         auto rootInlineBox = LineBox::InlineLevelBox::createRootInlineBox(rootBox(), horizontalAligmentOffset, lineBox.logicalWidth());
 
         auto lineHasImaginaryStrut = !layoutState().inQuirksMode();
         auto isInitiallyConsideredNonEmpty = !lineBox.isLineVisuallyEmpty() && lineHasImaginaryStrut;
-        if (isInitiallyConsideredNonEmpty) {
-            rootInlineBox->setIsNonEmpty();
-            adjustVerticalGeometryForNonEmptyInlineBox(*rootInlineBox);
-        }
+        if (isInitiallyConsideredNonEmpty)
+            setVerticalGeometryForInlineBox(*rootInlineBox);
         lineBox.addRootInlineBox(WTFMove(rootInlineBox));
     };
-    constructRootInlineBox();
-    if (!runs.isEmpty()) {
+    createRootInlineBox();
+
+    auto createWrappedInlineBoxes = [&] {
+        if (runs.isEmpty())
+            return;
         // An inline box may not necessarily start on the current line:
         // <span id=outer>line break<br>this content's parent inline box('outer') <span id=inner>starts on the previous line</span></span>
         // We need to make sure that there's an LineBox::InlineLevelBox for every inline box that's present on the current line.
@@ -207,22 +210,22 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         // e.g.
         // <span>normally the inline box closing forms a continuous content</span>
         // <span>unless it's forced to the next line<br></span>
-        if (firstRun.isContainerEnd() || &firstRunParentInlineBox != &rootBox()) {
-            auto* ancestor = &firstRunParentInlineBox;
-            Vector<const Box*> ancestorsWithoutInlineBoxes;
-            while (ancestor != &rootBox()) {
-                ancestorsWithoutInlineBoxes.append(ancestor);
-                ancestor = &ancestor->parent();
-            }
-            // Construct the missing LineBox::InlineBoxes starting with the topmost ancestor.
-            for (auto* ancestor : WTF::makeReversedRange(ancestorsWithoutInlineBoxes)) {
-                auto inlineBox = LineBox::InlineLevelBox::createInlineBox(*ancestor, horizontalAligmentOffset, lineBox.logicalWidth());
-                inlineBox->setIsNonEmpty();
-                adjustVerticalGeometryForNonEmptyInlineBox(*inlineBox);
-                lineBox.addInlineLevelBox(WTFMove(inlineBox));
-            }
+        if (&firstRunParentInlineBox == &rootBox() && !firstRun.isContainerEnd())
+            return;
+        auto* ancestor = &firstRunParentInlineBox;
+        Vector<const Box*> ancestorsWithoutInlineBoxes;
+        while (ancestor != &rootBox()) {
+            ancestorsWithoutInlineBoxes.append(ancestor);
+            ancestor = &ancestor->parent();
         }
-    }
+        // Construct the missing LineBox::InlineBoxes starting with the topmost ancestor.
+        for (auto* ancestor : WTF::makeReversedRange(ancestorsWithoutInlineBoxes)) {
+            auto inlineBox = LineBox::InlineLevelBox::createInlineBox(*ancestor, horizontalAligmentOffset, lineBox.logicalWidth());
+            setVerticalGeometryForInlineBox(*inlineBox);
+            lineBox.addInlineLevelBox(WTFMove(inlineBox));
+        }
+    };
+    createWrappedInlineBoxes();
 
     for (auto& run : runs) {
         auto& layoutBox = run.layoutBox();
@@ -232,24 +235,13 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
             auto logicalHeight = inlineLevelBoxGeometry.marginBoxHeight();
             auto baseline = logicalHeight;
             if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
-                // The inline-block's baseline offset is relative to its content box. Let's convert it relative to the margin box.
-                //           _______________ <- margin box
-                //          |
-                //          |  ____________  <- border box
-                //          | |
-                //          | |  _________  <- content box
-                //          | | |   ^
-                //          | | |   |  <- baseline offset
-                //          | | |   |
-                //     text | | |   v text
-                //     -----|-|-|---------- <- baseline
-                //
                 auto& formattingState = layoutState().establishedInlineFormattingState(downcast<ContainerBox>(layoutBox));
                 auto& lastLine = formattingState.lines().last();
                 auto inlineBlockBaseline = lastLine.logicalTop() + lastLine.baseline();
                 baseline = inlineLevelBoxGeometry.marginBefore() + inlineLevelBoxGeometry.borderTop() + inlineLevelBoxGeometry.paddingTop().valueOr(0) + inlineBlockBaseline;
             }
-            auto atomicInlineLevelBox = LineBox::InlineLevelBox::createAtomicInlineLevelBox(layoutBox, logicalLeft, { run.logicalWidth(), logicalHeight }, baseline);
+            auto atomicInlineLevelBox = LineBox::InlineLevelBox::createAtomicInlineLevelBox(layoutBox, logicalLeft, { run.logicalWidth(), logicalHeight });
+            atomicInlineLevelBox->setBaseline(baseline);
             if (logicalHeight)
                 atomicInlineLevelBox->setIsNonEmpty();
             lineBox.addInlineLevelBox(WTFMove(atomicInlineLevelBox));
@@ -265,18 +257,15 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         } else if (run.isText() || run.isSoftLineBreak()) {
             auto& parentBox = layoutBox.parent();
             auto& parentInlineBox = &parentBox == &rootBox() ? lineBox.rootInlineBox() : lineBox.inlineLevelBoxForLayoutBox(parentBox);
-            if (parentInlineBox.isEmpty()) {
-                // FIXME: Adjust non-empty inline box height when glyphs from the non-primary font stretch the box.
-                parentInlineBox.setIsNonEmpty();
-                adjustVerticalGeometryForNonEmptyInlineBox(parentInlineBox);
-            }
+            // FIXME: Adjust non-empty inline box height when glyphs from the non-primary font stretch the box.
+            if (parentInlineBox.isEmpty())
+                setVerticalGeometryForInlineBox(parentInlineBox);
         } else if (run.isHardLineBreak()) {
-            auto inlineBox = LineBox::InlineLevelBox::createInlineBox(layoutBox, logicalLeft, { });
-            inlineBox->setIsNonEmpty();
-            adjustVerticalGeometryForNonEmptyInlineBox(*inlineBox);
-            lineBox.addInlineLevelBox(WTFMove(inlineBox));
+            auto lineBreakBox = LineBox::InlineLevelBox::createLineBreakBox(layoutBox, logicalLeft);
+            setVerticalGeometryForInlineBox(*lineBreakBox);
+            lineBox.addInlineLevelBox(WTFMove(lineBreakBox));
         } else if (run.isWordBreakOpportunity())
-            lineBox.addInlineLevelBox(LineBox::InlineLevelBox::createInlineBox(layoutBox, logicalLeft, { }));
+            lineBox.addInlineLevelBox(LineBox::InlineLevelBox::createGenericInlineLevelBox(layoutBox, logicalLeft));
         else
             ASSERT_NOT_REACHED();
     }

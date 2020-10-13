@@ -62,7 +62,9 @@ public:
     public:
         static std::unique_ptr<LineBox::InlineLevelBox> createRootInlineBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
         static std::unique_ptr<LineBox::InlineLevelBox> createInlineBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
-        static std::unique_ptr<LineBox::InlineLevelBox> createAtomicInlineLevelBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutSize, InlineLayoutUnit baseline);
+        static std::unique_ptr<LineBox::InlineLevelBox> createAtomicInlineLevelBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutSize);
+        static std::unique_ptr<LineBox::InlineLevelBox> createLineBreakBox(const Box&, InlineLayoutUnit logicalLeft);
+        static std::unique_ptr<LineBox::InlineLevelBox> createGenericInlineLevelBox(const Box&, InlineLayoutUnit logicalLeft);
 
         const InlineRect& logicalRect() const { return m_logicalRect; }
         InlineLayoutUnit logicalTop() const { return m_logicalRect.top(); }
@@ -80,14 +82,18 @@ public:
         Optional<InlineLayoutUnit> lineSpacing() const { return m_lineSpacing; }
         const FontMetrics& fontMetrics() const { return layoutBox().style().fontMetrics(); }
         const Box& layoutBox() const { return *m_layoutBox; }
+
         bool isInlineBox() const { return m_type == Type::InlineBox || m_type == Type::RootInlineBox; }
+        bool isLineBreakBox() const { return m_type == Type::LineBreakBox; }
 
         enum class Type {
             InlineBox,
             RootInlineBox,
-            AtomicInlineLevelBox
+            AtomicInlineLevelBox,
+            LineBreakBox,
+            GenericInlineLevelBox
         };
-        InlineLevelBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutSize, InlineLayoutUnit baseline, Type);
+        InlineLevelBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutSize, Type);
         InlineLevelBox() = default;
 
     private:
@@ -155,17 +161,27 @@ private:
 
 inline std::unique_ptr<LineBox::InlineLevelBox> LineBox::InlineLevelBox::createRootInlineBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
 {
-    return makeUnique<LineBox::InlineLevelBox>(layoutBox, logicalLeft, InlineLayoutSize { logicalWidth, { } }, InlineLayoutUnit { }, Type::RootInlineBox);
+    return makeUnique<LineBox::InlineLevelBox>(layoutBox, logicalLeft, InlineLayoutSize { logicalWidth, { } }, Type::RootInlineBox);
 }
 
-inline std::unique_ptr<LineBox::InlineLevelBox> LineBox::InlineLevelBox::createAtomicInlineLevelBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize, InlineLayoutUnit baseline)
+inline std::unique_ptr<LineBox::InlineLevelBox> LineBox::InlineLevelBox::createAtomicInlineLevelBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize)
 {
-    return makeUnique<LineBox::InlineLevelBox>(layoutBox, logicalLeft, logicalSize, baseline, Type::AtomicInlineLevelBox);
+    return makeUnique<LineBox::InlineLevelBox>(layoutBox, logicalLeft, logicalSize, Type::AtomicInlineLevelBox);
 }
 
 inline std::unique_ptr<LineBox::InlineLevelBox> LineBox::InlineLevelBox::createInlineBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
 {
-    return makeUnique<LineBox::InlineLevelBox>(layoutBox, logicalLeft, InlineLayoutSize { logicalWidth, { } }, InlineLayoutUnit { }, Type::InlineBox);
+    return makeUnique<LineBox::InlineLevelBox>(layoutBox, logicalLeft, InlineLayoutSize { logicalWidth, { } }, Type::InlineBox);
+}
+
+inline std::unique_ptr<LineBox::InlineLevelBox> LineBox::InlineLevelBox::createLineBreakBox(const Box& layoutBox, InlineLayoutUnit logicalLeft)
+{
+    return makeUnique<LineBox::InlineLevelBox>(layoutBox, logicalLeft, InlineLayoutSize { }, Type::LineBreakBox);
+}
+
+inline std::unique_ptr<LineBox::InlineLevelBox> LineBox::InlineLevelBox::createGenericInlineLevelBox(const Box& layoutBox, InlineLayoutUnit logicalLeft)
+{
+    return makeUnique<LineBox::InlineLevelBox>(layoutBox, logicalLeft, InlineLayoutSize { }, Type::GenericInlineLevelBox);
 }
 
 }

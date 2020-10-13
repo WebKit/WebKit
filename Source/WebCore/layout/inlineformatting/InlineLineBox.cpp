@@ -32,10 +32,9 @@
 namespace WebCore {
 namespace Layout {
 
-LineBox::InlineLevelBox::InlineLevelBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize, InlineLayoutUnit baseline, Type type)
+LineBox::InlineLevelBox::InlineLevelBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize,  Type type)
     : m_layoutBox(makeWeakPtr(layoutBox))
     , m_logicalRect({ }, logicalLeft, logicalSize.width(), logicalSize.height())
-    , m_baseline(baseline)
     , m_type(type)
 {
 }
