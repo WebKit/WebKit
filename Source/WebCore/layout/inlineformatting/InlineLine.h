@@ -160,7 +160,7 @@ private:
         InlineLayoutUnit removePartiallyTrimmableContent();
 
         InlineLayoutUnit width() const { return m_fullyTrimmableWidth + m_partiallyTrimmableWidth; }
-        bool isEmpty() const { return !m_firstRunIndex.hasValue(); }
+        bool isEmpty() const { return !m_firstTrimmableRunIndex.hasValue(); }
         bool isTrailingRunFullyTrimmable() const { return m_hasFullyTrimmableContent; }
         bool isTrailingRunPartiallyTrimmable() const { return m_partiallyTrimmableWidth; }
 
@@ -168,7 +168,7 @@ private:
 
     private:
         RunList& m_runs;
-        Optional<size_t> m_firstRunIndex;
+        Optional<size_t> m_firstTrimmableRunIndex;
         bool m_hasFullyTrimmableContent { false };
         InlineLayoutUnit m_fullyTrimmableWidth { 0 };
         InlineLayoutUnit m_partiallyTrimmableWidth { 0 };
@@ -188,7 +188,7 @@ private:
 inline void Line::TrimmableTrailingContent::reset()
 {
     m_hasFullyTrimmableContent = false;
-    m_firstRunIndex = { };
+    m_firstTrimmableRunIndex = { };
     m_fullyTrimmableWidth = { };
     m_partiallyTrimmableWidth = { };
 }

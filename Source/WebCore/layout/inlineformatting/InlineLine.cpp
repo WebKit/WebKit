@@ -405,18 +405,18 @@ void Line::TrimmableTrailingContent::addFullyTrimmableContent(size_t runIndex, I
     m_fullyTrimmableWidth = trimmableWidth;
     // Note that just because the trimmable width is 0 (font-size: 0px), it does not mean we don't have a trimmable trailing content.
     m_hasFullyTrimmableContent = true;
-    m_firstRunIndex = m_firstRunIndex.valueOr(runIndex);
+    m_firstTrimmableRunIndex = m_firstTrimmableRunIndex.valueOr(runIndex);
 }
 
 void Line::TrimmableTrailingContent::addPartiallyTrimmableContent(size_t runIndex, InlineLayoutUnit trimmableWidth)
 {
     // Do not add trimmable letter spacing after a fully trimmable whitespace.
-    ASSERT(!m_firstRunIndex);
+    ASSERT(!m_firstTrimmableRunIndex);
     ASSERT(!m_hasFullyTrimmableContent);
     ASSERT(!m_partiallyTrimmableWidth);
     ASSERT(trimmableWidth);
     m_partiallyTrimmableWidth = trimmableWidth;
-    m_firstRunIndex = runIndex;
+    m_firstTrimmableRunIndex = runIndex;
 }
 
 InlineLayoutUnit Line::TrimmableTrailingContent::remove()
@@ -426,7 +426,7 @@ InlineLayoutUnit Line::TrimmableTrailingContent::remove()
     // [trailing whitespace][container end][container start][container end]
     // Trim the whitespace run and move the trailing inline container runs to the logical left.
     ASSERT(!isEmpty());
-    auto& trimmableRun = m_runs[*m_firstRunIndex];
+    auto& trimmableRun = m_runs[*m_firstTrimmableRunIndex];
     ASSERT(trimmableRun.isText());
 
     if (m_hasFullyTrimmableContent)
@@ -435,10 +435,20 @@ InlineLayoutUnit Line::TrimmableTrailingContent::remove()
         trimmableRun.removeTrailingLetterSpacing();
 
     auto trimmableWidth = width();
-    for (auto index = *m_firstRunIndex + 1; index < m_runs.size(); ++index) {
+    // When the trimmable run is followed by some non-content runs, we need to adjust their horizontal positions.
+    // e.g. <div>text is followed by trimmable content    <span> </span></div>
+    // When the [text...] run is trimmed (trailing whitespace is removed), both "<span>" and "</span>" runs
+    // need to be moved horizontally to catch up with the [text...] run. Note that the whitespace inside the <span> does
+    // not produce a run since in ::appendText() we see it as a fully collapsible run.
+    for (auto index = *m_firstTrimmableRunIndex + 1; index < m_runs.size(); ++index) {
         auto& run = m_runs[index];
         ASSERT(run.isContainerStart() || run.isContainerEnd() || run.isLineBreak());
         run.moveHorizontally(-trimmableWidth);
+    }
+    if (!trimmableRun.textContent()->length()) {
+        // This trimmable run is fully collapsed now (e.g. <div><img>    <span></span></div>).
+        // We don't need to keep it around anymore.
+        m_runs.remove(*m_firstTrimmableRunIndex);
     }
     reset();
     return trimmableWidth;
