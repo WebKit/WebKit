@@ -107,6 +107,8 @@ class WebDriverTestRunnerW3C(object):
                         result.add_subtest_results(self._subtest_name(subtest), status, message, backtrace)
                         need_restart = need_restart or status in ('FAIL', 'ERROR', 'XFAIL', 'TIMEOUT')
                 else:
+                    _log.error("Test %s failed:" % test_name)
+                    _log.error(harness_result[1])
                     need_restart = True
                 self._results.append(result)
 

@@ -1,3 +1,17 @@
+2020-10-13  Lauro Moura  <lmoura@igalia.com>
+
+        webkitpy: Log and report webdriver harness errors
+        https://bugs.webkit.org/show_bug.cgi?id=217659
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner.py:
+        (WebDriverTestRunner.process_results): Report failed harness tests,
+        not just subtests.
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner_w3c.py:
+        (WebDriverTestRunnerW3C.run): Print to error log when a test run
+        fails, not just subtests.
+
 2020-10-13  Sam Weinig  <weinig@apple.com>
 
         [Testing] Rename test header commands to match names in WebPreferences*.yaml
