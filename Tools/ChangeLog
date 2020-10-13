@@ -1,3 +1,9 @@
+2020-10-13  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed GLIB gardening. Remove several tests that were only failing in EWS API-GTK.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2020-10-12  Devin Rousso  <drousso@apple.com>
 
         CSS "any-pointer:fine" media query false on iPad/Pencil
