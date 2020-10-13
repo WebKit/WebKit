@@ -78,8 +78,6 @@ webkit.org/b/207002 imported/w3c/web-platform-tests/FileAPI/historical.https.htm
 
 webkit.org/b/206952 imported/w3c/IndexedDB-private-browsing/idbindex_getKey6.html [ Pass Timeout ]
 
-webkit.org/b/207515 http/wpt/service-workers/service-worker-spinning-fetch.https.html [ Pass Failure ]
-
 webkit.org/b/208036 http/wpt/cache-storage/cache-put-keys.https.any.worker.html [ Pass Failure ]
 
 webkit.org/b/209234 [ Release ] platform/ios/ios/plugin/youtube-flash-plugin-iframe-no-height-or-width.html [ Pass Failure ]
@@ -148,3 +146,8 @@ webkit.org/b/217357 http/wpt/cache-storage/cache-quota-after-restart.any.html [ 
 webkit.org/b/217412 http/wpt/cache-storage/cache-quota.any.html [ Pass Failure ]
 
 webkit.org/b/217643 imported/w3c/web-platform-tests/css/css-flexbox/auto-margins-001.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-activate.https.html [ Pass Timeout Failure ]
+webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-fetch.https.html [ Pass Timeout Failure ]
+webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-install.https.html [ Pass Timeout Failure ]
+webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-message.https.html [ Pass Timeout Failure ]

@@ -1,3 +1,12 @@
+2020-10-13  Karl Rackler  <rackler@apple.com>
+
+        REGRESSION (iOS 14): [ iOS wk2 ] service-workers-spinning tests are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=217669
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2020-10-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][MediaFoundation] Many test cases are timing out by waiting for events
