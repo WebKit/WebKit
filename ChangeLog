@@ -1,3 +1,13 @@
+2020-10-13  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Set ENABLE_GAMEPAD=ON for developer builds
+        https://bugs.webkit.org/show_bug.cgi?id=217493
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/OptionsGTK.cmake: Make the default value of ENABLE_GAMEPAD
+        depend on ENABLE_EXPERIMENTAL_FEATURES.
+
 2020-10-13  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] ENABLE_SHAREABLE_RESOURCE should be PRIVATE build option
