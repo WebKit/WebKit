@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (C) 2011 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2020 Apple Inc. All rights reserved.
 # Copyright (C) 2014 University of Szeged. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,16 +28,16 @@ import json
 import md5
 
 
-def create_mock_slave_passwords_dict():
+def create_mock_worker_passwords_dict():
     with open('config.json', 'r') as config_json:
         config_dict = json.load(config_json)
-    result = dict([(slave['name'], '1234') for slave in config_dict['slaves']])
+    result = dict([(worker['name'], '1234') for worker in config_dict['workers']])
     result['results-server-api-key'] = 'api-key'
     return result
 
 if __name__ == '__main__':
     with open('passwords.json', 'w') as passwords_file:
-        passwords_file.write(json.dumps(create_mock_slave_passwords_dict(), indent=4, sort_keys=True))
+        passwords_file.write(json.dumps(create_mock_worker_passwords_dict(), indent=4, sort_keys=True))
 
     with open('auth.json', 'w') as auth_json_file:
         auth_json_file.write("""{

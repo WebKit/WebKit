@@ -1,4 +1,4 @@
-# Copyright (C) 2017 Apple Inc. All rights reserved.
+# Copyright (C) 2017-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -50,7 +50,7 @@ def pickLatestBuild(builder, requests):
 def loadBuilderConfig(c, test_mode_is_enabled=False):
     # FIXME: These file handles are leaked.
     if test_mode_is_enabled:
-        passwords = make_passwords_json.create_mock_slave_passwords_dict()
+        passwords = make_passwords_json.create_mock_worker_passwords_dict()
     else:
         passwords = json.load(open('passwords.json'))
     results_server_api_key = passwords.get('results-server-api-key')
@@ -58,7 +58,7 @@ def loadBuilderConfig(c, test_mode_is_enabled=False):
         os.environ['RESULTS_SERVER_API_KEY'] = results_server_api_key
 
     config = json.load(open('config.json'))
-    c['slaves'] = [BuildSlave(slave['name'], passwords[slave['name']], max_builds=1) for slave in config['slaves']]
+    c['slaves'] = [BuildSlave(worker['name'], passwords[worker['name']], max_builds=1) for worker in config['workers']]
 
     c['schedulers'] = []
     for scheduler in config['schedulers']:
@@ -90,16 +90,16 @@ def loadBuilderConfig(c, test_mode_is_enabled=False):
 
     c['builders'] = []
     for builder in config['builders']:
-        for slaveName in builder['slavenames']:
-            for slave in config['slaves']:
-                if slave['name'] != slaveName or slave['platform'] == '*':
+        for workerName in builder['workernames']:
+            for worker in config['workers']:
+                if worker['name'] != workerName or worker['platform'] == '*':
                     continue
 
-                if slave['platform'] != builder['platform']:
-                    raise Exception, "Builder %r is for platform %r but has slave %r for platform %r!" % (builder['name'], builder['platform'], slave['name'], slave['platform'])
-
+                if worker['platform'] != builder['platform']:
+                    raise Exception('Builder {} is for platform {} but has worker {} for platform {}!'.format(builder['name'], builder['platform'], worker['name'], worker['platform']))
                 break
 
+        builder['slavenames'] = builder.pop('workernames')  # Workaround for old buildbot to allow using workernames in config.json instead of slavenames
         platform = builder['platform']
 
         factoryName = builder.pop('factory')

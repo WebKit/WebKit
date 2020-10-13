@@ -1,3 +1,17 @@
+2020-10-13  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Rename slave to worker in config.json
+        https://bugs.webkit.org/show_bug.cgi?id=217672
+
+        Reviewed by Dewei Zhu.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Renamed slaves to workers and slavenames to workernames.
+        Also deleted unused entry for test-slave.
+        * BuildSlaveSupport/build.webkit.org-config/loadConfig.py: Renamed slave to worker.
+        * BuildSlaveSupport/build.webkit.org-config/loadConfig_unittest.py: Ditto.
+        * BuildSlaveSupport/build.webkit.org-config/make_passwords_json.py: Ditto.
+        (create_mock_worker_passwords_dict):
+
 2020-10-13  Ellie Epskamp-Hunt  <eepskamphunt@apple.com>
 
         Expose a property on WKWebView to know if it's being inspected.
