@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if PLATFORM(MAC)
+#if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
 
 #include "Test.h"
 #include <WebCore/CARingBuffer.h>
@@ -76,26 +76,6 @@ public:
     size_t capacity() const { return m_capacity; }
 
 private:
-    size_t audioBufferListSizeForStream(const CAAudioStreamDescription& format)
-    {
-        return offsetof(AudioBufferList, mBuffers) + (sizeof(AudioBuffer) * std::max<uint32_t>(1, format.numberOfChannelStreams()));
-    }
-
-    void configureBufferListForStream(AudioBufferList& bufferList, const CAAudioStreamDescription& format, uint8_t* bufferData, size_t sampleCount)
-    {
-        size_t bufferCount = format.numberOfChannelStreams();
-        size_t channelCount = format.numberOfInterleavedChannels();
-        size_t bytesPerChannel = sampleCount * format.bytesPerFrame();
-
-        bufferList.mNumberBuffers = bufferCount;
-        for (unsigned i = 0; i < bufferCount; ++i) {
-            bufferList.mBuffers[i].mNumberChannels = channelCount;
-            bufferList.mBuffers[i].mDataByteSize = bytesPerChannel;
-            bufferList.mBuffers[i].mData = bufferData;
-            if (bufferData)
-                bufferData = bufferData + bytesPerChannel;
-        }
-    }
 
     std::unique_ptr<AudioBufferList> m_bufferList;
     std::unique_ptr<CARingBuffer> m_ringBuffer;
