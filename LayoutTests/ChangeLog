@@ -1,3 +1,12 @@
+2020-10-13  Truitt Savell  <tsavell@apple.com>
+
+        REGRESSION: [ Mac iOS ] fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html is flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=217618
+
+        Unreviewed test Gardening.
+
+        * TestExpectations:
+
 2020-10-13  Sam Weinig  <weinig@apple.com>
 
         [Testing] Rename test header commands to match names in WebPreferences*.yaml

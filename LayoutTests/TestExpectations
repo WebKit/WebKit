@@ -4518,3 +4518,5 @@ editing/selection/expando.html [ Failure ]
 
 fast/layoutformattingcontext/ [ ImageOnlyFailure ]
 webkit.org/b/217054 fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html [ Skip ]
+
+webkit.org/b/217618 [ Debug ] fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Pass Timeout ]
