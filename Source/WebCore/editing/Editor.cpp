@@ -2802,7 +2802,8 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
         auto resultLocation = results[i].range.location + offsetDueToReplacement;
         auto resultLength = results[i].range.length;
         auto resultEndLocation = resultLocation + resultLength;
-        auto automaticReplacementEndLocation = paragraph.automaticReplacementStart() + paragraph.automaticReplacementLength() + offsetDueToReplacement;
+        auto automaticReplacementStartLocation = paragraph.automaticReplacementStart(true);
+        auto automaticReplacementEndLocation = automaticReplacementStartLocation + paragraph.automaticReplacementLength(true) + offsetDueToReplacement;
         const String& replacement = results[i].replacement;
         bool resultEndsAtAmbiguousBoundary = useAmbiguousBoundaryOffset && selectionOffset - 1 <= resultEndLocation;
 
@@ -2827,7 +2828,7 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
                     addMarker(badGrammarRange, DocumentMarker::Grammar, detail.userDescription);
                 }
             }
-        } else if (resultEndLocation <= automaticReplacementEndLocation && resultEndLocation >= paragraph.automaticReplacementStart()
+        } else if (automaticReplacementStartLocation <= resultEndLocation && resultEndLocation <= automaticReplacementEndLocation
             && isAutomaticTextReplacementType(resultType)) {
             // In this case the result range just has to touch the automatic replacement range, so we can handle replacing non-word text such as punctuation.
             ASSERT(resultLength > 0);
