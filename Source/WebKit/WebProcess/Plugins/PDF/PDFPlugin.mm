@@ -1948,6 +1948,8 @@ RefPtr<ShareableBitmap> PDFPlugin::snapshot()
     backingStoreSize.scale(contentsScaleFactor);
 
     auto bitmap = ShareableBitmap::createShareable(backingStoreSize, { });
+    if (!bitmap)
+        return nullptr;
     auto context = bitmap->createGraphicsContext();
     if (!context)
         return nullptr;

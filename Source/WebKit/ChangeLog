@@ -1,3 +1,19 @@
+2020-10-13  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Null dereference in PDFPlugin::snapshot()
+        https://bugs.webkit.org/show_bug.cgi?id=217668
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a null pointer check in PDFPlugin's snapshot method
+        to prevent a crash if the backing store's size
+        isn't sufficient for the ShareableBitmap.
+
+        Test: plugins/pdf-plugin-null-onloaddeddata.html
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::snapshot):
+
 2020-10-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         IPC testing JS API should expose a reply and describe the list of arguments for each message

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<head>
+<style>
+embed, body { zoom: 61; }
+</style>
+</head>
+<body onload=pdfonload()>
+<p>This tests determining the PDF plugin does not crash upon a null onloadeddata variable.</p>
+<div id="result">FAIL</div>
+<embed id="testPlugin" type="application/pdf"></embed>
+<script>
+function pdfonload() {
+    testPlugin.onloadeddata = null;
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    result.textContent = 'PASS';
+}
+</script>
+</body>
+</html>
