@@ -1,3 +1,21 @@
+2020-10-13  Ellie Epskamp-Hunt  <eepskamphunt@apple.com>
+
+        Expose a property on WKWebView to know if it's being inspected.
+        https://bugs.webkit.org/show_bug.cgi?id=217629
+        rdar://70073369
+
+        Reviewed by Brian Burg.
+
+        Move an existing property from WKWebViewPrivateForTesting to WKWebViewPrivate so Safari can
+        know when a web view is being inspected.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _isBeingInspected]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _hasInspectorFrontend]): Deleted.
+
 2020-10-13  Chris Dumez  <cdumez@apple.com>
 
         WebAudio tests are crashing in debug when enabling the GPU process

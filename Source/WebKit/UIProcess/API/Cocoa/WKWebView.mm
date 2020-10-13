@@ -1599,6 +1599,11 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     _page->setViewportSizeForCSSViewportUnits(viewportSizeForViewportUnits);
 }
 
+- (BOOL)_isBeingInspected
+{
+    return _page && _page->hasInspectorFrontend();
+}
+
 - (_WKInspector *)_inspector
 {
     if (auto* inspector = _page->inspector())

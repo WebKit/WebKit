@@ -113,7 +113,7 @@ TEST(WKInspectorDelegate, InspectorLifecycleCallbacks)
     [webView setUIDelegate:uiDelegate.get()];
     [webView loadHTMLString:@"<head><title>Test page to be inspected</title></head><body><p>Filler content</p></body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
 
-    EXPECT_FALSE(webView.get()._hasInspectorFrontend);
+    EXPECT_FALSE(webView.get()._isBeingInspected);
 
     [[webView _inspector] show];
 
@@ -135,7 +135,7 @@ TEST(WKInspectorDelegate, InspectorCloseCalledReentrantly)
     [webView setUIDelegate:uiDelegate.get()];
     [webView loadHTMLString:@"<head><title>Test page to be inspected</title></head><body><p>Filler content</p></body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
 
-    EXPECT_FALSE(webView.get()._hasInspectorFrontend);
+    EXPECT_FALSE(webView.get()._isBeingInspected);
 
     [[webView _inspector] show];
     TestWebKitAPI::Util::run(&didAttachLocalInspectorCalled);

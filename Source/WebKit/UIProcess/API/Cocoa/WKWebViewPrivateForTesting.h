@@ -58,8 +58,6 @@ typedef enum {
 
 - (void)_setShareSheetCompletesImmediatelyWithResolutionForTesting:(BOOL)resolved;
 
-@property (nonatomic, readonly) BOOL _hasInspectorFrontend;
-
 @property (nonatomic, setter=_setScrollingUpdatesDisabledForTesting:) BOOL _scrollingUpdatesDisabledForTesting;
 
 - (void)_processWillSuspendForTesting:(void (^)(void))completionHandler;

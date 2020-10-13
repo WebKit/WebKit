@@ -1,3 +1,16 @@
+2020-10-13  Ellie Epskamp-Hunt  <eepskamphunt@apple.com>
+
+        Expose a property on WKWebView to know if it's being inspected.
+        https://bugs.webkit.org/show_bug.cgi?id=217629
+        rdar://70073369
+
+        Reviewed by Brian Burg.
+
+        Update the property name in existing tests.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorDelegate.mm:
+        (TEST):
+
 2020-10-13  Keith Rollin  <krollin@apple.com>
 
         Remove leftover MACOSX_DEPLOYMENT_TARGET_macosx support

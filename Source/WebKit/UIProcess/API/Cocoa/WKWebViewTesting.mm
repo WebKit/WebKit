@@ -166,11 +166,6 @@
     _resolutionForShareSheetImmediateCompletionForTesting = resolved;
 }
 
-- (BOOL)_hasInspectorFrontend
-{
-    return _page && _page->hasInspectorFrontend();
-}
-
 - (void)_processWillSuspendForTesting:(void (^)(void))completionHandler
 {
     if (!_page) {
