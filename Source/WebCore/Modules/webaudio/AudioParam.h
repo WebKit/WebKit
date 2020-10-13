@@ -106,7 +106,7 @@ public:
     ExceptionOr<AudioParam&> cancelScheduledValues(double cancelTime);
     ExceptionOr<AudioParam&> cancelAndHoldAtTime(double cancelTime);
 
-    bool hasSampleAccurateValues() const { return m_timeline.hasValues() || numberOfRenderingConnections(); }
+    bool hasSampleAccurateValues() const;
     
     // Calculates numberOfValues parameter values starting at the context's current time.
     // Must be called in the context's render thread.

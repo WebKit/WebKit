@@ -60,7 +60,7 @@ public:
     // the render quantum size such that the parameter value changes once per render quantum.
     float valuesForFrameRange(size_t startFrame, size_t endFrame, float defaultValue, float minValue, float maxValue, float* values, unsigned numberOfValues, double sampleRate, double controlRate);
 
-    bool hasValues() const { return m_events.size(); }
+    bool hasValues(size_t startFrame, double sampleRate) const;
 
 private:
     class ParamEvent {
@@ -201,7 +201,7 @@ private:
 
     Vector<UniqueRef<ParamEvent>> m_events;
 
-    Lock m_eventsLock;
+    mutable Lock m_eventsLock;
 };
 
 } // namespace WebCore

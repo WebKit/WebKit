@@ -38,7 +38,6 @@
 #include "JSCallbackData.h"
 #include "JSDOMExceptionHandling.h"
 #include "MessagePort.h"
-#include <JavaScriptCore/JSMap.h>
 #include <JavaScriptCore/JSTypedArrays.h>
 #include <wtf/GetPtr.h>
 
@@ -54,12 +53,20 @@ static JSFloat32Array* constructJSFloat32Array(JSGlobalObject& globalObject, uns
     return jsArray;
 }
 
-static JSMap* constructJSMap(VM& vm, JSGlobalObject& globalObject, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap)
+static JSObject* constructFrozenKeyValueObject(VM& vm, JSGlobalObject& globalObject, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap)
 {
-    auto* map = JSMap::create(&globalObject, vm, globalObject.mapStructure());
-    for (auto& pair : paramValuesMap)
-        map->set(&globalObject, jsStringWithCache(vm, pair.key), constructJSFloat32Array(globalObject, pair.value->size(), pair.value->data()));
-    return map;
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto* plainObjectStructure = JSFinalObject::createStructure(vm, &globalObject, globalObject.objectPrototype(), 0);
+    auto* object = JSFinalObject::create(vm, plainObjectStructure);
+    for (auto& pair : paramValuesMap) {
+        PutPropertySlot slot(object, false, PutPropertySlot::PutById);
+        // Per the specification, if the value is constant, we pass the JS an array with length 1, with the array item being the constant.
+        unsigned jsArraySize = pair.value->containsConstantValue() ? 1 : pair.value->size();
+        object->putInline(&globalObject, Identifier::fromString(vm, pair.key), constructJSFloat32Array(globalObject, jsArraySize, pair.value->data()), slot);
+    }
+    JSC::objectConstructorFreeze(&globalObject, object);
+    EXCEPTION_ASSERT_UNUSED(scope, !scope.exception());
+    return object;
 }
 
 enum class ShouldPopulateWithBusData : bool { No, Yes };
@@ -134,12 +141,12 @@ bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vect
     JSLockHolder lock(vm);
 
     MarkedArgumentBuffer args;
-    // FIXME: We should consider caching the JSArrays & JSMap and only update their items
+    // FIXME: We should consider caching the JSArrays & JSObject and only update their items
     // every time process() is called, for performance reasons.
     args.append(constructFrozenJSArray(vm, globalObject, inputs, ShouldPopulateWithBusData::Yes));
     auto* ouputJSArray = constructFrozenJSArray(vm, globalObject, outputs, ShouldPopulateWithBusData::No);
     args.append(ouputJSArray);
-    args.append(constructJSMap(vm, globalObject, paramValuesMap));
+    args.append(constructFrozenKeyValueObject(vm, globalObject, paramValuesMap));
 
     NakedPtr<JSC::Exception> returnedException;
     auto result = m_processCallback->invokeCallback(jsUndefined(), args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "process"), returnedException);

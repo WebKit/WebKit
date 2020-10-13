@@ -7,11 +7,11 @@ PASS > [Create Test Worklet]
 PASS   Construction of AudioWorklet resolved correctly.
 PASS < [Create Test Worklet] All assertions passed. (total 1 assertions)
 PASS > [AudioWorklet k-rate AudioParam]
-FAIL X output should have contain at least one value different from 0. assert_true: expected true got false
+PASS   output is not constantly 0 (contains 384 different values).
 PASS    k-rate output [0: 127] contains only the constant 0.
-PASS    k-rate output [128: 255] contains only the constant 0.
-PASS    k-rate output [256: 383] contains only the constant 0.
-PASS    k-rate output [384: 511] contains only the constant 0.
-FAIL < [AudioWorklet k-rate AudioParam] 1 out of 5 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 2 tasks were failed. assert_true: expected true got false
+PASS    k-rate output [128: 255] contains only the constant 2.5.
+PASS    k-rate output [256: 383] contains only the constant 5.
+PASS    k-rate output [384: 511] contains only the constant 7.5.
+PASS < [AudioWorklet k-rate AudioParam] All assertions passed. (total 5 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

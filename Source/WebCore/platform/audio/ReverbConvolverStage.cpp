@@ -71,7 +71,7 @@ ReverbConvolverStage::ReverbConvolverStage(const float* impulseResponse, size_t,
             VectorMath::multiplyByScalar(m_directKernel->data(), scale, m_directKernel->data(), stageLength);
         m_directConvolver = makeUnique<DirectConvolver>(renderSliceSize);
     }
-    m_temporaryBuffer.allocate(renderSliceSize);
+    m_temporaryBuffer.resize(renderSliceSize);
 
     // The convolution stage at offset stageOffset needs to have a corresponding delay to cancel out the offset.
     size_t totalDelay = stageOffset + reverbTotalLatency;
@@ -97,7 +97,7 @@ ReverbConvolverStage::ReverbConvolverStage(const float* impulseResponse, size_t,
 
     size_t delayBufferSize = m_preDelayLength < fftSize ? fftSize : m_preDelayLength;
     delayBufferSize = delayBufferSize < renderSliceSize ? renderSliceSize : delayBufferSize;
-    m_preDelayBuffer.allocate(delayBufferSize);
+    m_preDelayBuffer.resize(delayBufferSize);
 }
 
 ReverbConvolverStage::~ReverbConvolverStage() = default;

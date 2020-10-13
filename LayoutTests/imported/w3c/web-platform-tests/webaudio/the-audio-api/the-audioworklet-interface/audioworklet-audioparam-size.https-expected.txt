@@ -8,34 +8,10 @@ PASS   Creating offline context for testing did not throw an exception.
 PASS   Creating test worklet resolved correctly.
 PASS < [Initializing AudioWorklet and Context] All assertions passed. (total 2 assertions)
 PASS > [Verify Size of AudioParam Arrays]
-FAIL X Render quantum 0: array size: Expected 1 for all values but found 128 unexpected values:
-	Index	Actual
-	[0]	0
-	[1]	0
-	[2]	0
-	[3]	0
-	...and 124 more errors. assert_true: expected true got false
-FAIL X Render quantum 1: array size: Expected 1 for all values but found 128 unexpected values:
-	Index	Actual
-	[0]	0
-	[1]	0
-	[2]	0
-	[3]	0
-	...and 124 more errors. assert_true: expected true got false
-FAIL X Render quantum 2-3: array size: Expected 128 for all values but found 256 unexpected values:
-	Index	Actual
-	[0]	0
-	[1]	0
-	[2]	0
-	[3]	0
-	...and 252 more errors. assert_true: expected true got false
-FAIL X Remaining renders: array size: Expected 1 for all values but found 768 unexpected values:
-	Index	Actual
-	[0]	0
-	[1]	0
-	[2]	0
-	[3]	0
-	...and 764 more errors. assert_true: expected true got false
-FAIL < [Verify Size of AudioParam Arrays] 4 out of 4 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 2 tasks were failed. assert_true: expected true got false
+PASS   Render quantum 0: array size contains only the constant 1.
+PASS   Render quantum 1: array size contains only the constant 1.
+PASS   Render quantum 2-3: array size contains only the constant 128.
+PASS   Remaining renders: array size contains only the constant 1.
+PASS < [Verify Size of AudioParam Arrays] All assertions passed. (total 4 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

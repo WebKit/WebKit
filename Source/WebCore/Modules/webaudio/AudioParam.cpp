@@ -223,6 +223,14 @@ ExceptionOr<AudioParam&> AudioParam::cancelAndHoldAtTime(double cancelTime)
     return *this;
 }
 
+bool AudioParam::hasSampleAccurateValues() const
+{
+    if (numberOfRenderingConnections())
+        return true;
+
+    return m_timeline.hasValues(context().currentSampleFrame(), context().sampleRate());
+}
+
 float AudioParam::finalValue()
 {
     float value;

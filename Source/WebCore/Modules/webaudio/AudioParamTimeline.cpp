@@ -987,6 +987,17 @@ bool AudioParamTimeline::isEventCurrent(const ParamEvent& event, const ParamEven
     return true;
 }
 
+bool AudioParamTimeline::hasValues(size_t startFrame, double sampleRate) const
+{
+    auto locker = tryHoldLock(m_eventsLock);
+    if (!locker)
+        return true;
+
+    // Return false if there are no events in the time range.
+    auto endFrame = startFrame + AudioUtilities::renderQuantumSize;
+    return !m_events.isEmpty() && endFrame / sampleRate > m_events[0]->time().value();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

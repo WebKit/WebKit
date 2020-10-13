@@ -42,6 +42,7 @@ public:
 
     // Can be called from any thread.
     BaseAudioContext& context() { return m_context; }
+    const BaseAudioContext& context() const { return m_context; }
 
     // This must be called whenever we modify m_outputs.
     void changedOutputs();

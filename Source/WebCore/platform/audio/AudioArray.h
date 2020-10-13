@@ -42,7 +42,7 @@ public:
     AudioArray() = default;
     explicit AudioArray(size_t n)
     {
-        allocate(n);
+        resize(n);
     }
 
     ~AudioArray()
@@ -50,10 +50,13 @@ public:
         fastAlignedFree(m_allocation);
     }
 
-    // It's OK to call allocate() multiple times, but data will *not* be copied from an initial allocation
+    // It's OK to call resize() multiple times, but data will *not* be copied from an initial allocation
     // if re-allocated. Allocations are zero-initialized.
-    void allocate(Checked<size_t> n)
+    void resize(Checked<size_t> n)
     {
+        if (n == m_size)
+            return;
+
         Checked<size_t> initialSize = sizeof(T) * n;
         const size_t alignment = 16;
 
@@ -73,7 +76,7 @@ public:
     T& at(size_t i)
     {
         // Note that although it is a size_t, m_size is now guaranteed to be
-        // no greater than max unsigned. This guarantee is enforced in allocate().
+        // no greater than max unsigned. This guarantee is enforced in resize().
         ASSERT_WITH_SECURITY_IMPLICATION(i < size());
         return data()[i];
     }
@@ -82,7 +85,7 @@ public:
 
     void zero()
     {
-        // This multiplication is made safe by the check in allocate().
+        // This multiplication is made safe by the check in resize().
         memset(this->data(), 0, sizeof(T) * this->size());
     }
 
@@ -94,7 +97,7 @@ public:
             return;
 
         // This expression cannot overflow because end - start cannot be
-        // greater than m_size, which is safe due to the check in allocate().
+        // greater than m_size, which is safe due to the check in resize().
         memset(this->data() + start, 0, sizeof(T) * (end - start));
     }
 
@@ -106,8 +109,20 @@ public:
             return;
 
         // This expression cannot overflow because end - start cannot be
-        // greater than m_size, which is safe due to the check in allocate().
+        // greater than m_size, which is safe due to the check in resize().
         memcpy(this->data() + start, sourceData, sizeof(T) * (end - start));
+    }
+
+    bool containsConstantValue() const
+    {
+        if (m_size <= 1)
+            return true;
+        float constant = data()[0];
+        for (unsigned i = 1; i < m_size; ++i) {
+            if (data()[i] != constant)
+                return false;
+        }
+        return true;
     }
 
 private:

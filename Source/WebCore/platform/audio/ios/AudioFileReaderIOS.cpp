@@ -190,8 +190,8 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
     const size_t bufferSize = numberOfFrames * sizeof(float);
 
     if (mixToMono && numberOfChannels == 2) {
-        leftChannel.allocate(numberOfFrames);
-        rightChannel.allocate(numberOfFrames);
+        leftChannel.resize(numberOfFrames);
+        rightChannel.resize(numberOfFrames);
 
         bufferList->mBuffers[0].mNumberChannels = 1;
         bufferList->mBuffers[0].mDataByteSize = bufferSize;

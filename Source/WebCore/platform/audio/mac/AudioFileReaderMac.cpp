@@ -193,8 +193,8 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
     AudioBufferList* bufferList = createAudioBufferList(numberOfChannels);
 
     if (mixToMono && numberOfChannels == 2) {
-        bufL.allocate(numberOfFrames);
-        bufR.allocate(numberOfFrames);
+        bufL.resize(numberOfFrames);
+        bufR.resize(numberOfFrames);
         bufferL = bufL.data();
         bufferR = bufR.data();
 
