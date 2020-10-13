@@ -1,3 +1,16 @@
+2020-10-13  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Add support for gamepad tests
+        https://bugs.webkit.org/show_bug.cgi?id=98937
+
+        Reviewed by Carlos Garcia Campos.
+
+        Change PLATFORM(MAC) guards to ENABLE(GAMEPAD) around the support code used for
+        testing gamepad support in WKTR, and update GTK port test expectations accordingly.
+
+        * platform/glib/TestExpectations: Remove skipped gamepad tests.
+        * platform/wpe/TestExpectations: Skip gamepad tests for the WPE port.
+
 2020-10-12  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r268294): [ iOS wk2 ] imported/blink/fast/css/zoomed-intrinsic-width.html is a constant image failure

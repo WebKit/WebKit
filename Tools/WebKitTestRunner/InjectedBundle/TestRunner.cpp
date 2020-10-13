@@ -1894,7 +1894,7 @@ bool TestRunner::isMockRealtimeMediaSourceCenterEnabled()
     return postSynchronousMessageReturningBoolean("IsMockRealtimeMediaSourceCenterEnabled");
 }
 
-#if PLATFORM(MAC)
+#if ENABLE(GAMEPAD)
 
 void TestRunner::connectMockGamepad(unsigned index)
 {
@@ -1957,7 +1957,7 @@ void TestRunner::setMockGamepadButtonValue(unsigned, unsigned, double)
 {
 }
 
-#endif // PLATFORM(MAC)
+#endif // ENABLE(GAMEPAD)
 
 void TestRunner::setOpenPanelFiles(JSValueRef filesValue)
 {

@@ -488,7 +488,7 @@ void TestController::initialize(int argc, const char* argv[])
     initializeInjectedBundlePath();
     initializeTestPluginDirectory();
 
-#if PLATFORM(MAC)
+#if ENABLE(GAMEPAD)
     WebCoreTestSupport::installMockGamepadProvider();
 #endif
 

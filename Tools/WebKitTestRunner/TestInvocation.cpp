@@ -939,7 +939,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     if (WKStringIsEqualToUTF8CString(messageName, "HasAppBoundSession"))
         return adoptWK(WKBooleanCreate(TestController::singleton().hasAppBoundSession()));
 
-#if PLATFORM(MAC)
+#if ENABLE(GAMEPAD)
     if (WKStringIsEqualToUTF8CString(messageName, "ConnectMockGamepad")) {
         WebCoreTestSupport::connectMockGamepad(uint64Value(messageBody));
         return nullptr;
@@ -978,7 +978,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         WebCoreTestSupport::setMockGamepadButtonValue(gamepadIndex, buttonIndex, value);
         return nullptr;
     }
-#endif // PLATFORM(MAC)
+#endif // ENABLE(GAMEPAD)
 
     if (WKStringIsEqualToUTF8CString(messageName, "UserMediaPermissionRequestCountForOrigin")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);

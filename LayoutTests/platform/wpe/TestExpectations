@@ -666,6 +666,11 @@ webkit.org/b/217369 fast/canvas/fill-text-with-font-features.html [ ImageOnlyFai
 
 webkit.org/b/217370 fast/events/setDragImage-element-non-nullable.html [ Failure ]
 
+# ENABLE_GAMEPAD not enabled.
+webkit.org/b/213131 gamepad [ Skip ]
+webkit.org/b/213131 imported/w3c/web-platform-tests/dom/events/Event-timestamp-high-resolution.html [ Failure ]
+webkit.org/b/213131 http/tests/misc/gamepads-insecure.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////

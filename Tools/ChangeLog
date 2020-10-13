@@ -1,3 +1,19 @@
+2020-10-13  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Add support for gamepad tests
+        https://bugs.webkit.org/show_bug.cgi?id=98937
+
+        Reviewed by Carlos Garcia Campos.
+
+        Change PLATFORM(MAC) guards to ENABLE(GAMEPAD) around the support code used for
+        testing gamepad support in WKTR, and update GTK port test expectations accordingly.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp: Change guards to ENABLE(GAMEPAD).
+        * WebKitTestRunner/TestController.cpp: Ditto.
+        (WTR::TestController::initialize):
+        * WebKitTestRunner/TestInvocation.cpp: Ditto.
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2020-10-13  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed GLIB gardening. Remove several tests that were only failing in EWS API-GTK.
