@@ -1,3 +1,23 @@
+2020-10-13  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r268267) [webkitpy] Add missing deps for pytest when running webdriver tests
+        https://bugs.webkit.org/show_bug.cgi?id=217650
+
+        Reviewed by Jonathan Bedard.
+
+        scandir (needed as os.scandir was added only in py 3.5)
+
+        Also fixed more_itertools autoinstall declaration so the package
+        name, with underscore, is the name of the webkitcorepy package and the
+        dash is used for the pypi package name.
+
+        With these changes the script does not error anymore, although there
+        seems to be some issues with the executor when running tests. They
+        happen to only start and stop the webserver but not actually being
+        run. To be investigated in a separate bug.
+
+        * Scripts/webkitpy/__init__.py:
+
 2020-10-13  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Add support for gamepad tests
