@@ -87,9 +87,9 @@ bool UserInputBridge::handleAccessKeyEvent(const PlatformKeyboardEvent& keyEvent
     return m_page.focusController().focusedOrMainFrame().eventHandler().handleAccessKey(keyEvent);
 }
 
-bool UserInputBridge::handleWheelEvent(const PlatformWheelEvent& wheelEvent, InputSource)
+bool UserInputBridge::handleWheelEvent(const PlatformWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps, InputSource)
 {
-    return m_page.mainFrame().eventHandler().handleWheelEvent(wheelEvent);
+    return m_page.mainFrame().eventHandler().handleWheelEvent(wheelEvent, processingSteps);
 }
 
 void UserInputBridge::focusSetActive(bool active, InputSource)

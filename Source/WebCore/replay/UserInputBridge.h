@@ -31,6 +31,7 @@
 #include "ScrollTypes.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
@@ -40,6 +41,8 @@ class Page;
 class PlatformKeyboardEvent;
 class PlatformMouseEvent;
 class PlatformWheelEvent;
+
+enum class WheelEventProcessingSteps : uint8_t;
 
 // Real user inputs come from WebKit or WebKit2.
 // Synthetic inputs come from within WebCore (i.e., from web replay or fake mouse moves).
@@ -58,24 +61,24 @@ public:
 #if ENABLE(CONTEXT_MENU_EVENT)
     WEBCORE_EXPORT bool handleContextMenuEvent(const PlatformMouseEvent&, Frame&, InputSource = InputSource::User);
 #endif
-    WEBCORE_EXPORT bool handleMousePressEvent(const PlatformMouseEvent&, InputSource source = InputSource::User);
-    WEBCORE_EXPORT bool handleMouseReleaseEvent(const PlatformMouseEvent&, InputSource source = InputSource::User);
-    WEBCORE_EXPORT bool handleMouseMoveEvent(const PlatformMouseEvent&, InputSource source = InputSource::User);
-    WEBCORE_EXPORT bool handleMouseMoveOnScrollbarEvent(const PlatformMouseEvent&, InputSource source = InputSource::User);
+    WEBCORE_EXPORT bool handleMousePressEvent(const PlatformMouseEvent&, InputSource = InputSource::User);
+    WEBCORE_EXPORT bool handleMouseReleaseEvent(const PlatformMouseEvent&, InputSource = InputSource::User);
+    WEBCORE_EXPORT bool handleMouseMoveEvent(const PlatformMouseEvent&, InputSource = InputSource::User);
+    WEBCORE_EXPORT bool handleMouseMoveOnScrollbarEvent(const PlatformMouseEvent&, InputSource = InputSource::User);
     WEBCORE_EXPORT bool handleMouseForceEvent(const PlatformMouseEvent&, InputSource = InputSource::User);
-    WEBCORE_EXPORT bool handleWheelEvent(const PlatformWheelEvent&, InputSource source = InputSource::User);
-    WEBCORE_EXPORT bool handleKeyEvent(const PlatformKeyboardEvent&, InputSource source = InputSource::User);
-    WEBCORE_EXPORT bool handleAccessKeyEvent(const PlatformKeyboardEvent&, InputSource source = InputSource::User);
-    void focusSetActive(bool active, InputSource source = InputSource::User);
-    void focusSetFocused(bool focused, InputSource source = InputSource::User);
-    WEBCORE_EXPORT bool scrollRecursively(ScrollDirection, ScrollGranularity, InputSource source = InputSource::User);
-    WEBCORE_EXPORT bool logicalScrollRecursively(ScrollLogicalDirection, ScrollGranularity, InputSource source = InputSource::User);
+    WEBCORE_EXPORT bool handleWheelEvent(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, InputSource = InputSource::User);
+    WEBCORE_EXPORT bool handleKeyEvent(const PlatformKeyboardEvent&, InputSource = InputSource::User);
+    WEBCORE_EXPORT bool handleAccessKeyEvent(const PlatformKeyboardEvent&, InputSource = InputSource::User);
+    void focusSetActive(bool active, InputSource = InputSource::User);
+    void focusSetFocused(bool focused, InputSource = InputSource::User);
+    WEBCORE_EXPORT bool scrollRecursively(ScrollDirection, ScrollGranularity, InputSource = InputSource::User);
+    WEBCORE_EXPORT bool logicalScrollRecursively(ScrollLogicalDirection, ScrollGranularity, InputSource = InputSource::User);
 
     // Navigation APIs.
     WEBCORE_EXPORT void loadRequest(FrameLoadRequest&&, InputSource = InputSource::User);
     WEBCORE_EXPORT void reloadFrame(Frame*, OptionSet<ReloadOption>, InputSource = InputSource::User);
-    WEBCORE_EXPORT void stopLoadingFrame(Frame*, InputSource source = InputSource::User);
-    WEBCORE_EXPORT bool tryClosePage(InputSource source = InputSource::User);
+    WEBCORE_EXPORT void stopLoadingFrame(Frame*, InputSource = InputSource::User);
+    WEBCORE_EXPORT bool tryClosePage(InputSource = InputSource::User);
 
 private:
     Page& m_page;

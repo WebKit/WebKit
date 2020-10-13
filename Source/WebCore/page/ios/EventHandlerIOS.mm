@@ -107,7 +107,7 @@ bool EventHandler::wheelEvent(WebEvent *event)
 
     CurrentEventScope scope(event);
 
-    bool eventWasHandled = handleWheelEvent(PlatformEventFactory::createPlatformWheelEvent(event));
+    bool eventWasHandled = handleWheelEvent(PlatformEventFactory::createPlatformWheelEvent(event), { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForDOMEventDispatch });
     event.wasHandled = eventWasHandled;
     return eventWasHandled;
 }
@@ -419,7 +419,7 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
     return false;
 }
 
-bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent&, Widget& widget)
+bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent&, Widget& widget, OptionSet<WheelEventProcessingSteps>)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 

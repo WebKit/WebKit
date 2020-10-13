@@ -61,13 +61,13 @@ struct WheelEventHandlingResult {
     bool wasHandled { false };
     bool needsMainThreadProcessing() const { return steps.containsAny({ WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForDOMEventDispatch }); }
 
-    static WheelEventHandlingResult handled()
+    static WheelEventHandlingResult handled(OptionSet<WheelEventProcessingSteps> steps = { })
     {
-        return { { }, true };
+        return { steps, true };
     }
-    static WheelEventHandlingResult unhandled()
+    static WheelEventHandlingResult unhandled(OptionSet<WheelEventProcessingSteps> steps = { })
     {
-        return { { }, false };
+        return { steps, false };
     }
     static WheelEventHandlingResult result(bool handled)
     {
@@ -90,7 +90,7 @@ public:
     void setAsyncFrameOrOverflowScrollingEnabled(bool);
 
     WEBCORE_EXPORT OptionSet<WheelEventProcessingSteps> determineWheelEventProcessing(const PlatformWheelEvent&);
-    WEBCORE_EXPORT virtual WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&);
+    WEBCORE_EXPORT virtual WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps> = { });
 
     bool isRubberBandInProgressForNode(ScrollingNodeID);
     void setRubberBandingInProgressForNode(ScrollingNodeID, bool);

@@ -96,6 +96,8 @@ class Widget;
 
 struct DragState;
 
+enum class WheelEventProcessingSteps : uint8_t;
+
 #if ENABLE(DRAG_SUPPORT)
 extern const int LinkDragHysteresis;
 extern const int ImageDragHysteresis;
@@ -206,7 +208,7 @@ public:
     bool handleMouseMoveEvent(const PlatformMouseEvent&, HitTestResult* = nullptr, bool onlyUpdateScrollbars = false);
     WEBCORE_EXPORT bool handleMouseReleaseEvent(const PlatformMouseEvent&);
     bool handleMouseForceEvent(const PlatformMouseEvent&);
-    WEBCORE_EXPORT bool handleWheelEvent(const PlatformWheelEvent&);
+    WEBCORE_EXPORT bool handleWheelEvent(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>);
     void defaultWheelEventHandler(Node*, WheelEvent&);
     bool handlePasteGlobalSelection(const PlatformMouseEvent&);
 
@@ -450,7 +452,7 @@ private:
 
     bool passMouseDownEventToWidget(Widget*);
 
-    bool passWheelEventToWidget(const PlatformWheelEvent&, Widget&);
+    bool passWheelEventToWidget(const PlatformWheelEvent&, Widget&, OptionSet<WheelEventProcessingSteps>);
     void determineWheelEventTarget(const PlatformWheelEvent&, RefPtr<Element>& eventTarget, WeakPtr<ScrollableArea>&, bool& isOverWidget);
     void recordWheelEventForDeltaFilter(const PlatformWheelEvent&);
     bool processWheelEventForScrolling(const PlatformWheelEvent&, const WeakPtr<ScrollableArea>&);
@@ -625,6 +627,7 @@ private:
     double m_maxMouseMovedDuration { 0 };
     bool m_didStartDrag { false };
     bool m_isHandlingWheelEvent { false };
+    bool m_currentWheelEventAllowsScrolling { true };
 
 #if PLATFORM(IOS_FAMILY)
     bool m_shouldAllowMouseDownToStartDrag { false };

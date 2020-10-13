@@ -55,10 +55,10 @@ ThreadedScrollingTree::~ThreadedScrollingTree()
     ASSERT(!m_scrollingCoordinator);
 }
 
-WheelEventHandlingResult ThreadedScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
+WheelEventHandlingResult ThreadedScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps)
 {
     ASSERT(ScrollingThread::isCurrentThread());
-    return ScrollingTree::handleWheelEvent(wheelEvent);
+    return ScrollingTree::handleWheelEvent(wheelEvent, processingSteps);
 }
 
 bool ThreadedScrollingTree::handleWheelEventAfterMainThread(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNodeID)

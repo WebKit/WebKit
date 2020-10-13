@@ -1,3 +1,26 @@
+2020-10-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Plumb OptionSet<WheelEventProcessingSteps> through the wheel event handling code
+        https://bugs.webkit.org/show_bug.cgi?id=217660
+
+        Reviewed by Tim Horton.
+
+        Async scrolling in passive wheel event regions will require that the main thread event
+        handling code knows that the scrolling thread did the scrolling. To propagate this
+        information, plumb OptionSet<WheelEventProcessingSteps> through.
+
+        No behavior change.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+        (WebKit::EventDispatcher::dispatchWheelEventViaMainThread):
+        (WebKit::EventDispatcher::dispatchWheelEvent):
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::handleWheelEvent):
+        (WebKit::WebPage::wheelEvent):
+        * WebProcess/WebPage/WebPage.h:
+
 2020-10-13  Alex Christensen  <achristensen@webkit.org>
 
         Allow legacy custom scheme registration on non-main threads

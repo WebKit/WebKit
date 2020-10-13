@@ -1,3 +1,13 @@
+2020-10-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Plumb OptionSet<WheelEventProcessingSteps> through the wheel event handling code
+        https://bugs.webkit.org/show_bug.cgi?id=217660
+
+        Reviewed by Tim Horton.
+
+        * WebView.cpp:
+        (WebView::mouseWheel):
+
 2020-10-06  Devin Rousso  <drousso@apple.com>
 
         Move platform logic for CSS `hover` and `pointer` media queries outside of WebCore

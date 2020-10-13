@@ -64,7 +64,7 @@ TextStream& operator<<(TextStream& ts, WheelEventProcessingSteps steps)
     switch (steps) {
     case WheelEventProcessingSteps::ScrollingThread: ts << "scrolling thread"; break;
     case WheelEventProcessingSteps::MainThreadForScrolling: ts << "main thread scrolling"; break;
-    case WheelEventProcessingSteps::MainThreadForDOMEventDispatch: ts << "main thread DOM evnet dispatch"; break;
+    case WheelEventProcessingSteps::MainThreadForDOMEventDispatch: ts << "main thread DOM event dispatch"; break;
     }
     return ts;
 }

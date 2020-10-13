@@ -51,6 +51,7 @@
 #import "Pasteboard.h"
 #import "PlatformEventFactoryMac.h"
 #import "PlatformScreen.h"
+#import "PlatformWheelEvent.h"
 #import "Range.h"
 #import "RenderLayer.h"
 #import "RenderListBox.h"
@@ -145,7 +146,7 @@ bool EventHandler::wheelEvent(NSEvent *event)
         return false;
 
     CurrentEventScope scope(event, nil);
-    return handleWheelEvent(PlatformEventFactory::createPlatformWheelEvent(event, page->chrome().platformPageClient()));
+    return handleWheelEvent(PlatformEventFactory::createPlatformWheelEvent(event, page->chrome().platformPageClient()), { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForDOMEventDispatch });
 }
 
 bool EventHandler::keyEvent(NSEvent *event)
@@ -467,7 +468,7 @@ static void selfRetainingNSScrollViewScrollWheel(NSScrollView *self, SEL selecto
         CFRelease((__bridge CFTypeRef)self);
 }
 
-bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, Widget& widget)
+bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, Widget& widget, OptionSet<WheelEventProcessingSteps> processingSteps)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -477,7 +478,7 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, 
         if (!is<FrameView>(widget))
             return false;
 
-        return downcast<FrameView>(widget).frame().eventHandler().handleWheelEvent(wheelEvent);
+        return downcast<FrameView>(widget).frame().eventHandler().handleWheelEvent(wheelEvent, processingSteps);
     }
 
     if ([currentNSEvent() type] != NSEventTypeScrollWheel || m_sendingEventToSubview)

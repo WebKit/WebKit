@@ -2862,7 +2862,7 @@ bool EventHandler::completeWidgetWheelEvent(const PlatformWheelEvent& event, con
     return platformCompletePlatformWidgetWheelEvent(event, *widget.get(), scrollableArea);
 }
 
-bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
+bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event, OptionSet<WheelEventProcessingSteps> processingSteps)
 {
     auto* document = m_frame.document();
     if (!document)
@@ -2886,7 +2886,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
 #endif
 
 #if PLATFORM(COCOA)
-    LOG_WITH_STREAM(WheelEventTestMonitor, stream << "EventHandler::handleWheelEvent on main thread, phase " << event.phase() << " momentum phase " << event.momentumPhase());
+    LOG_WITH_STREAM(Scrolling, stream << "EventHandler::handleWheelEvent " << event << " processing steps " << processingSteps);
     if (auto monitor = m_frame.page()->wheelEventTestMonitor())
         monitor->receivedWheelEvent(event);
 
@@ -2918,7 +2918,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
     if (element) {
         if (isOverWidget) {
             if (WeakPtr<Widget> widget = widgetForElement(*element)) {
-                if (passWheelEventToWidget(event, *widget.get()))
+                if (passWheelEventToWidget(event, *widget.get(), processingSteps))
                     return completeWidgetWheelEvent(event, widget, scrollableArea);
             }
         }
@@ -4448,12 +4448,12 @@ bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&
     return true;
 }
 
-bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& event, Widget& widget)
+bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& event, Widget& widget, OptionSet<WheelEventProcessingSteps> processingSteps)
 {
     if (!is<FrameView>(widget))
         return false;
 
-    return downcast<FrameView>(widget).frame().eventHandler().handleWheelEvent(event);
+    return downcast<FrameView>(widget).frame().eventHandler().handleWheelEvent(event, processingSteps);
 }
 
 bool EventHandler::tabsToAllFormControls(KeyboardEvent*) const
