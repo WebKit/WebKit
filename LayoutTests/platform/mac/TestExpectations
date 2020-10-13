@@ -2245,3 +2245,5 @@ webkit.org/b/217543 webaudio/OfflineAudioContext/onstatechange.html [ Pass Failu
 webkit.org/b/209073 [ Debug ] inspector/injected-script/avoid-getter-invocation.html [ Pass Timeout ]
 
 webkit.org/b/217641 [ Debug ] imported/w3c/web-platform-tests/xhr/event-timeout.any.worker.html [ Pass Failure ]
+
+webkit.org/b/217620 inspector/audit/basic-async.htm [ Pass Timeout ]
