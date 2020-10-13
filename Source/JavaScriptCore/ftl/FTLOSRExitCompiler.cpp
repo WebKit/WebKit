@@ -549,8 +549,6 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
         );
 }
 
-extern "C" {
-
 JSC_DEFINE_JIT_OPERATION(operationCompileFTLOSRExit, void*, (CallFrame* callFrame, unsigned exitID))
 {
     if (shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit())
@@ -603,8 +601,6 @@ JSC_DEFINE_JIT_OPERATION(operationCompileFTLOSRExit, void*, (CallFrame* callFram
     
     return exit.m_code.code().executableAddress();
 }
-
-} // extern "C"
 
 } } // namespace JSC::FTL
 

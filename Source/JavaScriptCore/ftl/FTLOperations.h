@@ -34,8 +34,6 @@ namespace JSC { namespace FTL {
 
 class LazySlowPath;
 
-extern "C" {
-
 JSC_DECLARE_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSGlobalObject*, ExitTimeObjectMaterialization*, EncodedJSValue*));
 
 JSC_DECLARE_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalObject*, ExitTimeObjectMaterialization*, EncodedJSValue*, EncodedJSValue*));
@@ -46,8 +44,6 @@ JSC_DECLARE_JIT_OPERATION(operationSwitchStringAndGetBranchOffset, int32_t, (JSG
 JSC_DECLARE_JIT_OPERATION(operationTypeOfObjectAsTypeofType, int32_t, (JSGlobalObject*, JSCell*));
 
 JSC_DECLARE_JIT_OPERATION(operationReportBoundsCheckEliminationErrorAndCrash, void, (intptr_t codeBlockAsIntPtr, int32_t, int32_t, int32_t, int32_t, int32_t));
-
-} // extern "C"
 
 } } // namespace JSC::DFG
 

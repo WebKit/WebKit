@@ -40,8 +40,6 @@ namespace DFG {
 
 struct OSRExitBase;
 
-extern "C" {
-
 JSC_DECLARE_JIT_OPERATION(operationStringFromCharCode, JSCell*, (JSGlobalObject*, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationStringFromCharCodeUntyped, EncodedJSValue, (JSGlobalObject*, EncodedJSValue));
 
@@ -340,8 +338,6 @@ JSC_DECLARE_JIT_OPERATION(operationTriggerTierUpNow, void, (VM*));
 JSC_DECLARE_JIT_OPERATION(operationTriggerTierUpNowInLoop, void, (VM*, unsigned bytecodeIndexBits));
 JSC_DECLARE_JIT_OPERATION(operationTriggerOSREntryNow, char*, (VM*, unsigned bytecodeIndexBits));
 #endif // ENABLE(FTL_JIT)
-
-} // extern "C"
 
 inline auto operationNewTypedArrayWithSizeForType(TypedArrayType type) -> decltype(&operationNewInt8ArrayWithSize)
 {

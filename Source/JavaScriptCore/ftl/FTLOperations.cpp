@@ -53,8 +53,6 @@ IGNORE_WARNINGS_BEGIN("frame-address")
 
 namespace JSC { namespace FTL {
 
-extern "C" {
-
 JSC_DEFINE_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalObject* globalObject, ExitTimeObjectMaterialization* materialization, EncodedJSValue* encodedValue, EncodedJSValue* values))
 {
     using namespace DFG;
@@ -751,8 +749,6 @@ JSC_DEFINE_JIT_OPERATION_WITH_ATTRIBUTES(operationReportBoundsCheckEliminationEr
     dataLogLn("Bounds Check Eimination error found @ D@", nodeIndex, ": AssertInBounds(index D@", child1Index, ": ", checkedIndex, ", bounds D@", child2Index, " ", bounds, ") in ", codeBlock);
     CRASH();
 }
-
-} // extern "C"
 
 } } // namespace JSC::FTL
 

@@ -217,8 +217,6 @@ ALWAYS_INLINE static JSValue getByValObject(JSGlobalObject* globalObject, VM& vm
     return base->get(globalObject, propertyName);
 }
 
-extern "C" {
-
 JSC_DEFINE_JIT_OPERATION(operationToThis, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue encodedOp))
 {
     VM& vm = globalObject->vm();
@@ -3996,7 +3994,6 @@ JSC_DEFINE_JIT_OPERATION(operationTriggerOSREntryNow, char*, (VM* vmPointer, uns
 
 #endif // ENABLE(FTL_JIT)
 
-} // extern "C"
 } } // namespace JSC::DFG
 
 IGNORE_WARNINGS_END

@@ -80,10 +80,8 @@ ALWAYS_INLINE JSValue profiledAdd(JSGlobalObject* globalObject, JSValue op1, JSV
     return result;
 }
 
-extern "C" {
-
 #if COMPILER(MSVC)
-void * _ReturnAddress(void);
+extern "C" void * _ReturnAddress(void);
 #pragma intrinsic(_ReturnAddress)
 
 #define OUR_RETURN_ADDRESS _ReturnAddress()
@@ -671,8 +669,6 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdDirectNonStrictOptimize, void, (JSGloba
         repatchPutByID(globalObject, codeBlock, baseObject, structure, identifier, slot, *stubInfo, PutKind::Direct);
 }
 
-} // extern "C"
-
 template<typename PutPrivateFieldCallback>
 ALWAYS_INLINE static void setPrivateField(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame, JSValue baseValue, CacheableIdentifier identifier, JSValue value, PutPrivateFieldCallback callback)
 {
@@ -710,8 +706,6 @@ ALWAYS_INLINE static void definePrivateField(VM& vm, JSGlobalObject* globalObjec
 
     callback(vm, codeBlock, oldStructure, putSlot, ident);
 }
-
-extern "C" {
 
 JSC_DEFINE_JIT_OPERATION(operationPutByIdDefinePrivateFieldStrict, void, (JSGlobalObject* globalObject, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier))
 {
@@ -1514,8 +1508,6 @@ JSC_DEFINE_JIT_OPERATION(operationNewArrayWithSizeAndProfile, EncodedJSValue, (J
     return JSValue::encode(constructArrayWithSizeQuirk(globalObject, profile, sizeValue));
 }
 
-}
-
 template<typename FunctionType>
 static EncodedJSValue newFunctionCommon(VM& vm, JSScope* scope, JSCell* functionExecutable, bool isInvalidated)
 {
@@ -1524,8 +1516,6 @@ static EncodedJSValue newFunctionCommon(VM& vm, JSScope* scope, JSCell* function
         return JSValue::encode(FunctionType::createWithInvalidatedReallocationWatchpoint(vm, static_cast<FunctionExecutable*>(functionExecutable), scope));
     return JSValue::encode(FunctionType::create(vm, static_cast<FunctionExecutable*>(functionExecutable), scope));
 }
-
-extern "C" {
 
 JSC_DEFINE_JIT_OPERATION(operationNewFunction, EncodedJSValue, (VM* vmPointer, JSScope* scope, JSCell* functionExecutable))
 {
@@ -2090,8 +2080,6 @@ JSC_DEFINE_JIT_OPERATION(operationInstanceOfCustom, size_t, (JSGlobalObject* glo
     return 0;
 }
 
-}
-
 ALWAYS_INLINE static JSValue getByVal(JSGlobalObject* globalObject, CallFrame* callFrame, ArrayProfile* arrayProfile, JSValue baseValue, JSValue subscript)
 {
     UNUSED_PARAM(callFrame);
@@ -2155,8 +2143,6 @@ ALWAYS_INLINE static JSValue getByVal(JSGlobalObject* globalObject, CallFrame* c
     ASSERT(callFrame->bytecodeIndex() != BytecodeIndex(0));
     RELEASE_AND_RETURN(scope, baseValue.get(globalObject, property));
 }
-
-extern "C" {
 
 JSC_DEFINE_JIT_OPERATION(operationGetByValGeneric, EncodedJSValue, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, ArrayProfile* profile, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript))
 {
@@ -2249,8 +2235,6 @@ JSC_DEFINE_JIT_OPERATION(operationGetByVal, EncodedJSValue, (JSGlobalObject* glo
     RELEASE_AND_RETURN(scope, JSValue::encode(baseValue.get(globalObject, propertyName)));
 }
 
-} // extern "C"
-
 ALWAYS_INLINE static JSValue getPrivateName(JSGlobalObject* globalObject, CallFrame* callFrame, JSValue baseValue, JSValue fieldNameValue)
 {
     UNUSED_PARAM(callFrame);
@@ -2269,8 +2253,6 @@ ALWAYS_INLINE static JSValue getPrivateName(JSGlobalObject* globalObject, CallFr
 
     return slot.getValue(globalObject, fieldName);
 }
-
-extern "C" {
 
 JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameOptimize, EncodedJSValue, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedBase, EncodedJSValue encodedFieldName))
 {
@@ -3340,8 +3322,6 @@ JSC_DEFINE_JIT_OPERATION(operationCheckIfExceptionIsUncatchableAndNotifyProfiler
     }
     return 0;
 }
-
-} // extern "C"
 
 } // namespace JSC
 

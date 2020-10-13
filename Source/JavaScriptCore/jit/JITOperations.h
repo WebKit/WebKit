@@ -69,8 +69,6 @@ struct ECMAMode;
 struct InlineCallFrame;
 struct Instruction;
 
-extern "C" {
-
 typedef char* UnusedPtr;
 
 // These typedefs provide typechecking when generating calls out to helper routines;
@@ -315,8 +313,6 @@ JSC_DECLARE_JIT_OPERATION(operationValueSubProfiledNoOptimize, EncodedJSValue, (
 
 JSC_DECLARE_JIT_OPERATION(operationProcessTypeProfilerLog, void, (VM*));
 JSC_DECLARE_JIT_OPERATION(operationProcessShadowChickenLog, void, (VM*));
-
-} // extern "C"
 
 } // namespace JSC
 

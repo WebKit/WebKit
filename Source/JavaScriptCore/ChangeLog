@@ -1,3 +1,21 @@
+2020-10-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        JIT operations do not need extern "C"
+        https://bugs.webkit.org/show_bug.cgi?id=217636
+
+        Reviewed by Saam Barati.
+
+        Since they are directly embedded by JIT code generator (not linked via linker), they do not need to be C linkage.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * ftl/FTLOSRExitCompiler.cpp:
+        * ftl/FTLOSRExitCompiler.h:
+        * ftl/FTLOperations.cpp:
+        * ftl/FTLOperations.h:
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+
 2020-10-12  Saam Barati  <sbarati@apple.com>
 
         Array.prototype.sort's sortBucketSort accesses an array in an invalid way that can lead to incorrect results with indexed properties on the prototype chain

@@ -33,9 +33,7 @@ namespace JSC { namespace FTL {
 
 // Takes the call frame and the index of the exit, and returns the address to
 // jump to.
-extern "C" {
 JSC_DECLARE_JIT_OPERATION(operationCompileFTLOSRExit, void*, (CallFrame*, unsigned exitID));
-}
 
 } } // namespace JSC::FTL
 

@@ -193,15 +193,11 @@ inline CCallHelpers::Jump branchTestIsHTMLFlagOnNode(MacroAssembler& jit, CCallH
     return jit.branchTest32(condition, CCallHelpers::Address(nodeAddress, Node::nodeFlagsMemoryOffset()), CCallHelpers::TrustedImm32(Node::flagIsHTML()));
 }
 
-extern "C" {
-
 JSC_DECLARE_JIT_OPERATION(operationToJSNode, JSC::EncodedJSValue, (JSC::JSGlobalObject*, void*));
 JSC_DECLARE_JIT_OPERATION(operationToJSContainerNode, JSC::EncodedJSValue, (JSC::JSGlobalObject*, void*));
 JSC_DECLARE_JIT_OPERATION(operationToJSElement, JSC::EncodedJSValue, (JSC::JSGlobalObject*, void*));
 JSC_DECLARE_JIT_OPERATION(operationToJSHTMLElement, JSC::EncodedJSValue, (JSC::JSGlobalObject*, void*));
 JSC_DECLARE_JIT_OPERATION(operationToJSDocument, JSC::EncodedJSValue, (JSC::JSGlobalObject*, void*));
-
-}
 
 } }
 

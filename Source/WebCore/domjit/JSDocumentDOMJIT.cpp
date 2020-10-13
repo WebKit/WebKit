@@ -142,8 +142,6 @@ Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileDocumentBodyAttribute()
 
 namespace DOMJIT {
 
-extern "C" {
-
 JSC_DEFINE_JIT_OPERATION(operationToJSElement, JSC::EncodedJSValue, (JSC::JSGlobalObject* globalObject, void* result))
 {
     ASSERT(result);
@@ -192,8 +190,6 @@ JSC_DEFINE_JIT_OPERATION(operationToJSContainerNode, JSC::EncodedJSValue, (JSC::
     JSC::CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JSC::JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     return DOMJIT::toWrapperSlowImpl<ContainerNode>(globalObject, result);
-}
-
 }
 
 } }
