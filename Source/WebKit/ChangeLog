@@ -1,3 +1,16 @@
+2020-10-13  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS 14] Hang in -[WKUserDefaults _notifyObserversOfChangeFromValuesForKeys:toValuesForKeys:]
+        https://bugs.webkit.org/show_bug.cgi?id=217183
+        <rdar://problem/69916673>
+
+        Reviewed by Geoffrey Garen.
+
+        Dispatch this work on a non-main thread, in order to avoid blocking the main thread.
+
+        * UIProcess/Cocoa/PreferenceObserver.mm:
+        (-[WKUserDefaults _notifyObserversOfChangeFromValuesForKeys:toValuesForKeys:]):
+
 2020-10-13  Keith Rollin  <krollin@apple.com>
 
         Remove leftover MACOSX_DEPLOYMENT_TARGET_macosx support
