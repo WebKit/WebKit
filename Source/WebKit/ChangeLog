@@ -1,3 +1,17 @@
+2020-10-13  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Cocoa: Make WebGLLayer not dependent on  GraphicsContextGLOpenGL
+        https://bugs.webkit.org/show_bug.cgi?id=217212
+        <rdar://problem/69876022>
+
+        Reviewed by Dean Jackson.
+
+        Removed unneeded inclusions of GraphicsContextGLOpenGL.h. The
+        file is now using non-public headers.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+
 2020-10-12  Devin Rousso  <drousso@apple.com>
 
         CSS "any-pointer:fine" media query false on iPad/Pencil

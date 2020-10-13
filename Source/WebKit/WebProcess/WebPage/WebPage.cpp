@@ -175,7 +175,6 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/FullscreenManager.h>
-#include <WebCore/GraphicsContextGLOpenGL.h>
 #include <WebCore/HTMLAttachmentElement.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLImageElement.h>

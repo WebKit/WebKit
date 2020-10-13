@@ -28,74 +28,27 @@
 #if ENABLE(WEBGL)
 #import "WebGLLayer.h"
 
-#import "GraphicsContextCG.h"
-#import "GraphicsContextGLOpenGL.h"
 #import "GraphicsLayer.h"
 #import "GraphicsLayerCA.h"
-#import "ImageBufferUtilitiesCG.h"
-#import "NotImplemented.h"
 #import "PlatformCALayer.h"
+#import "WebGLLayerClient.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
-#import <wtf/FastMalloc.h>
 #import <wtf/RetainPtr.h>
 
-#define EGL_EGL_PROTOTYPES 0
-#import <ANGLE/egl.h>
-#import <ANGLE/eglext.h>
-#import <ANGLE/eglext_angle.h>
-#import <ANGLE/entry_points_egl.h>
-#import <ANGLE/entry_points_gles_2_0_autogen.h>
-// Skip the inclusion of ANGLE's explicit context entry points for now.
-#define GL_ANGLE_explicit_context
-#import <ANGLE/gl2ext.h>
-#import <ANGLE/gl2ext_angle.h>
-
-namespace {
-    class ScopedRestoreTextureBinding {
-        WTF_MAKE_NONCOPYABLE(ScopedRestoreTextureBinding);
-    public:
-        ScopedRestoreTextureBinding(GLenum bindingPointQuery, GLenum bindingPoint)
-            : m_bindingPoint(bindingPoint)
-        {
-            gl::GetIntegerv(bindingPointQuery, &m_bindingValue);
-        }
-
-        ~ScopedRestoreTextureBinding()
-        {
-            gl::BindTexture(m_bindingPoint, m_bindingValue);
-        }
-
-    private:
-        GLint m_bindingPoint { 0 };
-        GLint m_bindingValue { 0 };
-    };
-}
-
 @implementation WebGLLayer {
-    float _devicePixelRatio;
-    std::unique_ptr<WebCore::IOSurface> _contentsBuffer;
-    std::unique_ptr<WebCore::IOSurface> _drawingBuffer;
-    std::unique_ptr<WebCore::IOSurface> _spareBuffer;
-    WebCore::IntSize _bufferSize;
-    BOOL _usingAlpha;
-    void* _eglDisplay;
-    void* _eglConfig;
-    void* _contentsPbuffer;
-    void* _drawingPbuffer;
-    void* _sparePbuffer;
-    void* _latchedPbuffer;
+    NakedPtr<WebCore::WebGLLayerClient> _client;
+    WebCore::WebGLLayerBuffer _contentsBuffer;
+    WebCore::WebGLLayerBuffer _spareBuffer;
+
     BOOL _preparedForDisplay;
 }
 
-- (id)initWithGraphicsContextGL:(NakedPtr<WebCore::GraphicsContextGLOpenGL>)context
+- (id)initWithClient:(NakedPtr<WebCore::WebGLLayerClient>)client devicePixelRatio:(float)devicePixelRatio
 {
-    _context = context;
+    _client = client;
     self = [super init];
-    auto attributes = context->contextAttributes();
-    _devicePixelRatio = attributes.devicePixelRatio;
-    self.contentsOpaque = !attributes.alpha;
     self.transform = CATransform3DIdentity;
-    self.contentsScale = _devicePixelRatio;
+    self.contentsScale = devicePixelRatio;
     return self;
 }
 
@@ -117,66 +70,39 @@ namespace {
 
 - (CGImageRef)copyImageSnapshotWithColorSpace:(CGColorSpaceRef)colorSpace
 {
-    if (!_context)
-        return nullptr;
     // FIXME: implement. https://bugs.webkit.org/show_bug.cgi?id=217377
+    // When implementing, remember to use self.contentsScale.
     UNUSED_PARAM(colorSpace);
     return nullptr;
 }
 
-- (void)prepareForDisplay
+- (WebCore::WebGLLayerBuffer) recycleBuffer
 {
-    if (!_context)
-        return;
-
-    // To avoid running any OpenGL code in `display`, this method should be called
-    // at the end of the rendering task. We will flush all painting commands
-    // leaving the buffers ready to composite.
-
-    if (!_context->makeContextCurrent()) {
-        // Context is likely being torn down.
-        return;
+    if (_spareBuffer.surface) {
+        if (_spareBuffer.surface->isInUse())
+            _spareBuffer.surface.reset();
+        return WTFMove(_spareBuffer);
     }
-    _context->prepareTexture();
-    if (_drawingBuffer) {
-        if (_latchedPbuffer) {
-            WTF::Optional<ScopedRestoreTextureBinding> restoreBinding;
-            GCGLenum textureTarget = WebCore::GraphicsContextGLOpenGL::IOSurfaceTextureTarget();
-            // We don't need to restore GL_TEXTURE_RECTANGLE because it's not accessible from user code.
-            if (textureTarget != WebCore::GraphicsContextGL::TEXTURE_RECTANGLE_ARB)
-                restoreBinding.emplace(WebCore::GraphicsContextGLOpenGL::IOSurfaceTextureTargetQuery(), textureTarget);
-            GCGLenum texture = _context->platformTexture();
-            gl::BindTexture(textureTarget, texture);
-            if (!EGL_ReleaseTexImage(_eglDisplay, _latchedPbuffer, EGL_BACK_BUFFER)) {
-                // FIXME: report error.
-                notImplemented();
-            }
-            _latchedPbuffer = nullptr;
-        }
+    return { };
+}
 
-        std::swap(_contentsBuffer, _drawingBuffer);
-        std::swap(_contentsPbuffer, _drawingPbuffer);
-        [self bindFramebufferToNextAvailableSurface];
-    }
+- (void)prepareForDisplayWithContents:(WebCore::WebGLLayerBuffer) buffer
+{
+    ASSERT(!_spareBuffer.surface);
+    _spareBuffer = WTFMove(_contentsBuffer);
+    _contentsBuffer = WTFMove(buffer);
     [self setNeedsDisplay];
     _preparedForDisplay = YES;
 }
 
 - (void)display
 {
-    if (!_context)
-        return;
-
-    // At this point we've painted into the _drawingBuffer and swapped it with the old _contentsBuffer,
-    // so all we need to do here is tickle the CALayer to let it know it has new contents.
-    // This avoids running any OpenGL code in this method.
-
-    if (_contentsBuffer && _preparedForDisplay) {
-        self.contents = _contentsBuffer->asLayerContents();
+    if (_contentsBuffer.surface && _preparedForDisplay) {
+        self.contents = _contentsBuffer.surface->asLayerContents();
         [self reloadValueForKeyPath:@"contents"];
     }
-
-    _context->markLayerComposited();
+    if (_client)
+        _client->didDisplay();
     auto layer = WebCore::PlatformCALayer::platformCALayerForLayer((__bridge void*)self);
     if (layer && layer->owner())
         layer->owner()->platformCALayerLayerDidDisplay(layer.get());
@@ -184,96 +110,14 @@ namespace {
     _preparedForDisplay = NO;
 }
 
-- (void)setEGLDisplay:(void*)display config:(void*)config
+- (void*) detachClient
 {
-    _eglDisplay = display;
-    _eglConfig = config;
+    ASSERT(!_spareBuffer.surface);
+    _client = nil;
+    void* result = _contentsBuffer.handle;
+    _contentsBuffer.handle = nullptr;
+    return result;
 }
-
-- (void)releaseGLResources
-{
-    if (!_context)
-        return;
-
-    if (_context->makeContextCurrent() && _latchedPbuffer) {
-        EGL_ReleaseTexImage(_eglDisplay, _latchedPbuffer, EGL_BACK_BUFFER);
-        _latchedPbuffer = nullptr;
-    }
-
-    EGL_DestroySurface(_eglDisplay, _contentsPbuffer);
-    EGL_DestroySurface(_eglDisplay, _drawingPbuffer);
-    EGL_DestroySurface(_eglDisplay, _sparePbuffer);
-}
-
-- (bool)allocateIOSurfaceBackingStoreWithSize:(WebCore::IntSize)size usingAlpha:(BOOL)usingAlpha
-{
-    _bufferSize = size;
-    _usingAlpha = usingAlpha;
-    _contentsBuffer = WebCore::IOSurface::create(size, WebCore::sRGBColorSpaceRef());
-    _drawingBuffer = WebCore::IOSurface::create(size, WebCore::sRGBColorSpaceRef());
-    _spareBuffer = WebCore::IOSurface::create(size, WebCore::sRGBColorSpaceRef());
-
-    if (!_contentsBuffer || !_drawingBuffer || !_spareBuffer)
-        return false;
-
-    _contentsBuffer->migrateColorSpaceToProperties();
-    _drawingBuffer->migrateColorSpaceToProperties();
-    _spareBuffer->migrateColorSpaceToProperties();
-    const EGLint surfaceAttributes[] = {
-        EGL_WIDTH, size.width(),
-        EGL_HEIGHT, size.height(),
-        EGL_IOSURFACE_PLANE_ANGLE, 0,
-        EGL_TEXTURE_TARGET, WebCore::GraphicsContextGLOpenGL::EGLIOSurfaceTextureTarget(),
-        EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, usingAlpha ? GL_BGRA_EXT : GL_RGB,
-        EGL_TEXTURE_FORMAT, EGL_TEXTURE_RGBA,
-        EGL_TEXTURE_TYPE_ANGLE, GL_UNSIGNED_BYTE,
-        // Only has an effect on the iOS Simulator.
-        EGL_IOSURFACE_USAGE_HINT_ANGLE, EGL_IOSURFACE_WRITE_HINT_ANGLE,
-        EGL_NONE, EGL_NONE
-    };
-
-    _contentsPbuffer = EGL_CreatePbufferFromClientBuffer(_eglDisplay, EGL_IOSURFACE_ANGLE, _contentsBuffer->surface(), _eglConfig, surfaceAttributes);
-    _drawingPbuffer = EGL_CreatePbufferFromClientBuffer(_eglDisplay, EGL_IOSURFACE_ANGLE, _drawingBuffer->surface(), _eglConfig, surfaceAttributes);
-    _sparePbuffer = EGL_CreatePbufferFromClientBuffer(_eglDisplay, EGL_IOSURFACE_ANGLE, _spareBuffer->surface(), _eglConfig, surfaceAttributes);
-
-    if (!_contentsPbuffer || !_drawingPbuffer || !_sparePbuffer)
-        return false;
-
-    return true;
-}
-
-- (void)bindFramebufferToNextAvailableSurface
-{
-    WTF::Optional<ScopedRestoreTextureBinding> restoreBinding;
-    GCGLenum textureTarget = WebCore::GraphicsContextGLOpenGL::IOSurfaceTextureTarget();
-    // We don't need to restore GL_TEXTURE_RECTANGLE because it's not accessible from user code.
-    if (textureTarget != WebCore::GraphicsContextGL::TEXTURE_RECTANGLE_ARB)
-        restoreBinding.emplace(WebCore::GraphicsContextGLOpenGL::IOSurfaceTextureTargetQuery(), textureTarget);
-
-    GCGLenum texture = _context->platformTexture();
-    gl::BindTexture(textureTarget, texture);
-
-    if (_latchedPbuffer) {
-        if (!EGL_ReleaseTexImage(_eglDisplay, _latchedPbuffer, EGL_BACK_BUFFER)) {
-            // FIXME: report error.
-            notImplemented();
-        }
-        _latchedPbuffer = nullptr;
-    }
-
-    if (_drawingBuffer && _drawingBuffer->isInUse()) {
-        std::swap(_drawingBuffer, _spareBuffer);
-        std::swap(_drawingPbuffer, _sparePbuffer);
-    }
-
-    // Link the IOSurface to the texture via the previously-created pbuffer.
-    if (!EGL_BindTexImage(_eglDisplay, _drawingPbuffer, EGL_BACK_BUFFER)) {
-        // FIXME: report error.
-        notImplemented();
-    }
-    _latchedPbuffer = _drawingPbuffer;
-}
-
 @end
 
 #endif // ENABLE(WEBGL)

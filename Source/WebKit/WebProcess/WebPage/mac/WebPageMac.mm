@@ -71,7 +71,6 @@
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
-#import <WebCore/GraphicsContextGLOpenGL.h>
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/HTMLPlugInImageElement.h>
 #import <WebCore/HitTestResult.h>
