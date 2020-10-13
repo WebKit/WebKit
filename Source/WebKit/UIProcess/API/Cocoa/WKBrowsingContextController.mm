@@ -102,12 +102,24 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 + (void)registerSchemeForCustomProtocol:(NSString *)scheme
 {
-    WebKit::WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme);
+    if ([NSThread isMainThread])
+        WebKit::WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme);
+    else {
+        dispatch_async(dispatch_get_main_queue(), makeBlockPtr([scheme = retainPtr(scheme)] {
+            WebKit::WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme.get());
+        }).get());
+    }
 }
 
 + (void)unregisterSchemeForCustomProtocol:(NSString *)scheme
 {
-    WebKit::WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme);
+    if ([NSThread isMainThread])
+        WebKit::WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme);
+    else {
+        dispatch_async(dispatch_get_main_queue(), makeBlockPtr([scheme = retainPtr(scheme)] {
+            WebKit::WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme.get());
+        }).get());
+    }
 }
 
 - (void)loadRequest:(NSURLRequest *)request
