@@ -88,6 +88,7 @@
 #include "Page.h"
 #include "Range.h"
 #include "RenderAttachment.h"
+#include "RenderLayer.h"
 #include "RenderLineBreak.h"
 #include "RenderListBox.h"
 #include "RenderMathMLOperator.h"
@@ -300,11 +301,21 @@ bool AXObjectCache::isNodeVisible(Node* node) const
     if (!renderer)
         return false;
 
-    const RenderStyle& style = renderer->style();
-    if (style.display() == DisplayType::None
-        || style.visibility() != Visibility::Visible
-        || !style.opacity())
+    const auto& style = renderer->style();
+    if (style.display() == DisplayType::None)
         return false;
+
+    auto* renderLayer = renderer->enclosingLayer();
+    if (style.visibility() != Visibility::Visible && renderLayer && !renderLayer->hasVisibleContent())
+        return false;
+
+    // Check whether this object or any of its ancestors has opacity 0.
+    // The resulting opacity of a RenderObject is computed as the multiplication
+    // of its opacity times the opacities of its ancestors.
+    for (auto* renderObject = renderer; renderObject; renderObject = renderObject->parent()) {
+        if (!renderObject->style().opacity())
+            return false;
+    }
 
     // We also need to consider aria hidden status.
     if (!isNodeAriaVisible(node))
