@@ -1,3 +1,22 @@
+2020-10-13  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Make gamepads visible after their first input is received
+        https://bugs.webkit.org/show_bug.cgi?id=217494
+
+        Reviewed by Carlos Garcia Campos.
+
+        Turns out this was mostly working already, with a small caveat: Sometimes there would
+        be a timing issue if m_inputNotificationTimer would be fired before having a chance
+        of setting the m_initialGamepadsConnected flag, and in that case the early return
+        would prevent dispatchPlatformGamepadInputActivity() from ever being called. This
+        re-arms the timer to be fired again in the next event loop iteration if the flag was
+        unset, so it will be checked again after it has been toggled. This same approach is
+        used by HIDGamepadProvider in the Mac port, for example.
+
+        * platform/gamepad/manette/ManetteGamepadProvider.cpp:
+        (WebCore::ManetteGamepadProvider::inputNotificationTimerFired): Re-arm timer if
+        m_initialGamepadsConnected was not yet set.
+
 2020-10-10  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Build broken with ENABLE_GAMEPAD enabled

@@ -173,8 +173,11 @@ void ManetteGamepadProvider::initialGamepadsConnectedTimerFired()
 
 void ManetteGamepadProvider::inputNotificationTimerFired()
 {
-    if (!m_initialGamepadsConnected)
+    if (!m_initialGamepadsConnected) {
+        if (!m_inputNotificationTimer.isActive())
+            m_inputNotificationTimer.startOneShot(0_s);
         return;
+    }
 
     dispatchPlatformGamepadInputActivity();
 }
