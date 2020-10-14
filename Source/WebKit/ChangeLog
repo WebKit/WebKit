@@ -1,3 +1,40 @@
+2020-10-14  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r267619. rdar://problem/70296953
+
+    Add -[WKWebView _loadRequest:shouldOpenExternalURLsPolicy:] to provide a way to allow app link
+    https://bugs.webkit.org/show_bug.cgi?id=216977
+    
+    Patch by Hoa Dinh <dvh@apple.com> on 2020-09-25
+    Reviewed by Alex Christensen.
+    
+    The method -[WKWebView _loadRequest:shouldOpenExternalURLs:] would only allow opening external or not.
+    It wasn't providing the ability to allow external URL but not app links.
+    This patch adds -[WKWebView _loadRequest:shouldOpenExternalURLsPolicy:]. The parameters value for
+    shouldOpenExternalURLsPolicy has the same meaning than WebCore::ShouldOpenExternalURLsPolicy.
+    
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView _loadRequest:shouldOpenExternalURLsPolicy:]):
+    * UIProcess/API/Cocoa/WKWebViewPrivate.h: Added enum _WKShouldOpenExternalURLsPolicy,
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@267619 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-25  Hoa Dinh  <dvh@apple.com>
+
+            Add -[WKWebView _loadRequest:shouldOpenExternalURLsPolicy:] to provide a way to allow app link
+            https://bugs.webkit.org/show_bug.cgi?id=216977
+
+            Reviewed by Alex Christensen.
+
+            The method -[WKWebView _loadRequest:shouldOpenExternalURLs:] would only allow opening external or not.
+            It wasn't providing the ability to allow external URL but not app links.
+            This patch adds -[WKWebView _loadRequest:shouldOpenExternalURLsPolicy:]. The parameters value for
+            shouldOpenExternalURLsPolicy has the same meaning than WebCore::ShouldOpenExternalURLsPolicy.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _loadRequest:shouldOpenExternalURLsPolicy:]):
+            * UIProcess/API/Cocoa/WKWebViewPrivate.h: Added enum _WKShouldOpenExternalURLsPolicy,
+
 2020-10-13  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r268381. rdar://problem/70260409
