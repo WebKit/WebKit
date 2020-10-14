@@ -36,7 +36,7 @@ bool isValidEnum(WebCore::ShouldOpenExternalURLsPolicy policy)
 {
     switch (policy) {
     case WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow:
-    case WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes:
+    case WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemesButNotAppLinks:
     case WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow:
         return true;
     }

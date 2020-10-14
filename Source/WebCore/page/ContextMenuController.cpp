@@ -240,7 +240,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
 
     switch (action) {
     case ContextMenuItemTagOpenLinkInNewWindow:
-        openNewWindow(m_context.hitTestResult().absoluteLinkURL(), *frame, ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes);
+        openNewWindow(m_context.hitTestResult().absoluteLinkURL(), *frame, ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemesButNotAppLinks);
         break;
     case ContextMenuItemTagDownloadLinkToDisk:
         // FIXME: Some day we should be able to do this from within WebCore. (Bug 117709)
