@@ -1,3 +1,21 @@
+2020-10-14  Diego Pino Garcia  <dpino@igalia.com>
+
+        [webkitpy] Allow passing subtests to GLIB API testrunner
+        https://bugs.webkit.org/show_bug.cgi?id=217466
+
+        Reviewed by Carlos Garcia Campos.
+
+        GLIB API testrunner didn't allow passing a list of subtests to run.
+        That was possible, however, when executing a GLIB API binary directly
+        using knob -p. The patch adds the same option to GLIB API testrunner
+        and passes down the list of subtests accordingly.
+
+        * glib/api_test_runner.py:
+        (TestRunner._run_test_glib):
+        (TestRunner._run_test):
+        (TestRunner.run_tests):
+        (add_options):
+
 2020-10-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         IPC testing JS API should expose a reply and describe the list of arguments for each message
