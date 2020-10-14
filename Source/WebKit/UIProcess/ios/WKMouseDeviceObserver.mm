@@ -58,8 +58,8 @@
 
 - (void)stop
 {
-    ASSERT(_startCount > 1);
-    if (--_startCount)
+    ASSERT(_startCount);
+    if (!_startCount || --_startCount)
         return;
 
     ASSERT(_token);
