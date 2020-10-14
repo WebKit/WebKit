@@ -22,6 +22,10 @@ Dialog is not displaying with opacity 0
 PASS backgroundAccessible() is true
 Dialog is displaying with opacity 1
 PASS backgroundAccessible() is false
+Dialog is not displaying with parent opacity 0
+PASS backgroundAccessible() is true
+Dialog is displaying with parent opacity .5
+PASS backgroundAccessible() is false
 Dialog is removed from DOM
 PASS backgroundAccessible() is true
 PASS successfullyParsed is true
@@ -30,3 +34,5 @@ TEST COMPLETE
 Other page content with a dummy focusable element
 
 Display a dialog
+
+
