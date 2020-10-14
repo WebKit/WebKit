@@ -1,5 +1,16 @@
 2020-10-13  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitscmpy] Add `git-webkit find` (Follow up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=217534
+        <rdar://problem/70152431>
+
+        Unreviewed follow up fix.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Version bump.
+        * Scripts/libraries/webkitscmpy/setup.py: "program" was not a directory in the landed change.
+
+2020-10-13  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitscmpy] Add `git-webkit find`
         https://bugs.webkit.org/show_bug.cgi?id=217534
         <rdar://problem/70152431>

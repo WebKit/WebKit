@@ -53,7 +53,6 @@ setup(
         'webkitscmpy.local',
         'webkitscmpy.mocks',
         'webkitscmpy.mocks.local',
-        'webkitscmpy.program',
         'webkitscmpy.test',
     ],
     scripts=['git-webkit'],
