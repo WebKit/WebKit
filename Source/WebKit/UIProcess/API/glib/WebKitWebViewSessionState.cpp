@@ -60,7 +60,7 @@ static const guint16 g_sessionStateVersion = 2;
 // Use our own enum types to ensure the serialized format even if the core enums change.
 enum ExternalURLsPolicy {
     Allow,
-    AllowExternalSchemes,
+    AllowExternalSchemesButNotAppLinks,
     NotAllow
 };
 
@@ -69,8 +69,8 @@ static inline unsigned toExternalURLsPolicy(WebCore::ShouldOpenExternalURLsPolic
     switch (policy) {
     case WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow:
         return ExternalURLsPolicy::Allow;
-    case WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes:
-        return ExternalURLsPolicy::AllowExternalSchemes;
+    case WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemesButNotAppLinks:
+        return ExternalURLsPolicy::AllowExternalSchemesButNotAppLinks;
     case WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow:
         return ExternalURLsPolicy::NotAllow;
     }
@@ -83,8 +83,8 @@ static inline WebCore::ShouldOpenExternalURLsPolicy toWebCoreExternalURLsPolicy(
     switch (policy) {
     case ExternalURLsPolicy::Allow:
         return WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow;
-    case ExternalURLsPolicy::AllowExternalSchemes:
-        return WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes;
+    case ExternalURLsPolicy::AllowExternalSchemesButNotAppLinks:
+        return WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemesButNotAppLinks;
     case ExternalURLsPolicy::NotAllow:
         return WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow;
     }
