@@ -1,3 +1,22 @@
+2020-10-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Scrolls in the passive handler region should be reported as handled promptly
+        https://bugs.webkit.org/show_bug.cgi?id=217718
+
+        Reviewed by Tim Horton.
+
+        The UI process will enqueue wheel events to send later if the WebContent process doesn't
+        promptly respond that it has handled the previous event. When scrolling in the passive
+        event region, we want the WebContent process to appear responsive, so respond to the UI
+        process when we've scrolled (which is before the event has been dispatched for DOM events).
+
+        Hard to test because CPU-constrained bots don't send wheel events in a predictable way.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::wheelEvent):
+
 2020-10-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Enabling IPC testing API should prevent the termination of WebContent process which sends an invalid IPC

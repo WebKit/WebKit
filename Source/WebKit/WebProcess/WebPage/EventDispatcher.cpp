@@ -148,9 +148,12 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
 
             if (result.needsMainThreadProcessing()) {
                 protectedThis->dispatchWheelEventViaMainThread(pageID, wheelEvent, result.steps);
-                return;
+                if (result.steps.contains(WheelEventProcessingSteps::MainThreadForScrolling))
+                    return;
             }
 
+            // If we scrolled on the scrolling thread (even if we send the event to the main thread for passive event handlers)
+            // respond to the UI process that the event was handled.
             protectedThis->sendDidReceiveEvent(pageID, wheelEvent.type(), result.wasHandled);
         });
 

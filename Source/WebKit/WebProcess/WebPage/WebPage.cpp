@@ -2870,7 +2870,8 @@ void WebPage::wheelEvent(const WebWheelEvent& wheelEvent, OptionSet<WheelEventPr
 
     bool handled = handleWheelEvent(wheelEvent, m_page.get(), processingSteps);
 
-    send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(wheelEvent.type()), handled));
+    if (processingSteps.contains(WheelEventProcessingSteps::MainThreadForScrolling))
+        send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(wheelEvent.type()), handled));
 }
 
 static bool handleKeyEvent(const WebKeyboardEvent& keyboardEvent, Page* page)
