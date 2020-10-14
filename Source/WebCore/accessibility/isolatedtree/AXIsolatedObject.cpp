@@ -145,7 +145,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::CanSetNumericValue, object.canSetNumericValue());
     setProperty(AXPropertyName::SupportsRequiredAttribute, object.supportsRequiredAttribute());
     setProperty(AXPropertyName::CanSetSelectedAttribute, object.canSetSelectedAttribute());
-    setProperty(AXPropertyName::CanSetSelectedChildrenAttribute, object.canSetSelectedChildrenAttribute());
+    setProperty(AXPropertyName::CanSetSelectedChildren, object.canSetSelectedChildren());
     setProperty(AXPropertyName::CanSetExpandedAttribute, object.canSetExpandedAttribute());
     setProperty(AXPropertyName::IsShowingValidationMessage, object.isShowingValidationMessage());
     setProperty(AXPropertyName::ValidationMessage, object.validationMessage());
@@ -498,6 +498,25 @@ const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool
             m_children.uncheckedAppend(child);
     }
     return m_children;
+}
+
+void AXIsolatedObject::setSelectedChildren(const AccessibilityChildrenVector& selectedChildren)
+{
+    ASSERT(selectedChildren.isEmpty() || (selectedChildren[0] && selectedChildren[0]->isAXIsolatedObjectInstance()));
+
+    performFunctionOnMainThread([&] (AXCoreObject* object) {
+        if (selectedChildren.isEmpty()) {
+            // No selection, no need to convert objects from isolated to live.
+            object->setSelectedChildren(selectedChildren);
+            return;
+        }
+
+        ASSERT(axObjectCache());
+
+        auto axIDs = tree()->idsForObjects(selectedChildren);
+        auto axSelectedChildren = axObjectCache()->objectsForIDs(axIDs);
+        object->setSelectedChildren(axSelectedChildren);
+    });
 }
 
 bool AXIsolatedObject::isDetachedFromParent()
@@ -1037,6 +1056,12 @@ bool AXIsolatedObject::isAccessibilityTableColumnInstance() const
 }
 
 bool AXIsolatedObject::isAccessibilityProgressIndicatorInstance() const
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool AXIsolatedObject::isAccessibilityListBoxInstance() const
 {
     ASSERT_NOT_REACHED();
     return false;

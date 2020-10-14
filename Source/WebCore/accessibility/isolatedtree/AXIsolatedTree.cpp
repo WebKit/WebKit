@@ -134,7 +134,7 @@ RefPtr<AXIsolatedObject> AXIsolatedTree::nodeForID(AXID axID) const
     return axID != InvalidAXID ? m_readerThreadNodeMap.get(axID) : nullptr;
 }
 
-Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(Vector<AXID> axIDs) const
+Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(const Vector<AXID>& axIDs) const
 {
     AXTRACE("AXIsolatedTree::objectsForIDs");
     Vector<RefPtr<AXCoreObject>> result;
@@ -146,6 +146,13 @@ Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(Vector<AXID> axIDs) c
     }
 
     return result;
+}
+
+Vector<AXID> AXIsolatedTree::idsForObjects(const Vector<RefPtr<AXCoreObject>>& objects) const
+{
+    return objects.map([] (const RefPtr<AXCoreObject>& object) -> AXID {
+        return object ? object->objectID() : InvalidAXID;
+    });
 }
 
 void AXIsolatedTree::updateChildrenIDs(AXID axID, Vector<AXID>&& childrenIDs)

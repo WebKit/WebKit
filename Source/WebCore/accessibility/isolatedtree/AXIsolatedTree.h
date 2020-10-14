@@ -74,7 +74,7 @@ enum class AXPropertyName : uint16_t {
     CanSetFocusAttribute,
     CanSetNumericValue,
     CanSetSelectedAttribute,
-    CanSetSelectedChildrenAttribute,
+    CanSetSelectedChildren,
     CanSetTextRangeAttributes,
     CanSetValueAttribute,
     CanvasHasFallbackContent,
@@ -334,7 +334,8 @@ public:
     RefPtr<AXIsolatedObject> rootNode();
     RefPtr<AXIsolatedObject> focusedNode();
     RefPtr<AXIsolatedObject> nodeForID(AXID) const;
-    Vector<RefPtr<AXCoreObject>> objectsForIDs(Vector<AXID>) const;
+    Vector<RefPtr<AXCoreObject>> objectsForIDs(const Vector<AXID>&) const;
+    Vector<AXID> idsForObjects(const Vector<RefPtr<AXCoreObject>>&) const;
 
     struct NodeChange {
         Ref<AXIsolatedObject> isolatedObject;

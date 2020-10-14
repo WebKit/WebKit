@@ -212,7 +212,7 @@ private:
     bool canSetValueAttribute() const override { return boolAttributeValue(AXPropertyName::CanSetValueAttribute); }
     bool canSetNumericValue() const override { return boolAttributeValue(AXPropertyName::CanSetNumericValue); }
     bool canSetSelectedAttribute() const override { return boolAttributeValue(AXPropertyName::CanSetSelectedAttribute); }
-    bool canSetSelectedChildrenAttribute() const override { return boolAttributeValue(AXPropertyName::CanSetSelectedChildrenAttribute); }
+    bool canSetSelectedChildren() const override { return boolAttributeValue(AXPropertyName::CanSetSelectedChildren); }
     bool canSetExpandedAttribute() const override { return boolAttributeValue(AXPropertyName::CanSetExpandedAttribute); }
     bool accessibilityIsIgnored() const override { return boolAttributeValue(AXPropertyName::IsAccessibilityIgnored); }
     bool isShowingValidationMessage() const override { return boolAttributeValue(AXPropertyName::IsShowingValidationMessage); }
@@ -345,6 +345,7 @@ private:
     String language() const override { return stringAttributeValue(AXPropertyName::Language); }
     bool canHaveSelectedChildren() const override { return boolAttributeValue(AXPropertyName::CanHaveSelectedChildren); }
     void selectedChildren(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::SelectedChildren, children); }
+    void setSelectedChildren(const AccessibilityChildrenVector&) override;
     void visibleChildren(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::VisibleChildren, children); }
     void tabChildren(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::TabChildren, children); }
     bool hasARIAValueNow() const override { return boolAttributeValue(AXPropertyName::HasARIAValueNow); }
@@ -474,6 +475,7 @@ private:
     bool isAccessibilityTableInstance() const override;
     bool isAccessibilityTableColumnInstance() const override;
     bool isAccessibilityProgressIndicatorInstance() const override;
+    bool isAccessibilityListBoxInstance() const override;
 
     bool isAttachmentElement() const override;
     bool isNativeImage() const override;

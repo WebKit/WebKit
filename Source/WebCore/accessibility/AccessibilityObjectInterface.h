@@ -794,6 +794,7 @@ public:
     virtual bool isAccessibilityTableInstance() const = 0;
     virtual bool isAccessibilityTableColumnInstance() const = 0;
     virtual bool isAccessibilityProgressIndicatorInstance() const = 0;
+    virtual bool isAccessibilityListBoxInstance() const = 0;
     virtual bool isAXIsolatedObjectInstance() const = 0;
 
     virtual bool isAttachmentElement() const = 0;
@@ -812,7 +813,6 @@ public:
     bool isCheckbox() const { return roleValue() == AccessibilityRole::CheckBox; }
     bool isRadioButton() const { return roleValue() == AccessibilityRole::RadioButton; }
     bool isListBox() const { return roleValue() == AccessibilityRole::ListBox; }
-    virtual bool isNativeListBox() const { return false; };
     virtual bool isListBoxOption() const = 0;
     virtual bool isAttachment() const = 0;
     virtual bool isMediaTimeline() const = 0;
@@ -981,7 +981,7 @@ public:
     virtual bool canSetValueAttribute() const = 0;
     virtual bool canSetNumericValue() const = 0;
     virtual bool canSetSelectedAttribute() const = 0;
-    virtual bool canSetSelectedChildrenAttribute() const = 0;
+    virtual bool canSetSelectedChildren() const = 0;
     virtual bool canSetExpandedAttribute() const = 0;
 
     virtual Element* element() const = 0;
@@ -1239,6 +1239,7 @@ public:
 
     virtual bool canHaveSelectedChildren() const = 0;
     virtual void selectedChildren(AccessibilityChildrenVector&) = 0;
+    virtual void setSelectedChildren(const AccessibilityChildrenVector&) = 0;
     virtual void visibleChildren(AccessibilityChildrenVector&) = 0;
     virtual void tabChildren(AccessibilityChildrenVector&) = 0;
     virtual bool shouldFocusActiveDescendant() const = 0;

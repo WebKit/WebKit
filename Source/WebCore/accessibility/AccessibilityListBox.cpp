@@ -52,8 +52,8 @@ Ref<AccessibilityListBox> AccessibilityListBox::create(RenderObject* renderer)
 {
     return adoptRef(*new AccessibilityListBox(renderer));
 }
-    
-bool AccessibilityListBox::canSetSelectedChildrenAttribute() const
+
+bool AccessibilityListBox::canSetSelectedChildren() const
 {
     Node* selectNode = m_renderer->node();
     if (!selectNode)
@@ -82,9 +82,9 @@ void AccessibilityListBox::addChildren()
 
 void AccessibilityListBox::setSelectedChildren(const AccessibilityChildrenVector& children)
 {
-    if (!canSetSelectedChildrenAttribute())
+    if (!canSetSelectedChildren())
         return;
-    
+
     Node* selectNode = m_renderer->node();
     if (!selectNode)
         return;

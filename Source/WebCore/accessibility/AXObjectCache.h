@@ -220,6 +220,7 @@ public:
 
     AXID platformGenerateAXID() const;
     AccessibilityObject* objectFromAXID(AXID id) const { return m_objects.get(id); }
+    Vector<RefPtr<AXCoreObject>> objectsForIDs(const Vector<AXID>&) const;
 
     // Text marker utilities.
     Optional<TextMarkerData> textMarkerDataForVisiblePosition(const VisiblePosition&);

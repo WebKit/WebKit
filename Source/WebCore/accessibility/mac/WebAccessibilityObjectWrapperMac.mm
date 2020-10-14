@@ -3161,7 +3161,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return backingObject->canSetSelectedAttribute();
 
     if ([attributeName isEqualToString: NSAccessibilitySelectedChildrenAttribute])
-        return backingObject->canSetSelectedChildrenAttribute();
+        return backingObject->canSetSelectedChildren();
 
     if ([attributeName isEqualToString:NSAccessibilityDisclosingAttribute]
         || [attributeName isEqualToString:NSAccessibilityExpandedAttribute])
@@ -3549,14 +3549,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if (!number)
             return;
         backingObject->setSelected([number boolValue]);
-    } else if ([attributeName isEqualToString: NSAccessibilitySelectedChildrenAttribute]) {
-        if (!array)
+    } else if ([attributeName isEqualToString:NSAccessibilitySelectedChildrenAttribute]) {
+        if (!array || !backingObject->canSetSelectedChildren())
             return;
-        if (!backingObject->isNativeListBox())
-            return;
-        AccessibilityObject::AccessibilityChildrenVector selectedChildren;
+
+        AXCoreObject::AccessibilityChildrenVector selectedChildren;
         convertToVector(array, selectedChildren);
-        downcast<AccessibilityListBox>(*backingObject).setSelectedChildren(selectedChildren);
+        backingObject->setSelectedChildren(selectedChildren);
     } else if (backingObject->isTextControl()) {
         if ([attributeName isEqualToString: NSAccessibilitySelectedTextAttribute]) {
             backingObject->setSelectedText(string);

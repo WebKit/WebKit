@@ -1,3 +1,19 @@
+2020-10-14  Andres Gonzalez  <andresg_22@apple.com>
+
+        [ macOS ] accessibility/mac/select-element-selection-with-optgroups.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=215649
+        <rdar://problem/67406148>
+
+        Reviewed by Chris Fleizach.
+
+        Uses Promises to make test deterministic. Also waits for the correct event
+        since selectedChildrenCount is not the right indication that the
+        expected update happened.
+
+        * accessibility/mac/select-element-selection-with-optgroups-expected.txt:
+        * accessibility/mac/select-element-selection-with-optgroups.html:
+        * platform/mac/TestExpectations: No longer flaky.
+
 2020-10-14  Karl Rackler  <rackler@apple.com>
 
         Unreviewed, reverting r268441.

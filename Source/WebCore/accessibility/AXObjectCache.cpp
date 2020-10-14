@@ -952,6 +952,16 @@ AXID AXObjectCache::platformGenerateAXID() const
 }
 #endif
 
+Vector<RefPtr<AXCoreObject>> AXObjectCache::objectsForIDs(const Vector<AXID>& axIDs) const
+{
+    ASSERT(isMainThread());
+
+    return axIDs.map([this] (AXID axID) -> RefPtr<AXCoreObject> {
+        ASSERT(axID != InvalidAXID);
+        return objectFromAXID(axID);
+    });
+}
+
 AXID AXObjectCache::getAXID(AccessibilityObject* obj)
 {
     // check for already-assigned ID
