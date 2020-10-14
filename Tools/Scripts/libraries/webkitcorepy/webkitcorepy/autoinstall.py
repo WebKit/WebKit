@@ -258,6 +258,8 @@ class Package(object):
                         ],
                         cwd=candidate,
                         env=dict(
+                            HTTP_PROXY=os.environ.get('HTTP_PROXY', ''),
+                            HTTPS_PROXY=os.environ.get('HTTPS_PROXY', ''),
                             PATH=os.environ.get('PATH', ''),
                             PATHEXT=os.environ.get('PATHEXT', ''),
                             PYTHONPATH=install_location,

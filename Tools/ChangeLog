@@ -1,3 +1,16 @@
+2020-10-14  Stephan Szabo  <stephan.szabo@sony.com>
+
+        builtins-generator-tests and bindings-generation-tests are reporting "Failed to install configparser-4.0.2!" since r268267 on WinCairo Buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=217586
+
+        Reviewed by Jonathan Bedard.
+
+        Pass proxy environment variables to setup.py so wincairo bots
+        which need the proxy set can reach pypi.org.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py:
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+
 2020-10-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Temporarily reduce the number of iOS simulators booted during testing
