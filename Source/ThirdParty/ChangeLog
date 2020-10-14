@@ -1,5 +1,100 @@
 2020-10-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r268371. rdar://problem/70267767
+
+    [macOS] Workaround for MAC_OS_X_VERSION_MAJOR incorrectly including minor version when building
+    with Xcode 12 on macOS Big Sur SUs
+    https://bugs.webkit.org/show_bug.cgi?id=217602
+    rdar://70194453
+    
+    Patch by Luming Yin <luming_yin@apple.com> on 2020-10-12
+    Reviewed by Darin Adler.
+    
+    The previous workaround turns out to be ineffective because we can't set the value of
+    TARGET_MAC_OS_X_VERSION_MAJOR based on a previous value of itself. Introduce a new
+    variable TARGET_MAC_OS_X_VERSION_MAJOR to determine whether we need to explicitly
+    adjust MAC_OS_X_VERSION_MAJOR to 110000.
+    
+    PerformanceTests:
+    
+    * DecoderTest/Configurations/DebugRelease.xcconfig:
+    * MediaTime/Configurations/DebugRelease.xcconfig:
+    
+    Source/bmalloc:
+    
+    * Configurations/DebugRelease.xcconfig:
+    
+    Source/JavaScriptCore:
+    
+    * Configurations/DebugRelease.xcconfig:
+    
+    Source/ThirdParty:
+    
+    * gtest/xcode/Config/General.xcconfig:
+    
+    Source/ThirdParty/ANGLE:
+    
+    * Configurations/DebugRelease.xcconfig:
+    
+    Source/ThirdParty/libwebrtc:
+    
+    * Configurations/DebugRelease.xcconfig:
+    
+    Source/WebCore:
+    
+    * Configurations/DebugRelease.xcconfig:
+    
+    Source/WebCore/PAL:
+    
+    * Configurations/DebugRelease.xcconfig:
+    
+    Source/WebInspectorUI:
+    
+    * Configurations/DebugRelease.xcconfig:
+    
+    Source/WebKit:
+    
+    * Configurations/DebugRelease.xcconfig:
+    
+    Source/WebKitLegacy/mac:
+    
+    * Configurations/DebugRelease.xcconfig:
+    
+    Source/WTF:
+    
+    * Configurations/DebugRelease.xcconfig:
+    
+    Tools:
+    
+    * ContentExtensionTester/Configurations/DebugRelease.xcconfig:
+    * DumpRenderTree/mac/Configurations/DebugRelease.xcconfig:
+    * ImageDiff/cg/Configurations/DebugRelease.xcconfig:
+    * MiniBrowser/Configurations/DebugRelease.xcconfig:
+    * TestWebKitAPI/Configurations/DebugRelease.xcconfig:
+    * WebEditingTester/Configurations/DebugRelease.xcconfig:
+    * WebKitTestRunner/Configurations/DebugRelease.xcconfig:
+    * lldb/lldbWebKitTester/Configurations/DebugRelease.xcconfig:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268371 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-12  Luming Yin  <luming_yin@apple.com>
+
+            [macOS] Workaround for MAC_OS_X_VERSION_MAJOR incorrectly including minor version when building
+            with Xcode 12 on macOS Big Sur SUs
+            https://bugs.webkit.org/show_bug.cgi?id=217602
+            rdar://70194453
+
+            Reviewed by Darin Adler.
+
+            The previous workaround turns out to be ineffective because we can't set the value of
+            TARGET_MAC_OS_X_VERSION_MAJOR based on a previous value of itself. Introduce a new
+            variable TARGET_MAC_OS_X_VERSION_MAJOR to determine whether we need to explicitly
+            adjust MAC_OS_X_VERSION_MAJOR to 110000.
+
+            * gtest/xcode/Config/General.xcconfig:
+
+2020-10-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r268353. rdar://problem/70267767
 
     [macOS] Workaround for MAC_OS_X_VERSION_MAJOR incorrectly including minor version when building
