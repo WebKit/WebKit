@@ -16,16 +16,20 @@ if ($vm.isGigacageEnabled()) {
         } catch { }
     }
 
-    var exception;
-    useAllMemory();
-    try {
-        for (let i = 0; i < 5000; i++) {
-            CSS.paintWorklet.addModule('');
+    async function runTest() {
+        let promises = []
+        try {
+            for (let i = 0; i < 5000; i++)
+                await CSS.paintWorklet.addModule('');
+        } catch (e) {
+            if (e != "RangeError: Out of memory")
+                document.write("FAIL: expect: 'RangeError: Out of memory', actual: '" + e + "'");
+            else
+                document.write("PASS: threw a RangeError: Out of memory exception");
         }
-    } catch (e) {
-        exception = e;
     }
 
-    if (exception != "RangeError: Out of memory")
-        throw "FAIL: expect: 'RangeError: Out of memory', actual: '" + exception + "'";
+    var exception;
+    useAllMemory();
+    runTest();
 }

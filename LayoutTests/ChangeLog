@@ -1,3 +1,17 @@
+2020-10-14  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r267744): [ Debug WK2 ] fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html is a constant timeout
+        https://bugs.webkit.org/show_bug.cgi?id=217549
+
+        Reviewed by Sam Weinig.
+
+        After r267744, Worklet.addModule() returns a promise and no longer throws exceptions.
+        Update the test accordingly to expect that a promise gets rejected with an out of
+        memory error, instead of expecting an exception to be thrown.
+
+        * fast/css-custom-paint/out-of-memory-while-adding-worklet-module-expected.txt:
+        * fast/css-custom-paint/script-tests/out-of-memory-while-adding-worklet-module.js:
+
 2020-10-14  Megan Gardner  <megan_gardner@apple.com>
 
         Paint CSS highlights over images
