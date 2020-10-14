@@ -134,7 +134,7 @@ enum class NavigationType : uint8_t {
 
 enum class ShouldOpenExternalURLsPolicy : uint8_t {
     ShouldNotAllow,
-    ShouldAllowExternalSchemes,
+    ShouldAllowExternalSchemesButNotAppLinks,
     ShouldAllow,
 };
 
@@ -279,7 +279,7 @@ template<> struct EnumTraits<WebCore::ShouldOpenExternalURLsPolicy> {
     using values = EnumValues<
         WebCore::ShouldOpenExternalURLsPolicy,
         WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow,
-        WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes,
+        WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemesButNotAppLinks,
         WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow
     >;
 };

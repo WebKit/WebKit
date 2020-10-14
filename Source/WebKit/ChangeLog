@@ -1,5 +1,63 @@
 2020-10-14  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r267203. rdar://problem/70310545
+
+    Rename ShouldAllowExternalSchemes to ShouldAllowExternalSchemesButNotAppLinks to clarify what this enum value is for.
+    https://bugs.webkit.org/show_bug.cgi?id=216651
+    
+    Patch by Hoa Dinh <dvh@apple.com> on 2020-09-17
+    Reviewed by Alex Christensen.
+    
+    Rename ShouldAllowExternalSchemes to ShouldAllowExternalSchemesButNotAppLinks and reflects the change where it's used.
+    
+    Source/WebCore:
+    
+    Source/WebCore:
+    * loader/FrameLoaderTypes.h:
+    * page/ContextMenuController.cpp:
+    (WebCore::ContextMenuController::contextMenuItemSelected):
+    
+    Source/WebKit:
+    
+    Source/WebKit:
+    * Shared/SessionState.cpp:
+    (WebKit::isValidEnum):
+    * UIProcess/API/APINavigationAction.h:
+    * UIProcess/API/glib/WebKitWebViewSessionState.cpp:
+    (toExternalURLsPolicy):
+    (toWebCoreExternalURLsPolicy):
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/mac/LegacySessionStateCoding.cpp:
+    (WebKit::decodeSessionHistoryEntry):
+    * WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp:
+    (WebKit::InjectedBundleNavigationAction::InjectedBundleNavigationAction):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@267203 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-17  Hoa Dinh  <dvh@apple.com>
+
+            Rename ShouldAllowExternalSchemes to ShouldAllowExternalSchemesButNotAppLinks to clarify what this enum value is for.
+            https://bugs.webkit.org/show_bug.cgi?id=216651
+
+            Reviewed by Alex Christensen.
+
+            Rename ShouldAllowExternalSchemes to ShouldAllowExternalSchemesButNotAppLinks and reflects the change where it's used.
+
+            Source/WebKit:
+            * Shared/SessionState.cpp:
+            (WebKit::isValidEnum):
+            * UIProcess/API/APINavigationAction.h:
+            * UIProcess/API/glib/WebKitWebViewSessionState.cpp:
+            (toExternalURLsPolicy):
+            (toWebCoreExternalURLsPolicy):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/mac/LegacySessionStateCoding.cpp:
+            (WebKit::decodeSessionHistoryEntry):
+            * WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp:
+            (WebKit::InjectedBundleNavigationAction::InjectedBundleNavigationAction):
+
+2020-10-14  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r268003. rdar://problem/70267725
 
     Make NetscapePlugInStreamLoaderClient a weak pointer on NetscapePlugInStreamLoader
