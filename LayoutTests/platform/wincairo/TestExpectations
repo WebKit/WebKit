@@ -1186,31 +1186,19 @@ http/tests/referrer-policy/unsafe-url/cross-origin-http.https.html [ Skip ]
 # ResourceLoadStatistics
 http/tests/resourceLoadStatistics [ Pass ]
 http/tests/resourceLoadStatistics/exemptDomains [ Skip ]
-http/tests/resourceLoadStatistics/add-blocking-to-redirect-database.html [ Skip ]
 http/tests/resourceLoadStatistics/add-blocking-to-redirect.html [ Skip ]
-http/tests/resourceLoadStatistics/cookie-deletion-database.html [ Skip ]
 http/tests/resourceLoadStatistics/cookie-deletion.html [ Skip ]
-http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction-database.html [ Skip ]
 http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction.html [ Skip ]
-http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect-database.html [ Skip ]
 http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Skip ]
-http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-unique-redirects-to-database.html [ Skip ]
 http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-unique-redirects-to.html [ Skip ]
-http/tests/resourceLoadStatistics/ping-to-prevalent-resource-database.html [ Skip ]
 http/tests/resourceLoadStatistics/ping-to-prevalent-resource.html [ Skip ]
 http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Skip ]
-http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion-database.html [ Skip ]
 http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion.html [ Skip ]
-http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction-database.php [ Skip ]
 http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.php [ Skip ]
 http/tests/resourceLoadStatistics/telemetry-generation.html [ Skip ]
-http/tests/resourceLoadStatistics/third-party-cookie-blocking-ephemeral-database.html [ Skip ]
 http/tests/resourceLoadStatistics/third-party-cookie-blocking-ephemeral.html [ Skip ]
-http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction-database.html [ Skip ]
 http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction.html [ Skip ]
-http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time-database.html [ Skip ]
 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Skip ]
-http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-removal-database.html [ Skip ]
 http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-removal.html [ Skip ]
 
 # All timing out
@@ -1363,8 +1351,6 @@ webkit.org/b/117322 css2.1/20110323/word-spacing-remove-space-003.htm [ ImageOnl
 webkit.org/b/117322 css2.1/20110323/word-spacing-remove-space-006.htm [ ImageOnlyFailure ]
 webkit.org/b/117322 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
 
-css3/filters/color-interpolation-filters.html [ Pass ImageOnlyFailure ]
-
 # Don't run these time-outs for now
 css3/filters/huge-region-composited.html [ Skip ]
 
@@ -1378,9 +1364,6 @@ css2.1/20110323/abspos-replaced-width-margin-000-ref.htm [ Failure ]
 
 css3/flexbox/button.html [ Failure ]
 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
-
-# TODO HW filters not yet supported on Windows
-webkit.org/b/74716 css3/filters/backdrop [ Skip ]
 
 webkit.org/b/84679 css3/zoom-coords.xhtml [ Failure ]
 
@@ -1436,8 +1419,6 @@ webkit.org/b/188613 intersection-observer [ Skip ]
 webkit.org/b/188613 http/tests/intersection-observer [ Skip ]
 
 [ Debug ] css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Failure ]
-
-css3/filters/blur-various-radii.html [ Pass ImageOnlyFailure ]
 
 fast/css/sticky/sticky-top.html [ Pass ImageOnlyFailure ]
 
@@ -1716,6 +1697,7 @@ storage/indexeddb/modern/aborted-put.html [ Timeout Pass ]
 # TEMPORARY SKIPS -- these areas still need to be addressed individually
 #//////////////////////////////////////////////////////////////////////////////////////////
 
+css3/filters [ ImageOnlyFailure Failure Pass ]
 compositing [ Skip ]
 fast/attachment [ Skip ]
 fast/backgrounds [ Skip ]
@@ -1786,6 +1768,7 @@ loader/reload-subresource-when-type-changes.html [ Skip ]
 loader/stateobjects/pushstate-size-iframe.html [ Skip ]
 loader/stateobjects/pushstate-size.html [ Skip ]
 mathml [ Skip ]
+media [ Skip ]
 media/W3C [ Skip ]
 media/content [ Skip ]
 media/ios [ Skip ]
@@ -1835,21 +1818,6 @@ animations/additive-transform-animations.html [ ImageOnlyFailure ]
 animations/z-index-in-keyframe.html [ ImageOnlyFailure ]
 css1/font_properties/font_family.html [ Failure Pass ]
 css2.1/t1503-c522-font-family-00-b.html [ Failure Pass ]
-css3/filters/animation-from-initial-values-with-color-matrix.html [ ImageOnlyFailure ]
-css3/filters/composited-during-animation-layertree.html [ Failure ]
-css3/filters/composited-during-transition-layertree.html [ Failure ]
-css3/filters/css-opacity-with-drop-shadow.html [ ImageOnlyFailure ]
-css3/filters/drop-shadow.html [ ImageOnlyFailure ]
-css3/filters/effect-reference-delete.html [ ImageOnlyFailure ]
-css3/filters/effect-reference-local-url-with-base.html [ ImageOnlyFailure ]
-css3/filters/filter-is-on-subpixel-position.html [ ImageOnlyFailure ]
-css3/filters/filter-mask-clip-order.html [ ImageOnlyFailure ]
-css3/filters/filters-on-svg-root.html [ ImageOnlyFailure ]
-css3/filters/hidpi-feConvolveMatrix.html [ ImageOnlyFailure ]
-css3/filters/hidpi-feDisplacementMap.html [ ImageOnlyFailure ]
-css3/filters/reference-filter-set-filter-regions.html [ ImageOnlyFailure ]
-css3/filters/should-not-have-compositing-layer.html [ Failure ]
-css3/filters/svg-blur-filter-clipped.html [ ImageOnlyFailure ]
 css3/flexbox/flexbox-baseline-margins.html [ Failure ]
 css3/flexbox/flexitem.html [ Failure ]
 css3/masking/clip-path-filter.html [ ImageOnlyFailure ]

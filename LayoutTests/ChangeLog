@@ -1,3 +1,9 @@
+2020-10-14  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+
 2020-10-13  Antoine Quint  <graouts@webkit.org>
 
         transform-origin is applied on top of invidivual CSS transform properties on composited layers
