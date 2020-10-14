@@ -33,7 +33,7 @@
 namespace WebCore {
 namespace Layout {
 
-Optional<LayoutUnit> TableWrapperBlockFormattingContext::Quirks::overrideTableHeight(const ContainerBox& tableBox) const
+Optional<LayoutUnit> TableWrapperBlockFormattingContext::Quirks::overriddenTableHeight(const ContainerBox& tableBox) const
 {
     if (layoutState().inQuirksMode()) {
         // In quirks mode always use the content height. Note that the tables with content take computed values into account.

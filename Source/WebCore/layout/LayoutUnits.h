@@ -169,12 +169,12 @@ struct VerticalConstraints {
     Optional<LayoutUnit> logicalHeight;
 };
 
-struct OverrideHorizontalValues {
+struct OverriddenHorizontalValues {
     Optional<LayoutUnit> width;
     Optional<UsedHorizontalMargin> margin;
 };
 
-struct OverrideVerticalValues {
+struct OverriddenVerticalValues {
     // Consider collapsing it.
     Optional<LayoutUnit> height;
 };

@@ -76,8 +76,8 @@ protected:
     public:
         Geometry(const BlockFormattingContext&);
 
-        ContentHeightAndMargin inFlowHeightAndMargin(const Box&, const HorizontalConstraints&, const OverrideVerticalValues&);
-        ContentWidthAndMargin inFlowWidthAndMargin(const Box&, const HorizontalConstraints&, const OverrideHorizontalValues&);
+        ContentHeightAndMargin inFlowHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&);
+        ContentWidthAndMargin inFlowWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&);
 
         Point staticPosition(const Box&, const HorizontalConstraints&, const VerticalConstraints&) const;
         LayoutUnit staticVerticalPosition(const Box&, const VerticalConstraints&) const;
@@ -88,9 +88,9 @@ protected:
         ContentWidthAndMargin computedWidthAndMargin(const Box&, const HorizontalConstraints&, Optional<LayoutUnit> availableWidthFloatAvoider);
 
     private:
-        ContentHeightAndMargin inFlowNonReplacedHeightAndMargin(const Box&, const HorizontalConstraints&, const OverrideVerticalValues&);
-        ContentWidthAndMargin inFlowNonReplacedWidthAndMargin(const Box&, const HorizontalConstraints&, const OverrideHorizontalValues&);
-        ContentWidthAndMargin inFlowReplacedWidthAndMargin(const ReplacedBox&, const HorizontalConstraints&, const OverrideHorizontalValues&);
+        ContentHeightAndMargin inFlowNonReplacedHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&);
+        ContentWidthAndMargin inFlowNonReplacedWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&);
+        ContentWidthAndMargin inFlowReplacedWidthAndMargin(const ReplacedBox&, const HorizontalConstraints&, const OverriddenHorizontalValues&);
 
         const BlockFormattingContext& formattingContext() const { return downcast<BlockFormattingContext>(FormattingContext::Geometry::formattingContext()); }
     };

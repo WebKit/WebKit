@@ -49,7 +49,7 @@ private:
     public:
         Quirks(const TableWrapperBlockFormattingContext&);
 
-        Optional<LayoutUnit> overrideTableHeight(const ContainerBox& tableBox) const;
+        Optional<LayoutUnit> overriddenTableHeight(const ContainerBox& tableBox) const;
     };
     TableWrapperBlockFormattingContext::Quirks quirks() const { return Quirks(*this); }
 
