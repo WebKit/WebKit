@@ -1,3 +1,13 @@
+2020-10-14  Megan Gardner  <megan_gardner@apple.com>
+
+        Paint CSS highlights over images
+        https://bugs.webkit.org/show_bug.cgi?id=217417
+
+        Reviewed by Tim Horton.
+
+        * http/wpt/css/css-highlight-api/highlight-image-expected-mismatched.html: Removed.
+        * http/wpt/css/css-highlight-api/highlight-image-expected-mismatch.html: Added.
+
 2020-10-14  Alex Christensen  <achristensen@webkit.org>
 
         Disallow ports in file URLs
