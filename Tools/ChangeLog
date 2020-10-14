@@ -1,3 +1,12 @@
+2020-10-14  Aakash Jain  <aakash_jain@apple.com>
+
+        Rename slave to bot for gtk-linux bot names
+        https://bugs.webkit.org/show_bug.cgi?id=217702
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2020-10-14  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove ACCELERATED_2D_CANVAS build flags and guarded code

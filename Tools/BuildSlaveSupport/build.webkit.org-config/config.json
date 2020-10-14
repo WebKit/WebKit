@@ -73,16 +73,16 @@
                     { "name": "playstation-release-build-01", "platform": "playstation" },
                     { "name": "playstation-debug-build-01", "platform": "playstation" },
 
-                    { "name": "gtk-linux-slave-1", "platform": "gtk" },
-                    { "name": "gtk-linux-slave-2", "platform": "gtk" },
-                    { "name": "gtk-linux-slave-3", "platform": "gtk" },
-                    { "name": "gtk-linux-slave-5", "platform": "gtk" },
-                    { "name": "gtk-linux-slave-6", "platform": "gtk" },
-                    { "name": "gtk-linux-slave-7", "platform": "gtk" },
-                    { "name": "gtk-linux-slave-8", "platform": "gtk" },
-                    { "name": "gtk-linux-slave-9", "platform": "gtk" },
-                    { "name": "gtk-linux-slave-10", "platform": "gtk" },
-                    { "name": "gtk-linux-slave-11", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-1", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-2", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-3", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-5", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-6", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-7", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-8", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-9", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-10", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-11", "platform": "gtk" },
                     { "name": "gtk-linux-bot-12", "platform": "gtk" },
                     { "name": "gtk-linux-bot-13", "platform": "gtk" },
                     { "name": "gtk-linux-bot-14", "platform": "gtk" },
@@ -295,12 +295,12 @@
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["gtk-linux-64-release-tests", "gtk-linux-64-release-tests-js", "gtk-linux-64-release-tests-webdriver",
                                    "gtk-linux-64-release-wayland-tests", "gtk-linux-64-release-perf-tests"],
-                      "workernames": ["gtk-linux-slave-2"]
+                      "workernames": ["gtk-linux-bot-2"]
                     },
                     {
                       "name": "GTK-Linux-64-bit-Release-Tests", "factory": "TestAllButJSCFactory", "builddir": "gtk-linux-64-release-tests",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
-                      "workernames": ["gtk-linux-slave-6"]
+                      "workernames": ["gtk-linux-bot-6"]
                     },
                     {
                       "name": "GTK-Linux-64-bit-Release-JS-Tests", "factory": "TestJSFactory", "builddir": "gtk-linux-64-release-tests-js",
@@ -316,12 +316,12 @@
                       "name": "GTK-Linux-64-bit-Debug-Build", "factory": "BuildFactory", "builddir": "gtk-linux-64-debug",
                       "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["gtk-linux-64-debug-tests", "gtk-linux-64-debug-tests-js", "gtk-linux-64-debug-tests-webdriver"],
-                      "workernames": ["gtk-linux-slave-3"]
+                      "workernames": ["gtk-linux-bot-3"]
                     },
                     {
                       "name": "GTK-Linux-64-bit-Debug-Tests", "factory": "TestAllButJSCFactory", "builddir": "gtk-linux-64-debug-tests",
                       "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
-                      "workernames": ["gtk-linux-slave-7"]
+                      "workernames": ["gtk-linux-bot-7"]
                     },
                     {
                       "name": "GTK-Linux-64-bit-Debug-JS-Tests", "factory": "TestJSFactory", "builddir": "gtk-linux-64-debug-tests-js",
@@ -337,25 +337,25 @@
                       "name": "GTK-Linux-64-bit-Release-Perf", "factory": "DownloadAndPerfTestFactory", "builddir": "gtk-linux-64-release-perf-tests",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--display-server=xorg"],
-                      "workernames": ["gtk-linux-slave-8"]
+                      "workernames": ["gtk-linux-bot-8"]
                     },
                     {
                       "name": "GTK-Linux-64-bit-Release-Wayland-Tests", "factory": "TestAllButJSCFactory", "builddir": "gtk-linux-64-release-wayland-tests",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--display-server=wayland"],
-                      "workernames": ["gtk-linux-slave-9"]
+                      "workernames": ["gtk-linux-bot-9"]
                     },
                     {
                       "name": "GTK-Linux-64-bit-Release-Debian-Stable-Build", "factory": "BuildFactory", "builddir": "gtk-linux-64-release-debian",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-experimental-features", "--no-media-source"],
-                      "workernames": ["gtk-linux-slave-10"]
+                      "workernames": ["gtk-linux-bot-10"]
                     },
                     {
                       "name": "GTK-Linux-64-bit-Release-Ubuntu-LTS-Build", "factory": "BuildFactory", "builddir": "gtk-linux-64-release-ubuntu",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-experimental-features", "--no-media-source"],
-                      "workernames": ["gtk-linux-slave-11"]
+                      "workernames": ["gtk-linux-bot-11"]
                     },
                     {
                       "name": "GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu1804", "factory": "BuildAndGenerateMiniBrowserBundleFactory", "builddir": "gtk-linux-64-packaging-nigthly-ubuntu1804",
