@@ -94,6 +94,9 @@ private:
     void computeAspectRatioInformationForRenderBox(RenderBox*, FloatSize& constrainedSize, double& intrinsicRatio) const;
 
     virtual bool shouldDrawSelectionTint() const;
+    
+    Color calculateHighlightColor() const;
+    bool isHighlighted(HighlightState, const HighlightData&) const;
 
     mutable LayoutSize m_intrinsicSize;
 };

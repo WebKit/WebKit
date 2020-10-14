@@ -33,6 +33,7 @@
 
 #include "Document.h"
 #include "FrameSelection.h"
+#include "HighlightRangeGroup.h"
 #include "Logging.h"
 #include "Position.h"
 #include "Range.h"
@@ -162,7 +163,31 @@ void HighlightData::setRenderRange(const RenderRange& renderRange)
     m_renderRange = renderRange;
 }
 
-RenderObject::HighlightState HighlightData::highlightStateForRenderer(RenderObject& renderer)
+bool HighlightData::setRenderRange(const HighlightRangeData& rangeData)
+{
+    if (!rangeData.startPosition || !rangeData.endPosition)
+        return false;
+    
+    auto startPosition = rangeData.startPosition.value();
+    auto endPosition = rangeData.endPosition.value();
+    
+    if (!startPosition.containerNode() || !endPosition.containerNode())
+        return false;
+    
+    auto* startRenderer = startPosition.containerNode()->renderer();
+    auto* endRenderer = endPosition.containerNode()->renderer();
+    
+    if (!startRenderer || !endRenderer)
+        return false;
+    
+    unsigned startOffset = startPosition.computeOffsetInContainerNode();
+    unsigned endOffset = endPosition.computeOffsetInContainerNode();
+
+    setRenderRange({ startRenderer, endRenderer, startOffset, endOffset });
+    return true;
+}
+
+RenderObject::HighlightState HighlightData::highlightStateForRenderer(const RenderObject& renderer)
 {
     if (&renderer == m_renderRange.start()) {
         if (m_renderRange.start() && m_renderRange.end() && m_renderRange.start() == m_renderRange.end())
@@ -173,14 +198,11 @@ RenderObject::HighlightState HighlightData::highlightStateForRenderer(RenderObje
     if (&renderer == m_renderRange.end())
         return RenderObject::HighlightState::End;
 
-    RenderObject* highlightEnd = nullptr;
-    auto* highlightDataEnd = m_renderRange.end();
-    if (highlightDataEnd)
-        highlightEnd = rendererAfterOffset(*highlightDataEnd, m_renderRange.endOffset().value());
-    UNUSED_PARAM(highlightEnd);
+    auto* highlightEnd = rendererAfterOffset(*m_renderRange.end(), m_renderRange.endOffset().value());
+    
     HighlightIterator highlightIterator(m_renderRange.start());
-    for (auto* currentRenderer = m_renderRange.start(); currentRenderer && currentRenderer != m_renderRange.end(); currentRenderer = highlightIterator.next()) {
-        if (currentRenderer == m_renderRange.start() || currentRenderer == m_renderRange.end())
+    for (auto* currentRenderer = m_renderRange.start(); currentRenderer && currentRenderer != highlightEnd; currentRenderer = highlightIterator.next()) {
+        if (currentRenderer == m_renderRange.start())
             continue;
         if (!currentRenderer->canBeSelectionLeaf())
             continue;

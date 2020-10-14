@@ -37,6 +37,8 @@
 #endif
 
 namespace WebCore {
+
+struct HighlightRangeData;
     
 class HighlightData {
 public:
@@ -71,6 +73,7 @@ public:
     };
     
     void setRenderRange(const RenderRange&);
+    bool setRenderRange(const HighlightRangeData&); // Returns true if successful.
     
     enum class RepaintMode { NewXOROld, NewMinusOld, Nothing };
     void setSelection(const RenderRange&, RepaintMode = RepaintMode::NewXOROld);
@@ -87,7 +90,7 @@ public:
     IntRect boundsClippedToVisibleContent() const { return collectBounds(ClipToVisibleContent::Yes); }
     void repaintSelection() const;
     
-    RenderObject::HighlightState highlightStateForRenderer(RenderObject&);
+    RenderObject::HighlightState highlightStateForRenderer(const RenderObject&);
 
 private:
     enum class ClipToVisibleContent { Yes, No };

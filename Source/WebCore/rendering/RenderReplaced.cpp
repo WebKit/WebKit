@@ -31,6 +31,8 @@
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLParserIdioms.h"
+#include "HighlightData.h"
+#include "HighlightMap.h"
 #include "InlineElementBox.h"
 #include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationRunIterator.h"
@@ -148,6 +150,25 @@ inline static bool draggedContentContainsReplacedElement(const Vector<RenderedDo
     return false;
 }
 
+Color RenderReplaced::calculateHighlightColor() const
+{
+    auto highlightData = HighlightData(view());
+    for (auto& highlight : document().highlightMap().map()) {
+        for (auto& rangeData : highlight.value->rangesData()) {
+            if (!highlightData.setRenderRange(rangeData))
+                continue;
+            
+            auto state = highlightData.highlightStateForRenderer(*this);
+            if (!isHighlighted(state, highlightData))
+                continue;
+
+            if (auto highlightStyle = getUncachedPseudoStyle({ PseudoId::Highlight, highlight.key }, &style()))
+                return highlightStyle->backgroundColor();
+        }
+    }
+    return Color();
+}
+
 void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (!shouldPaint(paintInfo, paintOffset))
@@ -197,6 +218,10 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (!paintInfo.shouldPaintWithinRoot(*this))
         return;
     
+    Color highlightColor;
+    if (!document().printing() && !paintInfo.paintBehavior.contains(PaintBehavior::ExcludeSelection))
+        highlightColor = calculateHighlightColor();
+    
     bool drawSelectionTint = shouldDrawSelectionTint();
     if (paintInfo.phase == PaintPhase::Selection) {
         if (selectionState() == HighlightState::None)
@@ -229,6 +254,12 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         LayoutRect selectionPaintingRect = localSelectionRect();
         selectionPaintingRect.moveBy(adjustedPaintOffset);
         paintInfo.context().fillRect(snappedIntRect(selectionPaintingRect), selectionBackgroundColor());
+    }
+    
+    if (highlightColor.isVisible()) {
+        auto selectionPaintingRect = localSelectionRect(false);
+        selectionPaintingRect.moveBy(adjustedPaintOffset);
+        paintInfo.context().fillRect(snappedIntRect(selectionPaintingRect), highlightColor);
     }
 }
 
@@ -682,19 +713,23 @@ void RenderReplaced::setSelectionState(HighlightState state)
     RenderBox::setSelectionState(state);
 
     if (m_inlineBoxWrapper && canUpdateSelectionOnRootLineBoxes())
-        m_inlineBoxWrapper->root().setHasSelectedChildren(isSelected());
+        m_inlineBoxWrapper->root().setHasSelectedChildren(isHighlighted(selectionState(), view().selection()));
 }
 
 bool RenderReplaced::isSelected() const
 {
-    HighlightState state = selectionState();
+    return isHighlighted(selectionState(), view().selection());
+}
+
+bool RenderReplaced::isHighlighted(HighlightState state, const HighlightData& rangeData) const
+{
     if (state == HighlightState::None)
         return false;
     if (state == HighlightState::Inside)
         return true;
 
-    auto selectionStart = view().selection().startOffset();
-    auto selectionEnd = view().selection().endOffset();
+    auto selectionStart = rangeData.startOffset();
+    auto selectionEnd = rangeData.endOffset();
     if (state == HighlightState::Start)
         return !selectionStart;
 
