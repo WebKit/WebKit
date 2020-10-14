@@ -43,7 +43,7 @@ class WebGamepad;
 
 class GamepadData;
 
-class WebGamepadProvider : public WebCore::GamepadProvider {
+class WebGamepadProvider final : public WebCore::GamepadProvider {
 public:
     static WebGamepadProvider& singleton();
 

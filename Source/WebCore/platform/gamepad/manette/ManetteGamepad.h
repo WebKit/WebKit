@@ -70,8 +70,8 @@ public:
     ManetteGamepad(ManetteDevice*, unsigned index);
     virtual ~ManetteGamepad();
 
-    const Vector<double>& axisValues() const final { return m_axisValues; }
-    const Vector<double>& buttonValues() const final { return m_buttonValues; }
+    const Vector<SharedGamepadValue>& axisValues() const final { return m_axisValues; }
+    const Vector<SharedGamepadValue>& buttonValues() const final { return m_buttonValues; }
 
     void absoluteAxisChanged(ManetteDevice*, StandardGamepadAxis, double value);
     void buttonPressedOrReleased(ManetteDevice*, StandardGamepadButton, bool pressed);
@@ -79,8 +79,8 @@ public:
 private:
     GRefPtr<ManetteDevice> m_device;
 
-    Vector<double> m_buttonValues;
-    Vector<double> m_axisValues;
+    Vector<SharedGamepadValue> m_buttonValues;
+    Vector<SharedGamepadValue> m_axisValues;
 };
 
 } // namespace WebCore

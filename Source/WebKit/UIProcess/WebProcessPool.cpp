@@ -1998,14 +1998,16 @@ size_t WebProcessPool::numberOfConnectedGamepadsForTesting(GamepadType gamepadTy
     switch (gamepadType) {
     case GamepadType::All:
         return UIGamepadProvider::singleton().numberOfConnectedGamepads();
-    case GamepadType::HID:
 #if PLATFORM(MAC)
+    case GamepadType::HID:
         return HIDGamepadProvider::singleton().numberOfConnectedGamepads();
-#else
-        return 0;
-#endif
     case GamepadType::GameControllerFramework:
         return GameControllerGamepadProvider::singleton().numberOfConnectedGamepads();
+#else
+    case GamepadType::HID:
+    case GamepadType::GameControllerFramework:
+        return 0;
+#endif
     }
 #else
     return 0;
