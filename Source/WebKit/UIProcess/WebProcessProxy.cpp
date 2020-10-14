@@ -880,6 +880,11 @@ void WebProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC:
 
     WebProcessPool::didReceiveInvalidMessage(messageName);
 
+#if ENABLE(IPC_TESTING_API)
+    if (connection.ignoreInvalidMessageForTesting())
+        return;
+#endif
+
     // Terminate the WebContent process.
     terminate();
 
@@ -955,6 +960,15 @@ bool WebProcessProxy::mayBecomeUnresponsive()
 #endif
 }
 
+#if ENABLE(IPC_TESTING_API)
+void WebProcessProxy::setIgnoreInvalidMessageForTesting()
+{
+    if (state() == State::Running)
+        connection()->setIgnoreInvalidMessageForTesting();
+    m_ignoreInvalidMessageForTesting = true;
+}
+#endif
+
 void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
 {
     RELEASE_ASSERT(isMainThreadOrCheckDisabled());
@@ -978,6 +992,11 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 
     m_processPool->processDidFinishLaunching(this);
     m_backgroundResponsivenessTimer.updateState();
+
+#if ENABLE(IPC_TESTING_API)
+    if (m_ignoreInvalidMessageForTesting)
+        connection()->setIgnoreInvalidMessageForTesting();
+#endif
 
 #if PLATFORM(IOS_FAMILY)
     if (connection()) {

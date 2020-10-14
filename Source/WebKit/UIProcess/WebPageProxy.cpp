@@ -570,6 +570,12 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     m_inspectorDebuggable->init();
 #endif
     m_inspectorController->init();
+
+#if ENABLE(IPC_TESTING_API)
+    if (m_preferences->store().getBoolValueForKey(WebPreferencesKey::ipcTestingAPIEnabledKey()))
+        process.setIgnoreInvalidMessageForTesting();
+#endif
+
 }
 
 WebPageProxy::~WebPageProxy()
@@ -838,6 +844,11 @@ void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain, Pro
 
     m_process->addExistingWebPage(*this, WebProcessProxy::BeginsUsingDataStore::Yes);
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
+
+#if ENABLE(IPC_TESTING_API)
+    if (m_preferences->store().getBoolValueForKey(WebPreferencesKey::ipcTestingAPIEnabledKey()))
+        m_process->setIgnoreInvalidMessageForTesting();
+#endif
 
     finishAttachingToWebProcess(reason);
 

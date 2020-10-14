@@ -287,6 +287,11 @@ public:
 
     void enableIncomingMessagesThrottling();
 
+#if ENABLE(IPC_TESTING_API)
+    void setIgnoreInvalidMessageForTesting() { m_ignoreInvalidMessageForTesting = true; }
+    bool ignoreInvalidMessageForTesting() const { return m_ignoreInvalidMessageForTesting; }
+#endif
+
 private:
     Connection(Identifier, bool isServer, Client&);
     void platformInitialize(Identifier);
@@ -408,6 +413,10 @@ private:
     HashMap<uint64_t, WTF::Function<void()>> m_incomingSyncMessageCallbacks;
     RefPtr<WorkQueue> m_incomingSyncMessageCallbackQueue;
     uint64_t m_nextIncomingSyncMessageCallbackID { 0 };
+
+#if ENABLE(IPC_TESTING_API)
+    bool m_ignoreInvalidMessageForTesting { false };
+#endif
 
 #if HAVE(QOS_CLASSES)
     pthread_t m_mainThread { 0 };

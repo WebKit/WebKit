@@ -928,7 +928,7 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
     }
 
     // FIXME: If the message was invalid, we should send back a SyncMessageError.
-    ASSERT(decoder.isValid());
+    ASSERT(decoder.isValid() || m_ignoreInvalidMessageForTesting);
 
     if (replyEncoder)
         sendSyncReply(WTFMove(replyEncoder));

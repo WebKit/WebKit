@@ -87,4 +87,50 @@ TEST(IPCTestingAPI, CanSendAlert)
     EXPECT_STREQ([alertMessage UTF8String], "hi");
 }
 
+TEST(IPCTestingAPI, CanSendInvalidAsyncMessageWithoutTermination)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
+        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
+            break;
+        }
+    }
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    done = false;
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>"
+        "IPC.sendMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_ShowShareSheet.name, []);"
+        "alert('hi')</script>"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_STREQ([alertMessage UTF8String], "hi");
+}
+
+TEST(IPCTestingAPI, CanSendInvalidMessageWithoutTermination)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
+        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
+            break;
+        }
+    }
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    done = false;
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>"
+        "IPC.sendSyncMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_RunJavaScriptAlert.name, 100, [{type: 'uint64_t', value: IPC.frameID}]);"
+        "alert('hi')</script>"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_STREQ([alertMessage UTF8String], "hi");
+}
+
 #endif

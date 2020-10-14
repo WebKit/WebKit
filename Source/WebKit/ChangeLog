@@ -1,3 +1,34 @@
+2020-10-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enabling IPC testing API should prevent the termination of WebContent process which sends an invalid IPC
+        https://bugs.webkit.org/show_bug.cgi?id=217698
+
+        Reviewed by Geoffrey Garen.
+
+        A part of this was landed in r268431 but this patch formally disables UI process' default behavior
+        to terminate a Web process upon receiving an invalid message from it.
+
+        Tests: IPCTestingAPI.CanSendInvalidAsyncMessageWithoutTermination
+               IPCTestingAPI.CanSendInvalidMessageWithoutTermination
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::dispatchSyncMessage): Disable the debug assertion if the IPC testing API is enabled.
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::setIgnoreInvalidMessageForTesting): Added.
+        (IPC::Connection::ignoreInvalidMessageForTesting const): Added.
+        (IPC::Connection::m_ignoreInvalidMessageForTesting): Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Set the flag on WebProcessProxy to trigger the behavior.
+        (WebKit::WebPageProxy::launchProcess): Ditto.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveInvalidMessage): Use the flag on Connection instead of reaching
+        out to the default page group.
+        (WebKit::WebProcessProxy::setIgnoreInvalidMessageForTesting): Added. Remember the fact we've enabled IPC
+        testing API in a member variable and propagate the flag to Connection if a Web process is already running.
+        (WebKit::WebProcessProxy::didFinishLaunching): Propagte the flag to the newly launched Web process.
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::m_ignoreInvalidMessageForTesting): Added.
+
 2020-10-14  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Issue sandbox extension to additional icon service when attachment element is enabled.

@@ -390,6 +390,10 @@ public:
     AudioSessionRoutingArbitratorProxy& audioSessionRoutingArbitrator() { return m_routingArbitrator.get(); }
 #endif
 
+#if ENABLE(IPC_TESTING_API)
+    void setIgnoreInvalidMessageForTesting();
+#endif
+
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed);
 
@@ -620,6 +624,10 @@ private:
     Optional<AudibleMediaActivity> m_audibleMediaActivity;
 
     ShutdownPreventingScopeCounter m_shutdownPreventingScopeCounter;
+
+#if ENABLE(IPC_TESTING_API)
+    bool m_ignoreInvalidMessageForTesting { false };
+#endif
 };
 
 } // namespace WebKit

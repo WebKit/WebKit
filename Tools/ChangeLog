@@ -1,3 +1,16 @@
+2020-10-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enabling IPC testing API should prevent the termination of WebContent process which sends an invalid IPC
+        https://bugs.webkit.org/show_bug.cgi?id=217698
+
+        Reviewed by Geoffrey Garen.
+
+        Added regression tests.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IPCTestingAPI.mm:
+        (IPCTestingAPI.CanSendInvalidAsyncMessageWithoutTermination):
+        (IPCTestingAPI.CanSendInvalidMessageWithoutTermination):
+
 2020-10-14  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Add python 3 support - part 1
