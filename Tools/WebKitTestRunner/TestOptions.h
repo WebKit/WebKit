@@ -59,13 +59,9 @@ struct ContextOptions {
 
 class TestOptions {
 public:
-    static const TestFeatures& defaults();
     static const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMapping();
 
-    explicit TestOptions(TestFeatures features)
-        : m_features { std::move(features) }
-    {
-    }
+    explicit TestOptions(TestFeatures);
 
     ContextOptions contextOptions() const
     {
@@ -78,10 +74,10 @@ public:
         };
     }
 
-    bool allowTopNavigationToDataURLs() const { return boolWebPreferenceFeatureValue("AllowTopNavigationToDataURLs", true); }
-    bool enableAttachmentElement() const { return boolWebPreferenceFeatureValue("AttachmentElementEnabled", false); }
-    bool punchOutWhiteBackgroundsInDarkMode() const { return boolWebPreferenceFeatureValue("PunchOutWhiteBackgroundsInDarkMode", false); }
-    bool useServiceWorkerShortTimeout() const { return boolWebPreferenceFeatureValue("ShouldUseServiceWorkerShortTimeout", false); }
+    bool allowTopNavigationToDataURLs() const { return boolWebPreferenceFeatureValue("AllowTopNavigationToDataURLs"); }
+    bool enableAttachmentElement() const { return boolWebPreferenceFeatureValue("AttachmentElementEnabled"); }
+    bool punchOutWhiteBackgroundsInDarkMode() const { return boolWebPreferenceFeatureValue("PunchOutWhiteBackgroundsInDarkMode"); }
+    bool useServiceWorkerShortTimeout() const { return boolWebPreferenceFeatureValue("ShouldUseServiceWorkerShortTimeout"); }
 
     bool allowsLinkPreview() const { return boolTestRunnerFeatureValue("allowsLinkPreview"); }
     bool dumpJSConsoleLogInStdErr() const { return boolTestRunnerFeatureValue("dumpJSConsoleLogInStdErr"); }
@@ -119,15 +115,12 @@ public:
     const std::unordered_map<std::string, bool>& experimentalFeatures() const { return m_features.experimentalFeatures; }
     const std::unordered_map<std::string, bool>& internalDebugFeatures() const { return m_features.internalDebugFeatures; }
 
-    const std::unordered_map<std::string, bool>& boolWebPreferenceFeatures() const { return m_features.boolWebPreferenceFeatures; }
-    const std::unordered_map<std::string, double>& doubleWebPreferenceFeatures() const { return m_features.doubleWebPreferenceFeatures; }
-    const std::unordered_map<std::string, uint32_t>& uint32WebPreferenceFeatures() const { return m_features.uint32WebPreferenceFeatures; }
-    const std::unordered_map<std::string, std::string>& stringWebPreferenceFeatures() const { return m_features.stringWebPreferenceFeatures; }
+    std::vector<std::pair<std::string, bool>> boolWKPreferences() const;
 
     bool hasSameInitializationOptions(const TestOptions&) const;
 
 private:
-    bool boolWebPreferenceFeatureValue(std::string key, bool defaultValue) const;
+    bool boolWebPreferenceFeatureValue(std::string key) const;
     bool boolTestRunnerFeatureValue(std::string key) const;
     double doubleTestRunnerFeatureValue(std::string key) const;
     std::string stringTestRunnerFeatureValue(std::string key) const;

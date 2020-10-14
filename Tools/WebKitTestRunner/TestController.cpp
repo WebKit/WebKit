@@ -469,7 +469,6 @@ void TestController::initialize(int argc, const char* argv[])
     m_checkForWorldLeaks = options.checkForWorldLeaks;
     m_allowAnyHTTPSCertificateForAllowedHosts = options.allowAnyHTTPSCertificateForAllowedHosts;
 
-    m_globalFeatures = TestOptions::defaults();
     m_globalFeatures.internalDebugFeatures = options.internalFeatures;
     m_globalFeatures.experimentalFeatures = options.experimentalFeatures;
     m_globalFeatures.boolWebPreferenceFeatures.insert({ "AcceleratedDrawingEnabled", options.shouldUseAcceleratedDrawing });
@@ -857,6 +856,9 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     for (const auto& [key, value]  : options.internalDebugFeatures())
         WKPreferencesSetInternalDebugFeatureForKey(preferences, value, toWK(key).get());
 
+    for (const auto& [key, value] : options.boolWKPreferences())
+        WKPreferencesSetBoolValueForKey(preferences, value, toWK(key).get());
+
     // FIXME: Convert these to default values for TestOptions.
     WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.contextOptions().shouldEnableProcessSwapOnNavigation());
     WKPreferencesSetOfflineWebApplicationCacheEnabled(preferences, true);
@@ -922,19 +924,6 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
 #endif
 
     platformResetPreferencesToConsistentValues();
-
-    for (const auto& [key, value] : options.boolWebPreferenceFeatures())
-        WKPreferencesSetBoolValueForKey(preferences, value, toWK(key).get());
-
-    for (const auto& [key, value] : options.doubleWebPreferenceFeatures())
-        WKPreferencesSetDoubleValueForKey(preferences, value, toWK(key).get());
-
-    for (const auto& [key, value] : options.uint32WebPreferenceFeatures())
-        WKPreferencesSetUInt32ValueForKey(preferences, value, toWK(key).get());
-
-    for (const auto& [key, value] : options.stringWebPreferenceFeatures())
-        WKPreferencesSetStringValueForKey(preferences, toWK(value).get(), toWK(key).get());
-
 }
 
 bool TestController::resetStateToConsistentValues(const TestOptions& options, ResetStage resetStage)
