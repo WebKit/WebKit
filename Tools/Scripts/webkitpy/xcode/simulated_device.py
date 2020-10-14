@@ -63,8 +63,8 @@ class SimulatedDeviceManager(object):
 
     SIMULATOR_BOOT_TIMEOUT = 600
 
-    # FIXME: Simulators should only take up 2GB, but because of <rdar://problem/39393590> something in the OS thinks they're taking closer to 6GB
-    MEMORY_ESTIMATE_PER_SIMULATOR_INSTANCE = 6 * (1024 ** 3)  # 6GB a simulator.
+    # FIXME: Switch this back to 6GB (or maybe lower?) once webkit.org/b/217392 is resolved.
+    MEMORY_ESTIMATE_PER_SIMULATOR_INSTANCE = 8 * (1024 ** 3)  # 8GB a simulator.
     PROCESS_COUNT_ESTIMATE_PER_SIMULATOR_INSTANCE = 125
 
     # Testing on iMac Pros has indicated that more than 12 simulators, even if we seem to have enough resources for them,

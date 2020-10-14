@@ -1,3 +1,20 @@
+2020-10-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Temporarily reduce the number of iOS simulators booted during testing
+        https://bugs.webkit.org/show_bug.cgi?id=217681
+
+        Reviewed by Jonathan Bedard.
+
+        To work around unexpected timouts with iOS 14 (webkit.org/b/217392),
+        increase the estimated memory cost for booting iOS simulators.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager): Remove an obsolete FIXME and change the
+        estimated memory cost for a simulator to 8GB, which reduces the number
+        of booted simulators in our CI from 10 to 8. This change reduced the
+        number of unexpected timeouts seen on our bots from ~20 to 2, and came
+        at a penalty of < 5 minutes to layout test duration.
+
 2020-10-14  Kate Cheney  <katherine_cheney@apple.com>
 
         Remove ResourceLoadStatistics telemetry
