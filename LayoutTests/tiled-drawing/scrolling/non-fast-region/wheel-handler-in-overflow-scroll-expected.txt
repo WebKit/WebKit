@@ -7,3 +7,35 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
 
 8, 8 - 310, 310
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=800 height=600)
+      (wheel event listener region
+        (rect (9,9) width=250 height=9)
+        (rect (9,18) width=243 height=18)
+        (rect (9,36) width=271 height=18)
+        (rect (9,54) width=246 height=18)
+        (rect (9,72) width=262 height=1)
+        (rect (9,73) width=285 height=198)
+        (non-passive
+          (rect (9,9) width=250 height=9)
+          (rect (9,18) width=243 height=18)
+          (rect (9,36) width=271 height=18)
+          (rect (9,54) width=246 height=18)
+          (rect (9,72) width=262 height=1)
+          (rect (9,73) width=285 height=198)
+        )
+      )
+      )
+    )
+  )
+)
+

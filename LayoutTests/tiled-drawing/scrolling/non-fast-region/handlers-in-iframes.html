@@ -8,11 +8,9 @@
             margin: 10px;
         }
     </style>
+    <script src="../../../resources/ui-helper.js"></script>
     <script src="resources/wheel-handler-region-helper.js"></script>
     <script>
-        if (window.testRunner)
-            testRunner.waitUntilDone();
-
         var notificationsPending = 3;
 
         // Called from subframes.
@@ -28,11 +26,8 @@
         
         function receivedNotification()
         {
-            if (!--notificationsPending) {
-                dumpRegion();
-                if (window.testRunner)
-                    testRunner.notifyDone();
-            }
+            if (!--notificationsPending)
+                dumpRegionAndNotifyDone();
         }
         
         window.addEventListener('load', mainFrameLoaded, false);

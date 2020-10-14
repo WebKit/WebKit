@@ -16,26 +16,22 @@
         }
         
     </style>
+    <script src="../../../resources/ui-helper.js"></script>
     <script src="resources/wheel-handler-region-helper.js"></script>
     <script>
-        if (window.testRunner)
-            testRunner.waitUntilDone();
-
         if (window.internals) {
             internals.setTopContentInset(60);
             internals.setHeaderHeight(23);
         }
 
-        function doTest()
+        async function doTest()
         {
             if (window.internals)
                 internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
 
             // Scroll to test the mapping from document to view coords.
             document.scrollingElement.scrollTop = 197;
-            dumpRegion();
-            if (window.testRunner)
-                testRunner.notifyDone();
+            dumpNonFastScrollableRects();
         }
 
         window.addEventListener('load', doTest);
@@ -44,7 +40,7 @@
 <body>
 
 <p>Wheel event rect for plug-in:</p>
-<embed id="plugin" type="application/x-webkit-test-netscape" drawingmodel="coreanimation"></embed>
+<embed id="plugin" type="application/x-webkit-test-netscape" drawingmodel="coreanimation">
 <pre id="output"></pre>
 
 </body>

@@ -166,6 +166,7 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
         eventTrackingRegions.unite(subframeRegion);
     }
 
+#if !ENABLE(WHEEL_EVENT_REGIONS)
     auto wheelHandlerRegion = frame.document()->absoluteRegionForEventTargets(frame.document()->wheelEventTargets());
     bool wheelHandlerInFixedContent = wheelHandlerRegion.second;
     if (wheelHandlerInFixedContent) {
@@ -175,6 +176,7 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
     }
     
     nonFastScrollableRegion.unite(wheelHandlerRegion.first);
+#endif
 
     // FIXME: If this is not the main frame, we could clip the region to the frame's bounds.
     eventTrackingRegions.uniteSynchronousRegion(eventNames().wheelEvent, nonFastScrollableRegion);

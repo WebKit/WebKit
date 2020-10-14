@@ -2894,6 +2894,8 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event, OptionSet<W
 #endif
 
     m_isHandlingWheelEvent = true;
+    auto allowsScrollingState = SetForScope(m_currentWheelEventAllowsScrolling, processingSteps.contains(WheelEventProcessingSteps::MainThreadForScrolling));
+    
     setFrameWasScrolledByUser();
 
     if (m_frame.isMainFrame()) {
@@ -2946,7 +2948,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event, OptionSet<W
     bool handledEvent = false;
     bool allowScrolling = true;
 #if ENABLE(WHEEL_EVENT_LATCHING)
-    allowScrolling = m_frame.page()->scrollLatchingController().latchingAllowsScrollingInFrame(m_frame, scrollableArea);
+    allowScrolling = m_currentWheelEventAllowsScrolling && m_frame.page()->scrollLatchingController().latchingAllowsScrollingInFrame(m_frame, scrollableArea);
 #endif
     if (allowScrolling) {
         // FIXME: processWheelEventForScrolling() is only called for FrameView scrolling, not overflow scrolling, which is confusing.
@@ -2977,6 +2979,9 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
         return;
     
     if (!m_frame.page())
+        return;
+
+    if (!m_currentWheelEventAllowsScrolling)
         return;
 
     auto protectedFrame = makeRef(m_frame);

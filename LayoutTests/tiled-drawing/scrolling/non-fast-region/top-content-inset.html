@@ -12,22 +12,18 @@
         }
         
     </style>
+    <script src="../../../resources/ui-helper.js"></script>
     <script src="resources/wheel-handler-region-helper.js"></script>
     <script>
-        if (window.testRunner)
-            testRunner.waitUntilDone();
-
         if (window.internals)
             internals.setTopContentInset(60);
 
         function doTest()
         {
-            window.setTimeout(function() {
+            window.setTimeout(async () => {
                 // Scroll to test the mapping from document to view coords.
                 document.scrollingElement.scrollTop = 195;
-                dumpRegion();
-                if (window.testRunner)
-                    testRunner.notifyDone();
+                dumpRegionAndNotifyDone();
             }, 0)
         }
 

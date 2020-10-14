@@ -13,19 +13,15 @@
             color: blue;
         }
     </style>
+    <script src="../../../resources/ui-helper.js"></script>
     <script src="resources/wheel-handler-region-helper.js"></script>
     <script>
-        if (window.testRunner)
-            testRunner.waitUntilDone();
-
         function doTest()
         {
-            window.setTimeout(function() {
+            window.setTimeout(async () => {
                 var scroller = document.getElementById('container');
                 scroller.scrollTop = 200;
-                dumpRegion();
-                if (window.testRunner)
-                    testRunner.notifyDone();
+                dumpRegionAndNotifyDone();
             }, 0)
         }
 

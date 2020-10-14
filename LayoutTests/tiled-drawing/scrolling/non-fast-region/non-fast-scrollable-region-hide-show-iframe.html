@@ -1,29 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="../../../resources/ui-helper.js"></script>
 <script src="resources/wheel-handler-region-helper.js"></script>
 <script>
     if (window.testRunner)
         testRunner.waitUntilDone();
 
-    function dumpRegion(prefix)
-    {
-        if (window.internals) {
-            var rects = window.internals.nonFastScrollableRects();
-            document.getElementById('output').textContent += prefix + rectsAsString(rects) + '\n';
-        }
-    }
-
-    function doTest()
+    async function doTest()
     {
         var frame = document.getElementById('frame');
-        dumpRegion('before: ');
-        frame.style.display = 'none';
-        dumpRegion('after hide: ');
+
+        await UIHelper.renderingUpdate();
+        var output = 'before: ';
+        output += nonFastScrollableRects();
         
-        setTimeout(function() {
+        frame.style.display = 'none';
+        
+        await UIHelper.renderingUpdate();
+        output += '\nafter hide: ';
+        output += nonFastScrollableRects();
+        
+        setTimeout(async () => {
             frame.style.display = 'inline';
-            dumpRegion('after show: ');
+
+            await UIHelper.renderingUpdate();
+            output += '\nafter show: ';
+            output += nonFastScrollableRects();
+
+            document.getElementById('output').textContent = output;
 
             if (window.testRunner)
                 testRunner.notifyDone();

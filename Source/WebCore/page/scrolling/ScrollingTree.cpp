@@ -94,6 +94,15 @@ OptionSet<WheelEventProcessingSteps> ScrollingTree::determineWheelEventProcessin
             return { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForDOMEventDispatch };
     }
 
+#if ENABLE(WHEEL_EVENT_REGIONS)
+    auto eventListenerTypes = eventListenerRegionTypesForPoint(position);
+    if (eventListenerTypes.contains(EventListenerRegionType::NonPassiveWheel))
+        return { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForDOMEventDispatch };
+
+    if (eventListenerTypes.contains(EventListenerRegionType::Wheel))
+        return { WheelEventProcessingSteps::ScrollingThread, WheelEventProcessingSteps::MainThreadForDOMEventDispatch };
+#endif
+
     return { WheelEventProcessingSteps::ScrollingThread };
 }
 

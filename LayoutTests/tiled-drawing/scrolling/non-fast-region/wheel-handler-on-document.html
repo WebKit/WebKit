@@ -2,12 +2,13 @@
 
 <html>
 <head>
+    <script src="../../../resources/ui-helper.js"></script>
     <script src="resources/wheel-handler-region-helper.js"></script>
     <script>
-        function doTest()
+        async function doTest()
         {
             document.addEventListener('mousewheel', function() { });
-            dumpRegion();
+            dumpRegionAndNotifyDone();
         }
 
         window.addEventListener('load', doTest);

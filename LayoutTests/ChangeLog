@@ -1,3 +1,54 @@
+2020-10-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow passive mouse wheel event listeners to not force synchronous scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=158439
+        <rdar://problem/28265360>
+
+        Reviewed by Tim Horton.
+        
+        Change tests that relied on dumping the non-fast scrollable rects for wheel handlers
+        to dump layer trees with event regions instead. They also need to wait for a
+        rendering update, since wheel event regions are updated once per frame.
+        
+        slow-scrolling-overflow.html tests that an overflow:scroll that's forced into slow
+        scrolling because of background-attachment:fixed still scrolls.
+
+        * fast/scrolling/mac/slow-scrolling-overflow-expected.txt: Added.
+        * fast/scrolling/mac/slow-scrolling-overflow.html: Added.
+        * fast/scrolling/mac/wheel-event-listener-region-inside-overflow-scroll-clipped-out-expected.txt:
+        * fast/scrolling/mac/wheel-event-listener-region-inside-overflow-scroll-expected.txt:
+        * platform/mac-wk2/TestExpectations:
+        * tiled-drawing/scrolling/non-fast-region/fixed-div-in-scrollable-page.html:
+        * tiled-drawing/scrolling/non-fast-region/handlers-in-iframes-expected.txt:
+        * tiled-drawing/scrolling/non-fast-region/handlers-in-iframes.html:
+        * tiled-drawing/scrolling/non-fast-region/non-fast-scrollable-region-hide-show-iframe-expected.txt:
+        * tiled-drawing/scrolling/non-fast-region/non-fast-scrollable-region-hide-show-iframe.html:
+        * tiled-drawing/scrolling/non-fast-region/resources/wheel-handler-region-helper.js:
+        (nonFastScrollableRects):
+        (dumpNonFastScrollableRects):
+        (async dumpRegionAndNotifyDone):
+        (rectsAsString): Deleted.
+        (dumpRegion): Deleted.
+        * tiled-drawing/scrolling/non-fast-region/top-content-inset-expected.txt:
+        * tiled-drawing/scrolling/non-fast-region/top-content-inset-header-expected.txt:
+        * tiled-drawing/scrolling/non-fast-region/top-content-inset-header.html:
+        * tiled-drawing/scrolling/non-fast-region/top-content-inset.html:
+        * tiled-drawing/scrolling/non-fast-region/wheel-event-plugin.html:
+        * tiled-drawing/scrolling/non-fast-region/wheel-handler-fixed-child-expected.txt:
+        * tiled-drawing/scrolling/non-fast-region/wheel-handler-fixed-child.html:
+        * tiled-drawing/scrolling/non-fast-region/wheel-handler-in-columns-expected.txt:
+        * tiled-drawing/scrolling/non-fast-region/wheel-handler-in-columns.html:
+        * tiled-drawing/scrolling/non-fast-region/wheel-handler-in-overflow-scroll-expected.txt:
+        * tiled-drawing/scrolling/non-fast-region/wheel-handler-in-overflow-scroll.html:
+        * tiled-drawing/scrolling/non-fast-region/wheel-handler-inside-fixed-expected.txt:
+        * tiled-drawing/scrolling/non-fast-region/wheel-handler-inside-fixed.html:
+        * tiled-drawing/scrolling/non-fast-region/wheel-handler-on-document-expected.txt:
+        * tiled-drawing/scrolling/non-fast-region/wheel-handler-on-document.html:
+        * tiled-drawing/scrolling/non-fast-region/wheel-handler-on-fixed-expected.txt:
+        * tiled-drawing/scrolling/non-fast-region/wheel-handler-on-fixed.html:
+        * tiled-drawing/scrolling/non-fast-region/wheel-handler-region-basic-expected.txt:
+        * tiled-drawing/scrolling/non-fast-region/wheel-handler-region-basic.html:
+
 2020-10-14  Kate Cheney  <katherine_cheney@apple.com>
 
         Remove ResourceLoadStatistics telemetry

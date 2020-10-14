@@ -1,6 +1,5 @@
 <html>
 <head>
-    <script src="resources/wheel-handler-region-helper.js"></script>
     <style>
     body {
         margin: 0;
@@ -22,17 +21,13 @@
         width: 2000px;
     }
     </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="resources/wheel-handler-region-helper.js"></script>
     <script>
-    function dumpRegion()
-    {
-        if (window.internals) {
-            var rects = window.internals.nonFastScrollableRects();
-            document.getElementById('output').textContent = rectsAsString(rects);
-        }
-    }
+        window.addEventListener('load', dumpNonFastScrollableRects, false);
     </script>
 </head>
-<body onload="dumpRegion()">
+<body>
     <div class="fixed">
         <div class="tall"></div>
     </div>

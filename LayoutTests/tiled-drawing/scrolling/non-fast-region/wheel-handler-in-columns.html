@@ -13,14 +13,10 @@
             color: blue;
         }
     </style>
+    <script src="../../../resources/ui-helper.js"></script>
     <script src="resources/wheel-handler-region-helper.js"></script>
     <script>
-        function doTest()
-        {
-            dumpRegion();
-        }
-
-        window.addEventListener('load', doTest);
+        window.addEventListener('load', dumpRegionAndNotifyDone);
     </script>
 </head>
 <body>

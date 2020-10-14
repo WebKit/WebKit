@@ -1,8 +1,11 @@
-if (window.testRunner)
+if (window.testRunner) {
     testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
 
-function rectsAsString(rects)
+function nonFastScrollableRects()
 {
+    var rects = internals.nonFastScrollableRects();
     var result = "";
     for (var i = 0; i < rects.length; ++i) {
         var rect = rects[i];
@@ -13,10 +16,23 @@ function rectsAsString(rects)
     return result;
 }
 
-function dumpRegion()
+function dumpNonFastScrollableRects()
 {
+    if (window.internals)
+        document.getElementById('output').textContent = nonFastScrollableRects();
+
+    if (window.testRunner)
+        testRunner.notifyDone();    
+}
+
+async function dumpRegionAndNotifyDone()
+{
+    await UIHelper.renderingUpdate();
     if (window.internals) {
-        var rects = window.internals.nonFastScrollableRects();
-        document.getElementById('output').textContent = rectsAsString(rects);
+        var output = nonFastScrollableRects() + '\n' + internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION + internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+        document.getElementById('output').textContent = output;
     }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
