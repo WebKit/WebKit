@@ -1578,6 +1578,8 @@ size_t WebProcessPool::numberOfConnectedGamepadsForTesting(GamepadType gamepadTy
     case GamepadType::HID:
     case GamepadType::GameControllerFramework:
         return 0;
+    default:
+        return 0;
 #endif
     }
 #else
