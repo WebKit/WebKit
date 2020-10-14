@@ -1,5 +1,109 @@
 2020-10-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r268353. rdar://problem/70267767
+
+    [macOS] Workaround for MAC_OS_X_VERSION_MAJOR incorrectly including minor version when building
+    with Xcode 12 on macOS Big Sur SUs
+    https://bugs.webkit.org/show_bug.cgi?id=217602
+    rdar://70194453
+    
+    Patch by Luming Yin <luming_yin@apple.com> on 2020-10-12
+    Reviewed by Darin Adler.
+    
+    Due to a bug in Xcode (rdar://70185899), Xcode 12.0 and Xcode 12.1 Beta incorrectly includes the
+    minor release number in MAC_OS_X_VERSION_MAJOR, which causes Debug and Release builds of WebKit
+    to be misconfigured when building on macOS Big Sur SUs, leading to webpages failing to load.
+    
+    To work around the Xcode bug, when the MAC_OS_X_VERSION_MAJOR includes the minor version number,
+    drop the minor version number by explicitly setting TARGET_MAC_OS_X_VERSION_MAJOR to 110000.
+    
+    Note: This change should be reverted after <rdar://70185899> is resolved.
+    
+    PerformanceTests:
+    
+    * DecoderTest/Configurations/DebugRelease.xcconfig:
+    * MediaTime/Configurations/DebugRelease.xcconfig:
+    
+    Source/bmalloc:
+    
+    * Configurations/DebugRelease.xcconfig:
+    
+    Source/JavaScriptCore:
+    
+    * Configurations/DebugRelease.xcconfig:
+    
+    Source/ThirdParty:
+    
+    * gtest/xcode/Config/General.xcconfig:
+    
+    Source/ThirdParty/ANGLE:
+    
+    * Configurations/DebugRelease.xcconfig:
+    
+    Source/ThirdParty/libwebrtc:
+    
+    * Configurations/DebugRelease.xcconfig:
+    
+    Source/WebCore:
+    
+    * Configurations/DebugRelease.xcconfig:
+    
+    Source/WebCore/PAL:
+    
+    * Configurations/DebugRelease.xcconfig:
+    
+    Source/WebInspectorUI:
+    
+    * Configurations/DebugRelease.xcconfig:
+    
+    Source/WebKit:
+    
+    * Configurations/DebugRelease.xcconfig:
+    
+    Source/WebKitLegacy/mac:
+    
+    * Configurations/DebugRelease.xcconfig:
+    
+    Source/WTF:
+    
+    * Configurations/DebugRelease.xcconfig:
+    
+    Tools:
+    
+    * ContentExtensionTester/Configurations/DebugRelease.xcconfig:
+    * DumpRenderTree/mac/Configurations/DebugRelease.xcconfig:
+    * ImageDiff/cg/Configurations/DebugRelease.xcconfig:
+    * MiniBrowser/Configurations/DebugRelease.xcconfig:
+    * TestWebKitAPI/Configurations/DebugRelease.xcconfig:
+    * WebEditingTester/Configurations/DebugRelease.xcconfig:
+    * WebKitTestRunner/Configurations/DebugRelease.xcconfig:
+    * lldb/lldbWebKitTester/Configurations/DebugRelease.xcconfig:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268353 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-12  Luming Yin  <luming_yin@apple.com>
+
+            [macOS] Workaround for MAC_OS_X_VERSION_MAJOR incorrectly including minor version when building
+            with Xcode 12 on macOS Big Sur SUs
+            https://bugs.webkit.org/show_bug.cgi?id=217602
+            rdar://70194453
+
+            Reviewed by Darin Adler.
+
+            Due to a bug in Xcode (rdar://70185899), Xcode 12.0 and Xcode 12.1 Beta incorrectly includes the
+            minor release number in MAC_OS_X_VERSION_MAJOR, which causes Debug and Release builds of WebKit
+            to be misconfigured when building on macOS Big Sur SUs, leading to webpages failing to load.
+
+            To work around the Xcode bug, when the MAC_OS_X_VERSION_MAJOR includes the minor version number,
+            drop the minor version number by explicitly setting TARGET_MAC_OS_X_VERSION_MAJOR to 110000.
+
+            Note: This change should be reverted after <rdar://70185899> is resolved.
+
+            * DecoderTest/Configurations/DebugRelease.xcconfig:
+            * MediaTime/Configurations/DebugRelease.xcconfig:
+
+2020-10-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r268331. rdar://problem/70267393
 
     [macOS] Harden more build configurations against macOS versions 11 and higher as well as inclusion of patch versions
