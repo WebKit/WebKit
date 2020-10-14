@@ -1,4 +1,3 @@
-WebKitLauncher/*.h diff=objcppheader
 BuildSlaveSupport/win/kill-old-processes -crlf
 DumpRenderTree/cairo/PixelDumpSupportCairo.cpp -crlf
 FindSafari/Safari.exe.manifest -crlf

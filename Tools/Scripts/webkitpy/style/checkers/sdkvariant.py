@@ -33,7 +33,6 @@ SDK_VARIANT_FILES = [
     "Tools/ImageDiff/cg/Configurations/SDKVariant.xcconfig",
     "Tools/WebEditingTester/Configurations/SDKVariant.xcconfig",
     "Tools/MiniBrowser/Configurations/SDKVariant.xcconfig",
-    "Tools/WebKitLauncher/Configurations/SDKVariant.xcconfig",
     "Tools/lldb/lldbWebKitTester/Configurations/SDKVariant.xcconfig",
     "Tools/DumpRenderTree/mac/Configurations/SDKVariant.xcconfig",
     "Tools/ContentExtensionTester/Configurations/SDKVariant.xcconfig",
