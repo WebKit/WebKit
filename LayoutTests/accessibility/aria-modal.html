@@ -12,10 +12,12 @@
     <p><a onclick="toggleDialog('show'); return false;" href="#" role="button" id="displayButton">Display a dialog</a></p>
 </div>
 
-<div role="dialog" aria-modal="true" aria-labelledby="myDialog" id="box" class="box-hidden" tabindex="-1">
-    <h3 id="myDialog">Just an example.</h3>
-    <button id="ok" onclick="toggleDialog('hide');" class="close-button">OK</button>
-    <button onclick="toggleDialog('hide');" class="close-button">Cancel</button>
+<div id="dialogParent" role="group">
+    <div role="dialog" aria-modal="true" aria-labelledby="myDialog" id="box" class="box-hidden" tabindex="-1">
+        <h3 id="myDialog">Just an example.</h3>
+        <button id="ok" onclick="toggleDialog('hide');" class="close-button">OK</button>
+        <button onclick="toggleDialog('hide');" class="close-button">Cancel</button>
+    </div>
 </div>
 
 <script>
@@ -97,6 +99,22 @@
             debug("Dialog is displaying with opacity 1");
             shouldBeFalse("backgroundAccessible()");
 
+            // Set opacity of the dialog parent to 0 which should make the dialog invisible since opacity multiply.
+            document.getElementById("dialogParent").style.opacity = 0;
+            await waitFor(() => {
+                return backgroundAccessible();
+            });
+            debug("Dialog is not displaying with parent opacity 0");
+            shouldBeTrue("backgroundAccessible()");
+
+            // Set opacity of the dialog parent to .5 which should make the dialog visible again.
+            document.getElementById("dialogParent").style.opacity = .5;
+            await waitFor(() => {
+                return !backgroundAccessible();
+            });
+            debug("Dialog is displaying with parent opacity .5");
+            shouldBeFalse("backgroundAccessible()");
+
             // Test modal dialog is removed from DOM tree.
             var dialog = document.getElementById("box");
             dialog.parentNode.removeChild(dialog);
@@ -128,7 +146,6 @@
             dialog.setAttribute("aria-modal", "true");
         } else {
             dialog.style.display = 'none';
-            //dialog.style.opacity = 0;
             dialog.setAttribute("aria-modal", "false");
         }
     }

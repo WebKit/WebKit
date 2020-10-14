@@ -1,5 +1,46 @@
 2020-10-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r268206. rdar://problem/70267322
+
+    Presidential Executive Order pages not accessible with Safari.
+    https://bugs.webkit.org/show_bug.cgi?id=217415
+    <rdar://problem/69922416>
+    
+    Reviewed by Chris Fleizach and Simon Fraser.
+    
+    Follow up to the previous change for this bug per Simon Fraser's comment.
+    Check not only the visibility and opacity of the object in question but
+    also of its ancestors.
+    Expanded the test accessibility/aria-modal.html to include the case
+    where the visibility of the modal dialog is determined by the opacity of
+    its parent object.
+    
+    * accessibility/AXObjectCache.cpp:
+    (WebCore::AXObjectCache::isNodeVisible const):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268206 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-08  Andres Gonzalez  <andresg_22@apple.com>
+
+            Presidential Executive Order pages not accessible with Safari.
+            https://bugs.webkit.org/show_bug.cgi?id=217415
+            <rdar://problem/69922416>
+
+            Reviewed by Chris Fleizach and Simon Fraser.
+
+            Follow up to the previous change for this bug per Simon Fraser's comment.
+            Check not only the visibility and opacity of the object in question but
+            also of its ancestors.
+            Expanded the test accessibility/aria-modal.html to include the case
+            where the visibility of the modal dialog is determined by the opacity of
+            its parent object.
+
+            * accessibility/AXObjectCache.cpp:
+            (WebCore::AXObjectCache::isNodeVisible const):
+
+2020-10-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r268162. rdar://problem/70267741
 
     REGRESSION: Safari unable to load PDF in <embed> (docs.legalconnect.com)
