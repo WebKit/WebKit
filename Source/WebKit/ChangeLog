@@ -1,3 +1,13 @@
+2020-10-14  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Fix the build warning below since r222233.
+        warning: redundant move in return statement [-Wredundant-move]
+
+        No new tests, no new behaviors.
+
+        * Shared/Gamepad/GamepadData.cpp:
+        (WebKit::GamepadData::decode):
+
 2020-10-13  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         Null dereference in PDFPlugin::snapshot()

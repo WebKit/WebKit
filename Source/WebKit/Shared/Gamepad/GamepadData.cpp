@@ -81,7 +81,7 @@ Optional<GamepadData> GamepadData::decode(IPC::Decoder& decoder)
     if (!decoder.decode(data.m_lastUpdateTime))
         return WTF::nullopt;
 
-    return WTFMove(data);
+    return data;
 }
 
 #if !LOG_DISABLED
