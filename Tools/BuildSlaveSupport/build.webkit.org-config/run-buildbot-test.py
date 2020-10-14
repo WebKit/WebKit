@@ -62,7 +62,7 @@ from buildslave.bot import BuildSlave
 basedir = os.path.dirname(os.path.realpath(__file__))
 buildmaster_host = 'localhost'
 port = 17000
-slavename = '%(worker)s'
+slavename = '{}'
 passwd = '1234'
 keepalive = 600
 usepty = 1
@@ -95,7 +95,7 @@ def upgrade_db_needed(log):
 def create_tempdir(tmpdir=None):
     if tmpdir is not None:
         if not os.path.isdir(tmpdir):
-            raise ValueError('%s is not a directory' % tmpdir)
+            raise ValueError('{} is not a directory'.format(tmpdir))
         return tempfile.mkdtemp(prefix=os.path.join(os.path.abspath(tmpdir), 'tmp'))
     return tempfile.mkdtemp()
 
@@ -104,7 +104,7 @@ def print_if_error_stdout_stderr(cmd, retcode, stdout=None, stderr=None, extrams
     if retcode != 0:
         if type(cmd) == type([]):
             cmd = ' '.join(cmd)
-        print('WARNING: "%s" returned %s status code' % (cmd, retcode))
+        print('WARNING: "{cmd}" returned {retcode} status code'.format(cmd=cmd, retcode=retcode))
         if stdout is not None:
             print(stdout)
         if stderr is not None:
@@ -115,9 +115,9 @@ def print_if_error_stdout_stderr(cmd, retcode, stdout=None, stderr=None, extrams
 
 def setup_master_workdir(configdir, base_workdir):
     master_workdir = os.path.join(base_workdir, 'master')
-    print('Copying files from %s to %s ...' % (configdir, master_workdir))
+    print('Copying files from {} to {} ...'.format(configdir, master_workdir))
     shutil.copytree(configdir, master_workdir)
-    print('Generating buildbot files at %s ...' % master_workdir)
+    print('Generating buildbot files at {} ...'.format(master_workdir))
     with open(os.path.join(master_workdir, 'buildbot.tac'), 'w') as f:
         f.write(test_buildbot_master_tac)
     mkpwd_cmd = ['./make_passwords_json.py']
@@ -158,13 +158,13 @@ def start_master(master_workdir):
         while twistd_process.poll() is None:
             if check_tcp_port_open('localhost', 8710):
                 print('Test buildmaster ready!.\n\n'
-                     + ' - See buildmaster log:\n'
-                     + '     tail -f %s\n' % buildmasterlog
-                     + ' - Open a browser to:\n'
-                     + '     http://localhost:8710\n'
-                     + ' - Credentials for triggering manual builds:\n'
-                     + '     login:     committer@webkit.org\n'
-                     + '     password:  committerpassword\n')
+                      + ' - See buildmaster log:\n'
+                      + '     tail -f {}\n'.format(buildmasterlog)
+                      + ' - Open a browser to:\n'
+                      + '     http://localhost:8710\n'
+                      + ' - Credentials for triggering manual builds:\n'
+                      + '     login:     committer@webkit.org\n'
+                      + '     password:  committerpassword\n')
                 with open(os.path.join(master_workdir, '.master-is-ready'), 'w') as f:
                     f.write('ready')
                 twistd_process.wait()
@@ -182,7 +182,7 @@ def start_master(master_workdir):
             print_if_error_stdout_stderr(upgrade_cmd, upgrade_process.returncode, stdout, stderr)
         else:
             print_if_error_stdout_stderr(twistd_cmd, twistd_process.returncode, stdout, stderr,
-                                         'Check the log at %s' % buildmasterlog)
+                                         'Check the log at {}'.format(buildmasterlog))
     return 0
 
 
@@ -191,7 +191,7 @@ def get_list_workers(master_workdir):
     with open(password_list) as f:
         passwords = json.load(f)
     list_workers = []
-    for worker in passwords.keys():
+    for worker in passwords:
         list_workers.append(str(worker))
     return list_workers
 
@@ -203,7 +203,7 @@ def start_worker(base_workdir, worker):
     worker_workdir = os.path.join(base_workdir, worker)
     os.mkdir(worker_workdir)
     with open(os.path.join(worker_workdir, 'buildbot.tac'), 'w') as f:
-        f.write(worker_buildbot_master_tac % {'worker': worker})
+        f.write(worker_buildbot_master_tac.format(worker))
     twistd_cmd = ['twistd', '-l', 'worker.log', '-noy', 'buildbot.tac']
     twistd_worker_process = subprocess.Popen(twistd_cmd, cwd=worker_workdir,
         stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -213,12 +213,12 @@ def start_worker(base_workdir, worker):
         twistd_worker_process.kill()
         return
     print_if_error_stdout_stderr(twistd_cmd, twistd_worker_process.returncode, stdout, stderr,
-                                 'Check the log at %s' % os.path.join(worker_workdir, 'worker.log'))
+                                 'Check the log at {}'.format(os.path.join(worker_workdir, 'worker.log')))
 
 
 def clean(temp_dir):
     if os.path.isdir(temp_dir):
-        print('\n\nCleaning %s ... \n' % (temp_dir))
+        print('\n\nCleaning {} ... \n'.format(temp_dir))
         # shutil.rmtree can fail if we hold an open file descriptor on temp_dir
         # (which is very likely when cleaning) or if temp_dir is a NFS mount.
         # Use rm instead that always works.
@@ -239,7 +239,7 @@ def check_buildbot_installed():
 
 def setup_virtualenv(base_workdir_temp):
     if cmd_exists('virtualenv'):
-        print('Setting up virtualenv at %s ... ' % base_workdir_temp)
+        print('Setting up virtualenv at {} ... '.format(base_workdir_temp))
         virtualenv_cmd = ['virtualenv', '-p', 'python2', 'venv']
         virtualenv_process = subprocess.Popen(virtualenv_cmd, cwd=base_workdir_temp,
                                                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -281,10 +281,10 @@ def configdir_is_valid(configdir):
 def main(configdir, basetempdir=None, no_clean=False, no_workers=False, use_system_version=False):
     configdir = os.path.abspath(os.path.realpath(configdir))
     if not configdir_is_valid(configdir):
-        raise ValueError('The configdir %s dont contains the buildmaster files expected by this script' % configdir)
+        raise ValueError('The configdir {} dont contains the buildmaster files expected by this script'.format(configdir))
     base_workdir_temp = os.path.abspath(os.path.realpath(create_tempdir(basetempdir)))
     if base_workdir_temp.startswith(configdir):
-        raise ValueError('The temporal working directory %s cant be located inside configdir %s' % (base_workdir_temp, configdir))
+        raise ValueError('The temporal working directory {} cant be located inside configdir {}'.format(base_workdir_temp, configdir))
     try:
         if not use_system_version:
             setup_virtualenv(base_workdir_temp)
@@ -295,9 +295,9 @@ def main(configdir, basetempdir=None, no_clean=False, no_workers=False, use_syst
         wait_for_master_ready(master_workdir)
         if no_workers:
             print(' - To manually attach a build worker use this info:\n'
-                 + '     TCP port for the worker-to-master connection: 17000\n'
-                 + '     worker-id: the one defined at %s\n' % os.path.join(master_workdir, 'passwords.json')
-                 + '     password:  1234\n')
+                  + '     TCP port for the worker-to-master connection: 17000\n'
+                  + '     worker-id: the one defined at {}\n'.format(os.path.join(master_workdir, 'passwords.json'))
+                  + '     password:  1234\n')
         else:
             worker_runners = []
             for worker in get_list_workers(master_workdir):
@@ -305,8 +305,8 @@ def main(configdir, basetempdir=None, no_clean=False, no_workers=False, use_syst
                 worker_runner.start()
                 worker_runners.append(worker_runner)
             print(' - Workers started!.\n'
-                 + '     Check the log for each one at %s/${worker-name-id}/worker.log\n' % base_workdir_temp
-                 + '     tail -f %s/*/worker.log\n' % base_workdir_temp)
+                  + '     Check the log for each one at {}/${worker-name-id}/worker.log\n'.format(base_workdir_temp)
+                  + '     tail -f {}/*/worker.log\n'.format(base_workdir_temp))
             for worker_runner in worker_runners:
                 worker_runner.join()
         master_runner.join()

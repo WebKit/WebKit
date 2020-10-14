@@ -2,9 +2,7 @@
 
 import sys
 import os
-import StringIO
 import unittest
-import make_passwords_json
 import json
 
 # Show DepricationWarnings come from buildbot - it isn't default with Python 2.7 or newer.

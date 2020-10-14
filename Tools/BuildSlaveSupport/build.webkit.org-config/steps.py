@@ -339,7 +339,7 @@ class UploadBuiltProduct(transfer.FileUpload):
     def __init__(self, **kwargs):
         kwargs['slavesrc'] = self.slavesrc
         kwargs['masterdest'] = self.masterdest
-        kwargs['mode'] = 0644
+        kwargs['mode'] = 0o644
         kwargs['blocksize'] = 1024 * 256
         transfer.FileUpload.__init__(self, **kwargs)
 
@@ -1030,7 +1030,7 @@ class UploadTestResults(transfer.FileUpload):
     def __init__(self, **kwargs):
         kwargs['slavesrc'] = self.slavesrc
         kwargs['masterdest'] = self.masterdest
-        kwargs['mode'] = 0644
+        kwargs['mode'] = 0o644
         kwargs['blocksize'] = 1024 * 256
         transfer.FileUpload.__init__(self, **kwargs)
 
