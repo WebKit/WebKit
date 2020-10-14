@@ -129,13 +129,6 @@
 #include "TextureMapperContextAttributes.h"
 #include "TextureMapperPlatformLayerBuffer.h"
 #include "TextureMapperPlatformLayerProxy.h"
-#if USE(CAIRO) && ENABLE(ACCELERATED_2D_CANVAS)
-#include <cairo-gl.h>
-#include "GLContext.h"
-#include "PlatformDisplay.h"
-// cairo-gl.h ends up including X.h, which defines None, breaking MediaPlayer:: enums.
-#undef None
-#endif
 #endif // USE(TEXTURE_MAPPER_GL)
 
 #if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
@@ -3218,40 +3211,7 @@ bool MediaPlayerPrivateGStreamer::copyVideoTextureToPlatformTexture(GraphicsCont
 
 NativeImagePtr MediaPlayerPrivateGStreamer::nativeImageForCurrentTime()
 {
-#if USE(CAIRO) && ENABLE(ACCELERATED_2D_CANVAS)
-    if (m_isUsingFallbackVideoSink)
-        return nullptr;
-
-    auto sampleLocker = holdLock(m_sampleMutex);
-
-    if (!GST_IS_SAMPLE(m_sample.get()))
-        return nullptr;
-
-    std::unique_ptr<GstVideoFrameHolder> frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_videoDecoderPlatform, m_textureMapperFlags, true);
-
-    std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = frameHolder->platformLayerBuffer();
-    if (!layerBuffer)
-        return nullptr;
-
-    auto size = frameHolder->size();
-    if (m_videoSourceOrientation.usesWidthAsHeight())
-        size = size.transposedSize();
-
-    GLContext* context = PlatformDisplay::sharedDisplayForCompositing().sharingGLContext();
-    context->makeContextCurrent();
-
-    if (!m_videoTextureCopier)
-        m_videoTextureCopier = makeUnique<VideoTextureCopierGStreamer>(TEXTURE_COPIER_COLOR_CONVERT_FLAG);
-
-    frameHolder->waitForCPUSync();
-
-    if (!m_videoTextureCopier->copyVideoTextureToPlatformTexture(*layerBuffer.get(), size, 0, GL_TEXTURE_2D, 0, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, false, m_videoSourceOrientation))
-        return nullptr;
-
-    return adoptRef(cairo_gl_surface_create_for_texture(context->cairoDevice(), CAIRO_CONTENT_COLOR_ALPHA, m_videoTextureCopier->resultTexture(), size.width(), size.height()));
-#else
     return nullptr;
-#endif
 }
 #endif // USE(GSTREAMER_GL)
 

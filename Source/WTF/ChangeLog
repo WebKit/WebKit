@@ -1,3 +1,13 @@
+2020-10-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove ACCELERATED_2D_CANVAS build flags and guarded code
+        https://bugs.webkit.org/show_bug.cgi?id=217603
+
+        Reviewed by Carlos Garcia Campos.
+
+        * wtf/PlatformEnable.h:
+        Remove the fallback ENABLE_ACCELERATED_2D_CANVAS definition.
+
 2020-10-13  Chris Dumez  <cdumez@apple.com>
 
         WebAudio tests are crashing in debug when enabling the GPU process

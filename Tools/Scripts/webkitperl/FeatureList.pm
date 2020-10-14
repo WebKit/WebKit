@@ -49,7 +49,6 @@ BEGIN {
 }
 
 my (
-    $accelerated2DCanvasSupport,
     $accessibilityIsolatedTreeSupport,
     $applePaySessionV3Support,
     $applePaySessionV4Support,
@@ -196,9 +195,6 @@ prohibitUnknownPort();
 my @features = (
     { option => "3d-rendering", desc => "Toggle 3D rendering support",
       define => "ENABLE_3D_TRANSFORMS", value => \$threeDTransformsSupport },
-
-    { option => "accelerated-2d-canvas", desc => "Toggle Accelerated 2D Canvas support",
-      define => "ENABLE_ACCELERATED_2D_CANVAS", value => \$accelerated2DCanvasSupport },
 
     { option => "accessibility-isolated-tree", desc => "Toggle accessibility isolated tree support",
       define => "ENABLE_ACCESSIBILITY_ISOLATED_TREE", value => \$accessibilityIsolatedTreeSupport },

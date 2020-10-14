@@ -26,10 +26,6 @@
 #include <GL/glx.h>
 #include <cairo.h>
 
-#if ENABLE(ACCELERATED_2D_CANVAS)
-#include <cairo-gl.h>
-#endif
-
 namespace WebCore {
 
 #if !defined(PFNGLXSWAPINTERVALSGIPROC)
@@ -325,9 +321,6 @@ GLContextGLX::GLContextGLX(PlatformDisplay& display, XUniqueGLXContext&& context
 
 GLContextGLX::~GLContextGLX()
 {
-    if (m_cairoDevice)
-        cairo_device_destroy(m_cairoDevice);
-
     if (m_context) {
         // Due to a bug in some nvidia drivers, we need bind the default framebuffer in a context before
         // destroying it to avoid a crash. In order to do that, we need to make the context current and,
@@ -399,18 +392,6 @@ void GLContextGLX::swapInterval(int interval)
     if (!hasSGISwapControlExtension(m_x11Display))
         return;
     glXSwapIntervalSGI(interval);
-}
-
-cairo_device_t* GLContextGLX::cairoDevice()
-{
-    if (m_cairoDevice)
-        return m_cairoDevice;
-
-#if ENABLE(ACCELERATED_2D_CANVAS) && CAIRO_HAS_GLX_FUNCTIONS
-    m_cairoDevice = cairo_glx_device_create(m_x11Display, m_context.get());
-#endif
-
-    return m_cairoDevice;
 }
 
 #if ENABLE(GRAPHICS_CONTEXT_GL)

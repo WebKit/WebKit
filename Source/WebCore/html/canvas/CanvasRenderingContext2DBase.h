@@ -369,10 +369,6 @@ protected:
 
     bool hasInvertibleTransform() const override { return state().hasInvertibleTransform; }
 
-#if ENABLE(ACCELERATED_2D_CANVAS)
-    PlatformLayer* platformLayer() const override;
-#endif
-
     static const unsigned MaxSaveCount = 1024 * 16;
     Vector<State, 1> m_stateStack;
     unsigned m_unrealizedSaveCount { 0 };

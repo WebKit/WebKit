@@ -63,9 +63,6 @@ private:
     bool canRenderToDefaultFramebuffer() override;
     IntSize defaultFrameBufferSize() override;
     void swapInterval(int) override;
-#if USE(CAIRO)
-    cairo_device_t* cairoDevice() override;
-#endif
     bool isEGLContext() const override { return true; }
 
 #if ENABLE(GRAPHICS_CONTEXT_GL)
@@ -117,9 +114,6 @@ private:
 #endif
 #if USE(WPE_RENDERER)
     struct wpe_renderer_backend_egl_offscreen_target* m_wpeTarget { nullptr };
-#endif
-#if USE(CAIRO)
-    cairo_device_t* m_cairoDevice { nullptr };
 #endif
 };
 

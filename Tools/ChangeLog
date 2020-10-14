@@ -1,3 +1,13 @@
+2020-10-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove ACCELERATED_2D_CANVAS build flags and guarded code
+        https://bugs.webkit.org/show_bug.cgi?id=217603
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/webkitperl/FeatureList.pm:
+        Remove the ACCELERATED_2D_CANVAS feature flag.
+
 2020-10-14  Diego Pino Garcia  <dpino@igalia.com>
 
         [webkitpy] Allow passing subtests to GLIB API testrunner

@@ -44,7 +44,6 @@ include(GStreamerDefinitions)
 # Public options shared with other WebKit ports. Do not add any options here
 # without approval from a WPE reviewer. There must be strong reason to support
 # changing the value of the option.
-WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ACCELERATED_2D_CANVAS PUBLIC OFF)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ACCESSIBILITY PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ENCRYPTED_MEDIA PUBLIC ${ENABLE_EXPERIMENTAL_FEATURES})
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_THUNDER PRIVATE OFF)
@@ -150,10 +149,6 @@ if (USE_WOFF2)
     if (NOT WOFF2_FOUND)
         message(FATAL_ERROR "liwoff2dec is needed for USE_WOFF2.")
     endif ()
-endif ()
-
-if (ENABLE_ACCELERATED_2D_CANVAS)
-    find_package(CairoGL 1.10.2 REQUIRED COMPONENTS cairo-egl)
 endif ()
 
 if (ENABLE_WEB_CRYPTO)

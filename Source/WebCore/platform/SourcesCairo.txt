@@ -31,7 +31,6 @@ platform/graphics/cairo/GraphicsContextGLCairo.cpp
 platform/graphics/cairo/GraphicsContextCairo.cpp
 platform/graphics/cairo/GraphicsContextImplCairo.cpp
 platform/graphics/cairo/ImageBufferCairoBackend.cpp
-platform/graphics/cairo/ImageBufferCairoGLSurfaceBackend.cpp
 platform/graphics/cairo/ImageBufferCairoImageSurfaceBackend.cpp
 platform/graphics/cairo/ImageBufferCairoSurfaceBackend.cpp
 platform/graphics/cairo/ImageBufferUtilitiesCairo.cpp

@@ -330,7 +330,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cv/PixelBufferConformerCV.cpp
     platform/graphics/cv/VideoTextureCopierCV.cpp
 
-    platform/graphics/gpu/Texture.cpp
     platform/graphics/gpu/TilingData.cpp
 
     platform/graphics/mac/ColorMac.mm
