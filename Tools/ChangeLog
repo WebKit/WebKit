@@ -1,3 +1,21 @@
+2020-10-14  Keith Rollin  <krollin@apple.com>
+
+        'make debug' fails on the repository root if ccache is installed on mac after r262147
+        https://bugs.webkit.org/show_bug.cgi?id=212469
+        <rdar://problem/70278783>
+
+        Reviewed by David Kilzer.
+
+        ccache is frequently installed in /usr/local/bin. However, when
+        running under XCBuild, $PATH does not include /usr/local/bin. This
+        leaves in a situation where the check for the existence of ccache in
+        Makefile.shared succeeds, but the use of ccache in ccache-wrapper
+        fails. To address this, look for ccache in a few well-known places
+        rather than just relying on $PATH. If it still can't be found, fall
+        back to compiling normally without ccache.
+
+        * ccache/ccache-wrapper:
+
 2020-10-14  Sam Weinig  <weinig@apple.com>
 
         [Testing] Support configuring any preference from test headers for WebKitTestRunner
