@@ -999,6 +999,7 @@
             "com.apple.containermanagerd"
             "com.apple.diagnosticd"
             "com.apple.iconservices"
+            "com.apple.iconservices.store"
             "com.apple.tccd"
             "com.apple.BluetoothServices"
 

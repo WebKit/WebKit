@@ -158,8 +158,7 @@ struct WebPageCreationParameters {
     Optional<WebCore::ViewportArguments> overrideViewportArguments;
 #endif
 #if ENABLE(ATTACHMENT_ELEMENT)
-    Optional<SandboxExtension::Handle> frontboardExtensionHandle;
-    Optional<SandboxExtension::Handle> iconServicesExtensionHandle;
+    Optional<SandboxExtension::HandleArray> attachmentElementExtensionHandles;
 #endif
 #if PLATFORM(IOS_FAMILY)
     WebCore::FloatSize screenSize;

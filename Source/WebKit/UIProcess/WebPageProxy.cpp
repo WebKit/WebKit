@@ -7654,6 +7654,22 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     m_process->processTerminated();
 }
 
+#if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(COCOA)
+static const Vector<ASCIILiteral>& attachmentElementServices()
+{
+    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
+#if PLATFORM(IOS_FAMILY)
+        "com.apple.frontboard.systemappservices"_s,
+#endif
+        "com.apple.iconservices"_s,
+#if PLATFORM(MAC)
+        "com.apple.iconservices.store"_s,
+#endif
+    });
+    return services;
+}
+#endif
+
 WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& process, DrawingAreaProxy& drawingArea, RefPtr<API::WebsitePolicies>&& websitePolicies)
 {
     WebPageCreationParameters parameters;
@@ -7821,13 +7837,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
 #if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(COCOA)
     if (m_preferences->attachmentElementEnabled() && !m_process->hasIssuedAttachmentElementRelatedSandboxExtensions()) {
-        SandboxExtension::Handle handle;
-#if PLATFORM(IOS_FAMILY)
-        SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices"_s, WTF::nullopt, handle);
-        parameters.frontboardExtensionHandle = WTFMove(handle);
-#endif
-        SandboxExtension::createHandleForMachLookup("com.apple.iconservices"_s, WTF::nullopt, handle);
-        parameters.iconServicesExtensionHandle = WTFMove(handle);
+        parameters.attachmentElementExtensionHandles = SandboxExtension::createHandlesForMachLookup(attachmentElementServices(), WTF::nullopt);
         m_process->setHasIssuedAttachmentElementRelatedSandboxExtensions();
     }
 #endif

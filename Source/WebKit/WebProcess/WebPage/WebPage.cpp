@@ -571,10 +571,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         CrossOriginAccessControlCheckDisabler::singleton().setCrossOriginAccessControlCheckEnabled(false);
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    if (parameters.frontboardExtensionHandle)
-        SandboxExtension::consumePermanently(*parameters.frontboardExtensionHandle);
-    if (parameters.iconServicesExtensionHandle)
-        SandboxExtension::consumePermanently(*parameters.iconServicesExtensionHandle);
+    if (parameters.attachmentElementExtensionHandles)
+        SandboxExtension::consumePermanently(*parameters.attachmentElementExtensionHandles);
 #endif
 
     m_page = makeUnique<Page>(WTFMove(pageConfiguration));

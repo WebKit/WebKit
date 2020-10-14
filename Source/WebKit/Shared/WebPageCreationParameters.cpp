@@ -97,8 +97,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    encoder << frontboardExtensionHandle;
-    encoder << iconServicesExtensionHandle;
+    encoder << attachmentElementExtensionHandles;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -328,17 +327,11 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    Optional<Optional<SandboxExtension::Handle>> frontboardExtensionHandle;
-    decoder >> frontboardExtensionHandle;
-    if (!frontboardExtensionHandle)
+    Optional<Optional<SandboxExtension::HandleArray>> attachmentElementExtensionHandles;
+    decoder >> attachmentElementExtensionHandles;
+    if (!attachmentElementExtensionHandles)
         return WTF::nullopt;
-    parameters.frontboardExtensionHandle = WTFMove(*frontboardExtensionHandle);
-
-    Optional<Optional<SandboxExtension::Handle>> iconServicesExtensionHandle;
-    decoder >> iconServicesExtensionHandle;
-    if (!iconServicesExtensionHandle)
-        return WTF::nullopt;
-    parameters.iconServicesExtensionHandle = WTFMove(*iconServicesExtensionHandle);
+    parameters.attachmentElementExtensionHandles = WTFMove(*attachmentElementExtensionHandles);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
