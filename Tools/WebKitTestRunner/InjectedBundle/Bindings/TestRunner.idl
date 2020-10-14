@@ -299,7 +299,6 @@ interface TestRunner {
     boolean isStatisticsEphemeral();
     undefined installStatisticsDidModifyDataRecordsCallback(object callback);
     undefined installStatisticsDidScanDataRecordsCallback(object callback);
-    undefined installStatisticsDidRunTelemetryCallback(object callback);
     undefined setStatisticsDebugMode(boolean value, object completionHandler);
     undefined setStatisticsPrevalentResourceForDebugMode(DOMString hostName, object completionHandler);
     undefined setStatisticsLastSeen(DOMString hostName, double seconds, object completionHandler);
@@ -328,7 +327,6 @@ interface TestRunner {
     boolean statisticsNotifyObserver();
     undefined statisticsProcessStatisticsAndDataRecords();
     undefined statisticsUpdateCookieBlocking(object completionHandler);
-    undefined statisticsSubmitTelemetry();
     undefined setStatisticsIsRunningTest(boolean value);
     undefined setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(boolean value);
     undefined setStatisticsMinimumTimeBetweenDataRecordsRemoval(double seconds);

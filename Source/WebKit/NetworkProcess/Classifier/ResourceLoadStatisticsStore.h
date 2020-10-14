@@ -29,7 +29,6 @@
 
 #include "ResourceLoadStatisticsClassifier.h"
 #include "WebResourceLoadStatisticsStore.h"
-#include "WebResourceLoadStatisticsTelemetry.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/CompletionHandler.h>
@@ -153,13 +152,10 @@ public:
     void setPruneEntriesDownTo(size_t pruneTargetCount);
     void resetParametersToDefaultValues();
 
-    virtual void calculateAndSubmitTelemetry(NotifyPagesForTesting = NotifyPagesForTesting::No) const = 0;
-
     void setNotifyPagesWhenDataRecordsWereScanned(bool);
     void setIsRunningTest(bool);
     bool shouldSkip(const RegistrableDomain&) const;
     void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
-    void setShouldSubmitTelemetry(bool);
     void setTimeToLiveUserInteraction(Seconds);
     void setMinimumTimeBetweenDataRecordsRemoval(Seconds);
     void setGrandfatheringTime(Seconds);
@@ -240,7 +236,6 @@ protected:
         bool shouldNotifyPagesWhenDataRecordsWereScanned { false };
         bool shouldClassifyResourcesBeforeDataRecordsRemoval { true };
         size_t minimumTopFrameRedirectsForSameSiteStrictEnforcement { 10 };
-        bool shouldSubmitTelemetry { true };
         bool isRunningTest { false };
     };
     const Parameters& parameters() const { return m_parameters; }

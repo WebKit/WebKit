@@ -42,7 +42,6 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
-#include "WebResourceLoadStatisticsTelemetry.h"
 #include "WebsiteDataFetchOption.h"
 #include <WebCore/CookieJar.h>
 #include <WebCore/DiagnosticLoggingClient.h>
@@ -145,16 +144,6 @@ void WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecords
             m_statisticsStore->setShouldClassifyResourcesBeforeDataRecordsRemoval(value);
 
         postTaskReply(WTFMove(completionHandler));
-    });
-}
-
-void WebResourceLoadStatisticsStore::setShouldSubmitTelemetry(bool value)
-{
-    ASSERT(RunLoop::isMain());
-
-    postTask([this, value] {
-        if (m_statisticsStore)
-            m_statisticsStore->setShouldSubmitTelemetry(value);
     });
 }
 
@@ -728,22 +717,9 @@ void WebResourceLoadStatisticsStore::performDailyTasks()
     postTask([this] {
         if (m_statisticsStore) {
             m_statisticsStore->includeTodayAsOperatingDateIfNecessary();
-            m_statisticsStore->calculateAndSubmitTelemetry();
             if (is<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore))
                 downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore).runIncrementalVacuumCommand();
         }
-    });
-}
-
-void WebResourceLoadStatisticsStore::submitTelemetry(CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    postTask([this, completionHandler = WTFMove(completionHandler)]() mutable  {
-        if (!m_statisticsStore)
-            return;
-        m_statisticsStore->calculateAndSubmitTelemetry(NotifyPagesForTesting::Yes);
-        postTaskReply(WTFMove(completionHandler));
     });
 }
 
@@ -1412,13 +1388,6 @@ void WebResourceLoadStatisticsStore::sendDiagnosticMessageWithValue(const String
     ASSERT(RunLoop::isMain());
     if (m_networkSession)
         const_cast<WebResourceLoadStatisticsStore*>(this)->networkSession()->logDiagnosticMessageWithValue(message, description, value, sigDigits, shouldSample);
-}
-
-void WebResourceLoadStatisticsStore::notifyPageStatisticsTelemetryFinished(unsigned numberOfPrevalentResources, unsigned numberOfPrevalentResourcesWithUserInteraction, unsigned numberOfPrevalentResourcesWithoutUserInteraction, unsigned topPrevalentResourceWithUserInteractionDaysSinceUserInteraction, unsigned medianDaysSinceUserInteractionPrevalentResourceWithUserInteraction, unsigned top3NumberOfPrevalentResourcesWithUI, unsigned top3MedianSubFrameWithoutUI, unsigned top3MedianSubResourceWithoutUI, unsigned top3MedianUniqueRedirectsWithoutUI, unsigned top3MedianDataRecordsRemovedWithoutUI) const
-{
-    ASSERT(RunLoop::isMain());
-    if (m_networkSession)
-        const_cast<WebResourceLoadStatisticsStore*>(this)->networkSession()->notifyPageStatisticsTelemetryFinished(numberOfPrevalentResources, numberOfPrevalentResourcesWithUserInteraction, numberOfPrevalentResourcesWithoutUserInteraction, topPrevalentResourceWithUserInteractionDaysSinceUserInteraction, medianDaysSinceUserInteractionPrevalentResourceWithUserInteraction, top3NumberOfPrevalentResourcesWithUI, top3MedianSubFrameWithoutUI, top3MedianSubResourceWithoutUI, top3MedianUniqueRedirectsWithoutUI, top3MedianDataRecordsRemovedWithoutUI);
 }
 
 void WebResourceLoadStatisticsStore::aggregatedThirdPartyData(CompletionHandler<void(Vector<WebResourceLoadStatisticsStore::ThirdPartyData>&&)>&& completionHandler)

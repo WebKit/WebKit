@@ -1088,16 +1088,6 @@ void NetworkProcessProxy::resetParametersToDefaultValues(PAL::SessionID sessionI
     });
 }
 
-void NetworkProcessProxy::submitTelemetry(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
-{
-    if (!canSendMessage()) {
-        completionHandler();
-        return;
-    }
-    
-    sendWithAsyncReply(Messages::NetworkProcess::SubmitTelemetry(sessionID), WTFMove(completionHandler));
-}
-
 void NetworkProcessProxy::scheduleClearInMemoryAndPersistent(PAL::SessionID sessionID, ShouldGrandfatherStatistics shouldGrandfather, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {
@@ -1129,23 +1119,6 @@ void NetworkProcessProxy::notifyWebsiteDataDeletionForRegistrableDomainsFinished
 void NetworkProcessProxy::notifyWebsiteDataScanForRegistrableDomainsFinished()
 {
     WebProcessProxy::notifyWebsiteDataScanForRegistrableDomainsFinished();
-}
-
-void NetworkProcessProxy::notifyResourceLoadStatisticsTelemetryFinished(unsigned numberOfPrevalentResources, unsigned numberOfPrevalentResourcesWithUserInteraction, unsigned numberOfPrevalentResourcesWithoutUserInteraction, unsigned topPrevalentResourceWithUserInteractionDaysSinceUserInteraction, unsigned medianDaysSinceUserInteractionPrevalentResourceWithUserInteraction, unsigned top3NumberOfPrevalentResourcesWithUI, unsigned top3MedianSubFrameWithoutUI, unsigned top3MedianSubResourceWithoutUI, unsigned top3MedianUniqueRedirectsWithoutUI, unsigned top3MedianDataRecordsRemovedWithoutUI)
-{
-    API::Dictionary::MapType messageBody;
-    messageBody.set("NumberOfPrevalentResources"_s, API::UInt64::create(numberOfPrevalentResources));
-    messageBody.set("NumberOfPrevalentResourcesWithUserInteraction"_s, API::UInt64::create(numberOfPrevalentResourcesWithUserInteraction));
-    messageBody.set("NumberOfPrevalentResourcesWithoutUserInteraction"_s, API::UInt64::create(numberOfPrevalentResourcesWithoutUserInteraction));
-    messageBody.set("TopPrevalentResourceWithUserInteractionDaysSinceUserInteraction"_s, API::UInt64::create(topPrevalentResourceWithUserInteractionDaysSinceUserInteraction));
-    messageBody.set("MedianDaysSinceUserInteractionPrevalentResourceWithUserInteraction"_s, API::UInt64::create(medianDaysSinceUserInteractionPrevalentResourceWithUserInteraction));
-    messageBody.set("Top3NumberOfPrevalentResourcesWithUI"_s, API::UInt64::create(top3NumberOfPrevalentResourcesWithUI));
-    messageBody.set("Top3MedianSubFrameWithoutUI"_s, API::UInt64::create(top3MedianSubFrameWithoutUI));
-    messageBody.set("Top3MedianSubResourceWithoutUI"_s, API::UInt64::create(top3MedianSubResourceWithoutUI));
-    messageBody.set("Top3MedianUniqueRedirectsWithoutUI"_s, API::UInt64::create(top3MedianUniqueRedirectsWithoutUI));
-    messageBody.set("Top3MedianDataRecordsRemovedWithoutUI"_s, API::UInt64::create(top3MedianDataRecordsRemovedWithoutUI));
-
-    WebProcessProxy::notifyPageStatisticsTelemetryFinished(API::Dictionary::create(messageBody).ptr());
 }
 
 void NetworkProcessProxy::didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag> navigationDataTransfer, WebPageProxyIdentifier webPageProxyID, PageIdentifier webPageID)

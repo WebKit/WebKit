@@ -471,13 +471,6 @@ void WKWebsiteDataStoreStatisticsUpdateCookieBlocking(WKWebsiteDataStoreRef data
 #endif
 }
 
-void WKWebsiteDataStoreStatisticsSubmitTelemetry(WKWebsiteDataStoreRef dataStoreRef)
-{
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    WebKit::toImpl(dataStoreRef)->submitTelemetry();
-#endif
-}
-
 void WKWebsiteDataStoreSetStatisticsNotifyPagesWhenDataRecordsWereScanned(WKWebsiteDataStoreRef dataStoreRef, bool value)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

@@ -90,8 +90,6 @@ public:
     void setTopFrameUniqueRedirectTo(const TopFrameDomain&, const RedirectDomain&) override;
     void setTopFrameUniqueRedirectFrom(const TopFrameDomain&, const RedirectDomain&) override;
 
-    void calculateAndSubmitTelemetry(NotifyPagesForTesting = NotifyPagesForTesting::No) const override;
-
     bool areAllThirdPartyCookiesBlockedUnder(const TopFrameDomain&) override;
     CookieAccess cookieAccess(const ResourceLoadStatistics&, const TopFrameDomain&);
     void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&) override;

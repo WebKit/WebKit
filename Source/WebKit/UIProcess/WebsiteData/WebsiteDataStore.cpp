@@ -1445,13 +1445,6 @@ void WebsiteDataStore::resetParametersToDefaultValues(CompletionHandler<void()>&
     networkProcess().resetParametersToDefaultValues(m_sessionID, WTFMove(completionHandler));
 }
 
-void WebsiteDataStore::submitTelemetry()
-{
-    ASSERT(RunLoop::isMain());
-    
-    networkProcess().submitTelemetry(m_sessionID, [] { });
-}
-
 void WebsiteDataStore::scheduleClearInMemoryAndPersistent(WallTime modifiedSince, ShouldGrandfatherStatistics shouldGrandfather, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());

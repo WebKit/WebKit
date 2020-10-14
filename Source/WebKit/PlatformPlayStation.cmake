@@ -23,7 +23,6 @@ list(APPEND WebKit_SOURCES
     GPUProcess/playstation/GPUProcessPlayStation.cpp
 
     NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
-    NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.cpp
 
     NetworkProcess/Cookies/curl/WebCookieManagerCurl.cpp
 

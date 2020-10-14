@@ -29,7 +29,6 @@ GPUProcess/media/RemoteAudioDestinationManager.cpp
 GPUProcess/media/gstreamer/RemoteMediaPlayerProxyGStreamer.cpp
 
 NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
-NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.cpp
 
 NetworkProcess/Cookies/soup/WebCookieManagerSoup.cpp
 

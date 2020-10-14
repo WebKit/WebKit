@@ -3224,11 +3224,6 @@ void TestController::statisticsUpdateCookieBlocking()
     m_currentInvocation->didSetBlockCookiesForHost();
 }
 
-void TestController::statisticsSubmitTelemetry()
-{
-    WKWebsiteDataStoreStatisticsSubmitTelemetry(websiteDataStore());
-}
-
 void TestController::setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool value)
 {
     WKWebsiteDataStoreSetStatisticsNotifyPagesWhenDataRecordsWereScanned(websiteDataStore(), value);

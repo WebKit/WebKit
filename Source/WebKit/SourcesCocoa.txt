@@ -30,7 +30,6 @@ NetworkProcess/cocoa/NetworkProcessCocoa.mm
 NetworkProcess/cocoa/NetworkSessionCocoa.mm
 
 NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
-NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.cpp
 
 NetworkProcess/Cookies/mac/WebCookieManagerMac.mm
 

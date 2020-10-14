@@ -723,7 +723,6 @@ http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redir
 http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-unique-redirects-to.html [ Pass ]
 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store.html [ Pass ]
 http/tests/resourceLoadStatistics/grandfathering.html [ Pass ]
-webkit.org/b/180703 http/tests/resourceLoadStatistics/telemetry-generation.html [ Pass Failure ]
 http/tests/resourceLoadStatistics/prune-statistics.html [ Pass ]
 http/tests/resourceLoadStatistics [ Pass ]
 

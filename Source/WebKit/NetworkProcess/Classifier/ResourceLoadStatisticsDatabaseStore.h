@@ -52,28 +52,6 @@ static constexpr size_t numberOfBucketsPerStatistic = 5;
 static constexpr size_t numberOfStatistics = 7;
 static constexpr std::array<unsigned, numberOfBucketsPerStatistic> bucketSizes {{ 1, 3, 10, 50, 100 }};
 
-struct PrevalentResourceDatabaseTelemetry {
-    using Buckets = std::array<unsigned, numberOfBucketsPerStatistic>;
-
-    enum class Statistic {
-        NumberOfPrevalentResourcesWithUI,
-        MedianSubFrameWithoutUI,
-        MedianSubResourceWithoutUI,
-        MedianUniqueRedirectsWithoutUI,
-        MedianDataRecordsRemovedWithoutUI,
-        MedianTimesAccessedDueToUserInteractionWithoutUI,
-        MedianTimesAccessedDueToStorageAccessAPIWithoutUI
-    };
-
-    unsigned numberOfPrevalentResources;
-    unsigned numberOfPrevalentResourcesWithUserInteraction;
-    unsigned numberOfPrevalentResourcesWithoutUserInteraction;
-    unsigned topPrevalentResourceWithUserInteractionDaysSinceUserInteraction;
-    unsigned medianDaysSinceUserInteractionPrevalentResourceWithUserInteraction;
-
-    std::array<Buckets, numberOfStatistics> statistics;
-};
-
 class ResourceLoadStatisticsMemoryStore;
 
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
@@ -120,8 +98,6 @@ public:
     void setSubresourceUniqueRedirectFrom(const SubResourceDomain&, const RedirectDomain&) override;
     void setTopFrameUniqueRedirectTo(const TopFrameDomain&, const RedirectDomain&) override;
     void setTopFrameUniqueRedirectFrom(const TopFrameDomain&, const RedirectDomain&) override;
-
-    void calculateAndSubmitTelemetry(NotifyPagesForTesting = NotifyPagesForTesting::No) const override;
 
     void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&) override;
     void requestStorageAccess(SubFrameDomain&&, TopFrameDomain&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::StorageAccessScope, CompletionHandler<void(StorageAccessStatus)>&&) override;
@@ -171,13 +147,6 @@ private:
     void mergeStatistic(const ResourceLoadStatistics&);
     void merge(WebCore::SQLiteStatement*, const ResourceLoadStatistics&);
     void clearDatabaseContents();
-    unsigned getNumberOfPrevalentResources() const;
-    unsigned getNumberOfPrevalentResourcesWithUI() const;
-    unsigned getNumberOfPrevalentResourcesWithoutUI() const;
-    unsigned getTopPrevelentResourceDaysSinceUI() const;
-    void resetTelemetryPreparedStatements() const;
-    void resetTelemetryStatements() const;
-    void calculateTelemetryData(PrevalentResourceDatabaseTelemetry&) const;
     bool insertObservedDomain(const ResourceLoadStatistics&) WARN_UNUSED_RETURN;
     void insertDomainRelationships(const ResourceLoadStatistics&);
     void insertDomainRelationshipList(const String&, const HashSet<RegistrableDomain>&, unsigned);

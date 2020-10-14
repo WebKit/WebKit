@@ -35,7 +35,6 @@
 #include "PluginProcessProxy.h"
 #include "StorageAccessStatus.h"
 #include "WebProcessProxy.h"
-#include "WebResourceLoadStatisticsTelemetry.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/CookieJar.h>
 #include <WebCore/KeyedCoding.h>
@@ -169,12 +168,6 @@ void ResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecordsRem
 {
     ASSERT(!RunLoop::isMain());
     m_parameters.shouldClassifyResourcesBeforeDataRecordsRemoval = value;
-}
-
-void ResourceLoadStatisticsStore::setShouldSubmitTelemetry(bool value)
-{
-    ASSERT(!RunLoop::isMain());
-    m_parameters.shouldSubmitTelemetry = value;
 }
 
 void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& completionHandler)

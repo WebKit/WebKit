@@ -1,5 +1,30 @@
 2020-10-14  Kate Cheney  <katherine_cheney@apple.com>
 
+        Remove ResourceLoadStatistics telemetry
+        https://bugs.webkit.org/show_bug.cgi?id=217665
+        <rdar://problem/69748988>
+
+        Reviewed by Sam Weinig.
+
+        Telemetry calculation in ITP is unused, very complicated, a potential
+        privacy risk, and it causes flaky tests. We should remove it.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::installStatisticsDidRunTelemetryCallback): Deleted.
+        (WTR::TestRunner::statisticsDidRunTelemetryCallback): Deleted.
+        (WTR::TestRunner::statisticsSubmitTelemetry): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::statisticsSubmitTelemetry): Deleted.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
+2020-10-14  Kate Cheney  <katherine_cheney@apple.com>
+
         Remove _WKWebViewCategory from WKWebViewConfiguration
         https://bugs.webkit.org/show_bug.cgi?id=217679
         <rdar://problem/70260337>

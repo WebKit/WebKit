@@ -4228,8 +4228,6 @@
 		7AFBD36221E50F39005DBACB /* WebResourceLoadStatisticsStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebResourceLoadStatisticsStore.h; path = Classifier/WebResourceLoadStatisticsStore.h; sourceTree = "<group>"; };
 		7AFBD36421E51BAB005DBACB /* ResourceLoadStatisticsMemoryStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ResourceLoadStatisticsMemoryStore.cpp; path = Classifier/ResourceLoadStatisticsMemoryStore.cpp; sourceTree = "<group>"; };
 		7AFBD36521E51BAB005DBACB /* ResourceLoadStatisticsMemoryStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResourceLoadStatisticsMemoryStore.h; path = Classifier/ResourceLoadStatisticsMemoryStore.h; sourceTree = "<group>"; };
-		7AFBD36B21E54544005DBACB /* WebResourceLoadStatisticsTelemetry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebResourceLoadStatisticsTelemetry.h; path = Classifier/WebResourceLoadStatisticsTelemetry.h; sourceTree = "<group>"; };
-		7AFBD36C21E54544005DBACB /* WebResourceLoadStatisticsTelemetry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebResourceLoadStatisticsTelemetry.cpp; path = Classifier/WebResourceLoadStatisticsTelemetry.cpp; sourceTree = "<group>"; };
 		7AFBD36D21E546E3005DBACB /* PersistencyUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PersistencyUtils.h; sourceTree = "<group>"; };
 		7AFBD36E21E546E3005DBACB /* PersistencyUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PersistencyUtils.cpp; sourceTree = "<group>"; };
 		7C065F291C8CD95F00C2D950 /* WebUserContentControllerDataTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebUserContentControllerDataTypes.cpp; sourceTree = "<group>"; };
@@ -8438,8 +8436,6 @@
 				7A3FECA121F7C09700F267CD /* StorageAccessStatus.h */,
 				7A843A1A21E41FB200DEF663 /* WebResourceLoadStatisticsStore.cpp */,
 				7AFBD36221E50F39005DBACB /* WebResourceLoadStatisticsStore.h */,
-				7AFBD36C21E54544005DBACB /* WebResourceLoadStatisticsTelemetry.cpp */,
-				7AFBD36B21E54544005DBACB /* WebResourceLoadStatisticsTelemetry.h */,
 			);
 			name = Classifier;
 			sourceTree = "<group>";

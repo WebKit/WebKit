@@ -35,7 +35,6 @@
 #include "ResourceLoadStatisticsMemoryStore.h"
 #include "StorageAccessStatus.h"
 #include "WebProcessProxy.h"
-#include "WebResourceLoadStatisticsTelemetry.h"
 #include "WebsiteDataStore.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/DocumentStorageAccess.h>
@@ -234,8 +233,6 @@ constexpr auto createUniqueIndexSubresourceUniqueRedirectsTo = "CREATE UNIQUE IN
 constexpr auto createUniqueIndexSubresourceUniqueRedirectsFrom = "CREATE UNIQUE INDEX IF NOT EXISTS SubresourceUniqueRedirectsFrom_subresourceDomainID_fromDomainID on SubresourceUnderTopFrameDomains ( subresourceDomainID, fromDomainID );"_s;
 constexpr auto createUniqueIndexOperatingDates = "CREATE UNIQUE INDEX IF NOT EXISTS OperatingDates_year_month_monthDay on OperatingDates ( year, month, monthDay );"_s;
 
-const unsigned minimumPrevalentResourcesForTelemetry = 3;
-
 static const String ObservedDomainsTableSchemaV1()
 {
     return createObservedDomain;
@@ -295,11 +292,6 @@ ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebReso
     
     if (!m_database.turnOnIncrementalAutoVacuum())
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::turnOnIncrementalAutoVacuum failed, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
-
-    workQueue.dispatchAfter(5_s, [weakThis = makeWeakPtr(*this)] {
-        if (weakThis)
-            weakThis->calculateAndSubmitTelemetry();
-    });
 
     includeTodayAsOperatingDateIfNecessary();
     allStores().add(this);
@@ -942,11 +934,6 @@ static const StringView joinSubStatisticsForSorting()
         "GROUP BY domainID) ORDER BY sum DESC ";
 }
 
-static SQLiteStatement makeMedianWithUIQuery(SQLiteDatabase& database)
-{
-    return SQLiteStatement(database, makeString("SELECT mostRecentUserInteractionTime FROM ObservedDomains INNER JOIN (SELECT ", joinSubStatisticsForSorting(), ") as q ON ObservedDomains.domainID = q.domainID LIMIT 1 OFFSET ?"));
-}
-
 Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> ResourceLoadStatisticsDatabaseStore::getThirdPartyDataForSpecificFirstPartyDomains(unsigned thirdPartyDomainID, const RegistrableDomain& thirdPartyDomain) const
 {
     auto scopedStatement = this->scopedStatement(m_getAllSubStatisticsStatement, getAllSubStatisticsUnderDomainQuery, "getThirdPartyDataForSpecificFirstPartyDomains"_s);
@@ -992,266 +979,6 @@ Vector<WebResourceLoadStatisticsStore::ThirdPartyData> ResourceLoadStatisticsDat
         }
     }
     return thirdPartyDataList;
-}
-
-static std::pair<StringView, StringView> buildQueryStartAndEnd(PrevalentResourceDatabaseTelemetry::Statistic statistic)
-{
-    switch (statistic) {
-    case PrevalentResourceDatabaseTelemetry::Statistic::MedianSubFrameWithoutUI:
-        return std::make_pair("SELECT countSubFrameUnderTopFrame FROM ObservedDomains o INNER JOIN(SELECT countSubFrameUnderTopFrame, ", ") as q ON o.domainID = q.domainID LIMIT 1 OFFSET ?");
-    case PrevalentResourceDatabaseTelemetry::Statistic::MedianSubResourceWithoutUI:
-        return std::make_pair("SELECT countSubResourceUnderTopFrame FROM ObservedDomains o INNER JOIN(SELECT countSubResourceUnderTopFrame, ", ") as q ON o.domainID = q.domainID LIMIT 1 OFFSET ?");
-    case PrevalentResourceDatabaseTelemetry::Statistic::MedianUniqueRedirectsWithoutUI:
-        return std::make_pair("SELECT countUniqueRedirectTo FROM ObservedDomains o INNER JOIN(SELECT countUniqueRedirectTo, ", ") as q ON o.domainID = q.domainID LIMIT 1 OFFSET ?");
-    case PrevalentResourceDatabaseTelemetry::Statistic::MedianDataRecordsRemovedWithoutUI:
-        return std::make_pair("SELECT dataRecordsRemoved FROM (SELECT * FROM ObservedDomains o INNER JOIN(SELECT ", ") as q ON o.domainID = q.domainID) LIMIT 1 OFFSET ?");
-    case PrevalentResourceDatabaseTelemetry::Statistic::MedianTimesAccessedDueToUserInteractionWithoutUI:
-        return std::make_pair("SELECT timesAccessedAsFirstPartyDueToUserInteraction FROM (SELECT * FROM ObservedDomains o INNER JOIN(SELECT ", ") as q ON o.domainID = q.domainID) LIMIT 1 OFFSET ?");
-    case PrevalentResourceDatabaseTelemetry::Statistic::MedianTimesAccessedDueToStorageAccessAPIWithoutUI:
-        return std::make_pair("SELECT timesAccessedAsFirstPartyDueToStorageAccessAPI FROM (SELECT * FROM ObservedDomains o INNER JOIN(SELECT ", ") as q ON o.domainID = q.domainID) LIMIT 1 OFFSET ?");
-    case PrevalentResourceDatabaseTelemetry::Statistic::NumberOfPrevalentResourcesWithUI:
-        LOG_ERROR("ResourceLoadStatisticsDatabaseStore::makeMedianWithoutUIQuery was called for an incorrect statistic, undetermined query behavior will result.");
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-    return { };
-}
-
-static SQLiteStatement makeMedianWithoutUIQuery(SQLiteDatabase& database, PrevalentResourceDatabaseTelemetry::Statistic statistic)
-{
-    auto[queryStart, queryEnd] = buildQueryStartAndEnd(statistic);
-
-    return SQLiteStatement(database, makeString(queryStart, joinSubStatisticsForSorting(), queryEnd));
-}
-
-static unsigned getMedianOfPrevalentResourcesWithUserInteraction(SQLiteDatabase& database, unsigned prevalentResourcesWithUserInteractionCount)
-{
-    SQLiteStatement medianDaysSinceUIStatement = makeMedianWithUIQuery(database);
-
-    // Prepare
-    if (medianDaysSinceUIStatement.prepare() != SQLITE_OK) {
-        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %" PUBLIC_LOG_STRING, database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-
-    // Bind
-    if (medianDaysSinceUIStatement.bindInt(1, 1) != SQLITE_OK || medianDaysSinceUIStatement.bindInt(2, 1) != SQLITE_OK || medianDaysSinceUIStatement.bindInt(3, (prevalentResourcesWithUserInteractionCount / 2) != SQLITE_OK)) {
-        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %" PUBLIC_LOG_STRING, database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-
-    // Step
-    if (medianDaysSinceUIStatement.step() != SQLITE_ROW)
-        return 0;
-
-    double rawSeconds = medianDaysSinceUIStatement.getColumnDouble(0);
-    WallTime wallTime = WallTime::fromRawSeconds(rawSeconds);
-    unsigned median = wallTime <= WallTime() ? 0 : std::floor((WallTime::now() - wallTime) / 24_h);
-
-    if (prevalentResourcesWithUserInteractionCount & 1)
-        return median;
-
-    SQLiteStatement lowerMedianDaysSinceUIStatement = makeMedianWithUIQuery(database);
-
-    // Prepare
-    if (lowerMedianDaysSinceUIStatement.prepare() != SQLITE_OK) {
-        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %" PUBLIC_LOG_STRING, database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-
-    // Bind
-    if (lowerMedianDaysSinceUIStatement.bindInt(1, 1) != SQLITE_OK || lowerMedianDaysSinceUIStatement.bindInt(2, 1) != SQLITE_OK || lowerMedianDaysSinceUIStatement.bindInt(3, ((prevalentResourcesWithUserInteractionCount - 1) / 2)) != SQLITE_OK) {
-        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %" PUBLIC_LOG_STRING, database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-
-    // Step
-    if (lowerMedianDaysSinceUIStatement.step() == SQLITE_ROW) {
-        double rawSecondsLower = lowerMedianDaysSinceUIStatement.getColumnDouble(0);
-        WallTime wallTimeLower = WallTime::fromRawSeconds(rawSecondsLower);
-        return ((wallTimeLower <= WallTime() ? 0 : std::floor((WallTime::now() - wallTimeLower) / 24_h)) + median) / 2;
-    }
-    return 0;
-}
-
-unsigned ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResources() const
-{
-    auto scopedStatement = this->scopedStatement(m_countPrevalentResourcesStatement, countPrevalentResourcesQuery, "getNumberOfPrevalentResources"_s);
-    if (!scopedStatement)
-        return 0;
-    
-    auto stepValue = scopedStatement->step();
-    if (stepValue != SQLITE_ROW && stepValue != SQLITE_DONE) {
-        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResources failed to step, error message: %" PUBLIC_LOG_STRING, m_database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-    if (stepValue == SQLITE_ROW) {
-        unsigned prevalentResourceCount = scopedStatement->getColumnInt(0);
-        if (prevalentResourceCount >= minimumPrevalentResourcesForTelemetry)
-            return prevalentResourceCount;
-    }
-    return 0;
-}
-
-unsigned ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResourcesWithUI() const
-{
-    auto scopedStatement = this->scopedStatement(m_countPrevalentResourcesWithUserInteractionStatement, countPrevalentResourcesWithUserInteractionQuery, "getNumberOfPrevalentResourcesWithUI"_s);
-    if (scopedStatement && scopedStatement->step() == SQLITE_ROW) {
-        int count = scopedStatement->getColumnInt(0);
-        return count;
-    }
-    return 0;
-}
-
-unsigned ResourceLoadStatisticsDatabaseStore::getTopPrevelentResourceDaysSinceUI() const
-{
-    SQLiteStatement topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement(m_database, makeString("SELECT mostRecentUserInteractionTime FROM ObservedDomains INNER JOIN (SELECT ", joinSubStatisticsForSorting(), " LIMIT 1) as q ON ObservedDomains.domainID = q.domainID;"));
-    
-    // Prepare
-    if (topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement.prepare() != SQLITE_OK) {
-        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement query failed to prepare, error message: %" PUBLIC_LOG_STRING, m_database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-    
-    // Bind
-    if (topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement.bindInt(1, 1) != SQLITE_OK
-        || topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement.bindInt(2, 1) != SQLITE_OK) {
-        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement query failed to bind, error message: %" PUBLIC_LOG_STRING, m_database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-    
-    // Step
-    if (topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement.step() == SQLITE_ROW) {
-        double rawSeconds = topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement.getColumnDouble(0);
-        WallTime wallTime = WallTime::fromRawSeconds(rawSeconds);
-        return wallTime <= WallTime() ? 0 : std::floor((WallTime::now() - wallTime) / 24_h);
-    }
-    return 0;
-}
-
-static unsigned getMedianOfPrevalentResourceWithoutUserInteraction(SQLiteDatabase& database, unsigned bucketSize, PrevalentResourceDatabaseTelemetry::Statistic statistic, unsigned numberOfPrevalentResourcesWithoutUI)
-{
-    if (numberOfPrevalentResourcesWithoutUI < bucketSize)
-        return 0;
-
-    unsigned median = 0;
-    SQLiteStatement getMedianStatistic = makeMedianWithoutUIQuery(database, statistic);
-
-    if (getMedianStatistic.prepare() == SQLITE_OK) {
-        if (getMedianStatistic.bindInt(1, 1) != SQLITE_OK
-            || getMedianStatistic.bindInt(2, 0) != SQLITE_OK
-            || getMedianStatistic.bindInt(3, (bucketSize / 2)) != SQLITE_OK) {
-            RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::makeMedianWithoutUIQuery, error message: %" PUBLIC_LOG_STRING, database.lastErrorMsg());
-            ASSERT_NOT_REACHED();
-            return 0;
-        }
-        if (getMedianStatistic.step() == SQLITE_ROW)
-            median = getMedianStatistic.getColumnDouble(0);
-    }
-
-    if (bucketSize & 1)
-        return median;
-
-    SQLiteStatement getLowerMedianStatistic = makeMedianWithoutUIQuery(database, statistic);
-
-    if (getLowerMedianStatistic.prepare() == SQLITE_OK) {
-        if (getLowerMedianStatistic.bindInt(1, 1) != SQLITE_OK
-            || getLowerMedianStatistic.bindInt(2, 0) != SQLITE_OK
-            || getLowerMedianStatistic.bindInt(2, ((bucketSize-1) / 2)) != SQLITE_OK) {
-            RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::makeMedianWithoutUIQuery, error message: %" PUBLIC_LOG_STRING, database.lastErrorMsg());
-            ASSERT_NOT_REACHED();
-            return 0;
-        }
-        if (getLowerMedianStatistic.step() == SQLITE_ROW)
-            return (getLowerMedianStatistic.getColumnDouble(0) + median) / 2;
-    }
-
-    return 0;
-}
-
-static unsigned getNumberOfPrevalentResourcesInTopResources(SQLiteDatabase& database, unsigned bucketSize)
-{
-    SQLiteStatement prevalentResourceCountInTop(database, makeString("SELECT COUNT(*) FROM (SELECT * FROM ObservedDomains o INNER JOIN(SELECT ", joinSubStatisticsForSorting(), ") as q on q.domainID = o.domainID LIMIT ?) as p WHERE p.hadUserInteraction = 1;"));
-
-    if (prevalentResourceCountInTop.prepare() == SQLITE_OK) {
-        if (prevalentResourceCountInTop.bindInt(1, 1) != SQLITE_OK
-            || prevalentResourceCountInTop.bindText(2, "%") != SQLITE_OK
-            || prevalentResourceCountInTop.bindInt(3, bucketSize) != SQLITE_OK) {
-            RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResourcesInTopResources, error message: %" PUBLIC_LOG_STRING, database.lastErrorMsg());
-            ASSERT_NOT_REACHED();
-            return 0;
-        }
-
-        if (prevalentResourceCountInTop.step() == SQLITE_ROW)
-            return prevalentResourceCountInTop.getColumnInt(0);
-    }
-
-    return 0;
-}
-
-static unsigned makeStatisticQuery(SQLiteDatabase& database, PrevalentResourceDatabaseTelemetry::Statistic statistic, int bucketSize, unsigned totalWithUI, unsigned totalWithoutUI)
-{
-    switch (statistic) {
-    case PrevalentResourceDatabaseTelemetry::Statistic::NumberOfPrevalentResourcesWithUI:
-        return getNumberOfPrevalentResourcesInTopResources(database, bucketSize);
-    case PrevalentResourceDatabaseTelemetry::Statistic::MedianSubFrameWithoutUI:
-    case PrevalentResourceDatabaseTelemetry::Statistic::MedianSubResourceWithoutUI:
-    case PrevalentResourceDatabaseTelemetry::Statistic::MedianUniqueRedirectsWithoutUI:
-    case PrevalentResourceDatabaseTelemetry::Statistic::MedianDataRecordsRemovedWithoutUI:
-    case PrevalentResourceDatabaseTelemetry::Statistic::MedianTimesAccessedDueToUserInteractionWithoutUI:
-    case PrevalentResourceDatabaseTelemetry::Statistic::MedianTimesAccessedDueToStorageAccessAPIWithoutUI:
-        return getMedianOfPrevalentResourceWithoutUserInteraction(database, bucketSize, statistic, totalWithoutUI);
-    }
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-unsigned ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResourcesWithoutUI() const
-{
-    auto scopedStatement = this->scopedStatement(m_countPrevalentResourcesWithoutUserInteractionStatement, countPrevalentResourcesWithoutUserInteractionQuery, "getNumberOfPrevalentResourcesWithoutUI"_s);
-    if (scopedStatement && scopedStatement->step() == SQLITE_ROW) {
-        int count = m_countPrevalentResourcesWithoutUserInteractionStatement->getColumnInt(0);
-        return count;
-    }
-    return 0;
-}
-
-void ResourceLoadStatisticsDatabaseStore::calculateTelemetryData(PrevalentResourceDatabaseTelemetry& data) const
-{
-    data.numberOfPrevalentResources = getNumberOfPrevalentResources();
-    data.numberOfPrevalentResourcesWithUserInteraction = getNumberOfPrevalentResourcesWithUI();
-    data.numberOfPrevalentResourcesWithoutUserInteraction = getNumberOfPrevalentResourcesWithoutUI();
-    data.topPrevalentResourceWithUserInteractionDaysSinceUserInteraction = getTopPrevelentResourceDaysSinceUI();
-    data.medianDaysSinceUserInteractionPrevalentResourceWithUserInteraction = getMedianOfPrevalentResourcesWithUserInteraction(m_database, data.numberOfPrevalentResourcesWithUserInteraction);
-
-    for (unsigned bucketIndex = 0; bucketIndex < bucketSizes.size(); bucketIndex++) {
-        unsigned bucketSize = bucketSizes[bucketIndex];
-
-        if (data.numberOfPrevalentResourcesWithoutUserInteraction < bucketSize)
-            return;
-
-        for (unsigned statisticIndex = 0; statisticIndex < numberOfStatistics; statisticIndex++) {
-            auto statistic = static_cast<PrevalentResourceDatabaseTelemetry::Statistic>(statisticIndex);
-            data.statistics[statisticIndex][bucketIndex] = makeStatisticQuery(m_database, statistic, bucketSize, data.numberOfPrevalentResourcesWithUserInteraction, data.numberOfPrevalentResourcesWithoutUserInteraction);
-        }
-    }
-}
-
-void ResourceLoadStatisticsDatabaseStore::calculateAndSubmitTelemetry(NotifyPagesForTesting shouldNotifyPagesForTesting) const
-{
-    ASSERT(!RunLoop::isMain());
-
-    if (parameters().shouldSubmitTelemetry) {
-        PrevalentResourceDatabaseTelemetry prevalentResourceDatabaseTelemetry;
-        calculateTelemetryData(prevalentResourceDatabaseTelemetry);
-        WebResourceLoadStatisticsTelemetry::submitTelemetry(*this, prevalentResourceDatabaseTelemetry, shouldNotifyPagesForTesting);
-    }
 }
 
 static String domainsToString(const HashSet<RegistrableDomain>& domains)

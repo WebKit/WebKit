@@ -1143,11 +1143,6 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsSubmitTelemetry")) {
-        TestController::singleton().statisticsSubmitTelemetry();
-        return nullptr;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsNotifyPagesWhenDataRecordsWereScanned")) {
         TestController::singleton().setStatisticsNotifyPagesWhenDataRecordsWereScanned(booleanValue(messageBody));
         return nullptr;

@@ -10,7 +10,6 @@ add_definitions(-DBUILDING_WEBKIT)
 
 list(APPEND WebKit_SOURCES
     NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
-    NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.cpp
 
     NetworkProcess/WebStorage/StorageManager.cpp
 

@@ -34,7 +34,6 @@
 #include "PluginProcessProxy.h"
 #include "StorageAccessStatus.h"
 #include "WebProcessProxy.h"
-#include "WebResourceLoadStatisticsTelemetry.h"
 #include "WebsiteDataStore.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/DocumentStorageAccess.h>
@@ -74,12 +73,6 @@ ResourceLoadStatisticsMemoryStore::ResourceLoadStatisticsMemoryStore(WebResource
     : ResourceLoadStatisticsStore(store, workQueue, shouldIncludeLocalhost)
 {
     RELEASE_ASSERT(!RunLoop::isMain());
-
-    workQueue.dispatchAfter(5_s, [weakThis = makeWeakPtr(*this)] {
-        if (weakThis)
-            weakThis->calculateAndSubmitTelemetry();
-    });
-
     includeTodayAsOperatingDateIfNecessary();
 }
 
@@ -88,14 +81,6 @@ bool ResourceLoadStatisticsMemoryStore::isEmpty() const
     RELEASE_ASSERT(!RunLoop::isMain());
 
     return m_resourceStatisticsMap.isEmpty();
-}
-
-void ResourceLoadStatisticsMemoryStore::calculateAndSubmitTelemetry(NotifyPagesForTesting shouldNotifyPagesForTesting) const
-{
-    ASSERT(!RunLoop::isMain());
-
-    if (parameters().shouldSubmitTelemetry)
-        WebResourceLoadStatisticsTelemetry::calculateAndSubmit(*this, shouldNotifyPagesForTesting);
 }
 
 static void ensureThirdPartyDataForSpecificFirstPartyDomain(Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty>& thirdPartyDataForSpecificFirstPartyDomain, const RegistrableDomain& firstPartyDomain, bool thirdPartyHasStorageAccess)

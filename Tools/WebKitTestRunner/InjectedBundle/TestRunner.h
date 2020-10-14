@@ -388,15 +388,12 @@ public:
     bool isStatisticsEphemeral();
     void installStatisticsDidModifyDataRecordsCallback(JSValueRef callback);
     void installStatisticsDidScanDataRecordsCallback(JSValueRef callback);
-    void installStatisticsDidRunTelemetryCallback(JSValueRef callback);
     void statisticsDidModifyDataRecordsCallback();
     void statisticsDidScanDataRecordsCallback();
-    void statisticsDidRunTelemetryCallback(unsigned numberOfPrevalentResources, unsigned numberOfPrevalentResourcesWithUserInteraction, unsigned numberOfPrevalentResourcesWithoutUserInteraction, unsigned topPrevalentResourceWithUserInteractionDaysSinceUserInteraction, unsigned medianDaysSinceUserInteractionPrevalentResourceWithUserInteraction, unsigned top3NumberOfPrevalentResourcesWithUI, unsigned top3MedianSubFrameWithoutUI, unsigned top3MedianSubResourceWithoutUI, unsigned top3MedianUniqueRedirectsWithoutUI, unsigned top3MedianDataRecordsRemovedWithoutUI);
     bool statisticsNotifyObserver();
     void statisticsProcessStatisticsAndDataRecords();
     void statisticsUpdateCookieBlocking(JSValueRef completionHandler);
     void statisticsCallDidSetBlockCookiesForHostCallback();
-    void statisticsSubmitTelemetry();
     void setStatisticsDebugMode(bool value, JSValueRef completionHandler);
     void statisticsCallDidSetDebugModeCallback();
     void setStatisticsPrevalentResourceForDebugMode(JSStringRef hostName, JSValueRef completionHandler);

@@ -223,7 +223,6 @@ public:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     static void notifyPageStatisticsAndDataRecordsProcessed();
-    static void notifyPageStatisticsTelemetryFinished(API::Object* messageBody);
 
     static void notifyWebsiteDataDeletionForRegistrableDomainsFinished();
     static void notifyWebsiteDataScanForRegistrableDomainsFinished();

@@ -37,7 +37,6 @@
 #import "WKWebsiteDataRecordInternal.h"
 #import "WebPageProxy.h"
 #import "WebResourceLoadStatisticsStore.h"
-#import "WebResourceLoadStatisticsTelemetry.h"
 #import "WebsiteDataFetchOption.h"
 #import "_WKResourceLoadStatisticsThirdPartyInternal.h"
 #import "_WKWebsiteDataStoreConfigurationInternal.h"

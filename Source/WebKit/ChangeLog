@@ -1,5 +1,79 @@
 2020-10-14  Kate Cheney  <katherine_cheney@apple.com>
 
+        Remove ResourceLoadStatistics telemetry
+        https://bugs.webkit.org/show_bug.cgi?id=217665
+        <rdar://problem/69748988>
+
+        Reviewed by Sam Weinig.
+
+        Telemetry calculation in ITP is unused, very complicated, a potential
+        privacy risk, and it causes flaky tests. We should remove it.
+
+        No new tests. Existing ITP tests will check for no behavior change.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore):
+        (WebKit::makeMedianWithUIQuery): Deleted.
+        (WebKit::buildQueryStartAndEnd): Deleted.
+        (WebKit::makeMedianWithoutUIQuery): Deleted.
+        (WebKit::getMedianOfPrevalentResourcesWithUserInteraction): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResources const): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResourcesWithUI const): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::getTopPrevelentResourceDaysSinceUI const): Deleted.
+        (WebKit::getMedianOfPrevalentResourceWithoutUserInteraction): Deleted.
+        (WebKit::getNumberOfPrevalentResourcesInTopResources): Deleted.
+        (WebKit::makeStatisticQuery): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResourcesWithoutUI const): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::calculateTelemetryData const): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::calculateAndSubmitTelemetry const): Deleted.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::ResourceLoadStatisticsMemoryStore):
+        (WebKit::ResourceLoadStatisticsMemoryStore::calculateAndSubmitTelemetry const): Deleted.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::setShouldSubmitTelemetry): Deleted.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::performDailyTasks):
+        (WebKit::WebResourceLoadStatisticsStore::setShouldSubmitTelemetry): Deleted.
+        (WebKit::WebResourceLoadStatisticsStore::submitTelemetry): Deleted.
+        (WebKit::WebResourceLoadStatisticsStore::notifyPageStatisticsTelemetryFinished const): Deleted.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.cpp: Removed.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.h: Removed.
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::submitTelemetry): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::notifyPageStatisticsTelemetryFinished): Deleted.
+        * NetworkProcess/NetworkSession.h:
+        * SourcesCocoa.txt:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreStatisticsSubmitTelemetry): Deleted.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::submitTelemetry): Deleted.
+        (WebKit::NetworkProcessProxy::notifyResourceLoadStatisticsTelemetryFinished): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::notifyPageStatisticsTelemetryFinished): Deleted.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::submitTelemetry): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * PlatformFTW.cmake:
+        * SourcesGTK.txt:
+        * PlatformPlayStation.cmake:
+        * PlatformWin.cmake:
+        * SourcesWPE.txt:
+
+2020-10-14  Kate Cheney  <katherine_cheney@apple.com>
+
         Remove _WKWebViewCategory from WKWebViewConfiguration
         https://bugs.webkit.org/show_bug.cgi?id=217679
         <rdar://problem/70260337>

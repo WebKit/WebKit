@@ -238,7 +238,6 @@ public:
     void setStatisticsTimeToLiveUserInteraction(double seconds);
     void statisticsProcessStatisticsAndDataRecords();
     void statisticsUpdateCookieBlocking();
-    void statisticsSubmitTelemetry();
     void setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool);
     void setStatisticsIsRunningTest(bool);
     void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool);

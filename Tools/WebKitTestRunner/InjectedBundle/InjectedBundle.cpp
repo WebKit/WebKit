@@ -455,23 +455,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         m_testRunner->statisticsDidScanDataRecordsCallback();
         return;
     }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "ResourceLoadStatisticsTelemetryFinished")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        auto numberOfPrevalentResources = uint64Value(messageBodyDictionary, "NumberOfPrevalentResources");
-        auto numberOfPrevalentResourcesWithUserInteraction = uint64Value(messageBodyDictionary, "NumberOfPrevalentResourcesWithUserInteraction");
-        auto numberOfPrevalentResourcesWithoutUserInteraction = uint64Value(messageBodyDictionary, "NumberOfPrevalentResourcesWithoutUserInteraction");
-        auto topPrevalentResourceWithUserInteractionDaysSinceUserInteraction = uint64Value(messageBodyDictionary, "TopPrevalentResourceWithUserInteractionDaysSinceUserInteraction");
-        auto medianDaysSinceUserInteractionPrevalentResourceWithUserInteraction = uint64Value(messageBodyDictionary, "MedianDaysSinceUserInteractionPrevalentResourceWithUserInteraction");
-        auto top3NumberOfPrevalentResourcesWithUI = uint64Value(messageBodyDictionary, "Top3NumberOfPrevalentResourcesWithUI");
-        auto top3MedianSubFrameWithoutUI = uint64Value(messageBodyDictionary, "Top3MedianSubFrameWithoutUI");
-        auto top3MedianSubResourceWithoutUI = uint64Value(messageBodyDictionary, "Top3MedianSubResourceWithoutUI");
-        auto top3MedianUniqueRedirectsWithoutUI = uint64Value(messageBodyDictionary, "Top3MedianUniqueRedirectsWithoutUI");
-        auto top3MedianDataRecordsRemovedWithoutUI = uint64Value(messageBodyDictionary, "Top3MedianDataRecordsRemovedWithoutUI");
-
-        m_testRunner->statisticsDidRunTelemetryCallback(numberOfPrevalentResources, numberOfPrevalentResourcesWithUserInteraction, numberOfPrevalentResourcesWithoutUserInteraction, topPrevalentResourceWithUserInteractionDaysSinceUserInteraction, medianDaysSinceUserInteractionPrevalentResourceWithUserInteraction, top3NumberOfPrevalentResourcesWithUI, top3MedianSubFrameWithoutUI, top3MedianSubResourceWithoutUI, top3MedianUniqueRedirectsWithoutUI, top3MedianDataRecordsRemovedWithoutUI);
-        return;
-    }
     
     if (WKStringIsEqualToUTF8CString(messageName, "DidGetApplicationManifest")) {
         m_testRunner->didGetApplicationManifest();
