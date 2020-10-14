@@ -1231,9 +1231,6 @@ test/built-ins/RegExp/property-escapes/generated/XID_Start.js:
 test/built-ins/RegExp/prototype/Symbol.match/builtin-infer-unicode.js:
   default: 'Test262Error: Expected SameValue(«�», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
-test/built-ins/RegExp/prototype/Symbol.replace/poisoned-stdlib.js:
-  default: 'Test262Error: 0 setter should be unreachable.'
-  strict mode: 'Test262Error: 0 setter should be unreachable.'
 test/built-ins/RegExp/prototype/Symbol.search/u-lastindex-advance.js:
   default: 'Test262Error: Expected SameValue(«1», «-1») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1», «-1») to be true'

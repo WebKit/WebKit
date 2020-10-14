@@ -132,7 +132,7 @@ function matchSlow(regexp, str)
         if (!resultString.length)
             regexp.lastIndex = @advanceStringIndex(str, regexp.lastIndex, unicode);
 
-        resultList.@push(resultString);
+        @arrayPush(resultList, resultString);
     }
 }
 
@@ -307,7 +307,7 @@ function replace(strArg, replace)
         if (result === null)
             done = true;
         else {
-            resultList.@push(result);
+            @arrayPush(resultList, result);
             if (!global)
                 done = true;
             else {
@@ -340,7 +340,7 @@ function replace(strArg, replace)
             var capN = result[n];
             if (capN !== @undefined)
                 capN = @toString(capN);
-            captures.@push(capN);
+            @arrayPush(captures, capN);
         }
 
         var replacement;
@@ -349,13 +349,13 @@ function replace(strArg, replace)
         if (functionalReplace) {
             var replacerArgs = [ matched ];
             for (var j = 0; j < captures.length; j++)
-                replacerArgs.@push(captures[j]);
+                @arrayPush(replacerArgs, captures[j]);
 
-            replacerArgs.@push(position);
-            replacerArgs.@push(str);
+            @arrayPush(replacerArgs, position);
+            @arrayPush(replacerArgs, str);
 
             if (namedCaptures !== @undefined)
-                replacerArgs.@push(namedCaptures);
+                @arrayPush(replacerArgs, namedCaptures);
 
             var replValue = replace.@apply(@undefined, replacerArgs);
             replacement = @toString(replValue);
@@ -566,7 +566,7 @@ function split(string, limit)
                 var subStr = @stringSubstringInternal.@call(str, position, matchPosition);
                 // 2. Perform ! CreateDataProperty(A, ! ToString(lengthA), T).
                 // 3. Let lengthA be lengthA + 1.
-                @putByValDirect(result, result.length, subStr);
+                @arrayPush(result, subStr);
                 // 4. If lengthA = lim, return A.
                 if (result.length == limit)
                     return result;
@@ -585,7 +585,7 @@ function split(string, limit)
                     var nextCapture = matches[i];
                     // b. Perform ! CreateDataProperty(A, ! ToString(lengthA), nextCapture).
                     // d. Let lengthA be lengthA + 1.
-                    @putByValDirect(result, result.length, nextCapture);
+                    @arrayPush(result, nextCapture);
                     // e. If lengthA = lim, return A.
                     if (result.length == limit)
                         return result;
@@ -600,7 +600,7 @@ function split(string, limit)
     // 20. Let T be a String value equal to the substring of S consisting of the elements at indices p (inclusive) through size (exclusive).
     var remainingStr = @stringSubstringInternal.@call(str, position, size);
     // 21. Perform ! CreateDataProperty(A, ! ToString(lengthA), T).
-    @putByValDirect(result, result.length, remainingStr);
+    @arrayPush(result, remainingStr);
     // 22. Return A.
     return result;
 }

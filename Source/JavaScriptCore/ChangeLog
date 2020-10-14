@@ -1,3 +1,42 @@
+2020-10-14  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Use @putByValDirect instead of Array.prototype.@push in built-ins
+        https://bugs.webkit.org/show_bug.cgi?id=175432
+
+        Reviewed by Yusuke Suzuki.
+
+        Before this patch, Array.prototype.@push was used to implement List spec type,
+        stacks / queues, and in place of CreateDataProperty [1].
+        It's undesirably observable since elements are pushed using [[Set]],
+        affecting indexed properties on prototypes [2].
+
+        This change introduces @arrayPush() intrinsic to use with lists / stacks / queues.
+        @arrayPush() should only be used with JSArray receivers because "length" isn't
+        incremented. Unlike Array.prototype.@push, it doesn't grow arrays beyond UINT_MAX,
+        which is OK for current use cases. Object.entries microbenchmark is neutral.
+
+        Despite Array.prototype.@shift also performing [[Set]], it's safe to use with
+        non-sparse receivers.
+
+        [1]: https://tc39.es/ecma262/#sec-createarrayfromlist (step 4.a)
+        [2]: https://tc39.es/ecma262/#sec-array.prototype.push (step 5.a)
+
+        * builtins/ArrayPrototype.js:
+        (globalPrivate.sortBucketSort):
+        * builtins/ObjectConstructor.js:
+        (entries):
+        * builtins/RegExpPrototype.js:
+        (globalPrivate.matchSlow):
+        (Symbol.replace):
+        (Symbol.split):
+        * builtins/TypedArrayPrototype.js:
+        (filter):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_arrayPush):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+
 2020-10-14  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes, mid October 2020

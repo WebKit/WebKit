@@ -340,7 +340,7 @@ function filter(callback /*, thisArg */)
     for (var i = 0; i < length; i++) {
         var value = this[i];
         if (callback.@call(thisArg, value, i, this))
-            kept.@push(value);
+            @arrayPush(kept, value);
     }
     var length = kept.length;
 

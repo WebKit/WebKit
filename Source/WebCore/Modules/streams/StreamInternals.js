@@ -143,7 +143,7 @@ function enqueueValueWithSize(queue, value, size)
     size = @toNumber(size);
     if (!@isFinite(size) || size < 0)
         @throwRangeError("size has an incorrect value");
-    queue.content.@push({ value: value, size: size });
+    @arrayPush(queue.content, { value, size });
     queue.size += size;
 }
 

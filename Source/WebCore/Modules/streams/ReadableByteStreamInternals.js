@@ -243,7 +243,7 @@ function readableByteStreamControllerPull(controller)
             ctor: @Uint8Array,
             readerType: 'default'
         };
-        @getByIdDirectPrivate(controller, "pendingPullIntos").@push(pullIntoDescriptor);
+        @arrayPush(@getByIdDirectPrivate(controller, "pendingPullIntos"), pullIntoDescriptor);
     }
 
     const promise = @readableStreamAddReadRequest(stream);
@@ -347,7 +347,7 @@ function readableByteStreamControllerEnqueueChunk(controller, buffer, byteOffset
 {
     "use strict";
 
-    @getByIdDirectPrivate(controller, "queue").content.@push({
+    @arrayPush(@getByIdDirectPrivate(controller, "queue").content, {
         buffer: buffer,
         byteOffset: byteOffset,
         byteLength: byteLength
@@ -630,7 +630,7 @@ function readableByteStreamControllerPullInto(controller, view)
 
     if (@getByIdDirectPrivate(controller, "pendingPullIntos").length) {
         pullIntoDescriptor.buffer = @transferBufferToCurrentRealm(pullIntoDescriptor.buffer);
-        @getByIdDirectPrivate(controller, "pendingPullIntos").@push(pullIntoDescriptor);
+        @arrayPush(@getByIdDirectPrivate(controller, "pendingPullIntos"), pullIntoDescriptor);
         return @readableStreamAddReadIntoRequest(stream);
     }
 
@@ -653,7 +653,7 @@ function readableByteStreamControllerPullInto(controller, view)
     }
 
     pullIntoDescriptor.buffer = @transferBufferToCurrentRealm(pullIntoDescriptor.buffer);
-    @getByIdDirectPrivate(controller, "pendingPullIntos").@push(pullIntoDescriptor);
+    @arrayPush(@getByIdDirectPrivate(controller, "pendingPullIntos"), pullIntoDescriptor);
     const promise = @readableStreamAddReadIntoRequest(stream);
     @readableByteStreamControllerCallPullIfNeeded(controller);
     return promise;
@@ -667,7 +667,7 @@ function readableStreamAddReadIntoRequest(stream)
     @assert(@getByIdDirectPrivate(stream, "state") === @streamReadable || @getByIdDirectPrivate(stream, "state") === @streamClosed);
 
     const readRequest = @newPromise();
-    @getByIdDirectPrivate(@getByIdDirectPrivate(stream, "reader"), "readIntoRequests").@push(readRequest);
+    @arrayPush(@getByIdDirectPrivate(@getByIdDirectPrivate(stream, "reader"), "readIntoRequests"), readRequest);
 
     return readRequest;
 }

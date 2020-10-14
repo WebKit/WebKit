@@ -1388,6 +1388,19 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_argumentCount(BytecodeGenerato
     return generator.emitArgumentCount(generator.finalDestination(dst));
 }
 
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_arrayPush(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> base = generator.emitNode(node);
+    node = node->m_next;
+    RefPtr<RegisterID> value = generator.emitNode(node);
+
+    ASSERT(!node->m_next);
+
+    RefPtr<RegisterID> length = generator.emitDirectGetById(generator.newTemporary(), base.get(), generator.propertyNames().length);
+    return generator.move(dst, generator.emitDirectPutByVal(base.get(), length.get(), value.get()));
+}
+
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putByIdDirect(BytecodeGenerator& generator, RegisterID* dst)
 {
     ArgumentListNode* node = m_args->m_listNode;

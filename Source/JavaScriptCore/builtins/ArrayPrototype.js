@@ -463,7 +463,7 @@ function sortBucketSort(array, dst, bucket, depth)
         var c = string.@charCodeAt(depth);
         var cBucket = buckets[c];
         if (cBucket)
-            @putByValDirect(cBucket, cBucket.length, entry);
+            @arrayPush(cBucket, entry);
         else
             @putByValDirect(buckets, c, [ entry ]);
     }

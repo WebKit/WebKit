@@ -163,7 +163,7 @@ function writableStreamAddWriteRequest(stream)
 
     const writePromiseCapability = @newPromiseCapability(@Promise);
     const writeRequests = @getByIdDirectPrivate(stream, "writeRequests");
-    writeRequests.@push(writePromiseCapability);
+    @arrayPush(writeRequests, writePromiseCapability);
     return writePromiseCapability.@promise;
 }
 

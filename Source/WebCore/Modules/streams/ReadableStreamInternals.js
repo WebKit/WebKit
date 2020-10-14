@@ -783,7 +783,7 @@ function readableStreamAddReadRequest(stream)
     @assert(@getByIdDirectPrivate(stream, "state") == @streamReadable);
 
     const readRequest = @newPromise();
-    @getByIdDirectPrivate(@getByIdDirectPrivate(stream, "reader"), "readRequests").@push(readRequest);
+    @arrayPush(@getByIdDirectPrivate(@getByIdDirectPrivate(stream, "reader"), "readRequests"), readRequest);
 
     return readRequest;
 }
