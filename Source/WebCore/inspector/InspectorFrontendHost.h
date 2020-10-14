@@ -89,6 +89,7 @@ public:
     unsigned inspectionLevel() const;
 
     String platform() const;
+    String platformVersionName() const;
     String port() const;
 
     struct DebuggableInfo {

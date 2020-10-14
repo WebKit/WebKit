@@ -1,3 +1,33 @@
+2020-10-14  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r267148): new Big Sur styles are not used
+        https://bugs.webkit.org/show_bug.cgi?id=217682
+        <rdar://problem/70269030>
+
+        Reviewed by Brian Burg.
+
+        r267148 changed `navigator.userAgent` from `11_0` to `10_15_7`. This breaks Web Inspector
+        styling, which relied on this value to know what OS version it was running on in order to
+        know which styles to use.
+
+        * UserInterface/Base/Platform.js:
+        * UserInterface/Views/Variables.css:
+        (body.mac-platform): Added.
+        (body.mac-platform:not(.sierra, .high-sierra)): Deleted.
+        Use `InspectorFrontendHost.platformVersionName` instead of `navigator.userAgent`. Remove
+        unnecessary platform version names and other unused data.
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        (WI.undockedTitleAreaHeight): Added.
+        * UserInterface/Views/Popover.js:
+        (WI.Popover.prototype._update):
+        Provide a way to get the undocked title area height for use in JavaScript calculations.
+
+        * UserInterface/Controllers/HARBuilder.js:
+        (WI.HARBuilder.creator):
+        The `WI.Platform.version.build` hasn't changed in a long time, so just remove it.
+
 2020-10-13  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Sources: tab has wrong icon when paused if added after pause
