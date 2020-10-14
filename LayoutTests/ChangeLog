@@ -1,3 +1,21 @@
+2020-10-13  Antoine Quint  <graouts@webkit.org>
+
+        transform-origin is applied on top of invidivual CSS transform properties on composited layers
+        https://bugs.webkit.org/show_bug.cgi?id=217661
+        <rdar://problem/70259960>
+
+        Reviewed by Simon Fraser.
+
+        Add new tests checking that individual CSS properties render the same as the single transform property
+        when applied to a composited element.
+
+        * transforms/2d/rotate-composited-expected.html: Added.
+        * transforms/2d/rotate-composited.html: Added.
+        * transforms/2d/scale-composited-expected.html: Added.
+        * transforms/2d/scale-composited.html: Added.
+        * transforms/2d/translate-composited-expected.html: Added.
+        * transforms/2d/translate-composited.html: Added.
+
 2020-10-13  Karl Rackler  <rackler@apple.com>
 
         REGRESSION (iOS 14): [ iOS wk2 ] 12 2d.gradient.radial WPT tests are a flaky failure

@@ -1379,13 +1379,6 @@ void RenderStyle::setHasAttrContent()
     SET_VAR(m_rareNonInheritedData, hasAttrContent, true);
 }
 
-static inline bool requireTransformOrigin(const TransformOperations& transformOperations, OptionSet<RenderStyle::TransformOperationOption> options)
-{
-    // The transform-origin property brackets the transform with translate operations.
-    // When the only transform is a translation, the transform-origin is irrelevant.
-    return options.contains(RenderStyle::TransformOperationOption::TransformOrigin) && transformOperations.affectedByTransformOrigin();
-}
-
 void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
     // https://www.w3.org/TR/css-transforms-2/#ctm
@@ -1393,7 +1386,7 @@ void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRec
     // 1. Start with the identity matrix.
 
     auto& transformOperations = m_rareNonInheritedData->transform->operations;
-    bool applyTransformOrigin = m_rareNonInheritedData->rotate || m_rareNonInheritedData->scale || requireTransformOrigin(transformOperations, options);
+    bool applyTransformOrigin = options.contains(RenderStyle::TransformOperationOption::TransformOrigin) && ((m_rareNonInheritedData->rotate && !m_rareNonInheritedData->rotate->isIdentity()) || (m_rareNonInheritedData->scale && !m_rareNonInheritedData->scale->isIdentity()) || transformOperations.affectedByTransformOrigin());
 
     // 2. Translate by the computed X, Y, and Z values of transform-origin.
     FloatPoint3D originTranslate;
