@@ -1,3 +1,26 @@
+2020-10-14  Sam Weinig  <weinig@apple.com>
+
+        [Testing] Generate test header key map for DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=217723
+
+        Reviewed by Tim Horton.
+
+        Copy test header command type generation from WebKitTestRunner to DumpRenderTree, to 
+        begin support for using any WebPreference from DumpRenderTree. This does not actually
+        change any behavior yet, just updates the key mapping. 
+
+        * DumpRenderTree/CMakeLists.txt:
+        * DumpRenderTree/DerivedSources-input.xcfilelist:
+        * DumpRenderTree/DerivedSources-output.xcfilelist:
+        * DumpRenderTree/DerivedSources.make:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/Scripts/PreferencesTemplates: Added.
+        * DumpRenderTree/Scripts/PreferencesTemplates/TestOptionsGeneratedKeys.h.erb: Added.
+        * DumpRenderTree/TestOptions.cpp:
+        (WTR::TestOptions::keyTypeMapping):
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+
 2020-10-14  Alexey Proskuryakov  <ap@apple.com>
 
         Remove WebKitLauncher
