@@ -100,6 +100,14 @@ SDKROOT = macosx.internal;
 PRODUCTION_FRAMEWORKS_DIR[sdk=embedded*] = $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 PRODUCTION_FRAMEWORKS_DIR[sdk=macosx*] = $(SDKROOT)$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
 
+WTF_BUILD_SCRIPTS_DIR = $(WTF_BUILD_SCRIPTS_DIR_$(CONFIGURATION));
+WTF_BUILD_SCRIPTS_DIR_Release = $(WTF_BUILD_SCRIPTS_DIR_engineering);
+WTF_BUILD_SCRIPTS_DIR_Debug = $(WTF_BUILD_SCRIPTS_DIR_engineering);
+WTF_BUILD_SCRIPTS_DIR_Production = $(WTF_BUILD_SCRIPTS_DIR_Production_COCOA_TOUCH_$(WK_IS_COCOA_TOUCH));
+WTF_BUILD_SCRIPTS_DIR_Production_COCOA_TOUCH_YES = $(SDKROOT)$(WK_ALTERNATE_WEBKIT_SDK_PATH)/usr/local/include/wtf/Scripts;
+WTF_BUILD_SCRIPTS_DIR_Production_COCOA_TOUCH_NO = $(SDKROOT)/usr/local/include/wtf/Scripts;
+WTF_BUILD_SCRIPTS_DIR_engineering = $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts;
+
 WEBCORE_PRIVATE_HEADERS_DIR = $(WEBCORE_PRIVATE_HEADERS_DIR_$(CONFIGURATION));
 WEBCORE_PRIVATE_HEADERS_DIR_Release = $(WEBCORE_PRIVATE_HEADERS_DIR_engineering);
 WEBCORE_PRIVATE_HEADERS_DIR_Debug = $(WEBCORE_PRIVATE_HEADERS_DIR_engineering);
@@ -123,6 +131,7 @@ WK_COCOA_TOUCH_watchos = cocoatouch;
 WK_COCOA_TOUCH_watchsimulator = cocoatouch;
 WK_COCOA_TOUCH_appletvos = cocoatouch;
 WK_COCOA_TOUCH_appletvsimulator = cocoatouch;
+WK_IS_COCOA_TOUCH = $(WK_NOT_$(WK_EMPTY_$(WK_COCOA_TOUCH)));
 
 HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include $(BUILT_PRODUCTS_DIR)/WebCoreTestSupport $(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders $(NEXT_ROOT)/usr/local/include/WebCoreTestSupport $(HEADER_SEARCH_PATHS_$(WK_COCOA_TOUCH));
 HEADER_SEARCH_PATHS_ = ;
