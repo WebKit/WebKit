@@ -1,3 +1,15 @@
+2020-10-14  Chris Dumez  <cdumez@apple.com>
+
+        Enable AudioWorklet by default
+        https://bugs.webkit.org/show_bug.cgi?id=217708
+
+        Reviewed by Eric Carlson.
+
+        Enable AudioWorklet by default on platforms where modern/unprefixed WebAudio
+        is enabled.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2020-10-14  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove ACCELERATED_2D_CANVAS build flags and guarded code

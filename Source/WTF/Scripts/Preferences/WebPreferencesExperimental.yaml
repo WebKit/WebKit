@@ -94,9 +94,10 @@ AudioWorkletEnabled:
   condition: ENABLE(WEB_AUDIO)
   defaultValue:
     WebKitLegacy:
+      "PLATFORM(IOS_FAMILY)" : true
       default: false
     WebKit:
-      default: false
+      default: true
     WebCore:
       default: false
 
