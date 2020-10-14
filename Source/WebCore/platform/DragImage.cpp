@@ -34,6 +34,7 @@
 #include "Position.h"
 #include "RenderElement.h"
 #include "RenderView.h"
+#include "SelectionRangeData.h"
 #include "SimpleRange.h"
 #include "TextIndicator.h"
 
@@ -143,12 +144,12 @@ struct ScopedFrameSelectionState {
     {
         if (auto* renderView = frame.contentRenderer()) {
             ASSERT(selection);
-            renderView->selection().setSelection(selection.value(), HighlightData::RepaintMode::Nothing);
+            renderView->selection().set(selection.value(), SelectionRangeData::RepaintMode::Nothing);
         }
     }
 
     const Frame& frame;
-    Optional<HighlightData::RenderRange> selection;
+    Optional<RenderRange> selection;
 };
 
 #if !PLATFORM(IOS_FAMILY)
@@ -185,7 +186,7 @@ DragImageRef createDragImageForRange(Frame& frame, const SimpleRange& range, boo
     int startOffset = start.deprecatedEditingOffset();
     int endOffset = end.deprecatedEditingOffset();
     ASSERT(startOffset >= 0 && endOffset >= 0);
-    view->selection().setSelection({ startRenderer, endRenderer, static_cast<unsigned>(startOffset), static_cast<unsigned>(endOffset) }, HighlightData::RepaintMode::Nothing);
+    view->selection().set({ startRenderer, endRenderer, static_cast<unsigned>(startOffset), static_cast<unsigned>(endOffset) }, SelectionRangeData::RepaintMode::Nothing);
     // We capture using snapshotFrameRect() because we fake up the selection using
     // FrameView but snapshotSelection() uses the selection from the Frame itself.
     return createDragImageFromSnapshot(snapshotFrameRect(frame, view->selection().boundsClippedToVisibleContent(), options), nullptr);

@@ -152,7 +152,7 @@ inline static bool draggedContentContainsReplacedElement(const Vector<RenderedDo
 
 Color RenderReplaced::calculateHighlightColor() const
 {
-    auto highlightData = HighlightData(view());
+    HighlightData highlightData;
     for (auto& highlight : document().highlightMap().map()) {
         for (auto& rangeData : highlight.value->rangesData()) {
             if (!highlightData.setRenderRange(rangeData))

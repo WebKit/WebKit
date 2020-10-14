@@ -22,10 +22,10 @@
 #pragma once
 
 #include "FrameView.h"
-#include "HighlightData.h"
 #include "Region.h"
 #include "RenderBlockFlow.h"
 #include "RenderWidget.h"
+#include "SelectionRangeData.h"
 #include <memory>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
@@ -84,7 +84,7 @@ public:
     // Return the renderer whose background style is used to paint the root background.
     RenderElement* rendererForRootBackground() const;
 
-    HighlightData& selection() { return m_selection; }
+    SelectionRangeData& selection() { return m_selection; }
 
     bool printing() const;
 
@@ -224,7 +224,7 @@ private:
     uint64_t m_rendererCount { 1 };
 
     mutable std::unique_ptr<Region> m_accumulatedRepaintRegion;
-    HighlightData m_selection;
+    SelectionRangeData m_selection;
 
     WeakPtr<RenderLayer> m_styleChangeLayerMutationRoot;
 

@@ -1050,6 +1050,7 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForHighlights(TextPaintPhase
     Vector<MarkedText> markedTexts;
     auto& parentRenderer = parent()->renderer();
     auto& parentStyle = parentRenderer.style();
+    HighlightData highlightData;
     for (auto& highlight : renderer().document().highlightMap().map()) {
         auto renderStyle = parentRenderer.getUncachedPseudoStyle({ PseudoId::Highlight, highlight.key }, &parentStyle);
         if (!renderStyle)
@@ -1057,22 +1058,12 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForHighlights(TextPaintPhase
         if (renderStyle->textDecorationsInEffect().isEmpty() && phase == TextPaintPhase::Decoration)
             continue;
         for (auto& rangeData : highlight.value->rangesData()) {
-            if (rangeData->startPosition && rangeData->endPosition) {
-                Position startPosition = rangeData->startPosition.value();
-                Position endPosition = rangeData->endPosition.value();
-                auto* startRenderer = startPosition.deprecatedNode()->renderer();
-                unsigned startOffset = startPosition.deprecatedEditingOffset();
-                auto* endRenderer = endPosition.deprecatedNode()->renderer();
-                unsigned endOffset = endPosition.deprecatedEditingOffset();
-                if (!startRenderer || !endRenderer)
-                    continue;
-
-                auto highlightData = HighlightData(renderer().view());
-                highlightData.setRenderRange({ startRenderer, endRenderer, startOffset, endOffset });
-                auto [highlightStart, highlightEnd] = highlightStartEnd(highlightData);
-                if (highlightStart < highlightEnd)
-                    markedTexts.append({ highlightStart, highlightEnd, MarkedText::Highlight, nullptr, highlight.key });
-            }
+            if (!highlightData.setRenderRange(rangeData))
+                continue;
+            
+            auto [highlightStart, highlightEnd] = highlightStartEnd(highlightData);
+            if (highlightStart < highlightEnd)
+                markedTexts.append({ highlightStart, highlightEnd, MarkedText::Highlight, nullptr, highlight.key });
         }
     }
     return markedTexts;
