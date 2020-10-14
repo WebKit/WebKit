@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,12 +31,13 @@
 #include "ResourceLoader.h"
 #include <wtf/Function.h>
 #include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class NetscapePlugInStreamLoader;
 
-class NetscapePlugInStreamLoaderClient {
+class NetscapePlugInStreamLoaderClient : public CanMakeWeakPtr<NetscapePlugInStreamLoaderClient> {
 public:
     virtual void willSendRequest(NetscapePlugInStreamLoader*, ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&&) = 0;
     virtual void didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse&) = 0;
@@ -77,7 +78,7 @@ private:
 
     void notifyDone();
 
-    NetscapePlugInStreamLoaderClient* m_client;
+    WeakPtr<NetscapePlugInStreamLoaderClient> m_client;
     bool m_isInitialized { false };
 };
 
