@@ -97,7 +97,7 @@ TEST(IPCTestingAPI, CanSendAlert)
 
     done = false;
     [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>IPC.sendSyncMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_RunJavaScriptAlert.name, 100,"
-        "[{type: 'uint64_t', value: IPC.frameIdentifier}, {type: 'FrameInfoData'}, {'type': 'String', 'value': 'hi'}]);</script>"];
+        "[{type: 'uint64_t', value: IPC.frameID}, {type: 'FrameInfoData'}, {'type': 'String', 'value': 'hi'}]);</script>"];
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_STREQ([alertMessage UTF8String], "hi");
@@ -120,7 +120,7 @@ TEST(IPCTestingAPI, DecodesReplyArgumentsForPrompt)
     done = false;
     promptResult = @"foo";
     [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>result = IPC.sendSyncMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_RunJavaScriptPrompt.name, 100,"
-        "[{type: 'uint64_t', value: IPC.frameIdentifier}, {type: 'FrameInfoData'}, {'type': 'String', 'value': 'hi'}, {'type': 'String', 'value': 'bar'}]);</script>"];
+        "[{type: 'uint64_t', value: IPC.frameID}, {type: 'FrameInfoData'}, {'type': 'String', 'value': 'hi'}, {'type': 'String', 'value': 'bar'}]);</script>"];
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_STREQ([promptDefault UTF8String], "bar");
@@ -145,8 +145,8 @@ TEST(IPCTestingAPI, DecodesReplyArgumentsForAsyncMessage)
     done = false;
     promptResult = @"foo";
     [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>IPC.sendMessage(\"Networking\", 0, IPC.messages.NetworkConnectionToWebProcess_HasStorageAccess.name,"
-        "[{type: 'RegistrableDomain', value: 'https://ipctestingapi.com'}, {type: 'RegistrableDomain', value: 'https://webkit.org'}, {type: 'uint64_t', value: IPC.frameIdentifier},"
-        "{type: 'uint64_t', value: IPC.pageIdentifier}]).then((result) => alert(JSON.stringify(result.arguments)));</script>"];
+        "[{type: 'RegistrableDomain', value: 'https://ipctestingapi.com'}, {type: 'RegistrableDomain', value: 'https://webkit.org'}, {type: 'uint64_t', value: IPC.frameID},"
+        "{type: 'uint64_t', value: IPC.pageID}]).then((result) => alert(JSON.stringify(result.arguments)));</script>"];
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_STREQ([alertMessage UTF8String], "[{\"type\":\"bool\",\"value\":false}]");
