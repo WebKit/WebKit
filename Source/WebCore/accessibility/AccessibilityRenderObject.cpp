@@ -73,6 +73,7 @@
 #include "LocalizedStrings.h"
 #include "NodeList.h"
 #include "Page.h"
+#include "PathUtilities.h"
 #include "ProgressTracker.h"
 #include "Range.h"
 #include "RenderButton.h"
@@ -887,26 +888,64 @@ LayoutRect AccessibilityRenderObject::elementRect() const
     
     return boundingBoxRect();
 }
-    
+
 bool AccessibilityRenderObject::supportsPath() const
 {
-    return is<RenderSVGShape>(renderer());
+    return is<RenderText>(renderer()) || is<RenderSVGShape>(renderer());
 }
 
 Path AccessibilityRenderObject::elementPath() const
 {
+    if (is<RenderText>(renderer())) {
+        Vector<IntRect> rects;
+        downcast<RenderText>(*m_renderer).absoluteRects(rects, flooredLayoutPoint(m_renderer->localToAbsolute()));
+        // If only 1 rect, don't compute path since the bounding rect will be good enough.
+        if (rects.size() < 2)
+            return Path();
+
+        // Compute the path only if this is the last part of a line followed by the beginning of the next line.
+        const auto& style = m_renderer->style();
+        bool rightToLeftText = style.direction() == TextDirection::RTL;
+        static const int xTolerance = 5;
+        static const int yTolerance = 5;
+        bool needsPath = false;
+        IntRect unionRect = rects[0];
+        for (size_t i = 1; i < rects.size(); ++i) {
+            needsPath = abs(rects[i].y() - unionRect.maxY()) < yTolerance // This rect is in a new line.
+                && (rightToLeftText ? rects[i].x() - unionRect.x() > xTolerance
+                    : unionRect.x() - rects[i].x() > xTolerance); // And this rect is to right/left of all previous rects.
+
+            if (needsPath)
+                break;
+
+            unionRect.unite(rects[i]);
+        }
+        if (!needsPath)
+            return Path();
+
+        float outlineOffset = style.outlineOffset();
+        float deviceScaleFactor = m_renderer->document().deviceScaleFactor();
+        Vector<FloatRect> pixelSnappedRects;
+        for (auto rect : rects) {
+            rect.inflate(outlineOffset);
+            pixelSnappedRects.append(snapRectToDevicePixels(rect, deviceScaleFactor));
+        }
+
+        return PathUtilities::pathWithShrinkWrappedRects(pixelSnappedRects, 0);
+    }
+
     if (is<RenderSVGShape>(renderer()) && downcast<RenderSVGShape>(*m_renderer).hasPath()) {
         Path path = downcast<RenderSVGShape>(*m_renderer).path();
-        
+
         // The SVG path is in terms of the parent's bounding box. The path needs to be offset to frame coordinates.
         if (auto svgRoot = ancestorsOfType<RenderSVGRoot>(*m_renderer).first()) {
             LayoutPoint parentOffset = axObjectCache()->getOrCreate(&*svgRoot)->elementRect().location();
             path.transform(AffineTransform().translate(parentOffset.x(), parentOffset.y()));
         }
-        
+
         return path;
     }
-    
+
     return Path();
 }
 

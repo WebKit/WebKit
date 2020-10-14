@@ -1,3 +1,18 @@
+2020-10-14  Andres Gonzalez  <andresg_22@apple.com>
+
+        Support AXCoreObject::elementPath for text elements.
+        https://bugs.webkit.org/show_bug.cgi?id=215206
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/bounds-for-range-expected.txt:
+        Since elementPath is now supported for text elements,
+        AccessibilityUIEelement::attributesOfLinkedUIElements also returns the
+        element path description.
+        * accessibility/mac/internal-link-anchors-expected.txt: Ditto.
+        * accessibility/text-element-path-expected.txt: Added.
+        * accessibility/text-element-path.html: Added.
+
 2020-10-14  Hector Lopez  <hector_i_lopez@apple.com>
 
         Rebaseline editing/editable-region/iframe.html result

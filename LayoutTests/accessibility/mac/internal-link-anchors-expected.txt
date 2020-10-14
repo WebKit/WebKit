@@ -28,6 +28,7 @@ AXFocusableAncestor: <AXStaticText>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXElementBusy: 0
+AXPath: (null)
 
 ------------
 
