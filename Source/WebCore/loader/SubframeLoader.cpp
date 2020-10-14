@@ -148,31 +148,14 @@ bool FrameLoader::SubframeLoader::pluginIsLoadable(const URL& url, const String&
     return true;
 }
 
-bool FrameLoader::SubframeLoader::requestPlugin(HTMLPlugInImageElement& ownerElement, const URL& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback)
+static String findPluginMIMETypeFromURL(Page& page, const URL& url)
 {
-    // Application plug-ins are plug-ins implemented by the user agent, for example Qt plug-ins,
-    // as opposed to third-party code such as Flash. The user agent decides whether or not they are
-    // permitted, rather than WebKit.
-    if (!(m_frame.settings().arePluginsEnabled() || MIMETypeRegistry::isApplicationPluginMIMEType(mimeType)))
-        return false;
-
-    if (!pluginIsLoadable(url, mimeType))
-        return false;
-
-    ASSERT(ownerElement.hasTagName(objectTag) || ownerElement.hasTagName(embedTag));
-    return loadPlugin(ownerElement, url, mimeType, paramNames, paramValues, useFallback);
-}
-
-static String findPluginMIMETypeFromURL(Page& page, const StringView& url)
-{
-    if (!url)
-        return { };
-
-    size_t dotIndex = url.reverseFind('.');
+    auto lastPathComponent = url.lastPathComponent();
+    size_t dotIndex = lastPathComponent.reverseFind('.');
     if (dotIndex == notFound)
         return { };
 
-    auto extensionFromURL = url.substring(dotIndex + 1);
+    auto extensionFromURL = lastPathComponent.substring(dotIndex + 1);
 
     for (auto& type : page.pluginData().webVisibleMimeTypes()) {
         for (auto& extension : type.extensions) {
@@ -184,7 +167,28 @@ static String findPluginMIMETypeFromURL(Page& page, const StringView& url)
     return { };
 }
 
-static void logPluginRequest(Page* page, const String& mimeType, const String& url, bool success)
+bool FrameLoader::SubframeLoader::requestPlugin(HTMLPlugInImageElement& ownerElement, const URL& url, const String& explicitMIMEType, const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback)
+{
+    String mimeType = explicitMIMEType;
+    if (mimeType.isEmpty()) {
+        if (auto page = ownerElement.document().page())
+            mimeType = findPluginMIMETypeFromURL(*page, url);
+    }
+
+    // Application plug-ins are plug-ins implemented by the user agent, for example Qt plug-ins,
+    // as opposed to third-party code such as Flash. The user agent decides whether or not they are
+    // permitted, rather than WebKit.
+    if (!(m_frame.settings().arePluginsEnabled() || MIMETypeRegistry::isApplicationPluginMIMEType(mimeType)))
+        return false;
+
+    if (!pluginIsLoadable(url, explicitMIMEType))
+        return false;
+
+    ASSERT(ownerElement.hasTagName(objectTag) || ownerElement.hasTagName(embedTag));
+    return loadPlugin(ownerElement, url, explicitMIMEType, paramNames, paramValues, useFallback);
+}
+
+static void logPluginRequest(Page* page, const String& mimeType, const URL& url, bool success)
 {
     if (!page)
         return;
@@ -230,7 +234,7 @@ bool FrameLoader::SubframeLoader::requestObject(HTMLPlugInImageElement& ownerEle
     bool useFallback;
     if (shouldUsePlugin(completedURL, mimeType, hasFallbackContent, useFallback)) {
         bool success = requestPlugin(ownerElement, completedURL, mimeType, paramNames, paramValues, useFallback);
-        logPluginRequest(document.page(), mimeType, completedURL.string(), success);
+        logPluginRequest(document.page(), mimeType, completedURL, success);
         return success;
     }
 
@@ -276,7 +280,7 @@ RefPtr<Widget> FrameLoader::SubframeLoader::createJavaAppletWidget(const IntSize
     if (m_frame.settings().arePluginsEnabled())
         widget = m_frame.loader().client().createJavaAppletWidget(size, element, baseURL, paramNames, paramValues);
 
-    logPluginRequest(m_frame.page(), element.serviceType(), String(), widget);
+    logPluginRequest(m_frame.page(), element.serviceType(), { }, widget);
 
     if (!widget) {
         RenderEmbeddedObject* renderer = element.renderEmbeddedObject();

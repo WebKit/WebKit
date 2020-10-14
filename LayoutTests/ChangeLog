@@ -1,5 +1,69 @@
 2020-10-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r268162. rdar://problem/70267741
+
+    REGRESSION: Safari unable to load PDF in <embed> (docs.legalconnect.com)
+    https://bugs.webkit.org/show_bug.cgi?id=217451
+    <rdar://problem/69767043>
+    
+    Reviewed by Alex Christensen.
+    
+    Source/WebCore:
+    
+    Test: fast/replaced/pdf-as-embed-with-no-mime-type-is-not-blank.html
+    
+    If plugins are enabled, we'll always let the request go through, and WebKit will
+    guess that files with PDFPlugin-handled extensions should instantiate PDFPlugin,
+    even if no other plugins are available.
+    
+    However, if plugins are disabled, requestPlugin() will early return if the explicitly
+    specified MIME type is not handled by an application plugin (even though the downstream
+    WebKit code would have happily instantiated an application plugin for us).
+    
+    Application plugins shouldn't depend on the plugin enablement setting.
+    To fix this, have SubframeLoader guess the MIME type if not explicitly specified
+    (matching WebKit's behavior), and allow the request if it matches an application plugin.
+    
+    * loader/SubframeLoader.cpp:
+    (WebCore::findPluginMIMETypeFromURL):
+    Improve this previously logging-only function to use the lastPathComponent
+    of the URL instead of randomly looking at the end of the URL, to ignore
+    query strings and fragments when looking for the file extension.
+    
+    (WebCore::FrameLoader::SubframeLoader::requestPlugin):
+    Make use of findPluginMIMETypeFromURL to guess the MIME type if it's not
+    explicitly specified. If the guessed MIME type is one that is handled
+    by application plugins, allow the request to go out to WebKit (which
+    may then instantiate a PDFPlugin, for example).
+    
+    (WebCore::logPluginRequest):
+    (WebCore::FrameLoader::SubframeLoader::requestObject):
+    (WebCore::FrameLoader::SubframeLoader::createJavaAppletWidget):
+    Pass the URL instead of stringifying it, so we can lastPathComponent as above.
+    
+    LayoutTests:
+    
+    * fast/replaced/pdf-as-embed-with-no-mime-type-is-not-blank-expected-mismatch.html: Added.
+    * fast/replaced/pdf-as-embed-with-no-mime-type-is-not-blank.html: Added.
+    Add a test ensuring that <embed> with no specified MIME type still renders the PDF.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268162 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-07  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION: Safari unable to load PDF in <embed> (docs.legalconnect.com)
+            https://bugs.webkit.org/show_bug.cgi?id=217451
+            <rdar://problem/69767043>
+
+            Reviewed by Alex Christensen.
+
+            * fast/replaced/pdf-as-embed-with-no-mime-type-is-not-blank-expected-mismatch.html: Added.
+            * fast/replaced/pdf-as-embed-with-no-mime-type-is-not-blank.html: Added.
+            Add a test ensuring that <embed> with no specified MIME type still renders the PDF.
+
+2020-10-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r268117. rdar://problem/70267698
 
     Presidential Executive Order pages not accessible with Safari.
