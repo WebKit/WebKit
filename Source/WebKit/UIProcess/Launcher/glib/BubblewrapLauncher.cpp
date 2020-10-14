@@ -40,11 +40,13 @@
 #define BASE_DIRECTORY "wpe"
 #endif
 
-#if __has_include(<sys/memfd.h>)
+#include <sys/mman.h>
 
-#include <sys/memfd.h>
+#ifndef MFD_ALLOW_SEALING
 
-#else
+#if HAVE(LINUX_MEMFD_H)
+
+#include <linux/memfd.h>
 
 // These defines were added in glibc 2.27, the same release that added memfd_create.
 // But the kernel added all of this in Linux 3.17. So it's totally safe for us to
@@ -59,13 +61,13 @@
 #define F_SEAL_GROW   0x0004
 #define F_SEAL_WRITE  0x0008
 
-#define MFD_ALLOW_SEALING 2U
-
 static int memfd_create(const char* name, unsigned flags)
 {
     return syscall(__NR_memfd_create, name, flags);
 }
-#endif
+#endif // #if HAVE(LINUX_MEMFD_H)
+
+#endif // #ifndef MFD_ALLOW_SEALING
 
 namespace WebKit {
 using namespace WebCore;
