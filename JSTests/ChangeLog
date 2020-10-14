@@ -1,3 +1,13 @@
+2020-10-13  Saam Barati  <sbarati@apple.com>
+
+        JSObject::getPropertyNames should have a stack overflow check
+        https://bugs.webkit.org/show_bug.cgi?id=217677
+        <rdar://problem/69286436>
+
+        Reviewed by Tadeu Zagallo.
+
+        * stress/get-property-names-stack-overflow.js: Added.
+
 2020-10-12  Saam Barati  <sbarati@apple.com>
 
         Array.prototype.sort's sortBucketSort accesses an array in an invalid way that can lead to incorrect results with indexed properties on the prototype chain

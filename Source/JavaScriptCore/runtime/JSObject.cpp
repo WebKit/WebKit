@@ -2384,6 +2384,12 @@ void JSObject::getPropertyNames(JSObject* object, JSGlobalObject* globalObject, 
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
+        throwStackOverflowError(globalObject, scope);
+        return;
+    }
+
     object->methodTable(vm)->getOwnPropertyNames(object, globalObject, propertyNames, mode);
     RETURN_IF_EXCEPTION(scope, void());
 

@@ -1,3 +1,35 @@
+2020-10-13  Saam Barati  <sbarati@apple.com>
+
+        JSObject::getPropertyNames should have a stack overflow check
+        https://bugs.webkit.org/show_bug.cgi?id=217677
+        <rdar://problem/69286436>
+
+        Reviewed by Tadeu Zagallo.
+
+        A prototype chain can be long enough where the recursion causes a stack
+        overflow. The attached test case uses $vm to mimic such a prototype chain
+        by using JSProxy to make a cyclic prototype chain. But the same works by
+        making a prototype chain very long, but the test case takes too long to
+        run to justify landing. For posterity, the alternate test case is:
+        
+        ```
+        function makeLongProtoChain(length) {
+            let object = /foo/;
+            for (let i = 0; i < length; ++i) {
+                next = /foo/;
+                next.__proto__ = object;
+                object = next;
+            }
+            return object;
+        }
+        
+        let o = makeLongProtoChain(30000);
+        for (let q in o) {}
+        ```
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getPropertyNames):
+
 2020-10-13  Keith Rollin  <krollin@apple.com>
 
         Remove leftover MACOSX_DEPLOYMENT_TARGET_macosx support
