@@ -403,7 +403,7 @@ my $whitespaceTokenPattern = '^[\t\n\r ]*[\n\r]';
 my $floatTokenPattern = '^(-?(([0-9]+\.[0-9]*|[0-9]*\.[0-9]+)([Ee][+-]?[0-9]+)?|[0-9]+[Ee][+-]?[0-9]+))';
 my $integerTokenPattern = '^(-?[1-9][0-9]*|-?0[Xx][0-9A-Fa-f]+|-?0[0-7]*)';
 my $stringTokenPattern = '^(\"[^\"]*\")';
-my $identifierTokenPattern = '^([A-Z_a-z][0-9A-Z_a-z]*)';
+my $identifierTokenPattern = '^([_-]?[A-Z_a-z][0-9A-Z_a-z-]*)';
 my $otherTokenPattern = '^(\.\.\.|[^\t\n\r 0-9A-Z_a-z])';
 
 sub getTokenInternal

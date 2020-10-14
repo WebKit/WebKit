@@ -1847,22 +1847,33 @@ sub PassArgumentExpression
     return "WTFMove(${name})";
 }
 
+sub MangleAttributeOrFunctionName
+{
+    my ($name) = @_;
+
+    $name =~ s/-/_dash_/g;
+
+    return $name;
+}
+
 sub GetAttributeGetterName
 {
     my ($interface, $className, $attribute) = @_;
 
-    return $codeGenerator->WK_lcfirst($className) . "Constructor" . $codeGenerator->WK_ucfirst($attribute->name) if $attribute->isStatic;
     return GetJSBuiltinFunctionName($className, $attribute) if IsJSBuiltin($interface, $attribute);
-    return "js" . $interface->type->name . $codeGenerator->WK_ucfirst($attribute->name) . ($codeGenerator->IsConstructorType($attribute->type) ? "Constructor" : "");
+    return $codeGenerator->WK_lcfirst($className) . "Constructor" . $codeGenerator->WK_ucfirst(MangleAttributeOrFunctionName($attribute->name)) if $attribute->isStatic;
+    return $codeGenerator->WK_lcfirst($className) . $codeGenerator->WK_ucfirst(MangleAttributeOrFunctionName($attribute->name)) . "Constructor" if $codeGenerator->IsConstructorType($attribute->type);
+    return $codeGenerator->WK_lcfirst($className) . $codeGenerator->WK_ucfirst(MangleAttributeOrFunctionName($attribute->name));
 }
 
 sub GetAttributeSetterName
 {
     my ($interface, $className, $attribute) = @_;
 
-    return "set" . $codeGenerator->WK_ucfirst($className) . "Constructor" . $codeGenerator->WK_ucfirst($attribute->name) if $attribute->isStatic;
     return "set" . $codeGenerator->WK_ucfirst(GetJSBuiltinFunctionName($className, $attribute)) if IsJSBuiltin($interface, $attribute);
-    return "setJS" . $interface->type->name . $codeGenerator->WK_ucfirst($attribute->name) . ($codeGenerator->IsConstructorType($attribute->type) ? "Constructor" : "");
+    return "set" . $codeGenerator->WK_ucfirst($className) . "Constructor" . $codeGenerator->WK_ucfirst(MangleAttributeOrFunctionName($attribute->name)) if $attribute->isStatic;
+    return "set" . $codeGenerator->WK_ucfirst($className) . $codeGenerator->WK_ucfirst(MangleAttributeOrFunctionName($attribute->name)) . "Constructor" if $codeGenerator->IsConstructorType($attribute->type);
+    return "set" . $codeGenerator->WK_ucfirst($className) . $codeGenerator->WK_ucfirst(MangleAttributeOrFunctionName($attribute->name));
 }
 
 sub GetFunctionName
@@ -1875,7 +1886,7 @@ sub GetFunctionName
     $functionName = "SymbolIterator" if $functionName eq "[Symbol.Iterator]";
 
     my $kind = $operation->isStatic ? "Constructor" : (OperationShouldBeOnInstance($interface, $operation) ? "Instance" : "Prototype");
-    return $codeGenerator->WK_lcfirst($className) . $kind . "Function" . $codeGenerator->WK_ucfirst($functionName);
+    return $codeGenerator->WK_lcfirst($className) . $kind . "Function" . $codeGenerator->WK_ucfirst(MangleAttributeOrFunctionName($functionName));
 }
 
 sub GetFullyQualifiedImplementationCallName
@@ -4360,7 +4371,6 @@ sub GenerateImplementation
             die "Overloads is not supported in DOMJIT" if $isOverloaded;
             die "Currently ReadDOM value is only allowed" unless $codeGenerator->ExtendedAttributeContains($operation->extendedAttributes->{DOMJIT}, "ReadDOM");
 
-            my $interfaceName = $interface->type->name;
             my $functionName = GetFunctionName($interface, $className, $operation);
             my $nameOfFunctionWithoutTypeCheck = $codeGenerator->WK_lcfirst($functionName) . "WithoutTypeCheck";
             my $domJITSignatureName = "DOMJITSignatureFor" . $interface->type->name . $codeGenerator->WK_ucfirst($operation->name);
@@ -4390,10 +4400,9 @@ sub GenerateImplementation
             my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
             push(@implContent, "#if ${conditionalString}\n\n") if $conditionalString;
             AddToImplIncludes("DOMJITIDLTypeFilter.h", $conditionalString);
-            my $interfaceName = $interface->type->name;
             my $generatorName = $interfaceName . $codeGenerator->WK_ucfirst($attribute->name);
             my $domJITClassName = $generatorName . "Attribute";
-            my $getter = GetAttributeGetterName($interface, $generatorName, $attribute);
+            my $getter = GetAttributeGetterName($interface, $className, $attribute);
             my $resultType = "JSC::SpecBytecodeTop";
             if ($attribute->extendedAttributes->{DOMJIT}) {
                 $resultType = GetResultTypeFilter($interface, $attribute->type);

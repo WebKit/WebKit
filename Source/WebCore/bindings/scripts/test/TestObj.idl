@@ -455,6 +455,18 @@ enum TestConfidence { "high", "kinda-low" };
     [Exposed=Window] undefined conditionallyExposedToWindowFunction();
     [Exposed=Worker] undefined conditionallyExposedToWorkerFunction();
     [Exposed=(Window, Worker)] undefined conditionallyExposedToWindowAndWorkerFunction();
+
+    [ImplementedAs=leadingHyphenAttribute] attribute DOMString -leading-hyphen-attribute;
+    [ImplementedAs=trailingHyphenAttribute] attribute DOMString trailing-hyphen-attribute-;
+    attribute DOMString _leading_underscore_attribute; // NOTE: IDL removes the leading underscore so this is interpreted as "leading_underscore_attribute"
+    attribute DOMString __double_leading_underscore_attribute; // NOTE: IDL removes the leading underscore so this is interpreted as "_double_leading_underscore_attribute"
+    attribute DOMString trailing_underscore_attribute_;
+
+    [ImplementedAs=leadingHyphenFunction] undefined -leading-hyphen-function();
+    [ImplementedAs=trailingHyphenFunction] undefined trailing-hyphen-function-();
+    undefined _leading_underscore_function(); // NOTE: WebIDL removes the leading underscore so this is interpreted as "leading_underscore_function"
+    undefined __double_leading_underscore_function(); // NOTE: WebIDL removes the leading underscore so this is interpreted as "_double_leading_underscore_function"
+    undefined trailing_underscore_function_();
 };
 
 // The following comments should not generate any code.

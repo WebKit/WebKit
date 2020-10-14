@@ -1597,6 +1597,11 @@ JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunctionTestReturnValueOptimizationW
 JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunctionConditionallyExposedToWindowFunction);
 JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunctionConditionallyExposedToWorkerFunction);
 JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunctionConditionallyExposedToWindowAndWorkerFunction);
+JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_dash_leading_dash_hyphen_dash_function);
+JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunctionTrailing_dash_hyphen_dash_function_dash_);
+JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunctionLeading_underscore_function);
+JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_double_leading_underscore_function);
+JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunctionTrailing_underscore_function_);
 JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunctionToString);
 
 // Attributes
@@ -1796,6 +1801,16 @@ JSC_DECLARE_CUSTOM_GETTER(jsTestObjConditionallyExposedToWorkerAttribute);
 JSC_DECLARE_CUSTOM_SETTER(setJSTestObjConditionallyExposedToWorkerAttribute);
 JSC_DECLARE_CUSTOM_GETTER(jsTestObjConditionallyExposedToWindowAndWorkerAttribute);
 JSC_DECLARE_CUSTOM_SETTER(setJSTestObjConditionallyExposedToWindowAndWorkerAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObj_dash_leading_dash_hyphen_dash_attribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObj_dash_leading_dash_hyphen_dash_attribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjTrailing_dash_hyphen_dash_attribute_dash_);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjTrailing_dash_hyphen_dash_attribute_dash_);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjLeading_underscore_attribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjLeading_underscore_attribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObj_double_leading_underscore_attribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObj_double_leading_underscore_attribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjTrailing_underscore_attribute_);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjTrailing_underscore_attribute_);
 
 class JSTestObjPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -2128,6 +2143,11 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "conditionallyExposedToWindowAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionallyExposedToWindowAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjConditionallyExposedToWindowAttribute) } },
     { "conditionallyExposedToWorkerAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionallyExposedToWorkerAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjConditionallyExposedToWorkerAttribute) } },
     { "conditionallyExposedToWindowAndWorkerAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionallyExposedToWindowAndWorkerAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjConditionallyExposedToWindowAndWorkerAttribute) } },
+    { "-leading-hyphen-attribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObj_dash_leading_dash_hyphen_dash_attribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObj_dash_leading_dash_hyphen_dash_attribute) } },
+    { "trailing-hyphen-attribute-", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjTrailing_dash_hyphen_dash_attribute_dash_), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjTrailing_dash_hyphen_dash_attribute_dash_) } },
+    { "leading_underscore_attribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjLeading_underscore_attribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjLeading_underscore_attribute) } },
+    { "_double_leading_underscore_attribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObj_double_leading_underscore_attribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObj_double_leading_underscore_attribute) } },
+    { "trailing_underscore_attribute_", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjTrailing_underscore_attribute_), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjTrailing_underscore_attribute_) } },
 #if ENABLE(TEST_FEATURE)
     { "enabledAtRuntimeOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunctionEnabledAtRuntimeOperation), (intptr_t) (1) } },
 #else
@@ -2309,6 +2329,11 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "conditionallyExposedToWindowFunction", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunctionConditionallyExposedToWindowFunction), (intptr_t) (0) } },
     { "conditionallyExposedToWorkerFunction", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunctionConditionallyExposedToWorkerFunction), (intptr_t) (0) } },
     { "conditionallyExposedToWindowAndWorkerFunction", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunctionConditionallyExposedToWindowAndWorkerFunction), (intptr_t) (0) } },
+    { "-leading-hyphen-function", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunction_dash_leading_dash_hyphen_dash_function), (intptr_t) (0) } },
+    { "trailing-hyphen-function-", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunctionTrailing_dash_hyphen_dash_function_dash_), (intptr_t) (0) } },
+    { "leading_underscore_function", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunctionLeading_underscore_function), (intptr_t) (0) } },
+    { "_double_leading_underscore_function", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunction_double_leading_underscore_function), (intptr_t) (0) } },
+    { "trailing_underscore_function_", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunctionTrailing_underscore_function_), (intptr_t) (0) } },
     { "toString", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunctionToString), (intptr_t) (0) } },
 #if ENABLE(Condition1)
     { "CONDITIONAL_CONST", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(0) } },
@@ -5326,6 +5351,161 @@ static inline bool setJSTestObjConditionallyExposedToWindowAndWorkerAttributeSet
 JSC_DEFINE_CUSTOM_SETTER(setJSTestObjConditionallyExposedToWindowAndWorkerAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjConditionallyExposedToWindowAndWorkerAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "conditionallyExposedToWindowAndWorkerAttribute");
+}
+
+static inline JSValue jsTestObj_dash_leading_dash_hyphen_dash_attributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto& impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.leadingHyphenAttribute())));
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsTestObj_dash_leading_dash_hyphen_dash_attribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+{
+    return IDLAttribute<JSTestObj>::get<jsTestObj_dash_leading_dash_hyphen_dash_attributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "-leading-hyphen-attribute");
+}
+
+static inline bool setJSTestObj_dash_leading_dash_hyphen_dash_attributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject, JSValue value)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
+    RETURN_IF_EXCEPTION(throwScope, false);
+    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
+        return impl.setLeadingHyphenAttribute(WTFMove(nativeValue));
+    });
+    return true;
+}
+
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObj_dash_leading_dash_hyphen_dash_attribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+{
+    return IDLAttribute<JSTestObj>::set<setJSTestObj_dash_leading_dash_hyphen_dash_attributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "-leading-hyphen-attribute");
+}
+
+static inline JSValue jsTestObjTrailing_dash_hyphen_dash_attribute_dash_Getter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto& impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.trailingHyphenAttribute())));
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjTrailing_dash_hyphen_dash_attribute_dash_, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+{
+    return IDLAttribute<JSTestObj>::get<jsTestObjTrailing_dash_hyphen_dash_attribute_dash_Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "trailing-hyphen-attribute-");
+}
+
+static inline bool setJSTestObjTrailing_dash_hyphen_dash_attribute_dash_Setter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject, JSValue value)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
+    RETURN_IF_EXCEPTION(throwScope, false);
+    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
+        return impl.setTrailingHyphenAttribute(WTFMove(nativeValue));
+    });
+    return true;
+}
+
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjTrailing_dash_hyphen_dash_attribute_dash_, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+{
+    return IDLAttribute<JSTestObj>::set<setJSTestObjTrailing_dash_hyphen_dash_attribute_dash_Setter>(*lexicalGlobalObject, thisValue, encodedValue, "trailing-hyphen-attribute-");
+}
+
+static inline JSValue jsTestObjLeading_underscore_attributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto& impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.leading_underscore_attribute())));
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjLeading_underscore_attribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+{
+    return IDLAttribute<JSTestObj>::get<jsTestObjLeading_underscore_attributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "leading_underscore_attribute");
+}
+
+static inline bool setJSTestObjLeading_underscore_attributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject, JSValue value)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
+    RETURN_IF_EXCEPTION(throwScope, false);
+    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
+        return impl.setLeading_underscore_attribute(WTFMove(nativeValue));
+    });
+    return true;
+}
+
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjLeading_underscore_attribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+{
+    return IDLAttribute<JSTestObj>::set<setJSTestObjLeading_underscore_attributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "leading_underscore_attribute");
+}
+
+static inline JSValue jsTestObj_double_leading_underscore_attributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto& impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl._double_leading_underscore_attribute())));
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsTestObj_double_leading_underscore_attribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+{
+    return IDLAttribute<JSTestObj>::get<jsTestObj_double_leading_underscore_attributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "_double_leading_underscore_attribute");
+}
+
+static inline bool setJSTestObj_double_leading_underscore_attributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject, JSValue value)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
+    RETURN_IF_EXCEPTION(throwScope, false);
+    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
+        return impl.set_double_leading_underscore_attribute(WTFMove(nativeValue));
+    });
+    return true;
+}
+
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObj_double_leading_underscore_attribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+{
+    return IDLAttribute<JSTestObj>::set<setJSTestObj_double_leading_underscore_attributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "_double_leading_underscore_attribute");
+}
+
+static inline JSValue jsTestObjTrailing_underscore_attribute_Getter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto& impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.trailing_underscore_attribute_())));
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjTrailing_underscore_attribute_, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+{
+    return IDLAttribute<JSTestObj>::get<jsTestObjTrailing_underscore_attribute_Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "trailing_underscore_attribute_");
+}
+
+static inline bool setJSTestObjTrailing_underscore_attribute_Setter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject, JSValue value)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
+    RETURN_IF_EXCEPTION(throwScope, false);
+    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
+        return impl.setTrailing_underscore_attribute_(WTFMove(nativeValue));
+    });
+    return true;
+}
+
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjTrailing_underscore_attribute_, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+{
+    return IDLAttribute<JSTestObj>::set<setJSTestObjTrailing_underscore_attribute_Setter>(*lexicalGlobalObject, thisValue, encodedValue, "trailing_underscore_attribute_");
 }
 
 #if ENABLE(TEST_FEATURE)
@@ -9244,6 +9424,91 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionallyExposed
 JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunctionConditionallyExposedToWindowAndWorkerFunction, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionConditionallyExposedToWindowAndWorkerFunctionBody>(*lexicalGlobalObject, *callFrame, "conditionallyExposedToWindowAndWorkerFunction");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_dash_leading_dash_hyphen_dash_functionBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    auto& impl = castedThis->wrapped();
+    throwScope.release();
+    impl.leadingHyphenFunction();
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_dash_leading_dash_hyphen_dash_function, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_dash_leading_dash_hyphen_dash_functionBody>(*lexicalGlobalObject, *callFrame, "-leading-hyphen-function");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTrailing_dash_hyphen_dash_function_dash_Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    auto& impl = castedThis->wrapped();
+    throwScope.release();
+    impl.trailingHyphenFunction();
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunctionTrailing_dash_hyphen_dash_function_dash_, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionTrailing_dash_hyphen_dash_function_dash_Body>(*lexicalGlobalObject, *callFrame, "trailing-hyphen-function-");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionLeading_underscore_functionBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    auto& impl = castedThis->wrapped();
+    throwScope.release();
+    impl.leading_underscore_function();
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunctionLeading_underscore_function, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionLeading_underscore_functionBody>(*lexicalGlobalObject, *callFrame, "leading_underscore_function");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_double_leading_underscore_functionBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    auto& impl = castedThis->wrapped();
+    throwScope.release();
+    impl._double_leading_underscore_function();
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_double_leading_underscore_function, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_double_leading_underscore_functionBody>(*lexicalGlobalObject, *callFrame, "_double_leading_underscore_function");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTrailing_underscore_function_Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    auto& impl = castedThis->wrapped();
+    throwScope.release();
+    impl.trailing_underscore_function_();
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunctionTrailing_underscore_function_, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionTrailing_underscore_function_Body>(*lexicalGlobalObject, *callFrame, "trailing_underscore_function_");
 }
 
 static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionToStringBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
