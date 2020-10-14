@@ -334,7 +334,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
 
     // Create the WebGLLayer
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-        m_webGLLayer = adoptNS([[WebGLLayer alloc] initWithClient:this devicePixelRatio:attrs.devicePixelRatio]);
+        m_webGLLayer = adoptNS([[WebGLLayer alloc] initWithClient:this devicePixelRatio:attrs.devicePixelRatio contentsOpaque:!attrs.alpha]);
 #ifndef NDEBUG
         [m_webGLLayer setName:@"WebGL Layer"];
 #endif
