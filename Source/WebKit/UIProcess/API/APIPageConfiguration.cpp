@@ -84,7 +84,6 @@ Ref<PageConfiguration> PageConfiguration::copy() const
     copy->m_corsDisablingPatterns = this->m_corsDisablingPatterns;
     copy->m_crossOriginAccessControlCheckEnabled = this->m_crossOriginAccessControlCheckEnabled;
     copy->m_userScriptsShouldWaitUntilNotification = this->m_userScriptsShouldWaitUntilNotification;
-    copy->m_webViewCategory = this->m_webViewCategory;
 
     copy->m_processDisplayName = this->m_processDisplayName;
     copy->m_loadsSubresources = this->m_loadsSubresources;

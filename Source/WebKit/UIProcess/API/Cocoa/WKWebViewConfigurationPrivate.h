@@ -36,13 +36,6 @@ typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
 @protocol _UIClickInteractionDriving;
 #endif
 
-typedef NS_ENUM(NSUInteger, _WKWebViewCategory) {
-    _WKWebViewCategoryAppBoundDomain,
-    _WKWebViewCategoryHybridApp,
-    _WKWebViewCategoryInAppBrowser,
-    _WKWebViewCategoryWebBrowser
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
 @class WKWebView;
 @class _WKApplicationManifest;
 @class _WKVisitedLinkStore;
@@ -126,7 +119,6 @@ typedef NS_ENUM(NSUInteger, _WKWebViewCategory) {
 @property (nonatomic, copy, setter=_setAdditionalSupportedImageTypes:) NSArray<NSString *> *_additionalSupportedImageTypes WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 
 @property (nonatomic, setter=_setUndoManagerAPIEnabled:) BOOL _undoManagerAPIEnabled WK_API_AVAILABLE(macos(10.15), ios(13.0));
-@property (nonatomic, setter=_setWebViewCategory:) _WKWebViewCategory _webViewCategory WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, setter=_setShouldRelaxThirdPartyCookieBlocking:) BOOL _shouldRelaxThirdPartyCookieBlocking WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, setter=_setProcessDisplayName:) NSString *_processDisplayName WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 

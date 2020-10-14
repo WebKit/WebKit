@@ -1217,48 +1217,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return _undoManagerAPIEnabled;
 }
 
-static WebKit::WebViewCategory toWebKitWebViewCategory(_WKWebViewCategory category)
-{
-    switch (category) {
-    case _WKWebViewCategoryAppBoundDomain:
-        return WebKit::WebViewCategory::AppBoundDomain;
-    case _WKWebViewCategoryHybridApp:
-        return WebKit::WebViewCategory::HybridApp;
-    case _WKWebViewCategoryInAppBrowser:
-        return WebKit::WebViewCategory::InAppBrowser;
-    case _WKWebViewCategoryWebBrowser:
-        return WebKit::WebViewCategory::WebBrowser;
-    }
-    ASSERT_NOT_REACHED();
-    return WebKit::WebViewCategory::AppBoundDomain;
-}
-
-static _WKWebViewCategory toWKWebViewCategory(WebKit::WebViewCategory category)
-{
-    switch (category) {
-    case WebKit::WebViewCategory::AppBoundDomain:
-        return _WKWebViewCategoryAppBoundDomain;
-    case WebKit::WebViewCategory::HybridApp:
-        return _WKWebViewCategoryHybridApp;
-    case WebKit::WebViewCategory::InAppBrowser:
-        return _WKWebViewCategoryInAppBrowser;
-    case WebKit::WebViewCategory::WebBrowser:
-        return _WKWebViewCategoryWebBrowser;
-    }
-    ASSERT_NOT_REACHED();
-    return _WKWebViewCategoryAppBoundDomain;
-}
-
-- (_WKWebViewCategory)_webViewCategory
-{
-    return toWKWebViewCategory(_pageConfiguration->webViewCategory());
-}
-
-- (void)_setWebViewCategory:(_WKWebViewCategory)category
-{
-    _pageConfiguration->setWebViewCategory(toWebKitWebViewCategory(category));
-}
-
 - (BOOL)_shouldRelaxThirdPartyCookieBlocking
 {
     return _pageConfiguration->shouldRelaxThirdPartyCookieBlocking() == WebCore::ShouldRelaxThirdPartyCookieBlocking::Yes;

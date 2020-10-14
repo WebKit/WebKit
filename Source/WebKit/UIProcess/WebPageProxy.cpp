@@ -3076,16 +3076,13 @@ bool WebPageProxy::setIsNavigatingToAppBoundDomainAndCheckIfPermitted(bool isMai
         if (*isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::No) {
             if (isMainFrame)
                 return false;
-            m_configuration->setWebViewCategory(WebViewCategory::InAppBrowser);
             m_isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::No;
             return true;
         }
-        m_configuration->setWebViewCategory(WebViewCategory::AppBoundDomain);
         m_isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::Yes;
     } else {
         if (m_hasExecutedAppBoundBehaviorBeforeNavigation)
             return false;
-        m_configuration->setWebViewCategory(WebViewCategory::InAppBrowser);
         m_isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::No;
     }
     return true;

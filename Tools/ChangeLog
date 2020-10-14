@@ -1,3 +1,13 @@
+2020-10-14  Kate Cheney  <katherine_cheney@apple.com>
+
+        Remove _WKWebViewCategory from WKWebViewConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=217679
+        <rdar://problem/70260337>
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+
 2020-10-14  Aakash Jain  <aakash_jain@apple.com>
 
         Rename slave to bot for gtk-linux bot names

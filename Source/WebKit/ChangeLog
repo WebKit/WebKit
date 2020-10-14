@@ -1,3 +1,34 @@
+2020-10-14  Kate Cheney  <katherine_cheney@apple.com>
+
+        Remove _WKWebViewCategory from WKWebViewConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=217679
+        <rdar://problem/70260337>
+
+        Reviewed by Sam Weinig.
+
+        This property is not used in any meaningful way. Its original purpose
+        was to categorize WKWebViews for app-bound domains, but this is
+        now done using the isNavigatingToAppBoundDomain property on
+        WebPageProxy. We should remove it.
+
+        No new tests, behavior confirmed by existing tests.
+
+        * Shared/WebViewCategory.h: Removed.
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy const):
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::webViewCategory const): Deleted.
+        (API::PageConfiguration::setWebViewCategory): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (toWebKitWebViewCategory): Deleted.
+        (toWKWebViewCategory): Deleted.
+        (-[WKWebViewConfiguration _webViewCategory]): Deleted.
+        (-[WKWebViewConfiguration _setWebViewCategory:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomainAndCheckIfPermitted):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-10-14  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Fix the build warning below since r268312.

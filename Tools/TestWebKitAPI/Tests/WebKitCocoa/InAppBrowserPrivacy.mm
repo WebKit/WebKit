@@ -1203,25 +1203,6 @@ TEST(InAppBrowserPrivacy, JavaScriptInNonAppBoundFrameFails)
     TestWebKitAPI::Util::run(&isDone);
 }
 
-TEST(InAppBrowserPrivacy, WebViewCategory)
-{
-    initializeInAppBrowserPrivacyTestSettings();
-
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    EXPECT_EQ([configuration _webViewCategory], _WKWebViewCategoryAppBoundDomain);
-
-    [configuration _setWebViewCategory:_WKWebViewCategoryInAppBrowser];
-    EXPECT_EQ([configuration _webViewCategory], _WKWebViewCategoryInAppBrowser);
-
-    [configuration _setWebViewCategory:_WKWebViewCategoryWebBrowser];
-    EXPECT_EQ([configuration _webViewCategory], _WKWebViewCategoryWebBrowser);
-
-    [configuration _setWebViewCategory:_WKWebViewCategoryAppBoundDomain];
-    EXPECT_EQ([configuration _webViewCategory], _WKWebViewCategoryAppBoundDomain);
-
-    cleanUpInAppBrowserPrivacyTestSettings();
-}
-
 TEST(InAppBrowserPrivacy, LoadFromHTMLStringsSucceedsIfAppBound)
 {
     initializeInAppBrowserPrivacyTestSettings();

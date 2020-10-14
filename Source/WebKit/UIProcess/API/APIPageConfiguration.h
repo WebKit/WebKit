@@ -26,7 +26,6 @@
 #pragma once
 
 #include "APIObject.h"
-#include "WebViewCategory.h"
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
@@ -145,9 +144,6 @@ public:
     const WTF::String& processDisplayName() const { return m_processDisplayName; }
     void setProcessDisplayName(const WTF::String& name) { m_processDisplayName = name; }
 
-    WebKit::WebViewCategory webViewCategory() const { return m_webViewCategory; }
-    void setWebViewCategory(WebKit::WebViewCategory category) { m_webViewCategory = category; }
-
     bool loadsSubresources() const { return m_loadsSubresources; }
     void setLoadsSubresources(bool loads) { m_loadsSubresources = loads; }
 
@@ -206,7 +202,6 @@ private:
     bool m_userScriptsShouldWaitUntilNotification { true };
     bool m_crossOriginAccessControlCheckEnabled { true };
     WTF::String m_processDisplayName;
-    WebKit::WebViewCategory m_webViewCategory { WebKit::WebViewCategory::AppBoundDomain };
     bool m_loadsSubresources { true };
     bool m_loadsFromNetwork { true };
     
