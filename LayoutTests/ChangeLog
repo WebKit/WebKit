@@ -1,3 +1,15 @@
+2020-10-14  Alex Christensen  <achristensen@webkit.org>
+
+        Disallow ports in file URLs
+        https://bugs.webkit.org/show_bug.cgi?id=217252
+
+        Reviewed by Darin Adler.
+
+        * fast/loader/file-URL-with-port-number-expected.txt:
+        * fast/loader/file-URL-with-port-number.html:
+        Update test to reflect this new behavior.  The test was added in r24484 and
+        based on discussion in https://github.com/whatwg/url/issues/548 I've decided to try it and see if we can make this change.
+
 2020-10-13  Simon Fraser  <simon.fraser@apple.com>
 
         Allow passive mouse wheel event listeners to not force synchronous scrolling

@@ -1,3 +1,13 @@
+2020-10-14  Alex Christensen  <achristensen@webkit.org>
+
+        Disallow ports in file URLs
+        https://bugs.webkit.org/show_bug.cgi?id=217252
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2020-10-14  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Unreviewed. Update my status to "reviewer" and add WebIDL expertise.

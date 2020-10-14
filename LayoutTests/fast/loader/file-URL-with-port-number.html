@@ -1,10 +1,28 @@
 <head>
 <script>
-function subframeLoaded()
+
+function finishTest()
 {
-    document.getElementById("result").appendChild(document.createTextNode("SUCCESS: The subframe loaded."));
     if (window.testRunner)
         testRunner.notifyDone();
+}
+
+function subframeLoaded()
+{
+    document.getElementById("result").appendChild(document.createTextNode("FAIL: The subframe loaded."));
+    finishTest();
+}
+
+function subframeError()
+{
+    document.getElementById("result").appendChild(document.createTextNode("FAIL: The subframe onerror was called."));
+    finishTest();
+}
+
+function subframeDidNotLoad()
+{
+    document.getElementById("result").appendChild(document.createTextNode("PASS: The subframe did not load."));
+    finishTest();
 }
 
 function runTest()
@@ -19,7 +37,9 @@ function runTest()
     subframeLocation = subframeLocation.replace(/file-URL-with-port-number/, "resources/empty-subframe");
     var subframe = document.getElementById("subframe");
     subframe.onload = subframeLoaded;
+    subframe.onerror = subframeError;
     subframe.contentWindow.location = subframeLocation;
+    setTimeout(subframeDidNotLoad, 100);
 }
 
 </script>

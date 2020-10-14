@@ -1,3 +1,16 @@
+2020-10-14  Alex Christensen  <achristensen@webkit.org>
+
+        Disallow ports in file URLs
+        https://bugs.webkit.org/show_bug.cgi?id=217252
+
+        Reviewed by Darin Adler.
+
+        This matches Chrome and the URL specification.
+        Covered by newly passing web platform tests.
+
+        * wtf/URLParser.cpp:
+        (WTF::URLParser::parsePort):
+
 2020-10-13  Simon Fraser  <simon.fraser@apple.com>
 
         Allow passive mouse wheel event listeners to not force synchronous scrolling

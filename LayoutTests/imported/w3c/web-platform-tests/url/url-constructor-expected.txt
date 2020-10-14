@@ -79,9 +79,7 @@ PASS Parsing: <ftp:/example.com/> against <http://example.org/foo/bar>
 PASS Parsing: <https:/example.com/> against <http://example.org/foo/bar>
 PASS Parsing: <madeupscheme:/example.com/> against <http://example.org/foo/bar>
 PASS Parsing: <file:/example.com/> against <http://example.org/foo/bar>
-FAIL Parsing: <file://example:1/> against <about:blank> assert_throws_js: function "function () {
-          bURL(expected.input, expected.base)
-        }" did not throw
+PASS Parsing: <file://example:1/> against <about:blank>
 PASS Parsing: <file://example:test/> against <about:blank>
 PASS Parsing: <file://example%/> against <about:blank>
 PASS Parsing: <file://[example]/> against <about:blank>

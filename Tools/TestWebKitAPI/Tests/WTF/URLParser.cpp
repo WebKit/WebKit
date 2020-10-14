@@ -1192,15 +1192,13 @@ TEST_F(WTF_URLParser, DefaultPort)
     checkURL("unknown://host:80", {"unknown", "", "", "host", 80, "", "", "", "unknown://host:80"});
     checkURL("unknown://host:81", {"unknown", "", "", "host", 81, "", "", "", "unknown://host:81"});
 
-    checkURL("file://host:0", {"file", "", "", "host", 0, "/", "", "", "file://host:0/"});
-    checkURL("file://host:80", {"file", "", "", "host", 80, "/", "", "", "file://host:80/"});
-    checkURL("file://host:80/path", {"file", "", "", "host", 80, "/path", "", "", "file://host:80/path"});
-    checkURLDifferences("file://:80/path",
-        {"", "", "", "", 0, "", "", "", "file://:80/path"},
-        {"file", "", "", "", 80, "/path", "", "", "file://:80/path"});
-    checkURLDifferences("file://:0/path",
-        {"", "", "", "", 0, "", "", "", "file://:0/path"},
-        {"file", "", "", "", 0, "/path", "", "", "file://:0/path"});
+    checkURL("file://host/", {"file", "", "", "host", 0, "/", "", "", "file://host/"});
+    checkURL("file://host:", {"", "", "", "", 0, "", "", "", "file://host:"});
+    checkURL("file://host:0", {"", "", "", "", 0, "", "", "", "file://host:0"});
+    checkURL("file://host:80", {"", "", "", "", 0, "", "", "", "file://host:80"});
+    checkURL("file://host:80/path", {"", "", "", "", 0, "", "", "", "file://host:80/path"});
+    checkURL("file://:80/path", {"", "", "", "", 0, "", "", "", "file://:80/path"});
+    checkURL("file://:0/path", {"", "", "", "", 0, "", "", "", "file://:0/path"});
     
     checkURL("http://example.com:0000000000000077", {"http", "", "", "example.com", 77, "/", "", "", "http://example.com:77/"});
     checkURL("http://example.com:0000000000000080", {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"});
