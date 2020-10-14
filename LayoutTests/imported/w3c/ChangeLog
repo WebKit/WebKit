@@ -1,3 +1,15 @@
+2020-10-14  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorder .stop should not throw in Inactive state
+        https://bugs.webkit.org/show_bug.cgi?id=217705
+
+        Reviewed by Eric Carlson.
+
+        fix-217705
+
+        * web-platform-tests/mediacapture-record/MediaRecorder-stop-expected.txt:
+        * web-platform-tests/mediacapture-record/MediaRecorder-stop.html:
+
 2020-10-13  Chris Dumez  <cdumez@apple.com>
 
         It should be possible to create an AudioWorkletNode for a context that has finished rendering

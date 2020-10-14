@@ -46,7 +46,7 @@ enum RecordingState { "inactive", "recording", "paused" };
     // readonly attribute BitrateMode audioBitrateMode;
 
     [MayThrowException, ImplementedAs=startRecording] undefined start(optional unsigned long timeslice);
-    [MayThrowException, ImplementedAs=stopRecording] undefined stop();
+    [ImplementedAs=stopRecording] undefined stop();
     [MayThrowException, ImplementedAs=pauseRecording] undefined pause();
     [MayThrowException, ImplementedAs=resumeRecording] undefined resume();
     [MayThrowException] undefined requestData();

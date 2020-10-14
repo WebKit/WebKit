@@ -69,7 +69,7 @@ public:
     using RefCounted::deref;
     
     ExceptionOr<void> startRecording(Optional<unsigned>);
-    ExceptionOr<void> stopRecording();
+    void stopRecording();
     ExceptionOr<void> requestData();
     ExceptionOr<void> pauseRecording();
     ExceptionOr<void> resumeRecording();

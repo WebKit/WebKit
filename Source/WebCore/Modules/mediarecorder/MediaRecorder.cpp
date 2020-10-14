@@ -202,10 +202,10 @@ static inline Ref<BlobEvent> createDataAvailableEvent(ScriptExecutionContext* co
     return BlobEvent::create(eventNames().dataavailableEvent, BlobEvent::Init { { false, false, false }, WTFMove(blob), timeCode }, BlobEvent::IsTrusted::Yes);
 }
 
-ExceptionOr<void> MediaRecorder::stopRecording()
+void MediaRecorder::stopRecording()
 {
     if (state() == RecordingState::Inactive)
-        return Exception { InvalidStateError, "The MediaRecorder's state cannot be inactive"_s };
+        return;
 
     stopRecordingInternal();
     fetchData([this](auto&& buffer, auto& mimeType, auto timeCode) {
@@ -218,7 +218,7 @@ ExceptionOr<void> MediaRecorder::stopRecording()
             return;
         dispatchEvent(Event::create(eventNames().stopEvent, Event::CanBubble::No, Event::IsCancelable::No));
     }, TakePrivateRecorder::Yes);
-    return { };
+    return;
 }
 
 ExceptionOr<void> MediaRecorder::requestData()
