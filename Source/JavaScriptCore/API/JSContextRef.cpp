@@ -34,7 +34,7 @@
 #include "JSAPIWrapperObject.h"
 #include "JSCallbackObject.h"
 #include "JSClassRef.h"
-#include "JSObject.h"
+#include "JSObjectInlines.h"
 #include "StackVisitor.h"
 #include "StrongInlines.h"
 #include "StructureInlines.h"

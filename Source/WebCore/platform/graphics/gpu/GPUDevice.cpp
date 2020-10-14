@@ -53,6 +53,7 @@
 #include <algorithm>
 #include <wtf/Optional.h>
 #include <wtf/text/StringConcatenate.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 

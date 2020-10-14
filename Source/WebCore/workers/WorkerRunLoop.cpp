@@ -37,6 +37,7 @@
 #include "ThreadTimers.h"
 #include "WorkerRunLoop.h"
 #include "WorkerOrWorkletGlobalScope.h"
+#include "WorkerOrWorkletScriptController.h"
 #include "WorkerThread.h"
 
 #if USE(GLIB)

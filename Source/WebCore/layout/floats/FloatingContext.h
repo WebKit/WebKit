@@ -28,6 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FloatingState.h"
+#include "FormattingContext.h"
 #include "LayoutContainerBox.h"
 #include <wtf/IsoMalloc.h>
 
@@ -35,7 +36,6 @@ namespace WebCore {
 namespace Layout {
 
 class FloatAvoider;
-class FormattingContext;
 class Box;
 class LayoutState;
 

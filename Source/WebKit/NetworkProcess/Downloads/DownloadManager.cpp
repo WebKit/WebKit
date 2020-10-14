@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DownloadManager.h"
 
+#include "DataReference.h"
 #include "Download.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkLoad.h"

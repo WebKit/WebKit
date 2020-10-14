@@ -25,6 +25,7 @@
 #include "RenderReplaced.h"
 
 #include "DocumentMarkerController.h"
+#include "ElementRuleCollector.h"
 #include "FloatRoundedRect.h"
 #include "Frame.h"
 #include "GraphicsContext.h"

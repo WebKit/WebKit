@@ -30,7 +30,6 @@
 
 #include "BlockFormattingState.h"
 #include "FloatAvoider.h"
-#include "FormattingContext.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"

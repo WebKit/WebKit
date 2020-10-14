@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "JSCPtrTag.h"
+#include "OpcodeSize.h"
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
@@ -32,6 +34,7 @@ namespace JSC {
 class CallFrame;
 class VM;
 struct Instruction;
+template<PtrTag> class MacroAssemblerCodeRef;
 
 namespace LLInt {
 

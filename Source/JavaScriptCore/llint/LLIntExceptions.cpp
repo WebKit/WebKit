@@ -28,6 +28,7 @@
 
 #include "LLIntCommon.h"
 #include "LLIntData.h"
+#include "LLIntThunks.h"
 
 #if LLINT_TRACING
 #include "CatchScope.h"

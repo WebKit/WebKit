@@ -31,6 +31,7 @@
 #include "DFGGraph.h"
 #include "DFGNodeType.h"
 #include "Heap.h"
+#include "JSCJSValueInlines.h"
 #include "Options.h"
 #include "VMInspector.h"
 #include <wtf/DataLog.h>

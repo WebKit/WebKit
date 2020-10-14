@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DownloadProxyMap.h"
 
+#include "APIDownloadClient.h"
 #include "AuxiliaryProcessProxy.h"
 #include "DownloadProxy.h"
 #include "DownloadProxyMessages.h"

@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGL)
 #include "EXTTextureCompressionRGTC.h"
+#include "ExtensionsGL.h"
 
 #include <wtf/IsoMallocInlines.h>
 

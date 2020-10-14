@@ -26,6 +26,7 @@
 #pragma once
 
 #include "MacroAssemblerCodeRef.h"
+#include "OpcodeSize.h"
 #include "VM.h"
 #include <wtf/Scope.h>
 

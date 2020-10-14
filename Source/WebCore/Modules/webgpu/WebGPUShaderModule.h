@@ -28,8 +28,8 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUShaderModule.h"
-#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
