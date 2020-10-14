@@ -60,8 +60,6 @@ bool FontCascade::isSubpixelAntialiasingAvailable()
         subpixelAntialiasingEnabled = !CGFontRenderingGetFontSmoothingDisabled();
     });
     return subpixelAntialiasingEnabled;
-#elif PLATFORM(MAC)
-    return true;
 #else
     return false;
 #endif
