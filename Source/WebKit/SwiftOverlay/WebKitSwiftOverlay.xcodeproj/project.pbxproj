@@ -13,6 +13,10 @@
 		B3A5D39023F78F5400B17727 /* WebKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A5D38823F78F5400B17727 /* WebKitTests.swift */; };
 		B3A5D39223F790DB00B17727 /* WebKitSwiftOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A5D39123F790DB00B17727 /* WebKitSwiftOverlay.swift */; };
 		B3A5D39323F790DB00B17727 /* WebKitSwiftOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A5D39123F790DB00B17727 /* WebKitSwiftOverlay.swift */; };
+		B3B8FECC250090B1006172CA /* JavaScriptToSwiftTypeConversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B8FECB250090B1006172CA /* JavaScriptToSwiftTypeConversions.swift */; };
+		B3B8FECD250090B1006172CA /* JavaScriptToSwiftTypeConversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B8FECB250090B1006172CA /* JavaScriptToSwiftTypeConversions.swift */; };
+		B3B8FEEF2502BAA0006172CA /* ObjectiveCBlockConversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B8FEEE2502BAA0006172CA /* ObjectiveCBlockConversions.swift */; };
+		B3B8FEF02502BAA0006172CA /* ObjectiveCBlockConversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B8FEEE2502BAA0006172CA /* ObjectiveCBlockConversions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +50,8 @@
 		B3A5D39823F790E100B17727 /* WebKitSwiftOverlayTests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitSwiftOverlayTests.xcconfig; sourceTree = "<group>"; };
 		B3A5D39923F790E100B17727 /* install-swiftmodules.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "install-swiftmodules.sh"; sourceTree = "<group>"; };
 		B3A5D39A23F790E700B17727 /* WebKitSwiftOverlayTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WebKitSwiftOverlayTests-Info.plist"; sourceTree = "<group>"; };
+		B3B8FECB250090B1006172CA /* JavaScriptToSwiftTypeConversions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptToSwiftTypeConversions.swift; sourceTree = "<group>"; };
+		B3B8FEEE2502BAA0006172CA /* ObjectiveCBlockConversions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectiveCBlockConversions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +92,7 @@
 			isa = PBXGroup;
 			children = (
 				B3A5D39923F790E100B17727 /* install-swiftmodules.sh */,
+				B3B8FEEE2502BAA0006172CA /* ObjectiveCBlockConversions.swift */,
 				B3A5D39123F790DB00B17727 /* WebKitSwiftOverlay.swift */,
 			);
 			name = "Swift Overlay";
@@ -102,6 +109,7 @@
 		7D20070822F4EB72008DF640 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				B3B8FECB250090B1006172CA /* JavaScriptToSwiftTypeConversions.swift */,
 				B3A5D39A23F790E700B17727 /* WebKitSwiftOverlayTests-Info.plist */,
 				B3A5D38823F78F5400B17727 /* WebKitTests.swift */,
 			);
@@ -344,6 +352,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3B8FEEF2502BAA0006172CA /* ObjectiveCBlockConversions.swift in Sources */,
 				B3A5D39223F790DB00B17727 /* WebKitSwiftOverlay.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -352,6 +361,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3B8FEF02502BAA0006172CA /* ObjectiveCBlockConversions.swift in Sources */,
 				B3A5D39323F790DB00B17727 /* WebKitSwiftOverlay.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -360,6 +370,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3B8FECC250090B1006172CA /* JavaScriptToSwiftTypeConversions.swift in Sources */,
 				B3A5D38F23F78F5400B17727 /* WebKitTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -368,6 +379,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3B8FECD250090B1006172CA /* JavaScriptToSwiftTypeConversions.swift in Sources */,
 				B3A5D39023F78F5400B17727 /* WebKitTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
