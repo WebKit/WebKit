@@ -151,3 +151,8 @@ webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-activate.ht
 webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-fetch.https.html [ Pass Timeout Failure ]
 webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-install.https.html [ Pass Timeout Failure ]
 webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-message.https.html [ Pass Timeout Failure ]
+
+webkit.org/b/217687 accessibility/aria-current.html [ Pass Timeout ]
+webkit.org/b/217687 accessibility/insert-newline.html [ Pass Timeout ]
+webkit.org/b/217687 accessibility/ios-simulator/abbreviation.html [ Pass Timeout ]
+webkit.org/b/217687 accessibility/ios-simulator/accessibility-aria-table-children.html [ Pass Timeout ]
