@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "APIHitTestResult.h"
+#import "AppKitSPI.h"
 #import "ColorSpaceData.h"
 #import "DataReference.h"
 #import "DownloadProxy.h"
@@ -327,6 +328,11 @@ void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
         return;
 
     [platformCursor set];
+
+    if (cursor.type() == WebCore::Cursor::Type::None) {
+        if ([NSCursor respondsToSelector:@selector(hideUntilChanged)])
+            [NSCursor hideUntilChanged];
+    }
 }
 
 void PageClientImpl::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
