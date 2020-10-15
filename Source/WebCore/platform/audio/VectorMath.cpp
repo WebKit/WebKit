@@ -91,6 +91,11 @@ void multiplyThenAddScalar(const float* inputVector, float scale, float* outputV
     vDSP_vsma(inputVector, 1, &scale, outputVector, 1, outputVector, 1, numberOfElementsToProcess);
 }
 
+void addVectorsThenMultiplyByScalar(const float* inputVector1, const float* inputVector2, float scalar, float* outputVector, size_t numberOfElementsToProcess)
+{
+    vDSP_vasm(inputVector1, 1, inputVector2, 1, &scalar, outputVector, 1, numberOfElementsToProcess);
+}
+
 float maximumMagnitude(const float* inputVector, size_t numberOfElementsToProcess)
 {
     float maximumValue = 0;
@@ -684,6 +689,12 @@ void linearToDecibels(const float* inputVector, float* outputVector, size_t numb
 {
     for (size_t i = 0; i < numberOfElementsToProcess; ++i)
         outputVector[i] = AudioUtilities::linearToDecibels(inputVector[i]);
+}
+
+void addVectorsThenMultiplyByScalar(const float* inputVector1, const float* inputVector2, float scalar, float* outputVector, size_t numberOfElementsToProcess)
+{
+    add(inputVector1, inputVector2, outputVector, numberOfElementsToProcess);
+    multiplyByScalar(outputVector, scalar, outputVector, numberOfElementsToProcess);
 }
 
 #endif // USE(ACCELERATE)

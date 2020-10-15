@@ -34,6 +34,9 @@ namespace VectorMath {
 // Vector scalar multiply and then add (vsma).
 void multiplyThenAddScalar(const float* inputVector, float scale, float* outputVector, size_t numberOfElementsToProcess);
 
+// Multiplies the sum of two vectors by a scalar value (vasm).
+void addVectorsThenMultiplyByScalar(const float* inputVector1, const float* inputVector2, float scalar, float* outputVector, size_t numberOfElementsToProcess);
+
 void multiplyByScalar(const float* inputVector, float scale, float* outputVector, size_t numberOfElementsToProcess);
 void addScalar(const float* inputVector, float scalar, float* outputVector, size_t numberOfElementsToProcess);
 void add(const float* inputVector1, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess);

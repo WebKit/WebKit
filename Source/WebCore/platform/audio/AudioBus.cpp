@@ -585,8 +585,7 @@ RefPtr<AudioBus> AudioBus::createByMixingToMono(const AudioBus* sourceBus)
             float* destination = destinationBus->channel(0)->mutableData();
         
             // Do the mono mixdown.
-            for (unsigned i = 0; i < n; ++i)
-                destination[i] = (sourceL[i] + sourceR[i]) / 2;
+            VectorMath::addVectorsThenMultiplyByScalar(sourceL, sourceR, 0.5, destination, n);
 
             destinationBus->clearSilentFlag();
             destinationBus->setSampleRate(sourceBus->sampleRate());    
