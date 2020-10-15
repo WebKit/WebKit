@@ -57,9 +57,10 @@ public:
 
     bool isIdentity() const final { return !m_angle; }
 
+    bool isRepresentableIn2D() const final { return (!m_x && !m_y) || !m_angle; }
+
 private:
     bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
-    bool isRepresentableIn2D() const final { return (!m_x && !m_y) || !m_angle; }
 
     bool apply(TransformationMatrix& transform, const FloatSize& /*borderBoxSize*/) const override
     {

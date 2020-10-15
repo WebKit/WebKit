@@ -1595,6 +1595,9 @@ static bool styleAffectsLayerGeometry(const RenderStyle& style)
 static bool recompositeChangeRequiresGeometryUpdate(const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
     return oldStyle.transform() != newStyle.transform()
+        || oldStyle.translate() != newStyle.translate()
+        || oldStyle.scale() != newStyle.scale()
+        || oldStyle.rotate() != newStyle.rotate()
         || oldStyle.transformOriginX() != newStyle.transformOriginX()
         || oldStyle.transformOriginY() != newStyle.transformOriginY()
         || oldStyle.transformOriginZ() != newStyle.transformOriginZ()
@@ -2976,6 +2979,22 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObje
     return false;
 }
 
+static bool styleHas3DTransformOperation(const RenderStyle& style)
+{
+    return style.transform().has3DOperation()
+        || (style.translate() && style.translate()->is3DOperation())
+        || (style.scale() && style.scale()->is3DOperation())
+        || (style.rotate() && style.rotate()->is3DOperation());
+}
+
+static bool styleTransformOperationsAreRepresentableIn2D(const RenderStyle& style)
+{
+    return style.transform().isRepresentableIn2D()
+        && (!style.translate() || style.translate()->isRepresentableIn2D())
+        && (!style.scale() || style.scale()->isRepresentableIn2D())
+        && (!style.rotate() || style.rotate()->isRepresentableIn2D());
+}
+
 bool RenderLayerCompositor::requiresCompositingForTransform(RenderLayerModelObject& renderer) const
 {
     if (!(m_compositingTriggers & ChromeClient::ThreeDTransformTrigger))
@@ -2988,12 +3007,12 @@ bool RenderLayerCompositor::requiresCompositingForTransform(RenderLayerModelObje
     
     switch (m_compositingPolicy) {
     case CompositingPolicy::Normal:
-        return renderer.style().transform().has3DOperation();
+        return styleHas3DTransformOperation(renderer.style());
     case CompositingPolicy::Conservative:
         // Continue to allow pages to avoid the very slow software filter path.
-        if (renderer.style().transform().has3DOperation() && renderer.hasFilter())
+        if (styleHas3DTransformOperation(renderer.style()) && renderer.hasFilter())
             return true;
-        return renderer.style().transform().isRepresentableIn2D() ? false : true;
+        return styleTransformOperationsAreRepresentableIn2D(renderer.style()) ? false : true;
     }
     return false;
 }
@@ -4268,7 +4287,7 @@ bool RenderLayerCompositor::layerHas3DContent(const RenderLayer& layer) const
 {
     const RenderStyle& style = layer.renderer().style();
 
-    if (style.transformStyle3D() == TransformStyle3D::Preserve3D || style.hasPerspective() || style.transform().has3DOperation())
+    if (style.transformStyle3D() == TransformStyle3D::Preserve3D || style.hasPerspective() || styleHas3DTransformOperation(style))
         return true;
 
     const_cast<RenderLayer&>(layer).updateLayerListsIfNeeded();

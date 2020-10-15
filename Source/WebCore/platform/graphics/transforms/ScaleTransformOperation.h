@@ -56,9 +56,10 @@ public:
 
     bool isIdentity() const final { return m_x == 1 &&  m_y == 1 &&  m_z == 1; }
 
+    bool isRepresentableIn2D() const final { return m_z == 1; }
+
 private:
     bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
-    bool isRepresentableIn2D() const final { return m_z == 1; }
 
     bool apply(TransformationMatrix& transform, const FloatSize&) const override
     {

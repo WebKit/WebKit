@@ -68,8 +68,9 @@ public:
 
     Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) final;
 
-private:
     bool isRepresentableIn2D() const final { return m_z.isZero(); }
+
+private:
 
     void dump(WTF::TextStream&) const final;
 

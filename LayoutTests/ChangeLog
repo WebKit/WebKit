@@ -1,3 +1,21 @@
+2020-10-15  Antoine Quint  <graouts@webkit.org>
+
+        Updating an individual transform CSS property has no visual change when composited
+        https://bugs.webkit.org/show_bug.cgi?id=217769
+        <rdar://problem/70344280>
+
+        Reviewed by Simon Fraser.
+
+        Add new tests that check that changing the value of one of the individual transform
+        CSS properties when the element is composited yields a visual change.
+
+        * transforms/2d/rotate-change-composited-expected.html: Added.
+        * transforms/2d/rotate-change-composited.html: Added.
+        * transforms/2d/scale-change-composited-expected.html: Added.
+        * transforms/2d/scale-change-composited.html: Added.
+        * transforms/2d/translate-change-composited-expected.html: Added.
+        * transforms/2d/translate-change-composited.html: Added.
+
 2020-10-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Rebaseline after r268520
