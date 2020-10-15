@@ -61,14 +61,33 @@ bool FontCascade::isSubpixelAntialiasingAvailable()
 #endif
 }
 
-void fillVectorWithHorizontalGlyphPositions(Vector<CGPoint, 256>& positions, CGContextRef context, const CGSize* advances, unsigned count)
+static const AffineTransform& rotateLeftTransform()
+{
+    static AffineTransform result(0, -1, 1, 0, 0, 0);
+    return result;
+}
+
+void fillVectorWithHorizontalGlyphPositions(Vector<CGPoint, 256>& positions, CGContextRef context, const CGSize* advances, unsigned count, const FloatPoint& point)
 {
     CGAffineTransform matrix = CGAffineTransformInvert(CGContextGetTextMatrix(context));
-    positions[0] = CGPointZero;
+    positions[0] = CGPointApplyAffineTransform(point, matrix);
     for (unsigned i = 1; i < count; ++i) {
         CGSize advance = CGSizeApplyAffineTransform(advances[i - 1], matrix);
         positions[i].x = positions[i - 1].x + advance.width;
         positions[i].y = positions[i - 1].y + advance.height;
+    }
+}
+
+static void fillVectorWithVerticalGlyphPositions(Vector<CGPoint, 256>& positions, CGContextRef context, const CGSize* translations, const CGSize* advances, unsigned count, const FloatPoint& point, float ascentDelta)
+{
+    CGAffineTransform transform = CGAffineTransformInvert(CGContextGetTextMatrix(context));
+
+    auto position = CGPointMake(point.x(), point.y() + ascentDelta);
+    for (unsigned i = 0; i < count; ++i) {
+        CGSize translation = CGSizeApplyAffineTransform(translations[i], rotateLeftTransform());
+        positions[i] = CGPointApplyAffineTransform(CGPointMake(position.x - translation.width, position.y + translation.height), transform);
+        position.x += advances[i].width;
+        position.y += advances[i].height;
     }
 }
 
@@ -82,36 +101,24 @@ static inline bool shouldUseLetterpressEffect(const GraphicsContext& context)
 #endif
 }
 
-static void showGlyphsWithAdvances(const FloatPoint& point, const Font& font, CGContextRef context, const CGGlyph* glyphs, const CGSize* advances, unsigned count)
+static void showGlyphsWithAdvances(const FloatPoint& point, const Font& font, CGContextRef context, const CGGlyph* glyphs, const CGSize* advances, unsigned count, const AffineTransform& textMatrix)
 {
     if (!count)
         return;
 
-    CGContextSetTextPosition(context, point.x(), point.y());
-
     const FontPlatformData& platformData = font.platformData();
     Vector<CGPoint, 256> positions(count);
     if (platformData.orientation() == FontOrientation::Vertical) {
-        CGAffineTransform rotateLeftTransform = CGAffineTransformMake(0, -1, 1, 0, 0, 0);
-        CGAffineTransform textMatrix = CGContextGetTextMatrix(context);
-        CGAffineTransform runMatrix = CGAffineTransformConcat(textMatrix, rotateLeftTransform);
-        ScopedTextMatrix savedMatrix(runMatrix, context);
+        ScopedTextMatrix savedMatrix(computeVerticalTextMatrix(font, textMatrix), context);
 
         Vector<CGSize, 256> translations(count);
         CTFontGetVerticalTranslationsForGlyphs(platformData.ctFont(), glyphs, translations.data(), count);
 
-        CGAffineTransform transform = CGAffineTransformInvert(CGContextGetTextMatrix(context));
-
-        CGPoint position = FloatPoint(point.x(), point.y() + font.fontMetrics().floatAscent(IdeographicBaseline) - font.fontMetrics().floatAscent());
-        for (unsigned i = 0; i < count; ++i) {
-            CGSize translation = CGSizeApplyAffineTransform(translations[i], rotateLeftTransform);
-            positions[i] = CGPointApplyAffineTransform(CGPointMake(position.x - translation.width, position.y + translation.height), transform);
-            position.x += advances[i].width;
-            position.y += advances[i].height;
-        }
+        auto ascentDelta = font.fontMetrics().floatAscent(IdeographicBaseline) - font.fontMetrics().floatAscent();
+        fillVectorWithVerticalGlyphPositions(positions, context, translations.data(), advances, count, point, ascentDelta);
         CTFontDrawGlyphs(platformData.ctFont(), glyphs, positions.data(), count, context);
     } else {
-        fillVectorWithHorizontalGlyphPositions(positions, context, advances, count);
+        fillVectorWithHorizontalGlyphPositions(positions, context, advances, count, point);
         CTFontDrawGlyphs(platformData.ctFont(), glyphs, positions.data(), count, context);
     }
 }
@@ -130,9 +137,47 @@ static void setCGFontRenderingMode(GraphicsContext& context)
     CGContextSetShouldSubpixelQuantizeFonts(cgContext, doSubpixelQuantization);
 }
 
+AffineTransform computeOverallTextMatrix(const Font& font)
+{
+    auto& platformData = font.platformData();
+    AffineTransform result;
+    if (!platformData.isColorBitmapFont())
+        result = CTFontGetMatrix(platformData.font());
+    result.setB(-result.b());
+    result.setD(-result.d());
+    if (platformData.syntheticOblique()) {
+        float obliqueSkew = tanf(FontCascade::syntheticObliqueAngle() * piFloat / 180);
+        if (platformData.orientation() == FontOrientation::Vertical) {
+            if (font.isTextOrientationFallback())
+                result = AffineTransform(1, obliqueSkew, 0, 1, 0, 0) * result;
+            else
+                result = AffineTransform(1, -obliqueSkew, 0, 1, 0, 0) * result;
+        } else
+            result = AffineTransform(1, 0, -obliqueSkew, 1, 0, 0);
+    }
+
+    // We're emulating the behavior of CGContextSetTextPosition() by adding constant amounts to each glyph's position
+    // (see fillVectorWithHorizontalGlyphPositions() and fillVectorWithVerticalGlyphPositions()).
+    // CGContextSetTextPosition() has the side effect of clobbering the E and F fields of the text matrix,
+    // so we do that explicitly here.
+    result.setE(0);
+    result.setF(0);
+    return result;
+}
+
+AffineTransform computeVerticalTextMatrix(const Font& font, const AffineTransform& previousTextMatrix)
+{
+    ASSERT_UNUSED(font, font.platformData().orientation() == FontOrientation::Vertical);
+    // The translation here ("e" and "f" fields) are irrelevant, because
+    // this matrix is inverted in fillVectorWithVerticalGlyphPositions to place the glyphs in the CTM's coordinate system.
+    // All we're trying to do here is rotate the text matrix so glyphs appear visually upright.
+    // We have to include the previous text matrix because it includes things like synthetic oblique.
+    return rotateLeftTransform() * previousTextMatrix;
+}
+
 void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const GlyphBuffer& glyphBuffer, unsigned from, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode smoothingMode)
 {
-    const FontPlatformData& platformData = font.platformData();
+    const auto& platformData = font.platformData();
     if (!platformData.size())
         return;
 
@@ -175,22 +220,8 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     UNUSED_VARIABLE(useLetterpressEffect);
     FloatPoint point = anchorPoint;
 
-    CGAffineTransform matrix = CGAffineTransformIdentity;
-    if (!platformData.isColorBitmapFont())
-        matrix = CTFontGetMatrix(platformData.font());
-    matrix.b = -matrix.b;
-    matrix.d = -matrix.d;
-    if (platformData.syntheticOblique()) {
-        static float obliqueSkew = tanf(syntheticObliqueAngle() * piFloat / 180);
-        if (platformData.orientation() == FontOrientation::Vertical) {
-            if (font.isTextOrientationFallback())
-                matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, obliqueSkew, 0, 1, 0, 0));
-            else
-                matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, -obliqueSkew, 0, 1, 0, 0));
-        } else
-            matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, 0, -obliqueSkew, 1, 0, 0));
-    }
-    ScopedTextMatrix restorer(matrix, cgContext);
+    auto textMatrix = computeOverallTextMatrix(font);
+    ScopedTextMatrix restorer(textMatrix, cgContext);
 
     setCGFontRenderingMode(context);
     CGContextSetFontSize(cgContext, platformData.size());
@@ -221,9 +252,9 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
         float shadowTextX = point.x() + shadowOffset.width();
         // If shadows are ignoring transforms, then we haven't applied the Y coordinate flip yet, so down is negative.
         float shadowTextY = point.y() + shadowOffset.height() * (context.shadowsIgnoreTransforms() ? -1 : 1);
-        showGlyphsWithAdvances(FloatPoint(shadowTextX, shadowTextY), font, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
+        showGlyphsWithAdvances(FloatPoint(shadowTextX, shadowTextY), font, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs, textMatrix);
         if (syntheticBoldOffset)
-            showGlyphsWithAdvances(FloatPoint(shadowTextX + syntheticBoldOffset, shadowTextY), font, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
+            showGlyphsWithAdvances(FloatPoint(shadowTextX + syntheticBoldOffset, shadowTextY), font, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs, textMatrix);
         context.setFillColor(fillColor);
     }
 
@@ -233,11 +264,11 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     else
 #endif
     {
-        showGlyphsWithAdvances(point, font, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
+        showGlyphsWithAdvances(point, font, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs, textMatrix);
     }
 
     if (syntheticBoldOffset)
-        showGlyphsWithAdvances(FloatPoint(point.x() + syntheticBoldOffset, point.y()), font, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
+        showGlyphsWithAdvances(FloatPoint(point.x() + syntheticBoldOffset, point.y()), font, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs, textMatrix);
 
     if (hasSimpleShadow)
         context.setShadow(shadowOffset, shadowBlur, shadowColor);

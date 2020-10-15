@@ -62,9 +62,8 @@ void showLetterpressedGlyphsWithAdvances(const FloatPoint& point, const Font& fo
 
     CGContextRef context = coreContext.platformContext();
 
-    CGContextSetTextPosition(context, point.x(), point.y());
     Vector<CGPoint, 256> positions(count);
-    fillVectorWithHorizontalGlyphPositions(positions, context, advances, count);
+    fillVectorWithHorizontalGlyphPositions(positions, context, advances, count, point);
 
     CTFontRef ctFont = platformData.ctFont();
     CGContextSetFontSize(context, CTFontGetSize(ctFont));
