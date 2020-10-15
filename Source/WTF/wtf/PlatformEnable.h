@@ -313,7 +313,7 @@
 
 #if !defined(ENABLE_IPC_TESTING_API)
 /* Enable IPC testing on all ASAN builds and debug builds. */
-#if ASAN_ENABLED || !defined(NDEBUG)
+#if (ASAN_ENABLED || !defined(NDEBUG)) && PLATFORM(COCOA)
 #define ENABLE_IPC_TESTING_API 1
 #endif
 #endif

@@ -68,6 +68,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/LibWebRTCRemoteCodecsMessagesReplie
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/MediaPlayerPrivateRemoteMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/MediaPlayerPrivateRemoteMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/MediaPlayerPrivateRemoteMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/MessageArgumentDescriptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/MessageNames.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/MessageNames.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NPObjectMessageReceiverMessageReceiver.cpp

@@ -1,3 +1,19 @@
+2020-10-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        IPC testing JS API should expose a reply and describe the list of arguments for each message
+        https://bugs.webkit.org/show_bug.cgi?id=217565
+
+        Reviewed by Geoffrey Garen.
+
+        Added tests for decoding replies for sync and async messages and one for argument descriptions.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IPCTestingAPI.mm:
+        (-[IPCTestingAPIDelegate webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:]):
+        (-[IPCTestingAPIDelegate _webView:webContentProcessDidTerminateWithReason:]):
+        (IPCTestingAPI.DecodesReplyArgumentsForPrompt):
+        (IPCTestingAPI.DecodesReplyArgumentsForAsyncMessage):
+        (IPCTestingAPI.DescribesArguments):
+
 2020-10-14  Hector Lopez  <hector_i_lopez@apple.com>
 
         Unreviewed, reverting r268474.

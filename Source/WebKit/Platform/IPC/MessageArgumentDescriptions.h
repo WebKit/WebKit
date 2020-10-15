@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,37 +25,32 @@
 
 #pragma once
 
-#if ENABLE(APPLE_PAY)
+#include "MessageNames.h"
+#include <wtf/Optional.h>
+#include <wtf/Vector.h>
 
-OBJC_CLASS NSArray;
-OBJC_CLASS PKPaymentSetupFeature;
+namespace JSC {
 
-#include <WebCore/ApplePaySetupFeatureWebCore.h>
-#include <wtf/Forward.h>
-#include <wtf/RetainPtr.h>
+class JSGlobalObject;
+class JSValue;
 
-namespace IPC {
-class Decoder;
-class Encoder;
 }
 
-namespace WebKit {
+namespace IPC {
 
-class PaymentSetupFeatures {
-public:
-    PaymentSetupFeatures(Vector<RefPtr<WebCore::ApplePaySetupFeature>>&&);
-    PaymentSetupFeatures(RetainPtr<NSArray>&& = nullptr);
+class Decoder;
 
-    void encode(IPC::Encoder&) const;
-    static Optional<PaymentSetupFeatures> decode(IPC::Decoder&);
+Optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject*, MessageName, Decoder&);
+Optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject*, MessageName, Decoder&);
 
-    NSArray *platformFeatures() const { return m_platformFeatures.get(); }
-    operator Vector<Ref<WebCore::ApplePaySetupFeature>>() const;
-
-private:
-    RetainPtr<NSArray> m_platformFeatures;
+struct ArgumentDescription {
+    const char* name;
+    const char* type;
+    const char* enumName;
+    bool isOptional;
 };
 
-} // namespace WebKit
+Optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageName);
+Optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(MessageName);
 
-#endif // ENABLE(APPLE_PAY)
+}

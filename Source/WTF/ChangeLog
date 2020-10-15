@@ -1,3 +1,9 @@
+2020-10-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed build fix. Disable IPC testing API on non-Cocoa platforms.
+
+        * wtf/PlatformEnable.h:
+
 2020-10-14  Alex Christensen  <achristensen@webkit.org>
 
         Disallow ports in file URLs

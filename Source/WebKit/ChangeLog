@@ -1,3 +1,78 @@
+2020-10-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        IPC testing JS API should expose a reply and describe the list of arguments for each message
+        https://bugs.webkit.org/show_bug.cgi?id=217565
+
+        Reviewed by Geoffrey Garen.
+
+        This patch makes IPC.sendMessage and IPC.sendSyncMessage decode the reply. IPC.sendSyncMessage now returns
+        a dictionary with two keys: "buffer" and "arguments", the first of which returns ArrayBuffer of the decoded
+        message reply and the second of which is an array of decoded arguments where there was an appropriate JS
+        binding code existed for the argument type. IPC.sendMessage now returns a Promise which can either resolve
+        with the same dictionary as IPC.sendSyncMessage or reject when the decoding fails.
+
+        In addition, this patch exposes a dictionary describing each IPC message argument's type and parameter name.
+
+        In order to add these two functionalities, this patch adds a new step in generate-message-receiver.py to
+        generate MessageArgumentDescriptions.cpp, which contains functions which know how to decode arguments of
+        any IPC message and create a JS dictionary describing it as well as functions that return descriptions of
+        arguments or reply arguments.
+
+        Finally, this patch adds encoders for a few types found to be very common after r268239 had been landed.
+
+        Tests: TestWebKitAPI.IPCTestingAPI.DecodesReplyArgumentsForPrompt
+               TestWebKitAPI.IPCTestingAPI.DecodesReplyArgumentsForAsyncMessage
+               TestWebKitAPI.IPCTestingAPI.DescribesArguments
+
+        * CMakeLists.txt:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Platform/IPC/Decoder.h:
+        (IPC::Decoder::buffer const):
+        * Platform/IPC/JSIPCBinding.h: Added.
+        (jsValueForDecodedArgumentValue): Added. A template function to construct a JS value for a given C++ value.
+        (jsValueForDecodedNumericArgumentValue): Added. A helper for constructing a JS value for numeric values.
+        (jsValueForDecodedArgumentRect): Added. Ditto for IntRect and FloatRect.
+        (DecodedArgumentJSValueConverter): Added. A helper class to construct JS values for a tuple of values using
+        partial template specializations.
+        (DecodedArgumentJSValueConverter::convert): Added.
+        (jsValueForArgumentTuple): Added. A helper to construct a JS array for the decoded IPC arguments.
+        (jsValueForDecodedArguments): Added.
+        * Platform/IPC/MessageArgumentDescriptions.h: Added.
+        (IPC::ArgumentDescription): Added.
+        * Scripts/generate-message-receiver.py:
+        (main): Generate MessageArgumentDescriptions.cpp.
+        * Scripts/webkit/messages.py:
+        (headers_for_type): Removed the special case for PaymentMethodUpdate now that it's in its own header. Also
+        added made webrtc::WebKitEncodedFrameInfo include LibWebRTCEnumTraits.h as it uses webrtc::VideoFrameType.
+        (collect_header_conditions_for_receiver): Extracted from generate_message_handler.
+        (generate_header_includes_from_conditions): Ditto.
+        (generate_message_handler):
+        (generate_js_value_conversion_function): Added.
+        (generate_js_argument_descriptions): Added.
+        (generate_message_argument_description_implementation): Added.
+        * Shared/ApplePay/ApplePayPaymentSetupFeaturesWebKit.h: Fixed a bug that we were not forward declaring NSArray.
+        * SourcesCocoa.txt: Added MessageArgumentDescriptions.cpp as a non-unified cpp file as its size is around 1MB.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::JSIPC::staticValues): Added the session ID and page ID as static variables.
+        (WebKit::IPCTestingAPI::encodePointType): Added.
+        (WebKit::IPCTestingAPI::encodeRectType): Fixed the bug was that this code wasn't checking for any exceptions.
+        (WebKit::IPCTestingAPI::encodeNumericType): Renamed from encodeIntegralType since this function is now used
+        to encode double and float, not just integral types.
+        (WebKit::IPCTestingAPI::encodeArgument): Added the support for IntPoint, FloatPoint, URL, RegistrableDomain,
+        double, and float all of which turned out to be in the top 20 most common types.
+        (WebKit::IPCTestingAPI::jsResultFromReplyDecoder): Added.
+        (WebKit::IPCTestingAPI::JSIPC::sendMessage): Added the code to return Promise when there is a reply and resolve
+        it with the JS object describing the decoded argument. We use messageReplyArgumentDescriptions to figure out
+        whether there is a reply or not.
+        (WebKit::IPCTestingAPI::JSIPC::sendSyncMessage): Decode the reply and return a JS object which describes it.
+        (WebKit::IPCTestingAPI::JSIPC::frameID): Renamed from frameIdentifier to be consistent.
+        (WebKit::IPCTestingAPI::JSIPC::pageID): Added.
+        (WebKit::IPCTestingAPI::JSIPC::sessionID): Added.
+        (WebKit::IPCTestingAPI::createJSArrayForArgumentDescriptions): Added.
+        (WebKit::IPCTestingAPI::JSIPC::messages): Added the code to generate descriptions for arguments.
+
 2020-10-14  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r268423) SHOULD NEVER BE REACHED: GPUConnectionToWebProcess::didReceiveMessage(IPC::Connection &, IPC::Decoder &)
