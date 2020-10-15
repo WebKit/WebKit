@@ -39,13 +39,20 @@ class PlatformWheelEvent;
 
 class ScrollingTreeLatchingController {
 public:
+    struct ScrollingNodeAndProcessingSteps {
+        ScrollingNodeID scrollingNodeID;
+        OptionSet<WheelEventProcessingSteps> processingSteps;
+    };
+
     ScrollingTreeLatchingController();
 
     void receivedWheelEvent(const PlatformWheelEvent&, bool allowLatching);
-    Optional<ScrollingNodeID> latchedNodeForEvent(const PlatformWheelEvent&, bool allowLatching) const;
-    void nodeDidHandleEvent(ScrollingNodeID, const PlatformWheelEvent&, bool allowLatching);
+
+    Optional<ScrollingNodeAndProcessingSteps> latchingDataForEvent(const PlatformWheelEvent&, bool allowLatching) const;
+    void nodeDidHandleEvent(ScrollingNodeID, OptionSet<WheelEventProcessingSteps>, const PlatformWheelEvent&, bool allowLatching);
 
     Optional<ScrollingNodeID> latchedNodeID() const;
+    Optional<ScrollingNodeAndProcessingSteps> latchedNodeAndSteps() const;
 
     void nodeWasRemoved(ScrollingNodeID);
     void clearLatchedNode();
@@ -54,7 +61,7 @@ private:
     bool latchedNodeIsRelevant() const;
 
     mutable Lock m_latchedNodeMutex;
-    Markable<ScrollingNodeID, IntegralMarkableTraits<ScrollingNodeID, 0>> m_latchedNodeID;
+    Optional<ScrollingNodeAndProcessingSteps> m_latchedNodeAndSteps;
     MonotonicTime m_lastLatchedNodeInterationTime;
 };
 

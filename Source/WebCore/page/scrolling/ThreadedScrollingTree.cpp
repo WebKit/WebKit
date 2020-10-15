@@ -70,7 +70,7 @@ bool ThreadedScrollingTree::handleWheelEventAfterMainThread(const PlatformWheelE
     SetForScope<bool> disallowLatchingScope(m_allowLatching, false);
 
     RefPtr<ScrollingTreeNode> targetNode = nodeForID(targetNodeID);
-    auto result = handleWheelEventWithNode(wheelEvent, targetNode.get());
+    auto result = handleWheelEventWithNode(wheelEvent, { }, targetNode.get());
     return result.wasHandled;
 }
 

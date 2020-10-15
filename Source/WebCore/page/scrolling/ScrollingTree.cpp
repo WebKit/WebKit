@@ -68,10 +68,11 @@ OptionSet<WheelEventProcessingSteps> ScrollingTree::determineWheelEventProcessin
     // This method is invoked by the event handling thread
     LockHolder lock(m_treeStateMutex);
 
-    auto latchedNode = m_latchingController.latchedNodeForEvent(wheelEvent, m_allowLatching);
-    LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTree::shouldHandleWheelEventSynchronously " << wheelEvent << " have latched node " << latchedNode);
-    if (latchedNode)
-        return { WheelEventProcessingSteps::ScrollingThread };
+    auto latchedNodeAndSteps = m_latchingController.latchingDataForEvent(wheelEvent, m_allowLatching);
+    if (latchedNodeAndSteps) {
+        LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTree::determineWheelEventProcessing " << wheelEvent << " have latched node " << latchedNodeAndSteps->scrollingNodeID << " steps " << latchedNodeAndSteps->processingSteps);
+        return latchedNodeAndSteps->processingSteps;
+    }
 
     m_latchingController.receivedWheelEvent(wheelEvent, m_allowLatching);
 
@@ -135,14 +136,14 @@ WheelEventHandlingResult ScrollingTree::handleWheelEvent(const PlatformWheelEven
 
         m_gestureState.receivedWheelEvent(wheelEvent);
 
-        if (auto latchedNodeID = m_latchingController.latchedNodeForEvent(wheelEvent, m_allowLatching)) {
-            LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTree::handleWheelEvent: has latched node " << latchedNodeID);
-            auto* node = nodeForID(*latchedNodeID);
+        if (auto latchedNodeAndSteps = m_latchingController.latchingDataForEvent(wheelEvent, m_allowLatching)) {
+            LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTree::handleWheelEvent: has latched node " << latchedNodeAndSteps->scrollingNodeID);
+            auto* node = nodeForID(latchedNodeAndSteps->scrollingNodeID);
             if (is<ScrollingTreeScrollingNode>(node)) {
                 auto result = downcast<ScrollingTreeScrollingNode>(*node).handleWheelEvent(wheelEvent);
                 if (result.wasHandled) {
-                    m_latchingController.nodeDidHandleEvent(*latchedNodeID, wheelEvent, m_allowLatching);
-                    m_gestureState.nodeDidHandleEvent(*latchedNodeID, wheelEvent);
+                    m_latchingController.nodeDidHandleEvent(latchedNodeAndSteps->scrollingNodeID, processingSteps, wheelEvent, m_allowLatching);
+                    m_gestureState.nodeDidHandleEvent(latchedNodeAndSteps->scrollingNodeID, wheelEvent);
                 }
                 return result;
             }
@@ -154,14 +155,14 @@ WheelEventHandlingResult ScrollingTree::handleWheelEvent(const PlatformWheelEven
 
         LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::handleWheelEvent found node " << (node ? node->scrollingNodeID() : 0) << " for point " << position);
 
-        return handleWheelEventWithNode(wheelEvent, node.get());
+        return handleWheelEventWithNode(wheelEvent, processingSteps, node.get());
     }();
 
     result.steps.add(processingSteps & WheelEventProcessingSteps::MainThreadForDOMEventDispatch);
     return result;
 }
 
-WheelEventHandlingResult ScrollingTree::handleWheelEventWithNode(const PlatformWheelEvent& wheelEvent, ScrollingTreeNode* node)
+WheelEventHandlingResult ScrollingTree::handleWheelEventWithNode(const PlatformWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps, ScrollingTreeNode* node)
 {
     while (node) {
         if (is<ScrollingTreeScrollingNode>(*node)) {
@@ -169,7 +170,7 @@ WheelEventHandlingResult ScrollingTree::handleWheelEventWithNode(const PlatformW
             auto result = scrollingNode.handleWheelEvent(wheelEvent);
 
             if (result.wasHandled) {
-                m_latchingController.nodeDidHandleEvent(scrollingNode.scrollingNodeID(), wheelEvent, m_allowLatching);
+                m_latchingController.nodeDidHandleEvent(scrollingNode.scrollingNodeID(), processingSteps, wheelEvent, m_allowLatching);
                 m_gestureState.nodeDidHandleEvent(scrollingNode.scrollingNodeID(), wheelEvent);
                 return result;
             }

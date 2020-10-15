@@ -212,7 +212,7 @@ public:
     WEBCORE_EXPORT void willProcessWheelEvent();
 
 protected:
-    WheelEventHandlingResult handleWheelEventWithNode(const PlatformWheelEvent&, ScrollingTreeNode*);
+    WheelEventHandlingResult handleWheelEventWithNode(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, ScrollingTreeNode*);
 
     FloatPoint mainFrameScrollPosition() const;
     void setMainFrameScrollPosition(FloatPoint);

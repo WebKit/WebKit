@@ -1,3 +1,13 @@
+2020-10-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Scrolls in the passive event region only send one wheel event to the DOM
+        https://bugs.webkit.org/show_bug.cgi?id=217719
+
+        Reviewed by Tim Horton.
+
+        * fast/scrolling/latching/latched-scroll-in-passive-region-expected.txt: Added.
+        * fast/scrolling/latching/latched-scroll-in-passive-region.html: Added.
+
 2020-10-15  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for multiple accessibility layout tests in isolated tree mode.
