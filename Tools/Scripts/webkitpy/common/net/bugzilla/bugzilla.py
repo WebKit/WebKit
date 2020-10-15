@@ -317,7 +317,7 @@ class Bugzilla(object):
     def _get_browser(self):
         if not self._browser:
             self.setdefaulttimeout(600)
-            from webkitpy.thirdparty.autoinstalled.mechanize import Browser
+            from mechanize import Browser
             self._browser = Browser()
             self._browser.set_handle_robots(False)
         return self._browser

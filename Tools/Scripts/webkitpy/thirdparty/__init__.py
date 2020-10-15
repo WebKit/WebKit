@@ -93,9 +93,7 @@ class AutoinstallImportHook(object):
 
         # Note: all of the methods must follow the "_install_XXX" convention in
         # order for autoinstall_everything(), below, to work properly.
-        if '.mechanize' in fullname:
-            self._install_mechanize()
-        elif '.pylint' in fullname:
+        if '.pylint' in fullname:
             self._install_pylint()
         elif '.buildbot' in fullname:
             self._install_buildbot()
@@ -109,11 +107,6 @@ class AutoinstallImportHook(object):
             self.install_geckodriver()
         elif '.bs4' in fullname:
             self._install_beautifulsoup()
-
-    def _install_mechanize(self):
-        self._ensure_autoinstalled_dir_is_in_sys_path()
-        self._install("https://files.pythonhosted.org/packages/64/f1/1aa4c96dea14e17a955019b0fc4ac1b8dfbc50e3c90970c1fb8882e74a7b/mechanize-0.4.3.tar.gz",
-                             "mechanize-0.4.3/mechanize")
 
     def _install_keyring(self):
         self._install("https://files.pythonhosted.org/packages/7d/a9/8c6bf60710781ce13a9987c0debda8adab35eb79c6b5525f7fe5240b7a8a/keyring-7.3.1.tar.gz",

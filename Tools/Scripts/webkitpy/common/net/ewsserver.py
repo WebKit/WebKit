@@ -34,7 +34,7 @@ class EWSServer:
     def __init__(self, host=ewsserver_default_host, use_https=True, browser=None):
         self.host = host
         self.use_https = bool(use_https)
-        from webkitpy.thirdparty.autoinstalled.mechanize import Browser
+        from mechanize import Browser
         self._browser = browser or Browser()
         self._browser.set_handle_robots(False)
 

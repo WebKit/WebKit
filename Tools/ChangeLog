@@ -1,3 +1,25 @@
+2020-10-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Use webkitcorepy's autoinstaller for mechanize
+        https://bugs.webkit.org/show_bug.cgi?id=217683
+        <rdar://problem/70272262>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/__init__.py: Add mechanize.
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla._get_browser): 
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        * Scripts/webkitpy/common/net/ewsserver.py:
+        (EWSServer.__init__):
+        * Scripts/webkitpy/common/net/networktransaction_unittest.py:
+        (NetworkTransactionTest._raise_500_error):
+        (NetworkTransactionTest._raise_URLError):
+        (NetworkTransactionTest._raise_404_error):
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module): Remov _install_mechanize().
+        (AutoinstallImportHook._install_mechanize): Deleted.
+
 2020-10-15  Lauro Moura  <lmoura@igalia.com>
 
         [Flatpak SDK] Check for installed packages in setup_buildir
