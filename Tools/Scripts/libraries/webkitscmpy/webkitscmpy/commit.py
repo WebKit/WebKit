@@ -31,7 +31,7 @@ from webkitscmpy import Contributor
 class Commit(object):
     HASH_RE = re.compile(r'^[a-f0-9A-F]+$')
     REVISION_RE = re.compile(r'^[Rr]?(?P<revision>\d+)$')
-    IDENTIFIER_RE = re.compile(r'^((?P<branch_point>\d+)\.)?(?P<identifier>-?\d+)(@(?P<branch>\S+))?$')
+    IDENTIFIER_RE = re.compile(r'^((?P<branch_point>\d+)\.)?(?P<identifier>-?\d+)(@(?P<branch>\S*))?$')
     NUMBER_RE = re.compile(r'^-?\d*$')
     HASH_LABEL_SIZE = 12
 
@@ -112,7 +112,7 @@ class Commit(object):
                 identifier = match.group('branch_point'), int(match.group('identifier'))
                 if identifier[0]:
                     identifier = int(identifier[0]), identifier[1]
-                branch = match.group('branch')
+                branch = match.group('branch') or None
             elif cls.NUMBER_RE.match(identifier):
                 identifier = None, int(identifier)
             else:

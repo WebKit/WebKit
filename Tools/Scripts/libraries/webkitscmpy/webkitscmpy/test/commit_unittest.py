@@ -56,6 +56,7 @@ class TestCommit(unittest.TestCase):
     def test_parse_identifier(self):
         self.assertEqual((None, 1234, None), Commit._parse_identifier('1234'))
         self.assertEqual((None, 1234, None), Commit._parse_identifier(1234))
+        self.assertEqual((None, 1234, None), Commit._parse_identifier('1234@'))
 
         self.assertEqual((None, 1234, 'main'), Commit._parse_identifier('1234@main'))
         self.assertEqual((None, 1234, 'eng/bug'), Commit._parse_identifier('1234@eng/bug'))

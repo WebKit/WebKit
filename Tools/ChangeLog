@@ -1,3 +1,18 @@
+2020-10-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Support <identifier>@ abbreviated idiom
+        https://bugs.webkit.org/show_bug.cgi?id=217716
+        <rdar://problem/70299119>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/commit.py:
+        (Commit):
+        (Commit._parse_identifier): Support <identifier>@ shorthand.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/commit_unittest.py:
+        (TestCommit.test_parse_identifier):
+
 2020-10-15  Aakash Jain  <aakash_jain@apple.com>
 
         EWS bot should fail if a new test is missing its result
