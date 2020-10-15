@@ -1,3 +1,11 @@
+2020-10-15  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Update baseline of fast/css/word-space-extra.html after r268202.
+
+        * platform/glib/fast/css/word-space-extra-expected.png: Renamed from LayoutTests/platform/gtk/fast/css/word-space-extra-expected.png.
+        * platform/glib/fast/css/word-space-extra-expected.txt: Renamed from LayoutTests/platform/gtk/fast/css/word-space-extra-expected.txt.
+        * platform/wpe/fast/css/word-space-extra-expected.txt: Removed.
+
 2020-10-14  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening
