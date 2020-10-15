@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEB_AUDIO) && ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_AUDIO)
 
 #include "AudioSourceProvider.h"
 #include <wtf/ThreadSafeRefCounted.h>

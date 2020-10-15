@@ -56,6 +56,7 @@ class VideoLayerManager;
 
 namespace WebKit {
 
+class RemoteAudioSourceProvider;
 class UserData;
 struct TextTrackPrivateRemoteConfiguration;
 struct TrackPrivateRemoteConfiguration;
@@ -373,6 +374,10 @@ private:
 
     RemoteMediaPlayerState m_cachedState;
     std::unique_ptr<WebCore::PlatformTimeRanges> m_cachedBufferedTimeRanges;
+
+#if ENABLE(WEB_AUDIO) && PLATFORM(COCOA)
+    RefPtr<RemoteAudioSourceProvider> m_audioSourceProvider;
+#endif
 
     HashMap<RemoteMediaResourceIdentifier, RefPtr<WebCore::PlatformMediaResource>> m_mediaResources;
     HashMap<TrackPrivateRemoteIdentifier, Ref<AudioTrackPrivateRemote>> m_audioTracks;

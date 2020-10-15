@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM)
-
 #include "CARingBuffer.h"
 #include "WebAudioBufferList.h"
 #include <CoreAudio/CoreAudioTypes.h>
@@ -97,5 +95,3 @@ inline size_t AudioSampleBufferList::audioBufferListSizeForStream(const CAAudioS
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(MEDIA_STREAM)

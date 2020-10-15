@@ -530,6 +530,7 @@ platform/mediastream/mac/CoreAudioCaptureDeviceManager.cpp
 platform/mediastream/mac/CoreAudioCaptureSource.cpp
 platform/mediastream/mac/DisplayCaptureManagerCocoa.cpp
 platform/mediastream/mac/DisplayCaptureSourceCocoa.cpp
+platform/mediastream/mac/MediaStreamTrackAudioSourceProviderCocoa.cpp
 platform/mediastream/mac/MockAudioSharedUnit.mm
 platform/mediastream/mac/MockRealtimeVideoSourceMac.mm
 platform/mediastream/mac/RealtimeIncomingAudioSourceCocoa.cpp
@@ -540,7 +541,7 @@ platform/mediastream/mac/RealtimeOutgoingAudioSourceCocoa.cpp
 platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.cpp
 platform/mediastream/mac/RealtimeVideoUtilities.mm
 platform/mediastream/mac/ScreenDisplayCapturerMac.mm
-platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm
+platform/mediastream/mac/WebAudioSourceProviderCocoa.mm
 platform/mediastream/mac/WindowDisplayCapturerMac.mm
 platform/mock/MediaPlaybackTargetMock.cpp
 platform/mock/MediaPlaybackTargetPickerMock.cpp

@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "Logging.h"
+#include "RemoteAudioSourceProvider.h"
 #include "RemoteLegacyCDM.h"
 #include "RemoteLegacyCDMFactory.h"
 #include "RemoteLegacyCDMSession.h"
@@ -115,6 +116,11 @@ MediaPlayerPrivateRemote::~MediaPlayerPrivateRemote()
     m_videoLayerManager->didDestroyVideoLayer();
 #endif
     m_manager.deleteRemoteMediaPlayer(m_id);
+
+#if ENABLE(WEB_AUDIO) && PLATFORM(COCOA)
+    if (m_audioSourceProvider)
+        m_audioSourceProvider->close();
+#endif
 }
 
 void MediaPlayerPrivateRemote::setConfiguration(RemoteMediaPlayerConfiguration&& configuration, WebCore::SecurityOriginData&& documentSecurityOrigin)
@@ -924,8 +930,15 @@ unsigned MediaPlayerPrivateRemote::videoDecodedByteCount() const
 #if ENABLE(WEB_AUDIO)
 AudioSourceProvider* MediaPlayerPrivateRemote::audioSourceProvider()
 {
+#if PLATFORM(COCOA)
+    if (!m_audioSourceProvider)
+        m_audioSourceProvider = RemoteAudioSourceProvider::create(m_id, *this);
+
+    return m_audioSourceProvider.get();
+#else
     notImplemented();
     return nullptr;
+#endif
 }
 #endif
 

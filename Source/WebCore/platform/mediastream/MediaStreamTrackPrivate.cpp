@@ -37,7 +37,7 @@
 #include <wtf/UUID.h>
 
 #if PLATFORM(COCOA)
-#include "WebAudioSourceProviderAVFObjC.h"
+#include "MediaStreamTrackAudioSourceProviderCocoa.h"
 #elif ENABLE(WEB_AUDIO) && ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC) && USE(GSTREAMER)
 #include "AudioSourceProviderGStreamer.h"
 #else
@@ -188,7 +188,7 @@ AudioSourceProvider* MediaStreamTrackPrivate::audioSourceProvider()
 {
 #if PLATFORM(COCOA)
     if (!m_audioSourceProvider)
-        m_audioSourceProvider = WebAudioSourceProviderAVFObjC::create(*this);
+        m_audioSourceProvider = MediaStreamTrackAudioSourceProviderCocoa::create(*this);
 #elif USE(LIBWEBRTC) && USE(GSTREAMER)
     if (!m_audioSourceProvider)
         m_audioSourceProvider = AudioSourceProviderGStreamer::create(*this);

@@ -40,7 +40,7 @@ typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
 namespace WebCore {
 
 class WebAudioBufferList;
-class WebAudioSourceProviderAVFObjC;
+class WebAudioSourceProviderCocoa;
 
 class MockAudioSharedUnit final : public BaseAudioSharedUnit {
 public:

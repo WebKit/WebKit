@@ -37,7 +37,7 @@
 #include "Logging.h"
 #include "PlatformMediaSessionManager.h"
 #include "Timer.h"
-#include "WebAudioSourceProviderAVFObjC.h"
+#include "WebAudioSourceProviderCocoa.h"
 #include <AudioToolbox/AudioConverter.h>
 #include <AudioUnit/AudioUnit.h>
 #include <CoreMedia/CMSync.h>

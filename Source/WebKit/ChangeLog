@@ -1,3 +1,31 @@
+2020-10-15  Youenn Fablet  <youenn@apple.com>
+
+        Introduce a RemoteAudioSourceProvider to receive audio samples for web audio from GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=217710
+
+        Reviewed by Eric Carlson.
+
+        Make use of WebAudioSourceProviderAVFObjC to implement RemoteAudioSourceProvider.
+        RemoteAudioSourceProvider currently implements an AudioSourceProvider but it is not yet connected to GPUProcess media players.
+        This will be implemented in a follow-up.
+
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::~MediaPlayerPrivateRemote):
+        (WebKit::MediaPlayerPrivateRemote::audioSourceProvider):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/RemoteAudioSourceProvider.cpp: Added.
+        (WebKit::RemoteAudioSourceProvider::create):
+        (WebKit::RemoteAudioSourceProvider::RemoteAudioSourceProvider):
+        (WebKit::RemoteAudioSourceProvider::~RemoteAudioSourceProvider):
+        (WebKit::RemoteAudioSourceProvider::close):
+        (WebKit::RemoteAudioSourceProvider::hasNewClient):
+        (WebKit::RemoteAudioSourceProvider::audioSamplesAvailable):
+        (WebKit::RemoteAudioSourceProvider::logChannel const):
+        * WebProcess/GPU/media/RemoteAudioSourceProvider.h: Added.
+        * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+
 2020-10-15  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, mid October 2020, take two

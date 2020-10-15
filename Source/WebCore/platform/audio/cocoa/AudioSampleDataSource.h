@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM)
-
 #include "AudioSampleBufferList.h"
 #include <CoreAudio/CoreAudioTypes.h>
 #include <wtf/LoggerHelper.h>
@@ -123,5 +121,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(MEDIA_STREAM)

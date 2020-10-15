@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
 
+#import "RemoteAudioSourceProvider.h"
 #import <WebCore/VideoLayerManagerObjC.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "AudioSampleBufferList.h"
 
-#if ENABLE(MEDIA_STREAM)
-
 #include "Logging.h"
 #include "VectorMath.h"
 #include <Accelerate/Accelerate.h>
@@ -320,5 +318,3 @@ OSStatus AudioSampleBufferList::copyFrom(CARingBuffer& ringBuffer, size_t sample
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(MEDIA_STREAM)

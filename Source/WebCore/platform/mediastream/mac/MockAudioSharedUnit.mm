@@ -39,7 +39,7 @@
 #import "NotImplemented.h"
 #import "RealtimeMediaSourceSettings.h"
 #import "WebAudioBufferList.h"
-#import "WebAudioSourceProviderAVFObjC.h"
+#import "WebAudioSourceProviderCocoa.h"
 #import <AVFoundation/AVAudioBuffer.h>
 #import <AudioToolbox/AudioConverter.h>
 #import <CoreAudio/CoreAudioTypes.h>

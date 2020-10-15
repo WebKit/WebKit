@@ -26,12 +26,10 @@
 #import "config.h"
 #import "AudioSampleDataSource.h"
 
-#if ENABLE(MEDIA_STREAM)
-
 #import "CAAudioStreamDescription.h"
 #import "CARingBuffer.h"
 #import "Logging.h"
-#import "MediaStreamTrackPrivate.h"
+#import "PlatformAudioData.h"
 #import <AudioToolbox/AudioConverter.h>
 #import <mach/mach.h>
 #import <mach/mach_time.h>
@@ -379,5 +377,3 @@ WTFLogChannel& AudioSampleDataSource::logChannel() const
 #endif
 
 } // namespace WebCore
-
-#endif // ENABLE(MEDIA_STREAM)
