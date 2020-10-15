@@ -266,9 +266,7 @@ void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bo
 
         if (timelineValue)
             m_value = *timelineValue;
-
-        for (unsigned i = 0; i < numberOfValues; ++i)
-            values[i] = m_value;
+        std::fill_n(values, numberOfValues, m_value);
     }
 
     if (!numberOfRenderingConnections())
@@ -294,10 +292,8 @@ void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bo
     }
 
     // If we're not sample accurate, duplicate the first element of |values| to all of the elements.
-    if (!sampleAccurate) {
-        for (unsigned i = 1; i < numberOfValues; ++i)
-            values[i] = values[0];
-    }
+    if (!sampleAccurate)
+        std::fill_n(values + 1, numberOfValues - 1, values[0]);
 
     // Clamp values based on range allowed by AudioParam's min and max values.
     VectorMath::clamp(values, minValue(), maxValue(), values, numberOfValues);
