@@ -928,7 +928,11 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
     }
 
     // FIXME: If the message was invalid, we should send back a SyncMessageError.
+#if ENABLE(IPC_TESTING_API)
     ASSERT(decoder.isValid() || m_ignoreInvalidMessageForTesting);
+#else
+    ASSERT(decoder.isValid());
+#endif
 
     if (replyEncoder)
         sendSyncReply(WTFMove(replyEncoder));
