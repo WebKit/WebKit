@@ -3687,7 +3687,9 @@ id WebViewImpl::accessibilityAttributeValue(NSString *attribute, id parameter)
     if ([attribute isEqualToString:NSAccessibilityChildrenAttribute]) {
 
         id child = nil;
-        if (m_remoteAccessibilityChild)
+        if (m_safeBrowsingWarning)
+            child = m_safeBrowsingWarning.get();
+        else if (m_remoteAccessibilityChild)
             child = m_remoteAccessibilityChild.get();
 
             if (!child)
