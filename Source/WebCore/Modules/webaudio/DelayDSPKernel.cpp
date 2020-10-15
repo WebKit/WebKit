@@ -47,7 +47,6 @@ DelayDSPKernel::DelayDSPKernel(DelayProcessor* processor)
         return;
 
     m_buffer.resize(bufferLengthForDelay(m_maxDelayTime, processor->sampleRate()));
-    m_buffer.zero();
 }
 
 DelayDSPKernel::DelayDSPKernel(double maxDelayTime, float sampleRate)
@@ -64,7 +63,6 @@ DelayDSPKernel::DelayDSPKernel(double maxDelayTime, float sampleRate)
         return;
 
     m_buffer.resize(bufferLength);
-    m_buffer.zero();
 }
 
 size_t DelayDSPKernel::bufferLengthForDelay(double maxDelayTime, double sampleRate) const
