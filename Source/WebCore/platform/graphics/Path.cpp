@@ -431,9 +431,63 @@ Optional<FloatRect> Path::fastBoundingRectFromInlineData() const
     return boundingRectFromInlineData();
 }
 
+static FloatRect computeArcBounds(const FloatPoint& center, float radius, float start, float end, bool clockwise)
+{
+    if (clockwise)
+        std::swap(start, end);
+
+    constexpr float fullCircle = 2 * piFloat;
+    if (end - start >= fullCircle) {
+        auto diameter = radius * 2;
+        return { center.x() - radius, center.y() - radius, diameter, diameter };
+    }
+
+    auto normalize = [&] (float radians) {
+        double circles = radians / fullCircle;
+        return fullCircle * (circles - floor(circles));
+    };
+
+    start = normalize(start);
+    end = normalize(end);
+
+    auto lengthInRadians = end - start;
+    if (start > end)
+        lengthInRadians += fullCircle;
+
+    FloatPoint startPoint { center.x() + radius * cos(start), center.y() + radius * sin(start) };
+    FloatPoint endPoint { center.x() + radius * cos(end), center.y() + radius * sin(end) };
+    FloatRect result;
+    result.fitToPoints(startPoint, endPoint);
+
+    auto contains = [&] (float angleToCheck) {
+        return (start < angleToCheck && start + lengthInRadians > angleToCheck)
+            || (start > angleToCheck && start + lengthInRadians > angleToCheck + fullCircle);
+    };
+
+    if (contains(0))
+        result.shiftMaxXEdgeTo(center.x() + radius);
+
+    if (contains(piOverTwoFloat))
+        result.shiftMaxYEdgeTo(center.y() + radius);
+
+    if (contains(piFloat))
+        result.shiftXEdgeTo(center.x() - radius);
+
+    if (contains(3 * piOverTwoFloat))
+        result.shiftYEdgeTo(center.y() - radius);
+
+    return result;
+}
+
 Optional<FloatRect> Path::boundingRectFromInlineData() const
 {
-    // FIXME: Add logic to compute the exact bounding rect for an arc in inline data.
+    if (hasInlineData<ArcData>()) {
+        auto& arc = inlineData<ArcData>();
+        auto bounds = computeArcBounds(arc.center, arc.radius, arc.startAngle, arc.endAngle, arc.clockwise);
+        if (arc.type == ArcData::Type::LineAndArc || arc.type == ArcData::Type::ClosedLineAndArc)
+            bounds.extend(arc.start);
+        return bounds;
+    }
 
     if (hasInlineData<MoveData>())
         return FloatRect { };
