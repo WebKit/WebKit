@@ -113,11 +113,28 @@ passed = arr2[1] === "getOwnPropertyDescriptor";
 if (!passed)
     throw new Error("Object.entries should get property descriptor.");
 
-Array.prototype.push = function () { throw new Error("Array.prototype.push should not be used during invoking of Object.entries.")};
-Object.getOwnPropertyDescriptor = function () { throw new Error("Array.prototype.getOwnPropertyDescriptor should not be used during invoking of Object.entries.")};
+const withDontEnum = Object.create(null, {
+    a: {value: 1, enumerable: false},
+    b: {value: 2, enumerable: true},
+    c: {value: 3, enumerable: false},
+    d: {value: 4, enumerable: true},
+});
 
-entries = Object.entries({a:'1-2', b:'3-4'});
-passed = Array.isArray(entries) && String(entries[0]) === "a,1-2" && String(entries[1]) === "b,3-4";
+entries = Object.entries(withDontEnum);
+passed = compare(entries, [['b', 2], ['d', 4]]);
 
 if (!passed)
-    throw new Error("Object.entries return wrong result.");
+    throw new Error("Object.entries returned wrong result (non-enumerable properties).");
+
+delete Array.prototype.push;
+delete Object.prototype.propertyIsEnumerable;
+delete Object.getOwnPropertyDescriptor;
+delete Object.getOwnPropertyNames;
+delete Reflect.getOwnPropertyDescriptor;
+delete Reflect.ownKeys;
+
+entries = Object.entries({a:'1-2', b:'3-4'});
+passed = compare(entries, [['a', '1-2'], ['b', '3-4']]);
+
+if (!passed)
+    throw new Error("Object.entries returned wrong result (deleted built-ins).");

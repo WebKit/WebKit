@@ -35,7 +35,7 @@ function entries(object)
     for (var i = 0, length = names.length; i < length; ++i) {
         var name = names[i];
         if (@propertyIsEnumerable(obj, name))
-            @putByValDirect(properties, i, [name, obj[name]]);
+            @arrayPush(properties, [name, obj[name]]);
     }
 
     return properties;

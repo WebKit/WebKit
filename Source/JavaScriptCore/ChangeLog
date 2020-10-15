@@ -1,3 +1,16 @@
+2020-10-15  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        REGRESSION (r268489): test/built-ins/Object/entries/order-after-define-property.js failing on test262 bots
+        https://bugs.webkit.org/show_bug.cgi?id=217738
+
+        Reviewed by Yusuke Suzuki.
+
+        This change fixes an oversight of r268489 that caused Object.entries to
+        return a sparse array if its argument contained non-enumerable properties.
+
+        * builtins/ObjectConstructor.js:
+        (entries):
+
 2020-10-14  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Use @putByValDirect instead of Array.prototype.@push in built-ins
