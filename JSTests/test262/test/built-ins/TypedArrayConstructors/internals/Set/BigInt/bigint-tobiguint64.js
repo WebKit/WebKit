@@ -65,45 +65,38 @@ info: |
     2. Let int64bit be n modulo 2^64.
     3. Return int64bit.
 
-features: [BigInt, TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, BigInt, TypedArray]
 ---*/
-
+// 2n ** 64n + 2n
+// 2n ** 63n + 2n
+// -(2n ** 63n) - 2n
+// -(2n ** 64n) - 2n
+// 2n ** 63n + 2n
+// 2n ** 64n - 2n
+// 2n ** 63n - 2n
+// 2n ** 64n - 2n
 var vals = [
-  18446744073709551618n, // 2n ** 64n + 2n
-  9223372036854775810n, // 2n ** 63n + 2n
+  18446744073709551618n,
+  9223372036854775810n,
   2n,
   0n,
   -2n,
-  -9223372036854775810n, // -(2n ** 63n) - 2n
-  -18446744073709551618n, // -(2n ** 64n) - 2n
+  -9223372036854775810n,
+  -18446744073709551618n
 ];
 
 var typedArray = new BigUint64Array(1);
-
 typedArray[0] = vals[0];
-assert.sameValue(typedArray[0], 2n,
-                 "ToBigUint64(2n ** 64n + 2n) => 2n");
-
+assert.sameValue(typedArray[0], 2n, 'The value of typedArray[0] is 2n');
 typedArray[0] = vals[1];
-assert.sameValue(typedArray[0], 9223372036854775810n, // 2n ** 63n + 2n
-                 "ToBigUint64(2n ** 63n + 2n) => 9223372036854775810");
-
+assert.sameValue(typedArray[0], 9223372036854775810n, 'The value of typedArray[0] is 9223372036854775810n');
 typedArray[0] = vals[2];
-assert.sameValue(typedArray[0], 2n,
-                 "ToBigUint64(2n) => 2n");
-
+assert.sameValue(typedArray[0], 2n, 'The value of typedArray[0] is 2n');
 typedArray[0] = vals[3];
-assert.sameValue(typedArray[0], 0n,
-                 "ToBigUint64(0n) => 0n");
-
+assert.sameValue(typedArray[0], 0n, 'The value of typedArray[0] is 0n');
 typedArray[0] = vals[4];
-assert.sameValue(typedArray[0], 18446744073709551614n, // 2n ** 64n - 2n
-                 "ToBigUint64( -2n) => 18446744073709551614n");
-
+assert.sameValue(typedArray[0], 18446744073709551614n, 'The value of typedArray[0] is 18446744073709551614n');
 typedArray[0] = vals[5];
-assert.sameValue(typedArray[0], 9223372036854775806n, // 2n ** 63n - 2n
-                 "ToBigUint64( -(2n ** 63n) - 2n) => 9223372036854775806n");
-
+assert.sameValue(typedArray[0], 9223372036854775806n, 'The value of typedArray[0] is 9223372036854775806n');
 typedArray[0] = vals[6];
-assert.sameValue(typedArray[0], 18446744073709551614n, // 2n ** 64n - 2n
-                 "ToBigUint64( -(2n ** 64n) - 2n) => 18446744073709551614n");
+assert.sameValue(typedArray[0], 18446744073709551614n, 'The value of typedArray[0] is 18446744073709551614n');

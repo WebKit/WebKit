@@ -3,7 +3,7 @@
 /*---
 esid: sec-integer-indexed-exotic-objects-get-p-receiver
 description: >
-  Returns abrupt from OrginaryGet when key is not a numeric index
+  Returns abrupt from OrdinaryGet when key is not a numeric index
 info: |
   9.4.5.4 [[Get]] (P, Receiver)
 
@@ -20,7 +20,7 @@ info: |
   8. Return ? Call(getter, Receiver).
   ...
 includes: [testTypedArray.js]
-features: [TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

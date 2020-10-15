@@ -20,24 +20,23 @@ info: |
   15. Perform SetValueInBuffer(buffer, indexedPosition, elementType, numValue).
   16. Return true.
 includes: [testBigIntTypedArray.js]
-features: [BigInt, Reflect, TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, BigInt, Reflect, TypedArray]
 ---*/
 
-var proto = TypedArray.prototype;
-var throwDesc = {
+let proto = TypedArray.prototype;
+let throwDesc = {
   set: function() {
-    throw new Test262Error("OrdinarySet was called! Ref: 9.1.9.1 3.b.i");
+    throw new Test262Error('OrdinarySet was called!');
   }
 };
-Object.defineProperty(proto, "0", throwDesc);
-Object.defineProperty(proto, "1", throwDesc);
+
+Object.defineProperty(proto, '0', throwDesc);
+Object.defineProperty(proto, '1', throwDesc);
 
 testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([42n, 43n]);
-
-  assert.sameValue(Reflect.set(sample, "0", 1n), true, "sample[0]");
-  assert.sameValue(sample[0], 1n, "sample[0] value is set");
-
-  assert.sameValue(Reflect.set(sample, "1", 42n), true, "sample[1]");
-  assert.sameValue(sample[1], 42n, "sample[1] value is set");
+  let sample = new TA(2);
+  assert.sameValue(Reflect.set(sample, '0', 1n), true, 'Reflect.set(sample, "0", 1n) must return true');
+  assert.sameValue(sample[0], 1n, 'The value of sample[0] is 1n');
+  assert.sameValue(Reflect.set(sample, '1', 42n), true, 'Reflect.set(sample, "1", 42n) must return true');
+  assert.sameValue(sample[1], 42n, 'The value of sample[1] is 42n');
 });

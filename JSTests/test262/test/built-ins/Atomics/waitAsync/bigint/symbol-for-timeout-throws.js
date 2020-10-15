@@ -17,7 +17,7 @@ info: |
 
 features: [Atomics.waitAsync, SharedArrayBuffer, Symbol, Symbol.toPrimitive, TypedArray, computed-property-names, Atomics, BigInt]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 const i64a = new BigInt64Array(new SharedArrayBuffer(BigInt64Array.BYTES_PER_ELEMENT * 4));
 
 const poisonedValueOf = {
@@ -34,16 +34,16 @@ const poisonedToPrimitive = {
 
 assert.throws(Test262Error, function() {
   Atomics.waitAsync(i64a, 0, 0n, poisonedValueOf);
-}, '`Atomics.waitAsync(i64a, 0, 0n, poisonedValueOf)` throws Test262Error');
+}, '`Atomics.waitAsync(i64a, 0, 0n, poisonedValueOf)` throws a Test262Error exception');
 
 assert.throws(Test262Error, function() {
   Atomics.waitAsync(i64a, 0, 0n, poisonedToPrimitive);
-}, '`Atomics.waitAsync(i64a, 0, 0n, poisonedToPrimitive)` throws Test262Error');
+}, '`Atomics.waitAsync(i64a, 0, 0n, poisonedToPrimitive)` throws a Test262Error exception');
 
 assert.throws(TypeError, function() {
   Atomics.waitAsync(i64a, 0, 0n, Symbol('foo'));
-}, '`Atomics.waitAsync(i64a, 0, 0n, Symbol("foo"))` throws TypeError');
+}, '`Atomics.waitAsync(i64a, 0, 0n, Symbol("foo"))` throws a TypeError exception');
 
 assert.throws(TypeError, function() {
   Atomics.waitAsync(i64a, 0, 0n, Symbol('foo'));
-}, '`Atomics.waitAsync(i64a, 0, 0n, Symbol("foo"))` throws TypeError');
+}, '`Atomics.waitAsync(i64a, 0, 0n, Symbol("foo"))` throws a TypeError exception');

@@ -24,7 +24,7 @@ info: |
 
 features: [Atomics.waitAsync, Symbol, arrow-function, Atomics]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 const poisoned = {
   valueOf() {
     throw new Test262Error('should not evaluate this code');
@@ -33,29 +33,29 @@ const poisoned = {
 
 assert.throws(TypeError, () => {
   Atomics.waitAsync(null, poisoned, poisoned, poisoned);
-}, '`Atomics.waitAsync(null, poisoned, poisoned, poisoned)` throws TypeError');
+}, '`Atomics.waitAsync(null, poisoned, poisoned, poisoned)` throws a TypeError exception');
 
 assert.throws(TypeError, () => {
   Atomics.waitAsync(undefined, poisoned, poisoned, poisoned);
-}, '`Atomics.waitAsync(undefined, poisoned, poisoned, poisoned)` throws TypeError');
+}, '`Atomics.waitAsync(undefined, poisoned, poisoned, poisoned)` throws a TypeError exception');
 
 assert.throws(TypeError, () => {
   Atomics.waitAsync(true, poisoned, poisoned, poisoned);
-}, '`Atomics.waitAsync(true, poisoned, poisoned, poisoned)` throws TypeError');
+}, '`Atomics.waitAsync(true, poisoned, poisoned, poisoned)` throws a TypeError exception');
 
 assert.throws(TypeError, () => {
   Atomics.waitAsync(false, poisoned, poisoned, poisoned);
-}, '`Atomics.waitAsync(false, poisoned, poisoned, poisoned)` throws TypeError');
+}, '`Atomics.waitAsync(false, poisoned, poisoned, poisoned)` throws a TypeError exception');
 
 assert.throws(TypeError, () => {
   Atomics.waitAsync('***string***', poisoned, poisoned, poisoned);
-}, '`Atomics.waitAsync(\'***string***\', poisoned, poisoned, poisoned)` throws TypeError');
+}, '`Atomics.waitAsync("***string***", poisoned, poisoned, poisoned)` throws a TypeError exception');
 
 assert.throws(TypeError, () => {
   Atomics.waitAsync(Number.NEGATIVE_INFINITY, poisoned, poisoned, poisoned);
-}, '`Atomics.waitAsync(Number.NEGATIVE_INFINITY, poisoned, poisoned, poisoned)` throws TypeError');
+}, '`Atomics.waitAsync(Number.NEGATIVE_INFINITY, poisoned, poisoned, poisoned)` throws a TypeError exception');
 
 assert.throws(TypeError, () => {
   Atomics.waitAsync(Symbol('***symbol***'), poisoned, poisoned, poisoned);
-}, '`Atomics.waitAsync(Symbol(\'***symbol***\'), poisoned, poisoned, poisoned)` throws TypeError');
+}, '`Atomics.waitAsync(Symbol("***symbol***"), poisoned, poisoned, poisoned)` throws a TypeError exception');
 

@@ -24,7 +24,7 @@ info: |
 
 features: [Atomics.waitAsync, TypedArray, SharedArrayBuffer, destructuring-binding, Atomics]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 
 const i32a = new Int32Array(
   new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 8)
@@ -32,5 +32,5 @@ const i32a = new Int32Array(
 
 let {async, value} = Atomics.waitAsync(i32a, 0, 0, 0);
 
-assert.sameValue(async, false);
-assert.sameValue(value, "timed-out");
+assert.sameValue(async, false, 'The value of `async` is false');
+assert.sameValue(value, "timed-out", 'The value of `value` is "timed-out"');

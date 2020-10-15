@@ -3,7 +3,7 @@
 /*---
 esid: sec-integer-indexed-exotic-objects-defineownproperty-p-desc
 description: >
-  Throws a TypeError if object has valid numeric index and a detached buffer
+  Returns false if this has valid numeric index and a detached buffer
   (honoring the Realm of the current execution context)
 info: |
   9.4.5.3 [[DefineOwnProperty]] ( P, Desc)
@@ -20,17 +20,17 @@ info: |
   9.4.5.9 IntegerIndexedElementSet ( O, index, value )
 
   ...
-  4. Let buffer be the value of O's [[ViewedArrayBuffer]] internal slot.
-  5. If IsDetachedBuffer(buffer) is true, throw a TypeError exception.
+  Let buffer be O.[[ViewedArrayBuffer]].
+  If IsDetachedBuffer(buffer) is true, return false.
   ...
 includes: [testTypedArray.js, detachArrayBuffer.js]
-features: [cross-realm, Reflect, TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, cross-realm, Reflect, TypedArray]
 ---*/
 
 var other = $262.createRealm().global;
 var desc = {
   value: 0,
-  configurable: false,
+  configurable: true,
   enumerable: true,
   writable: true
 };
@@ -41,7 +41,9 @@ testWithTypedArrayConstructors(function(TA) {
 
   $DETACHBUFFER(sample.buffer);
 
-  assert.throws(TypeError, function() {
-    Reflect.defineProperty(sample, '0', desc);
-  });
+  assert.sameValue(
+    Reflect.defineProperty(sample, '0', desc),
+    false,
+    'Reflect.defineProperty(sample, "0", {value: 0, configurable: true, enumerable: true, writable: true}) must return false'
+  );
 });

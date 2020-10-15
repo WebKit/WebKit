@@ -16,13 +16,9 @@ info: |
 flags: [async]
 features: [Atomics.waitAsync, SharedArrayBuffer, TypedArray, Atomics, BigInt, destructuring-binding, arrow-function]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 const i64a = new BigInt64Array(new SharedArrayBuffer(BigInt64Array.BYTES_PER_ELEMENT * 4));
 
 Promise.all([Atomics.waitAsync(i64a, 0, 0n, -1).value]).then(([outcome]) => {
-  assert.sameValue(
-    outcome,
-    'timed-out',
-    'Atomics.waitAsync(i64a, 0, 0n, -1).value resolves to "timed-out"'
-  );
+  assert.sameValue(outcome, 'timed-out', 'The value of `outcome` is "timed-out"');
 }).then($DONE, $DONE);

@@ -26,7 +26,7 @@ flags: [async]
 includes: [atomicsHelper.js]
 features: [Atomics.waitAsync, SharedArrayBuffer, TypedArray, Atomics, arrow-function, async-functions]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 
 const WAIT_INDEX = 0;
 const RUNNING = 1;
@@ -59,12 +59,12 @@ const i32a = new Int32Array(
 
 $262.agent.safeBroadcastAsync(i32a, RUNNING, NUMAGENT).then(async (agentCount) => {
 
-  assert.sameValue(agentCount, NUMAGENT);
+  assert.sameValue(agentCount, NUMAGENT, 'The value of `agentCount` is expected to equal the value of NUMAGENT');
 
   assert.sameValue(
     Atomics.notify(i32a, WAIT_INDEX, NOTIFYCOUNT),
     NOTIFYCOUNT,
-    'Atomics.notify(i32a, WAIT_INDEX, NOTIFYCOUNT) returns the value of `NOTIFYCOUNT` (2)'
+    'Atomics.notify(new Int32Array(new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4)), 0, 2) must return the value of NOTIFYCOUNT'
   );
 
   const reports = [

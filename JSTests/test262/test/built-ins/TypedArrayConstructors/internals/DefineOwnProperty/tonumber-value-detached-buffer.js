@@ -6,7 +6,7 @@ esid: sec-integer-indexed-exotic-objects-defineownproperty-p-desc
 description: >
     Defining a typed array element to a value that, when converted to the typed
     array element type, detaches the typed array's underlying buffer, should
-    throw a TypeError and not modify the typed array.
+    return false and not modify the typed array.
 info: |
   9.4.5.3 [[DefineOwnProperty]] ( P, Desc )
 
@@ -26,7 +26,7 @@ info: |
   15. Perform SetValueInBuffer(buffer, indexedPosition, elementType, numValue).
   16. Return true.
 includes: [testTypedArray.js, detachArrayBuffer.js]
-features: [Reflect, TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, Reflect, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {
@@ -35,21 +35,18 @@ testWithTypedArrayConstructors(function(TA) {
   var desc =
     {
       value: {
-        valueOf: function() {
+        valueOf() {
           $DETACHBUFFER(ta.buffer);
           return 42;
         }
       }
     };
 
-  assert.throws(TypeError, function() {
-    Reflect.defineProperty(ta, 0, desc);
-  },
-  "detaching a ArrayBuffer during defining an element of a typed array " +
-  "viewing it should throw");
-
-  assert.throws(TypeError, function() {
-    ta[0];
-  });
+  assert.sameValue(
+    Reflect.defineProperty(ta, 0, desc),
+    false,
+    'Reflect.defineProperty(ta, 0, {value: {valueOf() {$DETACHBUFFER(ta.buffer); return 42;}}} ) must return false'
+  );
+  assert.sameValue(ta[0], undefined, 'The value of ta[0] is expected to equal `undefined`');
 });
 

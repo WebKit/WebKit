@@ -4,7 +4,7 @@
 /*---
 description: Computed property name from condition expression (ComputedPropertyName in ClassExpression)
 esid: prod-ComputedPropertyName
-features: [computed-property-names, top-level-await]
+features: [computed-property-names, top-level-await, class-fields-public, class-static-fields-public]
 flags: [generated, async, module]
 info: |
     ClassExpression:

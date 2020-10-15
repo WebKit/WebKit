@@ -22,7 +22,7 @@ info: |
 flags: [async]
 features: [Atomics.waitAsync, SharedArrayBuffer, TypedArray, BigInt, computed-property-names, Symbol, Symbol.toPrimitive, Atomics, arrow-function]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 const i64a = new BigInt64Array(new SharedArrayBuffer(BigInt64Array.BYTES_PER_ELEMENT * 4));
 
 const valueOf = {
@@ -38,6 +38,6 @@ const toPrimitive = {
 };
 
 Promise.all([Atomics.store(i64a, 0, 42n), Atomics.waitAsync(i64a, 0, 0n).value]).then(outcomes => {
-  assert.sameValue(outcomes[0], 42n);
-  assert.sameValue(outcomes[1], 'not-equal');
+  assert.sameValue(outcomes[0], 42n, 'The value of outcomes[0] is 42n');
+  assert.sameValue(outcomes[1], 'not-equal', 'The value of outcomes[1] is "not-equal"');
 }).then($DONE, $DONE);

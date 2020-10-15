@@ -11,32 +11,26 @@ info: |
     a. Let numericIndex be ! CanonicalNumericIndexString(P).
     b. If numericIndex is not undefined, then
       ...
-      x. If Desc has a [[Writable]] field and if Desc.[[Writable]] is false,
-      return false.
+      v. If Desc has a [[Writable]] field and if Desc.[[Writable]] is false,
+        return false.
   ...
 includes: [testBigIntTypedArray.js, propertyHelper.js]
-features: [BigInt, Reflect, TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, BigInt, Reflect, TypedArray]
 ---*/
-
 testWithBigIntTypedArrayConstructors(function(TA) {
   var sample = new TA([42n, 42n]);
 
-  assert.sameValue(
-    Reflect.defineProperty(sample, "0", {
-      value: 8n,
-      configurable: false,
-      enumerable: true,
-      writable: true
-    }),
-    true
-  );
+  assert.sameValue(Reflect.defineProperty(sample, '0', {
+    value: 8n,
+    configurable: true,
+    enumerable: true,
+    writable: true
+  }), true, 'Reflect.defineProperty(sample, "0", {value: 8n, configurable: true, enumerable: true, writable: true}) must return true');
 
-  assert.sameValue(sample[0], 8n, "property value was set");
-  var desc = Object.getOwnPropertyDescriptor(sample, "0");
-
-  assert.sameValue(desc.value, 8n, "desc.value");
-  assert.sameValue(desc.writable, true, "property is writable");
-
-  verifyEnumerable(sample, "0");
-  verifyNotConfigurable(sample, "0");
+  assert.sameValue(sample[0], 8n, 'The value of sample[0] is 8n');
+  var desc = Object.getOwnPropertyDescriptor(sample, '0');
+  assert.sameValue(desc.value, 8n, 'The value of desc.value is 8n');
+  assert.sameValue(desc.writable, true, 'The value of desc.writable is true');
+  verifyEnumerable(sample, '0');
+  verifyNotConfigurable(sample, '0');
 });

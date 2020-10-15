@@ -25,20 +25,31 @@ info: |
 flags: [async]
 features: [Atomics.waitAsync, TypedArray, SharedArrayBuffer, destructuring-binding, Atomics, arrow-function]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 
 const i32a = new Int32Array(
   new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 8)
 );
 
 let {async, value} = Atomics.waitAsync(i32a, 0, 0, 1);
-assert.sameValue(async, true);
-assert(value instanceof Promise);
-assert.sameValue(Object.getPrototypeOf(value), Promise.prototype);
+let outcome = null;
+let lifespan = 1000;
+let start = $262.agent.monotonicNow();
 
-value.then(outcome => {
-  assert.sameValue(outcome, "timed-out");
-}).then(() => $DONE(), $DONE);
+function wait() {
+  let elapsed = $262.agent.monotonicNow() - start;
+  if (elapsed > lifespan) {
+    $DONE("Test timed out");
+    return;
+  }
+  if (outcome === "timed-out") {
+    $DONE();
+    return;
+  }
 
+  $262.agent.setTimeout(wait, 0);
+}
 
+wait();
 
+value.then(result => (outcome = result), $DONE);

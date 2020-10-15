@@ -3,7 +3,7 @@
 /*---
 esid: sec-integer-indexed-exotic-objects-set-p-v-receiver
 description: >
-  Use OrginarySet if numeric key is not a CanonicalNumericIndex
+  Use OrdinarySet if numeric key is not a CanonicalNumericIndex
 info: |
   9.4.5.5 [[Set]] ( P, V, Receiver)
 
@@ -14,7 +14,7 @@ info: |
   ...
   3. Return ? OrdinarySet(O, P, V, Receiver).
 includes: [testTypedArray.js]
-features: [Reflect, TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, Reflect, TypedArray]
 ---*/
 
 var keys = [
@@ -31,16 +31,16 @@ testWithTypedArrayConstructors(function(TA) {
     assert.sameValue(
       Reflect.set(sample, key, "ecma262"),
       true,
-      "Return true setting a new property [" + key + "]"
+      'Reflect.set(sample, key, "ecma262") must return true'
     );
-    assert.sameValue(sample[key], "ecma262");
+    assert.sameValue(sample[key], "ecma262", 'The value of sample[key] is "ecma262"');
 
     assert.sameValue(
       Reflect.set(sample, key, "es3000"),
       true,
-      "Return true setting a value to a writable property [" + key + "]"
+      'Reflect.set(sample, key, "es3000") must return true'
     );
-    assert.sameValue(sample[key], "es3000");
+    assert.sameValue(sample[key], "es3000", 'The value of sample[key] is "es3000"');
 
     Object.defineProperty(sample, key, {
       writable: false,
@@ -49,10 +49,10 @@ testWithTypedArrayConstructors(function(TA) {
     assert.sameValue(
       Reflect.set(sample, key, 42),
       false,
-      "Return false setting a value to a non-writable property [" + key + "]"
+      'Reflect.set(sample, key, 42) must return false'
     );
     assert.sameValue(
-      sample[key], undefined, "non-writable [" + key + "] is preserved"
+      sample[key], undefined, 'The value of sample[key] is expected to equal `undefined`'
     );
   });
 });

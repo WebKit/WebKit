@@ -10,6 +10,6 @@ flags: [generated]
 
 class Subclass extends WeakRef {}
 
-const sub = new Subclass();
+const sub = new Subclass({});
 assert(sub instanceof Subclass);
 assert(sub instanceof WeakRef);

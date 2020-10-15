@@ -20,12 +20,12 @@ info: |
   7. If index = -0, return false.
   ...
 includes: [testTypedArray.js]
-features: [Reflect, TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, Reflect, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {
   var sample = new TA([42]);
 
-  assert.sameValue(Reflect.set(sample, "-0", 1), false, "-0");
-  assert.sameValue(sample.hasOwnProperty("-0"), false, "has no property [-0]");
+  assert.sameValue(Reflect.set(sample, "-0", 1), false, 'Reflect.set(sample, "-0", 1) must return false');
+  assert.sameValue(sample.hasOwnProperty("-0"), false, 'sample.hasOwnProperty("-0") must return false');
 });

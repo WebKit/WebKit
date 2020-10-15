@@ -20,7 +20,7 @@ info: |
 
 features: [Atomics.waitAsync, ArrayBuffer, Atomics, TypedArray, BigInt, arrow-function]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 const i64a = new BigInt64Array(new ArrayBuffer(BigInt64Array.BYTES_PER_ELEMENT * 4));
 
 const poisoned = {
@@ -31,8 +31,8 @@ const poisoned = {
 
 assert.throws(TypeError, () => {
   Atomics.waitAsync(i64a, 0, 0n, 0);
-}, '`Atomics.waitAsync(i64a, 0, 0n, 0)` throws TypeError');
+}, '`Atomics.waitAsync(i64a, 0, 0n, 0)` throws a TypeError exception');
 
 assert.throws(TypeError, () => {
   Atomics.waitAsync(i64a, poisoned, poisoned, poisoned);
-}, '`Atomics.waitAsync(i64a, poisoned, poisoned, poisoned)` throws TypeError');
+}, '`Atomics.waitAsync(i64a, poisoned, poisoned, poisoned)` throws a TypeError exception');

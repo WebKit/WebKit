@@ -15,6 +15,7 @@ skip:
     - regexp-lookbehind
     - legacy-regexp
 
+    - arbitrary-module-namespace-names
     - class-methods-private
     - class-static-fields-public
     - class-static-fields-private
@@ -69,6 +70,7 @@ skip:
     - test/built-ins/TypedArrayConstructors/ctors-bigint
     - test/built-ins/TypedArrayConstructors/from/BigInt
     - test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/BigInt
+    - test/built-ins/TypedArrayConstructors/internals/Delete/BigInt
     - test/built-ins/TypedArrayConstructors/internals/Get/BigInt
     - test/built-ins/TypedArrayConstructors/internals/GetOwnProperty/BigInt
     - test/built-ins/TypedArrayConstructors/internals/HasProperty/BigInt
@@ -81,6 +83,8 @@ skip:
     - test/intl402/DateTimeFormat/prototype/formatRangeToParts
   files:
     # https://bugs.webkit.org/show_bug.cgi?id=190800
+    - test/built-ins/Object/seal/seal-bigint64array.js
+    - test/built-ins/Object/seal/seal-biguint64array.js
     - test/built-ins/TypedArray/prototype/set/src-typedarray-big-throws.js
     - test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/src-typedarray-big-throws.js
     - test/built-ins/TypedArrayConstructors/prototype/Symbol.toStringTag/bigint-inherited.js
@@ -113,6 +117,10 @@ skip:
     - test/built-ins/TypedArrayConstructors/prototype/toLocaleString/bigint-inherited.js
     - test/built-ins/TypedArrayConstructors/prototype/toString/bigint-inherited.js
     - test/built-ins/TypedArrayConstructors/prototype/values/bigint-inherited.js
+    - test/language/expressions/class/subclass-builtins/subclass-BigInt64Array.js
+    - test/language/expressions/class/subclass-builtins/subclass-BigUint64Array.js
+    - test/language/statements/class/subclass-builtins/subclass-BigInt64Array.js
+    - test/language/statements/class/subclass-builtins/subclass-BigUint64Array.js
 
     # requires ICU 65 (https://unicode-org.atlassian.net/browse/ICU-20654)
     - test/intl402/RelativeTimeFormat/prototype/format/en-us-numeric-auto.js

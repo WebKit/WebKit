@@ -9,7 +9,7 @@ flags: [async]
 includes: [atomicsHelper.js]
 features: [Atomics.waitAsync, SharedArrayBuffer, TypedArray, Atomics, arrow-function, async-functions]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 
 const RUNNING = 1;
 const TIMEOUT = $262.agent.timeouts.huge;
@@ -35,22 +35,20 @@ $262.agent.start(`
 
 $262.agent.safeBroadcastAsync(i32a, RUNNING, 1).then(async (agentCount) => {
 
-  assert.sameValue(agentCount, 1);
-  assert.sameValue(Atomics.notify(i32a, 0), 1, 'Atomics.notify(i32a, 0) returns 1');
+  assert.sameValue(agentCount, 1, 'The value of `agentCount` is 1');
+  assert.sameValue(Atomics.notify(i32a, 0), 1, 'Atomics.notify(new Int32Array(new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4)), 0) must return 1');
 
-  const lapse = await $262.agent.getReportAsync();
+  let lapse = await $262.agent.getReportAsync();
 
   assert(
     lapse < TIMEOUT,
-    'The result of `(lapse >= TIMEOUT)` is true'
+    'The result of evaluating `(lapse < TIMEOUT)` is true'
   );
-
-  const result = await $262.agent.getReportAsync();
 
   assert.sameValue(
-    result,
+    await $262.agent.getReportAsync(),
     'ok',
-    'await Atomics.waitAsync(i32a, 0, 0, ${TIMEOUT}).value resolves to "ok"'
+    '(await $262.agent.getReportAsync()) resolves to the value "ok"'
   );
-  assert.sameValue(Atomics.notify(i32a, 0), 0, 'Atomics.notify(i32a, 0) returns 0');
+  assert.sameValue(Atomics.notify(i32a, 0), 0, 'Atomics.notify(new Int32Array(new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4)), 0) must return 0');
 }).then($DONE, $DONE);

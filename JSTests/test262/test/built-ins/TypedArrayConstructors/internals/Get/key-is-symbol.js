@@ -3,7 +3,7 @@
 /*---
 esid: sec-integer-indexed-exotic-objects-get-p-receiver
 description: >
-  Use OrginaryGet if key is a Symbol
+  Use OrdinaryGet if key is a Symbol
 info: |
   9.4.5.4 [[Get]] (P, Receiver)
 
@@ -12,7 +12,7 @@ info: |
     ...
   3. Return ? OrdinaryGet(O, P, Receiver).
 includes: [testTypedArray.js]
-features: [Symbol, TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, Symbol, TypedArray]
 ---*/
 
 var parentKey = Symbol("2");

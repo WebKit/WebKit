@@ -20,19 +20,18 @@ info: |
   6. If IsInteger(index) is false, return false.
   ...
 includes: [testBigIntTypedArray.js]
-features: [BigInt, Reflect, TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, BigInt, Reflect, TypedArray]
 ---*/
-
 testWithBigIntTypedArrayConstructors(function(TA) {
   var sample = new TA([42n]);
+  assert.sameValue(Reflect.set(sample, '1.1', 1n), false, 'Reflect.set("new TA([42n])", "1.1", 1n) must return false');
 
-  assert.sameValue(Reflect.set(sample, "1.1", 1n), false, "1.1");
-  assert.sameValue(Reflect.set(sample, "0.0001", 1n), false, "0.0001");
-
-  assert.sameValue(sample.hasOwnProperty("1.1"), false, "has no property [1.1]");
   assert.sameValue(
-    sample.hasOwnProperty("0.0001"),
+    Reflect.set(sample, '0.0001', 1n),
     false,
-    "has no property [0.0001]"
+    'Reflect.set("new TA([42n])", "0.0001", 1n) must return false'
   );
+
+  assert.sameValue(sample.hasOwnProperty('1.1'), false, 'sample.hasOwnProperty("1.1") must return false');
+  assert.sameValue(sample.hasOwnProperty('0.0001'), false, 'sample.hasOwnProperty("0.0001") must return false');
 });

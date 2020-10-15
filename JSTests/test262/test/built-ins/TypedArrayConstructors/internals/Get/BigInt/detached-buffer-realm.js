@@ -3,30 +3,34 @@
 /*---
 esid: sec-integer-indexed-exotic-objects-get-p-receiver
 description: >
-  Throws a TypeError if key has a numeric index and object has a detached
+  Returns undefined if key has a numeric index and object has a detached
   buffer (honoring the Realm of the current execution context)
 info: |
-  9.4.5.4 [[Get]] (P, Receiver)
+  [[Get]] ( P, Receiver )
 
-  ...
-  2. If Type(P) is String, then
-    a. Let numericIndex be ! CanonicalNumericIndexString(P).
-    b. If numericIndex is not undefined, then
-      i. Return ? IntegerIndexedElementGet(O, numericIndex).
+    If Type(P) is String, then
+      Let numericIndex be ! CanonicalNumericIndexString(P).
+      If numericIndex is not undefined, then
+        Return ! IntegerIndexedElementGet(O, numericIndex).
+
+  IntegerIndexedElementGet ( O, index )
+
+    Assert: O is an Integer-Indexed exotic object.
+    Assert: Type(index) is Number.
+    Let buffer be O.[[ViewedArrayBuffer]].
+    If IsDetachedBuffer(buffer) is true, return undefined.
   ...
 includes: [testBigIntTypedArray.js, detachArrayBuffer.js]
-features: [BigInt, cross-realm, TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, BigInt, cross-realm, TypedArray]
 ---*/
 
-var other = $262.createRealm().global;
+let other = $262.createRealm().global;
 
 testWithBigIntTypedArrayConstructors(function(TA) {
-  var OtherTA = other[TA.name];
-  var sample = new OtherTA(1);
+  let OtherTA = other[TA.name];
+  let sample = new OtherTA(1);
 
   $DETACHBUFFER(sample.buffer);
 
-  assert.throws(TypeError, function() {
-    sample[0];
-  });
+  assert.sameValue(sample[0], undefined, 'The value of sample[0] is expected to equal `undefined`');
 });

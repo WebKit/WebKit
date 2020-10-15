@@ -24,7 +24,7 @@ flags: [async]
 includes: [atomicsHelper.js]
 features: [Atomics.waitAsync, SharedArrayBuffer, TypedArray, Atomics, BigInt, arrow-function, async-functions]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 const RUNNING = 1;
 const TIMEOUT = $262.agent.timeouts.small;
 const i64a = new BigInt64Array(new SharedArrayBuffer(BigInt64Array.BYTES_PER_ELEMENT * 4));
@@ -45,17 +45,16 @@ $262.agent.start(`
 `);
 
 $262.agent.safeBroadcastAsync(i64a, RUNNING, 1n).then(async agentCount => {
-  assert.sameValue(agentCount, 1n);
+  assert.sameValue(agentCount, 1n, 'The value of `agentCount` is 1n');
   Atomics.and(i64a, 0, 1n);
   const lapse = await $262.agent.getReportAsync();
-  assert(lapse >= TIMEOUT, 'The result of `(lapse >= TIMEOUT)` is true');
+  assert(lapse >= TIMEOUT, 'The result of evaluating `(lapse >= TIMEOUT)` is true');
   const result = await $262.agent.getReportAsync();
+  assert.sameValue(result, 'timed-out', 'The value of `result` is "timed-out"');
 
   assert.sameValue(
-    result,
-    'timed-out',
-    'await Atomics.waitAsync(i64a, 0, 0n, ${TIMEOUT}).value resolves to "timed-out"'
+    Atomics.notify(i64a, 0),
+    0,
+    'Atomics.notify(new BigInt64Array(new SharedArrayBuffer(BigInt64Array.BYTES_PER_ELEMENT * 4)), 0) must return 0'
   );
-
-  assert.sameValue(Atomics.notify(i64a, 0), 0, 'Atomics.notify(i64a, 0) returns 0');
 }).then($DONE, $DONE);

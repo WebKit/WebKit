@@ -49,7 +49,7 @@ info: |
     Result: Throw a TypeError exception.
 
 includes: [testBigIntTypedArray.js]
-features: [BigInt, TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, BigInt, TypedArray]
 ---*/
 
 testWithBigIntTypedArrayConstructors(function(TA) {
@@ -57,6 +57,6 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert.throws(TypeError, function() {
     typedArray[0] = undefined;
-  }, "abrupt completion from undefined");
+  }, '`typedArray[0] = undefined` throws TypeError');
 
 });

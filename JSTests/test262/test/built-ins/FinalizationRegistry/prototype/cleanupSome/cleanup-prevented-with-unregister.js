@@ -22,7 +22,7 @@ info: |
       i. Remove cell from finalizationRegistry.[[Cells]].
       ii. Set removed to true.
   3. Return removed.
-features: [cleanupSome, FinalizationRegistry, host-gc-required]
+features: [FinalizationRegistry.prototype.cleanupSome, cleanupSome, FinalizationRegistry, host-gc-required]
 includes: [async-gc.js]
 flags: [async, non-deterministic]
 ---*/
@@ -49,6 +49,6 @@ emptyCells().then(function() {
   finalizationRegistry.cleanupSome(function cb(holding) {
     called += 1;
   });
-  
+
   assert.sameValue(called, 0, 'callback was not called');
 }).then($DONE, resolveAsyncGC);

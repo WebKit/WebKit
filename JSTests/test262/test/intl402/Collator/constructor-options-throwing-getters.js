@@ -11,6 +11,7 @@ function CustomError() {}
 const options = [
   "usage",
   "localeMatcher",
+  "collation",
   "numeric",
   "caseFirst",
   "sensitivity",

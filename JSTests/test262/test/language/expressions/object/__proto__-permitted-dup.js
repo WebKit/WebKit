@@ -13,7 +13,7 @@ info: |
     any duplicate entries for "__proto__" and at least two of those entries
     were obtained from productions of the form
     PropertyDefinition : PropertyName : AssignmentExpression .
-features: [generators, async-functions, async-iteration]
+features: [generators, async-functions, async-iteration, __proto__]
 ---*/
 
 var obj = {

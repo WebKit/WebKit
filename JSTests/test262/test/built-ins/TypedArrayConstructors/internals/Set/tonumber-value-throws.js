@@ -14,45 +14,47 @@ info: |
       i. Return ? IntegerIndexedElementSet(O, numericIndex, V).
   ...
 
-  9.4.5.9 IntegerIndexedElementSet ( O, index, value )
+  IntegerIndexedElementSet ( O, index, value )
 
-  ...
-  3. Let numValue be ? ToNumber(value).
+  Assert: O is an Integer-Indexed exotic object.
+  Assert: Type(index) is Number.
+  If O.[[ContentType]] is BigInt, let numValue be ? ToBigInt(value).
+  Otherwise, let numValue be ? ToNumber(value).
   ...
 includes: [testTypedArray.js]
-features: [TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([42]);
+  let sample = new TA([42]);
 
-  var obj = {
-    valueOf: function() {
+  let obj = {
+    valueOf() {
       throw new Test262Error();
     }
   };
 
   assert.throws(Test262Error, function() {
     sample["0"] = obj;
-  }, "ToNumber check with a valid index");
+  }, '`sample["0"] = obj` throws Test262Error');
 
   assert.throws(Test262Error, function() {
     sample["1.1"] = obj;
-  }, "ToNumber runs before ToInteger(index)");
+  }, '`sample["1.1"] = obj` throws Test262Error');
 
   assert.throws(Test262Error, function() {
     sample["-0"] = obj;
-  }, "ToNumber runs before -0 check");
+  }, '`sample["-0"] = obj` throws Test262Error');
 
   assert.throws(Test262Error, function() {
     sample["-1"] = obj;
-  }, "ToNumber runs before < 0 check");
+  }, '`sample["-1"] = obj` throws Test262Error');
 
   assert.throws(Test262Error, function() {
     sample["1"] = obj;
-  }, "ToNumber runs before index == length check");
+  }, '`sample["1"] = obj` throws Test262Error');
 
   assert.throws(Test262Error, function() {
     sample["2"] = obj;
-  }, "ToNumber runs before index > length check");
+  }, '`sample["2"] = obj` throws Test262Error');
 });

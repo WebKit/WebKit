@@ -23,7 +23,7 @@ flags: [async]
 includes: [atomicsHelper.js]
 features: [Atomics.waitAsync, SharedArrayBuffer, TypedArray, Atomics, BigInt, arrow-function, async-functions]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 const RUNNING = 1;
 const value = 42n;
 
@@ -40,23 +40,23 @@ $262.agent.start(`
 const i64a = new BigInt64Array(new SharedArrayBuffer(BigInt64Array.BYTES_PER_ELEMENT * 4));
 
 $262.agent.safeBroadcastAsync(i64a, RUNNING, 1n).then(async agentCount => {
-  assert.sameValue(agentCount, 1n);
+  assert.sameValue(agentCount, 1n, 'The value of `agentCount` is 1n');
 
   assert.sameValue(
     await $262.agent.getReportAsync(),
     value.toString(),
-    'Atomics.store(i64a, 0, 42n) returns 42'
+    '(await $262.agent.getReportAsync()) must return the same value returned by value.toString()'
   );
 
   assert.sameValue(
     await $262.agent.getReportAsync(),
     'not-equal',
-    'Atomics.waitAsync(i64a, 0, 0n).value resolves to "not-equal"'
+    '(await $262.agent.getReportAsync()) resolves to the value "not-equal"'
   );
 
   assert.sameValue(
     Atomics.notify(i64a, 0, 1),
     0,
-    'Atomics.notify(i64a, 0, 1) returns 0 (nothing to notify)'
+    'Atomics.notify(new BigInt64Array(new SharedArrayBuffer(BigInt64Array.BYTES_PER_ELEMENT * 4)), 0, 1) must return 0'
   );
 }).then($DONE, $DONE);

@@ -63,7 +63,7 @@ info: |
   an expression of the form  X !== X. The result will be true if and only
   if X is a NaN.
 includes: [nans.js, testTypedArray.js]
-features: [TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(FA) {
@@ -83,12 +83,12 @@ testWithTypedArrayConstructors(function(FA) {
 
       assert(
         samples[i] !== samples[i],
-        `samples (index=${idx}) produces a valid NaN (${precision} precision)`
+        'The result of `(samples[i] !== samples[i])` is true'
       );
 
       assert(
         controls[i] !== controls[i],
-        `controls (index=${idx}) produces a valid NaN (${precision} precision)`
+        'The result of `(controls[i] !== controls[i])` is true'
       );
     }
   }

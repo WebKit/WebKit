@@ -3,7 +3,7 @@
 /*---
 esid: sec-integer-indexed-exotic-objects-defineownproperty-p-desc
 description: >
-  Throws a TypeError if object has valid numeric index and a detached buffer
+  Returns false if this has valid numeric index and a detached buffer
 info: |
   9.4.5.3 [[DefineOwnProperty]] ( P, Desc)
   ...
@@ -19,11 +19,11 @@ info: |
   9.4.5.9 IntegerIndexedElementSet ( O, index, value )
 
   ...
-  4. Let buffer be the value of O's [[ViewedArrayBuffer]] internal slot.
-  5. If IsDetachedBuffer(buffer) is true, throw a TypeError exception.
+  Let buffer be O.[[ViewedArrayBuffer]].
+  If IsDetachedBuffer(buffer) is true, return false.
   ...
 includes: [testTypedArray.js, detachArrayBuffer.js]
-features: [Reflect, TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, Reflect, TypedArray]
 ---*/
 
 var desc = {
@@ -43,26 +43,28 @@ testWithTypedArrayConstructors(function(TA) {
   var sample = new TA(42);
   $DETACHBUFFER(sample.buffer);
 
-  assert.throws(TypeError, function() {
-    Reflect.defineProperty(sample, "0", desc);
-  }, "Throws TypeError on valid numeric index if instance has a detached buffer");
+  assert.sameValue(
+    Reflect.defineProperty(sample, "0", desc),
+    false,
+    'Reflect.defineProperty(sample, "0", {value: 0, configurable: false, enumerable: true, writable: true} ) must return false'
+  );
 
   assert.sameValue(
     Reflect.defineProperty(sample, "-1", desc),
     false,
-    "Return false before Detached Buffer check when value is a negative number"
+    'Reflect.defineProperty(sample, "-1", {value: 0, configurable: false, enumerable: true, writable: true} ) must return false'
   );
 
   assert.sameValue(
     Reflect.defineProperty(sample, "1.1", desc),
     false,
-    "Return false before Detached Buffer check when value is not an integer"
+    'Reflect.defineProperty(sample, "1.1", {value: 0, configurable: false, enumerable: true, writable: true} ) must return false'
   );
 
   assert.sameValue(
     Reflect.defineProperty(sample, "-0", desc),
     false,
-    "Return false before Detached Buffer check when value is -0"
+    'Reflect.defineProperty(sample, "-0", {value: 0, configurable: false, enumerable: true, writable: true} ) must return false'
   );
 
   assert.sameValue(
@@ -73,7 +75,7 @@ testWithTypedArrayConstructors(function(TA) {
       value: obj
     }),
     false,
-    "Return false before Detached Buffer check when desc configurable is true"
+    'Reflect.defineProperty(sample, "2", {configurable: true, enumerable: true, writable: true, value: obj}) must return false'
   );
 
   assert.sameValue(
@@ -84,7 +86,7 @@ testWithTypedArrayConstructors(function(TA) {
       value: obj
     }),
     false,
-    "Return false before Detached Buffer check when desc enumerable is false"
+    'Reflect.defineProperty(sample, "3", {configurable: false, enumerable: false, writable: true, value: obj}) must return false'
   );
 
   assert.sameValue(
@@ -95,19 +97,19 @@ testWithTypedArrayConstructors(function(TA) {
       value: obj
     }),
     false,
-    "Return false before Detached Buffer check when desc writable is false"
+    'Reflect.defineProperty("new TA(42)", "4", {writable: false, configurable: false, enumerable: true, value: obj}) must return false'
   );
 
   assert.sameValue(
     Reflect.defineProperty(sample, "42", desc),
     false,
-    "Return false before Detached Buffer check when key == [[ArrayLength]]"
+    'Reflect.defineProperty(sample, "42", {value: 0, configurable: false, enumerable: true, writable: true} ) must return false'
   );
 
   assert.sameValue(
     Reflect.defineProperty(sample, "43", desc),
     false,
-    "Return false before Detached Buffer check when key > [[ArrayLength]]"
+    'Reflect.defineProperty(sample, "43", {value: 0, configurable: false, enumerable: true, writable: true} ) must return false'
   );
 
   assert.sameValue(
@@ -115,7 +117,7 @@ testWithTypedArrayConstructors(function(TA) {
       get: function() {}
     }),
     false,
-    "Return false before Detached Buffer check with accessor descriptor"
+    'Reflect.defineProperty(sample, "5", {get: function() {}}) must return false'
   );
 
   assert.sameValue(
@@ -124,11 +126,7 @@ testWithTypedArrayConstructors(function(TA) {
       enumerable: true,
       writable: true
     }),
-    true,
-    "Return true before Detached Buffer check when desc value is not present"
+    false,
+    'Reflect.defineProperty(sample, "6", {configurable: false, enumerable: true, writable: true}) must return false'
   );
-
-  assert.throws(Test262Error, function() {
-    Reflect.defineProperty(sample, "7", {value: obj});
-  }, "Return Abrupt before Detached Buffer check from ToNumber(desc.value)");
 });

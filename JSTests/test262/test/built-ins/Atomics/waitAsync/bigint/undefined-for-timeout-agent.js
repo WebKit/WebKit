@@ -22,7 +22,7 @@ flags: [async]
 includes: [atomicsHelper.js]
 features: [Atomics.waitAsync, SharedArrayBuffer, TypedArray, Atomics, BigInt, arrow-function, async-functions]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 
 const WAIT_INDEX = 0;
 const RUNNING = 1;
@@ -57,12 +57,16 @@ const i64a = new BigInt64Array(
 
 $262.agent.safeBroadcastAsync(i64a, RUNNING, BigInt(NUMAGENT)).then(async (agentCount) => {
 
-  assert.sameValue(agentCount, BigInt(NUMAGENT));
+  assert.sameValue(
+    agentCount,
+    BigInt(NUMAGENT),
+    'The value of `agentCount` must return the same value returned by BigInt(NUMAGENT)'
+  );
 
   assert.sameValue(
     Atomics.notify(i64a, WAIT_INDEX, NOTIFYCOUNT),
     NOTIFYCOUNT,
-    'Atomics.notify(i64a, WAIT_INDEX, NOTIFYCOUNT) returns the value of `NOTIFYCOUNT` (2)'
+    'Atomics.notify(new BigInt64Array(new SharedArrayBuffer(BigInt64Array.BYTES_PER_ELEMENT * 4)), 0, 2) must return the value of NOTIFYCOUNT'
   );
 
   const reports = [

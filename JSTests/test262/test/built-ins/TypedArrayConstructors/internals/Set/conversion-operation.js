@@ -39,7 +39,7 @@ info: |
     e. Else,
       ...
 includes: [byteConversionValues.js, testTypedArray.js]
-features: [TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, TypedArray]
 ---*/
 
 testTypedArrayConversions(byteConversionValues, function(TA, value, expected, initial) {
@@ -47,5 +47,5 @@ testTypedArrayConversions(byteConversionValues, function(TA, value, expected, in
 
   sample[0] = value;
 
-  assert.sameValue(sample[0], expected, value + " converts to " + expected);
+  assert.sameValue(sample[0], expected, 'The value of sample[0] is expected to equal the value of expected');
 });

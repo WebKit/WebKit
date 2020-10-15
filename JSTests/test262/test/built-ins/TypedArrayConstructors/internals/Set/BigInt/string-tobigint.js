@@ -58,32 +58,28 @@ info: |
       corresponds to the MV, rather than rounding to a Number.
 
 includes: [testBigIntTypedArray.js]
-features: [BigInt, TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, BigInt, TypedArray]
 ---*/
-
 testWithBigIntTypedArrayConstructors(function(TA) {
   var typedArray = new TA(1);
-
   typedArray[0] = '';
-  assert.sameValue(typedArray[0], 0n);
-
+  assert.sameValue(typedArray[0], 0n, 'The value of typedArray[0] is 0n');
   typedArray[0] = '1';
-  assert.sameValue(typedArray[0], 1n);
+  assert.sameValue(typedArray[0], 1n, 'The value of typedArray[0] is 1n');
 
   assert.throws(SyntaxError, function() {
     typedArray[0] = '1n';
-  }, "A StringNumericLiteral may not include a BigIntLiteralSuffix.");
+  }, '`typedArray[0] = "1n"` throws SyntaxError');
 
   assert.throws(SyntaxError, function() {
-    typedArray[0] = "Infinity";
-  }, "Replace the StrUnsignedDecimalLiteral production with DecimalDigits to not allow Infinity..");
+    typedArray[0] = 'Infinity';
+  }, '`typedArray[0] = "Infinity"` throws SyntaxError');
 
   assert.throws(SyntaxError, function() {
-    typedArray[0] = "1.1";
-  }, "Replace the StrUnsignedDecimalLiteral production with DecimalDigits to not allow... decimal points...");
+    typedArray[0] = '1.1';
+  }, '`typedArray[0] = "1.1"` throws SyntaxError');
 
   assert.throws(SyntaxError, function() {
-    typedArray[0] = "1e7";
-  }, "Replace the StrUnsignedDecimalLiteral production with DecimalDigits to not allow... exponents...");
-
+    typedArray[0] = '1e7';
+  }, '`typedArray[0] = "1e7"` throws SyntaxError');
 });

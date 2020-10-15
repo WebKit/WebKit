@@ -23,7 +23,7 @@ flags: [async]
 includes: [atomicsHelper.js]
 features: [Atomics.waitAsync, SharedArrayBuffer, Symbol, Symbol.toPrimitive, TypedArray, Atomics, BigInt, arrow-function, async-functions]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 const RUNNING = 1;
 
 $262.agent.start(`
@@ -66,19 +66,23 @@ $262.agent.start(`
 const i64a = new BigInt64Array(new SharedArrayBuffer(BigInt64Array.BYTES_PER_ELEMENT * 4));
 
 $262.agent.safeBroadcastAsync(i64a, RUNNING, 1n).then(async agentCount => {
-  assert.sameValue(agentCount, 1n);
+  assert.sameValue(agentCount, 1n, 'The value of `agentCount` is 1n');
 
   assert.sameValue(
     await $262.agent.getReportAsync(),
     'A TypeError',
-    'Atomics.waitAsync(i64a, 0, Symbol("1"), ...) throws TypeError'
+    '(await $262.agent.getReportAsync()) resolves to the value "A TypeError"'
   );
 
   assert.sameValue(
     await $262.agent.getReportAsync(),
     'B TypeError',
-    'Atomics.waitAsync(i64a, 0, Symbol("2"), ...) throws TypeError'
+    '(await $262.agent.getReportAsync()) resolves to the value "B TypeError"'
   );
 
-  assert.sameValue(Atomics.notify(i64a, 0), 0, 'Atomics.notify(i64a, 0) returns 0');
+  assert.sameValue(
+    Atomics.notify(i64a, 0),
+    0,
+    'Atomics.notify(new BigInt64Array(new SharedArrayBuffer(BigInt64Array.BYTES_PER_ELEMENT * 4)), 0) must return 0'
+  );
 }).then($DONE, $DONE);

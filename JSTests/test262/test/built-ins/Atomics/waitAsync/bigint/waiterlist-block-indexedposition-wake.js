@@ -24,7 +24,7 @@ flags: [async]
 includes: [atomicsHelper.js]
 features: [Atomics.waitAsync, SharedArrayBuffer, TypedArray, Atomics, BigInt, arrow-function, async-functions]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 
 const NUMAGENT = 2;
 const RUNNING = 4;
@@ -57,28 +57,32 @@ const i64a = new BigInt64Array(
 
 $262.agent.safeBroadcastAsync(i64a, RUNNING, BigInt(NUMAGENT)).then(async (agentCount) => {
 
-  assert.sameValue(agentCount, BigInt(NUMAGENT));
+  assert.sameValue(
+    agentCount,
+    BigInt(NUMAGENT),
+    'The value of `agentCount` must return the same value returned by BigInt(NUMAGENT)'
+  );
 
   // Notify index 1, notifies nothing
-  assert.sameValue(Atomics.notify(i64a, 1), 0, 'Atomics.notify(i64a, 1) returns 0');
+  assert.sameValue(Atomics.notify(i64a, 1), 0, 'Atomics.notify(new BigInt64Array(new SharedArrayBuffer(BigInt64Array.BYTES_PER_ELEMENT * 5)), 1) must return 0');
 
   // Notify index 3, notifies nothing
-  assert.sameValue(Atomics.notify(i64a, 3), 0, 'Atomics.notify(i64a, 3) returns 0');
+  assert.sameValue(Atomics.notify(i64a, 3), 0, 'Atomics.notify(new BigInt64Array(new SharedArrayBuffer(BigInt64Array.BYTES_PER_ELEMENT * 5)), 3) must return 0');
 
   // Notify index 2, notifies 1
-  assert.sameValue(Atomics.notify(i64a, 2), 1, 'Atomics.notify(i64a, 2) returns 1');
+  assert.sameValue(Atomics.notify(i64a, 2), 1, 'Atomics.notify(new BigInt64Array(new SharedArrayBuffer(BigInt64Array.BYTES_PER_ELEMENT * 5)), 2) must return 1');
   assert.sameValue(
     await $262.agent.getReportAsync(),
     'ok',
-    'await Atomics.waitAsync(i64a, 0, 0n, Infinity).value resolves to "ok"'
+    '(await $262.agent.getReportAsync()) resolves to the value "ok"'
   );
 
   // Notify index 0, notifies 1
-  assert.sameValue(Atomics.notify(i64a, 0), 1, 'Atomics.notify(i64a, 0) returns 1');
+  assert.sameValue(Atomics.notify(i64a, 0), 1, 'Atomics.notify(new BigInt64Array(new SharedArrayBuffer(BigInt64Array.BYTES_PER_ELEMENT * 5)), 0) must return 1');
   assert.sameValue(
     await $262.agent.getReportAsync(),
     'ok',
-    'await Atomics.waitAsync(i64a, 2, 0n, Infinity).value resolves to "ok"'
+    '(await $262.agent.getReportAsync()) resolves to the value "ok"'
   );
 
 }).then($DONE, $DONE);

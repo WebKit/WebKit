@@ -19,7 +19,7 @@ info: |
 
 features: [Atomics.waitAsync, SharedArrayBuffer, Symbol, Symbol.toPrimitive, TypedArray, computed-property-names, Atomics]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 
 const i32a = new Int32Array(
   new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4)
@@ -39,8 +39,8 @@ const poisonedToPrimitive = {
 
 assert.throws(Test262Error, function() {
   Atomics.waitAsync(i32a, 0, 0, poisonedValueOf);
-}, '`Atomics.waitAsync(i32a, 0, 0, poisonedValueOf)` throws Test262Error');
+}, '`Atomics.waitAsync(i32a, 0, 0, poisonedValueOf)` throws a Test262Error exception');
 
 assert.throws(Test262Error, function() {
   Atomics.waitAsync(i32a, 0, 0, poisonedToPrimitive);
-}, '`Atomics.waitAsync(i32a, 0, 0, poisonedToPrimitive)` throws Test262Error');
+}, '`Atomics.waitAsync(i32a, 0, 0, poisonedToPrimitive)` throws a Test262Error exception');

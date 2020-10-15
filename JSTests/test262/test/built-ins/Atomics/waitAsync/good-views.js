@@ -9,7 +9,7 @@ flags: [async]
 includes: [atomicsHelper.js]
 features: [Atomics.waitAsync, Atomics]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 
 $262.agent.start(`
   (async () => {
@@ -53,17 +53,17 @@ $262.agent.start(`
   assert.sameValue(
     outcomes[0],
     'A timed-out',
-    '"A " + (await Atomics.waitAsync(view, 0, 0, 0).value resolves to "A timed-out"'
+    'The value of outcomes[0] is "A timed-out"'
   );
 
   assert.sameValue(
     outcomes[1],
     'B not-equal',
-    '"B " + (await Atomics.waitAsync(view, 0, 37, 0).value resolves to "B not-equal"'
+    'The value of outcomes[1] is "B not-equal"'
   );
   assert.sameValue(
     outcomes[2],
     'C not-equal,not-equal,not-equal,not-equal,not-equal',
-    'All C values are not equal'
+    'The value of outcomes[2] is "C not-equal,not-equal,not-equal,not-equal,not-equal"'
   );
 })().then($DONE, $DONE);

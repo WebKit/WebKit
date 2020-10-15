@@ -3,7 +3,7 @@
 /*---
 esid: sec-integer-indexed-exotic-objects-set-p-v-receiver
 description: >
-  Use OrginarySet if key is a Symbol
+  Use OrdinarySet if key is a Symbol
 info: |
   9.4.5.5 [[Set]] ( P, V, Receiver)
 
@@ -12,37 +12,40 @@ info: |
   ...
   3. Return ? OrdinarySet(O, P, V, Receiver).
 includes: [testBigIntTypedArray.js]
-features: [BigInt, Reflect, Symbol, TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, BigInt, Reflect, Symbol, TypedArray]
 ---*/
-
-var s1 = Symbol("1");
-var s2 = Symbol("2");
+var s1 = Symbol('1');
+var s2 = Symbol('2');
 
 testWithBigIntTypedArrayConstructors(function(TA) {
   var sample = new TA([42n]);
 
   assert.sameValue(
-    Reflect.set(sample, s1, "ecma262"),
+    Reflect.set(sample, s1, 'ecma262'),
     true,
-    "Return true setting a new property"
+    'Reflect.set("new TA([42n])", "Symbol(\\"1\\")", "ecma262") must return true'
   );
-  assert.sameValue(sample[s1], "ecma262");
+
+  assert.sameValue(sample[s1], 'ecma262', 'The value of sample[s1] is "ecma262"');
 
   assert.sameValue(
-    Reflect.set(sample, s1, "es3000"),
+    Reflect.set(sample, s1, 'es3000'),
     true,
-    "Return true setting a value to a writable property"
+    'Reflect.set("new TA([42n])", "Symbol(\\"1\\")", "es3000") must return true'
   );
-  assert.sameValue(sample[s1], "es3000");
+
+  assert.sameValue(sample[s1], 'es3000', 'The value of sample[s1] is "es3000"');
 
   Object.defineProperty(sample, s2, {
     writable: false,
     value: undefined
   });
+
   assert.sameValue(
     Reflect.set(sample, s2, 42),
     false,
-    "Return false setting a value to a non-writable property"
+    'Reflect.set("new TA([42n])", "Symbol(\\"2\\")", 42) must return false'
   );
-  assert.sameValue(sample[s2], undefined);
+
+  assert.sameValue(sample[s2], undefined, 'The value of sample[s2] is expected to equal `undefined`');
 });

@@ -4,9 +4,8 @@
 /*---
 esid: sec-integer-indexed-exotic-objects-set-p-v-receiver
 description: >
-    Setting a typed array element to a value that, when converted to the typed
-    array element type, detaches the typed array's underlying buffer, should
-    throw a TypeError and not modify the typed array.
+  Setting a typed array element to a value that, when converted to the typed
+  array element type, detaches the typed array's underlying buffer, should return false.
 info: |
   9.4.5.5 [[Set]] ( P, V, Receiver)
 
@@ -19,28 +18,26 @@ info: |
 
   9.4.5.9 IntegerIndexedElementSet ( O, index, value )
 
-  ...
-  15. Perform SetValueInBuffer(buffer, indexedPosition, elementType, numValue).
-  16. Return true.
+  Assert: O is an Integer-Indexed exotic object.
+  Assert: Type(index) is Number.
+  If O.[[ContentType]] is BigInt, let numValue be ? ToBigInt(value).
+  Otherwise, let numValue be ? ToNumber(value).
+  Let buffer be O.[[ViewedArrayBuffer]].
+  If IsDetachedBuffer(buffer) is true, return false.
+
 includes: [testTypedArray.js, detachArrayBuffer.js]
-features: [Reflect, TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, Reflect, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {
-  var ta = new TA([17]);
-
-  assert.throws(TypeError, function() {
-    Reflect.set(ta, 0, {
-      valueOf: function() {
-        $DETACHBUFFER(ta.buffer);
-        return 42;
-      }
-    });
-  },
-  "detaching a ArrayBuffer during setting an element of a typed array " +
-  "viewing it should throw");
-
-  assert.throws(TypeError, function() {
-    ta[0];
+  let ta = new TA(1);
+  let result = Reflect.set(ta, 0, {
+    valueOf() {
+      $DETACHBUFFER(ta.buffer);
+      return 42;
+    }
   });
+
+  assert.sameValue(result, false);
+  assert.sameValue(ta[0], false);
 });

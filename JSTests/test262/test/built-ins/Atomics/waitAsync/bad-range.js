@@ -19,7 +19,7 @@ info: |
 includes: [testAtomics.js]
 features: [Atomics.waitAsync, Atomics, SharedArrayBuffer, ArrayBuffer, DataView, Symbol, TypedArray]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 const i32a = new Int32Array(
   new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 8)
 );
@@ -27,7 +27,7 @@ const i32a = new Int32Array(
 testWithAtomicsOutOfBoundsIndices(function(IdxGen) {
   assert.throws(RangeError, function() {
     Atomics.waitAsync(i32a, IdxGen(i32a), 0, 0);
-  }, '`Atomics.waitAsync(i32a, IdxGen(i32a), 0, 0)` throws RangeError');
+  }, '`Atomics.waitAsync(i32a, IdxGen(i32a), 0, 0)` throws a RangeError exception');
 });
 
 

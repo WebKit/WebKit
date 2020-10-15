@@ -1,40 +1,73 @@
 // Copyright (C) 2015 the V8 project authors. All rights reserved.
+// Copyright (C) 2020 Rick Waldron. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 26.1.1
+esid: sec-reflect.apply
 description: >
   Return abrupt if argumentsList is not an ArrayLike object.
 info: |
-  26.1.1 Reflect.apply ( target, thisArgument, argumentsList )
+  Reflect.apply ( target, thisArgument, argumentsList )
 
   ...
-  2. Let args be CreateListFromArrayLike(argumentsList).
-  3. ReturnIfAbrupt(args).
-  ...
+  Let args be ? CreateListFromArrayLike(argumentsList).
 
-  7.3.17 CreateListFromArrayLike (obj [, elementTypes] )
+
+  CreateListFromArrayLike (obj [, elementTypes] )
 
   ...
-  3. If Type(obj) is not Object, throw a TypeError exception.
-  4. Let len be ToLength(Get(obj, "length")).
-  5. ReturnIfAbrupt(len).
-  ...
-features: [Reflect]
+  If Type(obj) is not Object, throw a TypeError exception.
+features: [Reflect, arrow-function, Symbol]
 ---*/
 
-function fn() {}
-var o = {};
+let count = 0;
 
-Object.defineProperty(o, 'length', {
-  get: function() {
-    throw new Test262Error();
-  }
-});
+function fn() {
+  count++;
+}
 
-assert.throws(Test262Error, function() {
-  Reflect.apply(fn, 1, o);
-});
+assert.throws(Test262Error, () => {
+  Reflect.apply(fn, null, {
+    get length() {
+      throw new Test262Error();
+    }
+  });
+}, '`Reflect.apply(fn, null, {get length() {throw new Test262Error();}})` throws a Test262Error exception');
 
-assert.throws(TypeError, function() {
-  Reflect.apply(fn, 1, 1);
-});
+assert.throws(TypeError, () => {
+  Reflect.apply(fn, null /* empty */);
+}, '`Reflect.apply(fn, null /* empty */)` throws a TypeError exception');
+
+assert.throws(TypeError, () => {
+  Reflect.apply(fn, null, Symbol());
+}, '`Reflect.apply(fn, null, Symbol())` throws a TypeError exception');
+
+assert.throws(TypeError, () => {
+  Reflect.apply(fn, null, 1);
+}, '`Reflect.apply(fn, null, 1)` throws a TypeError exception');
+
+assert.throws(TypeError, () => {
+  Reflect.apply(fn, null, Infinity);
+}, '`Reflect.apply(fn, null, Infinity)` throws a TypeError exception');
+
+assert.throws(TypeError, () => {
+  Reflect.apply(fn, null, null);
+}, '`Reflect.apply(fn, null, null)` throws a TypeError exception');
+
+assert.throws(TypeError, () => {
+  Reflect.apply(fn, null, undefined);
+}, '`Reflect.apply(fn, null, undefined)` throws a TypeError exception');
+
+assert.throws(TypeError, () => {
+  Reflect.apply(fn, null, false);
+}, '`Reflect.apply(fn, null, false)` throws a TypeError exception');
+
+assert.throws(TypeError, () => {
+  Reflect.apply(fn, null, true);
+}, '`Reflect.apply(fn, null, true)` throws a TypeError exception');
+
+assert.throws(TypeError, () => {
+  Reflect.apply(fn, null, NaN);
+}, '`Reflect.apply(fn, null, NaN)` throws a TypeError exception');
+
+
+assert.sameValue(count, 0, 'The value of `count` is 0');

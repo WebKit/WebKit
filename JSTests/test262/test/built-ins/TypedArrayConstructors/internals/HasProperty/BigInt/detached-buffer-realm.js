@@ -3,7 +3,7 @@
 /*---
 esid: sec-integer-indexed-exotic-objects-hasproperty-p
 description: >
-  Throws a TypeError if this has a detached buffer (honoring the Realm of the
+  Returns false if this has a detached buffer (honoring the Realm of the
   current execution context)
 info: |
   9.4.5.2 [[HasProperty]](P)
@@ -12,11 +12,11 @@ info: |
   3. If Type(P) is String, then
     a. Let numericIndex be ! CanonicalNumericIndexString(P).
     b. If numericIndex is not undefined, then
-      i. Let buffer be the value of O's [[ViewedArrayBuffer]] internal slot.
-      ii. If IsDetachedBuffer(buffer) is true, throw a TypeError exception.
+      i. Let buffer be O.[[ViewedArrayBuffer]].
+      ii. If IsDetachedBuffer(buffer) is true, return false.
   ...
 includes: [testBigIntTypedArray.js, detachArrayBuffer.js]
-features: [BigInt, cross-realm, Reflect, TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, BigInt, cross-realm, Reflect, TypedArray]
 ---*/
 
 var other = $262.createRealm().global;
@@ -27,7 +27,5 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   $DETACHBUFFER(sample.buffer);
 
-  assert.throws(TypeError, function() {
-    Reflect.has(sample, '0');
-  }, '0');
+  assert.sameValue(Reflect.has(sample, '0'), false, 'Reflect.has(sample, "0") must return false');
 });

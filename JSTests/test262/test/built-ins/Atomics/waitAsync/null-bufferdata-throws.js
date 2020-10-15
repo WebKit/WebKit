@@ -25,7 +25,7 @@ info: |
 includes: [detachArrayBuffer.js]
 features: [Atomics.waitAsync, ArrayBuffer, Atomics, TypedArray]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 const i32a = new Int32Array(
   new ArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4)
 );
@@ -44,4 +44,4 @@ try {
 
 assert.throws(TypeError, function() {
   Atomics.waitAsync(i32a, poisoned, poisoned, poisoned);
-}, '`Atomics.waitAsync(i32a, poisoned, poisoned, poisoned)` throws TypeError');
+}, '`Atomics.waitAsync(i32a, poisoned, poisoned, poisoned)` throws a TypeError exception');

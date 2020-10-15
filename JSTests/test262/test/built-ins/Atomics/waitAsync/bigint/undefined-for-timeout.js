@@ -18,22 +18,10 @@ info: |
   5.If q is NaN, let t be +∞, else let t be max(q, 0)
 
 flags: [async]
-includes: [atomicsHelper.js]
 features: [Atomics.waitAsync, SharedArrayBuffer, TypedArray, Atomics, BigInt, computed-property-names, Symbol, Symbol.toPrimitive, arrow-function]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 const i64a = new BigInt64Array(new SharedArrayBuffer(BigInt64Array.BYTES_PER_ELEMENT * 4));
-
-$262.agent.start(`
-  $262.agent.receiveBroadcast(async (sab) => {
-    var i64a = new BigInt64Array(sab);
-    $262.agent.sleep(1000);
-    Atomics.notify(i64a, 0, 4);
-    $262.agent.leaving();
-  });
-`);
-
-$262.agent.safeBroadcast(i64a);
 
 const valueOf = {
   valueOf() {
@@ -53,8 +41,10 @@ Promise.all([
   Atomics.waitAsync(i64a, 0, 0n, valueOf).value,
   Atomics.waitAsync(i64a, 0, 0n, toPrimitive).value
 ]).then(outcomes => {
-  assert.sameValue(outcomes[0], 'ok');
-  assert.sameValue(outcomes[1], 'ok');
-  assert.sameValue(outcomes[2], 'ok');
-  assert.sameValue(outcomes[3], 'ok');
+  assert.sameValue(outcomes[0], 'ok', 'The value of outcomes[0] is "ok"');
+  assert.sameValue(outcomes[1], 'ok', 'The value of outcomes[1] is "ok"');
+  assert.sameValue(outcomes[2], 'ok', 'The value of outcomes[2] is "ok"');
+  assert.sameValue(outcomes[3], 'ok', 'The value of outcomes[3] is "ok"');
 }).then($DONE, $DONE);
+
+Atomics.notify(i64a, 0);

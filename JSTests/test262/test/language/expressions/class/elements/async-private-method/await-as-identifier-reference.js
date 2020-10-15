@@ -31,6 +31,8 @@ info: |
 $DONOTEVALUATE();
 
 
-var C = class { async #method() {
+var C = class {
+  async #method() {
     void await;
-}};
+  }
+};

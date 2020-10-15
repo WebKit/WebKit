@@ -29,11 +29,11 @@ info: |
 
 features: [Atomics.waitAsync, Atomics, TypedArray, SharedArrayBuffer]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 
 const timeout = {
   valueOf() {
-    throw new Test262Error("timeout coerced");
+    throw new Test262Error();
   }
 };
 
@@ -46,5 +46,5 @@ for (const nonSharedArrayType of nonSharedArrayTypes) {
   const typedArray = new nonSharedArrayType(new SharedArrayBuffer(8));
   assert.throws(TypeError, function() {
     Atomics.waitAsync(typedArray, 0, 0, timeout);
-  });
+  }, '`Atomics.waitAsync(typedArray, 0, 0, timeout)` throws a TypeError exception');
 }

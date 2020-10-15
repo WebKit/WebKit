@@ -24,7 +24,7 @@ info: |
 
 features: [Atomics.waitAsync, arrow-function, Atomics]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 const poisoned = {
   valueOf() {
     throw new Test262Error('should not evaluate this code');
@@ -33,8 +33,8 @@ const poisoned = {
 
 assert.throws(TypeError, () => {
   Atomics.waitAsync({}, 0, 0, 0);
-}, '`Atomics.waitAsync({}, 0, 0, 0)` throws TypeError');
+}, '`Atomics.waitAsync({}, 0, 0, 0)` throws a TypeError exception');
 
 assert.throws(TypeError, () => {
   Atomics.waitAsync({}, poisoned, poisoned, poisoned);
-}, '`Atomics.waitAsync({}, poisoned, poisoned, poisoned)` throws TypeError');
+}, '`Atomics.waitAsync({}, poisoned, poisoned, poisoned)` throws a TypeError exception');

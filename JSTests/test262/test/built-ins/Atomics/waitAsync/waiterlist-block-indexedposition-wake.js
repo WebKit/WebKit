@@ -24,7 +24,7 @@ flags: [async]
 includes: [atomicsHelper.js]
 features: [Atomics.waitAsync, SharedArrayBuffer, TypedArray, Atomics, arrow-function, async-functions]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 
 const NUMAGENT = 2;
 const RUNNING = 4;
@@ -57,28 +57,28 @@ const i32a = new Int32Array(
 
 $262.agent.safeBroadcastAsync(i32a, RUNNING, NUMAGENT).then(async (agentCount) => {
 
-  assert.sameValue(agentCount, NUMAGENT);
+  assert.sameValue(agentCount, NUMAGENT, 'The value of `agentCount` is expected to equal the value of NUMAGENT');
 
   // Notify index 1, notifies nothing
-  assert.sameValue(Atomics.notify(i32a, 1), 0, 'Atomics.notify(i32a, 1) returns 0');
+  assert.sameValue(Atomics.notify(i32a, 1), 0, 'Atomics.notify(new Int32Array(new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 5)), 1) must return 0');
 
   // Notify index 3, notifies nothing
-  assert.sameValue(Atomics.notify(i32a, 3), 0, 'Atomics.notify(i32a, 3) returns 0');
+  assert.sameValue(Atomics.notify(i32a, 3), 0, 'Atomics.notify(new Int32Array(new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 5)), 3) must return 0');
 
   // Notify index 2, notifies 1
-  assert.sameValue(Atomics.notify(i32a, 2), 1, 'Atomics.notify(i32a, 2) returns 1');
+  assert.sameValue(Atomics.notify(i32a, 2), 1, 'Atomics.notify(new Int32Array(new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 5)), 2) must return 1');
   assert.sameValue(
     await $262.agent.getReportAsync(),
     'ok',
-    'await Atomics.waitAsync(i32a, 0, 0, Infinity).value resolves to "ok"'
+    '(await $262.agent.getReportAsync()) resolves to the value "ok"'
   );
 
   // Notify index 0, notifies 1
-  assert.sameValue(Atomics.notify(i32a, 0), 1, 'Atomics.notify(i32a, 0) returns 1');
+  assert.sameValue(Atomics.notify(i32a, 0), 1, 'Atomics.notify(new Int32Array(new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 5)), 0) must return 1');
   assert.sameValue(
     await $262.agent.getReportAsync(),
     'ok',
-    'await Atomics.waitAsync(i32a, 2, 0, Infinity).value resolves to "ok"'
+    '(await $262.agent.getReportAsync()) resolves to the value "ok"'
   );
 
 }).then($DONE, $DONE);

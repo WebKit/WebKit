@@ -1,22 +1,33 @@
-// Copyright (C) 2017 Leo Balter. All rights reserved.
+// Copyright (C) 2020 Rick Waldron. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-array.prototype.concat
+esid: sec-ecmascript-standard-built-in-objects
 description: >
-  Array.prototype.concat is not a constructor.
+  Array.prototype.concat does not implement [[Construct]], is not new-able
 info: |
-  17 ECMAScript Standard Built-in Objects
+  ECMAScript Function Objects
 
   Built-in function objects that are not identified as constructors do not
   implement the [[Construct]] internal method unless otherwise specified in
   the description of a particular function.
+
+  sec-evaluatenew
+
+  ...
+  7. If IsConstructor(constructor) is false, throw a TypeError exception.
+  ...
+includes: [isConstructor.js]
+features: [Reflect.construct, arrow-function]
 ---*/
 
-assert.throws(TypeError, function() {
-  new Array.prototype.concat();
-});
+assert.sameValue(
+  isConstructor(Array.prototype.concat),
+  false,
+  'isConstructor(Array.prototype.concat) must return false'
+);
 
-assert.throws(TypeError, function() {
-  new [].concat();
-});
+assert.throws(TypeError, () => {
+  new Array.prototype.concat([]);
+}, '`new Array.prototype.concat([])` throws TypeError');
+

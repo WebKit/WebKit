@@ -24,7 +24,7 @@ flags: [async]
 includes: [atomicsHelper.js]
 features: [Atomics.waitAsync, SharedArrayBuffer, TypedArray, Atomics, arrow-function, async-functions]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 
 const RUNNING = 1;
 const value = 42;
@@ -46,21 +46,21 @@ const i32a = new Int32Array(
 
 $262.agent.safeBroadcastAsync(i32a, RUNNING, 1).then(async (agentCount) => {
 
-  assert.sameValue(agentCount, 1);
+  assert.sameValue(agentCount, 1, 'The value of `agentCount` is 1');
 
   assert.sameValue(
     await $262.agent.getReportAsync(),
-    value.toString(),
-    'Atomics.store(i32a, 0, ${value}) returns 42'
+    '42',
+    '(await $262.agent.getReportAsync()) resolves to the value "42"'
   );
   assert.sameValue(
     await $262.agent.getReportAsync(),
     'not-equal',
-    'Atomics.waitAsync(i32a, 0, 0).value resolves to "not-equal"'
+    '(await $262.agent.getReportAsync()) resolves to the value "not-equal"'
   );
   assert.sameValue(
     Atomics.notify(i32a, 0, 1),
     0,
-    'Atomics.notify(i32a, 0, 1) returns 0 (nothing to notify)'
+    'Atomics.notify(new Int32Array(new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4)), 0, 1) must return 0'
   );
 }).then($DONE, $DONE);

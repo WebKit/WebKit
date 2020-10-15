@@ -6,16 +6,19 @@ description: >
   Tests that Date.prototype.toJSON meets the requirements
   for built-in objects defined by the introduction of chapter 17 of
   the ECMAScript Language Specification.
-includes: [isConstructor.js]
 features: [Reflect.construct]
 ---*/
 
-var toJSON = Date.prototype.toJSON;
-
-assert(Object.isExtensible(toJSON));
-assert.sameValue(typeof toJSON, 'function');
-assert.sameValue(Object.prototype.toString.call(toJSON), '[object Function]');
-assert.sameValue(Object.getPrototypeOf(toJSON), Function.prototype);
-
-assert.sameValue(toJSON.hasOwnProperty('prototype'), false);
-assert.sameValue(isConstructor(toJSON), false);
+assert(Object.isExtensible(Date.prototype.toJSON), 'Object.isExtensible(Date.prototype.toJSON) must return true');
+assert.sameValue(typeof Date.prototype.toJSON, 'function', 'The value of `typeof Date.prototype.toJSON` is "function"');
+assert.sameValue(
+  Object.prototype.toString.call(Date.prototype.toJSON),
+  '[object Function]',
+  'Object.prototype.toString.call(Date.prototype.toJSON) must return "[object Function]"'
+);
+assert.sameValue(
+  Object.getPrototypeOf(Date.prototype.toJSON),
+  Function.prototype,
+  'Object.getPrototypeOf(Date.prototype.toJSON) must return the value of Function.prototype'
+);
+assert.sameValue(Date.prototype.toJSON.hasOwnProperty('prototype'), false, 'Date.prototype.toJSON.hasOwnProperty("prototype") must return false');

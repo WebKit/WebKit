@@ -54,6 +54,8 @@ defines:
     })(this);
   }
 
+  $262.agent.setTimeout = setTimeout;
+
   $262.agent.getReportAsync = function() {
     return new Promise(function(resolve) {
       (function loop() {

@@ -2,32 +2,33 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-%typedarray%.prototype.slice
-description: Throws a TypeError buffer is detached on Get constructor.
+description: Throws a TypeError if _O_.[[ViewedArrayBuffer]] is detached.
 info: |
   22.2.3.24 %TypedArray%.prototype.slice ( start, end )
 
   ...
-  9. Let A be ? TypedArraySpeciesCreate(O, « count »).
-  ...
-  14. If SameValue(srcType, targetType) is false, then
-    ...
-  15. Else if count > 0, then
-    a. Let srcBuffer be the value of O's [[ViewedArrayBuffer]] internal slot.
-    b. If IsDetachedBuffer(srcBuffer) is true, throw a TypeError exception.
+  Let A be ? TypedArraySpeciesCreate(O, « count »).
+  If count > 0, then
+    If IsDetachedBuffer(O.[[ViewedArrayBuffer]]) is true, throw a TypeError exception.
   ...
 includes: [testTypedArray.js, detachArrayBuffer.js]
-features: [TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, Symbol.species, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA(1);
+  let counter = 0;
+  let sample = new TA(1);
 
   Object.defineProperty(sample, "constructor", {
-    get: function() {
+    get() {
+      counter++;
       $DETACHBUFFER(sample.buffer);
     }
   });
   assert.throws(TypeError, function() {
+    counter++;
     sample.slice();
-  });
+  }, '`sample.slice()` throws TypeError');
+
+  assert.sameValue(counter, 2, 'The value of `counter` is 2');
 });

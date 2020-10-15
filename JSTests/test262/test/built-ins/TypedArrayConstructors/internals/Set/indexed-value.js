@@ -20,24 +20,23 @@ info: |
   15. Perform SetValueInBuffer(buffer, indexedPosition, elementType, numValue).
   16. Return true.
 includes: [testTypedArray.js]
-features: [Reflect, TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, Reflect, TypedArray]
 ---*/
 
-var proto = TypedArray.prototype;
-var throwDesc = {
+let proto = TypedArray.prototype;
+let throwDesc = {
   set: function() {
-    throw new Test262Error("OrdinarySet was called! Ref: 9.1.9.1 3.b.i");
+    throw new Test262Error('OrdinarySet was called!');
   }
 };
-Object.defineProperty(proto, "0", throwDesc);
-Object.defineProperty(proto, "1", throwDesc);
+
+Object.defineProperty(proto, '0', throwDesc);
+Object.defineProperty(proto, '1', throwDesc);
 
 testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([42, 43]);
-
-  assert.sameValue(Reflect.set(sample, "0", 1), true, "sample[0]");
-  assert.sameValue(sample[0], 1, "sample[0] value is set");
-
-  assert.sameValue(Reflect.set(sample, "1", 42), true, "sample[1]");
-  assert.sameValue(sample[1], 42, "sample[1] value is set");
+  let sample = new TA(2);
+  assert.sameValue(Reflect.set(sample, '0', 1), true, 'Reflect.set(sample, "0", 1) must return true');
+  assert.sameValue(sample[0], 1, 'The value of sample[0] is 1');
+  assert.sameValue(Reflect.set(sample, '1', 42), true, 'Reflect.set(sample, "1", 42) must return true');
+  assert.sameValue(sample[1], 42, 'The value of sample[1] is 42');
 });

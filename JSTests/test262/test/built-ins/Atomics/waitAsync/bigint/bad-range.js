@@ -18,11 +18,11 @@ info: |
 includes: [testAtomics.js]
 features: [Atomics.waitAsync, Atomics, SharedArrayBuffer, ArrayBuffer, DataView, Symbol, TypedArray, BigInt]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 const i64a = new BigInt64Array(new SharedArrayBuffer(BigInt64Array.BYTES_PER_ELEMENT * 8));
 
 testWithAtomicsOutOfBoundsIndices(function(IdxGen) {
   assert.throws(RangeError, function() {
     Atomics.waitAsync(i64a, IdxGen(i64a), 0n, 0);
-  }, '`Atomics.waitAsync(i64a, IdxGen(i64a), 0n, 0)` throws RangeError');
+  }, '`Atomics.waitAsync(i64a, IdxGen(i64a), 0n, 0)` throws a RangeError exception');
 });

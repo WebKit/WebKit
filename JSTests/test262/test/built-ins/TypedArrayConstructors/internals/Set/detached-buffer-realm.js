@@ -15,26 +15,23 @@ info: |
       i. Return ? IntegerIndexedElementSet(O, numericIndex, V).
   ...
 
-  9.4.5.9 IntegerIndexedElementSet ( O, index, value )
+  IntegerIndexedElementSet ( O, index, value )
 
-  ...
-  3. Let numValue be ? ToNumber(value).
-  4. Let buffer be the value of O's [[ViewedArrayBuffer]] internal slot.
-  5. If IsDetachedBuffer(buffer) is true, throw a TypeError exception.
+  Assert: O is an Integer-Indexed exotic object.
+  Assert: Type(index) is Number.
+  If O.[[ContentType]] is BigInt, let numValue be ? ToBigInt(value).
+  Otherwise, let numValue be ? ToNumber(value).
+  Let buffer be O.[[ViewedArrayBuffer]].
+  If IsDetachedBuffer(buffer) is true, return false.
   ...
 includes: [testTypedArray.js, detachArrayBuffer.js]
-features: [cross-realm, TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, cross-realm, TypedArray]
 ---*/
 
-var other = $262.createRealm().global;
-
+let other = $262.createRealm().global;
 testWithTypedArrayConstructors(function(TA) {
-  var OtherTA = other[TA.name];
-  var sample = new OtherTA(1);
-
+  let OtherTA = other[TA.name];
+  let sample = new OtherTA(1);
   $DETACHBUFFER(sample.buffer);
-
-  assert.throws(TypeError, function() {
-    sample[0] = 0;
-  });
+  assert.sameValue(sample[0] = 1, false, '`sample[0] = 1` is false');
 });

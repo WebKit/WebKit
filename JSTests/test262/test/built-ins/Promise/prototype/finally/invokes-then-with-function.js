@@ -4,7 +4,7 @@
 author: Jordan Harband
 description: Promise.prototype.finally invokes `then` method
 esid: sec-promise.prototype.finally
-features: [Promise.prototype.finally, Reflect.construct]
+features: [Promise.prototype.finally, Reflect.construct, arrow-function]
 includes: [isConstructor.js]
 ---*/
 
@@ -13,16 +13,16 @@ var returnValue = {};
 var callCount = 0;
 var thisValue = null;
 var argCount = null;
-var firstArg = null;
-var secondArg = null;
+var resolve = null;
+var reject = null;
 
 target.then = function(a, b) {
   callCount += 1;
 
   thisValue = this;
   argCount = arguments.length;
-  firstArg = a;
-  secondArg = b;
+  resolve = a;
+  reject = b;
 
   return returnValue;
 };
@@ -30,31 +30,38 @@ target.then = function(a, b) {
 var originalFinallyHandler = function() {};
 var result = Promise.prototype.finally.call(target, originalFinallyHandler, 2, 3);
 
-assert.sameValue(callCount, 1, 'Invokes `then` method exactly once');
+assert.sameValue(callCount, 1, 'The value of `callCount` is 1');
 assert.sameValue(
   thisValue,
   target,
-  'Invokes `then` method with the instance as the `this` value'
+  'The value of `thisValue` is expected to equal the value of target'
 );
-assert.sameValue(argCount, 2, 'Invokes `then` method with exactly two single arguments');
+assert.sameValue(argCount, 2, 'The value of `argCount` is 2');
 assert.sameValue(
-  typeof firstArg,
+  typeof resolve,
   'function',
-  'Invokes `then` method with a function as the first argument'
+  'The value of `typeof resolve` is "function"'
 );
-assert.notSameValue(firstArg, originalFinallyHandler, 'Invokes `then` method with a different fulfillment handler');
-assert.sameValue(firstArg.length, 1, 'fulfillment handler has a length of 1');
-assert.sameValue(firstArg.name, '', 'fulfillment handler is anonymous');
-assert(!isConstructor(firstArg), 'fulfillment handler is not constructor');
+assert.notSameValue(resolve, originalFinallyHandler, 'The value of `resolve` is expected to not equal the value of `originalFinallyHandler`');
+assert.sameValue(resolve.length, 1, 'The value of resolve.length is 1');
+assert.sameValue(resolve.name, '', 'The value of resolve.name is ""');
+assert.sameValue(isConstructor(resolve), false, 'isConstructor(resolve) must return false');
+assert.throws(TypeError, () => {
+  new resolve();
+}, '`new resolve()` throws TypeError');
+
 
 assert.sameValue(
-  typeof secondArg,
+  typeof reject,
   'function',
-  'Invokes `then` method with a function as the second argument'
+  'The value of `typeof reject` is "function"'
 );
-assert.notSameValue(secondArg, originalFinallyHandler, 'Invokes `then` method with a different rejection handler');
-assert.sameValue(secondArg.length, 1, 'rejection handler has a length of 1');
-assert.sameValue(secondArg.name, '', 'rejection handler is anonymous');
-assert(!isConstructor(secondArg), 'rejection handler is not constructor');
+assert.notSameValue(reject, originalFinallyHandler, 'The value of `reject` is expected to not equal the value of `originalFinallyHandler`');
+assert.sameValue(reject.length, 1, 'The value of reject.length is 1');
+assert.sameValue(reject.name, '', 'The value of reject.name is ""');
+assert.sameValue(isConstructor(reject), false, 'isConstructor(reject) must return false');
+assert.throws(TypeError, () => {
+  new reject();
+}, '`new reject()` throws TypeError');
 
-assert.sameValue(result, returnValue, 'Returns the result of the invocation of `then`');
+assert.sameValue(result, returnValue, 'The value of `result` is expected to equal the value of returnValue');

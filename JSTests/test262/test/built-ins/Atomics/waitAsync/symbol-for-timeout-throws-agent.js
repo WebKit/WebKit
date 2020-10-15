@@ -20,7 +20,7 @@ flags: [async]
 includes: [atomicsHelper.js]
 features: [Atomics.waitAsync, SharedArrayBuffer, Symbol, Symbol.toPrimitive, TypedArray, Atomics, arrow-function, async-functions]
 ---*/
-assert.sameValue(typeof Atomics.waitAsync, 'function');
+assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
 
 const RUNNING = 1;
 
@@ -55,21 +55,21 @@ const i32a = new Int32Array(
 
 $262.agent.safeBroadcastAsync(i32a, RUNNING, 1).then(async (agentCount) => {
 
-  assert.sameValue(agentCount, 1);
+  assert.sameValue(agentCount, 1, 'The value of `agentCount` is 1');
 
   assert.sameValue(
     await $262.agent.getReportAsync(),
     'A TypeError',
-    'Atomics.waitAsync(i32a, 0, 0, Symbol("1")) throws TypeError'
+    '(await $262.agent.getReportAsync()) resolves to the value "A TypeError"'
   );
 
   assert.sameValue(
     await $262.agent.getReportAsync(),
     'B TypeError',
-    'Atomics.waitAsync(i32a, 0, 0, Symbol("2")) throws TypeError'
+    '(await $262.agent.getReportAsync()) resolves to the value "B TypeError"'
   );
 
-  assert.sameValue(Atomics.notify(i32a, 0), 0, 'Atomics.notify(i32a, 0) returns 0');
+  assert.sameValue(Atomics.notify(i32a, 0), 0, 'Atomics.notify(new Int32Array(new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4)), 0) must return 0');
 
 }).then($DONE, $DONE);
 

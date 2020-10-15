@@ -1,6 +1,6 @@
 // This file was procedurally generated from the following sources:
 // - src/class-elements/eval-err-contains-arguments.case
-// - src/class-elements/initializer-eval-arguments/cls-decl-fields-eval.template
+// - src/class-elements/initializer-direct-eval-arguments/cls-decl-fields-eval.template
 /*---
 description: error if `arguments` in StatementList of eval (direct eval)
 esid: sec-performeval-rules-in-initializer

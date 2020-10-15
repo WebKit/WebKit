@@ -2,32 +2,49 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-%typedarray%.prototype.slice
-description: Throws a TypeError buffer is detached on Get constructor.
+description: >
+  Throws a TypeError if _O_.[[ViewedArrayBuffer]] is detached during Get custom constructor.
 info: |
-  22.2.3.24 %TypedArray%.prototype.slice ( start, end )
+  %TypedArray%.prototype.slice ( start, end )
 
-  ...
-  9. Let A be ? TypedArraySpeciesCreate(O, « count »).
-  ...
-  14. If SameValue(srcType, targetType) is false, then
+    Let A be ? TypedArraySpeciesCreate(O, « count »).
+
+  TypedArraySpeciesCreate ( exemplar, argumentList )
+
+    Let result be ? TypedArrayCreate(constructor, argumentList).
+
+  TypedArrayCreate ( constructor, argumentList )
+
+    Let newTypedArray be ? Construct(constructor, argumentList).
+    Perform ? ValidateTypedArray(newTypedArray).
+
+  ValidateTypedArray ( O )
+    The abstract operation ValidateTypedArray takes argument O. It performs the following steps when called:
+
+    Perform ? RequireInternalSlot(O, [[TypedArrayName]]).
+    Assert: O has a [[ViewedArrayBuffer]] internal slot.
+    Let buffer be O.[[ViewedArrayBuffer]].
+    If IsDetachedBuffer(buffer) is true, throw a TypeError exception.
     ...
-  15. Else if count > 0, then
-    a. Let srcBuffer be the value of O's [[ViewedArrayBuffer]] internal slot.
-    b. If IsDetachedBuffer(srcBuffer) is true, throw a TypeError exception.
-  ...
+
 includes: [testBigIntTypedArray.js, detachArrayBuffer.js]
-features: [BigInt, TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, BigInt, TypedArray]
 ---*/
 
 testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA(1);
+  let counter = 0;
+  let sample = new TA(1);
 
   Object.defineProperty(sample, "constructor", {
-    get: function() {
+    get() {
+      counter++;
       $DETACHBUFFER(sample.buffer);
     }
   });
   assert.throws(TypeError, function() {
+    counter++;
     sample.slice();
-  });
+  }, '`sample.slice()` throws TypeError');
+
+  assert.sameValue(counter, 2, 'The value of `counter` is 2');
 });

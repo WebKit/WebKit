@@ -20,7 +20,7 @@ info: |
   object, if it exists, has the attributes { [[Writable]]: false,
   [[Enumerable]]: false, [[Configurable]]: true }.
 includes: [propertyHelper.js]
-features: [cleanupSome, FinalizationRegistry]
+features: [FinalizationRegistry.prototype.cleanupSome, cleanupSome, FinalizationRegistry]
 ---*/
 
 verifyProperty(FinalizationRegistry.prototype.cleanupSome, 'name', {

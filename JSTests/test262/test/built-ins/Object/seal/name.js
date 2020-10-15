@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 19.1.2.17
+esid: sec-object.seal
 description: >
   Object.seal.name is "seal".
 info: |

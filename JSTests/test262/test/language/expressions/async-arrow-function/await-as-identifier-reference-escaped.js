@@ -29,6 +29,6 @@ info: |
 $DONOTEVALUATE();
 
 
-async() => {
+async () => {
   void \u0061wait;
-};
+}

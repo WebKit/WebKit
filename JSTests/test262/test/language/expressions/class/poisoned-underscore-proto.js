@@ -14,7 +14,7 @@ info: |
 
   [...]
   4. Set obj.[[Prototype]] to proto.
-features: [class]
+features: [class, __proto__]
 ---*/
 
 Object.defineProperty(Object.prototype, '__proto__', {
