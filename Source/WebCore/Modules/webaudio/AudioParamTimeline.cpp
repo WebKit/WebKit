@@ -37,6 +37,14 @@
 
 namespace WebCore {
 
+static void fillWithValue(float* values, float value, unsigned endFrame, unsigned& writeIndex)
+{
+    if (writeIndex < endFrame) {
+        std::fill_n(values + writeIndex, endFrame - writeIndex, value);
+        writeIndex = endFrame;
+    }
+}
+
 // Test that for a SetTarget event, the current value is close enough to the target value that
 // we can consider the event to have converged to the target.
 static bool hasSetTargetConverged(float value, float target, Seconds currentTime, Seconds startTime, double timeConstant)
@@ -339,10 +347,7 @@ float AudioParamTimeline::valuesForFrameRange(size_t startFrame, size_t endFrame
     // We can't contend the lock in the realtime audio thread.
     auto locker = tryHoldLock(m_eventsLock);
     if (!locker) {
-        if (values) {
-            for (unsigned i = 0; i < numberOfValues; ++i)
-                values[i] = defaultValue;
-        }
+        std::fill_n(values, numberOfValues, defaultValue);
         return defaultValue;
     }
 
@@ -364,8 +369,7 @@ float AudioParamTimeline::valuesForFrameRangeImpl(size_t startFrame, size_t endF
 
     // Return default value if there are no events matching the desired time range.
     if (!m_events.size() || endFrame * samplingPeriod <= m_events[0]->time().value()) {
-        for (unsigned i = 0; i < numberOfValues; ++i)
-            values[i] = defaultValue;
+        std::fill_n(values, numberOfValues, defaultValue);
         return defaultValue;
     }
 
@@ -385,8 +389,7 @@ float AudioParamTimeline::valuesForFrameRangeImpl(size_t startFrame, size_t endF
 
         unsigned fillToFrame = static_cast<unsigned>(fillToEndFrame - startFrame);
         fillToFrame = std::min(fillToFrame, numberOfValues);
-        for (; writeIndex < fillToFrame; ++writeIndex)
-            values[writeIndex] = defaultValue;
+        fillWithValue(values, defaultValue, fillToFrame, writeIndex);
 
         currentFrame += fillToFrame;
     }
@@ -459,9 +462,7 @@ float AudioParamTimeline::valuesForFrameRangeImpl(size_t startFrame, size_t endF
 
                 // Simply stay at a constant value.
                 value = event->value();
-                for (; writeIndex < fillToFrame; ++writeIndex)
-                    values[writeIndex] = value;
-
+                fillWithValue(values, value, fillToFrame, writeIndex);
                 break;
             case ParamEvent::CancelValues:
                 processCancelValues(currentState, values, currentFrame, value, writeIndex);
@@ -481,8 +482,7 @@ float AudioParamTimeline::valuesForFrameRangeImpl(size_t startFrame, size_t endF
 
     // If there's any time left after processing the last event then just propagate the last value
     // to the end of the values buffer.
-    for (; writeIndex < numberOfValues; ++writeIndex)
-        values[writeIndex] = value;
+    fillWithValue(values, value, numberOfValues, writeIndex);
 
     return value;
 }
@@ -545,8 +545,7 @@ void AudioParamTimeline::processExponentialRamp(const AutomationState& currentSt
         // Per the specification:
         // If value1 and value2 have opposite signs or if value1 is zero, then v(t) = value1 for T0 <= t < T1.
         value = currentState.value1;
-        for (; writeIndex < currentState.fillToFrame; ++writeIndex)
-            values[writeIndex] = value;
+        fillWithValue(values, value, currentState.fillToFrame, writeIndex);
         return;
     }
 
@@ -591,8 +590,7 @@ void AudioParamTimeline::processCancelValues(const AutomationState& currentState
         }
     }
 
-    for (; writeIndex < currentState.fillToFrame; ++writeIndex)
-        values[writeIndex] = value;
+    fillWithValue(values, value, currentState.fillToFrame, writeIndex);
 
     currentFrame = currentState.fillToEndFrame;
 }
@@ -626,8 +624,7 @@ void AudioParamTimeline::processSetTarget(const AutomationState& currentState, f
     // with the target value.
     if (hasSetTargetConverged(value, target, Seconds { currentFrame * currentState.samplingPeriod }, currentState.time1, timeConstant)) {
         currentFrame += currentState.fillToFrame - writeIndex;
-        for (; writeIndex < currentState.fillToFrame; ++writeIndex)
-            values[writeIndex] = target;
+        fillWithValue(values, target, currentState.fillToFrame, writeIndex);
         value = target;
         return;
     }
@@ -690,8 +687,7 @@ void AudioParamTimeline::processSetValueCurve(const AutomationState& currentStat
     if (!curveData || !numberOfCurvePoints || duration <= 0_s || currentState.sampleRate <= 0) {
         // Error condition - simply propagate previous value.
         currentFrame = fillToEndFrame;
-        for (; writeIndex < fillToFrame; ++writeIndex)
-            values[writeIndex] = value;
+        fillWithValue(values, value, fillToFrame, writeIndex);
         return;
     }
 
@@ -758,8 +754,7 @@ void AudioParamTimeline::processSetValueCurve(const AutomationState& currentStat
     // of the next, then just propagate the last value.
     if (writeIndex < nextEventFillToFrame) {
         value = curveEndValue;
-        for (; writeIndex < nextEventFillToFrame; ++writeIndex)
-            values[writeIndex] = value;
+        fillWithValue(values, value, nextEventFillToFrame, writeIndex);
     }
 
     // Re-adjust current time
