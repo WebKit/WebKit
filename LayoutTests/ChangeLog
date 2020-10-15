@@ -1,3 +1,21 @@
+2020-10-15  Truitt Savell  <tsavell@apple.com>
+
+        Rebaseline tests for Catalina and iOS after the changes in r268520
+        https://bugs.webkit.org/show_bug.cgi?id=209813
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/fast/block/basic/001-expected.txt: Added.
+        * platform/mac-catalina/fast/block/basic/001-expected.txt: Added.
+        * platform/mac-catalina/fast/forms/button-table-styles-expected.txt:
+        * platform/mac-catalina/fast/forms/input-disabled-color-expected.txt:
+        * platform/mac-catalina/fast/forms/input-readonly-dimmed-expected.txt:
+        * platform/mac-catalina/fast/forms/plaintext-mode-2-expected.txt:
+        * platform/mac-catalina/fast/forms/select-change-popup-to-listbox-expected.txt:
+        * platform/mac-catalina/fast/text/indic-expected.txt: Added.
+        * platform/mac-catalina/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt: Added.
+        * platform/mac-catalina/tables/mozilla/other/wa_table_tr_align-expected.txt: Added.
+
 2020-10-15  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening
