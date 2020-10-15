@@ -156,3 +156,5 @@ webkit.org/b/217687 accessibility/aria-current.html [ Pass Timeout ]
 webkit.org/b/217687 accessibility/insert-newline.html [ Pass Timeout ]
 webkit.org/b/217687 accessibility/ios-simulator/abbreviation.html [ Pass Timeout ]
 webkit.org/b/217687 accessibility/ios-simulator/accessibility-aria-table-children.html [ Pass Timeout ]
+
+webkit.org/b/217741 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-multiple-times.html [ Pass Failure ] 

@@ -1,5 +1,14 @@
 2020-10-15  Karl Rackler  <rackler@apple.com>
 
+        REGRESSION (r268178): [iOS] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-multiple-times.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=217741
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
+2020-10-15  Karl Rackler  <rackler@apple.com>
+
         [ Mojave wk1 ews ] media/remote-control-command-seek.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=215325
 
