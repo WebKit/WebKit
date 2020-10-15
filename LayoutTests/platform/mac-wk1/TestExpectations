@@ -1191,3 +1191,5 @@ webkit.org/b/216292 imported/w3c/web-platform-tests/css/css-flexbox/quirks-auto-
 webkit.org/b/217478 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-descendant-text-mutated-001.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/215325 [ Mojave ] media/remote-control-command-seek.html [ Pass Timeout ]
+
+webkit.org/b/217761 [ Mojave+ Debug ] webgl/2.0.0/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Pass Crash ]
