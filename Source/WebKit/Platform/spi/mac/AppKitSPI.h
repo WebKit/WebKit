@@ -67,3 +67,8 @@ typedef NS_OPTIONS(NSUInteger, NSWindowShadowOptions) {
 @property CGFloat titlebarAlphaValue;
 @end
 #endif
+
+// FIXME: Move this above once <rdar://problem/70224980> is in an SDK.
+@interface NSCursor ()
++ (void)hideUntilChanged;
+@end
