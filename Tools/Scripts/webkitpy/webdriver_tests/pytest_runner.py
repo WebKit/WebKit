@@ -189,6 +189,10 @@ def run(path, args, timeout, env, expectations, ignore_param=None):
     _environ = dict(os.environ)
     os.environ.clear()
     os.environ.update(env)
+    # Disable autoload magic to avoid issues with webkitcorepy AutoInstall
+    # This will force pytest to actually import the desired plugins, which
+    # will trigger the AutoInstall procedure.
+    os.environ['PYTEST_DISABLE_PLUGIN_AUTOLOAD'] = '1'
 
     with TemporaryDirectory() as cache_directory:
         try:

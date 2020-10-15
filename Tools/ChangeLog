@@ -1,3 +1,25 @@
+2020-10-15  Lauro Moura  <lmoura@igalia.com>
+
+        webkitpy: Fix remaining pytest autoinstall imports
+        https://bugs.webkit.org/show_bug.cgi?id=217694
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump mini
+        version due to argument rename below.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (Package.__init__): Change argument name to communicate that the first
+        arg is the name of the package to be imported.
+        * Scripts/webkitpy/__init__.py: Some changes:
+        - Downgrade attr to a compatible version with the pytest used.
+        - Fix pytest_timeout import name
+        - Downgrade pytest to 3.x. Version 4.x deprecated direct invocation of
+        fixtures, which is still used by W3C webdriver test code.
+
+        * Scripts/webkitpy/webdriver_tests/pytest_runner.py:
+        (run): Avoid using pytest autoload features to ensure it would import
+        plugins like pytest_timeout, triggering their install.
+
 2020-10-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         IPC testing JS API should expose a reply and describe the list of arguments for each message

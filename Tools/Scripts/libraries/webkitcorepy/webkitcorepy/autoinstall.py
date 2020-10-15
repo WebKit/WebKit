@@ -93,8 +93,8 @@ class Package(object):
             else:
                 raise OSError('{} has an  unrecognized package format'.format(self.path))
 
-    def __init__(self, name, version=None, pypi_name=None, slow_install=False, wheel=False, aliases=None):
-        self.name = name
+    def __init__(self, import_name, version=None, pypi_name=None, slow_install=False, wheel=False, aliases=None):
+        self.name = import_name
         self.version = version
         self._archives = []
         self.pypi_name = pypi_name or self.name
