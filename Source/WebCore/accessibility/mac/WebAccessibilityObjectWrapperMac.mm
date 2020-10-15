@@ -1968,13 +1968,12 @@ static void WebTransformCGPathToNSBezierPath(void* info, const CGPathElement *el
 
 - (NSValue *)position
 {
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (AXObjectCache::isIsolatedTreeEnabled())
-        return [NSValue valueWithPoint:self.axBackingObject->relativeFrame().location()];
-#endif
+    auto* backingObject = self.axBackingObject;
+    if (!backingObject)
+        return nil;
 
-    auto rect = snappedIntRect(self.axBackingObject->elementRect());
-    
+    auto rect = snappedIntRect(backingObject->elementRect());
+
     // The Cocoa accessibility API wants the lower-left corner.
     auto floatPoint = FloatPoint(rect.x(), rect.maxY());
 

@@ -956,6 +956,15 @@ FloatRect AXIsolatedObject::relativeFrame() const
     });
 }
 
+FloatRect AXIsolatedObject::convertFrameToSpace(const FloatRect& rect, AccessibilityConversionSpace space) const
+{
+    return Accessibility::retrieveValueFromMainThread<FloatRect>([&rect, &space, this] () -> FloatRect {
+        if (auto* axObject = associatedAXObject())
+            return axObject->convertFrameToSpace(rect, space);
+        return { };
+    });
+}
+
 bool AXIsolatedObject::replaceTextInRange(const String& replacementText, const PlainTextRange& textRange)
 {
     return Accessibility::retrieveValueFromMainThread<bool>([&replacementText, &textRange, this] () -> bool {
@@ -1126,6 +1135,12 @@ void AXIsolatedObject::setSelectedVisiblePositionRange(const VisiblePositionRang
 
     if (auto* object = associatedAXObject())
         object->setSelectedVisiblePositionRange(visiblePositionRange);
+}
+
+Optional<SimpleRange> AXIsolatedObject::elementRange() const
+{
+    auto* axObject = associatedAXObject();
+    return axObject ? axObject->elementRange() : WTF::nullopt;
 }
 
 bool AXIsolatedObject::isListBoxOption() const

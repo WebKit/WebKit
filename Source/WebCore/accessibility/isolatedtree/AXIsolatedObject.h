@@ -388,7 +388,7 @@ private:
     String selectedText() const override { return String(); }
     VisiblePositionRange visiblePositionRange() const override { return VisiblePositionRange(); }
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const override { return VisiblePositionRange(); }
-    Optional<SimpleRange> elementRange() const override { return WTF::nullopt; }
+    Optional<SimpleRange> elementRange() const override;
     VisiblePositionRange visiblePositionRangeForUnorderedPositions(const VisiblePosition&, const VisiblePosition&) const override { return VisiblePositionRange(); }
     VisiblePositionRange positionOfLeftWord(const VisiblePosition&) const override { return VisiblePositionRange(); }
     VisiblePositionRange positionOfRightWord(const VisiblePosition&) const override { return VisiblePositionRange(); }
@@ -451,7 +451,7 @@ private:
     // TODO: Functions
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override { return String(); }
     Optional<SimpleRange> misspellingRange(const SimpleRange&, AccessibilitySearchDirection) const override { return WTF::nullopt; }
-    FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const override { return FloatRect(); }
+    FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const override;
     void increment() override;
     void decrement() override;
     bool performDismissAction() override;
