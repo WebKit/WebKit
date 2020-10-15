@@ -629,9 +629,6 @@ void GraphicsLayerTextureMapper::removeAnimation(const String& animationName)
 
 bool GraphicsLayerTextureMapper::setFilters(const FilterOperations& filters)
 {
-    if (!m_layer.textureMapper())
-        return false;
-
     bool canCompositeFilters = filtersCanBeComposited(filters);
     if (GraphicsLayer::filters() == filters)
         return canCompositeFilters;
