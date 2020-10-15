@@ -50,10 +50,18 @@ private:
 
     void repositionScrollingLayers() override;
 
+#if ENABLE(KINETIC_SCROLLING)
+    void ensureScrollAnimationKinetic();
+#endif
+#if ENABLE(SMOOTH_SCROLLING)
+    void ensureScrollAnimationSmooth();
+#endif
+
     WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&) override;
 
     void stopScrollAnimations() override;
 
+    bool m_scrollAnimatorEnabled { false };
 #if ENABLE(KINETIC_SCROLLING)
     std::unique_ptr<ScrollAnimationKinetic> m_kineticAnimation;
 #endif

@@ -70,6 +70,7 @@ public:
 
     void start(const FloatPoint& initialPosition, const FloatPoint& velocity, bool mayHScroll, bool mayVScroll);
     void stop() override;
+    bool isActive() const override;
 
 private:
     void animationTimerFired();

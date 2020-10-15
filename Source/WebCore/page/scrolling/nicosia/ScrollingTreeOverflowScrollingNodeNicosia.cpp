@@ -39,7 +39,7 @@
 #include "ScrollAnimationSmooth.h"
 #endif
 #include "ScrollingStateOverflowScrollingNode.h"
-#include "ScrollingTree.h"
+#include "ThreadedScrollingTree.h"
 
 namespace WebCore {
 
@@ -51,40 +51,7 @@ Ref<ScrollingTreeOverflowScrollingNode> ScrollingTreeOverflowScrollingNodeNicosi
 ScrollingTreeOverflowScrollingNodeNicosia::ScrollingTreeOverflowScrollingNodeNicosia(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
     : ScrollingTreeOverflowScrollingNode(scrollingTree, nodeID)
 {
-#if ENABLE(KINETIC_SCROLLING)
-    m_kineticAnimation = makeUnique<ScrollAnimationKinetic>(
-        [this]() -> ScrollExtents {
-            return { IntPoint(minimumScrollPosition()), IntPoint(maximumScrollPosition()), IntSize(scrollableAreaSize()) };
-        },
-        [this](FloatPoint&& position) {
-#if ENABLE(SMOOTH_SCROLLING)
-            m_smoothAnimation->setCurrentPosition(position);
-#endif
-
-            auto* scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrollContainerLayer());
-            ASSERT(scrollLayer);
-            auto& compositionLayer = downcast<Nicosia::CompositionLayer>(*scrollLayer);
-
-            auto updateScope = compositionLayer.createUpdateScope();
-            scrollTo(position);
-        });
-#endif
-#if ENABLE(SMOOTH_SCROLLING)
-    m_smoothAnimation = makeUnique<ScrollAnimationSmooth>(
-        [this]() -> ScrollExtents {
-            return { IntPoint(minimumScrollPosition()), IntPoint(maximumScrollPosition()), IntSize(scrollableAreaSize()) };
-        },
-        currentScrollPosition(),
-        [this](FloatPoint&& position) {
-            auto* scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrollContainerLayer());
-            ASSERT(scrollLayer);
-            auto& compositionLayer = downcast<Nicosia::CompositionLayer>(*scrollLayer);
-
-            auto updateScope = compositionLayer.createUpdateScope();
-            scrollTo(position);
-        },
-        [] { });
-#endif
+    m_scrollAnimatorEnabled = downcast<ThreadedScrollingTree>(scrollingTree).scrollAnimatorEnabled();
 }
 
 ScrollingTreeOverflowScrollingNodeNicosia::~ScrollingTreeOverflowScrollingNodeNicosia() = default;
@@ -99,7 +66,8 @@ void ScrollingTreeOverflowScrollingNodeNicosia::commitStateAfterChildren(const S
         const auto& requestedScrollData = overflowStateNode.requestedScrollData();
         scrollTo(requestedScrollData.scrollPosition, requestedScrollData.scrollType, requestedScrollData.clamping);
 #if ENABLE(SMOOTH_SCROLLING)
-        m_smoothAnimation->setCurrentPosition(currentScrollPosition());
+        if (m_smoothAnimation)
+            m_smoothAnimation->setCurrentPosition(currentScrollPosition());
 #endif
     }
 }
@@ -124,7 +92,61 @@ void ScrollingTreeOverflowScrollingNodeNicosia::repositionScrollingLayers()
             state.boundsOrigin = scrollOffset;
             state.delta.boundsOriginChanged = true;
         });
+
+#if ENABLE(SMOOTH_SCROLLING)
+    if (m_smoothAnimation)
+        m_smoothAnimation->updateVisibleLengths();
+#endif
 }
+
+#if ENABLE(KINETIC_SCROLLING)
+void ScrollingTreeOverflowScrollingNodeNicosia::ensureScrollAnimationKinetic()
+{
+    if (m_kineticAnimation)
+        return;
+
+    m_kineticAnimation = makeUnique<ScrollAnimationKinetic>(
+        [this]() -> ScrollExtents {
+            return { IntPoint(minimumScrollPosition()), IntPoint(maximumScrollPosition()), IntSize(scrollableAreaSize()) };
+        },
+        [this](FloatPoint&& position) {
+#if ENABLE(SMOOTH_SCROLLING)
+            if (m_smoothAnimation)
+                m_smoothAnimation->setCurrentPosition(position);
+#endif
+
+            auto* scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrollContainerLayer());
+            ASSERT(scrollLayer);
+            auto& compositionLayer = downcast<Nicosia::CompositionLayer>(*scrollLayer);
+
+            auto updateScope = compositionLayer.createUpdateScope();
+            scrollTo(position);
+        });
+}
+#endif
+
+#if ENABLE(SMOOTH_SCROLLING)
+void ScrollingTreeOverflowScrollingNodeNicosia::ensureScrollAnimationSmooth()
+{
+    if (m_smoothAnimation)
+        return;
+
+    m_smoothAnimation = makeUnique<ScrollAnimationSmooth>(
+        [this]() -> ScrollExtents {
+            return { IntPoint(minimumScrollPosition()), IntPoint(maximumScrollPosition()), IntSize(scrollableAreaSize()) };
+        },
+        currentScrollPosition(),
+        [this](FloatPoint&& position) {
+            auto* scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrollContainerLayer());
+            ASSERT(scrollLayer);
+            auto& compositionLayer = downcast<Nicosia::CompositionLayer>(*scrollLayer);
+
+            auto updateScope = compositionLayer.createUpdateScope();
+            scrollTo(position);
+        },
+        [] { });
+}
+#endif
 
 WheelEventHandlingResult ScrollingTreeOverflowScrollingNodeNicosia::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
@@ -132,6 +154,7 @@ WheelEventHandlingResult ScrollingTreeOverflowScrollingNodeNicosia::handleWheelE
         return WheelEventHandlingResult::unhandled();
 
 #if ENABLE(KINETIC_SCROLLING)
+    ensureScrollAnimationKinetic();
     m_kineticAnimation->appendToScrollHistory(wheelEvent);
     m_kineticAnimation->stop();
     if (wheelEvent.isEndOfNonMomentumScroll()) {
@@ -174,16 +197,20 @@ WheelEventHandlingResult ScrollingTreeOverflowScrollingNodeNicosia::handleWheelE
     }
 
 #if ENABLE(SMOOTH_SCROLLING)
-    m_smoothAnimation->scroll(HorizontalScrollbar, ScrollByPixel, 1, -deltaX);
-    m_smoothAnimation->scroll(VerticalScrollbar, ScrollByPixel, 1, -deltaY);
-#else
+    if (m_scrollAnimatorEnabled && !wheelEvent.hasPreciseScrollingDeltas()) {
+        ensureScrollAnimationSmooth();
+        m_smoothAnimation->scroll(HorizontalScrollbar, ScrollByPixel, 1, -deltaX);
+        m_smoothAnimation->scroll(VerticalScrollbar, ScrollByPixel, 1, -deltaY);
+        return WheelEventHandlingResult::handled();
+    }
+#endif
+
     auto* scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrollContainerLayer());
     ASSERT(scrollLayer);
     auto& compositionLayer = downcast<Nicosia::CompositionLayer>(*scrollLayer);
 
     auto updateScope = compositionLayer.createUpdateScope();
     scrollBy({ -deltaX, -deltaY });
-#endif
 
     return WheelEventHandlingResult::handled();
 }
@@ -191,11 +218,14 @@ WheelEventHandlingResult ScrollingTreeOverflowScrollingNodeNicosia::handleWheelE
 void ScrollingTreeOverflowScrollingNodeNicosia::stopScrollAnimations()
 {
 #if ENABLE(KINETIC_SCROLLING)
-    m_kineticAnimation->stop();
-    m_kineticAnimation->clearScrollHistory();
+    if (m_kineticAnimation) {
+        m_kineticAnimation->stop();
+        m_kineticAnimation->clearScrollHistory();
+    }
 #endif
 #if ENABLE(SMOOTH_SCROLLING)
-    m_smoothAnimation->stop();
+    if (m_smoothAnimation)
+        m_smoothAnimation->stop();
 #endif
 }
 

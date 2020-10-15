@@ -58,6 +58,7 @@ private:
     void stop() override;
     void updateVisibleLengths() override;
     void setCurrentPosition(const FloatPoint&) override;
+    bool isActive() const override;
 
     struct PerAxisData {
         PerAxisData() = delete;
@@ -101,7 +102,6 @@ private:
     void requestAnimationTimerFired();
     void startNextTimer(Seconds delay);
     void animationTimerFired();
-    bool animationTimerActive() const;
 
     ScrollExtentsCallback m_scrollExtentsFunction;
     NotifyPositionChangedCallback m_notifyPositionChangedFunction;

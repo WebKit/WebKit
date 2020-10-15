@@ -164,6 +164,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* 
 
     WebCore::FloatSize wheelTicks;
     WebCore::FloatSize delta;
+    bool hasPreciseScrollingDeltas = false;
 
 #if WPE_CHECK_VERSION(1, 5, 0)
     if (event->type & wpe_input_axis_event_type_mask_2d) {
@@ -177,6 +178,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* 
         case wpe_input_axis_event_type_motion_smooth:
             wheelTicks = WebCore::FloatSize(event2D->x_axis / deviceScaleFactor, event2D->y_axis / deviceScaleFactor);
             delta = wheelTicks;
+            hasPreciseScrollingDeltas = true;
             break;
         default:
             return WebWheelEvent();
@@ -184,7 +186,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* 
 
         return WebWheelEvent(WebEvent::Wheel, position, position,
             delta, wheelTicks, phase, momentumPhase,
-            WebWheelEvent::ScrollByPixelWheelEvent,
+            WebWheelEvent::ScrollByPixelWheelEvent, hasPreciseScrollingDeltas,
             OptionSet<WebEvent::Modifier> { }, wallTimeForEventTime(event->time));
     }
 #endif
@@ -210,6 +212,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* 
     case Smooth:
         wheelTicks = WebCore::FloatSize(0, event->value / deviceScaleFactor);
         delta = wheelTicks;
+        hasPreciseScrollingDeltas = true;
         break;
     default:
         return WebWheelEvent();
@@ -217,7 +220,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* 
 
     return WebWheelEvent(WebEvent::Wheel, position, position,
         delta, wheelTicks, phase, momentumPhase,
-        WebWheelEvent::ScrollByPixelWheelEvent,
+        WebWheelEvent::ScrollByPixelWheelEvent, hasPreciseScrollingDeltas,
         OptionSet<WebEvent::Modifier> { }, wallTimeForEventTime(event->time));
 }
 

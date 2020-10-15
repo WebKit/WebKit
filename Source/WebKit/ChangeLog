@@ -1,3 +1,31 @@
+2020-10-15  Chris Lord  <clord@igalia.com>
+
+        [GTK][WPE] Add support for smooth scrolling animation with async scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=210382
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add hasPreciseScrollingDeltas to GTK/WPE wheel events.
+
+        No new tests needed.
+
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformWheelEvent::WebKit2PlatformWheelEvent):
+        * Shared/WebWheelEvent.cpp:
+        (WebKit::WebWheelEvent::WebWheelEvent):
+        (WebKit::WebWheelEvent::encode const):
+        (WebKit::WebWheelEvent::decode):
+        * Shared/WebWheelEvent.h:
+        * Shared/WebWheelEventCoalescer.cpp:
+        (WebKit::WebWheelEventCoalescer::canCoalesce):
+        (WebKit::WebWheelEventCoalescer::coalesce):
+        * Shared/gtk/NativeWebWheelEventGtk.cpp:
+        (WebKit::NativeWebWheelEvent::NativeWebWheelEvent):
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        * Shared/libwpe/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebWheelEvent):
+
 2020-10-15  Youenn Fablet  <youenn@apple.com>
 
         Introduce a RemoteAudioSourceProvider to receive audio samples for web audio from GPUProcess

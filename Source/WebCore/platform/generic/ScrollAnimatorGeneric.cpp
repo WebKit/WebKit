@@ -73,8 +73,11 @@ ScrollAnimatorGeneric::~ScrollAnimatorGeneric() = default;
 #if ENABLE(SMOOTH_SCROLLING)
 void ScrollAnimatorGeneric::ensureSmoothScrollingAnimation()
 {
-    if (m_smoothAnimation)
+    if (m_smoothAnimation) {
+        if (!m_smoothAnimation->isActive())
+            m_smoothAnimation->setCurrentPosition(m_currentPosition);
         return;
+    }
 
     m_smoothAnimation = makeUnique<ScrollAnimationSmooth>(
         [this]() -> ScrollExtents {
