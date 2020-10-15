@@ -48,7 +48,7 @@ using namespace JSC;
 
 JSC_DECLARE_CUSTOM_GETTER(jsTestInterfaceLeadingUnderscoreConstructor);
 JSC_DECLARE_CUSTOM_SETTER(setJSTestInterfaceLeadingUnderscoreConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestInterfaceLeadingUnderscoreReadonly);
+JSC_DECLARE_CUSTOM_GETTER(jsTestInterfaceLeadingUnderscore_readonly);
 
 class JSTestInterfaceLeadingUnderscorePrototype final : public JSC::JSNonFinalObject {
 public:
@@ -104,7 +104,7 @@ template<> const ClassInfo JSTestInterfaceLeadingUnderscoreDOMConstructor::s_inf
 static const HashTableValue JSTestInterfaceLeadingUnderscorePrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceLeadingUnderscoreConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceLeadingUnderscoreConstructor) } },
-    { "readonly", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceLeadingUnderscoreReadonly), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "readonly", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceLeadingUnderscore_readonly), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
 const ClassInfo JSTestInterfaceLeadingUnderscorePrototype::s_info = { "TestInterfaceLeadingUnderscore", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestInterfaceLeadingUnderscorePrototype) };
@@ -181,7 +181,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestInterfaceLeadingUnderscoreConstructor, (JSGlob
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSValue jsTestInterfaceLeadingUnderscoreReadonlyGetter(JSGlobalObject& lexicalGlobalObject, JSTestInterfaceLeadingUnderscore& thisObject)
+static inline JSValue jsTestInterfaceLeadingUnderscore_readonlyGetter(JSGlobalObject& lexicalGlobalObject, JSTestInterfaceLeadingUnderscore& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -189,9 +189,9 @@ static inline JSValue jsTestInterfaceLeadingUnderscoreReadonlyGetter(JSGlobalObj
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.readonly())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestInterfaceLeadingUnderscoreReadonly, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestInterfaceLeadingUnderscore_readonly, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestInterfaceLeadingUnderscore>::get<jsTestInterfaceLeadingUnderscoreReadonlyGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "readonly");
+    return IDLAttribute<JSTestInterfaceLeadingUnderscore>::get<jsTestInterfaceLeadingUnderscore_readonlyGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "readonly");
 }
 
 JSC::IsoSubspace* JSTestInterfaceLeadingUnderscore::subspaceForImpl(JSC::VM& vm)

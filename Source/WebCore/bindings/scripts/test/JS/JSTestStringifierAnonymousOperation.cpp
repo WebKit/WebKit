@@ -46,7 +46,7 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestStringifierAnonymousOperationPrototypeFunctionToString);
+JSC_DECLARE_HOST_FUNCTION(jsTestStringifierAnonymousOperationPrototypeFunction_toString);
 
 // Attributes
 
@@ -107,7 +107,7 @@ template<> const ClassInfo JSTestStringifierAnonymousOperationDOMConstructor::s_
 static const HashTableValue JSTestStringifierAnonymousOperationPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestStringifierAnonymousOperationConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestStringifierAnonymousOperationConstructor) } },
-    { "toString", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestStringifierAnonymousOperationPrototypeFunctionToString), (intptr_t) (0) } },
+    { "toString", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestStringifierAnonymousOperationPrototypeFunction_toString), (intptr_t) (0) } },
 };
 
 const ClassInfo JSTestStringifierAnonymousOperationPrototype::s_info = { "TestStringifierAnonymousOperation", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierAnonymousOperationPrototype) };
@@ -184,7 +184,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestStringifierAnonymousOperationConstructor, (JSG
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSC::EncodedJSValue jsTestStringifierAnonymousOperationPrototypeFunctionToStringBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestStringifierAnonymousOperation>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestStringifierAnonymousOperationPrototypeFunction_toStringBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestStringifierAnonymousOperation>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -194,9 +194,9 @@ static inline JSC::EncodedJSValue jsTestStringifierAnonymousOperationPrototypeFu
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, impl.toString())));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestStringifierAnonymousOperationPrototypeFunctionToString, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestStringifierAnonymousOperationPrototypeFunction_toString, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestStringifierAnonymousOperation>::call<jsTestStringifierAnonymousOperationPrototypeFunctionToStringBody>(*lexicalGlobalObject, *callFrame, "toString");
+    return IDLOperation<JSTestStringifierAnonymousOperation>::call<jsTestStringifierAnonymousOperationPrototypeFunction_toStringBody>(*lexicalGlobalObject, *callFrame, "toString");
 }
 
 JSC::IsoSubspace* JSTestStringifierAnonymousOperation::subspaceForImpl(JSC::VM& vm)

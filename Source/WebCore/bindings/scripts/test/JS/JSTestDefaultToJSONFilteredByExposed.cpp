@@ -49,15 +49,15 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestDefaultToJSONFilteredByExposedPrototypeFunctionToJSON);
+JSC_DECLARE_HOST_FUNCTION(jsTestDefaultToJSONFilteredByExposedPrototypeFunction_toJSON);
 
 // Attributes
 
 JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONFilteredByExposedConstructor);
 JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONFilteredByExposedConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONFilteredByExposedNormalAttribute);
-JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONFilteredByExposedFilteredByExposedWindowAttribute);
-JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONFilteredByExposedFilteredByExposedWorkerAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONFilteredByExposed_normalAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONFilteredByExposed_filteredByExposedWindowAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONFilteredByExposed_filteredByExposedWorkerAttribute);
 
 class JSTestDefaultToJSONFilteredByExposedPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -113,10 +113,10 @@ template<> const ClassInfo JSTestDefaultToJSONFilteredByExposedDOMConstructor::s
 static const HashTableValue JSTestDefaultToJSONFilteredByExposedPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDefaultToJSONFilteredByExposedConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestDefaultToJSONFilteredByExposedConstructor) } },
-    { "normalAttribute", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDefaultToJSONFilteredByExposedNormalAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "filteredByExposedWindowAttribute", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDefaultToJSONFilteredByExposedFilteredByExposedWindowAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "filteredByExposedWorkerAttribute", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDefaultToJSONFilteredByExposedFilteredByExposedWorkerAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "toJSON", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestDefaultToJSONFilteredByExposedPrototypeFunctionToJSON), (intptr_t) (0) } },
+    { "normalAttribute", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDefaultToJSONFilteredByExposed_normalAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "filteredByExposedWindowAttribute", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDefaultToJSONFilteredByExposed_filteredByExposedWindowAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "filteredByExposedWorkerAttribute", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDefaultToJSONFilteredByExposed_filteredByExposedWorkerAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "toJSON", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestDefaultToJSONFilteredByExposedPrototypeFunction_toJSON), (intptr_t) (0) } },
 };
 
 const ClassInfo JSTestDefaultToJSONFilteredByExposedPrototype::s_info = { "TestDefaultToJSONFilteredByExposed", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONFilteredByExposedPrototype) };
@@ -215,7 +215,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONFilteredByExposedConstructor, (JS
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSValue jsTestDefaultToJSONFilteredByExposedNormalAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONFilteredByExposed& thisObject)
+static inline JSValue jsTestDefaultToJSONFilteredByExposed_normalAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONFilteredByExposed& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -223,12 +223,12 @@ static inline JSValue jsTestDefaultToJSONFilteredByExposedNormalAttributeGetter(
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.normalAttribute())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONFilteredByExposedNormalAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONFilteredByExposed_normalAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestDefaultToJSONFilteredByExposed>::get<jsTestDefaultToJSONFilteredByExposedNormalAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "normalAttribute");
+    return IDLAttribute<JSTestDefaultToJSONFilteredByExposed>::get<jsTestDefaultToJSONFilteredByExposed_normalAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "normalAttribute");
 }
 
-static inline JSValue jsTestDefaultToJSONFilteredByExposedFilteredByExposedWindowAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONFilteredByExposed& thisObject)
+static inline JSValue jsTestDefaultToJSONFilteredByExposed_filteredByExposedWindowAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONFilteredByExposed& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -236,12 +236,12 @@ static inline JSValue jsTestDefaultToJSONFilteredByExposedFilteredByExposedWindo
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDouble>(lexicalGlobalObject, throwScope, impl.filteredByExposedWindowAttribute())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONFilteredByExposedFilteredByExposedWindowAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONFilteredByExposed_filteredByExposedWindowAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestDefaultToJSONFilteredByExposed>::get<jsTestDefaultToJSONFilteredByExposedFilteredByExposedWindowAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "filteredByExposedWindowAttribute");
+    return IDLAttribute<JSTestDefaultToJSONFilteredByExposed>::get<jsTestDefaultToJSONFilteredByExposed_filteredByExposedWindowAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "filteredByExposedWindowAttribute");
 }
 
-static inline JSValue jsTestDefaultToJSONFilteredByExposedFilteredByExposedWorkerAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONFilteredByExposed& thisObject)
+static inline JSValue jsTestDefaultToJSONFilteredByExposed_filteredByExposedWorkerAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONFilteredByExposed& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -249,12 +249,12 @@ static inline JSValue jsTestDefaultToJSONFilteredByExposedFilteredByExposedWorke
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.filteredByExposedWorkerAttribute())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONFilteredByExposedFilteredByExposedWorkerAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONFilteredByExposed_filteredByExposedWorkerAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestDefaultToJSONFilteredByExposed>::get<jsTestDefaultToJSONFilteredByExposedFilteredByExposedWorkerAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "filteredByExposedWorkerAttribute");
+    return IDLAttribute<JSTestDefaultToJSONFilteredByExposed>::get<jsTestDefaultToJSONFilteredByExposed_filteredByExposedWorkerAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "filteredByExposedWorkerAttribute");
 }
 
-static inline EncodedJSValue jsTestDefaultToJSONFilteredByExposedPrototypeFunctionToJSONBody(JSGlobalObject* lexicalGlobalObject, CallFrame*, JSTestDefaultToJSONFilteredByExposed* castedThis)
+static inline EncodedJSValue jsTestDefaultToJSONFilteredByExposedPrototypeFunction_toJSONBody(JSGlobalObject* lexicalGlobalObject, CallFrame*, JSTestDefaultToJSONFilteredByExposed* castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -271,9 +271,9 @@ static inline EncodedJSValue jsTestDefaultToJSONFilteredByExposedPrototypeFuncti
     return JSValue::encode(result);
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestDefaultToJSONFilteredByExposedPrototypeFunctionToJSON, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestDefaultToJSONFilteredByExposedPrototypeFunction_toJSON, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestDefaultToJSONFilteredByExposed>::call<jsTestDefaultToJSONFilteredByExposedPrototypeFunctionToJSONBody>(*lexicalGlobalObject, *callFrame, "toJSON");
+    return IDLOperation<JSTestDefaultToJSONFilteredByExposed>::call<jsTestDefaultToJSONFilteredByExposedPrototypeFunction_toJSONBody>(*lexicalGlobalObject, *callFrame, "toJSON");
 }
 
 JSC::IsoSubspace* JSTestDefaultToJSONFilteredByExposed::subspaceForImpl(JSC::VM& vm)

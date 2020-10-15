@@ -50,17 +50,17 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunctionHas);
-JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunctionEntries);
-JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunctionKeys);
-JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunctionValues);
-JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunctionForEach);
+JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunction_has);
+JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunction_entries);
+JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunction_keys);
+JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunction_values);
+JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunction_forEach);
 
 // Attributes
 
 JSC_DECLARE_CUSTOM_GETTER(jsTestReadOnlySetLikeConstructor);
 JSC_DECLARE_CUSTOM_SETTER(setJSTestReadOnlySetLikeConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestReadOnlySetLikeSize);
+JSC_DECLARE_CUSTOM_GETTER(jsTestReadOnlySetLike_size);
 
 class JSTestReadOnlySetLikePrototype final : public JSC::JSNonFinalObject {
 public:
@@ -116,12 +116,12 @@ template<> const ClassInfo JSTestReadOnlySetLikeDOMConstructor::s_info = { "Test
 static const HashTableValue JSTestReadOnlySetLikePrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestReadOnlySetLikeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestReadOnlySetLikeConstructor) } },
-    { "size", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestReadOnlySetLikeSize), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "has", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestReadOnlySetLikePrototypeFunctionHas), (intptr_t) (1) } },
-    { "entries", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestReadOnlySetLikePrototypeFunctionEntries), (intptr_t) (0) } },
-    { "keys", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestReadOnlySetLikePrototypeFunctionKeys), (intptr_t) (0) } },
-    { "values", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestReadOnlySetLikePrototypeFunctionValues), (intptr_t) (0) } },
-    { "forEach", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestReadOnlySetLikePrototypeFunctionForEach), (intptr_t) (1) } },
+    { "size", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestReadOnlySetLike_size), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "has", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestReadOnlySetLikePrototypeFunction_has), (intptr_t) (1) } },
+    { "entries", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestReadOnlySetLikePrototypeFunction_entries), (intptr_t) (0) } },
+    { "keys", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestReadOnlySetLikePrototypeFunction_keys), (intptr_t) (0) } },
+    { "values", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestReadOnlySetLikePrototypeFunction_values), (intptr_t) (0) } },
+    { "forEach", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestReadOnlySetLikePrototypeFunction_forEach), (intptr_t) (1) } },
 };
 
 const ClassInfo JSTestReadOnlySetLikePrototype::s_info = { "TestReadOnlySetLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReadOnlySetLikePrototype) };
@@ -204,19 +204,19 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestReadOnlySetLikeConstructor, (JSGlobalObject* l
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSValue jsTestReadOnlySetLikeSizeGetter(JSGlobalObject& lexicalGlobalObject, JSTestReadOnlySetLike& thisObject)
+static inline JSValue jsTestReadOnlySetLike_sizeGetter(JSGlobalObject& lexicalGlobalObject, JSTestReadOnlySetLike& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     RELEASE_AND_RETURN(throwScope, (toJS<IDLAny>(lexicalGlobalObject, throwScope, forwardSizeToSetLike(lexicalGlobalObject, thisObject))));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestReadOnlySetLikeSize, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestReadOnlySetLike_size, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestReadOnlySetLike>::get<jsTestReadOnlySetLikeSizeGetter>(*lexicalGlobalObject, thisValue, "size");
+    return IDLAttribute<JSTestReadOnlySetLike>::get<jsTestReadOnlySetLike_sizeGetter>(*lexicalGlobalObject, thisValue, "size");
 }
 
-static inline JSC::EncodedJSValue jsTestReadOnlySetLikePrototypeFunctionHasBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestReadOnlySetLike>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestReadOnlySetLikePrototypeFunction_hasBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestReadOnlySetLike>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -230,12 +230,12 @@ static inline JSC::EncodedJSValue jsTestReadOnlySetLikePrototypeFunctionHasBody(
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardHasToSetLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key)))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunctionHas, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunction_has, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestReadOnlySetLike>::call<jsTestReadOnlySetLikePrototypeFunctionHasBody>(*lexicalGlobalObject, *callFrame, "has");
+    return IDLOperation<JSTestReadOnlySetLike>::call<jsTestReadOnlySetLikePrototypeFunction_hasBody>(*lexicalGlobalObject, *callFrame, "has");
 }
 
-static inline JSC::EncodedJSValue jsTestReadOnlySetLikePrototypeFunctionEntriesBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestReadOnlySetLike>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestReadOnlySetLikePrototypeFunction_entriesBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestReadOnlySetLike>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -244,12 +244,12 @@ static inline JSC::EncodedJSValue jsTestReadOnlySetLikePrototypeFunctionEntriesB
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardEntriesToSetLike(*lexicalGlobalObject, *callFrame, *castedThis))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunctionEntries, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunction_entries, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestReadOnlySetLike>::call<jsTestReadOnlySetLikePrototypeFunctionEntriesBody>(*lexicalGlobalObject, *callFrame, "entries");
+    return IDLOperation<JSTestReadOnlySetLike>::call<jsTestReadOnlySetLikePrototypeFunction_entriesBody>(*lexicalGlobalObject, *callFrame, "entries");
 }
 
-static inline JSC::EncodedJSValue jsTestReadOnlySetLikePrototypeFunctionKeysBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestReadOnlySetLike>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestReadOnlySetLikePrototypeFunction_keysBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestReadOnlySetLike>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -258,12 +258,12 @@ static inline JSC::EncodedJSValue jsTestReadOnlySetLikePrototypeFunctionKeysBody
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardKeysToSetLike(*lexicalGlobalObject, *callFrame, *castedThis))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunctionKeys, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunction_keys, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestReadOnlySetLike>::call<jsTestReadOnlySetLikePrototypeFunctionKeysBody>(*lexicalGlobalObject, *callFrame, "keys");
+    return IDLOperation<JSTestReadOnlySetLike>::call<jsTestReadOnlySetLikePrototypeFunction_keysBody>(*lexicalGlobalObject, *callFrame, "keys");
 }
 
-static inline JSC::EncodedJSValue jsTestReadOnlySetLikePrototypeFunctionValuesBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestReadOnlySetLike>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestReadOnlySetLikePrototypeFunction_valuesBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestReadOnlySetLike>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -272,12 +272,12 @@ static inline JSC::EncodedJSValue jsTestReadOnlySetLikePrototypeFunctionValuesBo
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardValuesToSetLike(*lexicalGlobalObject, *callFrame, *castedThis))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunctionValues, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunction_values, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestReadOnlySetLike>::call<jsTestReadOnlySetLikePrototypeFunctionValuesBody>(*lexicalGlobalObject, *callFrame, "values");
+    return IDLOperation<JSTestReadOnlySetLike>::call<jsTestReadOnlySetLikePrototypeFunction_valuesBody>(*lexicalGlobalObject, *callFrame, "values");
 }
 
-static inline JSC::EncodedJSValue jsTestReadOnlySetLikePrototypeFunctionForEachBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestReadOnlySetLike>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestReadOnlySetLikePrototypeFunction_forEachBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestReadOnlySetLike>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -291,9 +291,9 @@ static inline JSC::EncodedJSValue jsTestReadOnlySetLikePrototypeFunctionForEachB
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardForEachToSetLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(callback)))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunctionForEach, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunction_forEach, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestReadOnlySetLike>::call<jsTestReadOnlySetLikePrototypeFunctionForEachBody>(*lexicalGlobalObject, *callFrame, "forEach");
+    return IDLOperation<JSTestReadOnlySetLike>::call<jsTestReadOnlySetLikePrototypeFunction_forEachBody>(*lexicalGlobalObject, *callFrame, "forEach");
 }
 
 JSC::IsoSubspace* JSTestReadOnlySetLike::subspaceForImpl(JSC::VM& vm)

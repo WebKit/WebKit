@@ -49,10 +49,10 @@ using namespace JSC;
 // Functions
 
 #if ENABLE(ConditionBase)
-JSC_DECLARE_HOST_FUNCTION(jsTestOperationConditionalPrototypeFunctionNonConditionalOperation);
+JSC_DECLARE_HOST_FUNCTION(jsTestOperationConditionalPrototypeFunction_nonConditionalOperation);
 #endif
 #if ENABLE(ConditionBase) && ENABLE(ConditionOperation)
-JSC_DECLARE_HOST_FUNCTION(jsTestOperationConditionalPrototypeFunctionConditionalOperation);
+JSC_DECLARE_HOST_FUNCTION(jsTestOperationConditionalPrototypeFunction_conditionalOperation);
 #endif
 
 // Attributes
@@ -115,12 +115,12 @@ static const HashTableValue JSTestOperationConditionalPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestOperationConditionalConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestOperationConditionalConstructor) } },
 #if ENABLE(ConditionBase)
-    { "nonConditionalOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestOperationConditionalPrototypeFunctionNonConditionalOperation), (intptr_t) (0) } },
+    { "nonConditionalOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestOperationConditionalPrototypeFunction_nonConditionalOperation), (intptr_t) (0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(ConditionBase) && ENABLE(ConditionOperation)
-    { "conditionalOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestOperationConditionalPrototypeFunctionConditionalOperation), (intptr_t) (0) } },
+    { "conditionalOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestOperationConditionalPrototypeFunction_conditionalOperation), (intptr_t) (0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
@@ -201,7 +201,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestOperationConditionalConstructor, (JSGlobalObje
 }
 
 #if ENABLE(ConditionBase)
-static inline JSC::EncodedJSValue jsTestOperationConditionalPrototypeFunctionNonConditionalOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestOperationConditional>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestOperationConditionalPrototypeFunction_nonConditionalOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestOperationConditional>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -213,15 +213,15 @@ static inline JSC::EncodedJSValue jsTestOperationConditionalPrototypeFunctionNon
     return JSValue::encode(jsUndefined());
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestOperationConditionalPrototypeFunctionNonConditionalOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestOperationConditionalPrototypeFunction_nonConditionalOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestOperationConditional>::call<jsTestOperationConditionalPrototypeFunctionNonConditionalOperationBody>(*lexicalGlobalObject, *callFrame, "nonConditionalOperation");
+    return IDLOperation<JSTestOperationConditional>::call<jsTestOperationConditionalPrototypeFunction_nonConditionalOperationBody>(*lexicalGlobalObject, *callFrame, "nonConditionalOperation");
 }
 
 #endif
 
 #if ENABLE(ConditionBase) && ENABLE(ConditionOperation)
-static inline JSC::EncodedJSValue jsTestOperationConditionalPrototypeFunctionConditionalOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestOperationConditional>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestOperationConditionalPrototypeFunction_conditionalOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestOperationConditional>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -233,9 +233,9 @@ static inline JSC::EncodedJSValue jsTestOperationConditionalPrototypeFunctionCon
     return JSValue::encode(jsUndefined());
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestOperationConditionalPrototypeFunctionConditionalOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestOperationConditionalPrototypeFunction_conditionalOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestOperationConditional>::call<jsTestOperationConditionalPrototypeFunctionConditionalOperationBody>(*lexicalGlobalObject, *callFrame, "conditionalOperation");
+    return IDLOperation<JSTestOperationConditional>::call<jsTestOperationConditionalPrototypeFunction_conditionalOperationBody>(*lexicalGlobalObject, *callFrame, "conditionalOperation");
 }
 
 #endif

@@ -56,32 +56,32 @@ using namespace JSC;
 
 JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWriteConstructor);
 JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWriteConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWriteConditionallyReadWriteAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWrite_conditionallyReadWriteAttribute);
 #if ENABLE(CONDITION)
-JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWriteConditionallyReadWriteAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_conditionallyReadWriteAttribute);
 #endif
 #if ENABLE(CONDITION2)
-JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWriteConditionalAndConditionallyReadWriteAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWrite_conditionalAndConditionallyReadWriteAttribute);
 #if ENABLE(CONDITION)
-JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWriteConditionalAndConditionallyReadWriteAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_conditionalAndConditionallyReadWriteAttribute);
 #endif
 #endif
-JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttribute);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttribute);
-JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeable);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeable);
-JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeablePrivate);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeablePrivate);
-JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributePromise);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributePromise);
-JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttribute);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttribute);
-JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeable);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeable);
-JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeablePrivate);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeablePrivate);
-JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttributePromise);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttributePromise);
+JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeable);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeable);
+JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeablePrivate);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeablePrivate);
+JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributePromise);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributePromise);
+JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeable);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeable);
+JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeablePrivate);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeablePrivate);
+JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributePromise);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttributePromise);
 
 class JSTestConditionallyReadWritePrototype final : public JSC::JSNonFinalObject {
 public:
@@ -133,8 +133,8 @@ static const struct CompactHashIndex JSTestConditionallyReadWriteTableIndex[8] =
 
 static const HashTableValue JSTestConditionallyReadWriteTableValues[] =
 {
-    { "runtimeConditionallyReadWriteAttributeUnforgeable", static_cast<unsigned>(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeable), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeable) } },
-    { "settingsConditionallyReadWriteAttributeUnforgeable", static_cast<unsigned>(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeable), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeable) } },
+    { "runtimeConditionallyReadWriteAttributeUnforgeable", static_cast<unsigned>(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeable), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeable) } },
+    { "settingsConditionallyReadWriteAttributeUnforgeable", static_cast<unsigned>(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeable), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeable) } },
 };
 
 static const HashTable JSTestConditionallyReadWriteTable = { 2, 7, true, JSTestConditionallyReadWrite::info(), JSTestConditionallyReadWriteTableValues, JSTestConditionallyReadWriteTableIndex };
@@ -159,23 +159,23 @@ static const HashTableValue JSTestConditionallyReadWritePrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWriteConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWriteConstructor) } },
 #if ENABLE(CONDITION)
-    { "conditionallyReadWriteAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWriteConditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWriteConditionallyReadWriteAttribute) } },
+    { "conditionallyReadWriteAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_conditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWrite_conditionallyReadWriteAttribute) } },
 #else
-    { "conditionallyReadWriteAttribute", JSC::PropertyAttribute::ReadOnly | static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWriteConditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "conditionallyReadWriteAttribute", JSC::PropertyAttribute::ReadOnly | static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_conditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #endif
 #if ENABLE(CONDITION2)
 #if ENABLE(CONDITION)
-    { "conditionalAndConditionallyReadWriteAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWriteConditionalAndConditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWriteConditionalAndConditionallyReadWriteAttribute) } },
+    { "conditionalAndConditionallyReadWriteAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_conditionalAndConditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWrite_conditionalAndConditionallyReadWriteAttribute) } },
 #else
-    { "conditionalAndConditionallyReadWriteAttribute", JSC::PropertyAttribute::ReadOnly | static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWriteConditionalAndConditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "conditionalAndConditionallyReadWriteAttribute", JSC::PropertyAttribute::ReadOnly | static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_conditionalAndConditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #endif
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
-    { "runtimeConditionallyReadWriteAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttribute) } },
-    { "runtimeConditionallyReadWriteAttributePromise", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributePromise), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributePromise) } },
-    { "settingsConditionallyReadWriteAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttribute) } },
-    { "settingsConditionallyReadWriteAttributePromise", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttributePromise), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttributePromise) } },
+    { "runtimeConditionallyReadWriteAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttribute) } },
+    { "runtimeConditionallyReadWriteAttributePromise", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributePromise), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributePromise) } },
+    { "settingsConditionallyReadWriteAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttribute) } },
+    { "settingsConditionallyReadWriteAttributePromise", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributePromise), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttributePromise) } },
 };
 
 const ClassInfo JSTestConditionallyReadWritePrototype::s_info = { "TestConditionallyReadWrite", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestConditionallyReadWritePrototype) };
@@ -215,16 +215,16 @@ void JSTestConditionallyReadWritePrototype::finishCreation(VM& vm)
     }
     // Adding back attribute, but as readonly, after removing the read-write variant above. 
     if (!RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())
-        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().runtimeConditionallyReadWriteAttributePublicName(), JSC::DOMAttributeGetterSetter::create(vm, jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttribute, nullptr, JSC::DOMAttributeAnnotation { JSTestConditionallyReadWrite::info(), nullptr }), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute)));
+        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().runtimeConditionallyReadWriteAttributePublicName(), JSC::DOMAttributeGetterSetter::create(vm, jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttribute, nullptr, JSC::DOMAttributeAnnotation { JSTestConditionallyReadWrite::info(), nullptr }), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute)));
     // Adding back attribute, but as readonly, after removing the read-write variant above. 
     if (!RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())
-        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().runtimeConditionallyReadWriteAttributePromisePublicName(), CustomGetterSetter::create(vm, jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributePromise, nullptr), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor)));
+        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().runtimeConditionallyReadWriteAttributePromisePublicName(), CustomGetterSetter::create(vm, jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributePromise, nullptr), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor)));
     // Adding back attribute, but as readonly, after removing the read-write variant above. 
     if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settings().testFeatureEnabled())
-        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().settingsConditionallyReadWriteAttributePublicName(), JSC::DOMAttributeGetterSetter::create(vm, jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttribute, nullptr, JSC::DOMAttributeAnnotation { JSTestConditionallyReadWrite::info(), nullptr }), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute)));
+        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().settingsConditionallyReadWriteAttributePublicName(), JSC::DOMAttributeGetterSetter::create(vm, jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttribute, nullptr, JSC::DOMAttributeAnnotation { JSTestConditionallyReadWrite::info(), nullptr }), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute)));
     // Adding back attribute, but as readonly, after removing the read-write variant above. 
     if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settings().testFeatureEnabled())
-        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().settingsConditionallyReadWriteAttributePromisePublicName(), CustomGetterSetter::create(vm, jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttributePromise, nullptr), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor)));
+        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().settingsConditionallyReadWriteAttributePromisePublicName(), CustomGetterSetter::create(vm, jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributePromise, nullptr), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor)));
     if (hasDisabledRuntimeProperties && structure()->isDictionary())
         flattenDictionaryObject(vm);
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
@@ -244,8 +244,8 @@ void JSTestConditionallyReadWrite::finishCreation(VM& vm)
 
     static_assert(!std::is_base_of<ActiveDOMObject, TestConditionallyReadWrite>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
-    putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().runtimeConditionallyReadWriteAttributeUnforgeablePrivatePrivateName(), CustomGetterSetter::create(vm, jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeablePrivate, nullptr), attributesForStructure(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly));
-    putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().settingsConditionallyReadWriteAttributeUnforgeablePrivatePrivateName(), CustomGetterSetter::create(vm, jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeablePrivate, nullptr), attributesForStructure(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly));
+    putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().runtimeConditionallyReadWriteAttributeUnforgeablePrivatePrivateName(), CustomGetterSetter::create(vm, jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeablePrivate, nullptr), attributesForStructure(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly));
+    putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().settingsConditionallyReadWriteAttributeUnforgeablePrivatePrivateName(), CustomGetterSetter::create(vm, jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeablePrivate, nullptr), attributesForStructure(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly));
 }
 
 JSObject* JSTestConditionallyReadWrite::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
@@ -297,7 +297,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWriteConstructor, (JSGlobalOb
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSValue jsTestConditionallyReadWriteConditionallyReadWriteAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
+static inline JSValue jsTestConditionallyReadWrite_conditionallyReadWriteAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -305,13 +305,13 @@ static inline JSValue jsTestConditionallyReadWriteConditionallyReadWriteAttribut
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<Node>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.conditionallyReadWriteAttribute())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWriteConditionallyReadWriteAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWrite_conditionallyReadWriteAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWriteConditionallyReadWriteAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "conditionallyReadWriteAttribute");
+    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWrite_conditionallyReadWriteAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "conditionallyReadWriteAttribute");
 }
 
 #if ENABLE(CONDITION)
-static inline bool setJSTestConditionallyReadWriteConditionallyReadWriteAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
+static inline bool setJSTestConditionallyReadWrite_conditionallyReadWriteAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -324,15 +324,15 @@ static inline bool setJSTestConditionallyReadWriteConditionallyReadWriteAttribut
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWriteConditionallyReadWriteAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_conditionallyReadWriteAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
-    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWriteConditionallyReadWriteAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "conditionallyReadWriteAttribute");
+    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWrite_conditionallyReadWriteAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "conditionallyReadWriteAttribute");
 }
 
 #endif
 
 #if ENABLE(CONDITION2)
-static inline JSValue jsTestConditionallyReadWriteConditionalAndConditionallyReadWriteAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
+static inline JSValue jsTestConditionallyReadWrite_conditionalAndConditionallyReadWriteAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -340,16 +340,16 @@ static inline JSValue jsTestConditionallyReadWriteConditionalAndConditionallyRea
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<Node>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.conditionalAndConditionallyReadWriteAttribute())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWriteConditionalAndConditionallyReadWriteAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWrite_conditionalAndConditionallyReadWriteAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWriteConditionalAndConditionallyReadWriteAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "conditionalAndConditionallyReadWriteAttribute");
+    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWrite_conditionalAndConditionallyReadWriteAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "conditionalAndConditionallyReadWriteAttribute");
 }
 
 #endif
 
 #if ENABLE(CONDITION2)
 #if ENABLE(CONDITION)
-static inline bool setJSTestConditionallyReadWriteConditionalAndConditionallyReadWriteAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
+static inline bool setJSTestConditionallyReadWrite_conditionalAndConditionallyReadWriteAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -362,16 +362,16 @@ static inline bool setJSTestConditionallyReadWriteConditionalAndConditionallyRea
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWriteConditionalAndConditionallyReadWriteAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_conditionalAndConditionallyReadWriteAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
-    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWriteConditionalAndConditionallyReadWriteAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "conditionalAndConditionallyReadWriteAttribute");
+    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWrite_conditionalAndConditionallyReadWriteAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "conditionalAndConditionallyReadWriteAttribute");
 }
 
 #endif
 
 #endif
 
-static inline JSValue jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
+static inline JSValue jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -379,12 +379,12 @@ static inline JSValue jsTestConditionallyReadWriteRuntimeConditionallyReadWriteA
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<Node>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.runtimeConditionallyReadWriteAttribute())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "runtimeConditionallyReadWriteAttribute");
+    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "runtimeConditionallyReadWriteAttribute");
 }
 
-static inline bool setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
+static inline bool setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -397,12 +397,12 @@ static inline bool setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteA
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
-    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "runtimeConditionallyReadWriteAttribute");
+    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "runtimeConditionallyReadWriteAttribute");
 }
 
-static inline JSValue jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeableGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
+static inline JSValue jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeableGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -410,12 +410,12 @@ static inline JSValue jsTestConditionallyReadWriteRuntimeConditionallyReadWriteA
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<Node>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.runtimeConditionallyReadWriteAttributeUnforgeable())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeable, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeable, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeableGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "runtimeConditionallyReadWriteAttributeUnforgeable");
+    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeableGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "runtimeConditionallyReadWriteAttributeUnforgeable");
 }
 
-static inline bool setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeableSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
+static inline bool setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeableSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -428,12 +428,12 @@ static inline bool setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteA
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeable, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeable, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
-    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeableSetter>(*lexicalGlobalObject, thisValue, encodedValue, "runtimeConditionallyReadWriteAttributeUnforgeable");
+    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeableSetter>(*lexicalGlobalObject, thisValue, encodedValue, "runtimeConditionallyReadWriteAttributeUnforgeable");
 }
 
-static inline JSValue jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeablePrivateGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
+static inline JSValue jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeablePrivateGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -441,12 +441,12 @@ static inline JSValue jsTestConditionallyReadWriteRuntimeConditionallyReadWriteA
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<Node>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.runtimeConditionallyReadWriteAttributeUnforgeablePrivate())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeablePrivate, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeablePrivate, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeablePrivateGetter>(*lexicalGlobalObject, thisValue, "runtimeConditionallyReadWriteAttributeUnforgeablePrivate");
+    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeablePrivateGetter>(*lexicalGlobalObject, thisValue, "runtimeConditionallyReadWriteAttributeUnforgeablePrivate");
 }
 
-static inline bool setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeablePrivateSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
+static inline bool setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeablePrivateSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -459,12 +459,12 @@ static inline bool setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteA
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeablePrivate, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeablePrivate, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
-    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeablePrivateSetter>(*lexicalGlobalObject, thisValue, encodedValue, "runtimeConditionallyReadWriteAttributeUnforgeablePrivate");
+    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeablePrivateSetter>(*lexicalGlobalObject, thisValue, encodedValue, "runtimeConditionallyReadWriteAttributeUnforgeablePrivate");
 }
 
-static inline JSValue jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributePromiseGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
+static inline JSValue jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributePromiseGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -472,12 +472,12 @@ static inline JSValue jsTestConditionallyReadWriteRuntimeConditionallyReadWriteA
     RELEASE_AND_RETURN(throwScope, (toJS<IDLPromise<IDLDouble>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.runtimeConditionallyReadWriteAttributePromise())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributePromise, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributePromise, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributePromiseGetter, CastedThisErrorBehavior::RejectPromise>(*lexicalGlobalObject, thisValue, "runtimeConditionallyReadWriteAttributePromise");
+    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributePromiseGetter, CastedThisErrorBehavior::RejectPromise>(*lexicalGlobalObject, thisValue, "runtimeConditionallyReadWriteAttributePromise");
 }
 
-static inline bool setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributePromiseSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
+static inline bool setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributePromiseSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -490,12 +490,12 @@ static inline bool setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteA
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributePromise, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributePromise, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
-    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributePromiseSetter>(*lexicalGlobalObject, thisValue, encodedValue, "runtimeConditionallyReadWriteAttributePromise");
+    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributePromiseSetter>(*lexicalGlobalObject, thisValue, encodedValue, "runtimeConditionallyReadWriteAttributePromise");
 }
 
-static inline JSValue jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
+static inline JSValue jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -503,12 +503,12 @@ static inline JSValue jsTestConditionallyReadWriteSettingsConditionallyReadWrite
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<Node>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.settingsConditionallyReadWriteAttribute())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "settingsConditionallyReadWriteAttribute");
+    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "settingsConditionallyReadWriteAttribute");
 }
 
-static inline bool setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
+static inline bool setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -521,12 +521,12 @@ static inline bool setJSTestConditionallyReadWriteSettingsConditionallyReadWrite
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
-    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "settingsConditionallyReadWriteAttribute");
+    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "settingsConditionallyReadWriteAttribute");
 }
 
-static inline JSValue jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeableGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
+static inline JSValue jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeableGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -534,12 +534,12 @@ static inline JSValue jsTestConditionallyReadWriteSettingsConditionallyReadWrite
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<Node>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.settingsConditionallyReadWriteAttributeUnforgeable())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeable, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeable, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeableGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "settingsConditionallyReadWriteAttributeUnforgeable");
+    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeableGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "settingsConditionallyReadWriteAttributeUnforgeable");
 }
 
-static inline bool setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeableSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
+static inline bool setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeableSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -552,12 +552,12 @@ static inline bool setJSTestConditionallyReadWriteSettingsConditionallyReadWrite
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeable, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeable, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
-    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeableSetter>(*lexicalGlobalObject, thisValue, encodedValue, "settingsConditionallyReadWriteAttributeUnforgeable");
+    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeableSetter>(*lexicalGlobalObject, thisValue, encodedValue, "settingsConditionallyReadWriteAttributeUnforgeable");
 }
 
-static inline JSValue jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeablePrivateGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
+static inline JSValue jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeablePrivateGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -565,12 +565,12 @@ static inline JSValue jsTestConditionallyReadWriteSettingsConditionallyReadWrite
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<Node>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.settingsConditionallyReadWriteAttributeUnforgeablePrivate())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeablePrivate, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeablePrivate, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeablePrivateGetter>(*lexicalGlobalObject, thisValue, "settingsConditionallyReadWriteAttributeUnforgeablePrivate");
+    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeablePrivateGetter>(*lexicalGlobalObject, thisValue, "settingsConditionallyReadWriteAttributeUnforgeablePrivate");
 }
 
-static inline bool setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeablePrivateSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
+static inline bool setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeablePrivateSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -583,12 +583,12 @@ static inline bool setJSTestConditionallyReadWriteSettingsConditionallyReadWrite
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeablePrivate, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeablePrivate, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
-    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeablePrivateSetter>(*lexicalGlobalObject, thisValue, encodedValue, "settingsConditionallyReadWriteAttributeUnforgeablePrivate");
+    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeablePrivateSetter>(*lexicalGlobalObject, thisValue, encodedValue, "settingsConditionallyReadWriteAttributeUnforgeablePrivate");
 }
 
-static inline JSValue jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttributePromiseGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
+static inline JSValue jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributePromiseGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -596,12 +596,12 @@ static inline JSValue jsTestConditionallyReadWriteSettingsConditionallyReadWrite
     RELEASE_AND_RETURN(throwScope, (toJS<IDLPromise<IDLDouble>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.settingsConditionallyReadWriteAttributePromise())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttributePromise, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributePromise, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttributePromiseGetter, CastedThisErrorBehavior::RejectPromise>(*lexicalGlobalObject, thisValue, "settingsConditionallyReadWriteAttributePromise");
+    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributePromiseGetter, CastedThisErrorBehavior::RejectPromise>(*lexicalGlobalObject, thisValue, "settingsConditionallyReadWriteAttributePromise");
 }
 
-static inline bool setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttributePromiseSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
+static inline bool setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttributePromiseSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -614,9 +614,9 @@ static inline bool setJSTestConditionallyReadWriteSettingsConditionallyReadWrite
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttributePromise, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttributePromise, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
-    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttributePromiseSetter>(*lexicalGlobalObject, thisValue, encodedValue, "settingsConditionallyReadWriteAttributePromise");
+    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttributePromiseSetter>(*lexicalGlobalObject, thisValue, encodedValue, "settingsConditionallyReadWriteAttributePromise");
 }
 
 JSC::IsoSubspace* JSTestConditionallyReadWrite::subspaceForImpl(JSC::VM& vm)

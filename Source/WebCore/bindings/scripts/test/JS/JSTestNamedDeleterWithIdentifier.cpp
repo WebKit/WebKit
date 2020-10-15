@@ -47,7 +47,7 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestNamedDeleterWithIdentifierPrototypeFunctionNamedDeleter);
+JSC_DECLARE_HOST_FUNCTION(jsTestNamedDeleterWithIdentifierPrototypeFunction_namedDeleter);
 
 // Attributes
 
@@ -108,7 +108,7 @@ template<> const ClassInfo JSTestNamedDeleterWithIdentifierDOMConstructor::s_inf
 static const HashTableValue JSTestNamedDeleterWithIdentifierPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedDeleterWithIdentifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestNamedDeleterWithIdentifierConstructor) } },
-    { "namedDeleter", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamedDeleterWithIdentifierPrototypeFunctionNamedDeleter), (intptr_t) (1) } },
+    { "namedDeleter", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamedDeleterWithIdentifierPrototypeFunction_namedDeleter), (intptr_t) (1) } },
 };
 
 const ClassInfo JSTestNamedDeleterWithIdentifierPrototype::s_info = { "TestNamedDeleterWithIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedDeleterWithIdentifierPrototype) };
@@ -257,7 +257,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestNamedDeleterWithIdentifierConstructor, (JSGlob
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSC::EncodedJSValue jsTestNamedDeleterWithIdentifierPrototypeFunctionNamedDeleterBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestNamedDeleterWithIdentifier>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestNamedDeleterWithIdentifierPrototypeFunction_namedDeleterBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestNamedDeleterWithIdentifier>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -274,9 +274,9 @@ static inline JSC::EncodedJSValue jsTestNamedDeleterWithIdentifierPrototypeFunct
     return JSValue::encode(jsUndefined());
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestNamedDeleterWithIdentifierPrototypeFunctionNamedDeleter, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestNamedDeleterWithIdentifierPrototypeFunction_namedDeleter, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestNamedDeleterWithIdentifier>::call<jsTestNamedDeleterWithIdentifierPrototypeFunctionNamedDeleterBody>(*lexicalGlobalObject, *callFrame, "namedDeleter");
+    return IDLOperation<JSTestNamedDeleterWithIdentifier>::call<jsTestNamedDeleterWithIdentifierPrototypeFunction_namedDeleterBody>(*lexicalGlobalObject, *callFrame, "namedDeleter");
 }
 
 JSC::IsoSubspace* JSTestNamedDeleterWithIdentifier::subspaceForImpl(JSC::VM& vm)

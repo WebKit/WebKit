@@ -51,22 +51,22 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionClear);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionGet);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionHas);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionEntries);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionKeys);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionValues);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionForEach);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionDelete);
+JSC_DECLARE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_clear);
+JSC_DECLARE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_get);
+JSC_DECLARE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_has);
+JSC_DECLARE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_entries);
+JSC_DECLARE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_keys);
+JSC_DECLARE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_values);
+JSC_DECLARE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_forEach);
+JSC_DECLARE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_delete);
 
 // Attributes
 
 JSC_DECLARE_CUSTOM_GETTER(jsTestMapLikeWithOverriddenOperationsConstructor);
 JSC_DECLARE_CUSTOM_SETTER(setJSTestMapLikeWithOverriddenOperationsConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestMapLikeWithOverriddenOperationsSet);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestMapLikeWithOverriddenOperationsSet);
-JSC_DECLARE_CUSTOM_GETTER(jsTestMapLikeWithOverriddenOperationsSize);
+JSC_DECLARE_CUSTOM_GETTER(jsTestMapLikeWithOverriddenOperations_set);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestMapLikeWithOverriddenOperations_set);
+JSC_DECLARE_CUSTOM_GETTER(jsTestMapLikeWithOverriddenOperations_size);
 
 class JSTestMapLikeWithOverriddenOperationsPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -122,16 +122,16 @@ template<> const ClassInfo JSTestMapLikeWithOverriddenOperationsDOMConstructor::
 static const HashTableValue JSTestMapLikeWithOverriddenOperationsPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestMapLikeWithOverriddenOperationsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestMapLikeWithOverriddenOperationsConstructor) } },
-    { "set", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestMapLikeWithOverriddenOperationsSet), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestMapLikeWithOverriddenOperationsSet) } },
-    { "size", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestMapLikeWithOverriddenOperationsSize), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "clear", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionClear), (intptr_t) (0) } },
-    { "get", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionGet), (intptr_t) (1) } },
-    { "has", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionHas), (intptr_t) (1) } },
-    { "entries", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionEntries), (intptr_t) (0) } },
-    { "keys", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionKeys), (intptr_t) (0) } },
-    { "values", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionValues), (intptr_t) (0) } },
-    { "forEach", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionForEach), (intptr_t) (1) } },
-    { "delete", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionDelete), (intptr_t) (1) } },
+    { "set", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestMapLikeWithOverriddenOperations_set), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestMapLikeWithOverriddenOperations_set) } },
+    { "size", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestMapLikeWithOverriddenOperations_size), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "clear", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_clear), (intptr_t) (0) } },
+    { "get", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_get), (intptr_t) (1) } },
+    { "has", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_has), (intptr_t) (1) } },
+    { "entries", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_entries), (intptr_t) (0) } },
+    { "keys", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_keys), (intptr_t) (0) } },
+    { "values", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_values), (intptr_t) (0) } },
+    { "forEach", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_forEach), (intptr_t) (1) } },
+    { "delete", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_delete), (intptr_t) (1) } },
 };
 
 const ClassInfo JSTestMapLikeWithOverriddenOperationsPrototype::s_info = { "TestMapLikeWithOverriddenOperations", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestMapLikeWithOverriddenOperationsPrototype) };
@@ -214,7 +214,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestMapLikeWithOverriddenOperationsConstructor, (J
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSValue jsTestMapLikeWithOverriddenOperationsSetGetter(JSGlobalObject& lexicalGlobalObject, JSTestMapLikeWithOverriddenOperations& thisObject)
+static inline JSValue jsTestMapLikeWithOverriddenOperations_setGetter(JSGlobalObject& lexicalGlobalObject, JSTestMapLikeWithOverriddenOperations& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -222,12 +222,12 @@ static inline JSValue jsTestMapLikeWithOverriddenOperationsSetGetter(JSGlobalObj
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.set())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestMapLikeWithOverriddenOperationsSet, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestMapLikeWithOverriddenOperations_set, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestMapLikeWithOverriddenOperations>::get<jsTestMapLikeWithOverriddenOperationsSetGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "set");
+    return IDLAttribute<JSTestMapLikeWithOverriddenOperations>::get<jsTestMapLikeWithOverriddenOperations_setGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "set");
 }
 
-static inline bool setJSTestMapLikeWithOverriddenOperationsSetSetter(JSGlobalObject& lexicalGlobalObject, JSTestMapLikeWithOverriddenOperations& thisObject, JSValue value)
+static inline bool setJSTestMapLikeWithOverriddenOperations_setSetter(JSGlobalObject& lexicalGlobalObject, JSTestMapLikeWithOverriddenOperations& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -240,24 +240,24 @@ static inline bool setJSTestMapLikeWithOverriddenOperationsSetSetter(JSGlobalObj
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestMapLikeWithOverriddenOperationsSet, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestMapLikeWithOverriddenOperations_set, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
-    return IDLAttribute<JSTestMapLikeWithOverriddenOperations>::set<setJSTestMapLikeWithOverriddenOperationsSetSetter>(*lexicalGlobalObject, thisValue, encodedValue, "set");
+    return IDLAttribute<JSTestMapLikeWithOverriddenOperations>::set<setJSTestMapLikeWithOverriddenOperations_setSetter>(*lexicalGlobalObject, thisValue, encodedValue, "set");
 }
 
-static inline JSValue jsTestMapLikeWithOverriddenOperationsSizeGetter(JSGlobalObject& lexicalGlobalObject, JSTestMapLikeWithOverriddenOperations& thisObject)
+static inline JSValue jsTestMapLikeWithOverriddenOperations_sizeGetter(JSGlobalObject& lexicalGlobalObject, JSTestMapLikeWithOverriddenOperations& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     RELEASE_AND_RETURN(throwScope, (toJS<IDLAny>(lexicalGlobalObject, throwScope, forwardSizeToMapLike(lexicalGlobalObject, thisObject))));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestMapLikeWithOverriddenOperationsSize, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestMapLikeWithOverriddenOperations_size, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestMapLikeWithOverriddenOperations>::get<jsTestMapLikeWithOverriddenOperationsSizeGetter>(*lexicalGlobalObject, thisValue, "size");
+    return IDLAttribute<JSTestMapLikeWithOverriddenOperations>::get<jsTestMapLikeWithOverriddenOperations_sizeGetter>(*lexicalGlobalObject, thisValue, "size");
 }
 
-static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototypeFunctionClearBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLikeWithOverriddenOperations>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototypeFunction_clearBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLikeWithOverriddenOperations>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -269,12 +269,12 @@ static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototype
     return JSValue::encode(jsUndefined());
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionClear, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_clear, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestMapLikeWithOverriddenOperations>::call<jsTestMapLikeWithOverriddenOperationsPrototypeFunctionClearBody>(*lexicalGlobalObject, *callFrame, "clear");
+    return IDLOperation<JSTestMapLikeWithOverriddenOperations>::call<jsTestMapLikeWithOverriddenOperationsPrototypeFunction_clearBody>(*lexicalGlobalObject, *callFrame, "clear");
 }
 
-static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototypeFunctionGetBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLikeWithOverriddenOperations>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototypeFunction_getBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLikeWithOverriddenOperations>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -288,12 +288,12 @@ static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototype
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardGetToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key)))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionGet, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_get, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestMapLikeWithOverriddenOperations>::call<jsTestMapLikeWithOverriddenOperationsPrototypeFunctionGetBody>(*lexicalGlobalObject, *callFrame, "get");
+    return IDLOperation<JSTestMapLikeWithOverriddenOperations>::call<jsTestMapLikeWithOverriddenOperationsPrototypeFunction_getBody>(*lexicalGlobalObject, *callFrame, "get");
 }
 
-static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototypeFunctionHasBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLikeWithOverriddenOperations>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototypeFunction_hasBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLikeWithOverriddenOperations>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -307,12 +307,12 @@ static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototype
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardHasToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key)))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionHas, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_has, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestMapLikeWithOverriddenOperations>::call<jsTestMapLikeWithOverriddenOperationsPrototypeFunctionHasBody>(*lexicalGlobalObject, *callFrame, "has");
+    return IDLOperation<JSTestMapLikeWithOverriddenOperations>::call<jsTestMapLikeWithOverriddenOperationsPrototypeFunction_hasBody>(*lexicalGlobalObject, *callFrame, "has");
 }
 
-static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototypeFunctionEntriesBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLikeWithOverriddenOperations>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototypeFunction_entriesBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLikeWithOverriddenOperations>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -321,12 +321,12 @@ static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototype
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardEntriesToMapLike(*lexicalGlobalObject, *callFrame, *castedThis))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionEntries, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_entries, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestMapLikeWithOverriddenOperations>::call<jsTestMapLikeWithOverriddenOperationsPrototypeFunctionEntriesBody>(*lexicalGlobalObject, *callFrame, "entries");
+    return IDLOperation<JSTestMapLikeWithOverriddenOperations>::call<jsTestMapLikeWithOverriddenOperationsPrototypeFunction_entriesBody>(*lexicalGlobalObject, *callFrame, "entries");
 }
 
-static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototypeFunctionKeysBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLikeWithOverriddenOperations>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototypeFunction_keysBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLikeWithOverriddenOperations>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -335,12 +335,12 @@ static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototype
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardKeysToMapLike(*lexicalGlobalObject, *callFrame, *castedThis))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionKeys, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_keys, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestMapLikeWithOverriddenOperations>::call<jsTestMapLikeWithOverriddenOperationsPrototypeFunctionKeysBody>(*lexicalGlobalObject, *callFrame, "keys");
+    return IDLOperation<JSTestMapLikeWithOverriddenOperations>::call<jsTestMapLikeWithOverriddenOperationsPrototypeFunction_keysBody>(*lexicalGlobalObject, *callFrame, "keys");
 }
 
-static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototypeFunctionValuesBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLikeWithOverriddenOperations>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototypeFunction_valuesBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLikeWithOverriddenOperations>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -349,12 +349,12 @@ static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototype
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardValuesToMapLike(*lexicalGlobalObject, *callFrame, *castedThis))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionValues, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_values, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestMapLikeWithOverriddenOperations>::call<jsTestMapLikeWithOverriddenOperationsPrototypeFunctionValuesBody>(*lexicalGlobalObject, *callFrame, "values");
+    return IDLOperation<JSTestMapLikeWithOverriddenOperations>::call<jsTestMapLikeWithOverriddenOperationsPrototypeFunction_valuesBody>(*lexicalGlobalObject, *callFrame, "values");
 }
 
-static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototypeFunctionForEachBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLikeWithOverriddenOperations>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototypeFunction_forEachBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLikeWithOverriddenOperations>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -368,12 +368,12 @@ static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototype
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardForEachToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(callback)))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionForEach, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_forEach, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestMapLikeWithOverriddenOperations>::call<jsTestMapLikeWithOverriddenOperationsPrototypeFunctionForEachBody>(*lexicalGlobalObject, *callFrame, "forEach");
+    return IDLOperation<JSTestMapLikeWithOverriddenOperations>::call<jsTestMapLikeWithOverriddenOperationsPrototypeFunction_forEachBody>(*lexicalGlobalObject, *callFrame, "forEach");
 }
 
-static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototypeFunctionDeleteBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLikeWithOverriddenOperations>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototypeFunction_deleteBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLikeWithOverriddenOperations>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -387,9 +387,9 @@ static inline JSC::EncodedJSValue jsTestMapLikeWithOverriddenOperationsPrototype
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardDeleteToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key)))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunctionDelete, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_delete, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestMapLikeWithOverriddenOperations>::call<jsTestMapLikeWithOverriddenOperationsPrototypeFunctionDeleteBody>(*lexicalGlobalObject, *callFrame, "delete");
+    return IDLOperation<JSTestMapLikeWithOverriddenOperations>::call<jsTestMapLikeWithOverriddenOperationsPrototypeFunction_deleteBody>(*lexicalGlobalObject, *callFrame, "delete");
 }
 
 JSC::IsoSubspace* JSTestMapLikeWithOverriddenOperations::subspaceForImpl(JSC::VM& vm)

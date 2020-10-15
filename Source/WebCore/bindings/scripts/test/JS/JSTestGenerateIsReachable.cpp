@@ -48,7 +48,7 @@ using namespace JSC;
 
 JSC_DECLARE_CUSTOM_GETTER(jsTestGenerateIsReachableConstructor);
 JSC_DECLARE_CUSTOM_SETTER(setJSTestGenerateIsReachableConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestGenerateIsReachableASecretAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestGenerateIsReachable_aSecretAttribute);
 
 class JSTestGenerateIsReachablePrototype final : public JSC::JSNonFinalObject {
 public:
@@ -104,7 +104,7 @@ template<> const ClassInfo JSTestGenerateIsReachableDOMConstructor::s_info = { "
 static const HashTableValue JSTestGenerateIsReachablePrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGenerateIsReachableConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGenerateIsReachableConstructor) } },
-    { "aSecretAttribute", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGenerateIsReachableASecretAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "aSecretAttribute", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGenerateIsReachable_aSecretAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
 const ClassInfo JSTestGenerateIsReachablePrototype::s_info = { "TestGenerateIsReachable", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestGenerateIsReachablePrototype) };
@@ -191,7 +191,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestGenerateIsReachableConstructor, (JSGlobalObjec
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSValue jsTestGenerateIsReachableASecretAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestGenerateIsReachable& thisObject)
+static inline JSValue jsTestGenerateIsReachable_aSecretAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestGenerateIsReachable& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -199,9 +199,9 @@ static inline JSValue jsTestGenerateIsReachableASecretAttributeGetter(JSGlobalOb
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.aSecretAttribute())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestGenerateIsReachableASecretAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestGenerateIsReachable_aSecretAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestGenerateIsReachable>::get<jsTestGenerateIsReachableASecretAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "aSecretAttribute");
+    return IDLAttribute<JSTestGenerateIsReachable>::get<jsTestGenerateIsReachable_aSecretAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "aSecretAttribute");
 }
 
 JSC::IsoSubspace* JSTestGenerateIsReachable::subspaceForImpl(JSC::VM& vm)

@@ -56,20 +56,20 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestSerializedScriptValueInterfacePrototypeFunctionFunction);
-JSC_DECLARE_HOST_FUNCTION(jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturning);
+JSC_DECLARE_HOST_FUNCTION(jsTestSerializedScriptValueInterfacePrototypeFunction_function);
+JSC_DECLARE_HOST_FUNCTION(jsTestSerializedScriptValueInterfacePrototypeFunction_functionReturning);
 
 // Attributes
 
 JSC_DECLARE_CUSTOM_GETTER(jsTestSerializedScriptValueInterfaceConstructor);
 JSC_DECLARE_CUSTOM_SETTER(setJSTestSerializedScriptValueInterfaceConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestSerializedScriptValueInterfaceValue);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestSerializedScriptValueInterfaceValue);
-JSC_DECLARE_CUSTOM_GETTER(jsTestSerializedScriptValueInterfaceReadonlyValue);
-JSC_DECLARE_CUSTOM_GETTER(jsTestSerializedScriptValueInterfaceCachedValue);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestSerializedScriptValueInterfaceCachedValue);
-JSC_DECLARE_CUSTOM_GETTER(jsTestSerializedScriptValueInterfacePorts);
-JSC_DECLARE_CUSTOM_GETTER(jsTestSerializedScriptValueInterfaceCachedReadonlyValue);
+JSC_DECLARE_CUSTOM_GETTER(jsTestSerializedScriptValueInterface_value);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestSerializedScriptValueInterface_value);
+JSC_DECLARE_CUSTOM_GETTER(jsTestSerializedScriptValueInterface_readonlyValue);
+JSC_DECLARE_CUSTOM_GETTER(jsTestSerializedScriptValueInterface_cachedValue);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestSerializedScriptValueInterface_cachedValue);
+JSC_DECLARE_CUSTOM_GETTER(jsTestSerializedScriptValueInterface_ports);
+JSC_DECLARE_CUSTOM_GETTER(jsTestSerializedScriptValueInterface_cachedReadonlyValue);
 
 class JSTestSerializedScriptValueInterfacePrototype final : public JSC::JSNonFinalObject {
 public:
@@ -125,13 +125,13 @@ template<> const ClassInfo JSTestSerializedScriptValueInterfaceDOMConstructor::s
 static const HashTableValue JSTestSerializedScriptValueInterfacePrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSerializedScriptValueInterfaceConstructor) } },
-    { "value", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSerializedScriptValueInterfaceValue) } },
-    { "readonlyValue", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceReadonlyValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "cachedValue", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceCachedValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSerializedScriptValueInterfaceCachedValue) } },
-    { "ports", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfacePorts), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "cachedReadonlyValue", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceCachedReadonlyValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "function", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSerializedScriptValueInterfacePrototypeFunctionFunction), (intptr_t) (1) } },
-    { "functionReturning", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturning), (intptr_t) (0) } },
+    { "value", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterface_value), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSerializedScriptValueInterface_value) } },
+    { "readonlyValue", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterface_readonlyValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "cachedValue", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterface_cachedValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSerializedScriptValueInterface_cachedValue) } },
+    { "ports", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterface_ports), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "cachedReadonlyValue", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterface_cachedReadonlyValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "function", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSerializedScriptValueInterfacePrototypeFunction_function), (intptr_t) (1) } },
+    { "functionReturning", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSerializedScriptValueInterfacePrototypeFunction_functionReturning), (intptr_t) (0) } },
 };
 
 const ClassInfo JSTestSerializedScriptValueInterfacePrototype::s_info = { "TestSerializedScriptValueInterface", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterfacePrototype) };
@@ -213,7 +213,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestSerializedScriptValueInterfaceConstructor, (JS
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSValue jsTestSerializedScriptValueInterfaceValueGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializedScriptValueInterface& thisObject)
+static inline JSValue jsTestSerializedScriptValueInterface_valueGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializedScriptValueInterface& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -221,12 +221,12 @@ static inline JSValue jsTestSerializedScriptValueInterfaceValueGetter(JSGlobalOb
     RELEASE_AND_RETURN(throwScope, (toJS<IDLSerializedScriptValue<SerializedScriptValue>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.value())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestSerializedScriptValueInterfaceValue, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestSerializedScriptValueInterface_value, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestSerializedScriptValueInterface>::get<jsTestSerializedScriptValueInterfaceValueGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "value");
+    return IDLAttribute<JSTestSerializedScriptValueInterface>::get<jsTestSerializedScriptValueInterface_valueGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "value");
 }
 
-static inline bool setJSTestSerializedScriptValueInterfaceValueSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializedScriptValueInterface& thisObject, JSValue value)
+static inline bool setJSTestSerializedScriptValueInterface_valueSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializedScriptValueInterface& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -239,12 +239,12 @@ static inline bool setJSTestSerializedScriptValueInterfaceValueSetter(JSGlobalOb
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestSerializedScriptValueInterfaceValue, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestSerializedScriptValueInterface_value, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
-    return IDLAttribute<JSTestSerializedScriptValueInterface>::set<setJSTestSerializedScriptValueInterfaceValueSetter>(*lexicalGlobalObject, thisValue, encodedValue, "value");
+    return IDLAttribute<JSTestSerializedScriptValueInterface>::set<setJSTestSerializedScriptValueInterface_valueSetter>(*lexicalGlobalObject, thisValue, encodedValue, "value");
 }
 
-static inline JSValue jsTestSerializedScriptValueInterfaceReadonlyValueGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializedScriptValueInterface& thisObject)
+static inline JSValue jsTestSerializedScriptValueInterface_readonlyValueGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializedScriptValueInterface& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -252,12 +252,12 @@ static inline JSValue jsTestSerializedScriptValueInterfaceReadonlyValueGetter(JS
     RELEASE_AND_RETURN(throwScope, (toJS<IDLSerializedScriptValue<SerializedScriptValue>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.readonlyValue())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestSerializedScriptValueInterfaceReadonlyValue, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestSerializedScriptValueInterface_readonlyValue, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestSerializedScriptValueInterface>::get<jsTestSerializedScriptValueInterfaceReadonlyValueGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "readonlyValue");
+    return IDLAttribute<JSTestSerializedScriptValueInterface>::get<jsTestSerializedScriptValueInterface_readonlyValueGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "readonlyValue");
 }
 
-static inline JSValue jsTestSerializedScriptValueInterfaceCachedValueGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializedScriptValueInterface& thisObject)
+static inline JSValue jsTestSerializedScriptValueInterface_cachedValueGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializedScriptValueInterface& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -270,12 +270,12 @@ static inline JSValue jsTestSerializedScriptValueInterfaceCachedValueGetter(JSGl
     return result;
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestSerializedScriptValueInterfaceCachedValue, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestSerializedScriptValueInterface_cachedValue, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestSerializedScriptValueInterface>::get<jsTestSerializedScriptValueInterfaceCachedValueGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "cachedValue");
+    return IDLAttribute<JSTestSerializedScriptValueInterface>::get<jsTestSerializedScriptValueInterface_cachedValueGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "cachedValue");
 }
 
-static inline bool setJSTestSerializedScriptValueInterfaceCachedValueSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializedScriptValueInterface& thisObject, JSValue value)
+static inline bool setJSTestSerializedScriptValueInterface_cachedValueSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializedScriptValueInterface& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -288,12 +288,12 @@ static inline bool setJSTestSerializedScriptValueInterfaceCachedValueSetter(JSGl
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestSerializedScriptValueInterfaceCachedValue, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestSerializedScriptValueInterface_cachedValue, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
-    return IDLAttribute<JSTestSerializedScriptValueInterface>::set<setJSTestSerializedScriptValueInterfaceCachedValueSetter>(*lexicalGlobalObject, thisValue, encodedValue, "cachedValue");
+    return IDLAttribute<JSTestSerializedScriptValueInterface>::set<setJSTestSerializedScriptValueInterface_cachedValueSetter>(*lexicalGlobalObject, thisValue, encodedValue, "cachedValue");
 }
 
-static inline JSValue jsTestSerializedScriptValueInterfacePortsGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializedScriptValueInterface& thisObject)
+static inline JSValue jsTestSerializedScriptValueInterface_portsGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializedScriptValueInterface& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -301,12 +301,12 @@ static inline JSValue jsTestSerializedScriptValueInterfacePortsGetter(JSGlobalOb
     RELEASE_AND_RETURN(throwScope, (toJS<IDLSequence<IDLInterface<MessagePort>>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.ports())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestSerializedScriptValueInterfacePorts, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestSerializedScriptValueInterface_ports, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestSerializedScriptValueInterface>::get<jsTestSerializedScriptValueInterfacePortsGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "ports");
+    return IDLAttribute<JSTestSerializedScriptValueInterface>::get<jsTestSerializedScriptValueInterface_portsGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "ports");
 }
 
-static inline JSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValueGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializedScriptValueInterface& thisObject)
+static inline JSValue jsTestSerializedScriptValueInterface_cachedReadonlyValueGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializedScriptValueInterface& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -319,12 +319,12 @@ static inline JSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValueGet
     return result;
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestSerializedScriptValueInterfaceCachedReadonlyValue, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestSerializedScriptValueInterface_cachedReadonlyValue, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestSerializedScriptValueInterface>::get<jsTestSerializedScriptValueInterfaceCachedReadonlyValueGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "cachedReadonlyValue");
+    return IDLAttribute<JSTestSerializedScriptValueInterface>::get<jsTestSerializedScriptValueInterface_cachedReadonlyValueGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "cachedReadonlyValue");
 }
 
-static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestSerializedScriptValueInterface>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeFunction_functionBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestSerializedScriptValueInterface>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -341,12 +341,12 @@ static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeF
     return JSValue::encode(jsUndefined());
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestSerializedScriptValueInterfacePrototypeFunctionFunction, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestSerializedScriptValueInterfacePrototypeFunction_function, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestSerializedScriptValueInterface>::call<jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionBody>(*lexicalGlobalObject, *callFrame, "function");
+    return IDLOperation<JSTestSerializedScriptValueInterface>::call<jsTestSerializedScriptValueInterfacePrototypeFunction_functionBody>(*lexicalGlobalObject, *callFrame, "function");
 }
 
-static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturningBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestSerializedScriptValueInterface>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeFunction_functionReturningBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestSerializedScriptValueInterface>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -356,9 +356,9 @@ static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeF
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLSerializedScriptValue<SerializedScriptValue>>(*lexicalGlobalObject, *castedThis->globalObject(), impl.functionReturning())));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturning, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestSerializedScriptValueInterfacePrototypeFunction_functionReturning, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestSerializedScriptValueInterface>::call<jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturningBody>(*lexicalGlobalObject, *callFrame, "functionReturning");
+    return IDLOperation<JSTestSerializedScriptValueInterface>::call<jsTestSerializedScriptValueInterfacePrototypeFunction_functionReturningBody>(*lexicalGlobalObject, *callFrame, "functionReturning");
 }
 
 JSC::IsoSubspace* JSTestSerializedScriptValueInterface::subspaceForImpl(JSC::VM& vm)

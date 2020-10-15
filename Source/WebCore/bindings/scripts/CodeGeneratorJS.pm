@@ -1853,7 +1853,7 @@ sub MangleAttributeOrFunctionName
 
     $name =~ s/-/_dash_/g;
 
-    return $name;
+    return $name =~ /^_/ ? $name : '_' . $name;
 }
 
 sub GetAttributeGetterName
@@ -1861,9 +1861,9 @@ sub GetAttributeGetterName
     my ($interface, $className, $attribute) = @_;
 
     return GetJSBuiltinFunctionName($className, $attribute) if IsJSBuiltin($interface, $attribute);
-    return $codeGenerator->WK_lcfirst($className) . "Constructor" . $codeGenerator->WK_ucfirst(MangleAttributeOrFunctionName($attribute->name)) if $attribute->isStatic;
-    return $codeGenerator->WK_lcfirst($className) . $codeGenerator->WK_ucfirst(MangleAttributeOrFunctionName($attribute->name)) . "Constructor" if $codeGenerator->IsConstructorType($attribute->type);
-    return $codeGenerator->WK_lcfirst($className) . $codeGenerator->WK_ucfirst(MangleAttributeOrFunctionName($attribute->name));
+    return $codeGenerator->WK_lcfirst($className) . "Constructor" . MangleAttributeOrFunctionName($attribute->name) if $attribute->isStatic;
+    return $codeGenerator->WK_lcfirst($className) . MangleAttributeOrFunctionName($attribute->name) . "Constructor" if $codeGenerator->IsConstructorType($attribute->type);
+    return $codeGenerator->WK_lcfirst($className) . MangleAttributeOrFunctionName($attribute->name);
 }
 
 sub GetAttributeSetterName
@@ -1871,9 +1871,9 @@ sub GetAttributeSetterName
     my ($interface, $className, $attribute) = @_;
 
     return "set" . $codeGenerator->WK_ucfirst(GetJSBuiltinFunctionName($className, $attribute)) if IsJSBuiltin($interface, $attribute);
-    return "set" . $codeGenerator->WK_ucfirst($className) . "Constructor" . $codeGenerator->WK_ucfirst(MangleAttributeOrFunctionName($attribute->name)) if $attribute->isStatic;
-    return "set" . $codeGenerator->WK_ucfirst($className) . $codeGenerator->WK_ucfirst(MangleAttributeOrFunctionName($attribute->name)) . "Constructor" if $codeGenerator->IsConstructorType($attribute->type);
-    return "set" . $codeGenerator->WK_ucfirst($className) . $codeGenerator->WK_ucfirst(MangleAttributeOrFunctionName($attribute->name));
+    return "set" . $codeGenerator->WK_ucfirst($className) . "Constructor" . MangleAttributeOrFunctionName($attribute->name) if $attribute->isStatic;
+    return "set" . $codeGenerator->WK_ucfirst($className) . MangleAttributeOrFunctionName($attribute->name) . "Constructor" if $codeGenerator->IsConstructorType($attribute->type);
+    return "set" . $codeGenerator->WK_ucfirst($className) . MangleAttributeOrFunctionName($attribute->name);
 }
 
 sub GetFunctionName
@@ -1886,7 +1886,7 @@ sub GetFunctionName
     $functionName = "SymbolIterator" if $functionName eq "[Symbol.Iterator]";
 
     my $kind = $operation->isStatic ? "Constructor" : (OperationShouldBeOnInstance($interface, $operation) ? "Instance" : "Prototype");
-    return $codeGenerator->WK_lcfirst($className) . $kind . "Function" . $codeGenerator->WK_ucfirst(MangleAttributeOrFunctionName($functionName));
+    return $codeGenerator->WK_lcfirst($className) . $kind . "Function" . MangleAttributeOrFunctionName($functionName);
 }
 
 sub GetFullyQualifiedImplementationCallName

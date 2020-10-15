@@ -50,21 +50,21 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunctionGet);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunctionHas);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunctionEntries);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunctionKeys);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunctionValues);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunctionForEach);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunctionSet);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunctionClear);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunctionDelete);
+JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_get);
+JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_has);
+JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_entries);
+JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_keys);
+JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_values);
+JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_forEach);
+JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_set);
+JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_clear);
+JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_delete);
 
 // Attributes
 
 JSC_DECLARE_CUSTOM_GETTER(jsTestMapLikeConstructor);
 JSC_DECLARE_CUSTOM_SETTER(setJSTestMapLikeConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestMapLikeSize);
+JSC_DECLARE_CUSTOM_GETTER(jsTestMapLike_size);
 
 class JSTestMapLikePrototype final : public JSC::JSNonFinalObject {
 public:
@@ -120,16 +120,16 @@ template<> const ClassInfo JSTestMapLikeDOMConstructor::s_info = { "TestMapLike"
 static const HashTableValue JSTestMapLikePrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestMapLikeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestMapLikeConstructor) } },
-    { "size", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestMapLikeSize), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "get", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikePrototypeFunctionGet), (intptr_t) (1) } },
-    { "has", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikePrototypeFunctionHas), (intptr_t) (1) } },
-    { "entries", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikePrototypeFunctionEntries), (intptr_t) (0) } },
-    { "keys", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikePrototypeFunctionKeys), (intptr_t) (0) } },
-    { "values", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikePrototypeFunctionValues), (intptr_t) (0) } },
-    { "forEach", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikePrototypeFunctionForEach), (intptr_t) (1) } },
-    { "set", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikePrototypeFunctionSet), (intptr_t) (2) } },
-    { "clear", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikePrototypeFunctionClear), (intptr_t) (0) } },
-    { "delete", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikePrototypeFunctionDelete), (intptr_t) (1) } },
+    { "size", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestMapLike_size), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "get", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikePrototypeFunction_get), (intptr_t) (1) } },
+    { "has", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikePrototypeFunction_has), (intptr_t) (1) } },
+    { "entries", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikePrototypeFunction_entries), (intptr_t) (0) } },
+    { "keys", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikePrototypeFunction_keys), (intptr_t) (0) } },
+    { "values", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikePrototypeFunction_values), (intptr_t) (0) } },
+    { "forEach", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikePrototypeFunction_forEach), (intptr_t) (1) } },
+    { "set", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikePrototypeFunction_set), (intptr_t) (2) } },
+    { "clear", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikePrototypeFunction_clear), (intptr_t) (0) } },
+    { "delete", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikePrototypeFunction_delete), (intptr_t) (1) } },
 };
 
 const ClassInfo JSTestMapLikePrototype::s_info = { "TestMapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestMapLikePrototype) };
@@ -212,19 +212,19 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestMapLikeConstructor, (JSGlobalObject* lexicalGl
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSValue jsTestMapLikeSizeGetter(JSGlobalObject& lexicalGlobalObject, JSTestMapLike& thisObject)
+static inline JSValue jsTestMapLike_sizeGetter(JSGlobalObject& lexicalGlobalObject, JSTestMapLike& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     RELEASE_AND_RETURN(throwScope, (toJS<IDLAny>(lexicalGlobalObject, throwScope, forwardSizeToMapLike(lexicalGlobalObject, thisObject))));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestMapLikeSize, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestMapLike_size, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestMapLike>::get<jsTestMapLikeSizeGetter>(*lexicalGlobalObject, thisValue, "size");
+    return IDLAttribute<JSTestMapLike>::get<jsTestMapLike_sizeGetter>(*lexicalGlobalObject, thisValue, "size");
 }
 
-static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunctionGetBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLike>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunction_getBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLike>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -238,12 +238,12 @@ static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunctionGetBody(JSC::JSG
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardGetToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key)))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestMapLikePrototypeFunctionGet, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_get, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestMapLike>::call<jsTestMapLikePrototypeFunctionGetBody>(*lexicalGlobalObject, *callFrame, "get");
+    return IDLOperation<JSTestMapLike>::call<jsTestMapLikePrototypeFunction_getBody>(*lexicalGlobalObject, *callFrame, "get");
 }
 
-static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunctionHasBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLike>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunction_hasBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLike>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -257,12 +257,12 @@ static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunctionHasBody(JSC::JSG
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardHasToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key)))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestMapLikePrototypeFunctionHas, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_has, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestMapLike>::call<jsTestMapLikePrototypeFunctionHasBody>(*lexicalGlobalObject, *callFrame, "has");
+    return IDLOperation<JSTestMapLike>::call<jsTestMapLikePrototypeFunction_hasBody>(*lexicalGlobalObject, *callFrame, "has");
 }
 
-static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunctionEntriesBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLike>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunction_entriesBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLike>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -271,12 +271,12 @@ static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunctionEntriesBody(JSC:
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardEntriesToMapLike(*lexicalGlobalObject, *callFrame, *castedThis))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestMapLikePrototypeFunctionEntries, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_entries, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestMapLike>::call<jsTestMapLikePrototypeFunctionEntriesBody>(*lexicalGlobalObject, *callFrame, "entries");
+    return IDLOperation<JSTestMapLike>::call<jsTestMapLikePrototypeFunction_entriesBody>(*lexicalGlobalObject, *callFrame, "entries");
 }
 
-static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunctionKeysBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLike>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunction_keysBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLike>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -285,12 +285,12 @@ static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunctionKeysBody(JSC::JS
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardKeysToMapLike(*lexicalGlobalObject, *callFrame, *castedThis))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestMapLikePrototypeFunctionKeys, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_keys, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestMapLike>::call<jsTestMapLikePrototypeFunctionKeysBody>(*lexicalGlobalObject, *callFrame, "keys");
+    return IDLOperation<JSTestMapLike>::call<jsTestMapLikePrototypeFunction_keysBody>(*lexicalGlobalObject, *callFrame, "keys");
 }
 
-static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunctionValuesBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLike>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunction_valuesBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLike>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -299,12 +299,12 @@ static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunctionValuesBody(JSC::
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardValuesToMapLike(*lexicalGlobalObject, *callFrame, *castedThis))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestMapLikePrototypeFunctionValues, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_values, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestMapLike>::call<jsTestMapLikePrototypeFunctionValuesBody>(*lexicalGlobalObject, *callFrame, "values");
+    return IDLOperation<JSTestMapLike>::call<jsTestMapLikePrototypeFunction_valuesBody>(*lexicalGlobalObject, *callFrame, "values");
 }
 
-static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunctionForEachBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLike>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunction_forEachBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLike>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -318,12 +318,12 @@ static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunctionForEachBody(JSC:
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardForEachToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(callback)))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestMapLikePrototypeFunctionForEach, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_forEach, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestMapLike>::call<jsTestMapLikePrototypeFunctionForEachBody>(*lexicalGlobalObject, *callFrame, "forEach");
+    return IDLOperation<JSTestMapLike>::call<jsTestMapLikePrototypeFunction_forEachBody>(*lexicalGlobalObject, *callFrame, "forEach");
 }
 
-static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunctionSetBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLike>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunction_setBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLike>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -340,12 +340,12 @@ static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunctionSetBody(JSC::JSG
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardSetToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key), WTFMove(value)))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestMapLikePrototypeFunctionSet, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_set, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestMapLike>::call<jsTestMapLikePrototypeFunctionSetBody>(*lexicalGlobalObject, *callFrame, "set");
+    return IDLOperation<JSTestMapLike>::call<jsTestMapLikePrototypeFunction_setBody>(*lexicalGlobalObject, *callFrame, "set");
 }
 
-static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunctionClearBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLike>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunction_clearBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLike>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -356,12 +356,12 @@ static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunctionClearBody(JSC::J
     return JSValue::encode(jsUndefined());
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestMapLikePrototypeFunctionClear, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_clear, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestMapLike>::call<jsTestMapLikePrototypeFunctionClearBody>(*lexicalGlobalObject, *callFrame, "clear");
+    return IDLOperation<JSTestMapLike>::call<jsTestMapLikePrototypeFunction_clearBody>(*lexicalGlobalObject, *callFrame, "clear");
 }
 
-static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunctionDeleteBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLike>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunction_deleteBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestMapLike>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -375,9 +375,9 @@ static inline JSC::EncodedJSValue jsTestMapLikePrototypeFunctionDeleteBody(JSC::
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardDeleteToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key)))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestMapLikePrototypeFunctionDelete, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_delete, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestMapLike>::call<jsTestMapLikePrototypeFunctionDeleteBody>(*lexicalGlobalObject, *callFrame, "delete");
+    return IDLOperation<JSTestMapLike>::call<jsTestMapLikePrototypeFunction_deleteBody>(*lexicalGlobalObject, *callFrame, "delete");
 }
 
 JSC::IsoSubspace* JSTestMapLike::subspaceForImpl(JSC::VM& vm)

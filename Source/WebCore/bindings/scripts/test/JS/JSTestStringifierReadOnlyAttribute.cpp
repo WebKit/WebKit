@@ -47,13 +47,13 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestStringifierReadOnlyAttributePrototypeFunctionToString);
+JSC_DECLARE_HOST_FUNCTION(jsTestStringifierReadOnlyAttributePrototypeFunction_toString);
 
 // Attributes
 
 JSC_DECLARE_CUSTOM_GETTER(jsTestStringifierReadOnlyAttributeConstructor);
 JSC_DECLARE_CUSTOM_SETTER(setJSTestStringifierReadOnlyAttributeConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestStringifierReadOnlyAttributeIdentifier);
+JSC_DECLARE_CUSTOM_GETTER(jsTestStringifierReadOnlyAttribute_identifier);
 
 class JSTestStringifierReadOnlyAttributePrototype final : public JSC::JSNonFinalObject {
 public:
@@ -109,8 +109,8 @@ template<> const ClassInfo JSTestStringifierReadOnlyAttributeDOMConstructor::s_i
 static const HashTableValue JSTestStringifierReadOnlyAttributePrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestStringifierReadOnlyAttributeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestStringifierReadOnlyAttributeConstructor) } },
-    { "identifier", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestStringifierReadOnlyAttributeIdentifier), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "toString", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestStringifierReadOnlyAttributePrototypeFunctionToString), (intptr_t) (0) } },
+    { "identifier", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestStringifierReadOnlyAttribute_identifier), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "toString", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestStringifierReadOnlyAttributePrototypeFunction_toString), (intptr_t) (0) } },
 };
 
 const ClassInfo JSTestStringifierReadOnlyAttributePrototype::s_info = { "TestStringifierReadOnlyAttribute", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierReadOnlyAttributePrototype) };
@@ -192,7 +192,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestStringifierReadOnlyAttributeConstructor, (JSGl
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSValue jsTestStringifierReadOnlyAttributeIdentifierGetter(JSGlobalObject& lexicalGlobalObject, JSTestStringifierReadOnlyAttribute& thisObject)
+static inline JSValue jsTestStringifierReadOnlyAttribute_identifierGetter(JSGlobalObject& lexicalGlobalObject, JSTestStringifierReadOnlyAttribute& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -200,12 +200,12 @@ static inline JSValue jsTestStringifierReadOnlyAttributeIdentifierGetter(JSGloba
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.identifier())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestStringifierReadOnlyAttributeIdentifier, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestStringifierReadOnlyAttribute_identifier, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestStringifierReadOnlyAttribute>::get<jsTestStringifierReadOnlyAttributeIdentifierGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "identifier");
+    return IDLAttribute<JSTestStringifierReadOnlyAttribute>::get<jsTestStringifierReadOnlyAttribute_identifierGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "identifier");
 }
 
-static inline JSC::EncodedJSValue jsTestStringifierReadOnlyAttributePrototypeFunctionToStringBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestStringifierReadOnlyAttribute>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestStringifierReadOnlyAttributePrototypeFunction_toStringBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestStringifierReadOnlyAttribute>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -215,9 +215,9 @@ static inline JSC::EncodedJSValue jsTestStringifierReadOnlyAttributePrototypeFun
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, impl.identifier())));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestStringifierReadOnlyAttributePrototypeFunctionToString, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestStringifierReadOnlyAttributePrototypeFunction_toString, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestStringifierReadOnlyAttribute>::call<jsTestStringifierReadOnlyAttributePrototypeFunctionToStringBody>(*lexicalGlobalObject, *callFrame, "toString");
+    return IDLOperation<JSTestStringifierReadOnlyAttribute>::call<jsTestStringifierReadOnlyAttributePrototypeFunction_toStringBody>(*lexicalGlobalObject, *callFrame, "toString");
 }
 
 JSC::IsoSubspace* JSTestStringifierReadOnlyAttribute::subspaceForImpl(JSC::VM& vm)

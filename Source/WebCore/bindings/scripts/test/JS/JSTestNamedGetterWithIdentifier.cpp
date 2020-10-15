@@ -47,7 +47,7 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestNamedGetterWithIdentifierPrototypeFunctionGetterName);
+JSC_DECLARE_HOST_FUNCTION(jsTestNamedGetterWithIdentifierPrototypeFunction_getterName);
 
 // Attributes
 
@@ -108,7 +108,7 @@ template<> const ClassInfo JSTestNamedGetterWithIdentifierDOMConstructor::s_info
 static const HashTableValue JSTestNamedGetterWithIdentifierPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedGetterWithIdentifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestNamedGetterWithIdentifierConstructor) } },
-    { "getterName", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamedGetterWithIdentifierPrototypeFunctionGetterName), (intptr_t) (1) } },
+    { "getterName", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamedGetterWithIdentifierPrototypeFunction_getterName), (intptr_t) (1) } },
 };
 
 const ClassInfo JSTestNamedGetterWithIdentifierPrototype::s_info = { "TestNamedGetterWithIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedGetterWithIdentifierPrototype) };
@@ -235,7 +235,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestNamedGetterWithIdentifierConstructor, (JSGloba
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSC::EncodedJSValue jsTestNamedGetterWithIdentifierPrototypeFunctionGetterNameBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestNamedGetterWithIdentifier>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestNamedGetterWithIdentifierPrototypeFunction_getterNameBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestNamedGetterWithIdentifier>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -250,9 +250,9 @@ static inline JSC::EncodedJSValue jsTestNamedGetterWithIdentifierPrototypeFuncti
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, impl.getterName(WTFMove(name)))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestNamedGetterWithIdentifierPrototypeFunctionGetterName, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestNamedGetterWithIdentifierPrototypeFunction_getterName, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestNamedGetterWithIdentifier>::call<jsTestNamedGetterWithIdentifierPrototypeFunctionGetterNameBody>(*lexicalGlobalObject, *callFrame, "getterName");
+    return IDLOperation<JSTestNamedGetterWithIdentifier>::call<jsTestNamedGetterWithIdentifierPrototypeFunction_getterNameBody>(*lexicalGlobalObject, *callFrame, "getterName");
 }
 
 JSC::IsoSubspace* JSTestNamedGetterWithIdentifier::subspaceForImpl(JSC::VM& vm)

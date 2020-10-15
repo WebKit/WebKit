@@ -47,7 +47,7 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestNamedSetterWithIdentifierPrototypeFunctionNamedSetter);
+JSC_DECLARE_HOST_FUNCTION(jsTestNamedSetterWithIdentifierPrototypeFunction_namedSetter);
 
 // Attributes
 
@@ -108,7 +108,7 @@ template<> const ClassInfo JSTestNamedSetterWithIdentifierDOMConstructor::s_info
 static const HashTableValue JSTestNamedSetterWithIdentifierPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedSetterWithIdentifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestNamedSetterWithIdentifierConstructor) } },
-    { "namedSetter", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamedSetterWithIdentifierPrototypeFunctionNamedSetter), (intptr_t) (2) } },
+    { "namedSetter", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamedSetterWithIdentifierPrototypeFunction_namedSetter), (intptr_t) (2) } },
 };
 
 const ClassInfo JSTestNamedSetterWithIdentifierPrototype::s_info = { "TestNamedSetterWithIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithIdentifierPrototype) };
@@ -304,7 +304,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestNamedSetterWithIdentifierConstructor, (JSGloba
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSC::EncodedJSValue jsTestNamedSetterWithIdentifierPrototypeFunctionNamedSetterBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestNamedSetterWithIdentifier>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestNamedSetterWithIdentifierPrototypeFunction_namedSetterBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestNamedSetterWithIdentifier>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -324,9 +324,9 @@ static inline JSC::EncodedJSValue jsTestNamedSetterWithIdentifierPrototypeFuncti
     return JSValue::encode(jsUndefined());
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestNamedSetterWithIdentifierPrototypeFunctionNamedSetter, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestNamedSetterWithIdentifierPrototypeFunction_namedSetter, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestNamedSetterWithIdentifier>::call<jsTestNamedSetterWithIdentifierPrototypeFunctionNamedSetterBody>(*lexicalGlobalObject, *callFrame, "namedSetter");
+    return IDLOperation<JSTestNamedSetterWithIdentifier>::call<jsTestNamedSetterWithIdentifierPrototypeFunction_namedSetterBody>(*lexicalGlobalObject, *callFrame, "namedSetter");
 }
 
 JSC::IsoSubspace* JSTestNamedSetterWithIdentifier::subspaceForImpl(JSC::VM& vm)

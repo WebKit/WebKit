@@ -49,11 +49,11 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunctionSymbolIterator);
-JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunctionEntries);
-JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunctionKeys);
-JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunctionValues);
-JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunctionForEach);
+JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunction_SymbolIterator);
+JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunction_entries);
+JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunction_keys);
+JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunction_values);
+JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunction_forEach);
 
 // Attributes
 
@@ -114,10 +114,10 @@ template<> const ClassInfo JSTestIterableDOMConstructor::s_info = { "TestIterabl
 static const HashTableValue JSTestIterablePrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestIterableConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestIterableConstructor) } },
-    { "entries", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestIterablePrototypeFunctionEntries), (intptr_t) (0) } },
-    { "keys", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestIterablePrototypeFunctionKeys), (intptr_t) (0) } },
-    { "values", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestIterablePrototypeFunctionValues), (intptr_t) (0) } },
-    { "forEach", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestIterablePrototypeFunctionForEach), (intptr_t) (1) } },
+    { "entries", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestIterablePrototypeFunction_entries), (intptr_t) (0) } },
+    { "keys", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestIterablePrototypeFunction_keys), (intptr_t) (0) } },
+    { "values", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestIterablePrototypeFunction_values), (intptr_t) (0) } },
+    { "forEach", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestIterablePrototypeFunction_forEach), (intptr_t) (1) } },
 };
 
 const ClassInfo JSTestIterablePrototype::s_info = { "TestIterable", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestIterablePrototype) };
@@ -259,44 +259,44 @@ const JSC::ClassInfo TestIterableIterator::s_info = { "TestIterable Iterator", &
 template<>
 const JSC::ClassInfo TestIterableIteratorPrototype::s_info = { "TestIterable Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestIterableIteratorPrototype) };
 
-static inline EncodedJSValue jsTestIterablePrototypeFunctionEntriesCaller(JSGlobalObject*, CallFrame*, JSTestIterable* thisObject)
+static inline EncodedJSValue jsTestIterablePrototypeFunction_entriesCaller(JSGlobalObject*, CallFrame*, JSTestIterable* thisObject)
 {
     return JSValue::encode(iteratorCreate<TestIterableIterator>(*thisObject, IterationKind::Values));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunctionEntries, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunction_entries, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
-    return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunctionEntriesCaller>(*lexicalGlobalObject, *callFrame, "entries");
+    return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunction_entriesCaller>(*lexicalGlobalObject, *callFrame, "entries");
 }
 
-static inline EncodedJSValue jsTestIterablePrototypeFunctionKeysCaller(JSGlobalObject*, CallFrame*, JSTestIterable* thisObject)
+static inline EncodedJSValue jsTestIterablePrototypeFunction_keysCaller(JSGlobalObject*, CallFrame*, JSTestIterable* thisObject)
 {
     return JSValue::encode(iteratorCreate<TestIterableIterator>(*thisObject, IterationKind::Keys));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunctionKeys, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunction_keys, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
-    return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunctionKeysCaller>(*lexicalGlobalObject, *callFrame, "keys");
+    return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunction_keysCaller>(*lexicalGlobalObject, *callFrame, "keys");
 }
 
-static inline EncodedJSValue jsTestIterablePrototypeFunctionValuesCaller(JSGlobalObject*, CallFrame*, JSTestIterable* thisObject)
+static inline EncodedJSValue jsTestIterablePrototypeFunction_valuesCaller(JSGlobalObject*, CallFrame*, JSTestIterable* thisObject)
 {
     return JSValue::encode(iteratorCreate<TestIterableIterator>(*thisObject, IterationKind::Values));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunctionValues, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunction_values, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
-    return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunctionValuesCaller>(*lexicalGlobalObject, *callFrame, "values");
+    return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunction_valuesCaller>(*lexicalGlobalObject, *callFrame, "values");
 }
 
-static inline EncodedJSValue jsTestIterablePrototypeFunctionForEachCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestIterable* thisObject)
+static inline EncodedJSValue jsTestIterablePrototypeFunction_forEachCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestIterable* thisObject)
 {
     return JSValue::encode(iteratorForEach<TestIterableIterator>(*lexicalGlobalObject, *callFrame, *thisObject));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunctionForEach, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunction_forEach, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
-    return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunctionForEachCaller>(*lexicalGlobalObject, *callFrame, "forEach");
+    return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunction_forEachCaller>(*lexicalGlobalObject, *callFrame, "forEach");
 }
 
 JSC::IsoSubspace* JSTestIterable::subspaceForImpl(JSC::VM& vm)

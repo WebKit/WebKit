@@ -66,16 +66,16 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestDefaultToJSONInheritFinalPrototypeFunctionToJSON);
+JSC_DECLARE_HOST_FUNCTION(jsTestDefaultToJSONInheritFinalPrototypeFunction_toJSON);
 
 // Attributes
 
 JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONInheritFinalConstructor);
 JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONInheritFinalConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONInheritFinalFinalLongAttributeFoo);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONInheritFinalFinalLongAttributeFoo);
-JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONInheritFinalFinalLongAttributeBar);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONInheritFinalFinalLongAttributeBar);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONInheritFinal_finalLongAttributeFoo);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONInheritFinal_finalLongAttributeFoo);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONInheritFinal_finalLongAttributeBar);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONInheritFinal_finalLongAttributeBar);
 
 class JSTestDefaultToJSONInheritFinalPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -130,9 +130,9 @@ template<> const ClassInfo JSTestDefaultToJSONInheritFinalDOMConstructor::s_info
 static const HashTableValue JSTestDefaultToJSONInheritFinalPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDefaultToJSONInheritFinalConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestDefaultToJSONInheritFinalConstructor) } },
-    { "finalLongAttributeFoo", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDefaultToJSONInheritFinalFinalLongAttributeFoo), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestDefaultToJSONInheritFinalFinalLongAttributeFoo) } },
-    { "finalLongAttributeBar", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDefaultToJSONInheritFinalFinalLongAttributeBar), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestDefaultToJSONInheritFinalFinalLongAttributeBar) } },
-    { "toJSON", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestDefaultToJSONInheritFinalPrototypeFunctionToJSON), (intptr_t) (0) } },
+    { "finalLongAttributeFoo", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDefaultToJSONInheritFinal_finalLongAttributeFoo), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestDefaultToJSONInheritFinal_finalLongAttributeFoo) } },
+    { "finalLongAttributeBar", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDefaultToJSONInheritFinal_finalLongAttributeBar), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestDefaultToJSONInheritFinal_finalLongAttributeBar) } },
+    { "toJSON", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestDefaultToJSONInheritFinalPrototypeFunction_toJSON), (intptr_t) (0) } },
 };
 
 const ClassInfo JSTestDefaultToJSONInheritFinalPrototype::s_info = { "TestDefaultToJSONInheritFinal", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONInheritFinalPrototype) };
@@ -208,7 +208,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONInheritFinalConstructor, (JSGloba
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSValue jsTestDefaultToJSONInheritFinalFinalLongAttributeFooGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONInheritFinal& thisObject)
+static inline JSValue jsTestDefaultToJSONInheritFinal_finalLongAttributeFooGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONInheritFinal& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -216,12 +216,12 @@ static inline JSValue jsTestDefaultToJSONInheritFinalFinalLongAttributeFooGetter
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.finalLongAttributeFoo())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONInheritFinalFinalLongAttributeFoo, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONInheritFinal_finalLongAttributeFoo, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestDefaultToJSONInheritFinal>::get<jsTestDefaultToJSONInheritFinalFinalLongAttributeFooGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "finalLongAttributeFoo");
+    return IDLAttribute<JSTestDefaultToJSONInheritFinal>::get<jsTestDefaultToJSONInheritFinal_finalLongAttributeFooGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "finalLongAttributeFoo");
 }
 
-static inline bool setJSTestDefaultToJSONInheritFinalFinalLongAttributeFooSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONInheritFinal& thisObject, JSValue value)
+static inline bool setJSTestDefaultToJSONInheritFinal_finalLongAttributeFooSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONInheritFinal& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -234,12 +234,12 @@ static inline bool setJSTestDefaultToJSONInheritFinalFinalLongAttributeFooSetter
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONInheritFinalFinalLongAttributeFoo, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONInheritFinal_finalLongAttributeFoo, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
-    return IDLAttribute<JSTestDefaultToJSONInheritFinal>::set<setJSTestDefaultToJSONInheritFinalFinalLongAttributeFooSetter>(*lexicalGlobalObject, thisValue, encodedValue, "finalLongAttributeFoo");
+    return IDLAttribute<JSTestDefaultToJSONInheritFinal>::set<setJSTestDefaultToJSONInheritFinal_finalLongAttributeFooSetter>(*lexicalGlobalObject, thisValue, encodedValue, "finalLongAttributeFoo");
 }
 
-static inline JSValue jsTestDefaultToJSONInheritFinalFinalLongAttributeBarGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONInheritFinal& thisObject)
+static inline JSValue jsTestDefaultToJSONInheritFinal_finalLongAttributeBarGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONInheritFinal& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -247,12 +247,12 @@ static inline JSValue jsTestDefaultToJSONInheritFinalFinalLongAttributeBarGetter
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.finalLongAttributeBar())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONInheritFinalFinalLongAttributeBar, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONInheritFinal_finalLongAttributeBar, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestDefaultToJSONInheritFinal>::get<jsTestDefaultToJSONInheritFinalFinalLongAttributeBarGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "finalLongAttributeBar");
+    return IDLAttribute<JSTestDefaultToJSONInheritFinal>::get<jsTestDefaultToJSONInheritFinal_finalLongAttributeBarGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "finalLongAttributeBar");
 }
 
-static inline bool setJSTestDefaultToJSONInheritFinalFinalLongAttributeBarSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONInheritFinal& thisObject, JSValue value)
+static inline bool setJSTestDefaultToJSONInheritFinal_finalLongAttributeBarSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONInheritFinal& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -265,12 +265,12 @@ static inline bool setJSTestDefaultToJSONInheritFinalFinalLongAttributeBarSetter
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONInheritFinalFinalLongAttributeBar, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONInheritFinal_finalLongAttributeBar, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
-    return IDLAttribute<JSTestDefaultToJSONInheritFinal>::set<setJSTestDefaultToJSONInheritFinalFinalLongAttributeBarSetter>(*lexicalGlobalObject, thisValue, encodedValue, "finalLongAttributeBar");
+    return IDLAttribute<JSTestDefaultToJSONInheritFinal>::set<setJSTestDefaultToJSONInheritFinal_finalLongAttributeBarSetter>(*lexicalGlobalObject, thisValue, encodedValue, "finalLongAttributeBar");
 }
 
-static inline EncodedJSValue jsTestDefaultToJSONInheritFinalPrototypeFunctionToJSONBody(JSGlobalObject* lexicalGlobalObject, CallFrame*, JSTestDefaultToJSONInheritFinal* castedThis)
+static inline EncodedJSValue jsTestDefaultToJSONInheritFinalPrototypeFunction_toJSONBody(JSGlobalObject* lexicalGlobalObject, CallFrame*, JSTestDefaultToJSONInheritFinal* castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -305,9 +305,9 @@ static inline EncodedJSValue jsTestDefaultToJSONInheritFinalPrototypeFunctionToJ
     return JSValue::encode(result);
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestDefaultToJSONInheritFinalPrototypeFunctionToJSON, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestDefaultToJSONInheritFinalPrototypeFunction_toJSON, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestDefaultToJSONInheritFinal>::call<jsTestDefaultToJSONInheritFinalPrototypeFunctionToJSONBody>(*lexicalGlobalObject, *callFrame, "toJSON");
+    return IDLOperation<JSTestDefaultToJSONInheritFinal>::call<jsTestDefaultToJSONInheritFinalPrototypeFunction_toJSONBody>(*lexicalGlobalObject, *callFrame, "toJSON");
 }
 
 JSC::IsoSubspace* JSTestDefaultToJSONInheritFinal::subspaceForImpl(JSC::VM& vm)

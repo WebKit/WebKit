@@ -50,7 +50,7 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestEventTargetPrototypeFunctionItem);
+JSC_DECLARE_HOST_FUNCTION(jsTestEventTargetPrototypeFunction_item);
 
 // Attributes
 
@@ -110,7 +110,7 @@ template<> const ClassInfo JSTestEventTargetDOMConstructor::s_info = { "TestEven
 static const HashTableValue JSTestEventTargetPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestEventTargetConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestEventTargetConstructor) } },
-    { "item", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestEventTargetPrototypeFunctionItem), (intptr_t) (1) } },
+    { "item", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestEventTargetPrototypeFunction_item), (intptr_t) (1) } },
 };
 
 const ClassInfo JSTestEventTargetPrototype::s_info = { "TestEventTarget", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEventTargetPrototype) };
@@ -249,7 +249,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestEventTargetConstructor, (JSGlobalObject* lexic
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSC::EncodedJSValue jsTestEventTargetPrototypeFunctionItemBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestEventTarget>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestEventTargetPrototypeFunction_itemBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestEventTarget>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -264,9 +264,9 @@ static inline JSC::EncodedJSValue jsTestEventTargetPrototypeFunctionItemBody(JSC
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<Node>>(*lexicalGlobalObject, *castedThis->globalObject(), impl.item(WTFMove(index)))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestEventTargetPrototypeFunctionItem, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestEventTargetPrototypeFunction_item, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestEventTarget>::call<jsTestEventTargetPrototypeFunctionItemBody>(*lexicalGlobalObject, *callFrame, "item");
+    return IDLOperation<JSTestEventTarget>::call<jsTestEventTargetPrototypeFunction_itemBody>(*lexicalGlobalObject, *callFrame, "item");
 }
 
 JSC::IsoSubspace* JSTestEventTarget::subspaceForImpl(JSC::VM& vm)

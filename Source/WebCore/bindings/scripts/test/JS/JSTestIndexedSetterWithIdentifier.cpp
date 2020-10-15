@@ -48,7 +48,7 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestIndexedSetterWithIdentifierPrototypeFunctionIndexedSetter);
+JSC_DECLARE_HOST_FUNCTION(jsTestIndexedSetterWithIdentifierPrototypeFunction_indexedSetter);
 
 // Attributes
 
@@ -109,7 +109,7 @@ template<> const ClassInfo JSTestIndexedSetterWithIdentifierDOMConstructor::s_in
 static const HashTableValue JSTestIndexedSetterWithIdentifierPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestIndexedSetterWithIdentifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestIndexedSetterWithIdentifierConstructor) } },
-    { "indexedSetter", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestIndexedSetterWithIdentifierPrototypeFunctionIndexedSetter), (intptr_t) (2) } },
+    { "indexedSetter", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestIndexedSetterWithIdentifierPrototypeFunction_indexedSetter), (intptr_t) (2) } },
 };
 
 const ClassInfo JSTestIndexedSetterWithIdentifierPrototype::s_info = { "TestIndexedSetterWithIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestIndexedSetterWithIdentifierPrototype) };
@@ -276,7 +276,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestIndexedSetterWithIdentifierConstructor, (JSGlo
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSC::EncodedJSValue jsTestIndexedSetterWithIdentifierPrototypeFunctionIndexedSetterBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestIndexedSetterWithIdentifier>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestIndexedSetterWithIdentifierPrototypeFunction_indexedSetterBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestIndexedSetterWithIdentifier>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -296,9 +296,9 @@ static inline JSC::EncodedJSValue jsTestIndexedSetterWithIdentifierPrototypeFunc
     return JSValue::encode(jsUndefined());
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestIndexedSetterWithIdentifierPrototypeFunctionIndexedSetter, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestIndexedSetterWithIdentifierPrototypeFunction_indexedSetter, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestIndexedSetterWithIdentifier>::call<jsTestIndexedSetterWithIdentifierPrototypeFunctionIndexedSetterBody>(*lexicalGlobalObject, *callFrame, "indexedSetter");
+    return IDLOperation<JSTestIndexedSetterWithIdentifier>::call<jsTestIndexedSetterWithIdentifierPrototypeFunction_indexedSetterBody>(*lexicalGlobalObject, *callFrame, "indexedSetter");
 }
 
 JSC::IsoSubspace* JSTestIndexedSetterWithIdentifier::subspaceForImpl(JSC::VM& vm)

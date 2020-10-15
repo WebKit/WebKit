@@ -46,7 +46,7 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestStringifierPrototypeFunctionToString);
+JSC_DECLARE_HOST_FUNCTION(jsTestStringifierPrototypeFunction_toString);
 
 // Attributes
 
@@ -107,7 +107,7 @@ template<> const ClassInfo JSTestStringifierDOMConstructor::s_info = { "TestStri
 static const HashTableValue JSTestStringifierPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestStringifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestStringifierConstructor) } },
-    { "toString", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestStringifierPrototypeFunctionToString), (intptr_t) (0) } },
+    { "toString", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestStringifierPrototypeFunction_toString), (intptr_t) (0) } },
 };
 
 const ClassInfo JSTestStringifierPrototype::s_info = { "TestStringifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierPrototype) };
@@ -184,7 +184,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestStringifierConstructor, (JSGlobalObject* lexic
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSC::EncodedJSValue jsTestStringifierPrototypeFunctionToStringBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestStringifier>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestStringifierPrototypeFunction_toStringBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestStringifier>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -194,9 +194,9 @@ static inline JSC::EncodedJSValue jsTestStringifierPrototypeFunctionToStringBody
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, impl.toString())));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestStringifierPrototypeFunctionToString, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestStringifierPrototypeFunction_toString, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestStringifier>::call<jsTestStringifierPrototypeFunctionToStringBody>(*lexicalGlobalObject, *callFrame, "toString");
+    return IDLOperation<JSTestStringifier>::call<jsTestStringifierPrototypeFunction_toStringBody>(*lexicalGlobalObject, *callFrame, "toString");
 }
 
 JSC::IsoSubspace* JSTestStringifier::subspaceForImpl(JSC::VM& vm)

@@ -48,16 +48,16 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestCEReactionsStringifierPrototypeFunctionToString);
+JSC_DECLARE_HOST_FUNCTION(jsTestCEReactionsStringifierPrototypeFunction_toString);
 
 // Attributes
 
 JSC_DECLARE_CUSTOM_GETTER(jsTestCEReactionsStringifierConstructor);
 JSC_DECLARE_CUSTOM_SETTER(setJSTestCEReactionsStringifierConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestCEReactionsStringifierValue);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestCEReactionsStringifierValue);
-JSC_DECLARE_CUSTOM_GETTER(jsTestCEReactionsStringifierValueWithoutReactions);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestCEReactionsStringifierValueWithoutReactions);
+JSC_DECLARE_CUSTOM_GETTER(jsTestCEReactionsStringifier_value);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestCEReactionsStringifier_value);
+JSC_DECLARE_CUSTOM_GETTER(jsTestCEReactionsStringifier_valueWithoutReactions);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestCEReactionsStringifier_valueWithoutReactions);
 
 class JSTestCEReactionsStringifierPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -113,9 +113,9 @@ template<> const ClassInfo JSTestCEReactionsStringifierDOMConstructor::s_info = 
 static const HashTableValue JSTestCEReactionsStringifierPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsStringifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactionsStringifierConstructor) } },
-    { "value", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsStringifierValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactionsStringifierValue) } },
-    { "valueWithoutReactions", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsStringifierValueWithoutReactions), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactionsStringifierValueWithoutReactions) } },
-    { "toString", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestCEReactionsStringifierPrototypeFunctionToString), (intptr_t) (0) } },
+    { "value", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsStringifier_value), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactionsStringifier_value) } },
+    { "valueWithoutReactions", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsStringifier_valueWithoutReactions), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactionsStringifier_valueWithoutReactions) } },
+    { "toString", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestCEReactionsStringifierPrototypeFunction_toString), (intptr_t) (0) } },
 };
 
 const ClassInfo JSTestCEReactionsStringifierPrototype::s_info = { "TestCEReactionsStringifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCEReactionsStringifierPrototype) };
@@ -197,7 +197,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactionsStringifierConstructor, (JSGlobalOb
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSValue jsTestCEReactionsStringifierValueGetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactionsStringifier& thisObject)
+static inline JSValue jsTestCEReactionsStringifier_valueGetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactionsStringifier& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -205,12 +205,12 @@ static inline JSValue jsTestCEReactionsStringifierValueGetter(JSGlobalObject& le
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.value())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactionsStringifierValue, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactionsStringifier_value, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestCEReactionsStringifier>::get<jsTestCEReactionsStringifierValueGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "value");
+    return IDLAttribute<JSTestCEReactionsStringifier>::get<jsTestCEReactionsStringifier_valueGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "value");
 }
 
-static inline bool setJSTestCEReactionsStringifierValueSetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactionsStringifier& thisObject, JSValue value)
+static inline bool setJSTestCEReactionsStringifier_valueSetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactionsStringifier& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -224,12 +224,12 @@ static inline bool setJSTestCEReactionsStringifierValueSetter(JSGlobalObject& le
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactionsStringifierValue, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactionsStringifier_value, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
-    return IDLAttribute<JSTestCEReactionsStringifier>::set<setJSTestCEReactionsStringifierValueSetter>(*lexicalGlobalObject, thisValue, encodedValue, "value");
+    return IDLAttribute<JSTestCEReactionsStringifier>::set<setJSTestCEReactionsStringifier_valueSetter>(*lexicalGlobalObject, thisValue, encodedValue, "value");
 }
 
-static inline JSValue jsTestCEReactionsStringifierValueWithoutReactionsGetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactionsStringifier& thisObject)
+static inline JSValue jsTestCEReactionsStringifier_valueWithoutReactionsGetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactionsStringifier& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -237,12 +237,12 @@ static inline JSValue jsTestCEReactionsStringifierValueWithoutReactionsGetter(JS
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.valueWithoutReactions())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactionsStringifierValueWithoutReactions, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactionsStringifier_valueWithoutReactions, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestCEReactionsStringifier>::get<jsTestCEReactionsStringifierValueWithoutReactionsGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "valueWithoutReactions");
+    return IDLAttribute<JSTestCEReactionsStringifier>::get<jsTestCEReactionsStringifier_valueWithoutReactionsGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "valueWithoutReactions");
 }
 
-static inline bool setJSTestCEReactionsStringifierValueWithoutReactionsSetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactionsStringifier& thisObject, JSValue value)
+static inline bool setJSTestCEReactionsStringifier_valueWithoutReactionsSetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactionsStringifier& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -256,12 +256,12 @@ static inline bool setJSTestCEReactionsStringifierValueWithoutReactionsSetter(JS
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactionsStringifierValueWithoutReactions, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactionsStringifier_valueWithoutReactions, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
-    return IDLAttribute<JSTestCEReactionsStringifier>::set<setJSTestCEReactionsStringifierValueWithoutReactionsSetter>(*lexicalGlobalObject, thisValue, encodedValue, "valueWithoutReactions");
+    return IDLAttribute<JSTestCEReactionsStringifier>::set<setJSTestCEReactionsStringifier_valueWithoutReactionsSetter>(*lexicalGlobalObject, thisValue, encodedValue, "valueWithoutReactions");
 }
 
-static inline JSC::EncodedJSValue jsTestCEReactionsStringifierPrototypeFunctionToStringBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestCEReactionsStringifier>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestCEReactionsStringifierPrototypeFunction_toStringBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestCEReactionsStringifier>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -271,9 +271,9 @@ static inline JSC::EncodedJSValue jsTestCEReactionsStringifierPrototypeFunctionT
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, impl.value())));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestCEReactionsStringifierPrototypeFunctionToString, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestCEReactionsStringifierPrototypeFunction_toString, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestCEReactionsStringifier>::call<jsTestCEReactionsStringifierPrototypeFunctionToStringBody>(*lexicalGlobalObject, *callFrame, "toString");
+    return IDLOperation<JSTestCEReactionsStringifier>::call<jsTestCEReactionsStringifierPrototypeFunction_toStringBody>(*lexicalGlobalObject, *callFrame, "toString");
 }
 
 JSC::IsoSubspace* JSTestCEReactionsStringifier::subspaceForImpl(JSC::VM& vm)

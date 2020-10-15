@@ -35,11 +35,11 @@
 namespace WebCore {
 using namespace JSC;
 
-static JSC_DECLARE_CUSTOM_GETTER(jsLocationInstanceFunctionReplaceNonCaching);
+static JSC_DECLARE_CUSTOM_GETTER(jsLocationInstanceFunction_replaceNonCaching);
 
-JSC_DEFINE_CUSTOM_GETTER(jsLocationInstanceFunctionReplaceNonCaching, (JSGlobalObject* globalObject, EncodedJSValue, PropertyName propertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsLocationInstanceFunction_replaceNonCaching, (JSGlobalObject* globalObject, EncodedJSValue, PropertyName propertyName))
 {
-    return nonCachingStaticFunctionGetterImpl<jsLocationInstanceFunctionReplace, 1>(globalObject, propertyName);
+    return nonCachingStaticFunctionGetterImpl<jsLocationInstanceFunction_replace, 1>(globalObject, propertyName);
 }
 
 static bool getOwnPropertySlotCommon(JSLocation& thisObject, JSGlobalObject& lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot)
@@ -62,7 +62,7 @@ static bool getOwnPropertySlotCommon(JSLocation& thisObject, JSGlobalObject& lex
 
     // We only allow access to Location.replace() cross origin.
     if (propertyName == vm.propertyNames->replace) {
-        slot.setCustom(&thisObject, static_cast<unsigned>(PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum), jsLocationInstanceFunctionReplaceNonCaching);
+        slot.setCustom(&thisObject, static_cast<unsigned>(PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum), jsLocationInstanceFunction_replaceNonCaching);
         return true;
     }
 

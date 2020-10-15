@@ -48,13 +48,13 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsInstanceFunctionUnforgeableOperation);
+JSC_DECLARE_HOST_FUNCTION(jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsInstanceFunction_unforgeableOperation);
 
 // Attributes
 
 JSC_DECLARE_CUSTOM_GETTER(jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor);
 JSC_DECLARE_CUSTOM_SETTER(setJSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsUnforgeableAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns_unforgeableAttribute);
 
 class JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -102,8 +102,8 @@ static const struct CompactHashIndex JSTestNamedSetterWithLegacyUnforgeablePrope
 
 static const HashTableValue JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsTableValues[] =
 {
-    { "unforgeableAttribute", static_cast<unsigned>(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsUnforgeableAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "unforgeableOperation", static_cast<unsigned>(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsInstanceFunctionUnforgeableOperation), (intptr_t) (0) } },
+    { "unforgeableAttribute", static_cast<unsigned>(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns_unforgeableAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "unforgeableOperation", static_cast<unsigned>(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsInstanceFunction_unforgeableOperation), (intptr_t) (0) } },
 };
 
 static const HashTable JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsTable = { 2, 3, true, JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::info(), JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsTableValues, JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsTableIndex };
@@ -315,7 +315,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestNamedSetterWithLegacyUnforgeablePropertiesAndL
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSValue jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsUnforgeableAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns& thisObject)
+static inline JSValue jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns_unforgeableAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -323,12 +323,12 @@ static inline JSValue jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyO
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.unforgeableAttribute())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsUnforgeableAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns_unforgeableAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns>::get<jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsUnforgeableAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "unforgeableAttribute");
+    return IDLAttribute<JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns>::get<jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns_unforgeableAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "unforgeableAttribute");
 }
 
-static inline JSC::EncodedJSValue jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsInstanceFunctionUnforgeableOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsInstanceFunction_unforgeableOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -340,9 +340,9 @@ static inline JSC::EncodedJSValue jsTestNamedSetterWithLegacyUnforgeableProperti
     return JSValue::encode(jsUndefined());
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsInstanceFunctionUnforgeableOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsInstanceFunction_unforgeableOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns>::call<jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsInstanceFunctionUnforgeableOperationBody>(*lexicalGlobalObject, *callFrame, "unforgeableOperation");
+    return IDLOperation<JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns>::call<jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsInstanceFunction_unforgeableOperationBody>(*lexicalGlobalObject, *callFrame, "unforgeableOperation");
 }
 
 JSC::IsoSubspace* JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::subspaceForImpl(JSC::VM& vm)

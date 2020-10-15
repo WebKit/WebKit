@@ -52,15 +52,15 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunctionExcitingFunction);
-JSC_DECLARE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunctionPostMessage);
-JSC_DECLARE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunctionOverloadedMethod);
+JSC_DECLARE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunction_excitingFunction);
+JSC_DECLARE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunction_postMessage);
+JSC_DECLARE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunction_overloadedMethod);
 
 // Attributes
 
 JSC_DECLARE_CUSTOM_GETTER(jsTestDomainSecurityConstructor);
 JSC_DECLARE_CUSTOM_SETTER(setJSTestDomainSecurityConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestDomainSecurityExcitingAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDomainSecurity_excitingAttr);
 
 class JSTestDomainSecurityPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -106,7 +106,7 @@ static const struct CompactHashIndex JSTestDomainSecurityTableIndex[2] = {
 
 static const HashTableValue JSTestDomainSecurityTableValues[] =
 {
-    { "excitingAttr", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDomainSecurityExcitingAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "excitingAttr", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDomainSecurity_excitingAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
 static const HashTable JSTestDomainSecurityTable = { 1, 1, true, JSTestDomainSecurity::info(), JSTestDomainSecurityTableValues, JSTestDomainSecurityTableIndex };
@@ -130,9 +130,9 @@ template<> const ClassInfo JSTestDomainSecurityDOMConstructor::s_info = { "TestD
 static const HashTableValue JSTestDomainSecurityPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDomainSecurityConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestDomainSecurityConstructor) } },
-    { "excitingFunction", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestDomainSecurityPrototypeFunctionExcitingFunction), (intptr_t) (1) } },
-    { "postMessage", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestDomainSecurityPrototypeFunctionPostMessage), (intptr_t) (1) } },
-    { "overloadedMethod", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestDomainSecurityPrototypeFunctionOverloadedMethod), (intptr_t) (1) } },
+    { "excitingFunction", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestDomainSecurityPrototypeFunction_excitingFunction), (intptr_t) (1) } },
+    { "postMessage", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestDomainSecurityPrototypeFunction_postMessage), (intptr_t) (1) } },
+    { "overloadedMethod", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestDomainSecurityPrototypeFunction_overloadedMethod), (intptr_t) (1) } },
 };
 
 const ClassInfo JSTestDomainSecurityPrototype::s_info = { "TestDomainSecurity", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDomainSecurityPrototype) };
@@ -214,7 +214,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestDomainSecurityConstructor, (JSGlobalObject* le
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSValue jsTestDomainSecurityExcitingAttrGetter(JSGlobalObject& lexicalGlobalObject, JSTestDomainSecurity& thisObject)
+static inline JSValue jsTestDomainSecurity_excitingAttrGetter(JSGlobalObject& lexicalGlobalObject, JSTestDomainSecurity& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -226,12 +226,12 @@ static inline JSValue jsTestDomainSecurityExcitingAttrGetter(JSGlobalObject& lex
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.excitingAttr())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestDomainSecurityExcitingAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestDomainSecurity_excitingAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    return IDLAttribute<JSTestDomainSecurity>::get<jsTestDomainSecurityExcitingAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "excitingAttr");
+    return IDLAttribute<JSTestDomainSecurity>::get<jsTestDomainSecurity_excitingAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "excitingAttr");
 }
 
-static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunctionExcitingFunctionBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestDomainSecurity>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunction_excitingFunctionBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestDomainSecurity>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -252,12 +252,12 @@ static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunctionExcitingF
     return JSValue::encode(jsUndefined());
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunctionExcitingFunction, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunction_excitingFunction, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestDomainSecurity>::call<jsTestDomainSecurityPrototypeFunctionExcitingFunctionBody>(*lexicalGlobalObject, *callFrame, "excitingFunction");
+    return IDLOperation<JSTestDomainSecurity>::call<jsTestDomainSecurityPrototypeFunction_excitingFunctionBody>(*lexicalGlobalObject, *callFrame, "excitingFunction");
 }
 
-static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunctionPostMessageBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestDomainSecurity>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunction_postMessageBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestDomainSecurity>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -274,12 +274,12 @@ static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunctionPostMessa
     return JSValue::encode(jsUndefined());
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunctionPostMessage, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunction_postMessage, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestDomainSecurity>::call<jsTestDomainSecurityPrototypeFunctionPostMessageBody>(*lexicalGlobalObject, *callFrame, "postMessage");
+    return IDLOperation<JSTestDomainSecurity>::call<jsTestDomainSecurityPrototypeFunction_postMessageBody>(*lexicalGlobalObject, *callFrame, "postMessage");
 }
 
-static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunctionOverloadedMethod1Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestDomainSecurity>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunction_overloadedMethod1Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestDomainSecurity>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -295,7 +295,7 @@ static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunctionOverloade
     return JSValue::encode(jsUndefined());
 }
 
-static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunctionOverloadedMethod2Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestDomainSecurity>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunction_overloadedMethod2Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestDomainSecurity>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -313,7 +313,7 @@ static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunctionOverloade
     return JSValue::encode(jsUndefined());
 }
 
-static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunctionOverloadedMethodOverloadDispatcher(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestDomainSecurity>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunction_overloadedMethodOverloadDispatcher(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestDomainSecurity>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -325,17 +325,17 @@ static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunctionOverloade
         return JSValue::encode(jsUndefined());
     size_t argsCount = std::min<size_t>(2, callFrame->argumentCount());
     if (argsCount == 1) {
-        RELEASE_AND_RETURN(throwScope, (jsTestDomainSecurityPrototypeFunctionOverloadedMethod1Body(lexicalGlobalObject, callFrame, castedThis)));
+        RELEASE_AND_RETURN(throwScope, (jsTestDomainSecurityPrototypeFunction_overloadedMethod1Body(lexicalGlobalObject, callFrame, castedThis)));
     }
     if (argsCount == 2) {
-        RELEASE_AND_RETURN(throwScope, (jsTestDomainSecurityPrototypeFunctionOverloadedMethod2Body(lexicalGlobalObject, callFrame, castedThis)));
+        RELEASE_AND_RETURN(throwScope, (jsTestDomainSecurityPrototypeFunction_overloadedMethod2Body(lexicalGlobalObject, callFrame, castedThis)));
     }
     return argsCount < 1 ? throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject)) : throwVMTypeError(lexicalGlobalObject, throwScope);
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunctionOverloadedMethod, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunction_overloadedMethod, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestDomainSecurity>::call<jsTestDomainSecurityPrototypeFunctionOverloadedMethodOverloadDispatcher>(*lexicalGlobalObject, *callFrame, "overloadedMethod");
+    return IDLOperation<JSTestDomainSecurity>::call<jsTestDomainSecurityPrototypeFunction_overloadedMethodOverloadDispatcher>(*lexicalGlobalObject, *callFrame, "overloadedMethod");
 }
 
 JSC::IsoSubspace* JSTestDomainSecurity::subspaceForImpl(JSC::VM& vm)

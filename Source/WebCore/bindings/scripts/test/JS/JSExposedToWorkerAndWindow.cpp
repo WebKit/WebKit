@@ -87,7 +87,7 @@ JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, J
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsExposedToWorkerAndWindowPrototypeFunctionDoSomething);
+JSC_DECLARE_HOST_FUNCTION(jsExposedToWorkerAndWindowPrototypeFunction_doSomething);
 
 // Attributes
 
@@ -165,7 +165,7 @@ template<> const ClassInfo JSExposedToWorkerAndWindowDOMConstructor::s_info = { 
 static const HashTableValue JSExposedToWorkerAndWindowPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsExposedToWorkerAndWindowConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSExposedToWorkerAndWindowConstructor) } },
-    { "doSomething", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsExposedToWorkerAndWindowPrototypeFunctionDoSomething), (intptr_t) (0) } },
+    { "doSomething", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsExposedToWorkerAndWindowPrototypeFunction_doSomething), (intptr_t) (0) } },
 };
 
 const ClassInfo JSExposedToWorkerAndWindowPrototype::s_info = { "ExposedToWorkerAndWindow", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSExposedToWorkerAndWindowPrototype) };
@@ -242,7 +242,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSExposedToWorkerAndWindowConstructor, (JSGlobalObje
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSC::EncodedJSValue jsExposedToWorkerAndWindowPrototypeFunctionDoSomethingBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSExposedToWorkerAndWindow>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsExposedToWorkerAndWindowPrototypeFunction_doSomethingBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSExposedToWorkerAndWindow>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -252,9 +252,9 @@ static inline JSC::EncodedJSValue jsExposedToWorkerAndWindowPrototypeFunctionDoS
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDictionary<ExposedToWorkerAndWindow::Dict>>(*lexicalGlobalObject, *castedThis->globalObject(), impl.doSomething())));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsExposedToWorkerAndWindowPrototypeFunctionDoSomething, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsExposedToWorkerAndWindowPrototypeFunction_doSomething, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSExposedToWorkerAndWindow>::call<jsExposedToWorkerAndWindowPrototypeFunctionDoSomethingBody>(*lexicalGlobalObject, *callFrame, "doSomething");
+    return IDLOperation<JSExposedToWorkerAndWindow>::call<jsExposedToWorkerAndWindowPrototypeFunction_doSomethingBody>(*lexicalGlobalObject, *callFrame, "doSomething");
 }
 
 JSC::IsoSubspace* JSExposedToWorkerAndWindow::subspaceForImpl(JSC::VM& vm)
