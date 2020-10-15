@@ -672,6 +672,24 @@ private:
 
 WEBCORE_EXPORT RefPtr<Node> commonInclusiveAncestor(Node&, Node&);
 
+class PartialOrdering {
+public:
+    static const PartialOrdering less;
+    static const PartialOrdering equivalent;
+    static const PartialOrdering greater;
+    static const PartialOrdering unordered;
+
+    friend constexpr bool is_gt(PartialOrdering);
+
+private:
+    enum class Type : uint8_t { Less, Equivalent, Greater, Unordered };
+    constexpr PartialOrdering(Type type) : m_type { type } { }
+    Type m_type;
+};
+constexpr bool is_gt(PartialOrdering);
+
+WEBCORE_EXPORT PartialOrdering documentOrder(const Node&, const Node&);
+
 #if ASSERT_ENABLED
 
 inline void adopted(Node* node)
@@ -784,6 +802,16 @@ inline void Node::setTreeScopeRecursively(TreeScope& newTreeScope)
     ASSERT(!m_deletionHasBegun);
     if (m_treeScope != &newTreeScope)
         moveTreeToNewScope(*this, *m_treeScope, newTreeScope);
+}
+
+inline constexpr PartialOrdering PartialOrdering::less(Type::Less);
+inline constexpr PartialOrdering PartialOrdering::equivalent(Type::Equivalent);
+inline constexpr PartialOrdering PartialOrdering::greater(Type::Greater);
+inline constexpr PartialOrdering PartialOrdering::unordered(Type::Unordered);
+
+constexpr bool is_gt(PartialOrdering ordering)
+{
+    return ordering.m_type == PartialOrdering::Type::Greater;
 }
 
 bool areNodesConnectedInSameTreeScope(const Node*, const Node*);
