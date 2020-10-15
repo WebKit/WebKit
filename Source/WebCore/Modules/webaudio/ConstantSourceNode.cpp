@@ -98,9 +98,7 @@ void ConstantSourceNode::process(size_t framesToProcess)
         outputBus.zero();
     else {
         float* dest = outputBus.channel(0)->mutableData();
-        dest += quantumFrameOffset;
-        for (unsigned i = 0; i < nonSilentFramesToProcess; ++i)
-            dest[i] = value;
+        std::fill_n(dest + quantumFrameOffset, nonSilentFramesToProcess, value);
         outputBus.clearSilentFlag();
     }
 }
