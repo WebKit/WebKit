@@ -1,3 +1,16 @@
+2020-10-14  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] flex-grow property should be animatable
+        https://bugs.webkit.org/show_bug.cgi?id=209872
+
+        Reviewed by Antoine Quint.
+
+        * web-platform-tests/css/css-flexbox/animation/flex-grow-interpolation-expected.txt: New expected PASS results.
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-001-expected.txt: Additional results.
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-001-expected.txt: Ditto.
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt: Ditto.
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-iteration-composite-operation-expected.txt: Ditto.
+
 2020-10-14  Alex Christensen  <achristensen@webkit.org>
 
         Disallow ports in file URLs

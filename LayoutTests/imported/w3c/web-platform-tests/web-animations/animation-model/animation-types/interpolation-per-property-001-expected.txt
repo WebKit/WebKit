@@ -133,6 +133,8 @@ FAIL filter: interpolate different length of filter-function-list with function 
 FAIL filter: interpolate different length of filter-function-list with drop-shadow function assert_equals: The value should be blur(5px) drop-shadow(rgba(0, 0, 255, 0.4) 5px 5px 5px) at 500ms expected "blur(5px) drop-shadow(rgba(0, 0, 255, 0.4) 5px 5px 5px)" but got "blur(10px) drop-shadow(rgba(0, 0, 255, 0.8) 10px 10px 10px)"
 PASS filter: interpolate from none
 FAIL filter: url function (interpoalte as discrete) assert_equals: The value should be blur(0px) url("#f1") at 499ms expected "blur(0px) url(\"#f1\")" but got "blur(4.989999771118164px) url(\"#f1\")"
+PASS flex-grow (type: positiveNumber) has testInterpolation function
+FAIL flex-grow supports animating as a positive number assert_equals: The value should be 1.3 at 500ms expected "1.3" but got "1.2999999523162842"
 PASS flood-color (type: color) has testInterpolation function
 PASS flood-color supports animating as color of rgb()
 PASS flood-color supports animating as color of #RGB

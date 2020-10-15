@@ -112,6 +112,8 @@ FAIL fill-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 
 PASS filter (type: filterList) has testAddition function
 FAIL filter: blur on blur assert_equals: The value should be blur(10px) blur(20px) at 0ms expected "blur(10px) blur(20px)" but got "blur(20px)"
 FAIL filter: different filter functions assert_equals: The value should be blur(10px) brightness(0.8) at 0ms expected "blur(10px) brightness(0.8)" but got "brightness(0.8)"
+PASS flex-grow (type: positiveNumber) has testAddition function
+FAIL flex-grow: positive number assert_equals: The value should be 2.2 at 0ms expected "2.2" but got "1.100000023841858"
 PASS flood-color (type: color) has testAddition function
 FAIL flood-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL flood-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
