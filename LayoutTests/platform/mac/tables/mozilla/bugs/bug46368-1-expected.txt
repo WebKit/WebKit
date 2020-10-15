@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (2,2) size 444x95 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 203x18
                         text run at (2,2) width 203: "Mozilla To Be Dually-Licensed"
-                      RenderBR {BR} at (204,16) size 1x0
+                      RenderBR {BR} at (204,2) size 1x18
                       RenderText {#text} at (2,35) size 208x18
                         text run at (2,35) width 208: "Plans are underway to make the "
                       RenderInline {FONT} at (0,0) size 101x37 [color=#0000FF]
@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
                         text run at (53,57) width 156: "dual MPL/GPL license. "
                         text run at (208,57) width 181: "See the for more info. We're"
                         text run at (2,75) width 326: "gathering contributor input now, in the newsgroup."
-                      RenderBR {BR} at (327,89) size 1x0
+                      RenderBR {BR} at (327,75) size 1x18
             RenderTableCell {TD} at (457,25) size 324x59 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 293x55
                 text run at (2,3) width 273: "This status update contains information on"

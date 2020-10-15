@@ -17,10 +17,10 @@ layer at (0,0) size 785x2350
       RenderBlock {P} at (0,174) size 769x55
         RenderText {#text} at (0,0) size 152x18
           text run at (0,0) width 152: "The table height is: 100"
-        RenderBR {BR} at (151,14) size 1x0
+        RenderBR {BR} at (151,0) size 1x18
         RenderText {#text} at (0,18) size 135x18
           text run at (0,18) width 135: "Column One is: 33%"
-        RenderBR {BR} at (134,32) size 1x0
+        RenderBR {BR} at (134,18) size 1x18
         RenderText {#text} at (0,36) size 137x18
           text run at (0,36) width 137: "Column Two is: 67%"
       RenderBlock {HR} at (0,244) size 769x3 [border: (1px inset #000000)]
@@ -35,10 +35,10 @@ layer at (0,0) size 785x2350
       RenderBlock {P} at (0,870) size 769x55
         RenderText {#text} at (0,0) size 152x18
           text run at (0,0) width 152: "The table height is: 600"
-        RenderBR {BR} at (151,14) size 1x0
+        RenderBR {BR} at (151,0) size 1x18
         RenderText {#text} at (0,18) size 135x18
           text run at (0,18) width 135: "Column One is: 33%"
-        RenderBR {BR} at (134,32) size 1x0
+        RenderBR {BR} at (134,18) size 1x18
         RenderText {#text} at (0,36) size 137x18
           text run at (0,36) width 137: "Column Two is: 67%"
       RenderBlock {HR} at (0,940) size 769x3 [border: (1px inset #000000)]
@@ -59,10 +59,10 @@ layer at (0,0) size 785x2350
       RenderBlock {P} at (0,1566) size 769x55
         RenderText {#text} at (0,0) size 152x18
           text run at (0,0) width 152: "The table height is: 600"
-        RenderBR {BR} at (151,14) size 1x0
+        RenderBR {BR} at (151,0) size 1x18
         RenderText {#text} at (0,18) size 135x18
           text run at (0,18) width 135: "Column One is: 33%"
-        RenderBR {BR} at (134,32) size 1x0
+        RenderBR {BR} at (134,18) size 1x18
         RenderText {#text} at (0,36) size 137x18
           text run at (0,36) width 137: "Column Two is: 67%"
       RenderBlock {HR} at (0,1636) size 769x3 [border: (1px inset #000000)]
@@ -79,10 +79,10 @@ layer at (0,0) size 785x2350
       RenderBlock {P} at (0,2262) size 769x55
         RenderText {#text} at (0,0) size 152x18
           text run at (0,0) width 152: "The table height is: 600"
-        RenderBR {BR} at (151,14) size 1x0
+        RenderBR {BR} at (151,0) size 1x18
         RenderText {#text} at (0,18) size 135x18
           text run at (0,18) width 135: "Column One is: 33%"
-        RenderBR {BR} at (134,32) size 1x0
+        RenderBR {BR} at (134,18) size 1x18
         RenderText {#text} at (0,36) size 137x18
           text run at (0,36) width 137: "Column Two is: 67%"
       RenderBlock {HR} at (0,2332) size 769x3 [border: (1px inset #000000)]

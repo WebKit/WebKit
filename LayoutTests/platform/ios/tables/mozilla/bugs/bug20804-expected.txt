@@ -9,10 +9,10 @@ layer at (0,0) size 800x600
         RenderInline {A} at (0,0) size 170x19 [color=#0000EE]
           RenderText {#text} at (148,0) size 170x19
             text run at (148,0) width 170: "http://www.microsoft.com"
-        RenderBR {BR} at (317,15) size 1x0
+        RenderBR {BR} at (317,0) size 1x19
         RenderText {#text} at (0,20) size 595x19
           text run at (0,20) width 595: "The problem seems to be that the last cell in each row have an \"excessive\" COLSPAN value."
-        RenderBR {BR} at (594,35) size 1x0
+        RenderBR {BR} at (594,20) size 1x19
         RenderText {#text} at (0,40) size 399x19
           text run at (0,40) width 399: "I have added BORDER=1 to make the cell boundaries visible."
       RenderTable {TABLE} at (0,76) size 784x88 [border: (1px outset #808080)]
@@ -46,7 +46,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,180) size 784x40
         RenderText {#text} at (0,0) size 658x19
           text run at (0,0) width 658: "The following table is exactly as above, but I have removed COLSPAN for the last cell in row 1 and 2,"
-        RenderBR {BR} at (657,15) size 1x0
+        RenderBR {BR} at (657,0) size 1x19
         RenderText {#text} at (0,20) size 380x19
           text run at (0,20) width 380: "and changed COLSPAN=4 to COLSPAN=3 in the last row."
       RenderTable {TABLE} at (0,236) size 784x88 [border: (1px outset #808080)]

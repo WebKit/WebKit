@@ -64,12 +64,9 @@ public:
     float logicalWidth() const { return isHorizontal() ? rect().width() : rect().height(); }
     float logicalHeight() const { return isHorizontal() ? rect().height() : rect().width(); }
 
-    float baseline() const;
-
     bool isHorizontal() const;
     bool dirOverride() const;
     bool isLineBreak() const;
-    bool useLineBreakBoxRenderTreeDumpQuirk() const;
 
     unsigned minimumCaretOffset() const;
     unsigned maximumCaretOffset() const;
@@ -226,13 +223,6 @@ inline FloatRect PathRun::rect() const
     });
 }
 
-inline float PathRun::baseline() const
-{
-    return WTF::switchOn(m_pathVariant, [](auto& path) {
-        return path.baseline();
-    });
-}
-
 inline bool PathRun::isHorizontal() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
@@ -251,13 +241,6 @@ inline bool PathRun::isLineBreak() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.isLineBreak();
-    });
-}
-
-inline bool PathRun::useLineBreakBoxRenderTreeDumpQuirk() const
-{
-    return WTF::switchOn(m_pathVariant, [](auto& path) {
-        return path.useLineBreakBoxRenderTreeDumpQuirk();
     });
 }
 

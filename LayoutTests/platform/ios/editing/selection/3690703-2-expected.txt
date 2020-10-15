@@ -82,7 +82,7 @@ layer at (0,0) size 800x600
                     text run at (0,1) width 4: " "
                 RenderTableCell {TD} at (177,0) size 357x49 [r=0 c=1 rs=1 cs=1]
                   RenderTextControl {INPUT} at (2,2) size 352x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-                  RenderBR {BR} at (355,16) size 1x0
+                  RenderBR {BR} at (355,1) size 1x19
                   RenderButton {INPUT} at (72,27) size 98x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
                     RenderBlock (anonymous) at (12,3) size 74x14
                       RenderText at (0,0) size 74x14
@@ -98,13 +98,13 @@ layer at (0,0) size 800x600
                     RenderInline {A} at (0,0) size 71x12 [color=#0000CC]
                       RenderText {#text} at (5,0) size 71x12
                         text run at (5,0) width 71: "Advanced Search"
-                    RenderBR {BR} at (75,9) size 1x0
+                    RenderBR {BR} at (75,0) size 1x12
                     RenderText {#text} at (0,13) size 5x12
                       text run at (0,13) width 5: "  "
                     RenderInline {A} at (0,0) size 47x12 [color=#0000CC]
                       RenderText {#text} at (5,13) size 47x12
                         text run at (5,13) width 47: "Preferences"
-                    RenderBR {BR} at (51,22) size 1x0
+                    RenderBR {BR} at (51,13) size 1x12
                     RenderText {#text} at (0,26) size 5x12
                       text run at (0,26) width 5: "  "
                     RenderInline {A} at (0,0) size 65x12 [color=#0000CC]

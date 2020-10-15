@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,114) size 756x112
           RenderText {#text} at (0,0) size 190x28
             text run at (0,0) width 190: "Expected Results: "
-          RenderBR {BR} at (189,22) size 1x0
+          RenderBR {BR} at (189,0) size 1x28
           RenderText {#text} at (0,28) size 733x84
             text run at (0,28) width 733: "Should see the four lines in the red box. First line should be \"one\". Next one"
             text run at (0,56) width 167: "should be \"two\". "

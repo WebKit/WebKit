@@ -17,49 +17,49 @@ layer at (0,0) size 785x952
     RenderBody {BODY} at (8,8) size 769x936
       RenderText {#text} at (0,0) size 200x18
         text run at (0,0) width 200: "The images below should load."
-      RenderBR {BR} at (199,14) size 1x0
+      RenderBR {BR} at (199,0) size 1x18
       RenderImage {IMG} at (0,18) size 100x100
-      RenderBR {BR} at (100,118) size 0x0
+      RenderBR {BR} at (100,104) size 0x18
       RenderImage {IMG} at (0,118) size 100x100
-      RenderBR {BR} at (100,218) size 0x0
+      RenderBR {BR} at (100,204) size 0x18
       RenderImage {IMG} at (0,218) size 100x100
-      RenderBR {BR} at (100,318) size 0x0
+      RenderBR {BR} at (100,304) size 0x18
       RenderImage {IMG} at (0,318) size 100x100
-      RenderBR {BR} at (100,418) size 0x0
+      RenderBR {BR} at (100,404) size 0x18
       RenderImage {IMG} at (0,418) size 100x100
-      RenderBR {BR} at (100,518) size 0x0
+      RenderBR {BR} at (100,504) size 0x18
       RenderImage {IMG} at (0,518) size 100x100
-      RenderBR {BR} at (100,618) size 0x0
+      RenderBR {BR} at (100,604) size 0x18
       RenderImage {IMG} at (0,618) size 100x100
-      RenderBR {BR} at (100,718) size 0x0
+      RenderBR {BR} at (100,704) size 0x18
       RenderImage {IMG} at (0,718) size 100x100
-      RenderBR {BR} at (100,818) size 0x0
+      RenderBR {BR} at (100,804) size 0x18
       RenderImage {IMG} at (0,818) size 100x100
-      RenderBR {BR} at (100,918) size 0x0
+      RenderBR {BR} at (100,904) size 0x18
       RenderText {#text} at (0,918) size 242x18
         text run at (0,918) width 242: "The images below should be blocked."
-      RenderBR {BR} at (241,932) size 1x0
+      RenderBR {BR} at (241,918) size 1x18
       RenderImage {IMG} at (0,936) size 0x0
-      RenderBR {BR} at (0,936) size 0x0
+      RenderBR {BR} at (0,922) size 0x18
       RenderImage {IMG} at (0,936) size 0x0
-      RenderBR {BR} at (0,936) size 0x0
+      RenderBR {BR} at (0,922) size 0x18
       RenderImage {IMG} at (0,936) size 0x0
-      RenderBR {BR} at (0,936) size 0x0
+      RenderBR {BR} at (0,922) size 0x18
       RenderImage {IMG} at (0,936) size 0x0
-      RenderBR {BR} at (0,936) size 0x0
+      RenderBR {BR} at (0,922) size 0x18
       RenderImage {IMG} at (0,936) size 0x0
-      RenderBR {BR} at (0,936) size 0x0
+      RenderBR {BR} at (0,922) size 0x18
       RenderImage {IMG} at (0,936) size 0x0
-      RenderBR {BR} at (0,936) size 0x0
+      RenderBR {BR} at (0,922) size 0x18
       RenderImage {IMG} at (0,936) size 0x0
-      RenderBR {BR} at (0,936) size 0x0
+      RenderBR {BR} at (0,922) size 0x18
       RenderImage {IMG} at (0,936) size 0x0
-      RenderBR {BR} at (0,936) size 0x0
+      RenderBR {BR} at (0,922) size 0x18
       RenderImage {IMG} at (0,936) size 0x0
-      RenderBR {BR} at (0,936) size 0x0
+      RenderBR {BR} at (0,922) size 0x18
       RenderImage {IMG} at (0,936) size 0x0
-      RenderBR {BR} at (0,936) size 0x0
+      RenderBR {BR} at (0,922) size 0x18
       RenderImage {IMG} at (0,936) size 0x0
-      RenderBR {BR} at (0,936) size 0x0
+      RenderBR {BR} at (0,922) size 0x18
       RenderImage {IMG} at (0,936) size 0x0
-      RenderBR {BR} at (0,936) size 0x0
+      RenderBR {BR} at (0,922) size 0x18

@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
               RenderBlock {DIV} at (0,0) size 785x102 [border: (1px solid #000000)]
                 RenderText {#text} at (1,1) size 702x18
                   text run at (1,1) width 702: "This layout test is checks that we don't crash when a stand alone image is dragged into a content editable div. "
-                RenderBR {BR} at (702,15) size 1x0
+                RenderBR {BR} at (702,1) size 1x18
                 RenderInline {A} at (0,0) size 153x18 [color=#0000EE]
                   RenderText {#text} at (1,30) size 153x18
                     text run at (1,30) width 153: "rdar://problem/5021127"

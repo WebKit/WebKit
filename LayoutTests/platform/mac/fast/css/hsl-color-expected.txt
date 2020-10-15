@@ -28,7 +28,7 @@ layer at (0,0) size 785x1352
         RenderInline {B} at (0,0) size 142x18
           RenderText {#text} at (0,0) size 142x18
             text run at (0,0) width 142: "Out of bounds cases:"
-        RenderBR {BR} at (141,14) size 1x0
+        RenderBR {BR} at (141,0) size 1x18
         RenderText {#text} at (0,18) size 412x18
           text run at (0,18) width 412: "Check percentages larger than 100%, should be limited to 100%"
       RenderBlock {H1} at (0,466) size 769x38 [color=#00FF00]

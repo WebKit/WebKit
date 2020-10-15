@@ -27,7 +27,7 @@ layer at (0,0) size 800x600
                   RenderTableRow {TR} at (0,2) size 128x49
                     RenderTableCell {TD} at (2,2) size 124x49 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (3,3) size 118x25
-                      RenderBR {BR} at (121,28) size 0x0
+                      RenderBR {BR} at (121,14) size 0x18
                       RenderText {#text} at (24,28) size 6x18
                         text run at (24,28) width 6: "["
                       RenderInline {I} at (0,0) size 66x18
@@ -58,7 +58,7 @@ layer at (0,0) size 800x600
                   RenderTableRow {TR} at (0,2) size 128x49
                     RenderTableCell {TD} at (2,2) size 124x49 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (3,3) size 118x25
-                      RenderBR {BR} at (121,28) size 0x0
+                      RenderBR {BR} at (121,14) size 0x18
                       RenderText {#text} at (24,28) size 6x18
                         text run at (24,28) width 6: "["
                       RenderInline {I} at (0,0) size 66x18

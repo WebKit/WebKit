@@ -37,31 +37,31 @@ layer at (0,0) size 800x600
       RenderBlock (floating) {DIV} at (312,142) size 300x234 [bgcolor=#FFFFE0]
         RenderText {#text} at (0,0) size 191x18
           text run at (0,0) width 191: "Curabiturpretium,quamquiss?"
-        RenderBR {BR} at (190,14) size 1x0
+        RenderBR {BR} at (190,0) size 1x18
         RenderText {#text} at (0,18) size 295x36
           text run at (0,18) width 295: "empermalesuada,estliberofeugiatlibero,velfrin"
           text run at (0,36) width 13: "gi"
-        RenderBR {BR} at (12,50) size 1x0
+        RenderBR {BR} at (12,36) size 1x18
         RenderText {#text} at (0,54) size 135x18
           text run at (0,54) width 135: "llaorcinibhsedneque-"
-        RenderBR {BR} at (134,68) size 1x0
+        RenderBR {BR} at (134,54) size 1x18
         RenderText {#text} at (0,72) size 295x36
           text run at (0,72) width 295: "Quisqueeunullanonnisimolestieaccumsan.Etia"
           text run at (0,90) width 13: "m"
-        RenderBR {BR} at (12,104) size 1x0
+        RenderBR {BR} at (12,90) size 1x18
         RenderText {#text} at (0,108) size 197x18
           text run at (0,108) width 197: "tellusurna,laoreetac,laoreetnon"
-        RenderBR {BR} at (196,122) size 1x0
+        RenderBR {BR} at (196,108) size 1x18
         RenderText {#text} at (0,126) size 298x36
           text run at (0,126) width 298: "suscipitsed,sapien.Phasellusvehicula,sematpos"
           text run at (0,144) width 8: "u"
-        RenderBR {BR} at (8,158) size 0x0
+        RenderBR {BR} at (8,144) size 0x18
         RenderText {#text} at (0,162) size 228x18
           text run at (0,162) width 228: "erevehicula,auguenibhmolestienisl-"
-        RenderBR {BR} at (227,176) size 1x0
+        RenderBR {BR} at (227,162) size 1x18
         RenderText {#text} at (0,180) size 297x36
           text run at (0,180) width 297: "necullamcorperlacusantevulputatepede.Nascet"
           text run at (0,198) width 8: "u"
-        RenderBR {BR} at (8,212) size 0x0
+        RenderBR {BR} at (8,198) size 0x18
         RenderText {#text} at (0,216) size 92x18
           text run at (0,216) width 92: "rridiculusmus."

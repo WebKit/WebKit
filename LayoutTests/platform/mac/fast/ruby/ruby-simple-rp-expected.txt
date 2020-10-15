@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 342: "This is a test for simple ruby that contains <rp> tags. "
           text run at (341,0) width 436: "Contents of the <rp> tags (opening and closing brackets) should not"
           text run at (0,18) width 204: "show when ruby is suppoorted. "
-        RenderBR {BR} at (203,32) size 1x0
+        RenderBR {BR} at (203,18) size 1x18
         RenderBR {BR} at (0,36) size 0x18
       RenderBlock {P} at (0,70) size 784x28
         RenderText {#text} at (0,10) size 164x18

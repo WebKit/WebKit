@@ -47,7 +47,7 @@ layer at (0,0) size 800x600
                             RenderTableCell {TD} at (307,0) size 104x48 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                               RenderText {#text} at (6,6) size 91x18
                                 text run at (6,6) width 91: "27/03 - 30/04 "
-                              RenderBR {BR} at (96,20) size 1x0
+                              RenderBR {BR} at (96,6) size 1x18
                               RenderText {#text} at (6,24) size 87x18
                                 text run at (6,24) width 87: "16/10 - 31/10"
                             RenderTableCell {TD} at (410,9) size 178x30 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
@@ -56,7 +56,7 @@ layer at (0,0) size 800x600
                             RenderTableCell {TD} at (587,0) size 91x48 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
                               RenderText {#text} at (6,6) size 79x18
                                 text run at (6,6) width 79: "22/5 - 16/07"
-                              RenderBR {BR} at (84,20) size 1x0
+                              RenderBR {BR} at (84,6) size 1x18
                               RenderText {#text} at (6,24) size 79x18
                                 text run at (6,24) width 79: "28/8 - 01/10"
                             RenderTableCell {TD} at (677,9) size 91x30 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
@@ -103,7 +103,7 @@ layer at (0,0) size 800x600
                             RenderTableCell {TD} at (307,0) size 104x48 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                               RenderText {#text} at (6,6) size 91x18
                                 text run at (6,6) width 91: "27/03 - 30/04 "
-                              RenderBR {BR} at (96,20) size 1x0
+                              RenderBR {BR} at (96,6) size 1x18
                               RenderText {#text} at (6,24) size 87x18
                                 text run at (6,24) width 87: "16/10 - 31/10"
                             RenderTableCell {TD} at (410,9) size 178x30 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
@@ -112,7 +112,7 @@ layer at (0,0) size 800x600
                             RenderTableCell {TD} at (587,0) size 91x48 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
                               RenderText {#text} at (6,6) size 79x18
                                 text run at (6,6) width 79: "22/5 - 16/07"
-                              RenderBR {BR} at (84,20) size 1x0
+                              RenderBR {BR} at (84,6) size 1x18
                               RenderText {#text} at (6,24) size 79x18
                                 text run at (6,24) width 79: "28/8 - 01/10"
                             RenderTableCell {TD} at (677,9) size 91x30 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]

@@ -4,8 +4,8 @@ layer at (0,0) size 800x614
   RenderBlock {HTML} at (0,0) size 800x614
     RenderBody {BODY} at (8,8) size 784x598
       RenderBlock {DIV} at (0,1) size 671x592
-        RenderBR {BR} at (335,296) size 0x0
-        RenderBR {BR} at (671,592) size 0x0
+        RenderBR {BR} at (335,281) size 0x19
+        RenderBR {BR} at (671,577) size 0x19
       RenderText {#text} at (671,578) size 4x19
         text run at (671,578) width 4: " "
       RenderBlock {DIV} at (675,0) size 674x598

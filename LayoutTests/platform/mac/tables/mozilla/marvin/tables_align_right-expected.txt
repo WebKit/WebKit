@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,0) size 456x18
         text run at (0,0) width 456: "The table displayed is two rows by three columns with right alignment."
-      RenderBR {BR} at (455,14) size 1x0
+      RenderBR {BR} at (455,0) size 1x18
       RenderTable {TABLE} at (574,18) size 210x46
         RenderTableSection {TBODY} at (0,0) size 210x46
           RenderTableRow {TR} at (0,2) size 210x20

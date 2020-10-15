@@ -8,9 +8,9 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (0,24) size 0x0
           RenderBlock {DIV} at (0,0) size 447x48
           RenderBlock {DIV} at (446,24) size 0x0
-      RenderBR {BR} at (492,49) size 1x0
+      RenderBR {BR} at (492,34) size 1x19
       RenderTextControl {INPUT} at (2,94) size 489x88 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-      RenderBR {BR} at (492,141) size 1x0
+      RenderBR {BR} at (492,126) size 1x19
       RenderTextControl {INPUT} at (2,184) size 235x25 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
         RenderFlexibleBox {DIV} at (5,0) size 225x25
           RenderBlock {DIV} at (0,12) size 0x0

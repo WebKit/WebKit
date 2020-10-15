@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 32: "\x{9}"
       RenderText {#text} at (32,0) size 484x18
         text run at (32,0) width 484: "This tests to see where the selection is set when an html element is focused."
-      RenderBR {BR} at (515,14) size 1x0
+      RenderBR {BR} at (515,0) size 1x18
       RenderText {#text} at (0,18) size 751x36
         text run at (0,18) width 527: "We set it inside the body because we don't want to allow editing outside the body. "
         text run at (526,18) width 221: "This test also does some editing to"

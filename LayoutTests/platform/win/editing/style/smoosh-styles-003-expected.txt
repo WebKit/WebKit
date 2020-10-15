@@ -33,11 +33,11 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,142) size 756x112
           RenderText {#text} at (0,0) size 189x28
             text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,22) size 0x0
+          RenderBR {BR} at (189,0) size 0x28
           RenderText {#text} at (0,28) size 730x56
             text run at (0,28) width 730: "Should see this content in the red box below: foo. Note that there should be"
             text run at (0,56) width 174: "no visible indent. "
-          RenderBR {BR} at (174,78) size 0x0
+          RenderBR {BR} at (174,56) size 0x28
           RenderText {#text} at (0,84) size 183x28
             text run at (0,84) width 183: "This demonstrates "
           RenderInline {A} at (0,0) size 53x28 [color=#0000EE]

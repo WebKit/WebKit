@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
                   RenderBlock (anonymous) at (12,3) size 35x14
                     RenderText at (0,0) size 35x14
                       text run at (0,0) width 35: "Search"
-                RenderBR {BR} at (538,17) size 1x0
+                RenderBR {BR} at (538,2) size 1x19
                 RenderInline {SMALL} at (0,0) size 554x15
                   RenderInline {A} at (0,0) size 98x15 [color=#0000EE]
                     RenderText {#text} at (20,26) size 98x15
@@ -79,11 +79,11 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (163,105) size 272x50 [r=2 c=1 rs=1 cs=1]
                 RenderInline {A} at (0,0) size 233x28 [color=#0000EE]
                   RenderImage {IMG} at (19,1) size 233x35 [border: (1px solid #0000EE)]
-                  RenderBR {BR} at (251,36) size 1x0
+                  RenderBR {BR} at (251,21) size 1x19
                   RenderInline {FONT} at (0,0) size 48x12
                     RenderText {#text} at (111,36) size 48x12
                       text run at (111,36) width 48: "Click Here!"
-                RenderBR {BR} at (158,45) size 1x0
+                RenderBR {BR} at (158,30) size 1x19
               RenderTableCell {TD} at (436,121) size 161x18 [r=2 c=2 rs=1 cs=1]
                 RenderInline {A} at (0,0) size 132x19 [color=#0000EE]
                   RenderInline {FONT} at (0,0) size 132x15 [color=#0066FF]

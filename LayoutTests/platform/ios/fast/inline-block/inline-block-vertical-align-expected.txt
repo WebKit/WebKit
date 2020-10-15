@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x62
         RenderText {#text} at (0,0) size 27x19
           text run at (0,0) width 27: "One"
-        RenderBR {BR} at (26,15) size 1x0
+        RenderBR {BR} at (26,0) size 1x19
         RenderImage {IMG} at (0,36) size 11x11 [border: (1px dotted #FF0000)]
         RenderText {#text} at (11,30) size 4x19
           text run at (11,30) width 4: " "

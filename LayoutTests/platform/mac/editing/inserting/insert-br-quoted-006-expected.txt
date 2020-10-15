@@ -20,16 +20,16 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,28) size 784x82
           RenderText {#text} at (0,0) size 190x28
             text run at (0,0) width 190: "Expected Results: "
-          RenderBR {BR} at (189,22) size 1x0
+          RenderBR {BR} at (189,8) size 1x18
           RenderText {#text} at (0,28) size 374x18
             text run at (0,28) width 374: "Two blockquotes, with an unquoted blank line in between."
-          RenderBR {BR} at (373,42) size 1x0
+          RenderBR {BR} at (373,28) size 1x18
           RenderText {#text} at (0,46) size 410x18
             text run at (0,46) width 410: "The first blockquote contains two lines, the second one is blank."
-          RenderBR {BR} at (409,60) size 1x0
+          RenderBR {BR} at (409,46) size 1x18
           RenderText {#text} at (0,64) size 410x18
             text run at (0,64) width 410: "The second blockquote contains two lines, the first one is blank."
-          RenderBR {BR} at (409,78) size 1x0
+          RenderBR {BR} at (409,64) size 1x18
       RenderBlock {DIV} at (0,110) size 784x300 [border: (2px solid #FF0000)]
         RenderBlock (anonymous) at (14,14) size 756x28
           RenderText {#text} at (0,0) size 118x28

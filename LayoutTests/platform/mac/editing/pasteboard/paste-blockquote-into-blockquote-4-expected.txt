@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
         RenderBlock {BLOCKQUOTE} at (0,0) size 784x36 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderText {#text} at (22,0) size 34x18
             text run at (22,0) width 34: "Paste"
-          RenderBR {BR} at (55,14) size 1x0
+          RenderBR {BR} at (55,0) size 1x18
           RenderText {#text} at (22,18) size 58x18
             text run at (22,18) width 58: "HereOne"
         RenderBlock (anonymous) at (0,36) size 784x18

@@ -14,10 +14,10 @@ layer at (0,0) size 785x2088
       RenderBlock (anonymous) at (0,0) size 769x54
         RenderText {#text} at (0,0) size 595x18
           text run at (0,0) width 595: "This test makes sure that we don't scroll unnecessarily to reveal an editable HTML Element. "
-        RenderBR {BR} at (594,14) size 1x0
+        RenderBR {BR} at (594,0) size 1x18
         RenderText {#text} at (0,18) size 269x18
           text run at (0,18) width 269: "If the document doesn't scroll, test passes."
-        RenderBR {BR} at (268,32) size 1x0
+        RenderBR {BR} at (268,18) size 1x18
         RenderInline {B} at (0,0) size 537x18
           RenderText {#text} at (0,36) size 537x18
             text run at (0,36) width 537: "This demonstrates a bug: normally, focusing an element will select its contents."

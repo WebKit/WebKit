@@ -43,7 +43,7 @@ layer at (0,0) size 800x600
               RenderBlock (anonymous) at (1,21) size 110x21
                 RenderText {#text} at (0,0) size 102x19
                   text run at (0,0) width 102: "Althea Halliday"
-                RenderBR {BR} at (101,15) size 1x0
+                RenderBR {BR} at (101,0) size 1x19
           RenderTableRow {TR} at (0,66) size 783x83
             RenderTableCell {TD} at (0,66) size 112x83 [border: (0.50px solid #005A8C)] [r=2 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 110x21
@@ -52,7 +52,7 @@ layer at (0,0) size 800x600
               RenderBlock (anonymous) at (1,21) size 110x61
                 RenderText {#text} at (0,0) size 65x19
                   text run at (0,0) width 65: "CHORTle"
-                RenderBR {BR} at (64,15) size 1x0
+                RenderBR {BR} at (64,0) size 1x19
                 RenderText {#text} at (0,20) size 69x39
                   text run at (0,20) width 62: "Avondale"
                   text run at (0,40) width 69: "graduation"
@@ -109,7 +109,7 @@ layer at (0,0) size 800x600
               RenderBlock (anonymous) at (1,21) size 110x21
                 RenderText {#text} at (0,0) size 102x19
                   text run at (0,0) width 102: "Christmas party"
-                RenderBR {BR} at (101,15) size 1x0
+                RenderBR {BR} at (101,0) size 1x19
             RenderTableCell {TD} at (111,149) size 113x43 [border: (0.50px solid #005A8C)] [r=3 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 110x21
                 RenderText {#text} at (0,0) size 16x19
@@ -151,7 +151,7 @@ layer at (0,0) size 800x600
               RenderBlock (anonymous) at (1,21) size 110x21
                 RenderText {#text} at (0,0) size 68x19
                   text run at (0,0) width 68: "Paul Goltz"
-                RenderBR {BR} at (67,15) size 1x0
+                RenderBR {BR} at (67,0) size 1x19
           RenderTableRow {TR} at (0,232) size 783x63
             RenderTableCell {TD} at (0,232) size 112x43 [border: (0.50px solid #005A8C)] [r=4 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 110x21
@@ -200,7 +200,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 74x39
                   text run at (0,0) width 65: "Christmas"
                   text run at (0,20) width 74: "programme"
-                RenderBR {BR} at (73,35) size 1x0
+                RenderBR {BR} at (73,20) size 1x19
           RenderTableRow {TR} at (0,295) size 783x43
             RenderTableCell {TD} at (0,295) size 112x43 [border: (0.50px solid #005A8C)] [r=5 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 110x21
@@ -215,7 +215,7 @@ layer at (0,0) size 800x600
               RenderBlock (anonymous) at (1,21) size 110x21
                 RenderText {#text} at (0,0) size 92x19
                   text run at (0,0) width 92: "Christmas day"
-                RenderBR {BR} at (91,15) size 1x0
+                RenderBR {BR} at (91,0) size 1x19
             RenderTableCell {TD} at (223,295) size 113x43 [border: (0.50px solid #005A8C)] [r=5 c=2 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 110x21
                 RenderText {#text} at (0,0) size 16x19
@@ -223,7 +223,7 @@ layer at (0,0) size 800x600
               RenderBlock (anonymous) at (1,21) size 110x21
                 RenderText {#text} at (0,0) size 75x19
                   text run at (0,0) width 75: "Boxing day"
-                RenderBR {BR} at (74,15) size 1x0
+                RenderBR {BR} at (74,0) size 1x19
             RenderTableCell {TD} at (335,295) size 113x43 [border: (0.50px solid #005A8C)] [r=5 c=3 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 110x21
                 RenderText {#text} at (0,0) size 16x19
@@ -250,7 +250,7 @@ layer at (0,0) size 800x600
               RenderBlock (anonymous) at (1,21) size 110x21
                 RenderText {#text} at (0,0) size 95x19
                   text run at (0,0) width 95: "David Holman"
-                RenderBR {BR} at (94,15) size 1x0
+                RenderBR {BR} at (94,0) size 1x19
           RenderTableRow {TR} at (0,338) size 783x43
             RenderTableCell {TD} at (0,338) size 112x43 [border: (0.50px solid #005A8C)] [r=6 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 110x21

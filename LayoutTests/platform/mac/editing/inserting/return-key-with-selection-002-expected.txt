@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (0,0) size 756x84
             RenderText {#text} at (0,0) size 190x28
               text run at (0,0) width 190: "Expected Results: "
-            RenderBR {BR} at (189,22) size 1x0
+            RenderBR {BR} at (189,0) size 1x28
             RenderText {#text} at (0,28) size 704x56
               text run at (0,28) width 704: "Should see this content in the red box below (note that the insertion point"
               text run at (0,56) width 660: "should be at the start of the third line, immediately preceding \"baz\"):"

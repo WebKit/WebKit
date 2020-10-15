@@ -48,7 +48,6 @@ public:
     void dirtyLineBoxes(bool fullLayout);
 
     IntRect linesBoundingBox() const;
-    IntRect boundingBoxForRenderTreeDump() const;
 
     void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const final;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed = nullptr) const final;

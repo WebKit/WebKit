@@ -31,19 +31,19 @@ layer at (0,0) size 800x600
             text run at (85,0) width 9: "g"
         RenderText {#text} at (93,0) size 34x18
           text run at (93,0) width 34: "raph."
-        RenderBR {BR} at (126,14) size 1x0
+        RenderBR {BR} at (126,0) size 1x18
         RenderText {#text} at (0,18) size 65x18
           text run at (0,18) width 65: "Some text"
-        RenderBR {BR} at (64,32) size 1x0
+        RenderBR {BR} at (64,18) size 1x18
         RenderText {#text} at (0,36) size 65x18
           text run at (0,36) width 65: "Some text"
-        RenderBR {BR} at (64,50) size 1x0
+        RenderBR {BR} at (64,36) size 1x18
         RenderText {#text} at (0,54) size 65x18
           text run at (0,54) width 65: "Some text"
-        RenderBR {BR} at (64,68) size 1x0
+        RenderBR {BR} at (64,54) size 1x18
         RenderText {#text} at (0,72) size 65x18
           text run at (0,72) width 65: "Some text"
-        RenderBR {BR} at (64,86) size 1x0
+        RenderBR {BR} at (64,72) size 1x18
         RenderText {#text} at (0,90) size 86x18
           text run at (0,90) width 86: "This is a para"
         RenderInline {SPAN} at (0,0) size 9x18 [color=#FF0000]

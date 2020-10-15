@@ -80,46 +80,46 @@ layer at (0,0) size 800x2364
                       RenderText {#text} at (0,0) size 113x19
                         text run at (0,0) width 82: "yuiyututuyu "
                         text run at (81,0) width 32: "fesfe"
-                      RenderBR {BR} at (112,15) size 1x0
+                      RenderBR {BR} at (112,0) size 1x19
                       RenderText {#text} at (0,20) size 4x19
                         text run at (0,20) width 4: " "
-                      RenderBR {BR} at (4,35) size 0x0
+                      RenderBR {BR} at (4,20) size 0x19
                       RenderText {#text} at (0,40) size 4x19
                         text run at (0,40) width 4: " "
-                      RenderBR {BR} at (4,55) size 0x0
+                      RenderBR {BR} at (4,40) size 0x19
                       RenderText {#text} at (0,60) size 4x19
                         text run at (0,60) width 4: " "
-                      RenderBR {BR} at (4,75) size 0x0
+                      RenderBR {BR} at (4,60) size 0x19
                       RenderText {#text} at (0,80) size 4x19
                         text run at (0,80) width 4: " "
-                      RenderBR {BR} at (4,95) size 0x0
+                      RenderBR {BR} at (4,80) size 0x19
                       RenderText {#text} at (0,100) size 4x19
                         text run at (0,100) width 4: " "
-                      RenderBR {BR} at (4,115) size 0x0
+                      RenderBR {BR} at (4,100) size 0x19
                       RenderText {#text} at (0,120) size 4x19
                         text run at (0,120) width 4: " "
-                      RenderBR {BR} at (4,135) size 0x0
+                      RenderBR {BR} at (4,120) size 0x19
                       RenderText {#text} at (0,140) size 4x19
                         text run at (0,140) width 4: " "
-                      RenderBR {BR} at (4,155) size 0x0
+                      RenderBR {BR} at (4,140) size 0x19
                       RenderText {#text} at (0,160) size 4x19
                         text run at (0,160) width 4: " "
-                      RenderBR {BR} at (4,175) size 0x0
+                      RenderBR {BR} at (4,160) size 0x19
                       RenderText {#text} at (0,180) size 4x19
                         text run at (0,180) width 4: " "
-                      RenderBR {BR} at (4,195) size 0x0
+                      RenderBR {BR} at (4,180) size 0x19
                       RenderText {#text} at (0,200) size 4x19
                         text run at (0,200) width 4: " "
-                      RenderBR {BR} at (4,215) size 0x0
+                      RenderBR {BR} at (4,200) size 0x19
                       RenderText {#text} at (0,220) size 4x19
                         text run at (0,220) width 4: " "
-                      RenderBR {BR} at (4,235) size 0x0
+                      RenderBR {BR} at (4,220) size 0x19
                       RenderText {#text} at (0,240) size 4x19
                         text run at (0,240) width 4: " "
-                      RenderBR {BR} at (4,255) size 0x0
+                      RenderBR {BR} at (4,240) size 0x19
                       RenderText {#text} at (0,260) size 4x19
                         text run at (0,260) width 4: " "
-                      RenderBR {BR} at (4,275) size 0x0
+                      RenderBR {BR} at (4,260) size 0x19
                       RenderText {#text} at (0,280) size 4x19
                         text run at (0,280) width 4: " "
       RenderBlock (anonymous) at (0,1041) size 784x21
@@ -184,45 +184,45 @@ layer at (0,0) size 800x2364
                               RenderText {#text} at (0,0) size 117x19
                                 text run at (0,0) width 82: "yuiyututuyu "
                                 text run at (81,0) width 36: "fesf e"
-                              RenderBR {BR} at (116,15) size 1x0
+                              RenderBR {BR} at (116,0) size 1x19
                               RenderText {#text} at (0,20) size 4x19
                                 text run at (0,20) width 4: " "
-                              RenderBR {BR} at (4,35) size 0x0
+                              RenderBR {BR} at (4,20) size 0x19
                               RenderText {#text} at (0,40) size 4x19
                                 text run at (0,40) width 4: " "
-                              RenderBR {BR} at (4,55) size 0x0
+                              RenderBR {BR} at (4,40) size 0x19
                               RenderText {#text} at (0,60) size 4x19
                                 text run at (0,60) width 4: " "
-                              RenderBR {BR} at (4,75) size 0x0
+                              RenderBR {BR} at (4,60) size 0x19
                               RenderText {#text} at (0,80) size 4x19
                                 text run at (0,80) width 4: " "
-                              RenderBR {BR} at (4,95) size 0x0
+                              RenderBR {BR} at (4,80) size 0x19
                               RenderText {#text} at (0,100) size 4x19
                                 text run at (0,100) width 4: " "
-                              RenderBR {BR} at (4,115) size 0x0
+                              RenderBR {BR} at (4,100) size 0x19
                               RenderText {#text} at (0,120) size 4x19
                                 text run at (0,120) width 4: " "
-                              RenderBR {BR} at (4,135) size 0x0
+                              RenderBR {BR} at (4,120) size 0x19
                               RenderText {#text} at (0,140) size 4x19
                                 text run at (0,140) width 4: " "
-                              RenderBR {BR} at (4,155) size 0x0
+                              RenderBR {BR} at (4,140) size 0x19
                               RenderText {#text} at (0,160) size 4x19
                                 text run at (0,160) width 4: " "
-                              RenderBR {BR} at (4,175) size 0x0
+                              RenderBR {BR} at (4,160) size 0x19
                               RenderText {#text} at (0,180) size 4x19
                                 text run at (0,180) width 4: " "
-                              RenderBR {BR} at (4,195) size 0x0
+                              RenderBR {BR} at (4,180) size 0x19
                               RenderText {#text} at (0,200) size 4x19
                                 text run at (0,200) width 4: " "
-                              RenderBR {BR} at (4,215) size 0x0
+                              RenderBR {BR} at (4,200) size 0x19
                               RenderText {#text} at (0,220) size 4x19
                                 text run at (0,220) width 4: " "
-                              RenderBR {BR} at (4,235) size 0x0
+                              RenderBR {BR} at (4,220) size 0x19
                               RenderText {#text} at (0,240) size 4x19
                                 text run at (0,240) width 4: " "
-                              RenderBR {BR} at (4,255) size 0x0
+                              RenderBR {BR} at (4,240) size 0x19
                               RenderText {#text} at (0,260) size 4x19
                                 text run at (0,260) width 4: " "
-                              RenderBR {BR} at (4,275) size 0x0
+                              RenderBR {BR} at (4,260) size 0x19
                               RenderText {#text} at (0,280) size 4x19
                                 text run at (0,280) width 4: " "

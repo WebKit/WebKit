@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
           RenderInline {A} at (0,0) size 277x18 [color=#0000EE]
             RenderText {#text} at (156,0) size 277x18
               text run at (156,0) width 277: "http://www.linuxplanet.com/linuxplanet/"
-          RenderBR {BR} at (432,14) size 1x0
+          RenderBR {BR} at (432,0) size 1x18
           RenderText {#text} at (0,18) size 147x18
             text run at (0,18) width 147: "First cell is coded as: "
         RenderInline {CODE} at (0,0) size 282x15

@@ -28,10 +28,10 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,124) size 784x36
         RenderText {#text} at (0,0) size 360x18
           text run at (0,0) width 360: "In this table, the second and the third cell are given 40%"
-        RenderBR {BR} at (359,14) size 1x0
+        RenderBR {BR} at (359,0) size 1x18
         RenderText {#text} at (0,18) size 260x18
           text run at (0,18) width 260: "The cells are competing with each other."
-        RenderBR {BR} at (259,32) size 1x0
+        RenderBR {BR} at (259,18) size 1x18
       RenderTable {TABLE} at (0,176) size 347x36 [border: (5px outset #808080)]
         RenderTableSection {TBODY} at (5,5) size 337x26
           RenderTableRow {TR} at (0,2) size 337x22
@@ -47,10 +47,10 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,228) size 784x54
         RenderText {#text} at (0,0) size 360x18
           text run at (0,0) width 360: "In this table, the second and the third cell are given 50%"
-        RenderBR {BR} at (359,14) size 1x0
+        RenderBR {BR} at (359,0) size 1x18
         RenderText {#text} at (0,18) size 454x18
           text run at (0,18) width 454: "The cells are competing again but their percentage can not be satisfied."
-        RenderBR {BR} at (453,32) size 1x0
+        RenderBR {BR} at (453,18) size 1x18
         RenderText {#text} at (0,36) size 487x18
           text run at (0,36) width 487: "The table grows as large as it can and the first cell gets to its minimal width."
       RenderTable {TABLE} at (0,298) size 784x54 [border: (5px outset #808080)]

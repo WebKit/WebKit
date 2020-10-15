@@ -13,15 +13,15 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,67) size 784x430
         RenderText {#text} at (0,7) size 448x72
           text run at (0,7) width 448: "\x{D83D}\x{DC66}\x{D83C}\x{DFFB}\x{D83D}\x{DC69}\x{D83C}\x{DFFC}\x{D83D}\x{DC66}\x{D83C}\x{DFFE}\x{2764}\x{FE0F}\x{D83D}\x{DC8B}\x{D83D}\x{DD75}\x{D83C}\x{DFFB}\x{D83C}\x{DFC7}\x{D83C}\x{DFFB}"
-        RenderBR {BR} at (448,65) size 0x0
+        RenderBR {BR} at (448,6) size 0x72
         RenderText {#text} at (0,93) size 432x72
           text run at (0,93) width 432: "\x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC66} \x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC67} \x{D83D}\x{DC6A} \x{D83D}\x{DC66}\x{D83C}\x{DFFB}\x{D83D}\x{DC69}\x{D83C}\x{DFFC}\x{D83D}\x{DC66}\x{D83C}\x{DFFE}"
-        RenderBR {BR} at (432,151) size 0x0
+        RenderBR {BR} at (432,92) size 0x72
         RenderText {#text} at (0,179) size 384x72
           text run at (0,179) width 384: "\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC66} \x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC67} \x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC67}\x{200D}\x{D83D}\x{DC66} \x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC66}\x{200D}\x{D83D}\x{DC66} \x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC67}\x{200D}\x{D83D}\x{DC67}"
-        RenderBR {BR} at (384,237) size 0x0
+        RenderBR {BR} at (384,178) size 0x72
         RenderText {#text} at (0,265) size 384x72
           text run at (0,265) width 384: "\x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC66} \x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC67} \x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC67}\x{200D}\x{D83D}\x{DC66} \x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC66}\x{200D}\x{D83D}\x{DC66} \x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC67}\x{200D}\x{D83D}\x{DC67}"
-        RenderBR {BR} at (384,323) size 0x0
+        RenderBR {BR} at (384,264) size 0x72
         RenderText {#text} at (0,351) size 384x72
           text run at (0,351) width 384: "\x{D83D}\x{DC69}\x{200D}\x{2764}\x{FE0F}\x{200D}\x{D83D}\x{DC69} \x{D83D}\x{DC68}\x{200D}\x{2764}\x{FE0F}\x{200D}\x{D83D}\x{DC68} \x{D83D}\x{DC69}\x{200D}\x{2764}\x{FE0F}\x{200D}\x{D83D}\x{DC8B}\x{200D}\x{D83D}\x{DC69} \x{D83D}\x{DC68}\x{200D}\x{2764}\x{FE0F}\x{200D}\x{D83D}\x{DC8B}\x{200D}\x{D83D}\x{DC68} \x{D83D}\x{DC69}\x{200D}\x{2764}\x{FE0F}\x{200D}\x{D83D}\x{DC69}"

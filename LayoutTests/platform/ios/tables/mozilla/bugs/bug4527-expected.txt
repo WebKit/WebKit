@@ -29,9 +29,9 @@ layer at (0,0) size 800x600
                         RenderText {#text} at (0,0) size 0x0
                 RenderInline {A} at (0,0) size 19x19 [color=#0000EE]
                   RenderImage {IMG} at (468,0) size 19x60
-              RenderBR {BR} at (487,60) size 0x0
+              RenderBR {BR} at (487,45) size 0x19
               RenderImage {IMG} at (0,60) size 470x10
-              RenderBR {BR} at (470,70) size 0x0
+              RenderBR {BR} at (470,55) size 0x19
           RenderTableRow {TR} at (0,70) size 613x26
             RenderTableCell {TD} at (126,70) size 242x26 [bgcolor=#CCCCCC] [r=1 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 232x25

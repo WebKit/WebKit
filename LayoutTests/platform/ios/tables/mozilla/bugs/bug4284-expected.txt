@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x20
         RenderText {#text} at (0,0) size 223x19
           text run at (0,0) width 223: "this table should be center aligned "
-        RenderBR {BR} at (222,15) size 1x0
+        RenderBR {BR} at (222,0) size 1x19
       RenderTable {TABLE} at (376,20) size 32x30 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 30x28
           RenderTableRow {TR} at (0,2) size 30x24
@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,50) size 784x20
         RenderText {#text} at (0,0) size 467x19
           text run at (0,0) width 467: "this div should be center aligned with an image and a table centered in it "
-        RenderBR {BR} at (466,15) size 1x0
+        RenderBR {BR} at (466,0) size 1x19
       RenderBlock {DIV} at (0,70) size 784x80
         RenderBlock (anonymous) at (0,0) size 784x50
           RenderImage {IMG} at (367,0) size 50x50

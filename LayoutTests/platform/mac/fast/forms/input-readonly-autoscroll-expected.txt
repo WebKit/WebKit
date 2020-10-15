@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,91) size 784x18
         RenderText {#text} at (0,0) size 90x18
           text run at (0,0) width 90: "ScrollLeft: 13"
-        RenderBR {BR} at (89,14) size 1x0
+        RenderBR {BR} at (89,0) size 1x18
 layer at (13,81) size 140x13 scrollX 13 scrollWidth 153
   RenderBlock {DIV} at (3,3) size 140x13
     RenderText {#text} at (0,0) size 154x13

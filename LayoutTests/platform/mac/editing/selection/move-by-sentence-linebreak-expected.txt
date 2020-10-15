@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 564x18
           text run at (0,0) width 564: "This tests for sentence boundary when there are empty line breaks between lines of text."
-        RenderBR {BR} at (563,14) size 1x0
+        RenderBR {BR} at (563,0) size 1x18
         RenderText {#text} at (0,18) size 501x18
           text run at (0,18) width 501: "The result insertion point should be at the end of the sentence \"How are you?\""
       RenderBlock {DIV} at (0,52) size 784x108

@@ -7,7 +7,7 @@ layer at (0,0) size 800x1439
         RenderBlock (anonymous) at (0,0) size 784x20
           RenderText {#text} at (257,0) size 270x19
             text run at (257,0) width 270: "Build 1999/10/27/08 Win95 - Daily Build"
-          RenderBR {BR} at (526,15) size 1x0
+          RenderBR {BR} at (526,0) size 1x19
         RenderTable {TABLE} at (80,20) size 624x1259 [border: (10px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 624x20
             RenderText {#text} at (268,0) size 87x19

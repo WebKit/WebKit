@@ -10,6 +10,6 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,36) size 784x36
         RenderText {#text} at (0,0) size 82x18
           text run at (0,0) width 82: "Test Passed. "
-        RenderBR {BR} at (81,14) size 1x0
+        RenderBR {BR} at (81,0) size 1x18
         RenderText {#text} at (0,18) size 379x18
           text run at (0,18) width 379: "Index for option element with no corresponding select is: 0"

@@ -439,7 +439,7 @@ layer at (0,0) size 785x812
       RenderBlock (anonymous) at (0,742) size 769x36
         RenderText {#text} at (0,0) size 8x18
           text run at (0,0) width 8: "  "
-        RenderBR {BR} at (8,14) size 0x0
+        RenderBR {BR} at (8,0) size 0x18
         RenderText {#text} at (0,18) size 286x18
           text run at (0,18) width 286: "the following text should display on one line"
       RenderTable {TABLE} at (0,778) size 207x18

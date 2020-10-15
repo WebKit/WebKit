@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x36
         RenderText {#text} at (0,0) size 775x18
           text run at (0,0) width 775: "This tests that the blockquote's typing style doesn't remain after breaking the blockquote and typing in the unquoted area."
-        RenderBR {BR} at (774,14) size 1x0
+        RenderBR {BR} at (774,0) size 1x18
         RenderBR {BR} at (0,18) size 0x18
       RenderBlock {DIV} at (0,36) size 784x54
         RenderBlock {BLOCKQUOTE} at (0,0) size 784x18 [color=#0000FF] [border: none (2px solid #0000FF)]
@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,18) size 784x18
           RenderText {#text} at (0,0) size 35x18
             text run at (0,0) width 35: "black"
-          RenderBR {BR} at (34,14) size 1x0
+          RenderBR {BR} at (34,0) size 1x18
         RenderBlock {BLOCKQUOTE} at (0,36) size 784x18 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderBlock {DIV} at (12,0) size 772x18
             RenderBlock {BLOCKQUOTE} at (0,0) size 772x18 [color=#008000] [border: none (2px solid #008000)]

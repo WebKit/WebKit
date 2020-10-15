@@ -13,10 +13,10 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,238) size 784x40
         RenderText {#text} at (0,0) size 168x19
           text run at (0,0) width 168: "Found box1 on left: PASS"
-        RenderBR {BR} at (167,15) size 1x0
+        RenderBR {BR} at (167,0) size 1x19
         RenderText {#text} at (0,20) size 204x19
           text run at (0,20) width 204: "Found container on right: PASS"
-        RenderBR {BR} at (203,35) size 1x0
+        RenderBR {BR} at (203,20) size 1x19
 layer at (27,63) size 160x160
   RenderBlock {DIV} at (19,19) size 160x160 [bgcolor=#808080]
 layer at (227,63) size 160x160

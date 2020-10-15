@@ -5,10 +5,10 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,0) size 364x19
         text run at (0,0) width 364: "All of the boxes below should look identical to this one: "
-      RenderBR {BR} at (363,15) size 1x0
+      RenderBR {BR} at (363,0) size 1x19
       RenderText {#text} at (72,73) size 4x19
         text run at (72,73) width 4: " "
-      RenderBR {BR} at (76,88) size 0x0
+      RenderBR {BR} at (76,73) size 0x19
       RenderText {#text} at (0,93) size 101x19
         text run at (0,93) width 101: "The test boxes: "
       RenderBR {BR} at (0,0) size 0x0

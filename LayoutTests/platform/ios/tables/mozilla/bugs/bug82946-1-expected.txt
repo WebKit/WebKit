@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,56) size 784x20
         RenderText {#text} at (0,0) size 142x19
           text run at (0,0) width 142: "Table with width=459"
-        RenderBR {BR} at (141,15) size 1x0
+        RenderBR {BR} at (141,0) size 1x19
       RenderTable {TABLE} at (0,76) size 784x266 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x264
           RenderTableRow {TR} at (0,2) size 782x154

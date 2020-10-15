@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
             text run at (0,0) width 226: "This test passes if it does not crash."
         RenderText {#text} at (225,0) size 5x19
           text run at (225,0) width 5: " "
-        RenderBR {BR} at (229,15) size 1x0
+        RenderBR {BR} at (229,0) size 1x19
       RenderBlock {UL} at (0,36) size 784x60
         RenderListItem {LI} at (40,0) size 744x60
           RenderBlock (anonymous) at (0,0) size 744x20

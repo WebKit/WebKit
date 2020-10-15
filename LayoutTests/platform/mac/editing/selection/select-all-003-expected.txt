@@ -35,7 +35,7 @@ layer at (0,0) size 785x996
           text run at (0,586) width 575: "upon this continent, a new nation, conceived in Liberty, and"
           text run at (574,586) width 7: " "
           text run at (0,634) width 568: "dedicated to the proposition that all men are created equal. "
-        RenderBR {BR} at (567,656) size 1x0
+        RenderBR {BR} at (567,624) size 1x28
         RenderBR {BR} at (0,682) size 0x28
       RenderBlock {DIV} at (74,794) size 600x0
 selection start: position 0 of child 1 {BR} of body

@@ -10,7 +10,6 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 2 of #text > P > DIV > DIV > BODY > HTML > #document to 4 of #text > P > DIV > DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > P > DIV > DIV > BODY > HTML > #document to 2 of #text > P > DIV > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > P > DIV > DIV > BODY > HTML > #document to 2 of #text > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -29,7 +28,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,114) size 756x112
           RenderText {#text} at (0,0) size 189x28
             text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,22) size 0x0
+          RenderBR {BR} at (189,0) size 0x28
           RenderText {#text} at (0,28) size 738x84
             text run at (0,28) width 738: "Should see the four lines in the red box. First line should be \"one\". Next one"
             text run at (0,56) width 167: "should be \"two\". "

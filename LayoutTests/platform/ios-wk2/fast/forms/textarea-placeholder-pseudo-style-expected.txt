@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,0) size 336x19
         text run at (0,0) width 336: "This tests that you can set the placeholder text color."
-      RenderBR {BR} at (335,15) size 1x0
+      RenderBR {BR} at (335,0) size 1x19
       RenderText {#text} at (155,43) size 4x19
         text run at (155,43) width 4: " "
       RenderText {#text} at (314,43) size 4x19

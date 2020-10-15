@@ -9,9 +9,9 @@ layer at (0,0) size 800x600 isolatesBlending
           text run at (625,0) width 92: "while playing."
       RenderBlock (anonymous) at (0,36) size 784x196
         RenderMedia {AUDIO} at (0,0) size 260x39
-        RenderBR {BR} at (260,39) size 0x0
-        RenderBR {BR} at (260,103) size 0x0
-        RenderBR {BR} at (260,196) size 0x0
+        RenderBR {BR} at (260,24) size 0x19
+        RenderBR {BR} at (260,88) size 0x19
+        RenderBR {BR} at (260,181) size 0x19
 layer at (8,44) size 260x39 scrollHeight 89
   RenderFlexibleBox {DIV} at (0,0) size 260x39
 layer at (8,44) size 260x39

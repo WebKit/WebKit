@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
             text run at (30,11) width 79: " Row 1;      "
             text run at (108,11) width 1: " "
             text run at (0,22) width 319: "      background-color: cyan;     text-align: center;"
-          RenderBR {BR} at (318,30) size 1x0
+          RenderBR {BR} at (318,22) size 1x11
           RenderText {#text} at (0,33) size 0x11
             text run at (0,33) width 0: " "
           RenderInline {B} at (0,0) size 31x11
@@ -28,7 +28,7 @@ layer at (0,0) size 800x600
             text run at (30,44) width 79: " Rows 2,3,4; "
             text run at (108,44) width 1: " "
             text run at (0,55) width 313: "      background-color: #9999ff;  text-align: right;"
-          RenderBR {BR} at (312,63) size 1x0
+          RenderBR {BR} at (312,55) size 1x11
           RenderText {#text} at (0,66) size 0x11
             text run at (0,66) width 0: " "
           RenderInline {B} at (0,0) size 31x11

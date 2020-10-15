@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,243) size 784x194
         RenderText {#text} at (0,5) size 58x92
           text run at (0,5) width 58 RTL: "\x{5E9}\x{5C1}"
-        RenderBR {BR} at (57,77) size 1x0
+        RenderBR {BR} at (57,5) size 1x92
         RenderText {#text} at (0,102) size 58x92
           text run at (0,102) width 58 RTL: "\x{5E9}\x{5C2}"
         RenderText {#text} at (0,0) size 0x0

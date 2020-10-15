@@ -9,7 +9,7 @@ layer at (0,0) size 800x585
             text run at (0,0) width 589: "Resize the window. Red boxes below must not overflow the blue box (or window) from the "
             text run at (588,0) width 168: "left side, though they may"
             text run at (0,18) width 131: "overflow from right."
-          RenderBR {BR} at (130,32) size 1x0
+          RenderBR {BR} at (130,18) size 1x18
           RenderBR {BR} at (0,36) size 0x18
         RenderTable {TABLE} at (2,56) size 982x28 [border: (2px solid #FF0000)]
           RenderTableSection {TBODY} at (2,2) size 978x24

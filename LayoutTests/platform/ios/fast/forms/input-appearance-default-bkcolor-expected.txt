@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#800080]
       RenderText {#text} at (0,0) size 484x19
         text run at (0,0) width 484: "This tests that the default background color for the new text fields is white. "
-      RenderBR {BR} at (483,15) size 1x0
+      RenderBR {BR} at (483,0) size 1x19
       RenderTextControl {INPUT} at (2,22) size 138x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
       RenderText {#text} at (0,0) size 0x0
 layer at (17,33) size 124x14

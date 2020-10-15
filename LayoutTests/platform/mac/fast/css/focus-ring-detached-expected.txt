@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
               RenderInline {A} at (0,0) size 250x36 [color=#0000EE]
                 RenderText {#text} at (203,1) size 48x18
                   text run at (203,1) width 48: "should "
-                RenderBR {BR} at (250,15) size 1x0
+                RenderBR {BR} at (250,1) size 1x18
                 RenderText {#text} at (1,19) size 48x18
                   text run at (1,19) width 48: "contain"
               RenderText {#text} at (48,19) size 326x36

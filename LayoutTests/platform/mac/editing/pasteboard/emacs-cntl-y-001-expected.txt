@@ -18,10 +18,10 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,86) size 756x84
           RenderText {#text} at (0,0) size 190x28
             text run at (0,0) width 190: "Expected Results: "
-          RenderBR {BR} at (189,22) size 1x0
+          RenderBR {BR} at (189,0) size 1x28
           RenderText {#text} at (0,28) size 285x28
             text run at (0,28) width 285: "Deletes a character, yielding: "
-          RenderBR {BR} at (284,50) size 1x0
+          RenderBR {BR} at (284,28) size 1x28
           RenderText {#text} at (0,56) size 165x28
             text run at (0,56) width 165: "one tw three four"
       RenderBlock {DIV} at (0,208) size 784x32

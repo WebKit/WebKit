@@ -47,18 +47,11 @@ public:
     bool isHorizontal() const { return m_inlineBox->isHorizontal(); }
     bool dirOverride() const { return m_inlineBox->dirOverride(); }
     bool isLineBreak() const { return m_inlineBox->isLineBreak(); }
-    float baseline() const { return m_inlineBox->baselinePosition(AlphabeticBaseline); }
 
     unsigned minimumCaretOffset() const { return m_inlineBox->caretMinOffset(); }
     unsigned maximumCaretOffset() const { return m_inlineBox->caretMaxOffset(); }
 
     unsigned char bidiLevel() const { return m_inlineBox->bidiLevel(); }
-
-
-    bool useLineBreakBoxRenderTreeDumpQuirk() const
-    {
-        return !m_inlineBox->behavesLikeText();
-    }
 
     bool hasHyphen() const { return inlineTextBox()->hasHyphen(); }
     StringView text() const { return StringView(inlineTextBox()->renderer().text()).substring(inlineTextBox()->start(), inlineTextBox()->len()); }

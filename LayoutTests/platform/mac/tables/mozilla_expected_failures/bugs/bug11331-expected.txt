@@ -7,13 +7,13 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,0) size 784x72
           RenderText {#text} at (0,0) size 344x18
             text run at (0,0) width 344: "In the yellow table the \"W\" is clipped on its left edge."
-          RenderBR {BR} at (343,14) size 1x0
+          RenderBR {BR} at (343,0) size 1x18
           RenderText {#text} at (0,18) size 173x18
             text run at (0,18) width 173: "The only difference is that:"
-          RenderBR {BR} at (172,32) size 1x0
+          RenderBR {BR} at (172,18) size 1x18
           RenderText {#text} at (0,36) size 249x18
             text run at (0,36) width 249: "yellow table has CELLPADDING=\"0\""
-          RenderBR {BR} at (248,50) size 1x0
+          RenderBR {BR} at (248,36) size 1x18
           RenderText {#text} at (0,54) size 238x18
             text run at (0,54) width 238: "grey table has CELLPADDING=\"1\"."
         RenderTable {TABLE} at (0,72) size 40x40 [bgcolor=#FFFF00]

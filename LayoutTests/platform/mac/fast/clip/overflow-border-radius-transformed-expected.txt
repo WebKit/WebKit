@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,0) size 471x18
         text run at (0,0) width 471: "The white text and grey backgrounds should all clip to the border-radius. "
-      RenderBR {BR} at (470,14) size 1x0
+      RenderBR {BR} at (470,0) size 1x18
       RenderText {#text} at (240,38) size 4x18
         text run at (240,38) width 4: " "
       RenderText {#text} at (484,38) size 4x18
@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (240,178) size 4x18
         text run at (240,178) width 4: " "
-      RenderBR {BR} at (244,192) size 0x0
+      RenderBR {BR} at (244,178) size 0x18
       RenderText {#text} at (0,0) size 0x0
 layer at (18,36) size 220x120 clip at (28,46) size 200x100 scrollWidth 206 scrollHeight 156
   RenderBlock {DIV} at (10,28) size 220x120 [border: (10px solid #000000)]

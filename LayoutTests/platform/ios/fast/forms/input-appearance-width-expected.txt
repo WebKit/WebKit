@@ -5,17 +5,17 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,0) size 353x19
         text run at (0,0) width 353: "This tests that the new text fields use the correct width."
-      RenderBR {BR} at (352,15) size 1x0
+      RenderBR {BR} at (352,0) size 1x19
       RenderTextControl {INPUT} at (2,22) size 138x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-      RenderBR {BR} at (141,36) size 1x0
+      RenderBR {BR} at (141,21) size 1x19
       RenderTextControl {INPUT} at (0,47) size 200x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-      RenderBR {BR} at (200,61) size 0x0
+      RenderBR {BR} at (200,46) size 0x19
       RenderTextControl {INPUT} at (2,72) size 321x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-      RenderBR {BR} at (324,86) size 1x0
+      RenderBR {BR} at (324,71) size 1x19
       RenderTextControl {INPUT} at (0,97) size 200x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-      RenderBR {BR} at (200,111) size 0x0
+      RenderBR {BR} at (200,96) size 0x19
       RenderTextControl {INPUT} at (2,122) size 77x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-      RenderBR {BR} at (80,136) size 1x0
+      RenderBR {BR} at (80,121) size 1x19
 layer at (17,33) size 124x14
   RenderBlock {DIV} at (6,3) size 125x15
 layer at (15,58) size 187x14

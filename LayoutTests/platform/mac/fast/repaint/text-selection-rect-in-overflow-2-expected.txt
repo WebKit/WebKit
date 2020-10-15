@@ -17,7 +17,7 @@ layer at (0,0) size 800x174
             RenderBR {BR} at (0,54) size 0x18
             RenderText {#text} at (0,72) size 237x18
               text run at (0,72) width 237: "Should have blue, not gray, highlight"
-            RenderBR {BR} at (236,86) size 1x0
+            RenderBR {BR} at (236,72) size 1x18
             RenderBR {BR} at (0,90) size 0x18
             RenderBR {BR} at (0,108) size 0x18
             RenderBR {BR} at (0,126) size 0x18

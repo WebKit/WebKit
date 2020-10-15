@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
                 text run at (11,0) width 9: "b"
         RenderText {#text} at (103,10) size 28x18
           text run at (103,10) width 28: " Bar"
-        RenderBR {BR} at (130,24) size 1x0
+        RenderBR {BR} at (130,10) size 1x18
       RenderBlock {P} at (0,78) size 784x0
       RenderBlock {P} at (0,78) size 784x0
       RenderBlock (anonymous) at (0,78) size 784x28
@@ -42,7 +42,7 @@ layer at (0,0) size 800x600
               text run at (51,10) width 41: "[after]"
         RenderText {#text} at (91,10) size 28x18
           text run at (91,10) width 28: " Bar"
-        RenderBR {BR} at (118,24) size 1x0
+        RenderBR {BR} at (118,10) size 1x18
       RenderBlock {P} at (0,122) size 784x0
       RenderBlock {P} at (0,122) size 784x0
       RenderBlock (anonymous) at (0,122) size 784x28
@@ -64,5 +64,5 @@ layer at (0,0) size 800x600
               text run at (103,10) width 41: "[after]"
         RenderText {#text} at (143,10) size 28x18
           text run at (143,10) width 28: " Bar"
-        RenderBR {BR} at (170,24) size 1x0
+        RenderBR {BR} at (170,10) size 1x18
       RenderBlock {P} at (0,166) size 784x0

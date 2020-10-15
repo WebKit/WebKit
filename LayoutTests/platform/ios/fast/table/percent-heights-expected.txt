@@ -18,13 +18,13 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (0,0) size 479x102 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (194,11) size 91x19
                 text run at (194,11) width 91: "Table Data #1"
-              RenderBR {BR} at (284,26) size 1x0
+              RenderBR {BR} at (284,11) size 1x19
               RenderText {#text} at (204,31) size 71x19
                 text run at (204,31) width 71: "Other cells"
-              RenderBR {BR} at (274,46) size 1x0
+              RenderBR {BR} at (274,31) size 1x19
               RenderText {#text} at (174,51) size 131x19
                 text run at (174,51) width 131: "should be the height"
-              RenderBR {BR} at (304,66) size 1x0
+              RenderBR {BR} at (304,51) size 1x19
               RenderText {#text} at (205,71) size 69x19
                 text run at (205,71) width 69: "of this cell"
             RenderTableCell {TD} at (478,20) size 45x62 [bgcolor=#006000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]

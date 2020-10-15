@@ -56,8 +56,6 @@ public:
 
     FloatRect rect() const { return verticallyRoundedRect(run().rect()); }
 
-    float baseline() const { return line().baseline(); }
-
     bool isHorizontal() const { return true; }
     bool dirOverride() const { return false; }
     bool isLineBreak() const { return run().isLineBreak(); }
@@ -66,14 +64,6 @@ public:
     unsigned maximumCaretOffset() const { return isText() ? localEndOffset() : 1; }
 
     unsigned char bidiLevel() const { return 0; }
-
-    bool useLineBreakBoxRenderTreeDumpQuirk() const
-    {
-        if (!m_runIndex)
-            return false;
-        auto& previous = runs()[m_runIndex - 1];
-        return previous.lineIndex() == run().lineIndex();
-    }
 
     bool hasHyphen() const { return run().textContent()->needsHyphen(); }
     StringView text() const { return run().textContent()->content(); }

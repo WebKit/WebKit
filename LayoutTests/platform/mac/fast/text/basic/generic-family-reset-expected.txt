@@ -12,31 +12,31 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (10,10) size 764x211 [r=0 c=0 rs=1 cs=2]
               RenderText {#text} at (1,1) size 336x19
                 text run at (1,1) width 336: "The css in the head of this file is like this:"
-              RenderBR {BR} at (336,17) size 1x0
+              RenderBR {BR} at (336,1) size 1x19
               RenderBR {BR} at (1,20) size 0x19
               RenderText {#text} at (1,39) size 109x19
                 text run at (1,39) width 109: "html, body { "
-              RenderBR {BR} at (109,55) size 1x0
+              RenderBR {BR} at (109,39) size 1x19
               RenderText {#text} at (1,58) size 202x19
                 text run at (1,58) width 202: "    font-family: Verdana; "
-              RenderBR {BR} at (202,74) size 1x0
+              RenderBR {BR} at (202,58) size 1x19
               RenderText {#text} at (1,77) size 11x19
                 text run at (1,77) width 11: "}"
-              RenderBR {BR} at (11,93) size 1x0
+              RenderBR {BR} at (11,77) size 1x19
               RenderText {#text} at (1,96) size 78x19
                 text run at (1,96) width 78: "tt, span {"
-              RenderBR {BR} at (78,112) size 1x0
+              RenderBR {BR} at (78,96) size 1x19
               RenderText {#text} at (1,115) size 164x19
                 text run at (1,115) width 164: "    font-size: 0.8em;"
-              RenderBR {BR} at (164,131) size 1x0
+              RenderBR {BR} at (164,115) size 1x19
               RenderText {#text} at (1,134) size 11x19
                 text run at (1,134) width 11: "}"
-              RenderBR {BR} at (11,150) size 1x0
+              RenderBR {BR} at (11,134) size 1x19
               RenderBR {BR} at (1,153) size 0x19
               RenderText {#text} at (1,172) size 739x38
                 text run at (1,172) width 739: "The two columns below show that inheriting the font does not correctly inherit the font-size"
                 text run at (1,191) width 136: "for a <tt> block."
-              RenderBR {BR} at (136,207) size 1x0
+              RenderBR {BR} at (136,191) size 1x19
           RenderTableRow {TR} at (0,231) size 784x21
             RenderTableCell {TH} at (10,231) size 377x21 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (167,1) size 43x19

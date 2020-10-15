@@ -10,7 +10,7 @@ layer at (0,0) size 785x3166
       RenderBlock {DIV} at (0,52) size 720x240 [border: (10px solid #000000)]
         RenderText {#text} at (10,10) size 311x18
           text run at (10,10) width 311: "You should see blue and green rectangles below."
-        RenderBR {BR} at (320,24) size 1x0
+        RenderBR {BR} at (320,10) size 1x18
         RenderBlock (floating) {DIV} at (10,28) size 1500x100 [bgcolor=#0000FF]
         RenderText {#text} at (0,0) size 0x0
         RenderBlock (floating) {DIV} at (10,128) size 1500x100 [bgcolor=#008000]
@@ -44,7 +44,7 @@ layer at (0,0) size 785x3166
         RenderBlock (floating) {DIV} at (10,10) size 1500x100 [bgcolor=#0000FF]
         RenderText {#text} at (10,110) size 284x18
           text run at (10,110) width 284: "You should see blue above and green below."
-        RenderBR {BR} at (293,124) size 1x0
+        RenderBR {BR} at (293,110) size 1x18
         RenderBlock (floating) {DIV} at (10,128) size 1500x100 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,1588) size 769x18
@@ -53,7 +53,7 @@ layer at (0,0) size 785x3166
       RenderBlock {DIV} at (0,1622) size 720x240 [border: (10px solid #000000)]
         RenderText {#text} at (10,10) size 311x18
           text run at (10,10) width 311: "You should see blue and green rectangles below."
-        RenderBR {BR} at (320,24) size 1x0
+        RenderBR {BR} at (320,10) size 1x18
         RenderBlock (floating) {DIV} at (10,28) size 698x100 [bgcolor=#0000FF]
         RenderText {#text} at (0,0) size 0x0
         RenderBlock (floating) {DIV} at (10,128) size 698x100 [bgcolor=#008000]
@@ -86,6 +86,6 @@ layer at (0,0) size 785x3166
         RenderBlock (floating) {DIV} at (10,10) size 698x100 [bgcolor=#0000FF]
         RenderText {#text} at (10,110) size 284x18
           text run at (10,110) width 284: "You should see blue above and green below."
-        RenderBR {BR} at (293,124) size 1x0
+        RenderBR {BR} at (293,110) size 1x18
         RenderBlock (floating) {DIV} at (10,128) size 698x100 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 0x0

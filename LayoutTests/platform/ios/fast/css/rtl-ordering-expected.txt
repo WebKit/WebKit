@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
               text run at (0,0) width 27 LTR override: "\x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
         RenderText {#text} at (54,0) size 5x19
           text run at (54,0) width 5 LTR override: " "
-        RenderBR {BR} at (58,15) size 1x0
+        RenderBR {BR} at (58,0) size 1x19
         RenderButton {INPUT} at (2,26) size 51x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,2) size 27x16
             RenderText at (0,0) size 27x14

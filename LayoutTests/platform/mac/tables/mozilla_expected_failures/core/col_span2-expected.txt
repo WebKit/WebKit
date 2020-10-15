@@ -327,7 +327,7 @@ layer at (0,0) size 785x5451
       RenderBlock (anonymous) at (0,1236) size 769x18
         RenderText {#text} at (0,0) size 295x18
           text run at (0,0) width 295: "fixed table - spanned cols based on fix widths "
-        RenderBR {BR} at (294,14) size 1x0
+        RenderBR {BR} at (294,0) size 1x18
       RenderBlock {HR} at (0,1262) size 402x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,1272) size 534x61 [bgcolor=#FFA500] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 532x59
@@ -567,7 +567,7 @@ layer at (0,0) size 785x5451
         RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 160x18
           text run at (0,18) width 160: "PERCENT COLSPANS "
-        RenderBR {BR} at (159,32) size 1x0
+        RenderBR {BR} at (159,18) size 1x18
       RenderTable {TABLE} at (0,2249) size 500x61 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 498x59
           RenderTableRow {TR} at (0,5) size 498x22
@@ -1233,7 +1233,7 @@ layer at (0,0) size 785x5451
       RenderBlock (anonymous) at (0,5191) size 769x18
         RenderText {#text} at (0,0) size 256x18
           text run at (0,0) width 256: "fixed table looks more like IE than Nav "
-        RenderBR {BR} at (255,14) size 1x0
+        RenderBR {BR} at (255,0) size 1x18
       RenderTable {TABLE} at (0,5209) size 150x226 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 148x224
           RenderTableRow {TR} at (0,2) size 148x220

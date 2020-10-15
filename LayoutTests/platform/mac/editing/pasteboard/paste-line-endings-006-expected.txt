@@ -37,7 +37,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,114) size 756x112
           RenderText {#text} at (0,0) size 190x28
             text run at (0,0) width 190: "Expected Results: "
-          RenderBR {BR} at (189,22) size 1x0
+          RenderBR {BR} at (189,0) size 1x28
           RenderText {#text} at (0,28) size 750x84
             text run at (0,28) width 750: "Should see two lines of text below, self-documenting themselves as \"line one\""
             text run at (0,56) width 711: "and \"line two\". The insertion point must be after the first character (\"l\") of"
@@ -46,7 +46,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,0) size 784x60 [border: (2px solid #FF0000)]
           RenderText {#text} at (2,2) size 77x28
             text run at (2,2) width 77: "line one"
-          RenderBR {BR} at (78,24) size 1x0
+          RenderBR {BR} at (78,2) size 1x28
           RenderText {#text} at (2,30) size 78x28
             text run at (2,30) width 78: "line two"
 caret: position 1 of child 2 {#text} of child 1 {DIV} of child 3 {DIV} of body

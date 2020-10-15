@@ -32,7 +32,7 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,20) size 85x19
           text run at (0,20) width 85: "COLSPANS "
-        RenderBR {BR} at (84,35) size 1x0
+        RenderBR {BR} at (84,20) size 1x19
       RenderTable {TABLE} at (0,160) size 638x136 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 636x134
           RenderTableRow {TR} at (0,2) size 636x104
