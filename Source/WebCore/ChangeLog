@@ -1,3 +1,45 @@
+2020-10-15  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r268308. rdar://problem/70321629
+
+    [Mac] AirPlay menu does not show up when AirPlay button is clicked
+    https://bugs.webkit.org/show_bug.cgi?id=217536
+    <rdar://problem/69973777>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    PAL tries to soft-link the AVRoutePickerView from the AVFoundation framework, rather than the (correct)
+    AVKit framework. Remove AVRoutePickerView from AVFoundationSoftLink.h and use the already declared version
+    inside AVRoutePickerViewTargetPicker.mm.
+    
+    * platform/graphics/avfoundation/objc/AVRoutePickerViewTargetPicker.mm:
+    (WebCore::AVRoutePickerViewTargetPicker::isAvailable):
+    
+    Source/WebCore/PAL:
+    
+    * pal/cocoa/AVFoundationSoftLink.h:
+    * pal/cocoa/AVFoundationSoftLink.mm:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268308 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-09  Jer Noble  <jer.noble@apple.com>
+
+            [Mac] AirPlay menu does not show up when AirPlay button is clicked
+            https://bugs.webkit.org/show_bug.cgi?id=217536
+            <rdar://problem/69973777>
+
+            Reviewed by Eric Carlson.
+
+            PAL tries to soft-link the AVRoutePickerView from the AVFoundation framework, rather than the (correct)
+            AVKit framework. Remove AVRoutePickerView from AVFoundationSoftLink.h and use the already declared version
+            inside AVRoutePickerViewTargetPicker.mm.
+
+            * platform/graphics/avfoundation/objc/AVRoutePickerViewTargetPicker.mm:
+            (WebCore::AVRoutePickerViewTargetPicker::isAvailable):
+
 2020-10-08  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r266909. rdar://problem/69101091
