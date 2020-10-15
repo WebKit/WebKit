@@ -1,3 +1,37 @@
+2020-10-15  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r268367. rdar://problem/70321875
+
+    [macCatalyst] Enable WKPDFView
+    https://bugs.webkit.org/show_bug.cgi?id=217403
+    <rdar://problem/48217791>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebKit:
+    
+    * Configurations/WebKit.xcconfig: Linked PDFKit.framework when building for the Catalyst
+    variant on Big Sur or later.
+    
+    Source/WTF:
+    
+    * wtf/PlatformEnableCocoa.h: Enabled WKPDFView when building for the Catalyst variant on
+    Big Sur or later.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268367 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-12  Andy Estes  <aestes@apple.com>
+
+            [macCatalyst] Enable WKPDFView
+            https://bugs.webkit.org/show_bug.cgi?id=217403
+            <rdar://problem/48217791>
+
+            Reviewed by Tim Horton.
+
+            * wtf/PlatformEnableCocoa.h: Enabled WKPDFView when building for the Catalyst variant on
+            Big Sur or later.
+
 2020-10-14  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r267116. rdar://problem/70267318
