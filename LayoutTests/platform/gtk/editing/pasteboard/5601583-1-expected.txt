@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
         RenderInline {A} at (0,0) size 39x35 [color=#0000EE]
           RenderText {#text} at (0,0) size 35x17
             text run at (0,0) width 35: "Hello"
-          RenderBR {BR} at (35,14) size 0x0
+          RenderBR {BR} at (35,0) size 0x17
           RenderText {#text} at (0,18) size 39x17
             text run at (0,18) width 39: "World"
         RenderText {#text} at (0,0) size 0x0
@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
         RenderInline {A} at (0,0) size 39x35 [color=#0000EE]
           RenderText {#text} at (0,0) size 35x17
             text run at (0,0) width 35: "Hello"
-          RenderBR {BR} at (35,14) size 0x0
+          RenderBR {BR} at (35,0) size 0x17
           RenderText {#text} at (0,18) size 39x17
             text run at (0,18) width 39: "World"
 caret: position 5 of child 2 {#text} of child 0 {A} of child 4 {DIV} of body

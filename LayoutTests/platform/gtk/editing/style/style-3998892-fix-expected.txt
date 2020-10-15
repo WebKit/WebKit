@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,111) size 756x54
           RenderText {#text} at (0,0) size 189x26
             text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (188,21) size 1x0
+          RenderBR {BR} at (188,0) size 1x26
           RenderText {#text} at (0,27) size 604x26
             text run at (0,27) width 604: "Should see first line (\"foo\") not bold; second line (\"bar\") bold."
       RenderBlock {DIV} at (0,203) size 784x58

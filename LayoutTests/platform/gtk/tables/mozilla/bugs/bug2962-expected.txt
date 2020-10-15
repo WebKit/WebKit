@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
                     RenderText {#text} at (64,0) size 185x17
                       text run at (64,0) width 111: "Free Homepage! "
                       text run at (174,0) width 75: "Free Email!"
-                    RenderBR {BR} at (248,14) size 1x0
+                    RenderBR {BR} at (248,0) size 1x17
                     RenderText {#text} at (71,18) size 171x17
                       text run at (71,18) width 42: "It's all "
                       text run at (112,18) width 130: "yours at ACMEcity!"

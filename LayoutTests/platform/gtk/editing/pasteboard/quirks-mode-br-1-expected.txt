@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 370x17
             text run at (0,0) width 370: "The test should add a single blank line after this paragraph."
           RenderInline {SPAN} at (0,0) size 0x17
-          RenderBR {BR} at (370,14) size 0x0
+          RenderBR {BR} at (370,0) size 0x17
         RenderBlock (anonymous) at (0,18) size 784x18
           RenderBR {BR} at (0,0) size 0x17
 caret: position 0 of child 1 {BR} of child 2 {DIV} of body

@@ -37,14 +37,14 @@ layer at (0,0) size 800x600
               text run at (0,0) width 34: "Test: "
           RenderText {#text} at (33,0) size 47x17
             text run at (33,0) width 47: "content"
-        RenderBR {BR} at (79,14) size 1x0
+        RenderBR {BR} at (79,0) size 1x17
         RenderInline {SPAN} at (0,0) size 76x17
           RenderBlock (generated) at (0,18) size 30x18
             RenderText at (0,0) size 30x17
               text run at (0,0) width 30: "Test:"
           RenderText {#text} at (29,18) size 47x17
             text run at (29,18) width 47: "content"
-        RenderBR {BR} at (75,32) size 1x0
+        RenderBR {BR} at (75,18) size 1x17
         RenderInline {SPAN} at (0,0) size 76x17
           RenderTable at (0,36) size 30x18
             RenderTableSection (anonymous) at (0,0) size 30x18
@@ -54,4 +54,4 @@ layer at (0,0) size 800x600
                     text run at (0,0) width 30: "Test:"
           RenderText {#text} at (29,36) size 47x17
             text run at (29,36) width 47: "content"
-        RenderBR {BR} at (75,50) size 1x0
+        RenderBR {BR} at (75,36) size 1x17

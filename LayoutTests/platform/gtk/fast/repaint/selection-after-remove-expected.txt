@@ -14,6 +14,6 @@ layer at (0,0) size 800x600
           text run at (1,1) width 35: "hello "
         RenderText {#text} at (36,1) size 37x17
           text run at (36,1) width 37: "world"
-        RenderBR {BR} at (73,15) size 0x0
+        RenderBR {BR} at (73,1) size 0x17
 selection start: position 0 of child 0 {#text} of child 3 {DIV} of body
 selection end:   position 6 of child 1 {#text} of child 3 {DIV} of body

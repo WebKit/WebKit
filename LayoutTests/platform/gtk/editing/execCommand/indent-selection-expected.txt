@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
             RenderInline {SPAN} at (0,0) size 42x17
               RenderText {#text} at (0,0) size 42x17
                 text run at (0,0) width 42: "Lorem"
-              RenderBR {BR} at (42,14) size 0x0
+              RenderBR {BR} at (42,0) size 0x17
             RenderText {#text} at (0,18) size 83x17
               text run at (0,18) width 83: "more Lorem!"
           RenderBlock {BLOCKQUOTE} at (40,36) size 704x18
@@ -49,7 +49,7 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (0,18) size 744x36
             RenderText {#text} at (0,0) size 34x17
               text run at (0,0) width 34: "Sum!"
-            RenderBR {BR} at (34,14) size 0x0
+            RenderBR {BR} at (34,0) size 0x17
             RenderInline {SPAN} at (0,0) size 38x17
               RenderText {#text} at (0,18) size 38x17
                 text run at (0,18) width 38: "Thing"

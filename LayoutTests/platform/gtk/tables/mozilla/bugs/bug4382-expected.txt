@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 264x17
           text run at (0,0) width 264: "The select should not contain blank items "
-        RenderBR {BR} at (264,14) size 0x0
+        RenderBR {BR} at (264,0) size 0x17
       RenderBlock {FORM} at (0,18) size 784x34
         RenderInline {B} at (0,0) size 47x17
           RenderText {#text} at (0,8) size 47x17
@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,0) size 0x17
         RenderText {#text} at (0,18) size 264x17
           text run at (0,18) width 264: "The select should not contain blank items "
-        RenderBR {BR} at (264,32) size 0x0
+        RenderBR {BR} at (264,18) size 0x17
       RenderBlock {FORM} at (0,104) size 784x34
         RenderMenuList {SELECT} at (2,2) size 256x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 254x28

@@ -85,7 +85,7 @@ layer at (0,0) size 800x600
           RenderImage {IMG} at (80,123) size 77x103
           RenderText {#text} at (156,205) size 112x26
             text run at (156,205) width 112: " conceived "
-          RenderBR {BR} at (267,226) size 1x0
+          RenderBR {BR} at (267,205) size 1x26
           RenderText {#text} at (14,314) size 61x26
             text run at (14,314) width 61: "nation"
           RenderImage {IMG} at (74,232) size 77x103

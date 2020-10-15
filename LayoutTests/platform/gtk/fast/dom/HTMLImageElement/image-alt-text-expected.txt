@@ -9,8 +9,8 @@ layer at (0,0) size 800x600
           text run at (0,18) width 92: "blue rectangle."
       RenderBlock {P} at (0,52) size 784x98
         RenderImage {IMG} at (0,0) size 54x21
-        RenderBR {BR} at (54,21) size 0x0
+        RenderBR {BR} at (54,7) size 0x17
         RenderImage {IMG} at (0,21) size 102x52 [border: (1px solid #000000)]
-        RenderBR {BR} at (102,73) size 0x0
+        RenderBR {BR} at (102,59) size 0x17
         RenderImage {IMG} at (0,73) size 75x25
-        RenderBR {BR} at (75,98) size 0x0
+        RenderBR {BR} at (75,84) size 0x17

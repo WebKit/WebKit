@@ -64,7 +64,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 77x17
                 text run at (0,0) width 23: "All "
                 text run at (23,0) width 54: "borders"
-          RenderBR {BR} at (552,20) size 1x0
+          RenderBR {BR} at (552,6) size 1x17
           RenderButton {BUTTON} at (188,33) size 131x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
             RenderBlock (anonymous) at (8,4) size 114x18
               RenderText {#text} at (0,0) size 114x17

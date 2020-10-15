@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x36
         RenderText {#text} at (0,0) size 598x17
           text run at (0,0) width 598: "This table uses a COLSPAN attribute in the TD tag. The COLSPAN attribute has a value of 6."
-        RenderBR {BR} at (597,14) size 1x0
+        RenderBR {BR} at (597,0) size 1x17
         RenderBR {BR} at (0,18) size 0x17
       RenderTable {TABLE} at (0,36) size 345x52 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 343x50

@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 620x17
           text run at (0,0) width 620: "To reproduce this bug outside of DumpRenderTree, click the link below. If broken, we will crash. "
-        RenderBR {BR} at (619,14) size 1x0
+        RenderBR {BR} at (619,0) size 1x17
 layer at (8,26) size 58x88
   RenderTable {TABLE} at (0,18) size 58x88
     RenderTableSection {TBODY} at (0,0) size 58x88
@@ -24,11 +24,11 @@ layer at (11,51) size 52x60
         RenderTableCell {TD} at (2,2) size 48x56 [r=0 c=0 rs=1 cs=1]
           RenderText {#text} at (1,1) size 46x17
             text run at (1,1) width 46: "content"
-          RenderBR {BR} at (47,15) size 0x0
+          RenderBR {BR} at (47,1) size 0x17
           RenderText {#text} at (1,19) size 46x17
             text run at (1,19) width 46: "content"
-          RenderBR {BR} at (47,33) size 0x0
+          RenderBR {BR} at (47,19) size 0x17
           RenderText {#text} at (1,37) size 46x17
             text run at (1,37) width 46: "content"
-          RenderBR {BR} at (47,51) size 0x0
+          RenderBR {BR} at (47,37) size 0x17
 caret: position 5 of child 0 {#text} of body

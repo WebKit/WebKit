@@ -33,7 +33,7 @@ layer at (0,0) size 785x1121
               RenderText {#text} at (57,1) size 57x17
                 text run at (57,1) width 4: " "
                 text run at (61,1) width 53: "Names"
-              RenderBR {BR} at (114,15) size 0x0
+              RenderBR {BR} at (114,1) size 0x17
             RenderText {#text} at (0,0) size 0x0
             RenderInline {SPAN} at (0,0) size 104x15
               RenderText {#text} at (0,0) size 0x0
@@ -52,7 +52,7 @@ layer at (0,0) size 785x1121
             RenderInline {SPAN} at (0,0) size 83x17
               RenderText {#text} at (70,0) size 83x17
                 text run at (70,0) width 83: "Addresses"
-              RenderBR {BR} at (153,14) size 0x0
+              RenderBR {BR} at (153,0) size 0x17
             RenderText {#text} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
@@ -68,7 +68,7 @@ layer at (0,0) size 785x1121
               RenderText {#text} at (63,1) size 67x17
                 text run at (63,1) width 4: " "
                 text run at (67,1) width 63: "Phones "
-              RenderBR {BR} at (130,15) size 0x0
+              RenderBR {BR} at (130,1) size 0x17
             RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,277) size 769x0
         RenderInline {SPAN} at (0,0) size 0x0
@@ -104,10 +104,10 @@ layer at (0,0) size 785x1121
               RenderTableCell {TD} at (164,2) size 418x56 [r=0 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 146x17
                   text run at (1,1) width 146: "TUR - Tour Package"
-                RenderBR {BR} at (146,15) size 1x0
+                RenderBR {BR} at (146,1) size 1x17
                 RenderText {#text} at (1,19) size 227x17
                   text run at (1,19) width 227: "Date: Sunday, January 12, 2003"
-                RenderBR {BR} at (227,33) size 1x0
+                RenderBR {BR} at (227,19) size 1x17
                 RenderText {#text} at (1,37) size 416x17
                   text run at (1,37) width 416: "Comments: -** TICKETLESS CONF CODE IS WHGNSO**"
       RenderBlock (anonymous) at (0,374) size 769x0
@@ -143,18 +143,18 @@ layer at (0,0) size 785x1121
                     text run at (51,18) width 83: "Flight 1187 "
                     text run at (133,18) width 124: "Booking Code:M "
                     text run at (256,18) width 228: "Date: Sunday, January 12, 2003"
-                  RenderBR {BR} at (483,32) size 1x0
+                  RenderBR {BR} at (483,18) size 1x17
                   RenderText {#text} at (0,36) size 388x17
                     text run at (0,36) width 388: "From: San Francisco Intl Arpt, San Francisco CA - U.S."
-                  RenderBR {BR} at (387,50) size 1x0
+                  RenderBR {BR} at (387,36) size 1x17
                   RenderText {#text} at (0,54) size 403x17
                     text run at (0,54) width 26: "To: "
                     text run at (25,54) width 378: "Burbank Glendale Pasadena Arpt, Burbank CA - U.S."
-                  RenderBR {BR} at (402,68) size 1x0
+                  RenderBR {BR} at (402,54) size 1x17
                   RenderText {#text} at (0,72) size 244x17
                     text run at (0,72) width 127: "Departs: 6:05 PM "
                     text run at (127,72) width 117: "Arrives: 7:10 PM"
-                  RenderBR {BR} at (244,86) size 0x0
+                  RenderBR {BR} at (244,72) size 0x17
                   RenderText {#text} at (0,90) size 49x17
                     text run at (0,90) width 49: "Status:"
                   RenderInline {SPACE} at (0,0) size 127x35
@@ -166,7 +166,7 @@ layer at (0,0) size 785x1121
                       RenderBR {BR} at (0,0) size 0x0
                       RenderText {#text} at (0,108) size 45x17
                         text run at (0,108) width 45: "Seats:"
-                      RenderBR {BR} at (45,122) size 0x0
+                      RenderBR {BR} at (45,108) size 0x17
                 RenderBlock (anonymous) at (1,127) size 604x46
                   RenderTable {TABLE} at (0,0) size 604x46 [border: (1px outset #808080)]
                     RenderTableSection {TBODY} at (1,1) size 602x44
@@ -239,18 +239,18 @@ layer at (0,0) size 785x1121
                     text run at (51,18) width 75: "Flight 480 "
                     text run at (126,18) width 122: "Booking Code:Q "
                     text run at (248,18) width 217: "Date: Friday, January 24, 2003"
-                  RenderBR {BR} at (464,32) size 1x0
+                  RenderBR {BR} at (464,18) size 1x17
                   RenderText {#text} at (0,36) size 423x17
                     text run at (0,36) width 423: "From: Burbank Glendale Pasadena Arpt, Burbank CA - U.S."
-                  RenderBR {BR} at (422,50) size 1x0
+                  RenderBR {BR} at (422,36) size 1x17
                   RenderText {#text} at (0,54) size 368x17
                     text run at (0,54) width 26: "To: "
                     text run at (25,54) width 343: "San Francisco Intl Arpt, San Francisco CA - U.S."
-                  RenderBR {BR} at (367,68) size 1x0
+                  RenderBR {BR} at (367,54) size 1x17
                   RenderText {#text} at (0,72) size 244x17
                     text run at (0,72) width 127: "Departs: 1:40 PM "
                     text run at (127,72) width 117: "Arrives: 2:50 PM"
-                  RenderBR {BR} at (244,86) size 0x0
+                  RenderBR {BR} at (244,72) size 0x17
                   RenderText {#text} at (0,90) size 49x17
                     text run at (0,90) width 49: "Status:"
                   RenderInline {SPACE} at (0,0) size 127x35
@@ -262,7 +262,7 @@ layer at (0,0) size 785x1121
                       RenderBR {BR} at (0,0) size 0x0
                       RenderText {#text} at (0,108) size 45x17
                         text run at (0,108) width 45: "Seats:"
-                      RenderBR {BR} at (45,122) size 0x0
+                      RenderBR {BR} at (45,108) size 0x17
                 RenderBlock (anonymous) at (1,127) size 493x46
                   RenderTable {TABLE} at (0,0) size 493x46 [border: (1px outset #808080)]
                     RenderTableSection {TBODY} at (1,1) size 491x44
@@ -334,18 +334,18 @@ layer at (0,0) size 785x1121
                   text run at (91,19) width 75: "Flight 123 "
                   text run at (166,19) width 121: "Booking Code:Y "
                   text run at (286,19) width 221: "Date: Tuesday, March 25, 2003"
-                RenderBR {BR} at (506,33) size 1x0
+                RenderBR {BR} at (506,19) size 1x17
                 RenderText {#text} at (1,37) size 388x17
                   text run at (1,37) width 388: "From: San Francisco Intl Arpt, San Francisco CA - U.S."
-                RenderBR {BR} at (388,51) size 1x0
+                RenderBR {BR} at (388,37) size 1x17
                 RenderText {#text} at (1,55) size 368x17
                   text run at (1,55) width 26: "To: "
                   text run at (26,55) width 343: "San Francisco Intl Arpt, San Francisco CA - U.S."
-                RenderBR {BR} at (368,69) size 1x0
+                RenderBR {BR} at (368,55) size 1x17
                 RenderText {#text} at (1,73) size 170x17
                   text run at (1,73) width 90: "Departs: n/a "
                   text run at (91,73) width 80: "Arrives: n/a"
-                RenderBR {BR} at (171,87) size 0x0
+                RenderBR {BR} at (171,73) size 0x17
                 RenderText {#text} at (1,91) size 49x17
                   text run at (1,91) width 49: "Status:"
                 RenderInline {SPACE} at (0,0) size 195x17
@@ -354,7 +354,7 @@ layer at (0,0) size 785x1121
                   RenderInline {SPACE} at (0,0) size 4x17
                     RenderText {#text} at (241,91) size 4x17
                       text run at (241,91) width 4: " "
-                    RenderBR {BR} at (245,105) size 0x0
+                    RenderBR {BR} at (245,91) size 0x17
       RenderBlock (anonymous) at (0,926) size 769x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
@@ -375,14 +375,14 @@ layer at (0,0) size 785x1121
             RenderText {#text} at (20,0) size 77x17
               text run at (20,0) width 4: " "
               text run at (24,0) width 73: "Remarks:"
-            RenderBR {BR} at (97,14) size 0x0
+            RenderBR {BR} at (97,0) size 0x17
           RenderText {#text} at (0,0) size 0x0
           RenderBR {BR} at (0,20) size 0x15
           RenderInline {SPAN} at (0,0) size 196x15
             RenderText {#text} at (0,35) size 196x15
               text run at (0,35) width 126: "SERVICE FEE MCO "
               text run at (125,35) width 71: "8103220490"
-            RenderBR {BR} at (195,47) size 1x0
+            RenderBR {BR} at (195,35) size 1x15
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,998) size 769x3
         RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
@@ -399,7 +399,7 @@ layer at (0,0) size 785x1121
             RenderText {#text} at (181,1) size 5x17
               text run at (181,1) width 5: " "
             RenderInline {SPAN} at (0,0) size 1x17
-              RenderBR {BR} at (185,15) size 1x0
+              RenderBR {BR} at (185,1) size 1x17
               RenderInline {SPAN} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
@@ -415,7 +415,7 @@ layer at (0,0) size 785x1121
               RenderText {#text} at (20,0) size 257x17
                 text run at (20,0) width 4: " "
                 text run at (24,0) width 253: "Remarks and Service Information"
-              RenderBR {BR} at (277,14) size 0x0
+              RenderBR {BR} at (277,0) size 0x17
             RenderText {#text} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,1069) size 769x32
@@ -442,7 +442,7 @@ layer at (23,43) size 104x15
       RenderInline {SPAN} at (0,0) size 80x15
         RenderText {#text} at (24,29) size 80x15
           text run at (24,29) width 80: "HAO, SCOTT"
-        RenderBR {BR} at (104,41) size 0x0
+        RenderBR {BR} at (104,29) size 0x15
         RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
     RenderText {#text} at (0,0) size 0x0
@@ -454,7 +454,7 @@ layer at (23,103) size 590x38
       text run at (20,29) width 4: " "
       text run at (24,29) width 56: "Address: "
       text run at (80,29) width 510: "ST. JUDE MEDICAL, 21700 OXNARD ST SUITE 800, WOODLAND HILLS CA Z/91367 "
-    RenderBR {BR} at (589,41) size 1x0
+    RenderBR {BR} at (589,29) size 1x15
     RenderImage {IMG} at (0,44) size 20x20
     RenderText {#text} at (20,52) size 405x15
       text run at (20,52) width 4: " "

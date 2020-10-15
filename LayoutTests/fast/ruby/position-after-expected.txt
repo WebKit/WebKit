@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
               RenderRubyText {RT} at (0,20) size 100x20 [color=#FFA500]
                 RenderText {#text} at (45,0) size 10x10
                   text run at (45,0) width 10: "y"
-                RenderBR {BR} at (55,8) size 0x0
+                RenderBR {BR} at (55,0) size 0x10
                 RenderText {#text} at (45,10) size 10x10
                   text run at (45,10) width 10: "y"
               RenderRubyBase (anonymous) at (0,0) size 100x20
@@ -55,7 +55,7 @@ layer at (0,0) size 800x600
               RenderRubyText {RT} at (-20,0) size 20x100 [color=#FFA500]
                 RenderText {#text} at (0,45) size 10x10
                   text run at (0,45) width 10: "y"
-                RenderBR {BR} at (2,55) size 0x0
+                RenderBR {BR} at (0,55) size 10x0
                 RenderText {#text} at (10,45) size 10x10
                   text run at (10,45) width 10: "y"
               RenderRubyBase (anonymous) at (0,0) size 20x100
@@ -88,7 +88,7 @@ layer at (0,0) size 800x600
               RenderRubyText {RT} at (0,-20) size 100x20 [color=#FFA500]
                 RenderText {#text} at (45,0) size 10x10
                   text run at (45,0) width 10: "y"
-                RenderBR {BR} at (55,8) size 0x0
+                RenderBR {BR} at (55,0) size 0x10
                 RenderText {#text} at (45,10) size 10x10
                   text run at (45,10) width 10: "y"
               RenderRubyBase (anonymous) at (0,0) size 100x20
@@ -120,7 +120,7 @@ layer at (0,0) size 800x600
               RenderRubyText {RT} at (20,0) size 20x100 [color=#FFA500]
                 RenderText {#text} at (0,45) size 10x10
                   text run at (0,45) width 10: "y"
-                RenderBR {BR} at (8,55) size 0x0
+                RenderBR {BR} at (0,55) size 10x0
                 RenderText {#text} at (10,45) size 10x10
                   text run at (10,45) width 10: "y"
               RenderRubyBase (anonymous) at (0,0) size 20x100

@@ -28,10 +28,10 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,0) size 784x54
           RenderText {#text} at (0,0) size 471x17
             text run at (0,0) width 471: "When removing <A HREF=\"...\"> surrounding logo image in first row and"
-          RenderBR {BR} at (470,14) size 1x0
+          RenderBR {BR} at (470,0) size 1x17
           RenderText {#text} at (0,18) size 384x17
             text run at (0,18) width 384: "removing <MAP> element in second row it looks OK to me:"
-          RenderBR {BR} at (384,32) size 0x0
+          RenderBR {BR} at (384,18) size 0x17
           RenderBR {BR} at (0,36) size 0x17
         RenderTable {TABLE} at (0,54) size 600x89
           RenderTableSection {TBODY} at (0,0) size 600x89

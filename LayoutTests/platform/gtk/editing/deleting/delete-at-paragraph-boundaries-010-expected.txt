@@ -25,14 +25,14 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,27) size 743x53
             text run at (0,27) width 743: "Deleting when a selection starts at the beginning of a text following a nested"
             text run at (0,54) width 691: "block, and extends out of the enclosing block into the following block. "
-          RenderBR {BR} at (691,75) size 0x0
+          RenderBR {BR} at (691,54) size 0x26
           RenderText {#text} at (0,81) size 553x26
             text run at (0,81) width 267: "FIXME: Currently broken! "
             text run at (266,81) width 287: "See rdar://problem/4099839/."
         RenderBlock {DIV} at (14,138) size 756x162
           RenderText {#text} at (0,0) size 189x26
             text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (188,21) size 1x0
+          RenderBR {BR} at (188,0) size 1x26
           RenderText {#text} at (0,27) size 752x134
             text run at (0,27) width 727: "Should see a total of five lines in the red box, with the third line inside of a"
             text run at (0,54) width 675: "nested red box. First line should be \"one\". Next line should be \"two\". "

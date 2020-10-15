@@ -40,31 +40,31 @@ layer at (0,0) size 785x1194
             text run at (0,0) width 41: "Value:"
         RenderText {#text} at (40,0) size 82x17
           text run at (40,0) width 82: " scroll | fixed"
-        RenderBR {BR} at (121,14) size 1x0
+        RenderBR {BR} at (121,0) size 1x17
         RenderInline {EM} at (0,0) size 42x17
           RenderText {#text} at (0,18) size 42x17
             text run at (0,18) width 42: "Initial:"
         RenderText {#text} at (42,18) size 38x17
           text run at (42,18) width 38: " scroll"
-        RenderBR {BR} at (80,32) size 0x0
+        RenderBR {BR} at (80,18) size 0x17
         RenderInline {EM} at (0,0) size 68x17
           RenderText {#text} at (0,36) size 68x17
             text run at (0,36) width 68: "Applies to:"
         RenderText {#text} at (68,36) size 78x17
           text run at (68,36) width 78: " all elements"
-        RenderBR {BR} at (146,50) size 0x0
+        RenderBR {BR} at (146,36) size 0x17
         RenderInline {EM} at (0,0) size 62x17
           RenderText {#text} at (0,54) size 62x17
             text run at (0,54) width 62: "Inherited:"
         RenderText {#text} at (62,54) size 20x17
           text run at (62,54) width 20: " no"
-        RenderBR {BR} at (82,68) size 0x0
+        RenderBR {BR} at (82,54) size 0x17
         RenderInline {EM} at (0,0) size 121x17
           RenderText {#text} at (0,72) size 121x17
             text run at (0,72) width 121: "Percentage values:"
         RenderText {#text} at (120,72) size 33x17
           text run at (120,72) width 33: " N/A"
-        RenderBR {BR} at (152,86) size 1x0
+        RenderBR {BR} at (152,72) size 1x17
       RenderBlock {P} at (0,413) size 769x37
         RenderText {#text} at (0,0) size 765x35
           text run at (0,0) width 765: "If a background image is specified, the value of 'background-attachment' determines if it is fixed with regard to the canvas"
@@ -129,31 +129,31 @@ layer at (0,0) size 785x1194
                     text run at (0,0) width 41: "Value:"
                 RenderText {#text} at (40,0) size 82x17
                   text run at (40,0) width 82: " scroll | fixed"
-                RenderBR {BR} at (121,14) size 1x0
+                RenderBR {BR} at (121,0) size 1x17
                 RenderInline {EM} at (0,0) size 42x17
                   RenderText {#text} at (0,18) size 42x17
                     text run at (0,18) width 42: "Initial:"
                 RenderText {#text} at (42,18) size 38x17
                   text run at (42,18) width 38: " scroll"
-                RenderBR {BR} at (80,32) size 0x0
+                RenderBR {BR} at (80,18) size 0x17
                 RenderInline {EM} at (0,0) size 68x17
                   RenderText {#text} at (0,36) size 68x17
                     text run at (0,36) width 68: "Applies to:"
                 RenderText {#text} at (68,36) size 78x17
                   text run at (68,36) width 78: " all elements"
-                RenderBR {BR} at (146,50) size 0x0
+                RenderBR {BR} at (146,36) size 0x17
                 RenderInline {EM} at (0,0) size 62x17
                   RenderText {#text} at (0,54) size 62x17
                     text run at (0,54) width 62: "Inherited:"
                 RenderText {#text} at (62,54) size 20x17
                   text run at (62,54) width 20: " no"
-                RenderBR {BR} at (82,68) size 0x0
+                RenderBR {BR} at (82,54) size 0x17
                 RenderInline {EM} at (0,0) size 121x17
                   RenderText {#text} at (0,72) size 121x17
                     text run at (0,72) width 121: "Percentage values:"
                 RenderText {#text} at (120,72) size 33x17
                   text run at (120,72) width 33: " N/A"
-                RenderBR {BR} at (152,86) size 1x0
+                RenderBR {BR} at (152,72) size 1x17
               RenderBlock {P} at (4,322) size 747x37
                 RenderText {#text} at (0,0) size 718x35
                   text run at (0,0) width 718: "If a background image is specified, the value of 'background-attachment' determines if it is fixed with regard to the"

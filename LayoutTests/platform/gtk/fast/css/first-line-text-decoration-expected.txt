@@ -12,10 +12,10 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,80) size 784x85 [color=#008000]
         RenderText {#text} at (0,10) size 616x27
           text run at (0,10) width 616: "Underline Underline Underline Underline"
-        RenderBR {BR} at (616,32) size 0x0
+        RenderBR {BR} at (616,18) size 0x17
         RenderText {#text} at (0,48) size 264x17
           text run at (0,48) width 264: "Underline Underline Underline Underline"
-        RenderBR {BR} at (264,62) size 0x0
+        RenderBR {BR} at (264,48) size 0x17
         RenderText {#text} at (0,66) size 264x17
           text run at (0,66) width 264: "Underline Underline Underline Underline"
       RenderBlock (anonymous) at (0,164) size 784x19
@@ -27,10 +27,10 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,232) size 784x85 [color=#008000]
         RenderText {#text} at (0,10) size 548x27
           text run at (0,10) width 548: "Overline Overline Overline Overline"
-        RenderBR {BR} at (548,32) size 0x0
+        RenderBR {BR} at (548,18) size 0x17
         RenderText {#text} at (0,48) size 232x17
           text run at (0,48) width 232: "Overline Overline Overline Overline"
-        RenderBR {BR} at (232,62) size 0x0
+        RenderBR {BR} at (232,48) size 0x17
         RenderText {#text} at (0,66) size 232x17
           text run at (0,66) width 232: "Overline Overline Overline Overline"
       RenderBlock (anonymous) at (0,316) size 784x19
@@ -42,10 +42,10 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,384) size 784x85 [color=#008000]
         RenderText {#text} at (0,10) size 712x27
           text run at (0,10) width 712: "Line-Through Line-Through Line-Through Line "
-        RenderBR {BR} at (712,32) size 0x0
+        RenderBR {BR} at (712,18) size 0x17
         RenderText {#text} at (0,48) size 368x17
           text run at (0,48) width 368: "Line-Through Line-Through Line-Through Line-Through"
-        RenderBR {BR} at (368,62) size 0x0
+        RenderBR {BR} at (368,48) size 0x17
         RenderText {#text} at (0,66) size 368x17
           text run at (0,66) width 368: "Line-Through Line-Through Line-Through Line-Through"
       RenderBlock (anonymous) at (0,468) size 784x19

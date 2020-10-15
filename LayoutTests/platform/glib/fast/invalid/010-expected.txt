@@ -17,23 +17,23 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 31x17
           RenderText {#text} at (0,0) size 31x17
             text run at (0,0) width 31: "issue"
-        RenderBR {BR} at (31,14) size 0x0
+        RenderBR {BR} at (31,0) size 0x17
         RenderInline {SPAN} at (0,0) size 20x17
           RenderText {#text} at (0,18) size 20x17
             text run at (0,18) width 20: "fail"
-        RenderBR {BR} at (20,32) size 0x0
+        RenderBR {BR} at (20,18) size 0x17
         RenderInline {A} at (0,0) size 120x17
           RenderText {#text} at (0,36) size 120x17
             text run at (0,36) width 120: "here is another link"
-        RenderBR {BR} at (120,50) size 0x0
+        RenderBR {BR} at (120,36) size 0x17
         RenderInline {SPAN} at (0,0) size 19x17
           RenderText {#text} at (0,54) size 19x17
             text run at (0,54) width 19: "n/a"
-        RenderBR {BR} at (19,68) size 0x0
+        RenderBR {BR} at (19,54) size 0x17
         RenderInline {SPAN} at (0,0) size 27x17
           RenderText {#text} at (0,72) size 27x17
             text run at (0,72) width 27: "pass"
-        RenderBR {BR} at (27,86) size 0x0
+        RenderBR {BR} at (27,72) size 0x17
       RenderBlock {H1} at (0,209) size 784x38
         RenderText {#text} at (0,0) size 224x36
           text run at (0,0) width 224: "another heading"
@@ -41,4 +41,4 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 19x17
           RenderText {#text} at (0,0) size 19x17
             text run at (0,0) width 19: "n/a"
-        RenderBR {BR} at (19,14) size 0x0
+        RenderBR {BR} at (19,0) size 0x17

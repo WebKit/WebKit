@@ -586,7 +586,7 @@ layer at (0,0) size 785x2464
         RenderBlock (anonymous) at (0,0) size 769x18
           RenderText {#text} at (0,0) size 749x17
             text run at (0,0) width 749: "The following table will have its 2nd row and 2nd col collapsed. A window resize may be necessary to see it properly. "
-          RenderBR {BR} at (748,14) size 1x0
+          RenderBR {BR} at (748,0) size 1x17
         RenderTable {TABLE} at (0,18) size 188x108 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 188x18
             RenderInline {B} at (0,0) size 44x17
@@ -699,7 +699,7 @@ layer at (0,0) size 785x2464
         RenderBlock (anonymous) at (0,0) size 769x18
           RenderText {#text} at (0,0) size 459x17
             text run at (0,0) width 459: "The following table will have its 1st row group collapsed (rows 1 and 2) "
-          RenderBR {BR} at (459,14) size 0x0
+          RenderBR {BR} at (459,0) size 0x17
         RenderTable {TABLE} at (0,18) size 126x108 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 126x18
             RenderInline {B} at (0,0) size 44x17
@@ -828,7 +828,7 @@ layer at (0,0) size 785x2464
             text run at (0,0) width 554: "The following table is similar to a previous table except that the direction is right-to-left. "
             text run at (554,0) width 201: "It will have its 2nd row and 2nd"
             text run at (0,18) width 429: "col collapsed. A window resize may be necessary to see it properly. "
-          RenderBR {BR} at (428,32) size 1x0
+          RenderBR {BR} at (428,18) size 1x17
         RenderTable {TABLE} at (0,36) size 188x108 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 188x18
             RenderInline {B} at (0,0) size 44x17

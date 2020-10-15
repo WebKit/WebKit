@@ -22,7 +22,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,104) size 784x36
         RenderText {#text} at (0,0) size 99x17
           text run at (0,0) width 99: "First paragraph."
-        RenderBR {BR} at (99,14) size 0x0
+        RenderBR {BR} at (99,0) size 0x17
         RenderText {#text} at (0,18) size 118x17
           text run at (0,18) width 118: "Second paragraph."
 caret: position 16 of child 0 {#text} of child 4 {DIV} of body

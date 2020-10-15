@@ -6,12 +6,12 @@ layer at (0,0) size 785x1310
       RenderBlock (anonymous) at (0,0) size 769x18
         RenderText {#text} at (0,0) size 596x17
           text run at (0,0) width 596: "If there is missing vertical space between tables and/or tables and other content, it is bug 6997. "
-        RenderBR {BR} at (596,14) size 0x0
+        RenderBR {BR} at (596,0) size 0x17
       RenderBlock {H1} at (0,39) size 769x75
         RenderInline {FONT} at (0,0) size 468x73 [color=#FF0000]
           RenderText {#text} at (0,0) size 293x36
             text run at (0,0) width 293: "Acceptance Test Case"
-          RenderBR {BR} at (292,29) size 1x0
+          RenderBR {BR} at (292,0) size 1x36
           RenderText {#text} at (0,37) size 468x36
             text run at (0,37) width 468: "Web Browser: Web View (HTML)"
       RenderBlock {P} at (0,134) size 769x28
@@ -317,7 +317,7 @@ layer at (0,0) size 785x1310
         RenderInline {A} at (0,0) size 82x17 [color=#0000EE]
           RenderText {#text} at (134,0) size 82x17
             text run at (134,0) width 82: "Ronald Greti"
-        RenderBR {BR} at (216,14) size 0x0
+        RenderBR {BR} at (216,0) size 0x17
       RenderBlock {P} at (0,1267) size 769x19
         RenderBR {BR} at (0,0) size 0x17
       RenderBlock {P} at (0,1301) size 769x0

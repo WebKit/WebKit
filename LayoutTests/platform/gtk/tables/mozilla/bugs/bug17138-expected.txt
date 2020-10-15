@@ -20,11 +20,11 @@ layer at (0,0) size 800x600
                   RenderTableRow {TR} at (0,0) size 125x196
                     RenderTableCell {TD} at (0,0) size 125x196 [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (0,0) size 125x34
-                      RenderBR {BR} at (125,34) size 0x0
+                      RenderBR {BR} at (125,20) size 0x17
                       RenderText {#text} at (0,34) size 119x35
                         text run at (0,34) width 119: "Jose moving out to"
                         text run at (0,52) width 20: "sea"
-                      RenderBR {BR} at (20,66) size 0x0
+                      RenderBR {BR} at (20,52) size 0x17
                       RenderBR {BR} at (0,70) size 0x17
                       RenderBR {BR} at (0,88) size 0x17
                       RenderBR {BR} at (0,106) size 0x17
@@ -44,7 +44,7 @@ layer at (0,0) size 800x600
                 RenderInline {B} at (0,0) size 67x15
                   RenderText {#text} at (0,0) size 67x15
                     text run at (0,0) width 67: "Chilly time"
-                RenderBR {BR} at (67,12) size 0x0
+                RenderBR {BR} at (67,0) size 0x15
                 RenderText {#text} at (0,15) size 145x60
                   text run at (0,15) width 118: "Though the calendar"
                   text run at (0,30) width 122: "disagrees, the feel of"

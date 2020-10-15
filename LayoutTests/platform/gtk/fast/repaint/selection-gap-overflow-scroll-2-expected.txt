@@ -23,7 +23,7 @@ layer at (13,42) size 126x126 clip at (16,45) size 105x120 scrollY 36 scrollHeig
         RenderInline {SPAN} at (0,0) size 42x35
           RenderText {#text} at (0,0) size 42x17
             text run at (0,0) width 42: "Lorem"
-          RenderBR {BR} at (42,14) size 0x0
+          RenderBR {BR} at (42,0) size 0x17
           RenderText {#text} at (0,18) size 38x17
             text run at (0,18) width 38: "ipsum"
       RenderText {#text} at (0,0) size 0x0

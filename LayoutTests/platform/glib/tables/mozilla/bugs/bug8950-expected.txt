@@ -79,7 +79,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,267) size 784x54
         RenderText {#text} at (0,0) size 553x17
           text run at (0,0) width 553: "The second (nested) table below has fixed widths 300px, 500px, 200px (outer to inner)."
-        RenderBR {BR} at (553,14) size 0x0
+        RenderBR {BR} at (553,0) size 0x17
         RenderText {#text} at (0,18) size 65x17
           text run at (0,18) width 65: "When the "
         RenderInline {CODE} at (0,0) size 56x15
@@ -92,7 +92,7 @@ layer at (0,0) size 800x600
             text run at (237,21) width 104: "'onMouseOver'"
         RenderText {#text} at (341,18) size 212x17
           text run at (341,18) width 212: ", the outer table reflows to 300px,"
-        RenderBR {BR} at (553,32) size 0x0
+        RenderBR {BR} at (553,18) size 0x17
         RenderText {#text} at (0,36) size 303x17
           text run at (0,36) width 303: "clipping the middle (500px) table in the process."
       RenderTable {TABLE} at (0,337) size 300x28 [border: (1px outset #808080)]

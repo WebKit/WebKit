@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
           text run at (528,0) width 255: "left. The table has been assigned a width"
           text run at (0,18) width 237: "and border value so that it is easier to "
           text run at (237,18) width 113: "see the alignment."
-        RenderBR {BR} at (350,32) size 0x0
+        RenderBR {BR} at (350,18) size 0x17
       RenderTable {TABLE} at (0,36) size 300x52 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 298x50
           RenderTableRow {TR} at (0,2) size 298x22

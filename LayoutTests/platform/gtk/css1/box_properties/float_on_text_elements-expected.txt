@@ -27,7 +27,7 @@ layer at (0,0) size 785x2714
         RenderImage {IMG} at (0,72) size 15x15
         RenderText {#text} at (15,73) size 4x17
           text run at (15,73) width 4: " "
-        RenderBR {BR} at (19,87) size 0x0
+        RenderBR {BR} at (19,73) size 0x17
       RenderBlock {HR} at (0,225) size 769x2 [border: (1px inset #000000)]
       RenderBlock (floating) {P} at (0,235) size 385x108 [bgcolor=#FFFF00]
         RenderText {#text} at (0,0) size 385x107
@@ -41,7 +41,7 @@ layer at (0,0) size 785x2714
         RenderImage {IMG} at (384,0) size 16x15
         RenderText {#text} at (399,1) size 5x17
           text run at (399,1) width 5: " "
-        RenderBR {BR} at (403,15) size 1x0
+        RenderBR {BR} at (403,1) size 1x17
       RenderBlock {HR} at (0,351) size 769x2 [border: (1px inset #000000)]
       RenderBlock (floating) {P} at (384,361) size 385x108 [bgcolor=#FFFF00]
         RenderText {#text} at (0,0) size 385x107
@@ -55,7 +55,7 @@ layer at (0,0) size 785x2714
         RenderImage {IMG} at (0,0) size 15x15
         RenderText {#text} at (15,1) size 4x17
           text run at (15,1) width 4: " "
-        RenderBR {BR} at (19,15) size 0x0
+        RenderBR {BR} at (19,1) size 0x17
       RenderBlock {HR} at (0,477) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,487) size 769x54
         RenderBlock (floating) {SPAN} at (0,0) size 48x37 [bgcolor=#C0C0C0]
@@ -205,7 +205,7 @@ layer at (0,0) size 785x2714
                 RenderImage {IMG} at (0,72) size 15x15
                 RenderText {#text} at (15,73) size 4x17
                   text run at (15,73) width 4: " "
-                RenderBR {BR} at (19,87) size 0x0
+                RenderBR {BR} at (19,73) size 0x17
               RenderBlock {HR} at (4,229) size 747x2 [border: (1px inset #000000)]
               RenderBlock (floating) {P} at (4,239) size 374x108 [bgcolor=#FFFF00]
                 RenderText {#text} at (0,0) size 374x107
@@ -219,7 +219,7 @@ layer at (0,0) size 785x2714
                 RenderImage {IMG} at (373,0) size 16x15
                 RenderText {#text} at (388,1) size 5x17
                   text run at (388,1) width 5: " "
-                RenderBR {BR} at (392,15) size 1x0
+                RenderBR {BR} at (392,1) size 1x17
               RenderBlock {HR} at (4,355) size 747x2 [border: (1px inset #000000)]
               RenderBlock (floating) {P} at (377,365) size 374x108 [bgcolor=#FFFF00]
                 RenderText {#text} at (0,0) size 374x107
@@ -233,7 +233,7 @@ layer at (0,0) size 785x2714
                 RenderImage {IMG} at (0,0) size 15x15
                 RenderText {#text} at (15,1) size 4x17
                   text run at (15,1) width 4: " "
-                RenderBR {BR} at (19,15) size 0x0
+                RenderBR {BR} at (19,1) size 0x17
               RenderBlock {HR} at (4,481) size 747x2 [border: (1px inset #000000)]
               RenderBlock {P} at (4,491) size 747x72
                 RenderBlock (floating) {SPAN} at (0,0) size 48x37 [bgcolor=#C0C0C0]

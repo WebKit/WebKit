@@ -22,7 +22,7 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (0,51) size 756x27
             RenderText {#text} at (0,0) size 12x26
               text run at (0,0) width 12: "x"
-            RenderBR {BR} at (12,21) size 0x0
+            RenderBR {BR} at (12,0) size 0x26
           RenderBlock {BLOCKQUOTE} at (40,102) size 676x27
             RenderText {#text} at (0,0) size 41x26
               text run at (0,0) width 41: "Test"

@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,0) size 784x18
           RenderText {#text} at (0,0) size 4x17
             text run at (0,0) width 4: " "
-          RenderBR {BR} at (4,14) size 0x0
+          RenderBR {BR} at (4,0) size 0x17
         RenderBlock {DIV} at (0,18) size 784x18
           RenderText {#text} at (0,0) size 345x17
             text run at (0,0) width 345: "There should be a single space in the paragraph above."

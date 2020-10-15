@@ -18,10 +18,10 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,24) size 784x54
         RenderText {#text} at (0,0) size 92x17
           text run at (0,0) width 92: "h1 has index 0"
-        RenderBR {BR} at (92,14) size 0x0
+        RenderBR {BR} at (92,0) size 0x17
         RenderText {#text} at (0,18) size 91x17
           text run at (0,18) width 91: "c1 has index 1"
-        RenderBR {BR} at (91,32) size 0x0
+        RenderBR {BR} at (91,18) size 0x17
         RenderText {#text} at (0,36) size 91x17
           text run at (0,36) width 91: "c2 has index 2"
-        RenderBR {BR} at (91,50) size 0x0
+        RenderBR {BR} at (91,36) size 0x17

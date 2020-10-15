@@ -7,10 +7,10 @@ layer at (0,0) size 785x671
         RenderInline {SPAN} at (0,0) size 264x127 [border: (5px solid #000000)]
           RenderText {#text} at (5,16) size 55x17
             text run at (5,16) width 55: "This text"
-          RenderBR {BR} at (60,30) size 0x0
+          RenderBR {BR} at (60,0) size 0x17
           RenderText {#text} at (0,66) size 76x17
             text run at (0,66) width 76: "should have"
-          RenderBR {BR} at (76,80) size 0x0
+          RenderBR {BR} at (76,50) size 0x17
           RenderText {#text} at (0,116) size 259x17
             text run at (0,116) width 259: "a multi-line shadow with a border-radius."
         RenderText {#text} at (0,0) size 0x0
@@ -74,7 +74,7 @@ layer at (0,0) size 785x671
       RenderBlock {P} at (0,546) size 769x36
         RenderText {#text} at (0,0) size 356x17
           text run at (0,0) width 356: "The first line of this div should have a box-shadow on it."
-        RenderBR {BR} at (356,14) size 0x0
+        RenderBR {BR} at (356,0) size 0x17
         RenderText {#text} at (0,18) size 177x17
           text run at (0,18) width 177: "This second line should not."
       RenderBlock {P} at (0,598) size 769x36
@@ -83,6 +83,6 @@ layer at (0,0) size 785x671
             text run at (5,6) width 29: "T"
         RenderText {#text} at (43,0) size 488x17
           text run at (43,0) width 488: "he first letter of this paragraph should have a border and a nice shadow effect."
-        RenderBR {BR} at (530,14) size 1x0
+        RenderBR {BR} at (530,0) size 1x17
         RenderText {#text} at (43,18) size 162x17
           text run at (43,18) width 162: "It should look pretty cool."

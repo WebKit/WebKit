@@ -25,6 +25,6 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,34) size 784x18
           RenderText {#text} at (0,0) size 237x17
             text run at (0,0) width 237: "This paragraph should not be in a list."
-          RenderBR {BR} at (237,14) size 0x0
+          RenderBR {BR} at (237,0) size 0x17
 selection start: position 0 of child 0 {#text} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of body
 selection end:   position 35 of child 0 {#text} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of body

@@ -37,7 +37,7 @@ layer at (0,0) size 785x1044
           text run at (0,635) width 553: "Liberty, and dedicated to the proposition that all men are"
           text run at (552,635) width 7: " "
           text run at (0,683) width 142: "created equal. "
-        RenderBR {BR} at (142,704) size 0x0
+        RenderBR {BR} at (142,672) size 0x26
         RenderBR {BR} at (0,731) size 0x26
       RenderBlock {DIV} at (74,842) size 600x0
 selection start: position 0 of child 1 {BR} of body

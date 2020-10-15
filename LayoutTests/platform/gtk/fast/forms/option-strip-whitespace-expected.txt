@@ -10,12 +10,12 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,56) size 70x17
           text run at (0,56) width 70: "Five Tabs: "
         RenderListBox {SELECT} at (71,2) size 92x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-        RenderBR {BR} at (164,70) size 1x0
+        RenderBR {BR} at (164,56) size 1x17
         RenderBR {BR} at (0,77) size 0x17
         RenderText {#text} at (0,151) size 84x17
           text run at (0,151) width 84: "Five Spaces: "
         RenderListBox {SELECT} at (86,97) size 91x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-        RenderBR {BR} at (179,165) size 0x0
+        RenderBR {BR} at (179,151) size 0x17
         RenderBR {BR} at (0,172) size 0x17
         RenderText {#text} at (0,198) size 298x17
           text run at (0,198) width 298: "Five Spaces (with leading/trailing whitespace): "
@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (1,1) size 115x28
             RenderText at (5,5) size 89x17
               text run at (5,5) width 89: "Five Spaces"
-        RenderBR {BR} at (419,212) size 0x0
+        RenderBR {BR} at (419,198) size 0x17
         RenderBR {BR} at (0,224) size 0x17
         RenderText {#text} at (0,250) size 284x17
           text run at (0,250) width 284: "Five Tabs (with leading/trailing whitespace): "
@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (1,1) size 96x28
             RenderText at (5,5) size 70x17
               text run at (5,5) width 70: "Five Tabs"
-        RenderBR {BR} at (385,264) size 1x0
+        RenderBR {BR} at (385,250) size 1x17
         RenderBR {BR} at (0,276) size 0x17
         RenderText {#text} at (0,302) size 126x17
           text run at (0,302) width 126: "Mixed Whitespace: "

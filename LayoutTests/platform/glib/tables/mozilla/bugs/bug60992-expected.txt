@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
               RenderBlock (anonymous) at (1,1) size 224x54
                 RenderText {#text} at (0,0) size 224x17
                   text run at (0,0) width 224: "This cell has the nowrap parameter "
-                RenderBR {BR} at (224,14) size 0x0
+                RenderBR {BR} at (224,0) size 0x17
                 RenderBR {BR} at (0,18) size 0x17
                 RenderText {#text} at (0,36) size 31x17
                   text run at (0,36) width 31: "<hr>"
@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
               RenderBlock (anonymous) at (1,1) size 224x54
                 RenderText {#text} at (0,0) size 106x17
                   text run at (0,0) width 106: "This cell doesn't "
-                RenderBR {BR} at (106,14) size 0x0
+                RenderBR {BR} at (106,0) size 0x17
                 RenderBR {BR} at (0,18) size 0x17
                 RenderText {#text} at (0,36) size 31x17
                   text run at (0,36) width 31: "<hr>"
