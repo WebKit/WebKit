@@ -1,3 +1,18 @@
+2020-10-15  David Kilzer  <ddkilzer@apple.com>
+
+        WeakObjCPtr.h is not safe to include in C++ source files
+        <https://webkit.org/b/217712>
+        <rdar://problem/70250667>
+
+        Reviewed by Darin Adler.
+
+        * wtf/WeakObjCPtr.h:
+        (WTF::WeakObjCPtr::get const):
+        - Move implementation outside of the class and wrap it in
+          #ifdef __OBJC__/#endif.  This makes the header safe to compile
+          with other C++ sources, but will fail if get() is used in a
+          C++ source file.
+
 2020-10-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed build fix. Disable IPC testing API on non-Cocoa platforms.

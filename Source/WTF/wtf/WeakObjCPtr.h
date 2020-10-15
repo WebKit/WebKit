@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,14 +81,7 @@ public:
         return !get();
     }
 
-    RetainPtr<ValueType> get() const
-    {
-#if __has_feature(objc_arc)
-        return static_cast<ValueType *>(m_weakReference);
-#else
-        return adoptNS(objc_loadWeakRetained(&m_weakReference));
-#endif
-    }
+    RetainPtr<ValueType> get() const;
 
     ValueType *getAutoreleased() const
     {
@@ -109,6 +102,18 @@ private:
     mutable id m_weakReference { nullptr };
 #endif
 };
+
+#ifdef __OBJC__
+template<typename T>
+RetainPtr<typename WeakObjCPtr<T>::ValueType> WeakObjCPtr<T>::get() const
+{
+#if __has_feature(objc_arc)
+    return static_cast<typename WeakObjCPtr<T>::ValueType *>(m_weakReference);
+#else
+    return adoptNS(objc_loadWeakRetained(&m_weakReference));
+#endif
+}
+#endif
 
 } // namespace WTF
 
