@@ -1,3 +1,17 @@
+2020-10-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Allow additional sysctl reads needed by image decoding
+        https://bugs.webkit.org/show_bug.cgi?id=217733
+        <rdar://problem/68649171>
+
+        Reviewed by Per Arne Vollan.
+
+        Telemetry on iOS 14 shows that we are hitting some sandbox violations during image decoding. We should
+        grant access to hw.byteorder, hw.cachelinesize_compat, and hw.vectorunit. We should silence warnings
+        about hw.cpufrequency_compat since it is not needed in web-facing use cases.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-10-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed build fix for non-Cocoa platforms & release builds.
