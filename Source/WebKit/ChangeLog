@@ -1,3 +1,38 @@
+2020-10-14  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r268423) SHOULD NEVER BE REACHED: GPUConnectionToWebProcess::didReceiveMessage(IPC::Connection &, IPC::Decoder &)
+        https://bugs.webkit.org/show_bug.cgi?id=217730
+        <rdar://problem/70308112>
+
+        Reviewed by Geoffrey Garen.
+
+        r268423 added support for registering IPC WorkQueueMessageReceivers & ThreadMessageReceivers with
+        a given identifier. When receiving an IPC message, we would look up the key [ReceiverName, ID] in
+        the receiver map and pass the message to this receiver.
+        This introduced a crash because of an existing ThreadMessageReceiver (RemoteAudioMediaStreamTrackRenderer)
+        was registering itself as a message receiver without an identifier (ID=0). However, the IPC senders
+        on GPU process side would pass a non-0 identifier when sending the IPC. As a result, we would fail to
+        look up the receiver in the map when receiving those IPC messages.
+
+        While existing code should probably be fixed so that senders and receivers agree on on identifier,
+        I have decided to fix the issue in this patch at IPC::Connection level. When receiving an IPC
+        message, we first check if there is a "global" receiver in the map by looking up key
+        [ReceiverName, 0]. If there is, we pass the IPC to this one. If there isn't, we look up the key
+        [ReceiverName, ID] in the map and use the more specific receiver.
+
+        The reason I chose to fix it this way is that the code in MessageReceiverMap (which is used for
+        receivers that are not using a WorkQueue or a Thread) behaves in this fashion. I believe it is
+        good to have consistency between all kinds of receivers.
+
+        No new tests, covered by existing test that is crashing on the bots.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::threadMessageReceiver):
+        (IPC::Connection::workQueueMessageReceiver):
+        (IPC::Connection::dispatchMessageToWorkQueueReceiver):
+        (IPC::Connection::dispatchMessageToThreadReceiver):
+        * Platform/IPC/Connection.h:
+
 2020-10-14  Simon Fraser  <simon.fraser@apple.com>
 
         Scrolls in the passive handler region should be reported as handled promptly

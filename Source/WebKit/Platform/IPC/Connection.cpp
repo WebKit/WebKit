@@ -1006,32 +1006,61 @@ void Connection::dispatchMessage(Decoder& decoder)
     m_client.didReceiveMessage(*this, decoder);
 }
 
-bool Connection::dispatchMessageToWorkQueueReceiver(std::unique_ptr<Decoder>& message)
+auto Connection::threadMessageReceiver(std::unique_ptr<Decoder>& message) -> RefPtr<ThreadMessageReceiver>
+{
+    auto locker = holdLock(m_threadMessageReceiversLock);
+
+    // First check if there is a global message receiver and return it if there is one.
+    // This matches the behavior of MessageReceiverMap.
+    auto key = std::make_pair(static_cast<uint8_t>(message->messageReceiverName()), 0);
+    auto it = m_threadMessageReceivers.find(key);
+    if (it != m_threadMessageReceivers.end())
+        return it->value;
+
+    if (auto destinationID = message->destinationID()) {
+        key.second = destinationID;
+        return m_threadMessageReceivers.get(key);
+    }
+
+    return nullptr;
+}
+
+auto Connection::workQueueMessageReceiver(std::unique_ptr<Decoder>& message) -> std::pair<RefPtr<WorkQueue>, RefPtr<WorkQueueMessageReceiver>>
 {
     auto locker = holdLock(m_workQueueMessageReceiversMutex);
-    auto key = std::make_pair(static_cast<uint8_t>(message->messageReceiverName()), message->destinationID());
+
+    // First check if there is a global message receiver and return it if there is one.
+    // This matches the behavior of MessageReceiverMap.
+    auto key = std::make_pair(static_cast<uint8_t>(message->messageReceiverName()), 0);
     auto it = m_workQueueMessageReceivers.find(key);
-    if (it != m_workQueueMessageReceivers.end()) {
-        it->value.first->dispatch([protectedThis = makeRef(*this), workQueueMessageReceiver = it->value.second, decoder = WTFMove(message)]() mutable {
-            protectedThis->dispatchWorkQueueMessageReceiverMessage(*workQueueMessageReceiver, *decoder);
-        });
-        return true;
+    if (it != m_workQueueMessageReceivers.end())
+        return it->value;
+
+    if (auto destinationID = message->destinationID()) {
+        key.second = destinationID;
+        return m_workQueueMessageReceivers.get(key);
     }
-    return false;
+
+    return { };
+}
+
+bool Connection::dispatchMessageToWorkQueueReceiver(std::unique_ptr<Decoder>& message)
+{
+    auto receiver = workQueueMessageReceiver(message);
+    if (!receiver.first)
+        return false;
+
+    receiver.first->dispatch([protectedThis = makeRef(*this), workQueueMessageReceiver = receiver.second, decoder = WTFMove(message)]() mutable {
+        protectedThis->dispatchWorkQueueMessageReceiverMessage(*workQueueMessageReceiver, *decoder);
+    });
+    return true;
 }
 
 bool Connection::dispatchMessageToThreadReceiver(std::unique_ptr<Decoder>& message)
 {
-    RefPtr<ThreadMessageReceiver> protectedThreadMessageReceiver;
-    {
-        auto locker = holdLock(m_threadMessageReceiversLock);
-        auto key = std::make_pair(static_cast<uint8_t>(message->messageReceiverName()), message->destinationID());
-        protectedThreadMessageReceiver = m_threadMessageReceivers.get(key);
-    }
-
-    if (protectedThreadMessageReceiver) {
-        protectedThreadMessageReceiver->dispatchToThread([protectedThis = makeRef(*this), threadMessageReceiver = WTFMove(protectedThreadMessageReceiver), decoder = WTFMove(message)]() mutable {
-            protectedThis->dispatchThreadMessageReceiverMessage(*threadMessageReceiver, *decoder);
+    if (auto receiver = threadMessageReceiver(message)) {
+        receiver->dispatchToThread([protectedThis = makeRef(*this), receiver, decoder = WTFMove(message)]() mutable {
+            protectedThis->dispatchThreadMessageReceiverMessage(*receiver, *decoder);
         });
         return true;
     }

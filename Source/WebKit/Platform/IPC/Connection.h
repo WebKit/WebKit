@@ -357,6 +357,9 @@ private:
         unsigned m_throttlingLevel { 0 };
     };
 
+    RefPtr<ThreadMessageReceiver> threadMessageReceiver(std::unique_ptr<Decoder>&);
+    std::pair<RefPtr<WorkQueue>, RefPtr<WorkQueueMessageReceiver>> workQueueMessageReceiver(std::unique_ptr<Decoder>&);
+
     Client& m_client;
     UniqueID m_uniqueID;
     bool m_isServer;
