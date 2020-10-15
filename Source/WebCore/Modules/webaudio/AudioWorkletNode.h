@@ -34,6 +34,10 @@
 #include "AudioNode.h"
 #include <wtf/Lock.h>
 
+namespace JSC {
+class JSGlobalObject;
+} // namespace JSC
+
 namespace WebCore {
 
 class AudioParamMap;

@@ -34,6 +34,7 @@
 #include "AudioWorkletGlobalScope.h"
 #include "AudioWorkletMessagingProxy.h"
 #include "AudioWorkletNode.h"
+#include "AudioWorkletProcessor.h"
 #include "BaseAudioContext.h"
 #include "WorkerRunLoop.h"
 #include <wtf/IsoMallocInlines.h>

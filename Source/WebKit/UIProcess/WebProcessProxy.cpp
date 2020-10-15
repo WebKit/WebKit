@@ -50,6 +50,7 @@
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebPasteboardProxy.h"
+#include "WebPreferencesKeys.h"
 #include "WebProcessCache.h"
 #include "WebProcessDataStoreParameters.h"
 #include "WebProcessMessages.h"

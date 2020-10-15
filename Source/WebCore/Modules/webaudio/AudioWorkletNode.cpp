@@ -36,6 +36,7 @@
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
 #include "AudioParam.h"
+#include "AudioParamDescriptor.h"
 #include "AudioParamMap.h"
 #include "AudioUtilities.h"
 #include "AudioWorklet.h"

@@ -30,15 +30,16 @@
  */
  
 #include "config.h"
+#include "WorkerRunLoop.h"
 
 #include "ScriptExecutionContext.h"
 #include "SharedTimer.h"
 #include "ThreadGlobalData.h"
 #include "ThreadTimers.h"
-#include "WorkerRunLoop.h"
 #include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerOrWorkletScriptController.h"
 #include "WorkerThread.h"
+#include <JavaScriptCore/JSRunLoopTimer.h>
 
 #if USE(GLIB)
 #include <glib.h>

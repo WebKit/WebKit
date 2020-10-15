@@ -35,6 +35,7 @@
 #include "AudioWorklet.h"
 #include "AudioWorkletMessagingProxy.h"
 #include "AudioWorkletProcessorConstructionData.h"
+#include "BaseAudioContext.h"
 #include "JSAudioWorkletProcessor.h"
 #include "JSAudioWorkletProcessorConstructor.h"
 #include "JSDOMConvert.h"
