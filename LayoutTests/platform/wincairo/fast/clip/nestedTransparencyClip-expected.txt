@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 745x39
           text run at (0,0) width 745: "This test is for a bug we had with clipping transparency layers. The bug is visual, so the pixel test is more worthwhile. Below,"
           text run at (0,20) width 554: "\"Peach,\" \"Plum,\" and \"Pear\" should appear. Before, we were clipping out \"Plum\" and \"Pear.\""
-        RenderBR {BR} at (554,35) size 0x0
+        RenderBR {BR} at (554,20) size 0x19
         RenderBR {BR} at (0,40) size 0x19
 layer at (8,68) size 784x20
   RenderBlock {DIV} at (0,60) size 784x20

@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
                     text run at (0,0) width 35: "There"
                 RenderText {#text} at (35,0) size 166x19
                   text run at (35,0) width 166: " should be a caret here --> "
-                RenderBR {BR} at (201,15) size 0x0
+                RenderBR {BR} at (201,0) size 0x19
                 RenderText {#text} at (0,20) size 41x19
                   text run at (0,20) width 41: "See it?"
         RenderText {#text} at (0,0) size 0x0

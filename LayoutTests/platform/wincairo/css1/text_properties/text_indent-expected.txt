@@ -62,10 +62,10 @@ layer at (0,0) size 785x1329
       RenderBlock {P} at (0,607) size 769x60 [bgcolor=#00FFFF]
         RenderText {#text} at (48,0) size 389x19
           text run at (48,0) width 389: "Only the first line of this sentence should be indented half an inch,"
-        RenderBR {BR} at (437,15) size 0x0
+        RenderBR {BR} at (437,0) size 0x19
         RenderText {#text} at (0,20) size 246x19
           text run at (0,20) width 246: "no matter where the lines might start, and"
-        RenderBR {BR} at (246,35) size 0x0
+        RenderBR {BR} at (246,20) size 0x19
         RenderInline {EM} at (0,0) size 202x19
           RenderText {#text} at (0,40) size 202x19
             text run at (0,40) width 202: "regardless of any other markup"
@@ -120,10 +120,10 @@ layer at (0,0) size 785x1329
               RenderBlock {P} at (4,368) size 747x60 [bgcolor=#00FFFF]
                 RenderText {#text} at (48,0) size 389x19
                   text run at (48,0) width 389: "Only the first line of this sentence should be indented half an inch,"
-                RenderBR {BR} at (437,15) size 0x0
+                RenderBR {BR} at (437,0) size 0x19
                 RenderText {#text} at (0,20) size 246x19
                   text run at (0,20) width 246: "no matter where the lines might start, and"
-                RenderBR {BR} at (246,35) size 0x0
+                RenderBR {BR} at (246,20) size 0x19
                 RenderInline {EM} at (0,0) size 202x19
                   RenderText {#text} at (0,40) size 202x19
                     text run at (0,40) width 202: "regardless of any other markup"

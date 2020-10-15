@@ -16,7 +16,7 @@ layer at (0,0) size 785x1289
           text run at (0,40) width 767: "expected results, nor do I think that the browser should yet be expected to match all of the cases in the different languages, but I"
           text run at (0,60) width 22: "am "
           text run at (22,60) width 273: "(at least temporarily) adding the test anyway. "
-        RenderBR {BR} at (295,75) size 0x0
+        RenderBR {BR} at (295,60) size 0x19
         RenderBR {BR} at (0,80) size 0x19
       RenderTable {TABLE} at (0,100) size 769x391
         RenderBlock {CAPTION} at (0,0) size 769x20
@@ -53,10 +53,10 @@ layer at (0,0) size 785x1289
             RenderTableCell {TD} at (57,120) size 710x64 [border: (1px solid #EEEEEE)] [r=3 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 411x19
                 text run at (2,2) width 411: "'cept nut'in safari\x{2019}s \x{2018}sure\x{2019} nai\x{308}ve r\x{E9}sum\x{E9}\x{2014}h\x{E1}c\x{30C}ek full\x{2010}time one-to-one"
-              RenderBR {BR} at (413,17) size 0x0
+              RenderBR {BR} at (413,2) size 0x19
               RenderText {#text} at (2,22) size 293x19
                 text run at (2,22) width 293: "\"newcastle\x{2011}upon\x{2011}tyne\" washington\x{2011}on\x{2011}the\x{2011}brazos"
-              RenderBR {BR} at (295,37) size 0x0
+              RenderBR {BR} at (295,22) size 0x19
               RenderInline {SPAN} at (0,0) size 30x19
                 RenderText {#text} at (2,42) size 30x19
                   text run at (2,42) width 30: "earth"
@@ -162,10 +162,10 @@ layer at (0,0) size 785x1289
             RenderTableCell {TD} at (57,120) size 710x64 [border: (1px solid #EEEEEE)] [r=3 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 449x19
                 text run at (2,2) width 449: "'Cept Nut'in Safari\x{2019}s \x{2018}Sure\x{2019} Na\x{EF}ve R\x{E9}sum\x{E9}\x{2014}H\x{E1}\x{10D}ek Full\x{2010}time One-to-One"
-              RenderBR {BR} at (451,17) size 0x0
+              RenderBR {BR} at (451,2) size 0x19
               RenderText {#text} at (2,22) size 311x19
                 text run at (2,22) width 311: "\"Newcastle-upon-Tyne\" Washington\x{2011}on\x{2011}the\x{2011}Brazos"
-              RenderBR {BR} at (313,37) size 0x0
+              RenderBR {BR} at (313,22) size 0x19
               RenderText {#text} at (2,42) size 349x19
                 text run at (2,42) width 349: "Earthquake Earthworm Cheeseburger [House] ~Six -Big-"
           RenderTableRow {TR} at (0,186) size 769x24
@@ -255,10 +255,10 @@ layer at (0,0) size 785x1289
             RenderTableCell {TD} at (57,120) size 710x64 [border: (1px solid #EEEEEE)] [r=3 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 462x19
                 text run at (2,2) width 462: "'Cept Nut'in Safari\x{2019}s \x{2018}Sure\x{2019} Nai\x{308}ve R\x{E9}sum\x{E9}\x{2014}H\x{E1}c\x{30C}ek Full\x{2010}Time One-To-One"
-              RenderBR {BR} at (464,17) size 0x0
+              RenderBR {BR} at (464,2) size 0x19
               RenderText {#text} at (2,22) size 322x19
                 text run at (2,22) width 322: "\"Newcastle\x{2011}Upon\x{2011}Tyne\" Washington\x{2011}On\x{2011}The\x{2011}Brazos"
-              RenderBR {BR} at (324,37) size 0x0
+              RenderBR {BR} at (324,22) size 0x19
               RenderInline {SPAN} at (0,0) size 32x19
                 RenderText {#text} at (2,42) size 32x19
                   text run at (2,42) width 32: "Earth"

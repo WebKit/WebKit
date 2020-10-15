@@ -11,14 +11,14 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,56) size 784x80
         RenderText {#text} at (0,0) size 21x19
           text run at (0,0) width 21: "xxx"
-        RenderBR {BR} at (21,15) size 0x0
+        RenderBR {BR} at (21,0) size 0x19
         RenderText {#text} at (0,20) size 21x19
           text run at (0,20) width 21: "xxx"
-        RenderBR {BR} at (21,35) size 0x0
+        RenderBR {BR} at (21,20) size 0x19
         RenderText {#text} at (0,40) size 7x19
           text run at (0,40) width 7: "x"
-        RenderBR {BR} at (7,55) size 0x0
+        RenderBR {BR} at (7,40) size 0x19
         RenderText {#text} at (0,60) size 21x19
           text run at (0,60) width 21: "xxx"
-        RenderBR {BR} at (21,75) size 0x0
+        RenderBR {BR} at (21,60) size 0x19
 caret: position 3 of child 6 {#text} of child 2 {DIV} of body

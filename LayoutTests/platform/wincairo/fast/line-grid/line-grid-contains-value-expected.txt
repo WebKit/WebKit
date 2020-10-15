@@ -37,9 +37,9 @@ layer at (10,10) size 620x315
     RenderBlock {DIV} at (10,166) size 600x139
       RenderText {#text} at (0,36) size 104x15
         text run at (0,36) width 104: "This text should snap"
-      RenderBR {BR} at (104,48) size 0x0
+      RenderBR {BR} at (104,36) size 0x15
       RenderText {#text} at (0,79) size 115x15
         text run at (0,79) width 115: "to a 36px font-size grid."
-      RenderBR {BR} at (115,91) size 0x0
+      RenderBR {BR} at (115,79) size 0x15
       RenderText {#text} at (0,122) size 249x15
         text run at (0,122) width 249: "There should be lots of spacing between these lines."

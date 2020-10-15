@@ -23,7 +23,7 @@ layer at (0,0) size 785x900
             text run at (0,202) width 579: "testing whether that nation, or any nation, so conceived, and"
             text run at (579,202) width 6: " "
             text run at (0,250) width 564: "so dedicated, can long endure. We are met here on a great "
-          RenderBR {BR} at (564,271) size 0x0
+          RenderBR {BR} at (564,240) size 0x27
           RenderText {#text} at (0,298) size 600x171
             text run at (0,298) width 594: "battlefield of that war. We have come to dedicate a portion of"
             text run at (594,298) width 6: " "
@@ -32,7 +32,7 @@ layer at (0,0) size 785x900
             text run at (0,394) width 570: "that that nation might live. It is altogether fitting and proper"
             text run at (570,394) width 6: " "
             text run at (0,442) width 222: "that we should do this. "
-          RenderBR {BR} at (222,463) size 0x0
+          RenderBR {BR} at (222,432) size 0x27
           RenderText {#text} at (0,490) size 583x123
             text run at (0,490) width 550: "Four score and seven years ago our fathers brought forth,"
             text run at (550,490) width 6: " "

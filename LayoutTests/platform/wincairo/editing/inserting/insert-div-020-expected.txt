@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 32x27
           RenderText {#text} at (0,0) size 32x27
             text run at (0,0) width 32: "foo"
-        RenderBR {BR} at (32,21) size 0x0
+        RenderBR {BR} at (32,0) size 0x27
         RenderBR {BR} at (0,28) size 0x27
         RenderBR {BR} at (0,56) size 0x27
       RenderBlock {DIV} at (0,176) size 784x56 [border: (2px solid #0000FF)]

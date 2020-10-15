@@ -11,8 +11,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,56) size 784x0
       RenderBlock {FORM} at (0,56) size 784x97
         RenderImage {INPUT} at (0,0) size 56x20
-        RenderBR {BR} at (56,20) size 0x0
+        RenderBR {BR} at (56,5) size 0x19
         RenderImage {INPUT} at (0,20) size 102x52 [border: (1px solid #000000)]
-        RenderBR {BR} at (102,72) size 0x0
+        RenderBR {BR} at (102,57) size 0x19
         RenderImage {INPUT} at (0,72) size 75x25
-        RenderBR {BR} at (75,97) size 0x0
+        RenderBR {BR} at (75,82) size 0x19

@@ -40,31 +40,31 @@ layer at (0,0) size 785x1258
             text run at (0,0) width 42: "Value:"
         RenderText {#text} at (42,0) size 76x19
           text run at (42,0) width 76: " scroll | fixed"
-        RenderBR {BR} at (118,15) size 0x0
+        RenderBR {BR} at (118,0) size 0x19
         RenderInline {EM} at (0,0) size 43x19
           RenderText {#text} at (0,20) size 43x19
             text run at (0,20) width 43: "Initial:"
         RenderText {#text} at (43,20) size 36x19
           text run at (43,20) width 36: " scroll"
-        RenderBR {BR} at (79,35) size 0x0
+        RenderBR {BR} at (79,20) size 0x19
         RenderInline {EM} at (0,0) size 69x19
           RenderText {#text} at (0,40) size 69x19
             text run at (0,40) width 69: "Applies to:"
         RenderText {#text} at (69,40) size 73x19
           text run at (69,40) width 73: " all elements"
-        RenderBR {BR} at (142,55) size 0x0
+        RenderBR {BR} at (142,40) size 0x19
         RenderInline {EM} at (0,0) size 63x19
           RenderText {#text} at (0,60) size 63x19
             text run at (0,60) width 63: "Inherited:"
         RenderText {#text} at (63,60) size 19x19
           text run at (63,60) width 19: " no"
-        RenderBR {BR} at (82,75) size 0x0
+        RenderBR {BR} at (82,60) size 0x19
         RenderInline {EM} at (0,0) size 123x19
           RenderText {#text} at (0,80) size 123x19
             text run at (0,80) width 123: "Percentage values:"
         RenderText {#text} at (123,80) size 31x19
           text run at (123,80) width 31: " N/A"
-        RenderBR {BR} at (154,95) size 0x0
+        RenderBR {BR} at (154,80) size 0x19
       RenderBlock {P} at (0,441) size 769x41
         RenderText {#text} at (0,0) size 766x39
           text run at (0,0) width 766: "If a background image is specified, the value of 'background-attachment' determines if it is fixed with regard to the canvas or if it"
@@ -128,31 +128,31 @@ layer at (0,0) size 785x1258
                     text run at (0,0) width 42: "Value:"
                 RenderText {#text} at (42,0) size 76x19
                   text run at (42,0) width 76: " scroll | fixed"
-                RenderBR {BR} at (118,15) size 0x0
+                RenderBR {BR} at (118,0) size 0x19
                 RenderInline {EM} at (0,0) size 43x19
                   RenderText {#text} at (0,20) size 43x19
                     text run at (0,20) width 43: "Initial:"
                 RenderText {#text} at (43,20) size 36x19
                   text run at (43,20) width 36: " scroll"
-                RenderBR {BR} at (79,35) size 0x0
+                RenderBR {BR} at (79,20) size 0x19
                 RenderInline {EM} at (0,0) size 69x19
                   RenderText {#text} at (0,40) size 69x19
                     text run at (0,40) width 69: "Applies to:"
                 RenderText {#text} at (69,40) size 73x19
                   text run at (69,40) width 73: " all elements"
-                RenderBR {BR} at (142,55) size 0x0
+                RenderBR {BR} at (142,40) size 0x19
                 RenderInline {EM} at (0,0) size 63x19
                   RenderText {#text} at (0,60) size 63x19
                     text run at (0,60) width 63: "Inherited:"
                 RenderText {#text} at (63,60) size 19x19
                   text run at (63,60) width 19: " no"
-                RenderBR {BR} at (82,75) size 0x0
+                RenderBR {BR} at (82,60) size 0x19
                 RenderInline {EM} at (0,0) size 123x19
                   RenderText {#text} at (0,80) size 123x19
                     text run at (0,80) width 123: "Percentage values:"
                 RenderText {#text} at (123,80) size 31x19
                   text run at (123,80) width 31: " N/A"
-                RenderBR {BR} at (154,95) size 0x0
+                RenderBR {BR} at (154,80) size 0x19
               RenderBlock {P} at (4,346) size 747x41
                 RenderText {#text} at (0,0) size 744x39
                   text run at (0,0) width 744: "If a background image is specified, the value of 'background-attachment' determines if it is fixed with regard to the canvas or"

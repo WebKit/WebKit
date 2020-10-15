@@ -311,7 +311,7 @@ layer at (0,0) size 785x2575
               text run at (301,3) width 48: "within"
           RenderText {#text} at (369,0) size 104x19
             text run at (369,0) width 104: " elements too."
-          RenderBR {BR} at (473,15) size 0x0
+          RenderBR {BR} at (473,0) size 0x19
           RenderText {#text} at (0,20) size 174x19
             text run at (0,20) width 60: "Word "
             text run at (60,20) width 114: "spacing test "
@@ -333,7 +333,7 @@ layer at (0,0) size 785x2575
           RenderText {#text} at (449,20) size 757x39
             text run at (449,20) width 308: "too. (with comment between elements"
             text run at (0,40) width 71: "and too)"
-          RenderBR {BR} at (71,55) size 0x0
+          RenderBR {BR} at (71,40) size 0x19
           RenderText {#text} at (0,60) size 174x19
             text run at (0,60) width 60: "Word "
             text run at (60,60) width 114: "spacing test "
@@ -355,7 +355,7 @@ layer at (0,0) size 785x2575
           RenderText {#text} at (445,60) size 740x39
             text run at (445,60) width 295: " too. (with comment (no preceeding"
             text run at (0,80) width 286: "space) between elements and too)"
-          RenderBR {BR} at (286,95) size 0x0
+          RenderBR {BR} at (286,80) size 0x19
           RenderText {#text} at (0,100) size 174x19
             text run at (0,100) width 60: "Word "
             text run at (60,100) width 114: "spacing test "
@@ -377,7 +377,7 @@ layer at (0,0) size 785x2575
           RenderText {#text} at (449,100) size 713x39
             text run at (449,100) width 264: "too. (with comment (no trailing"
             text run at (0,120) width 286: "space) between elements and too)"
-          RenderBR {BR} at (286,135) size 0x0
+          RenderBR {BR} at (286,120) size 0x19
           RenderInline {SPAN} at (0,0) size 320x16
             RenderText {#text} at (0,143) size 204x16
               text run at (0,143) width 60: "Word "
@@ -398,7 +398,7 @@ layer at (0,0) size 785x2575
           RenderText {#text} at (412,140) size 762x39
             text run at (412,140) width 350: " elements too. (with monospace font from"
             text run at (0,160) width 153: "Word to elements)"
-          RenderBR {BR} at (153,175) size 0x0
+          RenderBR {BR} at (153,160) size 0x19
           RenderText {#text} at (0,180) size 174x19
             text run at (0,180) width 60: "Word "
             text run at (60,180) width 114: "spacing test "
@@ -419,7 +419,7 @@ layer at (0,0) size 785x2575
           RenderText {#text} at (386,180) size 736x39
             text run at (386,180) width 350: " elements too. (with monospace font from"
             text run at (0,200) width 117: "for to within)"
-          RenderBR {BR} at (117,215) size 0x0
+          RenderBR {BR} at (117,200) size 0x19
           RenderText {#text} at (0,220) size 174x19
             text run at (0,220) width 60: "Word "
             text run at (60,220) width 114: "spacing test "
@@ -755,7 +755,7 @@ layer at (0,0) size 785x2575
               text run at (366,3) width 78: "within"
           RenderText {#text} at (444,0) size 154x19
             text run at (444,0) width 154: " elements too."
-          RenderBR {BR} at (598,15) size 0x0
+          RenderBR {BR} at (598,0) size 0x19
           RenderText {#text} at (0,20) size 214x19
             text run at (0,20) width 75: "Letter "
             text run at (75,20) width 139: "spacing test "
@@ -777,7 +777,7 @@ layer at (0,0) size 785x2575
           RenderText {#text} at (554,20) size 761x39
             text run at (554,20) width 207: "too. (with comment"
             text run at (0,40) width 287: "between elements and too)"
-          RenderBR {BR} at (287,55) size 0x0
+          RenderBR {BR} at (287,40) size 0x19
           RenderText {#text} at (0,60) size 214x19
             text run at (0,60) width 75: "Letter "
             text run at (75,60) width 139: "spacing test "
@@ -799,7 +799,7 @@ layer at (0,0) size 785x2575
           RenderText {#text} at (545,60) size 761x39
             text run at (545,60) width 216: " too. (with comment"
             text run at (0,80) width 535: "(no preceeding space) between elements and too)"
-          RenderBR {BR} at (535,95) size 0x0
+          RenderBR {BR} at (535,80) size 0x19
           RenderText {#text} at (0,100) size 214x19
             text run at (0,100) width 75: "Letter "
             text run at (75,100) width 139: "spacing test "
@@ -821,7 +821,7 @@ layer at (0,0) size 785x2575
           RenderText {#text} at (554,100) size 761x39
             text run at (554,100) width 207: "too. (with comment"
             text run at (0,120) width 498: "(no trailing space) between elements and too)"
-          RenderBR {BR} at (498,135) size 0x0
+          RenderBR {BR} at (498,120) size 0x19
           RenderInline {SPAN} at (0,0) size 416x16
             RenderText {#text} at (0,143) size 260x16
               text run at (0,143) width 91: "Letter "
@@ -842,7 +842,7 @@ layer at (0,0) size 785x2575
           RenderText {#text} at (503,140) size 721x39
             text run at (503,140) width 218: " elements too. (with"
             text run at (0,160) width 440: "monospace font from Letter to elements)"
-          RenderBR {BR} at (440,175) size 0x0
+          RenderBR {BR} at (440,160) size 0x19
           RenderText {#text} at (0,180) size 214x19
             text run at (0,180) width 75: "Letter "
             text run at (75,180) width 139: "spacing test "
@@ -863,7 +863,7 @@ layer at (0,0) size 785x2575
           RenderText {#text} at (461,180) size 679x39
             text run at (461,180) width 218: " elements too. (with"
             text run at (0,200) width 379: "monospace font from for to within)"
-          RenderBR {BR} at (379,215) size 0x0
+          RenderBR {BR} at (379,200) size 0x19
           RenderText {#text} at (0,220) size 214x19
             text run at (0,220) width 75: "Letter "
             text run at (75,220) width 139: "spacing test "
@@ -1199,7 +1199,7 @@ layer at (0,0) size 785x2575
               text run at (611,3) width 78: "within"
           RenderText {#text} at (0,20) size 165x19
             text run at (0,20) width 165: "elements too."
-          RenderBR {BR} at (165,35) size 0x0
+          RenderBR {BR} at (165,20) size 0x19
           RenderText {#text} at (0,40) size 419x19
             text run at (0,40) width 240: "Word and letter "
             text run at (240,40) width 179: "spacing test "
@@ -1220,7 +1220,7 @@ layer at (0,0) size 785x2575
             text run at (0,60) width 121: "elements "
           RenderText {#text} at (121,60) size 623x19
             text run at (121,60) width 623: "too. (with comment between elements and too)"
-          RenderBR {BR} at (744,75) size 0x0
+          RenderBR {BR} at (744,60) size 0x19
           RenderText {#text} at (0,80) size 419x19
             text run at (0,80) width 240: "Word and letter "
             text run at (240,80) width 179: "spacing test "
@@ -1242,7 +1242,7 @@ layer at (0,0) size 785x2575
           RenderText {#text} at (112,100) size 676x39
             text run at (112,100) width 564: " too. (with comment (no preceeding space)"
             text run at (0,120) width 347: "between elements and too)"
-          RenderBR {BR} at (347,135) size 0x0
+          RenderBR {BR} at (347,120) size 0x19
           RenderText {#text} at (0,140) size 419x19
             text run at (0,140) width 240: "Word and letter "
             text run at (240,140) width 179: "spacing test "
@@ -1264,7 +1264,7 @@ layer at (0,0) size 785x2575
           RenderText {#text} at (121,160) size 754x39
             text run at (121,160) width 633: "too. (with comment (no trailing space) between"
             text run at (0,180) width 232: "elements and too)"
-          RenderBR {BR} at (232,195) size 0x0
+          RenderBR {BR} at (232,180) size 0x19
           RenderInline {SPAN} at (0,0) size 653x16
             RenderText {#text} at (0,203) size 477x16
               text run at (0,203) width 268: "Word and letter "
@@ -1285,7 +1285,7 @@ layer at (0,0) size 785x2575
           RenderText {#text} at (0,220) size 677x39
             text run at (0,220) width 677: "elements too. (with monospace font from Word to"
             text run at (0,240) width 102: "elements)"
-          RenderBR {BR} at (102,255) size 0x0
+          RenderBR {BR} at (102,240) size 0x19
           RenderText {#text} at (0,260) size 419x19
             text run at (0,260) width 240: "Word and letter "
             text run at (240,260) width 179: "spacing test "
@@ -1305,7 +1305,7 @@ layer at (0,0) size 785x2575
                 text run at (628,263) width 78: "within"
           RenderText {#text} at (0,280) size 757x19
             text run at (0,280) width 757: "elements too. (with monospace font from for to within)"
-          RenderBR {BR} at (757,295) size 0x0
+          RenderBR {BR} at (757,280) size 0x19
           RenderText {#text} at (0,300) size 419x19
             text run at (0,300) width 240: "Word and letter "
             text run at (240,300) width 179: "spacing test "

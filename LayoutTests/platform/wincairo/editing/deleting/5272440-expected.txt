@@ -10,5 +10,5 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 370x19
           RenderText {#text} at (1,1) size 370x19
             text run at (1,1) width 370: "There shouldn't be any blank lines in the black bordered area."
-          RenderBR {BR} at (371,16) size 0x0
+          RenderBR {BR} at (371,1) size 0x19
 caret: position 62 of child 0 {#text} of child 0 {SPAN} of child 2 {DIV} of body

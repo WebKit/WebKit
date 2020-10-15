@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
               RenderBody {BODY} at (8,8) size 284x134 [bgcolor=#FFFFE0]
                 RenderBlock {DIV} at (0,0) size 284x20
                   RenderBR {BR} at (0,0) size 0x19
-        RenderBR {BR} at (304,154) size 0x0
+        RenderBR {BR} at (304,139) size 0x19
         RenderBR {BR} at (0,154) size 0x19
       RenderBlock {P} at (0,190) size 784x40
         RenderInline {B} at (0,0) size 658x19

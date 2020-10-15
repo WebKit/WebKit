@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,141) size 756x83
           RenderText {#text} at (0,0) size 189x26
             text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,21) size 0x0
+          RenderBR {BR} at (189,0) size 0x27
           RenderText {#text} at (0,27) size 674x55
             text run at (0,27) width 674: "Should see the two lines in the red box. Each should contain \"A\" only."
             text run at (0,55) width 611: "Insertion point should be blinking at the start of the second line."

@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,0) size 784x20
           RenderText {#text} at (0,0) size 56x19
             text run at (0,0) width 56: "unquoted"
-          RenderBR {BR} at (56,15) size 0x0
+          RenderBR {BR} at (56,0) size 0x19
         RenderBlock {BLOCKQUOTE} at (0,20) size 784x20 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderBlock {DIV} at (12,0) size 772x20
             RenderText {#text} at (0,0) size 91x19
@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,60) size 784x20
           RenderText {#text} at (0,0) size 56x19
             text run at (0,0) width 56: "unquoted"
-          RenderBR {BR} at (56,15) size 0x0
+          RenderBR {BR} at (56,0) size 0x19
         RenderBlock {BLOCKQUOTE} at (0,80) size 784x20 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderBlock {DIV} at (12,0) size 772x20
             RenderBlock {BLOCKQUOTE} at (0,0) size 772x20 [border: none (2px solid #0000FF)]

@@ -43,10 +43,10 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (0,0) size 756x55
             RenderText {#text} at (0,0) size 189x26
               text run at (0,0) width 189: "Expected Results: "
-            RenderBR {BR} at (189,21) size 0x0
+            RenderBR {BR} at (189,0) size 0x27
             RenderText {#text} at (0,27) size 436x27
               text run at (0,27) width 436: "Should see this content in the red box below: "
-            RenderBR {BR} at (436,48) size 0x0
+            RenderBR {BR} at (436,27) size 0x27
           RenderBlock {DIV} at (0,55) size 756x28
             RenderText {#text} at (0,0) size 138x27
               text run at (0,0) width 138: "one two three "
