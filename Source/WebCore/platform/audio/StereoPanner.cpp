@@ -29,6 +29,7 @@
 
 #if ENABLE(WEB_AUDIO)
 
+#include "VectorMath.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -116,10 +117,8 @@ void panToTargetValue(const AudioBus* inputBus, AudioBus* outputBus, float panVa
     
     if (!sourceL || !sourceR || !destinationL || !destinationR)
         return;
-    
+
     float targetPan = clampTo(panValue, -1.0, 1.0);
-    
-    int n = framesToProcess;
     
     if (numberOfInputChannels == 1) {
         double panRadian = (targetPan * 0.5 + 0.5) * piOverTwoDouble;
@@ -127,27 +126,20 @@ void panToTargetValue(const AudioBus* inputBus, AudioBus* outputBus, float panVa
         double gainL = cos(panRadian);
         double gainR = sin(panRadian);
         
-        while (n--) {
-            float inputL = *sourceL++;
-            *destinationL++ = static_cast<float>(inputL * gainL);
-            *destinationR++ = static_cast<float>(inputL * gainR);
-        }
+        VectorMath::multiplyByScalar(sourceL, gainL, destinationL, framesToProcess);
+        VectorMath::multiplyByScalar(sourceL, gainR, destinationR, framesToProcess);
     } else {
         double panRadian = (targetPan <= 0 ? targetPan + 1 : targetPan) * piOverTwoDouble;
         
         double gainL = cos(panRadian);
         double gainR = sin(panRadian);
-        
-        while (n--) {
-            float inputL = *sourceL++;
-            float inputR = *sourceR++;
-            if (targetPan <= 0) {
-                *destinationL++ = static_cast<float>(inputL + inputR * gainL);
-                *destinationR++ = static_cast<float>(inputR * gainR);
-            } else {
-                *destinationL++ = static_cast<float>(inputL * gainL);
-                *destinationR++ = static_cast<float>(inputR + inputL * gainR);
-            }
+
+        if (targetPan <= 0) {
+            VectorMath::multiplyByScalarThenAddToVector(sourceR, gainL, sourceL, destinationL, framesToProcess);
+            VectorMath::multiplyByScalar(sourceR, gainR, destinationR, framesToProcess);
+        } else {
+            VectorMath::multiplyByScalar(sourceL, gainL, destinationL, framesToProcess);
+            VectorMath::multiplyByScalarThenAddToVector(sourceL, gainR, sourceR, destinationR, framesToProcess);
         }
     }
 }

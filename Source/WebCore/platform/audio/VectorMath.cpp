@@ -52,9 +52,9 @@ namespace VectorMath {
 #if USE(ACCELERATE)
 // On the Mac we use the highly optimized versions in Accelerate.framework
 
-void multiplyByScalar(const float* inputVector, float scale, float* outputVector, size_t numberOfElementsToProcess)
+void multiplyByScalar(const float* inputVector, float scalar, float* outputVector, size_t numberOfElementsToProcess)
 {
-    vDSP_vsmul(inputVector, 1, &scale, outputVector, 1, numberOfElementsToProcess);
+    vDSP_vsmul(inputVector, 1, &scalar, outputVector, 1, numberOfElementsToProcess);
 }
 
 void add(const float* inputVector1, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess)
@@ -86,9 +86,14 @@ void multiplyComplex(const float* realVector1, const float* imagVector1, const f
     vDSP_zvmul(&sc1, 1, &sc2, 1, &dest, 1, numberOfElementsToProcess, 1);
 }
 
-void multiplyByScalarThenAddToOutput(const float* inputVector, float scale, float* outputVector, size_t numberOfElementsToProcess)
+void multiplyByScalarThenAddToOutput(const float* inputVector, float scalar, float* outputVector, size_t numberOfElementsToProcess)
 {
-    vDSP_vsma(inputVector, 1, &scale, outputVector, 1, outputVector, 1, numberOfElementsToProcess);
+    vDSP_vsma(inputVector, 1, &scalar, outputVector, 1, outputVector, 1, numberOfElementsToProcess);
+}
+
+void multiplyByScalarThenAddToVector(const float* inputVector1, float scalar, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess)
+{
+    vDSP_vsma(inputVector1, 1, &scalar, inputVector2, 1, outputVector, 1, numberOfElementsToProcess);
 }
 
 void addVectorsThenMultiplyByScalar(const float* inputVector1, const float* inputVector2, float scalar, float* outputVector, size_t numberOfElementsToProcess)
@@ -128,14 +133,20 @@ static inline bool is16ByteAligned(const float* vector)
     return !(reinterpret_cast<uintptr_t>(vector) & 0x0F);
 }
 
-void multiplyByScalarThenAddToOutput(const float* inputVector, float scale, float* outputVector, size_t numberOfElementsToProcess)
+void multiplyByScalarThenAddToVector(const float* inputVector1, float scalar, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess)
+{
+    multiplyByScalarThenAddToOutput(inputVector1, scalar, outputVector, numberOfElementsToProcess);
+    add(outputVector, inputVector2, outputVector, numberOfElementsToProcess);
+}
+
+void multiplyByScalarThenAddToOutput(const float* inputVector, float scalar, float* outputVector, size_t numberOfElementsToProcess)
 {
     size_t n = numberOfElementsToProcess;
 
 #if CPU(X86_SSE2)
     // If the inputVector address is not 16-byte aligned, the first several frames (at most three) should be processed separately.
     while (!is16ByteAligned(inputVector) && n) {
-        *outputVector += scale * *inputVector;
+        *outputVector += scalar * *inputVector;
         inputVector++;
         outputVector++;
         n--;
@@ -148,7 +159,7 @@ void multiplyByScalarThenAddToOutput(const float* inputVector, float scale, floa
     __m128 pSource;
     __m128 dest;
     __m128 temp;
-    __m128 mScale = _mm_set_ps1(scale);
+    __m128 mScale = _mm_set_ps1(scalar);
 
     bool destAligned = is16ByteAligned(outputVector);
 
@@ -174,7 +185,7 @@ void multiplyByScalarThenAddToOutput(const float* inputVector, float scale, floa
     size_t tailFrames = n % 4;
     const float* endP = outputVector + n - tailFrames;
 
-    float32x4_t k = vdupq_n_f32(scale);
+    float32x4_t k = vdupq_n_f32(scalar);
     while (outputVector < endP) {
         float32x4_t source = vld1q_f32(inputVector);
         float32x4_t dest = vld1q_f32(outputVector);
@@ -188,20 +199,20 @@ void multiplyByScalarThenAddToOutput(const float* inputVector, float scale, floa
     n = tailFrames;
 #endif
     while (n--) {
-        *outputVector += *inputVector * scale;
+        *outputVector += *inputVector * scalar;
         ++inputVector;
         ++outputVector;
     }
 }
 
-void multiplyByScalar(const float* inputVector, float scale, float* outputVector, size_t numberOfElementsToProcess)
+void multiplyByScalar(const float* inputVector, float scalar, float* outputVector, size_t numberOfElementsToProcess)
 {
     size_t n = numberOfElementsToProcess;
 
 #if CPU(X86_SSE2)
     // If the inputVector address is not 16-byte aligned, the first several frames (at most three) should be processed separately.
     while (!is16ByteAligned(inputVector) && n) {
-        *outputVector = scale * *inputVector;
+        *outputVector = scalar * *inputVector;
         inputVector++;
         outputVector++;
         n--;
@@ -209,7 +220,7 @@ void multiplyByScalar(const float* inputVector, float scale, float* outputVector
 
     // Now the inputVector address is aligned and start to apply SSE.
     size_t group = n / 4;
-    __m128 mScale = _mm_set_ps1(scale);
+    __m128 mScale = _mm_set_ps1(scalar);
     __m128* pSource;
     __m128* pDest;
     __m128 dest;
@@ -243,7 +254,7 @@ void multiplyByScalar(const float* inputVector, float scale, float* outputVector
 
     while (outputVector < endP) {
         float32x4_t source = vld1q_f32(inputVector);
-        vst1q_f32(outputVector, vmulq_n_f32(source, scale));
+        vst1q_f32(outputVector, vmulq_n_f32(source, scalar));
 
         inputVector += 4;
         outputVector += 4;
@@ -251,7 +262,7 @@ void multiplyByScalar(const float* inputVector, float scale, float* outputVector
     n = tailFrames;
 #endif
     while (n--) {
-        *outputVector = scale * *inputVector;
+        *outputVector = scalar * *inputVector;
         ++inputVector;
         ++outputVector;
     }

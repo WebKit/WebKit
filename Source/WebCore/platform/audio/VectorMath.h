@@ -31,15 +31,20 @@ namespace WebCore {
 
 namespace VectorMath {
 
-// Multiples inputVector by scalar then adds the result to outputVector (vsma).
+// Multiples inputVector by scalar then adds the result to outputVector (simplified vsma).
 // for (n = 0; n < numberOfElementsToProcess; ++n)
-//     outputVector[n] += inputVector[n] * scale;
-void multiplyByScalarThenAddToOutput(const float* inputVector, float scale, float* outputVector, size_t numberOfElementsToProcess);
+//     outputVector[n] += inputVector[n] * scalar;
+void multiplyByScalarThenAddToOutput(const float* inputVector, float scalar, float* outputVector, size_t numberOfElementsToProcess);
+
+// Adds a vector inputVector2 to the product of a scalar value and a single-precision vector inputVector1 (vsma).
+// for (n = 0; n < numberOfElementsToProcess; ++n)
+//     outputVector[n] = inputVector1[n] * scalar + inputVector2[n];
+void multiplyByScalarThenAddToVector(const float* inputVector1, float scalar, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess);
 
 // Multiplies the sum of two vectors by a scalar value (vasm).
 void addVectorsThenMultiplyByScalar(const float* inputVector1, const float* inputVector2, float scalar, float* outputVector, size_t numberOfElementsToProcess);
 
-void multiplyByScalar(const float* inputVector, float scale, float* outputVector, size_t numberOfElementsToProcess);
+void multiplyByScalar(const float* inputVector, float scalar, float* outputVector, size_t numberOfElementsToProcess);
 void addScalar(const float* inputVector, float scalar, float* outputVector, size_t numberOfElementsToProcess);
 void add(const float* inputVector1, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess);
 
