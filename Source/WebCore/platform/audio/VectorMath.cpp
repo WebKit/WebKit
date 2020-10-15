@@ -86,7 +86,7 @@ void multiplyComplex(const float* realVector1, const float* imagVector1, const f
     vDSP_zvmul(&sc1, 1, &sc2, 1, &dest, 1, numberOfElementsToProcess, 1);
 }
 
-void multiplyThenAddScalar(const float* inputVector, float scale, float* outputVector, size_t numberOfElementsToProcess)
+void multiplyByScalarThenAddToOutput(const float* inputVector, float scale, float* outputVector, size_t numberOfElementsToProcess)
 {
     vDSP_vsma(inputVector, 1, &scale, outputVector, 1, outputVector, 1, numberOfElementsToProcess);
 }
@@ -128,7 +128,7 @@ static inline bool is16ByteAligned(const float* vector)
     return !(reinterpret_cast<uintptr_t>(vector) & 0x0F);
 }
 
-void multiplyThenAddScalar(const float* inputVector, float scale, float* outputVector, size_t numberOfElementsToProcess)
+void multiplyByScalarThenAddToOutput(const float* inputVector, float scale, float* outputVector, size_t numberOfElementsToProcess)
 {
     size_t n = numberOfElementsToProcess;
 

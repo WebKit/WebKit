@@ -317,8 +317,8 @@ void AudioBus::speakersSumFromByDownMixing(const AudioBus& sourceBus)
         const float* sourceR = sourceBusSafe.channelByType(ChannelRight)->data();
 
         float* destination = channelByType(ChannelLeft)->mutableData();
-        VectorMath::multiplyThenAddScalar(sourceL, 0.5, destination, length());
-        VectorMath::multiplyThenAddScalar(sourceR, 0.5, destination, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceL, 0.5, destination, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceR, 0.5, destination, length());
     } else if (numberOfSourceChannels == 4 && numberOfDestinationChannels == 1) {
         // Down-mixing: 4 -> 1
         // output = 0.25 * (input.L + input.R + input.SL + input.SR)
@@ -329,10 +329,10 @@ void AudioBus::speakersSumFromByDownMixing(const AudioBus& sourceBus)
 
         auto* destination = channelByType(ChannelLeft)->mutableData();
 
-        VectorMath::multiplyThenAddScalar(sourceL, 0.25, destination, length());
-        VectorMath::multiplyThenAddScalar(sourceR, 0.25, destination, length());
-        VectorMath::multiplyThenAddScalar(sourceSL, 0.25, destination, length());
-        VectorMath::multiplyThenAddScalar(sourceSR, 0.25, destination, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceL, 0.25, destination, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceR, 0.25, destination, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceSL, 0.25, destination, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceSR, 0.25, destination, length());
     } else if (numberOfSourceChannels == 6 && numberOfDestinationChannels == 1) {
         // Down-mixing: 5.1 -> 1
         // output = sqrt(1/2) * (input.L + input.R) + input.C + 0.5 * (input.SL + input.SR)
@@ -345,11 +345,11 @@ void AudioBus::speakersSumFromByDownMixing(const AudioBus& sourceBus)
         auto* destination = channelByType(ChannelLeft)->mutableData();
         float scaleSqrtHalf = sqrtf(0.5);
 
-        VectorMath::multiplyThenAddScalar(sourceL, scaleSqrtHalf, destination, length());
-        VectorMath::multiplyThenAddScalar(sourceR, scaleSqrtHalf, destination, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceL, scaleSqrtHalf, destination, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceR, scaleSqrtHalf, destination, length());
         VectorMath::add(sourceC, destination, destination, length());
-        VectorMath::multiplyThenAddScalar(sourceSL, 0.5, destination, length());
-        VectorMath::multiplyThenAddScalar(sourceSR, 0.5, destination, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceSL, 0.5, destination, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceSR, 0.5, destination, length());
     } else if (numberOfSourceChannels == 4 && numberOfDestinationChannels == 2) {
         // Down-mixing: 4 -> 2
         // output.L = 0.5 * (input.L + input.SL)
@@ -362,10 +362,10 @@ void AudioBus::speakersSumFromByDownMixing(const AudioBus& sourceBus)
         auto* destinationL = channelByType(ChannelLeft)->mutableData();
         auto* destinationR = channelByType(ChannelRight)->mutableData();
 
-        VectorMath::multiplyThenAddScalar(sourceL, 0.5, destinationL, length());
-        VectorMath::multiplyThenAddScalar(sourceSL, 0.5, destinationL, length());
-        VectorMath::multiplyThenAddScalar(sourceR, 0.5, destinationR, length());
-        VectorMath::multiplyThenAddScalar(sourceSR, 0.5, destinationR, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceL, 0.5, destinationL, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceSL, 0.5, destinationL, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceR, 0.5, destinationR, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceSR, 0.5, destinationR, length());
     } else if (numberOfSourceChannels == 6 && numberOfDestinationChannels == 2) {
         // Down-mixing: 5.1 -> 2
         // output.L = input.L + sqrt(1/2) * (input.C + input.SL)
@@ -381,11 +381,11 @@ void AudioBus::speakersSumFromByDownMixing(const AudioBus& sourceBus)
         float scaleSqrtHalf = sqrtf(0.5);
 
         VectorMath::add(sourceL, destinationL, destinationL, length());
-        VectorMath::multiplyThenAddScalar(sourceC, scaleSqrtHalf, destinationL, length());
-        VectorMath::multiplyThenAddScalar(sourceSL, scaleSqrtHalf, destinationL, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceC, scaleSqrtHalf, destinationL, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceSL, scaleSqrtHalf, destinationL, length());
         VectorMath::add(sourceR, destinationR, destinationR, length());
-        VectorMath::multiplyThenAddScalar(sourceC, scaleSqrtHalf, destinationR, length());
-        VectorMath::multiplyThenAddScalar(sourceSR, scaleSqrtHalf, destinationR, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceC, scaleSqrtHalf, destinationR, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceSR, scaleSqrtHalf, destinationR, length());
     } else if (numberOfSourceChannels == 6 && numberOfDestinationChannels == 4) {
         // Down-mixing: 5.1 -> 4
         // output.L = input.L + sqrt(1/2) * input.C
@@ -401,9 +401,9 @@ void AudioBus::speakersSumFromByDownMixing(const AudioBus& sourceBus)
         auto scaleSqrtHalf = sqrtf(0.5);
 
         VectorMath::add(sourceL, destinationL, destinationL, length());
-        VectorMath::multiplyThenAddScalar(sourceC, scaleSqrtHalf, destinationL, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceC, scaleSqrtHalf, destinationL, length());
         VectorMath::add(sourceR, destinationR, destinationR, length());
-        VectorMath::multiplyThenAddScalar(sourceC, scaleSqrtHalf, destinationR, length());
+        VectorMath::multiplyByScalarThenAddToOutput(sourceC, scaleSqrtHalf, destinationR, length());
         channel(2)->sumFrom(sourceBus.channel(4));
         channel(3)->sumFrom(sourceBus.channel(5));
     } else {

@@ -31,8 +31,10 @@ namespace WebCore {
 
 namespace VectorMath {
 
-// Vector scalar multiply and then add (vsma).
-void multiplyThenAddScalar(const float* inputVector, float scale, float* outputVector, size_t numberOfElementsToProcess);
+// Multiples inputVector by scalar then adds the result to outputVector (vsma).
+// for (n = 0; n < numberOfElementsToProcess; ++n)
+//     outputVector[n] += inputVector[n] * scale;
+void multiplyByScalarThenAddToOutput(const float* inputVector, float scale, float* outputVector, size_t numberOfElementsToProcess);
 
 // Multiplies the sum of two vectors by a scalar value (vasm).
 void addVectorsThenMultiplyByScalar(const float* inputVector1, const float* inputVector2, float scalar, float* outputVector, size_t numberOfElementsToProcess);
