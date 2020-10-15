@@ -39,6 +39,7 @@ struct BoundaryPoint {
 };
 
 bool operator==(const BoundaryPoint&, const BoundaryPoint&);
+WEBCORE_EXPORT PartialOrdering documentOrder(const BoundaryPoint&, const BoundaryPoint&);
 
 WEBCORE_EXPORT Optional<BoundaryPoint> makeBoundaryPointBeforeNode(Node&);
 WEBCORE_EXPORT Optional<BoundaryPoint> makeBoundaryPointAfterNode(Node&);
