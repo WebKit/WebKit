@@ -60,7 +60,7 @@ bool AVRoutePickerViewTargetPicker::isAvailable()
     static bool available;
     static std::once_flag flag;
     std::call_once(flag, [] () {
-        if (!PAL::getAVRoutePickerViewClass())
+        if (!getAVRoutePickerViewClass())
             return;
 
         if (auto picker = adoptNS([allocAVRoutePickerViewInstance() init]))
