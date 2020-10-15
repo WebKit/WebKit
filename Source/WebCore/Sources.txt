@@ -472,6 +472,7 @@ bindings/js/JSAnimationTimelineCustom.cpp
 bindings/js/JSAttrCustom.cpp
 bindings/js/JSAudioTrackCustom.cpp
 bindings/js/JSAudioTrackListCustom.cpp
+bindings/js/JSAudioWorkletProcessorCustom.cpp
 bindings/js/JSAuthenticatorResponseCustom.cpp
 bindings/js/JSBasicCredentialCustom.cpp
 bindings/js/JSBlobCustom.cpp

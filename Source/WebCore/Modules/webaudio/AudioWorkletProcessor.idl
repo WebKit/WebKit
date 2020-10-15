@@ -29,7 +29,8 @@
 [
     Conditional=WEB_AUDIO,
     Exposed=AudioWorklet,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    JSCustomMarkFunction
 ] interface AudioWorkletProcessor {
     [CallWith=ScriptExecutionContext, MayThrowException] constructor();
     readonly attribute MessagePort port;

@@ -31,9 +31,15 @@
 #if ENABLE(WEB_AUDIO)
 #include "AudioArray.h"
 #include "ExceptionOr.h"
+#include "JSValueInWrappedObject.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
+
+namespace JSC {
+class JSArray;
+class MarkedArgumentBuffer;
+}
 
 namespace WebCore {
 
@@ -55,12 +61,20 @@ public:
 
     void setProcessCallback(std::unique_ptr<JSCallbackDataStrong>&&);
 
+    JSValueInWrappedObject& jsInputsWrapper() { return m_jsInputs; }
+    JSValueInWrappedObject& jsOutputsWrapper() { return m_jsOutputs; }
+    JSValueInWrappedObject& jsParamValuesWrapper() { return m_jsParamValues; }
+
 private:
     explicit AudioWorkletProcessor(const AudioWorkletProcessorConstructionData&);
+    void buildJSArguments(JSC::VM&, JSC::JSGlobalObject&, JSC::MarkedArgumentBuffer&, const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap);
 
     String m_name;
     Ref<MessagePort> m_port;
     std::unique_ptr<JSCallbackDataStrong> m_processCallback;
+    JSValueInWrappedObject m_jsInputs;
+    JSValueInWrappedObject m_jsOutputs;
+    JSValueInWrappedObject m_jsParamValues;
 };
 
 } // namespace WebCore
