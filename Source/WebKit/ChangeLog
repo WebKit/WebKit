@@ -1,3 +1,18 @@
+2020-10-15  Aditya Keerthi  <akeerthi@apple.com>
+
+        Crash in -[WKDateTimePicker setDateTimePickerToInitialValue]
+        https://bugs.webkit.org/show_bug.cgi?id=217763
+        <rdar://problem/68635008>
+
+        Reviewed by Wenson Hsieh.
+
+        Crash occurs due to the use of an autoreleased NSString in
+        setDateTimePickerToInitialValue. To fix, make the variable
+        a RetainPtr.
+
+        * UIProcess/ios/forms/WKDateTimeInputControl.mm:
+        (-[WKDateTimePicker setDateTimePickerToInitialValue]):
+
 2020-10-15  Chris Lord  <clord@igalia.com>
 
         [GTK][WPE] Add support for smooth scrolling animation with async scrolling
