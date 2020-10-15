@@ -87,10 +87,6 @@ void FFTFrame::initialize()
 {
 }
 
-void FFTFrame::cleanup()
-{
-}
-
 FFTFrame::~FFTFrame()
 {
     if (!m_fft)

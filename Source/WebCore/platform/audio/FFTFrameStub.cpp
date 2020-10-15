@@ -78,11 +78,6 @@ void FFTFrame::initialize()
 {
 }
 
-void FFTFrame::cleanup()
-{
-    ASSERT_NOT_REACHED();
-}
-
 float* FFTFrame::realData() const
 {
     ASSERT_NOT_REACHED();

@@ -37,13 +37,13 @@
 #include "FFTFrame.h"
 
 #include "VectorMath.h"
+#include <wtf/NeverDestroyed.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-const int kMinFFTPow2Size = 2;
-const int kMaxFFTPow2Size = 24;
-
-FFTSetup* FFTFrame::fftSetups = 0;
+constexpr unsigned kMinFFTPow2Size = 2;
+constexpr unsigned kMaxFFTPow2Size = 24;
 
 // Normal constructor: allocates for a given fftSize
 FFTFrame::FFTFrame(unsigned fftSize)
@@ -123,17 +123,15 @@ void FFTFrame::doInverseFFT(float* data)
 
 FFTSetup FFTFrame::fftSetupForSize(unsigned fftSize)
 {
-    if (!fftSetups) {
-        fftSetups = (FFTSetup*)fastMalloc(sizeof(FFTSetup) * kMaxFFTPow2Size);
-        memset(fftSetups, 0, sizeof(FFTSetup) * kMaxFFTPow2Size);
-    }
+    static NeverDestroyed<Vector<FFTSetup>> fftSetups(kMaxFFTPow2Size, nullptr);
 
-    int pow2size = static_cast<int>(log2(fftSize));
+    auto pow2size = static_cast<size_t>(log2(fftSize));
     ASSERT(pow2size < kMaxFFTPow2Size);
-    if (!fftSetups[pow2size])
-        fftSetups[pow2size] = vDSP_create_fftsetup(pow2size, FFT_RADIX2);
+    auto& fftSetup = fftSetups->at(pow2size);
+    if (!fftSetup)
+        fftSetup = vDSP_create_fftsetup(pow2size, FFT_RADIX2);
 
-    return fftSetups[pow2size];
+    return fftSetup;
 }
 
 int FFTFrame::minFFTSize()
@@ -148,20 +146,6 @@ int FFTFrame::maxFFTSize()
 
 void FFTFrame::initialize()
 {
-}
-
-void FFTFrame::cleanup()
-{
-    if (!fftSetups)
-        return;
-
-    for (int i = 0; i < kMaxFFTPow2Size; ++i) {
-        if (fftSetups[i])
-            vDSP_destroy_fftsetup(fftSetups[i]);
-    }
-
-    fastFree(fftSetups);
-    fftSetups = 0;
 }
 
 float* FFTFrame::realData() const

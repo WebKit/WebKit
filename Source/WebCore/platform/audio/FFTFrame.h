@@ -62,7 +62,6 @@ public:
     ~FFTFrame();
 
     static void initialize();
-    static void cleanup();
     void doFFT(const float* data);
     void doInverseFFT(float* data);
     void multiply(const FFTFrame& frame); // multiplies ourself with frame : effectively operator*=()
@@ -100,8 +99,6 @@ private:
     DSPSplitComplex dspSplitComplex() const { return m_frame; }
 
     static FFTSetup fftSetupForSize(unsigned fftSize);
-
-    static FFTSetup* fftSetups;
 
     FFTSetup m_FFTSetup;
 
