@@ -190,7 +190,7 @@ void CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices(NotifyIfDevicesHa
 
     auto defaultInputDevice = getDefaultCaptureInputDevice();
     bool haveDeviceChanges = false;
-    if (defaultInputDevice && !m_coreAudioCaptureDevices.isEmpty() && m_coreAudioCaptureDevices.first().deviceID() != defaultInputDevice->deviceID()) {
+    if (defaultInputDevice && (m_coreAudioCaptureDevices.isEmpty() || m_coreAudioCaptureDevices.first().deviceID() != defaultInputDevice->deviceID())) {
         m_coreAudioCaptureDevices = Vector<CoreAudioCaptureDevice>::from(WTFMove(*defaultInputDevice));
         haveDeviceChanges = true;
     }

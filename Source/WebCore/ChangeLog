@@ -1,5 +1,23 @@
 2020-10-15  Russell Epstein  <repstein@apple.com>
 
+        Apply patch. rdar://problem/70321689
+
+    2020-10-15  Youenn Fablet  <youennf@gmail.com>
+
+            Improve computation of default audio input and output devices
+            https://bugs.webkit.org/show_bug.cgi?id=217652
+            <rdar://problem/69857857>
+
+            Previously, we were ensuring the default device is the first in the list if the list was not empty.
+            For the first enumeration of devices, we were expecting the default device to be the first in kAudioHardwarePropertyDevices list.
+            But this is not guaranteed, so we should make sure to prepend the default device in the list even for the first enumeration.
+            Manually tested.
+
+            * platform/mediastream/mac/CoreAudioCaptureDeviceManager.cpp:
+            (WebCore::CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices):
+
+2020-10-15  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r268308. rdar://problem/70321629
 
     [Mac] AirPlay menu does not show up when AirPlay button is clicked
