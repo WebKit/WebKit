@@ -1,3 +1,24 @@
+2020-10-15  Lauro Moura  <lmoura@igalia.com>
+
+        [Flatpak SDK] Check for installed packages in setup_buildir
+        https://bugs.webkit.org/show_bug.cgi?id=217768
+
+        Reviewed by Philippe Normand.
+
+        During a cleanup of one of the bots, setup_builddir failed with a null
+        self.sdk member, which is set in get_packages.
+
+        While I could not reproduce it again, this commit prevents this by
+        checking whether the packages are installed before continuing the
+        original setup_builddir steps.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.setup_builddir): Check for installed packages.
+        (WebkitFlatpak.run_in_sandbox): Check for setup_builddir return code.
+        (WebkitFlatpak.check_installed_packages): Extracted from
+        setup_dev_env.
+        (WebkitFlatpak.setup_dev_env): Call extracted method.
+
 2020-10-15  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Unconditionally extract git-svn-id from commit message

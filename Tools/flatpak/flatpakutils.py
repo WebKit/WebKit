@@ -572,7 +572,10 @@ class WebkitFlatpak:
 
     def setup_builddir(self):
         if os.path.exists(os.path.join(self.flatpak_build_path, "metadata")):
-            return
+            return True
+
+        if not self.check_installed_packages():
+            return False
 
         self.sdk_repo.flatpak("build-init",
                               self.flatpak_build_path,
@@ -580,6 +583,9 @@ class WebkitFlatpak:
                               str(self.sdk),
                               str(self.runtime),
                               self.sdk.branch)
+
+        return True
+
 
     def setup_gstbuild(self, building):
         gst_dir = os.environ.get('GST_BUILD_PATH')
@@ -652,7 +658,8 @@ class WebkitFlatpak:
         return host_path.replace(self.source_root, self.sandbox_source_root)
 
     def run_in_sandbox(self, *args, **kwargs):
-        self.setup_builddir()
+        if not self.setup_builddir():
+            return False
         cwd = kwargs.get("cwd", None)
         extra_env_vars = kwargs.get("env", {})
         stdout = kwargs.get("stdout", sys.stdout)
@@ -945,15 +952,21 @@ class WebkitFlatpak:
                 sccache_toolchains.append(item)
             return sccache_toolchains
 
+    def check_installed_packages(self):
+        for package in self._get_packages():
+            if package.name.startswith("org.webkit") and not package.is_installed(self.sdk_branch):
+                Console.error_message("Flatpak package %s not installed. Please update your SDK: Tools/Scripts/update-webkit-flatpak", package)
+                return False
+        else:
+            return True
+
+
     def setup_dev_env(self):
         if not os.path.exists(os.path.join(self.flatpak_build_path, "runtime", "org.webkit.Sdk")) or self.update:
             self.install_all()
 
-        if not self.update:
-            for package in self._get_packages():
-                if package.name.startswith("org.webkit") and not package.is_installed(self.sdk_branch):
-                    Console.error_message("Flatpak package %s not installed. Please update your SDK: Tools/Scripts/update-webkit-flatpak", package)
-                    return 1
+        if not self.update and not self.check_installed_packages():
+            return 1
 
         if self.gdb or self.gdb_stack_trace:
             return self.run_gdb()
