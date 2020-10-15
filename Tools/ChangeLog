@@ -1,3 +1,14 @@
+2020-10-15  Aakash Jain  <aakash_jain@apple.com>
+
+        EWS bot should fail if a new test is missing its result
+        https://bugs.webkit.org/show_bug.cgi?id=177723
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunWebKitTests.evaluateResult):
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-test.
+
 2020-10-15  Lauro Moura  <lmoura@igalia.com>
 
         webkitpy: Fix remaining pytest autoinstall imports

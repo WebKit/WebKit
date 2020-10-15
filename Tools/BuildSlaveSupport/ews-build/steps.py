@@ -1995,8 +1995,10 @@ class RunWebKitTests(shell.Test):
                     return WARNINGS
 
             for line in self.incorrectLayoutLines:
-                if line.find('flakes') >= 0 or line.find('new passes') >= 0 or line.find('missing results') >= 0:
+                if line.find('flakes') >= 0 or line.find('new passes') >= 0:
                     result = WARNINGS
+                elif line.find('missing results') >= 0:
+                    return FAILURE
                 else:
                     return FAILURE
 
