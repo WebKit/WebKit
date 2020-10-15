@@ -1,3 +1,10 @@
+2020-10-14  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/fast/css/word-space-extra-expected.txt:
+
 2020-10-14  James Darpinian  <jdarpinian@chromium.org>
 
         Unity RubysAdventure demo does not render properly if WebGL2 is enabled.
