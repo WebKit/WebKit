@@ -1,5 +1,46 @@
 2020-10-15  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r268376. rdar://problem/70321635
+
+    Cursor window is transparent - but not hidden - when `cursor: none` is specified
+    https://bugs.webkit.org/show_bug.cgi?id=217639
+    <rdar://problem/70006186>
+    
+    Reviewed by Simon Fraser.
+    
+    * Platform/spi/mac/AppKitSPI.h:
+    * UIProcess/mac/PageClientImplMac.mm:
+    (WebKit::PageClientImpl::setCursor):
+    Adopt new AppKit SPI to actually hide the cursor when we set it to the "none" shape.
+    This hiding lives until the next time the app-global cursor shape is changed by any client.]
+    We'll re-set it the next time we set the "none" shape.
+    
+    This is important, because on some platforms, hiding the cursor is a performance improvement
+    over simply making it transparent.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268376 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-12  Tim Horton  <timothy_horton@apple.com>
+
+            Cursor window is transparent - but not hidden - when `cursor: none` is specified
+            https://bugs.webkit.org/show_bug.cgi?id=217639
+            <rdar://problem/70006186>
+
+            Reviewed by Simon Fraser.
+
+            * Platform/spi/mac/AppKitSPI.h:
+            * UIProcess/mac/PageClientImplMac.mm:
+            (WebKit::PageClientImpl::setCursor):
+            Adopt new AppKit SPI to actually hide the cursor when we set it to the "none" shape.
+            This hiding lives until the next time the app-global cursor shape is changed by any client.]
+            We'll re-set it the next time we set the "none" shape.
+
+            This is important, because on some platforms, hiding the cursor is a performance improvement
+            over simply making it transparent.
+
+2020-10-15  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r268367. rdar://problem/70321875
 
     [macCatalyst] Enable WKPDFView
