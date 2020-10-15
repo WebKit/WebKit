@@ -235,9 +235,8 @@ class Git(Scm):
         if branch_point and parsed_branch_point and branch_point != parsed_branch_point:
             raise ValueError("Provided 'branch_point' does not match branch point of specified branch")
 
-        if self.is_svn:
-            match = self.GIT_SVN_REVISION.match(log.stdout.splitlines()[-1].lstrip())
-            revision = int(match.group('revision')) if match else None
+        match = self.GIT_SVN_REVISION.search(log.stdout)
+        revision = int(match.group('revision')) if match else None
 
         commit_time = run(
             [self.executable, 'show', '-s', '--format=%ct', hash],
