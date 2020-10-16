@@ -1,3 +1,12 @@
+2020-10-16  Karl Rackler  <rackler@apple.com>
+
+        REGRESSION: [ Win10 wk1 ews ] transforms/2d/scale-change-composited.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=217812
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2020-10-16  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Encoder probing support for the registry scanner
