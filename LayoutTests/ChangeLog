@@ -1,5 +1,12 @@
 2020-10-16  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GLIB][GTK] Unreviewed test gardening. Update test expectations after r268573.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2020-10-16  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Update expectations for editing/pasteboard/drop-text-without-selection.html after r267997
 
         Unreviewed test gardening.

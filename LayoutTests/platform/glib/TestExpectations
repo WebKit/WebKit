@@ -155,6 +155,9 @@ webkit.org/b/133122 crypto/workers/subtle/aes-cfb-import-key-wrap-key.html [ Ski
 webkit.org/b/188041 http/wpt/crypto/unwrap-rsa-key-crash.any.worker.html [ Failure Timeout Pass ]
 webkit.org/b/188041 http/wpt/crypto/unwrap-rsa-key-crash.any.html [ Timeout Pass ]
 
+webkit.org/b/217699 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-promises.https.html [ Crash Pass ]
+webkit.org/b/217699 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/cors-check.https.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crypto tests
 #////////////////////////////////////////////////////////////////////////////////////////
