@@ -206,7 +206,7 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
             document.cachedResourceLoader().m_documentResources.set(newImage->url().string(), newImage.get());
             document.cachedResourceLoader().setAutoLoadImages(autoLoadOtherImages);
         } else {
-            if ((m_lazyImageLoadState == LazyImageLoadState::None || m_lazyImageLoadState == LazyImageLoadState::FullImage) && isImageElement) {
+            if (m_lazyImageLoadState == LazyImageLoadState::None && isImageElement) {
                 auto& imageElement = downcast<HTMLImageElement>(element());
                 if (imageElement.isLazyLoadable() && document.settings().lazyImageLoadingEnabled()) {
                     m_lazyImageLoadState = LazyImageLoadState::Deferred;
