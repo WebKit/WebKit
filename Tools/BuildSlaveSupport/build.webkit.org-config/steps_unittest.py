@@ -38,8 +38,8 @@ class BuildBotConfigLoader(object):
         # When files are passed to the python interpreter on the command line (e.g. python test.py) __file__ is a relative path.
         absolute_file_path = os.path.abspath(__file__)
         webkit_org_config_dir = os.path.dirname(absolute_file_path)
-        build_slave_support_dir = os.path.dirname(webkit_org_config_dir)
-        webkit_tools_dir = os.path.dirname(build_slave_support_dir)
+        worker_support_dir = os.path.dirname(webkit_org_config_dir)
+        webkit_tools_dir = os.path.dirname(worker_support_dir)
         scripts_dir = os.path.join(webkit_tools_dir, 'Scripts')
         sys.path.append(scripts_dir)
 
@@ -361,7 +361,7 @@ Crashed
     TestWTF.WTF.StringConcatenate_Unsigned
         **FAIL** WTF.StringConcatenate_Unsigned
 
-        C:\\cygwin\\home\\buildbot\\slave\\win-release\\build\\Tools\\TestWebKitAPI\\Tests\\WTF\\StringConcatenate.cpp:84
+        C:\\cygwin\\home\\buildbot\\worker\\win-release\\build\\Tools\\TestWebKitAPI\\Tests\\WTF\\StringConcatenate.cpp:84
         Value of: makeString("hello ", static_cast<unsigned short>(42) , " world")
           Actual: hello 42 world
         Expected: "hello * world"
@@ -388,7 +388,7 @@ Crashed
     TestWTF.WTF.StringConcatenate_Unsigned
         **FAIL** WTF.StringConcatenate_Unsigned
 
-        C:\\cygwin\\home\\buildbot\\slave\\win-release\\build\\Tools\\TestWebKitAPI\\Tests\\WTF\\StringConcatenate.cpp:84
+        C:\\cygwin\\home\\buildbot\\worker\\win-release\\build\\Tools\\TestWebKitAPI\\Tests\\WTF\\StringConcatenate.cpp:84
         Value of: makeString("hello ", static_cast<unsigned short>(42) , " world")
           Actual: hello 42 world
         Expected: "hello * world"
@@ -397,7 +397,7 @@ Crashed
     TestWTF.WTF_Expected.Unexpected
         **FAIL** WTF_Expected.Unexpected
 
-        C:\cygwin\home\buildbot\slave\win-release\build\Tools\TestWebKitAPI\Tests\WTF\Expected.cpp:96
+        C:\\cygwin\\home\\buildbot\\worker\\win-release\\build\\Tools\\TestWebKitAPI\\Tests\\WTF\\Expected.cpp:96
         Value of: s1
           Actual: oops
         Expected: s0
@@ -465,7 +465,7 @@ Crashed
     TestWTF.WTF.StringConcatenate_Unsigned
         **FAIL** WTF.StringConcatenate_Unsigned
 
-        C:\\cygwin\\home\\buildbot\\slave\\win-release\\build\\Tools\\TestWebKitAPI\\Tests\\WTF\\StringConcatenate.cpp:84
+        C:\\cygwin\\home\\buildbot\\worker\\win-release\\build\\Tools\\TestWebKitAPI\\Tests\\WTF\\StringConcatenate.cpp:84
         Value of: makeString("hello ", static_cast<unsigned short>(42) , " world")
           Actual: hello 42 world
         Expected: "hello * world"
@@ -474,7 +474,7 @@ Crashed
     TestWTF.WTF_Expected.Unexpected
         **FAIL** WTF_Expected.Unexpected
 
-        C:\cygwin\home\buildbot\slave\win-release\build\Tools\TestWebKitAPI\Tests\WTF\Expected.cpp:96
+        C:\\cygwin\\home\\buildbot\\worker\\win-release\\build\\Tools\\TestWebKitAPI\\Tests\\WTF\\Expected.cpp:96
         Value of: s1
           Actual: oops
         Expected: s0
@@ -648,7 +648,7 @@ class RunAndUploadPerfTestsTest(unittest.TestCase):
         self.assertResults(255, "build not up to date")
 
     def test_build_bad_source_json(self):
-        self.assertResults(254, "slave config JSON error")
+        self.assertResults(254, "worker config JSON error")
 
     def test_build_bad_marge(self):
         self.assertResults(253, "output JSON merge error")

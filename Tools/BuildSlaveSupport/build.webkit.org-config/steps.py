@@ -316,12 +316,12 @@ class ExtractBuiltProduct(shell.ShellCommand):
 
 
 class UploadBuiltProduct(transfer.FileUpload):
-    slavesrc = WithProperties("WebKitBuild/%(configuration)s.zip")
+    workersrc = WithProperties("WebKitBuild/%(configuration)s.zip")
     masterdest = WithProperties("archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(got_revision)s.zip")
     haltOnFailure = True
 
     def __init__(self, **kwargs):
-        kwargs['slavesrc'] = self.slavesrc
+        kwargs['slavesrc'] = self.workersrc
         kwargs['masterdest'] = self.masterdest
         kwargs['mode'] = 0o644
         kwargs['blocksize'] = 1024 * 256
@@ -329,7 +329,7 @@ class UploadBuiltProduct(transfer.FileUpload):
 
 
 class UploadMinifiedBuiltProduct(UploadBuiltProduct):
-    slavesrc = WithProperties("WebKitBuild/minified-%(configuration)s.zip")
+    workersrc = WithProperties("WebKitBuild/minified-%(configuration)s.zip")
     masterdest = WithProperties("archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/minified-%(got_revision)s.zip")
 
 
@@ -959,7 +959,7 @@ class RunAndUploadPerfTests(shell.Test):
             if cmd.rc == -1 & 0xff:
                 return ["build not up to date"]
             elif cmd.rc == -2 & 0xff:
-                return ["slave config JSON error"]
+                return ["worker config JSON error"]
             elif cmd.rc == -3 & 0xff:
                 return ["output JSON merge error"]
             elif cmd.rc == -4 & 0xff:
@@ -1008,11 +1008,11 @@ class ArchiveTestResults(shell.ShellCommand):
 
 
 class UploadTestResults(transfer.FileUpload):
-    slavesrc = "layout-test-results.zip"
+    workersrc = "layout-test-results.zip"
     masterdest = WithProperties("public_html/results/%(buildername)s/r%(got_revision)s (%(buildnumber)s).zip")
 
     def __init__(self, **kwargs):
-        kwargs['slavesrc'] = self.slavesrc
+        kwargs['slavesrc'] = self.workersrc
         kwargs['masterdest'] = self.masterdest
         kwargs['mode'] = 0o644
         kwargs['blocksize'] = 1024 * 256
