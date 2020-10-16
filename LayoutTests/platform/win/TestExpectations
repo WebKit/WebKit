@@ -4584,3 +4584,4 @@ webkit.org/b/216967 fast/text/whitespace/pre-wrap-long-word-simple-lines.html [ 
 
 webkit.org/b/217812 transforms/2d/scale-change-composited.html [ Skip ]
 webkit.org/b/217812 transforms/2d/rotate-change-composited.html [ Skip ]
+webkit.org/b/217812 transforms/2d/translate-change-composited.html [ Skip ]
