@@ -21,7 +21,8 @@
 
 #include "AudioBus.h"
 #include "AudioDestination.h"
-#include <wtf/RefPtr.h>
+#include "GRefPtrGStreamer.h"
+#include <wtf/Forward.h>
 
 typedef struct _GstElement GstElement;
 typedef struct _GstPad GstPad;
@@ -52,6 +53,7 @@ private:
     bool m_isPlaying;
     bool m_audioSinkAvailable;
     GstElement* m_pipeline;
+    GRefPtr<GstElement> m_src;
 };
 
 } // namespace WebCore

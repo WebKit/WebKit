@@ -87,11 +87,8 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
     gst_bus_add_signal_watch_full(bus.get(), RunLoopSourcePriority::RunLoopDispatcher);
     g_signal_connect(bus.get(), "message", G_CALLBACK(messageCallback), this);
 
-    GstElement* webkitAudioSrc = reinterpret_cast<GstElement*>(g_object_new(WEBKIT_TYPE_WEB_AUDIO_SRC,
-                                                                            "rate", sampleRate,
-                                                                            "bus", m_renderBus.get(),
-                                                                            "provider", &m_callback,
-                                                                            "frames", AudioUtilities::renderQuantumSize, nullptr));
+    m_src = reinterpret_cast<GstElement*>(g_object_new(WEBKIT_TYPE_WEB_AUDIO_SRC, "rate", sampleRate,
+        "bus", m_renderBus.get(), "provider", &m_callback, "frames", AudioUtilities::renderQuantumSize, nullptr));
 
     GRefPtr<GstElement> audioSink = createPlatformAudioSink();
     m_audioSinkAvailable = audioSink;
@@ -119,10 +116,10 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
 
     GstElement* audioConvert = gst_element_factory_make("audioconvert", nullptr);
     GstElement* audioResample = gst_element_factory_make("audioresample", nullptr);
-    gst_bin_add_many(GST_BIN_CAST(m_pipeline), webkitAudioSrc, audioConvert, audioResample, audioSink.get(), nullptr);
+    gst_bin_add_many(GST_BIN_CAST(m_pipeline), m_src.get(), audioConvert, audioResample, audioSink.get(), nullptr);
 
     // Link src pads from webkitAudioSrc to audioConvert ! audioResample ! autoaudiosink.
-    gst_element_link_pads_full(webkitAudioSrc, "src", audioConvert, "sink", GST_PAD_LINK_CHECK_NOTHING);
+    gst_element_link_pads_full(m_src.get(), "src", audioConvert, "sink", GST_PAD_LINK_CHECK_NOTHING);
     gst_element_link_pads_full(audioConvert, "src", audioResample, "sink", GST_PAD_LINK_CHECK_NOTHING);
     gst_element_link_pads_full(audioResample, "src", audioSink.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
 }
@@ -165,11 +162,14 @@ gboolean AudioDestinationGStreamer::handleMessage(GstMessage* message)
     return TRUE;
 }
 
-void AudioDestinationGStreamer::start(Function<void(Function<void()>&&)>&&)
+void AudioDestinationGStreamer::start(Function<void(Function<void()>&&)>&& dispatchToRenderThread)
 {
     ASSERT(m_audioSinkAvailable);
     if (!m_audioSinkAvailable)
         return;
+
+    if (dispatchToRenderThread)
+        webkitWebAudioSourceSetDispatchToRenderThreadCallback(WEBKIT_WEB_AUDIO_SRC(m_src.get()), WTFMove(dispatchToRenderThread));
 
     if (gst_element_set_state(m_pipeline, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
         g_warning("Error: Failed to set pipeline to playing");

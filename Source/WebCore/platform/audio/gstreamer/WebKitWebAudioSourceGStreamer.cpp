@@ -30,6 +30,8 @@
 #include <gst/app/gstappsrc.h>
 #include <gst/audio/audio-info.h>
 #include <gst/pbutils/missing-plugins.h>
+#include <wtf/Condition.h>
+#include <wtf/Lock.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 
@@ -76,6 +78,10 @@ struct _WebKitWebAudioSrcPrivate {
     GRefPtr<GstBufferPool> pool;
 
     bool enableGapBufferSupport;
+
+    Optional<Function<void(Function<void()>&&)>> dispatchToRenderThreadCallback;
+    Lock dispatchMutex;
+    Condition dispatchCondition;
 
     _WebKitWebAudioSrcPrivate()
     {
@@ -340,7 +346,17 @@ static Optional<Vector<GRefPtr<GstBuffer>>> webKitWebAudioSrcAllocateBuffersAndR
     }
 
     // FIXME: Add support for local/live audio input.
-    priv->provider->render(nullptr, priv->bus, priv->framesToPull, outputTimestamp);
+
+    if (src->priv->dispatchToRenderThreadCallback.hasValue()) {
+        LockHolder holder(priv->dispatchMutex);
+        (*priv->dispatchToRenderThreadCallback)([src, outputTimestamp]() mutable {
+            auto* priv = src->priv;
+            priv->provider->render(nullptr, priv->bus, priv->framesToPull, outputTimestamp);
+            priv->dispatchCondition.notifyOne();
+        });
+        priv->dispatchCondition.wait(priv->dispatchMutex);
+    } else
+        priv->provider->render(nullptr, priv->bus, priv->framesToPull, outputTimestamp);
 
     return makeOptional(channelBufferList);
 }
@@ -432,6 +448,12 @@ static GstStateChangeReturn webKitWebAudioSrcChangeState(GstElement* element, Gs
     }
 
     return returnValue;
+}
+
+void webkitWebAudioSourceSetDispatchToRenderThreadCallback(WebKitWebAudioSrc* src, Function<void(Function<void()>&&)>&& function)
+{
+    ASSERT(function);
+    src->priv->dispatchToRenderThreadCallback = WTFMove(function);
 }
 
 #endif // ENABLE(WEB_AUDIO) && USE(GSTREAMER)

@@ -16,11 +16,12 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef WebKitWebAudioSourceGStreamer_h
-#define WebKitWebAudioSourceGStreamer_h
+#pragma once
+
 #if USE(GSTREAMER)
 
 #include <gst/gst.h>
+#include <wtf/Forward.h>
 
 #define WEBKIT_TYPE_WEB_AUDIO_SRC (webkit_web_audio_src_get_type())
 #define WEBKIT_WEB_AUDIO_SRC(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_WEB_AUDIO_SRC, WebKitWebAudioSrc))
@@ -29,5 +30,7 @@ typedef struct _WebKitWebAudioSrc WebKitWebAudioSrc;
 
 GType webkit_web_audio_src_get_type();
 
+void webkitWebAudioSourceSetDispatchToRenderThreadCallback(WebKitWebAudioSrc*, Function<void(Function<void()>&&)>&&);
+
 #endif // USE(GSTREAMER)
-#endif
+
