@@ -72,11 +72,9 @@ protected:
     enum ElementType {
         AudioDecoder = 0,
         VideoDecoder,
-        Demuxer,
-        AudioEncoder,
-        VideoEncoder,
-        Muxer
+        Demuxer
     };
+
     struct GstCapsWebKitMapping {
         ElementType elementType;
         const char* capsString;

@@ -181,12 +181,6 @@ void GStreamerRegistryScanner::fillMimeTypeSetFromCapsMapping(Vector<GstCapsWebK
         case VideoDecoder:
             factories = m_videoDecoderFactories;
             break;
-        case Muxer:
-        case AudioEncoder:
-        case VideoEncoder:
-            // This method is currently used only for Decoders and Demuxers.
-            ASSERT_NOT_REACHED();
-            return;
         }
 
         if (hasElementForMediaType(factories, current.capsString)) {
