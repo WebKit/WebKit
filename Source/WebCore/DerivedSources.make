@@ -45,79 +45,9 @@ HEADER_FLAGS := $(shell echo $(BUILT_PRODUCTS_DIR) $(HEADER_SEARCH_PATHS) $(SYST
 FEATURE_AND_PLATFORM_DEFINES := $(shell $(CC) -std=gnu++1z -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | $(PERL) -ne "print if s/\#define ((HAVE_|USE_|ENABLE_|WTF_PLATFORM_)\w+) 1/\1/")
 
 # FIXME: This should list Platform.h and all the things it includes. Could do that by using the -MD flag in the CC line above.
-FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES = DerivedSources.make
+FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES = $(WebCore)/DerivedSources.make
 
 # --------
-
-VPATH = \
-    $(WebCore) \
-    $(WebCore)/Modules/airplay \
-    $(WebCore)/Modules/applepay \
-    $(WebCore)/Modules/applepay/paymentrequest \
-    $(WebCore)/Modules/async-clipboard \
-    $(WebCore)/Modules/beacon \
-    $(WebCore)/Modules/cache \
-    $(WebCore)/Modules/contact-picker \
-    $(WebCore)/Modules/credentialmanagement \
-    $(WebCore)/Modules/encryptedmedia \
-    $(WebCore)/Modules/encryptedmedia/legacy \
-    $(WebCore)/Modules/entriesapi \
-    $(WebCore)/Modules/fetch \
-    $(WebCore)/Modules/gamepad \
-    $(WebCore)/Modules/geolocation \
-    $(WebCore)/Modules/highlight \
-    $(WebCore)/Modules/indexeddb \
-    $(WebCore)/Modules/indieui \
-    $(WebCore)/Modules/mediacapabilities \
-    $(WebCore)/Modules/mediacontrols \
-    $(WebCore)/Modules/mediarecorder \
-    $(WebCore)/Modules/mediasource \
-    $(WebCore)/Modules/mediastream \
-    $(WebCore)/Modules/notifications \
-    $(WebCore)/Modules/paymentrequest \
-    $(WebCore)/Modules/pictureinpicture \
-    $(WebCore)/Modules/plugins \
-    $(WebCore)/Modules/quota \
-	$(WebCore)/Modules/remoteplayback \
-    $(WebCore)/Modules/speech \
-    $(WebCore)/Modules/streams \
-    $(WebCore)/Modules/webaudio \
-    $(WebCore)/Modules/webauthn \
-    $(WebCore)/Modules/webdatabase \
-    $(WebCore)/Modules/webdriver \
-    $(WebCore)/Modules/webgpu \
-    $(WebCore)/Modules/websockets \
-    $(WebCore)/Modules/webxr \
-    $(WebCore)/accessibility \
-    $(WebCore)/animation \
-    $(WebCore)/bindings/js \
-    $(WebCore)/crypto \
-    $(WebCore)/crypto/keys \
-    $(WebCore)/crypto/parameters \
-    $(WebCore)/css \
-    $(WebCore)/css/typedom \
-    $(WebCore)/dom \
-    $(WebCore)/editing \
-    $(WebCore)/fileapi \
-    $(WebCore)/html \
-    $(WebCore)/html/canvas \
-    $(WebCore)/html/shadow \
-    $(WebCore)/html/track \
-    $(WebCore)/inspector \
-    $(WebCore)/loader/appcache \
-    $(WebCore)/mathml \
-    $(WebCore)/page \
-    $(WebCore)/platform/network \
-    $(WebCore)/plugins \
-    $(WebCore)/storage \
-    $(WebCore)/svg \
-    $(WebCore)/testing \
-    $(WebCore)/websockets \
-    $(WebCore)/workers \
-    $(WebCore)/workers/service \
-    $(WebCore)/worklets \
-    $(WebCore)/xml \
-#
 
 JS_BINDING_IDLS = \
     $(WebCore)/Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl \
@@ -127,9 +57,9 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/applepay/ApplePayErrorCode.idl \
     $(WebCore)/Modules/applepay/ApplePayErrorContactField.idl \
     $(WebCore)/Modules/applepay/ApplePayInstallmentConfiguration.idl \
-	$(WebCore)/Modules/applepay/ApplePayInstallmentItem.idl \
-	$(WebCore)/Modules/applepay/ApplePayInstallmentItemType.idl \
-	$(WebCore)/Modules/applepay/ApplePayInstallmentRetailChannel.idl \
+    $(WebCore)/Modules/applepay/ApplePayInstallmentItem.idl \
+    $(WebCore)/Modules/applepay/ApplePayInstallmentItemType.idl \
+    $(WebCore)/Modules/applepay/ApplePayInstallmentRetailChannel.idl \
     $(WebCore)/Modules/applepay/ApplePayLineItem.idl \
     $(WebCore)/Modules/applepay/ApplePayMerchantCapability.idl \
     $(WebCore)/Modules/applepay/ApplePayPayment.idl \
@@ -368,9 +298,9 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/quota/StorageQuotaCallback.idl \
     $(WebCore)/Modules/quota/StorageUsageCallback.idl \
     $(WebCore)/Modules/quota/WorkerNavigator+StorageQuota.idl \
-	$(WebCore)/Modules/remoteplayback/HTMLMediaElement+RemotePlayback.idl \
-	$(WebCore)/Modules/remoteplayback/RemotePlayback.idl \
-	$(WebCore)/Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl \
+    $(WebCore)/Modules/remoteplayback/HTMLMediaElement+RemotePlayback.idl \
+    $(WebCore)/Modules/remoteplayback/RemotePlayback.idl \
+    $(WebCore)/Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl \
     $(WebCore)/Modules/speech/DOMWindow+SpeechSynthesis.idl \
     $(WebCore)/Modules/speech/SpeechSynthesis.idl \
     $(WebCore)/Modules/speech/SpeechSynthesisEvent.idl \
@@ -464,7 +394,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/PeriodicWaveOptions.idl \
     $(WebCore)/Modules/webaudio/ScriptProcessorNode.idl \
     $(WebCore)/Modules/webaudio/StereoPannerNode.idl \
-	$(WebCore)/Modules/webaudio/StereoPannerOptions.idl \
+    $(WebCore)/Modules/webaudio/StereoPannerOptions.idl \
     $(WebCore)/Modules/webaudio/WaveShaperNode.idl \
     $(WebCore)/Modules/webaudio/WaveShaperOptions.idl \
     $(WebCore)/Modules/webaudio/WebKitAudioBufferSourceNode.idl \
@@ -1357,14 +1287,34 @@ ADDITIONAL_EVENT_TARGET_FACTORY =
 
 -include WebCoreDerivedSourcesAdditions.make
 
-JS_BINDING_IDLS += $(ADDITIONAL_BINDING_IDLS)
+# Convert the IDLs in ADDITIONAL_BINDING_IDLS -- which are just bare names
+# -- into full paths. We want to look for the IDL files in the set of paths
+# given in ADDITIONAL_BINDING_IDLS_PATHS, preferring the order in which the
+# paths are specified.
+#
+# We perform this conversions by taking each IDL from ADDITIONAL_BINDING_IDLS
+# in turn. For each one, prepend it with the paths in
+# ADDITIONAL_BINDING_IDLS_PATHS. Then pass those paths for that single IDL to
+# $(realpath) in order to evaluate their existence. Take the resulting list
+# (which should have 1..N items in it, depending on the number of directories
+# in ADDITIONAL_BINDING_IDLS_PATHS and the existence of the IDL file at each
+# location) and pick the first one. That will be the path we use for that IDL.
+#
+# Note that we don't want to find the IDL files by using `vpath`. Of necessity,
+# those facilities reference directories in $(WebCore) which also include IDL
+# files. We don't want to find any files listed in ADDITIONAL_BINDING_IDLS that
+# exist on those paths. So we go through the process of looking up the IDLs
+# along the desired set of paths ourselves.
 
-all : $(ADDITIONAL_BINDING_IDLS:%.idl=JS%.h)
-
-vpath %.idl $(BUILT_PRODUCTS_DIR)/usr/local/include $(SDKROOT)/usr/local/include
-
-$(ADDITIONAL_BINDING_IDLS) : % : WebKitAdditions/%
-	cp $< .
+ADDITIONAL_BINDING_IDLS_PATHS = $(BUILT_PRODUCTS_DIR) $(SDKROOT)
+JS_BINDING_IDLS += \
+    $(foreach \
+        idl, \
+        $(ADDITIONAL_BINDING_IDLS), \
+        $(firstword $(realpath $(foreach \
+            path, \
+            $(ADDITIONAL_BINDING_IDLS_PATHS), \
+            $(path)/usr/local/include/WebKitAdditions/$(idl)))))
 
 ifneq ($(findstring ENABLE_IOS_TOUCH_EVENTS,$(FEATURE_AND_PLATFORM_DEFINES)), ENABLE_IOS_TOUCH_EVENTS)
 JS_BINDING_IDLS += \
@@ -1452,7 +1402,7 @@ CSS_PROPERTY_NAME_FILES = \
 CSS_PROPERTY_NAME_FILES_PATTERNS = $(subst .,%,$(CSS_PROPERTY_NAME_FILES))
 
 all : $(CSS_PROPERTY_NAME_FILES)
-$(CSS_PROPERTY_NAME_FILES_PATTERNS) : $(WEBCORE_CSS_PROPERTY_NAMES) css/makeprop.pl $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+$(CSS_PROPERTY_NAME_FILES_PATTERNS) : $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
 	$(PERL) -pe '' $(WEBCORE_CSS_PROPERTY_NAMES) > CSSProperties.json
 	$(PERL) "$(WebCore)/css/makeprop.pl" --defines "$(FEATURE_AND_PLATFORM_DEFINES)"
 
@@ -1463,7 +1413,7 @@ CSS_VALUE_KEYWORD_FILES = \
 CSS_VALUE_KEYWORD_FILES_PATTERNS = $(subst .,%,$(CSS_VALUE_KEYWORD_FILES))
 
 all : $(CSS_VALUE_KEYWORD_FILES)
-$(CSS_VALUE_KEYWORD_FILES_PATTERNS) : $(WEBCORE_CSS_VALUE_KEYWORDS) css/makevalues.pl bindings/scripts/preprocessor.pm $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+$(CSS_VALUE_KEYWORD_FILES_PATTERNS) : $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/css/makevalues.pl $(WebCore)/bindings/scripts/preprocessor.pm $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
 	$(PERL) -pe '' $(WEBCORE_CSS_VALUE_KEYWORDS) > CSSValueKeywords.in
 	$(PERL) "$(WebCore)/css/makevalues.pl" --defines "$(FEATURE_AND_PLATFORM_DEFINES)"
 
@@ -1484,7 +1434,7 @@ SelectorPseudoElementTypeMap.cpp : $(WebCore)/css/makeSelectorPseudoElementsMap.
 all : DOMJITAbstractHeapRepository.h
 
 DOMJITAbstractHeapRepository.h : $(WebCore)/domjit/generate-abstract-heap.rb $(WebCore)/domjit/DOMJITAbstractHeapRepository.yaml
-	$(RUBY) "$(WebCore)/domjit/generate-abstract-heap.rb" $(WebCore)/domjit/DOMJITAbstractHeapRepository.yaml ./DOMJITAbstractHeapRepository.h
+	$(RUBY) "$(WebCore)/domjit/generate-abstract-heap.rb" $(WebCore)/domjit/DOMJITAbstractHeapRepository.yaml DOMJITAbstractHeapRepository.h
 
 # --------
 
@@ -1492,9 +1442,9 @@ DOMJITAbstractHeapRepository.h : $(WebCore)/domjit/generate-abstract-heap.rb $(W
 
 all : XMLViewerCSS.h
 
-XMLViewerCSS.h : xml/XMLViewer.css
-	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/cssmin.py <"$(WebCore)/xml/XMLViewer.css" > ./XMLViewer.min.css
-	$(PERL) $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl XMLViewer_css ./XMLViewer.min.css XMLViewerCSS.h
+XMLViewerCSS.h : $(WebCore)/xml/XMLViewer.css
+	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/cssmin.py < "$(WebCore)/xml/XMLViewer.css" > XMLViewer.min.css
+	$(PERL) $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl XMLViewer_css XMLViewer.min.css XMLViewerCSS.h
 	$(DELETE) XMLViewer.min.css
 
 # --------
@@ -1503,16 +1453,16 @@ XMLViewerCSS.h : xml/XMLViewer.css
 
 all : XMLViewerJS.h
 
-XMLViewerJS.h : xml/XMLViewer.js
-	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py <"$(WebCore)/xml/XMLViewer.js" > ./XMLViewer.min.js
-	$(PERL) $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl XMLViewer_js ./XMLViewer.min.js XMLViewerJS.h
+XMLViewerJS.h : $(WebCore)/xml/XMLViewer.js
+	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py < "$(WebCore)/xml/XMLViewer.js" > XMLViewer.min.js
+	$(PERL) $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl XMLViewer_js XMLViewer.min.js XMLViewerJS.h
 	$(DELETE) XMLViewer.min.js
 
 # --------
 
 # HTML entity names
 
-HTMLEntityTable.cpp : html/parser/HTMLEntityNames.in $(WebCore)/html/parser/create-html-entity-table
+HTMLEntityTable.cpp : $(WebCore)/html/parser/HTMLEntityNames.in $(WebCore)/html/parser/create-html-entity-table
 	$(PYTHON) $(WebCore)/html/parser/create-html-entity-table -o HTMLEntityTable.cpp $(WebCore)/html/parser/HTMLEntityNames.in
 
 # --------
@@ -1527,14 +1477,14 @@ HTTP_HEADER_NAMES_FILES = \
 HTTP_HEADER_NAMES_FILES_PATTERNS = $(subst .,%,$(HTTP_HEADER_NAMES_FILES))
 
 all : $(HTTP_HEADER_NAMES_FILES)
-$(HTTP_HEADER_NAMES_FILES_PATTERNS) : platform/network/HTTPHeaderNames.in $(WebCore)/platform/network/create-http-header-name-table
+$(HTTP_HEADER_NAMES_FILES_PATTERNS) : $(WebCore)/platform/network/HTTPHeaderNames.in $(WebCore)/platform/network/create-http-header-name-table
 	$(PYTHON) $(WebCore)/platform/network/create-http-header-name-table $(WebCore)/platform/network/HTTPHeaderNames.in gperf
 
 # --------
 
 # color names
 
-ColorData.cpp : platform/ColorData.gperf $(WebCore)/make-hash-tools.pl
+ColorData.cpp : $(WebCore)/platform/ColorData.gperf $(WebCore)/make-hash-tools.pl
 	$(PERL) $(WebCore)/make-hash-tools.pl . $(WebCore)/platform/ColorData.gperf
 
 # --------
@@ -1563,7 +1513,7 @@ USER_AGENT_STYLE_SHEETS += $(WebCore)/Modules/plugins/QuickTimePluginReplacement
 
 USER_AGENT_STYLE_SHEETS += $(WebCore)/html/shadow/meterElementShadow.css
 
-UserAgentStyleSheets.h : css/make-css-file-arrays.pl bindings/scripts/preprocessor.pm $(USER_AGENT_STYLE_SHEETS) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+UserAgentStyleSheets.h : $(WebCore)/css/make-css-file-arrays.pl $(WebCore)/bindings/scripts/preprocessor.pm $(USER_AGENT_STYLE_SHEETS) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
 	$(PERL) $< --defines "$(FEATURE_AND_PLATFORM_DEFINES)" $@ UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
 
 # --------
@@ -1589,7 +1539,7 @@ $(USER_AGENT_SCRIPTS_FILES_PATTERNS) : $(JavaScriptCore_SCRIPTS_DIR)/make-js-fil
 
 PLUG_INS_RESOURCES = $(WebCore)/Resources/plugIns.js
 
-PlugInsResources.h : css/make-css-file-arrays.pl bindings/scripts/preprocessor.pm $(PLUG_INS_RESOURCES) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+PlugInsResources.h : $(WebCore)/css/make-css-file-arrays.pl $(WebCore)/bindings/scripts/preprocessor.pm $(PLUG_INS_RESOURCES) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
 	$(PERL) $< --defines "$(FEATURE_AND_PLATFORM_DEFINES)" $@ PlugInsResourcesData.cpp $(PLUG_INS_RESOURCES)
 
 # --------
@@ -1601,7 +1551,7 @@ WEBKIT_FONT_FAMILY_NAME_FILES = \
 WEBKIT_FONT_FAMILY_NAME_FILES_PATTERNS = $(subst .,%,$(WEBKIT_FONT_FAMILY_NAME_FILES))
 
 all : $(WEBKIT_FONT_FAMILY_NAME_FILES)
-$(WEBKIT_FONT_FAMILY_NAME_FILES_PATTERNS): dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm css/WebKitFontFamilyNames.in
+$(WEBKIT_FONT_FAMILY_NAME_FILES_PATTERNS): $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/css/WebKitFontFamilyNames.in
 	$(PERL) $< --fonts $(WebCore)/css/WebKitFontFamilyNames.in
 
 # HTML tag and attribute names
@@ -1619,13 +1569,13 @@ HTML_TAG_FILES_PATTERNS = $(subst .,%,$(HTML_TAG_FILES))
 
 all : $(HTML_TAG_FILES)
 
-$(HTML_TAG_FILES_PATTERNS) : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm html/HTMLTagNames.in html/HTMLAttributeNames.in $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+$(HTML_TAG_FILES_PATTERNS) : $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/html/HTMLTagNames.in $(WebCore)/html/HTMLAttributeNames.in $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
 	$(PERL) $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --factory --wrapperFactory
 
-XMLNSNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm xml/xmlnsattrs.in
+XMLNSNames.cpp : $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/xml/xmlnsattrs.in
 	$(PERL) $< --attrs $(WebCore)/xml/xmlnsattrs.in
 
-XMLNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm xml/xmlattrs.in
+XMLNames.cpp : $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/xml/xmlattrs.in
 	$(PERL) $< --attrs $(WebCore)/xml/xmlattrs.in
 
 # --------
@@ -1645,17 +1595,17 @@ SVG_TAG_FILES_PATTERNS = $(subst .,%,$(SVG_TAG_FILES))
 
 all : $(SVG_TAG_FILES)
 
-$(SVG_TAG_FILES_PATTERNS) : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm svg/svgtags.in svg/svgattrs.in $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+$(SVG_TAG_FILES_PATTERNS) : $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/svg/svgtags.in $(WebCore)/svg/svgattrs.in $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
 	$(PERL) $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --factory --wrapperFactory
 
-XLinkNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm svg/xlinkattrs.in
+XLinkNames.cpp : $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/svg/xlinkattrs.in
 	$(PERL) $< --attrs $(WebCore)/svg/xlinkattrs.in
 
 # --------
 
 # Register event constructors and targets
 
-EVENT_NAMES = EventNames.in $(ADDITIONAL_EVENT_NAMES)
+EVENT_NAMES = $(WebCore)/dom/EventNames.in $(ADDITIONAL_EVENT_NAMES)
 
 EVENT_FACTORY_FILES = \
     EventFactory.cpp \
@@ -1665,10 +1615,10 @@ EVENT_FACTORY_FILES = \
 EVENT_FACTORY_PATTERNS = $(subst .,%,$(EVENT_FACTORY_FILES))
 
 all : $(EVENT_FACTORY_FILES)
-$(EVENT_FACTORY_PATTERNS) : dom/make_event_factory.pl $(EVENT_NAMES)
+$(EVENT_FACTORY_PATTERNS) : $(WebCore)/dom/make_event_factory.pl $(EVENT_NAMES)
 	$(PERL) $< $(addprefix --input , $(filter-out $(WebCore)/dom/make_event_factory.pl, $^))
 
-EVENT_TARGET_FACTORY = EventTargetFactory.in $(ADDITIONAL_EVENT_TARGET_FACTORY)
+EVENT_TARGET_FACTORY = $(WebCore)/dom/EventTargetFactory.in $(ADDITIONAL_EVENT_TARGET_FACTORY)
 
 EVENT_TARGET_FACTORY_FILES = \
     EventTargetFactory.cpp \
@@ -1678,7 +1628,7 @@ EVENT_TARGET_FACTORY_FILES = \
 EVENT_TARGET_FACTORY_PATTERNS = $(subst .,%,$(EVENT_TARGET_FACTORY_FILES))
 
 all : $(EVENT_TARGET_FACTORY_FILES)
-$(EVENT_TARGET_FACTORY_PATTERNS) : dom/make_event_factory.pl $(EVENT_TARGET_FACTORY)
+$(EVENT_TARGET_FACTORY_PATTERNS) : $(WebCore)/dom/make_event_factory.pl $(EVENT_TARGET_FACTORY)
 	$(PERL) $< $(addprefix --input , $(filter-out $(WebCore)/dom/make_event_factory.pl, $^))
 
 # --------
@@ -1697,7 +1647,7 @@ MATH_ML_GENERATED_FILES = \
 MATH_ML_GENERATED_PATTERNS = $(subst .,%,$(MATH_ML_GENERATED_FILES))
 
 all : $(MATH_ML_GENERATED_FILES)
-$(MATH_ML_GENERATED_PATTERNS) : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm mathml/mathtags.in mathml/mathattrs.in
+$(MATH_ML_GENERATED_PATTERNS) : $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/mathml/mathtags.in $(WebCore)/mathml/mathattrs.in
 	$(PERL) $< --tags $(WebCore)/mathml/mathtags.in --attrs $(WebCore)/mathml/mathattrs.in --factory --wrapperFactory
 
 # --------
@@ -1722,7 +1672,7 @@ GENERATE_SETTINGS_FILES = $(basename $(notdir $(GENERATE_SETTINGS_TEMPLATES)))
 GENERATE_SETTINGS_PATTERNS = $(subst .,%,$(GENERATE_SETTINGS_FILES))
 
 all : $(GENERATE_SETTINGS_FILES)
-$(GENERATE_SETTINGS_PATTERNS) : $(WebCore)/Scripts/GenerateSettings.rb $(GENERATE_SETTINGS_TEMPLATES) $(WEB_PREFERENCES_INPUT_FILES) page/Settings.yaml
+$(GENERATE_SETTINGS_PATTERNS) : $(WebCore)/Scripts/GenerateSettings.rb $(GENERATE_SETTINGS_TEMPLATES) $(WEB_PREFERENCES_INPUT_FILES) $(WebCore)/page/Settings.yaml
 	$(RUBY) $< --additionalSettings $(WebCore)/page/Settings.yaml --base ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferences.yaml --debug ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml --experimental ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml --internal ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml
 
 # --------
@@ -1742,13 +1692,13 @@ WHLSLStandardLibraryFunctionMap.cpp : $(WebCore)/Modules/webgpu/WHLSL/WHLSLBuild
 # Common generator things
 
 COMMON_BINDINGS_SCRIPTS = \
-    bindings/scripts/CodeGenerator.pm \
-    bindings/scripts/IDLParser.pm \
-    bindings/scripts/generate-bindings.pl \
-    bindings/scripts/preprocessor.pm
+    $(WebCore)/bindings/scripts/CodeGenerator.pm \
+    $(WebCore)/bindings/scripts/IDLParser.pm \
+    $(WebCore)/bindings/scripts/generate-bindings.pl \
+    $(WebCore)/bindings/scripts/preprocessor.pm
 
 PREPROCESS_IDLS_SCRIPTS = \
-    bindings/scripts/preprocess-idls.pl
+    $(WebCore)/bindings/scripts/preprocess-idls.pl
 
 # JS bindings generator
 
@@ -1779,7 +1729,7 @@ IDL_INCLUDES = \
 
 IDL_COMMON_ARGS = $(IDL_INCLUDES:%=--include %) --write-dependencies --outputDir .
 
-JS_BINDINGS_SCRIPTS = $(COMMON_BINDINGS_SCRIPTS) bindings/scripts/CodeGeneratorJS.pm
+JS_BINDINGS_SCRIPTS = $(COMMON_BINDINGS_SCRIPTS) $(WebCore)/bindings/scripts/CodeGeneratorJS.pm
 
 SUPPLEMENTAL_DEPENDENCY_FILE = SupplementalDependencies.txt
 SUPPLEMENTAL_MAKEFILE_DEPS = SupplementalDependencies.dep
@@ -1807,9 +1757,23 @@ IDL_INTERMEDIATE_FILES = \
 #
 IDL_INTERMEDIATE_PATTERNS = $(subst .,%,$(IDL_INTERMEDIATE_FILES))
 
-$(IDL_INTERMEDIATE_PATTERNS) : $(PREPROCESS_IDLS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(JS_BINDING_IDLS) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES) DerivedSources.make $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+$(IDL_INTERMEDIATE_PATTERNS) : $(PREPROCESS_IDLS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(JS_BINDING_IDLS) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
 	$(shell echo $(JS_BINDING_IDLS) | tr " " "\n" > IDLFileNamesList.txt)
 	$(PERL) $(WebCore)/bindings/scripts/preprocess-idls.pl --defines "$(FEATURE_AND_PLATFORM_DEFINES) LANGUAGE_JAVASCRIPT" --idlFileNamesList IDLFileNamesList.txt --idlAttributesFile $(IDL_ATTRIBUTES_FILE) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) --isoSubspacesHeaderFile $(ISO_SUBSPACES_HEADER_FILE) --windowConstructorsFile $(WINDOW_CONSTRUCTORS_FILE) --workerGlobalScopeConstructorsFile $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --dedicatedWorkerGlobalScopeConstructorsFile $(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --serviceWorkerGlobalScopeConstructorsFile $(SERVICEWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --workletGlobalScopeConstructorsFile $(WORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) --paintWorkletGlobalScopeConstructorsFile $(PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) --audioWorkletGlobalScopeConstructorsFile $(AUDIOWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) --supplementalMakefileDeps $(SUPPLEMENTAL_MAKEFILE_DEPS)
+
+# The "JS%.cpp JS%.h : %.idl ..." rule takes IDL files from a number of
+# locations and compiles them into header and implementation files in one
+# single location. In order for the pattern matching to work, `vpath` needs to
+# be set up to find all of these IDL files, no matter where they are. To build
+# up `vpath`, take the set of IDL files and extract their directory
+# components. When doing this, make sure that the paths containing
+# WebKitAdditions appear first so that they can override the standard IDL
+# files.
+
+IDL_VPATH = $(sort $(foreach f,$(JS_BINDING_IDLS),$(realpath $(dir $(f)))))
+OVERRIDE_IDL_VPATH = $(filter %WebKitAdditions,$(IDL_VPATH))
+STANDARD_IDL_VPATH = $(filter-out %WebKitAdditions,$(IDL_VPATH))
+vpath %.idl $(OVERRIDE_IDL_VPATH) $(STANDARD_IDL_VPATH)
 
 JS%.cpp JS%.h : %.idl $(JS_BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(IDL_INTERMEDIATE_FILES) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
 	$(PERL) $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_COMMON_ARGS) --defines "$(FEATURE_AND_PLATFORM_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --idlAttributesFile $(IDL_ATTRIBUTES_FILE) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) $<
@@ -1826,10 +1790,10 @@ endif
 
 all : CommandLineAPIModuleSource.h
 
-CommandLineAPIModuleSource.h : CommandLineAPIModuleSource.js
-	echo "//# sourceURL=__InjectedScript_CommandLineAPIModuleSource.js" > ./CommandLineAPIModuleSource.min.js
-	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py <$(WebCore)/inspector/CommandLineAPIModuleSource.js >> ./CommandLineAPIModuleSource.min.js
-	$(PERL) $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl CommandLineAPIModuleSource_js ./CommandLineAPIModuleSource.min.js CommandLineAPIModuleSource.h
+CommandLineAPIModuleSource.h : $(WebCore)/inspector/CommandLineAPIModuleSource.js
+	echo "//# sourceURL=__InjectedScript_CommandLineAPIModuleSource.js" > CommandLineAPIModuleSource.min.js
+	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py < $(WebCore)/inspector/CommandLineAPIModuleSource.js >> CommandLineAPIModuleSource.min.js
+	$(PERL) $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl CommandLineAPIModuleSource_js CommandLineAPIModuleSource.min.js CommandLineAPIModuleSource.h
 	$(DELETE) CommandLineAPIModuleSource.min.js
 
 # WebCore JS Builtins
@@ -1886,14 +1850,17 @@ WebCore_BUILTINS_WRAPPERS_PATTERNS = $(subst .,%,$(WebCore_BUILTINS_WRAPPERS))
 # Adding/removing scripts should trigger regeneration, but changing which builtins are
 # generated should not affect other builtins when not passing '--combined' to the generator.
 
-WebCore_BUILTINS_SOURCES_LIST : $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py DerivedSources.make
+WebCore_BUILTINS_SOURCES_LIST : $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py $(WebCore)/DerivedSources.make
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py '$(WebCore_BUILTINS_SOURCES)' $@
 
-WebCore_BUILTINS_DEPENDENCIES_LIST : $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py DerivedSources.make
+WebCore_BUILTINS_DEPENDENCIES_LIST : $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py $(WebCore)/DerivedSources.make
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py '$(BUILTINS_GENERATOR_SCRIPTS)' $@
 
 $(WebCore_BUILTINS_WRAPPERS_PATTERNS) : $(WebCore_BUILTINS_SOURCES) WebCore_BUILTINS_SOURCES_LIST $(BUILTINS_GENERATOR_SCRIPTS) WebCore_BUILTINS_DEPENDENCIES_LIST
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins.py --wrappers-only --output-directory . --framework WebCore $(WebCore_BUILTINS_SOURCES)
+
+# See comments for IDL_VPATH for a description of what this is for.
+vpath %.js $(sort $(foreach f,$(WebCore_BUILTINS_SOURCES),$(realpath $(dir $(f)))))
 
 %Builtins.h: %.js $(BUILTINS_GENERATOR_SCRIPTS) WebCore_BUILTINS_DEPENDENCIES_LIST
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins.py --output-directory . --framework WebCore $<
