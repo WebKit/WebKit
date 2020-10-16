@@ -1,3 +1,9 @@
+2020-10-15  Sam Weinig  <weinig@apple.com>
+
+        Attempt to fix the build.
+
+        * DumpRenderTree/DerivedSources.make: Don't use such fancy substitution, it wasn't working.
+
 2020-10-15  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Use webkitcorepy's autoinstaller for mechanize

@@ -34,7 +34,7 @@ WEB_PREFERENCES_TEMPLATES = \
     $(DumpRenderTree)/Scripts/PreferencesTemplates/TestOptionsGeneratedKeys.h.erb \
 #
 WEB_PREFERENCES_FILES = $(basename $(notdir $(WEB_PREFERENCES_TEMPLATES)))
-WEB_PREFERENCES_PATTERNS = $(subst .,%,$(WEB_PREFERENCES_FILES))
+WEB_PREFERENCES_PATTERNS = $(subst .erb,,$(WEB_PREFERENCES_FILES))
 
 all : $(WEB_PREFERENCES_FILES)
 
