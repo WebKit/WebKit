@@ -502,6 +502,12 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     }
 #endif
 
+#if PLATFORM(MAC)
+    SandboxExtension::Handle launchServicesExtensionHandle;
+    SandboxExtension::createHandleForMachLookup("com.apple.coreservices.launchservicesd"_s, WTF::nullopt, launchServicesExtensionHandle);
+    parameters.launchServicesExtensionHandle = WTFMove(launchServicesExtensionHandle);
+#endif
+
 #if PLATFORM(IOS_FAMILY) && ENABLE(CFPREFS_DIRECT_MODE)
     if ([UIApplication sharedApplication]) {
         auto state = [[UIApplication sharedApplication] applicationState];

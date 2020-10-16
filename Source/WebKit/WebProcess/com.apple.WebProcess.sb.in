@@ -1003,6 +1003,7 @@
             "com.apple.cfprefsd.agent"
             "com.apple.cfprefsd.daemon"
             "com.apple.containermanagerd"
+            "com.apple.coreservices.launchservicesd"
             "com.apple.diagnosticd"
             "com.apple.iconservices"
             "com.apple.iconservices.store"

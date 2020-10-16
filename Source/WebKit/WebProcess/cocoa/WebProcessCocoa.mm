@@ -274,11 +274,23 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_NSRUNLOOP)
+    RefPtr<SandboxExtension> launchServicesExtension;
+    if (parameters.launchServicesExtensionHandle) {
+        if ((launchServicesExtension = SandboxExtension::create(WTFMove(*parameters.launchServicesExtensionHandle)))) {
+            bool ok = launchServicesExtension->consume();
+            ASSERT_UNUSED(ok, ok);
+        }
+    }
+
     // Need to initialize accessibility for VoiceOver to work when the WebContent process is using NSRunLoop.
     // Currently, it is also needed to allocate and initialize an NSApplication object.
     // This method call will also call RegisterApplication, so there is no need for us to call this or
     // check in with Launch Services
     [NSApplication _accessibilityInitialize];
+
+    // FIXME: (<rdar://problem/70345312): Notify LaunchServices that we will be disconnecting.
+    if (launchServicesExtension)
+        launchServicesExtension->revoke();
 #endif
 
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)

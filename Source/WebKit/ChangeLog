@@ -1,5 +1,25 @@
 2020-10-15  Per Arne Vollan  <pvollan@apple.com>
 
+        [macOS] Issue temporary sandbox extension to the Launch Services daemon
+        https://bugs.webkit.org/show_bug.cgi?id=217781
+        <rdar://problem/70350924>
+
+        Reviewed by Brent Fulgham.
+
+        To support blocking of the Launch Services daemon in the WebContent process, issue temporary sandbox extension to this service on macOS.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2020-10-15  Per Arne Vollan  <pvollan@apple.com>
+
         [macOS] Add telemetry for distributed notification service
         https://bugs.webkit.org/show_bug.cgi?id=217762
         <rdar://problem/70341045>
