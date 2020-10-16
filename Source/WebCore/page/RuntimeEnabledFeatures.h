@@ -171,11 +171,6 @@ public:
     void setWebRTCPlatformCodecsInGPUProcessEnabled(bool isEnabled) { m_isWebRTCPlatformCodecsInGPUProcessEnabled = isEnabled; }
 #endif
 
-#if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
-    void setLegacyCSSVendorPrefixesEnabled(bool isEnabled) { m_isLegacyCSSVendorPrefixesEnabled = isEnabled; }
-    bool legacyCSSVendorPrefixesEnabled() const { return m_isLegacyCSSVendorPrefixesEnabled; }
-#endif
-
 #if ENABLE(DATALIST_ELEMENT)
     bool dataListElementEnabled() const { return m_isDataListElementEnabled; }
     void setDataListElementEnabled(bool isEnabled) { m_isDataListElementEnabled = isEnabled; }
@@ -322,10 +317,6 @@ private:
     bool m_isWebRTCH265CodecEnabled { false };
     bool m_isWebRTCVP9CodecEnabled { false };
     bool m_isWebRTCH264LowLatencyEncoderEnabled { false };
-#endif
-
-#if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
-    bool m_isLegacyCSSVendorPrefixesEnabled { false };
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)

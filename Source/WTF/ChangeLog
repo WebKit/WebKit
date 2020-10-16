@@ -1,3 +1,14 @@
+2020-10-16  Sam Weinig  <weinig@apple.com>
+
+        ENABLE_LEGACY_CSS_VENDOR_PREFIXES and RuntimeEnabledFeatures::legacyCSSVendorPrefixesEnabled() don't do anything
+        https://bugs.webkit.org/show_bug.cgi?id=217833
+
+        Reviewed by Simon Fraser.
+
+        * wtf/PlatformEnable.h:
+        * wtf/PlatformEnableCocoa.h:
+        Remove support for ENABLE_LEGACY_CSS_VENDOR_PREFIXES, which only guarded code that was always disabled.
+
 2020-10-16  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         REGRESSION(r267727): Warning spam from JSC_DECLARE_CUSTOM_GETTER
