@@ -27,7 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "RemoteImageBufferMessageHandler.h"
+#include "RemoteImageBufferMessageHandlerProxy.h"
 #include <WebCore/DisplayListImageBuffer.h>
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/DisplayListRecorder.h>
@@ -37,29 +37,29 @@ namespace WebKit {
 class RemoteRenderingBackend;
 
 template<typename BackendType>
-class RemoteImageBuffer : public WebCore::DisplayList::ImageBuffer<BackendType>, public RemoteImageBufferMessageHandler {
+class RemoteImageBufferProxy : public WebCore::DisplayList::ImageBuffer<BackendType>, public RemoteImageBufferMessageHandlerProxy {
     using BaseDisplayListImageBuffer = WebCore::DisplayList::ImageBuffer<BackendType>;
     using BaseDisplayListImageBuffer::m_backend;
     using BaseDisplayListImageBuffer::m_drawingContext;
 
 public:
-    static std::unique_ptr<RemoteImageBuffer> create(const WebCore::FloatSize& size, WebCore::RenderingMode renderingMode, float resolutionScale, WebCore::ColorSpace colorSpace, RemoteRenderingBackend& remoteRenderingBackend)
+    static std::unique_ptr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, WebCore::RenderingMode renderingMode, float resolutionScale, WebCore::ColorSpace colorSpace, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
     {
         if (BackendType::calculateBackendSize(size, resolutionScale).isEmpty())
             return nullptr;
 
-        return std::unique_ptr<RemoteImageBuffer>(new RemoteImageBuffer(size, renderingMode, resolutionScale, colorSpace, remoteRenderingBackend));
+        return std::unique_ptr<RemoteImageBufferProxy>(new RemoteImageBufferProxy(size, renderingMode, resolutionScale, colorSpace, remoteRenderingBackendProxy));
     }
 
-    ~RemoteImageBuffer()
+    ~RemoteImageBufferProxy()
     {
         flushDrawingContext();
     }
 
 protected:
-    RemoteImageBuffer(const WebCore::FloatSize& size, WebCore::RenderingMode renderingMode, float resolutionScale, WebCore::ColorSpace colorSpace, RemoteRenderingBackend& remoteRenderingBackend)
+    RemoteImageBufferProxy(const WebCore::FloatSize& size, WebCore::RenderingMode renderingMode, float resolutionScale, WebCore::ColorSpace colorSpace, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
         : BaseDisplayListImageBuffer(size)
-        , RemoteImageBufferMessageHandler(size, renderingMode, resolutionScale, colorSpace, remoteRenderingBackend)
+        , RemoteImageBufferMessageHandlerProxy(size, renderingMode, resolutionScale, colorSpace, remoteRenderingBackendProxy)
     {
     }
 
@@ -74,15 +74,15 @@ protected:
     BackendType* ensureBackendCreated() const override
     {
         if (!m_backend)
-            const_cast<RemoteImageBuffer&>(*this).RemoteImageBufferMessageHandler::waitForCreateImageBufferBackend();
+            const_cast<RemoteImageBufferProxy&>(*this).RemoteImageBufferMessageHandlerProxy::waitForCreateImageBufferBackend();
         return m_backend.get();
     }
 
     RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect) const override
     {
-        auto& displayList = const_cast<RemoteImageBuffer*>(this)->m_drawingContext.displayList();
-        const_cast<RemoteImageBuffer*>(this)->RemoteImageBufferMessageHandler::flushDrawingContext(displayList);
-        auto result = const_cast<RemoteImageBuffer*>(this)->RemoteImageBufferMessageHandler::getImageData(outputFormat, srcRect);
+        auto& displayList = const_cast<RemoteImageBufferProxy*>(this)->m_drawingContext.displayList();
+        const_cast<RemoteImageBufferProxy*>(this)->RemoteImageBufferMessageHandlerProxy::flushDrawingContext(displayList);
+        auto result = const_cast<RemoteImageBufferProxy*>(this)->RemoteImageBufferMessageHandlerProxy::getImageData(outputFormat, srcRect);
         // getImageData is synchronous, which means we've already received the CommitImageBufferFlushContext message.
         return result;
     }
@@ -105,7 +105,7 @@ protected:
     {
         auto& displayList = m_drawingContext.displayList();
         if (displayList.itemCount())
-            RemoteImageBufferMessageHandler::flushDrawingContextAndWaitCommit(displayList);
+            RemoteImageBufferMessageHandlerProxy::flushDrawingContextAndWaitCommit(displayList);
     }
     
     void willAppendItem(const WebCore::DisplayList::Item&) override
@@ -113,7 +113,7 @@ protected:
         constexpr size_t DisplayListBatchSize = 512;
         auto& displayList = m_drawingContext.displayList();
         if (displayList.itemCount() >= DisplayListBatchSize)
-            RemoteImageBufferMessageHandler::flushDrawingContext(displayList);
+            RemoteImageBufferMessageHandlerProxy::flushDrawingContext(displayList);
     }
 };
 

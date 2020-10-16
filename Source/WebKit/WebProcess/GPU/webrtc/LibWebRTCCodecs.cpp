@@ -31,6 +31,7 @@
 #include "DataReference.h"
 #include "GPUProcessConnection.h"
 #include "LibWebRTCCodecsProxyMessages.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include <WebCore/LibWebRTCMacros.h>
 #include <WebCore/RealtimeVideoUtilities.h>

@@ -24,30 +24,30 @@
  */
 
 #include "config.h"
-#include "RemoteImageBufferMessageHandlerProxy.h"
+#include "RemoteImageBufferMessageHandler.h"
 
 #if ENABLE(GPU_PROCESS)
 
-#include "RemoteRenderingBackendMessages.h"
-#include "RemoteRenderingBackendProxy.h"
+#include "RemoteRenderingBackend.h"
+#include "RemoteRenderingBackendProxyMessages.h"
 
 namespace WebKit {
 using namespace WebCore;
 
-RemoteImageBufferMessageHandlerProxy::RemoteImageBufferMessageHandlerProxy(RemoteRenderingBackendProxy& remoteRenderingBackendProxy, WebCore::RemoteResourceIdentifier remoteResourceIdentifier)
-    : m_remoteRenderingBackendProxy(remoteRenderingBackendProxy)
+RemoteImageBufferMessageHandler::RemoteImageBufferMessageHandler(RemoteRenderingBackend& remoteRenderingBackend, WebCore::RemoteResourceIdentifier remoteResourceIdentifier)
+    : m_remoteRenderingBackend(remoteRenderingBackend)
     , m_remoteResourceIdentifier(remoteResourceIdentifier)
 {
 }
 
-void RemoteImageBufferMessageHandlerProxy::createBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, ImageBufferBackendHandle handle)
+void RemoteImageBufferMessageHandler::createBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, ImageBufferBackendHandle handle)
 {
-    m_remoteRenderingBackendProxy.send(Messages::RemoteRenderingBackend::CreateImageBufferBackend(logicalSize, backendSize, resolutionScale, colorSpace, WTFMove(handle), m_remoteResourceIdentifier), m_remoteRenderingBackendProxy.renderingBackendIdentifier());
+    m_remoteRenderingBackend.send(Messages::RemoteRenderingBackendProxy::CreateImageBufferBackend(logicalSize, backendSize, resolutionScale, colorSpace, WTFMove(handle), m_remoteResourceIdentifier), m_remoteRenderingBackend.renderingBackendIdentifier());
 }
 
-void RemoteImageBufferMessageHandlerProxy::commitFlushContext(ImageBufferFlushIdentifier flushIdentifier)
+void RemoteImageBufferMessageHandler::commitFlushContext(ImageBufferFlushIdentifier flushIdentifier)
 {
-    m_remoteRenderingBackendProxy.send(Messages::RemoteRenderingBackend::CommitImageBufferFlushContext(flushIdentifier, m_remoteResourceIdentifier), m_remoteRenderingBackendProxy.renderingBackendIdentifier());
+    m_remoteRenderingBackend.send(Messages::RemoteRenderingBackendProxy::CommitImageBufferFlushContext(flushIdentifier, m_remoteResourceIdentifier), m_remoteRenderingBackend.renderingBackendIdentifier());
 }
 
 } // namespace WebKit

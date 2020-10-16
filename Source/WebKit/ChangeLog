@@ -1,3 +1,96 @@
+2020-10-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [GPU Process] Exchange RemoteImageBuffer and RemoteImageBufferProxy
+        https://bugs.webkit.org/show_bug.cgi?id=217809
+
+        Reviewed by Simon Fraser.
+
+        The names of the GPU rendering classes have been confusing. RemoteImageBuffer
+        should be the real object in the GPU Process because it owns the backend.
+        And RemoteImageBufferProxy should be a proxy to this object in the Web
+        Process. So we are going to exchange the following classes:
+
+        -- RemoteImageBuffer <-> RemoteImageBufferProxy
+        -- RemoteRenderingBackend <-> RemoteRenderingBackendProxy
+        -- RemoteImageBufferMessageHandler <-> RemoteImageBufferMessageHandlerProxy
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::createRenderingBackend):
+        (WebKit::GPUConnectionToWebProcess::releaseRenderingBackend):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/graphics/PlatformRemoteImageBuffer.h: Renamed from Source/WebKit/WebProcess/GPU/graphics/PlatformRemoteImageBuffer.h.
+        * GPUProcess/graphics/RemoteImageBuffer.h: Renamed from Source/WebKit/GPUProcess/graphics/RemoteImageBufferProxy.h.
+        (WebKit::RemoteImageBuffer::create):
+        (WebKit::RemoteImageBuffer::RemoteImageBuffer):
+        (WebKit::RemoteImageBuffer::~RemoteImageBuffer):
+        (WebKit::RemoteImageBuffer::apply):
+        * GPUProcess/graphics/RemoteImageBufferMessageHandler.cpp: Renamed from Source/WebKit/GPUProcess/graphics/RemoteImageBufferMessageHandlerProxy.cpp.
+        (WebKit::RemoteImageBufferMessageHandler::RemoteImageBufferMessageHandler):
+        (WebKit::RemoteImageBufferMessageHandler::createBackend):
+        (WebKit::RemoteImageBufferMessageHandler::commitFlushContext):
+        * GPUProcess/graphics/RemoteImageBufferMessageHandler.h: Renamed from Source/WebKit/GPUProcess/graphics/RemoteImageBufferMessageHandlerProxy.h.
+        (WebKit::RemoteImageBufferMessageHandler::backend):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp: Renamed from Source/WebKit/GPUProcess/graphics/RemoteRenderingBackendProxy.cpp.
+        (WebKit::RemoteRenderingBackend::create):
+        (WebKit::RemoteRenderingBackend::RemoteRenderingBackend):
+        (WebKit::RemoteRenderingBackend::~RemoteRenderingBackend):
+        (WebKit::RemoteRenderingBackend::messageSenderConnection const):
+        (WebKit::RemoteRenderingBackend::messageSenderDestinationID const):
+        (WebKit::RemoteRenderingBackend::createImageBuffer):
+        (WebKit::RemoteRenderingBackend::releaseRemoteResource):
+        (WebKit::RemoteRenderingBackend::getImageData):
+        (WebKit::RemoteRenderingBackend::flushImageBufferDrawingContext):
+        (WebKit::RemoteRenderingBackend::flushImageBufferDrawingContextAndCommit):
+        (WebKit::RemoteRenderingBackend::gpuConnectionToWebProcess const):
+        * GPUProcess/graphics/RemoteRenderingBackend.h: Renamed from Source/WebKit/GPUProcess/graphics/RemoteRenderingBackendProxy.h.
+        (WebKit::RemoteRenderingBackend::renderingBackendIdentifier const):
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in: Renamed from Source/WebKit/GPUProcess/graphics/RemoteRenderingBackendProxy.messages.in.
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.cpp:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/PlatformRemoteImageBufferProxy.h: Renamed from Source/WebKit/GPUProcess/graphics/PlatformRemoteImageBufferProxy.h.
+        * WebProcess/GPU/graphics/RemoteImageBufferMessageHandler.cpp: Removed.
+        * WebProcess/GPU/graphics/RemoteImageBufferMessageHandlerProxy.cpp: Added.
+        (WebKit::RemoteImageBufferMessageHandlerProxy::RemoteImageBufferMessageHandlerProxy):
+        (WebKit::RemoteImageBufferMessageHandlerProxy::~RemoteImageBufferMessageHandlerProxy):
+        (WebKit::RemoteImageBufferMessageHandlerProxy::getImageData const):
+        (WebKit::RemoteImageBufferMessageHandlerProxy::waitForCreateImageBufferBackend):
+        (WebKit::RemoteImageBufferMessageHandlerProxy::waitForCommitImageBufferFlushContext):
+        (WebKit::RemoteImageBufferMessageHandlerProxy::flushDrawingContext):
+        (WebKit::RemoteImageBufferMessageHandlerProxy::flushDrawingContextAndWaitCommit):
+        (WebKit::RemoteImageBufferMessageHandlerProxy::commitFlushContext):
+        * WebProcess/GPU/graphics/RemoteImageBufferMessageHandlerProxy.h: Renamed from Source/WebKit/WebProcess/GPU/graphics/RemoteImageBufferMessageHandler.h.
+        (WebKit::RemoteImageBufferMessageHandlerProxy::remoteResourceIdentifier const):
+        (WebKit::RemoteImageBufferMessageHandlerProxy::isPendingFlush const):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h: Renamed from Source/WebKit/WebProcess/GPU/graphics/RemoteImageBuffer.h.
+        (WebKit::RemoteImageBufferProxy::create):
+        (WebKit::RemoteImageBufferProxy::~RemoteImageBufferProxy):
+        (WebKit::RemoteImageBufferProxy::RemoteImageBufferProxy):
+        (WebKit::RemoteImageBufferProxy::putImageData):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp: Renamed from Source/WebKit/WebProcess/GPU/graphics/RemoteRenderingBackend.cpp.
+        (WebKit::RemoteRenderingBackendProxy::create):
+        (WebKit::RemoteRenderingBackendProxy::RemoteRenderingBackendProxy):
+        (WebKit::RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy):
+        (WebKit::RemoteRenderingBackendProxy::messageSenderConnection const):
+        (WebKit::RemoteRenderingBackendProxy::messageSenderDestinationID const):
+        (WebKit::RemoteRenderingBackendProxy::waitForCreateImageBufferBackend):
+        (WebKit::RemoteRenderingBackendProxy::waitForCommitImageBufferFlushContext):
+        (WebKit::RemoteRenderingBackendProxy::createImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::releaseRemoteResource):
+        (WebKit::RemoteRenderingBackendProxy::createImageBufferBackend):
+        (WebKit::RemoteRenderingBackendProxy::commitImageBufferFlushContext):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h: Renamed from Source/WebKit/WebProcess/GPU/graphics/RemoteRenderingBackend.h.
+        (WebKit::RemoteRenderingBackendProxy::renderingBackendIdentifier const):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.messages.in: Renamed from Source/WebKit/WebProcess/GPU/graphics/RemoteRenderingBackend.messages.in.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::ensureRemoteRenderingBackendProxy const):
+        (WebKit::WebChromeClient::createImageBuffer const):
+        (WebKit::WebChromeClient::ensureRemoteRenderingBackend const): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2020-10-16  Eric Carlson  <eric.carlson@apple.com>
 
         [GPU Process] Implement VideoPlaybackMetrics

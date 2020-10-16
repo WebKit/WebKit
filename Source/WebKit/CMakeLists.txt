@@ -123,7 +123,7 @@ set(WebKit_MESSAGES_IN_FILES
     GPUProcess/GPUConnectionToWebProcess
     GPUProcess/GPUProcess
 
-    GPUProcess/graphics/RemoteRenderingBackendProxy
+    GPUProcess/graphics/RemoteRenderingBackend
 
     GPUProcess/media/RemoteAudioDestinationManager
     GPUProcess/media/RemoteAudioSessionProxy
@@ -215,7 +215,7 @@ set(WebKit_MESSAGES_IN_FILES
 
     WebProcess/GPU/GPUProcessConnection
 
-    WebProcess/GPU/graphics/RemoteRenderingBackend
+    WebProcess/GPU/graphics/RemoteRenderingBackendProxy
 
     WebProcess/GPU/media/MediaPlayerPrivateRemote
     WebProcess/GPU/media/RemoteAudioDestinationProxy

@@ -35,25 +35,25 @@
 namespace WebKit {
 
 template<typename BackendType>
-class RemoteImageBufferProxy : public WebCore::ConcreteImageBuffer<BackendType>, public RemoteImageBufferMessageHandlerProxy, public WebCore::DisplayList::Replayer::Delegate {
+class RemoteImageBuffer : public WebCore::ConcreteImageBuffer<BackendType>, public RemoteImageBufferMessageHandler, public WebCore::DisplayList::Replayer::Delegate {
     using BaseConcreteImageBuffer = WebCore::ConcreteImageBuffer<BackendType>;
     using BaseConcreteImageBuffer::context;
     using BaseConcreteImageBuffer::m_backend;
 
 public:
-    static auto create(const WebCore::FloatSize& size, float resolutionScale, WebCore::ColorSpace colorSpace, RemoteRenderingBackendProxy& remoteRenderingBackendProxy, WebCore::RemoteResourceIdentifier remoteResourceIdentifier)
+    static auto create(const WebCore::FloatSize& size, float resolutionScale, WebCore::ColorSpace colorSpace, RemoteRenderingBackend& remoteRenderingBackend, WebCore::RemoteResourceIdentifier remoteResourceIdentifier)
     {
-        return BaseConcreteImageBuffer::template create<RemoteImageBufferProxy>(size, resolutionScale, colorSpace, nullptr, remoteRenderingBackendProxy, remoteResourceIdentifier);
+        return BaseConcreteImageBuffer::template create<RemoteImageBuffer>(size, resolutionScale, colorSpace, nullptr, remoteRenderingBackend, remoteResourceIdentifier);
     }
 
-    RemoteImageBufferProxy(std::unique_ptr<BackendType>&& backend, RemoteRenderingBackendProxy& remoteRenderingBackendProxy, WebCore::RemoteResourceIdentifier remoteResourceIdentifier)
+    RemoteImageBuffer(std::unique_ptr<BackendType>&& backend, RemoteRenderingBackend& remoteRenderingBackend, WebCore::RemoteResourceIdentifier remoteResourceIdentifier)
         : BaseConcreteImageBuffer(WTFMove(backend))
-        , RemoteImageBufferMessageHandlerProxy(remoteRenderingBackendProxy, remoteResourceIdentifier)
+        , RemoteImageBufferMessageHandler(remoteRenderingBackend, remoteResourceIdentifier)
     {
         createBackend(m_backend->logicalSize(), m_backend->backendSize(), m_backend->resolutionScale(), m_backend->colorSpace(), m_backend->createImageBufferBackendHandle());
     }
 
-    ~RemoteImageBufferProxy()
+    ~RemoteImageBuffer()
     {
         // Unwind the context's state stack before destruction, since calls to restore may not have
         // been flushed yet, or the web process may have terminated.

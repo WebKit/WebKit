@@ -41,28 +41,28 @@ class ImageData;
 
 namespace WebKit {
 
-class RemoteRenderingBackendProxy;
+class RemoteRenderingBackend;
 
-class RemoteImageBufferMessageHandlerProxy {
+class RemoteImageBufferMessageHandler {
 public:
-    virtual ~RemoteImageBufferMessageHandlerProxy() = default;
+    virtual ~RemoteImageBufferMessageHandler() = default;
 
-    // Messages to be received. See RemoteRenderingBackendProxy.messages.in.
+    // Messages to be received. See RemoteRenderingBackend.messages.in.
     virtual void flushDrawingContext(const WebCore::DisplayList::DisplayList&) = 0;
     virtual void flushDrawingContextAndCommit(const WebCore::DisplayList::DisplayList&, ImageBufferFlushIdentifier) = 0;
     virtual RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect) const = 0;
 
 protected:
-    RemoteImageBufferMessageHandlerProxy(RemoteRenderingBackendProxy&, WebCore::RemoteResourceIdentifier);
+    RemoteImageBufferMessageHandler(RemoteRenderingBackend&, WebCore::RemoteResourceIdentifier);
 
     // Messages to be sent. See RemoteRenderingBackend.messages.in.
     void createBackend(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle);
     void commitFlushContext(ImageBufferFlushIdentifier);
 
-    RemoteRenderingBackendProxy& backend() { return m_remoteRenderingBackendProxy; }
+    RemoteRenderingBackend& backend() { return m_remoteRenderingBackend; }
 
 private:
-    RemoteRenderingBackendProxy& m_remoteRenderingBackendProxy;
+    RemoteRenderingBackend& m_remoteRenderingBackend;
     WebCore::RemoteResourceIdentifier m_remoteResourceIdentifier;
 };
 

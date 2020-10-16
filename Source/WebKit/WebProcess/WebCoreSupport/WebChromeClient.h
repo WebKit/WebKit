@@ -37,7 +37,7 @@ enum class StorageAccessWasGranted : bool;
 
 namespace WebKit {
 
-class RemoteRenderingBackend;
+class RemoteRenderingBackendProxy;
 class WebFrame;
 class WebPage;
 
@@ -242,7 +242,7 @@ private:
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) const final;
 
 #if ENABLE(GPU_PROCESS)
-    RemoteRenderingBackend& ensureRemoteRenderingBackend() const;
+    RemoteRenderingBackendProxy& ensureRemoteRenderingBackendProxy() const;
     std::unique_ptr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::ShouldAccelerate, WebCore::ShouldUseDisplayList, WebCore::RenderingPurpose, float resolutionScale, WebCore::ColorSpace) const final;
 #endif
 
@@ -405,7 +405,7 @@ private:
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };
     mutable bool m_cachedMainFrameHasVerticalScrollbar { false };
 #if ENABLE(GPU_PROCESS)
-    mutable std::unique_ptr<RemoteRenderingBackend> m_remoteRenderingBackend;
+    mutable std::unique_ptr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
 #endif
     WebPage& m_page;
 };

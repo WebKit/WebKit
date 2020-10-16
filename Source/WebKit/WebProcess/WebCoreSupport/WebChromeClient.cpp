@@ -39,7 +39,7 @@
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "PageBanner.h"
-#include "RemoteRenderingBackend.h"
+#include "RemoteRenderingBackendProxy.h"
 #include "UserData.h"
 #include "WebColorChooser.h"
 #include "WebCoreArgumentCoders.h"
@@ -894,11 +894,11 @@ RefPtr<DisplayRefreshMonitor> WebChromeClient::createDisplayRefreshMonitor(Platf
 
 #if ENABLE(GPU_PROCESS)
 
-RemoteRenderingBackend& WebChromeClient::ensureRemoteRenderingBackend() const
+RemoteRenderingBackendProxy& WebChromeClient::ensureRemoteRenderingBackendProxy() const
 {
-    if (!m_remoteRenderingBackend)
-        m_remoteRenderingBackend = RemoteRenderingBackend::create();
-    return *m_remoteRenderingBackend;
+    if (!m_remoteRenderingBackendProxy)
+        m_remoteRenderingBackendProxy = RemoteRenderingBackendProxy::create();
+    return *m_remoteRenderingBackendProxy;
 }
 
 std::unique_ptr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, ShouldAccelerate shouldAccelerate, ShouldUseDisplayList shouldUseDisplayList, RenderingPurpose purpose, float resolutionScale, ColorSpace colorSpace) const
@@ -906,7 +906,7 @@ std::unique_ptr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize&
     if (!m_page.shouldUseRemoteRenderingFor(purpose))
         return nullptr;
 
-    return ensureRemoteRenderingBackend().createImageBuffer(size, shouldAccelerate, resolutionScale, colorSpace);
+    return ensureRemoteRenderingBackendProxy().createImageBuffer(size, shouldAccelerate, resolutionScale, colorSpace);
 }
 
 #endif // ENABLE(GPU_PROCESS)

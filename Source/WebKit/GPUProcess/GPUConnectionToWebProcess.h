@@ -31,7 +31,6 @@
 #include "GPUConnectionToWebProcessMessages.h"
 #include "MessageReceiverMap.h"
 #include "RemoteAudioSessionIdentifier.h"
-#include "RemoteRenderingBackendProxy.h"
 #include "RenderingBackendIdentifier.h"
 #include <WebCore/LibWebRTCEnumTraits.h>
 #include <WebCore/NowPlayingManager.h>
@@ -54,6 +53,7 @@ class RemoteMediaPlayerManagerProxy;
 class RemoteMediaRecorderManager;
 class RemoteMediaResourceManager;
 class RemoteMediaSessionHelperProxy;
+class RemoteRenderingBackend;
 class RemoteSampleBufferDisplayLayerManager;
 class UserMediaCaptureManagerProxy;
 struct RemoteAudioSessionConfiguration;
@@ -178,8 +178,8 @@ private:
     bool m_allowsDisplayCapture { false };
 #endif
 
-    using RemoteRenderingBackendProxyMap = HashMap<RenderingBackendIdentifier, std::unique_ptr<RemoteRenderingBackendProxy>>;
-    RemoteRenderingBackendProxyMap m_remoteRenderingBackendProxyMap;
+    using RemoteRenderingBackendMap = HashMap<RenderingBackendIdentifier, std::unique_ptr<RemoteRenderingBackend>>;
+    RemoteRenderingBackendMap m_remoteRenderingBackendMap;
 
 #if ENABLE(ENCRYPTED_MEDIA)
     std::unique_ptr<RemoteCDMFactoryProxy> m_cdmFactoryProxy;

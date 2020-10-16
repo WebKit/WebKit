@@ -32,7 +32,7 @@
 #include "ImageDataReference.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
-#include "RemoteImageBufferMessageHandlerProxy.h"
+#include "RemoteImageBufferMessageHandler.h"
 #include "RenderingBackendIdentifier.h"
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DisplayListItems.h>
@@ -52,18 +52,18 @@ namespace WebKit {
 
 class GPUConnectionToWebProcess;
 
-class RemoteRenderingBackendProxy
+class RemoteRenderingBackend
     : public IPC::MessageSender
     , private IPC::MessageReceiver {
 public:
-    static std::unique_ptr<RemoteRenderingBackendProxy> create(GPUConnectionToWebProcess&, RenderingBackendIdentifier);
-    virtual ~RemoteRenderingBackendProxy();
+    static std::unique_ptr<RemoteRenderingBackend> create(GPUConnectionToWebProcess&, RenderingBackendIdentifier);
+    virtual ~RemoteRenderingBackend();
 
     RenderingBackendIdentifier renderingBackendIdentifier() const { return m_renderingBackendIdentifier; }
     GPUConnectionToWebProcess* gpuConnectionToWebProcess() const;
 
 private:
-    RemoteRenderingBackendProxy(GPUConnectionToWebProcess&, RenderingBackendIdentifier);
+    RemoteRenderingBackend(GPUConnectionToWebProcess&, RenderingBackendIdentifier);
 
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const override;
@@ -80,7 +80,7 @@ private:
     void flushImageBufferDrawingContextAndCommit(const WebCore::DisplayList::DisplayList&, ImageBufferFlushIdentifier, WebCore::RemoteResourceIdentifier);
     void getImageData(WebCore::AlphaPremultiplication outputFormat, WebCore::IntRect srcRect, WebCore::RemoteResourceIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&&);
 
-    using ImageBufferMessageHandlerMap = HashMap<WebCore::RemoteResourceIdentifier, std::unique_ptr<RemoteImageBufferMessageHandlerProxy>>;
+    using ImageBufferMessageHandlerMap = HashMap<WebCore::RemoteResourceIdentifier, std::unique_ptr<RemoteImageBufferMessageHandler>>;
     ImageBufferMessageHandlerMap m_imageBufferMessageHandlerMap;
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     RenderingBackendIdentifier m_renderingBackendIdentifier;

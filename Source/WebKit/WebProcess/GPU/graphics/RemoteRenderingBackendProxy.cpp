@@ -24,13 +24,13 @@
  */
 
 #include "config.h"
-#include "RemoteRenderingBackend.h"
+#include "RemoteRenderingBackendProxy.h"
 
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcessConnection.h"
-#include "PlatformRemoteImageBuffer.h"
+#include "PlatformRemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
 #include "WebProcess.h"
@@ -39,63 +39,63 @@ namespace WebKit {
 
 using namespace WebCore;
 
-std::unique_ptr<RemoteRenderingBackend> RemoteRenderingBackend::create()
+std::unique_ptr<RemoteRenderingBackendProxy> RemoteRenderingBackendProxy::create()
 {
-    return std::unique_ptr<RemoteRenderingBackend>(new RemoteRenderingBackend());
+    return std::unique_ptr<RemoteRenderingBackendProxy>(new RemoteRenderingBackendProxy());
 }
 
-RemoteRenderingBackend::RemoteRenderingBackend()
+RemoteRenderingBackendProxy::RemoteRenderingBackendProxy()
 {
     // Register itself as a MessageReceiver in the GPUProcessConnection.
     IPC::MessageReceiverMap& messageReceiverMap = WebProcess::singleton().ensureGPUProcessConnection().messageReceiverMap();
-    messageReceiverMap.addMessageReceiver(Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64(), *this);
+    messageReceiverMap.addMessageReceiver(Messages::RemoteRenderingBackendProxy::messageReceiverName(), m_renderingBackendIdentifier.toUInt64(), *this);
 
-    // Create the RemoteRenderingBackendProxy.
+    // Create the RemoteRenderingBackend
     send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_renderingBackendIdentifier), 0);
 }
 
-RemoteRenderingBackend::~RemoteRenderingBackend()
+RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy()
 {
     // Un-register itself as a MessageReceiver.
     IPC::MessageReceiverMap& messageReceiverMap = WebProcess::singleton().ensureGPUProcessConnection().messageReceiverMap();
     messageReceiverMap.removeMessageReceiver(*this);
 
-    // Release the RemoteRenderingBackendProxy.
+    // Release the RemoteRenderingBackend.
     send(Messages::GPUConnectionToWebProcess::ReleaseRenderingBackend(m_renderingBackendIdentifier), 0);
 }
 
-IPC::Connection* RemoteRenderingBackend::messageSenderConnection() const
+IPC::Connection* RemoteRenderingBackendProxy::messageSenderConnection() const
 {
     return &WebProcess::singleton().ensureGPUProcessConnection().connection();
 }
 
-uint64_t RemoteRenderingBackend::messageSenderDestinationID() const
+uint64_t RemoteRenderingBackendProxy::messageSenderDestinationID() const
 {
     return m_renderingBackendIdentifier.toUInt64();
 }
 
-bool RemoteRenderingBackend::waitForCreateImageBufferBackend()
+bool RemoteRenderingBackendProxy::waitForCreateImageBufferBackend()
 {
     Ref<IPC::Connection> connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
-    return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackend::CreateImageBufferBackend>(m_renderingBackendIdentifier, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+    return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::CreateImageBufferBackend>(m_renderingBackendIdentifier, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
 }
 
-bool RemoteRenderingBackend::waitForCommitImageBufferFlushContext()
+bool RemoteRenderingBackendProxy::waitForCommitImageBufferFlushContext()
 {
     Ref<IPC::Connection> connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
-    return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackend::CommitImageBufferFlushContext>(m_renderingBackendIdentifier, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+    return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::CommitImageBufferFlushContext>(m_renderingBackendIdentifier, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
 }
 
-std::unique_ptr<ImageBuffer> RemoteRenderingBackend::createImageBuffer(const FloatSize& size, ShouldAccelerate shouldAccelerate, float resolutionScale, ColorSpace colorSpace)
+std::unique_ptr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, ShouldAccelerate shouldAccelerate, float resolutionScale, ColorSpace colorSpace)
 {
     if (shouldAccelerate == ShouldAccelerate::Yes) {
-        if (auto imageBuffer = AcceleratedRemoteImageBuffer::create(size, RenderingMode::RemoteAccelerated, resolutionScale, colorSpace, *this)) {
+        if (auto imageBuffer = AcceleratedRemoteImageBufferProxy::create(size, RenderingMode::RemoteAccelerated, resolutionScale, colorSpace, *this)) {
             m_imageBufferMessageHandlerMap.add(imageBuffer->remoteResourceIdentifier(), imageBuffer.get());
             return imageBuffer;
         }
     }
 
-    if (auto imageBuffer = UnacceleratedRemoteImageBuffer::create(size, RenderingMode::RemoteUnaccelerated, resolutionScale, colorSpace, *this)) {
+    if (auto imageBuffer = UnacceleratedRemoteImageBufferProxy::create(size, RenderingMode::RemoteUnaccelerated, resolutionScale, colorSpace, *this)) {
         m_imageBufferMessageHandlerMap.add(imageBuffer->remoteResourceIdentifier(), imageBuffer.get());
         return imageBuffer;
     }
@@ -103,20 +103,20 @@ std::unique_ptr<ImageBuffer> RemoteRenderingBackend::createImageBuffer(const Flo
     return nullptr;
 }
 
-void RemoteRenderingBackend::releaseRemoteResource(RemoteResourceIdentifier remoteResourceIdentifier)
+void RemoteRenderingBackendProxy::releaseRemoteResource(RemoteResourceIdentifier remoteResourceIdentifier)
 {
     // CreateImageBuffer message should have been received before this one.
     bool found = m_imageBufferMessageHandlerMap.remove(remoteResourceIdentifier);
     ASSERT_UNUSED(found, found);
 }
 
-void RemoteRenderingBackend::createImageBufferBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, ImageBufferBackendHandle handle, RemoteResourceIdentifier remoteResourceIdentifier)
+void RemoteRenderingBackendProxy::createImageBufferBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, ImageBufferBackendHandle handle, RemoteResourceIdentifier remoteResourceIdentifier)
 {
     if (auto imageBuffer = m_imageBufferMessageHandlerMap.get(remoteResourceIdentifier))
         imageBuffer->createBackend(logicalSize, backendSize, resolutionScale, colorSpace, WTFMove(handle));
 }
 
-void RemoteRenderingBackend::commitImageBufferFlushContext(ImageBufferFlushIdentifier flushIdentifier, RemoteResourceIdentifier remoteResourceIdentifier)
+void RemoteRenderingBackendProxy::commitImageBufferFlushContext(ImageBufferFlushIdentifier flushIdentifier, RemoteResourceIdentifier remoteResourceIdentifier)
 {
     if (auto imageBuffer = m_imageBufferMessageHandlerMap.get(remoteResourceIdentifier))
         imageBuffer->commitFlushContext(flushIdentifier);

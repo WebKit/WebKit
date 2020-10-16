@@ -32,6 +32,7 @@
 #include "RemoteCDMFactoryProxy.h"
 #include "RemoteCDMInstanceSessionMessages.h"
 #include "SharedBufferCopy.h"
+#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
 

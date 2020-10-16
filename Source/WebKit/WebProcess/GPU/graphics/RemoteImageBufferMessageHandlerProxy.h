@@ -42,11 +42,11 @@ enum class AlphaPremultiplication : uint8_t;
 
 namespace WebKit {
 
-class RemoteRenderingBackend;
+class RemoteRenderingBackendProxy;
 
-class RemoteImageBufferMessageHandler {
+class RemoteImageBufferMessageHandlerProxy {
 public:
-    virtual ~RemoteImageBufferMessageHandler();
+    virtual ~RemoteImageBufferMessageHandlerProxy();
 
     WebCore::RemoteResourceIdentifier remoteResourceIdentifier() const { return m_remoteResourceIdentifier; }
 
@@ -56,7 +56,7 @@ public:
     void commitFlushContext(ImageBufferFlushIdentifier);
 
 protected:
-    RemoteImageBufferMessageHandler(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace, RemoteRenderingBackend&);
+    RemoteImageBufferMessageHandlerProxy(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace, RemoteRenderingBackendProxy&);
 
     virtual bool isBackendCreated() const = 0;
     bool isPendingFlush() const { return m_sentFlushIdentifier != m_receivedFlushIdentifier; }
@@ -71,7 +71,7 @@ protected:
     void flushDrawingContextAndWaitCommit(WebCore::DisplayList::DisplayList&);
 
 private:
-    WeakPtr<RemoteRenderingBackend> m_remoteRenderingBackend;
+    WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     WebCore::RemoteResourceIdentifier m_remoteResourceIdentifier { WebCore::RemoteResourceIdentifier::generate() };
 
     ImageBufferFlushIdentifier m_sentFlushIdentifier;

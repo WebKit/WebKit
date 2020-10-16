@@ -31,7 +31,7 @@
 #include "ImageBufferFlushIdentifier.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
-#include "RemoteImageBufferMessageHandler.h"
+#include "RemoteImageBufferMessageHandlerProxy.h"
 #include "RenderingBackendIdentifier.h"
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DisplayList.h>
@@ -43,14 +43,14 @@
 
 namespace WebKit {
 
-class RemoteRenderingBackend
+class RemoteRenderingBackendProxy
     : public IPC::MessageSender
     , private IPC::MessageReceiver
-    , public CanMakeWeakPtr<RemoteRenderingBackend> {
+    , public CanMakeWeakPtr<RemoteRenderingBackendProxy> {
 public:
-    static std::unique_ptr<RemoteRenderingBackend> create();
+    static std::unique_ptr<RemoteRenderingBackendProxy> create();
 
-    ~RemoteRenderingBackend();
+    ~RemoteRenderingBackendProxy();
 
     RenderingBackendIdentifier renderingBackendIdentifier() const { return m_renderingBackendIdentifier; }
 
@@ -68,13 +68,13 @@ public:
     bool waitForCommitImageBufferFlushContext();
 
 private:
-    RemoteRenderingBackend();
+    RemoteRenderingBackendProxy();
 
     // Messages to be received.
     void createImageBufferBackend(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle, WebCore::RemoteResourceIdentifier);
     void commitImageBufferFlushContext(ImageBufferFlushIdentifier, WebCore::RemoteResourceIdentifier);
 
-    using ImageBufferMessageHandlerMap = HashMap<WebCore::RemoteResourceIdentifier, RemoteImageBufferMessageHandler*>;
+    using ImageBufferMessageHandlerMap = HashMap<WebCore::RemoteResourceIdentifier, RemoteImageBufferMessageHandlerProxy*>;
     ImageBufferMessageHandlerMap m_imageBufferMessageHandlerMap;
     RenderingBackendIdentifier m_renderingBackendIdentifier { RenderingBackendIdentifier::generate() };
 };

@@ -169,7 +169,7 @@ MESSAGE_RECEIVERS = \
 	UIProcess/Media/AudioSessionRoutingArbitratorProxy \
 	WebProcess/Databases/IndexedDB/WebIDBConnectionToServer \
 	WebProcess/GPU/GPUProcessConnection \
-	WebProcess/GPU/graphics/RemoteRenderingBackend \
+	WebProcess/GPU/graphics/RemoteRenderingBackendProxy \
 	WebProcess/GPU/webrtc/LibWebRTCCodecs \
 	WebProcess/GPU/webrtc/SampleBufferDisplayLayer \
 	WebProcess/GPU/media/MediaPlayerPrivateRemote \
@@ -222,7 +222,7 @@ MESSAGE_RECEIVERS = \
 	PluginProcess/PluginControllerProxy \
 	PluginProcess/PluginProcess \
 	GPUProcess/GPUConnectionToWebProcess \
-	GPUProcess/graphics/RemoteRenderingBackendProxy \
+	GPUProcess/graphics/RemoteRenderingBackend \
 	GPUProcess/webrtc/LibWebRTCCodecsProxy \
 	GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager \
 	GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager \
