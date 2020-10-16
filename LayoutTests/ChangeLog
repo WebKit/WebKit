@@ -1,3 +1,13 @@
+2020-10-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Remove the "alg" field in the attestation statement
+        https://bugs.webkit.org/show_bug.cgi?id=217720
+        <rdar://problem/70349734>
+
+        Reviewed by Brent Fulgham.
+
+        * http/wpt/webauthn/public-key-credential-create-success-local.https.html:
+
 2020-10-16  Chris Dumez  <cdumez@apple.com>
 
         Move even more AudioContext-specific logic out of BaseAudioContext

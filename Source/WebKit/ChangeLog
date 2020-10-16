@@ -1,3 +1,22 @@
+2020-10-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Remove the "alg" field in the attestation statement
+        https://bugs.webkit.org/show_bug.cgi?id=217720
+        <rdar://problem/70349734>
+
+        Reviewed by Brent Fulgham.
+
+        This old field was used in an unreleased old attestation statement format and is not used by
+        the final attestation statement format that will be added to the spec:
+        https://github.com/w3c/webauthn/pull/1491.
+
+        Therefore, remove it to resolve confusion.
+
+        Covered by existing tests.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterAttested):
+
 2020-10-16  Youenn Fablet  <youenn@apple.com>
 
         Add support for GPUProcess WebAudio media element providers
