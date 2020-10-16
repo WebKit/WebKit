@@ -351,6 +351,10 @@
 		6510A78111EC643800410867 /* WebKitWeightWatcher900.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher900.ttf; path = fonts/WebKitWeightWatcher900.ttf; sourceTree = "<group>"; };
 		65EB859D11EC67CC0034D300 /* ActivateFonts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActivateFonts.h; sourceTree = "<group>"; };
 		65EB859F11EC67CC0034D300 /* ActivateFontsCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ActivateFontsCocoa.mm; sourceTree = "<group>"; };
+		7C8A1F5625351EC600C5291E /* TestOptionsGeneratedKeys.h.erb */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestOptionsGeneratedKeys.h.erb; sourceTree = "<group>"; };
+		7C8A1F5725351EC600C5291E /* check-xcfilelists.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "check-xcfilelists.sh"; sourceTree = "<group>"; };
+		7C8A1F5825351EC600C5291E /* generate-derived-sources.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "generate-derived-sources.sh"; sourceTree = "<group>"; };
+		7CAA0E7625353BF500C519E5 /* TestOptionsGeneratedKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestOptionsGeneratedKeys.h; sourceTree = "<group>"; };
 		7CFF9BC52534AF1D0008009F /* TestFeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestFeatures.h; path = ../TestRunnerShared/TestFeatures.h; sourceTree = "<group>"; };
 		7CFF9BC62534AF1D0008009F /* TestFeatures.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestFeatures.cpp; path = ../TestRunnerShared/TestFeatures.cpp; sourceTree = "<group>"; };
 		7CFF9BC72534AF1D0008009F /* TestCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestCommand.cpp; path = ../TestRunnerShared/TestCommand.cpp; sourceTree = "<group>"; };
@@ -480,16 +484,17 @@
 			isa = PBXGroup;
 			children = (
 				49AEEF692407278200C87E4C /* Info.plist */,
-				0F18E71A1D6BC4BC0027E547 /* TestRunnerShared */,
 				BC952EC511F3C10F003398B4 /* DerivedSources.make */,
 				2EE52CEA1890A9A80010ED21 /* WebKitTestRunnerApp-Info.plist */,
 				BC99CBF11207642D00FDEE76 /* Shared */,
 				08FB7795FE84155DC02AAC07 /* TestRunner */,
+				0F18E71A1D6BC4BC0027E547 /* TestRunnerShared */,
 				BC25183511D1571D002EBC01 /* InjectedBundle */,
 				BC793401118F7C8A005EA8E2 /* Configurations */,
 				08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */,
 				BC25194411D15DBE002EBC01 /* Resources */,
 				2EE52CE81890A9A80010ED21 /* WebKitTestRunnerApp */,
+				7C8A1F5425351EC600C5291E /* Scripts */,
 				2EE52CE11890A9A80010ED21 /* Frameworks */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
 			);
@@ -499,6 +504,7 @@
 		08FB7795FE84155DC02AAC07 /* TestRunner */ = {
 			isa = PBXGroup;
 			children = (
+				7CAA0E7525353BC500C519E5 /* Derived Sources */,
 				BC9192021333E4CD003011DC /* cg */,
 				0FEB90A11905BC4A000FDBF3 /* cocoa */,
 				2EE52D121890A9FB0010ED21 /* ios */,
@@ -749,6 +755,33 @@
 			);
 			path = mac;
 			sourceTree = "<group>";
+		};
+		7C8A1F5425351EC600C5291E /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				7C8A1F5525351EC600C5291E /* PreferencesTemplates */,
+				7C8A1F5725351EC600C5291E /* check-xcfilelists.sh */,
+				7C8A1F5825351EC600C5291E /* generate-derived-sources.sh */,
+			);
+			path = Scripts;
+			sourceTree = "<group>";
+		};
+		7C8A1F5525351EC600C5291E /* PreferencesTemplates */ = {
+			isa = PBXGroup;
+			children = (
+				7C8A1F5625351EC600C5291E /* TestOptionsGeneratedKeys.h.erb */,
+			);
+			path = PreferencesTemplates;
+			sourceTree = "<group>";
+		};
+		7CAA0E7525353BC500C519E5 /* Derived Sources */ = {
+			isa = PBXGroup;
+			children = (
+				7CAA0E7625353BF500C519E5 /* TestOptionsGeneratedKeys.h */,
+			);
+			name = "Derived Sources";
+			path = DerivedSources/WebKitTestRunner;
+			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		BC14E4E0120E02F900826C0C /* Controllers */ = {
 			isa = PBXGroup;

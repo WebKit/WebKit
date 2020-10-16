@@ -26,131 +26,81 @@
 #include "config.h"
 #include "TestOptions.h"
 
-#include <fstream>
-#include <string>
+#include "TestOptionsGeneratedKeys.h"
 #include <wtf/Assertions.h>
-#include <wtf/StdFilesystem.h>
 
 namespace WTR {
 
-static const std::unordered_map<std::string, bool>& boolWebPreferencesDefaultsMap()
+const TestFeatures& TestOptions::defaults()
 {
-    static std::unordered_map<std::string, bool> map {
-        { "AcceleratedDrawingEnabled", false },
-        { "AllowCrossOriginSubresourcesToAskForCredentials", false },
-        { "AllowTopNavigationToDataURLs", true },
-        { "AttachmentElementEnabled", false },
-        { "CaptureAudioInGPUProcessEnabled", false },
-        { "CaptureAudioInUIProcessEnabled", false },
-        { "CaptureVideoInGPUProcessEnabled", false },
-        { "CaptureVideoInUIProcessEnabled", false },
-        { "ColorFilterEnabled", false },
-        { "DOMPasteAllowed", true },
-        { "InspectorAdditionsEnabled", false },
-        { "KeygenElementEnabled", false },
-        { "MenuItemElementEnabled", false },
-        { "MockScrollbarsEnabled", true },
-        { "ModernMediaControlsEnabled", true },
-        { "NeedsSiteSpecificQuirks", false },
-        { "PageVisibilityBasedProcessSuppressionEnabled", false },
-        { "PunchOutWhiteBackgroundsInDarkMode", false },
-        { "ServiceControlsEnabled", false },
-        { "ShouldIgnoreMetaViewport", false },
-        { "ShouldUseServiceWorkerShortTimeout", false },
-        { "UsesBackForwardCache", false },
-        { "WebAuthenticationEnabled", true },
-        { "WebAuthenticationLocalAuthenticatorEnabled", true },
-    };
-    return map;
-}
-
-static const std::unordered_map<std::string, bool>& boolTestRunnerDefaultsMap()
-{
-    static std::unordered_map<std::string, bool> map {
-        { "allowsLinkPreview", true },
-        { "dumpJSConsoleLogInStdErr", false },
-        { "editable", false },
-        { "enableInAppBrowserPrivacy", false },
-        { "enableProcessSwapOnNavigation", true },
-        { "enableProcessSwapOnWindowOpen", false },
-        { "ignoreSynchronousMessagingTimeouts", false },
-        { "ignoresViewportScaleLimits", false },
-        { "isAppBoundWebView", false },
-        { "runSingly", false },
-        { "shouldHandleRunOpenPanel", true },
-        { "shouldPresentPopovers", true },
-        { "shouldShowTouches", false },
-        { "shouldShowWebView", false },
-        { "spellCheckingDots", false },
-        { "useCharacterSelectionGranularity", false },
-        { "useDataDetection", false },
-        { "useEphemeralSession", false },
-        { "useFlexibleViewport", false },
-        { "useRemoteLayerTree", false },
-        { "useThreadedScrolling", false },
-    };
-    return map;
-}
-
-static const std::unordered_map<std::string, double>& doubleTestRunnerDefaultsMap()
-{
-    static std::unordered_map<std::string, double> map {
-        { "contentInset.top", 0 },
-        { "deviceScaleFactor", 1 },
-        { "viewHeight", 600 },
-        { "viewWidth", 800 },
-    };
-    return map;
-}
-
-static const std::unordered_map<std::string, std::string>& stringTestRunnerDefaultsMap()
-{
-    static std::unordered_map<std::string, std::string> map {
-        { "additionalSupportedImageTypes", { } },
-        { "applicationBundleIdentifier", { } },
-        { "applicationManifest", { } },
-        { "contentMode", { } },
-        { "jscOptions", { } },
-        { "standaloneWebApplicationURL", { } },
-    };
-    return map;
-}
-
-static const std::unordered_map<std::string, std::vector<std::string>>& stringVectorTestRunnerDefaultsMap()
-{
-    static std::unordered_map<std::string, std::vector<std::string>> map {
-        { "language", { } },
-    };
-    return map;
+    static TestFeatures features;
+    if (features.boolWebPreferenceFeatures.empty()) {
+        features.boolWebPreferenceFeatures = {
+            // These are WebPreference values that must always be set as they may
+            // differ from the default set in the WebPreferences*.yaml configuration.
+            { "AllowTopNavigationToDataURLs", true },
+            { "CaptureAudioInGPUProcessEnabled", false },
+            { "CaptureAudioInUIProcessEnabled", false },
+            { "CaptureVideoInGPUProcessEnabled", false },
+            { "CaptureVideoInUIProcessEnabled", false },
+            { "DOMPasteAllowed", true },
+            { "MockScrollbarsEnabled", true },
+            { "ModernMediaControlsEnabled", true },
+            { "NeedsSiteSpecificQuirks", false },
+            { "PageVisibilityBasedProcessSuppressionEnabled", false },
+            { "UsesBackForwardCache", false },
+            { "WebAuthenticationEnabled", true },
+            { "WebAuthenticationLocalAuthenticatorEnabled", true },
+        };
+        features.boolTestRunnerFeatures = {
+            { "allowsLinkPreview", true },
+            { "dumpJSConsoleLogInStdErr", false },
+            { "editable", false },
+            { "enableInAppBrowserPrivacy", false },
+            { "enableProcessSwapOnNavigation", true },
+            { "enableProcessSwapOnWindowOpen", false },
+            { "ignoreSynchronousMessagingTimeouts", false },
+            { "ignoresViewportScaleLimits", false },
+            { "isAppBoundWebView", false },
+            { "runSingly", false },
+            { "shouldHandleRunOpenPanel", true },
+            { "shouldPresentPopovers", true },
+            { "shouldShowTouches", false },
+            { "shouldShowWebView", false },
+            { "spellCheckingDots", false },
+            { "useCharacterSelectionGranularity", false },
+            { "useDataDetection", false },
+            { "useEphemeralSession", false },
+            { "useFlexibleViewport", false },
+            { "useRemoteLayerTree", false },
+            { "useThreadedScrolling", false },
+        };
+        features.doubleTestRunnerFeatures = {
+            { "contentInset.top", 0 },
+            { "deviceScaleFactor", 1 },
+            { "viewHeight", 600 },
+            { "viewWidth", 800 },
+        };
+        features.stringTestRunnerFeatures = {
+            { "additionalSupportedImageTypes", { } },
+            { "applicationBundleIdentifier", { } },
+            { "applicationManifest", { } },
+            { "contentMode", { } },
+            { "jscOptions", { } },
+            { "standaloneWebApplicationURL", { } },
+        };
+        features.stringVectorTestRunnerFeatures = {
+            { "language", { } },
+        };
+    }
+    
+    return features;
 }
 
 const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMapping()
 {
-    static std::unordered_map<std::string, TestHeaderKeyType> map {
-        { "AcceleratedDrawingEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "AllowCrossOriginSubresourcesToAskForCredentials", TestHeaderKeyType::BoolWebPreference },
-        { "AllowTopNavigationToDataURLs", TestHeaderKeyType::BoolWebPreference },
-        { "AttachmentElementEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "CaptureAudioInGPUProcessEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "CaptureAudioInUIProcessEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "CaptureVideoInGPUProcessEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "CaptureVideoInUIProcessEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "ColorFilterEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "DOMPasteAllowed", TestHeaderKeyType::BoolWebPreference },
-        { "InspectorAdditionsEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "KeygenElementEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "MenuItemElementEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "MockScrollbarsEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "ModernMediaControlsEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "NeedsSiteSpecificQuirks", TestHeaderKeyType::BoolWebPreference },
-        { "PageVisibilityBasedProcessSuppressionEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "PunchOutWhiteBackgroundsInDarkMode", TestHeaderKeyType::BoolWebPreference },
-        { "ServiceControlsEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "ShouldIgnoreMetaViewport", TestHeaderKeyType::BoolWebPreference },
-        { "ShouldUseServiceWorkerShortTimeout", TestHeaderKeyType::BoolWebPreference },
-        { "UsesBackForwardCache", TestHeaderKeyType::BoolWebPreference },
-        { "WebAuthenticationEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "WebAuthenticationLocalAuthenticatorEnabled", TestHeaderKeyType::BoolWebPreference },
+    static const std::unordered_map<std::string, TestHeaderKeyType> map {
+        GENERATED_WEB_PREFERENCE_KEY_TYPE_MAPPINGS
 
         { "allowsLinkPreview", TestHeaderKeyType::BoolTestRunner },
         { "dumpJSConsoleLogInStdErr", TestHeaderKeyType::BoolTestRunner },
@@ -192,11 +142,6 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
     return map;
 }
 
-TestOptions::TestOptions(TestFeatures features)
-    : m_features { features }
-{
-}
-
 bool TestOptions::hasSameInitializationOptions(const TestOptions& options) const
 {
     if (m_features.experimentalFeatures != options.m_features.experimentalFeatures)
@@ -222,46 +167,42 @@ bool TestOptions::hasSameInitializationOptions(const TestOptions& options) const
     return true;
 }
 
-std::vector<std::pair<std::string, bool>> TestOptions::boolWKPreferences() const
+bool TestOptions::boolWebPreferenceFeatureValue(std::string key, bool defaultValue) const
 {
-    std::vector<std::pair<std::string, bool>> result;
-
-    for (auto [key, defaultValue] : boolWebPreferencesDefaultsMap())
-        result.push_back({ key, boolWebPreferenceFeatureValue(key) });
-
-    return result;
-}
-
-template<typename T> T featureValue(std::string key, const std::unordered_map<std::string, T>& map, const std::unordered_map<std::string, T>& defaultsMap)
-{
-    auto it = map.find(key);
-    if (it != map.end())
+    auto it = m_features.boolWebPreferenceFeatures.find(key);
+    if (it != m_features.boolWebPreferenceFeatures.end())
         return it->second;
-    
-    auto defaultsMapIt = defaultsMap.find(key);
-    ASSERT(defaultsMapIt != defaultsMap.end());
-    return defaultsMapIt->second;
+    return defaultValue;
 }
 
-bool TestOptions::boolWebPreferenceFeatureValue(std::string key) const
+template<typename T> T testRunnerFeatureValue(std::string key, const std::unordered_map<std::string, T>& map)
 {
-    return featureValue(key, m_features.boolWebPreferenceFeatures, boolWebPreferencesDefaultsMap());
+    // All test runner features should always exist in their corresponding map since the base/global defaults
+    // contains default values for all of them.
+
+    auto it = map.find(key);
+    ASSERT(it != map.end());
+    return it->second;
 }
+
 bool TestOptions::boolTestRunnerFeatureValue(std::string key) const
 {
-    return featureValue(key, m_features.boolTestRunnerFeatures, boolTestRunnerDefaultsMap());
+    return testRunnerFeatureValue(key, m_features.boolTestRunnerFeatures);
 }
+
 double TestOptions::doubleTestRunnerFeatureValue(std::string key) const
 {
-    return featureValue(key, m_features.doubleTestRunnerFeatures, doubleTestRunnerDefaultsMap());
+    return testRunnerFeatureValue(key, m_features.doubleTestRunnerFeatures);
 }
+
 std::string TestOptions::stringTestRunnerFeatureValue(std::string key) const
 {
-    return featureValue(key, m_features.stringTestRunnerFeatures, stringTestRunnerDefaultsMap());
+    return testRunnerFeatureValue(key, m_features.stringTestRunnerFeatures);
 }
+
 std::vector<std::string> TestOptions::stringVectorTestRunnerFeatureValue(std::string key) const
 {
-    return featureValue(key, m_features.stringVectorTestRunnerFeatures, stringVectorTestRunnerDefaultsMap());
+    return testRunnerFeatureValue(key, m_features.stringVectorTestRunnerFeatures);
 }
 
 }

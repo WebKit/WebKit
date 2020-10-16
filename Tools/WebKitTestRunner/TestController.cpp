@@ -469,6 +469,7 @@ void TestController::initialize(int argc, const char* argv[])
     m_checkForWorldLeaks = options.checkForWorldLeaks;
     m_allowAnyHTTPSCertificateForAllowedHosts = options.allowAnyHTTPSCertificateForAllowedHosts;
 
+    m_globalFeatures = TestOptions::defaults();
     m_globalFeatures.internalDebugFeatures = options.internalFeatures;
     m_globalFeatures.experimentalFeatures = options.experimentalFeatures;
     m_globalFeatures.boolWebPreferenceFeatures.insert({ "AcceleratedDrawingEnabled", options.shouldUseAcceleratedDrawing });
@@ -497,21 +498,21 @@ void TestController::initialize(int argc, const char* argv[])
     m_eventSenderProxy = makeUnique<EventSenderProxy>(this);
 }
 
-WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfiguration(const ContextOptions& options) const
+WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfiguration(const TestOptions& options) const
 {
     auto configuration = adoptWK(WKContextConfigurationCreate());
     WKContextConfigurationSetInjectedBundlePath(configuration.get(), injectedBundlePath());
     WKContextConfigurationSetFullySynchronousModeIsAllowedForTesting(configuration.get(), true);
-    WKContextConfigurationSetIgnoreSynchronousMessagingTimeoutsForTesting(configuration.get(), options.ignoreSynchronousMessagingTimeouts);
+    WKContextConfigurationSetIgnoreSynchronousMessagingTimeoutsForTesting(configuration.get(), options.ignoreSynchronousMessagingTimeouts());
 
     auto overrideLanguages = adoptWK(WKMutableArrayCreate());
-    for (auto& language : options.overrideLanguages)
+    for (auto& language : options.overrideLanguages())
         WKArrayAppendItem(overrideLanguages.get(), toWK(language).get());
     WKContextConfigurationSetOverrideLanguages(configuration.get(), overrideLanguages.get());
 
     if (options.shouldEnableProcessSwapOnNavigation()) {
         WKContextConfigurationSetProcessSwapsOnNavigation(configuration.get(), true);
-        if (options.enableProcessSwapOnWindowOpen)
+        if (options.enableProcessSwapOnWindowOpen())
             WKContextConfigurationSetProcessSwapsOnWindowOpenWithOpener(configuration.get(), true);
     }
 
@@ -560,11 +561,9 @@ WKWebsiteDataStoreRef TestController::websiteDataStore()
 
 WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(const TestOptions& options)
 {
-    auto contextOptions = options.contextOptions();
-    if (!m_context || !m_contextOptions->hasSameInitializationOptions(contextOptions)) {
-        auto contextConfiguration = generateContextConfiguration(contextOptions);
+    if (!m_context || !m_mainWebView || !m_mainWebView->viewSupportsOptions(options)) {
+        auto contextConfiguration = generateContextConfiguration(options);
         m_context = platformAdjustContext(adoptWK(WKContextCreateWithConfiguration(contextConfiguration.get())).get(), contextConfiguration.get());
-        m_contextOptions = contextOptions;
 
         m_geolocationProvider = makeUnique<GeolocationProviderMock>(m_context.get());
 
@@ -824,7 +823,6 @@ void TestController::ensureViewSupportsOptionsForTest(const TestInvocation& test
         m_createdOtherPage = false;
     }
 
-
     createWebViewWithOptions(options);
 
     if (!resetStateToConsistentValues(options, ResetStage::BeforeTest))
@@ -856,11 +854,8 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     for (const auto& [key, value]  : options.internalDebugFeatures())
         WKPreferencesSetInternalDebugFeatureForKey(preferences, value, toWK(key).get());
 
-    for (const auto& [key, value] : options.boolWKPreferences())
-        WKPreferencesSetBoolValueForKey(preferences, value, toWK(key).get());
-
     // FIXME: Convert these to default values for TestOptions.
-    WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.contextOptions().shouldEnableProcessSwapOnNavigation());
+    WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.shouldEnableProcessSwapOnNavigation());
     WKPreferencesSetOfflineWebApplicationCacheEnabled(preferences, true);
     WKPreferencesSetSubpixelAntialiasedLayerTextEnabled(preferences, false);
     WKPreferencesSetXSSAuditorEnabled(preferences, false);
@@ -924,6 +919,19 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
 #endif
 
     platformResetPreferencesToConsistentValues();
+
+    for (const auto& [key, value] : options.boolWebPreferenceFeatures())
+        WKPreferencesSetBoolValueForKey(preferences, value, toWK(key).get());
+
+    for (const auto& [key, value] : options.doubleWebPreferenceFeatures())
+        WKPreferencesSetDoubleValueForKey(preferences, value, toWK(key).get());
+
+    for (const auto& [key, value] : options.uint32WebPreferenceFeatures())
+        WKPreferencesSetUInt32ValueForKey(preferences, value, toWK(key).get());
+
+    for (const auto& [key, value] : options.stringWebPreferenceFeatures())
+        WKPreferencesSetStringValueForKey(preferences, toWK(value).get(), toWK(key).get());
+
 }
 
 bool TestController::resetStateToConsistentValues(const TestOptions& options, ResetStage resetStage)

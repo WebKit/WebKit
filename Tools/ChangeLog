@@ -1,3 +1,48 @@
+2020-10-16  Sam Weinig  <weinig@apple.com>
+
+        [Testing] Support configuring any preference from test headers for WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=217645
+
+        Reviewed by Tim Horton.
+
+        Support using any preference defined in any of the WebPreference*.yaml configuration files
+        as a test header command rather than limiting it to a hard coded subset by generating the 
+        list of supported commands and their types from the yaml files themselves.
+        
+        This currently only works for WebKitTestRunner, but will be made to work with DumpRenderTree
+        in subsequent changes.
+
+        * WebKitTestRunner/CMakeLists.txt:
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+        * WebKitTestRunner/DerivedSources-input.xcfilelist:
+        * WebKitTestRunner/DerivedSources-output.xcfilelist:
+        * WebKitTestRunner/DerivedSources.make:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/Scripts/PreferencesTemplates: Added.
+        * WebKitTestRunner/Scripts/PreferencesTemplates/TestOptionsGeneratedKeys.h.erb: Added.
+        Add generation of TestOptionsGeneratedKeys.h from the WebPreference*.yaml using
+        the shared GeneratePreferences.rb script in WTF.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        Move preference setting to the bottom of the file to allow any preference
+        to be overriden. Also adds in support for double, uint32_t, and string preferences
+        though none of those are currently being used.
+
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::keyTypeMapping):
+        Use generated macro GENERATED_WEB_PREFERENCE_KEY_TYPE_MAPPINGS rather than hardcoding
+        all the preferences types.
+
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::boolWebPreferenceFeatures const):
+        (WTR::TestOptions::doubleWebPreferenceFeatures const):
+        (WTR::TestOptions::uint32WebPreferenceFeatures const):
+        (WTR::TestOptions::stringWebPreferenceFeatures const):
+        Expose accessors for preferences values for use in setting the actual preference
+        values. Rather than setting all preferences, we now only set preferences that have
+        been explicitly requested, using the default value for any that have not.
+
 2020-10-16  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org Rename slave to worker in steps.py

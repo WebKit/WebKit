@@ -353,7 +353,7 @@ public:
 
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);
-    WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration(const ContextOptions&) const;
+    WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration(const TestOptions&) const;
     void initialize(int argc, const char* argv[]);
     void createWebViewWithOptions(const TestOptions&);
     void run();
@@ -538,7 +538,6 @@ private:
 
     std::unique_ptr<PlatformWebView> m_mainWebView;
     WKRetainPtr<WKContextRef> m_context;
-    Optional<ContextOptions> m_contextOptions;
     WKRetainPtr<WKPageGroupRef> m_pageGroup;
     WKRetainPtr<WKUserContentControllerRef> m_userContentController;
 
