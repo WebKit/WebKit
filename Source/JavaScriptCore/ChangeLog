@@ -1,3 +1,16 @@
+2020-10-16  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        REGRESSION(r267727): Warning spam from JSC_DECLARE_CUSTOM_GETTER
+        https://bugs.webkit.org/show_bug.cgi?id=217585
+
+        Reviewed by Yusuke Suzuki.
+
+        A small number of source files now need to use JSC_DECLARE_CUSTOM_GETTER_WITHOUT_WTF_INTERNAL.
+
+        * b3/testb3_5.cpp:
+        * b3/testb3_7.cpp:
+        * tools/JSDollarVM.cpp:
+
 2020-10-15  Saam Barati  <sbarati@apple.com>
 
         Don't assign a bogus register to Load/ForwardVarargs in AvailabilityAnalysis before stack layout

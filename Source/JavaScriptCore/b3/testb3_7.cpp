@@ -549,14 +549,14 @@ void generateLoopNotBackwardsDominant(Procedure& proc, std::array<int, 100>& arr
     end->appendNew<Value>(proc, Return, Origin());
 }
 
-static JSC_DECLARE_JIT_OPERATION(oneFunction, int, (int* callCount));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(oneFunction, int, (int* callCount));
 JSC_DEFINE_JIT_OPERATION(oneFunction, int, (int* callCount))
 {
     (*callCount)++;
     return 1;
 }
 
-static JSC_DECLARE_JIT_OPERATION(noOpFunction, void, ());
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(noOpFunction, void, ());
 JSC_DEFINE_JIT_OPERATION(noOpFunction, void, ())
 {
 }
@@ -1342,7 +1342,7 @@ void testFloatEqualOrUnorderedDontFold()
     }
 }
 
-static JSC_DECLARE_JIT_OPERATION(functionNineArgs, void, (int32_t, void*, void*, void*, void*, void*, void*, void*, void*));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(functionNineArgs, void, (int32_t, void*, void*, void*, void*, void*, void*, void*, void*));
 JSC_DEFINE_JIT_OPERATION(functionNineArgs, void, (int32_t, void*, void*, void*, void*, void*, void*, void*, void*))
 {
 }

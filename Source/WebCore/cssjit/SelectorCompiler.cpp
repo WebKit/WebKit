@@ -64,67 +64,67 @@
 namespace WebCore {
 namespace SelectorCompiler {
 
-static JSC_DECLARE_JIT_OPERATION(operationAddStyleRelationFunction, void, (SelectorChecker::CheckingContext*, const Element*));
-static JSC_DECLARE_JIT_OPERATION(operationElementIsActive, bool, (const Element*));
-static JSC_DECLARE_JIT_OPERATION(operationElementIsHovered, bool, (const Element*));
-static JSC_DECLARE_JIT_OPERATION(operationIsPlaceholderShown, bool, (const Element*));
-static JSC_DECLARE_JIT_OPERATION(operationMakeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown, bool, (const Element*, SelectorChecker::CheckingContext*));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAddStyleRelationFunction, void, (SelectorChecker::CheckingContext*, const Element*));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationElementIsActive, bool, (const Element*));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationElementIsHovered, bool, (const Element*));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsPlaceholderShown, bool, (const Element*));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMakeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown, bool, (const Element*, SelectorChecker::CheckingContext*));
 #if CPU(ARM_THUMB2) && !CPU(APPLE_ARMV7S)
-static JSC_DECLARE_JIT_OPERATION(operationModuloHelper, int, (int dividend, int divisor));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationModuloHelper, int, (int dividend, int divisor));
 #endif
-static JSC_DECLARE_JIT_OPERATION(operationSynchronizeAllAnimatedSVGAttribute, void, (SVGElement&));
-static JSC_DECLARE_JIT_OPERATION(operationSynchronizeStyleAttributeInternal, void, (StyledElement* styledElement));
-static JSC_DECLARE_JIT_OPERATION(operationEqualIgnoringASCIICaseNonNull, bool, (const StringImpl*, const StringImpl*));
-static JSC_DECLARE_JIT_OPERATION(operationIsAutofilled, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationIsAutofilledStrongPassword, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationIsAutofilledStrongPasswordViewable, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationIsChecked, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationMatchesDefaultPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationMatchesDisabledPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationMatchesEnabledPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationIsDefinedElement, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationMatchesDirectFocusPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationMatchesFocusPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationIsMediaDocument, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationIsInRange, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationMatchesIndeterminatePseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationIsInvalid, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationIsOptionalFormControl, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationIsOutOfRange, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationMatchesReadOnlyPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationMatchesReadWritePseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationIsRequiredFormControl, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationIsValid, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationIsWindowInactive, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationMatchesLangPseudoClass, bool, (const Element&, const Vector<AtomString>&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationSynchronizeAllAnimatedSVGAttribute, void, (SVGElement&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationSynchronizeStyleAttributeInternal, void, (StyledElement* styledElement));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationEqualIgnoringASCIICaseNonNull, bool, (const StringImpl*, const StringImpl*));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsAutofilled, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsAutofilledStrongPassword, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsAutofilledStrongPasswordViewable, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsChecked, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesDefaultPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesDisabledPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesEnabledPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsDefinedElement, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesDirectFocusPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFocusPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsMediaDocument, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsInRange, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesIndeterminatePseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsInvalid, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsOptionalFormControl, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsOutOfRange, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesReadOnlyPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesReadWritePseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsRequiredFormControl, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsValid, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsWindowInactive, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesLangPseudoClass, bool, (const Element&, const Vector<AtomString>&));
 #if ENABLE(FULLSCREEN_API)
-static JSC_DECLARE_JIT_OPERATION(operationMatchesFullScreenPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationMatchesFullScreenDocumentPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationMatchesFullScreenAncestorPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationMatchesFullScreenAnimatingFullScreenTransitionPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationMatchesFullScreenControlsHiddenPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullScreenPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullScreenDocumentPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullScreenAncestorPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullScreenAnimatingFullScreenTransitionPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullScreenControlsHiddenPseudoClass, bool, (const Element&));
 #endif
 #if ENABLE(PICTURE_IN_PICTURE_API)
-static JSC_DECLARE_JIT_OPERATION(operationMatchesPictureInPicturePseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesPictureInPicturePseudoClass, bool, (const Element&));
 #endif
 #if ENABLE(VIDEO)
-static JSC_DECLARE_JIT_OPERATION(operationMatchesFutureCuePseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION(operationMatchesPastCuePseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFutureCuePseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesPastCuePseudoClass, bool, (const Element&));
 #endif
 #if ENABLE(ATTACHMENT_ELEMENT)
-static JSC_DECLARE_JIT_OPERATION(operationHasAttachment, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationHasAttachment, bool, (const Element&));
 #endif
 
-static JSC_DECLARE_JIT_OPERATION(operationAttributeValueBeginsWithCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
-static JSC_DECLARE_JIT_OPERATION(operationAttributeValueBeginsWithCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
-static JSC_DECLARE_JIT_OPERATION(operationAttributeValueContainsCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
-static JSC_DECLARE_JIT_OPERATION(operationAttributeValueContainsCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
-static JSC_DECLARE_JIT_OPERATION(operationAttributeValueEndsWithCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
-static JSC_DECLARE_JIT_OPERATION(operationAttributeValueEndsWithCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
-static JSC_DECLARE_JIT_OPERATION(operationAttributeValueMatchHyphenRuleCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
-static JSC_DECLARE_JIT_OPERATION(operationAttributeValueMatchHyphenRuleCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
-static JSC_DECLARE_JIT_OPERATION(operationAttributeValueSpaceSeparatedListContainsCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
-static JSC_DECLARE_JIT_OPERATION(operationAttributeValueSpaceSeparatedListContainsCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueBeginsWithCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueBeginsWithCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueContainsCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueContainsCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueEndsWithCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueEndsWithCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueMatchHyphenRuleCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueMatchHyphenRuleCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueSpaceSeparatedListContainsCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueSpaceSeparatedListContainsCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
 
 #define CSS_SELECTOR_JIT_DEBUGGING 0
 
