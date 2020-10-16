@@ -76,7 +76,7 @@ class ConfigureBuild(buildstep.BuildStep):
     description = ["configuring build"]
     descriptionDone = ["configured build"]
 
-    def __init__(self, platform, configuration, architecture, buildOnly, additionalArguments, SVNMirror, device_model, *args, **kwargs):
+    def __init__(self, platform, configuration, architecture, buildOnly, additionalArguments, device_model, *args, **kwargs):
         buildstep.BuildStep.__init__(self, *args, **kwargs)
         self.platform = platform
         if platform != 'jsc-only':
@@ -86,9 +86,8 @@ class ConfigureBuild(buildstep.BuildStep):
         self.architecture = architecture
         self.buildOnly = buildOnly
         self.additionalArguments = additionalArguments
-        self.SVNMirror = SVNMirror
         self.device_model = device_model
-        self.addFactoryArguments(platform=platform, configuration=configuration, architecture=architecture, buildOnly=buildOnly, additionalArguments=additionalArguments, SVNMirror=SVNMirror, device_model=device_model)
+        self.addFactoryArguments(platform=platform, configuration=configuration, architecture=architecture, buildOnly=buildOnly, additionalArguments=additionalArguments, device_model=device_model)
 
     def start(self):
         self.setProperty("platform", self.platform)
@@ -97,7 +96,6 @@ class ConfigureBuild(buildstep.BuildStep):
         self.setProperty("architecture", self.architecture)
         self.setProperty("buildOnly", self.buildOnly)
         self.setProperty("additionalArguments", self.additionalArguments)
-        self.setProperty("SVNMirror", self.SVNMirror)
         self.setProperty("device_model", self.device_model)
         self.finished(SUCCESS)
         return defer.succeed(None)
@@ -106,25 +104,11 @@ class ConfigureBuild(buildstep.BuildStep):
 class CheckOutSource(source.SVN):
     mode = "update"
 
-    def __init__(self, SVNMirror, **kwargs):
-        kwargs['baseURL'] = SVNMirror or "https://svn.webkit.org/repository/webkit/"
+    def __init__(self, **kwargs):
+        kwargs['baseURL'] = "https://svn.webkit.org/repository/webkit/"
         kwargs['defaultBranch'] = "trunk"
         kwargs['mode'] = self.mode
         source.SVN.__init__(self, **kwargs)
-        self.addFactoryArguments(SVNMirror=SVNMirror)
-
-
-class WaitForSVNServer(shell.ShellCommand):
-    name = "wait-for-svn-server"
-    command = ["python", "./Tools/BuildSlaveSupport/wait-for-SVN-server.py", "-r", WithProperties("%(revision)s"), "-s", WithProperties("%(SVNMirror)s")]
-    description = ["waiting for SVN server"]
-    descriptionDone = ["SVN server is ready"]
-    warnOnFailure = True
-
-    def evaluateCommand(self, cmd):
-        if cmd.rc != 0:
-            return WARNINGS
-        return SUCCESS
 
 
 class InstallWin32Dependencies(shell.Compile):

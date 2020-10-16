@@ -1,4 +1,4 @@
-# Copyright (C) 2017 Apple Inc. All rights reserved.
+# Copyright (C) 2017-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -27,12 +27,10 @@ from steps import *
 
 
 class Factory(factory.BuildFactory):
-    def __init__(self, platform, configuration, architectures, buildOnly, additionalArguments, SVNMirror, device_model):
+    def __init__(self, platform, configuration, architectures, buildOnly, additionalArguments, device_model):
         factory.BuildFactory.__init__(self)
-        self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architecture=" ".join(architectures), buildOnly=buildOnly, additionalArguments=additionalArguments, SVNMirror=SVNMirror, device_model=device_model))
-        if SVNMirror:
-            self.addStep(WaitForSVNServer())
-        self.addStep(CheckOutSource(SVNMirror=SVNMirror))
+        self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architecture=" ".join(architectures), buildOnly=buildOnly, additionalArguments=additionalArguments, device_model=device_model))
+        self.addStep(CheckOutSource())
         if not (platform == "jsc-only"):
             self.addStep(KillOldProcesses())
         self.addStep(CleanBuildIfScheduled())
@@ -49,8 +47,8 @@ class BuildFactory(Factory):
     ShouldRunJSCBundleStep = False
     ShouldRunMiniBrowserBundleStep = False
 
-    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, SVNMirror=None, device_model=None):
-        Factory.__init__(self, platform, configuration, architectures, True, additionalArguments, SVNMirror, device_model)
+    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, device_model=None):
+        Factory.__init__(self, platform, configuration, architectures, True, additionalArguments, device_model)
 
         if platform == "win" or platform.startswith("playstation"):
             self.addStep(CompileWebKit(timeout=2 * 60 * 60))
@@ -80,8 +78,8 @@ class TestFactory(Factory):
         self.addStep(DownloadBuiltProduct())
         self.addStep(ExtractBuiltProduct())
 
-    def __init__(self, platform, configuration, architectures, additionalArguments=None, SVNMirror=None, device_model=None, **kwargs):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, SVNMirror, device_model, **kwargs)
+    def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None, **kwargs):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model, **kwargs)
         self.getProduct()
 
         if platform == 'wincairo':
@@ -128,8 +126,8 @@ class BuildAndTestFactory(TestFactory):
     def getProduct(self):
         self.addStep(CompileWebKit())
 
-    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, SVNMirror=None, device_model=None, **kwargs):
-        TestFactory.__init__(self, platform, configuration, architectures, additionalArguments, SVNMirror, device_model, **kwargs)
+    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, device_model=None, **kwargs):
+        TestFactory.__init__(self, platform, configuration, architectures, additionalArguments, device_model, **kwargs)
         if triggers:
             self.addStep(ArchiveBuiltProduct())
             self.addStep(UploadBuiltProduct())
@@ -137,15 +135,15 @@ class BuildAndTestFactory(TestFactory):
 
 
 class BuildAndTestLLINTCLoopFactory(Factory):
-    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, SVNMirror=None, device_model=None, **kwargs):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, SVNMirror, device_model, **kwargs)
+    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, device_model=None, **kwargs):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model, **kwargs)
         self.addStep(CompileLLINTCLoop())
         self.addStep(RunLLINTCLoopTests())
 
 
 class BuildAndTest32bitJSCFactory(Factory):
-    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, SVNMirror=None, device_model=None, **kwargs):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, SVNMirror, device_model, **kwargs)
+    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, device_model=None, **kwargs):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model, **kwargs)
         self.addStep(Compile32bitJSC())
         self.addStep(Run32bitJSCTests())
 
@@ -155,15 +153,15 @@ class BuildAndNonLayoutTestFactory(BuildAndTestFactory):
 
 
 class BuildAndRemoteJSCTestsFactory(Factory):
-    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, SVNMirror=None, device_model=None):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, SVNMirror, device_model)
+    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, device_model=None):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
         self.addStep(CompileJSCOnly(timeout=60 * 60))
         self.addStep(RunRemoteJavaScriptCoreTests(timeout=60 * 60))
 
 
 class TestWebKit1LeaksFactory(Factory):
-    def __init__(self, platform, configuration, architectures, additionalArguments=None, SVNMirror=None, device_model=None):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, SVNMirror, device_model)
+    def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
         self.addStep(DownloadBuiltProduct())
         self.addStep(ExtractBuiltProduct())
         self.addStep(RunWebKit1LeakTests())
@@ -190,24 +188,24 @@ class BuildAndGenerateMiniBrowserJSCBundleFactory(BuildFactory):
 
 
 class TestJSCFactory(Factory):
-    def __init__(self, platform, configuration, architectures, additionalArguments=None, SVNMirror=None, device_model=None):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, SVNMirror, device_model)
+    def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
         self.addStep(DownloadBuiltProduct())
         self.addStep(ExtractBuiltProduct())
         self.addStep(RunJavaScriptCoreTests())
 
 
 class Test262Factory(Factory):
-    def __init__(self, platform, configuration, architectures, additionalArguments=None, SVNMirror=None, device_model=None):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, SVNMirror, device_model)
+    def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
         self.addStep(DownloadBuiltProduct())
         self.addStep(ExtractBuiltProduct())
         self.addStep(RunTest262Tests())
 
 
 class TestJSFactory(Factory):
-    def __init__(self, platform, configuration, architectures, additionalArguments=None, SVNMirror=None, device_model=None):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, SVNMirror, device_model)
+    def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
         self.addStep(DownloadBuiltProduct())
         self.addStep(ExtractBuiltProduct())
         self.addStep(RunJavaScriptCoreTests())
@@ -215,8 +213,8 @@ class TestJSFactory(Factory):
 
 
 class TestWebDriverFactory(Factory):
-    def __init__(self, platform, configuration, architectures, additionalArguments=None, SVNMirror=None, device_model=None):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, SVNMirror, device_model)
+    def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
         self.addStep(DownloadBuiltProduct())
         self.addStep(ExtractBuiltProduct())
         self.addStep(RunWebDriverTests())
@@ -231,8 +229,8 @@ class TestWebKit1AllButJSCFactory(TestWebKit1Factory):
 
 
 class BuildAndPerfTestFactory(Factory):
-    def __init__(self, platform, configuration, architectures, additionalArguments=None, SVNMirror=None, device_model=None, **kwargs):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, SVNMirror, device_model, **kwargs)
+    def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None, **kwargs):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model, **kwargs)
         self.addStep(CompileWebKit())
         self.addStep(RunAndUploadPerfTests())
         if platform == "gtk":
@@ -240,8 +238,8 @@ class BuildAndPerfTestFactory(Factory):
 
 
 class DownloadAndPerfTestFactory(Factory):
-    def __init__(self, platform, configuration, architectures, additionalArguments=None, SVNMirror=None, device_model=None, **kwargs):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, SVNMirror, device_model, **kwargs)
+    def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None, **kwargs):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model, **kwargs)
         self.addStep(DownloadBuiltProduct())
         self.addStep(ExtractBuiltProduct())
         self.addStep(RunAndUploadPerfTests())
