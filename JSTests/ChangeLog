@@ -1,3 +1,15 @@
+2020-10-15  Saam Barati  <sbarati@apple.com>
+
+        Don't assign a bogus register to Load/ForwardVarargs in AvailabilityAnalysis before stack layout
+        https://bugs.webkit.org/show_bug.cgi?id=217789
+        <rdar://problem/69285703>
+
+        Reviewed by Keith Miller.
+
+        * stress/dont-assign-bogus-virtual-register-in-availability-analysis-before-stack-layout-runs.js: Added.
+        (bar):
+        (foo):
+
 2020-10-15  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         REGRESSION (r268489): test/built-ins/Object/entries/order-after-define-property.js failing on test262 bots

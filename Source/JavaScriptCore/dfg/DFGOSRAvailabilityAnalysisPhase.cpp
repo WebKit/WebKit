@@ -287,7 +287,7 @@ void LocalOSRAvailabilityCalculator::executeNode(Node* node)
         m_availability.m_locals.operand(data->count) = Availability(FlushedAt(FlushedInt32, data->machineCount));
         for (unsigned i = data->limit; i--;) {
             m_availability.m_locals.operand(data->start + i) =
-                Availability(FlushedAt(FlushedJSValue, data->machineStart + i));
+                Availability(FlushedAt(FlushedJSValue, data->machineStart.isValid() ? (data->machineStart + i) : VirtualRegister()));
         }
         break;
     }

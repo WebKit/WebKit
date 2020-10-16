@@ -1,3 +1,25 @@
+2020-10-15  Saam Barati  <sbarati@apple.com>
+
+        Don't assign a bogus register to Load/ForwardVarargs in AvailabilityAnalysis before stack layout
+        https://bugs.webkit.org/show_bug.cgi?id=217789
+        <rdar://problem/69285703>
+
+        Reviewed by Keith Miller.
+
+        There is code inside AvailabilityAnalysis phase that was assuming the
+        Load/ForwardVarargs data was already stack allocated. However, this isn't
+        guaranteed to be the case. However, we were doing virtual register math on
+        invalid virtual registers, leading to wonky results. The fix here is to
+        model it like we do GetStack/PutStack, where we say, before we do stack
+        allocation, we just tell availability analysis the flush format, but not
+        where it's flushed.
+        
+        This was causing validation errors when merging these invalid FlushedAts with
+        the FlushedAts from GetStack/PutStack.
+
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::LocalOSRAvailabilityCalculator::executeNode):
+
 2020-10-15  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         REGRESSION (r268489): test/built-ins/Object/entries/order-after-define-property.js failing on test262 bots
