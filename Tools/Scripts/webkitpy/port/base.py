@@ -930,6 +930,9 @@ class Port(object):
             [name, value] = string_variable.split('=', 1)
             clean_env[name] = value
 
+        # FIXME: Some tests fail if the time zone is not set to US/Pacific (<https://webkit.org/b/186612>)
+        clean_env['TZ'] = 'US/Pacific'
+
         return clean_env
 
     def _clear_global_caches_and_temporary_files(self):

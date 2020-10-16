@@ -1,3 +1,20 @@
+2020-10-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Ensure the tests are run with US/Pacific time zone
+        https://bugs.webkit.org/show_bug.cgi?id=186612
+
+        Reviewed by Michael Catanzaro.
+
+        Some tests fail if the time zone is not set to US/Pacific, and
+        this causes issues for contributors living outside of that timezone.
+        Ideally we should fix those tests, but in the meantime setting this
+        environment variable before starting the layout tests seems like
+        an acceptable workaround. Note that something similar is also
+        already done for the JSC tests.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.setup_environ_for_server):
+
 2020-10-15  Sam Weinig  <weinig@apple.com>
 
         Attempt to fix the build.
