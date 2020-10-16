@@ -1,3 +1,18 @@
+2020-10-15  Tim Horton  <timothy_horton@apple.com>
+
+        iPhone apps and iPad apps linked before iOS 13 running on macOS get desktop UA unexpectedly
+        https://bugs.webkit.org/show_bug.cgi?id=217798
+        <rdar://problem/70254509>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::desktopClassBrowsingRecommended):
+        Share more of the code with iOS, for compatibility and consistency's sake:
+        iOS apps running on macOS should use the mobile UA if they are iPhone-only,
+        or if they were linked on an SDK earlier than iOS 13. This matches their
+        behavior on iPad.
+
 2020-10-15  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Issue temporary sandbox extension to the Launch Services daemon
