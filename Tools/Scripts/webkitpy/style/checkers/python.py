@@ -111,8 +111,9 @@ class Pylinter(object):
     def run(self, argv):
         output = _FilteredStringIO(self.FALSE_POSITIVES)
         with OutputCapture():
-            from webkitpy.thirdparty.autoinstalled.pylint import lint
-            from webkitpy.thirdparty.autoinstalled.pylint.reporters.text import ParseableTextReporter
+            from pylint import lint
+            from pylint.reporters.text import ParseableTextReporter
+
             lint.Run(['--rcfile', self._pylintrc] + argv, reporter=ParseableTextReporter(output=output), exit=False)
         return output
 

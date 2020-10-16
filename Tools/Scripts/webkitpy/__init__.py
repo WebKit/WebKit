@@ -41,6 +41,8 @@ AutoInstall.register(Package('more_itertools', Version(5, 0, 0), pypi_name='more
 AutoInstall.register(Package('genshi', Version(0, 7, 3), pypi_name='Genshi'))
 AutoInstall.register(Package('html5lib', Version(1, 1)))
 AutoInstall.register(Package('mechanize', Version(0, 4, 5)))
+AutoInstall.register(Package('logilab.common', Version(0, 58, 1), pypi_name='logilab-common', aliases=['logilab']))
+AutoInstall.register(Package('logilab.astng', Version(0, 24, 1), pypi_name='logilab-astng', aliases=['logilab']))
 AutoInstall.register(Package('mozprocess', Version(1, 2, 0)))
 AutoInstall.register(Package('mozlog', Version(6, 1)))
 AutoInstall.register(Package('mozterm', Version(1, 0, 0)))
@@ -51,12 +53,13 @@ AutoInstall.register(Package('pytest_timeout', Version(1, 4, 2), pypi_name='pyte
 # Pytest held to 3.x due to WPT webdriver compatibility
 AutoInstall.register(Package('pytest', Version(3, 10, 1)))
 AutoInstall.register(Package('pycodestyle', Version(2, 5, 0)))
+AutoInstall.register(Package('pylint', Version(0, 25, 2)))
 AutoInstall.register(Package('scandir', Version(1, 10, 0)))
 AutoInstall.register(Package('selenium', Version(3, 141, 0)))
 AutoInstall.register(Package('toml', Version(0, 10, 1)))
 AutoInstall.register(Package('wcwidth', Version(0, 2, 5)))
 AutoInstall.register(Package('webencodings', Version(0, 5, 1)))
 AutoInstall.register(Package('zipp', Version(1, 2, 0)))
-AutoInstall.register(Package('zope.interface', Version(5, 1, 0), pypi_name='zope-interface'))
+AutoInstall.register(Package('zope.interface', Version(5, 1, 0), aliases=['zope'], pypi_name='zope-interface'))
 
 AutoInstall.register(Package('webkitscmpy', Version(0, 0, 1)), local=True)

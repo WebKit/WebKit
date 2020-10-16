@@ -93,9 +93,7 @@ class AutoinstallImportHook(object):
 
         # Note: all of the methods must follow the "_install_XXX" convention in
         # order for autoinstall_everything(), below, to work properly.
-        if '.pylint' in fullname:
-            self._install_pylint()
-        elif '.buildbot' in fullname:
+        if '.buildbot' in fullname:
             self._install_buildbot()
         elif '.keyring' in fullname:
             self._install_keyring()
@@ -156,20 +154,6 @@ class AutoinstallImportHook(object):
                 process.join()
             finally:
                 sys.stdout = sys.__stdout__
-
-
-    def _install_pylint(self):
-        self._ensure_autoinstalled_dir_is_in_sys_path()
-        if (not self._fs.exists(self._fs.join(_AUTOINSTALLED_DIR, "pylint")) or
-            not self._fs.exists(self._fs.join(_AUTOINSTALLED_DIR, "logilab/astng")) or
-            not self._fs.exists(self._fs.join(_AUTOINSTALLED_DIR, "logilab/common"))):
-            installer = AutoInstaller(target_dir=_AUTOINSTALLED_DIR)
-            files_to_remove = []
-            if sys.platform == 'win32':
-                files_to_remove = ['test/data/write_protected_file.txt']
-            installer.install("https://files.pythonhosted.org/packages/source/l/logilab-common/logilab-common-0.58.1.tar.gz", url_subpath="logilab-common-0.58.1", target_name="logilab/common", files_to_remove=files_to_remove)
-            installer.install("https://files.pythonhosted.org/packages/source/l/logilab-astng/logilab-astng-0.24.1.tar.gz", url_subpath="logilab-astng-0.24.1", target_name="logilab/astng")
-            installer.install('https://files.pythonhosted.org/packages/source/p/pylint/pylint-0.25.2.tar.gz', url_subpath="pylint-0.25.2", target_name="pylint")
 
     # autoinstalled.buildbot is used by BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py
     # and should ideally match the version of BuildBot used at build.webkit.org.

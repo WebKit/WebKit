@@ -33,6 +33,7 @@ import tarfile
 import tempfile
 import zipfile
 
+from collections import defaultdict
 from logging import NullHandler
 from webkitcorepy import log
 from webkitcorepy.version import Version
@@ -309,7 +310,7 @@ class AutoInstall(object):
     index = 'pypi.org'
     timeout = 30
     version = Version(sys.version_info[0], sys.version_info[1], sys.version_info[2])
-    packages = {}
+    packages = defaultdict(list)
     manifest = {}
 
     # When sharing an install location, projects may wish to overwrite packages on disk
@@ -435,8 +436,8 @@ class AutoInstall(object):
                 package = Package(package)
         elif isinstance(package, Package):
             if cls.packages.get(package.name):
-                if cls.packages.get(package.name).version != package.version:
-                    raise ValueError('Registered version of {} uses {}, but requested version uses {}'.format(package.name, cls.packages.get(package.name).version, package.version))
+                if cls.packages.get(package.name)[0].version != package.version:
+                    raise ValueError('Registered version of {} uses {}, but requested version uses {}'.format(package.name, cls.packages.get(package.name)[0].version, package.version))
                 return cls.packages.get(package.name)
         else:
             raise ValueError('Expected package to be str or Package, not {}'.format(type(package)))
@@ -455,22 +456,22 @@ class AutoInstall(object):
                 if not os.path.isdir(os.path.join(candidate, package.name)):
                     continue
                 sys.path.insert(0, candidate)
-                return package
+                return [package]
 
         for alias in package.aliases:
-            cls.packages[alias] = package
-        cls.packages[package.name] = package
-        return package
+            cls.packages[alias].append(package)
+        cls.packages[package.name].append(package)
+        return [package]
 
     @classmethod
     def install(cls, package):
-        to_install = cls.register(package)
-        return to_install.install()
+        return all([to_install.install() for to_install in cls.register(package)])
 
     @classmethod
     def install_everything(cls):
-        for package in cls.packages.values():
-            package.install()
+        for packages in cls.packages.values():
+            for package in packages:
+                package.install()
         return None
 
     @classmethod
