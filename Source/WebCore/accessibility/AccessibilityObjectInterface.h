@@ -1180,6 +1180,8 @@ public:
     virtual PlatformWidget platformWidget() const = 0;
 #if PLATFORM(COCOA)
     virtual RemoteAXObjectRef remoteParentObject() const = 0;
+    virtual FloatRect convertRectToPlatformSpace(const FloatRect&, AccessibilityConversionSpace) const = 0;
+    virtual NSView *topDocumentFrameView() const = 0;
 #endif
     virtual Widget* widgetForAttachmentView() const = 0;
     virtual Page* page() const = 0;
@@ -1467,7 +1469,7 @@ public:
     virtual bool hasApplePDFAnnotationAttribute() const = 0;
 #endif
 
-#if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
     virtual bool caretBrowsingEnabled() const = 0;
     virtual void setCaretBrowsingEnabled(bool) = 0;
 #endif

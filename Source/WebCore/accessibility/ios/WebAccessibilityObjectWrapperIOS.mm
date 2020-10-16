@@ -37,9 +37,7 @@
 #import "Chrome.h"
 #import "ChromeClient.h"
 #import "FontCascade.h"
-#import "Frame.h"
 #import "FrameSelection.h"
-#import "FrameView.h"
 #import "HitTestResult.h"
 #import "HTMLFrameOwnerElement.h"
 #import "HTMLInputElement.h"
@@ -1741,31 +1739,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    // This method performs the crucial task of connecting to the UIWebDocumentView.
-    // This is needed to correctly calculate the screen position of the AX object.
-    static Class webViewClass = nil;
-    if (!webViewClass)
-        webViewClass = NSClassFromString(@"WebView");
-
-    if (!webViewClass)
-        return nil;
-    
-    FrameView* frameView = self.axBackingObject->documentFrameView();
-
-    if (!frameView)
-        return nil;
-    
-    // If this is the top level frame, the UIWebDocumentView should be returned.
-    id parentView = frameView->documentView();
-    while (parentView && ![parentView isKindOfClass:webViewClass])
-        parentView = [parentView superview];
-    
-    // The parentView should have an accessibilityContainer, if the UIKit accessibility bundle was loaded. 
-    // The exception is DRT, which tests accessibility without the entire system turning accessibility on. Hence,
-    // this check should be valid for everything except DRT.
-    ASSERT([parentView accessibilityContainer] || IOSApplication::isDumpRenderTree());
-    
-    return [parentView accessibilityContainer];
+    return [(id)self.axBackingObject->topDocumentFrameView() accessibilityContainer];
 }
 
 - (NSArray *)_accessibilityNextElementsWithCount:(UInt32)count

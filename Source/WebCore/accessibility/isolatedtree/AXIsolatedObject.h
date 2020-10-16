@@ -334,7 +334,7 @@ private:
     String descriptionAttributeValue() const override { return stringAttributeValue(AXPropertyName::Description); }
     String helpTextAttributeValue() const override { return stringAttributeValue(AXPropertyName::HelpText); }
     String titleAttributeValue() const override { return stringAttributeValue(AXPropertyName::TitleAttributeValue); }
-#if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
     bool caretBrowsingEnabled() const override { return boolAttributeValue(AXPropertyName::CaretBrowsingEnabled); }
 #endif
     AXCoreObject* focusableAncestor() override { return objectAttributeValue(AXPropertyName::FocusableAncestor); }
@@ -443,7 +443,7 @@ private:
     void setSelectedText(const String&) override;
     void setSelectedTextRange(const PlainTextRange&) override;
     bool setValue(const String&) override;
-#if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
     void setCaretBrowsingEnabled(bool) override;
 #endif
     void setPreventKeyboardDOMEventDispatch(bool) override;
@@ -579,6 +579,8 @@ private:
     HashMap<String, AXEditingStyleValueVariant> resolvedEditingStyles() const override;
 #if PLATFORM(COCOA)
     RemoteAXObjectRef remoteParentObject() const override;
+    FloatRect convertRectToPlatformSpace(const FloatRect&, AccessibilityConversionSpace) const override;
+    NSView *topDocumentFrameView() const override { return nil; } // FIXME: implement, currently only used on iOS.
 #endif
     Widget* widgetForAttachmentView() const override;
     Page* page() const override;

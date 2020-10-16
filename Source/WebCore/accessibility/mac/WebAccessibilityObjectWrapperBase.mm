@@ -50,8 +50,6 @@
 #import "Editing.h"
 #import "Font.h"
 #import "FontCascade.h"
-#import "Frame.h"
-#import "FrameLoaderClient.h"
 #import "FrameSelection.h"
 #import "HTMLNames.h"
 #import "LayoutRect.h"
@@ -63,15 +61,11 @@
 #import "ScrollView.h"
 #import "TextCheckerClient.h"
 #import "VisibleUnits.h"
-#import "WebCoreFrameView.h"
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(MAC)
 #import "WebAccessibilityObjectWrapperMac.h"
-#import <pal/spi/mac/HIServicesSPI.h>
 #else
-#import "WAKView.h"
-#import "WAKWindow.h"
 #import "WebAccessibilityObjectWrapperIOS.h"
 #endif
 
@@ -463,40 +457,11 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
 
 - (CGRect)convertRectToSpace:(const WebCore::FloatRect&)rect space:(AccessibilityConversionSpace)space
 {
-    if (!self.axBackingObject)
+    auto* backingObject = self.axBackingObject;
+    if (!backingObject)
         return CGRectZero;
-    
-    CGSize size = CGSizeMake(rect.size().width(), rect.size().height());
-    CGPoint point = CGPointMake(rect.x(), rect.y());
-    
-    CGRect cgRect = CGRectMake(point.x, point.y, size.width, size.height);
 
-    // WebKit1 code path... platformWidget() exists.
-    FrameView* frameView = self.axBackingObject->documentFrameView();
-#if PLATFORM(IOS_FAMILY)
-    WAKView* documentView = frameView ? frameView->documentView() : nullptr;
-    if (documentView) {
-        cgRect = [documentView convertRect:cgRect toView:nil];
-        
-        // we need the web document view to give us our final screen coordinates
-        // because that can take account of the scroller
-        id webDocument = [self _accessibilityWebDocumentView];
-        if (webDocument)
-            cgRect = [webDocument convertRect:cgRect toView:nil];
-        return cgRect;
-    }
-#else
-    if (frameView && frameView->platformWidget()) {
-        NSRect nsRect = NSRectFromCGRect(cgRect);
-        NSView* view = frameView->documentView();
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        nsRect = [[view window] convertRectToScreen:[view convertRect:nsRect toView:nil]];
-        ALLOW_DEPRECATED_DECLARATIONS_END
-        return NSRectToCGRect(nsRect);
-    }
-#endif
-    else
-        return static_cast<CGRect>(self.axBackingObject->convertFrameToSpace(rect, space));
+    return backingObject->convertRectToPlatformSpace(rect, space);
 }
 
 - (NSString *)ariaLandmarkRoleDescription

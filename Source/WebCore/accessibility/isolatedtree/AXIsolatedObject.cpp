@@ -965,6 +965,15 @@ FloatRect AXIsolatedObject::convertFrameToSpace(const FloatRect& rect, Accessibi
     });
 }
 
+FloatRect AXIsolatedObject::convertRectToPlatformSpace(const FloatRect& rect, AccessibilityConversionSpace space) const
+{
+    return Accessibility::retrieveValueFromMainThread<FloatRect>([&rect, &space, this] () -> FloatRect {
+        if (auto* axObject = associatedAXObject())
+            return axObject->convertRectToPlatformSpace(rect, space);
+        return { };
+    });
+}
+
 bool AXIsolatedObject::replaceTextInRange(const String& replacementText, const PlainTextRange& textRange)
 {
     return Accessibility::retrieveValueFromMainThread<bool>([&replacementText, &textRange, this] () -> bool {
@@ -1139,6 +1148,7 @@ void AXIsolatedObject::setSelectedVisiblePositionRange(const VisiblePositionRang
 
 Optional<SimpleRange> AXIsolatedObject::elementRange() const
 {
+    ASSERT(isMainThread());
     auto* axObject = associatedAXObject();
     return axObject ? axObject->elementRange() : WTF::nullopt;
 }
