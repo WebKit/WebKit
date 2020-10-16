@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         text run at (0,0) width 773: "This is a initial test for simple ruby. There should be 2 ruby annotations on below line, one with a ruby text shorter than the"
         text run at (0,18) width 36: "base, "
         text run at (36,18) width 291: "and one with a ruby text longer than the base. "
-      RenderBR {BR} at (327,32) size 0x0
+      RenderBR {BR} at (327,18) size 0x17
       RenderBR {BR} at (0,36) size 0x17
       RenderText {#text} at (0,63) size 155x17
         text run at (0,63) width 155: "<ruby> is defined in the "

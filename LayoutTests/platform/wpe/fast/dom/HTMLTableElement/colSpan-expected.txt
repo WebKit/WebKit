@@ -6,11 +6,11 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 167x17
           text run at (0,0) width 167: "Tests: the colspan attribute"
-        RenderBR {BR} at (167,14) size 0x0
+        RenderBR {BR} at (167,0) size 0x17
       RenderBlock {P} at (0,34) size 784x72
         RenderText {#text} at (0,0) size 73x17
           text run at (0,0) width 73: "Conditions:"
-        RenderBR {BR} at (73,14) size 0x0
+        RenderBR {BR} at (73,0) size 0x17
         RenderText {#text} at (0,18) size 772x53
           text run at (0,18) width 654: "The colSpan attribute specifies the number of columns spanned by the current cell. The default value of "
           text run at (654,18) width 118: "this attribute is one"

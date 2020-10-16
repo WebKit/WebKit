@@ -22,13 +22,13 @@ layer at (0,0) size 800x600
             text run at (0,18) width 221 RTL override: "This sentence should be backward."
         RenderText {#text} at (221,18) size 4x17
           text run at (221,18) width 4: " "
-        RenderBR {BR} at (225,32) size 0x0
+        RenderBR {BR} at (225,18) size 0x17
         RenderInline {BDO} at (0,0) size 209x17
           RenderText {#text} at (0,36) size 209x17
             text run at (0,36) width 209 LTR override: "This sentence should be forward."
         RenderText {#text} at (209,36) size 4x17
           text run at (209,36) width 4: " "
-        RenderBR {BR} at (213,50) size 0x0
+        RenderBR {BR} at (213,36) size 0x17
         RenderInline {BDO} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (0,54) size 0x17
@@ -37,7 +37,7 @@ layer at (0,0) size 800x600
             text run at (0,72) width 12 RTL override: "A"
         RenderText {#text} at (12,72) size 4x17
           text run at (12,72) width 4: " "
-        RenderBR {BR} at (16,86) size 0x0
+        RenderBR {BR} at (16,72) size 0x17
         RenderInline {BDO} at (0,0) size 290x17
           RenderText {#text} at (0,90) size 26x17
             text run at (0,90) width 26 LTR override: "My "

@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
         RenderInline {A} at (0,0) size 10x27 [bgcolor=#0000FF]
         RenderText {#text} at (271,36) size 4x17
           text run at (271,36) width 4: " "
-        RenderBR {BR} at (275,50) size 0x0
+        RenderBR {BR} at (275,36) size 0x17
         RenderInline {A} at (0,0) size 10x27 [bgcolor=#0000FF]
         RenderText {#text} at (10,54) size 277x17
           text run at (10,54) width 277: "There should be a blue box before this text. "

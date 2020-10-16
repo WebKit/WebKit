@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
                   text run at (209,19) width 548: "Wisconsin can continue using tuition vouchers to help poor parents send their"
                   text run at (212,37) width 222: "children to church-run schools. "
                   text run at (433,37) width 140: "What's your stand? "
-                RenderBR {BR} at (572,51) size 1x0
+                RenderBR {BR} at (572,37) size 1x17
                 RenderBR {BR} at (392,55) size 1x17
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,74) size 784x20

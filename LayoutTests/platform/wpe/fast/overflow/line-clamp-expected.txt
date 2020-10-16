@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,0) size 262x17
         text run at (0,0) width 262: "This tests the -webkit-line-clamp property"
-      RenderBR {BR} at (262,14) size 0x0
+      RenderBR {BR} at (262,0) size 0x17
       RenderBR {BR} at (0,18) size 0x17
       RenderText {#text} at (102,95) size 4x17
         text run at (102,95) width 4: " "

@@ -14,7 +14,7 @@ layer at (8,26) size 96x370
           text run at (0,1) width 46: "A"
       RenderText {#text} at (0,75) size 46x71
         text run at (0,75) width 46: "A"
-      RenderBR {BR} at (46,132) size 0x0
+      RenderBR {BR} at (46,74) size 0x71
       RenderInline {SPAN} at (0,0) size 46x71
         RenderText {#text} at (0,149) size 46x71
           text run at (0,149) width 46: "A"

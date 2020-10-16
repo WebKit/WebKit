@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 361x35
             text run at (0,0) width 361: "I\x{2019}m told this is the longest word in the English"
             text run at (0,18) width 180: "language: anti\x{AD}dis\x{AD}est\x{AD}ab\x{AD}"
-          RenderBR {BR} at (180,32) size 0x0
+          RenderBR {BR} at (180,18) size 0x17
           RenderText {#text} at (0,36) size 142x17
             text run at (0,36) width 142: "lish\x{AD}ment\x{AD}arian\x{AD}ism."
       RenderBlock {P} at (0,210) size 784x0
@@ -30,6 +30,6 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (2,86) size 688x36
           RenderText {#text} at (0,0) size 546x17
             text run at (0,0) width 546: "I\x{2019}m told this is the longest word in the English language: anti\x{AD}dis\x{AD}est\x{AD}ab\x{AD}"
-          RenderBR {BR} at (546,14) size 0x0
+          RenderBR {BR} at (546,0) size 0x17
           RenderText {#text} at (0,18) size 142x17
             text run at (0,18) width 142: "lish\x{AD}ment\x{AD}arian\x{AD}ism."

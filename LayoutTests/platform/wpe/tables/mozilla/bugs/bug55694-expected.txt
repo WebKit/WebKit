@@ -27,7 +27,7 @@ layer at (0,0) size 800x600
             text run at (260,0) width 50: "relative"
         RenderText {#text} at (310,0) size 82x17
           text run at (310,0) width 82: " positioning. "
-        RenderBR {BR} at (392,14) size 0x0
+        RenderBR {BR} at (392,0) size 0x17
         RenderText {#text} at (0,18) size 140x17
           text run at (0,18) width 140: "No width has been set"
 layer at (8,70) size 140x28

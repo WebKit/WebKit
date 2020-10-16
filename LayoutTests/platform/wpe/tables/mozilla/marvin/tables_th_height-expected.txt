@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 468x17
           text run at (0,0) width 468: "The TH tag uses the HEIGTH attribute. The TH has been set to 80 pixels."
-        RenderBR {BR} at (468,14) size 0x0
+        RenderBR {BR} at (468,0) size 0x17
       RenderTable {TABLE} at (0,18) size 287x110 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 285x108
           RenderTableRow {TR} at (0,2) size 285x80

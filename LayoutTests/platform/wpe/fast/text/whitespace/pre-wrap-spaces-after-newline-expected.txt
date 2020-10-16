@@ -46,7 +46,7 @@ layer at (0,0) size 785x646
       RenderBlock {PRE} at (0,184) size 49x30 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 24x15
           text run at (0,0) width 24: "foo"
-        RenderBR {BR} at (24,11) size 0x0
+        RenderBR {BR} at (24,0) size 0x15
         RenderText {#text} at (0,15) size 48x15
           text run at (0,15) width 48: "   bar"
       RenderBlock {PRE} at (0,227) size 49x30 [bgcolor=#C0C0C0]
@@ -92,7 +92,7 @@ layer at (0,0) size 785x646
       RenderBlock {PRE} at (0,522) size 49x45 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 24x15
           text run at (0,0) width 24: "foo"
-        RenderBR {BR} at (24,11) size 0x0
+        RenderBR {BR} at (24,0) size 0x15
         RenderText {#text} at (0,15) size 48x30
           text run at (0,15) width 0: " "
           text run at (0,30) width 48: "   bar"

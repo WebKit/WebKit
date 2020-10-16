@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 501x17
           text run at (0,0) width 424: "there's a table below this line with cellspacing=1 and border=2 and "
           text run at (424,0) width 77: "several lines"
-        RenderBR {BR} at (501,14) size 0x0
+        RenderBR {BR} at (501,0) size 0x17
         RenderText {#text} at (0,18) size 412x17
           text run at (0,18) width 412: "of content beginning 'Pacific Shore Properties ...'. Can you see it?"
       RenderTable {TABLE} at (0,52) size 777x529 [border: (2px outset #808080)]
@@ -22,7 +22,7 @@ layer at (0,0) size 800x600
                   RenderInline {FONT} at (0,0) size 230x17 [color=#E91C05]
                     RenderText {#text} at (23,7) size 230x17
                       text run at (23,7) width 230: "elcome to Pacific Shore Properties"
-                    RenderBR {BR} at (253,21) size 0x0
+                    RenderBR {BR} at (253,7) size 0x17
                 RenderInline {FONT} at (0,0) size 362x15
                   RenderText {#text} at (0,27) size 362x15
                     text run at (0,27) width 362: "Pacific Shore Properties is situated on beautiful Mayne Island."
@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 742x30
                     text run at (0,0) width 742: "Mayne Island is one of the southern Gulf Islands, off the coast of British Columbia, Canada, between Vancouver and Vancouver"
                     text run at (0,15) width 39: "Island."
-                  RenderBR {BR} at (39,27) size 0x0
+                  RenderBR {BR} at (39,15) size 0x15
                   RenderText {#text} at (0,30) size 86x15
                     text run at (0,30) width 86: "(See map: left)"
               RenderBlock {P} at (5,124) size 761x75
@@ -39,7 +39,7 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 749x30
                     text run at (0,0) width 749: "Pacific Shore Properties specializes in the diverse properties of the Southern Gulf Islands; which include Beach, Business, View,"
                     text run at (0,15) width 256: "Acreage, Home, Retirement and Recreation."
-                  RenderBR {BR} at (256,27) size 0x0
+                  RenderBR {BR} at (256,15) size 0x15
                   RenderBR {BR} at (0,30) size 0x15
                   RenderText {#text} at (0,45) size 720x30
                     text run at (0,45) width 720: "In business for over 35 years, and the oldest real estate company on Mayne Island, Pacific Shore Properties knowledge and"

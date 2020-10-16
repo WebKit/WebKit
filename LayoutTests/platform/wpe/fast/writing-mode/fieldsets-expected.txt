@@ -5,7 +5,7 @@ layer at (0,0) size 785x1240
     RenderBody {BODY} at (8,8) size 769x1224
       RenderText {#text} at (0,0) size 282x17
         text run at (0,0) width 282: "LTR fieldset with left/center/right text-align: "
-      RenderBR {BR} at (282,14) size 0x0
+      RenderBR {BR} at (282,0) size 0x17
       RenderFieldSet {FIELDSET} at (16,34) size 228x120 [border: (2px groove #C0C0C0)]
         RenderBlock {LEGEND} at (34,0) size 104x25
           RenderBlock {DIV} at (2,0) size 100x25 [bgcolor=#FFA500]
@@ -23,7 +23,7 @@ layer at (0,0) size 785x1240
       RenderBR {BR} at (0,0) size 0x0
       RenderText {#text} at (0,330) size 282x17
         text run at (0,330) width 282: "RTL fieldset with left/center/right text-align: "
-      RenderBR {BR} at (282,344) size 0x0
+      RenderBR {BR} at (282,330) size 0x17
       RenderFieldSet {FIELDSET} at (16,364) size 228x120 [border: (2px groove #C0C0C0)]
         RenderBlock {LEGEND} at (14,0) size 104x25
           RenderBlock {DIV} at (2,0) size 100x25 [bgcolor=#FFA500]
@@ -41,7 +41,7 @@ layer at (0,0) size 785x1240
       RenderBR {BR} at (0,0) size 0x0
       RenderText {#text} at (0,660) size 336x17
         text run at (0,660) width 336: "Vertical LTR fieldset with left/center/right text-align: "
-      RenderBR {BR} at (336,674) size 0x0
+      RenderBR {BR} at (336,660) size 0x17
       RenderFieldSet {FIELDSET} at (16,694) size 120x228 [border: (2px groove #C0C0C0)]
         RenderBlock {LEGEND} at (0,34) size 25x104
           RenderBlock {DIV} at (0,2) size 25x100 [bgcolor=#FFA500]
@@ -60,7 +60,7 @@ layer at (0,0) size 785x1240
       RenderBR {BR} at (0,0) size 0x0
       RenderText {#text} at (0,942) size 336x17
         text run at (0,942) width 336: "Vertical RTL fieldset with left/center/right text-align: "
-      RenderBR {BR} at (336,956) size 0x0
+      RenderBR {BR} at (336,942) size 0x17
       RenderFieldSet {FIELDSET} at (16,976) size 120x228 [border: (2px groove #C0C0C0)]
         RenderBlock {LEGEND} at (0,14) size 25x104
           RenderBlock {DIV} at (0,2) size 25x100 [bgcolor=#FFA500]
