@@ -33,10 +33,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/LocalConnectionAdditions.h>
-#endif
-
+#import "AppAttestInternalSoftLink.h"
 #import "LocalAuthenticationSoftLink.h"
 
 namespace WebKit {
@@ -125,8 +122,10 @@ RetainPtr<SecKeyRef> LocalConnection::createCredentialPrivateKey(LAContext *cont
 
 void LocalConnection::getAttestation(SecKeyRef privateKey, NSData *authData, NSData *hash, AttestationCallback&& completionHandler) const
 {
-#if defined(LOCALCONNECTION_ADDITIONS)
-LOCALCONNECTION_ADDITIONS
+#if HAVE(APPLE_ATTESTATION)
+    AppAttest_WebAuthentication_AttestKey(privateKey, authData, hash, makeBlockPtr([completionHandler = WTFMove(completionHandler)] (NSArray *certificates, NSError *error) mutable {
+        completionHandler(certificates, error);
+    }).get());
 #endif
 }
 

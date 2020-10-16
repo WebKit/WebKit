@@ -530,6 +530,7 @@ UIProcess/RemoteLayerTree/RemoteLayerTreeScrollingPerformanceData.mm
 UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp
 UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp
 
+UIProcess/WebAuthentication/Cocoa/AppAttestInternalSoftLink.mm @no-unify
 UIProcess/WebAuthentication/Cocoa/HidConnection.mm
 UIProcess/WebAuthentication/Cocoa/HidService.mm
 UIProcess/WebAuthentication/Cocoa/LocalAuthenticationSoftLink.mm @no-unify

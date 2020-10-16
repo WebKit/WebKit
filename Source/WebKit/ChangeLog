@@ -1,3 +1,23 @@
+2020-10-15  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Move AppAttestInternal related code from WKA to OpenSource
+        https://bugs.webkit.org/show_bug.cgi?id=217790
+        <rdar://problem/59613406>
+
+        Reviewed by Brent Fulgham.
+
+        Covered by manual testing.
+
+        * Platform/spi/Cocoa/AppAttestSPI.h: Copied from Source/WebKit/UIProcess/WebAuthentication/Cocoa/AppAttestInternalSoftLink.mm.
+        * SourcesCocoa.txt:
+        * UIProcess/WebAuthentication/Cocoa/AppAttestInternalSoftLink.h: Added.
+        * UIProcess/WebAuthentication/Cocoa/AppAttestInternalSoftLink.mm: Added.
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.mm:
+        (WebKit::LocalConnection::getAttestation const):
+        * UIProcess/WebAuthentication/Cocoa/LocalService.mm:
+        (WebKit::LocalService::isAvailable):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-10-15  David Kilzer  <ddkilzer@apple.com>
 
         v2: WebKit::XPCServiceEventHandler block should call exit() on the main thread

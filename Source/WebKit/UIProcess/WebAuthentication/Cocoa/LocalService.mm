@@ -31,10 +31,7 @@
 #import "LocalAuthenticator.h"
 #import "LocalConnection.h"
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/LocalServiceAdditions.h>
-#endif
-
+#import "AppAttestInternalSoftLink.h"
 #import "LocalAuthenticationSoftLink.h"
 
 namespace WebKit {
@@ -53,8 +50,11 @@ bool LocalService::isAvailable()
         return false;
     }
 
-#if defined(LOCALSERVICE_ADDITIONS)
-LOCALSERVICE_ADDITIONS
+#if HAVE(APPLE_ATTESTATION)
+    if (!AppAttest_WebAuthentication_IsSupported()) {
+        LOG_ERROR("Device is unable to support Apple attestation features.");
+        return false;
+    }
 #else
     return false;
 #endif

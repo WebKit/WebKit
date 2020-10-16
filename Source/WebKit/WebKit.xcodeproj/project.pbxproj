@@ -1096,6 +1096,9 @@
 		570DAAC22303730300E8FC04 /* NfcConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 570DAAC02303730300E8FC04 /* NfcConnection.h */; };
 		570DAAC623037F7F00E8FC04 /* WKNFReaderSessionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 570DAAC423037F7E00E8FC04 /* WKNFReaderSessionDelegate.h */; };
 		570DAACA230385FD00E8FC04 /* CtapNfcDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 570DAAC8230385FD00E8FC04 /* CtapNfcDriver.h */; };
+		572EBBDA2538F6B4000552B3 /* AppAttestInternalSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 572EBBD82538F6A1000552B3 /* AppAttestInternalSoftLink.mm */; };
+		572EBBDB2538F6B6000552B3 /* AppAttestInternalSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 572EBBD92538F6A1000552B3 /* AppAttestInternalSoftLink.h */; };
+		572EBBDD25392181000552B3 /* AppAttestSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 572EBBDC25392181000552B3 /* AppAttestSPI.h */; };
 		572FD44322265CE200A1ECC3 /* WebViewDidMoveToWindowObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 572FD44122265CE200A1ECC3 /* WebViewDidMoveToWindowObserver.h */; };
 		574217922400E286002B303D /* LocalAuthenticationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 574217912400E098002B303D /* LocalAuthenticationSPI.h */; };
 		574728D123456E98001700AF /* _WKWebAuthenticationPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 574728CF23456E98001700AF /* _WKWebAuthenticationPanel.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3910,6 +3913,9 @@
 		570DAAC523037F7E00E8FC04 /* WKNFReaderSessionDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNFReaderSessionDelegate.mm; sourceTree = "<group>"; };
 		570DAAC8230385FD00E8FC04 /* CtapNfcDriver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CtapNfcDriver.h; sourceTree = "<group>"; };
 		570DAAC9230385FD00E8FC04 /* CtapNfcDriver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CtapNfcDriver.cpp; sourceTree = "<group>"; };
+		572EBBD82538F6A1000552B3 /* AppAttestInternalSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppAttestInternalSoftLink.mm; sourceTree = "<group>"; };
+		572EBBD92538F6A1000552B3 /* AppAttestInternalSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppAttestInternalSoftLink.h; sourceTree = "<group>"; };
+		572EBBDC25392181000552B3 /* AppAttestSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppAttestSPI.h; sourceTree = "<group>"; };
 		572FD44122265CE200A1ECC3 /* WebViewDidMoveToWindowObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebViewDidMoveToWindowObserver.h; sourceTree = "<group>"; };
 		574217912400E098002B303D /* LocalAuthenticationSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalAuthenticationSPI.h; sourceTree = "<group>"; };
 		574728CF23456E98001700AF /* _WKWebAuthenticationPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebAuthenticationPanel.h; sourceTree = "<group>"; };
@@ -7217,6 +7223,7 @@
 			isa = PBXGroup;
 			children = (
 				E3CAAA432413278A00CED2E2 /* AccessibilitySupportSPI.h */,
+				572EBBDC25392181000552B3 /* AppAttestSPI.h */,
 				1A5705101BE410E500874AF1 /* BlockSPI.h */,
 				37C21CAD1E994C0C0029D5F9 /* CorePredictionSPI.h */,
 				2DAADA8E2298C21000E36B0C /* DeviceManagementSPI.h */,
@@ -8231,6 +8238,8 @@
 		57DCED9E2148F9D10016B847 /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				572EBBD92538F6A1000552B3 /* AppAttestInternalSoftLink.h */,
+				572EBBD82538F6A1000552B3 /* AppAttestInternalSoftLink.mm */,
 				57AC8F4E217FEED90055438C /* HidConnection.h */,
 				57AC8F4F217FEED90055438C /* HidConnection.mm */,
 				5772F204217DBD6A0056BF2C /* HidService.h */,
@@ -10808,6 +10817,8 @@
 				577FF7822346E81C004EDFB9 /* APIWebAuthenticationPanelClient.h in Headers */,
 				1AE286841C7F93860069AC4F /* APIWebsiteDataRecord.h in Headers */,
 				1A6563E51B7A8C50009CF787 /* APIWindowFeatures.h in Headers */,
+				572EBBDB2538F6B6000552B3 /* AppAttestInternalSoftLink.h in Headers */,
+				572EBBDD25392181000552B3 /* AppAttestSPI.h in Headers */,
 				074879B92373A90900F5678E /* AppKitSoftLink.h in Headers */,
 				F48D2A8521583A7E00C6752B /* AppKitSPI.h in Headers */,
 				F4EC94E32356CC57000BB614 /* ApplicationServicesSPI.h in Headers */,
@@ -12817,6 +12828,7 @@
 				49FBEFFF239B012F00BD032F /* _WKResourceLoadStatisticsThirdParty.mm in Sources */,
 				99E7189A21F79D9E0055E975 /* _WKTouchEventGenerator.mm in Sources */,
 				2D92A784212B6AB100F493FD /* ActivityAssertion.cpp in Sources */,
+				572EBBDA2538F6B4000552B3 /* AppAttestInternalSoftLink.mm in Sources */,
 				2D92A77B212B6A7100F493FD /* ArgumentCoders.cpp in Sources */,
 				2DEB1D2E2127473600933906 /* ArgumentCodersCF.cpp in Sources */,
 				2D92A77C212B6A7100F493FD /* Attachment.cpp in Sources */,
