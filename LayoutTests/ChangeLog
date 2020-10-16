@@ -1,3 +1,12 @@
+2020-10-16  Karl Rackler  <rackler@apple.com>
+
+        REGRESSION(268444?): [ Win10 wk1 ews ] transforms/2d/rotate-composited.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=217812
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2020-10-16  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB][GTK] Unreviewed test expectations. Update test expectations after r268606.
