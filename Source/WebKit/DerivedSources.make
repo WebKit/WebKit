@@ -175,6 +175,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/GPU/media/ios/RemoteMediaSessionHelper \
 	WebProcess/GPU/media/RemoteAudioDestinationProxy \
 	WebProcess/GPU/media/RemoteAudioSession \
+	WebProcess/GPU/media/RemoteAudioSourceProviderManager \
 	WebProcess/WebStorage/StorageAreaMap \
 	WebProcess/UserContent/WebUserContentController \
 	WebProcess/Inspector/WebInspectorInterruptDispatcher \

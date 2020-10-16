@@ -1,3 +1,60 @@
+2020-10-16  Youenn Fablet  <youenn@apple.com>
+
+        Add support for GPUProcess WebAudio media element providers
+        https://bugs.webkit.org/show_bug.cgi?id=217704
+
+        Reviewed by Eric Carlson.
+
+        Introduce RemoteAudioSourceProviderManager which receives IPC messages from GPU process for web audio data.
+        RemoteAudioSourceProviderManager sends it to the identified RemoteAudioSourceProvider.
+
+        Introduce RemoteAudioSourceProviderProxy which is a client to the AV AudioSourceProviderAVFObjC.
+        RemoteAudioSourceProviderProxy will send IPC messages to RemoteAudioSourceProviderManager to send audio data and description.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/media/RemoteAudioSourceProviderProxy.cpp: Added.
+        (WebKit::RemoteAudioSourceProviderProxy::create):
+        (WebKit::RemoteAudioSourceProviderProxy::RemoteAudioSourceProviderProxy):
+        (WebKit::RemoteAudioSourceProviderProxy::createRingBuffer):
+        (WebKit::RemoteAudioSourceProviderProxy::newAudioSamples):
+        (WebKit::RemoteAudioSourceProviderProxy::storageChanged):
+        * GPUProcess/media/RemoteAudioSourceProviderProxy.h: Added.
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::~RemoteMediaPlayerProxy):
+        (WebKit::RemoteMediaPlayerProxy::createAudioSourceProvider):
+        (WebKit::RemoteMediaPlayerProxy::setShouldEnableAudioSourceProvider):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::audioSourceProviderManager):
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/GPU/media/RemoteAudioSourceProvider.cpp:
+        (WebKit::RemoteAudioSourceProvider::create):
+        (WebKit::RemoteAudioSourceProvider::RemoteAudioSourceProvider):
+        (WebKit::RemoteAudioSourceProvider::close):
+        (WebKit::RemoteAudioSourceProvider::hasNewClient):
+        * WebProcess/GPU/media/RemoteAudioSourceProviderManager.cpp: Added.
+        (WebKit::RemoteAudioSourceProviderManager::RemoteAudioSourceProviderManager):
+        (WebKit::RemoteAudioSourceProviderManager::~RemoteAudioSourceProviderManager):
+        (WebKit::RemoteAudioSourceProviderManager::setConnection):
+        (WebKit::RemoteAudioSourceProviderManager::addProvider):
+        (WebKit::RemoteAudioSourceProviderManager::removeProvider):
+        (WebKit::RemoteAudioSourceProviderManager::dispatchToThread):
+        (WebKit::RemoteAudioSourceProviderManager::audioStorageChanged):
+        (WebKit::RemoteAudioSourceProviderManager::audioSamplesAvailable):
+        (WebKit::RemoteAudioSourceProviderManager::RemoteAudio::RemoteAudio):
+        (WebKit::RemoteAudioSourceProviderManager::RemoteAudio::setStorage):
+        (WebKit::RemoteAudioSourceProviderManager::RemoteAudio::audioSamplesAvailable):
+        * WebProcess/GPU/media/RemoteAudioSourceProviderManager.h: Added.
+        (WebKit::RemoteAudioSourceProviderManager::create):
+        * WebProcess/GPU/media/RemoteAudioSourceProviderManager.messages.in: Added.
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+
 2020-10-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Move AppAttestInternal related code from WKA to OpenSource

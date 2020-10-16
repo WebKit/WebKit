@@ -337,8 +337,13 @@ void AudioSourceProviderAVFObjC::prepare(CMItemCount maxFrames, const AudioStrea
     // Make the ringbuffer large enough to store at least two callbacks worth of audio, or 1s, whichever is larger.
     size_t capacity = std::max(static_cast<size_t>(2 * maxFrames), static_cast<size_t>(kRingBufferDuration * sampleRate));
 
-    m_ringBuffer = makeUnique<CARingBuffer>();
-    m_ringBuffer->allocate(CAAudioStreamDescription(*processingFormat), capacity);
+    CAAudioStreamDescription description { *processingFormat };
+    if (m_ringBufferCallback)
+        m_ringBuffer = m_ringBufferCallback(description, capacity).moveToUniquePtr();
+    else {
+        m_ringBuffer = makeUnique<CARingBuffer>();
+        m_ringBuffer->allocate(description, capacity);
+    }
 
     // AudioBufferList is a variable-length struct, so create on the heap with a generic new() operator
     // with a custom size, and initialize the struct manually.
@@ -419,6 +424,21 @@ void AudioSourceProviderAVFObjC::process(MTAudioProcessingTapRef tap, CMItemCoun
         memset(buffer.mData, 0, buffer.mDataByteSize);
     }
     *numberFramesOut = 0;
+
+    if (m_audioCallback)
+        m_audioCallback(endFrame, itemCount);
+}
+
+void AudioSourceProviderAVFObjC::setAudioCallback(AudioCallback&& callback)
+{
+    ASSERT(!m_avAudioMix);
+    m_audioCallback = WTFMove(callback);
+}
+
+void AudioSourceProviderAVFObjC::setRingBufferCreationCallback(RingBufferCreationCallback&& callback)
+{
+    ASSERT(!m_avAudioMix);
+    m_ringBufferCallback = WTFMove(callback);
 }
 
 }

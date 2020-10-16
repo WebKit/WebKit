@@ -33,6 +33,7 @@
 #include "LibWebRTCCodecs.h"
 #include "LibWebRTCCodecsMessages.h"
 #include "MediaPlayerPrivateRemoteMessages.h"
+#include "RemoteAudioSourceProviderManager.h"
 #include "RemoteCDMFactory.h"
 #include "RemoteCDMProxy.h"
 #include "RemoteLegacyCDMFactory.h"
@@ -100,6 +101,15 @@ RemoteMediaPlayerManager& GPUProcessConnection::mediaPlayerManager()
 {
     return *WebProcess::singleton().supplement<RemoteMediaPlayerManager>();
 }
+
+#if PLATFORM(COCOA) && ENABLE(WEB_AUDIO)
+RemoteAudioSourceProviderManager& GPUProcessConnection::audioSourceProviderManager()
+{
+    if (!m_audioSourceProviderManager)
+        m_audioSourceProviderManager = RemoteAudioSourceProviderManager::create();
+    return *m_audioSourceProviderManager;
+}
+#endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
 RemoteCDMFactory& GPUProcessConnection::cdmFactory()

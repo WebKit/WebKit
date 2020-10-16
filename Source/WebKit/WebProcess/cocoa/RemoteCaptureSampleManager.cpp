@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RemoteCaptureSampleManager.h"
 
+#include "Logging.h"
 #include "RemoteCaptureSampleManagerMessages.h"
 #include "SharedRingBufferStorage.h"
 #include <WebCore/WebAudioBufferList.h>
@@ -33,7 +34,6 @@
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
 namespace WebKit {
-using namespace PAL;
 using namespace WebCore;
 
 RemoteCaptureSampleManager::RemoteCaptureSampleManager()

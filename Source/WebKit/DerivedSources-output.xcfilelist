@@ -154,6 +154,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioSessionProxyManagerMessa
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioSessionProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioSessionProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioSessionProxyMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioSourceProviderManagerMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioSourceProviderManagerMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioSourceProviderManagerMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteCDMFactoryProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteCDMFactoryProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteCDMFactoryProxyMessagesReplies.h

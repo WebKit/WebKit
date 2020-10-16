@@ -52,6 +52,10 @@
 #include "RemoteCDMInstanceProxy.h"
 #endif
 
+#if PLATFORM(COCOA)
+#include "SharedRingBufferStorage.h"
+#endif
+
 namespace WTF {
 class MachSendRight;
 }
@@ -65,6 +69,7 @@ namespace WebKit {
 
 using LayerHostingContextID = uint32_t;
 class LayerHostingContext;
+class RemoteAudioSourceProviderProxy;
 class RemoteAudioTrackProxy;
 class RemoteMediaPlayerManagerProxy;
 class RemoteTextTrackProxy;
@@ -267,6 +272,9 @@ private:
     void sendCachedState();
     void timerFired();
 
+    void createAudioSourceProvider();
+    void setShouldEnableAudioSourceProvider(bool);
+
 #if !RELEASE_LOG_DISABLED
     const Logger& mediaPlayerLogger() final { return m_logger; }
     const void* mediaPlayerLogIdentifier() { return reinterpret_cast<const void*>(m_configuration.logIdentifier); }
@@ -301,6 +309,10 @@ private:
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
     bool m_shouldContinueAfterKeyNeeded { false };
     RemoteLegacyCDMSessionIdentifier m_legacySession;
+#endif
+
+#if ENABLE(WEB_AUDIO) && PLATFORM(COCOA)
+    RefPtr<RemoteAudioSourceProviderProxy> m_remoteAudioSourceProvider;
 #endif
 
 #if !RELEASE_LOG_DISABLED

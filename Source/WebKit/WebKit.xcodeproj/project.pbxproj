@@ -3427,6 +3427,11 @@
 		41287D4D225C161F009A3E26 /* WebSocketTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketTask.h; sourceTree = "<group>"; };
 		412FF91625373F9D001DF036 /* RemoteAudioSourceProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioSourceProvider.cpp; sourceTree = "<group>"; };
 		412FF91725373F9D001DF036 /* RemoteAudioSourceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteAudioSourceProvider.h; sourceTree = "<group>"; };
+		412FF92325382BD3001DF036 /* RemoteAudioSourceProviderManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioSourceProviderManager.cpp; sourceTree = "<group>"; };
+		412FF92425382BD5001DF036 /* RemoteAudioSourceProviderManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteAudioSourceProviderManager.h; sourceTree = "<group>"; };
+		412FF92525382BD5001DF036 /* RemoteAudioSourceProviderManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteAudioSourceProviderManager.messages.in; sourceTree = "<group>"; };
+		412FF92625382D85001DF036 /* RemoteAudioSourceProviderProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioSourceProviderProxy.cpp; sourceTree = "<group>"; };
+		412FF92725382D85001DF036 /* RemoteAudioSourceProviderProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteAudioSourceProviderProxy.h; sourceTree = "<group>"; };
 		4130759A1DE84FB00039EC69 /* NetworkRTCMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkRTCMonitor.cpp; sourceTree = "<group>"; };
 		4130759B1DE84FB00039EC69 /* NetworkRTCMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkRTCMonitor.h; sourceTree = "<group>"; };
 		4130759C1DE84FB00039EC69 /* NetworkRTCMonitor.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NetworkRTCMonitor.messages.in; sourceTree = "<group>"; };
@@ -4538,7 +4543,7 @@
 		9B1229D023FF2A5E008CA751 /* RemoteAudioDestinationIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioDestinationIdentifier.h; sourceTree = "<group>"; };
 		9B47908C25314D8300EC11AB /* MessageArgumentDescriptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageArgumentDescriptions.h; sourceTree = "<group>"; };
 		9B47908E253151CC00EC11AB /* JSIPCBinding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSIPCBinding.h; sourceTree = "<group>"; };
-		9B4790902531563200EC11AB /* MessageArgumentDescriptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageArgumentDescriptions.cpp; path = MessageArgumentDescriptions.cpp; sourceTree = "<group>"; };
+		9B4790902531563200EC11AB /* MessageArgumentDescriptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageArgumentDescriptions.cpp; sourceTree = "<group>"; };
 		9B5499AC2362A6F600DF8BA5 /* _WKTextManipulationConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKTextManipulationConfiguration.h; sourceTree = "<group>"; };
 		9B5499AE2362A7A700DF8BA5 /* _WKTextManipulationConfiguration.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKTextManipulationConfiguration.mm; sourceTree = "<group>"; };
 		9B5499B02362A7EC00DF8BA5 /* _WKTextManipulationExclusionRule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKTextManipulationExclusionRule.h; sourceTree = "<group>"; };
@@ -5574,6 +5579,9 @@
 				CDBB49FB240D974A0017C292 /* RemoteAudioSessionIdentifier.h */,
 				412FF91625373F9D001DF036 /* RemoteAudioSourceProvider.cpp */,
 				412FF91725373F9D001DF036 /* RemoteAudioSourceProvider.h */,
+				412FF92325382BD3001DF036 /* RemoteAudioSourceProviderManager.cpp */,
+				412FF92425382BD5001DF036 /* RemoteAudioSourceProviderManager.h */,
+				412FF92525382BD5001DF036 /* RemoteAudioSourceProviderManager.messages.in */,
 				CDAC20BF23FC2F750021DEE3 /* RemoteCDM.cpp */,
 				CDAC20BA23FC2F740021DEE3 /* RemoteCDM.h */,
 				CDAC20B823FC2F730021DEE3 /* RemoteCDMConfiguration.h */,
@@ -5629,6 +5637,8 @@
 				CDBB49F8240D8D530017C292 /* RemoteAudioSessionProxy.messages.in */,
 				CDBB49FA240D963D0017C292 /* RemoteAudioSessionProxyManager.cpp */,
 				CDBB49F9240D963C0017C292 /* RemoteAudioSessionProxyManager.h */,
+				412FF92625382D85001DF036 /* RemoteAudioSourceProviderProxy.cpp */,
+				412FF92725382D85001DF036 /* RemoteAudioSourceProviderProxy.h */,
 				071BC57E23CA5DB100680D7C /* RemoteAudioTrackProxy.cpp */,
 				071BC57F23CA5DB100680D7C /* RemoteAudioTrackProxy.h */,
 				CDAC207923FB1E210021DEE3 /* RemoteCDMFactoryProxy.cpp */,

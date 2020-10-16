@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AudioSourceProviderAVFObjC_h
-#define AudioSourceProviderAVFObjC_h
+#pragma once
 
 #if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
 
@@ -33,6 +32,8 @@
 #include <wtf/MediaTime.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/TypeCasts.h>
+#include <wtf/UniqueRef.h>
 
 OBJC_CLASS AVAssetTrack;
 OBJC_CLASS AVPlayerItem;
@@ -47,7 +48,10 @@ typedef signed long CMItemCount;
 
 namespace WebCore {
 
+class AudioStreamDescription;
+class CAAudioStreamDescription;
 class CARingBuffer;
+class PlatformAudioData;
 
 class AudioSourceProviderAVFObjC : public ThreadSafeRefCounted<AudioSourceProviderAVFObjC>, public AudioSourceProvider {
 public:
@@ -56,6 +60,11 @@ public:
 
     void setPlayerItem(AVPlayerItem *);
     void setAudioTrack(AVAssetTrack *);
+
+    using AudioCallback = Function<void(uint64_t startFrame, uint64_t numberOfFrames)>;
+    WEBCORE_EXPORT void setAudioCallback(AudioCallback&&);
+    using RingBufferCreationCallback = Function<UniqueRef<CARingBuffer>(const CAAudioStreamDescription&, size_t)>;
+    WEBCORE_EXPORT void setRingBufferCreationCallback(RingBufferCreationCallback&&);
 
 private:
     AudioSourceProviderAVFObjC(AVPlayerItem *);
@@ -66,6 +75,7 @@ private:
     // AudioSourceProvider
     void provideInput(AudioBus*, size_t framesToProcess) override;
     void setClient(AudioSourceProviderClient*) override;
+    bool isHandlingAVPlayer() const final { return true; }
 
     static void initCallback(MTAudioProcessingTapRef, void*, void**);
     static void finalizeCallback(MTAudioProcessingTapRef);
@@ -100,10 +110,14 @@ private:
 
     class TapStorage;
     RefPtr<TapStorage> m_tapStorage;
+    AudioCallback m_audioCallback;
+    RingBufferCreationCallback m_ringBufferCallback;
 };
-    
+
 }
 
-#endif
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AudioSourceProviderAVFObjC)
+    static bool isType(const WebCore::AudioSourceProvider& provider) { return provider.isHandlingAVPlayer(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
-#endif
+#endif // ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)

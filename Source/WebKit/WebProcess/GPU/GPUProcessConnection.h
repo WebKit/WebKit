@@ -40,6 +40,7 @@ class DataReference;
 
 namespace WebKit {
 
+class RemoteAudioSourceProviderManager;
 class RemoteCDMFactory;
 class RemoteMediaPlayerManager;
 class RemoteLegacyCDMFactory;
@@ -65,6 +66,10 @@ public:
 #endif
 
     RemoteMediaPlayerManager& mediaPlayerManager();
+
+#if PLATFORM(COCOA) && ENABLE(WEB_AUDIO)
+    RemoteAudioSourceProviderManager& audioSourceProviderManager();
+#endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
     RemoteCDMFactory& cdmFactory();
@@ -99,6 +104,9 @@ private:
 #endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     std::unique_ptr<SampleBufferDisplayLayerManager> m_sampleBufferDisplayLayerManager;
+#endif
+#if PLATFORM(COCOA) && ENABLE(WEB_AUDIO)
+    RefPtr<RemoteAudioSourceProviderManager> m_audioSourceProviderManager;
 #endif
 #if ENABLE(VP9)
     bool m_enableVP9Decoder { false };

@@ -28,6 +28,9 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO) && PLATFORM(COCOA)
 
+#include "RemoteAudioSourceProviderManager.h"
+#include "RemoteMediaPlayerProxyMessages.h"
+
 namespace WebCore {
 #if !RELEASE_LOG_DISABLED
 extern WTFLogChannel LogMedia;
@@ -39,7 +42,16 @@ using namespace WebCore;
 
 Ref<RemoteAudioSourceProvider> RemoteAudioSourceProvider::create(WebCore::MediaPlayerIdentifier identifier, WTF::LoggerHelper& helper)
 {
-    return adoptRef(*new RemoteAudioSourceProvider(identifier, helper));
+    auto provider = adoptRef(*new RemoteAudioSourceProvider(identifier, helper));
+
+    auto& gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
+    gpuProcessConnection.audioSourceProviderManager().addProvider(provider.copyRef());
+
+#if ENABLE(WEB_AUDIO)
+    gpuProcessConnection.connection().send(Messages::RemoteMediaPlayerProxy::CreateAudioSourceProvider { }, provider->identifier());
+#endif
+
+    return provider;
 }
 
 RemoteAudioSourceProvider::RemoteAudioSourceProvider(MediaPlayerIdentifier identifier, WTF::LoggerHelper& helper)
@@ -49,6 +61,7 @@ RemoteAudioSourceProvider::RemoteAudioSourceProvider(MediaPlayerIdentifier ident
     , m_logIdentifier(helper.logIdentifier())
 #endif
 {
+    ASSERT(isMainThread());
     UNUSED_PARAM(helper);
 }
 
@@ -58,11 +71,13 @@ RemoteAudioSourceProvider::~RemoteAudioSourceProvider()
 
 void RemoteAudioSourceProvider::close()
 {
+    ASSERT(isMainThread());
+    WebProcess::singleton().ensureGPUProcessConnection().audioSourceProviderManager().removeProvider(m_identifier);
 }
 
-void RemoteAudioSourceProvider::hasNewClient(AudioSourceProviderClient*)
+void RemoteAudioSourceProvider::hasNewClient(AudioSourceProviderClient* client)
 {
-    // FIXME: register/unregister as needed.
+    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteMediaPlayerProxy::SetShouldEnableAudioSourceProvider { !!client }, m_identifier);
 }
 
 void RemoteAudioSourceProvider::audioSamplesAvailable(const PlatformAudioData& data, const AudioStreamDescription& description, size_t size)

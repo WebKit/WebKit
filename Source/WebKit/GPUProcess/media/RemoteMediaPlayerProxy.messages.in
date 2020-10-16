@@ -116,6 +116,11 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     ErrorLog() -> (String errorLog) Synchronous
     AccessLog() -> (String accessLog) Synchronous
 #endif
+
+#if ENABLE(WEB_AUDIO)
+    CreateAudioSourceProvider()
+    SetShouldEnableAudioSourceProvider(bool shouldEnable)
+#endif
 }
 
 #endif

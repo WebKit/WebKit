@@ -32,6 +32,7 @@
 #include "GPUConnectionToWebProcess.h"
 #include "LayerHostingContext.h"
 #include "MediaPlayerPrivateRemoteMessages.h"
+#include "RemoteAudioSourceProviderProxy.h"
 #include "RemoteAudioTrackProxy.h"
 #include "RemoteLegacyCDMFactoryProxy.h"
 #include "RemoteLegacyCDMSessionProxy.h"
@@ -59,6 +60,10 @@
 #include <WebCore/MediaPlaybackTargetMock.h>
 #endif
 
+#if PLATFORM(COCOA)
+#include <WebCore/AudioSourceProviderAVFObjC.h>
+#endif
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -82,6 +87,7 @@ RemoteMediaPlayerProxy::~RemoteMediaPlayerProxy()
 {
     if (m_performTaskAtMediaTimeCompletionHandler)
         m_performTaskAtMediaTimeCompletionHandler(WTF::nullopt);
+    setShouldEnableAudioSourceProvider(false);
 }
 
 void RemoteMediaPlayerProxy::invalidate()
@@ -876,6 +882,28 @@ void RemoteMediaPlayerProxy::performTaskAtMediaTime(const MediaTime& taskTime, W
 void RemoteMediaPlayerProxy::wouldTaintOrigin(struct WebCore::SecurityOriginData originData, CompletionHandler<void(Optional<bool>)>&& completionHandler)
 {
     completionHandler(m_player->wouldTaintOrigin(originData.securityOrigin()));
+}
+
+void RemoteMediaPlayerProxy::createAudioSourceProvider()
+{
+#if ENABLE(WEB_AUDIO) && PLATFORM(COCOA)
+    if (!m_player)
+        return;
+
+    auto* provider = m_player->audioSourceProvider();
+    if (!provider || !is<AudioSourceProviderAVFObjC>(provider))
+        return;
+
+    m_remoteAudioSourceProvider = RemoteAudioSourceProviderProxy::create(m_id, m_webProcessConnection.copyRef(), downcast<AudioSourceProviderAVFObjC>(*provider));
+#endif
+}
+
+void RemoteMediaPlayerProxy::setShouldEnableAudioSourceProvider(bool shouldEnable)
+{
+#if ENABLE(WEB_AUDIO) && PLATFORM(COCOA)
+    if (auto* provider = m_player->audioSourceProvider())
+        provider->setClient(shouldEnable ? m_remoteAudioSourceProvider.get() : nullptr);
+#endif
 }
 
 } // namespace WebKit

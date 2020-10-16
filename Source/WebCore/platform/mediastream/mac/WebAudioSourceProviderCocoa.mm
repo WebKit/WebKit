@@ -141,7 +141,7 @@ void WebAudioSourceProviderCocoa::receivedNewAudioSamples(const PlatformAudioDat
     if (!m_dataSource)
         return;
 
-    m_dataSource->pushSamples(MediaTime(m_writeCount, m_outputDescription->sampleRate()), data, frameCount);
+    m_dataSource->pushSamples(MediaTime(m_writeCount, m_inputDescription->sampleRate()), data, frameCount);
 
     m_writeCount += frameCount;
 }
