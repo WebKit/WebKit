@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "BaseAudioContext.h"
+#include "AudioContext.h"
 #include "WebKitAudioListener.h"
 
 namespace WebCore {
@@ -46,8 +46,7 @@ class WebKitOscillatorNode;
 // AudioContext is the cornerstone of the web audio API and all AudioNodes are created from it.
 // For thread safety between the audio thread and the main thread, it has a rendering graph locking mechanism.
 
-class WebKitAudioContext
-    : public BaseAudioContext
+class WebKitAudioContext : public AudioContext
 {
     WTF_MAKE_ISO_ALLOCATED(WebKitAudioContext);
 public:
@@ -56,7 +55,7 @@ public:
 
     void close(DOMPromiseDeferred<void>&&);
 
-    WebKitAudioListener& listener() { return downcast<WebKitAudioListener>(BaseAudioContext::listener()); }
+    WebKitAudioListener& listener() { return downcast<WebKitAudioListener>(AudioContext::listener()); }
 
     // The AudioNode create methods are called on the main thread (from JavaScript).
 #if ENABLE(VIDEO)

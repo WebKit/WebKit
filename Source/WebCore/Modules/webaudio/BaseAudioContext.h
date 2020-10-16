@@ -144,9 +144,6 @@ public:
 
     AudioListener& listener();
 
-    void suspendRendering(DOMPromiseDeferred<void>&&);
-    void resumeRendering(DOMPromiseDeferred<void>&&);
-
     virtual void didSuspendRendering(size_t frame);
 
     AudioBuffer* renderTarget() const { return m_renderTarget.get(); }
@@ -258,7 +255,6 @@ public:
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }
 
-    void startRendering();
     void finishedRendering(bool didRendering);
 
     static unsigned s_hardwareContextCount;
@@ -276,7 +272,7 @@ public:
 
     void isPlayingAudioDidChange();
 
-    void nodeWillBeginPlayback();
+    virtual void nodeWillBeginPlayback() { }
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
@@ -317,7 +313,7 @@ public:
     void refNode(AudioNode&);
     void derefNode(AudioNode&);
 
-    void lazyInitialize();
+    virtual void lazyInitialize();
 
     static bool isSupportedSampleRate(float sampleRate);
 
@@ -350,13 +346,12 @@ protected:
 
     virtual void didFinishOfflineRendering(ExceptionOr<Ref<AudioBuffer>>&&) { }
 
-private:
-    void constructCommon();
-
-    bool willPausePlayback();
-
     bool userGestureRequiredForAudioStart() const { return !isOfflineContext() && m_restrictions & RequireUserGestureForAudioStartRestriction; }
     bool pageConsentRequiredForAudioStart() const { return !isOfflineContext() && m_restrictions & RequirePageConsentForAudioStartRestriction; }
+
+    PlatformMediaSession* mediaSession() const { return m_mediaSession.get(); }
+private:
+    void constructCommon();
 
     void clear();
 
@@ -475,10 +470,6 @@ private:
     AudioIOPosition m_outputPosition;
 
     HashMap<String, Vector<AudioParamDescriptor>> m_parameterDescriptorMap;
-
-    // [[suspended by user]] flag in the specification:
-    // https://www.w3.org/TR/webaudio/#dom-audiocontext-suspended-by-user-slot
-    bool m_wasSuspendedByScript { false };
 
     // These are cached per audio context for performance reasons. They cannot be
     // static because they rely on the sample rate.

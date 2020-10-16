@@ -27,11 +27,11 @@
 
 #include "AudioContextOptions.h"
 #include "BaseAudioContext.h"
+#include "DefaultAudioDestinationNode.h"
 
 namespace WebCore {
 
 class DOMWindow;
-class DefaultAudioDestinationNode;
 
 struct AudioTimestamp;
 
@@ -57,8 +57,24 @@ public:
     ExceptionOr<Ref<MediaStreamAudioDestinationNode>> createMediaStreamDestination();
 #endif
 
+    void suspendRendering(DOMPromiseDeferred<void>&&);
+    void resumeRendering(DOMPromiseDeferred<void>&&);
+
+    void nodeWillBeginPlayback() final;
+    void lazyInitialize() final;
+
+    void startRendering();
+
+protected:
+    explicit AudioContext(Document&, const AudioContextOptions& = { });
+    AudioContext(Document&, unsigned numberOfChannels, RefPtr<AudioBuffer>&& renderTarget);
+
 private:
-    AudioContext(Document&, const AudioContextOptions&);
+    bool willPausePlayback();
+
+    // [[suspended by user]] flag in the specification:
+    // https://www.w3.org/TR/webaudio/#dom-audiocontext-suspended-by-user-slot
+    bool m_wasSuspendedByScript { false };
 };
 
 } // WebCore

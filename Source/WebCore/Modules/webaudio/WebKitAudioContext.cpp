@@ -79,13 +79,13 @@ ExceptionOr<Ref<WebKitAudioContext>> WebKitAudioContext::create(Document& docume
 
 // Constructor for rendering to the audio hardware.
 WebKitAudioContext::WebKitAudioContext(Document& document)
-    : BaseAudioContext(document)
+    : AudioContext(document)
 {
 }
 
 // Constructor for offline (non-realtime) rendering.
 WebKitAudioContext::WebKitAudioContext(Document& document, Ref<AudioBuffer>&& renderTarget)
-    : BaseAudioContext(document, renderTarget->numberOfChannels(), WTFMove(renderTarget))
+    : AudioContext(document, renderTarget->numberOfChannels(), WTFMove(renderTarget))
 {
 }
 

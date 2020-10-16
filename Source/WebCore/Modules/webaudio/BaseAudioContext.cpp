@@ -223,18 +223,8 @@ void BaseAudioContext::lazyInitialize()
     if (m_isAudioThreadFinished)
         return;
 
-    if (m_destinationNode) {
+    if (m_destinationNode)
         m_destinationNode->initialize();
-
-        if (!isOfflineContext() && state() != State::Running) {
-            // This starts the audio thread. The destination node's provideInput() method will now be called repeatedly to render audio.
-            // Each time provideInput() is called, a portion of the audio stream is rendered. Let's call this time period a "render quantum".
-            // NOTE: for now default AudioContext does not need an explicit startRendering() call from JavaScript.
-            // We may want to consider requiring it for symmetry with OfflineAudioContext.
-            startRendering();
-            ++s_hardwareContextCount;
-        }
-    }
 
     m_isInitialized = true;
 }
@@ -1003,19 +993,6 @@ ScriptExecutionContext* BaseAudioContext::scriptExecutionContext() const
     return ActiveDOMObject::scriptExecutionContext();
 }
 
-void BaseAudioContext::nodeWillBeginPlayback()
-{
-    // Called by scheduled AudioNodes when clients schedule their start times.
-    // Prior to the introduction of suspend(), resume(), and stop(), starting
-    // a scheduled AudioNode would remove the user-gesture restriction, if present,
-    // and would thus unmute the context. Now that AudioContext stays in the
-    // "suspended" state if a user-gesture restriction is present, starting a
-    // schedule AudioNode should set the state to "running", but only if the
-    // user-gesture restriction is set.
-    if (userGestureRequiredForAudioStart())
-        startRendering();
-}
-
 static bool shouldDocumentAllowWebAudioToAutoPlay(const Document& document)
 {
     if (document.processingUserGestureForMedia() || document.isCapturing())
@@ -1053,44 +1030,6 @@ bool BaseAudioContext::willBeginPlayback()
     return willBegin;
 }
 
-bool BaseAudioContext::willPausePlayback()
-{
-    auto* document = this->document();
-    if (!document)
-        return false;
-
-    if (userGestureRequiredForAudioStart()) {
-        if (!document->processingUserGestureForMedia())
-            return false;
-        removeBehaviorRestriction(BaseAudioContext::RequireUserGestureForAudioStartRestriction);
-    }
-
-    if (pageConsentRequiredForAudioStart()) {
-        auto* page = document->page();
-        if (page && !page->canStartMedia()) {
-            document->addMediaCanStartListener(*this);
-            return false;
-        }
-        removeBehaviorRestriction(BaseAudioContext::RequirePageConsentForAudioStartRestriction);
-    }
-    
-    return m_mediaSession->clientWillPausePlayback();
-}
-
-void BaseAudioContext::startRendering()
-{
-    ALWAYS_LOG(LOGIDENTIFIER);
-    if (m_isStopScheduled || !willBeginPlayback() || m_wasSuspendedByScript)
-        return;
-
-    makePendingActivity();
-
-    setState(State::Running);
-
-    lazyInitialize();
-    destination()->startRendering();
-}
-
 void BaseAudioContext::mediaCanStart(Document& document)
 {
     ASSERT_UNUSED(document, &document == this->document());
@@ -1122,6 +1061,7 @@ void BaseAudioContext::isPlayingAudioDidChange()
     });
 }
 
+// FIXME: Move to OfflineAudioContext once WebKitOfflineAudioContext gets removed.
 void BaseAudioContext::finishedRendering(bool didRendering)
 {
     ASSERT(isOfflineContext());
@@ -1178,59 +1118,9 @@ void BaseAudioContext::decrementActiveSourceCount()
     --m_activeSourceCount;
 }
 
-void BaseAudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
-{
-    if (isOfflineContext() || m_isStopScheduled) {
-        promise.reject(InvalidStateError);
-        return;
-    }
-
-    if (m_state == State::Closed || m_state == State::Interrupted || !m_destinationNode) {
-        promise.reject();
-        return;
-    }
-
-    addReaction(State::Suspended, WTFMove(promise));
-    m_wasSuspendedByScript = true;
-
-    if (!willPausePlayback())
-        return;
-
-    lazyInitialize();
-
-    m_destinationNode->suspend([this, protectedThis = makeRef(*this)] {
-        setState(State::Suspended);
-    });
-}
-
 void BaseAudioContext::didSuspendRendering(size_t)
 {
     setState(State::Suspended);
-}
-
-void BaseAudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
-{
-    if (isOfflineContext() || m_isStopScheduled) {
-        promise.reject(InvalidStateError);
-        return;
-    }
-
-    if (m_state == State::Closed || !m_destinationNode) {
-        promise.reject();
-        return;
-    }
-
-    addReaction(State::Running, WTFMove(promise));
-    m_wasSuspendedByScript = false;
-
-    if (!willBeginPlayback())
-        return;
-
-    lazyInitialize();
-
-    m_destinationNode->resume([this, protectedThis = makeRef(*this)] {
-        setState(State::Running);
-    });
 }
 
 void BaseAudioContext::suspendPlayback()

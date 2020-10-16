@@ -30,8 +30,8 @@
 #include "AudioContext.h"
 #include "AudioTimestamp.h"
 #include "DOMWindow.h"
-#include "DefaultAudioDestinationNode.h"
 #include "JSDOMPromiseDeferred.h"
+#include "Page.h"
 #include "Performance.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -99,6 +99,12 @@ AudioContext::AudioContext(Document& document, const AudioContextOptions& contex
 {
 }
 
+// Only needed for WebKitOfflineAudioContext.
+AudioContext::AudioContext(Document& document, unsigned numberOfChannels, RefPtr<AudioBuffer>&& renderTarget)
+    : BaseAudioContext(document, numberOfChannels, WTFMove(renderTarget))
+{
+}
+
 double AudioContext::baseLatency()
 {
     lazyInitialize();
@@ -151,6 +157,125 @@ void AudioContext::close(DOMPromiseDeferred<void>&& promise)
 DefaultAudioDestinationNode* AudioContext::destination()
 {
     return static_cast<DefaultAudioDestinationNode*>(BaseAudioContext::destination());
+}
+
+void AudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
+{
+    if (isOfflineContext() || isStopped()) {
+        promise.reject(InvalidStateError);
+        return;
+    }
+
+    if (state() == State::Closed || state() == State::Interrupted || !destinationNode()) {
+        promise.reject();
+        return;
+    }
+
+    addReaction(State::Suspended, WTFMove(promise));
+    m_wasSuspendedByScript = true;
+
+    if (!willPausePlayback())
+        return;
+
+    lazyInitialize();
+
+    destinationNode()->suspend([this, protectedThis = makeRef(*this)] {
+        setState(State::Suspended);
+    });
+}
+
+void AudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
+{
+    if (isOfflineContext() || isStopped()) {
+        promise.reject(InvalidStateError);
+        return;
+    }
+
+    if (state() == State::Closed || !destinationNode()) {
+        promise.reject();
+        return;
+    }
+
+    addReaction(State::Running, WTFMove(promise));
+    m_wasSuspendedByScript = false;
+
+    if (!willBeginPlayback())
+        return;
+
+    lazyInitialize();
+
+    destinationNode()->resume([this, protectedThis = makeRef(*this)] {
+        setState(State::Running);
+    });
+}
+
+void AudioContext::nodeWillBeginPlayback()
+{
+    // Called by scheduled AudioNodes when clients schedule their start times.
+    // Prior to the introduction of suspend(), resume(), and stop(), starting
+    // a scheduled AudioNode would remove the user-gesture restriction, if present,
+    // and would thus unmute the context. Now that AudioContext stays in the
+    // "suspended" state if a user-gesture restriction is present, starting a
+    // schedule AudioNode should set the state to "running", but only if the
+    // user-gesture restriction is set.
+    if (userGestureRequiredForAudioStart())
+        startRendering();
+}
+
+void AudioContext::startRendering()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    if (isStopped() || !willBeginPlayback() || m_wasSuspendedByScript)
+        return;
+
+    makePendingActivity();
+
+    setState(State::Running);
+
+    lazyInitialize();
+    destination()->startRendering();
+}
+
+void AudioContext::lazyInitialize()
+{
+    if (isInitialized())
+        return;
+
+    BaseAudioContext::lazyInitialize();
+    if (isInitialized()) {
+        if (destinationNode() && state() != State::Running) {
+            // This starts the audio thread. The destination node's provideInput() method will now be called repeatedly to render audio.
+            // Each time provideInput() is called, a portion of the audio stream is rendered. Let's call this time period a "render quantum".
+            // NOTE: for now default AudioContext does not need an explicit startRendering() call from JavaScript.
+            // We may want to consider requiring it for symmetry with OfflineAudioContext.
+            startRendering();
+            ++s_hardwareContextCount;
+        }
+    }
+}
+
+bool AudioContext::willPausePlayback()
+{
+    auto* document = this->document();
+    if (!document)
+        return false;
+
+    if (userGestureRequiredForAudioStart()) {
+        if (!document->processingUserGestureForMedia())
+            return false;
+        removeBehaviorRestriction(BaseAudioContext::RequireUserGestureForAudioStartRestriction);
+    }
+
+    if (pageConsentRequiredForAudioStart()) {
+        auto* page = document->page();
+        if (page && !page->canStartMedia()) {
+            document->addMediaCanStartListener(*this);
+            return false;
+        }
+        removeBehaviorRestriction(BaseAudioContext::RequirePageConsentForAudioStartRestriction);
+    }
+
+    return mediaSession()->clientWillPausePlayback();
 }
 
 #if ENABLE(VIDEO)
