@@ -470,8 +470,9 @@
   </cmake>
 
   <cmake id="libwpe">
-    <branch repo="wpewebkit" module="libwpe-1.4.0.tar.xz" version="1.4.0"
-            hash="sha256:e2d3494fc33fe946ad917fd6a3abd127462b91bba62ef8b35507e92f8ede4188"/>
+    <branch module="libwpe-1.8.0.tar.xz" version="1.8.0"
+            repo="wpewebkit"
+            hash="sha256:a6f00a7d091cbd4db57fe7ee3b4c12c6350921d654ed79812800a26c888481d2"/>
   </cmake>
 
   <cmake id="wpebackend-fdo">
@@ -480,8 +481,9 @@
       <dep package="glib"/>
       <dep package="mesa"/>
     </dependencies>
-    <branch repo="wpewebkit" module="wpebackend-fdo-1.4.1.tar.xz" version="1.4.1"
-            hash="sha256:6249a0b7cbfa662206a8d2fa24e2c574e75c681ad0e93468091f1dc68ddb299d"/>
+    <branch module="wpebackend-fdo-1.8.0.tar.xz" version="1.8.0"
+            repo="wpewebkit"
+            hash="sha256:9652a99c75fe1c6eab0585b6395f4e104b2427e4d1f42969f1f77df29920d253"/>
   </cmake>
 
   <!-- Dependencies listed below this point are not thought to affect test results, and are only

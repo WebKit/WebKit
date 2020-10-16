@@ -1,3 +1,22 @@
+2020-10-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [JHBuild] Update libwpe and wpebackend-fdo and add libmanette to minimal moduleset
+        https://bugs.webkit.org/show_bug.cgi?id=217825
+
+        Reviewed by Adrian Perez de Castro.
+
+        libmanette 0.2.4 is required for enabling gamepad support, which
+        defaults to on since r268389 for developer builds. The version
+        shipped by ubuntu-20.04 is not enough (0.2.3), so we should include
+        this on the minimal moduleset which is used to generate the bundle
+        products on the packaging bots.
+
+        Seize to also update the libwpe and wpebackend-fdo libraries.
+
+        * gtk/jhbuild.modules:
+        * jhbuild/jhbuild-minimal.modules:
+        * wpe/jhbuild.modules:
+
 2020-10-16  Sam Sneddon  <gsnedders@apple.com>
 
         Match webkitpy.port.base.Port's merging of .webarchive/.txt
