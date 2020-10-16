@@ -1389,13 +1389,9 @@ void Position::ensureLineBoxes() const
     auto renderer = node->renderer();
     if (!renderer)
         return;
-
-    if (renderer->isBR()) {
-        downcast<RenderLineBreak>(*renderer).ensureLineBoxes();
-        return;
-    }
-    if (is<RenderText>(*renderer))
-        downcast<RenderText>(*renderer).ensureLineBoxes();
+    auto* parent = renderer->parent();
+    if (is<RenderBlockFlow>(parent))
+        downcast<RenderBlockFlow>(*parent).ensureLineBoxes();
 }
 
 TextDirection Position::primaryDirection() const

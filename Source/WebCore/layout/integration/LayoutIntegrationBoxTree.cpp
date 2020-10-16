@@ -30,8 +30,10 @@
 
 #include "LayoutInlineTextBox.h"
 #include "LayoutLineBreakBox.h"
+#include "LayoutReplacedBox.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
+#include "RenderImage.h"
 #include "RenderLineBreak.h"
 
 namespace WebCore {
@@ -68,6 +70,10 @@ void BoxTree::buildTree(const RenderBlockFlow& flow)
             clonedStyle.setFloating(Float::No);
             clonedStyle.setPosition(PositionType::Static);
             childBox = makeUnique<Layout::LineBreakBox>(downcast<RenderLineBreak>(childRenderer).isWBR(), WTFMove(clonedStyle));
+        } else if (is<RenderImage>(childRenderer)) {
+            auto& image = downcast<RenderImage>(childRenderer);
+            auto clonedStyle = RenderStyle::clone(image.style());
+            childBox = makeUnique<Layout::ReplacedBox>(WTF::nullopt, WTFMove(clonedStyle));
         }
         ASSERT(childBox);
 

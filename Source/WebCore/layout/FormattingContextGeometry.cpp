@@ -952,6 +952,9 @@ ContentHeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargi
     auto usedVerticalMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
     auto& style = replacedBox.style();
 
+    if (replacedBox.contentSizeForIntegration())
+        return { replacedBox.contentSizeForIntegration()->height(), usedVerticalMargin };
+
     auto height = overriddenVerticalValues.height ? overriddenVerticalValues.height.value() : computedHeight(replacedBox, verticalConstraints ? verticalConstraints->logicalHeight : WTF::nullopt);
     auto heightIsAuto = !overriddenVerticalValues.height && isHeightAuto(replacedBox);
     auto widthIsAuto = style.logicalWidth().isAuto();
@@ -1011,6 +1014,9 @@ ContentWidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(
             return overriddenHorizontalValues.margin->end;
         return computedHorizontalMargin.end.valueOr(0_lu);
     };
+
+    if (replacedBox.contentSizeForIntegration())
+        return { replacedBox.contentSizeForIntegration()->width(), { usedMarginStart(), usedMarginEnd() } };
 
     auto width = overriddenHorizontalValues.width ? overriddenHorizontalValues.width : computedWidth(replacedBox, horizontalConstraints.logicalWidth);
     auto heightIsAuto = isHeightAuto(replacedBox);

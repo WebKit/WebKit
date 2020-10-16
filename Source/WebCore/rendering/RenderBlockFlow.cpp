@@ -3661,8 +3661,14 @@ void RenderBlockFlow::layoutLFCLines(bool, LayoutUnit& repaintLogicalTop, Layout
     auto& layoutFormattingContextLineLayout = *this->layoutFormattingContextLineLayout();
 
     for (auto& renderer : childrenOfType<RenderObject>(*this)) {
-        if (is<RenderText>(renderer))
-            downcast<RenderText>(renderer).deleteLineBoxes();
+        if (!renderer.needsLayout())
+            continue;
+        if (is<RenderReplaced>(renderer)) {
+            auto& replaced = downcast<RenderReplaced>(renderer);
+            replaced.layoutIfNeeded();
+            layoutFormattingContextLineLayout.updateReplacedDimensions(replaced);
+            continue;
+        }
         renderer.clearNeedsLayout();
     }
 

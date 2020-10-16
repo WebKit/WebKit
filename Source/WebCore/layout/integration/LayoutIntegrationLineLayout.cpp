@@ -84,6 +84,14 @@ bool LineLayout::canUseForAfterStyleChange(const RenderBlockFlow& flow, StyleDif
     return canUseForLineLayoutAfterStyleChange(flow, diff);
 }
 
+void LineLayout::updateReplacedDimensions(const RenderBox& replaced)
+{
+    auto& layoutBox = *m_boxTree.layoutBoxForRenderer(replaced);
+    auto& replacedBox = const_cast<Layout::ReplacedBox&>(downcast<Layout::ReplacedBox>(layoutBox));
+
+    replacedBox.setContentSizeForIntegration({ replaced.contentLogicalWidth(), replaced.contentLogicalHeight() });
+}
+
 void LineLayout::updateStyle()
 {
     auto& root = rootLayoutBox();
@@ -155,6 +163,11 @@ void LineLayout::constructContent()
             auto expansion = Run::Expansion { lineRun.expansion().behavior, lineRun.expansion().horizontalExpansion };
             auto displayRun = Run { lineIndex, layoutBox, runRect, computedInkOverflow(runRect), expansion, textContent };
             displayInlineContent.runs.append(displayRun);
+
+            if (layoutBox.isReplacedBox()) {
+                auto& renderer = downcast<RenderBox>(*rendererForLayoutBox(layoutBox));
+                const_cast<RenderBox&>(renderer).setLocation(flooredLayoutPoint(runRect.location()));
+            }
         }
     };
     constructDisplayLineRuns();
@@ -203,6 +216,13 @@ void LineLayout::constructContent()
 void LineLayout::prepareLayoutState()
 {
     m_layoutState.setViewportSize(m_flow.frame().view()->size());
+
+    auto& rootGeometry = m_layoutState.ensureGeometryForBox(rootLayoutBox());
+    rootGeometry.setContentBoxWidth(m_flow.contentSize().width());
+    rootGeometry.setPadding({ { } });
+    rootGeometry.setBorder({ });
+    rootGeometry.setHorizontalMargin({ });
+    rootGeometry.setVerticalMargin({ });
 }
 
 void LineLayout::prepareFloatingState()
@@ -377,8 +397,14 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     paintRect.moveBy(-paintOffset);
 
     for (auto& run : inlineContent.runsForRect(paintRect)) {
-        if (!run.textContent())
+        if (!run.textContent()) {
+            auto* renderer = m_boxTree.rendererForLayoutBox(run.layoutBox());
+            if (renderer && renderer->isReplaced() && is<RenderElement>(*renderer)) {
+                auto& renderElement = const_cast<RenderElement&>(downcast<RenderElement>(*renderer));
+                renderElement.paint(paintInfo, paintOffset);
+            }
             continue;
+        }
 
         auto& textContent = *run.textContent();
         if (!textContent.length())

@@ -41,7 +41,7 @@ class HitTestLocation;
 class HitTestRequest;
 class HitTestResult;
 class RenderBlockFlow;
-class RenderLineBreak;
+class RenderBox;
 struct PaintInfo;
 
 namespace LayoutIntegration {
@@ -58,6 +58,7 @@ public:
     static bool canUseFor(const RenderBlockFlow&);
     static bool canUseForAfterStyleChange(const RenderBlockFlow&, StyleDifference);
 
+    void updateReplacedDimensions(const RenderBox&);
     void updateStyle();
     void layout();
 

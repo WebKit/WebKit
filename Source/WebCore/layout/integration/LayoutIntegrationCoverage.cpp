@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
+#include "RenderImage.h"
 #include "RenderLineBreak.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderTextControl.h"
@@ -40,6 +41,8 @@
 #include <wtf/OptionSet.h>
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+
+#define ALLOW_INLINE_IMAGES 0
 
 #ifndef NDEBUG
 #define SET_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \
@@ -305,20 +308,32 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         SET_REASON_AND_RETURN_IF_NEEDED(FlowParentIsTextAreaWithWrapping, reasons, includeReasons);
     // This currently covers <blockflow>#text</blockflow>, <blockflow>#text<br></blockflow> and mutiple (sibling) RenderText cases.
     // The <blockflow><inline>#text</inline></blockflow> case is also popular and should be relatively easy to cover.
-    for (const auto* child = flow.firstChild(); child;) {
+    for (const auto* child = flow.firstChild(); child; child = child->nextSibling()) {
         if (child->selectionState() != RenderObject::HighlightState::None)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowChildIsSelected, reasons, includeReasons);
         if (is<RenderText>(*child)) {
             const auto& renderText = downcast<RenderText>(*child);
             if (renderText.textNode() && !renderText.document().markers().markersFor(*renderText.textNode()).isEmpty())
                 SET_REASON_AND_RETURN_IF_NEEDED(FlowIncludesDocumentMarkers, reasons, includeReasons);
-            child = child->nextSibling();
             continue;
         }
-        if (is<RenderLineBreak>(child)) {
-            child = child->nextSibling();
+        if (is<RenderLineBreak>(*child))
+            continue;
+#if ALLOW_INLINE_IMAGES
+        if (is<RenderImage>(*child)) {
+            auto& image = downcast<RenderImage>(*child);
+            if (image.isFloating() || image.isPositioned())
+                SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+            auto& style = image.style();
+            if (style.verticalAlign() != VerticalAlign::Baseline)
+                SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+            if (style.width().isPercent() || style.height().isPercent())
+                SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+            if (style.objectFit() != RenderStyle::initialObjectFit())
+                SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
             continue;
         }
+#endif
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
         break;
     }
