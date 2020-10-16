@@ -158,7 +158,7 @@ webkit.org/b/188041 http/wpt/crypto/unwrap-rsa-key-crash.any.worker.html [ Failu
 webkit.org/b/188041 http/wpt/crypto/unwrap-rsa-key-crash.any.html [ Timeout Pass ]
 
 webkit.org/b/217699 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-promises.https.html [ Crash Pass ]
-webkit.org/b/217699 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/cors-check.https.html [ Crash ]
+webkit.org/b/217699 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/cors-check.https.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crypto tests
@@ -264,6 +264,10 @@ webkit.org/b/216171 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-d
 
 webkit.org/b/216118 webaudio/convolver-setBuffer-different-samplerate.html [ Skip ]
 webkit.org/b/216118 webaudio/convolver-setBuffer-null.html [ Skip ]
+
+webkit.org/b/217829 media/video-orientation-canvas.html [ Failure ]
+
+webkit.org/b/217845 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-stereopanner-interface/no-dezippering.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs

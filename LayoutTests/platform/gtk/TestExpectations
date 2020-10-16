@@ -73,6 +73,7 @@ webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/parsing/cursor-co
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/parsing/cursor-valid.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-values/angle-units-003.html [ Pass Crash ]
 webkit.org/b/216777 media/video-display-toggle.html [ Pass Crash ]
+webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/appearance-menulist-001.html [ Pass Crash ]
 
 # Parsing
 webkit.org/b/217421 fast/parser/entities-in-html.html [ Failure ]
