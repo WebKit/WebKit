@@ -814,7 +814,6 @@ static void enableExperimentalFeatures(IWebPreferences* preferences)
     // FIXME: WebGL2
     // FIXME: WebRTC
     prefsPrivate->setCSSOMViewSmoothScrollingEnabled(TRUE);
-    prefsPrivate->setCSSIndividualTransformPropertiesEnabled(TRUE);
 }
 
 static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)

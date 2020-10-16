@@ -1,3 +1,14 @@
+2020-10-16  Antoine Quint  <graouts@webkit.org>
+
+        Enable individual CSS transform properties by default
+        https://bugs.webkit.org/show_bug.cgi?id=217849
+        <rdar://problem/70052493>
+
+        Reviewed by Dean Jackson.
+
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+
 2020-10-13  Simon Fraser  <simon.fraser@apple.com>
 
         Plumb OptionSet<WheelEventProcessingSteps> through the wheel event handling code
