@@ -131,7 +131,7 @@
     },
     {
       "name": "ews108",
-      "platform": "ios-13"
+      "platform": "ios-14"
     },
     {
       "name": "ews109",
@@ -175,27 +175,27 @@
     },
     {
       "name": "ews121",
-      "platform": "ios-simulator-13"
+      "platform": "ios-simulator-14"
     },
     {
       "name": "ews122",
-      "platform": "ios-simulator-13"
+      "platform": "ios-simulator-14"
     },
     {
       "name": "ews123",
-      "platform": "ios-simulator-13"
+      "platform": "ios-simulator-14"
     },
     {
       "name": "ews124",
-      "platform": "ios-simulator-13"
+      "platform": "ios-simulator-14"
     },
     {
       "name": "ews125",
-      "platform": "ios-simulator-13"
+      "platform": "ios-simulator-14"
     },
     {
       "name": "ews126",
-      "platform": "ios-simulator-13"
+      "platform": "ios-simulator-14"
     },
     {
       "name": "ews127",
@@ -369,35 +369,35 @@
       "workernames": ["igalia5-gtk-wk2-ews", "igalia6-gtk-wk2-ews", "igalia7-gtk-wk2-ews", "igalia8-gtk-wk2-ews", "igalia9-gtk-wk2-ews"]
     },
     {
-      "name": "iOS-13-Build-EWS",
+      "name": "iOS-14-Build-EWS",
       "shortname": "ios",
       "icon": "buildOnly",
       "factory": "iOSEmbeddedBuildFactory",
-      "platform": "ios-13",
+      "platform": "ios-14",
       "configuration": "release",
       "architectures": ["arm64"],
       "workernames": ["ews152", "ews154", "ews108", "ews109"]
     },
     {
-      "name": "iOS-13-Simulator-Build-EWS",
+      "name": "iOS-14-Simulator-Build-EWS",
       "shortname": "ios-sim",
       "icon": "buildOnly",
       "factory": "iOSBuildFactory",
-      "platform": "ios-simulator-13",
+      "platform": "ios-simulator-14",
       "configuration": "release",
       "architectures": ["x86_64"],
-      "triggers": ["api-tests-ios-sim-ews", "ios-13-sim-wk2-tests-ews"],
+      "triggers": ["api-tests-ios-sim-ews", "ios-14-sim-wk2-tests-ews"],
       "workernames": ["ews152", "ews154", "ews156", "ews157", "ews109"]
     },
     {
-      "name": "iOS-13-Simulator-WK2-Tests-EWS",
+      "name": "iOS-14-Simulator-WK2-Tests-EWS",
       "shortname": "ios-wk2",
       "icon": "testOnly",
       "factory": "iOSTestsFactory",
-      "platform": "ios-simulator-13",
+      "platform": "ios-simulator-14",
       "configuration": "release",
       "architectures": ["x86_64"],
-      "triggered_by": ["ios-13-sim-build-ews"],
+      "triggered_by": ["ios-14-sim-build-ews"],
       "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126"]
     },
     {
@@ -631,7 +631,7 @@
       "icon": "testOnly",
       "factory": "APITestsFactory",
       "platform": "*",
-      "triggered_by": ["ios-13-sim-build-ews"],
+      "triggered_by": ["ios-14-sim-build-ews"],
       "workernames": ["ews156", "ews157", "ews158", "ews159"]
     },
     {
@@ -677,7 +677,7 @@
       "type": "Try_Userpass",
       "name": "try",
       "port": 5555,
-      "builderNames": ["Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-13-Build-EWS", "iOS-13-Simulator-Build-EWS",
+      "builderNames": ["Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-14-Build-EWS", "iOS-14-Simulator-Build-EWS",
                        "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS",
                        "macOS-Apple-Silicon-Big-Sur-Release-Build-EWS", "macOS-Mojave-Debug-Build-EWS", "macOS-Mojave-Release-Build-EWS",
                        "Services-EWS", "Style-EWS",
@@ -727,16 +727,16 @@
     },
     {
       "type": "Triggerable",
-      "name": "ios-13-sim-build-ews",
+      "name": "ios-14-sim-build-ews",
       "builderNames": [
-        "iOS-13-Simulator-Build-EWS"
+        "iOS-14-Simulator-Build-EWS"
       ]
     },
     {
       "type": "Triggerable",
-      "name": "ios-13-sim-wk2-tests-ews",
+      "name": "ios-14-sim-wk2-tests-ews",
       "builderNames": [
-        "iOS-13-Simulator-WK2-Tests-EWS"
+        "iOS-14-Simulator-WK2-Tests-EWS"
       ]
     },
     {
