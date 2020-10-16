@@ -1,5 +1,14 @@
 2020-10-16  Aakash Jain  <aakash_jain@apple.com>
 
+        [build.webkit.org] Add copyright message to steps_unittest.py
+        https://bugs.webkit.org/show_bug.cgi?id=217830
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py:
+
+2020-10-16  Aakash Jain  <aakash_jain@apple.com>
+
         [build.webkit.org] Remove SVNMirror
         https://bugs.webkit.org/show_bug.cgi?id=217823
 
