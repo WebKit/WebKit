@@ -2459,7 +2459,7 @@ webkit.org/b/157179 editing/pasteboard/drag-selected-image-to-contenteditable.ht
 webkit.org/b/157179 editing/pasteboard/drop-file-svg.html [ Failure ]
 webkit.org/b/157179 editing/pasteboard/drop-inputtext-acquires-style.html [ Failure ]
 webkit.org/b/157179 editing/pasteboard/drop-link.html [ Failure ]
-webkit.org/b/157179 editing/pasteboard/drop-text-without-selection.html [ Failure ]
+webkit.org/b/157179 editing/pasteboard/drop-text-without-selection.html [ ImageOnlyFailure ]
 webkit.org/b/157179 editing/pasteboard/get-data-text-plain-drop.html [ Failure ]
 webkit.org/b/157179 editing/pasteboard/smart-drag-drop.html [ Failure ]
 webkit.org/b/157179 editing/pasteboard/subframe-dragndrop-1.html [ Failure ]

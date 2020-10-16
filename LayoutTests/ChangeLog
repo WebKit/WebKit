@@ -1,3 +1,17 @@
+2020-10-16  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Update expectations for editing/pasteboard/drop-text-without-selection.html after r267997
+
+        Unreviewed test gardening.
+
+        r267997 removed GTK expected baseline for editing/pasteboard/drop-text-without-selection.html, which was stale
+        after the test was converted into a reftest. After this change, GTK test bot reported the baseline as Missing. 
+        The reason was that the reference test was in platform Mac. Also remove stale GTK expected image.
+
+        * editing/pasteboard/drop-text-without-selection-expected.html: Renamed from LayoutTests/platform/mac/editing/pasteboard/drop-text-without-selection-expected.html.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/editing/pasteboard/drop-text-without-selection-expected.png: Removed.
+
 2020-10-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE] Rebaseline after r268520
