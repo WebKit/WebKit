@@ -1,3 +1,15 @@
+2020-10-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Remove experimental feature flag: WebAuthenticationLocalAuthenticatorEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=217796
+        <rdar://problem/70358912>
+
+        Reviewed by Brent Fulgham.
+
+        The feature is now shipped. Let's remove the experimental feature flag.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2020-10-16  David Kilzer  <ddkilzer@apple.com>
 
         Open source clang warning: bitwise operation between different enumeration types [-Wenum-enum-conversion]

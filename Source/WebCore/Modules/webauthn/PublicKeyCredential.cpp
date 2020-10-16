@@ -61,10 +61,6 @@ PublicKeyCredential::PublicKeyCredential(Ref<AuthenticatorResponse>&& response)
 
 void PublicKeyCredential::isUserVerifyingPlatformAuthenticatorAvailable(Document& document, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    if (!document.settings().webAuthenticationLocalAuthenticatorEnabled()) {
-        promise.resolve(false);
-        return;
-    }
     document.page()->authenticatorCoordinator().isUserVerifyingPlatformAuthenticatorAvailable(WTFMove(promise));
 }
 

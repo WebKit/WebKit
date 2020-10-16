@@ -133,13 +133,6 @@ static void processGoogleLegacyAppIdSupportExtension(const Optional<Authenticati
     transports.remove(AuthenticatorTransport::Internal);
 }
 
-static bool isFeatureEnabled(WebPageProxy* page, const String& featureKey)
-{
-    if (!page)
-        return false;
-    return page->preferences().store().getBoolValueForKey(featureKey);
-}
-
 static String getRpId(const Variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
 {
     if (WTF::holds_alternative<PublicKeyCredentialCreationOptions>(options))
@@ -330,8 +323,6 @@ void AuthenticatorManager::filterTransports(TransportSet& transports) const
     if (!LocalService::isAvailable())
         transports.remove(AuthenticatorTransport::Internal);
 
-    if (!isFeatureEnabled(m_pendingRequestData.page.get(), WebPreferencesKey::webAuthenticationLocalAuthenticatorEnabledKey()))
-        transports.remove(AuthenticatorTransport::Internal);
     // Local authenticator might invoke system UI which should definitely not be able to trigger by scripts automatically.
     if (!m_pendingRequestData.processingUserGesture)
         transports.remove(AuthenticatorTransport::Internal);

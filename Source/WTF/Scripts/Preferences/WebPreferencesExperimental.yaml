@@ -868,20 +868,6 @@ WebAuthenticationEnabled:
     WebCore:
       default: false
 
-# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
-WebAuthenticationLocalAuthenticatorEnabled:
-  type: bool
-  humanReadableName: "Web Authentication Local Authenticator"
-  humanReadableDescription: "Enable Web Authentication local authenticator support"
-  condition: ENABLE(WEB_AUTHN)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 WebGL2Enabled:
   type: bool
   humanReadableName: "WebGL 2.0"

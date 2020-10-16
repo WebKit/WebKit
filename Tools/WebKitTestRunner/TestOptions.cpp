@@ -50,7 +50,6 @@ const TestFeatures& TestOptions::defaults()
             { "PageVisibilityBasedProcessSuppressionEnabled", false },
             { "UsesBackForwardCache", false },
             { "WebAuthenticationEnabled", true },
-            { "WebAuthenticationLocalAuthenticatorEnabled", true },
         };
         features.boolTestRunnerFeatures = {
             { "allowsLinkPreview", true },

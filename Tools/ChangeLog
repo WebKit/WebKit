@@ -1,3 +1,22 @@
+2020-10-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Remove experimental feature flag: WebAuthenticationLocalAuthenticatorEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=217796
+        <rdar://problem/70358912>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::boolDefaultsMap):
+        (WTR::keyTypeMap):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::enableWebAuthentication const):
+        (WTR::TestOptions::enableWebAuthenticationLocalAuthenticator const): Deleted.
+
 2020-10-16  Matt Lewis  <jlewis3@apple.com>
 
         Move EWS to new SDKs: iOS 14.

@@ -274,24 +274,6 @@ static _WKExperimentalFeature *webAuthenticationExperimentalFeature()
     return theFeature.get();
 }
 
-#if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
-static _WKExperimentalFeature *webAuthenticationLocalAuthenticatorExperimentalFeature()
-{
-    static RetainPtr<_WKExperimentalFeature> theFeature;
-    if (theFeature)
-        return theFeature.get();
-
-    NSArray *features = [WKPreferences _experimentalFeatures];
-    for (_WKExperimentalFeature *feature in features) {
-        if ([feature.key isEqual:@"WebAuthenticationLocalAuthenticatorEnabled"]) {
-            theFeature = feature;
-            break;
-        }
-    }
-    return theFeature.get();
-}
-#endif // USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
-
 static void reset()
 {
     webAuthenticationPanelRan = false;
@@ -1341,7 +1323,6 @@ TEST(WebAuthenticationPanel, LAMakeCredentialNoMockNoUserGesture)
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
-    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationLocalAuthenticatorExperimentalFeature()];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
     auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
@@ -1411,7 +1392,6 @@ TEST(WebAuthenticationPanel, LAGetAssertionNoMockNoUserGesture)
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
-    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationLocalAuthenticatorExperimentalFeature()];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
     auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
@@ -1429,7 +1409,6 @@ TEST(WebAuthenticationPanel, LAGetAssertionMultipleOrder)
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
-    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationLocalAuthenticatorExperimentalFeature()];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
     auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);

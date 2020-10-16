@@ -1,3 +1,19 @@
+2020-10-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Remove experimental feature flag: WebAuthenticationLocalAuthenticatorEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=217796
+        <rdar://problem/70358912>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetWebAuthenticationLocalAuthenticatorEnabled): Deleted.
+        (WKPreferencesGetWebAuthenticationLocalAuthenticatorEnabled): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::filterTransports const):
+        (WebKit::WebCore::isFeatureEnabled): Deleted.
+
 2020-10-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [GPU Process] Exchange RemoteImageBuffer and RemoteImageBufferProxy
