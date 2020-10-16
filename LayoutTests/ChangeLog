@@ -1,3 +1,27 @@
+2020-10-16  Antoine Quint  <graouts@webkit.org>
+
+        Support accelerated animation of individual transform CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=217842
+        <rdar://problem/70391914>
+
+        Reviewed by Dean Jackson.
+
+        Add some new tests that check animations of individual CSS transform properties can be performed,
+        checking on their relative order with the transform property, updating the transform property while
+        an animation is in flight and adding animations while in flight.
+
+        * TestExpectations:
+        * webanimations/accelerated-transform-related-animation-property-order-expected.html: Added.
+        * webanimations/accelerated-transform-related-animation-property-order.html: Added.
+        * webanimations/accelerated-translate-animation-additional-animation-added-in-flight-expected.html: Added.
+        * webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html: Added.
+        * webanimations/accelerated-translate-animation-expected.html: Added.
+        * webanimations/accelerated-translate-animation-underlying-transform-changed-in-flight-expected.html: Added.
+        * webanimations/accelerated-translate-animation-underlying-transform-changed-in-flight.html: Added.
+        * webanimations/accelerated-translate-animation-with-transform-expected.html: Added.
+        * webanimations/accelerated-translate-animation-with-transform.html: Added.
+        * webanimations/accelerated-translate-animation.html: Added.
+
 2020-10-16  Karl Rackler  <rackler@apple.com>
 
         REGRESSION(268444?): [ Win10 wk1 ews ] transforms/2d/rotate-composited.html is a flaky failure

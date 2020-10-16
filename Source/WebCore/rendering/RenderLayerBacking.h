@@ -251,6 +251,8 @@ public:
 
     LayoutSize subpixelOffsetFromRenderer() const { return m_subpixelOffsetFromRenderer; }
 
+    TransformationMatrix transformMatrixForProperty(AnimatedPropertyID) const final;
+
 #if PLATFORM(IOS_FAMILY)
     bool needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack(const GraphicsLayer&) const override;
 #endif

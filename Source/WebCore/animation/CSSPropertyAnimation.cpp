@@ -850,6 +850,8 @@ public:
     }
 
 private:
+    bool animationIsAccelerated() const final { return true; }
+
     bool equals(const RenderStyle* a, const RenderStyle* b) const final
     {
         return arePointingToEqualData((a->*m_getter)(), (b->*m_getter)());
@@ -865,6 +867,8 @@ public:
     }
 
 private:
+    bool animationIsAccelerated() const final { return true; }
+
     bool equals(const RenderStyle* a, const RenderStyle* b) const final
     {
         return arePointingToEqualData((a->*m_getter)(), (b->*m_getter)());
@@ -880,6 +884,8 @@ public:
     }
 
 private:
+    bool animationIsAccelerated() const final { return true; }
+
     bool equals(const RenderStyle* a, const RenderStyle* b) const final
     {
         return arePointingToEqualData((a->*m_getter)(), (b->*m_getter)());

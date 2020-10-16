@@ -137,10 +137,10 @@ PASS CSS Animations: property <rotate> from neutral to [30deg] at (0.25) should 
 PASS CSS Animations: property <rotate> from neutral to [30deg] at (0.75) should be [25deg]
 PASS CSS Animations: property <rotate> from neutral to [30deg] at (1) should be [30deg]
 PASS CSS Animations: property <rotate> from neutral to [30deg] at (2) should be [50deg]
-PASS Web Animations: property <rotate> from neutral to [30deg] at (-1) should be [-10deg]
+FAIL Web Animations: property <rotate> from neutral to [30deg] at (-1) should be [-10deg] assert_equals: expected "- 10deg " but got "- 50deg "
 FAIL Web Animations: property <rotate> from neutral to [30deg] at (0) should be [10deg] assert_equals: expected "10deg " but got "- 10deg "
-FAIL Web Animations: property <rotate> from neutral to [30deg] at (0.25) should be [15deg] assert_equals: expected "15deg " but got "none "
-FAIL Web Animations: property <rotate> from neutral to [30deg] at (0.75) should be [25deg] assert_equals: expected "25deg " but got "22.5deg "
+FAIL Web Animations: property <rotate> from neutral to [30deg] at (0.25) should be [15deg] assert_equals: expected "15deg " but got "7.5deg "
+FAIL Web Animations: property <rotate> from neutral to [30deg] at (0.75) should be [25deg] assert_equals: expected "25deg " but got "28.13deg "
 PASS Web Animations: property <rotate> from neutral to [30deg] at (1) should be [30deg]
 FAIL Web Animations: property <rotate> from neutral to [30deg] at (2) should be [50deg] assert_equals: expected "50deg " but got "30deg "
 PASS CSS Transitions: property <rotate> from [inherit] to [270deg] at (-1) should be [-90deg]

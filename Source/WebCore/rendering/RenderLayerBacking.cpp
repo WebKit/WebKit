@@ -3561,6 +3561,9 @@ void RenderLayerBacking::verifyNotPainting()
 bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& animation, const KeyframeList& keyframes)
 {
     bool hasOpacity = keyframes.containsProperty(CSSPropertyOpacity);
+    bool hasRotate = renderer().isBox() && keyframes.containsProperty(CSSPropertyRotate);
+    bool hasScale = renderer().isBox() && keyframes.containsProperty(CSSPropertyScale);
+    bool hasTranslate = renderer().isBox() && keyframes.containsProperty(CSSPropertyTranslate);
     bool hasTransform = renderer().isBox() && keyframes.containsProperty(CSSPropertyTransform);
     bool hasFilter = keyframes.containsProperty(CSSPropertyFilter);
 
@@ -3569,9 +3572,12 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
     hasBackdropFilter = keyframes.containsProperty(CSSPropertyWebkitBackdropFilter);
 #endif
 
-    if (!hasOpacity && !hasTransform && !hasFilter && !hasBackdropFilter)
+    if (!hasOpacity && !hasRotate && !hasScale && !hasTranslate && !hasTransform && !hasFilter && !hasBackdropFilter)
         return false;
 
+    KeyframeValueList rotateVector(AnimatedPropertyRotate);
+    KeyframeValueList scaleVector(AnimatedPropertyScale);
+    KeyframeValueList translateVector(AnimatedPropertyTranslate);
     KeyframeValueList transformVector(AnimatedPropertyTransform);
     KeyframeValueList opacityVector(AnimatedPropertyOpacity);
     KeyframeValueList filterVector(AnimatedPropertyFilter);
@@ -3591,6 +3597,15 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
         auto* tf = currentKeyframe.timingFunction();
         
         bool isFirstOrLastKeyframe = key == 0 || key == 1;
+        if ((hasRotate && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyRotate))
+            rotateVector.insert(makeUnique<TransformAnimationValue>(key, keyframeStyle->rotate(), tf));
+
+        if ((hasScale && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyScale))
+            scaleVector.insert(makeUnique<TransformAnimationValue>(key, keyframeStyle->scale(), tf));
+
+        if ((hasTranslate && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyTranslate))
+            translateVector.insert(makeUnique<TransformAnimationValue>(key, keyframeStyle->translate(), tf));
+
         if ((hasTransform && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyTransform))
             transformVector.insert(makeUnique<TransformAnimationValue>(key, keyframeStyle->transform(), tf));
 
@@ -3610,6 +3625,15 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
         return false;
 
     bool didAnimate = false;
+
+    if (hasRotate && m_graphicsLayer->addAnimation(rotateVector, snappedIntRect(renderBox()->borderBoxRect()).size(), &animation, keyframes.animationName(), timeOffset))
+        didAnimate = true;
+
+    if (hasScale && m_graphicsLayer->addAnimation(scaleVector, snappedIntRect(renderBox()->borderBoxRect()).size(), &animation, keyframes.animationName(), timeOffset))
+        didAnimate = true;
+
+    if (hasTranslate && m_graphicsLayer->addAnimation(translateVector, snappedIntRect(renderBox()->borderBoxRect()).size(), &animation, keyframes.animationName(), timeOffset))
+        didAnimate = true;
 
     if (hasTransform && m_graphicsLayer->addAnimation(transformVector, snappedIntRect(renderBox()->borderBoxRect()).size(), &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
@@ -3707,6 +3731,15 @@ CSSPropertyID RenderLayerBacking::graphicsLayerToCSSProperty(AnimatedPropertyID 
 {
     CSSPropertyID cssProperty = CSSPropertyInvalid;
     switch (property) {
+    case AnimatedPropertyTranslate:
+        cssProperty = CSSPropertyTranslate;
+        break;
+    case AnimatedPropertyScale:
+        cssProperty = CSSPropertyScale;
+        break;
+    case AnimatedPropertyRotate:
+        cssProperty = CSSPropertyRotate;
+        break;
     case AnimatedPropertyTransform:
         cssProperty = CSSPropertyTransform;
         break;
@@ -3733,6 +3766,12 @@ CSSPropertyID RenderLayerBacking::graphicsLayerToCSSProperty(AnimatedPropertyID 
 AnimatedPropertyID RenderLayerBacking::cssToGraphicsLayerProperty(CSSPropertyID cssProperty)
 {
     switch (cssProperty) {
+    case CSSPropertyTranslate:
+        return AnimatedPropertyTranslate;
+    case CSSPropertyScale:
+        return AnimatedPropertyScale;
+    case CSSPropertyRotate:
+        return AnimatedPropertyRotate;
     case CSSPropertyTransform:
         return AnimatedPropertyTransform;
     case CSSPropertyOpacity:
@@ -3818,6 +3857,33 @@ TextStream& operator<<(TextStream& ts, const RenderLayerBacking& backing)
     if (auto nodeID = backing.scrollingNodeIDForRole(ScrollCoordinationRole::Positioning))
         ts << " positioning node " << nodeID;
     return ts;
+}
+
+TransformationMatrix RenderLayerBacking::transformMatrixForProperty(AnimatedPropertyID property) const
+{
+    auto* box = renderBox();
+    if (!box)
+        return { };
+
+    TransformationMatrix matrix;
+
+    auto applyTransformOperation = [&](TransformOperation* operation) {
+        if (operation)
+            operation->apply(matrix, snappedIntRect(renderBox()->borderBoxRect()).size());
+    };
+
+    if (property == AnimatedPropertyTranslate)
+        applyTransformOperation(renderer().style().translate());
+    else if (property == AnimatedPropertyScale)
+        applyTransformOperation(renderer().style().scale());
+    else if (property == AnimatedPropertyRotate)
+        applyTransformOperation(renderer().style().rotate());
+    else if (property == AnimatedPropertyTransform)
+        renderer().style().transform().apply(snappedIntRect(renderBox()->borderBoxRect()).size(), matrix);
+    else
+        ASSERT_NOT_REACHED();
+
+    return matrix;
 }
 
 } // namespace WebCore

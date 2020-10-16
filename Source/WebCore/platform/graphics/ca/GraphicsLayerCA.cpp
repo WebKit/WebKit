@@ -56,6 +56,7 @@
 #include <wtf/PointerComparison.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/UUID.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/TextStream.h>
 
@@ -251,6 +252,9 @@ static PlatformCAAnimation::ValueFunctionType getValueFunctionNameForTransformOp
 static ASCIILiteral propertyIdToString(AnimatedPropertyID property)
 {
     switch (property) {
+    case AnimatedPropertyTranslate:
+    case AnimatedPropertyScale:
+    case AnimatedPropertyRotate:
     case AnimatedPropertyTransform:
         return "transform"_s;
     case AnimatedPropertyOpacity:
@@ -657,6 +661,12 @@ void GraphicsLayerCA::setTransform(const TransformationMatrix& t)
 
     GraphicsLayer::setTransform(t);
     noteLayerPropertyChanged(TransformChanged);
+
+    // If we are currently running a transform-related animation, a change in underlying
+    // transform value means we must re-evaluate all transform-related animations to ensure
+    // that the base value transform animations are current.
+    if (isRunningTransformAnimation())
+        noteLayerPropertyChanged(AnimationChanged | CoverageRectChanged);
 }
 
 void GraphicsLayerCA::setChildrenTransform(const TransformationMatrix& t)
@@ -689,7 +699,7 @@ void GraphicsLayerCA::moveOrCopyLayerAnimation(MoveOrCopy operation, const Strin
 void GraphicsLayerCA::moveOrCopyAnimations(MoveOrCopy operation, PlatformCALayer *fromLayer, PlatformCALayer *toLayer)
 {
     for (auto& animation : m_animations) {
-        if ((animation.m_property == AnimatedPropertyTransform
+        if ((animatedPropertyIsTransformOrRelated(animation.m_property)
             || animation.m_property == AnimatedPropertyOpacity
             || animation.m_property == AnimatedPropertyBackgroundColor
             || animation.m_property == AnimatedPropertyFilter)
@@ -1044,7 +1054,7 @@ bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const Flo
         return false;
 
     bool createdAnimations = false;
-    if (valueList.property() == AnimatedPropertyTransform)
+    if (animatedPropertyIsTransformOrRelated(valueList.property()))
         createdAnimations = createTransformAnimationsFromKeyframes(valueList, anim, animationName, Seconds { timeOffset }, boxSize);
     else if (valueList.property() == AnimatedPropertyFilter) {
         if (supportsAcceleratedFilterAnimations())
@@ -2851,30 +2861,156 @@ RefPtr<PlatformCALayer> GraphicsLayerCA::replicatedLayerRoot(ReplicaState& repli
 
 void GraphicsLayerCA::updateAnimations()
 {
-    // Remove all animations so far.
-    for (auto& animation : m_animations)
-        removeCAAnimationFromLayer(animation);
-
-    // Remove all animations from the list that were pending removal.
-    m_animations.removeAllMatching([&](LayerPropertyAnimation animation) {
-        return animation.m_pendingRemoval;
-    });
-
-    // Add all remaining animations.
-    for (auto& animation : m_animations) {
+    enum class Additive { Yes, No };
+    auto addAnimation = [&](LayerPropertyAnimation& animation, Additive additive = Additive::Yes) {
+        animation.m_animation->setAdditive(additive == Additive::Yes);
         setAnimationOnLayer(animation);
         if (animation.m_playState == PlayState::PausePending || animation.m_playState == PlayState::Paused) {
             pauseCAAnimationOnLayer(animation);
             animation.m_playState = PlayState::Paused;
         } else
             animation.m_playState = PlayState::Playing;
+    };
+
+    enum class TransformationMatrixSource { UseIdentityMatrix, AskClient };
+    auto addBaseValueTransformAnimation = [&](AnimatedPropertyID property, TransformationMatrixSource matrixSource = TransformationMatrixSource::AskClient) {
+        // A base value transform animation can either be set to the identity matrix or to read the underlying
+        // value from the GraphicsLayerClient. If we didn't explicitly ask for an identity matrix, we can skip
+        // the addition of this base value transform animation since it will be a no-op.
+        auto matrix = matrixSource == TransformationMatrixSource::UseIdentityMatrix ? TransformationMatrix() : client().transformMatrixForProperty(property);
+        if (matrixSource == TransformationMatrixSource::AskClient && matrix.isIdentity())
+            return;
+
+        // A base value transform animation needs to last forever and use the same value for its from and to values.
+        auto caAnimation = createPlatformCAAnimation(PlatformCAAnimation::Basic, propertyIdToString(property));
+        caAnimation->setDuration(Seconds::infinity().seconds());
+        caAnimation->setFromValue(matrix);
+        caAnimation->setToValue(matrix);
+
+        auto animation = LayerPropertyAnimation(WTFMove(caAnimation), "base-transform-" + createCanonicalUUIDString(), property, 0, 0, 0_s);
+        // To ensure the base value transform is applied along with all the interpolating animations, we set it to have started
+        // as early as possible, which combined with the infinite duration ensures it's current for any given CA media time.
+        animation.m_beginTime = Seconds::fromNanoseconds(1);
+
+        // Additivity will depend on the source of the matrix, if it was explicitly provided as an identity matrix, it
+        // is the initial base value transform animation and must override the current transform value for this layer.
+        // Otherwise, it is meant to apply the underlying value for one specific transform-related property and be additive
+        // to be combined with the other base value transform animations and interpolating animations.
+        addAnimation(animation, matrixSource == TransformationMatrixSource::AskClient ? Additive::Yes : Additive::No);
+        m_baseValueTransformAnimations.append(WTFMove(animation));
+    };
+
+    // Remove all running CA animations.
+    for (auto& animation : m_animations) {
+        if (animation.m_playState == PlayState::Playing || animation.m_playState == PlayState::Paused)
+            removeCAAnimationFromLayer(animation);
+    }
+
+    // Also remove all the base value transform CA animations.
+    for (auto& animation : m_baseValueTransformAnimations)
+        removeCAAnimationFromLayer(animation);
+
+    // Now remove all the animations marked as pending removal and all base value transform animations.
+    m_animations.removeAllMatching([&](LayerPropertyAnimation animation) {
+        return animation.m_pendingRemoval;
+    });
+    m_baseValueTransformAnimations.clear();
+
+    // Now that our list of animations is current, we can separate animations by property so that
+    // we can apply them in order. We only need to apply the last animation applied for a given
+    // individual transform property, so we keep a reference to that. For animations targeting
+    // the transform property itself, we keep them in order since they all need to apply and build
+    // on top of each other. Finally, animations that are not transform-related can be applied
+    // right away since their order relative to transform animations does not matter.
+    LayerPropertyAnimation* translateAnimation = nullptr;
+    LayerPropertyAnimation* scaleAnimation = nullptr;
+    LayerPropertyAnimation* rotateAnimation = nullptr;
+    Vector<LayerPropertyAnimation*> transformAnimations;
+
+    for (auto& animation : m_animations) {
+        switch (animation.m_property) {
+        case AnimatedPropertyTranslate:
+            translateAnimation = &animation;
+            break;
+        case AnimatedPropertyScale:
+            scaleAnimation = &animation;
+            break;
+        case AnimatedPropertyRotate:
+            rotateAnimation = &animation;
+            break;
+        case AnimatedPropertyTransform:
+            transformAnimations.append(&animation);
+            break;
+        case AnimatedPropertyOpacity:
+        case AnimatedPropertyBackgroundColor:
+        case AnimatedPropertyFilter:
+#if ENABLE(FILTERS_LEVEL_2)
+        case AnimatedPropertyWebkitBackdropFilter:
+#endif
+            addAnimation(animation, Additive::No);
+            break;
+        case AnimatedPropertyInvalid:
+            ASSERT_NOT_REACHED();
+        }
+    }
+
+    // Now we can apply the transform-related animations, taking care to add them in the right order
+    // (translate/scale/rotate/transform) and generate non-interpolating base value transform animations
+    // for each property that is not otherwise interpolated.
+    if (translateAnimation || scaleAnimation || rotateAnimation || !transformAnimations.isEmpty()) {
+        // Start with a base identity transform to override the transform applied to the layer and have a
+        // sound base to add animations on top of with additivity enabled.
+        addBaseValueTransformAnimation(AnimatedPropertyTransform, TransformationMatrixSource::UseIdentityMatrix);
+
+        // Core Animation might require additive animations to be applied in the reverse order.
+#if !PLATFORM(WIN) && !HAVE(CA_WHERE_ADDITIVE_TRANSFORMS_ARE_REVERSED)
+        if (translateAnimation)
+            addAnimation(*translateAnimation);
+        else
+            addBaseValueTransformAnimation(AnimatedPropertyTranslate);
+
+        if (scaleAnimation)
+            addAnimation(*scaleAnimation);
+        else
+            addBaseValueTransformAnimation(AnimatedPropertyScale);
+
+        if (rotateAnimation)
+            addAnimation(*rotateAnimation);
+        else
+            addBaseValueTransformAnimation(AnimatedPropertyRotate);
+
+        for (auto* animation : transformAnimations)
+            addAnimation(*animation);
+        if (transformAnimations.isEmpty())
+            addBaseValueTransformAnimation(AnimatedPropertyTransform);
+#else
+        for (auto* animation : WTF::makeReversedRange(transformAnimations))
+            addAnimation(*animation);
+        if (transformAnimations.isEmpty())
+            addBaseValueTransformAnimation(AnimatedPropertyTransform);
+
+        if (rotateAnimation)
+            addAnimation(*rotateAnimation);
+        else
+            addBaseValueTransformAnimation(AnimatedPropertyRotate);
+
+        if (scaleAnimation)
+            addAnimation(*scaleAnimation);
+        else
+            addBaseValueTransformAnimation(AnimatedPropertyScale);
+
+        if (translateAnimation)
+            addAnimation(*translateAnimation);
+        else
+            addBaseValueTransformAnimation(AnimatedPropertyTranslate);
+#endif
     }
 }
 
 bool GraphicsLayerCA::isRunningTransformAnimation() const
 {
     return m_animations.findMatching([&](LayerPropertyAnimation animation) {
-        return animation.m_property == AnimatedPropertyTransform && animation.m_playState == PlayState::Playing;
+        return animatedPropertyIsTransformOrRelated(animation.m_property) && (animation.m_playState == PlayState::Playing || animation.m_playState == PlayState::Paused);
     }) != notFound;
 }
 
@@ -3010,7 +3146,7 @@ static bool isKeyframe(const KeyframeValueList& list)
 
 bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, Seconds timeOffset)
 {
-    ASSERT(valueList.property() != AnimatedPropertyTransform && (!supportsAcceleratedFilterAnimations() || valueList.property() != AnimatedPropertyFilter));
+    ASSERT(!animatedPropertyIsTransformOrRelated(valueList.property()) && (!supportsAcceleratedFilterAnimations() || valueList.property() != AnimatedPropertyFilter));
 
     bool valuesOK;
     
@@ -3041,23 +3177,17 @@ bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valu
 bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, const TransformOperations* operations, const Animation* animation, const String& animationName, const FloatSize& boxSize, int animationIndex, Seconds timeOffset, bool isMatrixAnimation)
 {
     TransformOperation::OperationType transformOp = isMatrixAnimation ? TransformOperation::MATRIX_3D : operations->operations().at(animationIndex)->type();
-#if !PLATFORM(WIN) && !HAVE(CA_WHERE_ADDITIVE_TRANSFORMS_ARE_REVERSED)
-    bool additive = animationIndex > 0;
-#else
-    int numAnimations = isMatrixAnimation ? 1 : operations->size();
-    bool additive = animationIndex < numAnimations - 1;
-#endif
 
     RefPtr<PlatformCAAnimation> caAnimation;
     bool validMatrices = true;
     if (isKeyframe(valueList)) {
-        caAnimation = createKeyframeAnimation(animation, propertyIdToString(valueList.property()), additive);
+        caAnimation = createKeyframeAnimation(animation, propertyIdToString(valueList.property()), false);
         validMatrices = setTransformAnimationKeyframes(valueList, animation, caAnimation.get(), animationIndex, transformOp, isMatrixAnimation, boxSize);
     } else {
         if (animation->timingFunction()->isSpringTimingFunction())
-            caAnimation = createSpringAnimation(animation, propertyIdToString(valueList.property()), additive);
+            caAnimation = createSpringAnimation(animation, propertyIdToString(valueList.property()), false);
         else
-            caAnimation = createBasicAnimation(animation, propertyIdToString(valueList.property()), additive);
+            caAnimation = createBasicAnimation(animation, propertyIdToString(valueList.property()), false);
         validMatrices = setTransformAnimationEndpoints(valueList, animation, caAnimation.get(), animationIndex, transformOp, isMatrixAnimation, boxSize);
     }
     
@@ -3070,7 +3200,7 @@ bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& val
 
 bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, Seconds timeOffset, const FloatSize& boxSize)
 {
-    ASSERT(valueList.property() == AnimatedPropertyTransform);
+    ASSERT(animatedPropertyIsTransformOrRelated(valueList.property()));
 
     bool hasBigRotation;
     int listIndex = validateTransformOperations(valueList, hasBigRotation);
@@ -3079,15 +3209,10 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
     bool validMatrices = true;
 
     // If function lists don't match we do a matrix animation, otherwise we do a component hardware animation.
-    bool isMatrixAnimation = listIndex < 0;
+    bool isMatrixAnimation = valueList.property() == AnimatedPropertyTransform ? listIndex < 0 : true;
     int numAnimations = isMatrixAnimation ? 1 : operations->size();
 
-#if !PLATFORM(WIN) && !HAVE(CA_WHERE_ADDITIVE_TRANSFORMS_ARE_REVERSED)
     for (int animationIndex = 0; animationIndex < numAnimations; ++animationIndex) {
-#else
-    // Some versions of CA require animation lists to be applied in reverse order (<rdar://problem/43908047> and <rdar://problem/9112233>).
-    for (int animationIndex = numAnimations - 1; animationIndex >= 0; --animationIndex) {
-#endif
         if (!appendToUncommittedAnimations(valueList, operations, animation, animationName, boxSize, animationIndex, timeOffset, isMatrixAnimation)) {
             validMatrices = false;
             break;
@@ -4215,20 +4340,26 @@ double GraphicsLayerCA::backingStoreMemoryEstimate() const
 
 static String animatedPropertyIDAsString(AnimatedPropertyID property)
 {
-    if (property == AnimatedPropertyTransform)
+    switch (property) {
+    case AnimatedPropertyTranslate:
+    case AnimatedPropertyScale:
+    case AnimatedPropertyRotate:
+    case AnimatedPropertyTransform:
         return "transform";
-    if (property == AnimatedPropertyOpacity)
+    case AnimatedPropertyOpacity:
         return "opacity";
-    if (property == AnimatedPropertyBackgroundColor)
+    case AnimatedPropertyBackgroundColor:
         return "background-color";
-    if (property == AnimatedPropertyFilter)
+    case AnimatedPropertyFilter:
         return "filter";
-    if (property == AnimatedPropertyInvalid)
-        return "invalid";
 #if ENABLE(FILTERS_LEVEL_2)
-    if (property == AnimatedPropertyWebkitBackdropFilter)
+    case AnimatedPropertyWebkitBackdropFilter:
         return "backdrop-filter";
 #endif
+    case AnimatedPropertyInvalid:
+        return "invalid";
+    }
+    ASSERT_NOT_REACHED();
     return "";
 }
 

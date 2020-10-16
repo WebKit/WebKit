@@ -1,3 +1,15 @@
+2020-10-16  Antoine Quint  <graouts@webkit.org>
+
+        Support accelerated animation of individual transform CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=217842
+        <rdar://problem/70391914>
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css/css-transforms/animation/rotate-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/scale-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/translate-interpolation-expected.txt:
+
 2020-10-15  Sam Weinig  <weinig@apple.com>
 
         CSSStyleDeclaration breaks JS spec (properties not showing up in Object.getOwnPropertyNames)

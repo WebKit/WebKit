@@ -2972,6 +2972,9 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObje
 #if ENABLE(FILTERS_LEVEL_2)
                 || effectsStack->isCurrentlyAffectingProperty(CSSPropertyWebkitBackdropFilter)
 #endif
+                || effectsStack->isCurrentlyAffectingProperty(CSSPropertyTranslate)
+                || effectsStack->isCurrentlyAffectingProperty(CSSPropertyScale)
+                || effectsStack->isCurrentlyAffectingProperty(CSSPropertyRotate)
                 || effectsStack->isCurrentlyAffectingProperty(CSSPropertyTransform);
         }
     }
@@ -3517,7 +3520,10 @@ bool RenderLayerCompositor::isRunningTransformAnimation(RenderLayerModelObject& 
 
     if (auto styleable = Styleable::fromRenderer(renderer)) {
         if (auto* effectsStack = styleable->keyframeEffectStack())
-            return effectsStack->isCurrentlyAffectingProperty(CSSPropertyTransform);
+            return effectsStack->isCurrentlyAffectingProperty(CSSPropertyTransform)
+                || effectsStack->isCurrentlyAffectingProperty(CSSPropertyRotate)
+                || effectsStack->isCurrentlyAffectingProperty(CSSPropertyScale)
+                || effectsStack->isCurrentlyAffectingProperty(CSSPropertyTranslate);
     }
 
     return false;

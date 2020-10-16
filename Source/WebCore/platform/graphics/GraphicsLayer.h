@@ -133,6 +133,13 @@ public:
     {
     }
 
+    TransformAnimationValue(double keyTime, TransformOperation* value, TimingFunction* timingFunction = nullptr)
+        : AnimationValue(keyTime, timingFunction)
+    {
+        if (value)
+            m_value.operations().append(value);
+    }
+
     std::unique_ptr<AnimationValue> clone() const override
     {
         return makeUnique<TransformAnimationValue>(*this);

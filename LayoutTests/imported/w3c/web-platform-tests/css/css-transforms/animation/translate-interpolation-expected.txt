@@ -233,10 +233,10 @@ PASS CSS Animations: property <translate> from neutral to [20px] at (0.25) shoul
 PASS CSS Animations: property <translate> from neutral to [20px] at (0.75) should be [17.5px]
 PASS CSS Animations: property <translate> from neutral to [20px] at (1) should be [20px]
 PASS CSS Animations: property <translate> from neutral to [20px] at (2) should be [30px]
-PASS Web Animations: property <translate> from neutral to [20px] at (-1) should be [0px]
+FAIL Web Animations: property <translate> from neutral to [20px] at (-1) should be [0px] assert_equals: expected "none " but got "- 20px "
 FAIL Web Animations: property <translate> from neutral to [20px] at (0) should be [10px] assert_equals: expected "10px " but got "none "
-FAIL Web Animations: property <translate> from neutral to [20px] at (0.25) should be [12.5px] assert_equals: expected "12.5px " but got "5px "
-FAIL Web Animations: property <translate> from neutral to [20px] at (0.75) should be [17.5px] assert_equals: expected "17.5px " but got "16.25px "
+FAIL Web Animations: property <translate> from neutral to [20px] at (0.25) should be [12.5px] assert_equals: expected "12.5px " but got "8.75px "
+FAIL Web Animations: property <translate> from neutral to [20px] at (0.75) should be [17.5px] assert_equals: expected "17.5px " but got "19.06px "
 PASS Web Animations: property <translate> from neutral to [20px] at (1) should be [20px]
 FAIL Web Animations: property <translate> from neutral to [20px] at (2) should be [30px] assert_equals: expected "30px " but got "20px "
 PASS CSS Transitions: property <translate> from [initial] to [200px 100px 200px] at (-1) should be [-200px -100px -200px]

@@ -1,0 +1,41 @@
+<style>
+
+    #target {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100px;
+        height: 100px;
+        background-color: black;
+    }
+
+</style>
+<div id="target"></div>
+<script src="../resources/ui-helper.js"></script>
+<script>
+
+(async () => {
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    // Start an animation that lasts a day.
+    const duration = 24 * 60 * 60 * 1000;
+    const target = document.getElementById("target");
+    const animation = target.animate({ translate: "200px" }, duration);
+    animation.currentTime = duration / 2;
+
+    // Wait until the animation has been applied.
+    await animation.ready;
+    await UIHelper.ensureStablePresentationUpdate();
+
+    // Change the transform property.
+    target.style.transform = "translateY(100px)";
+
+    // Wait until that change was made.
+    await UIHelper.ensureStablePresentationUpdate();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+
+</script>

@@ -721,7 +721,7 @@ static inline const TransformOperations& operationsAt(const KeyframeValueList& v
 
 int GraphicsLayer::validateTransformOperations(const KeyframeValueList& valueList, bool& hasBigRotation)
 {
-    ASSERT(valueList.property() == AnimatedPropertyTransform);
+    ASSERT(animatedPropertyIsTransformOrRelated(valueList.property()));
 
     hasBigRotation = false;
     

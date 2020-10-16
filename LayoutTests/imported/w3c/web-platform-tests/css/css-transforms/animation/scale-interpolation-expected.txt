@@ -185,10 +185,10 @@ PASS CSS Animations: property <scale> from neutral to [1.5 1] at (0.25) should b
 PASS CSS Animations: property <scale> from neutral to [1.5 1] at (0.75) should be [1.4 1]
 PASS CSS Animations: property <scale> from neutral to [1.5 1] at (1) should be [1.5 1]
 PASS CSS Animations: property <scale> from neutral to [1.5 1] at (2) should be [1.9 1]
-PASS Web Animations: property <scale> from neutral to [1.5 1] at (-1) should be [0.7 1]
+FAIL Web Animations: property <scale> from neutral to [1.5 1] at (-1) should be [0.7 1] assert_equals: expected "0.7 1 " but got "- 0.1 1 "
 FAIL Web Animations: property <scale> from neutral to [1.5 1] at (0) should be [1.1 1] assert_equals: expected "1.1 1 " but got "0.7 1 "
-FAIL Web Animations: property <scale> from neutral to [1.5 1] at (0.25) should be [1.2 1] assert_equals: expected "1.2 1 " but got "0.9 1 "
-FAIL Web Animations: property <scale> from neutral to [1.5 1] at (0.75) should be [1.4 1] assert_equals: expected "1.4 1 " but got "1.35 1 "
+FAIL Web Animations: property <scale> from neutral to [1.5 1] at (0.25) should be [1.2 1] assert_equals: expected "1.2 1 " but got "1.05 1 "
+FAIL Web Animations: property <scale> from neutral to [1.5 1] at (0.75) should be [1.4 1] assert_equals: expected "1.4 1 " but got "1.46 1 "
 PASS Web Animations: property <scale> from neutral to [1.5 1] at (1) should be [1.5 1]
 FAIL Web Animations: property <scale> from neutral to [1.5 1] at (2) should be [1.9 1] assert_equals: expected "1.9 1 " but got "1.5 1 "
 PASS CSS Transitions: property <scale> from [initial] to [2 0.5 1] at (-1) should be [0 1.5]
