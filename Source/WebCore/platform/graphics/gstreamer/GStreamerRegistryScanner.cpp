@@ -171,51 +171,34 @@ void GStreamerRegistryScanner::fillMimeTypeSetFromCapsMapping(Vector<GstCapsWebK
 {
     for (auto& current : mapping) {
         GList* factories;
-        HashSet<String, ASCIICaseInsensitiveHash> mimeTypeSet;
-        HashMap<AtomString, bool> codecMap;
         switch (current.elementType) {
         case Demuxer:
             factories = m_demuxerFactories;
-            codecMap = m_decoderCodecMap;
-            mimeTypeSet = m_decoderMimeTypeSet;
             break;
         case AudioDecoder:
             factories = m_audioDecoderFactories;
-            codecMap = m_decoderCodecMap;
-            mimeTypeSet = m_decoderMimeTypeSet;
             break;
         case VideoDecoder:
             factories = m_videoDecoderFactories;
-            codecMap = m_decoderCodecMap;
-            mimeTypeSet = m_decoderMimeTypeSet;
             break;
         case Muxer:
-            factories = m_muxerFactories;
-            codecMap = m_encoderCodecMap;
-            mimeTypeSet = m_encoderMimeTypeSet;
-            break;
         case AudioEncoder:
-            factories = m_audioEncoderFactories;
-            codecMap = m_encoderCodecMap;
-            mimeTypeSet = m_encoderMimeTypeSet;
-            break;
         case VideoEncoder:
-            factories = m_videoEncoderFactories;
-            codecMap = m_encoderCodecMap;
-            mimeTypeSet = m_encoderMimeTypeSet;
-            break;
+            // This method is currently used only for Decoders and Demuxers.
+            ASSERT_NOT_REACHED();
+            return;
         }
 
         if (hasElementForMediaType(factories, current.capsString)) {
             if (!current.webkitCodecPatterns.isEmpty()) {
                 for (const auto& pattern : current.webkitCodecPatterns)
-                    codecMap.add(pattern, false);
+                    m_decoderCodecMap.add(pattern, false);
             }
             if (!current.webkitMimeTypes.isEmpty()) {
                 for (const auto& mimeType : current.webkitMimeTypes)
-                    mimeTypeSet.add(mimeType);
+                    m_decoderMimeTypeSet.add(mimeType);
             } else
-                mimeTypeSet.add(AtomString(current.capsString));
+                m_decoderMimeTypeSet.add(AtomString(current.capsString));
         }
     }
 }
