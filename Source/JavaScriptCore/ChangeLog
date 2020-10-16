@@ -1,3 +1,15 @@
+2020-10-16  Saam Barati  <sbarati@apple.com>
+
+        Don't emit OpSpread with a constant as the destination
+        https://bugs.webkit.org/show_bug.cgi?id=217800
+        <rdar://problem/69492311>
+
+        Reviewed by Yusuke Suzuki.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitConstruct):
+
 2020-10-16  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         REGRESSION(r267727): Warning spam from JSC_DECLARE_CUSTOM_GETTER

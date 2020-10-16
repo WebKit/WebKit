@@ -1,3 +1,15 @@
+2020-10-16  Saam Barati  <sbarati@apple.com>
+
+        Don't emit OpSpread with a constant as the destination
+        https://bugs.webkit.org/show_bug.cgi?id=217800
+        <rdar://problem/69492311>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/spread-should-not-have-a-constant-as-dst.js: Added.
+        (foo):
+        (bar):
+
 2020-10-15  Saam Barati  <sbarati@apple.com>
 
         Don't assign a bogus register to Load/ForwardVarargs in AvailabilityAnalysis before stack layout

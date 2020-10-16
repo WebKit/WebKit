@@ -3305,7 +3305,7 @@ RegisterID* BytecodeGenerator::emitCall(RegisterID* dst, RegisterID* func, Expec
                 auto* elements = static_cast<ArrayNode*>(expression)->elements();
                 if (elements && !elements->next() && elements->value()->isSpreadExpression()) {
                     ExpressionNode* expression = static_cast<SpreadExpressionNode*>(elements->value())->expression();
-                    RefPtr<RegisterID> argumentRegister = emitNode(callArguments.argumentRegister(0), expression);
+                    RefPtr<RegisterID> argumentRegister = tempDestination(emitNode(callArguments.argumentRegister(0), expression));
                     OpSpread::emit(this, argumentRegister.get(), argumentRegister.get());
 
                     return emitCallVarargs<typename VarArgsOp<CallOp>::type>(dst, func, callArguments.thisRegister(), argumentRegister.get(), newTemporary(), 0, divot, divotStart, divotEnd, debuggableCall);
@@ -3509,7 +3509,7 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
                 auto* elements = static_cast<ArrayNode*>(expression)->elements();
                 if (elements && !elements->next() && elements->value()->isSpreadExpression()) {
                     ExpressionNode* expression = static_cast<SpreadExpressionNode*>(elements->value())->expression();
-                    RefPtr<RegisterID> argumentRegister = emitNode(callArguments.argumentRegister(0), expression);
+                    RefPtr<RegisterID> argumentRegister = tempDestination(emitNode(callArguments.argumentRegister(0), expression));
                     OpSpread::emit(this, argumentRegister.get(), argumentRegister.get());
 
                     move(callArguments.thisRegister(), lazyThis);
