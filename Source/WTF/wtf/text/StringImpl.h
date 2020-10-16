@@ -196,6 +196,7 @@ private:
     static_assert(s_flagCount <= StringHasher::flagCount, "StringHasher reserves enough bits for StringImpl flags");
     static constexpr const unsigned s_flagStringKindCount = 4;
 
+    static constexpr const unsigned s_hashZeroValue = 0;
     static constexpr const unsigned s_hashFlagStringKindIsAtom = 1u << (s_flagStringKindCount);
     static constexpr const unsigned s_hashFlagStringKindIsSymbol = 1u << (s_flagStringKindCount + 1);
     static constexpr const unsigned s_hashMaskStringKind = s_hashFlagStringKindIsAtom | s_hashFlagStringKindIsSymbol;
@@ -873,7 +874,7 @@ inline StringImpl::StringImpl(unsigned length, Force8Bit)
 }
 
 inline StringImpl::StringImpl(unsigned length)
-    : StringImplShape(s_refCountIncrement, length, tailPointer<UChar>(), StringNormal | BufferInternal)
+    : StringImplShape(s_refCountIncrement, length, tailPointer<UChar>(), s_hashZeroValue | StringNormal | BufferInternal)
 {
     ASSERT(m_data16);
     ASSERT(m_length);
@@ -900,7 +901,7 @@ inline StringImpl::StringImpl(MallocPtr<LChar, Malloc> characters, unsigned leng
 }
 
 inline StringImpl::StringImpl(const UChar* characters, unsigned length, ConstructWithoutCopyingTag)
-    : StringImplShape(s_refCountIncrement, length, characters, StringNormal | BufferInternal)
+    : StringImplShape(s_refCountIncrement, length, characters, s_hashZeroValue | StringNormal | BufferInternal)
 {
     ASSERT(m_data16);
     ASSERT(m_length);
@@ -919,7 +920,7 @@ inline StringImpl::StringImpl(const LChar* characters, unsigned length, Construc
 
 template<typename Malloc>
 inline StringImpl::StringImpl(MallocPtr<UChar, Malloc> characters, unsigned length)
-    : StringImplShape(s_refCountIncrement, length, static_cast<const UChar*>(nullptr), StringNormal | BufferOwned)
+    : StringImplShape(s_refCountIncrement, length, static_cast<const UChar*>(nullptr), s_hashZeroValue | StringNormal | BufferOwned)
 {
     if constexpr (std::is_same_v<Malloc, StringImplMalloc>)
         m_data16 = characters.leakPtr();
@@ -949,7 +950,7 @@ inline StringImpl::StringImpl(const LChar* characters, unsigned length, Ref<Stri
 }
 
 inline StringImpl::StringImpl(const UChar* characters, unsigned length, Ref<StringImpl>&& base)
-    : StringImplShape(s_refCountIncrement, length, characters, StringNormal | BufferSubstring)
+    : StringImplShape(s_refCountIncrement, length, characters, s_hashZeroValue | StringNormal | BufferSubstring)
 {
     ASSERT(!is8Bit());
     ASSERT(m_data16);
@@ -1153,7 +1154,7 @@ inline StringImpl::StringImpl(CreateSymbolTag, const LChar* characters, unsigned
 }
 
 inline StringImpl::StringImpl(CreateSymbolTag, const UChar* characters, unsigned length)
-    : StringImplShape(s_refCountIncrement, length, characters, StringSymbol | BufferSubstring)
+    : StringImplShape(s_refCountIncrement, length, characters, s_hashZeroValue | StringSymbol | BufferSubstring)
 {
     ASSERT(!is8Bit());
     ASSERT(m_data16);

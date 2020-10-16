@@ -1,3 +1,17 @@
+2020-10-16  David Kilzer  <ddkilzer@apple.com>
+
+        Open source clang warning: bitwise operation between different enumeration types [-Wenum-enum-conversion]
+        <https://webkit.org/b/217805>
+        <rdar://problem/70250742>
+
+        Reviewed by Darin Adler.
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl::s_hashZeroValue): Add.
+        (WTF::StringImpl::StringImpl):
+        - Use s_hashZeroValue as first value in bitwise-or expression
+          so that enums are converted automatically to unsigned values.
+
 2020-10-16  Sam Weinig  <weinig@apple.com>
 
         ENABLE_LEGACY_CSS_VENDOR_PREFIXES and RuntimeEnabledFeatures::legacyCSSVendorPrefixesEnabled() don't do anything
