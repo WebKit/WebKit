@@ -1,3 +1,11 @@
+2020-10-16  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Update test expectations after r268575.
+
+        Added several failures from new added tests.
+
+        * platform/glib/TestExpectations:
+
 2020-10-16  Karl Rackler  <rackler@apple.com>
 
         REGRESSION: [ Win10 wk1 ews ] transforms/2d/rotate-change-composited.html is a flaky failure
