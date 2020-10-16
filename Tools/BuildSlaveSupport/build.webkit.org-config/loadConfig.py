@@ -47,10 +47,10 @@ def pickLatestBuild(builder, requests):
     return max(requests, key=operator.attrgetter("submittedAt"))
 
 
-def loadBuilderConfig(c, test_mode_is_enabled=False):
+def loadBuilderConfig(c, is_test_mode_enabled=False):
     # FIXME: These file handles are leaked.
-    if test_mode_is_enabled:
-        passwords = make_passwords_json.create_mock_worker_passwords_dict()
+    if is_test_mode_enabled:
+        passwords = {}
     else:
         passwords = json.load(open('passwords.json'))
     results_server_api_key = passwords.get('results-server-api-key')
@@ -58,7 +58,7 @@ def loadBuilderConfig(c, test_mode_is_enabled=False):
         os.environ['RESULTS_SERVER_API_KEY'] = results_server_api_key
 
     config = json.load(open('config.json'))
-    c['slaves'] = [BuildSlave(worker['name'], passwords[worker['name']], max_builds=1) for worker in config['workers']]
+    c['slaves'] = [BuildSlave(worker['name'], passwords.get(worker['name'], 'password'), max_builds=1) for worker in config['workers']]
 
     c['schedulers'] = []
     for scheduler in config['schedulers']:

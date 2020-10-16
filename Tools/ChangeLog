@@ -1,5 +1,17 @@
 2020-10-16  Aakash Jain  <aakash_jain@apple.com>
 
+        [build.webkit.org] buildbot checkconfig fails when passwords.json is missing
+        https://bugs.webkit.org/show_bug.cgi?id=217831
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Set is_test_mode_enabled based on BUILDBOT_TESTING env variable.
+        * BuildSlaveSupport/build.webkit.org-config/loadConfig.py: Renamed test_mode_is_enabled to is_test_mode_enabled to
+        be consistent with EWS code.
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py: Ditto.
+
+2020-10-16  Aakash Jain  <aakash_jain@apple.com>
+
         [build.webkit.org] Add copyright message to steps_unittest.py
         https://bugs.webkit.org/show_bug.cgi?id=217830
 

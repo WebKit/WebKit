@@ -688,7 +688,7 @@ if __name__ == '__main__':
     BuildBotConfigLoader()._add_dependent_modules_to_sys_modules()
     from loadConfig import *
     c = {}
-    loadBuilderConfig(c, test_mode_is_enabled=True)
+    loadBuilderConfig(c, is_test_mode_enabled=True)
     BuildStepsConstructorTest.generateTests()
     BuildStepsTest.generateTests()
     unittest.main()
