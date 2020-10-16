@@ -1,3 +1,12 @@
+2020-10-16  Karl Rackler  <rackler@apple.com>
+
+        REGRESSION (r266932): [ Mojave+ wk2 ] fast/scrolling/latching/latched-scroll-into-nonfast-region.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=217001
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-10-16  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Update test expectations after r268575.
