@@ -20,9 +20,14 @@ var calledResumeWithUserGesture = false;
 function runTest() {
     window.jsTestIsAsync = true;
 
-    context = new OfflineAudioContext(2, 1000, 44100);
+    if (window.webkitOfflineAudioContext)
+        context = new webkitOfflineAudioContext(2, 1000, 44100);
+    else
+        context = new OfflineAudioContext(2, 1000, 44100);
 
-    if (window.internals)
+    // It is not possible to set AudioContextRestrictions on an OfflineAudioContext since it
+    // does not subclass AudioContext / WebKitAudioContext.
+    if (window.internals && window.webkitOfflineAudioContext)
         internals.setAudioContextRestrictions(context, 'RequireUserGestureForAudioStart');
 
     shouldBe('context.state', '"suspended"');

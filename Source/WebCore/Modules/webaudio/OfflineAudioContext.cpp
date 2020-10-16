@@ -99,11 +99,6 @@ void OfflineAudioContext::startOfflineRendering(Ref<DeferredPromise>&& promise)
         return;
     }
 
-    if (!willBeginPlayback()) {
-        promise->reject(Exception { InvalidStateError, "Refusing to start rendering for security reasons" });
-        return;
-    }
-
     if (!renderTarget()) {
         promise->reject(Exception { InvalidStateError, "Failed to create audio buffer"_s });
         return;

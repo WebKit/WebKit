@@ -28,6 +28,10 @@
 #include "AudioContextOptions.h"
 #include "BaseAudioContext.h"
 #include "DefaultAudioDestinationNode.h"
+#include "MediaCanStartListener.h"
+#include "MediaProducer.h"
+#include "PlatformMediaSession.h"
+#include "VisibilityChangeClient.h"
 
 namespace WebCore {
 
@@ -35,11 +39,18 @@ class DOMWindow;
 
 struct AudioTimestamp;
 
-class AudioContext : public BaseAudioContext {
+class AudioContext
+    : public BaseAudioContext
+    , public MediaProducer
+    , public MediaCanStartListener
+    , private PlatformMediaSessionClient
+    , private VisibilityChangeClient {
     WTF_MAKE_ISO_ALLOCATED(AudioContext);
 public:
     // Create an AudioContext for rendering to the audio hardware.
     static ExceptionOr<Ref<AudioContext>> create(Document&, AudioContextOptions&& = { });
+    ~AudioContext();
+
     WEBCORE_EXPORT static void setDefaultSampleRateForTesting(Optional<float>);
 
     void close(DOMPromiseDeferred<void>&&);
@@ -65,12 +76,65 @@ public:
 
     void startRendering();
 
+    // Restrictions to change default behaviors.
+    enum BehaviorRestrictionFlags {
+        NoRestrictions = 0,
+        RequireUserGestureForAudioStartRestriction = 1 << 0,
+        RequirePageConsentForAudioStartRestriction = 1 << 1,
+    };
+    typedef unsigned BehaviorRestrictions;
+    BehaviorRestrictions behaviorRestrictions() const { return m_restrictions; }
+    void addBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions |= restriction; }
+    void removeBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions &= ~restriction; }
+
 protected:
     explicit AudioContext(Document&, const AudioContextOptions& = { });
     AudioContext(Document&, unsigned numberOfChannels, RefPtr<AudioBuffer>&& renderTarget);
 
+    bool willBeginPlayback();
+
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const final;
+#endif
+
 private:
+    void constructCommon();
+
+    bool userGestureRequiredForAudioStart() const { return !isOfflineContext() && m_restrictions & RequireUserGestureForAudioStartRestriction; }
+    bool pageConsentRequiredForAudioStart() const { return !isOfflineContext() && m_restrictions & RequirePageConsentForAudioStartRestriction; }
+
     bool willPausePlayback();
+
+    // MediaProducer
+    MediaProducer::MediaStateFlags mediaState() const override;
+    void pageMutedStateDidChange() override;
+
+    // PlatformMediaSessionClient
+    PlatformMediaSession::MediaType mediaType() const override { return PlatformMediaSession::MediaType::WebAudio; }
+    PlatformMediaSession::MediaType presentationType() const override { return PlatformMediaSession::MediaType::WebAudio; }
+    void mayResumePlayback(bool shouldResume) override;
+    void suspendPlayback() override;
+    bool canReceiveRemoteControlCommands() const override { return false; }
+    void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*) override { }
+    bool supportsSeeking() const override { return false; }
+    bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const override { return false; }
+    bool canProduceAudio() const final { return true; }
+    bool isSuspended() const final;
+    DocumentIdentifier hostingDocumentIdentifier() const final;
+
+    // MediaCanStartListener.
+    void mediaCanStart(Document&) override;
+
+    // VisibilityChangeClient
+    void visibilityStateChanged() final;
+
+    // ActiveDOMObject
+    void suspend(ReasonForSuspension) final;
+    void resume() final;
+
+    std::unique_ptr<PlatformMediaSession> m_mediaSession;
+
+    BehaviorRestrictions m_restrictions { NoRestrictions };
 
     // [[suspended by user]] flag in the specification:
     // https://www.w3.org/TR/webaudio/#dom-audiocontext-suspended-by-user-slot

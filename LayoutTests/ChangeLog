@@ -1,3 +1,19 @@
+2020-10-16  Chris Dumez  <cdumez@apple.com>
+
+        Move even more AudioContext-specific logic out of BaseAudioContext
+        https://bugs.webkit.org/show_bug.cgi?id=217803
+
+        Reviewed by Eric Carlson.
+
+        Update test that was trying to set the autoplay restrictions on an OfflineAudioContext
+        to make sure they did not apply. Now that the autoplay restrictions are on AudioContext
+        instead of BaseAudioContext, they definitely do not apply to OfflineAudioContext and it
+        is not even possible to set the restrictions on an OfflineAudioContext. I updated the
+        test to use webkitOfflineAudioContext when available since WebKitOfflineAudioContext
+        does inherit WebKitAudioContext.
+
+        * webaudio/offlineaudiocontext-restriction.html:
+
 2020-10-16  Youenn Fablet  <youenn@apple.com>
 
         sdpFmtLine should be missing from RTCRtpCodecCapability instead of being an empty string

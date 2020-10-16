@@ -31,8 +31,11 @@
 #include "AudioTimestamp.h"
 #include "DOMWindow.h"
 #include "JSDOMPromiseDeferred.h"
+#include "Logging.h"
 #include "Page.h"
 #include "Performance.h"
+#include "PlatformMediaSessionManager.h"
+#include "Quirks.h"
 #include <wtf/IsoMallocInlines.h>
 
 #if ENABLE(MEDIA_STREAM)
@@ -51,6 +54,8 @@
 
 namespace WebCore {
 
+#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(document() && document()->page() && document()->page()->isAlwaysOnLoggingAllowed(), Media, "%p - AudioContext::" fmt, this, ##__VA_ARGS__)
+
 #if OS(WINDOWS)
 // Don't allow more than this number of simultaneous AudioContexts talking to hardware.
 constexpr unsigned maxHardwareContexts = 4;
@@ -62,6 +67,13 @@ static Optional<float>& defaultSampleRateForTesting()
 {
     static Optional<float> sampleRate;
     return sampleRate;
+}
+
+static bool shouldDocumentAllowWebAudioToAutoPlay(const Document& document)
+{
+    if (document.processingUserGestureForMedia() || document.isCapturing())
+        return true;
+    return document.quirks().shouldAutoplayWebAudioForArbitraryUserGesture() && document.topDocument().hasHadUserInteraction();
 }
 
 void AudioContext::setDefaultSampleRateForTesting(Optional<float> sampleRate)
@@ -96,13 +108,44 @@ ExceptionOr<Ref<AudioContext>> AudioContext::create(Document& document, AudioCon
 // Constructor for rendering to the audio hardware.
 AudioContext::AudioContext(Document& document, const AudioContextOptions& contextOptions)
     : BaseAudioContext(document, contextOptions)
+    , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::sharedManager(), *this))
 {
+    constructCommon();
+
+    // Initialize the destination node's muted state to match the page's current muted state.
+    pageMutedStateDidChange();
+
+    document.addAudioProducer(*this);
+    document.registerForVisibilityStateChangedCallbacks(*this);
 }
 
 // Only needed for WebKitOfflineAudioContext.
 AudioContext::AudioContext(Document& document, unsigned numberOfChannels, RefPtr<AudioBuffer>&& renderTarget)
     : BaseAudioContext(document, numberOfChannels, WTFMove(renderTarget))
+    , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::sharedManager(), *this))
 {
+    constructCommon();
+}
+
+void AudioContext::constructCommon()
+{
+    ASSERT(document());
+    if (document()->audioPlaybackRequiresUserGesture())
+        addBehaviorRestriction(RequireUserGestureForAudioStartRestriction);
+    else
+        m_restrictions = NoRestrictions;
+
+#if PLATFORM(COCOA)
+    addBehaviorRestriction(RequirePageConsentForAudioStartRestriction);
+#endif
+}
+
+AudioContext::~AudioContext()
+{
+    if (!isOfflineContext() && scriptExecutionContext()) {
+        document()->removeAudioProducer(*this);
+        document()->unregisterForVisibilityStateChangedCallbacks(*this);
+    }
 }
 
 double AudioContext::baseLatency()
@@ -263,7 +306,7 @@ bool AudioContext::willPausePlayback()
     if (userGestureRequiredForAudioStart()) {
         if (!document->processingUserGestureForMedia())
             return false;
-        removeBehaviorRestriction(BaseAudioContext::RequireUserGestureForAudioStartRestriction);
+        removeBehaviorRestriction(RequireUserGestureForAudioStartRestriction);
     }
 
     if (pageConsentRequiredForAudioStart()) {
@@ -272,11 +315,154 @@ bool AudioContext::willPausePlayback()
             document->addMediaCanStartListener(*this);
             return false;
         }
-        removeBehaviorRestriction(BaseAudioContext::RequirePageConsentForAudioStartRestriction);
+        removeBehaviorRestriction(RequirePageConsentForAudioStartRestriction);
     }
 
-    return mediaSession()->clientWillPausePlayback();
+    return m_mediaSession->clientWillPausePlayback();
 }
+
+MediaProducer::MediaStateFlags AudioContext::mediaState() const
+{
+    if (!isStopped() && destinationNode() && destinationNode()->isPlayingAudio())
+        return MediaProducer::IsPlayingAudio;
+
+    return MediaProducer::IsNotPlaying;
+}
+
+void AudioContext::mayResumePlayback(bool shouldResume)
+{
+    if (!destinationNode() || state() == State::Closed || state() == State::Running)
+        return;
+
+    if (!shouldResume) {
+        setState(State::Suspended);
+        return;
+    }
+
+    if (!willBeginPlayback())
+        return;
+
+    lazyInitialize();
+
+    destinationNode()->resume([this, protectedThis = makeRef(*this)] {
+        setState(State::Running);
+    });
+}
+
+bool AudioContext::willBeginPlayback()
+{
+    auto* document = this->document();
+    if (!document)
+        return false;
+
+    if (userGestureRequiredForAudioStart()) {
+        if (!shouldDocumentAllowWebAudioToAutoPlay(*document)) {
+            ALWAYS_LOG(LOGIDENTIFIER, "returning false, not processing user gesture or capturing");
+            return false;
+        }
+        removeBehaviorRestriction(RequireUserGestureForAudioStartRestriction);
+    }
+
+    if (pageConsentRequiredForAudioStart()) {
+        auto* page = document->page();
+        if (page && !page->canStartMedia()) {
+            document->addMediaCanStartListener(*this);
+            ALWAYS_LOG(LOGIDENTIFIER, "returning false, page doesn't allow media to start");
+            return false;
+        }
+        removeBehaviorRestriction(RequirePageConsentForAudioStartRestriction);
+    }
+
+    auto willBegin = m_mediaSession->clientWillBeginPlayback();
+    ALWAYS_LOG(LOGIDENTIFIER, "returning ", willBegin);
+
+    return willBegin;
+}
+
+void AudioContext::visibilityStateChanged()
+{
+    // Do not suspend if audio is audible.
+    if (!document() || mediaState() == MediaProducer::IsPlayingAudio || isStopped())
+        return;
+
+    if (document()->hidden()) {
+        if (state() == State::Running) {
+            ALWAYS_LOG(LOGIDENTIFIER, "Suspending playback after going to the background");
+            m_mediaSession->beginInterruption(PlatformMediaSession::EnteringBackground);
+        }
+    } else {
+        if (state() == State::Interrupted) {
+            ALWAYS_LOG(LOGIDENTIFIER, "Resuming playback after entering foreground");
+            m_mediaSession->endInterruption(PlatformMediaSession::MayResumePlaying);
+        }
+    }
+}
+
+void AudioContext::suspend(ReasonForSuspension)
+{
+    if (state() == State::Running) {
+        m_mediaSession->beginInterruption(PlatformMediaSession::PlaybackSuspended);
+        document()->updateIsPlayingMedia();
+    }
+}
+
+void AudioContext::resume()
+{
+    if (state() == State::Interrupted) {
+        m_mediaSession->endInterruption(PlatformMediaSession::MayResumePlaying);
+        document()->updateIsPlayingMedia();
+    }
+}
+
+void AudioContext::suspendPlayback()
+{
+    if (!destinationNode() || state() == State::Closed)
+        return;
+
+    if (state() == State::Suspended) {
+        if (m_mediaSession->state() == PlatformMediaSession::Interrupted)
+            setState(State::Interrupted);
+        return;
+    }
+
+    lazyInitialize();
+
+    destinationNode()->suspend([this, protectedThis = makeRef(*this)] {
+        bool interrupted = m_mediaSession->state() == PlatformMediaSession::Interrupted;
+        setState(interrupted ? State::Interrupted : State::Suspended);
+    });
+}
+
+DocumentIdentifier AudioContext::hostingDocumentIdentifier() const
+{
+    auto* document = downcast<Document>(m_scriptExecutionContext);
+    return document ? document->identifier() : DocumentIdentifier { };
+}
+
+bool AudioContext::isSuspended() const
+{
+    return !document() || document()->activeDOMObjectsAreSuspended() || document()->activeDOMObjectsAreStopped();
+}
+
+void AudioContext::pageMutedStateDidChange()
+{
+    if (destinationNode() && document() && document()->page())
+        destinationNode()->setMuted(document()->page()->isAudioMuted());
+}
+
+void AudioContext::mediaCanStart(Document& document)
+{
+    ASSERT_UNUSED(document, &document == this->document());
+    removeBehaviorRestriction(RequirePageConsentForAudioStartRestriction);
+    mayResumePlayback(true);
+}
+
+#if !RELEASE_LOG_DISABLED
+const Logger& AudioContext::logger() const
+{
+    return BaseAudioContext::logger();
+}
+#endif
 
 #if ENABLE(VIDEO)
 

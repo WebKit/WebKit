@@ -75,7 +75,6 @@
 #include "PannerNode.h"
 #include "PeriodicWave.h"
 #include "PeriodicWaveOptions.h"
-#include "PlatformMediaSessionManager.h"
 #include "ScriptController.h"
 #include "ScriptProcessorNode.h"
 #include "StereoPannerNode.h"
@@ -111,8 +110,6 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(BaseAudioContext);
 
-#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(document() && document()->page() && document()->page()->isAlwaysOnLoggingAllowed(), Media, "%p - BaseAudioContext::" fmt, this, ##__VA_ARGS__)
-    
 bool BaseAudioContext::isSupportedSampleRate(float sampleRate)
 {
     return sampleRate >= 3000 && sampleRate <= 384000;
@@ -128,21 +125,14 @@ BaseAudioContext::BaseAudioContext(Document& document, const AudioContextOptions
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
     , m_worklet(AudioWorklet::create(*this))
-    , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::sharedManager(), *this))
 {
     // According to spec AudioContext must die only after page navigate.
     // Lets mark it as ActiveDOMObject with pending activity and unmark it in clear method.
     makePendingActivity();
 
-    constructCommon();
+    FFTFrame::initialize();
 
     m_destinationNode = DefaultAudioDestinationNode::create(*this, contextOptions.sampleRate);
-
-    // Initialize the destination node's muted state to match the page's current muted state.
-    pageMutedStateDidChange();
-
-    document.addAudioProducer(*this);
-    document.registerForVisibilityStateChangedCallbacks(*this);
 
     // Unlike OfflineAudioContext, AudioContext does not require calling resume() to start rendering.
     // Lazy initialization starts rendering so we schedule a task here to make sure lazy initialization
@@ -164,28 +154,12 @@ BaseAudioContext::BaseAudioContext(Document& document, unsigned numberOfChannels
 #endif
     , m_worklet(AudioWorklet::create(*this))
     , m_isOfflineContext(true)
-    , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::sharedManager(), *this))
     , m_renderTarget(WTFMove(renderTarget))
-{
-    constructCommon();
-
-    // Create a new destination for offline rendering.
-    m_destinationNode = OfflineAudioDestinationNode::create(*this, numberOfChannels, m_renderTarget.copyRef());
-}
-
-void BaseAudioContext::constructCommon()
 {
     FFTFrame::initialize();
 
-    ASSERT(document());
-    if (document()->audioPlaybackRequiresUserGesture())
-        addBehaviorRestriction(RequireUserGestureForAudioStartRestriction);
-    else
-        m_restrictions = NoRestrictions;
-
-#if PLATFORM(COCOA)
-    addBehaviorRestriction(RequirePageConsentForAudioStartRestriction);
-#endif
+    // Create a new destination for offline rendering.
+    m_destinationNode = OfflineAudioDestinationNode::create(*this, numberOfChannels, m_renderTarget.copyRef());
 }
 
 BaseAudioContext::~BaseAudioContext()
@@ -203,11 +177,6 @@ BaseAudioContext::~BaseAudioContext()
         m_renderingAutomaticPullNodes.resize(m_automaticPullNodes.size());
     ASSERT(m_renderingAutomaticPullNodes.isEmpty());
     // FIXME: Can we assert that m_deferredBreakConnectionList is empty?
-
-    if (!isOfflineContext() && scriptExecutionContext()) {
-        document()->removeAudioProducer(*this);
-        document()->unregisterForVisibilityStateChangedCallbacks(*this);
-    }
 }
 
 void BaseAudioContext::lazyInitialize()
@@ -336,22 +305,6 @@ void BaseAudioContext::stop()
     clear();
 }
 
-void BaseAudioContext::suspend(ReasonForSuspension)
-{
-    if (state() == State::Running) {
-        m_mediaSession->beginInterruption(PlatformMediaSession::PlaybackSuspended);
-        document()->updateIsPlayingMedia();
-    }
-}
-
-void BaseAudioContext::resume()
-{
-    if (state() == State::Interrupted) {
-        m_mediaSession->endInterruption(PlatformMediaSession::MayResumePlaying);
-        document()->updateIsPlayingMedia();
-    }
-}
-
 const char* BaseAudioContext::activeDOMObjectName() const
 {
     return "AudioContext";
@@ -362,39 +315,9 @@ Document* BaseAudioContext::document() const
     return downcast<Document>(m_scriptExecutionContext);
 }
 
-DocumentIdentifier BaseAudioContext::hostingDocumentIdentifier() const
-{
-    auto* document = downcast<Document>(m_scriptExecutionContext);
-    return document ? document->identifier() : DocumentIdentifier { };
-}
-
 float BaseAudioContext::sampleRate() const
 {
     return m_destinationNode ? m_destinationNode->sampleRate() : AudioDestination::hardwareSampleRate();
-}
-
-bool BaseAudioContext::isSuspended() const
-{
-    return !document() || document()->activeDOMObjectsAreSuspended() || document()->activeDOMObjectsAreStopped();
-}
-
-void BaseAudioContext::visibilityStateChanged()
-{
-    // Do not suspend if audio is audible.
-    if (!document() || mediaState() == MediaProducer::IsPlayingAudio || m_isStopScheduled)
-        return;
-
-    if (document()->hidden()) {
-        if (state() == State::Running) {
-            RELEASE_LOG_IF_ALLOWED("visibilityStateChanged() Suspending playback after going to the background");
-            m_mediaSession->beginInterruption(PlatformMediaSession::EnteringBackground);
-        }
-    } else {
-        if (state() == State::Interrupted) {
-            RELEASE_LOG_IF_ALLOWED("visibilityStateChanged() Resuming playback after entering foreground");
-            m_mediaSession->endInterruption(PlatformMediaSession::MayResumePlaying);
-        }
-    }
 }
 
 bool BaseAudioContext::wouldTaintOrigin(const URL& url) const
@@ -993,64 +916,6 @@ ScriptExecutionContext* BaseAudioContext::scriptExecutionContext() const
     return ActiveDOMObject::scriptExecutionContext();
 }
 
-static bool shouldDocumentAllowWebAudioToAutoPlay(const Document& document)
-{
-    if (document.processingUserGestureForMedia() || document.isCapturing())
-        return true;
-    return document.quirks().shouldAutoplayWebAudioForArbitraryUserGesture() && document.topDocument().hasHadUserInteraction();
-}
-
-bool BaseAudioContext::willBeginPlayback()
-{
-    auto* document = this->document();
-    if (!document)
-        return false;
-
-    if (userGestureRequiredForAudioStart()) {
-        if (!shouldDocumentAllowWebAudioToAutoPlay(*document)) {
-            ALWAYS_LOG(LOGIDENTIFIER, "returning false, not processing user gesture or capturing");
-            return false;
-        }
-        removeBehaviorRestriction(BaseAudioContext::RequireUserGestureForAudioStartRestriction);
-    }
-
-    if (pageConsentRequiredForAudioStart()) {
-        auto* page = document->page();
-        if (page && !page->canStartMedia()) {
-            document->addMediaCanStartListener(*this);
-            ALWAYS_LOG(LOGIDENTIFIER, "returning false, page doesn't allow media to start");
-            return false;
-        }
-        removeBehaviorRestriction(BaseAudioContext::RequirePageConsentForAudioStartRestriction);
-    }
-    
-    auto willBegin = m_mediaSession->clientWillBeginPlayback();
-    ALWAYS_LOG(LOGIDENTIFIER, "returning ", willBegin);
-    
-    return willBegin;
-}
-
-void BaseAudioContext::mediaCanStart(Document& document)
-{
-    ASSERT_UNUSED(document, &document == this->document());
-    removeBehaviorRestriction(BaseAudioContext::RequirePageConsentForAudioStartRestriction);
-    mayResumePlayback(true);
-}
-
-MediaProducer::MediaStateFlags BaseAudioContext::mediaState() const
-{
-    if (!m_isStopScheduled && m_destinationNode && m_destinationNode->isPlayingAudio())
-        return MediaProducer::IsPlayingAudio;
-
-    return MediaProducer::IsNotPlaying;
-}
-
-void BaseAudioContext::pageMutedStateDidChange()
-{
-    if (m_destinationNode && document() && document()->page())
-        m_destinationNode->setMuted(document()->page()->isAudioMuted());
-}
-
 void BaseAudioContext::isPlayingAudioDidChange()
 {
     // Make sure to call Document::updateIsPlayingMedia() on the main thread, since
@@ -1121,45 +986,6 @@ void BaseAudioContext::decrementActiveSourceCount()
 void BaseAudioContext::didSuspendRendering(size_t)
 {
     setState(State::Suspended);
-}
-
-void BaseAudioContext::suspendPlayback()
-{
-    if (!m_destinationNode || m_state == State::Closed)
-        return;
-
-    if (m_state == State::Suspended) {
-        if (m_mediaSession->state() == PlatformMediaSession::Interrupted)
-            setState(State::Interrupted);
-        return;
-    }
-
-    lazyInitialize();
-
-    m_destinationNode->suspend([this, protectedThis = makeRef(*this)] {
-        bool interrupted = m_mediaSession->state() == PlatformMediaSession::Interrupted;
-        setState(interrupted ? State::Interrupted : State::Suspended);
-    });
-}
-
-void BaseAudioContext::mayResumePlayback(bool shouldResume)
-{
-    if (!m_destinationNode || m_state == State::Closed || m_state == State::Running)
-        return;
-
-    if (!shouldResume) {
-        setState(State::Suspended);
-        return;
-    }
-
-    if (!willBeginPlayback())
-        return;
-
-    lazyInitialize();
-
-    m_destinationNode->resume([this, protectedThis = makeRef(*this)] {
-        setState(State::Running);
-    });
 }
 
 void BaseAudioContext::postTask(WTF::Function<void()>&& task)

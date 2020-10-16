@@ -4284,10 +4284,10 @@ bool Internals::elementIsBlockingDisplaySleep(HTMLMediaElement& element) const
 #endif // ENABLE(VIDEO)
 
 #if ENABLE(WEB_AUDIO)
-void Internals::setAudioContextRestrictions(const Variant<RefPtr<BaseAudioContext>, RefPtr<WebKitAudioContext>>& contextVariant, StringView restrictionsString)
+void Internals::setAudioContextRestrictions(const Variant<RefPtr<AudioContext>, RefPtr<WebKitAudioContext>>& contextVariant, StringView restrictionsString)
 {
-    RefPtr<BaseAudioContext> context;
-    switchOn(contextVariant, [&](RefPtr<BaseAudioContext> entry) {
+    RefPtr<AudioContext> context;
+    switchOn(contextVariant, [&](RefPtr<AudioContext> entry) {
         context = entry;
     }, [&](RefPtr<WebKitAudioContext> entry) {
         context = entry;
@@ -4296,15 +4296,15 @@ void Internals::setAudioContextRestrictions(const Variant<RefPtr<BaseAudioContex
     auto restrictions = context->behaviorRestrictions();
     context->removeBehaviorRestriction(restrictions);
 
-    restrictions = BaseAudioContext::NoRestrictions;
+    restrictions = AudioContext::NoRestrictions;
 
     for (StringView restrictionString : restrictionsString.split(',')) {
         if (equalLettersIgnoringASCIICase(restrictionString, "norestrictions"))
-            restrictions |= BaseAudioContext::NoRestrictions;
+            restrictions |= AudioContext::NoRestrictions;
         if (equalLettersIgnoringASCIICase(restrictionString, "requireusergestureforaudiostart"))
-            restrictions |= BaseAudioContext::RequireUserGestureForAudioStartRestriction;
+            restrictions |= AudioContext::RequireUserGestureForAudioStartRestriction;
         if (equalLettersIgnoringASCIICase(restrictionString, "requirepageconsentforaudiostart"))
-            restrictions |= BaseAudioContext::RequirePageConsentForAudioStartRestriction;
+            restrictions |= AudioContext::RequirePageConsentForAudioStartRestriction;
     }
     context->addBehaviorRestriction(restrictions);
 }
