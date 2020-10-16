@@ -1,6 +1,0 @@
-PASS count is 0
-PASS count < 6 is true
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

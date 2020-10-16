@@ -1,3 +1,14 @@
+2020-10-16  Sam Sneddon  <gsnedders@apple.com>
+
+        Match webkitpy.port.base.Port's merging of .webarchive/.txt
+        https://bugs.webkit.org/show_bug.cgi?id=217795
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/check-for-duplicated-platform-test-results:
+        (check_duplicate): Check for both .webarchive and .txt
+        (check_platform): Don't call the function that probably just threw
+
 2020-10-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Ensure the tests are run with US/Pacific time zone

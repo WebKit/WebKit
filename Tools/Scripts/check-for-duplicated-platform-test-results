@@ -38,6 +38,8 @@ IGNORED_FILE_NAMES = {
     '.DS_Store'
 }
 
+txt_types = (".webarchive", ".txt")
+
 
 def remove_layout_test_path_prefix(full_path):
     return os.path.relpath(full_path, layout_tests_directory)
@@ -51,34 +53,40 @@ def check_duplicate(platform, baseline_search_path, platform_test_result):
 
     prefix_len = len(os.path.join(platform_directory, platform)) + 1
     test_result_filename = platform_test_result[prefix_len:]
+    test_result_filename_base, test_result_filename_ext = os.path.splitext(platform_test_result[prefix_len:])
+    if test_result_filename_ext in txt_types:
+        try_baseline_filenames = [test_result_filename_base + txt_type for txt_type in txt_types]
+    else:
+        try_baseline_filenames = [test_result_filename]
     platform_test_result_size = None
     platform_test_result_sha1 = None
 
     baseline_found = False
     for baseline_path in baseline_search_path:
-        baseline_test_result = os.path.join(baseline_path, test_result_filename)
-        if not os.path.isfile(baseline_test_result):
-            _log.debug('    No result at {0}'.format(remove_layout_test_path_prefix(baseline_test_result)))
-            continue
+        for try_baseline_filename in try_baseline_filenames:
+            baseline_test_result = os.path.join(baseline_path, try_baseline_filename)
+            if not os.path.isfile(baseline_test_result):
+                _log.debug('    No result at {0}'.format(remove_layout_test_path_prefix(baseline_test_result)))
+                continue
 
-        _log.debug('    Comparing with {0}'.format(remove_layout_test_path_prefix(baseline_test_result)))
+            _log.debug('    Comparing with {0}'.format(remove_layout_test_path_prefix(baseline_test_result)))
 
-        baseline_found = True
-        if platform_test_result_size is None:
-            platform_test_result_size = os.path.getsize(platform_test_result)
-        baseline_test_result_size = os.path.getsize(baseline_test_result)
-        if platform_test_result_size != baseline_test_result_size:
-            _log.debug('    File size is different')
-            return False
+            baseline_found = True
+            if platform_test_result_size is None:
+                platform_test_result_size = os.path.getsize(platform_test_result)
+            baseline_test_result_size = os.path.getsize(baseline_test_result)
+            if platform_test_result_size != baseline_test_result_size:
+                _log.debug('    File size is different')
+                return False
 
-        if platform_test_result_sha1 is None:
-            platform_test_result_sha1 = sha1(platform_test_result)
-        baseline_test_result_sha1 = sha1(baseline_test_result)
-        if platform_test_result_sha1 != baseline_test_result_sha1:
-            _log.debug('    File hash is different')
-            return False
+            if platform_test_result_sha1 is None:
+                platform_test_result_sha1 = sha1(platform_test_result)
+            baseline_test_result_sha1 = sha1(baseline_test_result)
+            if platform_test_result_sha1 != baseline_test_result_sha1:
+                _log.debug('    File hash is different')
+                return False
 
-        _log.debug('   Duplicate found: {0} and {1}'.format(remove_layout_test_path_prefix(platform_test_result), remove_layout_test_path_prefix(baseline_test_result)))
+            _log.debug('   Duplicate found: {0} and {1}'.format(remove_layout_test_path_prefix(platform_test_result), remove_layout_test_path_prefix(baseline_test_result)))
 
     return baseline_found
 
@@ -129,7 +137,7 @@ def check_platform(options, baseline_search_paths_checked):
         try:
             baseline_search_path = tuple([p for p in port.baseline_search_path() if os.path.isdir(p)] + [layout_tests_directory])
         except:
-            _log.warn('Error computing baseline search paths from {0}'.format(port.baseline_search_path()))
+            _log.warn('Error computing baseline search paths from {0}'.format(platform))
             continue
 
         _log.info('Checking search paths [{0}]'.format(', '.join(remove_layout_test_path_prefix(p) for p in baseline_search_path[:-1])))
