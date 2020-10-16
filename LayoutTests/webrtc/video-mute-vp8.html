@@ -20,7 +20,12 @@ promise_test(async (test) => {
         window.internals.clearPeerConnectionFactory();
 
     const codecs = RTCRtpSender.getCapabilities("video").codecs;
-    assert_true(codecs.some((codec) => { return codec.mimeType.indexOf("VP8") }), "VP8 is listed as a codec");
+    assert_true(codecs.some((codec) => { return codec.mimeType.indexOf("VP8") >= 0 }), "VP8 is listed as a codec");
+
+    codecs.forEach((codec) => {
+       if (codec.mimeType.indexOf("VP8") >=0)
+           assert_equals(codec.sdpFmtpLine, undefined, "VP8 codec.sdpFmtpLine is undefined");
+    });
 
     const pc = new RTCPeerConnection();
     pc.addTransceiver("video");
