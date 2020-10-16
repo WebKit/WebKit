@@ -398,6 +398,7 @@ private:
     bool m_seeking { false };
     bool m_isCurrentPlaybackTargetWireless { false };
     bool m_invalid { false };
+    bool m_wantPlaybackQualityMetrics { false };
 };
 
 } // namespace WebKit

@@ -1079,8 +1079,12 @@ size_t MediaPlayerPrivateRemote::extraMemoryCost() const
 
 Optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateRemote::videoPlaybackQualityMetrics()
 {
-    notImplemented();
-    return WTF::nullopt;
+    if (!m_wantPlaybackQualityMetrics) {
+        m_wantPlaybackQualityMetrics = true;
+        connection().send(Messages::RemoteMediaPlayerProxy::SetShouldUpdatePlaybackMetrics(true), m_id);
+    }
+
+    return m_cachedState.videoMetrics;
 }
 
 #if ENABLE(AVF_CAPTIONS)

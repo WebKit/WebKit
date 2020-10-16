@@ -1,5 +1,26 @@
 2020-10-16  Eric Carlson  <eric.carlson@apple.com>
 
+        [GPU Process] Implement VideoPlaybackMetrics
+        https://bugs.webkit.org/show_bug.cgi?id=217439
+        <rdar://problem/60179370>
+
+        Reviewed by Jer Noble.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::outOfBandTrackSources):
+        (WebKit::RemoteMediaPlayerProxy::updateCachedState):
+        (WebKit::RemoteMediaPlayerProxy::setShouldUpdatePlaybackMetrics):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::videoPlaybackQualityMetrics):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/RemoteMediaPlayerState.h:
+        (WebKit::RemoteMediaPlayerState::encode const):
+        (WebKit::RemoteMediaPlayerState::decode):
+
+2020-10-16  Eric Carlson  <eric.carlson@apple.com>
+
         [GPU Process] Implement mediaPlayerGetRawCookies
         https://bugs.webkit.org/show_bug.cgi?id=217739
         <rdar://problem/70313370>

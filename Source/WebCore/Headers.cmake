@@ -1223,6 +1223,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/TrackPrivateBase.h
     platform/graphics/VelocityData.h
     platform/graphics/VideoLayerManager.h
+    platform/graphics/VideoPlaybackQualityMetrics.h
     platform/graphics/VideoTrackPrivate.h
     platform/graphics/WidthCache.h
     platform/graphics/WindRule.h

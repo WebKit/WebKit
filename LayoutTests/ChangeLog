@@ -1,3 +1,14 @@
+2020-10-16  Eric Carlson  <eric.carlson@apple.com>
+
+        [GPU Process] Implement VideoPlaybackMetrics
+        https://bugs.webkit.org/show_bug.cgi?id=217439
+        <rdar://problem/60179370>
+
+        Reviewed by Jer Noble.
+
+        * media/video-playback-quality-expected.txt: Added.
+        * media/video-playback-quality.html: Added.
+
 2020-10-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Remove the "alg" field in the attestation statement

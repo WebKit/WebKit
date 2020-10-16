@@ -741,6 +741,9 @@ void RemoteMediaPlayerProxy::updateCachedState()
     m_cachedState.hasAudio = m_player->hasAudio();
     m_cachedState.hasVideo = m_player->hasVideo();
 
+    if (m_shouldUpdatePlaybackMetrics)
+        m_cachedState.videoMetrics = m_player->videoPlaybackQualityMetrics();
+
     if (m_bufferedChanged) {
         m_bufferedChanged = false;
         m_cachedState.bufferedRanges = *m_player->buffered();
@@ -879,6 +882,11 @@ void RemoteMediaPlayerProxy::performTaskAtMediaTime(const MediaTime& taskTime, W
 void RemoteMediaPlayerProxy::wouldTaintOrigin(struct WebCore::SecurityOriginData originData, CompletionHandler<void(Optional<bool>)>&& completionHandler)
 {
     completionHandler(m_player->wouldTaintOrigin(originData.securityOrigin()));
+}
+
+void RemoteMediaPlayerProxy::setShouldUpdatePlaybackMetrics(bool should)
+{
+    m_shouldUpdatePlaybackMetrics = should;
 }
 
 void RemoteMediaPlayerProxy::createAudioSourceProvider()

@@ -42,6 +42,7 @@
 #include "PlatformScreen.h"
 #include "SecurityOriginHash.h"
 #include "Timer.h"
+#include "VideoPlaybackQualityMetrics.h"
 #include <wtf/URL.h>
 #include "VideoTrackPrivate.h"
 #include <JavaScriptCore/Uint8Array.h>
@@ -130,14 +131,6 @@ struct MediaEngineSupportParameters {
 
         return {{ WTFMove(*type), WTFMove(*url), *isMediaSource, *isMediaStream, *typesRequiringHardware }};
     }
-};
-
-struct VideoPlaybackQualityMetrics {
-    uint32_t totalVideoFrames { 0 };
-    uint32_t droppedVideoFrames { 0 };
-    uint32_t corruptedVideoFrames { 0 };
-    double totalFrameDelay { 0 };
-    uint32_t displayCompositedVideoFrames { 0 };
 };
 
 class MediaPlayerClient {
