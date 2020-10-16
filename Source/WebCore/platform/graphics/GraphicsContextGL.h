@@ -33,6 +33,7 @@
 #include "IntRect.h"
 #include "IntSize.h"
 #include "PlatformLayer.h"
+#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -888,6 +889,15 @@ public:
 #endif
     }
 
+    class Client {
+    public:
+        virtual ~Client() { }
+        virtual void didComposite() = 0;
+        virtual void forceContextLost() = 0;
+        virtual void recycleContext() = 0;
+        virtual void dispatchContextChangedNotification() = 0;
+    };
+
     struct ActiveInfo {
         String name;
         GCGLenum type;
@@ -896,6 +906,9 @@ public:
 
     GraphicsContextGL(GraphicsContextGLAttributes, Destination = Destination::Offscreen, GraphicsContextGL* sharedContext = nullptr);
     virtual ~GraphicsContextGL() = default;
+
+    void addClient(Client& client) { m_clients.add(&client); }
+    void removeClient(Client& client) { m_clients.remove(&client); }
 
     // ========== WebGL 1 entry points.
 
@@ -1253,12 +1266,89 @@ public:
 
     // ========== Non-WebGL based entry points.
 
+    virtual void setContextVisibility(bool) = 0;
+
+    virtual GraphicsContextGLPowerPreference powerPreferenceUsedForCreation() const = 0;
+
+    virtual bool isGLES2Compliant() const = 0;
+
+    // Synthesizes an OpenGL error which will be returned from a
+    // later call to getError. This is used to emulate OpenGL ES
+    // 2.0 behavior on the desktop and to enforce additional error
+    // checking mandated by WebGL.
+    //
+    // Per the behavior of glGetError, this stores at most one
+    // instance of any given error, and returns them from calls to
+    // getError in the order they were added.
+    virtual void synthesizeGLError(GCGLenum error) = 0;
+
+    virtual void setFailNextGPUStatusCheck() = 0;
+
+    virtual void prepareForDisplay() = 0;
+
+#if !USE(ANGLE)
+    // Helper to texImage2D with pixel==0 case: pixels are initialized to 0.
+    // Return true if no GL error is synthesized.
+    // By default, alignment is 4, the OpenGL default setting.
+    virtual bool texImage2DResourceSafe(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLint alignment = 4) =  0;
+#endif
+
+    IntSize getInternalFramebufferSize() const { return IntSize(m_currentWidth, m_currentHeight); }
+
     static unsigned getClearBitsByAttachmentType(GCGLenum);
     static unsigned getClearBitsByFormat(GCGLenum);
 
     static uint8_t getChannelBitsByFormat(GCGLenum);
 
+    struct PixelStoreParams final {
+        GCGLint alignment { 4 };
+        GCGLint rowLength { 0 };
+        GCGLint imageHeight { 0 };
+        GCGLint skipPixels { 0 };
+        GCGLint skipRows { 0 };
+        GCGLint skipImages { 0 };
+    };
+
+    // Computes the components per pixel and bytes per component
+    // for the given format and type combination. Returns false if
+    // either was an invalid enum.
+    static bool computeFormatAndTypeParameters(GCGLenum format, GCGLenum type, unsigned* componentsPerPixel, unsigned* bytesPerComponent);
+
+    // Computes the image size in bytes. If paddingInBytes is not null, padding
+    // is also calculated in return. Returns NO_ERROR if succeed, otherwise
+    // return the suggested GL error indicating the cause of the failure:
+    //   INVALID_VALUE if width/height is negative or overflow happens.
+    //   INVALID_ENUM if format/type is illegal.
+    static GCGLenum computeImageSizeInBytes(GCGLenum format, GCGLenum type, GCGLsizei width, GCGLsizei height, GCGLsizei depth, const PixelStoreParams&, unsigned* imageSizeInBytes, unsigned* paddingInBytes, unsigned* skipSizeInBytes);
+
+#if !USE(ANGLE)
+    static bool possibleFormatAndTypeForInternalFormat(GCGLenum internalFormat, GCGLenum& format, GCGLenum& type);
+#endif // !USE(ANGLE)
+
+    // Extracts the contents of the given ImageData into the passed Vector,
+    // packing the pixel data according to the given format and type,
+    // and obeying the flipY and premultiplyAlpha flags. Returns true
+    // upon success.
+    static bool extractImageData(ImageData*, DataFormat, const IntRect& sourceImageSubRectangle, int depth, int unpackImageHeight, GCGLenum format, GCGLenum type, bool flipY, bool premultiplyAlpha, Vector<uint8_t>& data);
+
+    // Helper function which extracts the user-supplied texture
+    // data, applying the flipY and premultiplyAlpha parameters.
+    // If the data is not tightly packed according to the passed
+    // unpackParams, the output data will be tightly packed.
+    // Returns true if successful, false if any error occurred.
+    static bool extractTextureData(unsigned width, unsigned height, GCGLenum format, GCGLenum type, const PixelStoreParams& unpackParams, bool flipY, bool premultiplyAlpha, const void* pixels, Vector<uint8_t>& data);
+
+    // Packs the contents of the given Image which is passed in |pixels| into the passed Vector
+    // according to the given format and type, and obeying the flipY and AlphaOp flags.
+    // Returns true upon success.
+    static bool packImageData(Image*, const void* pixels, GCGLenum format, GCGLenum type, bool flipY, AlphaOp, DataFormat sourceFormat, unsigned sourceImageWidth, unsigned sourceImageHeight, const IntRect& sourceImageSubRectangle, int depth, unsigned sourceUnpackAlignment, int unpackImageHeight, Vector<uint8_t>& data);
+
     Destination destination() const { return m_destination; }
+
+protected:
+    int m_currentWidth { 0 };
+    int m_currentHeight { 0 };
+    HashSet<Client*> m_clients;
 
 private:
     GraphicsContextGLAttributes m_attrs;

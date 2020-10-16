@@ -707,11 +707,6 @@ void GraphicsContextGLOpenGL::reshape(int width, int height)
     gl::Flush();
 }
 
-IntSize GraphicsContextGLOpenGL::getInternalFramebufferSize() const
-{
-    return IntSize(m_currentWidth, m_currentHeight);
-}
-
 void GraphicsContextGLOpenGL::activeTexture(GCGLenum texture)
 {
     makeContextCurrent();

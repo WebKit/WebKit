@@ -30,6 +30,7 @@
 
 #include "BitmapImage.h"
 #include "GraphicsContextCG.h"
+#include "GraphicsContextGLImageExtractor.h"
 #include "GraphicsContextGLOpenGL.h"
 #include "Image.h"
 #include "ImageBufferUtilitiesCG.h"
@@ -317,9 +318,9 @@ void convert16BitFormatToRGBA8(GraphicsContextGL::DataFormat srcFormat, const ui
 
 }
 
-GraphicsContextGLOpenGL::ImageExtractor::~ImageExtractor() = default;
+GraphicsContextGLImageExtractor::~GraphicsContextGLImageExtractor() = default;
 
-bool GraphicsContextGLOpenGL::ImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication)
+bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication)
 {
     if (!m_image)
         return false;

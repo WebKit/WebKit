@@ -851,9 +851,9 @@ protected:
     void texImage2DBase(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLsizei byteLength, const void* pixels);
     void texSubImage2DBase(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum internalformat, GCGLenum format, GCGLenum type, GCGLsizei byteLength, const void* pixels);
     static const char* getTexImageFunctionName(TexImageFunctionID);
-
-    virtual GraphicsContextGLOpenGL::PixelStoreParams getPackPixelStoreParams() const;
-    virtual GraphicsContextGLOpenGL::PixelStoreParams getUnpackPixelStoreParams(TexImageDimension) const;
+    using PixelStoreParams = GraphicsContextGL::PixelStoreParams;
+    virtual PixelStoreParams getPackPixelStoreParams() const;
+    virtual PixelStoreParams getUnpackPixelStoreParams(TexImageDimension) const;
 
 #if !USE(ANGLE)
     bool checkTextureCompleteness(const char*, bool);

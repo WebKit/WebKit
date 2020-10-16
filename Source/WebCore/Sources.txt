@@ -1895,6 +1895,7 @@ platform/graphics/Gradient.cpp
 platform/graphics/GradientImage.cpp
 platform/graphics/GraphicsContext.cpp
 platform/graphics/GraphicsContextGL.cpp
+platform/graphics/GraphicsContextGLImageExtractor.cpp
 platform/graphics/GraphicsContextImpl.cpp
 platform/graphics/GraphicsLayer.cpp
 platform/graphics/GraphicsLayerTransform.cpp

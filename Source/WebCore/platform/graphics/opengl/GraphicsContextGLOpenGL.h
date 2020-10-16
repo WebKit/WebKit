@@ -87,29 +87,20 @@ typedef WTF::HashMap<CString, uint64_t> ShaderNameHash;
 
 class GraphicsContextGLOpenGLPrivate;
 
-class GraphicsContextGLOpenGL : public GraphicsContextGL
+class GraphicsContextGLOpenGL final : public GraphicsContextGL
 #if PLATFORM(COCOA)
     , private WebGLLayerClient
 #endif
 {
 public:
-    class Client {
-    public:
-        virtual ~Client() { }
-        virtual void didComposite() = 0;
-        virtual void forceContextLost() = 0;
-        virtual void recycleContext() = 0;
-        virtual void dispatchContextChangedNotification() = 0;
-    };
-
     static RefPtr<GraphicsContextGLOpenGL> create(GraphicsContextGLAttributes, HostWindow*, Destination = Destination::Offscreen);
     virtual ~GraphicsContextGLOpenGL();
 
 #if PLATFORM(COCOA)
     static Ref<GraphicsContextGLOpenGL> createShared(GraphicsContextGLOpenGL& sharedContext);
-    PlatformGraphicsContextGL platformGraphicsContextGL() const override { return m_contextObj; }
-    PlatformGLObject platformTexture() const override { return m_texture; }
-    CALayer* platformLayer() const override { return reinterpret_cast<CALayer*>(m_webGLLayer.get()); }
+    PlatformGraphicsContextGL platformGraphicsContextGL() const final { return m_contextObj; }
+    PlatformGLObject platformTexture() const final { return m_texture; }
+    CALayer* platformLayer() const final { return reinterpret_cast<CALayer*>(m_webGLLayer.get()); }
     PlatformGraphicsContextGLDisplay platformDisplay() const { return m_displayObj; }
     PlatformGraphicsContextGLConfig platformConfig() const { return m_configObj; }
     static GCGLenum IOSurfaceTextureTarget();
@@ -130,9 +121,6 @@ public:
     static bool releaseCurrentContext(ReleaseBehavior);
 #endif
 
-    void addClient(Client& client) { m_clients.add(&client); }
-    void removeClient(Client& client) { m_clients.remove(&client); }
-
     // With multisampling on, blit from multisampleFBO to regular FBO.
     void prepareTexture();
 
@@ -145,81 +133,11 @@ public:
     // Compile a shader without going through ANGLE.
     void compileShaderDirect(PlatformGLObject);
 
-    // Helper to texImage2D with pixel==0 case: pixels are initialized to 0.
-    // Return true if no GL error is synthesized.
-    // By default, alignment is 4, the OpenGL default setting.
-    bool texImage2DResourceSafe(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLint alignment = 4);
-
-    bool isGLES2Compliant() const;
-
-    //----------------------------------------------------------------------
-    // Helpers for texture uploading and pixel readback.
-    //
-
-    struct PixelStoreParams final {
-        PixelStoreParams();
-
-        GCGLint alignment;
-        GCGLint rowLength;
-        GCGLint imageHeight;
-        GCGLint skipPixels;
-        GCGLint skipRows;
-        GCGLint skipImages;
-    };
-
-    // Computes the components per pixel and bytes per component
-    // for the given format and type combination. Returns false if
-    // either was an invalid enum.
-    static bool computeFormatAndTypeParameters(GCGLenum format,
-        GCGLenum type,
-        unsigned* componentsPerPixel,
-        unsigned* bytesPerComponent);
-
-    // Computes the image size in bytes. If paddingInBytes is not null, padding
-    // is also calculated in return. Returns NO_ERROR if succeed, otherwise
-    // return the suggested GL error indicating the cause of the failure:
-    //   INVALID_VALUE if width/height is negative or overflow happens.
-    //   INVALID_ENUM if format/type is illegal.
-    static GCGLenum computeImageSizeInBytes(GCGLenum format,
-        GCGLenum type,
-        GCGLsizei width,
-        GCGLsizei height,
-        GCGLsizei depth,
-        const PixelStoreParams&,
-        unsigned* imageSizeInBytes,
-        unsigned* paddingInBytes,
-        unsigned* skipSizeInBytes);
-
 #if !USE(ANGLE)
-    static bool possibleFormatAndTypeForInternalFormat(GCGLenum internalFormat, GCGLenum& format, GCGLenum& type);
-#endif // !USE(ANGLE)
+    bool texImage2DResourceSafe(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLint alignment = 4) final;
+#endif
 
-    // Extracts the contents of the given ImageData into the passed Vector,
-    // packing the pixel data according to the given format and type,
-    // and obeying the flipY and premultiplyAlpha flags. Returns true
-    // upon success.
-    static bool extractImageData(ImageData*,
-        DataFormat,
-        const IntRect& sourceImageSubRectangle,
-        int depth,
-        int unpackImageHeight,
-        GCGLenum format,
-        GCGLenum type,
-        bool flipY,
-        bool premultiplyAlpha,
-        Vector<uint8_t>& data);
-
-    // Helper function which extracts the user-supplied texture
-    // data, applying the flipY and premultiplyAlpha parameters.
-    // If the data is not tightly packed according to the passed
-    // unpackParams, the output data will be tightly packed.
-    // Returns true if successful, false if any error occurred.
-    static bool extractTextureData(unsigned width, unsigned height,
-        GCGLenum format, GCGLenum type,
-        const PixelStoreParams& unpackParams,
-        bool flipY, bool premultiplyAlpha,
-        const void* pixels,
-        Vector<uint8_t>& data);
+    bool isGLES2Compliant() const final;
 
     //----------------------------------------------------------------------
     // Entry points for WebGL.
@@ -537,7 +455,7 @@ public:
     void resetBuffersToAutoClear();
     void setBuffersToAutoClear(GCGLbitfield);
     GCGLbitfield getBuffersToAutoClear() const;
-    void enablePreserveDrawingBuffer() override;
+    void enablePreserveDrawingBuffer() final;
 
     void dispatchContextChangedNotification();
     void simulateContextChanged();
@@ -550,17 +468,13 @@ public:
     void primitiveRestartIndex(GCGLuint) final;
 #endif
 
-#if PLATFORM(COCOA)
-    bool reshapeDisplayBufferBacking();
-    bool bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer);
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA) && PLATFORM(MAC)
     void updateCGLContext();
 #endif
-#endif // PLATFORM(COCOA)
 
-    void setContextVisibility(bool);
+    void setContextVisibility(bool) final;
 
-    GraphicsContextGLPowerPreference powerPreferenceUsedForCreation() const { return m_powerPreferenceUsedForCreation; }
+    GraphicsContextGLPowerPreference powerPreferenceUsedForCreation() const final { return m_powerPreferenceUsedForCreation; }
 
     // Support for buffer creation and deletion
     PlatformGLObject createBuffer() final;
@@ -577,15 +491,7 @@ public:
     void deleteShader(PlatformGLObject) final;
     void deleteTexture(PlatformGLObject) final;
 
-    // Synthesizes an OpenGL error which will be returned from a
-    // later call to getError. This is used to emulate OpenGL ES
-    // 2.0 behavior on the desktop and to enforce additional error
-    // checking mandated by WebGL.
-    //
-    // Per the behavior of glGetError, this stores at most one
-    // instance of any given error, and returns them from calls to
-    // getError in the order they were added.
-    void synthesizeGLError(GCGLenum error);
+    void synthesizeGLError(GCGLenum error) final;
 
     // Read real OpenGL errors, and move them to the synthetic
     // error list. Return true if at least one error is moved.
@@ -597,59 +503,8 @@ public:
     // determine this.
     ExtensionsGL& getExtensions() final;
 
-    IntSize getInternalFramebufferSize() const;
+    void setFailNextGPUStatusCheck() final { m_failNextStatusCheck = true; }
 
-    // Packs the contents of the given Image which is passed in |pixels| into the passed Vector
-    // according to the given format and type, and obeying the flipY and AlphaOp flags.
-    // Returns true upon success.
-    static bool packImageData(Image*, const void* pixels, GCGLenum format, GCGLenum type, bool flipY, AlphaOp, DataFormat sourceFormat, unsigned sourceImageWidth, unsigned sourceImageHeight, const IntRect& sourceImageSubRectangle, int depth, unsigned sourceUnpackAlignment, int unpackImageHeight, Vector<uint8_t>& data);
-
-    class ImageExtractor {
-    public:
-        ImageExtractor(Image*, DOMSource, bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication);
-
-        // Each platform must provide an implementation of this method to deallocate or release resources
-        // associated with the image if needed.
-        ~ImageExtractor();
-
-        bool extractSucceeded() { return m_extractSucceeded; }
-        const void* imagePixelData() { return m_imagePixelData; }
-        unsigned imageWidth() { return m_imageWidth; }
-        unsigned imageHeight() { return m_imageHeight; }
-        DataFormat imageSourceFormat() { return m_imageSourceFormat; }
-        AlphaOp imageAlphaOp() { return m_alphaOp; }
-        unsigned imageSourceUnpackAlignment() { return m_imageSourceUnpackAlignment; }
-        DOMSource imageHtmlDomSource() { return m_imageHtmlDomSource; }
-    private:
-        // Each platform must provide an implementation of this method.
-        // Extracts the image and keeps track of its status, such as width, height, Source Alignment, format and AlphaOp etc,
-        // needs to lock the resources or relevant data if needed and returns true upon success
-        bool extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication);
-
-#if USE(CAIRO)
-        RefPtr<cairo_surface_t> m_imageSurface;
-#elif USE(CG)
-        RetainPtr<CGImageRef> m_cgImage;
-        RetainPtr<CGImageRef> m_decodedImage;
-        RetainPtr<CFDataRef> m_pixelData;
-        UniqueArray<uint8_t> m_formalizedRGBA8Data;
-#endif
-        Image* m_image;
-        DOMSource m_imageHtmlDomSource;
-        bool m_extractSucceeded;
-        const void* m_imagePixelData;
-        unsigned m_imageWidth;
-        unsigned m_imageHeight;
-        DataFormat m_imageSourceFormat;
-        AlphaOp m_alphaOp;
-        unsigned m_imageSourceUnpackAlignment;
-    };
-
-    void setFailNextGPUStatusCheck() { m_failNextStatusCheck = true; }
-
-    GCGLenum activeTextureUnit() const { return m_state.activeTextureUnit; }
-    GCGLenum currentBoundTexture() const { return m_state.currentBoundTexture(); }
-    GCGLenum currentBoundTarget() const { return m_state.currentBoundTarget(); }
     unsigned textureSeed(GCGLuint texture) { return m_state.textureSeedCount.count(texture); }
 
 #if PLATFORM(MAC)
@@ -657,17 +512,11 @@ public:
     void screenDidChange(PlatformDisplayID);
 #endif
 
-    void prepareForDisplay();
+    void prepareForDisplay() final;
 
 private:
     GraphicsContextGLOpenGL(GraphicsContextGLAttributes, HostWindow*, Destination = Destination::Offscreen, GraphicsContextGLOpenGL* sharedContext = nullptr);
 
-    // Helper for packImageData/extractImageData/extractTextureData which implement packing of pixel
-    // data into the specified OpenGL destination format and type.
-    // A sourceUnpackAlignment of zero indicates that the source
-    // data is tightly packed. Non-zero values may take a slow path.
-    // Destination data will have no gaps between rows.
-    static bool packPixels(const uint8_t* sourceData, DataFormat sourceDataFormat, unsigned sourceDataWidth, unsigned sourceDataHeight, const IntRect& sourceDataSubRectangle, int depth, unsigned sourceUnpackAlignment, int unpackImageHeight, unsigned destinationFormat, unsigned destinationType, AlphaOp, void* destinationData, bool flipY);
 
     // Take into account the user's requested context creation attributes,
     // in particular stencil and antialias, and determine which could or
@@ -695,12 +544,11 @@ private:
 
 #if PLATFORM(COCOA)
     bool allowOfflineRenderers() const;
+    bool reshapeDisplayBufferBacking();
+    bool bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer);
     // WebGLLayerClient overrides.
-    void didDisplay() override;
+    void didDisplay() final;
 #endif
-
-    int m_currentWidth { 0 };
-    int m_currentHeight { 0 };
 
 #if PLATFORM(COCOA)
     RetainPtr<WebGLLayer> m_webGLLayer;
@@ -887,8 +735,6 @@ private:
     friend class GraphicsContextGLOpenGLPrivate;
     std::unique_ptr<GraphicsContextGLOpenGLPrivate> m_private;
 #endif
-
-    HashSet<Client*> m_clients;
 
     bool m_isForWebGL2 { false };
     bool m_usingCoreProfile { false };
