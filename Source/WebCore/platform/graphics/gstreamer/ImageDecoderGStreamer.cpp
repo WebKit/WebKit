@@ -98,7 +98,7 @@ ImageDecoderGStreamer::ImageDecoderGStreamer(SharedBuffer& data, const String& m
 
 bool ImageDecoderGStreamer::supportsContainerType(const String& type)
 {
-    return GStreamerRegistryScanner::singleton().isContainerTypeSupported(type);
+    return GStreamerRegistryScanner::singleton().isContainerTypeSupported(GStreamerRegistryScanner::Configuration::Decoding, type);
 }
 
 bool ImageDecoderGStreamer::canDecodeType(const String& mimeType)
@@ -106,7 +106,7 @@ bool ImageDecoderGStreamer::canDecodeType(const String& mimeType)
     if (mimeType.isEmpty())
         return false;
 
-    return GStreamerRegistryScanner::singleton().isContainerTypeSupported(mimeType);
+    return GStreamerRegistryScanner::singleton().isContainerTypeSupported(GStreamerRegistryScanner::Configuration::Decoding, mimeType);
 }
 
 EncodedDataStatus ImageDecoderGStreamer::encodedDataStatus() const

@@ -711,7 +711,7 @@ void MediaPlayerPrivateGStreamerMSE::trackDetected(AppendPipeline& appendPipelin
 void MediaPlayerPrivateGStreamerMSE::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
 {
     auto& gstRegistryScanner = GStreamerRegistryScannerMSE::singleton();
-    types = gstRegistryScanner.mimeTypeSet();
+    types = gstRegistryScanner.mimeTypeSet(GStreamerRegistryScanner::Configuration::Decoding);
 }
 
 MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const MediaEngineSupportParameters& parameters)
@@ -731,7 +731,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const Med
 
     GST_DEBUG("Checking mime-type \"%s\"", parameters.type.raw().utf8().data());
     auto& gstRegistryScanner = GStreamerRegistryScannerMSE::singleton();
-    result = gstRegistryScanner.isContentTypeSupported(parameters.type, parameters.contentTypesRequiringHardwareSupport);
+    result = gstRegistryScanner.isContentTypeSupported(GStreamerRegistryScanner::Configuration::Decoding, parameters.type, parameters.contentTypesRequiringHardwareSupport);
 
     auto finalResult = extendedSupportsType(parameters, result);
     GST_DEBUG("Supported: %s", convertEnumerationToString(finalResult).utf8().data());

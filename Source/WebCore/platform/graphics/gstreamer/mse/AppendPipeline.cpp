@@ -397,7 +397,7 @@ void AppendPipeline::parseDemuxerSrcPadCaps(GstCaps* demuxerSrcPadCaps)
 
     const char* originalMediaType = capsMediaType(m_demuxerSrcPadCaps.get());
     auto& gstRegistryScanner = GStreamerRegistryScannerMSE::singleton();
-    if (!gstRegistryScanner.isCodecSupported(originalMediaType)) {
+    if (!gstRegistryScanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, originalMediaType)) {
             m_presentationSize = WebCore::FloatSize();
             m_streamType = WebCore::MediaSourceStreamTypeGStreamer::Invalid;
     } else if (doCapsHaveType(m_demuxerSrcPadCaps.get(), GST_VIDEO_CAPS_TYPE_PREFIX)) {

@@ -66,7 +66,7 @@ static const FactoryVector& factories()
         { &createMediaPlayerDecodingConfigurationCocoa, nullptr },
 #endif
 #if USE(GSTREAMER)
-        { &createMediaPlayerDecodingConfigurationGStreamer, nullptr },
+        { &createMediaPlayerDecodingConfigurationGStreamer, &createMediaPlayerEncodingConfigurationGStreamer },
 #endif
     }));
     return factories;

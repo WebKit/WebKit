@@ -32,7 +32,9 @@
 
 #include "GStreamerRegistryScanner.h"
 #include "MediaCapabilitiesDecodingInfo.h"
+#include "MediaCapabilitiesEncodingInfo.h"
 #include "MediaDecodingConfiguration.h"
+#include "MediaEncodingConfiguration.h"
 #include "MediaPlayer.h"
 #include <wtf/Function.h>
 
@@ -63,5 +65,16 @@ void createMediaPlayerDecodingConfigurationGStreamer(MediaDecodingConfiguration&
     callback(WTFMove(info));
 }
 
+void createMediaPlayerEncodingConfigurationGStreamer(MediaEncodingConfiguration&& configuration, WTF::Function<void(MediaCapabilitiesEncodingInfo&&)>&& callback)
+{
+    auto& scanner = GStreamerRegistryScanner::singleton();
+    auto lookupResult = scanner.isEncodingSupported(configuration);
+    MediaCapabilitiesEncodingInfo info;
+    info.supported = lookupResult.isSupported;
+    info.powerEfficient = lookupResult.isUsingHardware;
+    info.supportedConfiguration = WTFMove(configuration);
+
+    callback(WTFMove(info));
+}
 }
 #endif

@@ -42,12 +42,12 @@ PASS () => {
 PASS () => {
         return navigator.mediaCapabilities.decodingInfo({ type: 'invalid', video: { contentType: 'video/mp4; codecs="avc1"', width: 640, height: 480, bitrate: 1000, framerate: 24 } });
     } rejected promise  with TypeError: Type error.
-FAIL () => {
+PASS () => {
         return navigator.mediaCapabilities.encodingInfo({ type: 'record' });
-    } should not throw exception. Threw exception TypeError: navigator.mediaCapabilities.encodingInfo is not a function. (In 'navigator.mediaCapabilities.encodingInfo({ type: 'record' })', 'navigator.mediaCapabilities.encodingInfo' is undefined).
-FAIL () => {
+    } rejected promise  with TypeError: Type error.
+PASS () => {
         return navigator.mediaCapabilities.encodingInfo({ type: 'record', audio: { } });
-    } should not throw exception. Threw exception TypeError: navigator.mediaCapabilities.encodingInfo is not a function. (In 'navigator.mediaCapabilities.encodingInfo({ type: 'record', audio: { } })', 'navigator.mediaCapabilities.encodingInfo' is undefined).
+    } rejected promise  with TypeError: Member AudioConfiguration.contentType is required and must be an instance of DOMString.
 PASS () => {
         return navigator.mediaCapabilities.decodingInfo({ type: 'record', audio: { } });
     } rejected promise  with TypeError: Member AudioConfiguration.contentType is required and must be an instance of DOMString.
