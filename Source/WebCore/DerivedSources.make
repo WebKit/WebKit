@@ -1327,6 +1327,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/xml/XPathResult.idl \
     $(WebCore)/xml/XSLTProcessor.idl \
     InternalSettingsGenerated.idl \
+    CSSStyleDeclaration+PropertyNames.idl \
 #
 
 # --------
@@ -1418,6 +1419,7 @@ all : \
     StyleBuilderGenerated.cpp \
     StylePropertyShorthandFunctions.cpp \
     StylePropertyShorthandFunctions.h \
+    CSSStyleDeclaration+PropertyNames.idl \
     UserAgentStyleSheets.h \
     WebKitFontFamilyNames.cpp \
     WebKitFontFamilyNames.h \
@@ -1445,6 +1447,7 @@ CSS_PROPERTY_NAME_FILES = \
     StyleBuilderGenerated.cpp \
     StylePropertyShorthandFunctions.cpp \
     StylePropertyShorthandFunctions.h \
+    CSSStyleDeclaration+PropertyNames.idl \
 #
 CSS_PROPERTY_NAME_FILES_PATTERNS = $(subst .,%,$(CSS_PROPERTY_NAME_FILES))
 

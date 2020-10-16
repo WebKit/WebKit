@@ -1187,15 +1187,12 @@ sub GenerateInvokeNamedPropertySetter
     push(@$outputArray, $indent . "auto nativeValue = ${nativeValue};\n");
     push(@$outputArray, $indent . "RETURN_IF_EXCEPTION(throwScope, true);\n");
 
-    push(@$outputArray, $indent . "bool isPropertySupported = true;\n") if $namedSetterOperation->extendedAttributes->{CallNamedSetterOnlyForSupportedProperties};
-
     my $namedSetterFunctionName = $namedSetterOperation->name || "setNamedItem";
     my $nativeValuePassExpression = PassArgumentExpression("nativeValue", $argument);
 
     my @arguments = ();
     push(@arguments, "propertyNameToString(propertyName)");
     push(@arguments, $nativeValuePassExpression);
-    push(@arguments, "isPropertySupported") if $namedSetterOperation->extendedAttributes->{CallNamedSetterOnlyForSupportedProperties};
 
     my $functionString = "thisObject->wrapped().${namedSetterFunctionName}(" . join(", ", @arguments) . ")";
     push(@$outputArray, $indent . "invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return ${functionString}; });\n");
@@ -1250,10 +1247,6 @@ sub GeneratePut
         }
 
         GenerateInvokeNamedPropertySetter($outputArray, $additionalIndent . "        ", $interface, $namedSetterOperation, "value");
-        if ($namedSetterOperation->extendedAttributes->{CallNamedSetterOnlyForSupportedProperties}) {
-            push(@$outputArray, $additionalIndent . "        if (!isPropertySupported)\n");
-            push(@$outputArray, $additionalIndent . "            return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);\n");
-        }
         push(@$outputArray, $additionalIndent . "        return true;\n");
 
         if (!$legacyOverrideBuiltins) {
@@ -1286,7 +1279,7 @@ sub GeneratePutByIndex
     my $indexedSetterOperation = GetIndexedSetterOperation($interface);
     
     my $legacyOverrideBuiltins = $codeGenerator->InheritsExtendedAttribute($interface, "LegacyOverrideBuiltIns");
-    my $ellidesCallsToBase = ($namedSetterOperation && $legacyOverrideBuiltins) && !$interface->extendedAttributes->{Plugin} && !$namedSetterOperation->extendedAttributes->{CallNamedSetterOnlyForSupportedProperties};
+    my $ellidesCallsToBase = ($namedSetterOperation && $legacyOverrideBuiltins) && !$interface->extendedAttributes->{Plugin};
     
     push(@$outputArray, "bool ${className}::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index, JSValue value, bool" . (!$ellidesCallsToBase ? " shouldThrow" : "") . ")\n");
     push(@$outputArray, "{\n");
@@ -1328,10 +1321,6 @@ sub GeneratePutByIndex
         }
         
         GenerateInvokeNamedPropertySetter($outputArray, $additionalIndent . "    ", $interface, $namedSetterOperation, "value");
-        if ($namedSetterOperation->extendedAttributes->{CallNamedSetterOnlyForSupportedProperties}) {
-            push(@$outputArray, $additionalIndent . "    if (!isPropertySupported)\n");
-            push(@$outputArray, $additionalIndent . "        return JSObject::putByIndex(cell, lexicalGlobalObject, index, value, shouldThrow);\n");
-        }
         push(@$outputArray, $additionalIndent . "    return true;\n");
         
         if (!$legacyOverrideBuiltins) {
@@ -1475,10 +1464,7 @@ sub GenerateDefineOwnProperty
             
             # 2.2.2. Invoke the named property setter with P and Desc.[[Value]].
             GenerateInvokeNamedPropertySetter($outputArray, $additionalIndent . "        ", $interface, $namedSetterOperation, "propertyDescriptor.value()");
-            if ($namedSetterOperation->extendedAttributes->{CallNamedSetterOnlyForSupportedProperties}) {
-                push(@$outputArray, $additionalIndent . "    if (!isPropertySupported)\n");
-                push(@$outputArray, $additionalIndent . "        return JSObject::defineOwnProperty(object, lexicalGlobalObject, propertyName, propertyDescriptor, shouldThrow);\n");
-            }
+
             # 2.2.3. Return true.
             push(@$outputArray, $additionalIndent . "        return true;\n");
         }
@@ -2203,8 +2189,6 @@ sub InstanceOverridesPut
 sub InstanceOverridesDefineOwnProperty
 {
     my $interface = shift;
-
-    return 0 if $interface->extendedAttributes->{DefaultDefineOwnProperty};
 
     return $interface->extendedAttributes->{CustomDefineOwnProperty}
         || GetIndexedSetterOperation($interface)
@@ -3979,6 +3963,9 @@ sub GetSkipVTableValidationForInterface
 sub ToMethodName
 {
     my $param = shift;
+    
+    return $param if $param =~ /^CSSOM/;
+
     my $ret = lcfirst($param);
     $ret =~ s/cSS/css/ if $ret =~ /^cSS/;
     $ret =~ s/dOM/dom/ if $ret =~ /^dOM/;
@@ -5322,6 +5309,15 @@ sub GenerateAttributeGetterBodyDefinition
             AddToImplIncludes("JS" . $constructorType . ".h", $conditional);
             push(@$outputArray, "    return JS" . $constructorType . "::${constructorGetter}(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());\n");
         }
+    } elsif ($attribute->extendedAttributes->{CSSProperty}) {
+        $implIncludes{"CSSPropertyNames.h"} = 1;
+        my $propertyID = $attribute->extendedAttributes->{CSSProperty};
+        
+        my $getterName = $attribute->type->isUnion ? "getPropertyValueInternalForPosOrPixelPrefixed" : "getPropertyValueInternal";
+        
+        my $toJSExpression = NativeToJSValueUsingReferences($attribute, $interface, "impl.${getterName}(CSSProperty${propertyID})", "*thisObject.globalObject()");
+        push(@$outputArray, "    auto& impl = thisObject.wrapped();\n");
+        push(@$outputArray, "    RELEASE_AND_RETURN(throwScope, (${toJSExpression}));\n");
     } else {
         if ($attribute->extendedAttributes->{CachedAttribute}) {
             push(@$outputArray, "    if (JSValue cachedValue = thisObject.m_" . $attribute->name . ".get())\n");
@@ -5465,6 +5461,23 @@ sub GenerateAttributeSetterBodyDefinition
         }
         push(@$outputArray, "    vm.heap.writeBarrier(&thisObject, value);\n");
         push(@$outputArray, "    ensureStillAliveHere(value);\n\n");
+        push(@$outputArray, "    return true;\n");
+    } elsif ($attribute->extendedAttributes->{CSSProperty}) {
+        $implIncludes{"CSSPropertyNames.h"} = 1;
+
+        my $propertyID = $attribute->extendedAttributes->{CSSProperty};
+        
+        my $setterName = $attribute->type->isUnion ? "setPropertyValueInternalForPosOrPixelPrefixed" : "setPropertyValueInternal";
+        
+        my $exceptionThrower = GetAttributeExceptionThrower($interface, $attribute);
+        my $toNativeExpression = JSValueToNative($interface, $attribute, "value", $attribute->extendedAttributes->{Conditional}, "&lexicalGlobalObject", "lexicalGlobalObject", "thisObject", "*thisObject.globalObject()", $exceptionThrower);
+
+        push(@$outputArray, "    auto& impl = thisObject.wrapped();\n");
+        push(@$outputArray, "    auto nativeValue = ${toNativeExpression};\n");
+        push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
+        push(@$outputArray, "    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {\n");
+        push(@$outputArray, "        return impl.${setterName}(CSSProperty${propertyID}, WTFMove(nativeValue));\n");
+        push(@$outputArray, "    });\n");
         push(@$outputArray, "    return true;\n");
     } elsif ($isConstructor) {
         my $constructorType = $attribute->type->name;

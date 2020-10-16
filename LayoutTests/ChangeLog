@@ -1,3 +1,29 @@
+2020-10-15  Sam Weinig  <weinig@apple.com>
+
+        CSSStyleDeclaration breaks JS spec (properties not showing up in Object.getOwnPropertyNames)
+        https://bugs.webkit.org/show_bug.cgi?id=217623
+
+        Reviewed by Darin Adler.
+
+        * fast/css/style-enumerate-properties-expected.txt:
+        * fast/css/style-enumerate-properties.html:
+        * fast/dom/domListEnumeration-expected.txt:
+        * fast/dom/domListEnumeration.html:
+        Remove tests for iteration order, which is not standardized, and not consistent among
+        browsers.
+
+        * fast/dom/CSSStyleDeclaration/cssstyledeclaration-properties-descriptor-expected.txt:
+        * fast/dom/CSSStyleDeclaration/cssstyledeclaration-properties-descriptor.html:
+        Update now that the properties are proper attributes on the prototype.
+
+        * js/dom/put-override-should-not-use-ic.html:
+        Switch to using a DOMStringList as the object that overrides put, since CSSStyleDeclaration no longer does.
+
+        * transitions/transitions-parsing-expected.txt:
+        * transitions/transitions-parsing.html:
+        Remove Object.keys() aspect of the test, which is no longer meaningful since the
+        properties should no longer exist in the result set.
+
 2020-10-15  Truitt Savell  <tsavell@apple.com>
 
         Rebaseline tests for Catalina and iOS after the changes in r268520

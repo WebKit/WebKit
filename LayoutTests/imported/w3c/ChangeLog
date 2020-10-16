@@ -1,3 +1,13 @@
+2020-10-15  Sam Weinig  <weinig@apple.com>
+
+        CSSStyleDeclaration breaks JS spec (properties not showing up in Object.getOwnPropertyNames)
+        https://bugs.webkit.org/show_bug.cgi?id=217623
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/cssom/cssstyledeclaration-properties-expected.txt:
+        Update test result now that it is passing.
+
 2020-10-14  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] flex-grow property should be animatable

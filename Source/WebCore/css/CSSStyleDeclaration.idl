@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009, 2020 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -18,40 +18,29 @@
  * Boston, MA 02110-1301, USA.
  */
 
+typedef USVString CSSOMString;
+
 [
     ExportMacro=WEBCORE_EXPORT,
-    DefaultDefineOwnProperty,
     GenerateIsReachable,
     JSCustomHeader,
     JSCustomMarkFunction,
     SkipVTableValidation,
     Exposed=Window
 ] interface CSSStyleDeclaration {
-    [CEReactions] attribute DOMString cssText;
-
-    DOMString getPropertyValue(DOMString propertyName);
-
-    [CEReactions, MayThrowException] DOMString removeProperty(DOMString propertyName);
-    DOMString? getPropertyPriority(DOMString propertyName);
-
-    [CEReactions, MayThrowException] undefined setProperty(DOMString propertyName, [LegacyNullToEmptyString] DOMString value, optional [LegacyNullToEmptyString] DOMString priority = "");
-
+    [CEReactions] attribute CSSOMString cssText;
     readonly attribute unsigned long length;
-    getter DOMString item(unsigned long index);
+    getter CSSOMString item(unsigned long index);
+    CSSOMString getPropertyValue(CSSOMString property);
+    // FIXME: The return value of 'getPropertyPriority' should not be nullable.
+    CSSOMString? getPropertyPriority(CSSOMString property);
+    [CEReactions, MayThrowException] undefined setProperty(CSSOMString property, [LegacyNullToEmptyString] CSSOMString value, optional [LegacyNullToEmptyString] CSSOMString priority = "");
+    [CEReactions, MayThrowException] CSSOMString removeProperty(CSSOMString property);
     readonly attribute CSSRule? parentRule;
+    [CEReactions] attribute [LegacyNullToEmptyString] CSSOMString cssFloat;
 
-    [CEReactions] attribute [LegacyNullToEmptyString] DOMString cssFloat;
-
+    // Non-standard.
     DOMString? getPropertyShorthand(optional DOMString propertyName);
     boolean isPropertyImplicit(optional DOMString propertyName);
-
-    // Use named getters/setters for all support CSS property names. The spec says
-    // these should be normal attributes, but there are too many combinations with
-    // prefixes for this to be practical. If we remove legacy aliases, we should
-    // reconsider this decision.
-    getter (DOMString or double) (DOMString name);
-    [CEReactions, CallNamedSetterOnlyForSupportedProperties] setter undefined (DOMString name, [LegacyNullToEmptyString] DOMString value);
-
-    // This method is deprecated, and we would like to drop support for it someday
     DeprecatedCSSOMValue? getPropertyCSSValue(DOMString propertyName);
 };
