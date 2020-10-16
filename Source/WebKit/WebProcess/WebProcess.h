@@ -115,6 +115,7 @@ struct ServiceWorkerInitializationData;
 class StorageAreaMap;
 class UserData;
 class WaylandCompositorDisplay;
+class WebAuthnProcessConnection;
 class WebAutomationSessionProxy;
 class WebCacheStorageProvider;
 class WebCookieJar;
@@ -231,6 +232,12 @@ public:
 #endif
 
 #endif // ENABLE(GPU_PROCESS)
+
+#if ENABLE(WEB_AUTHN)
+    WebAuthnProcessConnection& ensureWebAuthnProcessConnection();
+    void webAuthnProcessConnectionClosed(WebAuthnProcessConnection*);
+    WebAuthnProcessConnection* existingWebAuthnProcessConnection() { return m_webAuthnProcessConnection.get(); }
+#endif
 
     LibWebRTCNetwork& libWebRTCNetwork();
 
@@ -584,6 +591,10 @@ private:
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     std::unique_ptr<LibWebRTCCodecs> m_libWebRTCCodecs;
 #endif
+#endif
+
+#if ENABLE(WEB_AUTHN)
+    RefPtr<WebAuthnProcessConnection> m_webAuthnProcessConnection;
 #endif
 
     Ref<WebCacheStorageProvider> m_cacheStorageProvider;

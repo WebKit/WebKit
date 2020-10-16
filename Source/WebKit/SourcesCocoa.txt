@@ -550,6 +550,10 @@ UIProcess/WebAuthentication/Mock/MockNfcService.mm
 
 UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm
 
+WebAuthnProcess/EntryPoint/Cocoa/XPCService/WebAuthnServiceEntryPoint.mm
+WebAuthnProcess/ios/WebAuthnProcessIOS.mm
+WebAuthnProcess/mac/WebAuthnProcessMac.mm
+
 WebProcess/API/Cocoa/WKWebProcess.cpp
 
 WebProcess/ApplePay/WebPaymentCoordinator.cpp

@@ -472,11 +472,16 @@ UIProcess/WebAuthentication/AuthenticatorTransportService.cpp
 UIProcess/WebAuthentication/Authenticator.cpp
 UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp
 UIProcess/WebAuthentication/WebAuthenticationRequestData.cpp
+UIProcess/WebAuthentication/WebAuthnProcessProxy.cpp
 
 UIProcess/WebsiteData/WebDeviceOrientationAndMotionAccessController.cpp
 UIProcess/WebsiteData/WebsiteDataRecord.cpp
 UIProcess/WebsiteData/WebsiteDataStore.cpp
 UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp
+
+WebAuthnProcess/WebAuthnConnectionToWebProcess.cpp
+WebAuthnProcess/WebAuthnProcess.cpp
+WebAuthnProcess/WebAuthnProcessCreationParameters.cpp
 
 WebProcess/WebConnectionToUIProcess.cpp
 WebProcess/WebProcess.cpp
@@ -626,6 +631,7 @@ WebProcess/Storage/WebServiceWorkerProvider.cpp
 WebProcess/UserContent/WebUserContentController.cpp
 
 WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp
+WebProcess/WebAuthentication/WebAuthnProcessConnection.cpp
 
 WebProcess/WebCoreSupport/SessionStateConversion.cpp
 WebProcess/WebCoreSupport/WebChromeClient.cpp

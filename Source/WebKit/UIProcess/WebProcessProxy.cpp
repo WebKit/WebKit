@@ -769,6 +769,13 @@ void WebProcessProxy::gpuProcessCrashed()
 }
 #endif
 
+#if ENABLE(WEB_AUTHN)
+void WebProcessProxy::getWebAuthnProcessConnection(Messages::WebProcessProxy::GetWebAuthnProcessConnection::DelayedReply&& reply)
+{
+    m_processPool->getWebAuthnProcessConnection(*this, WTFMove(reply));
+}
+#endif
+
 #if !PLATFORM(COCOA)
 bool WebProcessProxy::platformIsBeingDebugged() const
 {

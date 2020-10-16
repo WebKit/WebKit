@@ -46,6 +46,9 @@
 /* Visible name of Service Worker process. The argument is the application name. */
 "%@ Service Worker (%@)" = "%@ Service Worker (%@)";
 
+/* visible name of the WebAuthn process. The argument is the application name. */
+"%@ Web Authentication" = "%@ Web Authentication";
+
 /* Visible name of the web process. The argument is the application name. */
 "%@ Web Content" = "%@ Web Content";
 

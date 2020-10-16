@@ -165,6 +165,12 @@
 #include "GPUProcessConnectionInfo.h"
 #endif
 
+#if ENABLE(WEB_AUTHN)
+#include "WebAuthnConnectionToWebProcessMessages.h"
+#include "WebAuthnProcessConnection.h"
+#include "WebAuthnProcessConnectionInfo.h"
+#endif
+
 #if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/RemoteInspector.h>
 #endif
@@ -1315,6 +1321,53 @@ LibWebRTCCodecs& WebProcess::libWebRTCCodecs()
 #endif
 
 #endif // ENABLE(GPU_PROCESS)
+
+#if ENABLE(WEB_AUTHN)
+
+static WebAuthnProcessConnectionInfo getWebAuthnProcessConnection(IPC::Connection& connection)
+{
+    WebAuthnProcessConnectionInfo connectionInfo;
+    if (!connection.sendSync(Messages::WebProcessProxy::GetWebAuthnProcessConnection(), Messages::WebProcessProxy::GetWebAuthnProcessConnection::Reply(connectionInfo), 0)) {
+        // If we failed the first time, retry once. The attachment may have become invalid
+        // before it was received by the web process if the network process crashed.
+        if (!connection.sendSync(Messages::WebProcessProxy::GetWebAuthnProcessConnection(), Messages::WebProcessProxy::GetWebAuthnProcessConnection::Reply(connectionInfo), 0))
+            CRASH();
+    }
+
+    return connectionInfo;
+}
+
+WebAuthnProcessConnection& WebProcess::ensureWebAuthnProcessConnection()
+{
+    RELEASE_ASSERT(RunLoop::isMain());
+
+    // If we've lost our connection to the WebAuthn process (e.g. it crashed) try to re-establish it.
+    if (!m_webAuthnProcessConnection) {
+        auto connectionInfo = getWebAuthnProcessConnection(*parentProcessConnection());
+
+        // Retry once if the IPC to get the connectionIdentifier succeeded but the connectionIdentifier we received
+        // is invalid. This may indicate that the WebAuthn process has crashed.
+        if (!IPC::Connection::identifierIsValid(connectionInfo.identifier()))
+            connectionInfo = getWebAuthnProcessConnection(*parentProcessConnection());
+
+        if (!IPC::Connection::identifierIsValid(connectionInfo.identifier()))
+            CRASH();
+
+        m_webAuthnProcessConnection = WebAuthnProcessConnection::create(connectionInfo.releaseIdentifier());
+    }
+
+    return *m_webAuthnProcessConnection;
+}
+
+void WebProcess::webAuthnProcessConnectionClosed(WebAuthnProcessConnection* connection)
+{
+    ASSERT(m_webAuthnProcessConnection);
+    ASSERT_UNUSED(connection, m_webAuthnProcessConnection == connection);
+
+    m_webAuthnProcessConnection = nullptr;
+}
+
+#endif // ENABLE(WEB_AUTHN)
 
 void WebProcess::setEnhancedAccessibility(bool flag)
 {

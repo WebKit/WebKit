@@ -73,7 +73,10 @@ public:
 #endif
         Network,
 #if ENABLE(GPU_PROCESS)
-        GPU
+        GPU,
+#endif
+#if ENABLE(WEB_AUTHN)
+        WebAuthn
 #endif
     };
 

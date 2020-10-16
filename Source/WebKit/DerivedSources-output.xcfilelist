@@ -292,6 +292,18 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAuthenticatorCoordinatorMessages
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAuthenticatorCoordinatorProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAuthenticatorCoordinatorProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAuthenticatorCoordinatorProxyMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAuthnConnectionToWebProcessMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAuthnConnectionToWebProcessMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAuthnConnectionToWebProcessMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAuthnProcessConnectionMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAuthnProcessConnectionMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAuthnProcessConnectionMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAuthnProcessMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAuthnProcessMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAuthnProcessMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAuthnProcessProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAuthnProcessProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAuthnProcessProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAutomationSessionMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAutomationSessionMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAutomationSessionMessagesReplies.h
@@ -425,5 +437,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebUserContentControllerProxyMessag
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebUserContentControllerProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/com.apple.WebKit.GPUProcess.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/com.apple.WebKit.NetworkProcess.sb
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/com.apple.WebKit.WebAuthnProcess.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/com.apple.WebKit.plugin-common.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/com.apple.WebProcess.sb

@@ -71,6 +71,7 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/WebAuthentication"
     "${WEBKIT_DIR}/UIProcess/WebAuthentication/Mock"
     "${WEBKIT_DIR}/UIProcess/WebsiteData"
+    "${WEBKIT_DIR}/WebAuthnProcess"
     "${WEBKIT_DIR}/WebProcess"
     "${WEBKIT_DIR}/WebProcess/ApplePay"
     "${WEBKIT_DIR}/WebProcess/ApplicationCache"

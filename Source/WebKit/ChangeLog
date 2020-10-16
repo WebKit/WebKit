@@ -1,5 +1,159 @@
 2020-10-16  Jiewen Tan  <jiewen_tan@apple.com>
 
+        [WebAuthn] Implement a dummy WebAuthnProcess
+        https://bugs.webkit.org/show_bug.cgi?id=217559
+        <rdar://problem/70168749>
+
+        Reviewed by Brent Fulgham.
+
+        Previous patch r268248 introduces a new daemon to handle all WebAuthn requests. However, after more deeper investigations, the daemon
+        story is not very compelling for WebKit. Here are the two major road blockers:
+        1) The major one is on macOS. New daemons cannot be installed without a system update. It means relocatable Safari (e.g. STP)
+        and staged Safari on downlevel OSes will not get this feature. And relocatable STP can only utilize the system daemon. This
+        seems a bummer especially for the STP case given it is heavily used to test latest web features.
+        2) Additional plumbing is needed for testing and engineering builds. This problem is specific to WebKit and is on both macOS and iOS.
+        WebKit doesn't build roots to test engineering builds, which is required to update the plist on the above location. Hence, a separate
+        configuration is needed to generate a different plist that points to the right engineering binary and additional scripts will be needed
+        to ask launchd to load the plist before running any tests. Some extra exercises are probably needed to not confuse launchd about the
+        engineering binary and system binary as well.
+
+        Given the above constraints, a new architecture is proposed to make the daemon a WebKit XPC service/process instead and leave the launchd
+        event handler to a new Safari daemon. The launchd related feature is only on iOS and therefore it really doesn't make sense to overcome
+        all the above macOS constraints. Having different architectures on iOS (a daemon) and on macOS (a XPC service) accordingly will introduce
+        tons of overhead for maintainance as well. That's why relying on a Safari daemon to do the job is the most reasonable option.
+
+        This patch therefore focuses on making the WebAuthn process happen and removes the WebAuthn daemon.
+
+        * CMakeLists.txt:
+        * Configurations/WebAuthnService.xcconfig: Renamed from Source/WebKit/Configurations/WebAuthenticationAgent.xcconfig.
+        * Configurations/WebKit.xcconfig:
+        * Daemons/WebAuthenticationAgent/WebAuthenticationAgent.entitlements: Removed.
+        * Daemons/WebAuthenticationAgent/com.apple.webkit.WebAuthenticationAgent.plist: Removed.
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        Paperwork for building the new WebAuthn process.
+
+        * Platform/ExtraPrivateSymbolsForTAPI.h:
+        * Shared/AuxiliaryProcess.h:
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.h:
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceEventHandler):
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::processStorageClass):
+        (WebKit::sandboxDirectory):
+        Paperwork for introducing the new WebAuthn process. Mostly copied from GPU process.
+
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        Paperwork for building the new WebAuthn process.
+
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::getLaunchOptions):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::serviceName):
+        (WebKit::shouldLeakBoost):
+        * UIProcess/WebAuthentication/WebAuthnProcessProxy.cpp: Added.
+        (WebKit::WebAuthnProcessProxy::singleton):
+        (WebKit::WebAuthnProcessProxy::WebAuthnProcessProxy):
+        (WebKit::WebAuthnProcessProxy::getLaunchOptions):
+        (WebKit::WebAuthnProcessProxy::connectionWillOpen):
+        (WebKit::WebAuthnProcessProxy::processWillShutDown):
+        (WebKit::WebAuthnProcessProxy::getWebAuthnProcessConnection):
+        (WebKit::WebAuthnProcessProxy::webAuthnProcessCrashed):
+        (WebKit::WebAuthnProcessProxy::didClose):
+        (WebKit::WebAuthnProcessProxy::didReceiveInvalidMessage):
+        (WebKit::WebAuthnProcessProxy::didFinishLaunching):
+        (WebKit::WebAuthnProcessProxy::updateProcessAssertion):
+        * UIProcess/WebAuthentication/WebAuthnProcessProxy.h: Added.
+        * UIProcess/WebAuthentication/WebAuthnProcessProxy.messages.in: Added.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::getWebAuthnProcessConnection):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getWebAuthnProcessConnection):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebAuthnProcess/EntryPoint/Cocoa/XPCService/WebAuthnService/Info-OSX.plist: Copied from Source/WebKit/Daemons/WebAuthenticationAgent/Info.plist.
+        * WebAuthnProcess/EntryPoint/Cocoa/XPCService/WebAuthnService/Info-iOS.plist: Renamed from Source/WebKit/Daemons/WebAuthenticationAgent/Info.plist.
+        * WebAuthnProcess/EntryPoint/Cocoa/XPCService/WebAuthnServiceEntryPoint.mm: Copied from Source/WebKit/Daemons/WebAuthenticationAgent/main.mm.
+        (WebKit::WebAuthnServiceInitializerDelegate::WebAuthnServiceInitializerDelegate):
+        (WebKit::initializeAuxiliaryProcess<WebAuthnProcess>):
+        (WEBAUTHEN_SERVICE_INITIALIZER):
+        * WebAuthnProcess/WebAuthnConnectionToWebProcess.cpp: Added.
+        (WebKit::WebAuthnConnectionToWebProcess::create):
+        (WebKit::WebAuthnConnectionToWebProcess::WebAuthnConnectionToWebProcess):
+        (WebKit::WebAuthnConnectionToWebProcess::~WebAuthnConnectionToWebProcess):
+        (WebKit::WebAuthnConnectionToWebProcess::didClose):
+        (WebKit::WebAuthnConnectionToWebProcess::didReceiveInvalidMessage):
+        * WebAuthnProcess/WebAuthnConnectionToWebProcess.h: Copied from Source/WebKit/Daemons/WebAuthenticationAgent/main.mm.
+        (WebKit::WebAuthnConnectionToWebProcess::connection):
+        (WebKit::WebAuthnConnectionToWebProcess::WebAuthnProcessProcess):
+        (WebKit::WebAuthnConnectionToWebProcess::webProcessIdentifier const):
+        * WebAuthnProcess/WebAuthnConnectionToWebProcess.messages.in: Added.
+        * WebAuthnProcess/WebAuthnProcess.cpp: Added.
+        (WebKit::WebAuthnProcess::WebAuthnProcess):
+        (WebKit::WebAuthnProcess::~WebAuthnProcess):
+        (WebKit::WebAuthnProcess::createWebAuthnConnectionToWebProcess):
+        (WebKit::WebAuthnProcess::removeWebAuthnConnectionToWebProcess):
+        (WebKit::WebAuthnProcess::connectionToWebProcessClosed):
+        (WebKit::WebAuthnProcess::shouldTerminate):
+        (WebKit::WebAuthnProcess::didClose):
+        (WebKit::WebAuthnProcess::lowMemoryHandler):
+        (WebKit::WebAuthnProcess::initializeWebAuthnProcess):
+        (WebKit::WebAuthnProcess::prepareToSuspend):
+        (WebKit::WebAuthnProcess::processDidResume):
+        (WebKit::WebAuthnProcess::resume):
+        (WebKit::WebAuthnProcess::processDidTransitionToForeground):
+        (WebKit::WebAuthnProcess::processDidTransitionToBackground):
+        (WebKit::WebAuthnProcess::webProcessConnection const):
+        * WebAuthnProcess/WebAuthnProcess.h: Added.
+        * WebAuthnProcess/WebAuthnProcess.messages.in: Added.
+        * WebAuthnProcess/WebAuthnProcessCreationParameters.cpp: Copied from Source/WebKit/Daemons/WebAuthenticationAgent/main.mm.
+        (WebKit::WebAuthnProcessCreationParameters::encode const):
+        (WebKit::WebAuthnProcessCreationParameters::decode):
+        * WebAuthnProcess/WebAuthnProcessCreationParameters.h: Copied from Source/WebKit/Daemons/WebAuthenticationAgent/main.mm.
+        * WebAuthnProcess/ios/WebAuthnProcessIOS.mm: Copied from Source/WebKit/Daemons/WebAuthenticationAgent/main.mm.
+        (WebKit::WebAuthnProcess::initializeProcess):
+        (WebKit::WebAuthnProcess::initializeProcessName):
+        (WebKit::WebAuthnProcess::initializeSandbox):
+        * WebAuthnProcess/mac/WebAuthnProcessMac.mm: Added.
+        (WebKit::WebAuthnProcess::initializeProcess):
+        (WebKit::WebAuthnProcess::initializeProcessName):
+        (WebKit::WebAuthnProcess::initializeSandbox):
+        Paperwork for introducing the new WebAuthn process. Mostly copied from GPU process.
+
+        * WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in: Added.
+        The sandbox profile is originally from the GPU Process with IOKit related rules removed. Will tighten it again after the process is fully functional.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Paperwork for building the new WebAuthn process.
+
+        * WebProcess/WebAuthentication/WebAuthnProcessConnection.cpp: Copied from Source/WebKit/Daemons/WebAuthenticationAgent/main.mm.
+        (WebKit::WebAuthnProcessConnection::WebAuthnProcessConnection):
+        (WebKit::WebAuthnProcessConnection::~WebAuthnProcessConnection):
+        (WebKit::WebAuthnProcessConnection::didClose):
+        (WebKit::WebAuthnProcessConnection::didReceiveInvalidMessage):
+        * WebProcess/WebAuthentication/WebAuthnProcessConnection.h: Renamed from Source/WebKit/Daemons/WebAuthenticationAgent/main.mm.
+        (WebKit::WebAuthnProcessConnection::create):
+        (WebKit::WebAuthnProcessConnection::connection):
+        * WebProcess/WebAuthentication/WebAuthnProcessConnection.messages.in: Added.
+        * WebProcess/WebAuthentication/WebAuthnProcessConnectionInfo.h: Added.
+        (WebKit::WebAuthnProcessConnectionInfo::identifier const):
+        (WebKit::WebAuthnProcessConnectionInfo::releaseIdentifier):
+        (WebKit::WebAuthnProcessConnectionInfo::encode const):
+        (WebKit::WebAuthnProcessConnectionInfo::decode):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::getWebAuthnProcessConnection):
+        (WebKit::WebProcess::ensureWebAuthnProcessConnection):
+        (WebKit::WebProcess::webAuthnProcessConnectionClosed):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::existingWebAuthnProcessConnection):
+        Paperwork for introducing the new WebAuthn process. Mostly copied from GPU process.
+
+2020-10-16  Jiewen Tan  <jiewen_tan@apple.com>
+
         [WebAuthn] Remove the "alg" field in the attestation statement
         https://bugs.webkit.org/show_bug.cgi?id=217720
         <rdar://problem/70349734>

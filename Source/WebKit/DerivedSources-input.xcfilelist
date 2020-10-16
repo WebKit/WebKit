@@ -105,6 +105,7 @@ $(PROJECT_DIR)/UIProcess/UserContent/WebUserContentControllerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/ViewGestureController.messages.in
 $(PROJECT_DIR)/UIProcess/VisitedLinkStore.messages.in
 $(PROJECT_DIR)/UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.messages.in
+$(PROJECT_DIR)/UIProcess/WebAuthentication/WebAuthnProcessProxy.messages.in
 $(PROJECT_DIR)/UIProcess/WebCookieManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/WebFullScreenManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/WebGeolocationManagerProxy.messages.in
@@ -116,6 +117,9 @@ $(PROJECT_DIR)/UIProcess/ios/EditableImageController.messages.in
 $(PROJECT_DIR)/UIProcess/ios/SmartMagnificationController.messages.in
 $(PROJECT_DIR)/UIProcess/ios/WebDeviceOrientationUpdateProviderProxy.messages.in
 $(PROJECT_DIR)/UIProcess/mac/SecItemShimProxy.messages.in
+$(PROJECT_DIR)/WebAuthnProcess/WebAuthnConnectionToWebProcess.messages.in
+$(PROJECT_DIR)/WebAuthnProcess/WebAuthnProcess.messages.in
+$(PROJECT_DIR)/WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in
 $(PROJECT_DIR)/WebProcess/ApplePay/WebPaymentCoordinator.messages.in
 $(PROJECT_DIR)/WebProcess/Automation/WebAutomationSessionProxy.js
 $(PROJECT_DIR)/WebProcess/Automation/WebAutomationSessionProxy.messages.in
@@ -155,6 +159,7 @@ $(PROJECT_DIR)/WebProcess/Storage/WebSWClientConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Storage/WebSWContextManagerConnection.messages.in
 $(PROJECT_DIR)/WebProcess/UserContent/WebUserContentController.messages.in
 $(PROJECT_DIR)/WebProcess/WebAuthentication/WebAuthenticatorCoordinator.messages.in
+$(PROJECT_DIR)/WebProcess/WebAuthentication/WebAuthnProcessConnection.messages.in
 $(PROJECT_DIR)/WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/DrawingArea.messages.in

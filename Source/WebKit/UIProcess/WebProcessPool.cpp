@@ -116,6 +116,11 @@
 #include "GPUProcessProxy.h"
 #endif
 
+#if ENABLE(WEB_AUTHN)
+#include "WebAuthnProcessConnectionInfo.h"
+#include "WebAuthnProcessProxy.h"
+#endif
+
 #if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/RemoteInspector.h>
 #endif
@@ -489,6 +494,20 @@ void WebProcessPool::getGPUProcessConnection(WebProcessProxy& webProcessProxy, M
         if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()) && webProcessProxy && weakThis)) {
             WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "getGPUProcessConnection: Failed first attempt, retrying");
             GPUProcessProxy::singleton().getGPUProcessConnection(*webProcessProxy, WTFMove(reply));
+            return;
+        }
+        reply(connectionInfo);
+    });
+}
+#endif
+
+#if ENABLE(WEB_AUTHN)
+void WebProcessPool::getWebAuthnProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetWebAuthnProcessConnection::DelayedReply&& reply)
+{
+    WebAuthnProcessProxy::singleton().getWebAuthnProcessConnection(webProcessProxy, [this, weakThis = makeWeakPtr(*this), webProcessProxy = makeWeakPtr(webProcessProxy), reply = WTFMove(reply)] (auto& connectionInfo) mutable {
+        if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()) && webProcessProxy && weakThis)) {
+            WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "getWebAuthnProcessConnection: Failed first attempt, retrying");
+            WebAuthnProcessProxy::singleton().getWebAuthnProcessConnection(*webProcessProxy, WTFMove(reply));
             return;
         }
         reply(connectionInfo);

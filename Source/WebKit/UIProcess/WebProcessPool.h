@@ -358,6 +358,10 @@ public:
     void getGPUProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);
 #endif
 
+#if ENABLE(WEB_AUTHN)
+    void getWebAuthnProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetWebAuthnProcessConnectionDelayedReply&&);
+#endif
+
     // Network Process Management
     void networkProcessCrashed(NetworkProcessProxy&);
 

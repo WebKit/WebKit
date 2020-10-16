@@ -451,6 +451,10 @@ private:
     void getGPUProcessConnection(Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);
 #endif
 
+#if ENABLE(WEB_AUTHN)
+    void getWebAuthnProcessConnection(Messages::WebProcessProxy::GetWebAuthnProcessConnectionDelayedReply&&);
+#endif
+
     bool platformIsBeingDebugged() const;
     bool shouldAllowNonValidInjectedCode() const;
 

@@ -45,6 +45,8 @@ VPATH = \
     $(WebKit2)/Shared/ApplePay \
     $(WebKit2)/Shared/Authentication \
     $(WebKit2)/Shared/mac \
+    $(WebKit2)/WebAuthnProcess \
+    $(WebKit2)/WebAuthnProcess/mac \
     $(WebKit2)/WebProcess/ApplePay \
     $(WebKit2)/WebProcess/ApplicationCache \
     $(WebKit2)/WebProcess/Automation \
@@ -140,6 +142,7 @@ MESSAGE_RECEIVERS = \
 	UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy \
 	UIProcess/GPU/GPUProcessProxy \
 	UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy \
+	UIProcess/WebAuthentication/WebAuthnProcessProxy \
 	UIProcess/WebPasteboardProxy \
 	UIProcess/UserContent/WebUserContentControllerProxy \
 	UIProcess/Inspector/WebInspectorProxy \
@@ -214,6 +217,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/WebPage/VisitedLinkTableController \
 	WebProcess/WebPage/Cocoa/TextCheckingControllerProxy \
 	WebProcess/WebPage/ViewUpdateDispatcher \
+	WebProcess/WebAuthentication/WebAuthnProcessConnection \
 	PluginProcess/WebProcessConnection \
 	PluginProcess/PluginControllerProxy \
 	PluginProcess/PluginProcess \
@@ -240,6 +244,8 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/media/RemoteLegacyCDMProxy \
 	GPUProcess/media/RemoteMediaPlayerManagerProxy \
 	GPUProcess/media/RemoteAudioDestinationManager \
+	WebAuthnProcess/WebAuthnConnectionToWebProcess \
+	WebAuthnProcess/WebAuthnProcess \
 #
 
 GENERATE_MESSAGE_RECEIVER_SCRIPT = $(WebKit2)/Scripts/generate-message-receiver.py
@@ -285,7 +291,8 @@ SANDBOX_PROFILES = \
 	com.apple.WebProcess.sb \
 	com.apple.WebKit.plugin-common.sb \
 	com.apple.WebKit.NetworkProcess.sb \
-	com.apple.WebKit.GPUProcess.sb
+	com.apple.WebKit.GPUProcess.sb \
+	com.apple.WebKit.WebAuthnProcess.sb
 
 all : $(SANDBOX_PROFILES)
 

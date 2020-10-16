@@ -231,6 +231,10 @@ constexpr const char* processStorageClass(AuxiliaryProcess::ProcessType type)
     case AuxiliaryProcess::ProcessType::GPU:
         return "WebKitGPUSandbox";
 #endif
+#if ENABLE(WEB_AUTHN)
+    case AuxiliaryProcess::ProcessType::WebAuthn:
+        return "WebKitWebAuthnSandbox";
+#endif
     }
 }
 #endif // USE(APPLE_INTERNAL_SDK)
@@ -291,6 +295,11 @@ static String sandboxDirectory(AuxiliaryProcess::ProcessType processType, const 
 #if ENABLE(GPU_PROCESS)
     case AuxiliaryProcess::ProcessType::GPU:
         directory.append("/com.apple.WebKit.GPU.Sandbox");
+        break;
+#endif
+#if ENABLE(WEB_AUTHN)
+    case AuxiliaryProcess::ProcessType::WebAuthn:
+        directory.append("/com.apple.WebKit.WebAuthn.Sandbox");
         break;
 #endif
     }
