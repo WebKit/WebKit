@@ -50,9 +50,9 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
             if (event == XPC_ERROR_CONNECTION_INVALID || event == XPC_ERROR_TERMINATION_IMMINENT) {
                 RELEASE_LOG_FAULT(IPC, "Exiting: Received XPC event type: %s", event == XPC_ERROR_CONNECTION_INVALID ? "XPC_ERROR_CONNECTION_INVALID" : "XPC_ERROR_TERMINATION_IMMINENT");
                 // FIXME: Handle this case more gracefully.
-                dispatch_sync(dispatch_get_main_queue(), ^{
+                [[NSRunLoop mainRunLoop] performBlock:^{
                     exit(EXIT_FAILURE);
-                });
+                }];
             }
         } else {
             assert(type == XPC_TYPE_DICTIONARY);
@@ -77,9 +77,9 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                 InitializerFunction initializerFunctionPtr = reinterpret_cast<InitializerFunction>(CFBundleGetFunctionPointerForName(webKitBundle, entryPointFunctionName));
                 if (!initializerFunctionPtr) {
                     RELEASE_LOG_FAULT(IPC, "Exiting: Unable to find entry point in WebKit.framework with name: %s", [(__bridge NSString *)entryPointFunctionName UTF8String]);
-                    dispatch_sync(dispatch_get_main_queue(), ^{
+                    [[NSRunLoop mainRunLoop] performBlock:^{
                         exit(EXIT_FAILURE);
-                    });
+                    }];
                 }
 
                 auto reply = adoptOSObject(xpc_dictionary_create_reply(event));

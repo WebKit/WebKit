@@ -1,3 +1,17 @@
+2020-10-15  David Kilzer  <ddkilzer@apple.com>
+
+        v2: WebKit::XPCServiceEventHandler block should call exit() on the main thread
+        <https://webkit.org/b/217773>
+        <rdar://problem/70275659>
+
+        Reviewed by Geoff Garen.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceEventHandler):
+        - Use NSRunLoop instead of libdispatch to run code on the main
+          thread since libdispatch can randomly pick a new main thread when
+          exit() is called on the original main thread.
+
 2020-10-15  Tim Horton  <timothy_horton@apple.com>
 
         iPhone apps and iPad apps linked before iOS 13 running on macOS get desktop UA unexpectedly
