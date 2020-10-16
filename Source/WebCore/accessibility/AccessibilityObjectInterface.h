@@ -1181,7 +1181,6 @@ public:
 #if PLATFORM(COCOA)
     virtual RemoteAXObjectRef remoteParentObject() const = 0;
     virtual FloatRect convertRectToPlatformSpace(const FloatRect&, AccessibilityConversionSpace) const = 0;
-    virtual NSView *topDocumentFrameView() const = 0;
 #endif
     virtual Widget* widgetForAttachmentView() const = 0;
     virtual Page* page() const = 0;

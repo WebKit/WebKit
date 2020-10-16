@@ -70,12 +70,6 @@ void AccessibilityObject::overrideAttachmentParent(AXCoreObject* parent)
     ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-NSView *AccessibilityObject::topDocumentFrameView() const
-{
-    // FIXME: implement, currently only used on iOS.
-    return nil;
-}
-
 FloatRect AccessibilityObject::convertRectToPlatformSpace(const FloatRect& rect, AccessibilityConversionSpace space) const
 {
     // WebKit1 code path... platformWidget() exists.

@@ -580,7 +580,6 @@ private:
 #if PLATFORM(COCOA)
     RemoteAXObjectRef remoteParentObject() const override;
     FloatRect convertRectToPlatformSpace(const FloatRect&, AccessibilityConversionSpace) const override;
-    NSView *topDocumentFrameView() const override { return nil; } // FIXME: implement, currently only used on iOS.
 #endif
     Widget* widgetForAttachmentView() const override;
     Page* page() const override;

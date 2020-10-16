@@ -441,7 +441,6 @@ public:
 #if PLATFORM(COCOA)
     RemoteAXObjectRef remoteParentObject() const override;
     FloatRect convertRectToPlatformSpace(const FloatRect&, AccessibilityConversionSpace) const override;
-    NSView *topDocumentFrameView() const override;
 #endif
     Widget* widgetForAttachmentView() const override { return nullptr; }
     Page* page() const override;

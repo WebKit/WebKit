@@ -47,33 +47,6 @@ void AccessibilityObject::detachFromParent()
 {
 }
 
-NSView *AccessibilityObject::topDocumentFrameView() const
-{
-    // This method performs the crucial task of connecting to the UIWebDocumentView.
-    // This is needed to correctly calculate the screen position of the AX object.
-    static Class webViewClass = nil;
-    if (!webViewClass)
-        webViewClass = NSClassFromString(@"WebView");
-    if (!webViewClass)
-        return nil;
-
-    auto* frameView = documentFrameView();
-    if (!frameView)
-        return nil;
-
-    // If this is the top level frame, the UIWebDocumentView should be returned.
-    NSView *parentView = frameView->documentView();
-    while (parentView && ![parentView isKindOfClass:webViewClass])
-        parentView = [parentView superview];
-
-    // The parentView should have an accessibilityContainer, if the UIKit accessibility bundle was loaded.
-    // The exception is DRT, which tests accessibility without the entire system turning accessibility on. Hence,
-    // this check should be valid for everything except DRT.
-    ASSERT([parentView accessibilityContainer] || IOSApplication::isDumpRenderTree());
-
-    return parentView;
-}
-
 FloatRect AccessibilityObject::convertRectToPlatformSpace(const FloatRect& rect, AccessibilityConversionSpace space) const
 {
     auto* frameView = documentFrameView();
@@ -87,7 +60,7 @@ FloatRect AccessibilityObject::convertRectToPlatformSpace(const FloatRect& rect,
 
         // we need the web document view to give us our final screen coordinates
         // because that can take account of the scroller
-        NSView *webDocument = topDocumentFrameView();
+        id webDocument = [wrapper() _accessibilityWebDocumentView];
         if (webDocument)
             cgRect = [webDocument convertRect:cgRect toView:nil];
         return cgRect;
