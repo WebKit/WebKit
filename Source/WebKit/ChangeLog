@@ -41,24 +41,6 @@
 
 2020-10-14  Alan Coon  <alancoon@apple.com>
 
-        Cherry-pick r268377. rdar://problem/70320656
-
-    Unreviewed build fix after r268367.
-    
-    * Configurations/WebKit.xcconfig: Corrected the definition of
-    WK_PDFKIT_LDFLAGS_maccatalyst.
-    
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268377 268f45cc-cd09-0410-ab3c-d52691b4dbfc
-
-    2020-10-12  Andy Estes  <aestes@apple.com>
-
-            Unreviewed build fix after r268367.
-
-            * Configurations/WebKit.xcconfig: Corrected the definition of
-            WK_PDFKIT_LDFLAGS_maccatalyst.
-
-2020-10-14  Alan Coon  <alancoon@apple.com>
-
         Cherry-pick r268367. rdar://problem/70320656
 
     [macCatalyst] Enable WKPDFView
