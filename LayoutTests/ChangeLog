@@ -1,3 +1,33 @@
+2020-10-16  Truitt Savell  <tsavell@apple.com>
+
+        Rebaseline tests for Big Sur after the changes in r268520
+        https://bugs.webkit.org/show_bug.cgi?id=209813
+
+        Unreviewed test gardening.
+
+        * platform/mac/editing/selection/3690703-2-expected.txt:
+        * platform/mac/editing/selection/3690703-expected.txt:
+        * platform/mac/editing/selection/3690719-expected.txt:
+        * platform/mac/fast/block/basic/001-expected.txt:
+        * platform/mac/fast/block/float/float-avoidance-expected.txt:
+        * platform/mac/fast/css/rtl-ordering-expected.txt:
+        * platform/mac/fast/forms/basic-inputs-expected.txt:
+        * platform/mac/fast/forms/input-appearance-spinbutton-expected.txt:
+        * platform/mac/fast/forms/input-disabled-color-expected.txt:
+        * platform/mac/fast/forms/input-readonly-dimmed-expected.txt:
+        * platform/mac/fast/forms/option-text-clip-expected.txt:
+        * platform/mac/fast/forms/plaintext-mode-2-expected.txt:
+        * platform/mac/fast/forms/select-change-listbox-to-popup-expected.txt:
+        * platform/mac/fast/forms/select-change-popup-to-listbox-expected.txt:
+        * platform/mac/fast/forms/textfield-outline-expected.txt:
+        * platform/mac/fast/text/indic-expected.txt:
+        * platform/mac/fast/text/javascriptlink-frames-expected.txt: Added.
+        * platform/mac/media/video-display-toggle-expected.txt:
+        * platform/mac/media/video-volume-slider-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug30692-expected.txt:
+        * platform/mac/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+        * platform/mac/tables/mozilla/other/wa_table_tr_align-expected.txt:
+
 2020-10-16  Antoine Quint  <graouts@webkit.org>
 
         Support accelerated animation of individual transform CSS properties
