@@ -28,19 +28,11 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUBindGroupLayoutDescriptor.h"
+#include "GPUPlatformTypes.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Variant.h>
-
-#if USE(METAL)
-#include <wtf/RetainPtr.h>
-#endif
-
-#if USE(METAL)
-OBJC_PROTOCOL(MTLArgumentEncoder);
-OBJC_PROTOCOL(MTLBuffer);
-#endif // USE(METAL)
 
 namespace WebCore {
 

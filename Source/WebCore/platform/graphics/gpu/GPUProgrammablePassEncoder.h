@@ -29,26 +29,13 @@
 
 #include "GPUBindGroupBinding.h"
 #include "GPUCommandBuffer.h"
+#include "GPUPlatformTypes.h"
 #include <wtf/RefCounted.h>
-
-#if USE(METAL)
-#include <objc/NSObjCRuntime.h>
-#endif
-
-#if USE(METAL)
-OBJC_PROTOCOL(MTLBuffer);
-OBJC_PROTOCOL(MTLCommandEncoder);
-OBJC_PROTOCOL(MTLResource);
-#endif
 
 namespace WebCore {
 
 class GPUBindGroup;
 class GPURenderPipeline;
-
-#if USE(METAL)
-using PlatformProgrammablePassEncoder = MTLCommandEncoder;
-#endif
 
 class GPUProgrammablePassEncoder : public RefCounted<GPUProgrammablePassEncoder> {
 public:

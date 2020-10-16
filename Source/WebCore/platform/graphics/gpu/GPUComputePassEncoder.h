@@ -32,20 +32,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-#if USE(METAL)
-#include <wtf/RetainPtr.h>
-#endif
-
-#if USE(METAL)
-OBJC_PROTOCOL(MTLComputeCommandEncoder);
-#endif
-
 namespace WebCore {
-
-#if USE(METAL)
-using PlatformComputePassEncoder = MTLComputeCommandEncoder;
-using PlatformComputePassEncoderSmartPtr = RetainPtr<MTLComputeCommandEncoder>;
-#endif
 
 class GPUComputePassEncoder : public GPUProgrammablePassEncoder {
 public:

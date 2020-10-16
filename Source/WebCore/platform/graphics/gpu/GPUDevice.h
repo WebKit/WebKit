@@ -29,6 +29,7 @@
 
 #include "GPUBindGroupAllocator.h"
 #include "GPUErrorScopes.h"
+#include "GPUPlatformTypes.h"
 #include "GPUQueue.h"
 #include "GPUSwapChain.h"
 #include <wtf/Function.h>
@@ -37,14 +38,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
-
-#if USE(METAL)
-#include <wtf/RetainPtr.h>
-#endif
-
-#if USE(METAL)
-OBJC_PROTOCOL(MTLDevice);
-#endif
 
 namespace WebCore {
 
@@ -73,11 +66,6 @@ struct GPUSwapChainDescriptor;
 struct GPUTextureDescriptor;
 
 enum class GPUBufferMappedOption;
-
-#if USE(METAL)
-using PlatformDevice = MTLDevice;
-using PlatformDeviceSmartPtr = RetainPtr<MTLDevice>;
-#endif
 
 class GPUDevice : public RefCounted<GPUDevice>, public CanMakeWeakPtr<GPUDevice> {
 public:

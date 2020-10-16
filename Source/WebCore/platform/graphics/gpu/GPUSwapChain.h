@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUPlatformTypes.h"
 #include "GPUTexture.h"
 #include "PlatformLayer.h"
 #include <wtf/OptionSet.h>
@@ -41,15 +42,6 @@
 #include "TextureMapperPlatformLayer.h"
 #endif
 
-#if USE(METAL)
-#include <wtf/RetainPtr.h>
-#endif
-
-#if USE(METAL)
-OBJC_CLASS CAMetalDrawable;
-OBJC_CLASS WebGPULayer;
-#endif
-
 namespace WebCore {
 
 class GPUDevice;
@@ -57,11 +49,6 @@ class GPUDevice;
 struct GPUSwapChainDescriptor;
 
 enum class GPUTextureFormat;
-
-#if USE(METAL)
-using PlatformDrawableSmartPtr = RetainPtr<CAMetalDrawable>;
-using PlatformSwapLayerSmartPtr = RetainPtr<WebGPULayer>;
-#endif
 
 class GPUSwapChain : public RefCounted<GPUSwapChain> {
 public:

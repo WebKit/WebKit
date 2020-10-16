@@ -28,20 +28,13 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUPipeline.h"
+#include "GPUPlatformTypes.h"
 #include "GPUProgrammableStageDescriptor.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 #if ENABLE(WHLSL_COMPILER)
 #include "WHLSLPrepare.h"
-#endif
-
-#if USE(METAL)
-#include <wtf/RetainPtr.h>
-#endif
-
-#if USE(METAL)
-OBJC_PROTOCOL(MTLComputePipelineState);
 #endif
 
 namespace WebCore {
@@ -51,11 +44,6 @@ class GPUErrorScopes;
 class GPUPipelineLayout;
 
 struct GPUComputePipelineDescriptor;
-
-#if USE(METAL)
-using PlatformComputePipeline = MTLComputePipelineState;
-using PlatformComputePipelineSmartPtr = RetainPtr<MTLComputePipelineState>;
-#endif
 
 class GPUComputePipeline final : public GPUPipeline {
 public:

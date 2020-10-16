@@ -29,20 +29,12 @@
 
 #include "DeferrableTask.h"
 #include "GPUBufferUsage.h"
+#include "GPUPlatformTypes.h"
 #include <wtf/Function.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
-
-#if USE(METAL)
-#include <wtf/RetainPtr.h>
-#endif
-
-#if USE(METAL)
-OBJC_PROTOCOL(MTLBuffer);
-OBJC_PROTOCOL(MTLCommandBuffer);
-#endif
 
 namespace JSC {
 class ArrayBuffer;
@@ -57,11 +49,6 @@ struct GPUBufferDescriptor;
 
 enum class GPUBufferMappedOption;
 
-#if USE(METAL)
-using PlatformBuffer = MTLBuffer;
-using PlatformBufferSmartPtr = RetainPtr<MTLBuffer>;
-#endif
-
 class GPUBuffer : public RefCounted<GPUBuffer> {
 public:
     enum class State {
@@ -74,7 +61,7 @@ public:
 
     static RefPtr<GPUBuffer> tryCreate(GPUDevice&, const GPUBufferDescriptor&, GPUBufferMappedOption, GPUErrorScopes&);
 
-    PlatformBuffer *platformBuffer() const { return m_platformBuffer.get(); }
+    PlatformBuffer* platformBuffer() const { return m_platformBuffer.get(); }
     size_t byteLength() const { return m_byteLength; }
     bool isCopySource() const { return m_usage.contains(GPUBufferUsage::Flags::CopySource); }
     bool isCopyDestination() const { return m_usage.contains(GPUBufferUsage::Flags::CopyDestination); }

@@ -28,25 +28,13 @@
 #if ENABLE(WEBGPU)
 
 #include "DeferrableTask.h"
+#include "GPUPlatformTypes.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
-#if USE(METAL)
-#include <wtf/RetainPtr.h>
-#endif
-
-#if USE(METAL)
-OBJC_PROTOCOL(MTLCommandQueue);
-#endif
-
 namespace WebCore {
-
-#if USE(METAL)
-using PlatformQueue = MTLCommandQueue;
-using PlatformQueueSmartPtr = RetainPtr<MTLCommandQueue>;
-#endif
 
 class GPUCommandBuffer;
 class GPUDevice;
