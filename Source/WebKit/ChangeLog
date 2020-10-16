@@ -1,3 +1,15 @@
+2020-10-15  David Kilzer  <ddkilzer@apple.com>
+
+        PDFPlugin.mm:2303:139: error: type 'SEL _Nullable' cannot be narrowed to 'bool' in initializer list [-Wc++11-narrowing]
+        <https://webkit.org/b/217791>
+        <rdar://problem/70349804>
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::handleContextMenuEvent):
+        - Use `!!` to convert result to `bool`.
+
 2020-10-15  Aditya Keerthi  <akeerthi@apple.com>
 
         Crash in -[WKDateTimePicker setDateTimePickerToInitialValue]
