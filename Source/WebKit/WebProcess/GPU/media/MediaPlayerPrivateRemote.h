@@ -149,6 +149,10 @@ public:
     void currentPlaybackTargetIsWirelessChanged(bool);
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+    void getRawCookies(const URL&, WebCore::MediaPlayerClient::GetRawCookiesCallback&&) const;
+#endif
+
 private:
 
 #if !RELEASE_LOG_DISABLED

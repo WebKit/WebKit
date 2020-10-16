@@ -723,7 +723,7 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     String mediaPlayerNetworkInterfaceName() const override;
-    bool mediaPlayerGetRawCookies(const URL&, Vector<Cookie>&) const override;
+    void mediaPlayerGetRawCookies(const URL&, MediaPlayerClient::GetRawCookiesCallback&&) const final;
 #endif
 
     void mediaPlayerEngineFailedToLoad() const final;

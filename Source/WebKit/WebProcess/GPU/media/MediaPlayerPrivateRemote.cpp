@@ -1159,6 +1159,13 @@ void MediaPlayerPrivateRemote::activeSourceBuffersChanged()
     m_player->activeSourceBuffersChanged();
 }
 
+#if PLATFORM(IOS_FAMILY)
+void MediaPlayerPrivateRemote::getRawCookies(const URL& url, WebCore::MediaPlayerClient::GetRawCookiesCallback&& completionHandler) const
+{
+    m_player->getRawCookies(url, WTFMove(completionHandler));
+}
+#endif
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& MediaPlayerPrivateRemote::logChannel() const
 {

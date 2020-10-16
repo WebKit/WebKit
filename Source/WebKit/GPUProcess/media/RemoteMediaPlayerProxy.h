@@ -251,7 +251,7 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     String mediaPlayerNetworkInterfaceName() const final;
-    bool mediaPlayerGetRawCookies(const URL&, Vector<WebCore::Cookie>&) const final;
+    void mediaPlayerGetRawCookies(const URL&, WebCore::MediaPlayerClient::GetRawCookiesCallback&&) const final;
 #endif
 
     String mediaPlayerSourceApplicationIdentifier() const final;

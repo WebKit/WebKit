@@ -381,6 +381,11 @@ String RemoteMediaPlayerProxy::mediaPlayerNetworkInterfaceName() const
 {
     return m_configuration.networkInterfaceName;
 }
+
+void RemoteMediaPlayerProxy::mediaPlayerGetRawCookies(const URL& url, WebCore::MediaPlayerClient::GetRawCookiesCallback&& completionHandler) const
+{
+    m_webProcessConnection->sendWithAsyncReply(Messages::MediaPlayerPrivateRemote::GetRawCookies(url), WTFMove(completionHandler), m_id);
+}
 #endif
 
 const String& RemoteMediaPlayerProxy::mediaPlayerMediaCacheDirectory() const
@@ -675,14 +680,6 @@ Vector<RefPtr<PlatformTextTrack>> RemoteMediaPlayerProxy::outOfBandTrackSources(
     return sources;
 }
 
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-bool RemoteMediaPlayerProxy::mediaPlayerGetRawCookies(const URL&, Vector<Cookie>&) const
-{
-    notImplemented();
-    return false;
-}
 #endif
 
 double RemoteMediaPlayerProxy::mediaPlayerRequestedPlaybackRate() const

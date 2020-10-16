@@ -43,6 +43,7 @@ OBJC_CLASS AVPlayerItemVideoOutput;
 OBJC_CLASS AVPlayerLayer;
 OBJC_CLASS AVURLAsset;
 OBJC_CLASS NSArray;
+OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS WebCoreAVFLoaderDelegate;
 OBJC_CLASS WebCoreAVFMovieObserver;
 OBJC_CLASS WebCoreAVFPullDelegate;
@@ -187,6 +188,7 @@ private:
     void createAVPlayerItem() final;
     virtual void createAVPlayerLayer();
     void createAVAssetForURL(const URL&) final;
+    void createAVAssetForURL(const URL&, RetainPtr<NSMutableDictionary>);
     MediaPlayerPrivateAVFoundation::ItemStatus playerItemStatus() const final;
     MediaPlayerPrivateAVFoundation::AssetStatus assetStatus() const final;
     long assetErrorCode() const final;
@@ -194,7 +196,7 @@ private:
     double seekableTimeRangesLastModifiedTime() const final;
     double liveUpdateInterval() const final;
 
-    void checkPlayability() final;
+    void checkPlayability();
     void setRateDouble(double) final;
     double rate() const final;
     void setPreservesPitch(bool) final;
@@ -331,6 +333,7 @@ private:
     mutable String m_languageOfPrimaryAudioTrack;
     bool m_videoFrameHasDrawn { false };
     bool m_haveCheckedPlayability { false };
+    bool m_createAssetPending { false };
 
 #if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
     RefPtr<AudioSourceProviderAVFObjC> m_provider;

@@ -1,3 +1,19 @@
+2020-10-16  Eric Carlson  <eric.carlson@apple.com>
+
+        [GPU Process] Implement mediaPlayerGetRawCookies
+        https://bugs.webkit.org/show_bug.cgi?id=217739
+        <rdar://problem/70313370>
+
+        Reviewed by Youenn Fablet.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerGetRawCookies const):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::getRawCookies const):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in:
+
 2020-10-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Implement a dummy WebAuthnProcess

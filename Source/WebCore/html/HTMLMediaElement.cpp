@@ -6955,11 +6955,15 @@ String HTMLMediaElement::mediaPlayerNetworkInterfaceName() const
     return DeprecatedGlobalSettings::networkInterfaceName();
 }
 
-bool HTMLMediaElement::mediaPlayerGetRawCookies(const URL& url, Vector<Cookie>& cookies) const
+void HTMLMediaElement::mediaPlayerGetRawCookies(const URL& url, MediaPlayerClient::GetRawCookiesCallback&& completionHandler) const
 {
-    if (auto* page = document().page())
-        return page->cookieJar().getRawCookies(document(), url, cookies);
-    return false;
+    auto* page = document().page();
+    if (!page)
+        completionHandler({ });
+    
+    Vector<Cookie> cookies;
+    page->cookieJar().getRawCookies(document(), url, cookies);
+    completionHandler(WTFMove(cookies));
 }
 
 #endif

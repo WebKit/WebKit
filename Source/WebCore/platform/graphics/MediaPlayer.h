@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 #include "AudioTrackPrivate.h"
 #include "ContentType.h"
+#include "Cookie.h"
 #include "GraphicsTypesGL.h"
 #include "LayoutRect.h"
 #include "LegacyCDMSession.h"
@@ -44,6 +45,7 @@
 #include <wtf/URL.h>
 #include "VideoTrackPrivate.h"
 #include <JavaScriptCore/Uint8Array.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/Logger.h>
@@ -78,7 +80,6 @@ class MediaStreamPrivate;
 class PlatformTimeRanges;
 class TextTrackRepresentation;
 
-struct Cookie;
 struct GraphicsDeviceAdapter;
 struct SecurityOriginData;
 
@@ -249,7 +250,9 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     virtual String mediaPlayerNetworkInterfaceName() const { return String(); }
-    virtual bool mediaPlayerGetRawCookies(const URL&, Vector<Cookie>&) const { return false; }
+
+    using GetRawCookiesCallback = CompletionHandler<void(Vector<Cookie>&&)>;
+    virtual void mediaPlayerGetRawCookies(const URL&, GetRawCookiesCallback&& completionHandler) const { completionHandler({ }); }
 #endif
 
     virtual String mediaPlayerSourceApplicationIdentifier() const { return emptyString(); }
@@ -559,7 +562,7 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     String mediaPlayerNetworkInterfaceName() const;
-    bool getRawCookies(const URL&, Vector<Cookie>&) const;
+    void getRawCookies(const URL&, MediaPlayerClient::GetRawCookiesCallback&&) const;
 #endif
 
     static void resetMediaEngines();

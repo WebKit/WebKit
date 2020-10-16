@@ -500,6 +500,7 @@ void MediaPlayerPrivateAVFoundationCF::createAVAssetForURL(const URL& url)
     m_avfWrapper = new AVFWrapper(this);
     m_avfWrapper->createAssetForURL(url, inheritURI);
     setDelayCallbacks(false);
+    m_avfWrapper->checkPlayability();
 }
 
 void MediaPlayerPrivateAVFoundationCF::createAVPlayer()
@@ -521,12 +522,6 @@ void MediaPlayerPrivateAVFoundationCF::createAVPlayerItem()
     m_avfWrapper->createPlayerItem();
 
     setDelayCallbacks(false);
-}
-
-void MediaPlayerPrivateAVFoundationCF::checkPlayability()
-{
-    ASSERT(m_avfWrapper);
-    m_avfWrapper->checkPlayability();
 }
 
 void MediaPlayerPrivateAVFoundationCF::beginLoadingMetadata()
