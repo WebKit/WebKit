@@ -867,6 +867,20 @@ WebAuthenticationEnabled:
     WebCore:
       default: false
 
+# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
+WebAuthenticationModernEnabled:
+  type: bool
+  humanReadableName: "Web Authentication Modern"
+  humanReadableDescription: "Enable Modern Web Authentication support"
+  condition: ENABLE(WEB_AUTHN)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 WebGL2Enabled:
   type: bool
   humanReadableName: "WebGL 2.0"

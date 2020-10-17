@@ -1,3 +1,15 @@
+2020-10-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Add an experimental feature flag: WebAuthenticationModernEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=217843
+        <rdar://problem/70384187>
+
+        Reviewed by Brent Fulgham.
+
+        Add a new experimental feature flag to test the new WebAuthn process.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2020-10-16  Antoine Quint  <graouts@webkit.org>
 
         Enable individual CSS transform properties by default
