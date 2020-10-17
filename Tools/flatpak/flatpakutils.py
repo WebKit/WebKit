@@ -819,7 +819,11 @@ class WebkitFlatpak:
             n_cores = multiprocessing.cpu_count() * 3
             _log.debug('Following icecream recommendation for the number of cores to use: %d' % n_cores)
             toolchain_name = os.environ.get("CC", "gcc")
-            toolchain_path = self.icc_version[toolchain_name]
+            try:
+                toolchain_path = self.icc_version[toolchain_name]
+            except KeyError:
+                Console.error_message("Toolchains configuration not found. Please run webkit-flatpak -r")
+                return 1
             if not os.path.isfile(toolchain_path):
                 Console.error_message("%s is not a valid IceCC toolchain. Please run webkit-flatpak -r", toolchain_path)
                 return 1
