@@ -102,9 +102,9 @@ WI.DOMBreakpoint = class DOMBreakpoint extends WI.Breakpoint
 
     set domNode(domNode)
     {
-        console.assert(domNode instanceof WI.DOMNode, domNode);
-        console.assert(!this._domNode !== !domNode, "domNode should not change once set");
-        if (!this._domNode === !domNode)
+        console.assert(!domNode || domNode instanceof WI.DOMNode, domNode);
+        console.assert(!domNode || xor(domNode, this._domNode), "domNode should not change once set", domNode, this._domNode);
+        if (!xor(domNode, this._domNode))
             return;
 
         this.dispatchEventToListeners(WI.DOMBreakpoint.Event.DOMNodeWillChange);

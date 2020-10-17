@@ -30,6 +30,13 @@ var ellipsis = "\u2026";
 var zeroWidthSpace = "\u200b";
 var multiplicationSign = "\u00d7";
 
+function xor(a, b)
+{
+    if (a)
+        return b ? false : a;
+    return b || false;
+}
+
 Object.defineProperty(Object, "shallowCopy",
 {
     value(object)

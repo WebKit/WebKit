@@ -1,5 +1,21 @@
 2020-10-16  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(r266669): DOMBreakpoint.js:106:23: CONSOLE ASSERT ERROR domNode should not change once set
+        https://bugs.webkit.org/show_bug.cgi?id=217865
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/DOMBreakpoint.js:
+        (WI.DOMBreakpoint.prototype.set domNode):
+        Adjust the assertion such that `null` is allowed if `_domNode` is already `null`.
+
+        * UserInterface/Base/Utilities.js:
+        (xor): Added.
+        Global utility function for doing a non-bitwise or that returns `false` if both values are
+        truthy/falsy and the truthy value if only one is truthy.
+
+2020-10-16  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION(r266885): Controllers/ConsoleManager.js:177:27: CONSOLE ASSERT ERROR
         https://bugs.webkit.org/show_bug.cgi?id=217863
 
