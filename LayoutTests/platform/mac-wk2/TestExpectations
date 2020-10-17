@@ -1318,11 +1318,10 @@ webkit.org/b/217193 [ Mojave+ Release ] inspector/console/queryHolders.html [ Pa
 
 webkit.org/b/217262 [ Catalina ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Pass Failure ]
 
-webkit.org/b/217525 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-stop.html [ Pass Crash ]
-
 webkit.org/b/217525 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/idlharness.window.html [ Pass Crash ]
 
 webkit.org/b/217540 compositing/animation/repaint-after-clearing-shared-backing.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/217686 inspector/page/overrideSetting-ITPDebugModeEnabled.html [ Pass Failure ]
 
+webkit.org/b/217857 [ Mojave Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-stop.html [ Skip ]
