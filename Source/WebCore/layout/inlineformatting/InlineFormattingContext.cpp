@@ -441,7 +441,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             if (lineRun.isText() || lineRun.isLineBreak())
                 formattingState.addLineRun({ lineIndex, lineRun.layoutBox(), lineBox.logicalRectForTextRun(lineRun), lineRun.expansion(), lineRun.textContent() });
             else if (lineRun.isBox())
-                formattingState.addLineRun({ lineIndex, lineRun.layoutBox(), lineBox.inlineLevelBoxForLayoutBox(lineRun.layoutBox()).logicalRect(), lineRun.expansion(), { } });
+                formattingState.addLineRun({ lineIndex, lineRun.layoutBox(), lineBox.logicalRectForInlineLevelBox(lineRun.layoutBox()), lineRun.expansion(), { } });
         }
     };
     constructLineRuns();

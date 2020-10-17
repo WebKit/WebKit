@@ -79,12 +79,12 @@ public:
         bool isEmpty() const { return m_isEmpty; }
         void setIsNonEmpty() { m_isEmpty = false; }
 
-        Optional<InlineLayoutUnit> lineSpacing() const { return m_lineSpacing; }
         const FontMetrics& fontMetrics() const { return layoutBox().style().fontMetrics(); }
         const Box& layoutBox() const { return *m_layoutBox; }
 
         bool isInlineBox() const { return m_type == Type::InlineBox || m_type == Type::RootInlineBox; }
         bool isLineBreakBox() const { return m_type == Type::LineBreakBox; }
+        bool hasLineBoxRelativeAlignment() const;
 
         enum class Type {
             InlineBox,
@@ -104,14 +104,23 @@ public:
         void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_logicalRect.setHeight(logicalHeight); }
         void setBaseline(InlineLayoutUnit baseline) { m_baseline = baseline; }
         void setDescent(InlineLayoutUnit descent) { m_descent = descent; }
-        void setLineSpacing(InlineLayoutUnit lineSpacing) { m_lineSpacing = lineSpacing; }
+
+        // See https://www.w3.org/TR/css-inline-3/#layout-bounds
+        struct LayoutBounds {
+            InlineLayoutUnit height() const { return ascent + descent; }
+
+            InlineLayoutUnit ascent { 0 };
+            InlineLayoutUnit descent { 0 };
+        };
+        void setLayoutBounds(const LayoutBounds& layoutBounds) { m_layoutBounds = layoutBounds; }
+        LayoutBounds layoutBounds() const { return m_layoutBounds; }
 
     private:
         WeakPtr<const Box> m_layoutBox;
         InlineRect m_logicalRect;
+        LayoutBounds m_layoutBounds;
         InlineLayoutUnit m_baseline { 0 };
         Optional<InlineLayoutUnit> m_descent;
-        Optional<InlineLayoutUnit> m_lineSpacing;
         bool m_isEmpty { true };
         Type m_type { Type::InlineBox };
     };
@@ -127,7 +136,10 @@ public:
     bool isLineVisuallyEmpty() const { return m_isLineVisuallyEmpty; }
 
     const InlineLevelBox& inlineLevelBoxForLayoutBox(const Box& layoutBox) const { return *m_inlineLevelBoxRectMap.get(&layoutBox); }
+
     InlineRect logicalRectForTextRun(const Line::Run&) const;
+    InlineRect logicalRectForInlineLevelBox(const Box&) const;
+
     auto inlineLevelBoxList() const { return m_inlineLevelBoxRectMap.values(); }
     bool containsInlineLevelBox(const Box& layoutBox) const { return m_inlineLevelBoxRectMap.contains(&layoutBox); }
 
