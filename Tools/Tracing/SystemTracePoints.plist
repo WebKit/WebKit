@@ -459,6 +459,18 @@
              </dict>
              <dict>
                  <key>Name</key>
+                 <string>Flush remote image buffer</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>12015</string>
+                 <key>CodeEnd</key>
+                 <string>12016</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
                  <string>Commit RemoteLayerTree transaction</string>
                  <key>Type</key>
                  <string>Interval</string>

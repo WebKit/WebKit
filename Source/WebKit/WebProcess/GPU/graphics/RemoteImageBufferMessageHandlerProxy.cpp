@@ -32,6 +32,7 @@
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxy.h"
 #include <WebCore/DisplayListItems.h>
+#include <wtf/SystemTracing.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -75,6 +76,7 @@ void RemoteImageBufferMessageHandlerProxy::flushDrawingContext(WebCore::DisplayL
     if (!m_remoteRenderingBackendProxy)
         return;
     
+    TraceScope tracingScope(FlushRemoteImageBufferStart, FlushRemoteImageBufferEnd);
     m_remoteRenderingBackendProxy->send(Messages::RemoteRenderingBackend::FlushImageBufferDrawingContext(displayList, m_remoteResourceIdentifier), m_remoteRenderingBackendProxy->renderingBackendIdentifier());
     displayList.clear();
 }
@@ -83,6 +85,8 @@ void RemoteImageBufferMessageHandlerProxy::flushDrawingContextAndWaitCommit(WebC
 {
     if (!m_remoteRenderingBackendProxy)
         return;
+
+    TraceScope tracingScope(FlushRemoteImageBufferStart, FlushRemoteImageBufferEnd, 1);
     m_sentFlushIdentifier = ImageBufferFlushIdentifier::generate();
     m_remoteRenderingBackendProxy->send(Messages::RemoteRenderingBackend::FlushImageBufferDrawingContextAndCommit(displayList, m_sentFlushIdentifier, m_remoteResourceIdentifier), m_remoteRenderingBackendProxy->renderingBackendIdentifier());
     displayList.clear();

@@ -114,6 +114,8 @@ enum TracePointCode {
     RenderingUpdateRunLoopObserverEnd,
     LayerTreeFreezeStart,
     LayerTreeFreezeEnd,
+    FlushRemoteImageBufferStart,
+    FlushRemoteImageBufferEnd,
 
     UIProcessRange = 14000,
     CommitLayerTreeStart,

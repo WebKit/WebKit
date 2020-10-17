@@ -1,3 +1,17 @@
+2020-10-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add system trace points for flushing remote image buffers
+        https://bugs.webkit.org/show_bug.cgi?id=217853
+
+        Reviewed by Simon Fraser.
+
+        Add trace points to capture drawing context flushes. This encapsulates time spent encoding display lists in
+        preparation for IPC.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferMessageHandlerProxy.cpp:
+        (WebKit::RemoteImageBufferMessageHandlerProxy::flushDrawingContext):
+        (WebKit::RemoteImageBufferMessageHandlerProxy::flushDrawingContextAndWaitCommit):
+
 2020-10-16  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: rename `Highlight` so it doesn't conflict with CSS `Highlight`
