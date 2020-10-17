@@ -80,311 +80,11 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 
 @interface WebPreferences (WebPrivate)
 
-- (BOOL)isDNSPrefetchingEnabled;
-- (void)setDNSPrefetchingEnabled:(BOOL)flag;
-
-- (BOOL)developerExtrasEnabled;
-- (void)setDeveloperExtrasEnabled:(BOOL)flag;
-
-- (WebKitJavaScriptRuntimeFlags)javaScriptRuntimeFlags;
-- (void)setJavaScriptRuntimeFlags:(WebKitJavaScriptRuntimeFlags)flags;
-
-- (BOOL)authorAndUserStylesEnabled;
-- (void)setAuthorAndUserStylesEnabled:(BOOL)flag;
-
-- (BOOL)applicationChromeModeEnabled;
-- (void)setApplicationChromeModeEnabled:(BOOL)flag;
-
-- (BOOL)usesEncodingDetector;
-- (void)setUsesEncodingDetector:(BOOL)flag;
-
-#if !TARGET_OS_IPHONE
-- (BOOL)respectStandardStyleKeyEquivalents;
-- (void)setRespectStandardStyleKeyEquivalents:(BOOL)flag;
-
-- (BOOL)showsURLsInToolTips;
-- (void)setShowsURLsInToolTips:(BOOL)flag;
-
-- (BOOL)showsToolTipOverTruncatedText;
-- (void)setShowsToolTipOverTruncatedText:(BOOL)flag;
-
-- (BOOL)textAreasAreResizable;
-- (void)setTextAreasAreResizable:(BOOL)flag;
-
-- (PDFDisplayMode)PDFDisplayMode;
-- (void)setPDFDisplayMode:(PDFDisplayMode)mode;
-#endif
-
-- (BOOL)shrinksStandaloneImagesToFit;
-- (void)setShrinksStandaloneImagesToFit:(BOOL)flag;
-
-- (BOOL)automaticallyDetectsCacheModel;
-- (void)setAutomaticallyDetectsCacheModel:(BOOL)automaticallyDetectsCacheModel;
-
-- (BOOL)domTimersThrottlingEnabled;
-- (void)setDOMTimersThrottlingEnabled:(BOOL)domTimersThrottlingEnabled;
-
-- (BOOL)webArchiveDebugModeEnabled;
-- (void)setWebArchiveDebugModeEnabled:(BOOL)webArchiveDebugModeEnabled;
-
-- (BOOL)localFileContentSniffingEnabled;
-- (void)setLocalFileContentSniffingEnabled:(BOOL)localFileContentSniffingEnabled;
-
-- (BOOL)offlineWebApplicationCacheEnabled;
-- (void)setOfflineWebApplicationCacheEnabled:(BOOL)offlineWebApplicationCacheEnabled;
-
-- (BOOL)databasesEnabled;
-- (void)setDatabasesEnabled:(BOOL)databasesEnabled;
-
-#if TARGET_OS_IPHONE
-- (BOOL)storageTrackerEnabled;
-- (void)setStorageTrackerEnabled:(BOOL)storageTrackerEnabled;
-#endif
-
-- (BOOL)localStorageEnabled;
-- (void)setLocalStorageEnabled:(BOOL)localStorageEnabled;
-
-- (BOOL)isWebSecurityEnabled;
-- (void)setWebSecurityEnabled:(BOOL)flag;
-
-- (BOOL)allowUniversalAccessFromFileURLs;
-- (void)setAllowUniversalAccessFromFileURLs:(BOOL)flag;
-
-- (BOOL)allowFileAccessFromFileURLs;
-- (void)setAllowFileAccessFromFileURLs:(BOOL)flag;
-
-- (BOOL)allowTopNavigationToDataURLs;
-- (void)setAllowTopNavigationToDataURLs:(BOOL)flag;
-
-- (BOOL)allowCrossOriginSubresourcesToAskForCredentials;
-- (void)setAllowCrossOriginSubresourcesToAskForCredentials:(BOOL)flag;
-
-- (BOOL)needsStorageAccessFromFileURLsQuirk;
-- (void)setNeedsStorageAccessFromFileURLsQuirk:(BOOL)flag;
-
-- (BOOL)zoomsTextOnly;
-- (void)setZoomsTextOnly:(BOOL)zoomsTextOnly;
-
-- (BOOL)javaScriptCanAccessClipboard;
-- (void)setJavaScriptCanAccessClipboard:(BOOL)flag;
-
-- (BOOL)isXSSAuditorEnabled;
-- (void)setXSSAuditorEnabled:(BOOL)flag;
-
-- (BOOL)experimentalNotificationsEnabled;
-- (void)setExperimentalNotificationsEnabled:(BOOL)notificationsEnabled;
-
-- (BOOL)isFrameFlatteningEnabled;
-- (void)setFrameFlatteningEnabled:(BOOL)flag;
-
-- (WebKitFrameFlattening)frameFlattening;
-- (void)setFrameFlattening:(WebKitFrameFlattening)flag;
-
-- (BOOL)asyncFrameScrollingEnabled;
-- (void)setAsyncFrameScrollingEnabled:(BOOL)enabled;
-
-- (BOOL)isSpatialNavigationEnabled;
-- (void)setSpatialNavigationEnabled:(BOOL)flag;
-
-- (void)setMediaDevicesEnabled:(BOOL)flag;
-- (BOOL)mediaDevicesEnabled;
-
-- (void)setMediaStreamEnabled:(BOOL)flag;
-- (BOOL)mediaStreamEnabled;
-
-- (void)setPeerConnectionEnabled:(BOOL)flag;
-- (BOOL)peerConnectionEnabled;
-
-#if !TARGET_OS_IPHONE
-// zero means do AutoScale
-- (float)PDFScaleFactor;
-- (void)setPDFScaleFactor:(float)scale;
-#endif
-
-- (int64_t)applicationCacheTotalQuota;
-- (void)setApplicationCacheTotalQuota:(int64_t)quota;
-
-- (int64_t)applicationCacheDefaultOriginQuota;
-- (void)setApplicationCacheDefaultOriginQuota:(int64_t)quota;
-
-- (WebKitEditableLinkBehavior)editableLinkBehavior;
-- (void)setEditableLinkBehavior:(WebKitEditableLinkBehavior)behavior;
-
-- (WebTextDirectionSubmenuInclusionBehavior)textDirectionSubmenuInclusionBehavior;
-- (void)setTextDirectionSubmenuInclusionBehavior:(WebTextDirectionSubmenuInclusionBehavior)behavior;
-
-// Used to set preference specified in the test via LayoutTestController.overridePreference(..).
-// For use with DumpRenderTree only.
-- (void)_setPreferenceForTestWithValue:(NSString *)value forKey:(NSString *)key;
-
-// If site-specific spoofing is enabled, some pages that do inappropriate user-agent string checks will be
-// passed a nonstandard user-agent string to get them to work correctly. This method might be removed in
-// the future when there's no more need for it.
-- (BOOL)_useSiteSpecificSpoofing;
-- (void)_setUseSiteSpecificSpoofing:(BOOL)newValue;
-
-// WARNING: Allowing paste through the DOM API opens a security hole. We only use it for testing purposes.
-- (BOOL)isDOMPasteAllowed;
-- (void)setDOMPasteAllowed:(BOOL)DOMPasteAllowed;
-
-- (NSString *)_ftpDirectoryTemplatePath;
-- (void)_setFTPDirectoryTemplatePath:(NSString *)path;
-
-- (void)_setForceFTPDirectoryListings:(BOOL)force;
-- (BOOL)_forceFTPDirectoryListings;
-
-- (NSString *)_localStorageDatabasePath;
-- (void)_setLocalStorageDatabasePath:(NSString *)path;
-
-- (BOOL)acceleratedDrawingEnabled;
-- (void)setAcceleratedDrawingEnabled:(BOOL)enabled;
-
-- (BOOL)displayListDrawingEnabled;
-- (void)setDisplayListDrawingEnabled:(BOOL)enabled;
-
-- (BOOL)resourceLoadStatisticsEnabled;
-- (void)setResourceLoadStatisticsEnabled:(BOOL)enabled;
-
-- (BOOL)canvasUsesAcceleratedDrawing;
-- (void)setCanvasUsesAcceleratedDrawing:(BOOL)enabled;
-
-- (BOOL)acceleratedCompositingEnabled;
-- (void)setAcceleratedCompositingEnabled:(BOOL)enabled;
-
-- (BOOL)subpixelAntialiasedLayerTextEnabled;
-- (void)setSubpixelAntialiasedLayerTextEnabled:(BOOL)enabled;
-
-- (BOOL)showDebugBorders;
-- (void)setShowDebugBorders:(BOOL)show;
-
-- (BOOL)simpleLineLayoutEnabled;
-- (void)setSimpleLineLayoutEnabled:(BOOL)enabled;
-
-- (BOOL)simpleLineLayoutDebugBordersEnabled;
-- (void)setSimpleLineLayoutDebugBordersEnabled:(BOOL)enabled;
-
-- (BOOL)showRepaintCounter;
-- (void)setShowRepaintCounter:(BOOL)show;
-
-- (BOOL)webAudioEnabled;
-- (void)setWebAudioEnabled:(BOOL)enabled;
-
-
-- (BOOL)webGLEnabled;
-- (void)setWebGLEnabled:(BOOL)enabled;
-
-- (BOOL)forceLowPowerGPUForWebGL;
-- (void)setForceWebGLUsesLowPower:(BOOL)forceLowPower;
-
-- (BOOL)accelerated2dCanvasEnabled;
-- (void)setAccelerated2dCanvasEnabled:(BOOL)enabled;
-
-- (BOOL)paginateDuringLayoutEnabled;
-- (void)setPaginateDuringLayoutEnabled:(BOOL)flag;
-
-- (BOOL)hyperlinkAuditingEnabled;
-- (void)setHyperlinkAuditingEnabled:(BOOL)enabled;
-
-// Deprecated. Use -setVideoPlaybackRequiresUserGesture and -setAudioPlaybackRequiresUserGesture instead.
-- (void)setMediaPlaybackRequiresUserGesture:(BOOL)flag;
-// Deprecated. Use -videoPlaybackRequiresUserGesture and -audioPlaybackRequiresUserGesture instead.
-- (BOOL)mediaPlaybackRequiresUserGesture;
-
-- (void)setVideoPlaybackRequiresUserGesture:(BOOL)flag;
-- (BOOL)videoPlaybackRequiresUserGesture;
-
-- (void)setAudioPlaybackRequiresUserGesture:(BOOL)flag;
-- (BOOL)audioPlaybackRequiresUserGesture;
-
-- (void)setOverrideUserGestureRequirementForMainContent:(BOOL)flag;
-- (BOOL)overrideUserGestureRequirementForMainContent;
-
-- (void)setMediaPlaybackAllowsInline:(BOOL)flag;
-- (BOOL)mediaPlaybackAllowsInline;
-
-- (void)setInlineMediaPlaybackRequiresPlaysInlineAttribute:(BOOL)flag;
-- (BOOL)inlineMediaPlaybackRequiresPlaysInlineAttribute;
-
-- (void)setInvisibleAutoplayNotPermitted:(BOOL)flag;
-- (BOOL)invisibleAutoplayNotPermitted;
-
-- (void)setMediaControlsScaleWithPageZoom:(BOOL)flag;
-- (BOOL)mediaControlsScaleWithPageZoom;
-
-- (void)setAllowsAlternateFullscreen:(BOOL)flag;
-- (BOOL)allowsAlternateFullscreen;
-
-- (void)setAllowsPictureInPictureMediaPlayback:(BOOL)flag;
-- (BOOL)allowsPictureInPictureMediaPlayback;
-
-- (NSString *)pictographFontFamily;
-- (void)setPictographFontFamily:(NSString *)family;
-
-- (BOOL)pageCacheSupportsPlugins;
-- (void)setPageCacheSupportsPlugins:(BOOL)flag;
-
-// This is a global setting.
-- (BOOL)mockScrollbarsEnabled;
-- (void)setMockScrollbarsEnabled:(BOOL)flag;
-
-#if TARGET_OS_IPHONE
-// This is a global setting.
-- (unsigned)audioSessionCategoryOverride;
-- (void)setAudioSessionCategoryOverride:(unsigned)override;
-
-- (BOOL)avKitEnabled;
-- (void)setAVKitEnabled:(bool)flag;
-
-// WARNING: this affect network performance. This must not be enabled for production use.
-// Enabling this makes WebCore reports the network data usage.
-// This is a global setting.
-- (void)setNetworkDataUsageTrackingEnabled:(bool)trackingEnabled;
-- (BOOL)networkDataUsageTrackingEnabled;
-
-- (void)setNetworkInterfaceName:(NSString *)name;
-- (NSString *)networkInterfaceName;
-
-- (void)_setMinimumZoomFontSize:(float)size;
-- (float)_minimumZoomFontSize;
-
-- (void)setMediaPlaybackAllowsAirPlay:(BOOL)flag;
-- (BOOL)mediaPlaybackAllowsAirPlay;
-
-- (BOOL)contentChangeObserverEnabled;
-- (void)setContentChangeObserverEnabled:(BOOL)enabled;
-#endif
-
-- (void)_setTextAutosizingEnabled:(BOOL)enabled;
-- (BOOL)_textAutosizingEnabled;
-
-- (BOOL)isInheritURIQueryComponentEnabled;
-- (void)setEnableInheritURIQueryComponent:(BOOL)flag;
-
-// Other private methods
-#if TARGET_OS_IPHONE
-- (BOOL)_standalone;
-- (void)_setStandalone:(BOOL)flag;
-- (void)_setTelephoneNumberParsingEnabled:(BOOL)flag;
-- (BOOL)_telephoneNumberParsingEnabled;
-- (void)_setAllowMultiElementImplicitFormSubmission:(BOOL)flag;
-- (BOOL)_allowMultiElementImplicitFormSubmission;
-- (void)_setAlwaysRequestGeolocationPermission:(BOOL)flag;
-- (BOOL)_alwaysRequestGeolocationPermission;
-- (void)_setAlwaysUseAcceleratedOverflowScroll:(BOOL)flag;
-- (BOOL)_alwaysUseAcceleratedOverflowScroll;
-- (void)_setMaxParseDuration:(float)d;
-- (float)_maxParseDuration;
-- (void)_setInterpolationQuality:(int)quality;
-- (int)_interpolationQuality;
-- (BOOL)_allowPasswordEcho;
-- (float)_passwordEchoDuration;
-#endif
 - (void)_postPreferencesChangedNotification;
 - (void)_postPreferencesChangedAPINotification;
 + (WebPreferences *)_getInstanceForIdentifier:(NSString *)identifier;
 + (void)_setInstance:(WebPreferences *)instance forIdentifier:(NSString *)identifier;
 + (void)_removeReferenceForIdentifier:(NSString *)identifier;
-- (NSTimeInterval)_backForwardCacheExpirationInterval;
 + (CFStringEncoding)_systemCFStringEncoding;
 + (void)_setInitialDefaultTextEncodingToSystemEncoding;
 + (void)_setIBCreatorID:(NSString *)string;
@@ -393,6 +93,8 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 + (void)_switchNetworkLoaderToNewTestingSession;
 + (void)_setCurrentNetworkLoaderSessionCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)cookieAcceptPolicy;
 + (void)_clearNetworkLoaderSession;
+// Used to set preference specified in the test via LayoutTestController.overridePreference(..).
+- (void)_setPreferenceForTestWithValue:(NSString *)value forKey:(NSString *)key;
 
 + (void)setWebKitLinkTimeVersion:(int)version;
 
@@ -400,159 +102,135 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)willAddToWebView;
 - (void)didRemoveFromWebView;
 
-// Full screen support is dependent on WebCore/WebKit being
-// compiled with ENABLE_FULLSCREEN_API.
-- (void)setFullScreenEnabled:(BOOL)flag;
-- (BOOL)fullScreenEnabled;
-
-- (void)setAsynchronousSpellCheckingEnabled:(BOOL)flag;
-- (BOOL)asynchronousSpellCheckingEnabled;
-
-- (void)setUsePreHTML5ParserQuirks:(BOOL)flag;
-- (BOOL)usePreHTML5ParserQuirks;
-
-- (void)setLoadsSiteIconsIgnoringImageLoadingPreference: (BOOL)flag;
-- (BOOL)loadsSiteIconsIgnoringImageLoadingPreference;
-
-// AVFoundation support is dependent on WebCore/WebKit being
-// compiled with USE_AVFOUNDATION.
-- (void)setAVFoundationEnabled:(BOOL)flag;
-- (BOOL)isAVFoundationEnabled;
-
-- (void)setAVFoundationNSURLSessionEnabled:(BOOL)flag;
-- (BOOL)isAVFoundationNSURLSessionEnabled;
-
 #if TARGET_OS_IPHONE
 - (void)_invalidateCachedPreferences;
 - (void)_synchronizeWebStoragePolicyWithCookiePolicy;
 #endif
 
-- (void)setBackspaceKeyNavigationEnabled:(BOOL)flag;
-- (BOOL)backspaceKeyNavigationEnabled;
-
-- (void)setWantsBalancedSetDefersLoadingBehavior:(BOOL)flag;
-- (BOOL)wantsBalancedSetDefersLoadingBehavior;
-
-- (void)setShouldDisplaySubtitles:(BOOL)flag;
-- (BOOL)shouldDisplaySubtitles;
-
-- (void)setShouldDisplayCaptions:(BOOL)flag;
-- (BOOL)shouldDisplayCaptions;
-
-- (void)setShouldDisplayTextDescriptions:(BOOL)flag;
-- (BOOL)shouldDisplayTextDescriptions;
-
-- (void)setNotificationsEnabled:(BOOL)flag;
-- (BOOL)notificationsEnabled;
-
-- (void)setShouldRespectImageOrientation:(BOOL)flag;
-- (BOOL)shouldRespectImageOrientation;
-
-- (BOOL)requestAnimationFrameEnabled;
-- (void)setRequestAnimationFrameEnabled:(BOOL)enabled;
-
-- (void)setIncrementalRenderingSuppressionTimeoutInSeconds:(NSTimeInterval)timeout;
-- (NSTimeInterval)incrementalRenderingSuppressionTimeoutInSeconds;
-
-- (BOOL)diagnosticLoggingEnabled;
-- (void)setDiagnosticLoggingEnabled:(BOOL)enabled;
-
-- (void)setStorageBlockingPolicy:(WebStorageBlockingPolicy)storageBlockingPolicy;
-- (WebStorageBlockingPolicy)storageBlockingPolicy;
-
-- (BOOL)plugInSnapshottingEnabled;
-- (void)setPlugInSnapshottingEnabled:(BOOL)enabled;
-
-- (BOOL)hiddenPageDOMTimerThrottlingEnabled;
-- (void)setHiddenPageDOMTimerThrottlingEnabled:(BOOL)flag;
-
-- (BOOL)hiddenPageCSSAnimationSuspensionEnabled;
-- (void)setHiddenPageCSSAnimationSuspensionEnabled:(BOOL)flag;
-
-- (BOOL)lowPowerVideoAudioBufferSizeEnabled;
-- (void)setLowPowerVideoAudioBufferSizeEnabled:(BOOL)enabled;
-
-- (void)setUseLegacyTextAlignPositionedElementBehavior:(BOOL)flag;
-- (BOOL)useLegacyTextAlignPositionedElementBehavior;
-
-- (void)setMediaSourceEnabled:(BOOL)flag;
-- (BOOL)mediaSourceEnabled;
-
-- (void)setShouldConvertPositionStyleOnCopy:(BOOL)flag;
-- (BOOL)shouldConvertPositionStyleOnCopy;
-
-- (void)setImageControlsEnabled:(BOOL)flag;
-- (BOOL)imageControlsEnabled;
-
-- (void)setServiceControlsEnabled:(BOOL)flag;
-- (BOOL)serviceControlsEnabled;
-
-- (void)setGamepadsEnabled:(BOOL)flag;
-- (BOOL)gamepadsEnabled;
-
-- (void)setMediaPreloadingEnabled:(BOOL)flag;
-- (BOOL)mediaPreloadingEnabled;
-
-- (void)setMediaKeysStorageDirectory:(NSString *)directory;
-- (NSString *)mediaKeysStorageDirectory;
-
-- (void)setMetaRefreshEnabled:(BOOL)flag;
-- (BOOL)metaRefreshEnabled;
-
-- (void)setHTTPEquivEnabled:(BOOL)flag;
-- (BOOL)httpEquivEnabled;
-
-- (void)setMockCaptureDevicesEnabled:(BOOL)flag;
-- (BOOL)mockCaptureDevicesEnabled;
-
-- (void)setMockCaptureDevicesPromptEnabled:(BOOL)flag;
-- (BOOL)mockCaptureDevicesPromptEnabled;
-
-- (void)setEnumeratingAllNetworkInterfacesEnabled:(BOOL)flag;
-- (BOOL)enumeratingAllNetworkInterfacesEnabled;
-
-- (void)setIceCandidateFilteringEnabled:(BOOL)flag;
-- (BOOL)iceCandidateFilteringEnabled;
-
-- (void)setMediaCaptureRequiresSecureConnection:(BOOL)flag;
-- (BOOL)mediaCaptureRequiresSecureConnection;
-
-- (void)setDataTransferItemsEnabled:(BOOL)flag;
-- (BOOL)dataTransferItemsEnabled;
-
-- (void)setCustomPasteboardDataEnabled:(BOOL)flag;
-- (BOOL)customPasteboardDataEnabled;
-
-- (BOOL)cacheAPIEnabled;
-- (void)setCacheAPIEnabled:(BOOL)enabled;
-
-- (void)setDownloadAttributeEnabled:(BOOL)flag;
-- (BOOL)downloadAttributeEnabled;
-
-- (void)setDirectoryUploadEnabled:(BOOL)flag;
-- (BOOL)directoryUploadEnabled;
-
-- (void)setModernMediaControlsEnabled:(BOOL)flag;
-- (BOOL)modernMediaControlsEnabled;
-
-- (void)setSelectionAcrossShadowBoundariesEnabled:(BOOL)flag;
-- (BOOL)selectionAcrossShadowBoundariesEnabled;
-
-- (void)setCSSLogicalEnabled:(BOOL)flag;
-- (BOOL)cssLogicalEnabled;
-
-- (void)setLineHeightUnitsEnabled:(BOOL)flag;
-- (BOOL)lineHeightUnitsEnabled;
-
-- (void)setLayoutFormattingContextIntegrationEnabled:(BOOL)flag;
-- (BOOL)layoutFormattingContextIntegrationEnabled;
-
-- (BOOL)isInAppBrowserPrivacyEnabled;
-- (void)setInAppBrowserPrivacyEnabled:(BOOL)flag;
-
-- (void)setWebSQLEnabled:(BOOL)flag;
-- (BOOL)webSQLEnabled;
-
+@property (nonatomic, getter=isDNSPrefetchingEnabled) BOOL DNSPrefetchingEnabled;
+@property (nonatomic) BOOL developerExtrasEnabled;
+@property (nonatomic) WebKitJavaScriptRuntimeFlags javaScriptRuntimeFlags;
+@property (nonatomic) BOOL authorAndUserStylesEnabled;
+@property (nonatomic) BOOL applicationChromeModeEnabled;
+@property (nonatomic) BOOL usesEncodingDetector;
+@property (nonatomic) BOOL shrinksStandaloneImagesToFit;
+@property (nonatomic) BOOL automaticallyDetectsCacheModel;
+@property (nonatomic, getter=domTimersThrottlingEnabled) BOOL DOMTimersThrottlingEnabled;
+@property (nonatomic) BOOL webArchiveDebugModeEnabled;
+@property (nonatomic) BOOL localFileContentSniffingEnabled;
+@property (nonatomic) BOOL offlineWebApplicationCacheEnabled;
+@property (nonatomic) BOOL databasesEnabled;
+@property (nonatomic) BOOL localStorageEnabled;
+@property (nonatomic, getter=isWebSecurityEnabled) BOOL webSecurityEnabled;
+@property (nonatomic) BOOL allowUniversalAccessFromFileURLs;
+@property (nonatomic) BOOL allowFileAccessFromFileURLs;
+@property (nonatomic) BOOL allowTopNavigationToDataURLs;
+@property (nonatomic) BOOL allowCrossOriginSubresourcesToAskForCredentials;
+@property (nonatomic) BOOL needsStorageAccessFromFileURLsQuirk;
+@property (nonatomic) BOOL zoomsTextOnly;
+@property (nonatomic) BOOL javaScriptCanAccessClipboard;
+@property (nonatomic, getter=isXSSAuditorEnabled) BOOL XSSAuditorEnabled;
+@property (nonatomic) BOOL experimentalNotificationsEnabled;
+@property (nonatomic, getter=isFrameFlatteningEnabled) BOOL frameFlatteningEnabled;
+@property (nonatomic) WebKitFrameFlattening frameFlattening;
+@property (nonatomic) BOOL asyncFrameScrollingEnabled;
+@property (nonatomic, getter=isSpatialNavigationEnabled) BOOL spatialNavigationEnabled;
+@property (nonatomic) BOOL mediaDevicesEnabled;
+@property (nonatomic) BOOL mediaStreamEnabled;
+@property (nonatomic) BOOL peerConnectionEnabled;
+@property (nonatomic) int64_t applicationCacheTotalQuota;
+@property (nonatomic) int64_t applicationCacheDefaultOriginQuota;
+@property (nonatomic) WebKitEditableLinkBehavior editableLinkBehavior;
+@property (nonatomic) WebTextDirectionSubmenuInclusionBehavior textDirectionSubmenuInclusionBehavior;
+// If site-specific spoofing is enabled, some pages that do inappropriate user-agent string checks will be
+// passed a nonstandard user-agent string to get them to work correctly. This method might be removed in
+// the future when there's no more need for it.
+@property (nonatomic, setter=_setUseSiteSpecificSpoofing:) BOOL _useSiteSpecificSpoofing;
+// WARNING: Allowing paste through the DOM API opens a security hole. We only use it for testing purposes.
+@property (nonatomic, getter=isDOMPasteAllowed) BOOL DOMPasteAllowed;
+@property (nonatomic, setter=_setFTPDirectoryTemplatePath:) NSString *_ftpDirectoryTemplatePath;
+@property (nonatomic, setter=_setForceFTPDirectoryListings:) BOOL _forceFTPDirectoryListings;
+@property (nonatomic, setter=_setLocalStorageDatabasePath:) NSString *_localStorageDatabasePath;
+@property (nonatomic) BOOL acceleratedDrawingEnabled;
+@property (nonatomic) BOOL displayListDrawingEnabled;
+@property (nonatomic) BOOL resourceLoadStatisticsEnabled;
+@property (nonatomic) BOOL canvasUsesAcceleratedDrawing;
+@property (nonatomic) BOOL acceleratedCompositingEnabled;
+@property (nonatomic) BOOL subpixelAntialiasedLayerTextEnabled;
+@property (nonatomic) BOOL showDebugBorders;
+@property (nonatomic) BOOL simpleLineLayoutEnabled;
+@property (nonatomic) BOOL simpleLineLayoutDebugBordersEnabled;
+@property (nonatomic) BOOL showRepaintCounter;
+@property (nonatomic) BOOL webAudioEnabled;
+@property (nonatomic) BOOL webGLEnabled;
+@property (nonatomic, getter=forceLowPowerGPUForWebGL) BOOL forceWebGLUsesLowPower;
+@property (nonatomic) BOOL accelerated2dCanvasEnabled;
+@property (nonatomic) BOOL paginateDuringLayoutEnabled;
+@property (nonatomic) BOOL hyperlinkAuditingEnabled;
+@property (nonatomic) BOOL mediaPlaybackRequiresUserGesture; // Deprecated. Use videoPlaybackRequiresUserGesture and audioPlaybackRequiresUserGesture instead.
+@property (nonatomic) BOOL videoPlaybackRequiresUserGesture;
+@property (nonatomic) BOOL audioPlaybackRequiresUserGesture;
+@property (nonatomic) BOOL overrideUserGestureRequirementForMainContent;
+@property (nonatomic) BOOL mediaPlaybackAllowsInline;
+@property (nonatomic) BOOL inlineMediaPlaybackRequiresPlaysInlineAttribute;
+@property (nonatomic) BOOL invisibleAutoplayNotPermitted;
+@property (nonatomic) BOOL mediaControlsScaleWithPageZoom;
+@property (nonatomic) BOOL allowsAlternateFullscreen;
+@property (nonatomic) BOOL allowsPictureInPictureMediaPlayback;
+@property (nonatomic) NSString *pictographFontFamily;
+@property (nonatomic) BOOL pageCacheSupportsPlugins;
+@property (nonatomic) BOOL mockScrollbarsEnabled; // This is a global setting.
+@property (nonatomic, setter=_setTextAutosizingEnabled:) BOOL _textAutosizingEnabled;
+@property (nonatomic, getter=isInheritURIQueryComponentEnabled) BOOL enableInheritURIQueryComponent;
+@property (nonatomic) BOOL fullScreenEnabled;
+@property (nonatomic) BOOL asynchronousSpellCheckingEnabled;
+@property (nonatomic) BOOL usePreHTML5ParserQuirks;
+@property (nonatomic) BOOL loadsSiteIconsIgnoringImageLoadingPreference;
+@property (nonatomic, getter=isAVFoundationEnabled) BOOL AVFoundationEnabled;
+@property (nonatomic, getter=isAVFoundationNSURLSessionEnabled) BOOL AVFoundationNSURLSessionEnabled;
+@property (nonatomic) BOOL backspaceKeyNavigationEnabled;
+@property (nonatomic) BOOL wantsBalancedSetDefersLoadingBehavior;
+@property (nonatomic) BOOL shouldDisplaySubtitles;
+@property (nonatomic) BOOL shouldDisplayCaptions;
+@property (nonatomic) BOOL shouldDisplayTextDescriptions;
+@property (nonatomic) BOOL notificationsEnabled;
+@property (nonatomic) BOOL shouldRespectImageOrientation;
+@property (nonatomic) BOOL requestAnimationFrameEnabled;
+@property (nonatomic) NSTimeInterval incrementalRenderingSuppressionTimeoutInSeconds;
+@property (nonatomic, readonly) NSTimeInterval _backForwardCacheExpirationInterval;
+@property (nonatomic) BOOL diagnosticLoggingEnabled;
+@property (nonatomic) WebStorageBlockingPolicy storageBlockingPolicy;
+@property (nonatomic) BOOL plugInSnapshottingEnabled;
+@property (nonatomic) BOOL hiddenPageDOMTimerThrottlingEnabled;
+@property (nonatomic) BOOL hiddenPageCSSAnimationSuspensionEnabled;
+@property (nonatomic) BOOL lowPowerVideoAudioBufferSizeEnabled;
+@property (nonatomic) BOOL useLegacyTextAlignPositionedElementBehavior;
+@property (nonatomic) BOOL mediaSourceEnabled;
+@property (nonatomic) BOOL shouldConvertPositionStyleOnCopy;
+@property (nonatomic) BOOL imageControlsEnabled;
+@property (nonatomic) BOOL serviceControlsEnabled;
+@property (nonatomic) BOOL gamepadsEnabled;
+@property (nonatomic) BOOL mediaPreloadingEnabled;
+@property (nonatomic) NSString *mediaKeysStorageDirectory;
+@property (nonatomic) BOOL metaRefreshEnabled;
+@property (nonatomic, getter=httpEquivEnabled) BOOL HTTPEquivEnabled;
+@property (nonatomic) BOOL mockCaptureDevicesEnabled;
+@property (nonatomic) BOOL mockCaptureDevicesPromptEnabled;
+@property (nonatomic) BOOL enumeratingAllNetworkInterfacesEnabled;
+@property (nonatomic) BOOL iceCandidateFilteringEnabled;
+@property (nonatomic) BOOL mediaCaptureRequiresSecureConnection;
+@property (nonatomic) BOOL dataTransferItemsEnabled;
+@property (nonatomic) BOOL customPasteboardDataEnabled;
+@property (nonatomic) BOOL cacheAPIEnabled;
+@property (nonatomic) BOOL downloadAttributeEnabled;
+@property (nonatomic) BOOL directoryUploadEnabled;
+@property (nonatomic) BOOL modernMediaControlsEnabled;
+@property (nonatomic) BOOL selectionAcrossShadowBoundariesEnabled;
+@property (nonatomic, getter=cssLogicalEnabled) BOOL CSSLogicalEnabled;
+@property (nonatomic) BOOL lineHeightUnitsEnabled;
+@property (nonatomic) BOOL layoutFormattingContextIntegrationEnabled;
+@property (nonatomic, getter=isInAppBrowserPrivacyEnabled) BOOL inAppBrowserPrivacyEnabled;
+@property (nonatomic) BOOL webSQLEnabled;
 @property (nonatomic) BOOL CSSOMViewScrollingAPIEnabled;
 @property (nonatomic) BOOL largeImageAsyncDecodingEnabled;
 @property (nonatomic) BOOL animatedImageAsyncDecodingEnabled;
@@ -576,17 +254,44 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL allowMediaContentTypesRequiringHardwareSupportAsFallback;
 @property (nonatomic) BOOL ariaReflectionEnabled;
 @property (nonatomic) BOOL mediaCapabilitiesEnabled;
-@property (nonatomic) BOOL allowCrossOriginSubresourcesToAskForCredentials;
 @property (nonatomic) BOOL sourceBufferChangeTypeEnabled;
-
-#if TARGET_OS_IPHONE
-@property (nonatomic) BOOL quickLookDocumentSavingEnabled;
-#endif
-
 @property (nonatomic) NSString *mediaContentTypesRequiringHardwareSupport;
+@property (nonatomic, retain) NSArray<NSString *> *additionalSupportedImageTypes; // additionalSupportedImageTypes is an array of image UTIs.
 
-// additionalSupportedImageTypes is an array of image UTIs.
-@property (nonatomic, retain) NSArray<NSString *> *additionalSupportedImageTypes;
+#if !TARGET_OS_IPHONE
+
+@property (nonatomic) BOOL respectStandardStyleKeyEquivalents;
+@property (nonatomic) BOOL showsURLsInToolTips;
+@property (nonatomic) BOOL showsToolTipOverTruncatedText;
+@property (nonatomic) BOOL textAreasAreResizable;
+@property (nonatomic) PDFDisplayMode PDFDisplayMode;
+@property (nonatomic) float PDFScaleFactor; // zero means do AutoScale
+
+#else
+
+@property (nonatomic) BOOL storageTrackerEnabled;
+@property (nonatomic) unsigned audioSessionCategoryOverride;
+@property (nonatomic, getter=avKitEnabled) BOOL AVKitEnabled;
+// WARNING: this affect network performance. This must not be enabled for production use.
+// Enabling this makes WebCore reports the network data usage.
+// This is a global setting.
+@property (nonatomic) BOOL networkDataUsageTrackingEnabled;
+@property (nonatomic) NSString *networkInterfaceName;
+@property (nonatomic, setter=_setMinimumZoomFontSize:) float _minimumZoomFontSize;
+@property (nonatomic) BOOL mediaPlaybackAllowsAirPlay;
+@property (nonatomic) BOOL contentChangeObserverEnabled;
+@property (nonatomic, setter=_setStandalone:) BOOL _standalone;
+@property (nonatomic, setter=_setTelephoneNumberParsingEnabled:) BOOL _telephoneNumberParsingEnabled;
+@property (nonatomic, setter=_setAllowMultiElementImplicitFormSubmission:) BOOL _allowMultiElementImplicitFormSubmission;
+@property (nonatomic, setter=_setAlwaysRequestGeolocationPermission:) BOOL _alwaysRequestGeolocationPermission;
+@property (nonatomic, setter=_setAlwaysUseAcceleratedOverflowScroll:) BOOL _alwaysUseAcceleratedOverflowScroll;
+@property (nonatomic, setter=_setMaxParseDuration:) float _maxParseDuration;
+@property (nonatomic, setter=_setInterpolationQuality:) int _interpolationQuality;
+@property (nonatomic, readonly) BOOL _allowPasswordEcho;
+@property (nonatomic, readonly) float _passwordEchoDuration;
+@property (nonatomic) BOOL quickLookDocumentSavingEnabled;
+
+#endif
 
 @end
 

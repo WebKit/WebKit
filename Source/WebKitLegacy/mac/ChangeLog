@@ -1,3 +1,13 @@
+2020-10-17  Sam Weinig  <weinig@apple.com>
+
+        Convert preferences in WebPreferencesPrivate.h to use @property syntax to make them more manageable
+        https://bugs.webkit.org/show_bug.cgi?id=217877
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebPreferencesPrivate.h:
+        Switch to using the @property syntax. No behavior change intended, just a cleanup.
+
 2020-10-16  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: rename `Highlight` so it doesn't conflict with CSS `Highlight`
