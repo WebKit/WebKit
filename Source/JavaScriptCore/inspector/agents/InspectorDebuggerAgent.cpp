@@ -1337,7 +1337,6 @@ void InspectorDebuggerAgent::clearDebuggerBreakpointState()
     m_pausedGlobalObject = nullptr;
     m_currentCallStack = { };
     m_scripts.clear();
-    m_protocolBreakpointForProtocolBreakpointID.clear();
     m_debuggerBreakpointsForProtocolBreakpointID.clear();
     m_nextDebuggerBreakpointID = JSC::noBreakpointID + 1;
     m_continueToLocationDebuggerBreakpoint = nullptr;

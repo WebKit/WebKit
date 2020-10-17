@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/log-active-stack-trace.js"></script>
+<script src="resources/nested-calls.js"></script>
+<script>
+function test()
+{
+    InspectorTest.debug();
+    let suite = InspectorTest.createAsyncSuite("Breakpoint.Resolve");
+
+    suite.addTestCase({
+        name: "Breakpoint.Resolve.WhenScriptAdded",
+        description: "Test that breakpoints already sent to the backend automatically resolve when scripts matching that breakpoint are loaded.",
+        async test() {
+            InspectorTest.log("Waiting for script...");
+            let script = await new Promise((resolve, reject) => {
+                for (let resource of WI.networkManager.mainFrame.resourceCollection) {
+                    if (resource.url.endsWith("resources/nested-calls.js")) {
+                        resolve(resource);
+                        return;
+                    }
+                }
+
+                let listener = WI.networkManager.mainFrame.addEventListener(WI.Frame.Event.ResourceWasAdded, (event) => {
+                    if (event.resource.url.endsWith("resources/nested-calls.js")) {
+                        WI.networkManager.mainFrame.removeEventListener(WI.Frame.Event.ResourceWasAdded, listener);
+                        resolve(event.resource);
+                    }
+                });
+            });
+            InspectorTest.pass("Found script.");
+
+            let breakpoint = new WI.JavaScriptBreakpoint(script.createSourceCodeLocation(7, 0));
+
+            InspectorTest.log("Adding breakpoint...");
+            let breakpoingResolvedStateDidChangePromise = breakpoint.awaitEvent(WI.JavaScriptBreakpoint.Event.ResolvedStateDidChange);
+            WI.debuggerManager.addBreakpoint(breakpoint);
+            await breakpoingResolvedStateDidChangePromise;
+            InspectorTest.assert(breakpoint.resolved, "Breakpoint should be resolved.");
+
+            InspectorTest.log("Reloading page...");
+            await Promise.all([
+                WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused),
+                InspectorTest.reloadPage(),
+            ]);
+            InspectorTest.pass("Paused");
+            logActiveStackTrace();
+
+            InspectorTest.log("Removing breakpoint...");
+            breakpoint.remove();
+
+            InspectorTest.log("Resuming...");
+            await WI.debuggerManager.resume();
+        },
+   });
+
+   suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for breakpoint resolving behavior.</p>
+</body>
+</html>
