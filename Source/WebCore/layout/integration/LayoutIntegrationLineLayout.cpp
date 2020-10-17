@@ -399,9 +399,13 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     for (auto& run : inlineContent.runsForRect(paintRect)) {
         if (!run.textContent()) {
             auto* renderer = m_boxTree.rendererForLayoutBox(run.layoutBox());
-            if (renderer && renderer->isReplaced() && is<RenderElement>(*renderer)) {
-                auto& renderElement = const_cast<RenderElement&>(downcast<RenderElement>(*renderer));
-                renderElement.paint(paintInfo, paintOffset);
+            if (renderer && renderer->isReplaced() && is<RenderBox>(*renderer)) {
+                auto& renderBox = const_cast<RenderBox&>(downcast<RenderBox>(*renderer));
+                if (renderBox.hasSelfPaintingLayer())
+                    continue;
+                if (!paintInfo.shouldPaintWithinRoot(renderBox))
+                    continue;
+                renderBox.paintAsInlineBlock(paintInfo, paintOffset);
             }
             continue;
         }
