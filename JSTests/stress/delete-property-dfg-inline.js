@@ -324,7 +324,7 @@ function testTypedArray() {
     let foo = new Uint8Array(12);
     transferArrayBuffer(foo.buffer)
     doDelete12(foo)
-    assert_throws(() => delete foo[0])
+    assert(delete foo[0]);
 }
 noInline(testTypedArray)
 

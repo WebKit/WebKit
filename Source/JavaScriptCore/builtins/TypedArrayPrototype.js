@@ -96,6 +96,9 @@ function fill(value /* [, start [, end]] */)
     var start = @typedArrayClampArgumentToStartOrEnd(@argument(1), length, 0);
     var end = @typedArrayClampArgumentToStartOrEnd(@argument(2), length, length);
 
+    if (@isNeutered(this))
+        @throwTypeError("Underlying ArrayBuffer has been detached from the view");
+
     for (var i = start; i < end; i++)
         this[i] = number;
     return this;
@@ -175,7 +178,16 @@ function sort(comparator)
         return a < b ? a : b;
     }
 
-    function merge(dst, src, srcIndex, srcEnd, width, comparator)
+    var compare = (a, b) => {
+        var result = @toNumber(comparator(a, b));
+
+        if (@isNeutered(this))
+            @throwTypeError("Underlying ArrayBuffer has been detached from the view");
+
+        return result;
+    };
+
+    function merge(dst, src, srcIndex, srcEnd, width)
     {
         var left = srcIndex;
         var leftEnd = min(left + width, srcEnd);
@@ -184,7 +196,7 @@ function sort(comparator)
 
         for (var dstIndex = left; dstIndex < rightEnd; ++dstIndex) {
             if (right < rightEnd) {
-                if (left >= leftEnd || comparator(src[right], src[left]) < 0) {
+                if (left >= leftEnd || compare(src[right], src[left]) < 0) {
                     dst[dstIndex] = src[right++];
                     continue;
                 }
@@ -194,7 +206,7 @@ function sort(comparator)
         }
     }
 
-    function mergeSort(array, valueCount, comparator)
+    function mergeSort(array, valueCount)
     {
         var buffer = [ ];
         buffer.length = valueCount;
@@ -204,7 +216,7 @@ function sort(comparator)
 
         for (var width = 1; width < valueCount; width *= 2) {
             for (var srcIndex = 0; srcIndex < valueCount; srcIndex += 2 * width)
-                merge(dst, src, srcIndex, valueCount, width, comparator);
+                merge(dst, src, srcIndex, valueCount, width);
 
             var tmp = src;
             src = dst;
@@ -225,7 +237,7 @@ function sort(comparator)
         return;
 
     if (comparator !== @undefined)
-        mergeSort(this, length, comparator);
+        mergeSort(this, length);
     else
         @typedArraySort(this);
 

@@ -1,3 +1,44 @@
+2020-10-17  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Ensure %TypedArray% essential internal methods adhere to spec
+        https://bugs.webkit.org/show_bug.cgi?id=217854
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch addresses https://github.com/tc39/ecma262/pull/2164,
+        which aligns detached buffer semantics in typed arrays with web reality.
+
+        In particular:
+        - [[HasProperty]] must not throw
+        - IntegerIndexedElementGet (i.e. [[GetOwnProperty]] and [[Get]]) must not throw
+        - IntegerIndexedElementSet (i.e. [[DefineOwnProperty]] and [[Set]]) must not throw
+        - Integer-indexed elements must be [[Configurable]] (to avoid breaking a [[HasProperty]] invariant)
+        - [[Delete]] must be overridden to return false for integer-indexed elements (which are *not* deletable)
+
+        This patch furthermore ensures that all of these essential internal methods have a spec-perfect implementation.
+
+        Note that there are a couple of interesting ripple effects here:
+        - The fill(), sort(), and set() methods should throw explicitly, but we'd been letting [[Get]] throw instead.
+        - Other callback-taking methods should *not* throw anymore; they only did so implicitly via [[Get]] and [[Set]].
+
+        * builtins/TypedArrayPrototype.js:
+        (fill):
+        (sort):
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::set):
+        (JSC::JSGenericTypedArrayView<Adaptor>::getOwnPropertySlot):
+        (JSC::JSGenericTypedArrayView<Adaptor>::put):
+        (JSC::JSGenericTypedArrayView<Adaptor>::defineOwnProperty):
+        (JSC::JSGenericTypedArrayView<Adaptor>::deleteProperty):
+        (JSC::JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex):
+        (JSC::JSGenericTypedArrayView<Adaptor>::deletePropertyByIndex):
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::getPropertySlot):
+        (JSC::JSObject::getNonIndexPropertySlot):
+        * runtime/JSTypedArrays.cpp:
+
 2020-10-16  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r266074): line-based JavaScript breakpoints don't hit after reload

@@ -302,8 +302,11 @@ bool JSGenericTypedArrayView<Adaptor>::set(
             RETURN_IF_EXCEPTION(scope, false);
             bool success = setIndex(globalObject, offset + i, value);
             EXCEPTION_ASSERT(!scope.exception() || !success);
-            if (!success)
+            if (!success) {
+                if (isNeutered())
+                    throwTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
                 return false;
+            }
         }
         return true;
     } }
@@ -337,27 +340,12 @@ bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlot(
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
 
     if (Optional<uint32_t> index = parseIndex(propertyName)) {
-        if (thisObject->isNeutered()) {
-            slot.setCustom(thisObject, static_cast<unsigned>(PropertyAttribute::None), throwNeuteredTypedArrayTypeError);
-            return true;
-        }
-
-        if (thisObject->canGetIndexQuickly(index.value())) {
-            slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontDelete), thisObject->getIndexQuickly(index.value()));
-            return true;
-        }
-
-        return false;
+        static_assert(std::is_final_v<JSGenericTypedArrayView<Adaptor>>, "getOwnPropertySlotByIndex must not be overridden");
+        return getOwnPropertySlotByIndex(thisObject, globalObject, index.value(), slot);
     }
 
-    if (isCanonicalNumericIndexString(propertyName)) {
-        if (thisObject->isNeutered()) {
-            slot.setCustom(thisObject, static_cast<unsigned>(PropertyAttribute::None), throwNeuteredTypedArrayTypeError);
-            return true;
-        }
-
+    if (isCanonicalNumericIndexString(propertyName))
         return false;
-    }
 
     return Base::getOwnPropertySlot(thisObject, globalObject, propertyName, slot);
 }
@@ -367,24 +355,20 @@ bool JSGenericTypedArrayView<Adaptor>::put(
     JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value,
     PutPropertySlot& slot)
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
 
-    // https://tc39.github.io/ecma262/#sec-integer-indexed-exotic-objects-set-p-v-receiver
-    // Ignore the receiver even if the receiver is altered to non base value.
-    // 9.4.5.5-2-b-i Return ? IntegerIndexedElementSet(O, numericIndex, V).
-    if (Optional<uint32_t> index = parseIndex(propertyName))
-        RELEASE_AND_RETURN(scope, putByIndex(thisObject, globalObject, index.value(), value, slot.isStrictMode()));
+    if (Optional<uint32_t> index = parseIndex(propertyName)) {
+        static_assert(std::is_final_v<JSGenericTypedArrayView<Adaptor>>, "putByIndex must not be overridden");
+        return putByIndex(thisObject, globalObject, index.value(), value, slot.isStrictMode());
+    }
 
     if (isCanonicalNumericIndexString(propertyName)) {
-        if (thisObject->isNeutered())
-            throwTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+        // Cases like '-0', '1.1', etc. are still obliged to give the RHS a chance to throw.
+        toNativeFromValue<Adaptor>(globalObject, value);
         return false;
     }
 
-    RELEASE_AND_RETURN(scope, Base::put(thisObject, globalObject, propertyName, value, slot));
+    return Base::put(thisObject, globalObject, propertyName, value, slot);
 }
 
 template<typename Adaptor>
@@ -403,14 +387,14 @@ bool JSGenericTypedArrayView<Adaptor>::defineOwnProperty(
             return false;
         };
 
-        if (index.value() >= thisObject->m_length)
+        if (!thisObject->isNeutered() && index.value() >= thisObject->m_length)
             return false;
 
         if (descriptor.isAccessorDescriptor())
             return throwTypeErrorIfNeeded("Attempting to store accessor property on a typed array at index: ");
 
-        if (descriptor.configurable())
-            return throwTypeErrorIfNeeded("Attempting to configure non-configurable property on a typed array at index: ");
+        if (descriptor.configurablePresent() && !descriptor.configurable())
+            return throwTypeErrorIfNeeded("Attempting to store non-configurable property on a typed array at index: ");
 
         if (descriptor.enumerablePresent() && !descriptor.enumerable())
             return throwTypeErrorIfNeeded("Attempting to store non-enumerable property on a typed array at index: ");
@@ -434,16 +418,16 @@ template<typename Adaptor>
 bool JSGenericTypedArrayView<Adaptor>::deleteProperty(
     JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
 
-    if (parseIndex(propertyName)) {
-        if (thisObject->isNeutered())
-            return typeError(globalObject, scope, true, typedArrayBufferHasBeenDetachedErrorMessage);
-        return false;
+    if (Optional<uint32_t> index = parseIndex(propertyName)) {
+        static_assert(std::is_final_v<JSGenericTypedArrayView<Adaptor>>, "deletePropertyByIndex must not be overridden");
+        return deletePropertyByIndex(thisObject, globalObject, index.value());
     }
-    
+
+    if (isCanonicalNumericIndexString(propertyName))
+        return true;
+
     return Base::deleteProperty(thisObject, globalObject, propertyName, slot);
 }
 
@@ -453,15 +437,10 @@ bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex(
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
 
-    if (thisObject->isNeutered()) {
-        slot.setCustom(thisObject, static_cast<unsigned>(PropertyAttribute::None), throwNeuteredTypedArrayTypeError);
-        return true;
-    }
-
-    if (!thisObject->canGetIndexQuickly(propertyName))
+    if (thisObject->isNeutered() || !thisObject->canGetIndexQuickly(propertyName))
         return false;
-    
-    slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontDelete), thisObject->getIndexQuickly(propertyName));
+
+    slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::None), thisObject->getIndexQuickly(propertyName));
     return true;
 }
 
@@ -475,10 +454,11 @@ bool JSGenericTypedArrayView<Adaptor>::putByIndex(
 
 template<typename Adaptor>
 bool JSGenericTypedArrayView<Adaptor>::deletePropertyByIndex(
-    JSCell* cell, JSGlobalObject* globalObject, unsigned propertyName)
+    JSCell* cell, JSGlobalObject*, unsigned propertyName)
 {
-    VM& vm = globalObject->vm();
-    return JSCell::deleteProperty(cell, globalObject, Identifier::from(vm, propertyName));
+    // Integer-indexed elements can't be deleted, so we must return false when the index is valid.
+    JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
+    return thisObject->isNeutered() || propertyName >= thisObject->m_length;
 }
 
 template<typename Adaptor>

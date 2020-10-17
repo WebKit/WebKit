@@ -72,33 +72,26 @@ testInvalidIndices([
     '4294967296',
 ]);
 
-const makeTestValidIndex = (configurable) =>
-    (array, key, value, assert) => {
-        assert(array[key] === value, `${key.toString()} should be set to ${value}`);
-        assert(key in array, `should contain key ${key.toString()}`);
+const testValidIndices = makeTest((array, key, value, assert) => {
+    assert(array[key] === value, `${key.toString()} should be set to ${value}`);
+    assert(key in array, `should contain key ${key.toString()}`);
 
-        assert(array.hasOwnProperty(key) === true, `hasOwnProperty(${key.toString()}) should be true`);
-        const descriptor = Object.getOwnPropertyDescriptor(array, key);
-        assert(typeof descriptor === 'object', `Object.getOwnPropertyDescriptor(${key.toString()}) return an object`);
-        assert(descriptor.value === value, `descriptor.value should be ${value}`);
-        assert(descriptor.writable === true, `descriptor.writable should be true`);
-        assert(descriptor.enumerable === true, `descriptor.enumerable should be true`);
-        assert(descriptor.configurable === configurable, `descriptor.configurable should be ${configurable}`);
-    };
+    assert(array.hasOwnProperty(key) === true, `hasOwnProperty(${key.toString()}) should be true`);
+    const descriptor = Object.getOwnPropertyDescriptor(array, key);
+    assert(typeof descriptor === 'object', `Object.getOwnPropertyDescriptor(${key.toString()}) return an object`);
+    assert(descriptor.value === value, `descriptor.value should be ${value}`);
+    assert(descriptor.writable === true, `descriptor.writable should be true`);
+    assert(descriptor.enumerable === true, `descriptor.enumerable should be true`);
+    assert(descriptor.configurable === true, `descriptor.configurable should be true`);
+});
 
-const testValidConfigurableIndices = makeTest(makeTestValidIndex(true));
-
-testValidConfigurableIndices([
+testValidIndices([
     '01',
     '0.10',
     '+Infinity',
     '-NaN',
     '-0.0',
     Symbol('1'),
-]);
-
-testValidNonConfigurableIndices = makeTest(makeTestValidIndex(false))
-testValidNonConfigurableIndices([
     '0',
     0,
 ]);

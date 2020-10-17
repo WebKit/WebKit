@@ -64,13 +64,5 @@ MAKE_S_INFO(Float64);
 
 MAKE_CONSTRUCTORS(DataView);
 
-JSC_DEFINE_CUSTOM_GETTER(throwNeuteredTypedArrayTypeError, (JSGlobalObject* globalObject, EncodedJSValue object, PropertyName))
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    ASSERT_UNUSED(object, jsCast<JSArrayBufferView*>(JSValue::decode(object))->isNeutered());
-    return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
-}
-
 } // namespace JSC
 

@@ -101,24 +101,16 @@ function assertViewClosed(testName, view)
             }
             try {
                 var v = view[0];
-                testFailed(testName + ": index get on a closed view did not throw an exception");
-                return false;
             } catch(xn) {
-                if (xn != "TypeError: Underlying ArrayBuffer has been detached from the view") {
-                    testFailed(testName + ": index get on a closed view threw the wrong exception: " + xn);
-                    return false;
-                }
+                testFailed(testName + ": index get on a closed view threw an exception: " + xn);
+                return false;
             }
 
             try {
                 view[0] = 42;
-                testFailed(testName + ": index set on a closed view did not throw an exception");
-                return false;
             } catch(xn) {
-                if (xn != "TypeError: Underlying ArrayBuffer has been detached from the view") {
-                    testFailed(testName + ": index set then get on a closed view threw the wrong exception: " + xn);
-                    return false;
-                }
+                testFailed(testName + ": index set on a closed view threw an exception");
+                return false;
             }
 
             try {

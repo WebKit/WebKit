@@ -1,61 +1,9 @@
 typedArrays = [Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array];
 
-
-function check(array, thunk, count) {
-    let failed = true;
-    try {
-        thunk(array, count);
-    } catch(e) {
-        if (e != "TypeError: Underlying ArrayBuffer has been detached from the view")
-            throw new Error([thunk, count, e]);
-        failed = false;
-    }
-    if (failed)
-        throw new Error([thunk, count]);
-}
-noInline(check);
-
-function test(thunk, array) {
-    let fn = Function("array", "i", thunk);
-    noInline(fn);
-    for (let i = 0; i < 10000; i++)
-        check(array, fn, i);
-}
-
-for (let constructor of typedArrays) {
-    let array = new constructor(10);
-    transferArrayBuffer(array.buffer);
-    test("array[0]", array);
-    test("delete array[0]", array);
-    test("Object.getOwnPropertyDescriptor(array, 0)", array);
-    test("array[0] = 1", array);
-    test("array[i] = 1", array);
-}
-
-function testFTL(thunk, array, failArray) {
-    let fn = Function("array", "i", thunk);
-    noInline(fn);
-    for (let i = 0; i < 10000; i++)
-        fn(array, i)
-    check(failArray, fn, 10000);
-}
-
-for (let constructor of typedArrays) {
-    let array = new constructor(10);
-    let failArray = new constructor(10);
-    transferArrayBuffer(failArray.buffer);
-    testFTL("array[0]", array, failArray);
-    testFTL("delete array[0]", array, failArray);
-    testFTL("Object.getOwnPropertyDescriptor(array, 0)", array, failArray);
-    testFTL("array[0] = 1", array, failArray);
-    testFTL("array[i] = 1", array, failArray);
-}
-
-
 function checkNoException(array, thunk, count) {
     thunk(array, count);
 }
-noInline(check);
+noInline(checkNoException);
 
 function testNoException(thunk, array) {
     let fn = Function("array", "i", thunk);
@@ -67,7 +15,12 @@ function testNoException(thunk, array) {
 for (let constructor of typedArrays) {
     let array = new constructor(10);
     transferArrayBuffer(array.buffer);
-    testNoException("Object.defineProperty(array, 0, { value: 1, writable: true, configurable: false, enumerable: true })", array);
+    testNoException("array[0]", array);
+    testNoException("delete array[0]", array);
+    testNoException("Object.getOwnPropertyDescriptor(array, 0)", array);
+    testNoException("array[0] = 1", array);
+    testNoException("array[i] = 1", array);
+    testNoException("Object.defineProperty(array, 0, { value: 1, writable: true, configurable: true, enumerable: true })", array);
 }
 
 function testFTLNoException(thunk, array, failArray) {
@@ -77,9 +30,15 @@ function testFTLNoException(thunk, array, failArray) {
         fn(array, i)
     checkNoException(failArray, fn, 10000);
 }
+
 for (let constructor of typedArrays) {
     let array = new constructor(10);
     let failArray = new constructor(10);
     transferArrayBuffer(failArray.buffer);
-    testFTLNoException("Object.defineProperty(array, 0, { value: 1, writable: true, configurable: false, enumerable: true })", array, failArray);
+    testFTLNoException("array[0]", array, failArray);
+    testFTLNoException("delete array[0]", array, failArray);
+    testFTLNoException("Object.getOwnPropertyDescriptor(array, 0)", array, failArray);
+    testFTLNoException("array[0] = 1", array, failArray);
+    testFTLNoException("array[i] = 1", array, failArray);
+    testFTLNoException("Object.defineProperty(array, 0, { value: 1, writable: true, configurable: true, enumerable: true })", array, failArray);
 }

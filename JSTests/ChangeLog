@@ -1,3 +1,30 @@
+2020-10-17  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Ensure %TypedArray% essential internal methods adhere to spec
+        https://bugs.webkit.org/show_bug.cgi?id=217854
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/array-prototype-splice-making-typed-array.js:
+        * stress/array-species-config-array-constructor.js:
+        * stress/delete-property-dfg-inline.js:
+        * stress/float32array-out-of-bounds.js:
+        * stress/put-direct-index-broken-2.js:
+        * stress/typedarray-access-monomorphic-neutered.js:
+        * stress/typedarray-access-neutered.js:
+        * stress/typedarray-configure-index.js:
+        * stress/typedarray-functions-with-neutered.js:
+        * stress/typedarray-getownproperty.js: Renamed from JSTests/stress/typedarray-getownproperty-not-configurable.js.
+        * stress/typed-array-canonical-numeric-index-string.js:
+        Adjust tests.
+
+        * test262/expectations.yaml:
+        Address all test failures under built-ins/TypedArrayConstructors/internals.
+        Note that there are a slew of corrections needed for these test cases,
+        which were discovered in the course of working on this patch:
+        https://github.com/tc39/test262/pull/2833#issuecomment-709635850
+        Accordingly, these remaining lines should all disappear in the future.
+
 2020-10-16  Saam Barati  <sbarati@apple.com>
 
         Don't emit OpSpread with a constant as the destination

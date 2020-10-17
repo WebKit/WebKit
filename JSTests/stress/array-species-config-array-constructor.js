@@ -31,10 +31,9 @@ function shouldThrow(f, m) {
 }
 
 function test() {
-    const message = "TypeError: Attempting to configure non-configurable property on a typed array at index: 0";
     foo.concat([1]);
     foo = [1,2,3,4];
-    shouldThrow(() => foo.slice(0), message);
+    foo.slice(0);
     foo = [1,2,3,4];
     let r = foo.splice();
     if (!(r instanceof Int32Array))
@@ -42,7 +41,7 @@ function test() {
     if (r.length !== 0)
         throw "Bad";
     foo = [1,2,3,4];
-    shouldThrow(() => foo.splice(0), message);
+    foo.splice(0);
 }
 noInline(test);
 for (let i = 0; i < 3000; ++i)

@@ -90,8 +90,6 @@ enum class CopyType {
 
 extern const ASCIILiteral typedArrayBufferHasBeenDetachedErrorMessage;
 
-JSC_DECLARE_CUSTOM_GETTER(throwNeuteredTypedArrayTypeError);
-
 template<typename Adaptor>
 class JSGenericTypedArrayView final : public JSArrayBufferView {
 public:
@@ -173,12 +171,7 @@ public:
         typename Adaptor::Type value = toNativeFromValue<Adaptor>(globalObject, jsValue);
         RETURN_IF_EXCEPTION(scope, false);
 
-        if (isNeutered()) {
-            throwTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
-            return false;
-        }
-
-        if (i >= m_length)
+        if (isNeutered() || i >= m_length)
             return false;
 
         setIndexQuicklyToNativeValue(i, value);

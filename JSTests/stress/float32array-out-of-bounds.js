@@ -25,5 +25,5 @@ if (result !== void 0)
 
 Float32Array.prototype[1] = 23;
 result = foo(make(42), 1);
-if (result !== 23)
+if (result !== void 0)
     throw "Error: bad result: " + result;

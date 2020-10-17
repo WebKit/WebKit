@@ -12,7 +12,7 @@ function foo() {
         assert(b.value === 0);
         assert(b.writable === true);
         assert(b.enumerable === true);
-        assert(b.configurable === false);
+        assert(b.configurable === true);
     }
 }
 

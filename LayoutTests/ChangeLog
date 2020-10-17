@@ -1,3 +1,17 @@
+2020-10-17  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Ensure %TypedArray% essential internal methods adhere to spec
+        https://bugs.webkit.org/show_bug.cgi?id=217854
+
+        Reviewed by Yusuke Suzuki.
+
+        * fast/canvas/webgl/arraybuffer-transfer-of-control.html:
+        * js/dom/dfg-typed-array-neuter-expected.txt:
+        * js/dom/getOwnPropertyDescriptor-expected.txt:
+        * js/dom/script-tests/dfg-typed-array-neuter.js:
+        * js/resources/getOwnPropertyDescriptor.js:
+        Adjust tests.
+
 2020-10-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r268561): Synthetic oblique text is drawn upside-down

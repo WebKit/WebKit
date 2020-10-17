@@ -60,6 +60,6 @@ JSC_DECLARE_HOST_FUNCTION(globalFuncPropertyIsEnumerable);
 JSC_DECLARE_HOST_FUNCTION(globalFuncOwnKeys);
 JSC_DECLARE_HOST_FUNCTION(globalFuncDateTimeFormat);
 
-double jsToNumber(StringView);
+JS_EXPORT_PRIVATE double jsToNumber(StringView);
 
 } // namespace JSC

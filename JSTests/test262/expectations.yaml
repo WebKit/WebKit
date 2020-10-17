@@ -1240,15 +1240,42 @@ test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
+test/built-ins/TypedArray/prototype/every/callbackfn-detachbuffer.js:
+  default: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array.)'
+  strict mode: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array.)'
+test/built-ins/TypedArray/prototype/filter/callbackfn-detachbuffer.js:
+  default: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array.)'
+  strict mode: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array.)'
+test/built-ins/TypedArray/prototype/find/predicate-may-detach-buffer.js:
+  default: 'Test262Error: throws a TypeError getting a value from the detached buffer Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
+  strict mode: 'Test262Error: throws a TypeError getting a value from the detached buffer Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
+test/built-ins/TypedArray/prototype/findIndex/predicate-may-detach-buffer.js:
+  default: 'Test262Error: throws a TypeError getting a value from the detached buffer Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
+  strict mode: 'Test262Error: throws a TypeError getting a value from the detached buffer Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
+test/built-ins/TypedArray/prototype/forEach/callbackfn-detachbuffer.js:
+  default: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array.)'
+  strict mode: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array.)'
+test/built-ins/TypedArray/prototype/map/callbackfn-detachbuffer.js:
+  default: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array.)'
+  strict mode: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array.)'
+test/built-ins/TypedArray/prototype/reduce/callbackfn-detachbuffer.js:
+  default: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array.)'
+  strict mode: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array.)'
+test/built-ins/TypedArray/prototype/reduceRight/callbackfn-detachbuffer.js:
+  default: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array.)'
+  strict mode: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array.)'
 test/built-ins/TypedArray/prototype/slice/detached-buffer-custom-ctor-other-targettype.js:
-  default: 'Test262Error: Expected obj[0] to have configurable:true. (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected obj[0] to have configurable:true. (Testing with Float64Array.)'
+  default: 'Test262Error: Expected obj[0] to be configurable, but was not. (Testing with Float64Array.)'
+  strict mode: 'Test262Error: Expected obj[0] to be configurable, but was not. (Testing with Float64Array.)'
 test/built-ins/TypedArray/prototype/slice/detached-buffer-zero-count-custom-ctor-other-targettype.js:
   default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
   strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
 test/built-ins/TypedArray/prototype/slice/detached-buffer-zero-count-custom-ctor-same-targettype.js:
   default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
   strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
+test/built-ins/TypedArray/prototype/some/callbackfn-detachbuffer.js:
+  default: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array.)'
+  strict mode: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/ctors/buffer-arg/byteoffset-to-number-detachbuffer.js:
   default: 'Test262Error: Expected a TypeError but got a RangeError (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError but got a RangeError (Testing with Float64Array.)'
@@ -1309,84 +1336,24 @@ test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor
 test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor-value-not-obj-throws.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/tonumber-value-detached-buffer.js:
-  default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-  strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/Delete/detached-buffer-realm.js:
-  default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-  strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/Delete/detached-buffer.js:
-  default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-  strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/Delete/key-is-out-of-bounds-non-strict.js:
-  default: 'Test262Error: The value of `delete sample["1"]` is true Expected SameValue(«false», «true») to be true (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/Delete/key-is-out-of-bounds-strict.js:
-  strict mode: 'TypeError: Unable to delete property. (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/Get/detached-buffer-realm.js:
-  default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-  strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/Get/detached-buffer.js:
-  default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-  strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/Get/infinity-detached-buffer.js:
-  default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-  strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/Get/key-is-not-integer.js:
-  default: 'Test262Error: OrdinaryGet was called! Ref: 9.1.8.1 3.c (Testing with Float64Array.)'
-  strict mode: 'Test262Error: OrdinaryGet was called! Ref: 9.1.8.1 3.c (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/Get/key-is-not-minus-zero.js:
-  default: 'Test262Error: OrdinaryGet was called! Ref: 9.1.8.1 3.c (Testing with Float64Array.)'
-  strict mode: 'Test262Error: OrdinaryGet was called! Ref: 9.1.8.1 3.c (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/Get/key-is-out-of-bounds.js:
-  default: 'Test262Error: OrdinaryGet was called! Ref: 9.1.8.1 3.c (Testing with Float64Array.)'
-  strict mode: 'Test262Error: OrdinaryGet was called! Ref: 9.1.8.1 3.c (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/GetOwnProperty/detached-buffer-realm.js:
-  default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-  strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/GetOwnProperty/detached-buffer.js:
-  default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-  strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
+test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/key-is-numericindex-desc-configurable.js:
+  default: "Test262Error: defineProperty's result Expected SameValue(«true», «false») to be true (Testing with Float64Array.)"
+  strict mode: "Test262Error: defineProperty's result Expected SameValue(«true», «false») to be true (Testing with Float64Array.)"
+test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/key-is-numericindex.js:
+  default: 'Test262Error: Expected SameValue(«false», «true») to be true (Testing with Float64Array.)'
+  strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/internals/GetOwnProperty/index-prop-desc.js:
-  default: 'Test262Error: Expected obj[0] to have configurable:true. (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected obj[0] to have configurable:true. (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/HasProperty/abrupt-from-ordinary-has-parent-hasproperty.js:
-  default: 'Test262Error:  (Testing with Float64Array.)'
-  strict mode: 'Test262Error:  (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/HasProperty/detached-buffer-realm.js:
-  default: 'Test262Error: Reflect.has(sample, "0") must return false Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Reflect.has(sample, "0") must return false Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/HasProperty/detached-buffer.js:
-  default: 'Test262Error: Reflect.has(sample, "0") must return false Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Reflect.has(sample, "0") must return false Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/HasProperty/infinity-with-detached-buffer.js:
-  default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/HasProperty/inherited-property.js:
-  default: 'Test262Error: 42 Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: 42 Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/HasProperty/key-is-greater-than-last-index.js:
-  default: 'Test262Error: Reflect.has(sample, "1") must return false Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Reflect.has(sample, "1") must return false Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/HasProperty/key-is-lower-than-zero.js:
-  default: 'Test262Error: Reflect.has(sample, "-1") must return false Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Reflect.has(sample, "-1") must return false Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/HasProperty/key-is-minus-zero.js:
-  default: 'Test262Error: Reflect.has(sample, "-0") must return false Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Reflect.has(sample, "-0") must return false Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/HasProperty/key-is-not-integer.js:
-  default: 'Test262Error: 1.1 Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: 1.1 Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
+  default: 'Test262Error: Expected obj[0] to be configurable, but was not. (Testing with Float64Array.)'
+  strict mode: 'Test262Error: Expected obj[0] to be configurable, but was not. (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/internals/Set/detached-buffer-realm.js:
-  default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-  strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
+  default: 'Test262Error: `sample[0] = 1` is false Expected SameValue(«1», «false») to be true (Testing with Float64Array.)'
+  strict mode: 'Test262Error: `sample[0] = 1` is false Expected SameValue(«1», «false») to be true (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/internals/Set/detached-buffer.js:
-  default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-  strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
+  default: 'Test262Error: `sample[0] = 1` is false Expected SameValue(«1», «false») to be true (Testing with Float64Array.)'
+  strict mode: 'Test262Error: `sample[0] = 1` is false Expected SameValue(«1», «false») to be true (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/internals/Set/tonumber-value-detached-buffer.js:
-  default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-  strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/Set/tonumber-value-throws.js:
-  default: 'Test262Error: `sample["1.1"] = obj` throws Test262Error Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: `sample["1.1"] = obj` throws Test262Error Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
+  default: 'Test262Error: Expected SameValue(«undefined», «false») to be true (Testing with Float64Array.)'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «false») to be true (Testing with Float64Array.)'
 test/intl402/DateTimeFormat/prototype/formatRange/en-US.js:
   default: 'Test262Error: Expected SameValue(«1/3/2019 – 1/5/2019», «1/3/2019 – 1/5/2019») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1/3/2019 – 1/5/2019», «1/3/2019 – 1/5/2019») to be true'

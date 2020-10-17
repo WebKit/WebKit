@@ -25,7 +25,7 @@ test(function() {
     } catch(e) {
         err = e;
     }
-    assert(err.toString() === "TypeError: Attempting to configure non-configurable property on a typed array at index: 0");
+    assert(err.toString() === "TypeError: Attempted to assign to readonly property.");
 
     assert(x instanceof Array);
     assert(x.length === 5);
