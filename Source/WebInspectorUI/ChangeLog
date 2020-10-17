@@ -1,3 +1,28 @@
+2020-10-16  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r266480): line-based JavaScript breakpoint tree element titles also show the file name
+        https://bugs.webkit.org/show_bug.cgi?id=217859
+
+        Reviewed by Timothy Hatcher.
+
+        r266480 changed it such that `WI.BreakpointTreeElement` would only call `updateTitles` if
+        the constructor was not provided a `title` while also adding a fallback for `title` in the
+        constructor of `WI.JavaScriptBreakpointTreeElement`, ensuring that it would always be set
+        by the time it reached `WI.BreakpointTreeElement`, meaning that `updateTitles` would never
+        be called.
+
+        Since `updateTitles` was only implemented by `WI.JavaScriptBreakpointTreeElement`, remove
+        it from `WI.BreakpointTreeElement` and ensure that it is always called for non-special
+        JavaScript breakpoints (in addition to whenever the `WI.SourceCodeLocation` changes).
+
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WI.BreakpointTreeElement.prototype.updateTitles): Deleted.
+        * UserInterface/Views/JavaScriptBreakpointTreeElement.js:
+        (WI.JavaScriptBreakpointTreeElement):
+        (WI.JavaScriptBreakpointTreeElement.prototype._updateTitles): Added.
+        (WI.JavaScriptBreakpointTreeElement.prototype._breakpointLocationDidChange):
+        (WI.JavaScriptBreakpointTreeElement.prototype.updateTitles): Deleted.
+
 2020-10-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r267148): new Big Sur styles are not used

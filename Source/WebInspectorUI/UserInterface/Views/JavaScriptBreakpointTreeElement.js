@@ -33,13 +33,15 @@ WI.JavaScriptBreakpointTreeElement = class JavaScriptBreakpointTreeElement exten
             classNames = ["line"];
         classNames.push("javascript");
 
-        if (!title)
+        if (!title && breakpoint.special)
             title = breakpoint.displayName;
 
         super(breakpoint, {classNames, title});
 
-        if (!breakpoint.special)
+        if (!breakpoint.special) {
             this.listenerSet.register(breakpoint, WI.JavaScriptBreakpoint.Event.LocationDidChange, this._breakpointLocationDidChange);
+            this._updateTitles();
+        }
         this.listenerSet.register(breakpoint, WI.JavaScriptBreakpoint.Event.ResolvedStateDidChange, this.updateStatus);
     }
 
@@ -62,10 +64,10 @@ WI.JavaScriptBreakpointTreeElement = class JavaScriptBreakpointTreeElement exten
         this.status.classList.toggle("resolved", this.breakpoint.resolved && WI.debuggerManager.breakpointsEnabled);
     }
 
-    updateTitles()
-    {
-        super.updateTitles();
+    // Private
 
+    _updateTitles()
+    {
         console.assert(!this.breakpoint.special);
 
         let sourceCodeLocation = this.breakpoint.sourceCodeLocation;
@@ -89,8 +91,6 @@ WI.JavaScriptBreakpointTreeElement = class JavaScriptBreakpointTreeElement exten
         }
     }
 
-    // Private
-
     _breakpointLocationDidChange(event)
     {
         console.assert(event.target === this.breakpoint);
@@ -99,6 +99,6 @@ WI.JavaScriptBreakpointTreeElement = class JavaScriptBreakpointTreeElement exten
         if (event.data.oldDisplaySourceCode === this.breakpoint.displaySourceCode)
             return;
 
-        this.updateTitles();
+        this._updateTitles();
     }
 };

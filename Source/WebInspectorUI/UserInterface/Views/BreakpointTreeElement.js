@@ -54,8 +54,6 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
         this._listenerSet.register(this.status, "mousedown", this._statusImageElementMouseDown);
         this._listenerSet.register(this.status, "click", this._statusImageElementClicked);
 
-        if (!title)
-            this.updateTitles();
         this.updateStatus();
 
         this._iconAnimationLayerElement = document.createElement("span");
@@ -143,11 +141,6 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
         this.status.classList.toggle(WI.BreakpointTreeElement.StatusImageDisabledStyleClassName, this._breakpoint.disabled);
         if (this._breakpoint.editable)
             this.status.classList.toggle(WI.BreakpointTreeElement.StatusImageAutoContinueStyleClassName, this._breakpoint.autoContinue);
-    }
-
-    updateTitles()
-    {
-        // Overridden by subclasses if needed.
     }
 
     // Private
