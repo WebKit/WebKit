@@ -166,7 +166,8 @@ void LineLayout::constructContent()
 
             if (layoutBox.isReplacedBox()) {
                 auto& renderer = downcast<RenderBox>(*rendererForLayoutBox(layoutBox));
-                const_cast<RenderBox&>(renderer).setLocation(flooredLayoutPoint(runRect.location()));
+                auto borderBoxLocation = FloatPoint { runRect.x(), runRect.y() + m_layoutState.geometryForBox(layoutBox).marginBefore() };
+                const_cast<RenderBox&>(renderer).setLocation(flooredLayoutPoint(borderBoxLocation));
             }
         }
     };
