@@ -59,41 +59,41 @@ RefPtr<ImageData> RemoteImageBufferMessageHandlerProxy::getImageData(AlphaPremul
     return imageDataReference.buffer();
 }
 
-void RemoteImageBufferMessageHandlerProxy::waitForCreateImageBufferBackend()
+void RemoteImageBufferMessageHandlerProxy::waitForImageBufferBackendWasCreated()
 {
     if (m_remoteRenderingBackendProxy && !isBackendCreated())
-        m_remoteRenderingBackendProxy->waitForCreateImageBufferBackend();
+        m_remoteRenderingBackendProxy->waitForImageBufferBackendWasCreated();
 }
 
-void RemoteImageBufferMessageHandlerProxy::waitForCommitImageBufferFlushContext()
+void RemoteImageBufferMessageHandlerProxy::waitForFlushDisplayListWasCommitted()
 {
     if (m_remoteRenderingBackendProxy && isPendingFlush())
-        m_remoteRenderingBackendProxy->waitForCommitImageBufferFlushContext();
+        m_remoteRenderingBackendProxy->waitForFlushDisplayListWasCommitted();
 }
 
-void RemoteImageBufferMessageHandlerProxy::flushDrawingContext(WebCore::DisplayList::DisplayList& displayList)
+void RemoteImageBufferMessageHandlerProxy::flushDisplayList(WebCore::DisplayList::DisplayList& displayList)
 {
     if (!m_remoteRenderingBackendProxy)
         return;
     
     TraceScope tracingScope(FlushRemoteImageBufferStart, FlushRemoteImageBufferEnd);
-    m_remoteRenderingBackendProxy->send(Messages::RemoteRenderingBackend::FlushImageBufferDrawingContext(displayList, m_remoteResourceIdentifier), m_remoteRenderingBackendProxy->renderingBackendIdentifier());
+    m_remoteRenderingBackendProxy->send(Messages::RemoteRenderingBackend::FlushDisplayList(displayList, m_remoteResourceIdentifier), m_remoteRenderingBackendProxy->renderingBackendIdentifier());
     displayList.clear();
 }
 
-void RemoteImageBufferMessageHandlerProxy::flushDrawingContextAndWaitCommit(WebCore::DisplayList::DisplayList& displayList)
+void RemoteImageBufferMessageHandlerProxy::flushDisplayListAndWaitCommit(WebCore::DisplayList::DisplayList& displayList)
 {
     if (!m_remoteRenderingBackendProxy)
         return;
 
     TraceScope tracingScope(FlushRemoteImageBufferStart, FlushRemoteImageBufferEnd, 1);
-    m_sentFlushIdentifier = ImageBufferFlushIdentifier::generate();
-    m_remoteRenderingBackendProxy->send(Messages::RemoteRenderingBackend::FlushImageBufferDrawingContextAndCommit(displayList, m_sentFlushIdentifier, m_remoteResourceIdentifier), m_remoteRenderingBackendProxy->renderingBackendIdentifier());
+    m_sentFlushIdentifier = DisplayListFlushIdentifier::generate();
+    m_remoteRenderingBackendProxy->send(Messages::RemoteRenderingBackend::FlushDisplayListAndCommit(displayList, m_sentFlushIdentifier, m_remoteResourceIdentifier), m_remoteRenderingBackendProxy->renderingBackendIdentifier());
     displayList.clear();
-    waitForCommitImageBufferFlushContext();
+    waitForFlushDisplayListWasCommitted();
 }
 
-void RemoteImageBufferMessageHandlerProxy::commitFlushContext(ImageBufferFlushIdentifier flushIdentifier)
+void RemoteImageBufferMessageHandlerProxy::commitFlushContext(DisplayListFlushIdentifier flushIdentifier)
 {
     m_receivedFlushIdentifier = flushIdentifier;
 }

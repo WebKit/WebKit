@@ -27,8 +27,8 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "DisplayListFlushIdentifier.h"
 #include "ImageBufferBackendHandle.h"
-#include "ImageBufferFlushIdentifier.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "RemoteImageBufferMessageHandlerProxy.h"
@@ -64,15 +64,15 @@ public:
     std::unique_ptr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::ShouldAccelerate, float resolutionScale, WebCore::ColorSpace);
     void releaseRemoteResource(WebCore::RemoteResourceIdentifier);
 
-    bool waitForCreateImageBufferBackend();
-    bool waitForCommitImageBufferFlushContext();
+    bool waitForImageBufferBackendWasCreated();
+    bool waitForFlushDisplayListWasCommitted();
 
 private:
     RemoteRenderingBackendProxy();
 
     // Messages to be received.
-    void createImageBufferBackend(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle, WebCore::RemoteResourceIdentifier);
-    void commitImageBufferFlushContext(ImageBufferFlushIdentifier, WebCore::RemoteResourceIdentifier);
+    void imageBufferBackendWasCreated(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle, WebCore::RemoteResourceIdentifier);
+    void flushDisplayListWasCommitted(DisplayListFlushIdentifier, WebCore::RemoteResourceIdentifier);
 
     using ImageBufferMessageHandlerMap = HashMap<WebCore::RemoteResourceIdentifier, RemoteImageBufferMessageHandlerProxy*>;
     ImageBufferMessageHandlerMap m_imageBufferMessageHandlerMap;

@@ -23,32 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RemoteImageBufferMessageHandler.h"
+#pragma once
 
 #if ENABLE(GPU_PROCESS)
 
-#include "RemoteRenderingBackend.h"
-#include "RemoteRenderingBackendProxyMessages.h"
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
-using namespace WebCore;
 
-RemoteImageBufferMessageHandler::RemoteImageBufferMessageHandler(RemoteRenderingBackend& remoteRenderingBackend, WebCore::RemoteResourceIdentifier remoteResourceIdentifier)
-    : m_remoteRenderingBackend(remoteRenderingBackend)
-    , m_remoteResourceIdentifier(remoteResourceIdentifier)
-{
-}
-
-void RemoteImageBufferMessageHandler::createBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, ImageBufferBackendHandle handle)
-{
-    m_remoteRenderingBackend.send(Messages::RemoteRenderingBackendProxy::CreateImageBufferBackend(logicalSize, backendSize, resolutionScale, colorSpace, WTFMove(handle), m_remoteResourceIdentifier), m_remoteRenderingBackend.renderingBackendIdentifier());
-}
-
-void RemoteImageBufferMessageHandler::commitFlushContext(ImageBufferFlushIdentifier flushIdentifier)
-{
-    m_remoteRenderingBackend.send(Messages::RemoteRenderingBackendProxy::CommitImageBufferFlushContext(flushIdentifier, m_remoteResourceIdentifier), m_remoteRenderingBackend.renderingBackendIdentifier());
-}
+enum DisplayListFlushIdentifierType { };
+using DisplayListFlushIdentifier = ObjectIdentifier<DisplayListFlushIdentifierType>;
 
 } // namespace WebKit
 

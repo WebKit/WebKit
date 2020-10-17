@@ -74,14 +74,14 @@ protected:
     BackendType* ensureBackendCreated() const override
     {
         if (!m_backend)
-            const_cast<RemoteImageBufferProxy&>(*this).RemoteImageBufferMessageHandlerProxy::waitForCreateImageBufferBackend();
+            const_cast<RemoteImageBufferProxy&>(*this).RemoteImageBufferMessageHandlerProxy::waitForImageBufferBackendWasCreated();
         return m_backend.get();
     }
 
     RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect) const override
     {
         auto& displayList = const_cast<RemoteImageBufferProxy*>(this)->m_drawingContext.displayList();
-        const_cast<RemoteImageBufferProxy*>(this)->RemoteImageBufferMessageHandlerProxy::flushDrawingContext(displayList);
+        const_cast<RemoteImageBufferProxy*>(this)->RemoteImageBufferMessageHandlerProxy::flushDisplayList(displayList);
         auto result = const_cast<RemoteImageBufferProxy*>(this)->RemoteImageBufferMessageHandlerProxy::getImageData(outputFormat, srcRect);
         // getImageData is synchronous, which means we've already received the CommitImageBufferFlushContext message.
         return result;
@@ -105,7 +105,7 @@ protected:
     {
         auto& displayList = m_drawingContext.displayList();
         if (displayList.itemCount())
-            RemoteImageBufferMessageHandlerProxy::flushDrawingContextAndWaitCommit(displayList);
+            RemoteImageBufferMessageHandlerProxy::flushDisplayListAndWaitCommit(displayList);
     }
     
     void willAppendItem(const WebCore::DisplayList::Item&) override
@@ -113,7 +113,7 @@ protected:
         constexpr size_t DisplayListBatchSize = 512;
         auto& displayList = m_drawingContext.displayList();
         if (displayList.itemCount() >= DisplayListBatchSize)
-            RemoteImageBufferMessageHandlerProxy::flushDrawingContext(displayList);
+            RemoteImageBufferMessageHandlerProxy::flushDisplayList(displayList);
     }
 };
 

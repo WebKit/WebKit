@@ -31,6 +31,7 @@
 #include "GPUConnectionToWebProcess.h"
 #include "PlatformRemoteImageBuffer.h"
 #include "RemoteRenderingBackendMessages.h"
+#include "RemoteRenderingBackendProxyMessages.h"
 
 namespace WebKit {
 using namespace WebCore;
@@ -54,6 +55,11 @@ RemoteRenderingBackend::~RemoteRenderingBackend()
         gpuConnectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
 }
 
+GPUConnectionToWebProcess* RemoteRenderingBackend::gpuConnectionToWebProcess() const
+{
+    return m_gpuConnectionToWebProcess.get();
+}
+
 IPC::Connection* RemoteRenderingBackend::messageSenderConnection() const
 {
     if (auto* gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get())
@@ -66,64 +72,62 @@ uint64_t RemoteRenderingBackend::messageSenderDestinationID() const
     return m_renderingBackendIdentifier.toUInt64();
 }
 
+void RemoteRenderingBackend::imageBufferBackendWasCreated(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, ImageBufferBackendHandle handle, RemoteResourceIdentifier remoteResourceIdentifier)
+{
+    send(Messages::RemoteRenderingBackendProxy::ImageBufferBackendWasCreated(logicalSize, backendSize, resolutionScale, colorSpace, WTFMove(handle), remoteResourceIdentifier), m_renderingBackendIdentifier);
+}
+
+void RemoteRenderingBackend::flushDisplayListWasCommitted(DisplayListFlushIdentifier flushIdentifier, RemoteResourceIdentifier remoteResourceIdentifier)
+{
+    send(Messages::RemoteRenderingBackendProxy::FlushDisplayListWasCommitted(flushIdentifier, remoteResourceIdentifier), m_renderingBackendIdentifier);
+}
+
 void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace, WebCore::RemoteResourceIdentifier remoteResourceIdentifier)
 {
-    auto* gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get();
-    if (!gpuConnectionToWebProcess)
+    ASSERT(renderingMode == RenderingMode::RemoteAccelerated || renderingMode == RenderingMode::RemoteUnaccelerated);
+
+    std::unique_ptr<WebCore::ImageBuffer> image;
+
+    if (renderingMode == RenderingMode::RemoteAccelerated)
+        image = AcceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, *this, remoteResourceIdentifier);
+
+    if (!image)
+        image = UnacceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, *this, remoteResourceIdentifier);
+
+    if (image) {
+        m_remoteResourceCache.cacheImageBuffer(remoteResourceIdentifier, WTFMove(image));
         return;
-
-    if (m_imageBufferMessageHandlerMap.contains(remoteResourceIdentifier)) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    if (renderingMode == RenderingMode::RemoteAccelerated) {
-        if (auto imageBuffer = AcceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, *this, remoteResourceIdentifier)) {
-            m_imageBufferMessageHandlerMap.add(remoteResourceIdentifier, WTFMove(imageBuffer));
-            return;
-        }
-    }
-
-    if (renderingMode == RenderingMode::RemoteAccelerated || renderingMode == RenderingMode::RemoteUnaccelerated) {
-        if (auto imageBuffer = UnacceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, *this, remoteResourceIdentifier)) {
-            m_imageBufferMessageHandlerMap.add(remoteResourceIdentifier, WTFMove(imageBuffer));
-            return;
-        }
     }
 
     ASSERT_NOT_REACHED();
 }
 
-void RemoteRenderingBackend::releaseRemoteResource(RemoteResourceIdentifier remoteResourceIdentifier)
+void RemoteRenderingBackend::flushDisplayList(const WebCore::DisplayList::DisplayList& displayList, RemoteResourceIdentifier remoteResourceIdentifier)
 {
-    // CreateImageBuffer message should have been received before this one.
-    bool found = m_imageBufferMessageHandlerMap.remove(remoteResourceIdentifier);
-    ASSERT_UNUSED(found, found);
+    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(remoteResourceIdentifier))
+        imageBuffer->flushDisplayList(displayList);
+}
+
+void RemoteRenderingBackend::flushDisplayListAndCommit(const WebCore::DisplayList::DisplayList& displayList, DisplayListFlushIdentifier flushIdentifier, RemoteResourceIdentifier remoteResourceIdentifier)
+{
+    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(remoteResourceIdentifier)) {
+        imageBuffer->flushDisplayList(displayList);
+        imageBuffer->flushContext();
+        flushDisplayListWasCommitted(flushIdentifier, remoteResourceIdentifier);
+    }
 }
 
 void RemoteRenderingBackend::getImageData(WebCore::AlphaPremultiplication outputFormat, WebCore::IntRect srcRect, RemoteResourceIdentifier remoteResourceIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&& completionHandler)
 {
-    if (auto imageBuffer = m_imageBufferMessageHandlerMap.get(remoteResourceIdentifier)) {
-        auto imageData = imageBuffer->getImageData(outputFormat, srcRect);
-        completionHandler(IPC::ImageDataReference(WTFMove(imageData)));
-    }
+    RefPtr<ImageData> imageData;
+    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(remoteResourceIdentifier))
+        imageData = imageBuffer->getImageData(outputFormat, srcRect);
+    completionHandler(IPC::ImageDataReference(WTFMove(imageData)));
 }
 
-void RemoteRenderingBackend::flushImageBufferDrawingContext(const WebCore::DisplayList::DisplayList& displayList, RemoteResourceIdentifier remoteResourceIdentifier)
+void RemoteRenderingBackend::releaseRemoteResource(RemoteResourceIdentifier remoteResourceIdentifier)
 {
-    if (auto imageBuffer = m_imageBufferMessageHandlerMap.get(remoteResourceIdentifier))
-        imageBuffer->flushDrawingContext(displayList);
-}
-
-void RemoteRenderingBackend::flushImageBufferDrawingContextAndCommit(const WebCore::DisplayList::DisplayList& displayList, ImageBufferFlushIdentifier flushIdentifier, RemoteResourceIdentifier remoteResourceIdentifier)
-{
-    if (auto imageBuffer = m_imageBufferMessageHandlerMap.get(remoteResourceIdentifier))
-        imageBuffer->flushDrawingContextAndCommit(displayList, flushIdentifier);
-}
-
-GPUConnectionToWebProcess* RemoteRenderingBackend::gpuConnectionToWebProcess() const
-{
-    return m_gpuConnectionToWebProcess.get();
+    m_remoteResourceCache.releaseRemoteResource(remoteResourceIdentifier);
 }
 
 } // namespace WebKit

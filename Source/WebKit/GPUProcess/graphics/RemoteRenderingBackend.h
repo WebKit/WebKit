@@ -28,24 +28,24 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "Connection.h"
-#include "ImageBufferFlushIdentifier.h"
+#include "DisplayListFlushIdentifier.h"
+#include "ImageBufferBackendHandle.h"
 #include "ImageDataReference.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
-#include "RemoteImageBufferMessageHandler.h"
+#include "RemoteResourceCache.h"
 #include "RenderingBackendIdentifier.h"
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DisplayListItems.h>
-#include <WebCore/FloatSize.h>
-#include <WebCore/RemoteResourceIdentifier.h>
-#include <WebCore/RenderingMode.h>
-#include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 namespace DisplayList {
 class DisplayList;
 }
+class FloatSize;
+enum class ColorSpace : uint8_t;
+enum class RenderingMode : uint8_t;
 }
 
 namespace WebKit {
@@ -59,8 +59,11 @@ public:
     static std::unique_ptr<RemoteRenderingBackend> create(GPUConnectionToWebProcess&, RenderingBackendIdentifier);
     virtual ~RemoteRenderingBackend();
 
-    RenderingBackendIdentifier renderingBackendIdentifier() const { return m_renderingBackendIdentifier; }
     GPUConnectionToWebProcess* gpuConnectionToWebProcess() const;
+
+    // Messages to be sent.
+    void imageBufferBackendWasCreated(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle, WebCore::RemoteResourceIdentifier);
+    void flushDisplayListWasCommitted(DisplayListFlushIdentifier, WebCore::RemoteResourceIdentifier);
 
 private:
     RemoteRenderingBackend(GPUConnectionToWebProcess&, RenderingBackendIdentifier);
@@ -75,13 +78,12 @@ private:
 
     // Messages to be received.
     void createImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace, WebCore::RemoteResourceIdentifier);
-    void releaseRemoteResource(WebCore::RemoteResourceIdentifier);
-    void flushImageBufferDrawingContext(const WebCore::DisplayList::DisplayList&, WebCore::RemoteResourceIdentifier);
-    void flushImageBufferDrawingContextAndCommit(const WebCore::DisplayList::DisplayList&, ImageBufferFlushIdentifier, WebCore::RemoteResourceIdentifier);
+    void flushDisplayList(const WebCore::DisplayList::DisplayList&, WebCore::RemoteResourceIdentifier);
+    void flushDisplayListAndCommit(const WebCore::DisplayList::DisplayList&, DisplayListFlushIdentifier, WebCore::RemoteResourceIdentifier);
     void getImageData(WebCore::AlphaPremultiplication outputFormat, WebCore::IntRect srcRect, WebCore::RemoteResourceIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&&);
+    void releaseRemoteResource(WebCore::RemoteResourceIdentifier);
 
-    using ImageBufferMessageHandlerMap = HashMap<WebCore::RemoteResourceIdentifier, std::unique_ptr<RemoteImageBufferMessageHandler>>;
-    ImageBufferMessageHandlerMap m_imageBufferMessageHandlerMap;
+    RemoteResourceCache m_remoteResourceCache;
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     RenderingBackendIdentifier m_renderingBackendIdentifier;
 };

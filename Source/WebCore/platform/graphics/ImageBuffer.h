@@ -33,6 +33,7 @@
 namespace WebCore {
 
 namespace DisplayList {
+class DisplayList;
 class DrawingContext;
 }
 
@@ -64,6 +65,7 @@ public:
 
     virtual DisplayList::DrawingContext* drawingContext() { return nullptr; }
     virtual void flushDrawingContext() { }
+    virtual void flushDisplayList(const DisplayList::DisplayList&) { }
 
     virtual AffineTransform baseTransform() const = 0;
     virtual IntSize logicalSize() const = 0;

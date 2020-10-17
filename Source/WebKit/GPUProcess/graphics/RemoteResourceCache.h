@@ -27,43 +27,29 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "ImageBufferBackendHandle.h"
-#include "ImageBufferFlushIdentifier.h"
-#include <WebCore/ColorSpace.h>
-#include <WebCore/DisplayList.h>
-#include <WebCore/FloatSize.h>
 #include <WebCore/RemoteResourceIdentifier.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
-enum class AlphaPremultiplication : uint8_t;
-class ImageData;
+class ImageBuffer;
 }
 
 namespace WebKit {
 
 class RemoteRenderingBackend;
 
-class RemoteImageBufferMessageHandler {
+class RemoteResourceCache {
 public:
-    virtual ~RemoteImageBufferMessageHandler() = default;
+    RemoteResourceCache() = default;
 
-    // Messages to be received. See RemoteRenderingBackend.messages.in.
-    virtual void flushDrawingContext(const WebCore::DisplayList::DisplayList&) = 0;
-    virtual void flushDrawingContextAndCommit(const WebCore::DisplayList::DisplayList&, ImageBufferFlushIdentifier) = 0;
-    virtual RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect) const = 0;
-
-protected:
-    RemoteImageBufferMessageHandler(RemoteRenderingBackend&, WebCore::RemoteResourceIdentifier);
-
-    // Messages to be sent. See RemoteRenderingBackend.messages.in.
-    void createBackend(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle);
-    void commitFlushContext(ImageBufferFlushIdentifier);
-
-    RemoteRenderingBackend& backend() { return m_remoteRenderingBackend; }
+    void cacheImageBuffer(WebCore::RemoteResourceIdentifier, std::unique_ptr<WebCore::ImageBuffer>&&);
+    WebCore::ImageBuffer* cachedImageBuffer(WebCore::RemoteResourceIdentifier);
+    void releaseRemoteResource(WebCore::RemoteResourceIdentifier);
 
 private:
-    RemoteRenderingBackend& m_remoteRenderingBackend;
-    WebCore::RemoteResourceIdentifier m_remoteResourceIdentifier;
+    using RemoteImageBufferHashMap = HashMap<WebCore::RemoteResourceIdentifier, std::unique_ptr<WebCore::ImageBuffer>>;
+
+    RemoteImageBufferHashMap m_imageBuffers;
 };
 
 } // namespace WebKit

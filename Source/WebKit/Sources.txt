@@ -24,8 +24,8 @@
 GPUProcess/GPUProcess.cpp
 GPUProcess/GPUConnectionToWebProcess.cpp
 GPUProcess/GPUProcessCreationParameters.cpp
-GPUProcess/graphics/RemoteImageBufferMessageHandler.cpp
 GPUProcess/graphics/RemoteRenderingBackend.cpp
+GPUProcess/graphics/RemoteResourceCache.cpp
 GPUProcess/media/RemoteAudioSessionProxy.cpp
 GPUProcess/media/RemoteAudioSessionProxyManager.cpp
 GPUProcess/media/RemoteAudioTrackProxy.cpp

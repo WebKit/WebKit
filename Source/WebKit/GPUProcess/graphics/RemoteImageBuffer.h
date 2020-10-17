@@ -28,17 +28,17 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUConnectionToWebProcess.h"
-#include "RemoteImageBufferMessageHandlerProxy.h"
 #include <WebCore/ConcreteImageBuffer.h>
 #include <WebCore/DisplayListReplayer.h>
 
 namespace WebKit {
 
 template<typename BackendType>
-class RemoteImageBuffer : public WebCore::ConcreteImageBuffer<BackendType>, public RemoteImageBufferMessageHandler, public WebCore::DisplayList::Replayer::Delegate {
+class RemoteImageBuffer : public WebCore::ConcreteImageBuffer<BackendType>, public WebCore::DisplayList::Replayer::Delegate {
     using BaseConcreteImageBuffer = WebCore::ConcreteImageBuffer<BackendType>;
     using BaseConcreteImageBuffer::context;
     using BaseConcreteImageBuffer::m_backend;
+    using BaseConcreteImageBuffer::putImageData;
 
 public:
     static auto create(const WebCore::FloatSize& size, float resolutionScale, WebCore::ColorSpace colorSpace, RemoteRenderingBackend& remoteRenderingBackend, WebCore::RemoteResourceIdentifier remoteResourceIdentifier)
@@ -48,9 +48,9 @@ public:
 
     RemoteImageBuffer(std::unique_ptr<BackendType>&& backend, RemoteRenderingBackend& remoteRenderingBackend, WebCore::RemoteResourceIdentifier remoteResourceIdentifier)
         : BaseConcreteImageBuffer(WTFMove(backend))
-        , RemoteImageBufferMessageHandler(remoteRenderingBackend, remoteResourceIdentifier)
+        , m_remoteRenderingBackend(remoteRenderingBackend)
     {
-        createBackend(m_backend->logicalSize(), m_backend->backendSize(), m_backend->resolutionScale(), m_backend->colorSpace(), m_backend->createImageBufferBackendHandle());
+        m_remoteRenderingBackend.imageBufferBackendWasCreated(m_backend->logicalSize(), m_backend->backendSize(), m_backend->resolutionScale(), m_backend->colorSpace(), m_backend->createImageBufferBackendHandle(), remoteResourceIdentifier);
     }
 
     ~RemoteImageBuffer()
@@ -62,27 +62,12 @@ public:
     }
 
 private:
-    using BaseConcreteImageBuffer::flushDrawingContext;
-    using BaseConcreteImageBuffer::putImageData;
-
-    void flushDrawingContext(const WebCore::DisplayList::DisplayList& displayList) override
+    void flushDisplayList(const WebCore::DisplayList::DisplayList& displayList) override
     {
         if (displayList.itemCount()) {
             WebCore::DisplayList::Replayer replayer(BaseConcreteImageBuffer::context(), displayList, this);
             replayer.replay();
         }
-    }
-
-    void flushDrawingContextAndCommit(const WebCore::DisplayList::DisplayList& displayList, ImageBufferFlushIdentifier flushIdentifier) override
-    {
-        flushDrawingContext(displayList);
-        m_backend->flushContext();
-        commitFlushContext(flushIdentifier);
-    }
-
-    RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect) const override
-    {
-        return BaseConcreteImageBuffer::getImageData(outputFormat, srcRect);
     }
 
     bool apply(WebCore::DisplayList::Item& item, WebCore::GraphicsContext& context) override
@@ -103,7 +88,7 @@ private:
 
     void apply(WebCore::DisplayList::PaintFrameForMedia& item, WebCore::GraphicsContext& context)
     {
-        auto process = backend().gpuConnectionToWebProcess();
+        auto process = m_remoteRenderingBackend.gpuConnectionToWebProcess();
         if (!process)
             return;
 
@@ -117,6 +102,8 @@ private:
 
         context.paintFrameForMedia(*player, item.destination());
     }
+    
+    RemoteRenderingBackend& m_remoteRenderingBackend;
 };
 
 } // namespace WebKit

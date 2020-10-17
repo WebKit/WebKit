@@ -27,8 +27,8 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "DisplayListFlushIdentifier.h"
 #include "ImageBufferBackendHandle.h"
-#include "ImageBufferFlushIdentifier.h"
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DisplayList.h>
 #include <WebCore/FloatSize.h>
@@ -53,7 +53,7 @@ public:
     // Messages to be received. See RemoteRenderingBackend.messages.in.
     virtual void createBackend(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle) = 0;
 
-    void commitFlushContext(ImageBufferFlushIdentifier);
+    void commitFlushContext(DisplayListFlushIdentifier);
 
 protected:
     RemoteImageBufferMessageHandlerProxy(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace, RemoteRenderingBackendProxy&);
@@ -63,19 +63,19 @@ protected:
 
     RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect) const;
 
-    void waitForCreateImageBufferBackend();
-    void waitForCommitImageBufferFlushContext();
+    void waitForImageBufferBackendWasCreated();
+    void waitForFlushDisplayListWasCommitted();
 
     // Messages to be sent. See RemoteRenderingBackendProxy.messages.in.
-    void flushDrawingContext(WebCore::DisplayList::DisplayList&);
-    void flushDrawingContextAndWaitCommit(WebCore::DisplayList::DisplayList&);
+    void flushDisplayList(WebCore::DisplayList::DisplayList&);
+    void flushDisplayListAndWaitCommit(WebCore::DisplayList::DisplayList&);
 
 private:
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     WebCore::RemoteResourceIdentifier m_remoteResourceIdentifier { WebCore::RemoteResourceIdentifier::generate() };
 
-    ImageBufferFlushIdentifier m_sentFlushIdentifier;
-    ImageBufferFlushIdentifier m_receivedFlushIdentifier;
+    DisplayListFlushIdentifier m_sentFlushIdentifier;
+    DisplayListFlushIdentifier m_receivedFlushIdentifier;
 };
 
 } // namespace WebKit

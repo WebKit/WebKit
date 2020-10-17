@@ -1096,9 +1096,6 @@
 		570DAAC22303730300E8FC04 /* NfcConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 570DAAC02303730300E8FC04 /* NfcConnection.h */; };
 		570DAAC623037F7F00E8FC04 /* WKNFReaderSessionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 570DAAC423037F7E00E8FC04 /* WKNFReaderSessionDelegate.h */; };
 		570DAACA230385FD00E8FC04 /* CtapNfcDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 570DAAC8230385FD00E8FC04 /* CtapNfcDriver.h */; };
-		572EBBDA2538F6B4000552B3 /* AppAttestInternalSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 572EBBD82538F6A1000552B3 /* AppAttestInternalSoftLink.mm */; };
-		572EBBDB2538F6B6000552B3 /* AppAttestInternalSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 572EBBD92538F6A1000552B3 /* AppAttestInternalSoftLink.h */; };
-		572EBBDD25392181000552B3 /* AppAttestSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 572EBBDC25392181000552B3 /* AppAttestSPI.h */; };
 		572EBBBF2536A60A000552B3 /* WebAuthnConnectionToWebProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 572EBBBB2536A60A000552B3 /* WebAuthnConnectionToWebProcessMessageReceiver.cpp */; };
 		572EBBC02536A60A000552B3 /* WebAuthnConnectionToWebProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 572EBBBC2536A60A000552B3 /* WebAuthnConnectionToWebProcessMessages.h */; };
 		572EBBC12536A60A000552B3 /* WebAuthnProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 572EBBBD2536A60A000552B3 /* WebAuthnProcessMessageReceiver.cpp */; };
@@ -1110,6 +1107,9 @@
 		572EBBD02536BB11000552B3 /* WebAuthnProcessProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 572EBBCE2536BB10000552B3 /* WebAuthnProcessProxyMessages.h */; };
 		572EBBD52536C885000552B3 /* WebAuthnProcessConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 572EBBD22536C885000552B3 /* WebAuthnProcessConnection.h */; };
 		572EBBD72537EBAE000552B3 /* ExtraPrivateSymbolsForTAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = ECA680D31E6904B500731D20 /* ExtraPrivateSymbolsForTAPI.h */; };
+		572EBBDA2538F6B4000552B3 /* AppAttestInternalSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 572EBBD82538F6A1000552B3 /* AppAttestInternalSoftLink.mm */; };
+		572EBBDB2538F6B6000552B3 /* AppAttestInternalSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 572EBBD92538F6A1000552B3 /* AppAttestInternalSoftLink.h */; };
+		572EBBDD25392181000552B3 /* AppAttestSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 572EBBDC25392181000552B3 /* AppAttestSPI.h */; };
 		572FD44322265CE200A1ECC3 /* WebViewDidMoveToWindowObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 572FD44122265CE200A1ECC3 /* WebViewDidMoveToWindowObserver.h */; };
 		574217922400E286002B303D /* LocalAuthenticationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 574217912400E098002B303D /* LocalAuthenticationSPI.h */; };
 		5742A2EB2535613F00B7BA14 /* AuxiliaryProcessMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9120F2293C25F005BEC78 /* AuxiliaryProcessMain.cpp */; };
@@ -3913,7 +3913,7 @@
 		550640A424071C2100AAE045 /* RemoteRenderingBackend.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteRenderingBackend.messages.in; sourceTree = "<group>"; };
 		55AD09422408A02E00DE4D2F /* RemoteImageBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteImageBuffer.h; sourceTree = "<group>"; };
 		55AD09432408A0E600DE4D2F /* PlatformRemoteImageBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformRemoteImageBuffer.h; sourceTree = "<group>"; };
-		55AD09442408ABB300DE4D2F /* ImageBufferFlushIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferFlushIdentifier.h; sourceTree = "<group>"; };
+		55AD09442408ABB300DE4D2F /* DisplayListFlushIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayListFlushIdentifier.h; sourceTree = "<group>"; };
 		570AB8F220AE3BD700B8BE87 /* SecKeyProxyStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecKeyProxyStore.h; sourceTree = "<group>"; };
 		570AB90020B2517400B8BE87 /* AuthenticationChallengeProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AuthenticationChallengeProxyCocoa.mm; sourceTree = "<group>"; };
 		570AB90320B2541C00B8BE87 /* SecKeyProxyStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SecKeyProxyStore.mm; sourceTree = "<group>"; };
@@ -3927,9 +3927,6 @@
 		570DAAC523037F7E00E8FC04 /* WKNFReaderSessionDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNFReaderSessionDelegate.mm; sourceTree = "<group>"; };
 		570DAAC8230385FD00E8FC04 /* CtapNfcDriver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CtapNfcDriver.h; sourceTree = "<group>"; };
 		570DAAC9230385FD00E8FC04 /* CtapNfcDriver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CtapNfcDriver.cpp; sourceTree = "<group>"; };
-		572EBBD82538F6A1000552B3 /* AppAttestInternalSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppAttestInternalSoftLink.mm; sourceTree = "<group>"; };
-		572EBBD92538F6A1000552B3 /* AppAttestInternalSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppAttestInternalSoftLink.h; sourceTree = "<group>"; };
-		572EBBDC25392181000552B3 /* AppAttestSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppAttestSPI.h; sourceTree = "<group>"; };
 		572EBBB92536A06E000552B3 /* Info-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = "Info-iOS.plist"; path = "WebAuthnProcess/EntryPoint/Cocoa/XPCService/WebAuthnService/Info-iOS.plist"; sourceTree = SOURCE_ROOT; };
 		572EBBBA2536A06E000552B3 /* Info-OSX.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = "Info-OSX.plist"; path = "WebAuthnProcess/EntryPoint/Cocoa/XPCService/WebAuthnService/Info-OSX.plist"; sourceTree = SOURCE_ROOT; };
 		572EBBBB2536A60A000552B3 /* WebAuthnConnectionToWebProcessMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAuthnConnectionToWebProcessMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -3946,6 +3943,9 @@
 		572EBBD12536C885000552B3 /* WebAuthnProcessConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAuthnProcessConnection.cpp; sourceTree = "<group>"; };
 		572EBBD22536C885000552B3 /* WebAuthnProcessConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAuthnProcessConnection.h; sourceTree = "<group>"; };
 		572EBBD32536C885000552B3 /* WebAuthnProcessConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebAuthnProcessConnection.messages.in; sourceTree = "<group>"; };
+		572EBBD82538F6A1000552B3 /* AppAttestInternalSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppAttestInternalSoftLink.mm; sourceTree = "<group>"; };
+		572EBBD92538F6A1000552B3 /* AppAttestInternalSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppAttestInternalSoftLink.h; sourceTree = "<group>"; };
+		572EBBDC25392181000552B3 /* AppAttestSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppAttestSPI.h; sourceTree = "<group>"; };
 		572FD44122265CE200A1ECC3 /* WebViewDidMoveToWindowObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebViewDidMoveToWindowObserver.h; sourceTree = "<group>"; };
 		574217912400E098002B303D /* LocalAuthenticationSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalAuthenticationSPI.h; sourceTree = "<group>"; };
 		5742A2F72535613F00B7BA14 /* com.apple.WebKit.WebAuthn.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = com.apple.WebKit.WebAuthn.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4226,8 +4226,8 @@
 		7227800B2408BD7D007D376B /* PlatformRemoteImageBufferProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformRemoteImageBufferProxy.h; sourceTree = "<group>"; };
 		7227800C24097A02007D376B /* RemoteImageBufferMessageHandlerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteImageBufferMessageHandlerProxy.cpp; sourceTree = "<group>"; };
 		7227800D24097A02007D376B /* RemoteImageBufferMessageHandlerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteImageBufferMessageHandlerProxy.h; sourceTree = "<group>"; };
-		722780112409906E007D376B /* RemoteImageBufferMessageHandler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteImageBufferMessageHandler.cpp; sourceTree = "<group>"; };
-		722780122409906E007D376B /* RemoteImageBufferMessageHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteImageBufferMessageHandler.h; sourceTree = "<group>"; };
+		726D56DD253A64810002EF90 /* RemoteResourceCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteResourceCache.cpp; sourceTree = "<group>"; };
+		726D56DE253A64810002EF90 /* RemoteResourceCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteResourceCache.h; sourceTree = "<group>"; };
 		727A7F342407857D004D2931 /* ImageBufferShareableIOSurfaceBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferShareableIOSurfaceBackend.cpp; sourceTree = "<group>"; };
 		727A7F352407857F004D2931 /* ImageBufferShareableIOSurfaceBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBufferShareableIOSurfaceBackend.h; sourceTree = "<group>"; };
 		727A7F36240788F0004D2931 /* ImageBufferShareableBitmapBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBufferShareableBitmapBackend.h; sourceTree = "<group>"; };
@@ -8132,8 +8132,8 @@
 			isa = PBXGroup;
 			children = (
 				727A7F3324078527004D2931 /* cocoa */,
+				55AD09442408ABB300DE4D2F /* DisplayListFlushIdentifier.h */,
 				727A7F39240788F1004D2931 /* ImageBufferBackendHandle.h */,
-				55AD09442408ABB300DE4D2F /* ImageBufferFlushIdentifier.h */,
 				727A7F37240788F0004D2931 /* ImageBufferShareableBitmapBackend.cpp */,
 				727A7F36240788F0004D2931 /* ImageBufferShareableBitmapBackend.h */,
 				727A7F38240788F0004D2931 /* PlatformImageBufferShareableBackend.h */,
@@ -8154,11 +8154,11 @@
 			children = (
 				55AD09432408A0E600DE4D2F /* PlatformRemoteImageBuffer.h */,
 				55AD09422408A02E00DE4D2F /* RemoteImageBuffer.h */,
-				722780112409906E007D376B /* RemoteImageBufferMessageHandler.cpp */,
-				722780122409906E007D376B /* RemoteImageBufferMessageHandler.h */,
 				550640A224071A6100AAE045 /* RemoteRenderingBackend.cpp */,
 				550640A324071A6100AAE045 /* RemoteRenderingBackend.h */,
 				550640A424071C2100AAE045 /* RemoteRenderingBackend.messages.in */,
+				726D56DD253A64810002EF90 /* RemoteResourceCache.cpp */,
+				726D56DE253A64810002EF90 /* RemoteResourceCache.h */,
 			);
 			path = graphics;
 			sourceTree = "<group>";

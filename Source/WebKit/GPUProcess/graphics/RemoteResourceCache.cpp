@@ -23,16 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "RemoteResourceCache.h"
 
 #if ENABLE(GPU_PROCESS)
 
-#include <wtf/ObjectIdentifier.h>
-
 namespace WebKit {
+using namespace WebCore;
 
-enum ImageBufferFlushIdentifierType { };
-using ImageBufferFlushIdentifier = ObjectIdentifier<ImageBufferFlushIdentifierType>;
+void RemoteResourceCache::cacheImageBuffer(RemoteResourceIdentifier remoteResourceIdentifier, std::unique_ptr<ImageBuffer>&& image)
+{
+    auto addResult = m_imageBuffers.add(remoteResourceIdentifier, WTFMove(image));
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+}
+
+WebCore::ImageBuffer* RemoteResourceCache::cachedImageBuffer(RemoteResourceIdentifier remoteResourceIdentifier)
+{
+    return m_imageBuffers.get(remoteResourceIdentifier);
+}
+
+void RemoteResourceCache::releaseRemoteResource(RemoteResourceIdentifier remoteResourceIdentifier)
+{
+    if (m_imageBuffers.remove(remoteResourceIdentifier))
+        return;
+    // Caching the remote resource should have happened before releasing it.
+    ASSERT_NOT_REACHED();
+}
 
 } // namespace WebKit
 
