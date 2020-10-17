@@ -371,6 +371,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     display/css/DisplayReplacedBox.h
     display/css/DisplayStyle.h
 
+    dom/AbstractRange.h
     dom/ActiveDOMCallback.h
     dom/ActiveDOMObject.h
     dom/Attr.h
@@ -1589,6 +1590,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     ${WebCore_DERIVED_SOURCES_DIR}/HTMLElementTypeHelpers.h
     ${WebCore_DERIVED_SOURCES_DIR}/HTMLNames.h
     ${WebCore_DERIVED_SOURCES_DIR}/HTTPHeaderNames.h
+    ${WebCore_DERIVED_SOURCES_DIR}/JSAbstractRange.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSBlob.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSCSSRule.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSCSSRuleList.h

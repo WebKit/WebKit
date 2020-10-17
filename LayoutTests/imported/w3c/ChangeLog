@@ -1,3 +1,13 @@
+2020-10-16  Darin Adler  <darin@apple.com>
+
+        Add AbstractRange
+        https://bugs.webkit.org/show_bug.cgi?id=217846
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/dom/idlharness.window-expected.txt:
+        Updated test result for progression.
+
 2020-10-16  Karl Rackler  <rackler@apple.com>
 
         Unreviewed, reverting r268178.

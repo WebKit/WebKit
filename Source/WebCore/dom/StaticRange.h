@@ -25,13 +25,15 @@
 
 #pragma once
 
-#include "ExceptionOr.h"
+#include "AbstractRange.h"
 #include "SimpleRange.h"
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class StaticRange : public RefCounted<StaticRange>, public SimpleRange {
+template<typename> class ExceptionOr;
+
+class StaticRange final : public AbstractRange, public SimpleRange {
+    WTF_MAKE_ISO_ALLOCATED(StaticRange);
 public:
     struct Init {
         RefPtr<Node> startContainer;
@@ -44,8 +46,20 @@ public:
     static Ref<StaticRange> create(const SimpleRange&);
     static Ref<StaticRange> create(SimpleRange&&);
 
+    Node& startContainer() const final { return SimpleRange::startContainer(); }
+    unsigned startOffset() const final { return SimpleRange::startOffset(); }
+    Node& endContainer() const final { return SimpleRange::endContainer(); }
+    unsigned endOffset() const final { return SimpleRange::endOffset(); }
+    bool collapsed() const final { return SimpleRange::collapsed(); }
+
 private:
     StaticRange(SimpleRange&&);
+
+    bool isLiveRange() const final { return false; }
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StaticRange)
+    static bool isType(const WebCore::AbstractRange& range) { return !range.isLiveRange(); }
+SPECIALIZE_TYPE_TRAITS_END()

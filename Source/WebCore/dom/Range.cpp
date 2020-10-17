@@ -45,6 +45,7 @@
 #include "VisibleUnits.h"
 #include "markup.h"
 #include <stdio.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -60,6 +61,8 @@ enum ContentsProcessDirection { ProcessContentsForward, ProcessContentsBackward 
 static ExceptionOr<void> processNodes(Range::ActionType, Vector<Ref<Node>>&, Node* oldContainer, RefPtr<Node> newContainer);
 static ExceptionOr<RefPtr<Node>> processContentsBetweenOffsets(Range::ActionType, RefPtr<DocumentFragment>, RefPtr<Node> container, unsigned startOffset, unsigned endOffset);
 static ExceptionOr<RefPtr<Node>> processAncestorsAndTheirSiblings(Range::ActionType, Node* container, ContentsProcessDirection, ExceptionOr<RefPtr<Node>>&& passedClonedContainer, Node* commonRoot);
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(Range);
 
 inline Range::Range(Document& ownerDocument)
     : m_ownerDocument(ownerDocument)

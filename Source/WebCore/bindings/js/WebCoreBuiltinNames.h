@@ -41,6 +41,7 @@ namespace WebCore {
 
 #define WEBCORE_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
     macro(AbortSignal) \
+    macro(AbstractRange) \
     macro(Animation) \
     macro(AnimationEffect) \
     macro(AnimationPlaybackEvent) \

@@ -28,8 +28,11 @@
 
 #include "ContainerNode.h"
 #include "Text.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(StaticRange);
 
 StaticRange::StaticRange(SimpleRange&& range)
     : SimpleRange(WTFMove(range))

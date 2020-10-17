@@ -675,6 +675,7 @@ $(PROJECT_DIR)/css/typedom/TypedOMCSSUnparsedValue.idl
 $(PROJECT_DIR)/dom/AbortAlgorithm.idl
 $(PROJECT_DIR)/dom/AbortController.idl
 $(PROJECT_DIR)/dom/AbortSignal.idl
+$(PROJECT_DIR)/dom/AbstractRange.idl
 $(PROJECT_DIR)/dom/AnimationEvent.idl
 $(PROJECT_DIR)/dom/Attr.idl
 $(PROJECT_DIR)/dom/BeforeLoadEvent.idl

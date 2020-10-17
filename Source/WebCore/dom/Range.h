@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "AbstractRange.h"
 #include "RangeBoundaryPoint.h"
 
 namespace WebCore {
@@ -37,16 +38,17 @@ class Text;
 
 struct SimpleRange;
 
-class Range : public RefCounted<Range> {
+class Range final : public AbstractRange {
+    WTF_MAKE_ISO_ALLOCATED(Range);
 public:
     WEBCORE_EXPORT static Ref<Range> create(Document&);
     WEBCORE_EXPORT ~Range();
 
-    Node& startContainer() const { return m_start.container(); }
-    unsigned startOffset() const { return m_start.offset(); }
-    Node& endContainer() const { return m_end.container(); }
-    unsigned endOffset() const { return m_end.offset(); }
-    bool collapsed() const { return m_start == m_end; }
+    Node& startContainer() const final { return m_start.container(); }
+    unsigned startOffset() const final { return m_start.offset(); }
+    Node& endContainer() const final { return m_end.container(); }
+    unsigned endOffset() const final { return m_end.offset(); }
+    bool collapsed() const final { return m_start == m_end; }
     Node* commonAncestorContainer() const { return commonInclusiveAncestor(startContainer(), endContainer()).get(); }
 
     WEBCORE_EXPORT ExceptionOr<void> setStart(Ref<Node>&&, unsigned offset);
@@ -118,6 +120,8 @@ public:
 private:
     explicit Range(Document&);
 
+    bool isLiveRange() const final { return true; }
+
     void updateDocument();
     void updateAssociatedSelection();
     ExceptionOr<RefPtr<DocumentFragment>> processContents(ActionType);
@@ -142,3 +146,7 @@ WEBCORE_EXPORT RefPtr<Range> createLiveRange(const Optional<SimpleRange>&);
 // Outside the WebCore namespace for ease of invocation from the debugger.
 void showTree(const WebCore::Range*);
 #endif
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Range)
+    static bool isType(const WebCore::AbstractRange& range) { return range.isLiveRange(); }
+SPECIALIZE_TYPE_TRAITS_END()

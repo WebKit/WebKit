@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,17 +20,12 @@
 
 [
     GenerateIsReachable=ReachableFromDOMWindow,
-    ImplementationLacksVTable,
     ExportMacro=WEBCORE_EXPORT,
-    Exposed=Window
-] interface Range {
+    Exposed=Window,
+    JSGenerateToNativeObject,
+] interface Range : AbstractRange {
     [CallWith=Document] constructor();
 
-    readonly attribute Node startContainer;
-    readonly attribute unsigned long startOffset;
-    readonly attribute Node endContainer;
-    readonly attribute unsigned long endOffset;
-    readonly attribute boolean collapsed;
     readonly attribute Node commonAncestorContainer;
 
     [MayThrowException] undefined setStart(Node node, unsigned long offset);

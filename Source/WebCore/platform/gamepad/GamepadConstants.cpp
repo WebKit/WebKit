@@ -28,8 +28,8 @@
 
 #if ENABLE(GAMEPAD)
 
-#import <wtf/NeverDestroyed.h>
-#import <wtf/text/WTFString.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

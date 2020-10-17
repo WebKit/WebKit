@@ -753,6 +753,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/AbortAlgorithm.idl
     dom/AbortController.idl
     dom/AbortSignal.idl
+    dom/AbstractRange.idl
     dom/AnimationEvent.idl
     dom/Attr.idl
     dom/BeforeLoadEvent.idl

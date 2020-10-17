@@ -636,6 +636,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/AbortAlgorithm.idl \
     $(WebCore)/dom/AbortController.idl \
     $(WebCore)/dom/AbortSignal.idl \
+    $(WebCore)/dom/AbstractRange.idl \
     $(WebCore)/dom/AnimationEvent.idl \
     $(WebCore)/dom/Attr.idl \
     $(WebCore)/dom/BeforeLoadEvent.idl \
