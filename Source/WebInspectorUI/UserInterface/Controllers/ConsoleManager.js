@@ -42,7 +42,6 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
         this._customLoggingChannels = [];
-        this._loggingChannelSources = [];
     }
 
     // Static
@@ -68,7 +67,6 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
     get warningCount() { return this._warningCount; }
     get errorCount() { return this._errorCount; }
     get customLoggingChannels() { return this._customLoggingChannels; }
-    get logChannelSources() { return this._loggingChannelSources; }
 
     issuesForSourceCode(sourceCode)
     {
@@ -165,16 +163,12 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         if (!WI.ConsoleManager.supportsLogChannels())
             return;
 
-        if (this._loggingChannelSources.length)
+        if (this._customLoggingChannels.length)
             return;
-
-        this._loggingChannelSources = [WI.ConsoleMessage.MessageSource.Media, WI.ConsoleMessage.MessageSource.WebRTC, WI.ConsoleMessage.MessageSource.MediaSource];
 
         target.ConsoleAgent.getLoggingChannels((error, channels) => {
             if (error)
                 return;
-
-            console.assert(channels.every((channel) => this._loggingChannelSources.includes(channel.source)));
 
             this._customLoggingChannels = channels.map(WI.LoggingChannel.fromPayload);
         });

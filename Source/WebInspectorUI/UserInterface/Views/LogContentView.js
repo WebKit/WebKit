@@ -450,7 +450,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         if (this._startedProvisionalLoad)
             this._provisionalMessages.push(message);
 
-        if (!this._hasNonDefaultLogChannelMessage && WI.consoleManager.logChannelSources.includes(message.source)) {
+        if (!this._hasNonDefaultLogChannelMessage && WI.consoleManager.customLoggingChannels.some((channel) => channel.source === message.source)) {
             this._hasNonDefaultLogChannelMessage = true;
             this.dispatchEventToListeners(WI.ContentView.Event.NavigationItemsDidChange);
             this._scopeBar.item(WI.LogContentView.Scopes.Infos).hidden = false;

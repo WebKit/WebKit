@@ -54,8 +54,6 @@ function test()
                 InspectorTest.expectThat(WI.ConsoleManager.supportsLogChannels(), "Log channels should be supported.");
                 InspectorTest.expectThat(WI.consoleManager.customLoggingChannels, "Has WI.consoleManager.customLoggingChannels.");
                 InspectorTest.expectThat(WI.consoleManager.customLoggingChannels.length, "WI.consoleManager.customLoggingChannels is not empty.");
-                InspectorTest.expectThat(WI.consoleManager.logChannelSources, "Has WI.consoleManager.logChannelSources.");
-                InspectorTest.expectThat(WI.consoleManager.logChannelSources.length, "WI.consoleManager.logChannelSources is not empty.");
 
                 let sources = Object.values(WI.ConsoleMessage.MessageSource);
                 WI.consoleManager.customLoggingChannels.forEach((channel) => {

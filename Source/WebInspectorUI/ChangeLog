@@ -1,5 +1,23 @@
 2020-10-16  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(r266885): Controllers/ConsoleManager.js:177:27: CONSOLE ASSERT ERROR
+        https://bugs.webkit.org/show_bug.cgi?id=217863
+
+        Reviewed by Timothy Hatcher.
+
+        r266885 changed `Console.getLoggingChannels` to return any `Console.ChannelSource` that
+        existed, rather than a hardcoded list. Remove the similarly hardcoded list in the frontend.
+
+        * UserInterface/Controllers/ConsoleManager.js:
+        (WI.ConsoleManager):
+        (WI.ConsoleManager.prototype.initializeLogChannels):
+        (WI.ConsoleManager.prototype.get logChannelSources): Deleted.
+
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype._messageAdded):
+
+2020-10-16  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION(r266885): LoggingChannel.js:31:23: CONSOLE ASSERT ERROR
         https://bugs.webkit.org/show_bug.cgi?id=217864
 
