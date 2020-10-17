@@ -80,7 +80,6 @@
 #include "InspectorController.h"
 #include "InspectorHistory.h"
 #include "InspectorNodeFinder.h"
-#include "InspectorOverlay.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
@@ -1227,14 +1226,14 @@ void InspectorDOMAgent::setSearchingForNode(Protocol::ErrorString& errorString, 
         client->elementSelectionChanged(m_searchingForNode);
 }
 
-std::unique_ptr<HighlightConfig> InspectorDOMAgent::highlightConfigFromInspectorObject(Protocol::ErrorString& errorString, RefPtr<JSON::Object>&& highlightInspectorObject)
+std::unique_ptr<InspectorOverlay::Highlight::Config> InspectorDOMAgent::highlightConfigFromInspectorObject(Protocol::ErrorString& errorString, RefPtr<JSON::Object>&& highlightInspectorObject)
 {
     if (!highlightInspectorObject) {
         errorString = "Internal error: highlight configuration parameter is missing"_s;
         return nullptr;
     }
 
-    auto highlightConfig = makeUnique<HighlightConfig>();
+    auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
     highlightConfig->showInfo = highlightInspectorObject->getBoolean(Protocol::DOM::HighlightConfig::showInfoKey).valueOr(false);
     highlightConfig->content = parseConfigColor(Protocol::DOM::HighlightConfig::contentColorKey, *highlightInspectorObject);
     highlightConfig->padding = parseConfigColor(Protocol::DOM::HighlightConfig::paddingColorKey, *highlightInspectorObject);
@@ -1290,7 +1289,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightQuad(Ref<JSON::Array>&
 
 void InspectorDOMAgent::innerHighlightQuad(std::unique_ptr<FloatQuad> quad, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, Optional<bool>&& usePageCoordinates)
 {
-    auto highlightConfig = makeUnique<HighlightConfig>();
+    auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
     highlightConfig->content = parseColor(WTFMove(color));
     highlightConfig->contentOutline = parseColor(WTFMove(outlineColor));
     highlightConfig->usePageCoordinates = usePageCoordinates ? *usePageCoordinates : false;
@@ -1402,7 +1401,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightNode(Ref<JSON::Object>
     if (!node)
         return makeUnexpected(errorString);
 
-    std::unique_ptr<HighlightConfig> highlightConfig = highlightConfigFromInspectorObject(errorString, WTFMove(highlightInspectorObject));
+    std::unique_ptr<InspectorOverlay::Highlight::Config> highlightConfig = highlightConfigFromInspectorObject(errorString, WTFMove(highlightInspectorObject));
     if (!highlightConfig)
         return makeUnexpected(errorString);
 
@@ -1433,7 +1432,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightNodeList(Ref<JSON::Arr
         nodes.append(*node);
     }
 
-    std::unique_ptr<HighlightConfig> highlightConfig = highlightConfigFromInspectorObject(errorString, WTFMove(highlightInspectorObject));
+    std::unique_ptr<InspectorOverlay::Highlight::Config> highlightConfig = highlightConfigFromInspectorObject(errorString, WTFMove(highlightInspectorObject));
     if (!highlightConfig)
         return makeUnexpected(errorString);
 
@@ -1455,7 +1454,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightFrame(const Protocol::
         return makeUnexpected(errorString);
 
     if (frame->ownerElement()) {
-        auto highlightConfig = makeUnique<HighlightConfig>();
+        auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
         highlightConfig->showInfo = true; // Always show tooltips for frames.
         highlightConfig->content = parseColor(WTFMove(color));
         highlightConfig->contentOutline = parseColor(WTFMove(outlineColor));

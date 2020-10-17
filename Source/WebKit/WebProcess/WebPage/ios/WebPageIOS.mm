@@ -1267,7 +1267,7 @@ void WebPage::setFocusedElementSelectedIndex(uint32_t index, bool allowMultipleS
         downcast<HTMLSelectElement>(*m_focusedElement).optionSelectedByUser(index, true, allowMultipleSelection);
 }
 
-void WebPage::showInspectorHighlight(const WebCore::Highlight& highlight)
+void WebPage::showInspectorHighlight(const WebCore::InspectorOverlay::Highlight& highlight)
 {
     send(Messages::WebPageProxy::ShowInspectorHighlight(highlight));
 }

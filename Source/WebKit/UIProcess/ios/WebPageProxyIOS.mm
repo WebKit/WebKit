@@ -1026,7 +1026,7 @@ void WebPageProxy::autofillLoginCredentials(const String& username, const String
     m_process->send(Messages::WebPage::AutofillLoginCredentials(username, password), m_webPageID);
 }
 
-void WebPageProxy::showInspectorHighlight(const WebCore::Highlight& highlight)
+void WebPageProxy::showInspectorHighlight(const WebCore::InspectorOverlay::Highlight& highlight)
 {
     pageClient().showInspectorHighlight(highlight);
 }

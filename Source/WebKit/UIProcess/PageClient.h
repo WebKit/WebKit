@@ -52,6 +52,10 @@
 #include "RemoteLayerTreeNode.h"
 #include "WKFoundation.h"
 
+#if PLATFORM(IOS_FAMILY)
+#include <WebCore/InspectorOverlay.h>
+#endif
+
 OBJC_CLASS CALayer;
 OBJC_CLASS NSFileWrapper;
 OBJC_CLASS NSMenu;
@@ -98,7 +102,6 @@ enum class TextIndicatorWindowDismissalAnimation : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
 
 struct DictionaryPopupInfo;
-struct Highlight;
 struct TextIndicatorData;
 struct ViewportAttributes;
 struct ShareDataWithParsedURL;
@@ -450,7 +453,7 @@ public:
     virtual void scrollingNodeScrollDidEndScroll() = 0;
     virtual Vector<String> mimeTypesWithCustomContentProviders() = 0;
 
-    virtual void showInspectorHighlight(const WebCore::Highlight&) = 0;
+    virtual void showInspectorHighlight(const WebCore::InspectorOverlay::Highlight&) = 0;
     virtual void hideInspectorHighlight() = 0;
 
     virtual void showInspectorIndication() = 0;

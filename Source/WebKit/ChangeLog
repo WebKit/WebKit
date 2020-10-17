@@ -1,3 +1,44 @@
+2020-10-16  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: rename `Highlight` so it doesn't conflict with CSS `Highlight`
+        https://bugs.webkit.org/show_bug.cgi?id=217858
+
+        Reviewed by Megan Gardner.
+
+        No new tests as there is no behavior change since this is purely a rename.
+
+        * Scripts/webkit/messages.py:
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<InspectorOverlay::Highlight>::encode): Added.
+        (IPC::ArgumentCoder<InspectorOverlay::Highlight>::decode): Added.
+        (IPC::ArgumentCoder<Highlight>::encode): Deleted.
+        (IPC::ArgumentCoder<Highlight>::decode): Deleted.
+
+        * WebProcess/Inspector/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::highlight):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::showInspectorHighlight):
+
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _showInspectorHighlight:]):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::showInspectorHighlight):
+        * UIProcess/PageClient.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::showInspectorHighlight):
+        * UIProcess/Inspector/ios/WKInspectorHighlightView.h:
+        * UIProcess/Inspector/ios/WKInspectorHighlightView.mm:
+        (-[WKInspectorHighlightView _layoutForNodeHighlight:offset:]):
+        (-[WKInspectorHighlightView _layoutForNodeListHighlight:]):
+        (-[WKInspectorHighlightView _layoutForRectsHighlight:]):
+        (-[WKInspectorHighlightView update:]):
+
 2020-10-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         IPC testing API should expose whether a given IPC message has sync reply or not

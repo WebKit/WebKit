@@ -1655,7 +1655,7 @@ ExceptionOr<Ref<DOMRectList>> Internals::inspectorHighlightRects()
     if (!document || !document->page())
         return Exception { InvalidAccessError };
 
-    Highlight highlight;
+    InspectorOverlay::Highlight highlight;
     document->page()->inspectorController().getHighlight(highlight, InspectorOverlay::CoordinateSystem::View);
     return DOMRectList::create(highlight.quads);
 }

@@ -28,6 +28,7 @@
 #import "WKBrowsingContextController.h"
 #import "WKBrowsingContextGroup.h"
 #import "WKProcessGroup.h"
+#import <WebCore/InspectorOverlay.h>
 #import <wtf/NakedRef.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
@@ -41,7 +42,6 @@ class PageConfiguration;
 
 namespace WebCore {
 class FloatRect;
-struct Highlight;
 }
 
 namespace WebKit {
@@ -108,7 +108,7 @@ class WebProcessPool;
 #endif
 - (void)_setAcceleratedCompositingRootView:(UIView *)rootView;
 
-- (void)_showInspectorHighlight:(const WebCore::Highlight&)highlight;
+- (void)_showInspectorHighlight:(const WebCore::InspectorOverlay::Highlight&)highlight;
 - (void)_hideInspectorHighlight;
 
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction;

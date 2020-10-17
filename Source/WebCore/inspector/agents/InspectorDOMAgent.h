@@ -30,6 +30,7 @@
 #pragma once
 
 #include "EventTarget.h"
+#include "InspectorOverlay.h"
 #include "InspectorWebAgentBase.h"
 #include "Timer.h"
 #include <JavaScriptCore/Breakpoint.h>
@@ -63,7 +64,6 @@ class Exception;
 class FloatQuad;
 class Frame;
 class InspectorHistory;
-class InspectorOverlay;
 #if ENABLE(VIDEO)
 class HTMLMediaElement;
 #endif
@@ -73,8 +73,6 @@ class Page;
 class PseudoElement;
 class RevalidateStyleAttributeTask;
 class ShadowRoot;
-
-struct HighlightConfig;
 
 class InspectorDOMAgent final : public InspectorAgentBase, public Inspector::DOMBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDOMAgent);
@@ -214,7 +212,7 @@ private:
 
     void highlightMousedOverNode();
     void setSearchingForNode(Inspector::Protocol::ErrorString&, bool enabled, RefPtr<JSON::Object>&& highlightConfig, bool showRulers);
-    std::unique_ptr<HighlightConfig> highlightConfigFromInspectorObject(Inspector::Protocol::ErrorString&, RefPtr<JSON::Object>&& highlightInspectorObject);
+    std::unique_ptr<InspectorOverlay::Highlight::Config> highlightConfigFromInspectorObject(Inspector::Protocol::ErrorString&, RefPtr<JSON::Object>&& highlightInspectorObject);
 
     // Node-related methods.
     typedef HashMap<RefPtr<Node>, Inspector::Protocol::DOM::NodeId> NodeToIdMap;
@@ -260,7 +258,7 @@ private:
     RefPtr<Node> m_nodeToFocus;
     RefPtr<Node> m_mousedOverNode;
     RefPtr<Node> m_inspectedNode;
-    std::unique_ptr<HighlightConfig> m_inspectModeHighlightConfig;
+    std::unique_ptr<InspectorOverlay::Highlight::Config> m_inspectModeHighlightConfig;
     std::unique_ptr<InspectorHistory> m_history;
     std::unique_ptr<DOMEditor> m_domEditor;
 

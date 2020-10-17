@@ -30,7 +30,6 @@
 
 #import <WebCore/FloatQuad.h>
 #import <WebCore/GeometryUtilities.h>
-#import <WebCore/InspectorOverlay.h>
 
 @implementation WKInspectorHighlightView
 
@@ -210,7 +209,7 @@ static void layerPath(CAShapeLayer *layer, const WebCore::FloatQuad& outerQuad)
     CGPathRelease(path);
 }
 
-- (void)_layoutForNodeHighlight:(const WebCore::Highlight&)highlight offset:(unsigned)offset
+- (void)_layoutForNodeHighlight:(const WebCore::InspectorOverlay::Highlight&)highlight offset:(unsigned)offset
 {
     ASSERT([_layers count] >= offset + 4);
     ASSERT(highlight.quads.size() >= offset + 4);
@@ -238,7 +237,7 @@ static void layerPath(CAShapeLayer *layer, const WebCore::FloatQuad& outerQuad)
     layerPath(contentLayer, contentQuad);
 }
 
-- (void)_layoutForNodeListHighlight:(const WebCore::Highlight&)highlight
+- (void)_layoutForNodeListHighlight:(const WebCore::InspectorOverlay::Highlight&)highlight
 {
     if (!highlight.quads.size()) {
         [self _removeAllLayers];
@@ -252,7 +251,7 @@ static void layerPath(CAShapeLayer *layer, const WebCore::FloatQuad& outerQuad)
         [self _layoutForNodeHighlight:highlight offset:i * 4];
 }
 
-- (void)_layoutForRectsHighlight:(const WebCore::Highlight&)highlight
+- (void)_layoutForRectsHighlight:(const WebCore::InspectorOverlay::Highlight&)highlight
 {
     NSUInteger numLayers = highlight.quads.size();
     if (!numLayers) {
@@ -270,11 +269,11 @@ static void layerPath(CAShapeLayer *layer, const WebCore::FloatQuad& outerQuad)
     }
 }
 
-- (void)update:(const WebCore::Highlight&)highlight
+- (void)update:(const WebCore::InspectorOverlay::Highlight&)highlight
 {
-    if (highlight.type == WebCore::HighlightType::Node || highlight.type == WebCore::HighlightType::NodeList)
+    if (highlight.type == WebCore::InspectorOverlay::Highlight::Type::Node || highlight.type == WebCore::InspectorOverlay::Highlight::Type::NodeList)
         [self _layoutForNodeListHighlight:highlight];
-    else if (highlight.type == WebCore::HighlightType::Rects)
+    else if (highlight.type == WebCore::InspectorOverlay::Highlight::Type::Rects)
         [self _layoutForRectsHighlight:highlight];
 }
 

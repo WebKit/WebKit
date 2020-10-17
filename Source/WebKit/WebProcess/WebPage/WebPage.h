@@ -115,6 +115,7 @@ typedef struct _AtkObject AtkObject;
 
 #if PLATFORM(IOS_FAMILY)
 #include "GestureTypes.h"
+#include <WebCore/InspectorOverlay.h>
 #include <WebCore/IntPointHash.h>
 #include <WebCore/WKContentObservation.h>
 #endif
@@ -219,7 +220,6 @@ struct DictationAlternative;
 struct ElementContext;
 struct GlobalFrameIdentifier;
 struct GlobalWindowIdentifier;
-struct Highlight;
 struct KeypressCommand;
 struct MediaUsageInfo;
 struct PromisedAttachmentInfo;
@@ -765,7 +765,7 @@ public:
 
     Seconds eventThrottlingDelay() const;
 
-    void showInspectorHighlight(const WebCore::Highlight&);
+    void showInspectorHighlight(const WebCore::InspectorOverlay::Highlight&);
     void hideInspectorHighlight();
 
     void showInspectorIndication();

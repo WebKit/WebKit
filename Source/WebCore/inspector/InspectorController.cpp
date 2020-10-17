@@ -356,7 +356,7 @@ void InspectorController::drawHighlight(GraphicsContext& context) const
     m_overlay->paint(context);
 }
 
-void InspectorController::getHighlight(Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem) const
+void InspectorController::getHighlight(InspectorOverlay::Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem) const
 {
     m_overlay->getHighlight(highlight, coordinateSystem);
 }

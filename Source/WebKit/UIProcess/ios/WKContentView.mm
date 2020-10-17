@@ -354,7 +354,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return [self isEditable];
 }
 
-- (void)_showInspectorHighlight:(const WebCore::Highlight&)highlight
+- (void)_showInspectorHighlight:(const WebCore::InspectorOverlay::Highlight&)highlight
 {
     if (!_inspectorHighlightView) {
         _inspectorHighlightView = adoptNS([[WKInspectorHighlightView alloc] initWithFrame:CGRectZero]);

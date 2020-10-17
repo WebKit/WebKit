@@ -116,7 +116,7 @@ static Element* effectiveElementForNode(Node& node)
     return element;
 }
 
-static void buildRendererHighlight(RenderObject* renderer, const HighlightConfig& highlightConfig, Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem)
+static void buildRendererHighlight(RenderObject* renderer, const InspectorOverlay::Highlight::Config& highlightConfig, InspectorOverlay::Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem)
 {
     Frame* containingFrame = renderer->document().frame();
     if (!containingFrame)
@@ -130,7 +130,7 @@ static void buildRendererHighlight(RenderObject* renderer, const HighlightConfig
     bool isSVGRenderer = renderer->node() && renderer->node()->isSVGElement() && !renderer->isSVGRoot();
 
     if (isSVGRenderer) {
-        highlight.type = HighlightType::Rects;
+        highlight.type = InspectorOverlay::Highlight::Type::Rects;
         renderer->absoluteQuads(highlight.quads);
         for (auto& quad : highlight.quads)
             contentsQuadToCoordinateSystem(mainView, containingView, quad, coordinateSystem);
@@ -175,7 +175,7 @@ static void buildRendererHighlight(RenderObject* renderer, const HighlightConfig
         contentsQuadToCoordinateSystem(mainView, containingView, absBorderQuad, coordinateSystem);
         contentsQuadToCoordinateSystem(mainView, containingView, absMarginQuad, coordinateSystem);
 
-        highlight.type = HighlightType::Node;
+        highlight.type = InspectorOverlay::Highlight::Type::Node;
         highlight.quads.append(absMarginQuad);
         highlight.quads.append(absBorderQuad);
         highlight.quads.append(absPaddingQuad);
@@ -183,7 +183,7 @@ static void buildRendererHighlight(RenderObject* renderer, const HighlightConfig
     }
 }
 
-static void buildNodeHighlight(Node& node, const HighlightConfig& highlightConfig, Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem)
+static void buildNodeHighlight(Node& node, const InspectorOverlay::Highlight::Config& highlightConfig, InspectorOverlay::Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem)
 {
     RenderObject* renderer = node.renderer();
     if (!renderer)
@@ -192,14 +192,14 @@ static void buildNodeHighlight(Node& node, const HighlightConfig& highlightConfi
     buildRendererHighlight(renderer, highlightConfig, highlight, coordinateSystem);
 }
 
-static void buildQuadHighlight(const FloatQuad& quad, const HighlightConfig& highlightConfig, Highlight& highlight)
+static void buildQuadHighlight(const FloatQuad& quad, const InspectorOverlay::Highlight::Config& highlightConfig, InspectorOverlay::Highlight& highlight)
 {
     highlight.setDataFromConfig(highlightConfig);
-    highlight.type = HighlightType::Rects;
+    highlight.type = InspectorOverlay::Highlight::Type::Rects;
     highlight.quads.append(quad);
 }
 
-static Path quadToPath(const FloatQuad& quad, Highlight::Bounds& bounds)
+static Path quadToPath(const FloatQuad& quad, InspectorOverlay::Highlight::Bounds& bounds)
 {
     Path path;
     path.moveTo(quad.p1());
@@ -213,7 +213,7 @@ static Path quadToPath(const FloatQuad& quad, Highlight::Bounds& bounds)
     return path;
 }
 
-static void drawOutlinedQuadWithClip(GraphicsContext& context, const FloatQuad& quad, const FloatQuad& clipQuad, const Color& fillColor, Highlight::Bounds& bounds)
+static void drawOutlinedQuadWithClip(GraphicsContext& context, const FloatQuad& quad, const FloatQuad& clipQuad, const Color& fillColor, InspectorOverlay::Highlight::Bounds& bounds)
 {
     GraphicsContextStateSaver stateSaver(context);
 
@@ -226,7 +226,7 @@ static void drawOutlinedQuadWithClip(GraphicsContext& context, const FloatQuad& 
     context.fillPath(quadToPath(clipQuad, bounds));
 }
 
-static void drawOutlinedQuad(GraphicsContext& context, const FloatQuad& quad, const Color& fillColor, const Color& outlineColor, Highlight::Bounds& bounds)
+static void drawOutlinedQuad(GraphicsContext& context, const FloatQuad& quad, const Color& fillColor, const Color& outlineColor, InspectorOverlay::Highlight::Bounds& bounds)
 {
     Path path = quadToPath(quad, bounds);
 
@@ -243,9 +243,9 @@ static void drawOutlinedQuad(GraphicsContext& context, const FloatQuad& quad, co
     context.strokePath(path);
 }
 
-static void drawFragmentHighlight(GraphicsContext& context, Node& node, const HighlightConfig& highlightConfig, Highlight::Bounds& bounds)
+static void drawFragmentHighlight(GraphicsContext& context, Node& node, const InspectorOverlay::Highlight::Config& highlightConfig, InspectorOverlay::Highlight::Bounds& bounds)
 {
-    Highlight highlight;
+    InspectorOverlay::Highlight highlight;
     buildNodeHighlight(node, highlightConfig, highlight, InspectorOverlay::CoordinateSystem::Document);
 
     FloatQuad marginQuad;
@@ -276,7 +276,7 @@ static void drawFragmentHighlight(GraphicsContext& context, Node& node, const Hi
         drawOutlinedQuad(context, contentQuad, highlight.contentColor, highlight.contentOutlineColor, bounds);
 }
 
-static void drawShapeHighlight(GraphicsContext& context, Node& node, Highlight::Bounds& bounds)
+static void drawShapeHighlight(GraphicsContext& context, Node& node, InspectorOverlay::Highlight::Bounds& bounds)
 {
     RenderObject* renderer = node.renderer();
     if (!renderer || !is<RenderBox>(renderer))
@@ -416,23 +416,23 @@ void InspectorOverlay::paint(GraphicsContext& context)
         drawRulers(context, rulerExclusion);
 }
 
-void InspectorOverlay::getHighlight(Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem) const
+void InspectorOverlay::getHighlight(InspectorOverlay::Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem) const
 {
     if (!m_highlightNode && !m_highlightQuad && !m_highlightNodeList)
         return;
 
-    highlight.type = HighlightType::Rects;
+    highlight.type = InspectorOverlay::Highlight::Type::Rects;
     if (m_highlightNode)
         buildNodeHighlight(*m_highlightNode, m_nodeHighlightConfig, highlight, coordinateSystem);
     else if (m_highlightNodeList) {
         highlight.setDataFromConfig(m_nodeHighlightConfig);
         for (unsigned i = 0; i < m_highlightNodeList->length(); ++i) {
-            Highlight nodeHighlight;
+            InspectorOverlay::Highlight nodeHighlight;
             buildNodeHighlight(*(m_highlightNodeList->item(i)), m_nodeHighlightConfig, nodeHighlight, coordinateSystem);
-            if (nodeHighlight.type == HighlightType::Node)
+            if (nodeHighlight.type == InspectorOverlay::Highlight::Type::Node)
                 highlight.quads.appendVector(nodeHighlight.quads);
         }
-        highlight.type = HighlightType::NodeList;
+        highlight.type = InspectorOverlay::Highlight::Type::NodeList;
     } else
         buildQuadHighlight(*m_highlightQuad, m_quadHighlightConfig, highlight);
 }
@@ -445,7 +445,7 @@ void InspectorOverlay::hideHighlight()
     update();
 }
 
-void InspectorOverlay::highlightNodeList(RefPtr<NodeList>&& nodes, const HighlightConfig& highlightConfig)
+void InspectorOverlay::highlightNodeList(RefPtr<NodeList>&& nodes, const InspectorOverlay::Highlight::Config& highlightConfig)
 {
     m_nodeHighlightConfig = highlightConfig;
     m_highlightNodeList = WTFMove(nodes);
@@ -453,7 +453,7 @@ void InspectorOverlay::highlightNodeList(RefPtr<NodeList>&& nodes, const Highlig
     update();
 }
 
-void InspectorOverlay::highlightNode(Node* node, const HighlightConfig& highlightConfig)
+void InspectorOverlay::highlightNode(Node* node, const InspectorOverlay::Highlight::Config& highlightConfig)
 {
     m_nodeHighlightConfig = highlightConfig;
     m_highlightNode = node;
@@ -461,7 +461,7 @@ void InspectorOverlay::highlightNode(Node* node, const HighlightConfig& highligh
     update();
 }
 
-void InspectorOverlay::highlightQuad(std::unique_ptr<FloatQuad> quad, const HighlightConfig& highlightConfig)
+void InspectorOverlay::highlightQuad(std::unique_ptr<FloatQuad> quad, const InspectorOverlay::Highlight::Config& highlightConfig)
 {
     if (highlightConfig.usePageCoordinates)
         *quad -= toIntSize(m_page.mainFrame().view()->scrollPosition());
@@ -594,7 +594,7 @@ InspectorOverlay::RulerExclusion InspectorOverlay::drawQuadHighlight(GraphicsCon
 {
     RulerExclusion rulerExclusion;
 
-    Highlight highlight;
+    InspectorOverlay::Highlight highlight;
     buildQuadHighlight(quad, m_quadHighlightConfig, highlight);
 
     if (highlight.quads.size() >= 1) {
@@ -618,7 +618,7 @@ void InspectorOverlay::drawPaintRects(GraphicsContext& context, const Deque<Time
         context.fillRect(pair.second);
 }
 
-void InspectorOverlay::drawBounds(GraphicsContext& context, const Highlight::Bounds& bounds)
+void InspectorOverlay::drawBounds(GraphicsContext& context, const InspectorOverlay::Highlight::Bounds& bounds)
 {
     FrameView* pageView = m_page.mainFrame().view();
     FloatSize viewportSize = pageView->sizeForVisibleContent();
@@ -892,7 +892,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
     }
 }
 
-Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, const Highlight::Bounds& bounds)
+Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, const InspectorOverlay::Highlight::Bounds& bounds)
 {
     if (bounds.isEmpty())
         return { };

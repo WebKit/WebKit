@@ -640,7 +640,7 @@ bool PageClientImpl::showShareSheet(const ShareDataWithParsedURL& shareData, WTF
     return true;
 }
 
-void PageClientImpl::showInspectorHighlight(const WebCore::Highlight& highlight)
+void PageClientImpl::showInspectorHighlight(const WebCore::InspectorOverlay::Highlight& highlight)
 {
     [m_contentView _showInspectorHighlight:highlight];
 }

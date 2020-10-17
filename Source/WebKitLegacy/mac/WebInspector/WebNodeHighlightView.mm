@@ -261,7 +261,7 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
     CGPathRelease(path);
 }
 
-- (void)_layoutForNodeHighlight:(Highlight*)highlight parent:(CALayer *)parentLayer
+- (void)_layoutForNodeHighlight:(InspectorOverlay::Highlight*)highlight parent:(CALayer *)parentLayer
 {
     if (!highlight->quads.size()) {
         [self _removeAllLayers];
@@ -291,7 +291,7 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
     layerPath(contentLayer, contentQuad);
 }
 
-- (void)_layoutForRectsHighlight:(Highlight*)highlight parent:(CALayer *)parentLayer
+- (void)_layoutForRectsHighlight:(InspectorOverlay::Highlight*)highlight parent:(CALayer *)parentLayer
 {
     NSUInteger numLayers = highlight->quads.size();
     if (!numLayers) {
@@ -319,12 +319,12 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
     if (![_webNodeHighlight inspectorController])
         return;
 
-    Highlight h;
+    InspectorOverlay::Highlight h;
     [_webNodeHighlight inspectorController]->getHighlight(h, InspectorOverlay::CoordinateSystem::View);
 
-    if (h.type == HighlightType::Node)
+    if (h.type == InspectorOverlay::Highlight::Type::Node)
         [self _layoutForNodeHighlight:&h parent:parentLayer];
-    else if (h.type == HighlightType::Rects)
+    else if (h.type == InspectorOverlay::Highlight::Type::Rects)
         [self _layoutForRectsHighlight:&h parent:parentLayer];
 }
 #endif

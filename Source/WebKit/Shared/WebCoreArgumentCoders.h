@@ -62,6 +62,10 @@
 #include <WebCore/CDMInstanceSession.h>
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#include <WebCore/InspectorOverlay.h>
+#endif
+
 #if PLATFORM(GTK)
 #include "ArgumentCodersGtk.h"
 #endif
@@ -163,7 +167,6 @@ struct KeypressCommand;
 #if PLATFORM(IOS_FAMILY)
 class FloatQuad;
 class SelectionRect;
-struct Highlight;
 struct PasteboardImage;
 struct PasteboardWebContent;
 #endif
@@ -486,9 +489,9 @@ template<> struct ArgumentCoder<WebCore::SelectionRect> {
     static Optional<WebCore::SelectionRect> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::Highlight> {
-    static void encode(Encoder&, const WebCore::Highlight&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::Highlight&);
+template<> struct ArgumentCoder<WebCore::InspectorOverlay::Highlight> {
+    static void encode(Encoder&, const WebCore::InspectorOverlay::Highlight&);
+    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::InspectorOverlay::Highlight&);
 };
 
 template<> struct ArgumentCoder<WebCore::PasteboardWebContent> {

@@ -125,6 +125,7 @@
 #if PLATFORM(IOS_FAMILY)
 #include "GestureTypes.h"
 #include "WebAutocorrectionContext.h"
+#include <WebCore/InspectorOverlay.h>
 #endif
 
 #if PLATFORM(MACCATALYST)
@@ -2210,7 +2211,7 @@ private:
     void didReleaseAllTouchPoints();
     void didUpdateEditorState();
 
-    void showInspectorHighlight(const WebCore::Highlight&);
+    void showInspectorHighlight(const WebCore::InspectorOverlay::Highlight&);
     void hideInspectorHighlight();
 
     void enableInspectorNodeSearch();

@@ -406,7 +406,7 @@ messages -> WebPageProxy {
     FocusedElementDidChangeInputMode(enum:uint8_t WebCore::InputMode mode)
     ScrollingNodeScrollWillStartScroll()
     ScrollingNodeScrollDidEndScroll()
-    ShowInspectorHighlight(struct WebCore::Highlight highlight)
+    ShowInspectorHighlight(struct WebCore::InspectorOverlay::Highlight highlight)
     HideInspectorHighlight()
     FocusedElementInformationCallback(struct WebKit::FocusedElementInformation information, WebKit::CallbackID callbackID)
 

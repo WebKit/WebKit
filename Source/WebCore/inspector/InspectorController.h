@@ -92,7 +92,7 @@ public:
     void inspect(Node*);
     WEBCORE_EXPORT bool shouldShowOverlay() const;
     WEBCORE_EXPORT void drawHighlight(GraphicsContext&) const;
-    WEBCORE_EXPORT void getHighlight(Highlight&, InspectorOverlay::CoordinateSystem) const;
+    WEBCORE_EXPORT void getHighlight(InspectorOverlay::Highlight&, InspectorOverlay::CoordinateSystem) const;
     void hideHighlight();
     Node* highlightedNode() const;
 

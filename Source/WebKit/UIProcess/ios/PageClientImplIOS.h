@@ -29,6 +29,7 @@
 
 #import "PageClientImplCocoa.h"
 #import "WebFullScreenManagerProxy.h"
+#import <WebCore/InspectorOverlay.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
@@ -183,7 +184,7 @@ private:
     double minimumZoomScale() const override;
     WebCore::FloatRect documentRect() const override;
 
-    void showInspectorHighlight(const WebCore::Highlight&) override;
+    void showInspectorHighlight(const WebCore::InspectorOverlay::Highlight&) override;
     void hideInspectorHighlight() override;
 
     void showInspectorIndication() override;

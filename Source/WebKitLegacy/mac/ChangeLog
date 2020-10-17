@@ -1,3 +1,17 @@
+2020-10-16  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: rename `Highlight` so it doesn't conflict with CSS `Highlight`
+        https://bugs.webkit.org/show_bug.cgi?id=217858
+
+        Reviewed by Megan Gardner.
+
+        No new tests as there is no behavior change since this is purely a rename.
+
+        * WebInspector/WebNodeHighlightView.mm:
+        (-[WebNodeHighlightView _layoutForNodeHighlight:parent:]):
+        (-[WebNodeHighlightView _layoutForRectsHighlight:parent:]):
+        (-[WebNodeHighlightView layoutSublayers:]):
+
 2020-10-13  Keith Rollin  <krollin@apple.com>
 
         Remove leftover MACOSX_DEPLOYMENT_TARGET_macosx support

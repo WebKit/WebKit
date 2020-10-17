@@ -100,7 +100,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include <WebCore/FloatQuad.h>
-#include <WebCore/InspectorOverlay.h>
 #include <WebCore/SelectionRect.h>
 #include <WebCore/SharedBuffer.h>
 #endif // PLATFORM(IOS_FAMILY)
@@ -1723,7 +1722,7 @@ bool ArgumentCoder<PasteboardURL>::decode(Decoder& decoder, PasteboardURL& conte
 
 #if PLATFORM(IOS_FAMILY)
 
-void ArgumentCoder<Highlight>::encode(Encoder& encoder, const Highlight& highlight)
+void ArgumentCoder<InspectorOverlay::Highlight>::encode(Encoder& encoder, const InspectorOverlay::Highlight& highlight)
 {
     encoder << static_cast<uint32_t>(highlight.type);
     encoder << highlight.usePageCoordinates;
@@ -1735,12 +1734,12 @@ void ArgumentCoder<Highlight>::encode(Encoder& encoder, const Highlight& highlig
     encoder << highlight.quads;
 }
 
-bool ArgumentCoder<Highlight>::decode(Decoder& decoder, Highlight& highlight)
+bool ArgumentCoder<InspectorOverlay::Highlight>::decode(Decoder& decoder, InspectorOverlay::Highlight& highlight)
 {
     uint32_t type;
     if (!decoder.decode(type))
         return false;
-    highlight.type = (HighlightType)type;
+    highlight.type = (InspectorOverlay::Highlight::Type)type;
 
     if (!decoder.decode(highlight.usePageCoordinates))
         return false;
