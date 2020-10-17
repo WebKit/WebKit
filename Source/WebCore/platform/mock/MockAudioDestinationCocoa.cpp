@@ -68,10 +68,10 @@ void MockAudioDestinationCocoa::tick()
 {
     m_workQueue->dispatch([this, sampleRate = sampleRate(), numberOfFramesToProcess = m_numberOfFramesToProcess] {
         AudioStreamBasicDescription streamFormat;
-        setAudioStreamBasicDescription(streamFormat);
+        getAudioStreamBasicDescription(streamFormat);
 
         WebAudioBufferList webAudioBufferList { streamFormat, numberOfFramesToProcess };
-        AudioDestinationCocoa::inputProc(this, 0, 0, 0, numberOfFramesToProcess, webAudioBufferList.list());
+        render(0., 0, numberOfFramesToProcess, webAudioBufferList.list());
     });
 }
 

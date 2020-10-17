@@ -56,7 +56,6 @@ Ref<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const 
         return AudioDestinationCocoa::createOverride(callback, sampleRate);
 
     auto destination = adoptRef(*new AudioDestinationCocoa(callback, numberOfOutputChannels, sampleRate));
-    destination->configure();
     return destination;
 }
 
@@ -70,15 +69,16 @@ unsigned long AudioDestination::maxChannelCount()
     return AudioSession::sharedSession().maximumNumberOfOutputChannels();
 }
 
-AudioDestinationCocoa::AudioDestinationCocoa(AudioIOCallback& callback, unsigned numberOfOutputChannels, float sampleRate)
-    : m_outputUnit(0)
+AudioDestinationCocoa::AudioDestinationCocoa(AudioIOCallback& callback, unsigned numberOfOutputChannels, float sampleRate, bool configureAudioOutputUnit)
+    : m_audioOutputUnitAdaptor(*this)
     , m_callback(callback)
     , m_outputBus(AudioBus::create(numberOfOutputChannels, AudioUtilities::renderQuantumSize, false).releaseNonNull())
     , m_renderBus(AudioBus::create(numberOfOutputChannels, AudioUtilities::renderQuantumSize).releaseNonNull())
     , m_fifo(makeUniqueRef<PushPullFIFO>(numberOfOutputChannels, fifoSize))
     , m_contextSampleRate(sampleRate)
 {
-    configure();
+    if (configureAudioOutputUnit)
+        m_audioOutputUnitAdaptor.configure(hardwareSampleRate(), numberOfOutputChannels);
 
     auto hardwareSampleRate = this->hardwareSampleRate();
     if (sampleRate != hardwareSampleRate) {
@@ -87,11 +87,7 @@ AudioDestinationCocoa::AudioDestinationCocoa(AudioIOCallback& callback, unsigned
     }
 }
 
-AudioDestinationCocoa::~AudioDestinationCocoa()
-{
-    if (m_outputUnit)
-        AudioComponentInstanceDispose(m_outputUnit);
-}
+AudioDestinationCocoa::~AudioDestinationCocoa() = default;
 
 unsigned AudioDestinationCocoa::numberOfOutputChannels() const
 {
@@ -107,7 +103,7 @@ void AudioDestinationCocoa::start(Function<void(Function<void()>&&)>&& dispatchT
 {
     LOG(Media, "AudioDestinationCocoa::start");
     m_dispatchToRenderThread = WTFMove(dispatchToRenderThread);
-    OSStatus result = AudioOutputUnitStart(m_outputUnit);
+    OSStatus result = m_audioOutputUnitAdaptor.start();
 
     if (!result)
         setIsPlaying(true);
@@ -116,7 +112,7 @@ void AudioDestinationCocoa::start(Function<void(Function<void()>&&)>&& dispatchT
 void AudioDestinationCocoa::stop()
 {
     LOG(Media, "AudioDestinationCocoa::stop");
-    OSStatus result = AudioOutputUnitStop(m_outputUnit);
+    OSStatus result = m_audioOutputUnitAdaptor.stop();
     m_dispatchToRenderThread = nullptr;
 
     if (!result)
@@ -133,7 +129,7 @@ void AudioDestinationCocoa::setIsPlaying(bool isPlaying)
     m_callback.isPlayingDidChange();
 }
 
-void AudioDestinationCocoa::setAudioStreamBasicDescription(AudioStreamBasicDescription& streamFormat)
+void AudioDestinationCocoa::getAudioStreamBasicDescription(AudioStreamBasicDescription& streamFormat)
 {
     const int bytesPerFloat = sizeof(Float32);
     const int bitsPerByte = 8;
@@ -157,22 +153,24 @@ static void assignAudioBuffersToBus(AudioBuffer* buffers, AudioBus& bus, UInt32 
     }
 }
 
-// Pulls on our provider to get rendered audio stream.
-OSStatus AudioDestinationCocoa::render(const AudioTimeStamp* timestamp, UInt32 numberOfFrames, AudioBufferList* ioData)
+bool AudioDestinationCocoa::hasEnoughFrames(UInt32 numberOfFrames) const
 {
-    if (m_fifo->length() < numberOfFrames)
+    return m_fifo->length() >= numberOfFrames;
+}
+
+// Pulls on our provider to get rendered audio stream.
+OSStatus AudioDestinationCocoa::render(double sampleTime, uint64_t hostTime, UInt32 numberOfFrames, AudioBufferList* ioData)
+{
+    if (!hasEnoughFrames(numberOfFrames))
         return noErr;
 
-    if (timestamp) {
-        m_outputTimestamp = {
-            Seconds { timestamp->mSampleTime / sampleRate() },
-            MonotonicTime::fromMachAbsoluteTime(timestamp->mHostTime)
-        };
-    } else
-        m_outputTimestamp = AudioIOPosition { };
+    m_outputTimestamp = {
+        Seconds { sampleTime / sampleRate() },
+        MonotonicTime::fromMachAbsoluteTime(hostTime)
+    };
 
     auto* buffers = ioData->mBuffers;
-    UInt32 numberOfBuffers = ioData->mNumberBuffers;
+    auto numberOfBuffers = ioData->mNumberBuffers;
 
     // Associate the destination data array with the output bus then fill the FIFO.
     assignAudioBuffersToBus(buffers, m_outputBus.get(), numberOfBuffers, numberOfFrames, 0, numberOfFrames);
@@ -208,13 +206,6 @@ void AudioDestinationCocoa::renderOnRenderingThead(size_t framesToRender)
         auto locker = holdLock(m_fifoLock);
         m_fifo->push(m_renderBus.ptr());
     }
-}
-
-// DefaultOutputUnit callback
-OSStatus AudioDestinationCocoa::inputProc(void* userData, AudioUnitRenderActionFlags*, const AudioTimeStamp* timestamp, UInt32 /*busNumber*/, UInt32 numberOfFrames, AudioBufferList* ioData)
-{
-    auto* audioOutput = static_cast<AudioDestinationCocoa*>(userData);
-    return audioOutput->render(timestamp, numberOfFrames, ioData);
 }
 
 void AudioDestinationCocoa::provideInput(AudioBus* bus, size_t framesToProcess)

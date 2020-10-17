@@ -28,24 +28,37 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO)
 
 #include "Connection.h"
-#include "RemoteAudioBusData.h"
 #include "RemoteAudioDestinationIdentifier.h"
 #include "WebProcessSupplement.h"
-#include <WebCore/AudioDestination.h>
 #include <WebCore/AudioIOCallback.h>
 #include <wtf/CrossThreadQueue.h>
+#include <wtf/MediaTime.h>
 #include <wtf/Threading.h>
 
 #if PLATFORM(COCOA)
-#include <WebCore/CARingBuffer.h>
+#include "SharedRingBufferStorage.h"
+#include <WebCore/AudioDestinationCocoa.h>
+#else
+#include <WebCore/AudioDestination.h>
 #endif
+
+namespace WebCore {
+class CARingBuffer;
+class WebAudioBufferList;
+}
 
 namespace WebKit {
 
-class RemoteAudioDestinationProxy : public WebCore::AudioDestination, public IPC::Connection::ThreadMessageReceiver {
+class RemoteAudioDestinationProxy
+#if PLATFORM(COCOA)
+    : public WebCore::AudioDestinationCocoa
+    , public SharedRingBufferStorage::Client
+#else
+    : public WebCore::AudioDestination
+#endif
+    , public IPC::Connection::ThreadMessageReceiver {
     WTF_MAKE_NONCOPYABLE(RemoteAudioDestinationProxy);
 public:
-    using AudioBus = WebCore::AudioBus;
     using AudioIOCallback = WebCore::AudioIOCallback;
     using WebCore::AudioDestination::ref;
     using WebCore::AudioDestination::deref;
@@ -57,16 +70,25 @@ public:
 
     void didReceiveMessageFromGPUProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
 
-    void renderBuffer(const WebKit::RemoteAudioBusData&, CompletionHandler<void()>&&);
-    void didChangeIsPlaying(bool isPlaying);
+#if PLATFORM(COCOA)
+    void requestBuffer(double sampleTime, uint64_t hostTime, uint64_t numberOfFrames, CompletionHandler<void(uint64_t startFrame, uint64_t numberOfFramesToRender, uint64_t boundsStartFrame, uint64_t boundsEndFrame)>&&);
+#endif
 
 private:
-    // WebCore::AudioDestination
-    void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread) override;
-    void stop() override;
-    bool isPlaying() override { return m_isPlaying; }
-    float sampleRate() const override { return m_sampleRate; }
-    unsigned framesPerBuffer() const override { return m_framesPerBuffer; }
+    void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread) final;
+    void stop() final;
+
+#if !PLATFORM(COCOA)
+    bool isPlaying() final { return false; }
+    void setIsPlaying(bool) { }
+    float sampleRate() const final { return 0; }
+    unsigned framesPerBuffer() const final { return 0; }
+#endif
+
+#if PLATFORM(COCOA)
+    void storageChanged(SharedMemory*) final;
+    void renderOnRenderingThead(size_t framesToRender) final;
+#endif
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -76,11 +98,16 @@ private:
     void refMessageReceiver() final { WebCore::AudioDestination::ref(); }
     void derefMessageReceiver() final { WebCore::AudioDestination::deref(); }
 
-    AudioIOCallback& m_callback;
-    float m_sampleRate { 0. };
-    unsigned m_framesPerBuffer { 0 };
     RemoteAudioDestinationIdentifier m_destinationID;
-    bool m_isPlaying { false };
+
+#if PLATFORM(COCOA)
+    uint64_t m_numberOfFrames { 0 };
+    std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
+    std::unique_ptr<WebCore::WebAudioBufferList> m_audioBufferList;
+    uint64_t m_currentFrame { 0 };
+    WTF::Function<void(uint64_t, uint64_t, uint64_t, uint64_t)> m_renderCompletionHandler;
+#endif
+
     Function<void(Function<void()>&&)> m_dispatchToRenderThread;
     RefPtr<Thread> m_renderThread;
     CrossThreadQueue<Function<void()>> m_threadTaskQueue;

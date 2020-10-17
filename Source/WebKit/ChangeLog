@@ -1,3 +1,76 @@
+2020-10-16  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process] Use CARingBuffer to transfer audio data of an audio destination from a web process to the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=217715
+
+        Reviewed by Jer Noble.
+
+        The current implementation of RemoteAudioDestination essentially runs the
+        AudioDestinationCocoa in the GPU process, which is not good because we are adding
+        AudioWorklet stuff into AudioDestinationCocoa, but the AudioWorklet stuff is
+        irrelevant to the GPU process.
+
+        What really needs to run in the GPU process (for Cocoa platforms at least) is the
+        audio output unit. This patch adds WebCore::AudioOutputUnitAdaptor and
+        WebCore::AudioUnitRenderer to implement that. With this patch, RemoteAudioDestination
+        in the GPU process is an AudioUnitRenderer and it embeds an AudioOutputUnitAdaptor
+        like AudioDestinationCocoa does in the Web process. Essentially, we run AudioOutputUnitAdaptor
+        remotely from the AudioDestinationCocoa's perspective.
+
+        Also, in the current implementation, the RemoteAudioDestinationProxy in a Web
+        process transfers audio data to the RemoteAudioDestination in the GPU process
+        with IPC messages (RemoteAudioBusData). This is not efficient because of the
+        large number of IPC messages for audio samples.
+
+        With this patch, RemoteAudioDestinationProxy (Web process) transfers audio samples
+        to RemoteAudioDestination(GPU process) with a CARingBuffer providing shared
+        buffers for the Web process and the GPU process.
+
+        * GPUProcess/media/RemoteAudioDestinationManager.cpp:
+        (WebKit::RemoteAudioDestination::create):
+        (WebKit::RemoteAudioDestination::~RemoteAudioDestination):
+        (WebKit::RemoteAudioDestination::audioSamplesStorageChanged):
+        (WebKit::RemoteAudioDestination::start):
+        (WebKit::RemoteAudioDestination::stop):
+        (WebKit::RemoteAudioDestination::isPlaying const):
+        (WebKit::RemoteAudioDestination::RemoteAudioDestination):
+        (WebKit::RemoteAudioDestination::storage):
+        (WebKit::RemoteAudioDestination::render):
+        (WebKit::RemoteAudioDestinationManager::createAudioDestination):
+        (WebKit::RemoteAudioDestinationManager::audioSamplesStorageChanged):
+        (WebKit::RemoteAudioDestination::isPlaying): Deleted.
+        (WebKit::RemoteAudioDestination::framesPerBuffer const): Deleted.
+        * GPUProcess/media/RemoteAudioDestinationManager.h:
+        (WebKit::RemoteAudioDestinationManager::didReceiveSyncMessageFromWebProcess):
+        * GPUProcess/media/RemoteAudioDestinationManager.messages.in:
+        Add a message AudioSamplesStorageChanged to support using CARingBuffer to
+        transmit audio samples to the GPU process.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * WebProcess/GPU/media/RemoteAudioBusData.h: Removed.
+
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::RemoteAudioDestinationProxy):
+        (WebKit::RemoteAudioDestinationProxy::start):
+        (WebKit::RemoteAudioDestinationProxy::stop):
+        (WebKit::RemoteAudioDestinationProxy::requestBuffer):
+        (WebKit::RemoteAudioDestinationProxy::renderOnRenderingThead):
+        (WebKit::RemoteAudioDestinationProxy::storageChanged):
+        (WebKit::RemoteAudioDestinationProxy::renderBuffer): Deleted.
+        (WebKit::RemoteAudioDestinationProxy::didChangeIsPlaying): Deleted.
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.h:
+        RemoteAudioDestinationProxy is a subclass of AudioDestinationCocoa. It pulls audio
+        samples from the WebAudio side and use a CARingBuffer to push audio samples to
+        the audio output unit (managed by RemoteAudioDestination) in the GPU process.
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.messages.in:
+        Add a message RequestBuffer, which can be used by RemoteAudioDestination to ask
+        for (pull) audio samples.
+
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRenderer.cpp:
+        (WebKit::AudioMediaStreamTrackRenderer::pushSamples): A minor fix to get rid of
+        a type conversion.
+
 2020-10-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Add an experimental feature flag: WebAuthenticationModernEnabled

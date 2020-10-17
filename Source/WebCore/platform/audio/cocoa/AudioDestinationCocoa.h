@@ -29,6 +29,7 @@
 
 #include "AudioDestination.h"
 #include "AudioIOCallback.h"
+#include "AudioOutputUnitAdaptor.h"
 #include "AudioSourceProvider.h"
 #include <AudioUnit/AudioUnit.h>
 #include <wtf/RefPtr.h>
@@ -43,47 +44,39 @@ class PushPullFIFO;
 using CreateAudioDestinationCocoaOverride = Ref<AudioDestination>(*)(AudioIOCallback&, float sampleRate);
 
 // An AudioDestination using CoreAudio's default output AudioUnit
-class AudioDestinationCocoa : public AudioDestination, public AudioSourceProvider {
+class AudioDestinationCocoa : public AudioDestination, public AudioUnitRenderer, public AudioSourceProvider {
 public:
-    AudioDestinationCocoa(AudioIOCallback&, unsigned numberOfOutputChannels, float sampleRate);
-    virtual ~AudioDestinationCocoa();
+    WEBCORE_EXPORT AudioDestinationCocoa(AudioIOCallback&, unsigned numberOfOutputChannels, float sampleRate, bool configureAudioOutputUnit = true);
+    WEBCORE_EXPORT virtual ~AudioDestinationCocoa();
 
     WEBCORE_EXPORT static CreateAudioDestinationCocoaOverride createOverride;
 
 protected:
-    void setIsPlaying(bool);
+    WEBCORE_EXPORT bool hasEnoughFrames(UInt32 numberOfFrames) const;
+    WEBCORE_EXPORT OSStatus render(double sampleTime, uint64_t hostTime, UInt32 numberOfFrames, AudioBufferList* ioData) final;
+    WEBCORE_EXPORT virtual void renderOnRenderingThead(size_t framesToRender);
 
+    WEBCORE_EXPORT void setIsPlaying(bool);
     bool isPlaying() final { return m_isPlaying; }
     float sampleRate() const final { return m_contextSampleRate; }
-    unsigned framesPerBuffer() const final;
-    AudioUnit& outputUnit() { return m_outputUnit; }
+    WEBCORE_EXPORT unsigned framesPerBuffer() const final;
 
     unsigned numberOfOutputChannels() const;
-    
-    // DefaultOutputUnit callback
-    static OSStatus inputProc(void* userData, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 busNumber, UInt32 numberOfFrames, AudioBufferList* ioData);
 
-    void setAudioStreamBasicDescription(AudioStreamBasicDescription&);
+    WEBCORE_EXPORT void getAudioStreamBasicDescription(AudioStreamBasicDescription&);
 
     Function<void(Function<void()>&&)> m_dispatchToRenderThread;
 
 private:
+    friend Ref<AudioDestination> AudioDestination::create(AudioIOCallback&, const String&, unsigned, unsigned, float);
+
     void start(Function<void(Function<void()>&&)>&&) override;
     void stop() override;
 
-    void renderOnRenderingThead(size_t framesToRender);
-
-    friend Ref<AudioDestination> AudioDestination::create(AudioIOCallback&, const String&, unsigned, unsigned, float);
-    
     // AudioSourceProvider.
-    void provideInput(AudioBus*, size_t framesToProcess) final;
+    WEBCORE_EXPORT void provideInput(AudioBus*, size_t framesToProcess) final;
 
-    void configure();
-    void processBusAfterRender(AudioBus&, UInt32 numberOfFrames);
-
-    OSStatus render(const AudioTimeStamp*, UInt32 numberOfFrames, AudioBufferList* ioData);
-
-    AudioUnit m_outputUnit;
+    AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;
     AudioIOCallback& m_callback;
 
     // To pass the data from FIFO to the audio device callback.

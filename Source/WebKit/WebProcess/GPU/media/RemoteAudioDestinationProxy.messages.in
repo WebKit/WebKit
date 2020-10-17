@@ -24,10 +24,9 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO)
 
 messages -> RemoteAudioDestinationProxy NotRefCounted {
-
-    RenderBuffer(struct WebKit::RemoteAudioBusData data) -> () Async
-    DidChangeIsPlaying(bool isPlaying)
-
+#if PLATFORM(COCOA)
+    RequestBuffer(double sampleTime, uint64_t hostTime, uint64_t numberOfFrames) -> (uint64_t startFrame, uint64_t numberOfFramesToRender, uint64_t boundsStartFrame, uint64_t boundsEndFrame) Async
+#endif
 }
 
 #endif

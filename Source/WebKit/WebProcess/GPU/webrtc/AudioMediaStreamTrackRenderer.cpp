@@ -90,7 +90,7 @@ void AudioMediaStreamTrackRenderer::pushSamples(const MediaTime& time, const Web
 
         // Allocate a ring buffer large enough to contain 2 seconds of audio.
         m_numberOfFrames = m_description.sampleRate() * 2;
-        m_ringBuffer->allocate(m_description.streamDescription(), m_numberOfFrames);
+        m_ringBuffer->allocate(m_description, m_numberOfFrames);
     }
 
     ASSERT(is<WebCore::WebAudioBufferList>(audioData));
