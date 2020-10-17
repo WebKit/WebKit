@@ -410,10 +410,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
 
     formattingState.addLineBox(geometry.lineBoxForLineContent(lineContent));
     const auto& lineBox = formattingState.lineBoxes().last();
-
-    auto lineRectAndLineBoxOffset = geometry.computedLineLogicalRect(lineBox, root().style(), lineContent);
-    auto lineLogicalRect = lineRectAndLineBoxOffset.logicalRect;
-    auto lineBoxVerticalOffset = lineRectAndLineBoxOffset.lineBoxVerticalOffset;
+    auto lineLogicalRect = geometry.computedLineLogicalRect(lineBox, lineContent);
 
     auto updateFloatGeometry = [&] {
         if (lineContent.floats.isEmpty())
@@ -459,7 +456,6 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             // Inline box coordinates are relative to the line box.
             // Let's convert top/left relative to the formatting context root.
             auto borderBoxLogicalTopLeft = lineLogicalRect.topLeft();
-            borderBoxLogicalTopLeft.move({ }, lineBoxVerticalOffset);
             auto inlineLevelBoxLogicalTopLeft = inlineLevelBox->logicalRect().topLeft();
             // Inline box height includes the margin box. Let's account for that.
             borderBoxLogicalTopLeft.move(inlineLevelBoxLogicalTopLeft.x(), inlineLevelBoxLogicalTopLeft.y() + boxGeometry.marginBefore());
@@ -497,8 +493,8 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     updateBoxGeometry();
 
     auto constructLineGeometry = [&] {
-        auto lineBoxLogicalRect = InlineRect { lineLogicalRect.top() + lineBoxVerticalOffset, lineLogicalRect.left(), lineBox.logicalWidth(), lineBox.logicalHeight() };
-        formattingState.addLine({ lineLogicalRect, lineBoxLogicalRect, lineBoxVerticalOffset + lineBox.alignmentBaseline(), lineBox.horizontalAlignmentOffset().valueOr(InlineLayoutUnit { }) });
+        auto lineBoxLogicalRect = InlineRect { lineLogicalRect.top(), lineLogicalRect.left(), lineBox.logicalWidth(), lineBox.logicalHeight() };
+        formattingState.addLine({ lineLogicalRect, lineBoxLogicalRect, lineBox.alignmentBaseline(), lineBox.horizontalAlignmentOffset().valueOr(InlineLayoutUnit { }) });
     };
     constructLineGeometry();
 

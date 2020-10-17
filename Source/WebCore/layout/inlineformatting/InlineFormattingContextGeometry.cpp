@@ -399,17 +399,10 @@ LineBox InlineFormattingContext::Geometry::lineBoxForLineContent(const LineBuild
     return LineBoxBuilder(formattingContext()).build(lineContent);
 }
 
-InlineFormattingContext::Geometry::LineRectAndLineBoxOffset InlineFormattingContext::Geometry::computedLineLogicalRect(const LineBox& lineBox, const RenderStyle&, const LineBuilder::LineContent& lineContent) const
+InlineRect InlineFormattingContext::Geometry::computedLineLogicalRect(const LineBox& lineBox, const LineBuilder::LineContent& lineContent) const
 {
-    if (lineContent.runs.isEmpty() || lineBox.isLineVisuallyEmpty())
-        return { { }, { lineContent.logicalTopLeft, lineContent.lineLogicalWidth, { } } };
-
-    auto lineBoxLogicalHeight = lineBox.logicalHeight();
-    auto lineLogicalHeight = lineBox.logicalHeight();
-    auto logicalRect = InlineRect { lineContent.logicalTopLeft, lineContent.lineLogicalWidth, lineLogicalHeight};
-    // Inline tree height is all integer based.
-    auto lineBoxOffset = floorf((lineLogicalHeight - lineBoxLogicalHeight) / 2);
-    return { lineBoxOffset, logicalRect };
+    auto isConsideredEmpty = lineContent.runs.isEmpty() || lineBox.isLineVisuallyEmpty();
+    return { lineContent.logicalTopLeft, lineContent.lineLogicalWidth, isConsideredEmpty ? InlineLayoutUnit() : lineBox.logicalHeight()};
 }
 
 InlineLayoutUnit InlineFormattingContext::Geometry::logicalTopForNextLine(const LineBuilder::LineContent& lineContent, InlineLayoutUnit previousLineLogicalBottom, const FloatingContext& floatingContext) const
