@@ -1,3 +1,14 @@
+2020-10-17  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r191637): Fix -Wmisleading-indentation warnings in open source clang
+        <https://webkit.org/b/217882>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::accessibilityAttributeValue):
+        - Fix indentation of source to match what it is doing.
+
 2020-10-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [GPU Process] Introduce RemoteResourceCacheProxy to manage the resources in the GPU Process

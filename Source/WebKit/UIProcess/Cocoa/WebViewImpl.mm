@@ -3736,18 +3736,18 @@ id WebViewImpl::accessibilityAttributeValue(NSString *attribute, id parameter)
         else if (m_remoteAccessibilityChild)
             child = m_remoteAccessibilityChild.get();
 
-            if (!child)
-                return nil;
+        if (!child)
+            return nil;
         return @[child];
     }
     if ([attribute isEqualToString:NSAccessibilityRoleAttribute])
         return NSAccessibilityGroupRole;
     if ([attribute isEqualToString:NSAccessibilityRoleDescriptionAttribute])
         return NSAccessibilityRoleDescription(NSAccessibilityGroupRole, nil);
-        if ([attribute isEqualToString:NSAccessibilityParentAttribute])
-            return NSAccessibilityUnignoredAncestor([m_view superview]);
-            if ([attribute isEqualToString:NSAccessibilityEnabledAttribute])
-                return @YES;
+    if ([attribute isEqualToString:NSAccessibilityParentAttribute])
+        return NSAccessibilityUnignoredAncestor([m_view superview]);
+    if ([attribute isEqualToString:NSAccessibilityEnabledAttribute])
+        return @YES;
 
     if ([attribute isEqualToString:@"AXConvertRelativeFrame"]) {
         if ([parameter isKindOfClass:[NSValue class]]) {
