@@ -455,10 +455,10 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             auto& boxGeometry = formattingState.boxGeometry(layoutBox);
             // Inline box coordinates are relative to the line box.
             // Let's convert top/left relative to the formatting context root.
-            auto borderBoxLogicalTopLeft = lineLogicalRect.topLeft();
-            auto inlineLevelBoxLogicalTopLeft = inlineLevelBox->logicalRect().topLeft();
+            auto logicalRect = lineBox.logicalRectForInlineLevelBox(layoutBox);
             // Inline box height includes the margin box. Let's account for that.
-            borderBoxLogicalTopLeft.move(inlineLevelBoxLogicalTopLeft.x(), inlineLevelBoxLogicalTopLeft.y() + boxGeometry.marginBefore());
+            auto borderBoxLogicalTopLeft = lineLogicalRect.topLeft();
+            borderBoxLogicalTopLeft.move(logicalRect.left(), logicalRect.top() + boxGeometry.marginBefore());
 
             if (layoutBox.isInFlowPositioned())
                 borderBoxLogicalTopLeft += geometry.inFlowPositionedPositionOffset(layoutBox, horizontalConstraints);
@@ -470,9 +470,9 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             }
             if (layoutBox.isLineBreakBox()) {
                 boxGeometry.setLogicalTopLeft(toLayoutPoint(borderBoxLogicalTopLeft));
-                boxGeometry.setContentBoxHeight(toLayoutUnit(inlineLevelBox->logicalHeight()));
+                boxGeometry.setContentBoxHeight(toLayoutUnit(logicalRect.height()));
             }
-            auto marginBoxWidth = inlineLevelBox->logicalWidth();
+            auto marginBoxWidth = logicalRect.width();
             auto contentBoxWidth = marginBoxWidth - (boxGeometry.marginStart() + boxGeometry.borderLeft() + boxGeometry.paddingLeft().valueOr(0));
             // Non-atomic inline level boxes may or may not be wrapped and have geometries on multiple lines.
             int previousLineIndex = formattingState.lineBoxes().size() - 2;
@@ -481,13 +481,13 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
                 // This box showed up on this line the first time.
                 boxGeometry.setLogicalTopLeft(toLayoutPoint(borderBoxLogicalTopLeft));
                 boxGeometry.setContentBoxWidth(toLayoutUnit(contentBoxWidth));
-                boxGeometry.setContentBoxHeight(toLayoutUnit(inlineLevelBox->logicalHeight()));
+                boxGeometry.setContentBoxHeight(toLayoutUnit(logicalRect.height()));
                 continue;
             }
             // This is a just a simple box geometry for the line spanning inline box. getBoundingClientRect looks into each line boxes (will turn into fragmented boxes).
             boxGeometry.setLogicalLeft(std::min(boxGeometry.logicalLeft(), toLayoutUnit(borderBoxLogicalTopLeft.x())));
             boxGeometry.setContentBoxWidth(std::max(toLayoutUnit(contentBoxWidth), boxGeometry.contentBoxWidth()));
-            boxGeometry.setContentBoxHeight(boxGeometry.contentBoxHeight() + toLayoutUnit(inlineLevelBox->logicalHeight()));
+            boxGeometry.setContentBoxHeight(boxGeometry.contentBoxHeight() + toLayoutUnit(logicalRect.height()));
         }
     };
     updateBoxGeometry();
