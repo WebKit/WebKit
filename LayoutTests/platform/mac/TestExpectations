@@ -2245,3 +2245,13 @@ webkit.org/b/209073 [ Debug ] inspector/injected-script/avoid-getter-invocation.
 webkit.org/b/217641 [ Debug ] imported/w3c/web-platform-tests/xhr/event-timeout.any.worker.html [ Pass Failure ]
 
 webkit.org/b/217620 inspector/audit/basic-async.htm [ Pass Timeout ]
+
+
+# These are failing on Mojave due to an error in the way CA animations are applied.
+# https://bugs.webkit.org/show_bug.cgi?id=217842
+[ Mojave ] transitions/interrupted-transition-hardware.html [ Pass Failure ]
+[ Mojave ] webanimations/accelerated-transform-related-animation-property-order.html [ Pass Failure ]
+[ Mojave ] webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html [ Pass Failure ]
+[ Mojave ] webanimations/accelerated-translate-animation-underlying-transform-changed-in-flight.html [ Pass Failure ]
+[ Mojave ] webanimations/accelerated-translate-animation-with-transform.html [ Pass Failure ]
+[ Mojave ] webanimations/accelerated-translate-animation.html [ Pass Failure ]

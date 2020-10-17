@@ -1,3 +1,13 @@
+2020-10-16  Dean Jackson  <dino@apple.com>
+
+        Support accelerated animation of individual transform CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=217842
+        <rdar://problem/70391914>
+
+        Unreviewed. Mark some tests as failing on Mojave.
+
+        * platform/mac/TestExpectations:
+
 2020-10-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r268620.
