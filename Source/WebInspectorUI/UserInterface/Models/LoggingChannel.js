@@ -28,10 +28,10 @@ WI.LoggingChannel = class LoggingChannel
     constructor(source, level)
     {
         console.assert(typeof source === "string");
-        console.assert(source === WI.ConsoleMessage.MessageSource.Media || source === WI.ConsoleMessage.MessageSource.WebRTC || source === WI.ConsoleMessage.MessageSource.MediaSource);
+        console.assert(Object.values(WI.ConsoleMessage.MessageSource).includes(source), source);
 
         console.assert(typeof level === "string");
-        console.assert(Object.values(WI.LoggingChannel.Level).includes(level));
+        console.assert(Object.values(WI.LoggingChannel.Level).includes(level), level);
 
         this._source = source;
         this._level = level;
