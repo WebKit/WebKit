@@ -81,7 +81,7 @@ TEST(IPCTestingAPI, IsDisabledByDefault)
 
 #if ENABLE(IPC_TESTING_API)
 
-TEST(IPCTestingAPI, CanSendAlert)
+static RetainPtr<TestWKWebView> createWebViewWithIPCTestingAPI()
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
@@ -90,7 +90,12 @@ TEST(IPCTestingAPI, CanSendAlert)
             break;
         }
     }
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get()]);
+    return adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get()]);
+}
+
+TEST(IPCTestingAPI, CanSendAlert)
+{
+    auto webView = createWebViewWithIPCTestingAPI();
 
     auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
@@ -103,16 +108,23 @@ TEST(IPCTestingAPI, CanSendAlert)
     EXPECT_STREQ([alertMessage UTF8String], "hi");
 }
 
+TEST(IPCTestingAPI, AlertIsSyncMessage)
+{
+    auto webView = createWebViewWithIPCTestingAPI();
+
+    auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    done = false;
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>alert(IPC.messages.WebPageProxy_RunJavaScriptAlert.isSync);</script>"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_STREQ([alertMessage UTF8String], "true");
+}
+
 TEST(IPCTestingAPI, CanSendInvalidAsyncMessageWithoutTermination)
 {
-    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
-        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
-            [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
-            break;
-        }
-    }
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get()]);
+    auto webView = createWebViewWithIPCTestingAPI();
 
     auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
@@ -128,14 +140,7 @@ TEST(IPCTestingAPI, CanSendInvalidAsyncMessageWithoutTermination)
 
 TEST(IPCTestingAPI, CanSendInvalidMessageWithoutTermination)
 {
-    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
-        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
-            [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
-            break;
-        }
-    }
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get()]);
+    auto webView = createWebViewWithIPCTestingAPI();
 
     auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
@@ -151,14 +156,7 @@ TEST(IPCTestingAPI, CanSendInvalidMessageWithoutTermination)
 
 TEST(IPCTestingAPI, DecodesReplyArgumentsForPrompt)
 {
-    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
-        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
-            [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
-            break;
-        }
-    }
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get()]);
+    auto webView = createWebViewWithIPCTestingAPI();
 
     auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
@@ -176,14 +174,7 @@ TEST(IPCTestingAPI, DecodesReplyArgumentsForPrompt)
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 TEST(IPCTestingAPI, DecodesReplyArgumentsForAsyncMessage)
 {
-    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
-        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
-            [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
-            break;
-        }
-    }
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get()]);
+    auto webView = createWebViewWithIPCTestingAPI();
 
     auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
@@ -201,14 +192,7 @@ TEST(IPCTestingAPI, DecodesReplyArgumentsForAsyncMessage)
 
 TEST(IPCTestingAPI, DescribesArguments)
 {
-    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
-        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
-            [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
-            break;
-        }
-    }
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get()]);
+    auto webView = createWebViewWithIPCTestingAPI();
 
     auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];

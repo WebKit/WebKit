@@ -52,5 +52,6 @@ struct ArgumentDescription {
 
 Optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageName);
 Optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(MessageName);
+bool messageIsSync(MessageName);
 
 }

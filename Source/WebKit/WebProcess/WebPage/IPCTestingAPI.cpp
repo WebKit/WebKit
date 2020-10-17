@@ -99,7 +99,7 @@ JSClassRef JSIPC::wrapperClass()
     static JSClassRef jsClass;
     if (!jsClass) {
         JSClassDefinition definition = kJSClassDefinitionEmpty;
-        definition.className = "UIProcess";
+        definition.className = "IPC";
         definition.parentClass = 0;
         definition.staticValues = staticValues();
         definition.staticFunctions = staticFunctions();
@@ -772,6 +772,7 @@ JSValueRef JSIPC::messages(JSContextRef context, JSObjectRef thisObject, JSStrin
 
     auto nameIdent = JSC::Identifier::fromString(vm, "name");
     auto replyArgumentsIdent = JSC::Identifier::fromString(vm, "replyArguments");
+    auto isSyncIdent = JSC::Identifier::fromString(vm, "isSync");
     for (unsigned i = 0; i < static_cast<unsigned>(IPC::MessageName::Last); ++i) {
         auto name = static_cast<IPC::MessageName>(i);
 
@@ -791,6 +792,9 @@ JSValueRef JSIPC::messages(JSContextRef context, JSObjectRef thisObject, JSStrin
         if (replyArgumentDescriptions.isEmpty())
             return JSValueMakeUndefined(context);
         dictionary->putDirect(vm, replyArgumentsIdent, replyArgumentDescriptions);            
+        RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+
+        dictionary->putDirect(vm, isSyncIdent, JSC::jsBoolean(messageIsSync(name)));            
         RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
 
         messagesObject->putDirect(vm, JSC::Identifier::fromString(vm, description(name)), dictionary);

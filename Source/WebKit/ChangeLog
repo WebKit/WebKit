@@ -1,3 +1,23 @@
+2020-10-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        IPC testing API should expose whether a given IPC message has sync reply or not
+        https://bugs.webkit.org/show_bug.cgi?id=217861
+
+        Reviewed by Darin Adler.
+
+        This patch adds IPC.messages.*.isSync to indicate whether a given IPC message has a sync reply or not.
+
+        Test: TestWebKitAPI.IPCTestingAPI.AlertIsSyncMessage
+
+        * Platform/IPC/MessageArgumentDescriptions.h:
+        * Scripts/webkit/messages.py:
+        (generate_js_value_conversion_function): Fixed a typo.
+        (generate_js_argument_descriptions): Ditto.
+        (generate_message_argument_description_implementation): Generate messageIsSync function.
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::JSIPC::wrapperClass): Updated the class name to match the implementation.
+        (WebKit::IPCTestingAPI::JSIPC::messages): Added isSync as a boolean property on message description.
+
 2020-10-16  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process] Use CARingBuffer to transfer audio data of an audio destination from a web process to the GPU Process
