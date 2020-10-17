@@ -1,3 +1,14 @@
+2020-10-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r268561): Synthetic oblique text is drawn upside-down
+        https://bugs.webkit.org/show_bug.cgi?id=217867
+        <rdar://problem/70400846>
+
+        Reviewed by Darin Adler.
+
+        * fast/text/synthetic-oblique-expected.html: Added.
+        * fast/text/synthetic-oblique.html: Added.
+
 2020-10-16  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r266669): DOMBreakpoint.js:106:23: CONSOLE ASSERT ERROR domNode should not change once set

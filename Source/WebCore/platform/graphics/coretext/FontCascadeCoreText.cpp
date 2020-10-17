@@ -146,14 +146,14 @@ AffineTransform computeOverallTextMatrix(const Font& font)
     result.setB(-result.b());
     result.setD(-result.d());
     if (platformData.syntheticOblique()) {
-        float obliqueSkew = tanf(FontCascade::syntheticObliqueAngle() * piFloat / 180);
+        float obliqueSkew = tanf(deg2rad(FontCascade::syntheticObliqueAngle()));
         if (platformData.orientation() == FontOrientation::Vertical) {
             if (font.isTextOrientationFallback())
                 result = AffineTransform(1, obliqueSkew, 0, 1, 0, 0) * result;
             else
                 result = AffineTransform(1, -obliqueSkew, 0, 1, 0, 0) * result;
         } else
-            result = AffineTransform(1, 0, -obliqueSkew, 1, 0, 0);
+            result = AffineTransform(1, 0, -obliqueSkew, 1, 0, 0) * result;
     }
 
     // We're emulating the behavior of CGContextSetTextPosition() by adding constant amounts to each glyph's position

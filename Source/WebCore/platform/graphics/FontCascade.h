@@ -196,7 +196,7 @@ public:
 
     bool primaryFontIsSystemFont() const;
 
-    static int syntheticObliqueAngle() { return 14; }
+    static float syntheticObliqueAngle() { return 14; }
 
     std::unique_ptr<DisplayList::DisplayList> displayListForTextRun(GraphicsContext&, const TextRun&, unsigned from = 0, Optional<unsigned> to = { }, CustomFontNotReadyAction = CustomFontNotReadyAction::DoNotPaintIfFontNotReady) const;
 
