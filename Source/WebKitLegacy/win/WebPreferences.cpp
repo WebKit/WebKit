@@ -30,6 +30,7 @@
 #include "NetworkStorageSessionMap.h"
 #include "WebNotificationCenter.h"
 #include "WebPreferenceKeysPrivate.h"
+#include "WebPreferencesDefinitions.h"
 
 #if USE(CG)
 #include <CoreGraphics/CoreGraphics.h>
@@ -207,6 +208,8 @@ void WebPreferences::initializeDefaultSettings()
         return;
 
     CFMutableDictionaryRef defaults = CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+
+    INITIALIZE_DEFAULT_PREFERENCES_DICTIONARY_FROM_GENERATED_PREFERENCES;
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitStandardFontPreferenceKey), CFSTR("Times New Roman"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitFixedFontPreferenceKey), CFSTR("Courier New"));

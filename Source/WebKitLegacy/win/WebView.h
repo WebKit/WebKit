@@ -482,6 +482,7 @@ public:
 
     HRESULT notifyDidAddIcon(IWebNotification*);
     HRESULT notifyPreferencesChanged(IWebNotification*);
+    HRESULT preferencesChangedGenerated(const WebPreferences&);
 
     static void setCacheModel(WebCacheModel);
     static WebCacheModel cacheModel();

@@ -1,3 +1,23 @@
+2020-10-17  Sam Weinig  <weinig@apple.com>
+
+        [Preferences] Add infrastructure for generating preferences for WWindows WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=217876
+
+        Reviewed by Simon Fraser.
+
+        * Scripts: Added.
+        * Scripts/PreferencesTemplates: Added.
+        * Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb: Added.
+        * Scripts/PreferencesTemplates/WebViewPreferencesChangedGenerated.cpp.erb: Added.
+        Adds mostly empty generated files to establish infrastructure for generation.
+        
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+        * WebView.h:
+        Adopt generated files, which currently don't do anything.
+
 2020-10-16  Antoine Quint  <graouts@webkit.org>
 
         Enable individual CSS transform properties by default

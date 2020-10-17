@@ -1,3 +1,13 @@
+2020-10-17  Sam Weinig  <weinig@apple.com>
+
+        [Preferences] Add infrastructure for generating preferences for Windows WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=217876
+
+        Reviewed by Simon Fraser.
+
+        * PlatformWin.cmake:
+        Add generation of WebPreferences.
+
 2020-10-07  Keith Rollin  <krollin@apple.com>
 
         Update post-processing rules for headers to not unnecessarily change timestamps
