@@ -74,6 +74,8 @@ public:
 
 private:
     void nextContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, size_t overflowLength, InlineLayoutUnit availableLineWidth, InlineLayoutUnit currentLogicalRight);
+    size_t nextWrapOpportunity(size_t startIndex, const LineBuilder::InlineItemRange& layoutRange) const;
+
     struct Result {
         InlineContentBreaker::IsEndOfLine isEndOfLine { InlineContentBreaker::IsEndOfLine::No };
         struct CommittedContentCount {

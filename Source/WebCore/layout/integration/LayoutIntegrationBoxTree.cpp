@@ -73,7 +73,7 @@ void BoxTree::buildTree(const RenderBlockFlow& flow)
         } else if (is<RenderImage>(childRenderer)) {
             auto& image = downcast<RenderImage>(childRenderer);
             auto clonedStyle = RenderStyle::clone(image.style());
-            childBox = makeUnique<Layout::ReplacedBox>(WTF::nullopt, WTFMove(clonedStyle));
+            childBox = makeUnique<Layout::ReplacedBox>(Layout::Box::ElementAttributes { Layout::Box::ElementType::Image }, WTFMove(clonedStyle));
         }
         ASSERT(childBox);
 

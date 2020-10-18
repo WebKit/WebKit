@@ -49,6 +49,7 @@ public:
     class Quirks : public FormattingContext::Quirks {
     public:
         InlineLayoutUnit initialLineHeight() const;
+        bool hasSoftWrapOpportunityAtImage() const;
 
     private:
         friend class InlineFormattingContext;

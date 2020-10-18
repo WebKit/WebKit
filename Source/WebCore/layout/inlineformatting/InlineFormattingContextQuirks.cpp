@@ -40,6 +40,11 @@ InlineLayoutUnit InlineFormattingContext::Quirks::initialLineHeight() const
     return root.style().fontMetrics().floatHeight();
 }
 
+bool InlineFormattingContext::Quirks::hasSoftWrapOpportunityAtImage() const
+{
+    return !formattingContext().root().isTableCell();
+}
+
 }
 }
 
