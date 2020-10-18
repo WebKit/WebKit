@@ -1,3 +1,19 @@
+2020-10-18  David Kilzer  <ddkilzer@apple.com>
+
+        Fix -Wdeprecated-copy warnings in WTF and JavaScriptCore
+        <https://webkit.org/b/217855>
+        <rdar://problem/67716914>
+
+        Reviewed by Darin Adler.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::LinkRecord::LinkRecord): Add.
+        - Implement the copy constructor since the compiler may not
+          have implemented it the same way as the copy assignment
+          operator.
+        (JSC::ARM64Assembler::LinkRecord::operator=):
+        - Fix return type of copy assignment operator and simplify it.
+
 2020-10-18  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][JIT] Add support for UntypedUse on PutPrivateName's base operand

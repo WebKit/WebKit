@@ -39,15 +39,14 @@ public:
     }
 
 protected:
-    IdentifiedBase(const IdentifiedBase& other)
-        : m_identifier(other.m_identifier)
-    {
-    }
+    IdentifiedBase(const IdentifiedBase&) = default;
 
     explicit IdentifiedBase(IdentifierType identifier)
         : m_identifier(identifier)
     {
     }
+
+    IdentifiedBase& operator=(const IdentifiedBase&) = default;
 
 private:
     IdentifierType m_identifier;

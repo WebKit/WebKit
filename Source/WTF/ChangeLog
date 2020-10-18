@@ -1,3 +1,17 @@
+2020-10-18  David Kilzer  <ddkilzer@apple.com>
+
+        Fix -Wdeprecated-copy warnings in WTF and JavaScriptCore
+        <https://webkit.org/b/217855>
+        <rdar://problem/67716914>
+
+        Reviewed by Darin Adler.
+
+        * wtf/Identified.h:
+        (WTF::IdentifiedBase::Identifier):
+        - Change to default since compiler will generate the same code.
+        (WTF::IdentifiedBase::operator=): Add.
+        - Add default copy assignment operator to keep it protected.
+
 2020-10-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add system trace points for flushing remote image buffers
