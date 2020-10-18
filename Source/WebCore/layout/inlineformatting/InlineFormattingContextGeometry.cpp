@@ -202,12 +202,13 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
 
     auto createRootInlineBox = [&] {
         auto rootInlineBox = LineBox::InlineLevelBox::createRootInlineBox(rootBox(), horizontalAligmentOffset, lineBox.logicalWidth());
-        setVerticalGeometryForInlineBox(*rootInlineBox);
 
         auto lineHasImaginaryStrut = !layoutState().inQuirksMode();
         auto isInitiallyConsideredNonEmpty = !lineBox.isLineVisuallyEmpty() && lineHasImaginaryStrut;
         if (isInitiallyConsideredNonEmpty)
             rootInlineBox->setIsNonEmpty();
+        if (lineHasImaginaryStrut)
+            setVerticalGeometryForInlineBox(*rootInlineBox);
         lineBox.addRootInlineBox(WTFMove(rootInlineBox));
     };
     createRootInlineBox();
@@ -245,6 +246,14 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
     };
     createWrappedInlineBoxes();
 
+    auto stretchRootInlineBoxIfNeededQuirk = [&] (const auto& layoutBox) {
+        auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent());
+        if (&parentInlineBox.layoutBox() != &rootBox() || !parentInlineBox.isEmpty())
+            return;
+        setVerticalGeometryForInlineBox(parentInlineBox);
+        parentInlineBox.setIsNonEmpty();
+    };
+
     for (auto& run : runs) {
         auto& layoutBox = run.layoutBox();
         auto logicalLeft = horizontalAligmentOffset + run.logicalLeft();
@@ -277,11 +286,12 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
             inlineBox.setLogicalWidth(run.logicalRight() - inlineBox.logicalLeft());
         } else if (run.isText() || run.isSoftLineBreak()) {
             // FIXME: Adjust non-empty inline box height when glyphs from the non-primary font stretch the box.
-            // FIXME: Add quirk inline box stretching.
+            stretchRootInlineBoxIfNeededQuirk(layoutBox);
         } else if (run.isHardLineBreak()) {
             auto lineBreakBox = LineBox::InlineLevelBox::createLineBreakBox(layoutBox, logicalLeft);
             setVerticalGeometryForInlineBox(*lineBreakBox);
             lineBox.addInlineLevelBox(WTFMove(lineBreakBox));
+            stretchRootInlineBoxIfNeededQuirk(layoutBox);
         } else if (run.isWordBreakOpportunity())
             lineBox.addInlineLevelBox(LineBox::InlineLevelBox::createGenericInlineLevelBox(layoutBox, logicalLeft));
         else
