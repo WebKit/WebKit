@@ -91,7 +91,7 @@ InlineRect LineBox::logicalRectForInlineLevelBox(const Box& layoutBox) const
         ASSERT(inlineBox->isInlineBox());
         inlineBoxAbsolutelogicalTop += inlineBox->logicalTop();
     }
-    return { inlineBoxAbsolutelogicalTop, m_horizontalAlignmentOffset.valueOr(InlineLayoutUnit { }) + inlineBoxLogicalRect.left(), inlineBoxLogicalRect.width(), inlineBoxLogicalRect.height() };
+    return { inlineBoxAbsolutelogicalTop, inlineBoxLogicalRect.left(), inlineBoxLogicalRect.width(), inlineBoxLogicalRect.height() };
 }
 
 }
