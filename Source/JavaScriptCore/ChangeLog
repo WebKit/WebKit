@@ -1,3 +1,43 @@
+2020-10-18  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][JIT] Add support for UntypedUse on PutPrivateName's base operand
+        https://bugs.webkit.org/show_bug.cgi?id=217373
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch is adding UntypedUse for `PutPrivateName`'s base operand to
+        avoid a OSR when we have a non-cell base.
+        Also, it is fixing a bug on private field operations `get_private_name` and
+        `put_private_name` to call `ToObject` on base to properly support
+        class fields spec text[1][2].
+
+        [1] - https://tc39.es/proposal-class-fields/#sec-getvalue
+        [2] - https://tc39.es/proposal-class-fields/#sec-putvalue
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePutPrivateName):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutPrivateName):
+        * jit/JITOperations.cpp:
+        (JSC::setPrivateField):
+        (JSC::definePrivateField):
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        (JSC::getPrivateName):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_private_name):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_private_name):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.cpp:
+
+        Previous implementation was wrongly considering that base was always
+        an object, causing segmentation fault when base was not an object.
+        We changed this to handle cases when base is not and object, following
+        what spec text specifies.
+
 2020-10-17  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed fix for r268640

@@ -1907,7 +1907,6 @@ private:
 
 
         case PutPrivateName: {
-            fixEdge<CellUse>(node->child1());
             fixEdge<SymbolUse>(node->child2());
             break;
         }

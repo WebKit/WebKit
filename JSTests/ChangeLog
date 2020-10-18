@@ -1,3 +1,14 @@
+2020-10-18  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][JIT] Add support for UntypedUse on PutPrivateName's base operand
+        https://bugs.webkit.org/show_bug.cgi?id=217373
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/get-private-name-with-primitive.js: Added.
+        * stress/put-private-name-untyped-use.js: Added.
+        * stress/put-private-name-with-primitive.js: Added.
+
 2020-10-17  Ross Kirsling  <ross.kirsling@sony.com>
 
         Ensure %TypedArray% essential internal methods adhere to spec

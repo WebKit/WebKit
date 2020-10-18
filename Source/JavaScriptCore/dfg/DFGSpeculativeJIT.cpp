@@ -3526,19 +3526,20 @@ void SpeculativeJIT::compileGetByValWithThis(Node* node)
 
 void SpeculativeJIT::compilePutPrivateName(Node* node)
 {
-    SpeculateCellOperand base(this, node->child1());
+    ASSERT(node->child1().useKind() == UntypedUse);
+    JSValueOperand base(this, node->child1());
     SpeculateCellOperand propertyValue(this, node->child2());
     JSValueOperand value(this, node->child3());
 
     JSValueRegs valueRegs = value.jsValueRegs();
+    JSValueRegs baseRegs = base.jsValueRegs();
 
-    GPRReg baseGPR = base.gpr();
     GPRReg propertyGPR = propertyValue.gpr();
 
     speculateSymbol(node->child2(), propertyGPR);
 
     flushRegisters();
-    callOperation(operationPutPrivateNameGeneric, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), CCallHelpers::CellValue(baseGPR), CCallHelpers::CellValue(propertyGPR), valueRegs, TrustedImmPtr(nullptr), TrustedImm32(node->privateFieldPutKind().value()));
+    callOperation(operationPutPrivateNameGeneric, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseRegs, CCallHelpers::CellValue(propertyGPR), valueRegs, TrustedImmPtr(nullptr), TrustedImm32(node->privateFieldPutKind().value()));
     m_jit.exceptionCheck();
 
     noResult(node);

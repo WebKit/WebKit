@@ -340,6 +340,7 @@ void JIT::emit_op_put_private_name(const Instruction* currentInstruction)
 
     emitLoad2(base, regT1, regT0, property, regT3, regT2);
 
+    emitJumpSlowCaseIfNotJSCell(base, regT1);
     PatchableJump fastPathJmp = patchableJump();
     addSlowCase(fastPathJmp);
 

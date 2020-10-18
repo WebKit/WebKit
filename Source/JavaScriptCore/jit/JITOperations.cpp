@@ -677,7 +677,8 @@ ALWAYS_INLINE static void setPrivateField(VM& vm, JSGlobalObject* globalObject, 
     Identifier ident = Identifier::fromUid(vm, identifier.uid());
     ASSERT(ident.isPrivateName());
 
-    JSObject* baseObject = asObject(baseValue);
+    JSObject* baseObject = baseValue.toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, void());
     CodeBlock* codeBlock = callFrame->codeBlock();
     Structure* oldStructure = baseObject->structure(vm);
 
@@ -696,7 +697,8 @@ ALWAYS_INLINE static void definePrivateField(VM& vm, JSGlobalObject* globalObjec
     Identifier ident = Identifier::fromUid(vm, identifier.uid());
     ASSERT(ident.isPrivateName());
 
-    JSObject* baseObject = asObject(baseValue);
+    JSObject* baseObject = baseValue.toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, void());
     CodeBlock* codeBlock = callFrame->codeBlock();
     Structure* oldStructure = baseObject->structure(vm);
 
@@ -730,9 +732,10 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdDefinePrivateFieldStrictOptimize, void,
     CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
     AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
     JSValue value = JSValue::decode(encodedValue);
-    JSObject* baseObject = asObject(JSValue::decode(encodedBase));
-
-    definePrivateField(vm, globalObject, callFrame, baseObject, identifier, value, [=](VM& vm, CodeBlock* codeBlock, Structure* oldStructure, PutPropertySlot& putSlot, const Identifier& ident) {
+    JSValue baseValue = JSValue::decode(encodedBase);
+    
+    definePrivateField(vm, globalObject, callFrame, baseValue, identifier, value, [=](VM& vm, CodeBlock* codeBlock, Structure* oldStructure, PutPropertySlot& putSlot, const Identifier& ident) {
+        JSObject* baseObject = asObject(baseValue);
         LOG_IC((ICEvent::OperationPutByIdDefinePrivateFieldFieldStrictOptimize, baseObject->classInfo(vm), ident, putSlot.base() == baseObject));
 
         ASSERT_UNUSED(accessType, accessType == static_cast<AccessType>(stubInfo->accessType));
@@ -765,9 +768,10 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdSetPrivateFieldStrictOptimize, void, (J
     CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
     AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
     JSValue value = JSValue::decode(encodedValue);
-    JSObject* baseObject = asObject(JSValue::decode(encodedBase));
+    JSValue baseValue = JSValue::decode(encodedBase);
 
-    setPrivateField(vm, globalObject, callFrame, baseObject, identifier, value, [&](VM& vm, CodeBlock* codeBlock, Structure* oldStructure, PutPropertySlot& putSlot, const Identifier& ident) {
+    setPrivateField(vm, globalObject, callFrame, baseValue, identifier, value, [&](VM& vm, CodeBlock* codeBlock, Structure* oldStructure, PutPropertySlot& putSlot, const Identifier& ident) {
+        JSObject* baseObject = asObject(baseValue);
         LOG_IC((ICEvent::OperationPutByIdPutPrivateFieldFieldStrictOptimize, baseObject->classInfo(vm), ident, putSlot.base() == baseObject));
 
         ASSERT_UNUSED(accessType, accessType == static_cast<AccessType>(stubInfo->accessType));
@@ -1101,6 +1105,9 @@ JSC_DEFINE_JIT_OPERATION(operationPutPrivateNameOptimize, void, (JSGlobalObject*
     JSValue subscript = JSValue::decode(encodedSubscript);
     JSValue value = JSValue::decode(encodedValue);
 
+    auto baseObject = baseValue.toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, void());
+
     auto propertyName = subscript.toPropertyKey(globalObject);
     EXCEPTION_ASSERT(!scope.exception());
 
@@ -1149,7 +1156,6 @@ JSC_DEFINE_JIT_OPERATION(operationPutPrivateNameOptimize, void, (JSGlobalObject*
     // Private fields can only be accessed within class lexical scope
     // and class methods are always in strict mode
     const bool isStrictMode = true;
-    auto baseObject = asObject(baseValue);
     PutPropertySlot slot(baseObject, isStrictMode);
     if (putKind.isDefine())
         baseObject->definePrivateField(globalObject, propertyName, value, slot);
@@ -1170,6 +1176,9 @@ JSC_DEFINE_JIT_OPERATION(operationPutPrivateNameGeneric, void, (JSGlobalObject* 
     JSValue subscript = JSValue::decode(encodedSubscript);
     JSValue value = JSValue::decode(encodedValue);
 
+    auto baseObject = baseValue.toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, void());
+
     auto propertyName = subscript.toPropertyKey(globalObject);
     EXCEPTION_ASSERT(!scope.exception());
 
@@ -1178,7 +1187,6 @@ JSC_DEFINE_JIT_OPERATION(operationPutPrivateNameGeneric, void, (JSGlobalObject* 
     // Private fields can only be accessed within class lexical scope
     // and class methods are always in strict mode
     const bool isStrictMode = true;
-    auto baseObject = asObject(baseValue);
     PutPropertySlot slot(baseObject, isStrictMode);
     if (privateFieldPutKind.isDefine())
         baseObject->definePrivateField(globalObject, propertyName, value, slot);
@@ -2241,12 +2249,11 @@ ALWAYS_INLINE static JSValue getPrivateName(JSGlobalObject* globalObject, CallFr
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    baseValue.requireObjectCoercible(globalObject);
+    JSObject* base = baseValue.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, JSValue());
     auto fieldName = fieldNameValue.toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    JSObject* base = baseValue.toObject(globalObject);
     PropertySlot slot(base, PropertySlot::InternalMethodType::GetOwnProperty);
     base->getPrivateField(globalObject, fieldName, slot);
     RETURN_IF_EXCEPTION(scope, JSValue());

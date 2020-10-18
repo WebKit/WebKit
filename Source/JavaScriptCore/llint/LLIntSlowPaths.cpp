@@ -1087,17 +1087,17 @@ LLINT_SLOW_PATH_DECL(slow_path_get_private_name)
     JSValue subscript = getOperand(callFrame, bytecode.m_property);
     ASSERT(subscript.isSymbol());
 
-    baseValue.requireObjectCoercible(globalObject);
+    JSObject* baseObject = baseValue.toObject(globalObject);
     LLINT_CHECK_EXCEPTION();
     auto property = subscript.toPropertyKey(globalObject);
     LLINT_CHECK_EXCEPTION();
     ASSERT(property.isPrivateName());
 
-    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::GetOwnProperty);
-    asObject(baseValue)->getPrivateField(globalObject, property, slot);
+    PropertySlot slot(baseObject, PropertySlot::InternalMethodType::GetOwnProperty);
+    baseObject->getPrivateField(globalObject, property, slot);
     LLINT_CHECK_EXCEPTION();
 
-    if (!LLINT_ALWAYS_ACCESS_SLOW && slot.isCacheable() && !slot.isUnset()) {
+    if (!LLINT_ALWAYS_ACCESS_SLOW && baseValue.isCell() && slot.isCacheable() && !slot.isUnset()) {
         auto& metadata = bytecode.metadata(codeBlock);
         {
             StructureID oldStructureID = metadata.m_structureID;
@@ -1207,6 +1207,9 @@ LLINT_SLOW_PATH_DECL(slow_path_put_private_name)
     JSValue subscript = getOperand(callFrame, bytecode.m_property);
     JSValue value = getOperand(callFrame, bytecode.m_value);
 
+    JSObject* baseObject = baseValue.toObject(globalObject);
+    LLINT_CHECK_EXCEPTION();
+
     auto property = subscript.toPropertyKey(globalObject);
     LLINT_CHECK_EXCEPTION();
     ASSERT(property.isPrivateName());
@@ -1216,7 +1219,6 @@ LLINT_SLOW_PATH_DECL(slow_path_put_private_name)
     // Private fields can only be accessed within class lexical scope
     // and class methods are always in strict mode
     const bool isStrictMode = true;
-    auto baseObject = asObject(baseValue);
     PutPropertySlot slot(baseObject, isStrictMode);
     if (bytecode.m_putKind.isDefine())
         baseObject->definePrivateField(globalObject, property, value, slot);

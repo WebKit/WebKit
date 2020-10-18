@@ -380,6 +380,8 @@ void JIT::emit_op_put_private_name(const Instruction* currentInstruction)
     emitGetVirtualRegister(base, regT0);
     emitGetVirtualRegister(property, regT1);
 
+    emitJumpSlowCaseIfNotJSCell(regT0, base);
+
     PatchableJump fastPathJmp = patchableJump();
     addSlowCase(fastPathJmp);
     
