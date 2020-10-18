@@ -387,7 +387,7 @@ bool JSGenericTypedArrayView<Adaptor>::defineOwnProperty(
             return false;
         };
 
-        if (!thisObject->isNeutered() && index.value() >= thisObject->m_length)
+        if (index.value() >= thisObject->m_length)
             return false;
 
         if (descriptor.isAccessorDescriptor())
