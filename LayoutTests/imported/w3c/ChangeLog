@@ -1,3 +1,12 @@
+2020-10-18  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Serialize aspect ratio with spaces around the slash.
+        https://bugs.webkit.org/show_bug.cgi?id=217888
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/css/mediaqueries/aspect-ratio-serialization-expected.txt: Annotate progression.
+
 2020-10-16  Darin Adler  <darin@apple.com>
 
         Add AbstractRange

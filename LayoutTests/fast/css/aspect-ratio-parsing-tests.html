@@ -16,12 +16,12 @@
           return div.style[styleAttribute];
       }
 
-      shouldBeEqualToString('testParsing("aspectRatioTest", "2/1", "-webkit-aspect-ratio")', '2/1');
-      shouldBeEqualToString('testParsing("aspectRatioTest", "1/1", "-webkit-aspect-ratio")', '1/1');
-      shouldBeEqualToString('testParsing("aspectRatioTest", "1/4", "-webkit-aspect-ratio")', '1/4');
-      shouldBeEqualToString('testParsing("aspectRatioTest", "1 / 2", "-webkit-aspect-ratio")', '1/2');
-      shouldBeEqualToString('testParsing("aspectRatioTest", "1.2 / 2", "-webkit-aspect-ratio")', '1.2/2');
-      shouldBeEqualToString('testParsing("aspectRatioTest", "2 / 0.5", "-webkit-aspect-ratio")', '2/0.5');
+      shouldBeEqualToString('testParsing("aspectRatioTest", "2/1", "-webkit-aspect-ratio")', '2 / 1');
+      shouldBeEqualToString('testParsing("aspectRatioTest", "1/1", "-webkit-aspect-ratio")', '1 / 1');
+      shouldBeEqualToString('testParsing("aspectRatioTest", "1/4", "-webkit-aspect-ratio")', '1 / 4');
+      shouldBeEqualToString('testParsing("aspectRatioTest", "1 / 2", "-webkit-aspect-ratio")', '1 / 2');
+      shouldBeEqualToString('testParsing("aspectRatioTest", "1.2 / 2", "-webkit-aspect-ratio")', '1.2 / 2');
+      shouldBeEqualToString('testParsing("aspectRatioTest", "2 / 0.5", "-webkit-aspect-ratio")', '2 / 0.5');
       shouldBeEqualToString('testParsing("aspectRatioTest", "inherit", "-webkit-aspect-ratio")', 'inherit');
       shouldBeEqualToString('testParsing("aspectRatioTest", "from-dimensions", "-webkit-aspect-ratio")', 'from-dimensions');
       shouldBeEqualToString('testParsing("aspectRatioTest", "from-intrinsic", "-webkit-aspect-ratio")', 'from-intrinsic');

@@ -1,3 +1,16 @@
+2020-10-18  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Serialize aspect ratio with spaces around the slash.
+        https://bugs.webkit.org/show_bug.cgi?id=217888
+
+        Reviewed by Sam Weinig.
+
+        * fast/css/aspect-ratio-inheritance-expected.txt:
+        * fast/css/aspect-ratio-inheritance.html:
+        * fast/css/aspect-ratio-parsing-tests-expected.txt:
+        * fast/css/aspect-ratio-parsing-tests.html:
+        Adjust tests
+
 2020-10-17  Ross Kirsling  <ross.kirsling@sony.com>
 
         Ensure %TypedArray% essential internal methods adhere to spec
