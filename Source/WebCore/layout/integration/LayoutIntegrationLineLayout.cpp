@@ -155,7 +155,9 @@ void LineLayout::constructContent()
             auto lineBoxLogicalRect = m_inlineFormattingState.lines()[lineIndex].lineBoxLogicalRect();
             runRect.moveBy({ lineBoxLogicalRect.left(), lineBoxLogicalRect.top() });
             // InlineTree rounds y position to integral value, see InlineFlowBox::placeBoxesInBlockDirection.
-            runRect.setY(roundToInt(runRect.y()));
+            auto needsLegacyIntegralPosition = !layoutBox.isReplacedBox();
+            if (needsLegacyIntegralPosition)
+                runRect.setY(roundToInt(runRect.y()));
 
             WTF::Optional<Run::TextContent> textContent;
             if (auto text = lineRun.text())
