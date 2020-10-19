@@ -9,11 +9,6 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('scroll-snap-type') is 'initial'
 
-only strictness : mandatory
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('scroll-snap-type') is 'mandatory'
-
 only axis : both
 PASS cssRule.type is 1
 PASS declaration.length is 1

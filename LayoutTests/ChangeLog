@@ -1,3 +1,17 @@
+2020-10-19  Martin Robinson  <mrobinson@igalia.com>
+
+        axis in scroll-snap-type should be required
+        https://bugs.webkit.org/show_bug.cgi?id=210468
+        <rdar://problem/61746766>
+
+        Reviewed by Simon Fraser.
+
+        * css3/scroll-snap/scroll-snap-inherit.html: Update test and results to reflect specification.
+        * css3/scroll-snap/scroll-snap-property-computed-style-expected.txt: Ditto.
+        * css3/scroll-snap/scroll-snap-property-computed-style.js: Ditto.
+        * css3/scroll-snap/scroll-snap-property-parsing-expected.txt: Ditto.
+        * css3/scroll-snap/scroll-snap-property-parsing.js: Ditto.
+
 2020-10-18  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Serialize aspect ratio with spaces around the slash.

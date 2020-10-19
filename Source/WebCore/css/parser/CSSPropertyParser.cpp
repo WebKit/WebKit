@@ -2542,16 +2542,11 @@ static RefPtr<CSSValueList> consumeScrollSnapAlign(CSSParserTokenRange& range)
 static RefPtr<CSSValueList> consumeScrollSnapType(CSSParserTokenRange& range)
 {
     RefPtr<CSSValueList> typeValue = CSSValueList::createSpaceSeparated();
-    RefPtr<CSSPrimitiveValue> secondValue;
 
-    auto firstValue = consumeIdent<CSSValueX, CSSValueY, CSSValueBlock, CSSValueInline, CSSValueBoth>(range);
-    if (firstValue)
-        secondValue = consumeIdent<CSSValueProximity, CSSValueMandatory>(range);
-    else
-        firstValue = consumeIdent<CSSValueNone, CSSValueProximity, CSSValueMandatory>(range);
-
+    auto firstValue = consumeIdent<CSSValueNone, CSSValueX, CSSValueY, CSSValueBlock, CSSValueInline, CSSValueBoth>(range);
     if (!firstValue)
         return nullptr;
+    auto secondValue = consumeIdent<CSSValueProximity, CSSValueMandatory>(range);
 
     typeValue->append(firstValue.releaseNonNull());
     if (secondValue)

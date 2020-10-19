@@ -906,23 +906,15 @@ inline ScrollSnapType BuilderConverter::convertScrollSnapType(BuilderState&, con
     ScrollSnapType type;
     auto& values = downcast<CSSValueList>(value);
     auto& firstValue = downcast<CSSPrimitiveValue>(*values.item(0));
-    if (values.length() == 2) {
-        type.axis = firstValue;
-        type.strictness = downcast<CSSPrimitiveValue>(*values.item(1));
+    if (firstValue.valueID() == CSSValueNone)
         return type;
-    }
 
-    switch (firstValue.valueID()) {
-    case CSSValueNone:
-    case CSSValueMandatory:
-    case CSSValueProximity:
-        type.strictness = firstValue;
-        break;
-    default:
-        type.axis = firstValue;
+    type.axis = firstValue;
+    if (values.length() == 2)
+        type.strictness = downcast<CSSPrimitiveValue>(*values.item(1));
+    else
         type.strictness = ScrollSnapStrictness::Proximity;
-        break;
-    }
+
     return type;
 }
 

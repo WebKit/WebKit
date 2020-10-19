@@ -27,9 +27,9 @@ testComputedScrollSnapRule("none following axis", "scroll-snap-type", "both none
 testComputedScrollSnapRule("two axis values", "scroll-snap-type", "block inline", "none");
 testComputedScrollSnapRule("two strictness values", "scroll-snap-type", "proximity mandatory", "none");
 testComputedScrollSnapRule("axis following strictness", "scroll-snap-type", "mandatory inline", "none");
+testComputedScrollSnapRule("only strictness", "scroll-snap-type", "mandatory", "none");
 // Valid declarations
 testComputedScrollSnapRule("initial value", "scroll-snap-type", "initial", "none");
-testComputedScrollSnapRule("only strictness", "scroll-snap-type", "mandatory", "both mandatory");
 testComputedScrollSnapRule("only axis", "scroll-snap-type", "both", "both");
 testComputedScrollSnapRule("none", "scroll-snap-type", "none", "none");
 testComputedScrollSnapRule("strictness following axis", "scroll-snap-type", "inline mandatory", "inline mandatory");

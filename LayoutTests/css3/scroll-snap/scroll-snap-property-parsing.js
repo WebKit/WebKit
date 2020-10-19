@@ -21,7 +21,6 @@ function testScrollSnapRule(description, snapProperty, rule, expectedValue, expe
 }
 
 testScrollSnapRule("initial value", "scroll-snap-type", "initial", "initial", 1);
-testScrollSnapRule("only strictness", "scroll-snap-type", "mandatory", "mandatory", 1);
 testScrollSnapRule("only axis", "scroll-snap-type", "both", "both", 1);
 testScrollSnapRule("none", "scroll-snap-type", "none", "none", 1);
 testScrollSnapRule("strictness following axis", "scroll-snap-type", "inline mandatory", "inline mandatory", 1);
