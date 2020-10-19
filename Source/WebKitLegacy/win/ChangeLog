@@ -1,3 +1,13 @@
+2020-10-19  Antoine Quint  <graouts@webkit.org>
+
+        Move remaining Web Animations runtime-enabled features to settings
+        https://bugs.webkit.org/show_bug.cgi?id=217903
+
+        Reviewed by Sam Weinig.
+
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2020-10-17  Sam Weinig  <weinig@apple.com>
 
         [Preferences] Add infrastructure for generating preferences for WWindows WebKitLegacy

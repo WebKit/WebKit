@@ -1,3 +1,12 @@
+2020-10-19  Antoine Quint  <graouts@webkit.org>
+
+        Move remaining Web Animations runtime-enabled features to settings
+        https://bugs.webkit.org/show_bug.cgi?id=217903
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2020-10-18  David Kilzer  <ddkilzer@apple.com>
 
         Fix -Wdeprecated-copy warnings in WTF and JavaScriptCore

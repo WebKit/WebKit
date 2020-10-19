@@ -832,12 +832,13 @@ WebAnimationsCompositeOperationsEnabled:
   type: bool
   humanReadableName: "Web Animations composite operations"
   humanReadableDescription: "Support for the CompositeOperation enum and properties consuming it"
-  webcoreBinding: RuntimeEnabledFeatures
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
       "ENABLE(EXPERIMENTAL_FEATURES)" : true
+      default: false
+    WebCore:
       default: false
 
 # FIXME: This is enabled when ENABLE(EXPERIMENTAL_FEATURES) is true in WebKit2. Perhaps we should consider using that for WebKitLegacy as well.
@@ -845,12 +846,13 @@ WebAnimationsMutableTimelinesEnabled:
   type: bool
   humanReadableName: "Web Animations mutable timelines"
   humanReadableDescription: "Support for setting the timeline property of an Animation object"
-  webcoreBinding: RuntimeEnabledFeatures
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
       "ENABLE(EXPERIMENTAL_FEATURES)" : true
+      default: false
+    WebCore:
       default: false
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
