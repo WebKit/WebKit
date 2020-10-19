@@ -38,10 +38,7 @@ namespace WebCore {
 struct SameSizeAsNodeRareData {
     uint32_t m_tabIndex;
     uint32_t m_childIndexAndIsElementRareDataFlag;
-    void* m_pointer[3];
-#if CHECK_HASHTABLE_ITERATORS
-    void* m_hashTableIteratorsAndMutex[2];
-#endif
+    void* m_pointer[2];
 };
 
 COMPILE_ASSERT(sizeof(NodeRareData) == sizeof(SameSizeAsNodeRareData), NodeRareDataShouldStaySmall);
