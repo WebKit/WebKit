@@ -974,6 +974,7 @@ webkit.org/b/163604 inspector/debugger/breakpoint-action-eval.html [ Pass Timeou
 webkit.org/b/165772 inspector/debugger/breakpoint-action-log.html [ Pass Failure ]
 webkit.org/b/161387 inspector/debugger/breakpoint-action-with-exception.html [ Pass Failure ]
 webkit.org/b/164293 [ Debug ] inspector/debugger/breakpoint-scope.html [ Pass Timeout ]
+webkit.org/b/217862 [ Debug ] inspector/debugger/breakpoint-resolve-when-script-added.html [ Slow ]
 webkit.org/b/168090 [ Debug ] inspector/debugger/breakpoint-columns.html [ Pass Timeout ]
 webkit.org/b/161951 [ Release ] inspector/debugger/breakpoints/resolved-dump-each-line.html [ Pass Failure Timeout ]
 webkit.org/b/167711 [ Debug ] inspector/debugger/probe-manager-add-remove-actions.html [ Slow ]

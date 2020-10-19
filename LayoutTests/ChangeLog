@@ -1,3 +1,9 @@
+2020-10-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening for webkit.org/b/217862.
+
+        * platform/mac/TestExpectations: Mark the new test as slow for macOS debug queues.
+
 2020-10-19  Truitt Savell  <tsavell@apple.com>
 
         Fix name of test exepctations after r268679, change actual to expected
