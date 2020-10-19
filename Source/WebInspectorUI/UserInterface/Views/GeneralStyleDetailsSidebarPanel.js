@@ -45,7 +45,16 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
 
     get minimumWidth()
     {
-        return Math.max(super.minimumWidth, this._panel.minimumWidth || 0);
+        let minimumWidth = Math.max(super.minimumWidth, this._panel.minimumWidth || 0);
+
+        if (this.exclusive) {
+            let pseudoClassMinimumWidth = 0;
+            for (let child of this._forcedPseudoClassContainer.children)
+                pseudoClassMinimumWidth += child.offsetWidth;
+            minimumWidth = Math.max(minimumWidth, pseudoClassMinimumWidth);
+        }
+
+        return minimumWidth;
     }
 
     supportsDOMNode(nodeToInspect)

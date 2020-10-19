@@ -38,14 +38,15 @@ WI.TabBrowser = class TabBrowser extends WI.View
         this._detailsSidebar = detailsSidebar || null;
 
         if (this._navigationSidebar) {
-            this._navigationSidebar.addEventListener(WI.Sidebar.Event.CollapsedStateDidChange, this._sidebarCollapsedStateDidChange, this);
-            this._navigationSidebar.addEventListener(WI.Sidebar.Event.WidthDidChange, this._sidebarWidthDidChange, this);
+            this._navigationSidebar.addEventListener(WI.Sidebar.Event.CollapsedStateDidChange, this._handleSidebarCollapsedStateDidChange, this);
+            this._navigationSidebar.addEventListener(WI.Sidebar.Event.WidthDidChange, this._handleSidebarWidthDidChange, this);
         }
 
         if (this._detailsSidebar) {
-            this._detailsSidebar.addEventListener(WI.Sidebar.Event.CollapsedStateDidChange, this._sidebarCollapsedStateDidChange, this);
-            this._detailsSidebar.addEventListener(WI.Sidebar.Event.SidebarPanelSelected, this._sidebarPanelSelected, this);
-            this._detailsSidebar.addEventListener(WI.Sidebar.Event.WidthDidChange, this._sidebarWidthDidChange, this);
+            this._detailsSidebar.addEventListener(WI.Sidebar.Event.CollapsedStateDidChange, this._handleSidebarCollapsedStateDidChange, this);
+            this._detailsSidebar.addEventListener(WI.Sidebar.Event.WidthDidChange, this._handleSidebarWidthDidChange, this);
+            this._detailsSidebar.addEventListener(WI.Sidebar.Event.SidebarPanelSelected, this._handleSidebarPanelSelected, this);
+            this._detailsSidebar.addEventListener(WI.MultiSidebar.Event.SidebarAdded, this._handleMultiSidebarSidebarAdded, this);
         }
 
         this._contentViewContainer = new WI.ContentViewContainer;
@@ -296,7 +297,7 @@ WI.TabBrowser = class TabBrowser extends WI.View
         console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0]);
     }
 
-    _sidebarPanelSelected(event)
+    _handleSidebarPanelSelected(event)
     {
         if (this._ignoreSidebarEvents)
             return;
@@ -311,10 +312,10 @@ WI.TabBrowser = class TabBrowser extends WI.View
             return;
 
         var selectedSidebarPanel = this._detailsSidebar.selectedSidebarPanel;
-        tabContentView.detailsSidebarSelectedPanelSetting.value = selectedSidebarPanel ? selectedSidebarPanel.identifier : null;
+        tabContentView.detailsSidebarSelectedPanelSetting.value = selectedSidebarPanel?.identifier ?? null;
     }
 
-    _sidebarCollapsedStateDidChange(event)
+    _handleSidebarCollapsedStateDidChange(event)
     {
         if (this._ignoreSidebarEvents)
             return;
@@ -329,7 +330,7 @@ WI.TabBrowser = class TabBrowser extends WI.View
             tabContentView.detailsSidebarCollapsedSetting.value = this._detailsSidebar.collapsed;
     }
 
-    _sidebarWidthDidChange(event)
+    _handleSidebarWidthDidChange(event)
     {
         if (this._ignoreSidebarEvents || !event.data)
             return;
@@ -344,9 +345,29 @@ WI.TabBrowser = class TabBrowser extends WI.View
             break;
 
         case this._detailsSidebar:
-            tabContentView.detailsSidebarWidthSetting.value = event.data.newWidth;
+            if (event.data.sidebar && event.data.newWidth) {
+                let identifier = event.data.sidebar === this._detailsSidebar.primarySidebar ? WI.TabBrowser.SidebarWidthSettingPrimarySidebarIdentifier : (event.data.sidebar.sidebarPanels[0]?.identifier || null);
+                if (identifier) {
+                    tabContentView.detailsSidebarWidthSetting.value[identifier] = event.data.newWidth;
+                    tabContentView.detailsSidebarWidthSetting.save();
+                }
+            }
             break;
         }
+    }
+
+    _handleMultiSidebarSidebarAdded(event)
+    {
+        let tabContentView = this.selectedTabContentView;
+        if (!tabContentView)
+            return;
+
+        if (event.target !== this._detailsSidebar)
+            return;
+
+        let sidebar = event.data.sidebar;
+        let identifier = event.data.sidebar === this._detailsSidebar.primarySidebar ? WI.TabBrowser.SidebarWidthSettingPrimarySidebarIdentifier : (event.data.sidebar.sidebarPanels[0]?.identifier || null);
+        sidebar.width = tabContentView.detailsSidebarWidthSetting.value[identifier] || WI.TabContentView.DefaultSidebarWidth;
     }
 
     _saveFocusedNodeForTabContentView(tabContentView)
@@ -429,8 +450,12 @@ WI.TabBrowser = class TabBrowser extends WI.View
             return;
         }
 
-        if (tabContentView.detailsSidebarWidthSetting.value)
-            this._detailsSidebar.width = tabContentView.detailsSidebarWidthSetting.value;
+        for (let sidebar of this._detailsSidebar.sidebars) {
+            let identifier = sidebar === this._detailsSidebar.primarySidebar ? WI.TabBrowser.SidebarWidthSettingPrimarySidebarIdentifier : (sidebar.sidebarPanels[0]?.identifier || null);
+            sidebar.width = tabContentView.detailsSidebarWidthSetting.value[identifier] || WI.TabContentView.DefaultSidebarWidth;
+        }
+
+        this._detailsSidebar.allowMultipleSidebars = tabContentView.allowMultipleDetailSidebars;
 
         if (tabContentView.managesDetailsSidebarPanels) {
             tabContentView.showDetailsSidebarPanels();
@@ -488,6 +513,8 @@ WI.TabBrowser = class TabBrowser extends WI.View
 
 WI.TabBrowser.NeedsResizeLayoutSymbol = Symbol("needs-resize-layout");
 WI.TabBrowser.FocusedNodeSymbol = Symbol("focused-node");
+
+WI.TabBrowser.SidebarWidthSettingPrimarySidebarIdentifier = "primary-sidebar";
 
 WI.TabBrowser.TabNavigationInitiator = {
     // Initiated by clicking on the TabBar UI (switching, opening, closing).

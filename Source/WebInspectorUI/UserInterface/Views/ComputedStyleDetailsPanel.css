@@ -60,3 +60,11 @@
 .sidebar > .panel.details.css-style > .content > .computed .property:not(:hover) .go-to-arrow {
     display: none;
 }
+
+.multi-sidebar.showing-multiple > .sidebar > .panel.details.style-computed > .content > .pseudo-classes,
+.multi-sidebar.showing-multiple > .sidebar > .panel.details.style-computed > .options-container > .toggle-class-toggle,
+.multi-sidebar.showing-multiple > .sidebar > .panel.details.style-computed > .class-list-container {
+    display: none;
+}
+
+

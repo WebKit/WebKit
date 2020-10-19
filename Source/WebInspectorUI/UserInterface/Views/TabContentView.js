@@ -37,14 +37,12 @@ WI.TabContentView = class TabContentView extends WI.ContentView
         this._navigationSidebarPanelConstructor = navigationSidebarPanelConstructor || null;
         this._detailsSidebarPanelConstructors = detailsSidebarPanelConstructors || [];
 
-        const defaultSidebarWidth = 300;
-
         this._navigationSidebarCollapsedSetting = new WI.Setting(this._identifier + "-navigation-sidebar-collapsed", false);
-        this._navigationSidebarWidthSetting = new WI.Setting(this._identifier + "-navigation-sidebar-width", defaultSidebarWidth);
+        this._navigationSidebarWidthSetting = new WI.Setting(this._identifier + "-navigation-sidebar-width", WI.TabContentView.DefaultSidebarWidth);
 
         this._detailsSidebarCollapsedSetting = new WI.Setting(this._identifier + "-details-sidebar-collapsed", !this.detailsSidebarExpandedByDefault);
         this._detailsSidebarSelectedPanelSetting = new WI.Setting(this._identifier + "-details-sidebar-selected-panel", null);
-        this._detailsSidebarWidthSetting = new WI.Setting(this._identifier + "-details-sidebar-width", defaultSidebarWidth);
+        this._detailsSidebarWidthSetting = new WI.Setting(this._identifier + "-details-sidebar-widths", {});
 
         this._cookieSetting = new WI.Setting(this._identifier + "-tab-cookie", {});
 
@@ -121,6 +119,12 @@ WI.TabContentView = class TabContentView extends WI.ContentView
         return false;
     }
 
+    get allowMultipleDetailSidebars()
+    {
+        // Can be overridden by subclasses.
+        return false;
+    }
+
     shown()
     {
         super.shown();
@@ -192,3 +196,5 @@ WI.TabContentView = class TabContentView extends WI.ContentView
     get detailsSidebarSelectedPanelSetting() { return this._detailsSidebarSelectedPanelSetting; }
     get detailsSidebarWidthSetting() { return this._detailsSidebarWidthSetting; }
 };
+
+WI.TabContentView.DefaultSidebarWidth = 300;

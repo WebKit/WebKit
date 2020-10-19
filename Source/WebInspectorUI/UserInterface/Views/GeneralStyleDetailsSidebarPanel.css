@@ -64,11 +64,6 @@
     border-top: 1px solid var(--border-color);
 }
 
-.sidebar > .panel.details.css-style.style-rules > .content ~ :matches(.options-container, .class-list-container) {
-    /* Cover the border-bottom of the last CSS rule. */
-    transform: translateY(-1px);
-}
-
 .sidebar > .panel.details.css-style > .content ~ .options-container {
     height: var(--navigation-bar-height);
     padding-top: 2px;
@@ -212,4 +207,26 @@
     .sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule {
         filter: var(--filter-invert);
     }
+}
+
+.panel.exclusive-presentation.details.css-style > .content > .pseudo-classes {
+    height: var(--navigation-bar-height);
+    flex-flow: row nowrap;
+    justify-content: center;
+}
+
+.panel.exclusive-presentation.details.css-style > .content > .pseudo-classes > .group {
+    flex-flow: row nowrap;
+    justify-content: center;
+    flex: 0;
+}
+
+.panel.exclusive-presentation.details.css-style > .content > .rules {
+    position: absolute; 
+    top: var(--navigation-bar-height);
+    left:0;
+    right:0;
+    bottom:0;
+    overflow-x: hidden;
+    overflow-y: auto;
 }

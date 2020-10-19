@@ -413,6 +413,8 @@ localizedStrings["Demo Audit"] = "Demo Audit";
 localizedStrings["Detach into separate window"] = "Detach into separate window";
 localizedStrings["Detached"] = "Detached";
 localizedStrings["Details"] = "Details";
+/* Label for the details sidebar. */
+localizedStrings["Details @ Sidebar"] = "Details";
 localizedStrings["Device %d"] = "Device %d";
 localizedStrings["Device Settings"] = "Device Settings";
 localizedStrings["Diagnoses common accessibility problems affecting screen readers and other assistive technology."] = "Diagnoses common accessibility problems affecting screen readers and other assistive technology.";
@@ -508,6 +510,8 @@ localizedStrings["Element overlaps other compositing element"] = "Element overla
 localizedStrings["Elements"] = "Elements";
 /* Name of Elements Tab */
 localizedStrings["Elements Tab Name"] = "Elements";
+/* Category label for experimental settings pertaining to the Elements tab */
+localizedStrings["Elements Tab: @ Experimental Settings"] = "Elements Tab:";
 localizedStrings["Emulate User Gesture"] = "Emulate User Gesture";
 localizedStrings["Enable Audit"] = "Enable Audit";
 localizedStrings["Enable Breakpoint"] = "Enable Breakpoint";
@@ -837,6 +841,8 @@ localizedStrings["Module Code"] = "Module Code";
 localizedStrings["More information is available at <https://webkit.org/web-inspector/inspector-bootstrap-script/>."] = "More information is available at <https://webkit.org/web-inspector/inspector-bootstrap-script/>.";
 localizedStrings["Multi-Entry"] = "Multi-Entry";
 localizedStrings["Name"] = "Name";
+/* Label for the navigation sidebar. */
+localizedStrings["Navigation @ Sidebar"] = "Navigation";
 localizedStrings["Network"] = "Network";
 localizedStrings["Network Issue"] = "Network Issue";
 localizedStrings["Network Requests"] = "Network Requests";
@@ -1015,7 +1021,6 @@ localizedStrings["Recording Timeline Data @ Timeline Recording Progress"] = "Rec
 /* A type of canvas recording in the Graphics Tab */
 localizedStrings["Recording Type Canvas Bitmap Renderer"] = "Bitmap Renderer";
 localizedStrings["Recording Warning: %s"] = "Recording Warning: %s";
-localizedStrings["Recording stop requested \u2014 %s"] = "Recording stop requested \u2014 %s";
 localizedStrings["Recordings"] = "Recordings";
 localizedStrings["Redirect Response"] = "Redirect Response";
 localizedStrings["Redirects"] = "Redirects";
@@ -1189,6 +1194,7 @@ localizedStrings["Show all resources"] = "Show all resources";
 localizedStrings["Show compositing borders"] = "Show compositing borders";
 localizedStrings["Show full certificate"] = "Show full certificate";
 localizedStrings["Show hidden tabs"] = "Show hidden tabs";
+localizedStrings["Show independent Styles sidebar"] = "Show independent Styles sidebar";
 localizedStrings["Show jump to effective property button"] = "Show jump to effective property button";
 localizedStrings["Show jump to variable declaration button"] = "Show jump to variable declaration button";
 localizedStrings["Show only for selected node"] = "Show only for selected node";

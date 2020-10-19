@@ -275,12 +275,14 @@ WI.contentLoaded = function()
     WI.consoleContentView = WI.consoleDrawer.contentViewForRepresentedObject(WI._consoleRepresentedObject);
     WI.consoleLogViewController = WI.consoleContentView.logViewController;
 
-    // FIXME: The sidebars should be flipped in RTL languages.
-    WI.navigationSidebar = new WI.Sidebar(document.getElementById("navigation-sidebar"), WI.Sidebar.Sides.Left);
+    WI.navigationSidebar = new WI.SingleSidebar(document.getElementById("navigation-sidebar"), WI.Sidebar.Sides.Leading, WI.UIString("Navigation", "Navigation @ Sidebar", "Label for the navigation sidebar."));
     WI.navigationSidebar.addEventListener(WI.Sidebar.Event.WidthDidChange, WI._sidebarWidthDidChange);
+    WI.navigationSidebar.addEventListener(WI.Sidebar.Event.CollapsedStateChanged, WI._sidebarWidthDidChange);
 
-    WI.detailsSidebar = new WI.Sidebar(document.getElementById("details-sidebar"), WI.Sidebar.Sides.Right, null, null, WI.UIString("Details"), true);
+    WI.detailsSidebar = new WI.MultiSidebar(document.getElementById("details-sidebar"), WI.Sidebar.Sides.Trailing, WI.UIString("Details", "Details @ Sidebar", "Label for the details sidebar."));
     WI.detailsSidebar.addEventListener(WI.Sidebar.Event.WidthDidChange, WI._sidebarWidthDidChange);
+    WI.detailsSidebar.addEventListener(WI.Sidebar.Event.CollapsedStateChanged, WI._sidebarWidthDidChange);
+    WI.detailsSidebar.addEventListener(WI.MultiSidebar.Event.MultipleSidebarsVisibleChanged, WI._sidebarWidthDidChange);
 
     WI.searchKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Shift, "F", WI._focusSearchField);
     WI._findKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "F", WI._find);
@@ -1320,7 +1322,7 @@ WI.getMaximumSidebarWidth = function(sidebar)
 {
     console.assert(sidebar instanceof WI.Sidebar);
 
-    const minimumContentBrowserWidth = 100;
+    const minimumContentBrowserWidth = 100; // Keep in sync with `#tab-browser`
 
     let minimumWidth = window.innerWidth - minimumContentBrowserWidth;
     let tabContentView = WI.tabBrowser.selectedTabContentView;
@@ -1328,14 +1330,16 @@ WI.getMaximumSidebarWidth = function(sidebar)
     if (!tabContentView)
         return minimumWidth;
 
-    let otherSidebar = null;
-    if (sidebar === WI.navigationSidebar)
-        otherSidebar = tabContentView.detailsSidebarPanels.length ? WI.detailsSidebar : null;
-    else
-        otherSidebar = tabContentView.navigationSidebarPanel ? WI.navigationSidebar : null;
+    if (tabContentView.navigationSidebarPanel && sidebar !== WI.navigationSidebar)
+        minimumWidth -= WI.navigationSidebar.width;
 
-    if (otherSidebar)
-        minimumWidth -= otherSidebar.width;
+    if (tabContentView.detailsSidebarPanels && sidebar !== WI.detailsSidebar) {
+        // A sidebar within the detailsSidebar needs the minimum width of its sibilings.
+        for (let singleDetailsSidebar of WI.detailsSidebar.sidebars) {
+            if (sidebar !== singleDetailsSidebar)
+                minimumWidth -= singleDetailsSidebar.width;
+        }
+    }
 
     return minimumWidth;
 };

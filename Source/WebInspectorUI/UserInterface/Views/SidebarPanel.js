@@ -32,6 +32,7 @@ WI.SidebarPanel = class SidebarPanel extends WI.View
         this._identifier = identifier;
         this._displayName = displayName;
         this._selected = false;
+        this._exclusive = false;
 
         this._savedScrollPosition = 0;
 
@@ -90,6 +91,27 @@ WI.SidebarPanel = class SidebarPanel extends WI.View
     {
         // Implemented by subclasses.
         return 0;
+    }
+
+    get exclusive()
+    {
+        return this._exclusive;
+    }
+
+    set exclusive(exclusive)
+    {
+        if (exclusive === this._exclusive)
+            return;
+
+        this._exclusive = !!exclusive;
+
+        this.element.classList.toggle("exclusive-presentation", this._exclusive);
+    }
+
+    get allowExclusivePresentation()
+    {
+        // Implemented by subclasses.
+        return false;
     }
 
     shown()

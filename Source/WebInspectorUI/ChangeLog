@@ -1,3 +1,189 @@
+2020-10-19  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Support three-column pane arrangement in Elements Tab
+        https://bugs.webkit.org/show_bug.cgi?id=217396
+
+        Reviewed by Devin Rousso.
+
+        The new multiple-sidebar layout for the Elements tab (and any other tab for which it is enabled in the future)
+        is achieved with a new WI.MultiSidebar, which is itself a WI.Sidebar and contains multiple new WI.SingleSidebar.
+        SingleSidebar replaces usage of the former Sidebar in favor of Sidebar being a common base shared between the
+        SingleSidebar and MultiSidebar.
+
+        A MultiSidebar supports showing multiple sidebars, and makes that decision based on the user having enabled
+        showing multiple sidebars and the `WI.SidebarPanel.prototype.allowExclusivePresentation` property on specific
+        SidebarPanels. The MultiSidebar manages these sidebars and their presentation, with some added properties to
+        manage the visibility of multiple sidebars. A MultiSidebar can display any number of sidebar panels
+        simultaneously. A MultiSidebar will always have a `primarySidebar` (although it may be collapsed), which is
+        where most panels will be presented. Additional panels that are marked as allowing exclusive presentation are
+        laid out in natural language order when the `MultiSidebar`'s side is `Leading` and reverse order when it is
+        `Trailing`. This allows the sidebar to remain conceptually anchored, so the `primarySidebar` in the set does not
+        change locations when adding or removing other sidebars from the set.
+
+        The presentation of more than the `primarySidebar` is dependant on the following conditions:
+        1. The tab (e.g. Elements Tab) must allow the three-panel layout.
+        2. At least one panel in the MultiSidebar must allow exclusive presentation (e.g. Styles when enabled in
+        Experimental Settings).
+        3. There must be at least one other panel to keep in the primary sidebar.
+        4. There must be enough available space horizontally to satisfy the minimum width of both the `primarySidebar`
+        and any sidebar panels that will be shown by themselves.
+
+        This feature is behind an Experimental Feature setting, and is disabled by default.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js: Use new SingleSidebar and MultiSidebars, include each detail sidebar in maximum
+        width calculations, and listen for both width and collapse events.
+        * UserInterface/Base/Setting.js: Added setting for allowing Styles panel to be exclusive.
+        * UserInterface/Main.html:
+        * UserInterface/Views/ComputedStyleDetailsPanel.css: Hide shared elements between Styles and Computed when both
+        are visible.
+        (.multi-sidebar.showing-multiple > .sidebar > .panel.details.style-computed > .content > .pseudo-classes,):
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WI.ElementsTabContentView.prototype.get allowMultipleDetailSidebars):
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.css: Show pseudo-class rules as if they were a navigation
+        bar only when shown exclusively. Otherwise, still allow them to wrap like normal.
+        (.panel.exclusive-presentation.details.css-style > .content > .pseudo-classes):
+        (.panel.exclusive-presentation.details.css-style > .content > .pseudo-classes > .group):
+        (.panel.exclusive-presentation.details.css-style > .content > .rules):
+        (.sidebar > .panel.details.css-style.style-rules > .content ~ :matches(.options-container, .class-list-container)): Removed.
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.js: If showing exclusively, prevent wrapping pseudo-class
+        rules by reporting their combined minimum width.
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.get minimumWidth):
+        * UserInterface/Views/Main.css:
+        (#tab-browser): Match existing assumption for minimum tab-browser width.
+        (#details-sidebar): Match assumption for minimum sidebar width.
+        * UserInterface/Views/MultiSidebar.css: Added.
+        (.multi-sidebar):
+        (.multi-sidebar.trailing):
+        (.multi-sidebar.collapsed):
+        * UserInterface/Views/MultiSidebar.js: A Sidebar subclass that manages multiple SingleSidebars, and dynamically
+        presents them as space is available.
+        (WI.MultiSidebar):
+        (WI.MultiSidebar.prototype.get sidebars):
+        (WI.MultiSidebar.prototype.get primarySidebar):
+        (WI.MultiSidebar.prototype.get allowMultipleSidebars):
+        (WI.MultiSidebar.prototype.set allowMultipleSidebars):
+        (WI.MultiSidebar.prototype.get multipleSidebarsVisible):
+        (WI.MultiSidebar.prototype.set multipleSidebarsVisible):
+        (WI.MultiSidebar.prototype.addSidebar):
+        (WI.MultiSidebar.prototype.removeSidebar):
+        (WI.MultiSidebar.prototype.get selectedSidebarPanel):
+        (WI.MultiSidebar.prototype.set selectedSidebarPanel):
+        (WI.MultiSidebar.prototype.get collapsable):
+        (WI.MultiSidebar.prototype.set collapsable):
+        (WI.MultiSidebar.prototype.get minimumWidth):
+        (WI.MultiSidebar.prototype.get width):
+        (WI.MultiSidebar.prototype.didInsertSidebarPanel):
+        (WI.MultiSidebar.prototype.didRemoveSidebarPanel):
+        (WI.MultiSidebar.prototype.didSetCollapsed):
+        (WI.MultiSidebar.prototype.get _canShowMultipleSidebars):
+        (WI.MultiSidebar.prototype._updateMinimumWidthForMultipleSidebars):
+        (WI.MultiSidebar.prototype.get _hasWidthForMultipleSidebars):
+        (WI.MultiSidebar.prototype.get _hasSidebarPanelSupportingExclusive):
+        (WI.MultiSidebar.prototype._updateMultipleSidebarLayout):
+        (WI.MultiSidebar.prototype._canSidebarPanelBeExclusive):
+        (WI.MultiSidebar.prototype._makeSidebarPanelExclusive):
+        (WI.MultiSidebar.prototype._makeSidebarPanelNotExclusive):
+        (WI.MultiSidebar.prototype._nonExclusiveIndexOfSidebarPanel):
+        (WI.MultiSidebar.prototype._findSidebarForSidebarPanel):
+        (WI.MultiSidebar.prototype._addSidebarEventListeners):
+        (WI.MultiSidebar.prototype._removeSidebarEventListeners):
+        (WI.MultiSidebar.prototype._handleSidebarPanelSelected):
+        (WI.MultiSidebar.prototype._handleSidebarCollapsedStateDidChange):
+        (WI.MultiSidebar.prototype._handleSidebarWidthDidChange):
+        (WI.MultiSidebar.prototype._handleWindowResize):
+        * UserInterface/Views/RulesStyleDetailsSidebarPanel.js: If enabled in settings, allow Styles panel to be its own
+        sidebar.
+        (WI.RulesStyleDetailsSidebarPanel.prototype.get allowExclusivePresentation):
+        (WI.RulesStyleDetailsSidebarPanel):
+        * UserInterface/Views/SettingsTabContentView.js: Add setting for showing the Styles panel as its own sidebar.
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+        * UserInterface/Views/Sidebar.css: Moved navigation and resizing to SingleSidebar.css.
+        (.sidebar):
+        (.sidebar.collapsed):
+        (.sidebar > .navigation-bar): Deleted.
+        (.sidebar.has-navigation-bar > .panel): Deleted.
+        (body[dir=ltr] .sidebar.right > .resizer,): Deleted.
+        (body[dir=ltr] .sidebar.left > .resizer,): Deleted.
+        (body[dir=ltr] .sidebar.left,): Deleted.
+        (body[dir=ltr] .sidebar.right,): Deleted.
+        * UserInterface/Views/Sidebar.js: Common base class for both SingleSidebar and MultiSidebar. Moved existing
+        navigation and resizing behavior to SingleSidebar.
+        (WI.Sidebar):
+        (WI.Sidebar.get sidebarPanels):
+        (WI.Sidebar.prototype.get side):
+        (WI.Sidebar.prototype.addSidebarPanel):
+        (WI.Sidebar.prototype.insertSidebarPanel):
+        (WI.Sidebar.prototype.removeSidebarPanel):
+        (WI.Sidebar.prototype.get selectedSidebarPanel):
+        (WI.Sidebar.prototype.set selectedSidebarPanel):
+        (WI.Sidebar.prototype.get collapsed):
+        (WI.Sidebar.prototype.set collapsed):
+        (WI.Sidebar.prototype.get collapsable):
+        (WI.Sidebar.prototype.set collapsable):
+        (WI.Sidebar.prototype.get minimumWidth):
+        (WI.Sidebar.prototype.get maximumWidth):
+        (WI.Sidebar.prototype.shouldInsertSidebarPanel):
+        (WI.Sidebar.prototype.didInsertSidebarPanel):
+        (WI.Sidebar.prototype.didRemoveSidebarPanel):
+        (WI.Sidebar.prototype.willSetSelectedSidebarPanel):
+        (WI.Sidebar.prototype.didSetSelectedSidebarPanel):
+        (WI.Sidebar.prototype.didSetCollapsed):
+        (WI.Sidebar.prototype._findSidebarPanel):
+        (WI.Sidebar.prototype.get width): Deleted.
+        (WI.Sidebar.prototype.set width): Deleted.
+        (WI.Sidebar.prototype.get sidebarPanels): Deleted.
+        (WI.Sidebar.prototype.findSidebarPanel): Deleted.
+        (WI.Sidebar.prototype.resizerDragStarted): Deleted.
+        (WI.Sidebar.prototype.resizerDragging): Deleted.
+        (WI.Sidebar.prototype.resizerDragEnded): Deleted.
+        (WI.Sidebar.prototype._recalculateWidth): Deleted.
+        (WI.Sidebar.prototype._navigationItemSelected): Deleted.
+        * UserInterface/Views/SidebarPanel.js: Support tracking exclusive display as well as enabling exclusive display.
+        (WI.SidebarPanel):
+        (WI.SidebarPanel.prototype.get exclusive):
+        (WI.SidebarPanel.prototype.set exclusive):
+        (WI.SidebarPanel.prototype.get allowExclusivePresentation):
+        * UserInterface/Views/SingleSidebar.css: Moved navigation and resizing from Sidebar.css.
+        (.single-sidebar > .navigation-bar):
+        (.single-sidebar.has-navigation-bar > .panel):
+        (body[dir=ltr] .single-sidebar.trailing > .resizer,):
+        (body[dir=ltr] .single-sidebar.leading > .resizer,):
+        (.single-sidebar.leading):
+        (.single-sidebar.trailing):
+        * UserInterface/Views/SingleSidebar.js: Added. Contains navigation and resizing previously in Sidebar.js.
+        (WI.SingleSidebar):
+        (WI.SingleSidebar.prototype.get allowResizingToCollapse):
+        (WI.SingleSidebar.prototype.set allowResizingToCollapse):
+        (WI.SingleSidebar.prototype.get minimumWidth):
+        (WI.SingleSidebar.prototype.get width):
+        (WI.SingleSidebar.prototype.set width):
+        (WI.SingleSidebar.prototype.shouldInsertSidebarPanel):
+        (WI.SingleSidebar.prototype.didInsertSidebarPanel):
+        (WI.SingleSidebar.prototype.didRemoveSidebarPanel):
+        (WI.SingleSidebar.prototype.willSetSelectedSidebarPanel):
+        (WI.SingleSidebar.prototype.didSetSelectedSidebarPanel):
+        (WI.SingleSidebar.prototype.didSetCollapsed):
+        (WI.SingleSidebar.prototype.resizerDragStarted):
+        (WI.SingleSidebar.prototype.resizerDragging):
+        (WI.SingleSidebar.prototype.resizerDragEnded):
+        (WI.SingleSidebar.prototype._recalculateWidth):
+        (WI.SingleSidebar.prototype._handleNavigationItemSelected):
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.css: The last rule row should not show a bottom border,
+        otherwise a double-border is visible at the bottom of the sidebar.
+        (.sidebar > .panel.details.css-style > .content > .rules > :nth-last-child(1 of .spreadsheet-css-declaration)):
+        * UserInterface/Views/TabBrowser.js: Updated naming of handlers and added support for multiple detail sidebars.
+        (WI.TabBrowser):
+        (WI.TabBrowser._handleSidebarPanelSelected):
+        (WI.TabBrowser.prototype._handleSidebarWidthDidChange):
+        (WI.TabBrowser.prototype._handleMultiSidebarSidebarAdded):
+        (WI.TabBrowser.prototype._showDetailsSidebarPanelsForTabContentView):
+        (WI.TabBrowser._sidebarPanelSelected): Deleted.
+        (WI.TabBrowser.prototype._sidebarCollapsedStateDidChange): Deleted.
+        (WI.TabBrowser.prototype._sidebarWidthDidChange): Deleted.
+        * UserInterface/Views/TabContentView.js:
+        (WI.TabContentView.prototype.get allowMultipleDetailSidebars):
+
 2020-10-16  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r266669): DOMBreakpoint.js:106:23: CONSOLE ASSERT ERROR domNode should not change once set

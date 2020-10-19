@@ -29,4 +29,11 @@ WI.RulesStyleDetailsSidebarPanel = class RulesStyleDetailsSidebarPanel extends W
     {
         super("style-rules", WI.UIString("Styles"), WI.SpreadsheetRulesStyleDetailsPanel);
     }
+
+    // Public
+
+    get allowExclusivePresentation()
+    {
+        return WI.settings.experimentalEnableIndependentStylesPanel.value;
+    }
 };

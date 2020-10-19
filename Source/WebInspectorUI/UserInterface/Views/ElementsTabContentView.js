@@ -112,6 +112,11 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
         WI.Frame.removeEventListener(null, null, this);
     }
 
+    get allowMultipleDetailSidebars()
+    {
+        return true;
+    }
+
     // Private
 
     _showDOMTreeContentView()
