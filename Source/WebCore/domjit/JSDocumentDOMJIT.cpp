@@ -38,6 +38,8 @@
 #include <JavaScriptCore/Snippet.h>
 #include <JavaScriptCore/SnippetParams.h>
 
+IGNORE_WARNINGS_BEGIN("frame-address");
+
 namespace WebCore {
 using namespace JSC;
 
@@ -147,7 +149,6 @@ JSC_DEFINE_JIT_OPERATION(operationToJSElement, JSC::EncodedJSValue, (JSC::JSGlob
     ASSERT(result);
     ASSERT(globalObject);
     JSC::VM& vm = globalObject->vm();
-    IGNORE_WARNINGS_BEGIN("frame-address");
     JSC::CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JSC::JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     return DOMJIT::toWrapperSlowImpl<Element>(globalObject, result);
@@ -158,7 +159,6 @@ JSC_DEFINE_JIT_OPERATION(operationToJSHTMLElement, JSC::EncodedJSValue, (JSC::JS
     ASSERT(result);
     ASSERT(globalObject);
     JSC::VM& vm = globalObject->vm();
-    IGNORE_WARNINGS_BEGIN("frame-address");
     JSC::CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JSC::JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     return DOMJIT::toWrapperSlowImpl<HTMLElement>(globalObject, result);
@@ -169,7 +169,6 @@ JSC_DEFINE_JIT_OPERATION(operationToJSDocument, JSC::EncodedJSValue, (JSC::JSGlo
     ASSERT(result);
     ASSERT(globalObject);
     JSC::VM& vm = globalObject->vm();
-    IGNORE_WARNINGS_BEGIN("frame-address");
     JSC::CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JSC::JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     return DOMJIT::toWrapperSlowImpl<Document>(globalObject, result);
@@ -180,7 +179,6 @@ JSC_DEFINE_JIT_OPERATION(operationToJSNode, JSC::EncodedJSValue, (JSC::JSGlobalO
     ASSERT(result);
     ASSERT(globalObject);
     JSC::VM& vm = globalObject->vm();
-    IGNORE_WARNINGS_BEGIN("frame-address");
     JSC::CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JSC::JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     return DOMJIT::toWrapperSlowImpl<Node>(globalObject, result);
@@ -191,12 +189,13 @@ JSC_DEFINE_JIT_OPERATION(operationToJSContainerNode, JSC::EncodedJSValue, (JSC::
     ASSERT(result);
     ASSERT(globalObject);
     JSC::VM& vm = globalObject->vm();
-    IGNORE_WARNINGS_BEGIN("frame-address");
     JSC::CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JSC::JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     return DOMJIT::toWrapperSlowImpl<ContainerNode>(globalObject, result);
 }
 
-} }
+} } // namespace WebCore::DOMJIT
 
-#endif
+IGNORE_WARNINGS_END
+
+#endif // ENABLE(JIT)
