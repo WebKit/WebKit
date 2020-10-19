@@ -135,18 +135,18 @@ layer at (0,0) size 785x1309
             RenderTableRow {TR} at (0,2) size 767x55
               RenderTableCell {TH} at (2,2) size 763x55 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderInline {A} at (0,0) size 0x0
-                RenderText {#text} at (12,11) size 95x18
-                  text run at (12,11) width 95: "Test Case #1: "
+                RenderText {#text} at (14,11) size 95x18
+                  text run at (14,11) width 95: "Test Case #1: "
                 RenderInline {FONT} at (0,0) size 603x18 [color=#0000FF]
-                  RenderText {#text} at (106,11) size 603x18
-                    text run at (106,11) width 603: "Table displaying Header \"CENTER \"& Data \"LEFT\" default horizontal row alignment"
-                RenderText {#text} at (708,11) size 5x18
-                  text run at (708,11) width 5: " "
-                RenderInline {FONT} at (0,0) size 403x31
-                  RenderInline {I} at (0,0) size 403x31
-                    RenderText {#text} at (712,13) size 403x31
-                      text run at (712,13) width 39: "(using"
-                      text run at (348,29) width 67: "<TR> tag)"
+                  RenderText {#text} at (108,11) size 603x18
+                    text run at (108,11) width 603: "Table displaying Header \"CENTER \"& Data \"LEFT\" default horizontal row alignment"
+                RenderText {#text} at (710,11) size 5x18
+                  text run at (710,11) width 5: " "
+                RenderInline {FONT} at (0,0) size 396x31
+                  RenderInline {I} at (0,0) size 396x31
+                    RenderText {#text} at (714,13) size 396x31
+                      text run at (714,13) width 35: "(using"
+                      text run at (353,29) width 57: "<TR> tag)"
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,631) size 769x71
         RenderTable {TABLE} at (0,0) size 347x70 [bgcolor=#FFE4C4] [border: (1px outset #808080)]
@@ -181,18 +181,18 @@ layer at (0,0) size 785x1309
             RenderTableRow {TR} at (0,2) size 767x55
               RenderTableCell {TH} at (2,2) size 763x55 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderInline {A} at (0,0) size 0x0
-                RenderText {#text} at (16,11) size 95x18
-                  text run at (16,11) width 95: "Test Case #2: "
+                RenderText {#text} at (18,11) size 95x18
+                  text run at (18,11) width 95: "Test Case #2: "
                 RenderInline {FONT} at (0,0) size 595x18 [color=#0000FF]
-                  RenderText {#text} at (110,11) size 595x18
-                    text run at (110,11) width 595: "Tables displaying Header & Data \"LEFT|CENTER|RIGHT\" horizontal row alignment"
-                RenderText {#text} at (704,11) size 5x18
-                  text run at (704,11) width 5: " "
-                RenderInline {FONT} at (0,0) size 498x31
-                  RenderInline {I} at (0,0) size 498x31
-                    RenderText {#text} at (708,13) size 498x31
-                      text run at (708,13) width 39: "(using"
-                      text run at (249,29) width 265: "<TR ALIGN=LEFT|CENTER|RIGHT> tag)"
+                  RenderText {#text} at (112,11) size 595x18
+                    text run at (112,11) width 595: "Tables displaying Header & Data \"LEFT|CENTER|RIGHT\" horizontal row alignment"
+                RenderText {#text} at (706,11) size 5x18
+                  text run at (706,11) width 5: " "
+                RenderInline {FONT} at (0,0) size 483x31
+                  RenderInline {I} at (0,0) size 483x31
+                    RenderText {#text} at (710,13) size 483x31
+                      text run at (710,13) width 35: "(using"
+                      text run at (262,29) width 239: "<TR ALIGN=LEFT|CENTER|RIGHT> tag)"
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,812) size 769x147
         RenderTable {TABLE} at (0,0) size 347x146 [bgcolor=#FFE4C4] [border: (1px outset #808080)]
