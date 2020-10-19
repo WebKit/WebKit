@@ -4586,3 +4586,8 @@ webkit.org/b/217812 transforms/2d/scale-change-composited.html [ Skip ]
 webkit.org/b/217812 transforms/2d/rotate-change-composited.html [ Skip ]
 webkit.org/b/217812 transforms/2d/translate-change-composited.html [ Skip ]
 webkit.org/b/217812 transforms/2d/rotate-composited.html [ Skip ]
+
+webkit.org/b/217922 [ Release ] animations/additive-transform-animations.html [ ImageOnlyFailure ]
+webkit.org/b/217922 animations/needs-layout.html [ ImageOnlyFailure ]
+webkit.org/b/217922 fast/animation/animation-mixed-transform-crash.html [ ImageOnlyFailure ]
+
