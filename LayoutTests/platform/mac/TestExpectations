@@ -2256,3 +2256,6 @@ webkit.org/b/217620 inspector/audit/basic-async.htm [ Pass Timeout ]
 [ Mojave ] webanimations/accelerated-translate-animation-underlying-transform-changed-in-flight.html [ Pass Failure ]
 [ Mojave ] webanimations/accelerated-translate-animation-with-transform.html [ Pass Failure ]
 [ Mojave ] webanimations/accelerated-translate-animation.html [ Pass Failure ]
+
+webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-success-empty-src-module.html [ Pass Failure ]
+
