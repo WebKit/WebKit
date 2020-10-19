@@ -1081,6 +1081,9 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     drawText("px"_s, Color::darkGray);
 
     if (hasSecondLine) {
+        textPosition.setX(boxX + elementDataSpacing);
+        textPosition.move(0, fontHeight);
+        
         drawText("Role"_s, { 170, 13, 145 });
         drawText(" "_s, Color::black);
         drawText(elementRole, Color::black);
