@@ -514,12 +514,12 @@ void Connection::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t
 
     auto encoder = makeUnique<Encoder>(T::name(), destinationID);
     uint64_t listenerID = nextAsyncReplyHandlerID();
-    addAsyncReplyHandler(*this, listenerID, [completionHandler = WTFMove(completionHandler)] (Decoder* decoder) mutable {
+    addAsyncReplyHandler(*this, listenerID, CompletionHandler<void(Decoder*)>([completionHandler = WTFMove(completionHandler)] (Decoder* decoder) mutable {
         if (decoder && decoder->isValid())
             T::callReply(*decoder, WTFMove(completionHandler));
         else
             T::cancelReply(WTFMove(completionHandler));
-    });
+    }, CompletionHandlerCallThread::MainThread));
     encoder->encode(listenerID);
     encoder->encode(message.arguments());
     sendMessage(WTFMove(encoder), sendOptions);

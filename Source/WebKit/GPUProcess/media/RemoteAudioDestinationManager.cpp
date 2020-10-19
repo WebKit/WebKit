@@ -141,14 +141,11 @@ private:
         if (m_protectThisDuringGracefulShutdown)
             return noErr;
 
-        // FIXME: It is unfortunate we have to dispatch to the main thead here. We should be able to IPC straight from the
-        // render thread but this is not supported by sendWithAsyncReply().
-        callOnMainThread([this, protectedThis = makeRef(*this), sampleTime, hostTime, numberOfFrames, ioData]() mutable {
-            m_connection.connection().sendWithAsyncReply(Messages::RemoteAudioDestinationProxy::RequestBuffer(sampleTime, hostTime, numberOfFrames), [this, protectedThis = WTFMove(protectedThis), ioData](auto startFrame, auto numberOfFramesToRender, auto boundsStartFrame, auto boundsEndFrame) mutable {
-                m_ringBuffer->setCurrentFrameBounds(boundsStartFrame, boundsEndFrame);
-                m_ringBuffer->fetch(ioData, numberOfFramesToRender, startFrame);
-            }, m_id.toUInt64());
-        });
+        m_connection.connection().sendWithAsyncReply(Messages::RemoteAudioDestinationProxy::RequestBuffer(sampleTime, hostTime, numberOfFrames), CompletionHandler<void(uint64_t, uint64_t, uint64_t, uint64_t)>([this, protectedThis = makeRef(*this), ioData](auto startFrame, auto numberOfFramesToRender, auto boundsStartFrame, auto boundsEndFrame) mutable {
+            ASSERT(isMainThread());
+            m_ringBuffer->setCurrentFrameBounds(boundsStartFrame, boundsEndFrame);
+            m_ringBuffer->fetch(ioData, numberOfFramesToRender, startFrame);
+        }, CompletionHandlerCallThread::MainThread), m_id.toUInt64());
 
         return noErr;
     }

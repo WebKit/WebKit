@@ -1,3 +1,26 @@
+2020-10-19  Chris Dumez  <cdumez@apple.com>
+
+        [GPU Process] RemoteAudioDestination::render() should not need to dispatch to the main thread to do IPC
+        https://bugs.webkit.org/show_bug.cgi?id=217920
+
+        Reviewed by Alex Christensen.
+
+        RemoteAudioDestination::render() should not need to dispatch to the main thread to do IPC as this is bad
+        for performance and IPC::Connection::sendWithAsyncReply() already does locking internally for thread-safety.
+        The only thing that was preventing us from calling sendWithAsyncReply() from the audio rendering thread was
+        a threading assertion in CompletionHandler that made sure that the completion handler was always called on
+        the thread the completion handler was constructed on. To avoid this issue, I added a paramater to the
+        CompletionHandler constructor allowing the caller to indicate it expects the completion handler to get called
+        on the main thread. I am now using this new flag in sendWithAsyncReply() and at its call site in
+        RemoteAudioDestination::render().
+
+        No new tests, no Web-facing behavior change.
+
+        * GPUProcess/media/RemoteAudioDestinationManager.cpp:
+        (WebKit::RemoteAudioDestination::render):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::sendWithAsyncReply):
+
 2020-10-19  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [GPU Process] Clean the DisplayList recording of the NativeImage

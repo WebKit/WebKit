@@ -1,3 +1,16 @@
+2020-10-19  Chris Dumez  <cdumez@apple.com>
+
+        [GPU Process] RemoteAudioDestination::render() should not need to dispatch to the main thread to do IPC
+        https://bugs.webkit.org/show_bug.cgi?id=217920
+
+        Reviewed by Alex Christensen.
+
+        Add an optional parameter to the CompletionHandler constructor allowing the caller to indicate it expects
+        the completion handler to get call on the main thread instead of the construction thread.
+
+        * wtf/CompletionHandler.h:
+        (WTF::CompletionHandler<Out):
+
 2020-10-19  Antoine Quint  <graouts@webkit.org>
 
         Move remaining Web Animations runtime-enabled features to settings

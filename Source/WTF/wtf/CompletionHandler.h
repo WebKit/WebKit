@@ -31,6 +31,7 @@
 namespace WTF {
 
 template<typename> class CompletionHandler;
+enum class CompletionHandlerCallThread { MainThread, ConstructionThread };
 
 // Wraps a Function to make sure it is always called once and only once.
 template <typename Out, typename... In>
@@ -40,9 +41,13 @@ public:
     CompletionHandler() = default;
 
     template<typename CallableType, class = typename std::enable_if<std::is_rvalue_reference<CallableType&&>::value>::type>
-    CompletionHandler(CallableType&& callable)
+    CompletionHandler(CallableType&& callable, CompletionHandlerCallThread callThread = CompletionHandlerCallThread::ConstructionThread)
         : m_function(WTFMove(callable))
+#if ASSERT_ENABLED
+        , m_shouldBeCalledOnMainThread(callThread == CompletionHandlerCallThread::MainThread || isMainThread())
+#endif
     {
+        UNUSED_PARAM(callThread);
     }
 
     CompletionHandler(CompletionHandler&&) = default;
@@ -57,7 +62,7 @@ public:
 
     Out operator()(In... in)
     {
-        ASSERT(m_wasConstructedOnMainThread == isMainThread());
+        ASSERT(m_shouldBeCalledOnMainThread == isMainThread());
         ASSERT_WITH_MESSAGE(m_function, "Completion handler should not be called more than once");
         return std::exchange(m_function, nullptr)(std::forward<In>(in)...);
     }
@@ -65,7 +70,7 @@ public:
 private:
     Function<Out(In...)> m_function;
 #if ASSERT_ENABLED
-    bool m_wasConstructedOnMainThread { isMainThread() };
+    bool m_shouldBeCalledOnMainThread;
 #endif
 };
 
@@ -157,5 +162,6 @@ private:
 } // namespace WTF
 
 using WTF::CompletionHandler;
+using WTF::CompletionHandlerCallThread;
 using WTF::CompletionHandlerCallingScope;
 using WTF::CompletionHandlerWithFinalizer;
