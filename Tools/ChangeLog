@@ -1,3 +1,16 @@
+2020-10-19  Sam Weinig  <weinig@apple.com>
+
+        Switch to a static pattern for DumpRenderTree preferences generation to avoid ambiguous rules
+        https://bugs.webkit.org/show_bug.cgi?id=217907
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/DerivedSources-input.xcfilelist:
+        Add DerivedSources.make and generate-derived-sources.sh to ensure things get rebuilt when they change.
+
+        * DumpRenderTree/DerivedSources.make:
+        Switch to using a static pattern to avoid ambiguous and ciruclar rules.
+
 2020-10-19  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Use feature flag to support Buildbot 2 code
