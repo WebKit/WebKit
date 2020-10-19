@@ -121,7 +121,7 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
     }
 #endif
 
-    auto processingSteps = OptionSet<WebCore::WheelEventProcessingSteps> { WheelEventProcessingSteps::MainThreadForDOMEventDispatch };
+    auto processingSteps = OptionSet<WebCore::WheelEventProcessingSteps> { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForDOMEventDispatch };
 #if ENABLE(SCROLLING_THREAD)
     processingSteps = [&]() -> OptionSet<WheelEventProcessingSteps> {
         LockHolder locker(m_scrollingTreesMutex);
