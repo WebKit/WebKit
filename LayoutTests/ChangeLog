@@ -1,3 +1,25 @@
+2020-10-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        Sanitize the usage of override sizes
+        https://bugs.webkit.org/show_bug.cgi?id=217479
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        The percentage-size-subitems-001.html is passing now after making the overrides work properly.
+
+        Apart from that the override sanitization allowed us to remove platform specific expectations for the border-fit-2.html
+        test even for the GTK port which is working fine now.
+
+        * TestExpectations: Removed a test that passes now.
+        * css3/flexbox/flex-flow-auto-margins-no-available-space-assert.html: Fine tuned expectations.
+        * fast/borders/border-fit-2-expected.txt: Renamed from LayoutTests/platform/ios/fast/borders/border-fit-2-expected.txt.
+        * platform/gtk/TestExpectations: Removed two tests that pass now.
+        * platform/gtk/fast/borders/border-fit-2-expected.txt: Removed.
+        * platform/gtk/fast/borders/border-fit-expected.txt: Added.
+        * platform/mac/fast/borders/border-fit-2-expected.txt: Removed.
+        * platform/wincairo/fast/borders/border-fit-2-expected.txt: Removed.
+        * platform/wpe/fast/borders/border-fit-2-expected.txt: Removed.
+
 2020-10-19  Martin Robinson  <mrobinson@igalia.com>
 
         axis in scroll-snap-type should be required

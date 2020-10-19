@@ -590,11 +590,11 @@ void ComplexLineLayout::updateRubyForJustifiedText(RenderRubyRun& rubyRun, BidiR
         totalOpportunitiesInRun += opportunitiesInRun;
     }
 
-    ASSERT(!rubyRun.hasOverrideContentLogicalWidth());
+    ASSERT(!rubyRun.hasOverrideLogicalWidth());
     float newBaseWidth = rubyRun.logicalWidth() + totalExpansion + m_flow.marginStartForChild(rubyRun) + m_flow.marginEndForChild(rubyRun);
     float newRubyRunWidth = rubyRun.logicalWidth() + totalExpansion;
     rubyBase.setInitialOffset((newRubyRunWidth - newBaseWidth) / 2);
-    rubyRun.setOverrideContentLogicalWidth(LayoutUnit(newRubyRunWidth));
+    rubyRun.setOverrideLogicalWidth(LayoutUnit(newRubyRunWidth));
     rubyRun.setNeedsLayout(MarkOnlyThis);
     rootBox.markDirty();
     if (RenderRubyText* rubyText = rubyRun.rubyText()) {
@@ -602,7 +602,7 @@ void ComplexLineLayout::updateRubyForJustifiedText(RenderRubyRun& rubyRun, BidiR
             textRootBox->markDirty();
     }
     rubyRun.layoutBlock(true);
-    rubyRun.clearOverrideContentLogicalWidth();
+    rubyRun.clearOverrideLogicalWidth();
     r.box()->setExpansion(newRubyRunWidth - r.box()->logicalWidth());
 
     totalLogicalWidth += totalExpansion;

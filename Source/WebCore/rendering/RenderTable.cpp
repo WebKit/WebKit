@@ -282,8 +282,8 @@ void RenderTable::updateLogicalWidth()
 
     // Our parent might have set an override content logical width on us, so we must respect it. This
     // is how flexbox containers flex or stretch us.
-    if (hasOverrideContentLogicalWidth())
-        setLogicalWidth(std::max(logicalWidth(), overrideContentLogicalWidth()));
+    if (hasOverrideLogicalWidth())
+        setLogicalWidth(std::max(logicalWidth(), overrideLogicalWidth()));
 
     // Ensure we aren't bigger than our max-width style.
     Length styleMaxLogicalWidth = style().logicalMaxWidth();

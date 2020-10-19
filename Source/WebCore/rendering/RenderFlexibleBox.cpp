@@ -480,14 +480,14 @@ LayoutUnit RenderFlexibleBox::childIntrinsicLogicalWidth(const RenderBox& child)
         return child.logicalWidth();
 
     // Temporarily clear potential overrides to compute the logical width otherwise it'll return the override size.
-    bool childHasOverrideWidth = child.hasOverrideContentLogicalWidth();
-    auto overrideWidth = childHasOverrideWidth ? child.overrideContentLogicalWidth() : -1_lu;
+    bool childHasOverrideWidth = child.hasOverrideLogicalWidth();
+    auto overrideWidth = childHasOverrideWidth ? child.overrideLogicalWidth() : -1_lu;
     if (childHasOverrideWidth)
-        const_cast<RenderBox*>(&child)->clearOverrideContentLogicalWidth();
+        const_cast<RenderBox*>(&child)->clearOverrideLogicalWidth();
     LogicalExtentComputedValues values;
     child.computeLogicalWidthInFragment(values);
     if (childHasOverrideWidth)
-        const_cast<RenderBox*>(&child)->setOverrideContentLogicalWidth(overrideWidth);
+        const_cast<RenderBox*>(&child)->setOverrideLogicalWidth(overrideWidth);
     return values.m_extent;
 }
 
@@ -1169,9 +1169,9 @@ Optional<LayoutUnit> RenderFlexibleBox::crossSizeForPercentageResolution(const R
         return WTF::nullopt;
 
     // Here we implement https://drafts.csswg.org/css-flexbox/#algo-stretch
-    if (child.hasOverrideContentLogicalHeight())
-        return child.overrideContentLogicalHeight() - child.scrollbarLogicalHeight();
-    
+    if (child.hasOverrideLogicalHeight())
+        return child.overrideContentLogicalHeight();
+
     // We don't currently implement the optimization from
     // https://drafts.csswg.org/css-flexbox/#definite-sizes case 1. While that
     // could speed up a specialized case, it requires determining if we have a
@@ -1190,7 +1190,7 @@ Optional<LayoutUnit> RenderFlexibleBox::mainSizeForPercentageResolution(const Re
     if (!mainAxisLengthIsDefinite(child, Length(0, Percent)))
         return WTF::nullopt;
 
-    return child.hasOverrideContentLogicalHeight() ? Optional<LayoutUnit>(child.overrideContentLogicalHeight() - child.scrollbarLogicalHeight()) : WTF::nullopt;
+    return child.hasOverrideLogicalHeight() ? Optional<LayoutUnit>(child.overrideContentLogicalHeight()) : WTF::nullopt;
 }
 
 Optional<LayoutUnit> RenderFlexibleBox::childLogicalHeightForPercentageResolution(const RenderBox& child)
@@ -1424,9 +1424,9 @@ static LayoutUnit alignmentOffset(LayoutUnit availableFreeSpace, ItemPosition po
 void RenderFlexibleBox::setOverrideMainAxisContentSizeForChild(RenderBox& child, LayoutUnit childPreferredSize)
 {
     if (hasOrthogonalFlow(child))
-        child.setOverrideContentLogicalHeight(childPreferredSize);
+        child.setOverrideLogicalHeight(childPreferredSize + child.borderAndPaddingLogicalHeight());
     else
-        child.setOverrideContentLogicalWidth(childPreferredSize);
+        child.setOverrideLogicalWidth(childPreferredSize + child.borderAndPaddingLogicalWidth());
 }
 
 LayoutUnit RenderFlexibleBox::staticMainAxisPositionForPositionedChild(const RenderBox& child)
@@ -1883,8 +1883,8 @@ void RenderFlexibleBox::applyStretchAlignmentToChild(RenderBox& child, LayoutUni
             // So, redo it here.
             childNeedsRelayout = true;
         }
-        if (childNeedsRelayout || !child.hasOverrideContentLogicalHeight())
-            child.setOverrideContentLogicalHeight(desiredLogicalHeight - child.borderAndPaddingLogicalHeight());
+        if (childNeedsRelayout || !child.hasOverrideLogicalHeight())
+            child.setOverrideLogicalHeight(desiredLogicalHeight);
         if (childNeedsRelayout) {
             SetForScope<bool> resetChildLogicalHeight(m_shouldResetChildLogicalHeightBeforeLayout, true);
             // We cache the child's intrinsic content logical height to avoid it being
@@ -1905,7 +1905,7 @@ void RenderFlexibleBox::applyStretchAlignmentToChild(RenderBox& child, LayoutUni
         childWidth = child.constrainLogicalWidthInFragmentByMinMax(childWidth, crossAxisContentExtent(), *this, nullptr);
         
         if (childWidth != child.logicalWidth()) {
-            child.setOverrideContentLogicalWidth(childWidth - child.borderAndPaddingLogicalWidth());
+            child.setOverrideLogicalWidth(childWidth);
             child.setChildNeedsLayout(MarkOnlyThis);
             child.layoutIfNeeded();
         }

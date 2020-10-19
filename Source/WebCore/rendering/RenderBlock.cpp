@@ -2425,10 +2425,10 @@ void RenderBlock::computeChildPreferredLogicalWidths(RenderObject& child, Layout
     if (child.isBox()) {
         auto& box = downcast<RenderBox>(child);
         if (box.isFlexItem()) {
-            if (box.hasOverrideContentLogicalHeight())
-                overrideHeight = Optional<LayoutUnit>(box.overrideContentLogicalHeight());
-            if (box.hasOverrideContentLogicalWidth())
-                overrideWidth = Optional<LayoutUnit>(box.overrideContentLogicalWidth());
+            if (box.hasOverrideLogicalHeight())
+                overrideHeight = Optional<LayoutUnit>(box.overrideLogicalHeight());
+            if (box.hasOverrideLogicalWidth())
+                overrideWidth = Optional<LayoutUnit>(box.overrideLogicalWidth());
             box.clearOverrideContentSize();
         }
     }
@@ -2439,9 +2439,9 @@ void RenderBlock::computeChildPreferredLogicalWidths(RenderObject& child, Layout
     if (child.isBox()) {
         auto& box = downcast<RenderBox>(child);
         if (overrideHeight)
-            box.setOverrideContentLogicalHeight(overrideHeight.value());
+            box.setOverrideLogicalHeight(overrideHeight.value());
         if (overrideWidth)
-            box.setOverrideContentLogicalWidth(overrideWidth.value());
+            box.setOverrideLogicalWidth(overrideWidth.value());
     }
 
     // For non-replaced blocks if the inline size is min|max-content or a definite
@@ -3219,8 +3219,8 @@ Optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComputation
     
     if (stretchedFlexHeight)
         availableHeight = stretchedFlexHeight;
-    else if (isGridItem() && hasOverrideContentLogicalHeight())
-        availableHeight = overrideContentLogicalHeight();
+    else if (isGridItem() && hasOverrideLogicalHeight())
+        availableHeight = overrideLogicalHeight();
     else if (styleToUse.logicalHeight().isFixed()) {
         LayoutUnit contentBoxHeight = adjustContentBoxLogicalHeightForBoxSizing((LayoutUnit)styleToUse.logicalHeight().value());
         availableHeight = std::max(0_lu, constrainContentBoxLogicalHeightByMinMax(contentBoxHeight - scrollbarLogicalHeight(), WTF::nullopt));

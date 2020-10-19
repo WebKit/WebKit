@@ -307,19 +307,18 @@ public:
     LayoutUnit minPreferredLogicalWidth() const override;
     LayoutUnit maxPreferredLogicalWidth() const override;
 
-    // FIXME: We should rename these back to overrideLogicalHeight/Width and have them store
-    // the border-box height/width like the regular height/width accessors on RenderBox.
-    // Right now, these are different than contentHeight/contentWidth because they still
-    // include the scrollbar height/width.
-    LayoutUnit overrideContentLogicalWidth() const;
-    LayoutUnit overrideContentLogicalHeight() const;
-    bool hasOverrideContentLogicalHeight() const;
-    bool hasOverrideContentLogicalWidth() const;
-    void setOverrideContentLogicalHeight(LayoutUnit);
-    void setOverrideContentLogicalWidth(LayoutUnit);
+    LayoutUnit overrideLogicalWidth() const;
+    LayoutUnit overrideLogicalHeight() const;
+    bool hasOverrideLogicalHeight() const;
+    bool hasOverrideLogicalWidth() const;
+    void setOverrideLogicalHeight(LayoutUnit);
+    void setOverrideLogicalWidth(LayoutUnit);
     void clearOverrideContentSize();
-    void clearOverrideContentLogicalHeight();
-    void clearOverrideContentLogicalWidth();
+    void clearOverrideLogicalHeight();
+    void clearOverrideLogicalWidth();
+
+    LayoutUnit overrideContentLogicalWidth() const { return overrideLogicalWidth() - borderAndPaddingLogicalWidth() - scrollbarLogicalWidth(); }
+    LayoutUnit overrideContentLogicalHeight() const { return overrideLogicalHeight() - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight(); }
 
     Optional<LayoutUnit> overrideContainingBlockContentWidth() const override;
     Optional<LayoutUnit> overrideContainingBlockContentHeight() const override;

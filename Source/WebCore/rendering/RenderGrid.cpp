@@ -193,7 +193,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         LayoutSize previousSize = size();
         // FIXME: We should use RenderBlock::hasDefiniteLogicalHeight() but it does not work for positioned stuff.
         // FIXME: Consider caching the hasDefiniteLogicalHeight value throughout the layout.
-        bool hasDefiniteLogicalHeight = hasOverrideContentLogicalHeight() || computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), WTF::nullopt);
+        bool hasDefiniteLogicalHeight = hasOverrideLogicalHeight() || computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), WTF::nullopt);
 
         m_hasAnyOrthogonalItem = false;
         for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
@@ -202,7 +202,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
             // Grid's layout logic controls the grid item's override height, hence we need to
             // clear any override height set previously, so it doesn't interfere in current layout
             // execution. Grid never uses the override width, that's why we don't need to clear  it.
-            child->clearOverrideContentLogicalHeight();
+            child->clearOverrideLogicalHeight();
 
             // We may need to repeat the track sizing in case of any grid item was orthogonal.
             if (GridLayoutFunctions::isOrthogonalChild(*this, *child))
@@ -1129,7 +1129,7 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
 
     // We clear height override values because we will decide now whether it's allowed or
     // not, evaluating the conditions which might have changed since the old values were set.
-    child.clearOverrideContentLogicalHeight();
+    child.clearOverrideLogicalHeight();
 
     GridTrackSizingDirection childBlockDirection = GridLayoutFunctions::flowAwareDirectionForChild(*this, child, ForRows);
     bool blockFlowIsColumnAxis = childBlockDirection == ForRows;
@@ -1137,7 +1137,7 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
     if (allowedToStretchChildBlockSize) {
         LayoutUnit stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(GridLayoutFunctions::overrideContainingBlockContentSizeForChild(child, childBlockDirection).value(), child);
         LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight, -1_lu);
-        child.setOverrideContentLogicalHeight(desiredLogicalHeight - child.borderAndPaddingLogicalHeight());
+        child.setOverrideLogicalHeight(desiredLogicalHeight);
         if (desiredLogicalHeight != child.logicalHeight()) {
             // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
             child.setLogicalHeight(0_lu);

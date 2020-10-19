@@ -3045,7 +3045,7 @@ void RenderBlockFlow::adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutU
 
 void RenderBlockFlow::fitBorderToLinesIfNeeded()
 {
-    if (style().borderFit() == BorderFit::Border || hasOverrideContentLogicalWidth())
+    if (style().borderFit() == BorderFit::Border || hasOverrideLogicalWidth())
         return;
 
     // Walk any normal flow lines to snugly fit.
@@ -3063,10 +3063,10 @@ void RenderBlockFlow::fitBorderToLinesIfNeeded()
     LayoutUnit newContentWidth = right - left;
     if (newContentWidth == oldWidth)
         return;
-    
-    setOverrideContentLogicalWidth(newContentWidth);
+
+    setOverrideLogicalWidth(newContentWidth + borderAndPaddingLogicalWidth());
     layoutBlock(false);
-    clearOverrideContentLogicalWidth();
+    clearOverrideLogicalWidth();
 }
 
 void RenderBlockFlow::markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUnit logicalBottom, RootInlineBox* highest)
