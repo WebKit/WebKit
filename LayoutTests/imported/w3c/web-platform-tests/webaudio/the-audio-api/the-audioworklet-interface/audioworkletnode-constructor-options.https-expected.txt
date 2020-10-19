@@ -1,6 +1,4 @@
 
-Harness Error (FAIL), message = 1 duplicate test name: "  Creating AudioWorkletNode with channelCountMode "foobar" threw TypeError: "Type error"."
-
 PASS # AUDIT TASK RUNNER STARTED.
 PASS Executing "setup"
 PASS Executing "without-audio-node-options"
@@ -42,7 +40,7 @@ PASS < [channel-count-mode] All assertions passed. (total 4 assertions)
 PASS > [channel-interpretation]
 PASS   testNode.channelInterpretation (set via options.speakers) is equal to speakers.
 PASS   testNode.channelInterpretation (set via options.discrete) is equal to discrete.
-PASS   Creating AudioWorkletNode with channelCountMode "foobar" threw TypeError: "Type error".
+PASS   Creating AudioWorkletNode with channelInterpretation "foobar" threw TypeError: "Type error".
 PASS < [channel-interpretation] All assertions passed. (total 3 assertions)
 PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully.
 

@@ -26,3 +26,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-upmixing-1-channel-response.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/ctor-convolver.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/transferred-buffer-output.html

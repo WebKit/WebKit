@@ -1,3 +1,21 @@
+2020-10-19  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/webaudio from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=217909
+
+        Reviewed by Eric Carlson.
+
+        Resync web-platform-tests/webaudio from upstream 357b8f6365d9080a06.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-constructor-options.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-constructor-options.https.html:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-promises.https.html:
+        * web-platform-tests/webaudio/the-audio-api/the-constantsourcenode-interface/test-constantsourcenode.html:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/transferred-buffer-output-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/transferred-buffer-output.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/w3c-import.log:
+        * web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/offlineaudiocontext-detached-execution-context.tentative.html:
+
 2020-10-19  Martin Robinson  <mrobinson@igalia.com>
 
         axis in scroll-snap-type should be required
