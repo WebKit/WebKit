@@ -32,47 +32,37 @@
 namespace WTR {
 
 struct TestOptions {
-    // FIXME: Remove these and replace with access to TestFeatures set.
-    // Web Preferences
-    bool allowCrossOriginSubresourcesToAskForCredentials { false };
-    bool allowTopNavigationToDataURLs { true };
-    bool enableAcceleratedDrawing { false };
     bool enableAttachmentElement { false };
-    bool enableBackForwardCache { false };
-    bool enableColorFilter { false };
-    bool enableInspectorAdditions { false };
+    bool enableAcceleratedDrawing { false };
     bool enableIntersectionObserver { false };
-    bool enableKeygenElement { false };
+    bool useEphemeralSession { false };
+    bool enableBackForwardCache { false };
     bool enableMenuItemElement { false };
+    bool enableKeygenElement { false };
     bool enableModernMediaControls { true };
-
-    // FIXME: Remove these and replace with access to TestFeatures set.
-    // Internal Features
+    bool enableDragDestinationActionLoad { false };
+    bool layerBackedWebView { false };
+    bool enableInspectorAdditions { false };
+    bool dumpJSConsoleLogInStdErr { false };
+    bool allowCrossOriginSubresourcesToAskForCredentials { false };
+    bool enableColorFilter { false };
+    bool enableSelectionAcrossShadowBoundaries { true };
+    bool enableWebGPU { false };
     bool enableCSSLogical { false };
     bool enableLineHeightUnits { false };
-    bool enableSelectionAcrossShadowBoundaries { true };
-    bool layoutFormattingContextIntegrationEnabled { true };
-
-    // FIXME: Remove these and replace with access to TestFeatures set.
-    // Experimental Features
     bool adClickAttributionEnabled { false };
-    bool enableAspectRatioOfImgFromWidthAndHeight { false };
-    bool enableAsyncClipboardAPI { false };
+    bool enableResizeObserver { false };
     bool enableCSSOMViewSmoothScrolling { false };
-    bool enableContactPickerAPI { false };
     bool enableCoreMathML { false };
     bool enableRequestIdleCallback { false };
-    bool enableResizeObserver { false };
-    bool enableWebGPU { false };
-
-    // Test Runner Specific Features
-    bool dumpJSConsoleLogInStdErr { false };
-    bool enableDragDestinationActionLoad { false };
+    bool enableAsyncClipboardAPI { false };
+    bool enableContactPickerAPI { false };
+    bool layoutFormattingContextIntegrationEnabled { true };
+    bool enableAspectRatioOfImgFromWidthAndHeight { false };
     bool enableWebSQL { true };
-    bool layerBackedWebView { false };
-    bool useEphemeralSession { false };
-    std::string additionalSupportedImageTypes;
+    bool allowTopNavigationToDataURLs { true };
     std::string jscOptions;
+    std::string additionalSupportedImageTypes;
 
     explicit TestOptions(TestFeatures);
     bool webViewIsCompatibleWithOptions(const TestOptions&) const;
