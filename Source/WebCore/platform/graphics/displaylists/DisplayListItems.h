@@ -2675,7 +2675,7 @@ private:
     void apply(GraphicsContext&) const override;
     Optional<FloatRect> localBounds(const GraphicsContext&) const override;
 
-    mutable Path m_path;
+    const Path m_path;
 };
 
 template<class Encoder>

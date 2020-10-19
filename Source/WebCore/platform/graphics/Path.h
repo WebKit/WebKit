@@ -196,6 +196,17 @@ public:
     PlatformPathPtr platformPath() const { return m_path; }
 #endif
 
+    void releasePlatformPathIfPossible() const
+    {
+#if ENABLE(INLINE_PATH_DATA)
+        if (!hasAnyInlineData() || !m_path)
+            return;
+
+        m_path = nullptr;
+        m_copyPathBeforeMutation = false;
+#endif
+    }
+
 #if !USE(CAIRO)
     // ensurePlatformPath() will allocate a PlatformPath if it has not yet been and will never return null.
     WEBCORE_EXPORT PlatformPathPtr ensurePlatformPath();

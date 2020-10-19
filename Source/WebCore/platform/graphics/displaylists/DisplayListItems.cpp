@@ -1134,6 +1134,7 @@ FillPath::~FillPath() = default;
 void FillPath::apply(GraphicsContext& context) const
 {
     context.fillPath(m_path);
+    m_path.releasePlatformPathIfPossible();
 }
 
 static TextStream& operator<<(TextStream& ts, const FillPath& item)
@@ -1282,7 +1283,8 @@ Optional<FloatRect> StrokePath::localBounds(const GraphicsContext& context) cons
 
 void StrokePath::apply(GraphicsContext& context) const
 {
-    context.strokePath(WTFMove(m_path));
+    context.strokePath(m_path);
+    m_path.releasePlatformPathIfPossible();
 }
 
 static TextStream& operator<<(TextStream& ts, const StrokePath& item)
