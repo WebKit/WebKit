@@ -1,3 +1,14 @@
+2020-10-19  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] use -o while unzipping layout-test-results.zip
+        https://bugs.webkit.org/show_bug.cgi?id=217914
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ExtractTestResults.__init__):
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+
 2020-10-19  Sam Weinig  <weinig@apple.com>
 
         Switch to a static pattern for DumpRenderTree preferences generation to avoid ambiguous rules

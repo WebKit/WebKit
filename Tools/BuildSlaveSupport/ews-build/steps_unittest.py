@@ -3198,6 +3198,7 @@ class TestExtractTestResults(BuildStepMixinAdditions, unittest.TestCase):
         self.expectLocalCommands(
             ExpectMasterShellCommand(command=['unzip',
                                               '-q',
+                                              '-o',
                                               'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12.zip',
                                               '-d',
                                               'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12',
@@ -3217,6 +3218,7 @@ class TestExtractTestResults(BuildStepMixinAdditions, unittest.TestCase):
         self.expectLocalCommands(
             ExpectMasterShellCommand(command=['unzip',
                                               '-q',
+                                              '-o',
                                               'public_html/results/iOS-12-Simulator-WK2-Tests-EWS/r1234-12-rerun.zip',
                                               '-d',
                                               'public_html/results/iOS-12-Simulator-WK2-Tests-EWS/r1234-12-rerun',
@@ -3236,6 +3238,7 @@ class TestExtractTestResults(BuildStepMixinAdditions, unittest.TestCase):
         self.expectLocalCommands(
             ExpectMasterShellCommand(command=['unzip',
                                               '-q',
+                                              '-o',
                                               'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12.zip',
                                               '-d',
                                               'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12',
