@@ -1,0 +1,6 @@
+
+PASS "*.pastoral" should be a valid selector
+PASS ".pastoral" should be a valid selector
+PASS "h1.pastoral" should be a valid selector
+PASS "p.pastoral.marine" should be a valid selector
+

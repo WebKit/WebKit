@@ -16,6 +16,7 @@
     "css/css-text-decor": "import", 
     "css/css-values": "import", 
     "css/geometry": "import", 
+    "css/selectors": "import", 
     "css/support": "import", 
     "custom-elements": "import", 
     "encrypted-media": "import", 

@@ -1,0 +1,4 @@
+A  B  C  D  E  F
+
+PASS :is() combined with pseudo-classes
+

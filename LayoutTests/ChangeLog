@@ -1,3 +1,12 @@
+2020-10-19  Antti Koivisto  <antti@apple.com>
+
+        Update imported/w3c/web-platform-tests/css/selectors/
+        https://bugs.webkit.org/show_bug.cgi?id=217905
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+
 2020-10-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening for webkit.org/b/217862.

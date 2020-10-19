@@ -1,3 +1,71 @@
+2020-10-19  Antti Koivisto  <antti@apple.com>
+
+        Update imported/w3c/web-platform-tests/css/selectors/
+        https://bugs.webkit.org/show_bug.cgi?id=217905
+
+        Reviewed by Simon Fraser.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/selectors/first-line-bidi-001-expected.html: Added.
+        * web-platform-tests/css/selectors/first-line-bidi-001.html: Added.
+        * web-platform-tests/css/selectors/first-line-bidi-002-expected.html: Added.
+        * web-platform-tests/css/selectors/first-line-bidi-002.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-007.html:
+        * web-platform-tests/css/selectors/focus-visible-011.html:
+        * web-platform-tests/css/selectors/is-where-error-recovery-expected.txt: Added.
+        * web-platform-tests/css/selectors/is-where-error-recovery.html: Added.
+        * web-platform-tests/css/selectors/is-where-not-expected.txt: Added.
+        * web-platform-tests/css/selectors/is-where-not.html: Added.
+        * web-platform-tests/css/selectors/is-where-parsing-expected.txt:
+        * web-platform-tests/css/selectors/is-where-parsing.html:
+        * web-platform-tests/css/selectors/is-where-pseudo-classes-expected.txt: Added.
+        * web-platform-tests/css/selectors/is-where-pseudo-classes.html: Added.
+        * web-platform-tests/css/selectors/is-where-pseudo-elements-expected.html: Added.
+        * web-platform-tests/css/selectors/is-where-pseudo-elements.html: Added.
+        * web-platform-tests/css/selectors/is-where-shadow-expected.txt: Added.
+        * web-platform-tests/css/selectors/is-where-shadow.html: Added.
+        * web-platform-tests/css/selectors/is-where-visited-expected.html: Added.
+        * web-platform-tests/css/selectors/is-where-visited.html: Added.
+        * web-platform-tests/css/selectors/not-links-expected.html:
+        * web-platform-tests/css/selectors/not-links.html:
+        * web-platform-tests/css/selectors/old-tests/css3-modsel-23.xml: Removed.
+        * web-platform-tests/css/selectors/old-tests/css3-modsel-24.xml: Removed.
+        * web-platform-tests/css/selectors/old-tests/css3-modsel-68.xml: Removed.
+        * web-platform-tests/css/selectors/old-tests/css3-modsel-69.xml: Removed.
+        * web-platform-tests/css/selectors/old-tests/w3c-import.log:
+        * web-platform-tests/css/selectors/parsing/parse-attribute-expected.txt: Added.
+        * web-platform-tests/css/selectors/parsing/parse-attribute.html: Added.
+        * web-platform-tests/css/selectors/parsing/parse-child-expected.txt: Added.
+        * web-platform-tests/css/selectors/parsing/parse-child.html: Added.
+        * web-platform-tests/css/selectors/parsing/parse-class-expected.txt: Added.
+        * web-platform-tests/css/selectors/parsing/parse-class.html: Added.
+        * web-platform-tests/css/selectors/parsing/parse-descendant-expected.txt: Added.
+        * web-platform-tests/css/selectors/parsing/parse-descendant.html: Added.
+        * web-platform-tests/css/selectors/parsing/parse-id-expected.txt: Added.
+        * web-platform-tests/css/selectors/parsing/parse-id.html: Added.
+        * web-platform-tests/css/selectors/parsing/parse-is-expected.txt: Added.
+        * web-platform-tests/css/selectors/parsing/parse-is.html: Added.
+        * web-platform-tests/css/selectors/parsing/parse-not-expected.txt: Added.
+        * web-platform-tests/css/selectors/parsing/parse-not.html: Added.
+        * web-platform-tests/css/selectors/parsing/parse-sibling-expected.txt: Added.
+        * web-platform-tests/css/selectors/parsing/parse-sibling.html: Added.
+        * web-platform-tests/css/selectors/parsing/parse-universal-expected.txt: Added.
+        * web-platform-tests/css/selectors/parsing/parse-universal.html: Added.
+        * web-platform-tests/css/selectors/parsing/parse-where-expected.txt: Added.
+        * web-platform-tests/css/selectors/parsing/parse-where.html: Added.
+        * web-platform-tests/css/selectors/parsing/w3c-import.log: Added.
+        * web-platform-tests/css/selectors/pseudo-enabled-disabled-expected.txt: Added.
+        * web-platform-tests/css/selectors/pseudo-enabled-disabled.html: Added.
+        * web-platform-tests/css/selectors/query/query-is-expected.txt: Added.
+        * web-platform-tests/css/selectors/query/query-is.html: Added.
+        * web-platform-tests/css/selectors/query/query-where-expected.txt: Added.
+        * web-platform-tests/css/selectors/query/query-where.html: Added.
+        * web-platform-tests/css/selectors/query/w3c-import.log: Added.
+        * web-platform-tests/css/selectors/w3c-import.log:
+        * web-platform-tests/css/support/query-testcommon.js: Added.
+        (test_query_selector):
+        * web-platform-tests/css/support/w3c-import.log:
+
 2020-10-19  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/webaudio from upstream

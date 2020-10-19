@@ -46,6 +46,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/support/pattern-grg-rrg-rgg.png
 /LayoutTests/imported/w3c/web-platform-tests/css/support/pattern-rgr-grg-rgr.png
 /LayoutTests/imported/w3c/web-platform-tests/css/support/pattern-tr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/support/query-testcommon.js
 /LayoutTests/imported/w3c/web-platform-tests/css/support/red-rect.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/support/red.ico
 /LayoutTests/imported/w3c/web-platform-tests/css/support/ruler-h-50%.png

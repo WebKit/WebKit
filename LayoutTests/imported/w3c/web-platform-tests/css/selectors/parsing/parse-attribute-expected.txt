@@ -1,0 +1,18 @@
+
+PASS "[att]" should be a valid selector
+PASS "[att=val]" should be a valid selector
+PASS "[att~=val]" should be a valid selector
+PASS "[att|=val]" should be a valid selector
+PASS "h1[title]" should be a valid selector
+PASS "span[class='example']" should be a valid selector
+PASS "a[hreflang=fr]" should be a valid selector
+PASS "a[hreflang|='en']" should be a valid selector
+PASS "[att^=val]" should be a valid selector
+PASS "[att$=val]" should be a valid selector
+PASS "[att*=val]" should be a valid selector
+PASS "object[type^=\"image/\"]" should be a valid selector
+PASS "a[href$=\".html\"]" should be a valid selector
+PASS "p[title*=\"hello\"]" should be a valid selector
+PASS "[*|att]" should be a valid selector
+PASS "[|att]" should be a valid selector
+

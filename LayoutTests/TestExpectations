@@ -1203,6 +1203,7 @@ imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-172a.xml [ I
 imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-172b.xml [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-173a.xml [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-173b.xml [ ImageOnlyFailure ]
+webkit.org/b/217904 imported/w3c/web-platform-tests/css/selectors/is-where-visited.html [ ImageOnlyFailure ]
 
 # ref for this is under a directory that is not yet imported
 webkit.org/b/209735 imported/w3c/web-platform-tests/css/selectors/root-siblings.htm [ Skip ]
