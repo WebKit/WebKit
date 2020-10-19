@@ -132,12 +132,10 @@ ImageDrawResult Recorder::drawTiledImage(Image& image, const FloatRect& destinat
     return ImageDrawResult::DidRecord;
 }
 
-#if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
 void Recorder::drawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     appendItemAndUpdateExtent(DrawNativeImage::create(image, imageSize, destRect, srcRect, options));
 }
-#endif
 
 void Recorder::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {

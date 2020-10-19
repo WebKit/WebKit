@@ -30,7 +30,6 @@
 
 #include "Color.h"
 #include "FloatRect.h"
-#include "GeometryUtilities.h"
 #include "GraphicsContextCG.h"
 #include "IntSize.h"
 #include "SubimageCacheWithTimer.h"
@@ -67,40 +66,6 @@ Color nativeImageSinglePixelSolidColor(const NativeImagePtr& image)
         return Color::transparentBlack;
 
     return clampToComponentBytes<SRGBA>(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
-}
-
-void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& srcSize, const ImagePaintingOptions& options)
-{
-    // Subsampling may have given us an image that is smaller than size().
-    IntSize subsampledImageSize = nativeImageSize(image);
-    if (options.orientation().usesWidthAsHeight())
-        subsampledImageSize = subsampledImageSize.transposedSize();
-
-    // srcRect is in the coordinates of the unsubsampled image, so we have to map it to the subsampled image.
-    FloatRect adjustedSrcRect = srcRect;
-    if (subsampledImageSize != srcSize)
-        adjustedSrcRect = mapRect(srcRect, FloatRect({ }, srcSize), FloatRect({ }, subsampledImageSize));
-
-    context.drawNativeImage(image, subsampledImageSize, destRect, adjustedSrcRect, options);
-}
-
-void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, float scaleFactor, const IntPoint& destination, const IntRect& source)
-{
-    CGContextRef cgContext = context.platformContext();
-    CGContextSaveGState(cgContext);
-
-    CGContextClipToRect(cgContext, CGRectMake(destination.x(), destination.y(), source.width(), source.height()));
-    CGContextScaleCTM(cgContext, 1, -1);
-
-    CGFloat imageHeight = CGImageGetHeight(image.get()) / scaleFactor;
-    CGFloat imageWidth = CGImageGetWidth(image.get()) / scaleFactor;
-
-    CGFloat destX = destination.x() - source.x();
-    CGFloat destY = -imageHeight - destination.y() + source.y();
-
-    CGContextDrawImage(cgContext, CGRectMake(destX, destY, imageWidth, imageHeight), image.get());
-
-    CGContextRestoreGState(cgContext);
 }
 
 void clearNativeImageSubimages(const NativeImagePtr& image)

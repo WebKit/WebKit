@@ -1422,7 +1422,6 @@ Optional<Ref<DrawTiledScaledImage>> DrawTiledScaledImage::decode(Decoder& decode
     return DrawTiledScaledImage::create(*imageHandle->image, *destination, *source, *tileScaleFactor, hRule, vRule, *imagePaintingOptions);
 }
 
-#if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
 class DrawNativeImage : public DrawingItem {
 public:
     static Ref<DrawNativeImage> create(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
@@ -1445,9 +1444,7 @@ private:
 
     Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_destinationRect; }
 
-#if USE(CG)
     NativeImagePtr m_image;
-#endif
     FloatSize m_imageSize;
     FloatRect m_destinationRect;
     FloatRect m_srcRect;
@@ -1457,10 +1454,7 @@ private:
 template<class Encoder>
 void DrawNativeImage::encode(Encoder& encoder) const
 {
-#if USE(CG)
-    NativeImageHandle handle { m_image };
-    encoder << handle;
-#endif
+    encoder << m_image;
     encoder << m_imageSize;
     encoder << m_destinationRect;
     encoder << m_srcRect;
@@ -1470,12 +1464,10 @@ void DrawNativeImage::encode(Encoder& encoder) const
 template<class Decoder>
 Optional<Ref<DrawNativeImage>> DrawNativeImage::decode(Decoder& decoder)
 {
-#if USE(CG)
-    Optional<NativeImageHandle> handle;
-    decoder >> handle;
-    if (!handle)
+    Optional<NativeImagePtr> image;
+    decoder >> image;
+    if (!image)
         return WTF::nullopt;
-#endif
 
     Optional<FloatSize> imageSize;
     decoder >> imageSize;
@@ -1497,14 +1489,8 @@ Optional<Ref<DrawNativeImage>> DrawNativeImage::decode(Decoder& decoder)
     if (!options)
         return WTF::nullopt;
 
-#if USE(CG)
-    NativeImagePtr image = handle->image;
-#else
-    NativeImagePtr image = nullptr;
-#endif
-    return DrawNativeImage::create(image, *imageSize, *destinationRect, *srcRect, *options);
+    return DrawNativeImage::create(*image, *imageSize, *destinationRect, *srcRect, *options);
 }
-#endif
 
 class DrawPattern : public DrawingItem {
 public:
@@ -2963,11 +2949,9 @@ void Item::encode(Encoder& encoder) const
     case ItemType::DrawTiledScaledImage:
         encoder << downcast<DrawTiledScaledImage>(*this);
         break;
-#if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
     case ItemType::DrawNativeImage:
         encoder << downcast<DrawNativeImage>(*this);
         break;
-#endif
     case ItemType::DrawPattern:
         encoder << downcast<DrawPattern>(*this);
         break;
@@ -3154,12 +3138,10 @@ Optional<Ref<Item>> Item::decode(Decoder& decoder)
         if (auto item = DrawTiledScaledImage::decode(decoder))
             return static_reference_cast<Item>(WTFMove(*item));
         break;
-#if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
     case ItemType::DrawNativeImage:
         if (auto item = DrawNativeImage::decode(decoder))
             return static_reference_cast<Item>(WTFMove(*item));
         break;
-#endif
     case ItemType::DrawPattern:
         if (auto item = DrawPattern::decode(decoder))
             return static_reference_cast<Item>(WTFMove(*item));
@@ -3316,9 +3298,7 @@ SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawGlyphs)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawImage)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawTiledImage)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawTiledScaledImage)
-#if USE(CG) || USE(CAIRO)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawNativeImage)
-#endif
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawPattern)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawRect)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawLine)
@@ -3378,9 +3358,7 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::DrawImage,
     WebCore::DisplayList::ItemType::DrawTiledImage,
     WebCore::DisplayList::ItemType::DrawTiledScaledImage,
-#if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
     WebCore::DisplayList::ItemType::DrawNativeImage,
-#endif
     WebCore::DisplayList::ItemType::DrawPattern,
     WebCore::DisplayList::ItemType::DrawRect,
     WebCore::DisplayList::ItemType::DrawLine,

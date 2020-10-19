@@ -123,15 +123,10 @@ void GraphicsContext::drawRect(const FloatRect& rect, float borderThickness)
     Cairo::drawRect(*platformContext(), rect, borderThickness, state.fillColor, state.strokeStyle, state.strokeColor);
 }
 
-void GraphicsContext::drawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void GraphicsContext::platformDrawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     if (paintingDisabled())
         return;
-
-    if (m_impl) {
-        m_impl->drawNativeImage(image, imageSize, destRect, srcRect, options);
-        return;
-    }
 
     ASSERT(hasPlatformContext());
     auto& state = this->state();

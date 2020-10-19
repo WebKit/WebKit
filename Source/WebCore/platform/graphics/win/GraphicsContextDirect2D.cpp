@@ -207,15 +207,10 @@ void GraphicsContext::restorePlatformState()
     Direct2D::restore(*platformContext());
 }
 
-void GraphicsContext::drawNativeImage(const COMPtr<ID2D1Bitmap>& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void GraphicsContext::platformDrawNativeImage(const COMPtr<ID2D1Bitmap>& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     if (paintingDisabled())
         return;
-
-    if (m_impl) {
-        m_impl->drawNativeImage(image, imageSize, destRect, srcRect, options);
-        return;
-    }
 
     ASSERT(hasPlatformContext());
     auto& state = this->state();

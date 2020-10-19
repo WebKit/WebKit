@@ -31,13 +31,14 @@
 #include "GraphicsTypesGL.h"
 #include "ImagePaintingOptions.h"
 #include "IntRect.h"
-#include "NativeImage.h"
+#include "NativeImagePtr.h"
 #include "PlatformLayer.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
+class GraphicsContext;
 class GraphicsContextGLOpenGL;
 class HostWindow;
 class Image;

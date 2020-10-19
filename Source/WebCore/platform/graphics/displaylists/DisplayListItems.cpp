@@ -106,10 +106,8 @@ size_t Item::sizeInBytes(const Item& item)
         return sizeof(downcast<DrawTiledImage>(item));
     case ItemType::DrawTiledScaledImage:
         return sizeof(downcast<DrawTiledScaledImage>(item));
-#if USE(CG) || USE(CAIRO)
     case ItemType::DrawNativeImage:
         return sizeof(downcast<DrawNativeImage>(item));
-#endif
     case ItemType::DrawPattern:
         return sizeof(downcast<DrawPattern>(item));
     case ItemType::DrawRect:
@@ -698,32 +696,21 @@ static TextStream& operator<<(TextStream& ts, const DrawTiledScaledImage& item)
     return ts;
 }
 
-#if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
 DrawNativeImage::DrawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
     : DrawingItem(ItemType::DrawNativeImage)
-#if USE(CG)
-    // FIXME: Need to store an image for Cairo.
     , m_image(image)
-#endif
     , m_imageSize(imageSize)
     , m_destinationRect(destRect)
     , m_srcRect(srcRect)
     , m_options(options)
 {
-#if !USE(CG)
-    UNUSED_PARAM(image);
-#endif
 }
 
 DrawNativeImage::~DrawNativeImage() = default;
 
 void DrawNativeImage::apply(GraphicsContext& context) const
 {
-#if USE(CG)
     context.drawNativeImage(m_image, m_imageSize, m_destinationRect, m_srcRect, m_options);
-#else
-    UNUSED_PARAM(context);
-#endif
 }
 
 static TextStream& operator<<(TextStream& ts, const DrawNativeImage& item)
@@ -734,7 +721,6 @@ static TextStream& operator<<(TextStream& ts, const DrawNativeImage& item)
     ts.dumpProperty("dest-rect", item.destinationRect());
     return ts;
 }
-#endif
 
 DrawPattern::DrawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
     : DrawingItem(ItemType::DrawPattern)
@@ -1464,9 +1450,7 @@ static TextStream& operator<<(TextStream& ts, const ItemType& type)
     case ItemType::DrawImage: ts << "draw-image"; break;
     case ItemType::DrawTiledImage: ts << "draw-tiled-image"; break;
     case ItemType::DrawTiledScaledImage: ts << "draw-tiled-scaled-image"; break;
-#if USE(CG) || USE(CAIRO)
     case ItemType::DrawNativeImage: ts << "draw-native-image"; break;
-#endif
     case ItemType::DrawPattern: ts << "draw-pattern"; break;
     case ItemType::DrawRect: ts << "draw-rect"; break;
     case ItemType::DrawLine: ts << "draw-line"; break;
@@ -1566,11 +1550,9 @@ TextStream& operator<<(TextStream& ts, const Item& item)
     case ItemType::DrawTiledScaledImage:
         ts << downcast<DrawTiledScaledImage>(item);
         break;
-#if USE(CG) || USE(CAIRO)
     case ItemType::DrawNativeImage:
         ts << downcast<DrawNativeImage>(item);
         break;
-#endif
     case ItemType::DrawPattern:
         ts << downcast<DrawPattern>(item);
         break;

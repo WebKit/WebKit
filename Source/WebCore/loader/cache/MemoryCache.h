@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "NativeImage.h"
 #include "SecurityOriginHash.h"
 #include "Timer.h"
 #include <pal/SessionID.h>

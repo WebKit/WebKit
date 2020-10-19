@@ -28,6 +28,7 @@
 
 #include "GStreamerCommon.h"
 #include "GStreamerEMEUtilities.h"
+#include "ImageOrientation.h"
 #include "Logging.h"
 #include "MainThreadNotifier.h"
 #include "MediaPlayerPrivate.h"

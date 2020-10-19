@@ -39,6 +39,7 @@
 #include <WebCore/CompositionUnderline.h>
 #include <WebCore/Credential.h>
 #include <WebCore/Cursor.h>
+#include <WebCore/DOMCacheEngine.h>
 #include <WebCore/DatabaseDetails.h>
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DictionaryPopupInfo.h>
@@ -1099,7 +1100,7 @@ bool ArgumentCoder<ImageHandle>::decode(Decoder& decoder, ImageHandle& imageHand
     return true;
 }
 
-static void encodeNativeImage(Encoder& encoder, NativeImagePtr image)
+static void encodeNativeImage(Encoder& encoder, const NativeImagePtr& image)
 {
     auto imageSize = nativeImageSize(image);
     auto bitmap = ShareableBitmap::createShareable(imageSize, { });
@@ -1142,7 +1143,7 @@ static WARN_UNUSED_RETURN bool decodeNativeImage(Decoder& decoder, NativeImagePt
     return true;
 }
 
-static void encodeOptionalNativeImage(Encoder& encoder, NativeImagePtr image)
+static void encodeOptionalNativeImage(Encoder& encoder, const NativeImagePtr& image)
 {
     bool hasImage = !!image;
     encoder << hasImage;
@@ -1165,14 +1166,14 @@ static WARN_UNUSED_RETURN bool decodeOptionalNativeImage(Decoder& decoder, Nativ
     return decodeNativeImage(decoder, image);
 }
 
-void ArgumentCoder<NativeImageHandle>::encode(Encoder& encoder, const NativeImageHandle& imageHandle)
+void ArgumentCoder<NativeImagePtr>::encode(Encoder& encoder, const NativeImagePtr& image)
 {
-    encodeOptionalNativeImage(encoder, imageHandle.image.get());
+    encodeOptionalNativeImage(encoder, image);
 }
 
-bool ArgumentCoder<NativeImageHandle>::decode(Decoder& decoder, NativeImageHandle& imageHandle)
+bool ArgumentCoder<NativeImagePtr>::decode(Decoder& decoder, NativeImagePtr& image)
 {
-    return decodeOptionalNativeImage(decoder, imageHandle.image);
+    return decodeOptionalNativeImage(decoder, image);
 }
 
 void ArgumentCoder<Ref<Font>>::encode(Encoder& encoder, const Ref<WebCore::Font>& font)

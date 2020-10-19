@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2004-2020 Apple Inc.  All rights reserved.
- * Copyright (C) 2007-2008 Torch Mobile, Inc.
- * Copyright (C) 2012 Company 100 Inc.
+ * Copyright (C) 2020 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,16 +25,25 @@
 
 #pragma once
 
-#include "NativeImagePtr.h"
+#if USE(CG)
+#include <wtf/RetainPtr.h>
+typedef struct CGImage* CGImageRef;
+#elif USE(CAIRO)
+#include "RefPtrCairo.h"
+#elif USE(WINGDI)
+#include "SharedBitmap.h"
+#endif
 
 namespace WebCore {
 
-class Color;
-class IntSize;
-
-WEBCORE_EXPORT IntSize nativeImageSize(const NativeImagePtr&);
-bool nativeImageHasAlpha(const NativeImagePtr&);
-Color nativeImageSinglePixelSolidColor(const NativeImagePtr&);
-void clearNativeImageSubimages(const NativeImagePtr&);
+#if USE(CG)
+typedef RetainPtr<CGImageRef> NativeImagePtr;
+#elif USE(DIRECT2D)
+typedef COMPtr<ID2D1Bitmap> NativeImagePtr;
+#elif USE(CAIRO)
+typedef RefPtr<cairo_surface_t> NativeImagePtr;
+#elif USE(WINGDI)
+typedef RefPtr<SharedBitmap> NativeImagePtr;
+#endif
 
 }

@@ -217,6 +217,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::PlaybackTargetClientContextIdentifier',
         'WebCore::MediaPlayerIdentifier',
         'WebCore::MediaSessionIdentifier',
+        'WebCore::NativeImagePtr',
         'WebCore::PageIdentifier',
         'WebCore::PluginLoadClientPolicy',
         'WebCore::PointerID',

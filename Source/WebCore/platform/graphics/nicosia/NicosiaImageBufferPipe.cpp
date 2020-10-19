@@ -28,6 +28,7 @@
 #include "ImageBuffer.h"
 
 #include "ImageBufferPipe.h"
+#include "NativeImage.h"
 #include "NicosiaContentLayerTextureMapperImpl.h"
 #include "NicosiaPlatformLayer.h"
 #include "TextureMapperPlatformLayerBuffer.h"

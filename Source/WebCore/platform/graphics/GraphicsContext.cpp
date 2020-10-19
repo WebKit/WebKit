@@ -731,6 +731,19 @@ void GraphicsContext::drawBidiText(const FontCascade& font, const TextRun& run, 
     bidiRuns.clear();
 }
 
+void GraphicsContext::drawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+{
+    if (paintingDisabled())
+        return;
+
+    if (m_impl) {
+        m_impl->drawNativeImage(image, imageSize, destRect, srcRect, options);
+        return;
+    }
+
+    platformDrawNativeImage(image, imageSize, destRect, srcRect, options);
+}
+
 ImageDrawResult GraphicsContext::drawImage(Image& image, const FloatPoint& destination, const ImagePaintingOptions& imagePaintingOptions)
 {
     return drawImage(image, FloatRect(destination, image.size()), FloatRect(FloatPoint(), image.size()), imagePaintingOptions);

@@ -28,6 +28,7 @@
 #include "BitmapImage.h"
 
 #include "FloatRect.h"
+#include "GeometryUtilities.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "ImageObserver.h"
@@ -203,6 +204,21 @@ bool BitmapImage::notSolidColor()
     return size().width() != 1 || size().height() != 1 || frameCount() > 1;
 }
 #endif // ASSERT_ENABLED
+
+static inline void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& srcSize, const ImagePaintingOptions& options)
+{
+    // Subsampling may have given us an image that is smaller than size().
+    IntSize subsampledImageSize = nativeImageSize(image);
+    if (options.orientation().usesWidthAsHeight())
+        subsampledImageSize = subsampledImageSize.transposedSize();
+
+    // srcRect is in the coordinates of the unsubsampled image, so we have to map it to the subsampled image.
+    FloatRect adjustedSrcRect = srcRect;
+    if (subsampledImageSize != srcSize)
+        adjustedSrcRect = mapRect(srcRect, FloatRect({ }, srcSize), FloatRect({ }, subsampledImageSize));
+
+    context.drawNativeImage(image, subsampledImageSize, destRect, adjustedSrcRect, options);
+}
 
 ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {

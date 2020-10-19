@@ -106,12 +106,27 @@ std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 
 void ShareableBitmap::paint(WebCore::GraphicsContext& context, const IntPoint& destination, const IntRect& source)
 {
-    drawNativeImage(makeCGImageCopy(), context, 1, destination, source);
+    paint(context, 1, destination, source);
 }
 
 void ShareableBitmap::paint(WebCore::GraphicsContext& context, float scaleFactor, const IntPoint& destination, const IntRect& source)
 {
-    drawNativeImage(makeCGImageCopy(), context, scaleFactor, destination, source);
+    CGContextRef cgContext = context.platformContext();
+    CGContextSaveGState(cgContext);
+
+    CGContextClipToRect(cgContext, CGRectMake(destination.x(), destination.y(), source.width(), source.height()));
+    CGContextScaleCTM(cgContext, 1, -1);
+
+    auto image = makeCGImageCopy();
+    CGFloat imageHeight = CGImageGetHeight(image.get()) / scaleFactor;
+    CGFloat imageWidth = CGImageGetWidth(image.get()) / scaleFactor;
+
+    CGFloat destX = destination.x() - source.x();
+    CGFloat destY = -imageHeight - destination.y() + source.y();
+
+    CGContextDrawImage(cgContext, CGRectMake(destX, destY, imageWidth, imageHeight), image.get());
+
+    CGContextRestoreGState(cgContext);
 }
 
 RetainPtr<CGImageRef> ShareableBitmap::makeCGImageCopy()

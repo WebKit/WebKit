@@ -280,15 +280,10 @@ void GraphicsContext::restorePlatformState()
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContext::drawNativeImage(const RetainPtr<CGImageRef>& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void GraphicsContext::platformDrawNativeImage(const RetainPtr<CGImageRef>& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     if (paintingDisabled())
         return;
-
-    if (m_impl) {
-        m_impl->drawNativeImage(image, imageSize, destRect, srcRect, options);
-        return;
-    }
 
 #if !LOG_DISABLED
     MonotonicTime startTime = MonotonicTime::now();

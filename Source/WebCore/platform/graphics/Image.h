@@ -32,8 +32,9 @@
 #include "FloatSize.h"
 #include "GraphicsTypes.h"
 #include "ImageOrientation.h"
+#include "ImagePaintingOptions.h"
 #include "ImageTypes.h"
-#include "NativeImage.h"
+#include "NativeImagePtr.h"
 #include "Timer.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/Optional.h>
@@ -72,7 +73,6 @@ class FloatSize;
 class GraphicsContext;
 class GraphicsContextImpl;
 class SharedBuffer;
-struct ImagePaintingOptions;
 struct Length;
 
 // This class gets notified when an image creates or destroys decoded frames and when it advances animation frames.

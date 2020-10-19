@@ -34,6 +34,7 @@
 #include <WebCore/IndexedDB.h>
 #include <WebCore/InputMode.h>
 #include <WebCore/MediaSelectionOption.h>
+#include <WebCore/NativeImagePtr.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/NotificationDirection.h>
 #include <WebCore/RealtimeMediaSource.h>
@@ -109,7 +110,6 @@ class KeyframeValueList;
 class LayoutSize;
 class LayoutPoint;
 class LinearTimingFunction;
-class NativeImageHandle;
 class Notification;
 class PasteboardCustomData;
 class PaymentInstallmentConfiguration;
@@ -419,9 +419,9 @@ template<> struct ArgumentCoder<WebCore::ImageHandle> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ImageHandle&);
 };
 
-template<> struct ArgumentCoder<WebCore::NativeImageHandle> {
-    static void encode(Encoder&, const WebCore::NativeImageHandle&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::NativeImageHandle&);
+template<> struct ArgumentCoder<WebCore::NativeImagePtr> {
+    static void encode(Encoder&, const WebCore::NativeImagePtr&);
+    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::NativeImagePtr&);
 };
 
 template<> struct ArgumentCoder<WebCore::ResourceRequest> {

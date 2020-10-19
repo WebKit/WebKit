@@ -1,3 +1,24 @@
+2020-10-19  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [GPU Process] Clean the DisplayList recording of the NativeImage
+        https://bugs.webkit.org/show_bug.cgi?id=217573
+
+        Reviewed by Simon Fraser.
+
+        Support encoding and decoding NativeImagePtr directly.
+
+        * Scripts/webkit/messages.py:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::encodeNativeImage):
+        (IPC::encodeOptionalNativeImage):
+        (IPC::ArgumentCoder<NativeImagePtr>::encode):
+        (IPC::ArgumentCoder<NativeImagePtr>::decode):
+        (IPC::ArgumentCoder<NativeImageHandle>::encode): Deleted.
+        (IPC::ArgumentCoder<NativeImageHandle>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::paint):
+
 2020-10-18  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] sluggish page scrolling for wheel events since r268499
