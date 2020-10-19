@@ -90,8 +90,8 @@ class WebDriverTestRunnerSelenium(object):
                 for subtest, status, message, backtrace in test_results:
                     result.add_subtest_results(os.path.basename(subtest), status, message, backtrace)
             else:
-                # FIXME: handle other results.
-                pass
+                _log.error("Test %s failed:" % test_name)
+                _log.error(harness_result[1])
             self._results.append(result)
 
     def results(self):

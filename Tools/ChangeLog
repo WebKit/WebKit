@@ -1,3 +1,37 @@
+2020-10-18  Lauro Moura  <lmoura@igalia.com>
+
+        webkitcorepy: Allow one package to require another package
+        https://bugs.webkit.org/show_bug.cgi?id=217856
+
+        Reviewed by Jonathan Bedard.
+
+        In some cases a package may check whether another package is
+        installed without actually importing it, which would make
+        the AutoInstall to miss the dependency as it would not be
+        imported. An example is pytest autoload feature searching
+        for plugins like pytest_timeout.
+
+        So, this commit adds a new argument to autoinstall.Package:
+        implicit_deps. It is not intended to be a full fledged dependency
+        tracking system, just covering these corner cases.
+
+        This commit also downgrades pytest from 3.10 to 3.6 to match the
+        version used in WPT tests.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump mini
+        version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (Package.__init__): Add new implicit_deps argument.
+        (Package.install): Install implicit_deps.
+        * Scripts/webkitpy/__init__.py: Update pytest version and add
+        pytest_timeout dependency.
+        * Scripts/webkitpy/webdriver_tests/pytest_runner.py:
+        (run): Ignore DISABLE_AUTOLOAD as it was added in pytest 3.8 and go
+        back to implicitly loading pytest_timeout.
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner_selenium.py:
+        (WebDriverTestRunnerSelenium.run): Add the harness error log messages
+        like the ones in the w3c runner from r268402.
+
 2020-10-17  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] flatpakutils.py reports "KeyError: 'gcc'" error if using with icecc and toolchains aren't generated yet

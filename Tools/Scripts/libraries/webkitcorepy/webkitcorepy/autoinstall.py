@@ -94,7 +94,7 @@ class Package(object):
             else:
                 raise OSError('{} has an  unrecognized package format'.format(self.path))
 
-    def __init__(self, import_name, version=None, pypi_name=None, slow_install=False, wheel=False, aliases=None):
+    def __init__(self, import_name, version=None, pypi_name=None, slow_install=False, wheel=False, aliases=None, implicit_deps=None):
         self.name = import_name
         self.version = version
         self._archives = []
@@ -102,6 +102,7 @@ class Package(object):
         self.slow_install = slow_install
         self.wheel = wheel
         self.aliases = aliases or []
+        self.implicit_deps = implicit_deps or []
 
     @property
     def location(self):
@@ -210,6 +211,13 @@ class Package(object):
         if self.name not in ['setuptools', 'wheel']:
             AutoInstall.install('setuptools')
             AutoInstall.install('wheel')
+
+        # In some cases a package may check if another package is installed without actually
+        # importing it, which would make the AutoInstall to miss the dependency as it would
+        # not be imported. An example is pytest autoload feature to search for plugins like
+        # pytest_timeout.
+        for dependency in self.implicit_deps:
+            AutoInstall.install(dependency)
 
         if not self.archives():
             raise ValueError('No archives for {}-{} found'.format(self.pypi_name, self.version))

@@ -51,7 +51,7 @@ AutoInstall.register(Package('pluggy', Version(0, 13, 1)))
 AutoInstall.register(Package('py', Version(1, 9, 0)))
 AutoInstall.register(Package('pytest_timeout', Version(1, 4, 2), pypi_name='pytest-timeout'))
 # Pytest held to 3.x due to WPT webdriver compatibility
-AutoInstall.register(Package('pytest', Version(3, 10, 1)))
+AutoInstall.register(Package('pytest', Version(3, 6, 2), implicit_deps=['pytest_timeout']))
 AutoInstall.register(Package('pycodestyle', Version(2, 5, 0)))
 AutoInstall.register(Package('pylint', Version(0, 25, 2)))
 AutoInstall.register(Package('scandir', Version(1, 10, 0)))
