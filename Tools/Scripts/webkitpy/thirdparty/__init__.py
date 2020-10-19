@@ -95,8 +95,6 @@ class AutoinstallImportHook(object):
         # order for autoinstall_everything(), below, to work properly.
         if '.buildbot' in fullname:
             self._install_buildbot()
-        elif '.keyring' in fullname:
-            self._install_keyring()
         elif '.twisted_15_5_0' in fullname:
             self._install_twisted_15_5_0()
         elif '.chromedriver' in fullname:
@@ -105,10 +103,6 @@ class AutoinstallImportHook(object):
             self.install_geckodriver()
         elif '.bs4' in fullname:
             self._install_beautifulsoup()
-
-    def _install_keyring(self):
-        self._install("https://files.pythonhosted.org/packages/7d/a9/8c6bf60710781ce13a9987c0debda8adab35eb79c6b5525f7fe5240b7a8a/keyring-7.3.1.tar.gz",
-                             "keyring-7.3.1/keyring")
 
     def _install_pytest_timeout(self):
         self._install("https://files.pythonhosted.org/packages/cc/b7/b2a61365ea6b6d2e8881360ae7ed8dad0327ad2df89f2f0be4a02304deb2/pytest-timeout-1.2.0.tar.gz",

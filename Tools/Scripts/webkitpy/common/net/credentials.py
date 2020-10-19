@@ -30,6 +30,7 @@
 # Python module for reading stored web credentials from the OS.
 
 import logging
+import keyring
 import os
 import platform
 import re
@@ -37,7 +38,6 @@ import re
 from webkitpy.common.checkout.scm import Git
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.user import User
-import webkitpy.thirdparty.autoinstalled.keyring as keyring
 
 _log = logging.getLogger(__name__)
 

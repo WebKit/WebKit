@@ -1,3 +1,17 @@
+2020-10-19  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Use webkitcorepy's autoinstaller for keyring
+        https://bugs.webkit.org/show_bug.cgi?id=217839
+        <rdar://problem/70389225>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/__init__.py: Add keyring.
+        * Scripts/webkitpy/common/net/credentials.py:
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module): Remove _install_keyring.
+        (AutoinstallImportHook._install_keyring): Deleted.
+
 2020-10-18  Lauro Moura  <lmoura@igalia.com>
 
         webkitcorepy: Allow one package to require another package
