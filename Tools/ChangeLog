@@ -1,3 +1,13 @@
+2020-10-19  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Use feature flag to support Buildbot 2 code
+        https://bugs.webkit.org/show_bug.cgi?id=217834
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/build.webkit.org-config/loadConfig.py:
+        (loadBuilderConfig):
+
 2020-10-19  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Use webkitcorepy's autoinstaller for keyring

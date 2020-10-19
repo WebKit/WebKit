@@ -20,7 +20,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from buildbot.buildslave import BuildSlave
+import os
+USE_BUILDBOT_VERSION2 = os.getenv('USE_BUILDBOT_VERSION2') is not None
+
+if USE_BUILDBOT_VERSION2:
+    from buildbot.worker import Worker
+else:
+    from buildbot.buildslave import BuildSlave
 from buildbot.scheduler import AnyBranchScheduler, Triggerable, Nightly
 from buildbot.schedulers.forcesched import FixedParameter, ForceScheduler, StringParameter, BooleanParameter
 from buildbot.schedulers.filter import ChangeFilter
@@ -58,7 +64,10 @@ def loadBuilderConfig(c, is_test_mode_enabled=False):
         os.environ['RESULTS_SERVER_API_KEY'] = results_server_api_key
 
     config = json.load(open('config.json'))
-    c['slaves'] = [BuildSlave(worker['name'], passwords.get(worker['name'], 'password'), max_builds=1) for worker in config['workers']]
+    if USE_BUILDBOT_VERSION2:
+        c['workers'] = [Worker(worker['name'], passwords.get(worker['name'], 'password'), max_builds=1) for worker in config['workers']]
+    else:
+        c['slaves'] = [BuildSlave(worker['name'], passwords.get(worker['name'], 'password'), max_builds=1) for worker in config['workers']]
 
     c['schedulers'] = []
     for scheduler in config['schedulers']:
@@ -99,7 +108,8 @@ def loadBuilderConfig(c, is_test_mode_enabled=False):
                     raise Exception('Builder {} is for platform {} but has worker {} for platform {}!'.format(builder['name'], builder['platform'], worker['name'], worker['platform']))
                 break
 
-        builder['slavenames'] = builder.pop('workernames')  # Workaround for old buildbot to allow using workernames in config.json instead of slavenames
+        if not USE_BUILDBOT_VERSION2:
+            builder['slavenames'] = builder.pop('workernames')
         platform = builder['platform']
 
         factoryName = builder.pop('factory')
@@ -118,32 +128,37 @@ def loadBuilderConfig(c, is_test_mode_enabled=False):
         if not buildbot_identifiers_re.match(builder_name):
             raise Exception('Builder name "{}" is not a valid buildbot identifier.'.format(builder_name))
         for step in builder["factory"].steps:
-            step_name = step[0].name
+            if USE_BUILDBOT_VERSION2:
+                step_name = step.buildStep().name
+            else:
+                step_name = step[0].name
             if len(step_name) > STEP_NAME_LENGTH_LIMIT:
                 raise Exception('step name "{}" is longer than maximum allowed by Buildbot ({} characters).'.format(step_name, STEP_NAME_LENGTH_LIMIT))
             if not buildbot_identifiers_re.match(step_name):
                 raise Exception('step name "{}" is not a valid buildbot identifier.'.format(step_name))
 
         if platform.startswith('mac'):
-            builder["category"] = 'AppleMac'
+            category = 'AppleMac'
         elif platform.startswith('ios'):
-            builder['category'] = 'iOS'
+            category = 'iOS'
         elif platform == 'win':
-            builder["category"] = 'AppleWin'
+            category = 'AppleWin'
         elif platform.startswith('gtk'):
-            builder["category"] = 'GTK'
+            category = 'GTK'
         elif platform.startswith('wpe'):
-            builder["category"] = 'WPE'
+            category = 'WPE'
         elif platform == 'wincairo':
-            builder["category"] = 'WinCairo'
+            category = 'WinCairo'
         elif platform.startswith('playstation'):
-            builder["category"] = 'PlayStation'
+            category = 'PlayStation'
         else:
-            builder["category"] = 'misc'
+            category = 'misc'
 
-        if (builder['category'] in ('AppleMac', 'AppleWin', 'iOS')) and factoryName != 'BuildFactory':
+        if (category in ('AppleMac', 'AppleWin', 'iOS')) and factoryName != 'BuildFactory':
             builder['nextBuild'] = pickLatestBuild
 
+        if not USE_BUILDBOT_VERSION2:
+            builder['category'] = category
         c['builders'].append(builder)
 
 
