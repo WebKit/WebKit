@@ -1,3 +1,24 @@
+2020-10-19  Mark Cohen  <m@mpc.sh>
+
+        test262: test/language/expressions/conditional/in-branch-1.js
+        https://bugs.webkit.org/show_bug.cgi?id=217879
+
+        Reviewed by Darin Adler.
+
+        The test262 test in question checks that the parser respects the +In
+        parameter on the left-hand AssignmentExpression (between `?` and `:`)
+        in the ternary operator grammar. The relevant piece of the spec can be
+        found here (https://tc39.es/ecma262/#sec-conditional-operator). The
+        test checks this by embedding a ternary with left-hand
+        AssignmentExpression that contains the `in` keyword in the
+        initializing statement of a `for` loop, where `in` would normally be
+        disallowed. All this patch does is unconditionally allow the `in`
+        keyword inside the left-hand AssignmentExpression of a ternary.
+
+        This also fixes a variable typo in parseForStatement.
+
+        * parser/Parser.cpp:
+
 2020-10-18  David Kilzer  <ddkilzer@apple.com>
 
         Fix -Wdeprecated-copy warnings in WTF and JavaScriptCore

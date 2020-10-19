@@ -2375,9 +2375,6 @@ test/language/expressions/compound-assignment/S11.13.2_A7.8_T4.js:
 test/language/expressions/compound-assignment/S11.13.2_A7.9_T4.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
-test/language/expressions/conditional/in-branch-1.js:
-  default: "SyntaxError: Unexpected keyword 'in'. Expected ':' in ternary operator."
-  strict mode: "SyntaxError: Unexpected keyword 'in'. Expected ':' in ternary operator."
 test/language/expressions/dynamic-import/catch/nested-async-gen-await-eval-script-code-target.js:
   module: 'Test262:AsyncTestFailure:Test262Error: [object Object]'
 test/language/expressions/dynamic-import/catch/nested-async-gen-return-await-eval-script-code-target.js:
