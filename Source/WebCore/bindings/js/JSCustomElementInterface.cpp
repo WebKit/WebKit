@@ -99,7 +99,7 @@ RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& 
         return nullptr;
 
     ASSERT(&document == scriptExecutionContext());
-    auto& lexicalGlobalObject = *document.execState();
+    auto& lexicalGlobalObject = *document.globalObject();
     auto element = constructCustomElementSynchronously(document, vm, lexicalGlobalObject, m_constructor.get(), localName);
     EXCEPTION_ASSERT(!!scope.exception() == !element);
     if (!element) {

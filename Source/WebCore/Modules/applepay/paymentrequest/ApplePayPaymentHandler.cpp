@@ -67,7 +67,7 @@ static ExceptionOr<ApplePayRequest> convertAndValidate(ScriptExecutionContext& c
         return Exception { TypeError, "Missing payment method data." };
 
     auto throwScope = DECLARE_THROW_SCOPE(context.vm());
-    auto applePayRequest = convertDictionary<ApplePayRequest>(*context.execState(), data);
+    auto applePayRequest = convertDictionary<ApplePayRequest>(*context.globalObject(), data);
     if (throwScope.exception())
         return Exception { ExistingExceptionError };
 
@@ -305,7 +305,7 @@ ExceptionOr<ApplePaySessionPaymentRequest::TotalAndLineItems> ApplePayPaymentHan
         if (serializedModifierData[i].isEmpty())
             continue;
 
-        auto& lexicalGlobalObject = *document().execState();
+        auto& lexicalGlobalObject = *document().globalObject();
         auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
         JSC::JSValue data;
         {
@@ -403,7 +403,7 @@ ExceptionOr<void> ApplePayPaymentHandler::computePaymentMethodErrors(JSC::JSObje
 
     auto& context = *scriptExecutionContext();
     auto throwScope = DECLARE_THROW_SCOPE(context.vm());
-    auto applePayErrors = convert<IDLSequence<IDLInterface<ApplePayError>>>(*context.execState(), paymentMethodErrors);
+    auto applePayErrors = convert<IDLSequence<IDLInterface<ApplePayError>>>(*context.globalObject(), paymentMethodErrors);
     if (throwScope.exception())
         return Exception { ExistingExceptionError };
 
@@ -442,7 +442,7 @@ ExceptionOr<void> ApplePayPaymentHandler::merchantValidationCompleted(JSC::JSVal
         return Exception { TypeError };
 
     String errorMessage;
-    auto merchantSession = PaymentMerchantSession::fromJS(*document().execState(), asObject(merchantSessionValue), errorMessage);
+    auto merchantSession = PaymentMerchantSession::fromJS(*document().globalObject(), asObject(merchantSessionValue), errorMessage);
     if (!merchantSession)
         return Exception { TypeError, WTFMove(errorMessage) };
 

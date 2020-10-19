@@ -242,7 +242,7 @@ public:
         return ensureRejectedPromiseTrackerSlow();
     }
 
-    WEBCORE_EXPORT JSC::JSGlobalObject* execState();
+    WEBCORE_EXPORT JSC::JSGlobalObject* globalObject();
 
     WEBCORE_EXPORT String domainForCachePartition() const;
     void setDomainForCachePartition(String&& domain) { m_domainForCachePartition = WTFMove(domain); }

@@ -267,4 +267,9 @@ bool WorkletScriptController::isTerminatingExecution() const
     return m_isTerminatingExecution;
 }
 
+JSC::JSGlobalObject* WorkletScriptController::globalScopeWrapper()
+{
+    return workletGlobalScopeWrapper();
+}
+
 } // namespace WebCore

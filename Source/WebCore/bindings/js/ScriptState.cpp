@@ -39,7 +39,7 @@
 #include "Node.h"
 #include "Page.h"
 #include "ScriptController.h"
-#include "WorkerGlobalScope.h"
+#include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerScriptController.h"
 #include "WorkletGlobalScope.h"
 #include "WorkletScriptController.h"
@@ -81,7 +81,7 @@ JSC::JSGlobalObject* mainWorldExecState(Frame* frame)
     return frame->windowProxy().jsWindowProxy(mainThreadNormalWorld())->window();
 }
 
-JSC::JSGlobalObject* execStateFromNode(DOMWrapperWorld& world, Node* node)
+JSC::JSGlobalObject* globalObject(DOMWrapperWorld& world, Node* node)
 {
     if (!node)
         return nullptr;
@@ -93,23 +93,16 @@ JSC::JSGlobalObject* execStateFromNode(DOMWrapperWorld& world, Node* node)
     return frame->script().globalObject(world);
 }
 
-JSC::JSGlobalObject* execStateFromPage(DOMWrapperWorld& world, Page* page)
+JSC::JSGlobalObject* globalObject(DOMWrapperWorld& world, Page* page)
 {
     return page ? page->mainFrame().script().globalObject(world) : nullptr;
 }
 
-JSC::JSGlobalObject* execStateFromWorkerGlobalScope(WorkerGlobalScope& workerGlobalScope)
+JSC::JSGlobalObject* globalObject(WorkerOrWorkletGlobalScope& workerOrWorkletGlobalScope)
 {
-    return workerGlobalScope.script()->workerGlobalScopeWrapper();
+    if (auto* scriptController = workerOrWorkletGlobalScope.script())
+        return scriptController->globalScopeWrapper();
+    return nullptr;
 }
-
-#if ENABLE(CSS_PAINTING_API)
-JSC::JSGlobalObject* execStateFromWorkletGlobalScope(WorkletGlobalScope& workletGlobalScope)
-{
-    if (!workletGlobalScope.script())
-        return nullptr;
-    return workletGlobalScope.script()->workletGlobalScopeWrapper();
-}
-#endif
 
 }

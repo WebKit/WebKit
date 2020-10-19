@@ -388,7 +388,7 @@ public:
             return;
         }
 
-        auto* lexicalGlobalObject = context.execState();
+        auto* lexicalGlobalObject = context.globalObject();
 
         auto key = m_injectedScript.wrapObject(toJS(*lexicalGlobalObject, *lexicalGlobalObject, cursor->key()), String(), true);
         if (!key)
@@ -462,7 +462,7 @@ public:
 
         TransactionActivator activator(idbTransaction.get());
         RefPtr<IDBRequest> idbRequest;
-        auto* exec = context() ? context()->execState() : nullptr;
+        auto* exec = context() ? context()->globalObject() : nullptr;
         if (!m_indexName.isEmpty()) {
             auto idbIndex = indexForObjectStore(idbObjectStore.get(), m_indexName);
             if (!idbIndex) {
@@ -705,7 +705,7 @@ public:
 
         TransactionActivator activator(idbTransaction.get());
         RefPtr<IDBRequest> idbRequest;
-        if (auto* exec = context() ? context()->execState() : nullptr) {
+        if (auto* exec = context() ? context()->globalObject() : nullptr) {
             auto result = idbObjectStore->clear(*exec);
             ASSERT(!result.hasException());
             if (result.hasException()) {

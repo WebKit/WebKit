@@ -279,4 +279,9 @@ void WorkerScriptController::detachDebugger(JSC::Debugger* debugger)
     debugger->detach(m_workerGlobalScopeWrapper.get(), JSC::Debugger::TerminatingDebuggingSession);
 }
 
+JSC::JSGlobalObject* WorkerScriptController::globalScopeWrapper()
+{
+    return workerGlobalScopeWrapper();
+}
+
 } // namespace WebCore

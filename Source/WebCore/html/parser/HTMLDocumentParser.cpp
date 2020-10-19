@@ -228,7 +228,7 @@ void HTMLDocumentParser::runScriptsForPausedTreeBuilder()
 
             document()->eventLoop().performMicrotaskCheckpoint();
 
-            CustomElementReactionStack reactionStack(document()->execState());
+            CustomElementReactionStack reactionStack(document()->globalObject());
             auto& elementInterface = constructionData->elementInterface.get();
             auto newElement = elementInterface.constructElementWithFallback(*document(), constructionData->name);
             m_treeBuilder->didCreateCustomOrFallbackElement(WTFMove(newElement), *constructionData);

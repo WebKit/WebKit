@@ -224,10 +224,8 @@ ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const
         return nullptr;
     if (inherits<JSWorkerGlobalScopeBase>(vm()))
         return jsCast<const JSWorkerGlobalScopeBase*>(this)->scriptExecutionContext();
-#if ENABLE(CSS_PAINTING_API)
     if (inherits<JSWorkletGlobalScopeBase>(vm()))
         return jsCast<const JSWorkletGlobalScopeBase*>(this)->scriptExecutionContext();
-#endif
 #if ENABLE(INDEXED_DATABASE)
     if (inherits<JSIDBSerializationGlobalObject>(vm()))
         return jsCast<const JSIDBSerializationGlobalObject*>(this)->scriptExecutionContext();

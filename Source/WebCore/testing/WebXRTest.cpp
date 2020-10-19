@@ -56,7 +56,7 @@ void WebXRTest::simulateDeviceConnection(ScriptExecutionContext& context, const 
 
         Vector<XRReferenceSpaceType> features;
         if (init.supportedFeatures) {
-            if (auto* globalObject = context.execState()) {
+            if (auto* globalObject = context.globalObject()) {
                 for (auto& feature : init.supportedFeatures.value()) {
                     if (auto referenceSpaceType = parseEnumeration<XRReferenceSpaceType>(*globalObject, feature))
                         features.append(referenceSpaceType.value());

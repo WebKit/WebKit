@@ -483,10 +483,8 @@ JSC::VM& ScriptExecutionContext::vm()
         return commonVM();
     if (is<WorkerGlobalScope>(*this))
         return downcast<WorkerGlobalScope>(*this).script()->vm();
-#if ENABLE(CSS_PAINTING_API)
     if (is<WorkletGlobalScope>(*this))
         return downcast<WorkletGlobalScope>(*this).script()->vm();
-#endif
 
     RELEASE_ASSERT_NOT_REACHED();
     return commonVM();
@@ -524,20 +522,13 @@ bool ScriptExecutionContext::hasPendingActivity() const
     return false;
 }
 
-JSC::JSGlobalObject* ScriptExecutionContext::execState()
+JSC::JSGlobalObject* ScriptExecutionContext::globalObject()
 {
-    if (is<Document>(*this)) {
-        Document& document = downcast<Document>(*this);
-        auto* frame = document.frame();
-        return frame ? frame->script().globalObject(mainThreadNormalWorld()) : nullptr;
-    }
+    if (is<Document>(*this))
+        return WebCore::globalObject(mainThreadNormalWorld(), downcast<Document>(*this).page());
 
-    if (is<WorkerGlobalScope>(*this))
-        return execStateFromWorkerGlobalScope(downcast<WorkerGlobalScope>(*this));
-#if ENABLE(CSS_PAINTING_API)
-    if (is<WorkletGlobalScope>(*this))
-        return execStateFromWorkletGlobalScope(downcast<WorkletGlobalScope>(*this));
-#endif
+    if (is<WorkerOrWorkletGlobalScope>(*this))
+        return WebCore::globalObject(downcast<WorkerOrWorkletGlobalScope>(*this));
 
     ASSERT_NOT_REACHED();
     return nullptr;

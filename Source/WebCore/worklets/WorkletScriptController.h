@@ -59,6 +59,8 @@ public:
         return m_workletGlobalScopeWrapper.get();
     }
 
+    JSC::JSGlobalObject* globalScopeWrapper() final;
+
     void forbidExecution();
     bool isExecutionForbidden() const;
 

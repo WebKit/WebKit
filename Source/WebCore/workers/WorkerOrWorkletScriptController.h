@@ -40,6 +40,8 @@ public:
     virtual void removeTimerSetNotification(JSC::JSRunLoopTimer::TimerNotificationCallback) = 0;
 
     virtual bool isTerminatingExecution() const = 0;
+
+    virtual JSC::JSGlobalObject* globalScopeWrapper() = 0;
 };
 
 } // namespace WebCore

@@ -313,7 +313,7 @@ Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorAnimation
     if (!animation)
         return makeUnexpected(errorString);
 
-    auto* state = animation->scriptExecutionContext()->execState();
+    auto* state = animation->scriptExecutionContext()->globalObject();
     auto injectedScript = m_injectedScriptManager.injectedScriptFor(state);
     ASSERT(!injectedScript.hasNoValue());
 

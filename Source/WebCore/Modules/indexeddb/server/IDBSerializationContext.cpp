@@ -91,7 +91,7 @@ JSC::VM& IDBSerializationContext::vm()
     return *m_vm;
 }
 
-JSC::JSGlobalObject& IDBSerializationContext::execState()
+JSC::JSGlobalObject& IDBSerializationContext::globalObject()
 {
     initializeVM();
     return *m_globalObject.get();

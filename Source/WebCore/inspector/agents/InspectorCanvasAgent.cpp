@@ -248,7 +248,7 @@ Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorCanvasAge
     if (!inspectorCanvas)
         return makeUnexpected(errorString);
 
-    auto* state = inspectorCanvas->scriptExecutionContext()->execState();
+    auto* state = inspectorCanvas->scriptExecutionContext()->globalObject();
     auto injectedScript = m_injectedScriptManager.injectedScriptFor(state);
     ASSERT(!injectedScript.hasNoValue());
 

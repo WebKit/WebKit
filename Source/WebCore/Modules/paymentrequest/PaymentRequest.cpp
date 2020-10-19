@@ -308,7 +308,7 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
 static ExceptionOr<JSC::JSValue> parse(ScriptExecutionContext& context, const String& string)
 {
     auto scope = DECLARE_THROW_SCOPE(context.vm());
-    JSC::JSValue data = JSONParse(context.execState(), string);
+    JSC::JSValue data = JSONParse(context.globalObject(), string);
     if (scope.exception())
         return Exception { ExistingExceptionError };
     return data;
@@ -337,8 +337,8 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
 
         String serializedData;
         if (paymentMethod.data) {
-            auto scope = DECLARE_THROW_SCOPE(document.execState()->vm());
-            serializedData = JSONStringify(document.execState(), paymentMethod.data.get(), 0);
+            auto scope = DECLARE_THROW_SCOPE(document.globalObject()->vm());
+            serializedData = JSONStringify(document.globalObject(), paymentMethod.data.get(), 0);
             if (scope.exception())
                 return Exception { ExistingExceptionError };
             
@@ -357,7 +357,7 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
     if (totalResult.hasException())
         return totalResult.releaseException();
 
-    auto detailsResult = checkAndCanonicalizeDetails(*document.execState(), details, options.requestShipping, ShouldValidatePaymentMethodIdentifier::No);
+    auto detailsResult = checkAndCanonicalizeDetails(*document.globalObject(), details, options.requestShipping, ShouldValidatePaymentMethodIdentifier::No);
     if (detailsResult.hasException())
         return detailsResult.releaseException();
 
@@ -647,7 +647,7 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
 
     auto& context = *m_detailsPromise->scriptExecutionContext();
     auto throwScope = DECLARE_THROW_SCOPE(context.vm());
-    auto detailsUpdate = convertDictionary<PaymentDetailsUpdate>(*context.execState(), m_detailsPromise->result());
+    auto detailsUpdate = convertDictionary<PaymentDetailsUpdate>(*context.globalObject(), m_detailsPromise->result());
     if (throwScope.exception()) {
         abortWithException(Exception { ExistingExceptionError });
         return;
@@ -659,7 +659,7 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
         return;
     }
 
-    auto detailsResult = checkAndCanonicalizeDetails(*context.execState(), detailsUpdate, m_options.requestShipping, ShouldValidatePaymentMethodIdentifier::Yes);
+    auto detailsResult = checkAndCanonicalizeDetails(*context.globalObject(), detailsUpdate, m_options.requestShipping, ShouldValidatePaymentMethodIdentifier::Yes);
     if (detailsResult.hasException()) {
         abortWithException(detailsResult.releaseException());
         return;

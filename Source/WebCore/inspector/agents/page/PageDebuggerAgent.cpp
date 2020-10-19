@@ -171,11 +171,11 @@ void PageDebuggerAgent::didRequestAnimationFrame(int callbackId, Document& docum
     if (!breakpointsActive())
         return;
 
-    JSC::JSGlobalObject* scriptState = document.execState();
-    if (!scriptState)
+    auto* globalObject = document.globalObject();
+    if (!globalObject)
         return;
 
-    didScheduleAsyncCall(scriptState, InspectorDebuggerAgent::AsyncCallType::RequestAnimationFrame, callbackId, true);
+    didScheduleAsyncCall(globalObject, InspectorDebuggerAgent::AsyncCallType::RequestAnimationFrame, callbackId, true);
 }
 
 void PageDebuggerAgent::willFireAnimationFrame(int callbackId)

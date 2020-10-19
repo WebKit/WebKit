@@ -277,7 +277,7 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream(ScriptExecutionContext& scriptExec
         UniqueRef<FileReaderLoader> m_loader;
     };
 
-    return ReadableStream::create(*scriptExecutionContext.execState(), adoptRef(*new BlobStreamSource(scriptExecutionContext, *this)));
+    return ReadableStream::create(*scriptExecutionContext.globalObject(), adoptRef(*new BlobStreamSource(scriptExecutionContext, *this)));
 }
 
 #if ASSERT_ENABLED

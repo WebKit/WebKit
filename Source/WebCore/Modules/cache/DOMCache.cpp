@@ -366,7 +366,7 @@ void DOMCache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromise
 
     // FIXME: for efficiency, we should load blobs directly instead of going through the readableStream path.
     if (response->isBlobBody()) {
-        auto streamOrException = response->readableStream(*scriptExecutionContext()->execState());
+        auto streamOrException = response->readableStream(*scriptExecutionContext()->globalObject());
         if (UNLIKELY(streamOrException.hasException())) {
             promise.reject(streamOrException.releaseException());
             return;

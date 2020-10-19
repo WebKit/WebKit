@@ -252,7 +252,7 @@ void MemoryObjectStore::deleteRange(const IDBKeyRangeData& inputRange)
 
 IDBError MemoryObjectStore::addRecord(MemoryBackingStoreTransaction& transaction, const IDBKeyData& keyData, const IDBValue& value)
 {
-    auto indexKeys = generateIndexKeyMapForValue(m_serializationContext->execState(), m_info, keyData, value);
+    auto indexKeys = generateIndexKeyMapForValue(m_serializationContext->globalObject(), m_info, keyData, value);
     return addRecord(transaction, keyData, indexKeys, value);
 }
 
@@ -342,12 +342,12 @@ IDBError MemoryObjectStore::populateIndexWithExistingRecords(MemoryIndex& index)
     JSLockHolder locker(m_serializationContext->vm());
 
     for (const auto& iterator : *m_keyValueStore) {
-        auto jsValue = deserializeIDBValueToJSValue(m_serializationContext->execState(), iterator.value);
+        auto jsValue = deserializeIDBValueToJSValue(m_serializationContext->globalObject(), iterator.value);
         if (jsValue.isUndefinedOrNull())
             return IDBError { };
 
         IndexKey indexKey;
-        generateIndexKeyForValue(m_serializationContext->execState(), index.info(), jsValue, indexKey, m_info.keyPath(), iterator.key);
+        generateIndexKeyForValue(m_serializationContext->globalObject(), index.info(), jsValue, indexKey, m_info.keyPath(), iterator.key);
 
         if (indexKey.isNull())
             continue;

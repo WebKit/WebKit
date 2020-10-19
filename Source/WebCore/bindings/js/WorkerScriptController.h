@@ -57,6 +57,8 @@ public:
         return m_workerGlobalScopeWrapper.get();
     }
 
+    JSC::JSGlobalObject* globalScopeWrapper() final;
+
     void evaluate(const ScriptSourceCode&, String* returnedExceptionMessage = nullptr);
     void evaluate(const ScriptSourceCode&, NakedPtr<JSC::Exception>& returnedException, String* returnedExceptionMessage = nullptr);
 

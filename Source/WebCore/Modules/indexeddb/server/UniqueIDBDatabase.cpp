@@ -758,7 +758,7 @@ void UniqueIDBDatabase::putOrAdd(const IDBRequestData& requestData, const IDBKey
         usedKey = keyData;
 
     // Generate index keys up front for more accurate quota check.
-    auto indexKeys = generateIndexKeyMapForValue(m_backingStore->serializationContext().execState(), *objectStoreInfo, usedKey, value);
+    auto indexKeys = generateIndexKeyMapForValue(m_backingStore->serializationContext().globalObject(), *objectStoreInfo, usedKey, value);
 
     if (overwriteMode == IndexedDB::ObjectStoreOverwriteMode::NoOverwrite) {
         bool keyExists;

@@ -44,10 +44,7 @@ class Frame;
 class Node;
 class Page;
 class ScriptExecutionContext;
-class WorkerGlobalScope;
-#if ENABLE(CSS_PAINTING_API)
-class WorkletGlobalScope;
-#endif
+class WorkerOrWorkletGlobalScope;
 
 DOMWindow* domWindowFromExecState(JSC::JSGlobalObject*);
 Frame* frameFromExecState(JSC::JSGlobalObject*);
@@ -55,11 +52,8 @@ ScriptExecutionContext* scriptExecutionContextFromExecState(JSC::JSGlobalObject*
 
 JSC::JSGlobalObject* mainWorldExecState(Frame*);
 
-JSC::JSGlobalObject* execStateFromNode(DOMWrapperWorld&, Node*);
-WEBCORE_EXPORT JSC::JSGlobalObject* execStateFromPage(DOMWrapperWorld&, Page*);
-JSC::JSGlobalObject* execStateFromWorkerGlobalScope(WorkerGlobalScope&);
-#if ENABLE(CSS_PAINTING_API)
-JSC::JSGlobalObject* execStateFromWorkletGlobalScope(WorkletGlobalScope&);
-#endif
+JSC::JSGlobalObject* globalObject(DOMWrapperWorld&, Node*);
+WEBCORE_EXPORT JSC::JSGlobalObject* globalObject(DOMWrapperWorld&, Page*);
+JSC::JSGlobalObject* globalObject(WorkerOrWorkletGlobalScope&);
 
 } // namespace WebCore

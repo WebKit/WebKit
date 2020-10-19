@@ -48,7 +48,7 @@ public:
     ~IDBSerializationContext();
 
     JSC::VM& vm();
-    JSC::JSGlobalObject& execState();
+    JSC::JSGlobalObject& globalObject();
 
 private:
     IDBSerializationContext(PAL::SessionID);

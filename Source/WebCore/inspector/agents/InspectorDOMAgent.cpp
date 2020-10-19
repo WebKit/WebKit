@@ -1847,24 +1847,24 @@ Ref<Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener
             document = &downcast<Node>(eventTarget).document();
 
         JSC::JSObject* handlerObject = nullptr;
-        JSC::JSGlobalObject* exec = nullptr;
+        JSC::JSGlobalObject* globalObject = nullptr;
 
         JSC::JSLockHolder lock(scriptListener.isolatedWorld().vm());
 
         if (document) {
             handlerObject = scriptListener.ensureJSFunction(*document);
-            exec = execStateFromNode(scriptListener.isolatedWorld(), document);
+            globalObject = WebCore::globalObject(scriptListener.isolatedWorld(), document);
         }
 
-        if (handlerObject && exec) {
-            JSC::VM& vm = exec->vm();
+        if (handlerObject && globalObject) {
+            JSC::VM& vm = globalObject->vm();
             JSC::JSFunction* handlerFunction = JSC::jsDynamicCast<JSC::JSFunction*>(vm, handlerObject);
 
             if (!handlerFunction) {
                 auto scope = DECLARE_CATCH_SCOPE(vm);
 
                 // If the handler is not actually a function, see if it implements the EventListener interface and use that.
-                auto handleEventValue = handlerObject->get(exec, JSC::Identifier::fromString(vm, "handleEvent"));
+                auto handleEventValue = handlerObject->get(globalObject, JSC::Identifier::fromString(vm, "handleEvent"));
 
                 if (UNLIKELY(scope.exception()))
                     scope.clearException();

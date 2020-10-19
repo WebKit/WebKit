@@ -2086,12 +2086,12 @@ IDBError SQLiteIDBBackingStore::updateOneIndexForAddRecord(IDBObjectStoreInfo& o
 {
     JSLockHolder locker(m_serializationContext->vm());
 
-    auto jsValue = deserializeIDBValueToJSValue(m_serializationContext->execState(), value);
+    auto jsValue = deserializeIDBValueToJSValue(m_serializationContext->globalObject(), value);
     if (jsValue.isUndefinedOrNull())
         return IDBError { };
 
     IndexKey indexKey;
-    generateIndexKeyForValue(m_serializationContext->execState(), info, jsValue, indexKey, objectStoreInfo.keyPath(), key);
+    generateIndexKeyForValue(m_serializationContext->globalObject(), info, jsValue, indexKey, objectStoreInfo.keyPath(), key);
 
     if (indexKey.isNull())
         return IDBError { };

@@ -55,8 +55,7 @@ InjectedScript WorkerAuditAgent::injectedScriptForEval(Protocol::ErrorString& er
         return InjectedScript();
     }
 
-    JSC::JSGlobalObject* scriptState = execStateFromWorkerGlobalScope(m_workerGlobalScope);
-    return injectedScriptManager().injectedScriptFor(scriptState);
+    return injectedScriptManager().injectedScriptFor(globalObject(m_workerGlobalScope));
 }
 
 } // namespace WebCore

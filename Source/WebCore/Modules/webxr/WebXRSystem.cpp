@@ -388,7 +388,7 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
         if (!device || !device->supports(mode))
             return;
 
-        auto* globalObject = protectedDocument->execState();
+        auto* globalObject = protectedDocument->globalObject();
         if (!globalObject)
             return;
 

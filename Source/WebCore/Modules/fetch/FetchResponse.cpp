@@ -178,7 +178,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::clone(ScriptExecutionContext& con
 
     // If loading, let's create a stream so that data is teed on both clones.
     if (isLoading() && !m_readableStreamSource) {
-        auto voidOrException = createReadableStream(*context.execState());
+        auto voidOrException = createReadableStream(*context.globalObject());
         if (UNLIKELY(voidOrException.hasException()))
             return voidOrException.releaseException();
     }
