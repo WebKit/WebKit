@@ -1,3 +1,32 @@
+2020-10-19  Truitt Savell  <tsavell@apple.com>
+
+        Fix name of test exepctations after r268679, change actual to expected
+        https://bugs.webkit.org/show_bug.cgi?id=209813
+
+        Unreviewed test gardening.
+
+        * platform/mac-mojave/editing/selection/3690703-2-expected.txt: Renamed from LayoutTests/platform/mac-mojave/editing/selection/3690703-2-actual.txt.
+        * platform/mac-mojave/editing/selection/3690703-expected.txt: Renamed from LayoutTests/platform/mac-mojave/editing/selection/3690703-actual.txt.
+        * platform/mac-mojave/editing/selection/3690719-expected.txt: Renamed from LayoutTests/platform/mac-mojave/editing/selection/3690719-actual.txt.
+        * platform/mac-mojave/fast/block/basic/001-expected.txt: Renamed from LayoutTests/platform/mac-mojave/fast/block/basic/001-actual.txt.
+        * platform/mac-mojave/fast/block/float/float-avoidance-expected.txt: Renamed from LayoutTests/platform/mac-mojave/fast/block/float/float-avoidance-actual.txt.
+        * platform/mac-mojave/fast/css/rtl-ordering-expected.txt: Renamed from LayoutTests/platform/mac-mojave/fast/css/rtl-ordering-actual.txt.
+        * platform/mac-mojave/fast/forms/basic-inputs-expected.txt: Renamed from LayoutTests/platform/mac-mojave/fast/forms/basic-inputs-actual.txt.
+        * platform/mac-mojave/fast/forms/input-appearance-spinbutton-expected.txt: Renamed from LayoutTests/platform/mac-mojave/fast/forms/input-appearance-spinbutton-actual.txt.
+        * platform/mac-mojave/fast/forms/input-disabled-color-expected.txt: Renamed from LayoutTests/platform/mac-mojave/fast/forms/input-disabled-color-actual.txt.
+        * platform/mac-mojave/fast/forms/input-readonly-dimmed-expected.txt: Renamed from LayoutTests/platform/mac-mojave/fast/forms/input-readonly-dimmed-actual.txt.
+        * platform/mac-mojave/fast/forms/option-text-clip-expected.txt: Renamed from LayoutTests/platform/mac-mojave/fast/forms/option-text-clip-actual.txt.
+        * platform/mac-mojave/fast/forms/plaintext-mode-2-expected.txt: Renamed from LayoutTests/platform/mac-mojave/fast/forms/plaintext-mode-2-actual.txt.
+        * platform/mac-mojave/fast/forms/select-change-listbox-to-popup-expected.txt: Renamed from LayoutTests/platform/mac-mojave/fast/forms/select-change-listbox-to-popup-actual.txt.
+        * platform/mac-mojave/fast/forms/select-change-popup-to-listbox-expected.txt: Renamed from LayoutTests/platform/mac-mojave/fast/forms/select-change-popup-to-listbox-actual.txt.
+        * platform/mac-mojave/fast/forms/textfield-outline-expected.txt: Renamed from LayoutTests/platform/mac-mojave/fast/forms/textfield-outline-actual.txt.
+        * platform/mac-mojave/fast/text/indic-expected.txt: Renamed from LayoutTests/platform/mac-mojave/fast/text/indic-actual.txt.
+        * platform/mac-mojave/media/video-display-toggle-expected.txt: Renamed from LayoutTests/platform/mac-mojave/media/video-display-toggle-actual.txt.
+        * platform/mac-mojave/media/video-volume-slider-expected.txt: Renamed from LayoutTests/platform/mac-mojave/media/video-volume-slider-actual.txt.
+        * platform/mac-mojave/tables/mozilla/bugs/bug30692-expected.txt: Renamed from LayoutTests/platform/mac-mojave/tables/mozilla/bugs/bug30692-actual.txt.
+        * platform/mac-mojave/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt: Renamed from LayoutTests/platform/mac-mojave/tables/mozilla/other/wa_table_thtd_rowspan-actual.txt.
+        * platform/mac-mojave/tables/mozilla/other/wa_table_tr_align-expected.txt: Renamed from LayoutTests/platform/mac-mojave/tables/mozilla/other/wa_table_tr_align-actual.txt.
+
 2020-10-19  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ WinCairo ] animations/needs-layout.html is a constant ImageOnlyFailure
