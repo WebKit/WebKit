@@ -86,7 +86,8 @@ String standardUserAgentWithApplicationName(const String& applicationName, const
         return makeString("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko)", appNameSuffix);
     }
 
-    // FIXME: Is this needed any more? Mac doesn't have this check,
+    // FIXME: We should deprecate and eventually remove this obsolete UA override;
+    // see https://bugs.webkit.org/show_bug.cgi?id=217927 for details.
     // Check to see if there is a user agent override for all WebKit clients.
     CFPropertyListRef override = CFPreferencesCopyAppValue(CFSTR("UserAgent"), CFSTR("com.apple.WebFoundation"));
     if (override) {
