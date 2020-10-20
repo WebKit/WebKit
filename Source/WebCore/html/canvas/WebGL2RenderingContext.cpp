@@ -3002,9 +3002,9 @@ GCGLuint WebGL2RenderingContext::maxTransformFeedbackSeparateAttribs() const
     return m_maxTransformFeedbackSeparateAttribs;
 }
 
-WebGLRenderingContextBase::PixelStoreParams WebGL2RenderingContext::getPackPixelStoreParams() const
+GraphicsContextGLOpenGL::PixelStoreParams WebGL2RenderingContext::getPackPixelStoreParams() const
 {
-    PixelStoreParams params;
+    GraphicsContextGLOpenGL::PixelStoreParams params;
     params.alignment = m_packAlignment;
     params.rowLength = m_packRowLength;
     params.skipPixels = m_packSkipPixels;
@@ -3012,9 +3012,9 @@ WebGLRenderingContextBase::PixelStoreParams WebGL2RenderingContext::getPackPixel
     return params;
 }
 
-WebGLRenderingContextBase::PixelStoreParams WebGL2RenderingContext::getUnpackPixelStoreParams(TexImageDimension dimension) const
+GraphicsContextGLOpenGL::PixelStoreParams WebGL2RenderingContext::getUnpackPixelStoreParams(TexImageDimension dimension) const
 {
-    PixelStoreParams params;
+    GraphicsContextGLOpenGL::PixelStoreParams params;
     params.alignment = m_unpackAlignment;
     params.rowLength = m_unpackRowLength;
     params.skipPixels = m_unpackSkipPixels;

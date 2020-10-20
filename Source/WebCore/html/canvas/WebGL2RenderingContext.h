@@ -256,8 +256,8 @@ public:
 
     GCGLuint maxTransformFeedbackSeparateAttribs() const;
 
-    PixelStoreParams getPackPixelStoreParams() const override;
-    PixelStoreParams getUnpackPixelStoreParams(TexImageDimension) const override;
+    GraphicsContextGLOpenGL::PixelStoreParams getPackPixelStoreParams() const override;
+    GraphicsContextGLOpenGL::PixelStoreParams getUnpackPixelStoreParams(TexImageDimension) const override;
 
     bool checkAndTranslateAttachments(const char* functionName, GCGLenum, Vector<GCGLenum>&);
 

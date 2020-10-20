@@ -29,16 +29,15 @@
 #if ENABLE(GRAPHICS_CONTEXT_GL) && USE(DIRECT2D)
 
 #include "COMPtr.h"
-#include "GraphicsContextGLImageExtractor.h"
 #include "NotImplemented.h"
 #include <d2d1.h>
 #include <d2d1effects.h>
 
 namespace WebCore {
 
-GraphicsContextGLImageExtractor::~GraphicsContextGLImageExtractor() = default;
+GraphicsContextGLOpenGL::ImageExtractor::~ImageExtractor() = default;
 
-bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication)
+bool GraphicsContextGLOpenGL::ImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication)
 {
     if (!m_image)
         return false;

@@ -31,7 +31,6 @@
 #if ENABLE(GRAPHICS_CONTEXT_GL) && USE(CAIRO)
 
 #include "CairoUtilities.h"
-#include "GraphicsContextGLImageExtractor.h"
 #include "Image.h"
 #include "ImageSource.h"
 #include "PlatformContextCairo.h"
@@ -40,9 +39,9 @@
 
 namespace WebCore {
 
-GraphicsContextGLImageExtractor::~GraphicsContextGLImageExtractor() = default;
+GraphicsContextGLOpenGL::ImageExtractor::~ImageExtractor() = default;
 
-bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool)
+bool GraphicsContextGLOpenGL::ImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool)
 {
     if (!m_image)
         return false;
