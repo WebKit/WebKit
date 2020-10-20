@@ -1,3 +1,17 @@
+2020-10-20  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION (r268483): Map jumps around while zooming on windy.com, strava.com
+        https://bugs.webkit.org/show_bug.cgi?id=217987
+        <rdar://problem/70418548>
+
+        Reviewed by Simon Fraser.
+
+        Add a new test that checks that only the last of two overlapping "transform" animations is applied. 
+
+        * platform/mac-wk1/TestExpectations:
+        * webanimations/accelerated-overlapping-transform-animations-expected.html: Added.
+        * webanimations/accelerated-overlapping-transform-animations.html: Added.
+
 2020-10-20  Truitt Savell  <tsavell@apple.com>
 
         imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-output-channel-count.https.html is a flaky failure

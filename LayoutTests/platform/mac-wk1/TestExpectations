@@ -1199,3 +1199,4 @@ webkit.org/b/217761 [ Mojave+ Debug ] webgl/2.0.0/conformance/extensions/webgl-c
 
 webkit.org/b/217934 inspector/debugger/breakpoint-resolve-when-script-added.html [ Skip ]
 
+webkit.org/b/217997 webanimations/accelerated-overlapping-transform-animations.html [ Pass Failure ]
