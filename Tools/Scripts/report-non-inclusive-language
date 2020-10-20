@@ -33,8 +33,6 @@ import argparse, os, re
 #   Clever default for use on WebKit source tree instead of current directory by default.
 #   Report third party sources separately from WebKit project files.
 #   Skip known examples on an exception list that we don't intend to fix.
-#   Replace special cases for ChangeLog, ".order", ".xcuserstate", ".git", ".svn"
-#   files with something smarter.
 
 # Hard-coded for now, could read these out of a file instead.
 # Term, then the regular expression for that term.
@@ -43,6 +41,10 @@ nonInclusiveTerms = [
     [ "whitelist", "white ?list" ],
     [ "slave", "slave" ]
 ]
+
+IGNORE_DIRECTORIES = ['.svn', '.git', 'autoinstalled']
+IGNORE_FILES_STARTING_WITH = ('ChangeLog')
+IGNORE_FILES_ENDING_WITH = ('.log', '.order', '.pyc', '.swp', '.xcuserstate')
 
 parser = argparse.ArgumentParser(description='Report counts and locations of non-inclusive terms.')
 parser.add_argument('--verbose', '-v', action='store_true');
@@ -56,16 +58,12 @@ for term in nonInclusiveTerms:
 root = os.getcwd()
 for subroot, directories, files in os.walk(root):
     prefix = subroot[len(root) + 1:]
-    if ".svn" in prefix:
-        continue
-    if ".git" in prefix:
+    if any(directory in prefix for directory in IGNORE_DIRECTORIES):
         continue
     for file in files:
-        if file.startswith("ChangeLog"):
+        if file.startswith(IGNORE_FILES_STARTING_WITH):
             continue
-        if file.endswith(".order"):
-            continue
-        if file.endswith(".xcuserstate"):
+        if file.endswith(IGNORE_FILES_ENDING_WITH):
             continue
         handle = open(os.path.join(subroot, file), "r")
         for line in handle.readlines():
