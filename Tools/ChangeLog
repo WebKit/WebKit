@@ -1,3 +1,9 @@
+2020-10-20  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, partial revert of r268721.
+
+        * buildstream/elements/sdk/libmanette.bst: libevdev is actually a requirement for libmanette.
+
 2020-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: start a https server too for tests
