@@ -1,3 +1,11 @@
+2020-10-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, mark imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/no-cors.https.html as failing on mac-wk1.
+
+        This test was unskipped recently but only seems to pass on WebKit2.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-10-20  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION(r268615): some accelerated transform tests are failing
