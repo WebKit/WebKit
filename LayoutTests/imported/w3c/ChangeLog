@@ -1,3 +1,14 @@
+2020-10-19  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] convertRecord() should handle duplicate keys for USVString records
+        https://bugs.webkit.org/show_bug.cgi?id=217612
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/url/urlsearchparams-constructor.any-expected.txt:
+        * web-platform-tests/url/urlsearchparams-constructor.any.js:
+        * web-platform-tests/url/urlsearchparams-constructor.any.worker-expected.txt:
+
 2020-10-19  Antti Koivisto  <antti@apple.com>
 
         Update imported/w3c/web-platform-tests/css/selectors/

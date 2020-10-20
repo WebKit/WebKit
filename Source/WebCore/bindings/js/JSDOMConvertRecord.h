@@ -127,11 +127,18 @@ private:
                 auto typedValue = Converter<V>::convert(lexicalGlobalObject, subValue, args...);
                 RETURN_IF_EXCEPTION(scope, { });
                 
-                // 4. If typedKey is already a key in result, set its value to typedValue.
-                // Note: This can happen when O is a proxy object.
-                // FIXME: Handle this case.
+                // 4. Set result[typedKey] to typedValue.
+                // Note: It's possible that typedKey is already in result if K is USVString and key contains unpaired surrogates.
+                if constexpr (std::is_same_v<K, IDLUSVString>) {
+                    if (!typedKey.is8Bit()) {
+                        auto index = result.findMatching([&](auto& entry) { return entry.key == typedKey; });
+                        if (index != notFound) {
+                            result[index].value = typedValue;
+                            continue;
+                        }
+                    }
+                }
                 
-                // 5. Otherwise, append to result a mapping (typedKey, typedValue).
                 result.append({ typedKey, typedValue });
             }
         }

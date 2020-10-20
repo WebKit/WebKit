@@ -22,6 +22,8 @@ PASS Constructor with sequence of sequences of strings
 PASS Construct with object with +
 PASS Construct with object with two keys
 PASS Construct with array with two keys
+PASS Construct with 2 unpaired surrogates (no trailing)
+PASS Construct with 3 unpaired surrogates (no leading)
 PASS Construct with object with NULL, non-ASCII, and surrogate keys
 PASS Custom [Symbol.iterator]
 
