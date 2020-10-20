@@ -1,3 +1,14 @@
+2020-10-20  Michael Saboff  <msaboff@apple.com>
+
+        [JSC] Update RegExp UCD to version 13.0
+        https://bugs.webkit.org/show_bug.cgi?id=217975
+
+        Reviewed by Yusuke Suzuki.
+
+        Updated test expectations for tests that now pass based on the updating to UCD 13.0.
+
+        * test262/expectations.yaml:
+
 2020-10-20  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Rename item() to at() and move it behind a flag

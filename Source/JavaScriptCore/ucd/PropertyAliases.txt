@@ -1,6 +1,6 @@
-# PropertyAliases-11.0.0.txt
-# Date: 2018-02-06, 06:59:47 GMT
-# © 2018 Unicode®, Inc.
+# PropertyAliases-13.0.0.txt
+# Date: 2019-10-23, 03:46:32 GMT
+# © 2019 Unicode®, Inc.
 # Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
 # For terms of use, see http://www.unicode.org/terms_of_use.html
 #
@@ -18,9 +18,14 @@
 #
 # Each line has two or more fields, separated by semicolons.
 #
-# First Field: The first field is an abbreviated name for the property.
+# First Field: The first field is the short name for the property.
+# It is typically an abbreviation, but in a number of cases it is simply
+# a duplicate of the "long name" in the second field.
+# For Unihan database tags, the short name is actually a longer string than
+# the tag specified in the second field.
 #
-# Second Field: The second field is a long name
+# Second Field: The second field is the long name for the property,
+# typically the formal name used in documentation about the property.
 #
 # The above are the preferred aliases. Other aliases may be listed in additional fields.
 #
@@ -43,7 +48,8 @@
 #
 # The combination of property value and property name is, however, unique.
 #
-# For more information, see UTS #18: Unicode Regular Expressions
+# For more information, see UAX #44, Unicode Character Database, and
+# UTS #18, Unicode Regular Expressions.
 # ================================================
 
 
@@ -83,7 +89,9 @@ cjkIRG_JSource           ; kIRG_JSource
 cjkIRG_KPSource          ; kIRG_KPSource
 cjkIRG_KSource           ; kIRG_KSource
 cjkIRG_MSource           ; kIRG_MSource
+cjkIRG_SSource           ; kIRG_SSource
 cjkIRG_TSource           ; kIRG_TSource
+cjkIRG_UKSource          ; kIRG_UKSource
 cjkIRG_USource           ; kIRG_USource
 cjkIRG_VSource           ; kIRG_VSource
 cjkRSUnicode             ; kRSUnicode                  ; Unicode_Radical_Stroke; URS
@@ -148,7 +156,13 @@ Dash                     ; Dash
 Dep                      ; Deprecated
 DI                       ; Default_Ignorable_Code_Point
 Dia                      ; Diacritic
+EBase                    ; Emoji_Modifier_Base
+EComp                    ; Emoji_Component
+EMod                     ; Emoji_Modifier
+Emoji                    ; Emoji
+EPres                    ; Emoji_Presentation
 Ext                      ; Extender
+ExtPict                  ; Extended_Pictographic
 Gr_Base                  ; Grapheme_Base
 Gr_Ext                   ; Grapheme_Extend
 Gr_Link                  ; Grapheme_Link
@@ -193,6 +207,6 @@ XO_NFKC                  ; Expands_On_NFKC
 XO_NFKD                  ; Expands_On_NFKD
 
 # ================================================
-# Total:    121
+# Total:    129
 
 # EOF
