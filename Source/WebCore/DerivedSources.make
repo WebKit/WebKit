@@ -199,6 +199,16 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/mediasource/TextTrack+MediaSource.idl \
     $(WebCore)/Modules/mediasource/VideoPlaybackQuality.idl \
     $(WebCore)/Modules/mediasource/VideoTrack+MediaSource.idl \
+    $(WebCore)/Modules/mediasession/MediaImage.idl \
+    $(WebCore)/Modules/mediasession/MediaMetadata.idl \
+    $(WebCore)/Modules/mediasession/MediaMetadataInit.idl \
+    $(WebCore)/Modules/mediasession/MediaPositionState.idl \
+    $(WebCore)/Modules/mediasession/MediaSession.idl \
+    $(WebCore)/Modules/mediasession/MediaSessionAction.idl \
+    $(WebCore)/Modules/mediasession/MediaSessionActionDetails.idl \
+    $(WebCore)/Modules/mediasession/MediaSessionActionHandler.idl \
+    $(WebCore)/Modules/mediasession/MediaSessionPlaybackState.idl \
+    $(WebCore)/Modules/mediasession/Navigator+MediaSession.idl \
     $(WebCore)/Modules/mediastream/CanvasCaptureMediaStreamTrack.idl \
     $(WebCore)/Modules/mediastream/DoubleRange.idl \
     $(WebCore)/Modules/mediastream/LongRange.idl \

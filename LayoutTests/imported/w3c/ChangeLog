@@ -1,3 +1,29 @@
+2020-10-15  Jer Noble  <jer.noble@apple.com>
+
+        Add skeleton implementation of Media Session API
+        https://bugs.webkit.org/show_bug.cgi?id=217797
+
+        Reviewed by Darin Adler.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/mediasession/META.yml: Added.
+        * web-platform-tests/mediasession/README.md: Added.
+        * web-platform-tests/mediasession/helper/artwork-generator.html: Added.
+        * web-platform-tests/mediasession/helper/w3c-import.log: Added.
+        * web-platform-tests/mediasession/idlharness.window-expected.txt: Added.
+        * web-platform-tests/mediasession/idlharness.window.html: Added.
+        * web-platform-tests/mediasession/idlharness.window.js: Added.
+        * web-platform-tests/mediasession/mediametadata-expected.txt: Added.
+        * web-platform-tests/mediasession/mediametadata.html: Added.
+        * web-platform-tests/mediasession/playbackstate-expected.txt: Added.
+        * web-platform-tests/mediasession/playbackstate.html: Added.
+        * web-platform-tests/mediasession/positionstate-expected.txt: Added.
+        * web-platform-tests/mediasession/positionstate.html: Added.
+        * web-platform-tests/mediasession/setactionhandler-expected.txt: Added.
+        * web-platform-tests/mediasession/setactionhandler.html: Added.
+        * web-platform-tests/mediasession/w3c-import.log: Added.
+
 2020-10-20  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] order property should be animatable

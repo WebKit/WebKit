@@ -165,6 +165,16 @@ $(PROJECT_DIR)/Modules/mediacontrols/MediaControlsHost.idl
 $(PROJECT_DIR)/Modules/mediarecorder/BlobEvent.idl
 $(PROJECT_DIR)/Modules/mediarecorder/MediaRecorder.idl
 $(PROJECT_DIR)/Modules/mediarecorder/MediaRecorderErrorEvent.idl
+$(PROJECT_DIR)/Modules/mediasession/MediaImage.idl
+$(PROJECT_DIR)/Modules/mediasession/MediaMetadata.idl
+$(PROJECT_DIR)/Modules/mediasession/MediaMetadataInit.idl
+$(PROJECT_DIR)/Modules/mediasession/MediaPositionState.idl
+$(PROJECT_DIR)/Modules/mediasession/MediaSession.idl
+$(PROJECT_DIR)/Modules/mediasession/MediaSessionAction.idl
+$(PROJECT_DIR)/Modules/mediasession/MediaSessionActionDetails.idl
+$(PROJECT_DIR)/Modules/mediasession/MediaSessionActionHandler.idl
+$(PROJECT_DIR)/Modules/mediasession/MediaSessionPlaybackState.idl
+$(PROJECT_DIR)/Modules/mediasession/Navigator+MediaSession.idl
 $(PROJECT_DIR)/Modules/mediasource/AudioTrack+MediaSource.idl
 $(PROJECT_DIR)/Modules/mediasource/DOMURL+MediaSource.idl
 $(PROJECT_DIR)/Modules/mediasource/MediaSource.idl

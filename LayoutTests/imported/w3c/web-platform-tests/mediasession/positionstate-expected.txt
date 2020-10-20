@@ -1,0 +1,14 @@
+
+PASS Test setPositionState with a null value
+PASS Test setPositionState with a valid value for forward playback
+PASS Test setPositionState with optional position
+PASS Test setPositionState with optional playback rate
+PASS Test setPositionState with only duration
+PASS Test setPositionState with zero duration
+PASS Test setPositionState with negative playback rate
+PASS Test setPositionState throws a TypeError if duration is negative
+PASS Test setPositionState throws a TypeError if position is negative
+PASS Test setPositionState throws a TypeError if duration is less than position
+PASS Test setPositionState throws a TypeError if playback rate is zero
+PASS Test setPositionState throws a TypeError if duration is not specified
+

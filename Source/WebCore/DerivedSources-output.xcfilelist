@@ -1252,6 +1252,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaEncryptedEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaEncryptedEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaError.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaError.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaImage.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaImage.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaKeyEncryptionScheme.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaKeyEncryptionScheme.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaKeyMessageEvent.cpp
@@ -1274,6 +1276,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaKeysRequirement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaKeysRequirement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaList.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaList.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaMetadata.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaMetadata.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaMetadataInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaMetadataInit.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaPositionState.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaPositionState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaQueryList.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaQueryList.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaQueryListEvent.cpp
@@ -1282,6 +1290,16 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaRecorder.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaRecorder.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaRecorderErrorEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaRecorderErrorEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSession.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSession.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionAction.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionAction.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionActionDetails.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionActionDetails.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionActionHandler.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionActionHandler.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionPlaybackState.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionPlaybackState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSource.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSource.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStream.cpp
@@ -1364,6 +1382,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+MediaCapabilities.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+MediaCapabilities.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+MediaDevices.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+MediaDevices.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+MediaSession.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+MediaSession.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+StorageQuota.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+StorageQuota.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+WebDriver.cpp

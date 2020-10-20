@@ -562,6 +562,19 @@ MediaRecorderEnabled:
     WebCore:
       default: false
 
+MediaSessionEnabled:
+  type: bool
+  humanReadableName: "Media Session API"
+  humanReadableDescription: "Media Session API"
+  condition: ENABLE(MEDIA_SESSION)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 ModernUnprefixedWebAudioEnabled:
   type: bool
   humanReadableName: "Modern WebAudio API"

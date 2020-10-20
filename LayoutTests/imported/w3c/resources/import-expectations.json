@@ -331,7 +331,7 @@
     "web-platform-tests/mediacapture-record": "import", 
     "web-platform-tests/mediacapture-streams": "import", 
     "web-platform-tests/mediacapture-streams/": "import", 
-    "web-platform-tests/mediasession": "skip", 
+    "web-platform-tests/mediasession": "import", 
     "web-platform-tests/microdata": "skip", 
     "web-platform-tests/mimesniff": "import", 
     "web-platform-tests/mixed-content": "skip", 

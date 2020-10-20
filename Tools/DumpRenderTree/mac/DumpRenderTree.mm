@@ -81,6 +81,7 @@
 #import <WebKit/WebDeviceOrientationProviderMock.h>
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebEditingDelegate.h>
+#import <WebKit/WebFeature.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebHistoryItemPrivate.h>
@@ -841,6 +842,11 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setAspectRatioOfImgFromWidthAndHeightEnabled:YES];
     [preferences setCSSOMViewSmoothScrollingEnabled:YES];
     [preferences setAudioWorkletEnabled:YES];
+
+    for (WebFeature* feature in [WebPreferences _experimentalFeatures]) {
+        if ([feature.key isEqual:@"MediaSessionEnabled"])
+            [preferences _setEnabled:YES forFeature:feature];
+    }
 }
 
 // Called before each test.

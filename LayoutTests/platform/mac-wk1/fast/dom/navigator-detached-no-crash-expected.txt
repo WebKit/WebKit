@@ -10,6 +10,7 @@ navigator.language is OK
 navigator.languages is OK
 navigator.maxTouchPoints is OK
 navigator.mediaCapabilities is OK
+navigator.mediaSession is OK
 navigator.mimeTypes is OK
 navigator.onLine is OK
 navigator.platform is OK
@@ -31,6 +32,7 @@ navigator.language is OK
 navigator.languages is OK
 navigator.maxTouchPoints is OK
 navigator.mediaCapabilities is OK
+navigator.mediaSession is OK
 navigator.mimeTypes is OK
 navigator.onLine is OK
 navigator.platform is OK

@@ -127,6 +127,9 @@ Modules/indexeddb/shared/IDBTransactionInfo.cpp
 Modules/indexeddb/shared/IndexKey.cpp
 Modules/mediacapabilities/MediaCapabilities.cpp
 Modules/mediacapabilities/NavigatorMediaCapabilities.cpp
+Modules/mediasession/MediaMetadata.cpp
+Modules/mediasession/MediaSession.cpp
+Modules/mediasession/NavigatorMediaSession.cpp
 Modules/mediacontrols/MediaControlsHost.cpp
 Modules/mediarecorder/BlobEvent.cpp
 Modules/mediarecorder/MediaRecorder.cpp
@@ -3115,6 +3118,7 @@ JSMediaEncodingConfiguration.cpp
 JSMediaEncodingType.cpp
 JSMediaEncryptedEvent.cpp
 JSMediaError.cpp
+JSMediaImage.cpp
 JSMediaKeyEncryptionScheme.cpp
 JSMediaKeyMessageEvent.cpp
 JSMediaKeySession.cpp
@@ -3126,10 +3130,18 @@ JSMediaKeySystemMediaCapability.cpp
 JSMediaKeys.cpp
 JSMediaKeysRequirement.cpp
 JSMediaList.cpp
+JSMediaMetadata.cpp
+JSMediaMetadataInit.cpp
+JSMediaPositionState.cpp
 JSMediaQueryList.cpp
 JSMediaQueryListEvent.cpp
 JSMediaRecorder.cpp
 JSMediaRecorderErrorEvent.cpp
+JSMediaSessionActionDetails.cpp
+JSMediaSessionActionHandler.cpp
+JSMediaSessionAction.cpp
+JSMediaSessionPlaybackState.cpp
+JSMediaSession.cpp
 JSMediaSource.cpp
 JSMediaStream.cpp
 JSMediaStreamAudioDestinationNode.cpp
