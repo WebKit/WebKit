@@ -235,9 +235,7 @@ bool isValidCSSSelector(const String& selector)
     QualifiedName::init();
     CSSParserContext context(HTMLQuirksMode);
     CSSParser parser(context);
-    CSSSelectorList selectorList;
-    parser.parseSelector(selector, selectorList);
-    return selectorList.isValid();
+    return !!parser.parseSelector(selector);
 }
 
 static Expected<Optional<Action>, std::error_code> loadAction(JSGlobalObject& lexicalGlobalObject, const JSObject& ruleObject)

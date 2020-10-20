@@ -4,32 +4,19 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 1 invalid selectors
-PASS document.querySelector(":is()") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":is(    )") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":is(,)") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":is(.123class)") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":is(#123id)") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":is([])") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":is(())") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":is())") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":is({})") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":is(})") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":is(:not()") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":is(:is()") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":is(:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
+selector ':is() { }' parsed: YES
+selector ':is(    ) { }' parsed: YES
+selector ':is(,) { }' parsed: YES
+selector ':is(.123class) { }' parsed: YES
+selector ':is(#123id) { }' parsed: YES
+selector ':is([]) { }' parsed: YES
+selector ':is(()) { }' parsed: YES
+selector ':is()) { }' parsed: NO
+selector ':is({}) { }' parsed: YES
+selector ':is(}) { }' parsed: YES
+selector ':is(:not() { }' parsed: NO
+selector ':is(:is() { }' parsed: NO
+selector ':is(:nth-child(2n+1 of) { }' parsed: NO
 PASS successfullyParsed is true
 
 TEST COMPLETE

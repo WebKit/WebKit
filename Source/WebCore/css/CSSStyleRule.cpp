@@ -91,18 +91,17 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
         return;
 
     CSSParser p(parserContext());
-    CSSSelectorList selectorList;
-    p.parseSelector(selectorText, selectorList);
-    if (!selectorList.isValid())
+    auto selectorList = p.parseSelector(selectorText);
+    if (!selectorList)
         return;
 
     // NOTE: The selector list has to fit into RuleData. <http://webkit.org/b/118369>
-    if (selectorList.componentCount() > Style::RuleData::maximumSelectorComponentCount)
+    if (selectorList->componentCount() > Style::RuleData::maximumSelectorComponentCount)
         return;
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
-    m_styleRule->wrapperAdoptSelectorList(WTFMove(selectorList));
+    m_styleRule->wrapperAdoptSelectorList(WTFMove(*selectorList));
 
     if (hasCachedSelectorText()) {
         selectorTextCache().remove(this);

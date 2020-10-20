@@ -52,6 +52,7 @@ public:
     static bool supportsComplexSelector(CSSParserTokenRange, const CSSParserContext&);
 
 private:
+    CSSSelectorList consumeComplexForgivingSelectorList(CSSParserTokenRange&);
     CSSSelectorList consumeCompoundSelectorList(CSSParserTokenRange&);
 
     std::unique_ptr<CSSParserSelector> consumeComplexSelector(CSSParserTokenRange&);
@@ -88,6 +89,6 @@ private:
 
 
 
-CSSSelectorList parseCSSSelector(CSSParserTokenRange, const CSSParserContext&, StyleSheetContents*);
+Optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange, const CSSParserContext&, StyleSheetContents*);
 
 } // namespace WebCore

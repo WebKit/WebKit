@@ -1,3 +1,53 @@
+2020-10-20  Antti Koivisto  <antti@apple.com>
+
+        Implement <forgiving-selector-list> for :is/:where
+        https://bugs.webkit.org/show_bug.cgi?id=217814
+        <rdar://problem/70384483>
+
+        Reviewed by Sam Weinig.
+
+        Update some selector parsing tests to log the results instead of PASS/FAIL as forgiving
+        parsing allows many combinations involving :is/:where.
+
+        Remove a few repetetive tests that don't add anything.
+
+        * fast/css/parsing-css-attribute-case-insensitive-value-4-expected.txt: Removed.
+        * fast/css/parsing-css-attribute-case-insensitive-value-4.html: Removed.
+        * fast/css/parsing-css-is-5-expected.txt:
+        * fast/css/parsing-css-is-5.html:
+        * fast/css/parsing-css-is-6-expected.txt:
+        * fast/css/parsing-css-is-6.html:
+        * fast/css/parsing-css-is-7-expected.txt:
+        * fast/css/parsing-css-is-7.html:
+        * fast/css/parsing-css-is-8-expected.txt:
+        * fast/css/parsing-css-is-8.html:
+        * fast/css/parsing-css-matches-5-expected.txt: Removed.
+        * fast/css/parsing-css-matches-5.html: Removed.
+        * fast/css/parsing-css-matches-6-expected.txt: Removed.
+        * fast/css/parsing-css-matches-6.html: Removed.
+        * fast/css/parsing-css-matches-7-expected.txt: Removed.
+        * fast/css/parsing-css-matches-7.html: Removed.
+        * fast/css/parsing-css-matches-8-expected.txt: Removed.
+        * fast/css/parsing-css-matches-8.html: Removed.
+        * fast/css/parsing-css-not-5-expected.txt:
+        * fast/css/parsing-css-not-5.html:
+        * fast/css/parsing-css-not-6-expected.txt:
+        * fast/css/parsing-css-not-6.html:
+        * fast/css/parsing-css-not-7-expected.txt:
+        * fast/css/parsing-css-not-7.html:
+        * fast/css/parsing-css-not-8-expected.txt:
+        * fast/css/parsing-css-not-8.html:
+        * fast/css/parsing-css-not-9-expected.txt:
+        * fast/css/parsing-css-not-9.html:
+        * fast/css/parsing-css-nth-child-of-4-expected.txt:
+        * fast/css/parsing-css-nth-child-of-4.html:
+        * fast/css/parsing-css-nth-last-child-of-4-expected.txt:
+        * fast/css/parsing-css-nth-last-child-of-4.html:
+        * fast/selectors/invalid-functional-pseudo-class-expected.txt:
+        * fast/selectors/invalid-functional-pseudo-class.html:
+        * fast/selectors/pseudo-element-in-is-where-expected.html:
+        * fast/selectors/pseudo-element-in-is-where.html:
+
 2020-10-20  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB][GTK] Unreviewed test gardening. Update test expectations after r268732.

@@ -43,7 +43,7 @@ public:
     explicit CSSSelectorList(UniqueArray<CSSSelector>&& array)
         : m_selectorArray(WTFMove(array)) { }
 
-    bool isValid() const { return !!m_selectorArray; }
+    bool isEmpty() const { return !m_selectorArray; }
     const CSSSelector* first() const { return m_selectorArray.get(); }
     static const CSSSelector* next(const CSSSelector*);
     const CSSSelector* selectorAt(size_t index) const { return &m_selectorArray[index]; }

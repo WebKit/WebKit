@@ -635,7 +635,7 @@ RefPtr<StyleRuleKeyframes> CSSParserImpl::consumeKeyframesRule(bool webkitPrefix
 RefPtr<StyleRulePage> CSSParserImpl::consumePageRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
 {
     CSSSelectorList selectorList = parsePageSelector(prelude, m_styleSheet.get());
-    if (!selectorList.isValid())
+    if (selectorList.isEmpty())
         return nullptr; // Parse error, invalid @page selector
 
     if (m_observerWrapper) {
@@ -698,8 +698,8 @@ static void observeSelectors(CSSParserObserverWrapper& wrapper, CSSParserTokenRa
 
 RefPtr<StyleRule> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
 {
-    CSSSelectorList selectorList = parseCSSSelector(prelude, m_context, m_styleSheet.get());
-    if (!selectorList.isValid())
+    auto selectorList = parseCSSSelector(prelude, m_context, m_styleSheet.get());
+    if (!selectorList)
         return nullptr; // Parse error, invalid selector list
 
     if (m_observerWrapper)
@@ -713,12 +713,12 @@ RefPtr<StyleRule> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelude, C
         CSSParserTokenRange blockCopy = block;
         blockCopy.consumeWhitespace();
         if (!blockCopy.atEnd()) {
-            return StyleRule::create(createDeferredStyleProperties(block), m_context.hasDocumentSecurityOrigin, WTFMove(selectorList));
+            return StyleRule::create(createDeferredStyleProperties(block), m_context.hasDocumentSecurityOrigin, WTFMove(*selectorList));
         }
     }
 
     consumeDeclarationList(block, StyleRuleType::Style);
-    return StyleRule::create(createStyleProperties(m_parsedProperties, m_context.mode), m_context.hasDocumentSecurityOrigin, WTFMove(selectorList));
+    return StyleRule::create(createStyleProperties(m_parsedProperties, m_context.mode), m_context.hasDocumentSecurityOrigin, WTFMove(*selectorList));
 }
 
 void CSSParserImpl::consumeDeclarationList(CSSParserTokenRange range, StyleRuleType ruleType)

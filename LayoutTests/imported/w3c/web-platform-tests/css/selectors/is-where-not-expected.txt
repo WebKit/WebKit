@@ -10,7 +10,7 @@ PASS :not(:is(div)) matches expected elements
 PASS :not(:is(*|div)) matches expected elements
 PASS :not(:is(*|*)) matches expected elements
 PASS :not(:is(*)) matches expected elements
-FAIL :not(:is(svg|div)) matches expected elements The string did not match the expected pattern.
+PASS :not(:is(svg|div)) matches expected elements
 PASS :not(:is(:not(div))) matches expected elements
 PASS :not(:is(span, b, i)) matches expected elements
 PASS :not(:is(span, b, i, div)) matches expected elements

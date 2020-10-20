@@ -1323,8 +1323,9 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(Ref<JSON::Obj
         return makeUnexpected("Missing document of frame for given frameId"_s);
 
     CSSParser parser(*document);
-    CSSSelectorList selectorList;
-    parser.parseSelector(selectorString, selectorList);
+    auto selectorList = parser.parseSelector(selectorString);
+    if (!selectorList)
+        return { };
 
     SelectorChecker selectorChecker(*document);
 
@@ -1341,7 +1342,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(Ref<JSON::Obj
         auto pseudoId = descendantElement.pseudoId();
         auto& pseudo = descendantElement.pseudo();
 
-        for (const auto* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
+        for (const auto* selector = selectorList->first(); selector; selector = CSSSelectorList::next(selector)) {
             if (isInUserAgentShadowTree && (selector->match() != CSSSelector::PseudoElement || selector->value() != pseudo))
                 continue;
 

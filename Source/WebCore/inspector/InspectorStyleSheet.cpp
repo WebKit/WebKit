@@ -885,10 +885,8 @@ ExceptionOr<String> InspectorStyleSheet::ruleSelector(const InspectorCSSId& id)
 
 static bool isValidSelectorListString(const String& selector, Document* document)
 {
-    CSSSelectorList selectorList;
     CSSParser parser(parserContextForDocument(document));
-    parser.parseSelector(selector, selectorList);
-    return selectorList.isValid();
+    return !!parser.parseSelector(selector);
 }
 
 ExceptionOr<void> InspectorStyleSheet::setRuleSelector(const InspectorCSSId& id, const String& selector)

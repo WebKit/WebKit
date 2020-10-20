@@ -57,13 +57,13 @@ private:
 static AtomString serializeANPlusB(const std::pair<int, int>&);
 static bool consumeANPlusB(CSSParserTokenRange&, std::pair<int, int>&);
 
-CSSSelectorList parseCSSSelector(CSSParserTokenRange range, const CSSParserContext& context, StyleSheetContents* styleSheet)
+Optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange range, const CSSParserContext& context, StyleSheetContents* styleSheet)
 {
     CSSSelectorParser parser(context, styleSheet);
     range.consumeWhitespace();
     CSSSelectorList result = parser.consumeComplexSelectorList(range);
-    if (!range.atEnd())
-        return CSSSelectorList();
+    if (result.isEmpty() || !range.atEnd())
+        return { };
     return result;
 }
 
@@ -78,17 +78,56 @@ CSSSelectorList CSSSelectorParser::consumeComplexSelectorList(CSSParserTokenRang
     Vector<std::unique_ptr<CSSParserSelector>> selectorList;
     auto selector = consumeComplexSelector(range);
     if (!selector)
-        return CSSSelectorList();
+        return { };
+
     selectorList.append(WTFMove(selector));
     while (!range.atEnd() && range.peek().type() == CommaToken) {
         range.consumeIncludingWhitespace();
         selector = consumeComplexSelector(range);
         if (!selector)
-            return CSSSelectorList();
+            return { };
         selectorList.append(WTFMove(selector));
     }
+
     if (m_failedParsing)
         return { };
+
+    return CSSSelectorList { WTFMove(selectorList) };
+}
+
+CSSSelectorList CSSSelectorParser::consumeComplexForgivingSelectorList(CSSParserTokenRange& range)
+{
+    if (m_failedParsing)
+        return { };
+
+    Vector<std::unique_ptr<CSSParserSelector>> selectorList;
+
+    auto consumeForgiving = [&] {
+        auto selector = consumeComplexSelector(range);
+
+        if (m_failedParsing) {
+            selector = { };
+            m_failedParsing = false;
+        }
+        if (!range.atEnd() && range.peek().type() != CommaToken) {
+            while (!range.atEnd() && range.peek().type() != CommaToken)
+                range.consume();
+            return;
+        }
+        if (selector)
+            selectorList.append(WTFMove(selector));
+    };
+
+    consumeForgiving();
+
+    while (!range.atEnd() && range.peek().type() == CommaToken) {
+        range.consumeIncludingWhitespace();
+        consumeForgiving();
+    }
+
+    if (selectorList.isEmpty())
+        return { };
+
     return CSSSelectorList { WTFMove(selectorList) };
 }
 
@@ -589,7 +628,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
                 block.consumeWhitespace();
                 auto selectorList = makeUnique<CSSSelectorList>();
                 *selectorList = consumeComplexSelectorList(block);
-                if (!selectorList->first() || !block.atEnd())
+                if (selectorList->isEmpty() || !block.atEnd())
                     return nullptr;
                 selector->setSelectorList(WTFMove(selectorList));
             }
@@ -609,8 +648,8 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
         case CSSSelector::PseudoClassWhere: {
             DisallowPseudoElementsScope scope(*this);
             auto selectorList = makeUnique<CSSSelectorList>();
-            *selectorList = consumeComplexSelectorList(block);
-            if (!selectorList->first() || !block.atEnd())
+            *selectorList = consumeComplexForgivingSelectorList(block);
+            if (!block.atEnd())
                 return nullptr;
             selector->setSelectorList(WTFMove(selectorList));
             return selector;
@@ -619,7 +658,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
         case CSSSelector::PseudoClassHost: {
             auto selectorList = makeUnique<CSSSelectorList>();
             *selectorList = consumeCompoundSelectorList(block);
-            if (!selectorList->first() || !block.atEnd())
+            if (selectorList->isEmpty() || !block.atEnd())
                 return nullptr;
             selector->setSelectorList(WTFMove(selectorList));
             return selector;
@@ -646,7 +685,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             DisallowPseudoElementsScope scope(*this);
             auto selectorList = makeUnique<CSSSelectorList>();
             *selectorList = consumeCompoundSelectorList(block);
-            if (!selectorList->isValid() || !block.atEnd())
+            if (selectorList->isEmpty() || !block.atEnd())
                 return nullptr;
             selector->setSelectorList(WTFMove(selectorList));
             return selector;

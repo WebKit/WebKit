@@ -362,8 +362,11 @@ void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, MediaQueryCollector& 
 
 void RuleSet::addStyleRule(const StyleRule& rule, MediaQueryCollector& mediaQueryCollector)
 {
+    auto& selectorList = rule.selectorList();
+    if (selectorList.isEmpty())
+        return;
     unsigned selectorListIndex = 0;
-    for (size_t selectorIndex = 0; selectorIndex != notFound; selectorIndex = rule.selectorList().indexOfNextSelectorAfter(selectorIndex))
+    for (size_t selectorIndex = 0; selectorIndex != notFound; selectorIndex = selectorList.indexOfNextSelectorAfter(selectorIndex))
         addRule(rule, selectorIndex, selectorListIndex++, &mediaQueryCollector);
 }
 

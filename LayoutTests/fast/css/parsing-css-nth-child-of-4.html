@@ -11,11 +11,10 @@
 description('Test the parsing of :nth-child(of) for querySelector and style on deeply nested pseudo elements.');
 
 function testInvalidSelector(selectorString) {
-    shouldThrowErrorName('document.querySelector(":nth-child(' + selectorString + ')")', 'SyntaxError');
-
     var styleContainer = document.getElementById('style-container');
     styleContainer.innerHTML = ':nth-child(' + selectorString + ') { }';
-    shouldBe("document.getElementById('style-container').sheet.cssRules.length", "0");
+    const parsed = document.getElementById('style-container').sheet.cssRules.length == 1;
+    debug(`selector '${styleContainer.innerHTML}' parsed: ${parsed ? "YES" : "NO"}`);
     styleContainer.innerHTML = '';
 }
 

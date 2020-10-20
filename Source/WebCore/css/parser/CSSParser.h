@@ -26,6 +26,7 @@
 #include "CSSRegisteredCustomProperty.h"
 #include "CSSValue.h"
 #include "WritingMode.h"
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -81,7 +82,7 @@ public:
     WEBCORE_EXPORT bool parseDeclaration(MutableStyleProperties&, const String&);
     static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, const Element*);
 
-    void parseSelector(const String&, CSSSelectorList&);
+    Optional<CSSSelectorList> parseSelector(const String&);
 
     RefPtr<CSSValue> parseValueWithVariableReferences(CSSPropertyID, const CSSValue&, Style::BuilderState&);
 

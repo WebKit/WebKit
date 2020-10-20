@@ -65,14 +65,13 @@ String CSSPageRule::selectorText() const
 void CSSPageRule::setSelectorText(const String& selectorText)
 {
     CSSParser parser(parserContext());
-    CSSSelectorList selectorList;
-    parser.parseSelector(selectorText, selectorList);
-    if (!selectorList.isValid())
+    auto selectorList = parser.parseSelector(selectorText);
+    if (!selectorList)
         return;
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
-    m_pageRule->wrapperAdoptSelectorList(WTFMove(selectorList));
+    m_pageRule->wrapperAdoptSelectorList(WTFMove(*selectorList));
 }
 
 String CSSPageRule::cssText() const
