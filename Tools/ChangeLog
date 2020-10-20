@@ -1,3 +1,17 @@
+2020-10-20  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Gamepad events do not occur in the flatpak shell.
+        https://bugs.webkit.org/show_bug.cgi?id=212453
+
+        Reviewed by Michael Catanzaro.
+
+        If the support for gudev is disabled in libmanette, it falls back to monitoring the
+        files under /dev/input by itself without trying to use udev at all. This works fine
+        because the Flatpak SDK environment has access to all of /dev.
+
+        * buildstream/elements/sdk/libmanette.bst: Pass -Dgudev=disabled to Meson, and remove
+        the libgudev dependency from the element.
+
 2020-10-20  Sam Weinig  <weinig@apple.com>
 
         Tweak WebPreferences*.yaml "exposed" key to only indicate that the key should not be changeable by the frontend
