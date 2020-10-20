@@ -621,6 +621,7 @@ webkit.org/b/216868 webaudio/AudioParam/audioparam-processing.html [ Failure Pas
 webkit.org/b/217189 webaudio/Convolver/unmmodified-buffer.html [ Pass Timeout Crash ]
 
 webkit.org/b/217956 webaudio/DynamicsCompressor/dynamicscompressor-simple.html [ Crash Pass ]
+webkit.org/b/217956 webaudio/DynamicsCompressor/dynamicscompressor-clear-internal-state.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebAudio-related bugs

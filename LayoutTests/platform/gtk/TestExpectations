@@ -70,6 +70,7 @@ webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transitions/parsing/
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/animation/caret-color-interpolation.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/animation/outline-width-composition.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/appearance-auto-001.html [ ImageOnlyFailure Crash ]
+webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/appearance-checkbox-001.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/appearance-cssom-001.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/appearance-initial-value-001.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/parsing/box-sizing-computed.html [ Pass Crash ]
@@ -77,6 +78,7 @@ webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/parsing/cursor-co
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/parsing/cursor-valid.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-values/angle-units-003.html [ Pass Crash ]
 webkit.org/b/216777 media/video-display-toggle.html [ Pass Crash ]
+webkit.org/b/216777 webkit.org/b/191009 webrtc/video-mute-vp8.html [ Pass Timeout Crash ]
 
 # Parsing
 webkit.org/b/217421 fast/parser/entities-in-html.html [ Failure ]
@@ -2354,8 +2356,6 @@ webkit.org/b/187273 media/picture-in-picture/picture-in-picture-interruption.htm
 webkit.org/b/188044 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec4.html [ Timeout ]
 
 webkit.org/b/191008 webanimations/accelerated-animation-suspension.html [ Timeout ]
-
-webkit.org/b/191009 webrtc/video-mute-vp8.html [ Timeout ]
 
 webkit.org/b/193635 imported/w3c/web-platform-tests/resource-timing/resource_timing.worker.html [ Failure ]
 

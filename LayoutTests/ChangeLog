@@ -1,5 +1,12 @@
 2020-10-20  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GLIB][GTK] Unreviewed test gardening. Gardened several flaky crash failures.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2020-10-20  Diego Pino Garcia  <dpino@igalia.com>
+
         [GLIB] Unreviewed test gardening. Mark several WPT Mediasession tests as failure after r268735.
 
         * platform/glib/TestExpectations:
