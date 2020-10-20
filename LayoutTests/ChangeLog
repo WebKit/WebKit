@@ -1,3 +1,13 @@
+2020-10-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [mac-wk1] inspector/debugger/breakpoint-resolve-when-script-added.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=217934
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Mark test as flaky.
+        * platform/mac/TestExpectations: Remove previous entry marking it slow for debug.
+
 2020-10-19  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-success-empty-src-module.html is a flaky failure
