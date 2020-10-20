@@ -1,3 +1,22 @@
+2020-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: start a https server too for tests
+        https://bugs.webkit.org/show_bug.cgi?id=217223
+        <rdar://problem/70136595>
+
+        Reviewed by Adrian Perez de Castro.
+
+        Handle HTTPS configuration in WebDriver WPT server.
+
+        * Scripts/webkitpy/webdriver_tests/webdriver_w3c_executor.py:
+        (WebDriverW3CExecutor.__init__): Set https configuration from server.
+        * Scripts/webkitpy/webdriver_tests/webdriver_w3c_web_server.py:
+        (WebDriverW3CWebServer._wait_for_server): Also wait for HTTPS port.
+        (WebDriverW3CWebServer.start): Write config file and get also https port.
+        (WebDriverW3CWebServer.http_port): Renamed port as http_port.
+        (WebDriverW3CWebServer.https_port): Added to return the https port.
+        (WebDriverW3CWebServer.port): Deleted.
+
 2020-10-20  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Update rr for AMD Ryzen support

@@ -1,10 +1,25 @@
 {"browser_host": "localhost",
- "ports":{"http":[8802, null],
-          "https": [null],
-          "ws": [null],
-          "wss": [null]},
+ "alternate_hosts": { "alt": "127.0.0.1" },
+ "ports": {"http":[8802, null],
+           "https": [9444],
+           "ws": [null],
+           "wss": [null]
+          },
  "doc_root": "%DOC_ROOT%",
  "check_subdomains": false,
  "log_level":"debug",
- "bind_hostname": false
+ "bind_hostname": true,
+ "ssl": {"type": "openssl",
+         "encrypt_after_connect": false,
+         "openssl": {
+             "openssl_binary": "openssl",
+             "base_path": "%CERTS_DIR%",
+             "force_regenerate": false
+         },
+         "pregenerated": {
+             "host_key_path": null,
+             "host_cert_path": null
+         },
+         "none": {}
+        }
 }

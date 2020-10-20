@@ -135,7 +135,8 @@ class WebDriverW3CExecutor(WdspecExecutor):
         server_config = {'browser_host': server.host(),
                          'domains': {'': {'': server.host()},
                                      'alt':{ '': '127.0.0.1'}},
-                         'ports': {'http': [str(server.port())]},
+                         'ports': {'http': [str(server.http_port())],
+                                   'https': [str(server.https_port())]},
                          'doc_root': server.document_root()}
         self.runner = TestRunner()
         WdspecExecutor.__init__(self, self.runner.logger, driver.browser_name(), server_config, driver.binary_path(), None, capabilities=driver.capabilities())

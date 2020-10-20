@@ -71,7 +71,9 @@ class WebDriverW3CWebServer(object):
 
         start_time = time.time()
         while time.time() - start_time < wait_secs:
-            if self._port._executive.check_running_pid(self._pid) and check_port(self._server_host, self._server_port):
+            if self._port._executive.check_running_pid(self._pid) \
+               and check_port(self._server_host, self._server_http_port) \
+               and check_port(self._server_host, self._server_https_port):
                 return True
             time.sleep(sleep_secs)
         return False
@@ -92,11 +94,13 @@ class WebDriverW3CWebServer(object):
         _log.debug('Copying WebDriver WPT server config.json')
         doc_root = os.path.join(WebKitFinder(self._port.host.filesystem).path_from_webkit_base('WebDriverTests'), 'imported', 'w3c')
         config_filename = os.path.join(doc_root, 'config.json')
-        config_json = self._port.host.filesystem.read_text_file(config_filename).replace("%DOC_ROOT%", doc_root)
-        self._port.host.filesystem.write_text_file(os.path.join(self._layout_doc_root, 'config.json'), config_json)
-        config = json.loads(config_json)
+        config = json.loads(self._port.host.filesystem.read_text_file(config_filename))
+        config['doc_root'] = doc_root
+        config['ssl']['openssl']['base_path'] = os.path.join(self._runtime_path, '_wpt_certs')
+        self._port.host.filesystem.write_text_file(os.path.join(self._layout_doc_root, 'config.json'), json.dumps(config))
         self._server_host = config['browser_host']
-        self._server_port = config['ports']['http'][0]
+        self._server_http_port = config['ports']['http'][0]
+        self._server_https_port = config['ports']['https'][0]
 
         self._wsout = self._port.host.filesystem.open_text_file_for_writing(self._output_log_path)
         wpt_file = os.path.join(self._layout_doc_root, "wpt.py")
@@ -110,7 +114,7 @@ class WebDriverW3CWebServer(object):
             self.stop()
             raise RuntimeError
 
-        _log.info('WebDriver WPT server listening at http://%s:%s/' % (self._server_host, self._server_port))
+        _log.info('WebDriver WPT server listening at http://%s:%s/ and https://%s:%s/' % (self._server_host, self._server_http_port, self._server_host, self._server_https_port))
 
     def stop(self):
         _log.debug('Cleaning WebDriver WPT server config.json')
@@ -129,8 +133,11 @@ class WebDriverW3CWebServer(object):
     def host(self):
         return self._server_host
 
-    def port(self):
-        return self._server_port
+    def http_port(self):
+        return self._server_http_port
+
+    def https_port(self):
+        return self._server_https_port
 
     def document_root(self):
         return self._layout_doc_root

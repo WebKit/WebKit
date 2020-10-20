@@ -1,5 +1,15 @@
 2020-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: start a https server too for tests
+        https://bugs.webkit.org/show_bug.cgi?id=217223
+        <rdar://problem/70136595>
+
+        Reviewed by Adrian Perez de Castro.
+
+        * imported/w3c/config.json: Add HTTPs configuration.
+
+2020-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: add support for right variations of virtual keys
         https://bugs.webkit.org/show_bug.cgi?id=217819
 
