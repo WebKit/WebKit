@@ -35,11 +35,6 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/UniqueArray.h>
 
-#if PLATFORM(COCOA)
-#include "IOSurface.h"
-#include "WebGLLayerClient.h"
-#endif
-
 #if USE(CA)
 #include "PlatformCALayer.h"
 #endif
@@ -59,6 +54,7 @@
 #if PLATFORM(COCOA)
 OBJC_CLASS CALayer;
 OBJC_CLASS WebGLLayer;
+typedef struct __IOSurface* IOSurfaceRef;
 #endif // PLATFORM(COCOA)
 
 #if USE(NICOSIA)
@@ -87,11 +83,7 @@ typedef WTF::HashMap<CString, uint64_t> ShaderNameHash;
 
 class GraphicsContextGLOpenGLPrivate;
 
-class GraphicsContextGLOpenGL : public GraphicsContextGL
-#if PLATFORM(COCOA)
-    , private WebGLLayerClient
-#endif
-{
+class GraphicsContextGLOpenGL : public GraphicsContextGL {
 public:
     class Client {
     public:
@@ -551,8 +543,8 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    bool reshapeDisplayBufferBacking();
-    bool bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer);
+    bool allocateIOSurfaceBackingStore(IntSize);
+    void updateFramebufferTextureBackingStoreFromLayer();
 #if PLATFORM(MAC)
     void updateCGLContext();
 #endif
@@ -689,14 +681,11 @@ private:
 #endif
 
     bool reshapeFBOs(const IntSize&);
-    void prepareTextureImpl();
     void resolveMultisamplingIfNecessary(const IntRect& = IntRect());
     void attachDepthAndStencilBufferIfNeeded(GCGLuint internalDepthStencilFormat, int width, int height);
 
 #if PLATFORM(COCOA)
     bool allowOfflineRenderers() const;
-    // WebGLLayerClient overrides.
-    void didDisplay() override;
 #endif
 
     int m_currentWidth { 0 };
@@ -901,12 +890,6 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    // Backing store for the the buffer which is eventually used for display.
-    // When preserveDrawingBuffer == false, this is the drawing buffer backing store.
-    // When preserveDrawingBuffer == true, this is blitted to during display prepare.
-    std::unique_ptr<IOSurface> m_displayBufferBacking;
-    void* m_displayBufferPbuffer { nullptr };
-
     bool m_hasSwitchedToHighPerformanceGPU { false };
 #endif
 };
