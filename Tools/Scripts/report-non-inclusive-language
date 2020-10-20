@@ -42,7 +42,7 @@ nonInclusiveTerms = [
     [ "slave", "slave" ]
 ]
 
-IGNORE_DIRECTORIES_CONTAINING = ['.svn', '.git', 'autoinstalled']
+IGNORE_DIRECTORIES = ['.svn', '.git', 'autoinstalled']
 IGNORE_FILES_STARTING_WITH = ('ChangeLog')
 IGNORE_FILES_ENDING_WITH = ('.log', '.order', '.pyc', '.swp', '.xcuserstate')
 
@@ -58,7 +58,7 @@ for term in nonInclusiveTerms:
 root = os.getcwd()
 for subroot, directories, files in os.walk(root):
     prefix = subroot[len(root) + 1:]
-    if any(directory in prefix for directory in IGNORE_DIRECTORIES_CONTAINING):
+    if any(directory in prefix.split('/') for directory in IGNORE_DIRECTORIES):
         continue
     for file in files:
         if file.startswith(IGNORE_FILES_STARTING_WITH):
