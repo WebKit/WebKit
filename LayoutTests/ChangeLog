@@ -1,3 +1,16 @@
+2020-10-20  Rob Buis  <rbuis@igalia.com>
+
+        Introduce Selection specific mixin of GlobalEventHandlers
+        https://bugs.webkit.org/show_bug.cgi?id=217248
+
+        Reviewed by Sam Weinig.
+
+        Adapt test to GlobalEventHandlers change.
+
+        * fast/dom/event-attribute-availability-expected.txt:
+        * fast/dom/event-handler-attributes-expected.txt:
+        * fast/dom/event-handler-attributes.html:
+
 2020-10-20  Antti Koivisto  <antti@apple.com>
 
         Implement <forgiving-selector-list> for :is/:where

@@ -752,6 +752,7 @@ $(PROJECT_DIR)/dom/EventTarget.idl
 $(PROJECT_DIR)/dom/EventTargetFactory.in
 $(PROJECT_DIR)/dom/FocusEvent.idl
 $(PROJECT_DIR)/dom/GlobalEventHandlers+PointerEvents.idl
+$(PROJECT_DIR)/dom/GlobalEventHandlers+Selection.idl
 $(PROJECT_DIR)/dom/GlobalEventHandlers.idl
 $(PROJECT_DIR)/dom/HashChangeEvent.idl
 $(PROJECT_DIR)/dom/IdleDeadline.idl

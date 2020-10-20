@@ -31,8 +31,4 @@ partial interface Document {
     // https://w3c.github.io/webcomponents/spec/shadow/#extensions-to-the-documentorshadowroot-mixin.
     // We should get this resolved in the Selection API spec and move this to the correct IDL file.
     DOMSelection? getSelection();
-
-    // FIXME: Should be moved to GlobalEventHandlers (http://w3c.github.io/selection-api/#extensions-to-globaleventhandlers).
-    [NotEnumerable] attribute EventHandler onselectstart; // FIXME: Should be enumerable.
-    [NotEnumerable] attribute EventHandler onselectionchange; // FIXME: Should be enumerable.
 };

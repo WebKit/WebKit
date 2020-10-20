@@ -73,9 +73,6 @@
     
     // FIXME: Most of the following non-standard event handlers probably make more sense as part of the GlobalEventHandlers mixin.
 
-    // Event handler from Selection API (http://w3c.github.io/selection-api/#extensions-to-globaleventhandlers).
-    [NotEnumerable] attribute EventHandler onselectstart; // FIXME: Should be enumerable.
-
     // Non-standard: Cannot find these in the latest specification (https://w3c.github.io/uievents/#events-focus-types).
     [NotEnumerable] attribute EventHandler onfocusin;
     [NotEnumerable] attribute EventHandler onfocusout;

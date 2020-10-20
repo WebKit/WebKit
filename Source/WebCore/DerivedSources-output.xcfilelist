@@ -920,6 +920,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGlobalEventHandlers+CSSTransition
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGlobalEventHandlers+CSSTransitions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGlobalEventHandlers+PointerEvents.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGlobalEventHandlers+PointerEvents.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGlobalEventHandlers+Selection.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGlobalEventHandlers+Selection.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGlobalEventHandlers.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGlobalEventHandlers.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLAllCollection.cpp

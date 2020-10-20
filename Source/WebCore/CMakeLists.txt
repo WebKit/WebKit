@@ -828,6 +828,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/EventTarget.idl
     dom/FocusEvent.idl
     dom/GlobalEventHandlers+PointerEvents.idl
+    dom/GlobalEventHandlers+Selection.idl
     dom/GlobalEventHandlers.idl
     dom/HashChangeEvent.idl
     dom/IdleDeadline.idl

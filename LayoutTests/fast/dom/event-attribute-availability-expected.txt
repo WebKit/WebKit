@@ -160,7 +160,7 @@ FAIL 'onbeforepaste' in window should be true. Was false.
 FAIL 'onpaste' in window should be true. Was false.
 PASS 'onreset' in window is true
 PASS 'onsearch' in window is true
-FAIL 'onselectstart' in window should be true. Was false.
+PASS 'onselectstart' in window is true
 
 Test Text Node
 PASS 'onabort' in textNode is false
