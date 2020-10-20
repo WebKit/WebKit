@@ -27,6 +27,10 @@
 
 #include <JavaScriptCore/JSRunLoopTimer.h>
 
+namespace JSC {
+class JSGlobalObject;
+}
+
 namespace WebCore {
 
 class WorkerOrWorkletScriptController {

@@ -30,10 +30,11 @@
 #include "JSEvent.h"
 
 #include "JSDOMWrapperCache.h"
+#include <JavaScriptCore/JSCJSValue.h>
 
 namespace WebCore {
 
-JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Event& event)
+JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Event& event)
 {
     return wrap(lexicalGlobalObject, globalObject, event);
 }

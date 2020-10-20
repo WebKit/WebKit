@@ -29,6 +29,10 @@
 
 #include <wtf/IsoMalloc.h>
 
+#if ENABLE(TREE_DEBUGGING)
+#include <wtf/Forward.h>
+#endif
+
 namespace WebCore {
 
 class LayoutSize;
