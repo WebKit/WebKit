@@ -1902,7 +1902,7 @@ void RenderLayerBacking::updateClippingStackLayerGeometry(LayerAncestorClippingS
         entry.clippingLayer->setSize(snappedClippingLayerRect.size());
 
         if (entry.clipData.isOverflowScroll) {
-            ScrollOffset scrollOffset = entry.clipData.clippingLayer->scrollOffset();
+            ScrollOffset scrollOffset = entry.clipData.clippingLayer ? entry.clipData.clippingLayer->scrollOffset() : ScrollOffset();
 
             entry.clippingLayer->setBoundsOrigin(scrollOffset);
             lastClipLayerRect.moveBy(-scrollOffset);
