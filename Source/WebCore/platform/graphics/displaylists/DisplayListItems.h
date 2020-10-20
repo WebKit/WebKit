@@ -336,6 +336,121 @@ Optional<Ref<ConcatenateCTM>> ConcatenateCTM::decode(Decoder& decoder)
     return ConcatenateCTM::create(*transform);
 }
 
+class SetFillColor : public Item {
+public:
+    WEBCORE_EXPORT static Ref<SetFillColor> create(Color);
+
+    WEBCORE_EXPORT virtual ~SetFillColor();
+
+    Color color() const { return m_color; }
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<SetFillColor>> decode(Decoder&);
+
+private:
+    SetFillColor(Color color)
+        : Item(ItemType::SetFillColor)
+        , m_color(color)
+    {
+    }
+
+    void apply(GraphicsContext&) const override;
+
+    Color m_color;
+};
+
+template<class Encoder>
+void SetFillColor::encode(Encoder& encoder) const
+{
+    encoder << m_color;
+}
+
+template<class Decoder>
+Optional<Ref<SetFillColor>> SetFillColor::decode(Decoder& decoder)
+{
+    Optional<Color> color;
+    decoder >> color;
+    if (!color)
+        return WTF::nullopt;
+
+    return SetFillColor::create(*color);
+}
+
+class SetStrokeState : public Item {
+public:
+    WEBCORE_EXPORT static Ref<SetStrokeState> create(Optional<Color>&&, Optional<float>&& thickness);
+
+    WEBCORE_EXPORT virtual ~SetStrokeState();
+
+    Color color() const { return m_color; }
+    bool hasColor() const { return m_hasColor; }
+
+    float thickness() const { return m_thickness; }
+    bool hasThickness() const { return m_hasThickness; }
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<SetStrokeState>> decode(Decoder&);
+
+private:
+    SetStrokeState(Optional<Color>&& color, Optional<float>&& thickness)
+        : Item(ItemType::SetStrokeState)
+        , m_color(color.valueOr(Color()))
+        , m_thickness(thickness.valueOr(0))
+        , m_hasColor(color.hasValue())
+        , m_hasThickness(thickness.hasValue())
+    {
+    }
+
+    void apply(GraphicsContext&) const override;
+
+    Color m_color;
+    float m_thickness { 0 };
+    bool m_hasColor { false };
+    bool m_hasThickness { false };
+};
+
+template<class Encoder>
+void SetStrokeState::encode(Encoder& encoder) const
+{
+    encoder << m_hasColor;
+    if (m_hasColor)
+        encoder << m_color;
+
+    encoder << m_hasThickness;
+    if (m_hasThickness)
+        encoder << m_thickness;
+}
+
+template<class Decoder>
+Optional<Ref<SetStrokeState>> SetStrokeState::decode(Decoder& decoder)
+{
+    Optional<bool> hasColor;
+    decoder >> hasColor;
+    if (!hasColor)
+        return WTF::nullopt;
+
+    Optional<Color> color;
+    if (*hasColor) {
+        decoder >> color;
+        if (!color)
+            return WTF::nullopt;
+    }
+
+    Optional<bool> hasThickness;
+    decoder >> hasThickness;
+    if (!hasThickness)
+        return WTF::nullopt;
+
+    Optional<float> thickness;
+    if (*hasThickness) {
+        decoder >> thickness;
+        if (!thickness)
+            return WTF::nullopt;
+    }
+
+    return SetStrokeState::create(WTFMove(color), WTFMove(thickness));
+}
+
 class SetState : public Item {
 public:
     static Ref<SetState> create(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
@@ -351,10 +466,6 @@ public:
     WEBCORE_EXPORT virtual ~SetState();
     
     const GraphicsContextStateChange& state() const { return m_state; }
-
-    void accumulate(const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
-
-    void accumulate(GraphicsContextState&) const;
 
     static void builderState(GraphicsContext&, const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
 
@@ -2904,6 +3015,12 @@ void Item::encode(Encoder& encoder) const
     case ItemType::ConcatenateCTM:
         encoder << downcast<ConcatenateCTM>(*this);
         break;
+    case ItemType::SetFillColor:
+        encoder << downcast<SetFillColor>(*this);
+        break;
+    case ItemType::SetStrokeState:
+        encoder << downcast<SetStrokeState>(*this);
+        break;
     case ItemType::SetState:
         encoder << downcast<SetState>(*this);
         break;
@@ -3076,6 +3193,14 @@ Optional<Ref<Item>> Item::decode(Decoder& decoder)
         break;
     case ItemType::ConcatenateCTM:
         if (auto item = ConcatenateCTM::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
+    case ItemType::SetFillColor:
+        if (auto item = SetFillColor::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
+    case ItemType::SetStrokeState:
+        if (auto item = SetStrokeState::decode(decoder))
             return static_reference_cast<Item>(WTFMove(*item));
         break;
     case ItemType::SetState:
@@ -3284,6 +3409,8 @@ SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(Rotate)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(Scale)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(SetCTM)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(ConcatenateCTM)
+SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(SetFillColor)
+SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(SetStrokeState)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(SetState)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(SetLineCap)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(SetLineDash)
@@ -3343,6 +3470,8 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::Scale,
     WebCore::DisplayList::ItemType::SetCTM,
     WebCore::DisplayList::ItemType::ConcatenateCTM,
+    WebCore::DisplayList::ItemType::SetFillColor,
+    WebCore::DisplayList::ItemType::SetStrokeState,
     WebCore::DisplayList::ItemType::SetState,
     WebCore::DisplayList::ItemType::SetLineCap,
     WebCore::DisplayList::ItemType::SetLineDash,

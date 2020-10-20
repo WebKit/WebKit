@@ -1,3 +1,12 @@
+2020-10-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [MotionMark] Add state change items to represent changes to stroke and fill state
+        https://bugs.webkit.org/show_bug.cgi?id=217911
+
+        Reviewed by Simon Fraser.
+
+        * displaylists/canvas-display-list-expected.txt: Rebaseline an existing display list item dump test.
+
 2020-10-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         [mac-wk1] inspector/debugger/breakpoint-resolve-when-script-added.html is a flaky timeout

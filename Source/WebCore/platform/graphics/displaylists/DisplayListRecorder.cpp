@@ -57,6 +57,40 @@ void Recorder::putImageData(WebCore::AlphaPremultiplication inputFormat, const W
     appendItem(WebCore::DisplayList::PutImageData::create(inputFormat, imageData, srcRect, destPoint, destFormat));
 }
 
+static bool containsOnlyStrokeColorOrThicknessChange(GraphicsContextState::StateChangeFlags changes)
+{
+    static constexpr GraphicsContextState::StateChangeFlags strokeStateChangeFlags {
+        GraphicsContextState::StrokeThicknessChange,
+        GraphicsContextState::StrokeColorChange
+    };
+    return changes == (changes & strokeStateChangeFlags);
+}
+
+static bool containsOnlyFillColorChange(GraphicsContextState::StateChangeFlags changes)
+{
+    return changes == (changes & GraphicsContextState::FillColorChange);
+}
+
+static Ref<Item> createStateChangeItem(const GraphicsContextStateChange& changes, GraphicsContextState::StateChangeFlags changeFlags)
+{
+    if (containsOnlyFillColorChange(changeFlags))
+        return SetFillColor::create(changes.m_state.fillColor);
+
+    if (containsOnlyStrokeColorOrThicknessChange(changeFlags)) {
+        Optional<Color> strokeColor;
+        if (changeFlags.contains(GraphicsContextState::StrokeColorChange))
+            strokeColor = changes.m_state.strokeColor;
+
+        Optional<float> strokeThickness;
+        if (changeFlags.contains(GraphicsContextState::StrokeThicknessChange))
+            strokeThickness = changes.m_state.strokeThickness;
+
+        return SetStrokeState::create(WTFMove(strokeColor), WTFMove(strokeThickness));
+    }
+
+    return SetState::create(changes.m_state, changeFlags);
+}
+
 void Recorder::willAppendItem(const Item& item)
 {
     if (m_observer)
@@ -71,7 +105,7 @@ void Recorder::willAppendItem(const Item& item)
         GraphicsContextState::StateChangeFlags changesFromLastState = stateChanges.changesFromState(currentState().lastDrawingState);
         if (changesFromLastState) {
             LOG_WITH_STREAM(DisplayLists, stream << "pre-drawing, saving state " << GraphicsContextStateChange(stateChanges.m_state, changesFromLastState));
-            m_displayList.append(SetState::create(stateChanges.m_state, changesFromLastState));
+            m_displayList.append(createStateChangeItem(stateChanges, changesFromLastState));
             stateChanges.m_changeFlags = { };
             currentState().lastDrawingState = stateChanges.m_state;
         }

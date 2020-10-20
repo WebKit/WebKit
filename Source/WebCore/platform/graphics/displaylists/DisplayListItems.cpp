@@ -76,6 +76,10 @@ size_t Item::sizeInBytes(const Item& item)
         return sizeof(downcast<SetCTM>(item));
     case ItemType::ConcatenateCTM:
         return sizeof(downcast<ConcatenateCTM>(item));
+    case ItemType::SetFillColor:
+        return sizeof(downcast<SetFillColor>(item));
+    case ItemType::SetStrokeState:
+        return sizeof(downcast<SetStrokeState>(item));
     case ItemType::SetState:
         return sizeof(downcast<SetState>(item));
     case ItemType::SetLineCap:
@@ -316,6 +320,49 @@ static TextStream& operator<<(TextStream& ts, const ConcatenateCTM& item)
     return ts;
 }
 
+Ref<SetFillColor> SetFillColor::create(Color color)
+{
+    return adoptRef(*new SetFillColor(color));
+}
+
+SetFillColor::~SetFillColor() = default;
+
+void SetFillColor::apply(GraphicsContext& context) const
+{
+    context.setFillColor(m_color);
+}
+
+static TextStream& operator<<(TextStream& ts, const SetFillColor& state)
+{
+    ts.dumpProperty("color", state.color());
+    return ts;
+}
+
+Ref<SetStrokeState> SetStrokeState::create(Optional<Color>&& color, Optional<float>&& thickness)
+{
+    return adoptRef(*new SetStrokeState(WTFMove(color), WTFMove(thickness)));
+}
+
+SetStrokeState::~SetStrokeState() = default;
+
+void SetStrokeState::apply(GraphicsContext& context) const
+{
+    if (m_hasColor)
+        context.setStrokeColor(m_color);
+
+    if (m_hasThickness)
+        context.setStrokeThickness(m_thickness);
+}
+
+static TextStream& operator<<(TextStream& ts, const SetStrokeState& state)
+{
+    if (state.hasColor())
+        ts.dumpProperty("color", state.color());
+    if (state.hasThickness())
+        ts.dumpProperty("thickness", state.thickness());
+    return ts;
+}
+
 SetState::SetState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
     : Item(ItemType::SetState)
     , m_state(state, flags)
@@ -333,11 +380,6 @@ SetState::~SetState() = default;
 void SetState::apply(GraphicsContext& context) const
 {
     m_state.apply(context);
-}
-
-void SetState::accumulate(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
-{
-    m_state.accumulate(state, flags);
 }
 
 static TextStream& operator<<(TextStream& ts, const SetState& state)
@@ -1438,6 +1480,8 @@ static TextStream& operator<<(TextStream& ts, const ItemType& type)
     case ItemType::Scale: ts << "scale"; break;
     case ItemType::SetCTM: ts << "set-ctm"; break;
     case ItemType::ConcatenateCTM: ts << "concatentate-ctm"; break;
+    case ItemType::SetFillColor: ts << "set-fill-color"; break;
+    case ItemType::SetStrokeState: ts << "set-stroke-state"; break;
     case ItemType::SetState: ts << "set-state"; break;
     case ItemType::SetLineCap: ts << "set-line-cap"; break;
     case ItemType::SetLineDash: ts << "set-line-dash"; break;
@@ -1509,6 +1553,12 @@ TextStream& operator<<(TextStream& ts, const Item& item)
         break;
     case ItemType::ConcatenateCTM:
         ts << downcast<ConcatenateCTM>(item);
+        break;
+    case ItemType::SetFillColor:
+        ts << downcast<SetFillColor>(item);
+        break;
+    case ItemType::SetStrokeState:
+        ts << downcast<SetStrokeState>(item);
         break;
     case ItemType::SetState:
         ts << downcast<SetState>(item);
