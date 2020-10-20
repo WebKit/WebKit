@@ -1,3 +1,19 @@
+2020-10-20  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Use allowlist and blocklist
+        https://bugs.webkit.org/show_bug.cgi?id=217985
+        <rdar://problem/70499499>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/pylintrc:
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_namespace_indentation):
+        * Scripts/webkitpy/w3c/common.py:
+        (is_basename_skipped):
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.setup_gstbuild):
+
 2020-10-20  Aakash Jain  <aakash_jain@apple.com>
 
         Make report-non-inclusive-language ignore autoinstalled directories and certain file types
