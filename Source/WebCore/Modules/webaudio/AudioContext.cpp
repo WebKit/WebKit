@@ -252,8 +252,10 @@ void AudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
     });
 }
 
-void AudioContext::nodeWillBeginPlayback()
+void AudioContext::sourceNodeWillBeginPlayback(AudioNode& audioNode)
 {
+    BaseAudioContext::sourceNodeWillBeginPlayback(audioNode);
+
     // Called by scheduled AudioNodes when clients schedule their start times.
     // Prior to the introduction of suspend(), resume(), and stop(), starting
     // a scheduled AudioNode would remove the user-gesture restriction, if present,

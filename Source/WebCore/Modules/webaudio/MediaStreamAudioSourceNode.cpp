@@ -60,7 +60,8 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> MediaStreamAudioSourceNode::create(
     auto node = adoptRef(*new MediaStreamAudioSourceNode(context, *options.mediaStream, *providerTrack));
     node->setFormat(2, context.sampleRate());
 
-    context.refNode(node); // context keeps reference until node is disconnected
+    // Context keeps reference until node is disconnected.
+    context.sourceNodeWillBeginPlayback(node);
 
     return node;
 }

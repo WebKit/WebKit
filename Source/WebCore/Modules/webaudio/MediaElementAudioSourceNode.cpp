@@ -55,7 +55,9 @@ ExceptionOr<Ref<MediaElementAudioSourceNode>> MediaElementAudioSourceNode::creat
     auto node = adoptRef(*new MediaElementAudioSourceNode(context, *options.mediaElement));
 
     options.mediaElement->setAudioSourceNode(node.ptr());
-    context.refNode(node.get()); // context keeps reference until node is disconnected
+
+    // context keeps reference until node is disconnected.
+    context.sourceNodeWillBeginPlayback(node);
 
     return node;
 }

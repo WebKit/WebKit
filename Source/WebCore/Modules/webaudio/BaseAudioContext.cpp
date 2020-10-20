@@ -170,8 +170,8 @@ BaseAudioContext::~BaseAudioContext()
     ASSERT(!m_isInitialized);
     ASSERT(m_isStopScheduled);
     ASSERT(m_nodesToDelete.isEmpty());
-    ASSERT(m_referencedNodes.isEmpty());
-    ASSERT(m_finishedNodes.isEmpty()); // FIXME (bug 105870): This assertion fails on tests sometimes.
+    ASSERT(m_referencedSourceNodes.isEmpty());
+    ASSERT(m_finishedSourceNodes.isEmpty());
     ASSERT(m_automaticPullNodes.isEmpty());
     if (m_automaticPullNodesNeedUpdating)
         m_renderingAutomaticPullNodes.resize(m_automaticPullNodes.size());
@@ -244,7 +244,7 @@ void BaseAudioContext::uninitialize()
         AutoLocker locker(*this);
         // This should have been called from handlePostRenderTasks() at the end of rendering.
         // However, in case of lock contention, the tryLock() call could have failed in handlePostRenderTasks(),
-        // leaving nodes in m_finishedNodes. Now that the audio thread is gone, make sure we deref those nodes
+        // leaving nodes in m_finishedSourceNodes. Now that the audio thread is gone, make sure we deref those nodes
         // before the BaseAudioContext gets destroyed.
         derefFinishedSourceNodes();
     }
@@ -436,10 +436,7 @@ ExceptionOr<Ref<ScriptProcessorNode>> BaseAudioContext::createScriptProcessor(si
     if (numberOfOutputChannels > maxNumberOfChannels())
         return Exception { NotSupportedError };
 
-    auto node = ScriptProcessorNode::create(*this, bufferSize, numberOfInputChannels, numberOfOutputChannels);
-
-    refNode(node); // context keeps reference until we stop making javascript rendering callbacks
-    return node;
+    return ScriptProcessorNode::create(*this, bufferSize, numberOfInputChannels, numberOfOutputChannels);
 }
 
 ExceptionOr<Ref<BiquadFilterNode>> BaseAudioContext::createBiquadFilter()
@@ -578,42 +575,38 @@ ExceptionOr<Ref<IIRFilterNode>> BaseAudioContext::createIIRFilter(ScriptExecutio
     return IIRFilterNode::create(scriptExecutionContext, *this, WTFMove(options));
 }
 
-void BaseAudioContext::notifyNodeFinishedProcessing(AudioNode* node)
-{
-    ASSERT(isAudioThread());
-    m_finishedNodes.append(node);
-}
-
 void BaseAudioContext::derefFinishedSourceNodes()
 {
     ASSERT(isGraphOwner());
     ASSERT(isAudioThread() || isAudioThreadFinished());
-    for (auto& node : m_finishedNodes)
-        derefNode(*node);
+    for (auto& node : m_finishedSourceNodes)
+        derefSourceNode(*node);
 
-    m_finishedNodes.clear();
+    m_finishedSourceNodes.clear();
 }
 
-void BaseAudioContext::refNode(AudioNode& node)
+void BaseAudioContext::refSourceNode(AudioNode& node)
 {
     ASSERT(isMainThread());
     AutoLocker locker(*this);
-    
-    m_referencedNodes.append(&node);
+
+    ASSERT(!m_referencedSourceNodes.contains(&node));
+    // Reference source node to keep it alive and playing even if its JS wrapper gets garbage collected.
+    m_referencedSourceNodes.append(&node);
 }
 
-void BaseAudioContext::derefNode(AudioNode& node)
+void BaseAudioContext::derefSourceNode(AudioNode& node)
 {
     ASSERT(isGraphOwner());
     
-    ASSERT(m_referencedNodes.contains(&node));
-    m_referencedNodes.removeFirst(&node);
+    ASSERT(m_referencedSourceNodes.contains(&node));
+    m_referencedSourceNodes.removeFirst(&node);
 }
 
 void BaseAudioContext::derefUnfinishedSourceNodes()
 {
     ASSERT(isMainThread() && isAudioThreadFinished());
-    m_referencedNodes.clear();
+    m_referencedSourceNodes.clear();
 }
 
 void BaseAudioContext::lock(bool& mustReleaseLock)
@@ -1048,6 +1041,18 @@ void BaseAudioContext::addAudioParamDescriptors(const String& processorName, Vec
 {
     ASSERT(!m_parameterDescriptorMap.contains(processorName));
     m_parameterDescriptorMap.add(processorName, WTFMove(descriptors));
+}
+
+void BaseAudioContext::sourceNodeWillBeginPlayback(AudioNode& node)
+{
+    refSourceNode(node);
+}
+
+void BaseAudioContext::sourceNodeDidFinishPlayback(AudioNode& node)
+{
+    ASSERT(isAudioThread());
+
+    m_finishedSourceNodes.append(&node);
 }
 
 #if !RELEASE_LOG_DISABLED

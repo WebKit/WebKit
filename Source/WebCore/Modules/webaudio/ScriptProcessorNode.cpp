@@ -270,6 +270,19 @@ bool ScriptProcessorNode::requiresTailProcessing() const
     return true;
 }
 
+void ScriptProcessorNode::eventListenersDidChange()
+{
+    m_hasAudioProcessEventListener = hasEventListeners(eventNames().audioprocessEvent);
+}
+
+bool ScriptProcessorNode::virtualHasPendingActivity() const
+{
+    if (context().isClosed())
+        return false;
+
+    return m_hasAudioProcessEventListener;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

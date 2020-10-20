@@ -76,10 +76,6 @@ ExceptionOr<Ref<AudioBufferSourceNode>> AudioBufferSourceNode::create(BaseAudioC
     node->setLoopStart(options.loopStart);
     node->playbackRate().setValue(options.playbackRate);
 
-    // Because this is an AudioScheduledSourceNode, the context keeps a reference until it has finished playing.
-    // When this happens, AudioScheduledSourceNode::finish() calls BaseAudioContext::notifyNodeFinishedProcessing().
-    context.refNode(node);
-
     return node;
 }
 
@@ -473,8 +469,6 @@ ExceptionOr<void> AudioBufferSourceNode::startPlaying(double when, double grainO
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "when = ", when, ", offset = ", grainOffset, ", duration = ", grainDuration.valueOr(0));
 
-    context().nodeWillBeginPlayback();
-
     if (m_playbackState != UNSCHEDULED_STATE)
         return Exception { InvalidStateError, "Cannot call start more than once."_s };
 
@@ -486,6 +480,8 @@ ExceptionOr<void> AudioBufferSourceNode::startPlaying(double when, double grainO
 
     if (grainDuration && (!std::isfinite(*grainDuration) || (*grainDuration < 0)))
         return Exception { RangeError, "duration value should be positive"_s };
+
+    context().sourceNodeWillBeginPlayback(*this);
 
     // This synchronizes with process().
     auto locker = holdLock(m_processLock);

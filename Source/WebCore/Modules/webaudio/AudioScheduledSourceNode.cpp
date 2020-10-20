@@ -152,13 +152,13 @@ ExceptionOr<void> AudioScheduledSourceNode::startLater(double when)
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, when);
 
-    context().nodeWillBeginPlayback();
-
     if (m_playbackState != UNSCHEDULED_STATE)
         return Exception { InvalidStateError };
 
     if (!std::isfinite(when) || when < 0)
         return Exception { RangeError, "when value should be positive"_s };
+
+    context().sourceNodeWillBeginPlayback(*this);
 
     m_startTime = when;
     m_playbackState = SCHEDULED_STATE;
@@ -193,7 +193,7 @@ void AudioScheduledSourceNode::finish()
 {
     ASSERT(!hasFinished());
     // Let the context dereference this AudioNode.
-    context().notifyNodeFinishedProcessing(this);
+    context().sourceNodeDidFinishPlayback(*this);
     m_playbackState = FINISHED_STATE;
     context().decrementActiveSourceCount();
 

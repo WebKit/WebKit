@@ -163,9 +163,6 @@ public:
     ExceptionOr<Ref<StereoPannerNode>> createStereoPanner();
     ExceptionOr<Ref<IIRFilterNode>> createIIRFilter(ScriptExecutionContext&, Vector<double>&& feedforward, Vector<double>&& feedback);
 
-    // When a source node has no more processing to do (has finished playing), then it tells the context to dereference it.
-    void notifyNodeFinishedProcessing(AudioNode*);
-
     // Called at the start of each render quantum.
     void handlePreRenderTasks(const AudioIOPosition& outputPosition);
 
@@ -249,7 +246,9 @@ public:
 
     void isPlayingAudioDidChange();
 
-    virtual void nodeWillBeginPlayback() { }
+    virtual void sourceNodeWillBeginPlayback(AudioNode&);
+    // When a source node has no more processing to do (has finished playing), then it tells the context to dereference it.
+    void sourceNodeDidFinishPlayback(AudioNode&);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const override { return m_logger.get(); }
@@ -282,13 +281,6 @@ public:
         BaseAudioContext& m_context;
         bool m_mustReleaseLock;
     };
-
-    // The context itself keeps a reference to all source nodes. The source nodes, then reference all nodes they're connected to.
-    // In turn, these nodes reference all nodes they're connected to. All nodes are ultimately connected to the AudioDestinationNode.
-    // When the context dereferences a source node, it will be deactivated from the rendering graph along with all other nodes it is
-    // uniquely connected to. See the AudioNode::ref() and AudioNode::deref() methods for more details.
-    void refNode(AudioNode&);
-    void derefNode(AudioNode&);
 
     virtual void lazyInitialize();
 
@@ -326,6 +318,13 @@ private:
 
     void scheduleNodeDeletion();
 
+    // When source nodes begin playing, the BaseAudioContext keeps them alive inside m_referencedSourceNodes.
+    // When the nodes stop playing, they get added to m_finishedSourceNodes. After each rendering quantum,
+    // we call derefSourceNode() on every node in m_finishedSourceNodes since we no longer need to keep them
+    // alive.
+    void refSourceNode(AudioNode&);
+    void derefSourceNode(AudioNode&);
+
     // EventTarget
     void dispatchEvent(Event&) final;
 
@@ -352,10 +351,10 @@ private:
     Ref<AudioWorklet> m_worklet;
 
     // Only accessed in the audio thread.
-    Vector<AudioNode*> m_finishedNodes;
+    Vector<AudioNode*> m_finishedSourceNodes;
 
     // Either accessed when the graph lock is held, or on the main thread when the audio thread has finished.
-    Vector<AudioConnectionRefPtr<AudioNode>> m_referencedNodes;
+    Vector<AudioConnectionRefPtr<AudioNode>> m_referencedSourceNodes;
 
     // Accumulate nodes which need to be deleted here.
     // This is copied to m_nodesToDelete at the end of a render cycle in handlePostRenderTasks(), where we're assured of a stable graph

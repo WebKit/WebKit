@@ -105,7 +105,9 @@ ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject&
     node->initializeAudioParameters(parameterDescriptors, parameterData);
 
     // Will cause the context to ref the node until playback has finished.
-    context.refNode(node);
+    // Note that a node with zero outputs cannot be a source node.
+    if (node->numberOfOutputs() > 0)
+        context.sourceNodeWillBeginPlayback(node);
 
     context.audioWorklet().createProcessor(name, processorMessagePort->disentangle(), serializedOptions.releaseNonNull(), node);
 
@@ -228,7 +230,9 @@ void AudioWorkletNode::didFinishProcessingOnRenderingThread(bool threwException)
 
     m_processor = nullptr;
     m_tailTime = 0;
-    context().notifyNodeFinishedProcessing(this);
+
+    if (numberOfOutputs() > 0)
+        context().sourceNodeDidFinishPlayback(*this);
 }
 
 void AudioWorkletNode::updatePullStatus()

@@ -71,7 +71,7 @@ public:
     void suspendRendering(DOMPromiseDeferred<void>&&);
     void resumeRendering(DOMPromiseDeferred<void>&&);
 
-    void nodeWillBeginPlayback() final;
+    void sourceNodeWillBeginPlayback(AudioNode&) final;
     void lazyInitialize() final;
 
     void startRendering();

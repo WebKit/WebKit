@@ -41,11 +41,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(ConstantSourceNode);
 
 ExceptionOr<Ref<ConstantSourceNode>> ConstantSourceNode::create(BaseAudioContext& context, const ConstantSourceOptions& options)
 {
-    auto node = adoptRef(*new ConstantSourceNode(context, options.offset));
-    
-    context.refNode(node);
-    
-    return node;
+    return adoptRef(*new ConstantSourceNode(context, options.offset));
 }
 
 ConstantSourceNode::ConstantSourceNode(BaseAudioContext& context, float offset)

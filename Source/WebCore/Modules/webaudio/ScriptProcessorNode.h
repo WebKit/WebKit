@@ -76,6 +76,8 @@ private:
 
     ScriptProcessorNode(BaseAudioContext&, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels);
 
+    bool virtualHasPendingActivity() const final;
+    void eventListenersDidChange() final;
     void fireProcessEvent(unsigned doubleBufferIndex);
 
     // Double buffering
@@ -94,6 +96,7 @@ private:
     RefPtr<AudioBus> m_internalInputBus;
     RefPtr<PendingActivity<ScriptProcessorNode>> m_pendingActivity;
     Lock m_processLock;
+    bool m_hasAudioProcessEventListener { false };
 };
 
 } // namespace WebCore
