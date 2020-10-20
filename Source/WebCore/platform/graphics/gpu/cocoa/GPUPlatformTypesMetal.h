@@ -50,6 +50,9 @@ OBJC_PROTOCOL(MTLTexture);
 
 namespace WebCore {
 
+using PlatformGPUBufferOffset = NSUInteger;
+
+// Metal types
 using PlatformBuffer = MTLBuffer;
 using PlatformBufferSmartPtr = RetainPtr<PlatformBuffer>;
 

@@ -41,29 +41,27 @@ class GPUBindGroupAllocator : public RefCounted<GPUBindGroupAllocator> {
 public:
     static Ref<GPUBindGroupAllocator> create(GPUErrorScopes&);
 
-#if USE(METAL)
     struct ArgumentBufferOffsets {
-        Optional<NSUInteger> vertex;
-        Optional<NSUInteger> fragment;
-        Optional<NSUInteger> compute;
+        Optional<PlatformGPUBufferOffset> vertex;
+        Optional<PlatformGPUBufferOffset> fragment;
+        Optional<PlatformGPUBufferOffset> compute;
     };
 
+#if USE(METAL)
     Optional<ArgumentBufferOffsets> allocateAndSetEncoders(MTLArgumentEncoder *vertex, MTLArgumentEncoder *fragment, MTLArgumentEncoder *compute);
+#endif
 
     void tryReset();
 
-    const MTLBuffer *argumentBuffer() const { return m_argumentBuffer.get(); }
-#endif
+    const PlatformBuffer* argumentBuffer() const { return m_argumentBuffer.get(); }
 
 private:
     explicit GPUBindGroupAllocator(GPUErrorScopes&);
 
-#if USE(METAL)
-    bool reallocate(NSUInteger);
+    bool reallocate(PlatformGPUBufferOffset);
 
-    RetainPtr<MTLBuffer> m_argumentBuffer;
-    NSUInteger m_lastOffset { 0 };
-#endif
+    PlatformBufferSmartPtr m_argumentBuffer;
+    PlatformGPUBufferOffset m_lastOffset { 0 };
 
     Ref<GPUErrorScopes> m_errorScopes;
     int m_numBindGroups { 0 };

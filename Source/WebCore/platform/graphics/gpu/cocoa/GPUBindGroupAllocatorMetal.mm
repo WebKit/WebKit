@@ -121,6 +121,8 @@ Optional<GPUBindGroupAllocator::ArgumentBufferOffsets> GPUBindGroupAllocator::al
     return offsets;
 }
 
+#endif // USE(METAL)
+
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=200657, https://bugs.webkit.org/show_bug.cgi?id=200658 Optimize reallocation and reset behavior.
 bool GPUBindGroupAllocator::reallocate(NSUInteger newOffset)
 {
@@ -163,8 +165,6 @@ void GPUBindGroupAllocator::tryReset()
         m_lastOffset = 0;
     }
 }
-
-#endif // USE(METAL)
 
 } // namespace WebCore
 

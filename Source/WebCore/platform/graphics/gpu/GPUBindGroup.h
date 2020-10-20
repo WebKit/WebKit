@@ -40,9 +40,7 @@ namespace WebCore {
 
 struct GPUBindGroupDescriptor;
 
-#if USE(METAL)
-using ArgumentBuffer = std::pair<const MTLBuffer *, const GPUBindGroupAllocator::ArgumentBufferOffsets&>;
-#endif
+using ArgumentBuffer = std::pair<const PlatformBuffer*, const GPUBindGroupAllocator::ArgumentBufferOffsets&>;
 
 class GPUBindGroup : public RefCounted<GPUBindGroup> {
 public:
@@ -50,19 +48,15 @@ public:
 
     ~GPUBindGroup();
     
-#if USE(METAL)
     const ArgumentBuffer argumentBuffer() const { return { m_allocator->argumentBuffer(), m_argumentBufferOffsets }; }
-#endif
     const HashSet<Ref<GPUBuffer>>& boundBuffers() const { return m_boundBuffers; }
     const HashSet<Ref<GPUTexture>>& boundTextures() const { return m_boundTextures; }
 
 private:
-#if USE(METAL)
     GPUBindGroup(GPUBindGroupAllocator::ArgumentBufferOffsets&&, GPUBindGroupAllocator&, HashSet<Ref<GPUBuffer>>&&, HashSet<Ref<GPUTexture>>&&);
     
     GPUBindGroupAllocator::ArgumentBufferOffsets m_argumentBufferOffsets;
     Ref<GPUBindGroupAllocator> m_allocator;
-#endif
     HashSet<Ref<GPUBuffer>> m_boundBuffers;
     HashSet<Ref<GPUTexture>> m_boundTextures;
 };
