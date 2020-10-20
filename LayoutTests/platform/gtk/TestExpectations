@@ -73,7 +73,6 @@ webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/parsing/cursor-co
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/parsing/cursor-valid.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-values/angle-units-003.html [ Pass Crash ]
 webkit.org/b/216777 media/video-display-toggle.html [ Pass Crash ]
-webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/appearance-menulist-001.html [ Pass Crash ]
 
 # Parsing
 webkit.org/b/217421 fast/parser/entities-in-html.html [ Failure ]
@@ -102,6 +101,16 @@ webkit.org/b/216118 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-c
 webkit.org/b/216118 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-upmixing-1-channel-response.html [ Crash Failure Pass ]
 webkit.org/b/216118 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/ctor-convolver.html [ Crash Pass ]
 webkit.org/b/216118 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html [ Crash Failure Pass ]
+
+# Synthetic oblique.
+webkit.org/b/217946 fast/text/synthetic-oblique.html [ ImageOnlyFailure ]
+
+# Cross-origin credentials.
+webkit.org/b/217947 http/tests/security/mixedContent/insecure-basic-auth-image.https.html [ Failure Pass ]
+webkit.org/b/217947 http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image.html [ Failure Pass ]
+webkit.org/b/217947 http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image.https.html [ Failure Pass ]
+webkit.org/b/217947 http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image.https.html [ Failure Pass ]
+webkit.org/b/217947 http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https.html [ Failure Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations

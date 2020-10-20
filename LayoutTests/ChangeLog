@@ -1,3 +1,10 @@
+2020-10-20  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB][GTK] Unreviewed test gardening. Update test expectations after r268715.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-10-19  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] flex-shrink property should be animatable

@@ -90,7 +90,7 @@ webkit.org/b/207711 [ Debug ] accessibility/roles-exposed.html [ Timeout ]
 
 webkit.org/b/217260 accessibility/spinbutton-crash.html [ Failure ]
 
-webkit.org/b/217817 accessibility/text-element-path.html [ Failure ]
+webkit.org/b/217801 accessibility/text-element-path.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
