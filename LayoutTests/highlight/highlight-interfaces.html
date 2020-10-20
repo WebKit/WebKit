@@ -4,18 +4,18 @@
 <script src="../resources/js-test.js"></script>
 <script>
 
-description("Tests the interfaces of the highlight API, which include HighlightRangeGroup, HighlightMap, and extensions to the CSS namespace.");
+description("Tests the interfaces of the highlight API, which include Highlight, HighlightRegister, and extensions to the CSS namespace.");
 
 debug("Testing Highlight:");
-shouldBeTrue("HighlightRangeGroup instanceof Function");
-shouldBeEqualToString("typeof HighlightRangeGroup", "function");
-shouldBeTrue("new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2})) instanceof HighlightRangeGroup");
-shouldBeTrue("HighlightMap instanceof Function");
-shouldBeEqualToString("typeof HighlightMap", "function");
-shouldBeTrue("new HighlightMap() instanceof HighlightMap");
-shouldBeDefined('new HighlightMap().set("foo-styling",new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2})))');
+shouldBeTrue("Highlight instanceof Function");
+shouldBeEqualToString("typeof Highlight", "function");
+shouldBeTrue("new Highlight(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2})) instanceof Highlight");
+shouldBeTrue("HighlightRegister instanceof Function");
+shouldBeEqualToString("typeof HighlightRegister", "function");
+shouldBeTrue("new HighlightRegister() instanceof HighlightRegister");
+shouldBeDefined('new HighlightRegister().set("foo-styling",new Highlight(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2})))');
 shouldBeDefined('CSS.highlights');
-shouldBe('CSS.highlights.set("foo-styling",new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2})))', 'CSS.highlights');
+shouldBe('CSS.highlights.set("foo-styling",new Highlight(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2})))', 'CSS.highlights');
 
 </script>
 </body>

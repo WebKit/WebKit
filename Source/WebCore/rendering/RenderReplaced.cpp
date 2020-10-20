@@ -33,7 +33,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLParserIdioms.h"
 #include "HighlightData.h"
-#include "HighlightMap.h"
+#include "HighlightRegister.h"
 #include "InlineElementBox.h"
 #include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationRunIterator.h"
@@ -154,7 +154,7 @@ inline static bool draggedContentContainsReplacedElement(const Vector<RenderedDo
 Color RenderReplaced::calculateHighlightColor() const
 {
     HighlightData highlightData;
-    for (auto& highlight : document().highlightMap().map()) {
+    for (auto& highlight : document().highlightRegister().map()) {
         for (auto& rangeData : highlight.value->rangesData()) {
             if (!highlightData.setRenderRange(rangeData))
                 continue;

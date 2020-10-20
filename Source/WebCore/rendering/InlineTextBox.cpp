@@ -36,7 +36,7 @@
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HighlightData.h"
-#include "HighlightMap.h"
+#include "HighlightRegister.h"
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
 #include "InlineTextBoxStyle.h"
@@ -1051,7 +1051,7 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForHighlights(TextPaintPhase
     auto& parentRenderer = parent()->renderer();
     auto& parentStyle = parentRenderer.style();
     HighlightData highlightData;
-    for (auto& highlight : renderer().document().highlightMap().map()) {
+    for (auto& highlight : renderer().document().highlightRegister().map()) {
         auto renderStyle = parentRenderer.getUncachedPseudoStyle({ PseudoId::Highlight, highlight.key }, &parentStyle);
         if (!renderStyle)
             continue;

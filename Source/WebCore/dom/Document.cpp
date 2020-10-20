@@ -111,7 +111,7 @@
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "HashChangeEvent.h"
-#include "HighlightMap.h"
+#include "HighlightRegister.h"
 #include "History.h"
 #include "HitTestResult.h"
 #include "IdleCallbackController.h"
@@ -792,8 +792,8 @@ void Document::commonTeardown()
 
     clearScriptedAnimationController();
     
-    if (m_highlightMap)
-        m_highlightMap->clear();
+    if (m_highlightRegister)
+        m_highlightRegister->clear();
 
     m_pendingScrollEventTargetList = nullptr;
 
@@ -2767,18 +2767,18 @@ Ref<DocumentParser> Document::createParser()
     return XMLDocumentParser::create(*this, view());
 }
 
-HighlightMap& Document::highlightMap()
+HighlightRegister& Document::highlightRegister()
 {
-    if (!m_highlightMap)
-        m_highlightMap = HighlightMap::create();
-    return *m_highlightMap;
+    if (!m_highlightRegister)
+        m_highlightRegister = HighlightRegister::create();
+    return *m_highlightRegister;
 }
 
 void Document::updateHighlightPositions()
 {
     Vector<WeakPtr<HighlightRangeData>> rangesData;
-    if (m_highlightMap) {
-        for (auto& highlight : m_highlightMap->map()) {
+    if (m_highlightRegister) {
+        for (auto& highlight : m_highlightRegister->map()) {
             for (auto& rangeData : highlight.value->rangesData()) {
                 if (rangeData->startPosition && rangeData->endPosition)
                     continue;

@@ -290,8 +290,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/geolocation/PositionErrorCallback.idl
     Modules/geolocation/PositionOptions.idl
 
-    Modules/highlight/HighlightMap.idl
-    Modules/highlight/HighlightRangeGroup.idl
+    Modules/highlight/Highlight.idl
+    Modules/highlight/HighlightRegister.idl
 
     Modules/indexeddb/DOMWindow+IndexedDatabase.idl
     Modules/indexeddb/IDBCursor.idl

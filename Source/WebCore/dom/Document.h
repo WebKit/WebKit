@@ -156,7 +156,7 @@ class HTMLImageElement;
 class HTMLMapElement;
 class HTMLMediaElement;
 class HTMLVideoElement;
-class HighlightMap;
+class HighlightRegister;
 class HitTestLocation;
 class HitTestRequest;
 class HitTestResult;
@@ -1569,7 +1569,7 @@ public:
     WEBCORE_EXPORT TextManipulationController& textManipulationController();
     TextManipulationController* textManipulationControllerIfExists() { return m_textManipulationController.get(); }
         
-    HighlightMap& highlightMap();
+    HighlightRegister& highlightRegister();
     void updateHighlightPositions();
 
     bool allowsContentJavaScript() const;
@@ -1924,7 +1924,7 @@ private:
     std::unique_ptr<TextAutoSizing> m_textAutoSizing;
 #endif
         
-    RefPtr<HighlightMap> m_highlightMap;
+    RefPtr<HighlightRegister> m_highlightRegister;
 
     Timer m_visualUpdatesSuppressionTimer;
 

@@ -64,8 +64,8 @@ Modules/geolocation/Geolocation.cpp
 Modules/geolocation/GeolocationController.cpp
 Modules/geolocation/GeolocationCoordinates.cpp
 Modules/geolocation/NavigatorGeolocation.cpp
-Modules/highlight/HighlightMap.cpp
-Modules/highlight/HighlightRangeGroup.cpp
+Modules/highlight/HighlightRegister.cpp
+Modules/highlight/Highlight.cpp
 Modules/indexeddb/DOMWindowIndexedDatabase.cpp
 Modules/indexeddb/IDBCursor.cpp
 Modules/indexeddb/IDBCursorWithValue.cpp
@@ -3061,8 +3061,8 @@ JSHTMLUnknownElement.cpp
 JSHTMLVideoElement.cpp
 JSHashChangeEvent.cpp
 JSHdrMetadataType.cpp
-JSHighlightMap.cpp
-JSHighlightRangeGroup.cpp
+JSHighlightRegister.cpp
+JSHighlight.cpp
 JSHistory.cpp
 JSHkdfParams.cpp
 JSHmacKeyParams.cpp

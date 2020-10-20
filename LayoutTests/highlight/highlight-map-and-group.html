@@ -20,23 +20,23 @@
     <body><span>One </span><span>two </span><span>three...</span>
 
     <script>
-        let highlightRangeGroup1 = new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2}));
+        let highlight1 = new Highlight(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2}));
 
-        let highlightRangeGroup2 = new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 2, endContainer: document.body, endOffset: 3}));
-        highlightRangeGroup2.add(new StaticRange({startContainer: document.body, startOffset: 4, endContainer: document.body, endOffset: 5}));
+        let highlight2 = new Highlight(new StaticRange({startContainer: document.body, startOffset: 2, endContainer: document.body, endOffset: 3}));
+        highlight2.add(new StaticRange({startContainer: document.body, startOffset: 4, endContainer: document.body, endOffset: 5}));
 
-        let highlightRangeGroup3 = new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 4, endContainer: document.body, endOffset: 8}));
-        highlightRangeGroup3.add(new StaticRange({startContainer: document.body, startOffset: 10, endContainer: document.body, endOffset: 12}));
-        highlightRangeGroup3.add(new StaticRange({startContainer: document.body, startOffset: 5, endContainer: document.body, endOffset: 6}));
+        let highlight3 = new Highlight(new StaticRange({startContainer: document.body, startOffset: 4, endContainer: document.body, endOffset: 8}));
+        highlight3.add(new StaticRange({startContainer: document.body, startOffset: 10, endContainer: document.body, endOffset: 12}));
+        highlight3.add(new StaticRange({startContainer: document.body, startOffset: 5, endContainer: document.body, endOffset: 6}));
         
 
-        CSS.highlights.set("example-highlight1", highlightRangeGroup1);
-        CSS.highlights.set("example-highlight2", highlightRangeGroup2);
-        CSS.highlights.set("example-highlight3", highlightRangeGroup3);
+        CSS.highlights.set("example-highlight1", highlight1);
+        CSS.highlights.set("example-highlight2", highlight2);
+        CSS.highlights.set("example-highlight3", highlight3);
 
-        shouldBe("highlightRangeGroup1.size","1");
-        shouldBe("highlightRangeGroup2.size","2");
-        shouldBe("highlightRangeGroup3.size","3");
+        shouldBe("highlight1.size","1");
+        shouldBe("highlight2.size","2");
+        shouldBe("highlight3.size","3");
 
         shouldBe("CSS.highlights.size","3");
 

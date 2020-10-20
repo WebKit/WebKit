@@ -5,7 +5,7 @@
     <title>Multiple custom highlight pseudo elements.</title>
     <link rel="help" href="https://drafts.csswg.org/css-highlight-api-1/#creating-highlights">
     <link rel="match" href="highlight-text-expected.html">
-    <meta name="assert" content="Highlight Ranges should be able to be added and removed from the HighlightRangeGroup.">
+    <meta name="assert" content="Highlight Ranges should be able to be added and removed from the Highlight.">
     <style>
         ::highlight(example-highlight) {
             background-color: blue;
@@ -42,12 +42,12 @@
             let range2 = new StaticRange({startContainer: textElement.childNodes[0], startOffset: 3, endContainer: textElement.childNodes[0], endOffset: 4});
             let range3 = new StaticRange({startContainer: textElement.childNodes[0], startOffset: 8, endContainer: textElement.childNodes[0], endOffset: 12});
 
-            let highlightRangeGroup1 = new HighlightRangeGroup(range1);
-            CSS.highlights.set("example-highlight", highlightRangeGroup1);
+            let highlight1 = new Highlight(range1);
+            CSS.highlights.set("example-highlight", highlight1);
 
-            highlightRangeGroup1.add(range2);
-            highlightRangeGroup1.delete(range1);
-            highlightRangeGroup1.add(range3);
+            highlight1.add(range2);
+            highlight1.delete(range1);
+            highlight1.add(range3);
 
             var repaintRects = window.internals.repaintRectsAsText();
             window.internals.stopTrackingRepaints();

@@ -13,6 +13,6 @@
 
 <script>
 let highlight = document.getElementById('highlight');
-let highlightRangeGroup = new HighlightRangeGroup(new StaticRange({startContainer: highlight.childNodes[0], startOffset: 0, endContainer: highlight.childNodes[0], endOffset: 4}));
-CSS.highlights.set("example", highlightRangeGroup);
+let highlight1 = new Highlight(new StaticRange({startContainer: highlight.childNodes[0], startOffset: 0, endContainer: highlight.childNodes[0], endOffset: 4}));
+CSS.highlights.set("example", highlight1);
 </script>

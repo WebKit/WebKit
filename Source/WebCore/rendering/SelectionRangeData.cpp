@@ -32,7 +32,7 @@
 
 #include "Document.h"
 #include "FrameSelection.h"
-#include "HighlightRangeGroup.h"
+#include "Highlight.h"
 #include "Logging.h"
 #include "Position.h"
 #include "Range.h"
