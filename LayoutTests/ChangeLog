@@ -1,3 +1,58 @@
+2020-10-20  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r268746. rdar://problem/70497736
+
+    REGRESSION(r268615): some accelerated transform tests are failing
+    https://bugs.webkit.org/show_bug.cgi?id=217851
+    <rdar://problem/70394402>
+    
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    When we added support for accelerated individual transform properties animations, we added
+    the notion of base transform animations which are used to set the base value of any
+    transform-related property that is not animated.
+    
+    Those animations were defined to start as early as possible, assuming that a very small value
+    after 0s was as early as possible. However, it's possible that other animations start with a
+    negative time if they have a delay or are seeked, if the value returned by CACurrentMediaTime()
+    is smaller than that delay. This means that if the machine had been booted for less time than
+    an accelerated animation's delay, the base transform animation wouldn't overlap.
+    
+    We now ensure that those base transform animations start as early as the earliest animation
+    that is being committed in a call to GraphicsLayerCA::updateAnimations().
+    
+    * platform/graphics/ca/GraphicsLayerCA.cpp:
+    (WebCore::GraphicsLayerCA::updateAnimations):
+    (WebCore::GraphicsLayerCA::setAnimationOnLayer):
+    * platform/graphics/ca/GraphicsLayerCA.h:
+    (WebCore::GraphicsLayerCA::LayerPropertyAnimation::computedBeginTime const):
+    
+    LayoutTests:
+    
+    Remove flaky epectations for affected tests and skip tests on Windows where failures remain.
+    
+    * TestExpectations:
+    * platform/mac/TestExpectations:
+    * platform/win/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268746 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-20  Antoine Quint  <graouts@webkit.org>
+
+            REGRESSION(r268615): some accelerated transform tests are failing
+            https://bugs.webkit.org/show_bug.cgi?id=217851
+            <rdar://problem/70394402>
+
+            Reviewed by Dean Jackson.
+
+            Remove flaky epectations for affected tests and skip tests on Windows where failures remain.
+
+            * TestExpectations:
+            * platform/mac/TestExpectations:
+            * platform/win/TestExpectations:
+
 2020-10-17  Ross Kirsling  <ross.kirsling@sony.com>
 
         Ensure %TypedArray% essential internal methods adhere to spec
