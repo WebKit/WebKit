@@ -31,6 +31,7 @@
 #include "MediaSessionAction.h"
 #include "MediaSessionActionHandler.h"
 #include "MediaSessionPlaybackState.h"
+#include <wtf/MonotonicTime.h>
 #include <wtf/Optional.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
@@ -53,8 +54,12 @@ public:
 
     void setActionHandler(MediaSessionAction, RefPtr<MediaSessionActionHandler>&&);
     ExceptionOr<void> setPositionState(Optional<MediaPositionState>&&);
+    WEBCORE_EXPORT Optional<double> currentPosition() const;
 
     void metadataUpdated();
+    void actionHandlersUpdated();
+    bool hasActionHandler(MediaSessionAction) const;
+    WEBCORE_EXPORT RefPtr<MediaSessionActionHandler> handlerForAction(MediaSessionAction) const;
 
 private:
     explicit MediaSession(Navigator&);
@@ -62,6 +67,10 @@ private:
     WeakPtr<Navigator> m_navigator;
     RefPtr<MediaMetadata> m_metadata;
     MediaSessionPlaybackState m_playbackState { MediaSessionPlaybackState::None };
+    Optional<MediaPositionState> m_positionState;
+    Optional<double> m_lastReportedPosition;
+    MonotonicTime m_timeAtLastPositionUpdate;
+    HashMap<MediaSessionAction, RefPtr<MediaSessionActionHandler>, WTF::IntHash<MediaSessionAction>, WTF::StrongEnumHashTraits<MediaSessionAction>> m_actionHandlers;
 };
 
 }

@@ -57,28 +57,73 @@ void MediaSession::setMetadata(RefPtr<MediaMetadata>&& metadata)
 
 void MediaSession::setPlaybackState(MediaSessionPlaybackState state)
 {
+    if (m_playbackState == state)
+        return;
+
+    auto currentPosition = this->currentPosition();
+    if (m_positionState && currentPosition) {
+        m_positionState->position = *currentPosition;
+        m_timeAtLastPositionUpdate = MonotonicTime::now();
+    }
     m_playbackState = state;
 }
 
-void MediaSession::setActionHandler(MediaSessionAction, RefPtr<MediaSessionActionHandler>&&)
+void MediaSession::setActionHandler(MediaSessionAction action, RefPtr<MediaSessionActionHandler>&& handler)
 {
+    if (handler)
+        m_actionHandlers.set(action, handler);
+    else
+        m_actionHandlers.remove(action);
+    actionHandlersUpdated();
+}
+
+bool MediaSession::hasActionHandler(MediaSessionAction action) const
+{
+    return m_actionHandlers.contains(action);
+}
+
+RefPtr<MediaSessionActionHandler> MediaSession::handlerForAction(MediaSessionAction action) const
+{
+    return m_actionHandlers.get(action);
 }
 
 ExceptionOr<void> MediaSession::setPositionState(Optional<MediaPositionState>&& state)
 {
-    if (!state)
+    if (!state) {
+        m_positionState = WTF::nullopt;
         return { };
-    if (state->duration >= 0
+    }
+
+    if (!(state->duration >= 0
         && state->position >= 0
         && state->position <= state->duration
         && std::isfinite(state->playbackRate)
-        && state->playbackRate != 0)
-        return { };
+        && state->playbackRate))
+        return Exception { TypeError };
 
-    return Exception { TypeError };
+    m_positionState = WTFMove(state);
+    m_lastReportedPosition = m_positionState->position;
+    m_timeAtLastPositionUpdate = MonotonicTime::now();
+    return { };
+}
+
+Optional<double> MediaSession::currentPosition() const
+{
+    if (!m_positionState || !m_lastReportedPosition)
+        return WTF::nullopt;
+
+    auto actualPlaybackRate = m_playbackState == MediaSessionPlaybackState::Playing ? m_positionState->playbackRate : 0;
+
+    auto elapsedTime = (MonotonicTime::now() - m_timeAtLastPositionUpdate) * actualPlaybackRate;
+
+    return std::max(0., std::min(*m_lastReportedPosition + elapsedTime.value(), m_positionState->duration));
 }
 
 void MediaSession::metadataUpdated()
+{
+}
+
+void MediaSession::actionHandlersUpdated()
 {
 }
 

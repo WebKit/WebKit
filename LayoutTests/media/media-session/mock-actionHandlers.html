@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-actionHandlers</title>
+    <script src="../video-test.js"></script>
+    <script>
+    var actionDetails;
+
+    function isEqualActionDetails(setA, setB) {
+        return setA.action === setB.action
+            && setA.seekOffset === setB.seekOffset
+            && setA.seekTime === setB.seekTime
+            && setA.fastSeek === setB.fastSeek
+    }
+
+    function testExpectedActionDetails(testFuncString, expected)
+    {
+        let observed = eval(testFuncString);
+        let success = isEqualActionDetails(observed, expected);
+        reportExpected(success, testFuncString, '===', JSON.stringify(expected), JSON.stringify(observed));
+    }
+
+    window.addEventListener('load', async event => {
+        if (!window.internals) {
+            failTest('This test requires Internals');
+            return;
+        }
+
+        let actions = ["play", "pause", "seekbackward", "seekforward", "previoustrack", "nexttrack", "skipad", "stop", "seekto"];
+
+        for (action of actions) {
+            navigator.mediaSession.setActionHandler(action, actionDetails => {
+                consoleWrite(`ACTION: ${actionDetails.action}`);
+                window.actionDetails = actionDetails;
+            });
+        }
+
+        consoleWrite('Test that synthetic Media Session actions trigger page installed actionHandlers.')
+
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "play"})');
+        testExpectedActionDetails('actionDetails', {action: 'play'});
+
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "pause"})');
+        testExpectedActionDetails('actionDetails', {action: 'pause'});
+
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekbackward", seekOffset: -10})');
+        testExpectedActionDetails('actionDetails', {action: 'seekbackward', seekOffset: -10});
+
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekbackward", seekOffset: -10, fastSeek: true})');
+        testExpectedActionDetails('actionDetails', {action: 'seekbackward', seekOffset: -10, fastSeek: true});
+
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekforward", seekOffset: 10})');
+        testExpectedActionDetails('actionDetails', {action: 'seekforward', seekOffset: 10});
+
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekforward", seekOffset: 10, fastSeek: true})');
+        testExpectedActionDetails('actionDetails', {action: 'seekforward', seekOffset: 10, fastSeek: true});
+
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "previoustrack"})');
+        testExpectedActionDetails('actionDetails', {action: 'previoustrack'});
+
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "nexttrack"})');
+        testExpectedActionDetails('actionDetails', {action: 'nexttrack'});
+
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "skipad"})');
+        testExpectedActionDetails('actionDetails', {action: 'skipad'});
+
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "stop"})');
+        testExpectedActionDetails('actionDetails', {action: 'stop'});
+
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekto", seekTime: 1})');
+        testExpectedActionDetails('actionDetails', {action: 'seekto', seekTime: 1});
+
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekto", seekTime: 1, fastSeek: true})');
+        testExpectedActionDetails('actionDetails', {action: 'seekto', seekTime: 1, fastSeek: true});
+
+        endTest();
+    }, {once: true});
+    </script>
+</head>
+<body>
+
+</body>
+</html>

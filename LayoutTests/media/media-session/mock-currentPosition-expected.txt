@@ -1,0 +1,27 @@
+Test that there is no current position before positionState has been set.
+RUN(navigator.mediaSession.setPositionState(null))
+TEST(internals.currentMediaSessionPosition(navigator.mediaSession)) THROWS(DOMException.INVALID_STATE_ERR) OK
+
+Test that current position does not advance when session is "paused".
+RUN(navigator.mediaSession.playbackState = "paused")
+RUN(navigator.mediaSession.setPositionState({ duration: 1, playbackRate: 1, position: 0 }))
+EXPECTED (internals.currentMediaSessionPosition(navigator.mediaSession) == '0') OK
+sleeping for 100ms
+EXPECTED (internals.currentMediaSessionPosition(navigator.mediaSession) == '0') OK
+
+Test that current position does advance when session is "playing".
+RUN(navigator.mediaSession.playbackState = "playing")
+sleeping for 100ms
+EXPECTED (internals.currentMediaSessionPosition(navigator.mediaSession) > '0') OK
+
+Test that currentPosition does not move < 0 when playing backwards.
+RUN(navigator.mediaSession.setPositionState({ duration: 1, playbackRate: -100, position: 1 }))
+sleeping for 100ms
+EXPECTED (internals.currentMediaSessionPosition(navigator.mediaSession) == '0') OK
+
+Test that currentPosition does not advance > duration when playing forwards.
+RUN(navigator.mediaSession.setPositionState({ duration: 1, playbackRate: 100, position: 0 }))
+sleeping for 100ms
+EXPECTED (internals.currentMediaSessionPosition(navigator.mediaSession) == '1') OK
+END OF TEST
+

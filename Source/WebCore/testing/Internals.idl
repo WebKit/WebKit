@@ -952,4 +952,7 @@ enum ContentSizeCategory {
     undefined setContentSizeCategory(ContentSizeCategory category);
 
     [Conditional=ATTACHMENT_ELEMENT, MayThrowException] AttachmentThumbnailInfo attachmentThumbnailInfo(HTMLAttachmentElement element);
+
+    [Conditional=MEDIA_SESSION, MayThrowException] double currentMediaSessionPosition(MediaSession session);
+    [Conditional=MEDIA_SESSION, MayThrowException] undefined sendMediaSessionAction(MediaSession session, MediaSessionActionDetails actionDetails);
 };

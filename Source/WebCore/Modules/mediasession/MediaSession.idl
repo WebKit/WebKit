@@ -27,6 +27,7 @@
     Conditional=MEDIA_SESSION,
     Exposed=Window,
     ImplementationLacksVTable,
+    ExportMacro=WEBCORE_EXPORT,
 ] interface MediaSession {
     attribute MediaMetadata? metadata;
 

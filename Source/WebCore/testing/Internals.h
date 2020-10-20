@@ -80,7 +80,6 @@ class InternalSettings;
 class InternalsSetLike;
 class Location;
 class MallocStatistics;
-class MediaSession;
 class MediaStream;
 class MediaStreamTrack;
 class MemoryInfo;
@@ -125,6 +124,11 @@ class ServiceWorker;
 
 #if ENABLE(WEBXR)
 class WebXRTest;
+#endif
+
+#if ENABLE(MEDIA_SESSION)
+class MediaSession;
+struct MediaSessionActionDetails;
 #endif
 
 template<typename IDLType> class DOMPromiseDeferred;
@@ -1046,6 +1050,11 @@ public:
     };
 
     ExceptionOr<AttachmentThumbnailInfo> attachmentThumbnailInfo(const HTMLAttachmentElement&);
+#endif
+
+#if ENABLE(MEDIA_SESSION)
+    ExceptionOr<double> currentMediaSessionPosition(const MediaSession&);
+    ExceptionOr<void> sendMediaSessionAction(MediaSession&, const MediaSessionActionDetails&);
 #endif
 
 private:

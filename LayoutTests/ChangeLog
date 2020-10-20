@@ -1,3 +1,15 @@
+2020-10-20  Jer Noble  <jer.noble@apple.com>
+
+        [media-session] Basic support for MediaSession.setPositionState() and MediaSession.setActionHandler()
+        https://bugs.webkit.org/show_bug.cgi?id=217963
+
+        Reviewed by Eric Carlson.
+
+        * media/media-session/mock-actionHandlers-expected.txt: Added.
+        * media/media-session/mock-actionHandlers.html: Added.
+        * media/media-session/mock-currentPosition-expected.txt: Added.
+        * media/media-session/mock-currentPosition.html: Added.
+
 2020-10-20  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB][GTK] Unreviewed test gardening. Gardened several flaky crash failures.

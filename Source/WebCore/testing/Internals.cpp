@@ -128,6 +128,8 @@
 #include "MediaProducer.h"
 #include "MediaRecorderProvider.h"
 #include "MediaResourceLoader.h"
+#include "MediaSession.h"
+#include "MediaSessionActionDetails.h"
 #include "MediaStreamTrack.h"
 #include "MediaUsageInfo.h"
 #include "MemoryCache.h"
@@ -5962,5 +5964,24 @@ ExceptionOr<Internals::AttachmentThumbnailInfo> Internals::attachmentThumbnailIn
 }
 
 #endif
+
+#if ENABLE(MEDIA_SESSION)
+ExceptionOr<double> Internals::currentMediaSessionPosition(const MediaSession& session)
+{
+    if (auto currentPosition = session.currentPosition())
+        return *currentPosition;
+    return Exception { InvalidStateError };
+}
+
+ExceptionOr<void> Internals::sendMediaSessionAction(MediaSession& session, const MediaSessionActionDetails& actionDetails)
+{
+    if (auto handler = session.handlerForAction(actionDetails.action)) {
+        handler->handleEvent(actionDetails);
+        return { };
+    }
+    return Exception { InvalidStateError };
+}
+#endif
+
 
 } // namespace WebCore
