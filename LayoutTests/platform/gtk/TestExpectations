@@ -64,9 +64,11 @@ webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transforms/animation
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-invalid.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-origin-invalid.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transitions/CSSTransition-ready.tentative.html [ Pass Crash ]
+webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transitions/CSSTransition-startTime.tentative.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/animation/caret-color-interpolation.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/animation/outline-width-composition.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/appearance-auto-001.html [ ImageOnlyFailure Crash ]
+webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/appearance-cssom-001.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/appearance-initial-value-001.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/parsing/box-sizing-computed.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/parsing/cursor-computed.html [ Pass Crash ]
@@ -111,6 +113,9 @@ webkit.org/b/217947 http/tests/security/mixedContent/insecure-image-redirects-to
 webkit.org/b/217947 http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image.https.html [ Failure Pass ]
 webkit.org/b/217947 http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image.https.html [ Failure Pass ]
 webkit.org/b/217947 http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https.html [ Failure Pass ]
+
+# WebInspector.
+webkit.org/b/217966 [ Release ] inspector/console/queryHolders.html [ Crash Failure Timeout Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations

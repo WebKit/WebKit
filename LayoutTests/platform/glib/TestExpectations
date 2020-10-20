@@ -293,6 +293,8 @@ webkit.org/b/214798 http/tests/images/image-supports-video.html [ Missing Timeou
 
 webkit.org/b/207723 http/tests/contentextensions/hide-on-ping-with-ping-that-redirects.html [ Pass Failure ]
 
+webkit.org/b/217961 http/tests/images/mp4-partial-load.html [ Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of HTTP-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -613,6 +615,8 @@ webkit.org/b/216539 webanimations/accelerated-animation-easing-and-direction-upd
 webkit.org/b/216868 webaudio/AudioParam/audioparam-processing.html [ Failure Pass ]
 
 webkit.org/b/217189 webaudio/Convolver/unmmodified-buffer.html [ Pass Timeout Crash ]
+
+webkit.org/b/217956 webaudio/DynamicsCompressor/dynamicscompressor-simple.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebAudio-related bugs
