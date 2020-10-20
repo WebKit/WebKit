@@ -1,3 +1,14 @@
+2020-10-20  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION(r268691): Web Inspector: WI.Sidebar.Event.CollapsedStateChanged is undefined
+        https://bugs.webkit.org/show_bug.cgi?id=217939
+
+        Reviewed by Brian Burg.
+
+        r268691 added an event listener for CollapsedStateChanged, which is undefined.
+
+        * UserInterface/Base/Main.js:
+
 2020-10-20  Philippe Normand  <pnormand@igalia.com>
 
         Web Inspector: Add setScreenSizeOverride API to the Page agent
