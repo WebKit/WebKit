@@ -152,7 +152,7 @@ bool defaultCaptureAudioInGPUProcessEnabled()
 #if PLATFORM(MAC)
     return isFeatureFlagEnabled("gpu_process_webrtc");
 #elif PLATFORM(IOS_FAMILY)
-    return isFeatureFlagEnabled("canvas_and_media_in_gpu_process");
+    return isFeatureFlagEnabled("gpu_process_media");
 #endif
 #endif
 
@@ -252,7 +252,7 @@ bool defaultVP9DecoderEnabled()
 bool defaultVP9SWDecoderEnabledOnBattery()
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("SW_vp9_decoder_on_battery");
+    return isFeatureFlagEnabled("sw_vp9_decoder_on_battery");
 #endif
 
     return false;

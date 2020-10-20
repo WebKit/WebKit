@@ -1,3 +1,16 @@
+2020-10-19  Peng Liu  <peng.liu6@apple.com>
+
+        Two feature flag names are incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=217913
+
+        Reviewed by Eric Carlson.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultCaptureAudioInGPUProcessEnabled): The correct feature flag
+        is gpu_process_media.
+        (WebKit::defaultVP9SWDecoderEnabledOnBattery): The correct feature flag
+        is sw_vp9_decoder_on_battery.
+
 2020-10-19  Chris Dumez  <cdumez@apple.com>
 
         [GPU Process] RemoteAudioDestination::render() should not need to dispatch to the main thread to do IPC
