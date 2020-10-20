@@ -1,3 +1,17 @@
+2020-10-20  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] order property should be animatable
+        https://bugs.webkit.org/show_bug.cgi?id=209876
+
+        Reviewed by Antoine Quint.
+
+        Updated ~150 FAIL expectations to PASS.
+
+        * web-platform-tests/css/css-flexbox/animation/order-interpolation-expected.txt: Updated expectations.
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002-expected.txt: Ditto.
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002-expected.txt: Ditto.
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt: Ditto.
+
 2020-10-19  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] flex-shrink property should be animatable
