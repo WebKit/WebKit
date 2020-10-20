@@ -39,13 +39,13 @@ namespace WebCore {
 struct CookieRequestHeaderFieldProxy;
 class SocketStreamHandleClient;
 
-typedef struct {
+struct SourceApplicationAuditToken {
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> sourceApplicationAuditData;
 #else
     void *empty { nullptr };
 #endif
-} SourceApplicationAuditToken;
+};
 
 class SocketStreamHandle : public ThreadSafeRefCounted<SocketStreamHandle, WTF::DestructionThread::Main> {
 public:
