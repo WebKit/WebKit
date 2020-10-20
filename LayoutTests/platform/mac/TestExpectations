@@ -2255,3 +2255,5 @@ imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-with-activation
 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-without-activation-fails.tentative.html [ Skip ]
 
 webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-install.https.html [ Pass Failure ]
+
+webkit.org/b/217994 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-output-channel-count.https.html [ Pass Failure ]
