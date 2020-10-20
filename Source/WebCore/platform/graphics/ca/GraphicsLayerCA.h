@@ -30,6 +30,7 @@
 #include "PlatformCALayer.h"
 #include "PlatformCALayerClient.h"
 #include <wtf/HashMap.h>
+#include <wtf/Optional.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/StringHash.h>
 
@@ -462,6 +463,12 @@ private:
         { }
 
         String animationIdentifier() const { return makeString(m_name, '_', static_cast<unsigned>(m_property), '_', m_index, '_', m_subIndex); }
+        Optional<Seconds> computedBeginTime() const
+        {
+            if (m_beginTime)
+                return m_beginTime - m_timeOffset;
+            return WTF::nullopt;
+        }
 
         RefPtr<PlatformCAAnimation> m_animation;
         String m_name;

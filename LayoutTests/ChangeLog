@@ -1,3 +1,17 @@
+2020-10-20  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION(r268615): some accelerated transform tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=217851
+        <rdar://problem/70394402>
+
+        Reviewed by Dean Jackson.
+
+        Remove flaky epectations for affected tests and skip tests on Windows where failures remain.
+
+        * TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2020-10-20  Rob Buis  <rbuis@igalia.com>
 
         Introduce Selection specific mixin of GlobalEventHandlers
