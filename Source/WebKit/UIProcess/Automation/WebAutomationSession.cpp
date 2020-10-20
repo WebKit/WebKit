@@ -1860,6 +1860,46 @@ static SimulatedInputSourceType simulatedInputSourceTypeFromProtocolSourceType(I
 }
 #endif // ENABLE(WEBDRIVER_ACTIONS_API)
 
+#if ENABLE(WEBDRIVER_ACTIONS_API)
+// §15.4.2 Keyboard actions
+// https://w3c.github.io/webdriver/#dfn-normalised-key-value
+static VirtualKey normalizedVirtualKey(VirtualKey key)
+{
+    switch (key) {
+    case Inspector::Protocol::Automation::VirtualKey::ControlRight:
+        return Inspector::Protocol::Automation::VirtualKey::Control;
+    case Inspector::Protocol::Automation::VirtualKey::ShiftRight:
+        return Inspector::Protocol::Automation::VirtualKey::Shift;
+    case Inspector::Protocol::Automation::VirtualKey::AlternateRight:
+        return Inspector::Protocol::Automation::VirtualKey::Alternate;
+    case Inspector::Protocol::Automation::VirtualKey::MetaRight:
+        return Inspector::Protocol::Automation::VirtualKey::Meta;
+    case Inspector::Protocol::Automation::VirtualKey::DownArrowRight:
+        return Inspector::Protocol::Automation::VirtualKey::DownArrow;
+    case Inspector::Protocol::Automation::VirtualKey::UpArrowRight:
+        return Inspector::Protocol::Automation::VirtualKey::UpArrow;
+    case Inspector::Protocol::Automation::VirtualKey::LeftArrowRight:
+        return Inspector::Protocol::Automation::VirtualKey::LeftArrow;
+    case Inspector::Protocol::Automation::VirtualKey::RightArrowRight:
+        return Inspector::Protocol::Automation::VirtualKey::RightArrow;
+    case Inspector::Protocol::Automation::VirtualKey::PageUpRight:
+        return Inspector::Protocol::Automation::VirtualKey::PageUp;
+    case Inspector::Protocol::Automation::VirtualKey::PageDownRight:
+        return Inspector::Protocol::Automation::VirtualKey::PageDown;
+    case Inspector::Protocol::Automation::VirtualKey::EndRight:
+        return Inspector::Protocol::Automation::VirtualKey::End;
+    case Inspector::Protocol::Automation::VirtualKey::HomeRight:
+        return Inspector::Protocol::Automation::VirtualKey::Home;
+    case Inspector::Protocol::Automation::VirtualKey::DeleteRight:
+        return Inspector::Protocol::Automation::VirtualKey::Delete;
+    case Inspector::Protocol::Automation::VirtualKey::InsertRight:
+        return Inspector::Protocol::Automation::VirtualKey::Insert;
+    default:
+        return key;
+    }
+}
+#endif // ENABLE(WEBDRIVER_ACTIONS_API)
+
 void WebAutomationSession::performInteractionSequence(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, Ref<JSON::Array>&& inputSources, Ref<JSON::Array>&& steps, Ref<WebAutomationSession::PerformInteractionSequenceCallback>&& callback)
 {
     // This command implements WebKit support for §17.5 Perform Actions.
@@ -1971,7 +2011,7 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
                 sourceState.pressedCharKey = pressedCharKeyString.characterAt(0);
 
             if (auto pressedVirtualKeysArray = stateObject->getArray("pressedVirtualKeys"_s)) {
-                VirtualKeySet pressedVirtualKeys { };
+                VirtualKeyMap pressedVirtualKeys;
 
                 for (auto it = pressedVirtualKeysArray->begin(); it != pressedVirtualKeysArray->end(); ++it) {
                     auto pressedVirtualKeyString = (*it)->asString();
@@ -1982,7 +2022,7 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
                     if (!parsedVirtualKey)
                         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Encountered an unknown virtual key value.");
                     else
-                        pressedVirtualKeys.add(parsedVirtualKey.value());
+                        pressedVirtualKeys.add(normalizedVirtualKey(parsedVirtualKey.value()), parsedVirtualKey.value());
                 }
 
                 sourceState.pressedVirtualKeys = pressedVirtualKeys;

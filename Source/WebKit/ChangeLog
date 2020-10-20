@@ -1,3 +1,29 @@
+2020-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: add support for right variations of virtual keys
+        https://bugs.webkit.org/show_bug.cgi?id=217819
+
+        Reviewed by Brian Burg.
+
+        Instead of using a HashSet the pressed virtual keys are now stored in a HashMap where the key is the normalized
+        virtual key and the value is the raw virtual key.
+
+        * UIProcess/Automation/Automation.json:
+        * UIProcess/Automation/SimulatedInputDispatcher.cpp:
+        (WebKit::SimulatedInputDispatcher::transitionInputSourceToState):
+        * UIProcess/Automation/SimulatedInputDispatcher.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::normalizedVirtualKey):
+        (WebKit::WebAutomationSession::performInteractionSequence):
+        * UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp:
+        (WebKit::keyCodeForVirtualKey):
+        (WebKit::modifiersForKeyCode):
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        (WebKit::keyCodeForVirtualKey):
+        * UIProcess/Automation/wpe/WebAutomationSessionWPE.cpp:
+        (WebKit::keyCodeForVirtualKey):
+        (WebKit::modifiersForKeyCode):
+
 2020-10-19  Peng Liu  <peng.liu6@apple.com>
 
         Two feature flag names are incorrect

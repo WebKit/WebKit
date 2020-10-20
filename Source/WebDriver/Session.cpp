@@ -1934,17 +1934,23 @@ String Session::virtualKeyForKey(UChar key, KeyModifier& modifier)
     case 0xE007U:
         return "Enter"_s;
     case 0xE008U:
-    case 0xE050U:
         modifier = KeyModifier::Shift;
         return "Shift"_s;
+    case 0xE050U:
+        modifier = KeyModifier::Shift;
+        return "ShiftRight"_s;
     case 0xE009U:
-    case 0xE051U:
         modifier = KeyModifier::Control;
         return "Control"_s;
+    case 0xE051U:
+        modifier = KeyModifier::Control;
+        return "ControlRight"_s;
     case 0xE00AU:
-    case 0xE052U:
         modifier = KeyModifier::Alternate;
         return "Alternate"_s;
+    case 0xE052U:
+        modifier = KeyModifier::Alternate;
+        return "AlternateRight"_s;
     case 0xE00BU:
         return "Pause"_s;
     case 0xE00CU:
@@ -1952,35 +1958,45 @@ String Session::virtualKeyForKey(UChar key, KeyModifier& modifier)
     case 0xE00DU:
         return "Space"_s;
     case 0xE00EU:
-    case 0xE054U:
         return "PageUp"_s;
+    case 0xE054U:
+        return "PageUpRight"_s;
     case 0xE00FU:
-    case 0xE055U:
         return "PageDown"_s;
+    case 0xE055U:
+        return "PageDownRight"_s;
     case 0xE010U:
-    case 0xE056U:
         return "End"_s;
+    case 0xE056U:
+        return "EndRight"_s;
     case 0xE011U:
-    case 0xE057U:
         return "Home"_s;
+    case 0xE057U:
+        return "HomeRight"_s;
     case 0xE012U:
-    case 0xE058U:
         return "LeftArrow"_s;
+    case 0xE058U:
+        return "LeftArrowRight"_s;
     case 0xE013U:
-    case 0xE059U:
         return "UpArrow"_s;
+    case 0xE059U:
+        return "UpArrowRight"_s;
     case 0xE014U:
-    case 0xE05AU:
         return "RightArrow"_s;
+    case 0xE05AU:
+        return "RightArrowRight"_s;
     case 0xE015U:
-    case 0xE05BU:
         return "DownArrow"_s;
+    case 0xE05BU:
+        return "DownArrowRight"_s;
     case 0xE016U:
-    case 0xE05CU:
         return "Insert"_s;
+    case 0xE05CU:
+        return "InsertRight"_s;
     case 0xE017U:
-    case 0xE05DU:
         return "Delete"_s;
+    case 0xE05DU:
+        return "DeleteRight"_s;
     case 0xE018U:
         return "Semicolon"_s;
     case 0xE019U:
@@ -2042,9 +2058,11 @@ String Session::virtualKeyForKey(UChar key, KeyModifier& modifier)
     case 0xE03CU:
         return "Function12"_s;
     case 0xE03DU:
-    case 0xE053U:
         modifier = KeyModifier::Meta;
         return "Meta"_s;
+    case 0xE053U:
+        modifier = KeyModifier::Meta;
+        return "MetaRight"_s;
     default:
         break;
     }

@@ -56,7 +56,7 @@ class WebPageProxy;
 
 using KeyboardInteraction = Inspector::Protocol::Automation::KeyboardInteractionType;
 using VirtualKey = Inspector::Protocol::Automation::VirtualKey;
-using VirtualKeySet = HashSet<VirtualKey, WTF::IntHash<VirtualKey>, WTF::StrongEnumHashTraits<VirtualKey>>;
+using VirtualKeyMap = HashMap<VirtualKey, VirtualKey, WTF::IntHash<VirtualKey>, WTF::StrongEnumHashTraits<VirtualKey>>;
 using CharKey = char; // For WebDriver, this only needs to support ASCII characters on 102-key keyboard.
 using MouseButton = Inspector::Protocol::Automation::MouseButton;
 using MouseInteraction = Inspector::Protocol::Automation::MouseInteraction;
@@ -77,7 +77,7 @@ enum class TouchInteraction {
 
 struct SimulatedInputSourceState {
     Optional<CharKey> pressedCharKey;
-    VirtualKeySet pressedVirtualKeys;
+    VirtualKeyMap pressedVirtualKeys;
     Optional<MouseButton> pressedMouseButton;
     Optional<MouseMoveOrigin> origin;
     Optional<String> nodeHandle;

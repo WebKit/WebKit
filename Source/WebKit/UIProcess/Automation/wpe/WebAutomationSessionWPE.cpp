@@ -163,12 +163,20 @@ static uint32_t keyCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey
 {
     switch (key) {
     case Inspector::Protocol::Automation::VirtualKey::Shift:
+        return WPE_KEY_Shift_L;
+    case Inspector::Protocol::Automation::VirtualKey::ShiftRight:
         return WPE_KEY_Shift_R;
     case Inspector::Protocol::Automation::VirtualKey::Control:
+        return WPE_KEY_Control_L;
+    case Inspector::Protocol::Automation::VirtualKey::ControlRight:
         return WPE_KEY_Control_R;
     case Inspector::Protocol::Automation::VirtualKey::Alternate:
         return WPE_KEY_Alt_L;
+    case Inspector::Protocol::Automation::VirtualKey::AlternateRight:
+        return WPE_KEY_Alt_R;
     case Inspector::Protocol::Automation::VirtualKey::Meta:
+        return WPE_KEY_Meta_L;
+    case Inspector::Protocol::Automation::VirtualKey::MetaRight:
         return WPE_KEY_Meta_R;
     case Inspector::Protocol::Automation::VirtualKey::Command:
         return WPE_KEY_Execute;
@@ -190,24 +198,44 @@ static uint32_t keyCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey
         return WPE_KEY_Escape;
     case Inspector::Protocol::Automation::VirtualKey::PageUp:
         return WPE_KEY_Page_Up;
+    case Inspector::Protocol::Automation::VirtualKey::PageUpRight:
+        return WPE_KEY_KP_Page_Up;
     case Inspector::Protocol::Automation::VirtualKey::PageDown:
         return WPE_KEY_Page_Down;
+    case Inspector::Protocol::Automation::VirtualKey::PageDownRight:
+        return WPE_KEY_KP_Page_Down;
     case Inspector::Protocol::Automation::VirtualKey::End:
         return WPE_KEY_End;
+    case Inspector::Protocol::Automation::VirtualKey::EndRight:
+        return WPE_KEY_KP_End;
     case Inspector::Protocol::Automation::VirtualKey::Home:
         return WPE_KEY_Home;
+    case Inspector::Protocol::Automation::VirtualKey::HomeRight:
+        return WPE_KEY_KP_Home;
     case Inspector::Protocol::Automation::VirtualKey::LeftArrow:
         return WPE_KEY_Left;
+    case Inspector::Protocol::Automation::VirtualKey::LeftArrowRight:
+        return WPE_KEY_KP_Left;
     case Inspector::Protocol::Automation::VirtualKey::UpArrow:
         return WPE_KEY_Up;
+    case Inspector::Protocol::Automation::VirtualKey::UpArrowRight:
+        return WPE_KEY_KP_Up;
     case Inspector::Protocol::Automation::VirtualKey::RightArrow:
         return WPE_KEY_Right;
+    case Inspector::Protocol::Automation::VirtualKey::RightArrowRight:
+        return WPE_KEY_KP_Right;
     case Inspector::Protocol::Automation::VirtualKey::DownArrow:
         return WPE_KEY_Down;
+    case Inspector::Protocol::Automation::VirtualKey::DownArrowRight:
+        return WPE_KEY_KP_Down;
     case Inspector::Protocol::Automation::VirtualKey::Insert:
         return WPE_KEY_Insert;
+    case Inspector::Protocol::Automation::VirtualKey::InsertRight:
+        return WPE_KEY_KP_Insert;
     case Inspector::Protocol::Automation::VirtualKey::Delete:
         return WPE_KEY_Delete;
+    case Inspector::Protocol::Automation::VirtualKey::DeleteRight:
+        return WPE_KEY_KP_Delete;
     case Inspector::Protocol::Automation::VirtualKey::Space:
         return WPE_KEY_space;
     case Inspector::Protocol::Automation::VirtualKey::Semicolon:
@@ -281,12 +309,16 @@ static uint32_t keyCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey
 static uint32_t modifiersForKeyCode(unsigned keyCode)
 {
     switch (keyCode) {
+    case WPE_KEY_Shift_L:
     case WPE_KEY_Shift_R:
         return wpe_input_keyboard_modifier_shift;
+    case WPE_KEY_Control_L:
     case WPE_KEY_Control_R:
         return wpe_input_keyboard_modifier_control;
     case WPE_KEY_Alt_L:
+    case WPE_KEY_Alt_R:
         return wpe_input_keyboard_modifier_alt;
+    case WPE_KEY_Meta_L:
     case WPE_KEY_Meta_R:
         return wpe_input_keyboard_modifier_meta;
     }

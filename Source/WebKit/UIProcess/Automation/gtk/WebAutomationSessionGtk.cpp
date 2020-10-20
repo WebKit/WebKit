@@ -122,12 +122,20 @@ static int keyCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey key)
 {
     switch (key) {
     case Inspector::Protocol::Automation::VirtualKey::Shift:
+        return GDK_KEY_Shift_L;
+    case Inspector::Protocol::Automation::VirtualKey::ShiftRight:
         return GDK_KEY_Shift_R;
     case Inspector::Protocol::Automation::VirtualKey::Control:
+        return GDK_KEY_Control_L;
+    case Inspector::Protocol::Automation::VirtualKey::ControlRight:
         return GDK_KEY_Control_R;
     case Inspector::Protocol::Automation::VirtualKey::Alternate:
         return GDK_KEY_Alt_L;
+    case Inspector::Protocol::Automation::VirtualKey::AlternateRight:
+        return GDK_KEY_Alt_R;
     case Inspector::Protocol::Automation::VirtualKey::Meta:
+        return GDK_KEY_Meta_L;
+    case Inspector::Protocol::Automation::VirtualKey::MetaRight:
         return GDK_KEY_Meta_R;
     case Inspector::Protocol::Automation::VirtualKey::Command:
         return GDK_KEY_Execute;
@@ -149,24 +157,44 @@ static int keyCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey key)
         return GDK_KEY_Escape;
     case Inspector::Protocol::Automation::VirtualKey::PageUp:
         return GDK_KEY_Page_Up;
+    case Inspector::Protocol::Automation::VirtualKey::PageUpRight:
+        return GDK_KEY_KP_Page_Up;
     case Inspector::Protocol::Automation::VirtualKey::PageDown:
         return GDK_KEY_Page_Down;
+    case Inspector::Protocol::Automation::VirtualKey::PageDownRight:
+        return GDK_KEY_KP_Page_Down;
     case Inspector::Protocol::Automation::VirtualKey::End:
         return GDK_KEY_End;
+    case Inspector::Protocol::Automation::VirtualKey::EndRight:
+        return GDK_KEY_KP_End;
     case Inspector::Protocol::Automation::VirtualKey::Home:
         return GDK_KEY_Home;
+    case Inspector::Protocol::Automation::VirtualKey::HomeRight:
+        return GDK_KEY_KP_Home;
     case Inspector::Protocol::Automation::VirtualKey::LeftArrow:
         return GDK_KEY_Left;
+    case Inspector::Protocol::Automation::VirtualKey::LeftArrowRight:
+        return GDK_KEY_KP_Left;
     case Inspector::Protocol::Automation::VirtualKey::UpArrow:
         return GDK_KEY_Up;
+    case Inspector::Protocol::Automation::VirtualKey::UpArrowRight:
+        return GDK_KEY_KP_Up;
     case Inspector::Protocol::Automation::VirtualKey::RightArrow:
         return GDK_KEY_Right;
+    case Inspector::Protocol::Automation::VirtualKey::RightArrowRight:
+        return GDK_KEY_KP_Right;
     case Inspector::Protocol::Automation::VirtualKey::DownArrow:
         return GDK_KEY_Down;
+    case Inspector::Protocol::Automation::VirtualKey::DownArrowRight:
+        return GDK_KEY_KP_Down;
     case Inspector::Protocol::Automation::VirtualKey::Insert:
         return GDK_KEY_Insert;
+    case Inspector::Protocol::Automation::VirtualKey::InsertRight:
+        return GDK_KEY_KP_Insert;
     case Inspector::Protocol::Automation::VirtualKey::Delete:
         return GDK_KEY_Delete;
+    case Inspector::Protocol::Automation::VirtualKey::DeleteRight:
+        return GDK_KEY_KP_Delete;
     case Inspector::Protocol::Automation::VirtualKey::Space:
         return GDK_KEY_space;
     case Inspector::Protocol::Automation::VirtualKey::Semicolon:
@@ -240,12 +268,16 @@ static int keyCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey key)
 static unsigned modifiersForKeyCode(unsigned keyCode)
 {
     switch (keyCode) {
+    case GDK_KEY_Shift_L:
     case GDK_KEY_Shift_R:
         return GDK_SHIFT_MASK;
+    case GDK_KEY_Control_L:
     case GDK_KEY_Control_R:
         return GDK_CONTROL_MASK;
     case GDK_KEY_Alt_L:
+    case GDK_KEY_Alt_R:
         return GDK_MOD1_MASK;
+    case GDK_KEY_Meta_L:
     case GDK_KEY_Meta_R:
         return GDK_META_MASK;
     }

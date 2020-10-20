@@ -349,31 +349,31 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
             m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyRelease, a.pressedCharKey.value(), WTFMove(eventDispatchFinished));
         } else if (a.pressedVirtualKeys != b.pressedVirtualKeys) {
             bool simulatedAnInteraction = false;
-            for (VirtualKey key : b.pressedVirtualKeys) {
-                if (!a.pressedVirtualKeys.contains(key)) {
+            for (const auto& iter : b.pressedVirtualKeys) {
+                if (!a.pressedVirtualKeys.contains(iter.key)) {
                     ASSERT_WITH_MESSAGE(!simulatedAnInteraction, "Only one VirtualKey may differ at a time between two input source states.");
                     if (simulatedAnInteraction)
                         continue;
                     simulatedAnInteraction = true;
 #if !LOG_DISABLED
-                    String virtualKeyName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(key);
+                    String virtualKeyName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(iter.value);
                     LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyPress[key=%s] for transition to %d.%d", this, virtualKeyName.utf8().data(), m_keyframeIndex, m_inputSourceStateIndex);
 #endif
-                    m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyPress, key, WTFMove(eventDispatchFinished));
+                    m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyPress, iter.value, WTFMove(eventDispatchFinished));
                 }
             }
 
-            for (VirtualKey key : a.pressedVirtualKeys) {
-                if (!b.pressedVirtualKeys.contains(key)) {
+            for (const auto& iter : a.pressedVirtualKeys) {
+                if (!b.pressedVirtualKeys.contains(iter.key)) {
                     ASSERT_WITH_MESSAGE(!simulatedAnInteraction, "Only one VirtualKey may differ at a time between two input source states.");
                     if (simulatedAnInteraction)
                         continue;
                     simulatedAnInteraction = true;
 #if !LOG_DISABLED
-                    String virtualKeyName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(key);
+                    String virtualKeyName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(iter.value);
                     LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyRelease[key=%s] for transition to %d.%d", this, virtualKeyName.utf8().data(), m_keyframeIndex, m_inputSourceStateIndex);
 #endif
-                    m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyRelease, key, WTFMove(eventDispatchFinished));
+                    m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyRelease, iter.value, WTFMove(eventDispatchFinished));
                 }
             }
         } else

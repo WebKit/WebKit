@@ -411,15 +411,23 @@ static int keyCodeForVirtualKey(VirtualKey key)
     switch (key) {
     case VirtualKey::Shift:
         return kVK_Shift;
+    case VirtualKey::ShiftRight:
+        return kVK_RightShift;
     case VirtualKey::Control:
         return kVK_Control;
+    case VirtualKey::ControlRight:
+        return kVK_RightControl;
     case VirtualKey::Alternate:
         return kVK_Option;
+    case VirtualKey::AlternateRight:
+        return kVK_RightOption;
     case VirtualKey::Meta:
         // The 'meta' key does not exist on Apple keyboards and is usually
         // mapped to the Command key when using third-party keyboards.
     case VirtualKey::Command:
         return kVK_Command;
+    case VirtualKey::MetaRight:
+        return kVK_RightCommand;
     case VirtualKey::Help:
         return kVK_Help;
     case VirtualKey::Backspace:
@@ -440,26 +448,36 @@ static int keyCodeForVirtualKey(VirtualKey key)
     case VirtualKey::Escape:
         return kVK_Escape;
     case VirtualKey::PageUp:
+    case VirtualKey::PageUpRight:
         return kVK_PageUp;
     case VirtualKey::PageDown:
+    case VirtualKey::PageDownRight:
         return kVK_PageDown;
     case VirtualKey::End:
+    case VirtualKey::EndRight:
         return kVK_End;
     case VirtualKey::Home:
+    case VirtualKey::HomeRight:
         return kVK_Home;
     case VirtualKey::LeftArrow:
+    case VirtualKey::LeftArrowRight:
         return kVK_LeftArrow;
     case VirtualKey::UpArrow:
+    case VirtualKey::UpArrowRight:
         return kVK_UpArrow;
     case VirtualKey::RightArrow:
+    case VirtualKey::RightArrowRight:
         return kVK_RightArrow;
     case VirtualKey::DownArrow:
+    case VirtualKey::DownArrowRight:
         return kVK_DownArrow;
     case VirtualKey::Insert:
+    case VirtualKey::InsertRight:
         // The 'insert' key does not exist on Apple keyboards and has no keyCode.
         // The semantics are unclear so just abort and do nothing.
         return 0;
     case VirtualKey::Delete:
+    case VirtualKey::DeleteRight:
         return kVK_ForwardDelete;
     case VirtualKey::Space:
         return kVK_Space;

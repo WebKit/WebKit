@@ -1,3 +1,34 @@
+2020-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: add support for right variations of virtual keys
+        https://bugs.webkit.org/show_bug.cgi?id=217819
+
+        Reviewed by Brian Burg.
+
+        The browser is currently receiving the virtual keys already normalized, but WebDriver expects the key code to be
+        the actual one, not the normalized one. We need to send the raw virtual keys to the browser and do the
+        normalization there, but use the raw one when synthesizing the events.
+
+        Fixes: imported/w3c/webdriver/tests/perform_actions/key_events.py::test_modifier_key_sends_correct_events[\ue009-CONTROL]
+               imported/w3c/webdriver/tests/perform_actions/key_events.py::test_modifier_key_sends_correct_events[\ue008-SHIFT]
+               imported/w3c/webdriver/tests/perform_actions/key_events.py::test_modifier_key_sends_correct_events[\ue052-R_ALT]
+               imported/w3c/webdriver/tests/perform_actions/key_events.py::test_special_key_sends_keydown[CONTROL-expected5]
+               imported/w3c/webdriver/tests/perform_actions/key_events.py::test_special_key_sends_keydown[R_ALT-expected48]
+               imported/w3c/webdriver/tests/perform_actions/key_events.py::test_special_key_sends_keydown[R_ARROWDOWN-expected49]
+               imported/w3c/webdriver/tests/perform_actions/key_events.py::test_special_key_sends_keydown[R_ARROWLEFT-expected50]
+               imported/w3c/webdriver/tests/perform_actions/key_events.py::test_special_key_sends_keydown[R_ARROWRIGHT-expected51]
+               imported/w3c/webdriver/tests/perform_actions/key_events.py::test_special_key_sends_keydown[R_ARROWUP-expected52]
+               imported/w3c/webdriver/tests/perform_actions/key_events.py::test_special_key_sends_keydown[R_DELETE-expected54]
+               imported/w3c/webdriver/tests/perform_actions/key_events.py::test_special_key_sends_keydown[R_END-expected55]
+               imported/w3c/webdriver/tests/perform_actions/key_events.py::test_special_key_sends_keydown[R_HOME-expected56]
+               imported/w3c/webdriver/tests/perform_actions/key_events.py::test_special_key_sends_keydown[R_INSERT-expected57]
+               imported/w3c/webdriver/tests/perform_actions/key_events.py::test_special_key_sends_keydown[R_PAGEDOWN-expected59]
+               imported/w3c/webdriver/tests/perform_actions/key_events.py::test_special_key_sends_keydown[R_PAGEUP-expected60]
+               imported/w3c/webdriver/tests/perform_actions/key_events.py::test_special_key_sends_keydown[SHIFT-expected64]
+
+        * Session.cpp:
+        (WebDriver::Session::virtualKeyForKey): Do not normalize the virtual keys.
+
 2020-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: add support for same site cookies
