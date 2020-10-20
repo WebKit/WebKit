@@ -1,3 +1,15 @@
+2020-10-20  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update rr for AMD Ryzen support
+        https://bugs.webkit.org/show_bug.cgi?id=217474
+
+        Reviewed by Adrian Perez de Castro.
+
+        * buildstream/Pipfile: Remove Python 3.8 hard requirement.
+        * buildstream/Pipfile.lock:
+        * buildstream/elements/freedesktop-sdk.bst: Bump to latest version of the 20.08 FDO junction.
+        * buildstream/elements/sdk/rr.bst: Bump to current git master.
+
 2020-10-20  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Gamepad events do not occur in the flatpak shell.

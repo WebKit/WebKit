@@ -6,9 +6,6 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-buildstream = "==1.4.3"
+buildstream = "==1.6.0"
 buildstream-external = "*"
 pygobject = "==3.36"
-
-[requires]
-python_version = "3.8"
