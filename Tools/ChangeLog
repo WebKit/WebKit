@@ -1,3 +1,16 @@
+2020-10-20  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        TestOptionsGeneratedKeys.h:30:52: warning: backslash-newline at end of file
+        https://bugs.webkit.org/show_bug.cgi?id=217957
+
+        Reviewed by Sam Weinig.
+
+        I guess this is bad because something else from another header could be on the next line,
+        depending on the order that headers get included into the source file. So let's add a blank
+        line to the end of the file.
+
+        * WebKitTestRunner/Scripts/PreferencesTemplates/TestOptionsGeneratedKeys.h.erb:
+
 2020-10-16  Jer Noble  <jer.noble@apple.com>
 
         Add skeleton implementation of Media Session API
