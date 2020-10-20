@@ -1,3 +1,17 @@
+2020-10-19  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] flex-shrink property should be animatable
+        https://bugs.webkit.org/show_bug.cgi?id=209874
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Added new expectations. Replaced ~100 FAIL subtests with PASS expectations.
+
+        * web-platform-tests/css/css-flexbox/animation/flex-shrink-interpolation-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+
 2020-10-19  Sihui Liu  <sihui_liu@apple.com>
 
         Import speech tests from WPT
