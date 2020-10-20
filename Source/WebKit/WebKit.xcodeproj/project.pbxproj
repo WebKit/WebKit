@@ -1738,8 +1738,6 @@
 		CD0C6831201FD10100A59409 /* WKFullScreenViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD0C682F201FD10100A59409 /* WKFullScreenViewController.h */; };
 		CD19A26E1A13E834008D650E /* WebDiagnosticLoggingClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CD19A26A1A13E821008D650E /* WebDiagnosticLoggingClient.h */; };
 		CD19D2EA2046406F0017074A /* FullscreenTouchSecheuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = CD19D2E82046406F0017074A /* FullscreenTouchSecheuristic.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CD2865EE2255562000606AC7 /* ProcessTaskStateObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = CD2865EC2255562000606AC7 /* ProcessTaskStateObserver.h */; };
-		CD2865EF2255562000606AC7 /* ProcessTaskStateObserver.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD2865ED2255562000606AC7 /* ProcessTaskStateObserver.mm */; };
 		CD4570D3244113B500A3DCEB /* AudioSessionRoutingArbitratorProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD4570D02441014A00A3DCEB /* AudioSessionRoutingArbitratorProxyMessageReceiver.cpp */; };
 		CD4570D424411D0F00A3DCEB /* AudioSessionRoutingArbitrator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD4570CB2440FB2A00A3DCEB /* AudioSessionRoutingArbitrator.cpp */; };
 		CD46618324010A670047CA35 /* RemoteCDMInstanceSessionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD466181240105640047CA35 /* RemoteCDMInstanceSessionMessageReceiver.cpp */; };
@@ -1789,7 +1787,6 @@
 		CDE555342406EB8C008A3DDB /* RemoteLegacyCDMSessionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE5552E2406B897008A3DDB /* RemoteLegacyCDMSessionMessageReceiver.cpp */; };
 		CDE555352406EB8C008A3DDB /* RemoteLegacyCDMSessionProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE555312406B897008A3DDB /* RemoteLegacyCDMSessionProxyMessageReceiver.cpp */; };
 		CE11AD521CBC482F00681EE5 /* CodeSigning.h in Headers */ = {isa = PBXBuildFile; fileRef = CE11AD511CBC482F00681EE5 /* CodeSigning.h */; };
-		CE1A0BD21A48E6C60054EF74 /* AssertionServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A0BCC1A48E6C60054EF74 /* AssertionServicesSPI.h */; };
 		CE1A0BD61A48E6C60054EF74 /* TCCSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A0BD01A48E6C60054EF74 /* TCCSPI.h */; };
 		CE1A0BD71A48E6C60054EF74 /* TextInputSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A0BD11A48E6C60054EF74 /* TextInputSPI.h */; };
 		CE21215F240EE571006ED443 /* WKTextPlaceholder.h in Headers */ = {isa = PBXBuildFile; fileRef = CE21215D240EE571006ED443 /* WKTextPlaceholder.h */; };
@@ -5149,8 +5146,6 @@
 		CD19A26A1A13E821008D650E /* WebDiagnosticLoggingClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDiagnosticLoggingClient.h; sourceTree = "<group>"; };
 		CD19D2E82046406F0017074A /* FullscreenTouchSecheuristic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FullscreenTouchSecheuristic.h; path = ios/fullscreen/FullscreenTouchSecheuristic.h; sourceTree = "<group>"; };
 		CD19D2E92046406F0017074A /* FullscreenTouchSecheuristic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FullscreenTouchSecheuristic.cpp; path = ios/fullscreen/FullscreenTouchSecheuristic.cpp; sourceTree = "<group>"; };
-		CD2865EC2255562000606AC7 /* ProcessTaskStateObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProcessTaskStateObserver.h; sourceTree = "<group>"; };
-		CD2865ED2255562000606AC7 /* ProcessTaskStateObserver.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessTaskStateObserver.mm; sourceTree = "<group>"; };
 		CD4570CA2440FB2A00A3DCEB /* AudioSessionRoutingArbitrator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioSessionRoutingArbitrator.h; sourceTree = "<group>"; };
 		CD4570CB2440FB2A00A3DCEB /* AudioSessionRoutingArbitrator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSessionRoutingArbitrator.cpp; sourceTree = "<group>"; };
 		CD4570D02441014A00A3DCEB /* AudioSessionRoutingArbitratorProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSessionRoutingArbitratorProxyMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -5305,7 +5300,6 @@
 		CDE555312406B897008A3DDB /* RemoteLegacyCDMSessionProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteLegacyCDMSessionProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		CE11AD4F1CBC47F800681EE5 /* CodeSigning.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CodeSigning.mm; sourceTree = "<group>"; };
 		CE11AD511CBC482F00681EE5 /* CodeSigning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeSigning.h; sourceTree = "<group>"; };
-		CE1A0BCC1A48E6C60054EF74 /* AssertionServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssertionServicesSPI.h; sourceTree = "<group>"; };
 		CE1A0BD01A48E6C60054EF74 /* TCCSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCCSPI.h; sourceTree = "<group>"; };
 		CE1A0BD11A48E6C60054EF74 /* TextInputSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInputSPI.h; sourceTree = "<group>"; };
 		CE21215D240EE571006ED443 /* WKTextPlaceholder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKTextPlaceholder.h; path = ios/WKTextPlaceholder.h; sourceTree = "<group>"; };
@@ -7583,8 +7577,6 @@
 				CE550E12228373C800D28791 /* InsertTextOptions.h */,
 				C1663E5A24AEA74200C6A3B2 /* LaunchServicesDatabaseXPCConstants.h */,
 				2D1087621D2C641B00B85F82 /* LoadParametersCocoa.mm */,
-				CD2865EC2255562000606AC7 /* ProcessTaskStateObserver.h */,
-				CD2865ED2255562000606AC7 /* ProcessTaskStateObserver.mm */,
 				7AB4EA3F22777C460085BBAA /* SandboxExtensionCocoa.mm */,
 				7AB4EA4122777FC70085BBAA /* SandboxInitialiationParametersCocoa.mm */,
 				E19BDA88193686A400B97F57 /* SandboxUtilities.h */,
@@ -10570,7 +10562,6 @@
 		CE1A0BCB1A48E6C60054EF74 /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				CE1A0BCC1A48E6C60054EF74 /* AssertionServicesSPI.h */,
 				CDA041F31ACE2105004A13EC /* BackBoardServicesSPI.h */,
 				95C943902523C0D00054F3D5 /* BaseBoardSPI.h */,
 				2D4AF0882044C3C4006C8817 /* FrontBoardServicesSPI.h */,
@@ -10918,7 +10909,6 @@
 				1AEFD2F711D1807B008219D3 /* ArgumentCoders.h in Headers */,
 				1AAF0C4A12B16334008E49E2 /* ArgumentCodersCF.h in Headers */,
 				A175C44A21AA3171000037D0 /* ArgumentCodersCocoa.h in Headers */,
-				CE1A0BD21A48E6C60054EF74 /* AssertionServicesSPI.h in Headers */,
 				515E7728183DD6F60007203F /* AsyncRequest.h in Headers */,
 				AAFA634F234F7C6400FFA864 /* AsyncRevalidation.h in Headers */,
 				BCEE966D112FAF57006BCC24 /* Attachment.h in Headers */,
@@ -11229,7 +11219,6 @@
 				E1CC1B9012D7EADF00625838 /* PrintInfo.h in Headers */,
 				86F9536518FF58F5001DB2EF /* ProcessAssertion.h in Headers */,
 				BC1A7C581136E19C00FB7167 /* ProcessLauncher.h in Headers */,
-				CD2865EE2255562000606AC7 /* ProcessTaskStateObserver.h in Headers */,
 				463FD4821EB94EC000A2982C /* ProcessTerminationReason.h in Headers */,
 				86E67A251910B9D100004AB7 /* ProcessThrottler.h in Headers */,
 				83048AE61ACA45DC0082C832 /* ProcessThrottlerClient.h in Headers */,
@@ -13060,7 +13049,6 @@
 				2D91344D212CF9F000128AFD /* PluginView.cpp in Sources */,
 				C15CBB3723F37ECB00300CC7 /* PreferenceObserver.mm in Sources */,
 				2D54C31B212F4DA60049C174 /* ProcessLauncher.cpp in Sources */,
-				CD2865EF2255562000606AC7 /* ProcessTaskStateObserver.mm in Sources */,
 				1A0C227F2451130A00ED614D /* QuickLookThumbnailingSoftLink.mm in Sources */,
 				1A0C225E243575CD00ED614D /* QuickLookThumbnailLoader.mm in Sources */,
 				9B1229CE23FF25F2008CA751 /* RemoteAudioDestinationManager.cpp in Sources */,

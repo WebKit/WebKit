@@ -1,3 +1,30 @@
+2020-10-20  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy code using AssertionServices
+        https://bugs.webkit.org/show_bug.cgi?id=217787
+        <rdar://problem/70160942>
+
+        Reviewed by Darin Adler.
+
+        Drop legacy code using AssertionServices as this framework is deprecated in favor of
+        RunningBoard. All our code has been ported to RunningBoard already.
+
+        * Configurations/WebKit.xcconfig:
+        * Platform/spi/ios/AssertionServicesSPI.h: Removed.
+        * Shared/Cocoa/ProcessTaskStateObserver.h: Removed.
+        * Shared/Cocoa/ProcessTaskStateObserver.mm: Removed.
+        * UIProcess/ApplicationStateTracker.mm:
+        * UIProcess/ProcessAssertion.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager init]):
+        (-[WKProcessAssertionBackgroundTaskManager _hasBackgroundTask]):
+        (-[WKProcessAssertionBackgroundTaskManager _updateBackgroundTask]):
+        (-[WKProcessAssertionBackgroundTaskManager assertion:didInvalidateWithError:]):
+        (-[WKProcessAssertionBackgroundTaskManager _releaseBackgroundTask]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+
 2020-10-20  Sam Weinig  <weinig@apple.com>
 
         Tweak WebPreferences*.yaml "exposed" key to only indicate that the key should not be changeable by the frontend
