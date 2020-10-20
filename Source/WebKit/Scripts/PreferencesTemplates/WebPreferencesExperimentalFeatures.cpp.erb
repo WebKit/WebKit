@@ -36,7 +36,7 @@ namespace WebKit {
 const Vector<RefPtr<API::Object>>& WebPreferences::experimentalFeatures()
 {
     static NeverDestroyed<Vector<RefPtr<API::Object>>> features(std::initializer_list<RefPtr<API::Object>> {
-<%- for @pref in @experimentalFeatures do -%>
+<%- for @pref in @exposedExperimentalFeatures do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
@@ -58,7 +58,7 @@ bool WebPreferences::isFeatureEnabled(const API::ExperimentalFeature& feature) c
     };
 
     static FeatureGetterMapping getters[] = {
-<%- for @pref in @experimentalFeatures do -%>
+<%- for @pref in @exposedExperimentalFeatures do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
@@ -92,7 +92,7 @@ void WebPreferences::setExperimentalFeatureEnabledForKey(const String& key, bool
     };
 
     static FeatureSetterMapping setters[] = {
-<%- for @pref in @experimentalFeatures do -%>
+<%- for @pref in @exposedExperimentalFeatures do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
@@ -113,7 +113,7 @@ void WebPreferences::setExperimentalFeatureEnabledForKey(const String& key, bool
 
 void WebPreferences::enableAllExperimentalFeatures()
 {
-<%- for @pref in @experimentalFeatures do -%>
+<%- for @pref in @exposedExperimentalFeatures do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>

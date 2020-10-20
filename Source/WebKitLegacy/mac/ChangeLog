@@ -1,3 +1,18 @@
+2020-10-20  Sam Weinig  <weinig@apple.com>
+
+        Tweak WebPreferences*.yaml "exposed" key to only indicate that the key should not be changeable by the frontend
+        https://bugs.webkit.org/show_bug.cgi?id=217918
+
+        Reviewed by Darin Adler.
+
+        Update to use new "exposed" prefix bindings and use default value explicitly
+        when updating settings for non-exposed preferences.
+
+        * Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb:
+        * Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.mm.erb:
+        * Scripts/PreferencesTemplates/WebPreferencesInternalFeatures.mm.erb:
+        * Scripts/PreferencesTemplates/WebViewPreferencesChangedGenerated.mm.erb:
+
 2020-10-17  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r25430): Fix -Wstring-concatenation warning from open source clang

@@ -1,3 +1,29 @@
+2020-10-20  Sam Weinig  <weinig@apple.com>
+
+        Tweak WebPreferences*.yaml "exposed" key to only indicate that the key should not be changeable by the frontend
+        https://bugs.webkit.org/show_bug.cgi?id=217918
+
+        Reviewed by Darin Adler.
+
+        * Scripts/GeneratePreferences.rb:
+        Tweak how the "exposed" key is interpreted to extend to keys with default values
+        for the current frontend (that should continue to be set on Settings for instance)
+        but that should not respect the key being passed in. For instance, the key 
+        "AsyncFrameScrollingEnabled" has default values for all front ends, since we need
+        to set it to false in Settings when building WebKitLegacy, but is only exposed to
+        WebKit, so it won't be in WebKitLegacy's -[WebPreferences internalFeatures] array
+        and won't do anything if passed to -[WebPreferences _setBoolPreferenceForTestingWithValue:forKey:].
+
+        * Scripts/Preferences/WebPreferences.yaml:
+        Replace now incorrect uses of exposed with temporary key "webKitLegacyBinding" to indicate
+        that these keys should be valid, but currently use a custom binding in WebKitLegacy.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+        Only expose AsyncFrameScrollingEnabled and AsyncOverflowScrollingEnabled to WebKit.
+        This maintains the behavior that these keys are not valid keys as test header commands
+        when run through DumpRenderTree.
+        
+
 2020-10-19  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r268115) [GTK] Build failures with GCC 7 (Ubuntu 18.04) and GCC 8 (Debian Buster)

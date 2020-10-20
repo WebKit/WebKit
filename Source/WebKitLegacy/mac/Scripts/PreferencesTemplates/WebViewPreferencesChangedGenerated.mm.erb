@@ -27,6 +27,7 @@
 
 #import "WebViewInternal.h"
 
+#import "WebPreferencesDefinitions.h"
 #import "WebPreferencesInternal.h"
 #import "WebViewData.h"
 #import <WebCore/DeprecatedGlobalSettings.h>
@@ -40,31 +41,43 @@
 {
     auto& settings = _private->page->settings();
 
-<%- for @pref in @preferencesBoundToSetting do -%>
+<%- for @pref in @preferencesBoundToSetting.select { |p| !p.opts["webKitLegacyBinding"] } do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
+<%- if @pref.exposed -%>
     settings.set<%= @pref.webcoreNameUpper %>([preferences <%= @pref.preferenceAccessor %>:@"<%= @pref.preferenceKey %>"]);
+<%- else -%>
+    settings.set<%= @pref.webcoreNameUpper %>(DEFAULT_VALUE_FOR_<%= @pref.name %>);
+<%- end -%>
 <%- if @pref.condition -%>
 #endif
 <%- end -%>
 <%- end -%>
 
-<%- for @pref in @preferencesBoundToDeprecatedGlobalSettings do -%>
+<%- for @pref in @preferencesBoundToDeprecatedGlobalSettings.select { |p| !p.opts["webKitLegacyBinding"] } do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
+<%- if @pref.exposed -%>
     WebCore::DeprecatedGlobalSettings::set<%= @pref.webcoreNameUpper %>([preferences <%= @pref.preferenceAccessor %>:@"<%= @pref.preferenceKey %>"]);
+<%- else -%>
+    WebCore::DeprecatedGlobalSettings::set<%= @pref.webcoreNameUpper %>(DEFAULT_VALUE_FOR_<%= @pref.name %>);
+<%- end -%>
 <%- if @pref.condition -%>
 #endif
 <%- end -%>
 <%- end -%>
 
-<%- for @pref in @preferencesBoundToRuntimeEnabledFeatures do -%>
+<%- for @pref in @preferencesBoundToRuntimeEnabledFeatures.select { |p| !p.opts["webKitLegacyBinding"] } do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
+<%- if @pref.exposed -%>
     WebCore::RuntimeEnabledFeatures::sharedFeatures().set<%= @pref.webcoreNameUpper %>([preferences <%= @pref.preferenceAccessor %>:@"<%= @pref.preferenceKey %>"]);
+<%- else -%>
+    WebCore::RuntimeEnabledFeatures::sharedFeatures().set<%= @pref.webcoreNameUpper %>(DEFAULT_VALUE_FOR_<%= @pref.name %>);
+<%- end -%>
 <%- if @pref.condition -%>
 #endif
 <%- end -%>

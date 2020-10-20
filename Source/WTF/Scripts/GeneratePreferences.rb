@@ -38,7 +38,7 @@ options = {
   :templates => []
 }
 optparse = OptionParser.new do |opts|
-  opts.banner = "Usage: #{File.basename($0)} --input file"
+  opts.banner = "Usage: #{File.basename($0)} --frontend <frontend> --base <base> --debug <debug> --experimental <experimental> --internal <internal> --template file"
 
   opts.separator ""
 
@@ -100,6 +100,7 @@ class Preference
   attr_accessor :condition
   attr_accessor :hidden
   attr_accessor :defaultValues
+  attr_accessor :exposed
 
   def initialize(name, opts, frontend)
     @name = name
@@ -113,6 +114,7 @@ class Preference
     @condition = opts["condition"]
     @hidden = opts["hidden"] || false
     @defaultValues = opts["defaultValue"][frontend]
+    @exposed = !opts["exposed"] || opts["exposed"].include?(frontend)
   end
 
   def nameLower
@@ -190,6 +192,12 @@ class Preferences
     @experimentalFeatures.sort! { |x, y| x.name <=> y.name }.sort! { |x, y| x.humanReadableName <=> y.humanReadableName }
     @internalFeatures.sort! { |x, y| x.name <=> y.name }.sort! { |x, y| x.humanReadableName <=> y.humanReadableName }
 
+    @exposedPreferences = @preferences.select { |p| p.exposed }
+    @exposedPreferencesNotDebug = @preferencesNotDebug.select { |p| p.exposed }
+    @exposedPreferencesDebug = @preferencesDebug.select { |p| p.exposed }
+    @exposedExperimentalFeatures = @experimentalFeatures.select { |p| p.exposed }
+    @exposedInternalFeatures = @internalFeatures.select { |p| p.exposed }
+
     @preferencesBoundToSetting = @preferences.select { |p| !p.webcoreBinding }
     @preferencesBoundToDeprecatedGlobalSettings = @preferences.select { |p| p.webcoreBinding == "DeprecatedGlobalSettings" }
     @preferencesBoundToRuntimeEnabledFeatures = @preferences.select { |p| p.webcoreBinding == "RuntimeEnabledFeatures" }
@@ -204,7 +212,7 @@ class Preferences
         if !options["webcoreBinding"] && options["defaultValue"].size != 3
           raise "ERROR: Preferences bound to WebCore::Settings must have default values for all frontends: #{name}"
         end
-        if !options["exposed"] or options["exposed"].include?(@frontend)
+        if options["defaultValue"].include?(@frontend)
           preference = Preference.new(name, options, @frontend)
           @preferences << preference
           result << preference

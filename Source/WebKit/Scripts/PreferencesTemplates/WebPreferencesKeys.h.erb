@@ -32,7 +32,7 @@
 namespace WebKit {
 namespace WebPreferencesKey {
 
-<%- for @pref in @preferences do -%>
+<%- for @pref in @exposedPreferences do -%>
 const String& <%= @pref.nameLower %>Key();
 <%- end -%>
 

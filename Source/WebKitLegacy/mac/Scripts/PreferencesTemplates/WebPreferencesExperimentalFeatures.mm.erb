@@ -37,7 +37,7 @@ using namespace WebKit;
 + (NSArray<WebFeature *> *)_experimentalFeatures
 {
     static NSArray<WebFeature *> *features = @[
-<%- for @pref in @experimentalFeatures do -%>
+<%- for @pref in @exposedExperimentalFeatures do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>

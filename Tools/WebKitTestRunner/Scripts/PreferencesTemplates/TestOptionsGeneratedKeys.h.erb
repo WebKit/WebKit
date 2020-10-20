@@ -28,7 +28,7 @@
 #pragma once
 
 #define GENERATED_WEB_PREFERENCE_KEY_TYPE_MAPPINGS \
-<%- for @pref in @preferences do -%>
+<%- for @pref in @exposedPreferences do -%>
     { "<%= @pref.name %>", TestHeaderKeyType::<%= @pref.typeUpper %>WebPreference }, \
 <%- end -%>
 \

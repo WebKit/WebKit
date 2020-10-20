@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-<%- for @pref in (@preferencesNotDebug + @preferencesDebug) do -%>
+<%- for @pref in (@exposedPreferencesNotDebug + @exposedPreferencesDebug) do -%>
 void WebPreferences::set<%= @pref.name %>(const <%= @pref.type %>& value)
 {
     if (!m_store.set<%= @pref.typeUpper %>ValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key(), value))
@@ -52,7 +52,7 @@ void WebPreferences::delete<%= @pref.name %>()
 
 <%- end -%>
 
-<%- for @pref in @experimentalFeatures do -%>
+<%- for @pref in @exposedExperimentalFeatures do -%>
 void WebPreferences::set<%= @pref.name %>(const bool& value)
 {
     if (!m_store.setBoolValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key(), value))
@@ -72,7 +72,7 @@ void WebPreferences::delete<%= @pref.name %>()
 
 <%- end -%>
 
-<%- for @pref in @internalFeatures do -%>
+<%- for @pref in @exposedInternalFeatures do -%>
 void WebPreferences::set<%= @pref.name %>(const bool& value)
 {
     if (!m_store.setBoolValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key(), value))

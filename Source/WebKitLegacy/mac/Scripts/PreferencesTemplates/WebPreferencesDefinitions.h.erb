@@ -58,7 +58,7 @@
 
 // Default initialization of WebPreferences' internal dictionary.
 
-<%- for @pref in @preferences do -%>
+<%- for @pref in @exposedPreferences do -%>
 <%-   if @pref.condition -%>
 #if <%= @pref.condition %>
 <%-   end -%>
@@ -71,7 +71,7 @@
 <%- end -%>
 
 #define INITIALIZE_DEFAULT_PREFERENCES_DICTIONARY_FROM_GENERATED_PREFERENCES \
-<%- for @pref in @preferences do -%>
+<%- for @pref in @exposedPreferences do -%>
      INITIALIZE_DEFAULT_PREFERENCES_FOR_<%= @pref.name %> \
 <%- end -%>
     \

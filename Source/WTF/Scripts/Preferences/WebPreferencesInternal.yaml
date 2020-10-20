@@ -81,6 +81,7 @@ AsyncFrameScrollingEnabled:
   webcoreOnChange: setNeedsRelayoutAllFrames
   humanReadableName: "Async Frame Scrolling"
   humanReadableDescription: "Perform frame scrolling off the main thread"
+  exposed: [ WebKit ]
   defaultValue:
     WebKitLegacy:
       default: false
@@ -96,6 +97,7 @@ AsyncOverflowScrollingEnabled:
   webcoreOnChange: setNeedsRelayoutAllFrames
   humanReadableName: "Async Overflow Scrolling"
   humanReadableDescription: "Perform overflow scrolling off the main thread"
+  exposed: [ WebKit ]
   defaultValue:
     WebKitLegacy:
       default: false

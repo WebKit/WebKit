@@ -416,7 +416,7 @@ ContentChangeObserverEnabled:
 # FIXME: This is handled via WebView SPI rather than WebPreferences for WebKitLegacy. We should change the SPI to lookup the WebPreferences value instead.
 CookieEnabled:
   type: bool
-  exposed: [ WebKit ]
+  webKitLegacyBinding: custom
   defaultValue:
     WebKit:
       default: true
@@ -962,7 +962,7 @@ InteractiveFormValidationEnabled:
   type: bool
   humanReadableName: "HTML Interactive Form Validation"
   humanReadableDescription: "HTML interactive form validation"
-  exposed: [ WebKit ]
+  webKitLegacyBinding: custom
   defaultValue:
     WebKit:
       default: true
@@ -1727,7 +1727,7 @@ ScrollingPerformanceLoggingEnabled:
 # FIXME: This is handled via WebView SPI rather than WebPreferences for WebKitLegacy. We should change the SPI to lookup the WebPreferences value instead.
 SelectTrailingWhitespaceEnabled:
   type: bool
-  exposed: [ WebKit ]
+  webKitLegacyBinding: custom
   defaultValue:
     WebKit:
       default: false
@@ -1946,7 +1946,7 @@ ShowsURLsInToolTipsEnabled:
 # FIXME: This is handled via WebView SPI rather than WebPreferences for WebKitLegacy. We should change the SPI to lookup the WebPreferences value instead.
 SmartInsertDeleteEnabled:
   type: bool
-  exposed: [ WebKit ]
+  webKitLegacyBinding: custom
   defaultValue:
     WebKit:
       default: true
