@@ -578,10 +578,11 @@ void RenderLayerBacking::destroyGraphicsLayers()
 
     GraphicsLayer::clear(m_maskLayer);
 
-    if (m_ancestorClippingStack) {
-        for (auto& entry : m_ancestorClippingStack->stack())
-            GraphicsLayer::unparentAndClear(entry.clippingLayer);
-    }
+    if (m_ancestorClippingStack)
+        removeClippingStackLayers(*m_ancestorClippingStack);
+
+    if (m_overflowControlsHostLayerAncestorClippingStack)
+        removeClippingStackLayers(*m_overflowControlsHostLayerAncestorClippingStack);
 
     GraphicsLayer::unparentAndClear(m_contentsContainmentLayer);
     GraphicsLayer::unparentAndClear(m_foregroundLayer);
@@ -1926,8 +1927,13 @@ bool RenderLayerBacking::updateAncestorClipping(bool needsAncestorClip, const Re
         }
     } else if (m_ancestorClippingStack) {
         removeClippingStackLayers(*m_ancestorClippingStack);
-
         m_ancestorClippingStack = nullptr;
+        
+        if (m_overflowControlsHostLayerAncestorClippingStack) {
+            removeClippingStackLayers(*m_overflowControlsHostLayerAncestorClippingStack);
+            m_overflowControlsHostLayerAncestorClippingStack = nullptr;
+        }
+        
         layersChanged = true;
     }
     
