@@ -157,7 +157,9 @@ def loadBuilderConfig(c, is_test_mode_enabled=False):
         if (category in ('AppleMac', 'AppleWin', 'iOS')) and factoryName != 'BuildFactory':
             builder['nextBuild'] = pickLatestBuild
 
-        if not USE_BUILDBOT_VERSION2:
+        if USE_BUILDBOT_VERSION2:
+            builder['tags'] = getTagsForBuilder(builder)
+        else:
             builder['category'] = category
         c['builders'].append(builder)
 
@@ -170,3 +172,23 @@ class PlatformSpecificScheduler(AnyBranchScheduler):
 
     def filter(self, change):
         return wkbuild.should_build(self.platform, change.files)
+
+
+def getInvalidTags():
+    """
+    We maintain a list of words which we do not want to display as tag in buildbot.
+    We generate a list of tags by splitting the builder name. We do not want certain words as tag.
+    For e.g. we don't want '11'as tag for builder iOS-11-Simulator-EWS
+    """
+    invalid_tags = [str(i) for i in xrange(0, 20)]
+    invalid_tags.extend(['EWS', 'TryBot'])
+    return invalid_tags
+
+
+def getValidTags(tags):
+    return list(set(tags) - set(getInvalidTags()))
+
+
+def getTagsForBuilder(builder):
+    keywords = filter(None, re.split('[, \-_:()]+', str(builder['name'])))
+    return getValidTags(keywords)

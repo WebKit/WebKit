@@ -1,3 +1,23 @@
+2020-10-20  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Use builder tags instead of category for latest buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=217958
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/build.webkit.org-config/loadConfig.py:
+        (loadBuilderConfig):
+        (PlatformSpecificScheduler.filter):
+        (getInvalidTags):
+        (getValidTags):
+        (getTagsForBuilder):
+        * BuildSlaveSupport/build.webkit.org-config/loadConfig_unittest.py: Added unit-tests, copied from EWS code.
+        (TagsForBuilderTest):
+        (TagsForBuilderTest.verifyTags):
+        (TagsForBuilderTest.test_getTagsForBuilder):
+        (TagsForBuilderTest.test_tags_type):
+        (TagsForBuilderTest.test_getInvalidTags):
+
 2020-10-20  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         TestOptionsGeneratedKeys.h:30:52: warning: backslash-newline at end of file

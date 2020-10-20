@@ -27,6 +27,8 @@ import json
 import os
 import unittest
 
+import loadConfig
+
 
 class ConfigDotJSONTest(unittest.TestCase):
     def get_config(self):
@@ -63,6 +65,37 @@ class ConfigDotJSONTest(unittest.TestCase):
         for scheduler in config['schedulers']:
             if scheduler.get('type') == 'Triggerable':
                 self.assertTrue(len(scheduler.get('builderNames')) == 1, 'scheduler "{}" triggers multiple builders.'.format(scheduler['name']))
+
+
+class TagsForBuilderTest(unittest.TestCase):
+    def verifyTags(self, builderName, expectedTags):
+        tags = loadConfig.getTagsForBuilder({'name': builderName})
+        self.assertEqual(sorted(tags), sorted(expectedTags))
+
+    def test_getTagsForBuilder(self):
+        self.verifyTags('EWS', [])
+        self.verifyTags('TryBot-10-EWS', [])
+        self.verifyTags('11-EWS', [])
+        self.verifyTags('32-EWS', ['32'])
+        self.verifyTags('iOS-11-EWS', ['iOS'])
+        self.verifyTags('iOS(11),(test)-EWS', ['iOS', 'test'])
+        self.verifyTags('Windows-EWS', ['Windows'])
+        self.verifyTags('Windows_Windows', ['Windows'])
+        self.verifyTags('GTK-Build-EWS', ['GTK', 'Build'])
+        self.verifyTags('GTK-WK2-Tests-EWS', ['GTK', 'WK2', 'Tests'])
+        self.verifyTags('macOS-Sierra-Release-WK1-EWS', ['Sierra', 'Release', 'macOS', 'WK1'])
+        self.verifyTags('macOS-High-Sierra-Release-32bit-WK2-EWS', ['macOS', 'High', 'Sierra', 'Release', 'WK2', '32bit'])
+
+    def test_tags_type(self):
+        tags = loadConfig.getTagsForBuilder({'name': u'iOS-11-EWS'})
+        self.assertEqual(tags, ['iOS'])
+        self.assertEqual(type(tags[0]), str)
+
+    def test_getInvalidTags(self):
+        invalidTags = loadConfig.getInvalidTags()
+        expectedTags = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
+                        '11', '12', '13', '14', '15', '16', '17', '18', '19', 'EWS', 'TryBot']
+        self.assertEqual(invalidTags, expectedTags)
 
 
 if __name__ == '__main__':
