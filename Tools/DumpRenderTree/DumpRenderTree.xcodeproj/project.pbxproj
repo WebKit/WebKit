@@ -330,6 +330,10 @@
 		53CBB830134E42F3001CE6A4 /* CyclicRedundancyCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CyclicRedundancyCheck.cpp; sourceTree = "<group>"; };
 		53CBB831134E42F3001CE6A4 /* CyclicRedundancyCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CyclicRedundancyCheck.h; sourceTree = "<group>"; };
 		5DE8AE4313A2C15800D6A37D /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		7C44697F25377A020024290A /* TestOptionsGeneratedKeys.h.erb */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestOptionsGeneratedKeys.h.erb; sourceTree = "<group>"; };
+		7C44698025377A020024290A /* check-xcfilelists.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "check-xcfilelists.sh"; sourceTree = "<group>"; };
+		7C44698125377A020024290A /* generate-derived-sources.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "generate-derived-sources.sh"; sourceTree = "<group>"; };
+		7C44698525377E520024290A /* TestOptionsGeneratedKeys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TestOptionsGeneratedKeys.h; path = TestOptionsGeneratedKeys.h; sourceTree = "<group>"; };
 		7CBBC3221DDFCF9A00786B9D /* TestOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestOptions.h; sourceTree = "<group>"; };
 		7CFF9BBD2533BB240008009F /* TestFeatures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestFeatures.h; sourceTree = "<group>"; };
 		7CFF9BBE2533BB240008009F /* TestFeatures.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestFeatures.cpp; sourceTree = "<group>"; };
@@ -497,6 +501,7 @@
 			isa = PBXGroup;
 			children = (
 				0F18E6F11D6B9C640027E547 /* DerivedSources.make */,
+				7C44698225377C340024290A /* Derived Sources */,
 				3148A0651E6F90F400D3B316 /* TestRunnerShared */,
 				0F18E6E71D6B9BF50027E547 /* UIScriptContext */,
 				A1158D6A18927CE10088C17B /* ios */,
@@ -529,8 +534,9 @@
 				9345229B0BD12B2C0086EDA0 /* Resources */,
 				417DA9181373674D007C57FB /* WebCoreTestSupport */,
 				A803FF6409CAACC1009B2A37 /* Frameworks */,
-				9340995508540CAF007F3BC8 /* Products */,
+				7C44697D25377A020024290A /* Scripts */,
 				BCB281ED0CFA711D007E533E /* Configurations */,
+				9340995508540CAF007F3BC8 /* Products */,
 			);
 			name = DumpRenderTree;
 			sourceTree = "<group>";
@@ -749,6 +755,33 @@
 			);
 			name = WebCoreTestSupport;
 			sourceTree = "<group>";
+		};
+		7C44697D25377A020024290A /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				7C44697E25377A020024290A /* PreferencesTemplates */,
+				7C44698025377A020024290A /* check-xcfilelists.sh */,
+				7C44698125377A020024290A /* generate-derived-sources.sh */,
+			);
+			path = Scripts;
+			sourceTree = "<group>";
+		};
+		7C44697E25377A020024290A /* PreferencesTemplates */ = {
+			isa = PBXGroup;
+			children = (
+				7C44697F25377A020024290A /* TestOptionsGeneratedKeys.h.erb */,
+			);
+			path = PreferencesTemplates;
+			sourceTree = "<group>";
+		};
+		7C44698225377C340024290A /* Derived Sources */ = {
+			isa = PBXGroup;
+			children = (
+				7C44698525377E520024290A /* TestOptionsGeneratedKeys.h */,
+			);
+			name = "Derived Sources";
+			path = DerivedSources/DumpRenderTree;
+			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		9340995508540CAF007F3BC8 /* Products */ = {
 			isa = PBXGroup;

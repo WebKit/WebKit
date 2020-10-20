@@ -1,4 +1,4 @@
-# Copyright (C) 2016 Apple Inc. All rights reserved.
+# Copyright (C) 2016-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,10 +21,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
+RUBY = ruby
+
 UISCRIPTCONTEXT_DIR = $(DumpRenderTree)/../TestRunnerShared/UIScriptContext/Bindings
+DUMPRENDERTREE_PREFERENCES_TEMPLATES_DIR = $(DumpRenderTree)/Scripts/PreferencesTemplates
 
 VPATH = \
     $(UISCRIPTCONTEXT_DIR) \
+    $(DUMPRENDERTREE_PREFERENCES_TEMPLATES_DIR) \
 #
 
 UICONTEXT_INTERFACES = \
@@ -50,3 +54,20 @@ all : \
     $(UICONTEXT_INTERFACES:%=JS%.h) \
     $(UICONTEXT_INTERFACES:%=JS%.cpp) \
 #
+
+
+WEB_PREFERENCES = \
+    ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferences.yaml \
+    ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml \
+    ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml \
+    ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml \
+#
+
+WEB_PREFERENCES_GENERATED_FILES = \
+    TestOptionsGeneratedKeys.h \
+#
+
+all : $(WEB_PREFERENCES_GENERATED_FILES)
+
+$(WEB_PREFERENCES_GENERATED_FILES) : % : %.erb $(WEB_PREFERENCES) $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb
+	$(RUBY) $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb --frontend WebKitLegacy --base ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferences.yaml --debug ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml --experimental ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml --internal ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml --template $<

@@ -26,25 +26,14 @@
 #include "config.h"
 #include "TestOptions.h"
 
-#include "TestFeatures.h"
-#include <string>
+#include "TestOptionsGeneratedKeys.h"
 
 namespace WTR {
 
 const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMapping()
 {
     static const std::unordered_map<std::string, TestHeaderKeyType> map {
-        { "AcceleratedDrawingEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "AllowCrossOriginSubresourcesToAskForCredentials", TestHeaderKeyType::BoolWebPreference },
-        { "AllowTopNavigationToDataURLs", TestHeaderKeyType::BoolWebPreference },
-        { "AttachmentElementEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "ColorFilterEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "InspectorAdditionsEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "IntersectionObserverEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "KeygenElementEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "MenuItemElementEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "ModernMediaControlsEnabled", TestHeaderKeyType::BoolWebPreference },
-        { "UsesBackForwardCache", TestHeaderKeyType::BoolWebPreference },
+        GENERATED_WEB_PREFERENCE_KEY_TYPE_MAPPINGS
 
         { "dumpJSConsoleLogInStdErr", TestHeaderKeyType::BoolTestRunner },
         { "enableDragDestinationActionLoad", TestHeaderKeyType::BoolTestRunner },

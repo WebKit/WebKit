@@ -1,3 +1,16 @@
+2020-10-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r268693.
+
+        Re-landing these changes as the underlying issue may have been
+        with CI infrastructure (and should now be resolved)
+
+        Reverted changeset:
+
+        "Unreviewed, reverting r268495, r268571, and r268682."
+        https://bugs.webkit.org/show_bug.cgi?id=217723
+        https://trac.webkit.org/changeset/268693
+
 2020-10-19  Jonathan Bedard  <jbedard@apple.com>
 
         [results.webkit.org] Refresh S3 context when token expires
