@@ -1,3 +1,9 @@
+2020-10-20  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Mark several WPT Mediasession tests as failure after r268735.
+
+        * platform/glib/TestExpectations:
+
 2020-10-20  Sihui Liu  <sihui_liu@apple.com>
 
         Add stubs for SpeechRecognition
