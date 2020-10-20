@@ -97,6 +97,9 @@ class ConfigureBuild(buildstep.BuildStep):
         self.setProperty("buildOnly", self.buildOnly)
         self.setProperty("additionalArguments", self.additionalArguments)
         self.setProperty("device_model", self.device_model)
+        worker_name = self.getProperty("slavename")
+        if worker_name:
+            self.setProperty("workername", worker_name)  # Temporary workaround for supporting both older and newer buildbot versions.
         self.finished(SUCCESS)
         return defer.succeed(None)
 
@@ -361,7 +364,7 @@ class RunJavaScriptCoreTests(TestWithFailureCount):
         WithProperties("--%(configuration)s"),
         "--builder-name", WithProperties("%(buildername)s"),
         "--build-number", WithProperties("%(buildnumber)s"),
-        "--buildbot-worker", WithProperties("%(slavename)s"),
+        "--buildbot-worker", WithProperties("%(workername)s"),
         "--buildbot-master", BUILD_WEBKIT_URL,
         "--report", RESULTS_WEBKIT_URL,
     ]
@@ -446,7 +449,7 @@ class RunWebKitTests(shell.Test):
                "--clobber-old-results",
                "--builder-name", WithProperties("%(buildername)s"),
                "--build-number", WithProperties("%(buildnumber)s"),
-               "--buildbot-worker", WithProperties("%(slavename)s"),
+               "--buildbot-worker", WithProperties("%(workername)s"),
                "--master-name", "webkit.org",
                "--buildbot-master", BUILD_WEBKIT_URL,
                "--report", RESULTS_WEBKIT_URL,
@@ -580,7 +583,7 @@ class RunAPITests(TestWithFailureCount):
         "--buildbot-master", BUILD_WEBKIT_URL,
         "--builder-name", WithProperties("%(buildername)s"),
         "--build-number", WithProperties("%(buildnumber)s"),
-        "--buildbot-worker", WithProperties("%(slavename)s"),
+        "--buildbot-worker", WithProperties("%(workername)s"),
         "--report", RESULTS_WEBKIT_URL,
     ]
     failedTestsFormatString = "%d api test%s failed or timed out"
@@ -640,7 +643,7 @@ class RunWebKitPyTests(RunPythonTests):
         "--buildbot-master", BUILD_WEBKIT_URL,
         "--builder-name", WithProperties("%(buildername)s"),
         "--build-number", WithProperties("%(buildnumber)s"),
-        "--buildbot-worker", WithProperties("%(slavename)s"),
+        "--buildbot-worker", WithProperties("%(workername)s"),
         "--report", RESULTS_WEBKIT_URL,
     ]
     failedTestsFormatString = "%d python test%s failed"
@@ -700,7 +703,7 @@ class RunLLINTCLoopTests(TestWithFailureCount):
         WithProperties("--%(configuration)s"),
         "--builder-name", WithProperties("%(buildername)s"),
         "--build-number", WithProperties("%(buildnumber)s"),
-        "--buildbot-worker", WithProperties("%(slavename)s"),
+        "--buildbot-worker", WithProperties("%(workername)s"),
         "--buildbot-master", BUILD_WEBKIT_URL,
         "--report", RESULTS_WEBKIT_URL,
     ]
@@ -740,7 +743,7 @@ class Run32bitJSCTests(TestWithFailureCount):
         WithProperties("--%(configuration)s"),
         "--builder-name", WithProperties("%(buildername)s"),
         "--build-number", WithProperties("%(buildnumber)s"),
-        "--buildbot-worker", WithProperties("%(slavename)s"),
+        "--buildbot-worker", WithProperties("%(workername)s"),
         "--buildbot-master", BUILD_WEBKIT_URL,
         "--report", RESULTS_WEBKIT_URL,
     ]
