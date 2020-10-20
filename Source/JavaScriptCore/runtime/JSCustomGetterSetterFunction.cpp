@@ -48,7 +48,7 @@ JSC_DEFINE_HOST_FUNCTION(customGetterSetterFunctionCall, (JSGlobalObject* global
         CustomGetterSetter::CustomSetter setter = customGetterSetter->setter();
         ASSERT(setter);
         scope.release();
-        callCustomSetter(globalObject, setter, true, thisValue, callFrame->argument(0));
+        setter(globalObject, JSValue::encode(thisValue), JSValue::encode(callFrame->argument(0)));
         return JSValue::encode(jsUndefined());
     }
 

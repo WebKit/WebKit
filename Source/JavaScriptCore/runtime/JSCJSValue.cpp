@@ -213,8 +213,13 @@ bool JSValue::putToPrimitive(JSGlobalObject* globalObject, PropertyName property
             if (gs.isGetterSetter())
                 RELEASE_AND_RETURN(scope, callSetter(globalObject, *this, gs, value, slot.isStrictMode() ? ECMAMode::strict() : ECMAMode::sloppy()));
 
-            if (gs.isCustomGetterSetter())
-                return callCustomSetter(globalObject, gs, attributes & PropertyAttribute::CustomAccessor, obj, slot.thisValue(), value);
+            if (gs.isCustomGetterSetter()) {
+                auto setter = jsCast<CustomGetterSetter*>(gs.asCell())->setter();
+                bool isAccessor = attributes & PropertyAttribute::CustomAccessor;
+                auto result = callCustomSetter(globalObject, setter, isAccessor, obj, slot.thisValue(), value);
+                if (result != TriState::Indeterminate)
+                    RELEASE_AND_RETURN(scope, result == TriState::True);
+            }
 
             // If there's an existing property on the object or one of its 
             // prototypes it should be replaced, so break here.

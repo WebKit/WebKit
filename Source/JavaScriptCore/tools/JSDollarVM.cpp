@@ -1560,7 +1560,9 @@ JSC_DEFINE_CUSTOM_SETTER(customSetAccessor, (JSGlobalObject* globalObject, Encod
     VM& vm = globalObject->vm();
 
     JSValue value = JSValue::decode(encodedValue);
-    RELEASE_ASSERT(value.isObject());
+    if (!value.isObject())
+        return false;
+
     JSObject* object = asObject(value);
     PutPropertySlot slot(object);
     object->put(object, globalObject, Identifier::fromString(vm, "result"), JSValue::decode(thisObject), slot);
@@ -1576,7 +1578,9 @@ JSC_DEFINE_CUSTOM_SETTER(customSetValue, (JSGlobalObject* globalObject, EncodedJ
     RELEASE_ASSERT(JSValue::decode(slotValue).inherits<JSTestCustomGetterSetter>(globalObject->vm()));
 
     JSValue value = JSValue::decode(encodedValue);
-    RELEASE_ASSERT(value.isObject());
+    if (!value.isObject())
+        return false;
+
     JSObject* object = asObject(value);
     PutPropertySlot slot(object);
     object->put(object, globalObject, Identifier::fromString(vm, "result"), JSValue::decode(slotValue), slot);
@@ -1613,7 +1617,7 @@ void JSTestCustomGetterSetter::finishCreation(VM& vm)
     putDirectCustomAccessor(vm, Identifier::fromString(vm, "customValueGlobalObject"),
         CustomGetterSetter::create(vm, customGetValueGlobalObject, nullptr), 0);
     putDirectCustomAccessor(vm, Identifier::fromString(vm, "customAccessorGlobalObject"),
-        CustomGetterSetter::create(vm, customGetAccessorGlobalObject, nullptr), static_cast<unsigned>(PropertyAttribute::CustomAccessor));
+        CustomGetterSetter::create(vm, customGetAccessorGlobalObject, nullptr), PropertyAttribute::ReadOnly | PropertyAttribute::CustomAccessor);
 
     putDirectCustomAccessor(vm, Identifier::fromString(vm, "customFunction"),
         CustomGetterSetter::create(vm, customGetAccessor, customFunctionSetter), static_cast<unsigned>(PropertyAttribute::CustomAccessor));

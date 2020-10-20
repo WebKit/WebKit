@@ -275,6 +275,7 @@ inline bool putEntry(JSGlobalObject* globalObject, const ClassInfo*, const HashT
         if (!(entry->attributes() & PropertyAttribute::ReadOnly)) {
             // If this is a function or lazy property put then we just do the put because
             // logically the object already had the property, so this is just a replace.
+            // FIXME: thisValue may be an object with non-extensible structure we must throw for.
             if (JSObject* thisObject = jsDynamicCast<JSObject*>(vm, thisValue))
                 thisObject->putDirect(vm, propertyName, value);
             return true;
@@ -288,16 +289,23 @@ inline bool putEntry(JSGlobalObject* globalObject, const ClassInfo*, const HashT
     if (!(entry->attributes() & PropertyAttribute::ReadOnly)) {
         ASSERT_WITH_MESSAGE(!(entry->attributes() & PropertyAttribute::DOMJITAttribute), "DOMJITAttribute supports readonly attributes currently.");
         bool isAccessor = entry->attributes() & PropertyAttribute::CustomAccessor;
-        JSValue updateThisValue = entry->attributes() & PropertyAttribute::CustomAccessor ? slot.thisValue() : JSValue(base);
+        // FIXME: We should only be caching these if we're not an uncacheable dictionary:
+        // https://bugs.webkit.org/show_bug.cgi?id=215347
         // We need to make sure that we decide to cache this property before we potentially execute aribitrary JS.
         if (isAccessor)
             slot.setCustomAccessor(base, entry->propertyPutter());
         else
             slot.setCustomValue(base, entry->propertyPutter());
 
-        bool result = callCustomSetter(globalObject, entry->propertyPutter(), isAccessor, updateThisValue, value);
+        auto result = callCustomSetter(globalObject, entry->propertyPutter(), isAccessor, base, slot.thisValue(), value);
         RETURN_IF_EXCEPTION(scope, false);
-        return result;
+        if (result != TriState::Indeterminate)
+            return result == TriState::True;
+
+        // FIXME: thisValue may be an object with non-extensible structure we must throw for.
+        if (JSObject* thisObject = jsDynamicCast<JSObject*>(vm, thisValue))
+            thisObject->putDirect(vm, propertyName, value);
+        return true;
     }
 
     return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);

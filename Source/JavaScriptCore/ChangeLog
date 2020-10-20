@@ -1,3 +1,42 @@
+2020-10-19  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] %Interface%.prototype.constructor should be defined on [[Set]] receiver
+        https://bugs.webkit.org/show_bug.cgi?id=216533
+
+        Reviewed by Darin Adler.
+
+        Before this change, a [[Set]] performed on an %Interface% instance used to overwrite
+        %Interface%.prototype.constructor instead of defining own "constructor" property.
+
+        Since using CustomValue is essential for lazy initialization of WebIDL constructors,
+        and forwarding [[Set]] with correct receiver would require further diverging
+        CustomValue setter signature from CustomAccessor counterpart, this patch makes a
+        CustomValue property without a setter to be treated as a data descriptor [1].
+
+        This avoids generating a "constructor" setter for every exposed WebIDL interface and
+        making an extra put() dispatch in putInlineSlow(). Changing the semantics is safe
+        because there were no setter-less CustomValue properties before this patch.
+
+        [1]: https://tc39.es/ecma262/#sec-ordinarysetwithowndescriptor (step 3.e.ii)
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * runtime/CustomGetterSetter.cpp:
+        (JSC::callCustomSetter):
+        * runtime/CustomGetterSetter.h:
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::putToPrimitive): Add missing exception check.
+        * runtime/JSCustomGetterSetterFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putInlineSlow):
+        * runtime/Lookup.h:
+        (JSC::putEntry):
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::customGetter const):
+        * runtime/PropertySlot.h:
+        * tools/JSDollarVM.cpp:
+
 2020-10-19  Mark Cohen  <m@mpc.sh>
 
         test262: test/language/expressions/conditional/in-branch-1.js

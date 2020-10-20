@@ -76,7 +76,6 @@ private:
     CustomSetter m_setter;
 };
 
-JS_EXPORT_PRIVATE bool callCustomSetter(JSGlobalObject*, CustomGetterSetter::CustomSetter, bool isAccessor, JSValue thisValue, JSValue);
-JS_EXPORT_PRIVATE bool callCustomSetter(JSGlobalObject*, JSValue customGetterSetter, bool isAccessor, JSObject* slotBase, JSValue thisValue, JSValue);
+JS_EXPORT_PRIVATE TriState callCustomSetter(JSGlobalObject*, CustomGetterSetter::CustomSetter, bool isAccessor, JSObject* slotBase, JSValue thisValue, JSValue);
 
 } // namespace JSC

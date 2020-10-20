@@ -3381,8 +3381,7 @@ sub GeneratePropertiesHashTable
         my $getter = "js" . $interfaceName . "Constructor";
         push(@$hashValue1, $getter);
 
-        my $setter = "setJS" . $interfaceName . "Constructor";
-        push(@$hashValue2, $setter);
+        push(@$hashValue2, "0");
         push(@$hashSpecials, "static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)");
     }
 
@@ -4319,9 +4318,6 @@ sub GenerateImplementation
         if (NeedsConstructorProperty($interface)) {
             my $constructorGetter = "js" . $interfaceName . "Constructor";
             push(@implContent, "JSC_DECLARE_CUSTOM_GETTER(${constructorGetter});\n");
-
-            my $constructorSetter = "setJS" . $interfaceName . "Constructor";
-            push(@implContent, "JSC_DECLARE_CUSTOM_SETTER(${constructorSetter});\n");
         }
 
         foreach my $attribute (@{$interface->attributes}) {
@@ -4437,8 +4433,6 @@ sub GenerateImplementation
         my @hashSpecials = ();
         my %conditionals = ();
         my %readWriteConditionals = ();
-
-        my $needsConstructorTable = 0;
 
         foreach my $constant (@{$interface->constants}) {
             my $name = $constant->name;
@@ -4907,32 +4901,8 @@ sub GenerateImplementation
         push(@implContent, "    auto* prototype = jsDynamicCast<${className}Prototype*>(vm, JSValue::decode(thisValue));\n");
         push(@implContent, "    if (UNLIKELY(!prototype))\n");
         push(@implContent, "        return throwVMTypeError(lexicalGlobalObject, throwScope);\n");
-
-        if (!$interface->extendedAttributes->{LegacyNoInterfaceObject}) {
-            push(@implContent, "    return JSValue::encode(${className}::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));\n");
-        } else {
-            push(@implContent, "    JSValue constructor = ${className}Constructor::create(JSC::getVM(lexicalGlobalObject), ${className}Constructor::createStructure(JSC::getVM(lexicalGlobalObject), *prototype->globalObject(), prototype->globalObject()->objectPrototype()), *jsCast<JSDOMGlobalObject*>(prototype->globalObject()));\n");
-            push(@implContent, "    // Shadowing constructor property to ensure reusing the same constructor object\n");
-            push(@implContent, "    prototype->putDirect(vm, vm.propertyNames->constructor, constructor, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));\n");
-            push(@implContent, "    return JSValue::encode(constructor);\n");
-        }
+        push(@implContent, "    return JSValue::encode(${className}::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));\n");
         push(@implContent, "}\n\n");
-
-        my $constructorSetter = "setJS" . $interfaceName . "Constructor";
-
-        push(@implContent, "JSC_DEFINE_CUSTOM_SETTER(${constructorSetter}, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))\n");
-        push(@implContent, "{\n");
-        push(@implContent, "    VM& vm = JSC::getVM(lexicalGlobalObject);\n");
-        push(@implContent, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
-        push(@implContent, "    auto* prototype = jsDynamicCast<${className}Prototype*>(vm, JSValue::decode(thisValue));\n");
-        push(@implContent, "    if (UNLIKELY(!prototype)) {\n");
-        push(@implContent, "        throwVMTypeError(lexicalGlobalObject, throwScope);\n");
-        push(@implContent, "        return false;\n");
-        push(@implContent, "    }\n");
-        push(@implContent, "    // Shadowing a built-in constructor\n");
-        push(@implContent, "    return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));\n");
-        push(@implContent, "}\n\n");
-
     }
 
     foreach my $attribute (@{$interface->attributes}) {

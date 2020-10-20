@@ -1,3 +1,12 @@
+2020-10-19  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] %Interface%.prototype.constructor should be defined on [[Set]] receiver
+        https://bugs.webkit.org/show_bug.cgi?id=216533
+
+        Reviewed by Darin Adler.
+
+        * stress/custom-get-set-proto-chain-put.js: Added.
+
 2020-10-19  Mark Cohen  <m@mpc.sh>
 
         test262: test/language/expressions/conditional/in-branch-1.js

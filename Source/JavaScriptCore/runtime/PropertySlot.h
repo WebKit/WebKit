@@ -121,8 +121,6 @@ public:
             disallowVMEntry.emplace(*vmForInquiry);
     }
 
-    // FIXME: Remove this slotBase / receiver behavior difference in custom values and custom accessors.
-    // https://bugs.webkit.org/show_bug.cgi?id=158014
     using GetValueFunc = EncodedJSValue(JIT_OPERATION_ATTRIBUTES*)(JSGlobalObject*, EncodedJSValue thisValue, PropertyName);
 
     JSValue getValue(JSGlobalObject*, PropertyName) const;

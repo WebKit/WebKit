@@ -849,18 +849,21 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
                 return result;
             }
             if (gs.isCustomGetterSetter()) {
+                bool isAccessor = attributes & PropertyAttribute::CustomAccessor;
+                auto setter = jsCast<CustomGetterSetter*>(gs.asCell())->setter();
                 // FIXME: We should only be caching these if we're not an uncacheable dictionary:
                 // https://bugs.webkit.org/show_bug.cgi?id=215347
 
                 // We need to make sure that we decide to cache this property before we potentially execute aribitrary JS.
-                if (attributes & PropertyAttribute::CustomAccessor)
-                    slot.setCustomAccessor(obj, jsCast<CustomGetterSetter*>(gs.asCell())->setter());
+                if (isAccessor)
+                    slot.setCustomAccessor(obj, setter);
                 else
-                    slot.setCustomValue(obj, jsCast<CustomGetterSetter*>(gs.asCell())->setter());
+                    slot.setCustomValue(obj, setter);
 
-                bool result = callCustomSetter(globalObject, gs, attributes & PropertyAttribute::CustomAccessor, obj, slot.thisValue(), value);
+                auto result = callCustomSetter(globalObject, setter, isAccessor, obj, slot.thisValue(), value);
                 RETURN_IF_EXCEPTION(scope, false);
-                return result;
+                if (result != TriState::Indeterminate)
+                    return result == TriState::True;
             }
             ASSERT(!(attributes & PropertyAttribute::Accessor));
 

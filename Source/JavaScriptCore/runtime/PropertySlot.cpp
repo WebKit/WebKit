@@ -35,8 +35,6 @@ JSValue PropertySlot::functionGetter(JSGlobalObject* globalObject) const
 
 JSValue PropertySlot::customGetter(JSGlobalObject* globalObject, PropertyName propertyName) const
 {
-    // FIXME: Remove this differences in custom values and custom accessors.
-    // https://bugs.webkit.org/show_bug.cgi?id=158014
     JSValue thisValue = m_attributes & PropertyAttribute::CustomAccessor ? m_thisValue : JSValue(slotBase());
     if (auto domAttribute = this->domAttribute()) {
         VM& vm = globalObject->vm();
