@@ -1,3 +1,16 @@
+2020-10-19  Jonathan Bedard  <jbedard@apple.com>
+
+        [results.webkit.org] Refresh S3 context when token expires
+        https://bugs.webkit.org/show_bug.cgi?id=217924
+        <rdar://problem/70381137>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/s3_archiver.py:
+        (S3Archiver.__init__): Add _cached_token variable.
+        (S3Archiver.__enter__): Refresh S3 resource when the current token and cached token don't match.
+        (S3Archiver.__exit__): Clear out the cached token.
+
 2020-10-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r268495, r268571, and r268682.

@@ -54,6 +54,10 @@ class S3Archiver(Archiver):
         self.resources = None
         self.bucket = bucket
         self._count = 0
+        self._cached_token = None
+
+        if not self.credentials:
+            raise ValueError('No S3 credentials passed')
 
         # Only modify the lifecycle of the bucket if we're editing the schema
         if os.environ['CQLENG_ALLOW_SCHEMA_MANAGEMENT'] == '1':
@@ -88,7 +92,8 @@ class S3Archiver(Archiver):
 
     def __enter__(self):
         self._count += 1
-        if not self.resources:
+        if self._cached_token != self.credentials.aws_session_token:
+            self._cached_token = self.credentials.aws_session_token
             self.resources = boto3.resource(
                 service_name='s3',
                 region_name=self.credentials.region_name,
@@ -101,6 +106,7 @@ class S3Archiver(Archiver):
         self._count -= 1
         if self._count <= 0:
             self.resources = None
+            self._cached_token = None
             self._count = 0
 
     def save(self, archive, retain_for=None):
