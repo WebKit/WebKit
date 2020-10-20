@@ -2246,7 +2246,6 @@ webkit.org/b/217641 [ Debug ] imported/w3c/web-platform-tests/xhr/event-timeout.
 
 webkit.org/b/217620 inspector/audit/basic-async.htm [ Pass Timeout ]
 
-
 # These are failing on Mojave due to an error in the way CA animations are applied.
 # https://bugs.webkit.org/show_bug.cgi?id=217842
 [ Mojave ] transitions/interrupted-transition-hardware.html [ Pass Failure ]
@@ -2257,5 +2256,9 @@ webkit.org/b/217620 inspector/audit/basic-async.htm [ Pass Timeout ]
 [ Mojave ] webanimations/accelerated-translate-animation.html [ Pass Failure ]
 
 webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-success-empty-src-module.html [ Pass Failure ]
+
+imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-twice.html [ Skip ]
+imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-with-activation-succeeds.html [ Skip ]
+imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-without-activation-fails.tentative.html [ Skip ]
 
 webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-install.https.html [ Pass Failure ]

@@ -1,0 +1,8 @@
+
+PASS SpeechRecognitionError interface should not exist
+PASS webkitSpeechGrammar interface should not exist
+PASS webkitSpeechGrammarList interface should not exist
+PASS webkitSpeechRecognition interface should not exist
+PASS webkitSpeechRecognitionError interface should not exist
+PASS webkitSpeechRecognitionEvent interface should not exist
+

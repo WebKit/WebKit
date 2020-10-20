@@ -1,3 +1,14 @@
+2020-10-19  Sihui Liu  <sihui_liu@apple.com>
+
+        Import speech tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=217910
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-10-19  Karl Rackler  <rackler@apple.com>
 
         REGRESSION (268605?): [ Mojave+ wk2 ] 4 wpt/service-workers tests are flaky failures

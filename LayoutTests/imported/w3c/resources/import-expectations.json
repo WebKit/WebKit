@@ -378,7 +378,7 @@
     "web-platform-tests/service-workers": "import", 
     "web-platform-tests/shadow-dom": "import", 
     "web-platform-tests/shadow-dom/untriaged": "skip", 
-    "web-platform-tests/speech-api": "skip", 
+    "web-platform-tests/speech-api": "import", 
     "web-platform-tests/staticrange": "skip", 
     "web-platform-tests/storage": "skip", 
     "web-platform-tests/streams": "import", 

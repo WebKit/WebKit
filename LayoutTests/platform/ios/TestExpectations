@@ -34,6 +34,8 @@ http/tests/gzip-content-encoding [ Pass ]
 
 imported/w3c/web-platform-tests/dom/events/document-level-touchmove-event-listener-passive-by-default.html [ Pass ]
 
+imported/w3c/web-platform-tests/speech-api/ [ Pass ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -3498,6 +3500,10 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/
 
 #<rdar://68952824> [ macOS iOS wk2 ] media/media-continues-playing-after-replace-source.html is a flaky failure
 media/media-continues-playing-after-replace-source.html [ Pass Failure ]
+
+imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-twice.html [ Skip ]
+imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-with-activation-succeeds.html [ Skip ]
+imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-without-activation-fails.tentative.html [ Skip ]
 
 # This test fails in iOS due to subpixel differences for the marker position
 imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-002.html [ ImageOnlyFailure ]
