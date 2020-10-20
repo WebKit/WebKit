@@ -1325,3 +1325,8 @@ webkit.org/b/217540 compositing/animation/repaint-after-clearing-shared-backing.
 webkit.org/b/217686 inspector/page/overrideSetting-ITPDebugModeEnabled.html [ Pass Failure ]
 
 webkit.org/b/217857 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-stop.html [ Skip ]
+
+webkit.org/b/217938 [ Mojave+ ] http/wpt/service-workers/fetchEvent.https.html [ Pass Failure ]
+webkit.org/b/217938 [ Mojave+ ] http/wpt/service-workers/header-filtering.https.html [ Pass Failure ]
+webkit.org/b/217938 [ Mojave+ ] http/wpt/service-workers/mac/throttleable.https.html [ Pass Failure ]
+webkit.org/b/217938 [ Mojave+ ] http/wpt/service-workers/online.https.html [ Pass Failure ]
