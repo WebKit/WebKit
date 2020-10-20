@@ -1,3 +1,13 @@
+2020-10-19  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r268115) [GTK] Build failures with GCC 7 (Ubuntu 18.04) and GCC 8 (Debian Buster)
+        https://bugs.webkit.org/show_bug.cgi?id=217425
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * WebKitTestRunner/CMakeLists.txt: Link with stdc++fs if using
+        <experimental/filesystem>.
+
 2020-10-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r268693.

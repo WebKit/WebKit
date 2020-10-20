@@ -1,3 +1,27 @@
+2020-10-19  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r268115) [GTK] Build failures with GCC 7 (Ubuntu 18.04) and GCC 8 (Debian Buster)
+        https://bugs.webkit.org/show_bug.cgi?id=217425
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        The root cause is lack of proper <filesystem> support in gcc7/8 (and
+        incompatibility with llvm's header that was included). As such, we
+        need to check whether to use <filesystem>, <experimental/filesystem>,
+        or fallback to the included header.
+
+        Note: In some systems like Ubuntu 20.04, gcc-8 can use gcc-9's
+        libstdc++ and link successfully, but running will fail as it should
+        actually link with its libstc++fs to provide the correct symbols. As
+        this is some corner case (Ubuntu's 20 default gcc is 9), LDFLAGS
+        can be used to overcome this.
+
+        * Source/cmake/OptionsCommon.cmake: Add a HAVE directive to
+        check whether <experimental/filesystem> is the filesystem impl
+        available.
+        * Source/cmake/WebKitCompilerFlags.cmake: Test first whether
+        <filesystem> can be used, with <experimental/filestystem> as fallback.
+
 2020-10-14  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove ACCELERATED_2D_CANVAS build flags and guarded code

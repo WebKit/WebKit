@@ -26,6 +26,12 @@ set(WebKitTestRunner_LIBRARIES
     WebKit::WebKit
 )
 
+if (COMPILER_IS_GCC_OR_CLANG)
+    if (HAVE_STD_EXPERIMENTAL_FILESYSTEM)
+        list(APPEND WebKitTestRunner_LIBRARIES stdc++fs)
+    endif ()
+endif ()
+
 set(WebKitTestRunner_INCLUDE_DIRECTORIES
     ${CMAKE_BINARY_DIR}
     ${WebKitTestRunner_SHARED_DIR}

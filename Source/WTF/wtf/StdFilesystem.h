@@ -9,6 +9,11 @@
 
 #if __has_include(<filesystem>)
 #include <filesystem>
+#elif HAVE(STD_EXPERIMENTAL_FILESYSTEM)
+#include <experimental/filesystem>
+namespace std {
+namespace filesystem = std::experimental::filesystem;
+}
 #else
 
 /* Imports a copy of <filesystem> from r343838 of the libc++ project. This

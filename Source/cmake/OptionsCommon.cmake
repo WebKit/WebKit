@@ -153,3 +153,8 @@ check_type_size("__int128_t" INT128_VALUE)
 if (HAVE_INT128_VALUE)
   SET_AND_EXPOSE_TO_BUILD(HAVE_INT128_T INT128_VALUE)
 endif ()
+
+# Check whether experimental/filesystem is the filesystem impl available
+if (STD_EXPERIMENTAL_FILESYSTEM_IS_AVAILABLE)
+  SET_AND_EXPOSE_TO_BUILD(HAVE_STD_EXPERIMENTAL_FILESYSTEM TRUE)
+endif ()
