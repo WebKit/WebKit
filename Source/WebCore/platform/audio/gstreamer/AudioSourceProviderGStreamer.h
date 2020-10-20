@@ -16,8 +16,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AudioSourceProviderGStreamer_h
-#define AudioSourceProviderGStreamer_h
+#pragma once
 
 #if ENABLE(WEB_AUDIO) && ENABLE(VIDEO) && USE(GSTREAMER)
 
@@ -28,7 +27,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
-#if ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC)
+#if ENABLE(MEDIA_STREAM)
 #include "GStreamerAudioStreamDescription.h"
 #include "MediaStreamTrackPrivate.h"
 #include "WebAudioSourceProvider.h"
@@ -39,7 +38,7 @@ typedef struct _GstAppSink GstAppSink;
 
 namespace WebCore {
 
-#if ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC)
+#if ENABLE(MEDIA_STREAM)
 class AudioSourceProviderGStreamer final : public WebAudioSourceProvider {
 public:
     static Ref<AudioSourceProviderGStreamer> create(MediaStreamTrackPrivate& source)
@@ -67,28 +66,26 @@ public:
     void deinterleavePadsConfigured();
     void handleRemovedDeinterleavePad(GstPad*);
 
-    GstFlowReturn handleAudioBuffer(GstAppSink*);
-    GstElement* getAudioBin() const { return m_audioSinkBin.get(); }
+    GstFlowReturn handleSample(GstAppSink*, bool isPreroll);
     void clearAdapters();
 
 private:
+#if ENABLE(MEDIA_STREAM)
     GRefPtr<GstElement> m_pipeline;
+#endif
     enum MainThreadNotification {
         DeinterleavePadsConfigured = 1 << 0,
     };
     Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
     GRefPtr<GstElement> m_audioSinkBin;
-    AudioSourceProviderClient* m_client;
-    int m_deinterleaveSourcePads;
-    GstAdapter* m_frontLeftAdapter;
-    GstAdapter* m_frontRightAdapter;
-    unsigned long m_deinterleavePadAddedHandlerId;
-    unsigned long m_deinterleaveNoMorePadsHandlerId;
-    unsigned long m_deinterleavePadRemovedHandlerId;
+    AudioSourceProviderClient* m_client { nullptr };
+    int m_deinterleaveSourcePads { 0 };
+    HashMap<int, GRefPtr<GstAdapter>> m_adapters;
+    unsigned long m_deinterleavePadAddedHandlerId { 0 };
+    unsigned long m_deinterleaveNoMorePadsHandlerId { 0 };
+    unsigned long m_deinterleavePadRemovedHandlerId { 0 };
     Lock m_adapterMutex;
 };
 
 }
 #endif // ENABLE(WEB_AUDIO) && ENABLE(VIDEO) && USE(GSTREAMER)
-
-#endif // AudioSourceProviderGStreamer_h

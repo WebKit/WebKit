@@ -1,3 +1,14 @@
+2020-10-20  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] REGRESSION(r266559): imported/w3c/web-platform-tests/webaudio/the-audio-api/the-destinationnode-interface/destination.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=216171
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/glib/TestExpectations: Unflag tests.
+        imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/cors-check.https.html
+        is still flaky but flagged already as such in the generic TestExpectations.
+
 2020-10-20  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB][GTK] Unreviewed test gardening. Update test expectations after r268715.

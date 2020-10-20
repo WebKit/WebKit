@@ -37,6 +37,51 @@
 
 namespace WebCore {
 
+GST_DEBUG_CATEGORY(webkit_audio_destination_debug);
+#define GST_CAT_DEFAULT webkit_audio_destination_debug
+
+static void initializeDebugCategory()
+{
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_audio_destination_debug, "webkitaudiodestination", 0, "WebKit WebAudio Destination");
+    });
+}
+
+static unsigned long maximumNumberOfOutputChannels()
+{
+    initializeDebugCategory();
+
+    static int count = 0;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        auto monitor = adoptGRef(gst_device_monitor_new());
+        auto caps = adoptGRef(gst_caps_new_empty_simple("audio/x-raw"));
+        gst_device_monitor_add_filter(monitor.get(), "Audio/Sink", caps.get());
+        gst_device_monitor_start(monitor.get());
+        auto* devices = gst_device_monitor_get_devices(monitor.get());
+        while (devices) {
+            auto device = adoptGRef(GST_DEVICE_CAST(devices->data));
+            auto caps = adoptGRef(gst_device_get_caps(device.get()));
+            unsigned size = gst_caps_get_size(caps.get());
+            for (unsigned i = 0; i < size; i++) {
+                auto* structure = gst_caps_get_structure(caps.get(), i);
+                if (!g_str_equal(gst_structure_get_name(structure), "audio/x-raw"))
+                    continue;
+                int value;
+                if (!gst_structure_get_int(structure, "channels", &value))
+                    continue;
+                count = std::max(count, value);
+            }
+            devices = g_list_delete_link(devices, devices);
+        }
+        GST_DEBUG("maximumNumberOfOutputChannels: %d", count);
+        gst_device_monitor_stop(monitor.get());
+    });
+
+    return count;
+}
+
 gboolean messageCallback(GstBus*, GstMessage* message, AudioDestinationGStreamer* destination)
 {
     return destination->handleMessage(message);
@@ -50,17 +95,14 @@ static void autoAudioSinkChildAddedCallback(GstChildProxy*, GObject* object, gch
 
 Ref<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const String&, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
 {
+    initializeDebugCategory();
     // FIXME: make use of inputDeviceId as appropriate.
 
     // FIXME: Add support for local/live audio input.
     if (numberOfInputChannels)
-        LOG(Media, "AudioDestination::create(%u, %u, %f) - unhandled input channels", numberOfInputChannels, numberOfOutputChannels, sampleRate);
+        WTFLogAlways("AudioDestination::create(%u, %u, %f) - unhandled input channels", numberOfInputChannels, numberOfOutputChannels, sampleRate);
 
-    // FIXME: Add support for multi-channel (> stereo) output.
-    if (numberOfOutputChannels != 2)
-        LOG(Media, "AudioDestination::create(%u, %u, %f) - unhandled output channels", numberOfInputChannels, numberOfOutputChannels, sampleRate);
-
-    return adoptRef(*new AudioDestinationGStreamer(callback, sampleRate));
+    return adoptRef(*new AudioDestinationGStreamer(callback, numberOfOutputChannels, sampleRate));
 }
 
 float AudioDestination::hardwareSampleRate()
@@ -70,19 +112,16 @@ float AudioDestination::hardwareSampleRate()
 
 unsigned long AudioDestination::maxChannelCount()
 {
-    // FIXME: query the default audio hardware device to return the actual number
-    // of channels of the device. Also see corresponding FIXME in create().
-    return 0;
+    return maximumNumberOfOutputChannels();
 }
 
-AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, float sampleRate)
+AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, unsigned long numberOfOutputChannels, float sampleRate)
     : m_callback(callback)
-    , m_renderBus(AudioBus::create(2, AudioUtilities::renderQuantumSize, false))
+    , m_renderBus(AudioBus::create(numberOfOutputChannels, AudioUtilities::renderQuantumSize, false))
     , m_sampleRate(sampleRate)
-    , m_isPlaying(false)
 {
-    m_pipeline = gst_pipeline_new("play");
-    GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline)));
+    m_pipeline = gst_pipeline_new("audio-destination");
+    GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
     ASSERT(bus);
     gst_bus_add_signal_watch_full(bus.get(), RunLoopSourcePriority::RunLoopDispatcher);
     g_signal_connect(bus.get(), "message", G_CALLBACK(messageCallback), this);
@@ -93,7 +132,7 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
     GRefPtr<GstElement> audioSink = createPlatformAudioSink();
     m_audioSinkAvailable = audioSink;
     if (!audioSink) {
-        LOG_ERROR("Failed to create GStreamer audio sink element");
+        GST_ERROR("Failed to create GStreamer audio sink element");
         return;
     }
 
@@ -107,7 +146,7 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
         // audiosink was loaded correctly.
         GstStateChangeReturn stateChangeReturn = gst_element_set_state(audioSink.get(), GST_STATE_READY);
         if (stateChangeReturn == GST_STATE_CHANGE_FAILURE) {
-            LOG_ERROR("Failed to change autoaudiosink element state");
+            GST_ERROR("Failed to change autoaudiosink element state");
             gst_element_set_state(audioSink.get(), GST_STATE_NULL);
             m_audioSinkAvailable = false;
             return;
@@ -116,7 +155,7 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
 
     GstElement* audioConvert = gst_element_factory_make("audioconvert", nullptr);
     GstElement* audioResample = gst_element_factory_make("audioresample", nullptr);
-    gst_bin_add_many(GST_BIN_CAST(m_pipeline), m_src.get(), audioConvert, audioResample, audioSink.get(), nullptr);
+    gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), m_src.get(), audioConvert, audioResample, audioSink.get(), nullptr);
 
     // Link src pads from webkitAudioSrc to audioConvert ! audioResample ! autoaudiosink.
     gst_element_link_pads_full(m_src.get(), "src", audioConvert, "sink", GST_PAD_LINK_CHECK_NOTHING);
@@ -126,13 +165,12 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
 
 AudioDestinationGStreamer::~AudioDestinationGStreamer()
 {
-    GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline)));
+    GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
     ASSERT(bus);
     g_signal_handlers_disconnect_by_func(bus.get(), reinterpret_cast<gpointer>(messageCallback), this);
     gst_bus_remove_signal_watch(bus.get());
 
-    gst_element_set_state(m_pipeline, GST_STATE_NULL);
-    gst_object_unref(m_pipeline);
+    gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
 }
 
 unsigned AudioDestinationGStreamer::framesPerBuffer() const
@@ -153,8 +191,25 @@ gboolean AudioDestinationGStreamer::handleMessage(GstMessage* message)
     case GST_MESSAGE_ERROR:
         gst_message_parse_error(message, &error.outPtr(), &debug.outPtr());
         g_warning("Error: %d, %s. Debug output: %s", error->code,  error->message, debug.get());
-        gst_element_set_state(m_pipeline, GST_STATE_NULL);
+        gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
         m_isPlaying = false;
+        break;
+    case GST_MESSAGE_STATE_CHANGED:
+        if (GST_MESSAGE_SRC(message) == GST_OBJECT(m_pipeline.get())) {
+            GstState oldState, newState, pending;
+            gst_message_parse_state_changed(message, &oldState, &newState, &pending);
+
+            GST_INFO_OBJECT(m_pipeline.get(), "State changed (old: %s, new: %s, pending: %s)",
+                gst_element_state_get_name(oldState),
+                gst_element_state_get_name(newState),
+                gst_element_state_get_name(pending));
+
+            WTF::String dotFileName = makeString(GST_OBJECT_NAME(m_pipeline.get()), '_',
+                gst_element_state_get_name(oldState), '_',
+                gst_element_state_get_name(newState));
+
+            GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
+        }
         break;
     default:
         break;
@@ -171,12 +226,12 @@ void AudioDestinationGStreamer::start(Function<void(Function<void()>&&)>&& dispa
     if (dispatchToRenderThread)
         webkitWebAudioSourceSetDispatchToRenderThreadCallback(WEBKIT_WEB_AUDIO_SRC(m_src.get()), WTFMove(dispatchToRenderThread));
 
-    if (gst_element_set_state(m_pipeline, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
+    GST_DEBUG("Starting");
+    if (gst_element_set_state(m_pipeline.get(), GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
         g_warning("Error: Failed to set pipeline to playing");
         m_isPlaying = false;
         return;
     }
-
     m_isPlaying = true;
 }
 
@@ -186,7 +241,8 @@ void AudioDestinationGStreamer::stop()
     if (!m_audioSinkAvailable)
         return;
 
-    gst_element_set_state(m_pipeline, GST_STATE_PAUSED);
+    GST_DEBUG("Stopping");
+    gst_element_set_state(m_pipeline.get(), GST_STATE_PAUSED);
     m_isPlaying = false;
 }
 

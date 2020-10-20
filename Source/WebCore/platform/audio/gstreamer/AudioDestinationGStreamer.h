@@ -16,8 +16,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AudioDestinationGStreamer_h
-#define AudioDestinationGStreamer_h
+#pragma once
 
 #include "AudioBus.h"
 #include "AudioDestination.h"
@@ -32,7 +31,7 @@ namespace WebCore {
 
 class AudioDestinationGStreamer : public AudioDestination {
 public:
-    AudioDestinationGStreamer(AudioIOCallback&, float sampleRate);
+    AudioDestinationGStreamer(AudioIOCallback&, unsigned long numberOfOutputChannels, float sampleRate);
     virtual ~AudioDestinationGStreamer();
 
     void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread) override;
@@ -50,12 +49,10 @@ private:
     RefPtr<AudioBus> m_renderBus;
 
     float m_sampleRate;
-    bool m_isPlaying;
-    bool m_audioSinkAvailable;
-    GstElement* m_pipeline;
+    bool m_isPlaying { false };
+    bool m_audioSinkAvailable { false };
+    GRefPtr<GstElement> m_pipeline;
     GRefPtr<GstElement> m_src;
 };
 
 } // namespace WebCore
-
-#endif // AudioDestinationGStreamer_h
