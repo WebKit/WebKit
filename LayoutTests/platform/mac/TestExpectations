@@ -2258,3 +2258,4 @@ webkit.org/b/217620 inspector/audit/basic-async.htm [ Pass Timeout ]
 
 webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-success-empty-src-module.html [ Pass Failure ]
 
+webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-install.https.html [ Pass Failure ]
