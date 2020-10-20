@@ -326,9 +326,6 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediastreamaudiosourc
 # This test is timing out due to lack of support for SharedArrayBuffer.
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-postmessage-sharedarraybuffer.https.html [ Skip ]
 
-# This WebAudio test is timing out, potentially due to an AudioWorklet bug.
-imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/no-cors.https.html [ Skip ]
-
 # This webaudio test has been timing out since its import from Blink.
 webaudio/MediaStreamAudioSource/mediastreamaudiosourcenode.html [ Skip ]
 

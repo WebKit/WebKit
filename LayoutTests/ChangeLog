@@ -1,3 +1,11 @@
+2020-10-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, unskip imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/no-cors.https.html.
+
+        The test is no longer timing out.
+
+        * TestExpectations:
+
 2020-10-20  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] REGRESSION(r266559): imported/w3c/web-platform-tests/webaudio/the-audio-api/the-destinationnode-interface/destination.html is failing
