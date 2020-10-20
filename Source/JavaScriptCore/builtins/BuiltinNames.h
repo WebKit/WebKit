@@ -61,6 +61,7 @@ namespace JSC {
     macro(Array) \
     macro(ArrayBuffer) \
     macro(RegExp) \
+    macro(min) \
     macro(trunc) \
     macro(create) \
     macro(defineProperty) \

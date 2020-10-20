@@ -307,14 +307,6 @@ function includes(searchElement /*, fromIndex*/)
 }
 
 @globalPrivate
-function sortMin(a, b)
-{
-    "use strict";
-
-    return a < b ? a : b;
-}
-
-@globalPrivate
 function sortStringComparator(a, b)
 {
     "use strict";
@@ -379,16 +371,15 @@ function sortCommit(receiver, receiverLength, sorted, undefinedCount)
         delete receiver[i];
 }
 
-
 @globalPrivate
 function sortMerge(dst, src, srcIndex, srcEnd, width, comparator)
 {
     "use strict";
 
     var left = srcIndex;
-    var leftEnd = @sortMin(left + width, srcEnd);
+    var leftEnd = @min(left + width, srcEnd);
     var right = leftEnd;
-    var rightEnd = @sortMin(right + width, srcEnd);
+    var rightEnd = @min(right + width, srcEnd);
 
     for (var dstIndex = left; dstIndex < rightEnd; ++dstIndex) {
         if (right < rightEnd) {

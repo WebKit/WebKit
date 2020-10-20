@@ -1227,6 +1227,9 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::BuiltinDescribe)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, String(), globalFuncBuiltinDescribe));
         });
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::min)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, String(), mathProtoFuncMin, MinIntrinsic));
+        });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::trunc)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, String(), mathProtoFuncTrunc, TruncIntrinsic));
         });

@@ -61,6 +61,7 @@ class JSGlobalObject;
     v(BuiltinLog, nullptr) \
     v(BuiltinDescribe, nullptr) \
     v(RegExp, nullptr) \
+    v(min, nullptr) \
     v(trunc, nullptr) \
     v(Promise, nullptr) \
     v(InternalPromise, nullptr) \
