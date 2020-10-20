@@ -289,6 +289,13 @@ $(PROJECT_DIR)/Modules/quota/WorkerNavigator+StorageQuota.idl
 $(PROJECT_DIR)/Modules/remoteplayback/HTMLMediaElement+RemotePlayback.idl
 $(PROJECT_DIR)/Modules/remoteplayback/RemotePlayback.idl
 $(PROJECT_DIR)/Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl
+$(PROJECT_DIR)/Modules/speech/SpeechRecognition.idl
+$(PROJECT_DIR)/Modules/speech/SpeechRecognitionAlternative.idl
+$(PROJECT_DIR)/Modules/speech/SpeechRecognitionErrorCode.idl
+$(PROJECT_DIR)/Modules/speech/SpeechRecognitionErrorEvent.idl
+$(PROJECT_DIR)/Modules/speech/SpeechRecognitionEvent.idl
+$(PROJECT_DIR)/Modules/speech/SpeechRecognitionResult.idl
+$(PROJECT_DIR)/Modules/speech/SpeechRecognitionResultList.idl
 $(PROJECT_DIR)/Modules/speech/DOMWindow+SpeechSynthesis.idl
 $(PROJECT_DIR)/Modules/speech/SpeechSynthesis.idl
 $(PROJECT_DIR)/Modules/speech/SpeechSynthesisEvent.idl

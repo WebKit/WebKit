@@ -448,6 +448,14 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/remoteplayback/RemotePlayback.idl
     Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl
 
+    Modules/speech/SpeechRecognition.idl
+    Modules/speech/SpeechRecognitionAlternative.idl
+    Modules/speech/SpeechRecognitionErrorCode.idl
+    Modules/speech/SpeechRecognitionErrorEvent.idl
+    Modules/speech/SpeechRecognitionEvent.idl
+    Modules/speech/SpeechRecognitionResult.idl
+    Modules/speech/SpeechRecognitionResultList.idl
+
     Modules/speech/DOMWindow+SpeechSynthesis.idl
     Modules/speech/SpeechSynthesis.idl
     Modules/speech/SpeechSynthesisEvent.idl

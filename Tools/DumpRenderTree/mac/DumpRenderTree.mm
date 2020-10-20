@@ -842,6 +842,7 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setAspectRatioOfImgFromWidthAndHeightEnabled:YES];
     [preferences setCSSOMViewSmoothScrollingEnabled:YES];
     [preferences setAudioWorkletEnabled:YES];
+    [preferences _setSpeechRecognitionEnabled:YES];
 
     for (WebFeature* feature in [WebPreferences _experimentalFeatures]) {
         if ([feature.key isEqual:@"MediaSessionEnabled"])

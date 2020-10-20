@@ -316,6 +316,13 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/speech/SpeechSynthesisEvent.idl \
     $(WebCore)/Modules/speech/SpeechSynthesisUtterance.idl \
     $(WebCore)/Modules/speech/SpeechSynthesisVoice.idl \
+	$(WebCore)/Modules/speech/SpeechRecognition.idl \
+	$(WebCore)/Modules/speech/SpeechRecognitionAlternative.idl \
+	$(WebCore)/Modules/speech/SpeechRecognitionErrorCode.idl \
+	$(WebCore)/Modules/speech/SpeechRecognitionErrorEvent.idl \
+	$(WebCore)/Modules/speech/SpeechRecognitionEvent.idl \
+	$(WebCore)/Modules/speech/SpeechRecognitionResult.idl \
+	$(WebCore)/Modules/speech/SpeechRecognitionResultList.idl \
     $(WebCore)/Modules/streams/ByteLengthQueuingStrategy.idl \
     $(WebCore)/Modules/streams/CountQueuingStrategy.idl \
     $(WebCore)/Modules/streams/ReadableByteStreamController.idl \

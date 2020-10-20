@@ -348,6 +348,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic, setter=_setMediaRecorderEnabled:) BOOL _mediaRecorderEnabled;
 @property (nonatomic) BOOL CSSIndividualTransformPropertiesEnabled;
 @property (nonatomic) BOOL contactPickerAPIEnabled;
+@property (nonatomic, setter=_setSpeechRecognitionEnabled:) BOOL _speechRecognitionEnabled;
 @end
 
 @interface WebPreferences (WebPrivateDeprecated)

@@ -3375,6 +3375,16 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitCSSIndividualTransformPropertiesEnabledPreferenceKey];
 }
 
+- (BOOL)_speechRecognitionEnabled
+{
+    return [self _boolValueForKey:WebKitSpeechRecognitionEnabledPreferenceKey];
+}
+
+- (void)_setSpeechRecognitionEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitSpeechRecognitionEnabledPreferenceKey];
+}
+
 @end
 
 @implementation WebPreferences (WebPrivateObsolete)

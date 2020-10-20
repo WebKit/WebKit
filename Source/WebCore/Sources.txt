@@ -184,6 +184,12 @@ Modules/pictureinpicture/EnterPictureInPictureEvent.cpp
 Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp
 Modules/pictureinpicture/PictureInPictureWindow.cpp
 Modules/remoteplayback/RemotePlayback.cpp
+Modules/speech/SpeechRecognition.cpp
+Modules/speech/SpeechRecognitionAlternative.cpp
+Modules/speech/SpeechRecognitionErrorEvent.cpp
+Modules/speech/SpeechRecognitionEvent.cpp
+Modules/speech/SpeechRecognitionResult.cpp
+Modules/speech/SpeechRecognitionResultList.cpp
 Modules/speech/DOMWindowSpeechSynthesis.cpp
 Modules/speech/SpeechSynthesis.cpp
 Modules/speech/SpeechSynthesisEvent.cpp
@@ -3500,6 +3506,13 @@ JSShareData.cpp
 JSSlotable.cpp
 JSSourceBuffer.cpp
 JSSourceBufferList.cpp
+JSSpeechRecognition.cpp
+JSSpeechRecognitionAlternative.cpp
+JSSpeechRecognitionErrorCode.cpp
+JSSpeechRecognitionErrorEvent.cpp
+JSSpeechRecognitionEvent.cpp
+JSSpeechRecognitionResult.cpp
+JSSpeechRecognitionResultList.cpp
 JSSpeechSynthesis.cpp
 JSSpeechSynthesisEvent.cpp
 JSSpeechSynthesisUtterance.cpp

@@ -44,6 +44,8 @@ webkit.org/b/181964 fast/text/mac/select-character-before-zero-width-joiner.html
 pointerevents/mouse [ Pass ]
 imported/w3c/web-platform-tests/pointerevents [ Pass ]
 
+imported/w3c/web-platform-tests/speech-api [ Pass ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////

@@ -44,6 +44,7 @@ ServiceWorkerGlobalScope conditional=SERVICE_WORKER
 ServiceWorkerRegistration conditional=SERVICE_WORKER
 SourceBuffer conditional=MEDIA_SOURCE
 SourceBufferList conditional=MEDIA_SOURCE
+SpeechRecognition
 SpeechSynthesisUtterance conditional=SPEECH_SYNTHESIS
 TextTrack conditional=VIDEO
 TextTrackCue conditional=VIDEO

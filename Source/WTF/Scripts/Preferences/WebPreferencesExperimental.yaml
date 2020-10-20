@@ -741,6 +741,18 @@ ShouldDeferAsynchronousScriptsUntilAfterDocumentLoadOrFirstPaint:
     WebCore:
       default: true
 
+SpeechRecognitionEnabled:
+  type: bool
+  humanReadableName: "SpeechRecognition API"
+  humanReadableDescription: "Enable SpeechRecognition of WebSpeech API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: This is enabled when ENABLE(EXPERIMENTAL_FEATURES) is true in WebKit2. Perhaps we should consider using that for WebKitLegacy as well.
 SpringTimingFunctionEnabled:
   type: bool

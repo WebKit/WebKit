@@ -289,6 +289,7 @@
 #define WebKitMediaRecorderEnabledPreferenceKey @"WebKitMediaRecorderEnabled"
 #define WebKitCSSIndividualTransformPropertiesEnabledPreferenceKey @"WebKitCSSIndividualTransformPropertiesEnabled"
 #define WebKitContactPickerAPIEnabledPreferenceKey @"WebKitContactPickerAPIEnabled"
+#define WebKitSpeechRecognitionEnabledPreferenceKey @"WebKitSpeechRecognitionEnabled"
 
 // The preference keys below this point are deprecated and have no effect. They should
 // be removed when it is considered safe to do so.

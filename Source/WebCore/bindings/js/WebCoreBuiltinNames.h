@@ -238,6 +238,12 @@ namespace WebCore {
     macro(ServiceWorkerGlobalScope) \
     macro(ServiceWorkerRegistration) \
     macro(ShadowRoot) \
+    macro(SpeechRecognition) \
+    macro(SpeechRecognitionAlternative) \
+    macro(SpeechRecognitionErrorEvent) \
+    macro(SpeechRecognitionEvent) \
+    macro(SpeechRecognitionResult) \
+    macro(SpeechRecognitionResultList) \
     macro(StaticRange) \
     macro(StereoPannerNode) \
     macro(StylePropertyMapReadOnly) \
