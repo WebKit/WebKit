@@ -71,7 +71,7 @@ public:
     void didReceiveMessageFromGPUProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
 
 #if PLATFORM(COCOA)
-    void requestBuffer(double sampleTime, uint64_t hostTime, uint64_t numberOfFrames, CompletionHandler<void(uint64_t startFrame, uint64_t numberOfFramesToRender, uint64_t boundsStartFrame, uint64_t boundsEndFrame)>&&);
+    void requestBuffer(double sampleTime, uint64_t hostTime, uint64_t numberOfFrames, CompletionHandler<void(uint64_t boundsStartFrame, uint64_t boundsEndFrame)>&&);
 #endif
 
 private:
@@ -105,7 +105,7 @@ private:
     std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
     std::unique_ptr<WebCore::WebAudioBufferList> m_audioBufferList;
     uint64_t m_currentFrame { 0 };
-    WTF::Function<void(uint64_t, uint64_t, uint64_t, uint64_t)> m_renderCompletionHandler;
+    WTF::Function<void(uint64_t, uint64_t)> m_renderCompletionHandler;
 #endif
 
     Function<void(Function<void()>&&)> m_dispatchToRenderThread;

@@ -25,7 +25,7 @@
 
 messages -> RemoteAudioDestinationProxy NotRefCounted {
 #if PLATFORM(COCOA)
-    RequestBuffer(double sampleTime, uint64_t hostTime, uint64_t numberOfFrames) -> (uint64_t startFrame, uint64_t numberOfFramesToRender, uint64_t boundsStartFrame, uint64_t boundsEndFrame) Async
+    RequestBuffer(double sampleTime, uint64_t hostTime, uint64_t numberOfFrames) -> (uint64_t boundsStartFrame, uint64_t boundsEndFrame) Async
 #endif
 }
 

@@ -123,12 +123,12 @@ void RemoteAudioDestinationProxy::stop()
 }
 
 #if PLATFORM(COCOA)
-void RemoteAudioDestinationProxy::requestBuffer(double sampleTime, uint64_t hostTime, uint64_t numberOfFrames, CompletionHandler<void(uint64_t, uint64_t, uint64_t, uint64_t)>&& completionHandler)
+void RemoteAudioDestinationProxy::requestBuffer(double sampleTime, uint64_t hostTime, uint64_t numberOfFrames, CompletionHandler<void(uint64_t, uint64_t)>&& completionHandler)
 {
     ASSERT(!isMainThread());
 
     if (!hasEnoughFrames(numberOfFrames))
-        completionHandler(0, 0, 0, 0);
+        completionHandler(0, 0);
 
     m_renderCompletionHandler = WTFMove(completionHandler);
     m_audioBufferList->setSampleCount(numberOfFrames);
@@ -150,7 +150,7 @@ void RemoteAudioDestinationProxy::renderOnRenderingThead(size_t framesToRender)
     uint64_t boundsStartFrame;
     uint64_t boundsEndFrame;
     m_ringBuffer->getCurrentFrameBounds(boundsStartFrame, boundsEndFrame);
-    m_renderCompletionHandler(startFrame, framesToRender, boundsStartFrame, boundsEndFrame);
+    m_renderCompletionHandler(boundsStartFrame, boundsEndFrame);
 }
 #endif
 

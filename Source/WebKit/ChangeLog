@@ -1,3 +1,33 @@
+2020-10-20  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process] Some WebAudio layout tests generate strange noises
+        https://bugs.webkit.org/show_bug.cgi?id=217921
+
+        Reviewed by Eric Carlson.
+
+        RemoteAudioDestination::render() should not return `noErr` unless we can provide the requested
+        samples to the provided AudioBufferList. Otherwise, the audio output unit of CoreAudio will output
+        the samples in the AudioBufferList, which might be invalid data at the beginning of a rendering.
+        We have observed that happens in some layout tests and some WebAudio example pages.
+
+        Currently, RemoteAudioDestination::render() always returns `noErr` in the render thread (immediately),
+        but the AudioBufferList (ioData) is updated in the main thread (later). This patch fixes that by only
+        setting the bounds of CARingBuffer in the completion handler of sendWithAsyncReply() in the main thread,
+        and fetching AudioBuffer(s) from the CARingBuffer in the render thread. Also, RemoteAudioDestination
+        tracks the progress of fetching, so RemoteAudioDestinationProxy does not need to send `startFrame`
+        and `numberOfFramesToRender` to RemoteAudioDestination in response to a buffer request.
+
+        * GPUProcess/media/RemoteAudioDestinationManager.cpp:
+        (WebKit::RemoteAudioDestination::audioSamplesStorageChanged):
+        (WebKit::RemoteAudioDestination::render): Only return `noErr` if the function renders the requested
+        sample successfully.
+
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::requestBuffer): Remove unused parameters.
+        (WebKit::RemoteAudioDestinationProxy::renderOnRenderingThead): Ditto.
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.h: Ditto.
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.messages.in: Ditto.
+
 2020-10-20  Chris Dumez  <cdumez@apple.com>
 
         Drop legacy code using AssertionServices
