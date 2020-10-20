@@ -1,3 +1,16 @@
+2020-10-20  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Remove blacklist terminology
+        https://bugs.webkit.org/show_bug.cgi?id=217953
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/loadConfig.py:
+        (getInvalidTags):
+        (getValidTags):
+        * BuildSlaveSupport/ews-build/loadConfig_unittest.py:
+        (TagsForBuilderTest.test_getInvalidTags):
+
 2020-10-20  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, partial revert of r268721.

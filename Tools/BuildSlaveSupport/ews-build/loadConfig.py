@@ -183,19 +183,19 @@ def checkWorkersAndBuildersForConsistency(config, workers, builders):
                     builder['name'], builder['platform'], worker['name'], worker['platform']))
 
 
-def getBlackListedTags():
+def getInvalidTags():
     """
-    We maintain a blacklist of words which we do not want to display as tag in buildbot.
+    We maintain a list of words which we do not want to display as tag in buildbot.
     We generate a list of tags by splitting the builder name. We do not want certain words as tag.
     For e.g. we don't want '11'as tag for builder iOS-11-Simulator-EWS
     """
-    tags_blacklist = [str(i) for i in xrange(0, 20)]
-    tags_blacklist.extend(['EWS', 'TryBot'])
-    return tags_blacklist
+    invalid_tags = [str(i) for i in xrange(0, 20)]
+    invalid_tags.extend(['EWS', 'TryBot'])
+    return invalid_tags
 
 
 def getValidTags(tags):
-    return list(set(tags) - set(getBlackListedTags()))
+    return list(set(tags) - set(getInvalidTags()))
 
 
 def getTagsForBuilder(builder):

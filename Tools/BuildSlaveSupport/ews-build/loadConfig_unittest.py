@@ -131,11 +131,11 @@ class TagsForBuilderTest(unittest.TestCase):
         self.assertEqual(tags, ['iOS'])
         self.assertEqual(type(tags[0]), str)
 
-    def test_getBlackListedTags(self):
-        blacklistedTags = loadConfig.getBlackListedTags()
+    def test_getInvalidTags(self):
+        invalidTags = loadConfig.getInvalidTags()
         expectedTags = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
                         '11', '12', '13', '14', '15', '16', '17', '18', '19', 'EWS', 'TryBot']
-        self.assertEqual(blacklistedTags, expectedTags)
+        self.assertEqual(invalidTags, expectedTags)
 
 
 class TestcheckValidWorker(unittest.TestCase):
