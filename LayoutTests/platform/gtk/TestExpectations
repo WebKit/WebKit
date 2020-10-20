@@ -57,6 +57,7 @@ webkit.org/b/210528 media/video-supports-fullscreen.html [ Crash Pass ]
 webkit.org/b/215499 [ Release ] media/video-load-networkState.html [ Crash Pass ]
 
 # MESA-related segfault
+webkit.org/b/216777 compositing/reflections/masked-reflection-on-composited.html [ Pass Crash ]
 webkit.org/b/216777 compositing/reflections/nested-reflection-anchor-point.html [ Pass Crash ]
 webkit.org/b/216777 compositing/video/video-update-rendering.html [ Pass Crash ]
 webkit.org/b/216777 fast/spatial-navigation/snav-table-traversal.html [ Pass Crash ]
@@ -65,6 +66,7 @@ webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transforms/parsing/t
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-origin-invalid.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transitions/CSSTransition-ready.tentative.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transitions/CSSTransition-startTime.tentative.html [ Pass Crash ]
+webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transitions/parsing/transition-property-computed.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/animation/caret-color-interpolation.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/animation/outline-width-composition.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/appearance-auto-001.html [ ImageOnlyFailure Crash ]

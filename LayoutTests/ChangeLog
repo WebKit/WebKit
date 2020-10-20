@@ -1,3 +1,10 @@
+2020-10-20  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB][GTK] Unreviewed test gardening. Gardened several flaky crash tests.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-10-20  Truitt Savell  <tsavell@apple.com>
 
         Remove expectations from big-sur sense it is not needed after r268683
