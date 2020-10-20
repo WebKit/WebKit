@@ -34,6 +34,7 @@
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "Page.h"
 #include "PlatformScreen.h"
 #include "Quirks.h"
 #include "ResourceLoadObserver.h"
@@ -56,7 +57,7 @@ unsigned Screen::height() const
         return 0;
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ResourceLoadStatistics::ScreenAPI::Height);
-    long height = static_cast<long>(screenRect(frame->view()).height());
+    long height = static_cast<long>(frame->screenSize().height());
     return static_cast<unsigned>(height);
 }
 
@@ -67,7 +68,7 @@ unsigned Screen::width() const
         return 0;
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ResourceLoadStatistics::ScreenAPI::Width);
-    long width = static_cast<long>(screenRect(frame->view()).width());
+    long width = static_cast<long>(frame->screenSize().width());
     return static_cast<unsigned>(width);
 }
 

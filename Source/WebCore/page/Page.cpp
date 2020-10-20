@@ -89,6 +89,7 @@
 #include "PerformanceLoggingClient.h"
 #include "PerformanceMonitor.h"
 #include "PlatformMediaSessionManager.h"
+#include "PlatformScreen.h"
 #include "PlatformStrategies.h"
 #include "PlugInClient.h"
 #include "PluginData.h"

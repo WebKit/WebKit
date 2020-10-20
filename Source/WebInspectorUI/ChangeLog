@@ -1,3 +1,14 @@
+2020-10-20  Philippe Normand  <pnormand@igalia.com>
+
+        Web Inspector: Add setScreenSizeOverride API to the Page agent
+        https://bugs.webkit.org/show_bug.cgi?id=213242
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+        (WI.loaded): Add a new drop-down menu allowing to override the device screen size.
+
 2020-10-19  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Support three-column pane arrangement in Elements Tab

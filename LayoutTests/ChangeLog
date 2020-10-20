@@ -1,3 +1,15 @@
+2020-10-20  Philippe Normand  <pnormand@igalia.com> and Pavel Feldman <pavel.feldman@gmail.com>
+
+        Web Inspector: Add setScreenSizeOverride API to the Page agent
+        https://bugs.webkit.org/show_bug.cgi?id=213242
+
+        Reviewed by Devin Rousso.
+
+        * TestExpectations:
+        * inspector/page/setScreenSizeOverride.html: Added.
+        * platform/glib/TestExpectations:
+        * platform/glib/inspector/page/setScreenSizeOverride-expected.txt: Added.
+
 2020-10-19  Sihui Liu  <sihui_liu@apple.com>
 
         Import speech tests from WPT

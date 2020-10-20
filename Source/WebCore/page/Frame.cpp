@@ -1067,6 +1067,23 @@ bool Frame::mayPrewarmLocalStorage() const
     return m_localStoragePrewarmingCount < maxlocalStoragePrewarmingCount;
 }
 
+FloatSize Frame::screenSize() const
+{
+    if (!m_overrideScreenSize.isEmpty())
+        return m_overrideScreenSize;
+    return screenRect(view()).size();
+}
+
+void Frame::setOverrideScreenSize(FloatSize&& screenSize)
+{
+    if (m_overrideScreenSize == screenSize)
+        return;
+
+    m_overrideScreenSize = WTFMove(screenSize);
+    if (auto* document = this->document())
+        document->updateViewportArguments();
+}
+
 void Frame::selfOnlyRef()
 {
     ASSERT(isMainFrame());

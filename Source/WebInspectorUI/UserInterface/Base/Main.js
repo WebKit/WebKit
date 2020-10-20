@@ -167,6 +167,7 @@ WI.loaded = function()
     WI.visible = false;
     WI._windowKeydownListeners = [];
     WI._overridenDeviceUserAgent = null;
+    WI._overridenDeviceScreenSize = null;
     WI._overridenDeviceSettings = new Map;
 
     // Targets.
@@ -2205,6 +2206,123 @@ WI._handleDeviceSettingsTabBarButtonClicked = function(event)
             applyOverriddenUserAgent(value);
         }
     });
+
+    if (InspectorBackend.hasCommand("Page.setScreenSizeOverride")) {
+        function applyOverriddenScreenSize(value, force) {
+            if (value === WI._overridenDeviceScreenSize)
+                return;
+
+            if (!force && (!value || value === "default")) {
+                target.PageAgent.setScreenSizeOverride((error) => {
+                    if (error) {
+                        WI.reportInternalError(error);
+                        return;
+                    }
+
+                    WI._overridenDeviceScreenSize = null;
+                    updateActivatedState();
+                    target.PageAgent.reload();
+                });
+            } else {
+                let tokens = value.split("x");
+                let width = parseInt(tokens[0]);
+                let height = parseInt(tokens[1]);
+                target.PageAgent.setScreenSizeOverride(width, height, (error) => {
+                    if (error) {
+                        WI.reportInternalError(error);
+                        return;
+                    }
+
+                    WI._overridenDeviceScreenSize = value;
+                    updateActivatedState();
+                    target.PageAgent.reload();
+                });
+            }
+        }
+
+
+        let screenSizeRow = table.appendChild(document.createElement("tr"));
+
+        let screenSizeTitle = screenSizeRow.appendChild(document.createElement("td"));
+        screenSizeTitle.textContent = WI.UIString("Screen size:");
+
+        let screenSizeValue = screenSizeRow.appendChild(document.createElement("td"));
+        screenSizeValue.classList.add("screen-size");
+
+        let screenSizeValueSelect = screenSizeValue.appendChild(document.createElement("select"));
+
+        let screenSizeValueInput = null;
+
+        const screenSizes = [
+            [
+                {name: WI.UIString("Default"), value: "default"},
+            ],
+            [
+                {name: WI.UIString("1080p"), value: "1920x1080"},
+                {name: WI.UIString("720p"), value: "1280x720"},
+            ],
+            [
+                {name: WI.UIString("Other\u2026"), value: "other"},
+            ],
+        ];
+
+        let selectedScreenSizeOptionElement = null;
+
+        for (let group of screenSizes) {
+            for (let {name, value} of group) {
+                let optionElement = screenSizeValueSelect.appendChild(document.createElement("option"));
+                optionElement.value = value;
+                optionElement.textContent = name;
+
+                if (value === WI._overridenDeviceScreenSize)
+                    selectedScreenSizeOptionElement = optionElement;
+            }
+
+            if (group !== screenSizes.lastValue)
+                screenSizeValueSelect.appendChild(document.createElement("hr"));
+        }
+
+        function showScreenSizeInput() {
+            if (screenSizeValueInput)
+                return;
+
+            screenSizeValueInput = screenSizeValue.appendChild(document.createElement("input"));
+            screenSizeValueInput.spellcheck = false;
+            screenSizeValueInput.value = screenSizeValueInput.placeholder = WI._overridenDeviceScreenSize || (window.screen.width + "x" + window.screen.height);
+            screenSizeValueInput.addEventListener("click", (clickEvent) => {
+                clickEvent.preventDefault();
+            });
+            screenSizeValueInput.addEventListener("change", (inputEvent) => {
+                applyOverriddenScreenSize(screenSizeValueInput.value, true);
+            });
+
+            WI._deviceSettingsPopover.update();
+        }
+
+        if (selectedScreenSizeOptionElement)
+            screenSizeValueSelect.value = selectedScreenSizeOptionElement.value;
+        else if (WI._overridenDeviceScreenSize) {
+            screenSizeValueSelect.value = "other";
+            showScreenSizeInput();
+        }
+
+        screenSizeValueSelect.addEventListener("change", () => {
+            let value = screenSizeValueSelect.value;
+            if (value === "other") {
+                showScreenSizeInput();
+                screenSizeValueInput.select();
+            } else {
+                if (screenSizeValueInput) {
+                    screenSizeValueInput.remove();
+                    screenSizeValueInput = null;
+
+                    WI._deviceSettingsPopover.update();
+                }
+
+                applyOverriddenScreenSize(value);
+            }
+        });
+    }
 
     const settings = [
         {

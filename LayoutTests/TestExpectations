@@ -76,6 +76,7 @@ editing/pasteboard/dom-paste [ Skip ]
 editing/pasteboard/mac [ Skip ]
 fast/media/ios [ Skip ]
 fast/dom/Range/mac [ Skip ]
+inspector/page/setScreenSizeOverride.html [ Skip ]
 
 # Requires async overflow scrolling
 compositing/shared-backing/overflow-scroll [ Skip ]

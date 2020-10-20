@@ -309,6 +309,9 @@ public:
 
     void invalidateContentEventRegionsIfNeeded();
 
+    WEBCORE_EXPORT FloatSize screenSize() const;
+    void setOverrideScreenSize(FloatSize&&);
+
 // ========
 
     void selfOnlyRef();
@@ -371,6 +374,8 @@ private:
     unsigned m_selfOnlyRefCount { 0 };
     bool m_hasHadUserInteraction { false };
     unsigned m_localStoragePrewarmingCount { 0 };
+
+    FloatSize m_overrideScreenSize;
 
     UniqueRef<EventHandler> m_eventHandler;
 };

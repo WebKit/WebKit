@@ -1019,6 +1019,8 @@ imported/mozilla/svg/blend-hard-light.svg [ Pass ]
 imported/mozilla/svg/dynamic-textPath-02.svg [ Pass ]
 imported/mozilla/svg/image/image-filter-01.svg [ Pass ]
 
+inspector/page/setScreenSizeOverride.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -304,6 +304,16 @@
             "returns": [
                 { "name": "data", "type": "string", "description": "Base64-encoded web archive." }
             ]
+        },
+        {
+            "name": "setScreenSizeOverride",
+            "description": "Overrides screen size exposed to DOM and used in media queries for testing with provided values.",
+            "condition": "!(defined(WTF_PLATFORM_COCOA) && WTF_PLATFORM_COCOA)",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "width", "type": "integer", "description": "Screen width", "optional": true },
+                { "name": "height", "type": "integer", "description": "Screen height", "optional": true }
+            ]
         }
     ],
     "events": [

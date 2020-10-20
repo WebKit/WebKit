@@ -390,7 +390,7 @@ static bool deviceAspectRatioEvaluate(CSSValue* value, const CSSToLengthConversi
     if (!value)
         return true;
 
-    auto size = screenRect(frame.mainFrame().view()).size();
+    auto size = frame.mainFrame().screenSize();
     bool result = compareAspectRatioValue(value, size.width(), size.height(), op);
     LOG_WITH_STREAM(MediaQueries, stream << "  deviceAspectRatioEvaluate: " << op << " " << aspectRatioValueAsString(value) << " actual screen size " << size << ": " << result);
     return result;
@@ -508,7 +508,7 @@ static bool deviceHeightEvaluate(CSSValue* value, const CSSToLengthConversionDat
     if (!value)
         return true;
     int length;
-    auto height = screenRect(frame.mainFrame().view()).height();
+    auto height = frame.mainFrame().screenSize().height();
     if (!computeLength(value, !frame.document()->inQuirksMode(), conversionData, length))
         return false;
 
@@ -524,7 +524,7 @@ static bool deviceWidthEvaluate(CSSValue* value, const CSSToLengthConversionData
     if (!value)
         return true;
     int length;
-    auto width = screenRect(frame.mainFrame().view()).width();
+    auto width = frame.mainFrame().screenSize().width();
     if (!computeLength(value, !frame.document()->inQuirksMode(), conversionData, length))
         return false;
 

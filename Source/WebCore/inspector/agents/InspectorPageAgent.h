@@ -119,6 +119,9 @@ public:
 #if ENABLE(WEB_ARCHIVE) && USE(CF)
     Inspector::Protocol::ErrorStringOr<String> archive();
 #endif
+#if !PLATFORM(COCOA)
+    Inspector::Protocol::ErrorStringOr<void> setScreenSizeOverride(Optional<int>&& width, Optional<int>&& height);
+#endif
 
     // InspectorInstrumentation
     void domContentEventFired();

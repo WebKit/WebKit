@@ -1106,4 +1106,21 @@ Protocol::ErrorStringOr<String> InspectorPageAgent::archive()
 }
 #endif
 
+#if !PLATFORM(COCOA)
+Protocol::ErrorStringOr<void> InspectorPageAgent::setScreenSizeOverride(Optional<int>&& width, Optional<int>&& height)
+{
+    if (width.hasValue() != height.hasValue())
+        return makeUnexpected("Screen width and height override should be both specified or omitted"_s);
+
+    if (width && *width <= 0)
+        return makeUnexpected("Screen width override should be a positive integer"_s);
+
+    if (height && *height <= 0)
+        return makeUnexpected("Screen height override should be a positive integer"_s);
+
+    m_inspectedPage.mainFrame().setOverrideScreenSize(FloatSize(width.valueOr(0), height.valueOr(0)));
+    return { };
+}
+#endif
+
 } // namespace WebCore
