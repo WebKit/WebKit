@@ -1,3 +1,16 @@
+2020-10-20  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Rename item() to at() and move it behind a flag
+        https://bugs.webkit.org/show_bug.cgi?id=217942
+
+        Reviewed by Yusuke Suzuki.
+
+        * inspector/model/remote-object-get-properties-expected.txt:
+        * js/array-unscopables-properties-expected.txt:
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+        * js/script-tests/array-unscopables-properties.js:
+
 2020-10-20  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB][GTK] Unreviewed test gardening. Gardened several flaky crash tests.

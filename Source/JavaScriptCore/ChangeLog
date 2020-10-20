@@ -1,3 +1,28 @@
+2020-10-20  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Rename item() to at() and move it behind a flag
+        https://bugs.webkit.org/show_bug.cgi?id=217942
+
+        Reviewed by Yusuke Suzuki.
+
+        {Array, %TypedArray%}.prototype.item is official web-incompatible,
+        but it is expected to be renamed to `at` instead of being scrapped entirely:
+        https://github.com/tc39/proposal-item-method/issues/34
+
+        This patch performs the renaming, but does so behind a runtime flag since this has yet to achieve consensus.
+
+        * builtins/ArrayPrototype.js:
+        (at):
+        (item): Deleted.
+        * builtins/TypedArrayPrototype.js:
+        (at):
+        (item): Deleted.
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+        * runtime/OptionsList.h:
+
 2020-10-20  Philippe Normand  <pnormand@igalia.com> and Pavel Feldman <pavel.feldman@gmail.com>
 
         Web Inspector: Add setScreenSizeOverride API to the Page agent

@@ -385,7 +385,7 @@ function toLocaleString(/* locale, options */)
     return string;
 }
 
-function item(index)
+function at(index)
 {
     "use strict";
 

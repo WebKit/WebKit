@@ -1,3 +1,13 @@
+2020-10-20  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Rename item() to at() and move it behind a flag
+        https://bugs.webkit.org/show_bug.cgi?id=217942
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/at-method.js: Renamed from JSTests/stress/item-method.js.
+        * test262/config.yaml: Add skips until the feature is renamed.
+
 2020-10-19  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] %Interface%.prototype.constructor should be defined on [[Set]] receiver

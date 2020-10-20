@@ -687,11 +687,11 @@ function flatMap(callback)
     return @flatIntoArrayWithCallback(result, array, length, 0, callback, thisArg);
 }
 
-function item(index)
+function at(index)
 {
     "use strict";
 
-    var array = @toObject(this, "Array.prototype.item requires that |this| not be null or undefined");
+    var array = @toObject(this, "Array.prototype.at requires that |this| not be null or undefined");
     var length = @toLength(array.length);
 
     var k = @toInteger(index);
