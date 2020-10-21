@@ -83,6 +83,7 @@ public:
         const Box& layoutBox() const { return *m_layoutBox; }
 
         bool isInlineBox() const { return m_type == Type::InlineBox || m_type == Type::RootInlineBox; }
+        bool isAtomicInlineLevelBox() const { return m_type == Type::AtomicInlineLevelBox; }
         bool isLineBreakBox() const { return m_type == Type::LineBreakBox; }
         bool hasLineBoxRelativeAlignment() const;
 

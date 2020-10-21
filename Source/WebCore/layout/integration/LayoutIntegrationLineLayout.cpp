@@ -138,8 +138,31 @@ void LineLayout::constructContent()
 {
     auto& displayInlineContent = ensureInlineContent();
 
+    auto lineNeedsLegacyIntegralVerticalPosition = [&](size_t lineIndex) {
+        RELEASE_ASSERT(m_inlineFormattingState.lineBoxes().size() > lineIndex);
+        // InlineTree rounds y position to integral value for certain content (see InlineFlowBox::placeBoxesInBlockDirection).
+        auto inlineLevelBoxList = m_inlineFormattingState.lineBoxes()[lineIndex].inlineLevelBoxList();
+        if (inlineLevelBoxList.size() == 1) {
+            // This is text content only with root inline box.
+            return true;
+        }
+        // Text + <br> (or just <br> or text<span></span><br>) behaves like text.
+        for (auto& inlineLevelBox : inlineLevelBoxList) {
+            if (inlineLevelBox->isAtomicInlineLevelBox()) {
+                // Content like text<img> prevents legacy snapping.
+                return false;
+            }
+        }
+        return true;
+    };
+
     auto constructDisplayLineRuns = [&] {
         auto initialContaingBlockSize = m_layoutState.viewportSize();
+        struct LineLegacyVerticalPositionPolicy {
+            size_t lineIndex { 0 };
+            bool needsIntegralPosition { true }; 
+        };
+        auto lineLegacyVerticalPositionPolicy = LineLegacyVerticalPositionPolicy { 0, lineNeedsLegacyIntegralVerticalPosition(0) };
         for (auto& lineRun : m_inlineFormattingState.lineRuns()) {
             auto& layoutBox = lineRun.layoutBox();
             auto computedInkOverflow = [&] (auto runRect) {
@@ -164,9 +187,9 @@ void LineLayout::constructContent()
             auto lineIndex = lineRun.lineIndex();
             auto lineBoxLogicalRect = m_inlineFormattingState.lines()[lineIndex].lineBoxLogicalRect();
             runRect.moveBy({ lineBoxLogicalRect.left(), lineBoxLogicalRect.top() });
-            // InlineTree rounds y position to integral value, see InlineFlowBox::placeBoxesInBlockDirection.
-            auto needsLegacyIntegralPosition = !layoutBox.isReplacedBox();
-            if (needsLegacyIntegralPosition)
+            if (lineIndex != lineLegacyVerticalPositionPolicy.lineIndex)
+                lineLegacyVerticalPositionPolicy = LineLegacyVerticalPositionPolicy { lineIndex, lineNeedsLegacyIntegralVerticalPosition(lineIndex) };
+            if (lineLegacyVerticalPositionPolicy.needsIntegralPosition)
                 runRect.setY(roundToInt(runRect.y()));
 
             WTF::Optional<Run::TextContent> textContent;
@@ -215,8 +238,8 @@ void LineLayout::constructContent()
             auto lineRect = FloatRect { line.logicalRect() };
             // Painting code (specifically TextRun's xPos) needs the line box offset to be able to compute tab positions.
             lineRect.setX(lineBoxLogicalRect.left());
-            // InlineTree rounds y position to integral value, see InlineFlowBox::placeBoxesInBlockDirection.
-            lineRect.setY(roundToInt(lineRect.y()));
+            if (lineNeedsLegacyIntegralVerticalPosition(lineIndex))
+                lineRect.setY(roundToInt(lineRect.y()));
             displayInlineContent.lines.append({ firstRunIndex, runCount, lineRect, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.horizontalAlignmentOffset() });
         }
     };
