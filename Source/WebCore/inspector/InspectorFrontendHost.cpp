@@ -388,6 +388,19 @@ String InspectorFrontendHost::platform() const
 #endif
 }
 
+String InspectorFrontendHost::platformVersionName() const
+{
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+    return "big-sur"_s;
+#elif PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
+    return "catalina"_s;
+#elif PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    return "mojave"_s;
+#else
+    return emptyString();
+#endif
+}
+
 String InspectorFrontendHost::port() const
 {
 #if PLATFORM(GTK)

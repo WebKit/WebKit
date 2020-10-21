@@ -60,7 +60,7 @@ WI.HARBuilder = class HARBuilder
     {
         return {
             name: "WebKit Web Inspector",
-            version: WI.Platform.version.build || "1.0",
+            version: "1.0",
         };
     }
 

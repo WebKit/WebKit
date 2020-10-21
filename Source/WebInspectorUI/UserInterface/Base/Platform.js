@@ -25,61 +25,7 @@
 
 WI.Platform = {
     name: InspectorFrontendHost.platform,
-    isNightlyBuild: false,
     version: {
-        base: 0,
-        release: 0,
-        name: "",
-        build: "",
+        name: InspectorFrontendHost.platformVersionName,
     }
 };
-
-(function () {
-    let versionMatch = / AppleWebKit\/([^ ]+)/.exec(navigator.userAgent);
-    if (versionMatch) {
-        WI.Platform.version.build = versionMatch[1];
-
-        // Check for a nightly build by looking for a plus in the version number and a small number of stylesheets (indicating combined resources).
-        if (versionMatch[1].indexOf("+") !== -1 && document.styleSheets.length < 10)
-            WI.Platform.isNightlyBuild = true;
-    }
-
-    let osVersionMatch = / Mac OS X (\d+)_(\d+)/.exec(navigator.appVersion);
-    if (osVersionMatch) {
-        WI.Platform.version.base = parseInt(osVersionMatch[1]);
-        WI.Platform.version.release = parseInt(osVersionMatch[2]);
-
-        switch (WI.Platform.version.base) {
-        case 10:
-            switch (WI.Platform.version.release) {
-            case 15:
-                WI.Platform.version.name = "catalina";
-                break;
-            case 14:
-                WI.Platform.version.name = "mojave";
-                break;
-            case 13:
-                WI.Platform.version.name = "high-sierra";
-                break;
-            case 12:
-                WI.Platform.version.name = "sierra";
-                break;
-            default:
-                WI.Platform.version.name = "unknown-mac";
-                break;
-            }
-            break;
-
-        case 11:
-            switch (WI.Platform.version.release) {
-            case 0:
-                WI.Platform.version.name = "big-sur";
-                break;
-            default:
-                WI.Platform.version.name = "unknown-mac";
-                break;
-            }
-            break;
-        }
-    }
-})();
