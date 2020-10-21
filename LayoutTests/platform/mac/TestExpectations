@@ -2260,3 +2260,5 @@ webkit.org/b/217994 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 
 webkit.org/b/218031 tiled-drawing/scrolling/non-fast-region/handlers-in-iframes.html [ Pass Failure ]
 
+# rdar://70546330 REGRESSION (r267531): [ Big Sur iOS 14 ] imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002.html is a constant failure
+[ BigSur+ ] imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002.html [ Failure ]
