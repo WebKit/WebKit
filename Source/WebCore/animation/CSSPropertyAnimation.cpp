@@ -1870,6 +1870,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapper<TextDecorationThickness>(CSSPropertyTextDecorationThickness, &RenderStyle::textDecorationThickness, &RenderStyle::setTextDecorationThickness),
         new PropertyWrapper<TextUnderlineOffset>(CSSPropertyTextUnderlineOffset, &RenderStyle::textUnderlineOffset, &RenderStyle::setTextUnderlineOffset),
 
+        new LengthPropertyWrapper(CSSPropertyFlexBasis, &RenderStyle::flexBasis, &RenderStyle::setFlexBasis),
         new PropertyWrapper<float>(CSSPropertyFlexGrow, &RenderStyle::flexGrow, &RenderStyle::setFlexGrow),
         new PropertyWrapper<float>(CSSPropertyFlexShrink, &RenderStyle::flexShrink, &RenderStyle::setFlexShrink),
         new PropertyWrapper<int>(CSSPropertyOrder, &RenderStyle::order, &RenderStyle::setOrder),

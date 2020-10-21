@@ -112,6 +112,21 @@ FAIL fill-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 
 PASS filter (type: filterList) has testAccumulation function
 FAIL filter: same ordered filter functions assert_equals: The value should be blur(30px) brightness(0) at 0ms expected "blur(30px) brightness(0)" but got "blur(20px) brightness(0.1)"
 PASS filter: mismatched ordered filter functions
+PASS flex-basis (type: lengthPercentageOrCalc) has testAccumulation function
+FAIL flex-basis: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
+FAIL flex-basis: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
+FAIL flex-basis: percentage assert_equals: The value should be 130% at 0ms expected "130%" but got "70%"
+FAIL flex-basis: units "%" onto "px" assert_equals: The value should be calc(10% + 10px) at 0ms expected "calc(10% + 10px)" but got "10%"
+FAIL flex-basis: units "px" onto "%" assert_equals: The value should be calc(10% + 10px) at 0ms expected "calc(10% + 10px)" but got "10px"
+FAIL flex-basis: units "rem" onto "%" assert_equals: The value should be calc(10% + 20px) at 0ms expected "calc(10% + 20px)" but got "20px"
+FAIL flex-basis: units "%" onto "rem" assert_equals: The value should be calc(10% + 20px) at 0ms expected "calc(10% + 20px)" but got "10%"
+FAIL flex-basis: units "rem" onto "em" assert_equals: The value should be 40px at 0ms expected "40px" but got "20px"
+FAIL flex-basis: units "em" onto "rem" assert_equals: The value should be 40px at 0ms expected "40px" but got "20px"
+FAIL flex-basis: units "calc" onto "px" assert_equals: The value should be calc(20% + 30px) at 0ms expected "calc(20% + 30px)" but got "calc(20% + 20px)"
+FAIL flex-basis: calc assert_equals: The value should be calc(30% + 30px) at 0ms expected "calc(30% + 30px)" but got "calc(20% + 20px)"
+PASS flex-basis (type: discrete) has testAccumulation function
+PASS flex-basis: "10px" onto "auto"
+PASS flex-basis: "auto" onto "10px"
 PASS flex-grow (type: positiveNumber) has testAccumulation function
 FAIL flex-grow: positive number assert_equals: The value should be 2.2 at 0ms expected "2.2" but got "1.100000023841858"
 PASS flex-shrink (type: positiveNumber) has testAccumulation function
