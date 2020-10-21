@@ -102,7 +102,7 @@ class WebDriverTestRunner(object):
                         results.setdefault(status, []).append(os.path.join(os.path.dirname(result.test), subtest))
                         passed_count += 1
             elif result.status == 'ERROR':  # Harness execution error
-                results.setdefault('FAIL', []).append(os.path.dirname(result.test))
+                results.setdefault('FAIL', []).append(result.test)
             else:
                 # FIXME: handle other results.
                 pass

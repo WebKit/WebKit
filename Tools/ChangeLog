@@ -1,3 +1,14 @@
+2020-10-21  Lauro Moura  <lmoura@igalia.com>
+
+        webkitpy: Fix webdriver logging message
+        https://bugs.webkit.org/show_bug.cgi?id=218006
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner.py:
+        (WebDriverTestRunner.process_results): Use the test name instead of
+        the dir name.
+
 2020-10-20  Aakash Jain  <aakash_jain@apple.com>
 
         report-non-inclusive-language should do exact match for directory names to ignore
