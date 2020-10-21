@@ -2257,3 +2257,6 @@ imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-without-activat
 webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-message.https.html [ Pass Failure ]
 
 webkit.org/b/217994 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-output-channel-count.https.html [ Pass Failure ]
+
+webkit.org/b/218031 tiled-drawing/scrolling/non-fast-region/handlers-in-iframes.html [ Pass Failure ]
+
