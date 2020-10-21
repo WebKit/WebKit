@@ -160,3 +160,5 @@ webkit.org/b/217687 accessibility/ios-simulator/accessibility-aria-table-childre
 webkit.org/b/217741 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-multiple-times.html [ Pass Failure ]
 
 webkit.org/b/217759 media/now-playing-status-without-media.html [ Pass Failure ]
+
+webkit.org/b/217268 imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002.html [ Failure ]
