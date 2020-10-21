@@ -48,7 +48,9 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
         if (type == XPC_TYPE_ERROR) {
             if (event == XPC_ERROR_CONNECTION_INVALID || event == XPC_ERROR_TERMINATION_IMMINENT) {
                 // FIXME: Handle this case more gracefully.
-                exit(EXIT_FAILURE);
+                [[NSRunLoop mainRunLoop] performBlock:^{
+                    exit(EXIT_FAILURE);
+                }];
             }
         } else {
             assert(type == XPC_TYPE_DICTIONARY);
@@ -73,7 +75,9 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                 InitializerFunction initializerFunctionPtr = reinterpret_cast<InitializerFunction>(CFBundleGetFunctionPointerForName(webKitBundle, entryPointFunctionName));
                 if (!initializerFunctionPtr) {
                     NSLog(@"Unable to find entry point in WebKit.framework with name: %@", (__bridge NSString *)entryPointFunctionName);
-                    exit(EXIT_FAILURE);
+                    [[NSRunLoop mainRunLoop] performBlock:^{
+                        exit(EXIT_FAILURE);
+                    }];
                 }
 
                 auto reply = adoptOSObject(xpc_dictionary_create_reply(event));

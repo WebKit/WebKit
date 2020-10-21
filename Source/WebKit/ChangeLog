@@ -1,5 +1,37 @@
 2020-10-21  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r268570. rdar://problem/70541887
+
+    v2: WebKit::XPCServiceEventHandler block should call exit() on the main thread
+    <https://webkit.org/b/217773>
+    <rdar://problem/70275659>
+    
+    Reviewed by Geoff Garen.
+    
+    * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+    (WebKit::XPCServiceEventHandler):
+    - Use NSRunLoop instead of libdispatch to run code on the main
+      thread since libdispatch can randomly pick a new main thread when
+      exit() is called on the original main thread.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268570 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-15  David Kilzer  <ddkilzer@apple.com>
+
+            v2: WebKit::XPCServiceEventHandler block should call exit() on the main thread
+            <https://webkit.org/b/217773>
+            <rdar://problem/70275659>
+
+            Reviewed by Geoff Garen.
+
+            * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+            (WebKit::XPCServiceEventHandler):
+            - Use NSRunLoop instead of libdispatch to run code on the main
+              thread since libdispatch can randomly pick a new main thread when
+              exit() is called on the original main thread.
+
+2020-10-21  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r268602. rdar://problem/70541712
 
     [WebAuthn] Remove the "alg" field in the attestation statement
