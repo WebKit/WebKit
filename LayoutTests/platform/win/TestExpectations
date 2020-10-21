@@ -4598,3 +4598,4 @@ webkit.org/b/217922 fast/animation/animation-mixed-transform-crash.html [ ImageO
 
 webkit.org/b/217997 webanimations/accelerated-overlapping-transform-animations.html [ Pass Failure ]
 
+webkit.org/b/218040 svg/clip-path/clip-path-invalid.svg [ Pass Crash ]
