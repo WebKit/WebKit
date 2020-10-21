@@ -5740,10 +5740,8 @@ void HTMLMediaElement::dispatchEvent(Event& event)
     // We need to fire the end fullscreen event to notify the page
     // to change the position/size back *before* exiting fullscreen.
     // Otherwise, the exit fullscreen animation will be incorrect.
-    if (!m_videoFullscreenStandby && !m_waitingToEnterFullscreen && event.type() == eventNames().webkitendfullscreenEvent) {
-        setFullscreenMode(VideoFullscreenModeNone);
+    if (!m_videoFullscreenStandby && m_videoFullscreenMode == VideoFullscreenModeNone && event.type() == eventNames().webkitendfullscreenEvent)
         document().page()->chrome().client().exitVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this));
-    }
 }
 
 bool HTMLMediaElement::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
@@ -6002,6 +6000,7 @@ void HTMLMediaElement::exitFullscreen()
         }
 
         if (oldVideoFullscreenMode == VideoFullscreenModeStandard) {
+            setFullscreenMode(VideoFullscreenModeNone);
             // The exit fullscreen request will be sent in dispatchEvent().
             scheduleEvent(eventNames().webkitendfullscreenEvent);
             return;
