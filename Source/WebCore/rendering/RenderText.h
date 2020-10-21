@@ -168,9 +168,6 @@ public:
 #endif
 
     void ensureLineBoxes();
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    const LayoutIntegration::LineLayout* layoutFormattingContextLineLayout() const;
-#endif
     bool usesComplexLineLayoutPath() const;
 
     StringView stringView(unsigned start = 0, Optional<unsigned> stop = WTF::nullopt) const;

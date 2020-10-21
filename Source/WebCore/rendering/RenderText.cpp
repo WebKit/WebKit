@@ -38,6 +38,7 @@
 #include "Hyphenation.h"
 #include "InlineTextBox.h"
 #include "LayoutIntegrationLineIterator.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "LayoutIntegrationRunIterator.h"
 #include "Range.h"
 #include "RenderBlock.h"
@@ -1464,22 +1465,13 @@ void RenderText::ensureLineBoxes()
     downcast<RenderBlockFlow>(*parent()).ensureLineBoxes();
 }
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-const LayoutIntegration::LineLayout* RenderText::layoutFormattingContextLineLayout() const
-{
-    if (!is<RenderBlockFlow>(*parent()))
-        return nullptr;
-    return downcast<RenderBlockFlow>(*parent()).layoutFormattingContextLineLayout();
-}
-#endif
-
 bool RenderText::usesComplexLineLayoutPath() const
 {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (layoutFormattingContextLineLayout())
-        return false;
-#endif
+    return !LayoutIntegration::LineLayout::containing(*this);
+#else
     return true;
+#endif
 }
 
 float RenderText::width(unsigned from, unsigned len, float xPos, bool firstLine, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const

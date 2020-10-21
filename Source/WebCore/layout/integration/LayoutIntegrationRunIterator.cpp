@@ -160,23 +160,11 @@ LineRunIterator& LineRunIterator::traversePreviousOnLineIgnoringLineBreak()
     return *this;
 }
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-static const RenderBlockFlow* lineLayoutSystemFlowForRenderer(const RenderObject& renderer)
-{
-    // In currently supported cases the renderer is always direct child of the flow.
-    if (!is<RenderBlockFlow>(renderer.parent()))
-        return nullptr;
-    return downcast<RenderBlockFlow>(renderer.parent());
-}
-#endif
-
 TextRunIterator firstTextRunFor(const RenderText& text)
 {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (auto* flow = lineLayoutSystemFlowForRenderer(text)) {
-        if (auto* layoutFormattingContextLineLayout = flow->layoutFormattingContextLineLayout())
-            return layoutFormattingContextLineLayout->textRunsFor(text);
-    }
+    if (auto* lineLayout = LineLayout::containing(text))
+        return lineLayout->textRunsFor(text);
 #endif
 
     return { RunIteratorLegacyPath { text.firstTextBox() } };
@@ -201,26 +189,22 @@ TextRunRange textRunsFor(const RenderText& text)
     return { firstTextRunFor(text) };
 }
 
-RunIterator runFor(const RenderLineBreak& renderElement)
+RunIterator runFor(const RenderLineBreak& renderer)
 {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (auto* flow = lineLayoutSystemFlowForRenderer(renderElement)) {
-        if (auto* layoutFormattingContextLineLayout = flow->layoutFormattingContextLineLayout())
-            return layoutFormattingContextLineLayout->runFor(renderElement);
-    }
+    if (auto* lineLayout = LineLayout::containing(renderer))
+        return lineLayout->runFor(renderer);
 #endif
-    return { RunIteratorLegacyPath(renderElement.inlineBoxWrapper()) };
+    return { RunIteratorLegacyPath(renderer.inlineBoxWrapper()) };
 }
 
-RunIterator runFor(const RenderBox& renderElement)
+RunIterator runFor(const RenderBox& renderer)
 {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (auto* flow = lineLayoutSystemFlowForRenderer(renderElement)) {
-        if (auto* layoutFormattingContextLineLayout = flow->layoutFormattingContextLineLayout())
-            return layoutFormattingContextLineLayout->runFor(renderElement);
-    }
+    if (auto* lineLayout = LineLayout::containing(renderer))
+        return lineLayout->runFor(renderer);
 #endif
-    return { RunIteratorLegacyPath(renderElement.inlineBoxWrapper()) };
+    return { RunIteratorLegacyPath(renderer.inlineBoxWrapper()) };
 }
 
 LineRunIterator lineRun(const RunIterator& runIterator)
