@@ -423,7 +423,7 @@ ExceptionOr<void> AudioNode::setChannelInterpretation(ChannelInterpretation inte
 void AudioNode::updateChannelsForInputs()
 {
     for (auto& input : m_inputs)
-        input->changedOutputs();
+        input->markRenderingStateAsDirty();
 }
 
 void AudioNode::initializeDefaultNodeOptions(unsigned count, ChannelCountMode mode, WebCore::ChannelInterpretation interpretation)

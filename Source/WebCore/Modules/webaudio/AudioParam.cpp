@@ -320,13 +320,11 @@ void AudioParam::connect(AudioNodeOutput* output)
     if (!output)
         return;
 
-    if (!m_outputs.add(output).isNewEntry)
+    if (!addOutput(*output))
         return;
 
     INFO_LOG(LOGIDENTIFIER, output->node()->nodeType());
-
     output->addParam(this);
-    changedOutputs();
 }
 
 void AudioParam::disconnect(AudioNodeOutput* output)
@@ -339,10 +337,8 @@ void AudioParam::disconnect(AudioNodeOutput* output)
 
     INFO_LOG(LOGIDENTIFIER, output->node()->nodeType());
 
-    if (m_outputs.remove(output)) {
-        changedOutputs();
+    if (removeOutput((*output)))
         output->removeParam(this);
-    }
 }
 
 #if !RELEASE_LOG_DISABLED
