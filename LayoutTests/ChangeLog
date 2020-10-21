@@ -1,3 +1,16 @@
+2020-10-21  Youenn Fablet  <youenn@apple.com>
+
+        WebRTC VP9 Decoder should be able to use VTB
+        https://bugs.webkit.org/show_bug.cgi?id=217811
+
+        Reviewed by Eric Carlson.
+
+        * TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * webrtc/vp9-vtb-expected.txt: Added.
+        * webrtc/vp9-vtb.html: Added.
+
 2020-10-21  Hector Lopez  <hector_i_lopez@apple.com>
 
         Add test expectation 

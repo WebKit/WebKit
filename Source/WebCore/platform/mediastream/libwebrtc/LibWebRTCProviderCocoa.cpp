@@ -63,7 +63,7 @@ std::unique_ptr<webrtc::VideoDecoderFactory> LibWebRTCProviderCocoa::createDecod
     if (!webRTCAvailable())
         return nullptr;
 
-    return webrtc::createWebKitDecoderFactory(isSupportingH265() ? webrtc::WebKitH265::On : webrtc::WebKitH265::Off, isSupportingVP9() ? webrtc::WebKitVP9::On : webrtc::WebKitVP9::Off);
+    return webrtc::createWebKitDecoderFactory(isSupportingH265() ? webrtc::WebKitH265::On : webrtc::WebKitH265::Off, isSupportingVP9() ? webrtc::WebKitVP9::On : webrtc::WebKitVP9::Off, isSupportingVP9VTB() ? webrtc::WebKitVP9VTB::On : webrtc::WebKitVP9VTB::Off);
 }
 
 std::unique_ptr<webrtc::VideoEncoderFactory> LibWebRTCProviderCocoa::createEncoderFactory()

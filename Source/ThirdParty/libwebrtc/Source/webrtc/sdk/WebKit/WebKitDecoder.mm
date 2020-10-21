@@ -167,9 +167,9 @@ std::unique_ptr<VideoDecoder> RemoteVideoDecoderFactory::CreateVideoDecoder(cons
     return std::make_unique<RemoteVideoDecoder>(identifier);
 }
 
-std::unique_ptr<webrtc::VideoDecoderFactory> createWebKitDecoderFactory(WebKitH265 supportsH265, WebKitVP9 supportsVP9)
+std::unique_ptr<webrtc::VideoDecoderFactory> createWebKitDecoderFactory(WebKitH265 supportsH265, WebKitVP9 supportsVP9, WebKitVP9VTB supportsVP9VTB)
 {
-    auto internalFactory = ObjCToNativeVideoDecoderFactory([[RTCDefaultVideoDecoderFactory alloc] initWithH265: supportsH265 == WebKitH265::On vp9: supportsVP9 == WebKitVP9::On]);
+    auto internalFactory = ObjCToNativeVideoDecoderFactory([[RTCDefaultVideoDecoderFactory alloc] initWithH265: supportsH265 == WebKitH265::On vp9: supportsVP9 == WebKitVP9::On vp9VTB: supportsVP9VTB == WebKitVP9VTB::On]);
     if (videoDecoderCallbacks().createCallback)
         return std::make_unique<RemoteVideoDecoderFactory>(std::move(internalFactory));
     return internalFactory;

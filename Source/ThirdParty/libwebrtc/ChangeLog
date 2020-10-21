@@ -1,3 +1,53 @@
+2020-10-21  Youenn Fablet  <youenn@apple.com>
+
+        WebRTC VP9 Decoder should be able to use VTB
+        https://bugs.webkit.org/show_bug.cgi?id=217811
+
+        Reviewed by Eric Carlson.
+
+        Add RTCVideoDecoderVTBVP9 as a VP9 decoder using the VTB API.
+        Enable this code path by default if VP9 is enabled and hardware VP9 decoding is supported.
+        Allow to override this setting for testing purposes.
+
+        Add SPI header files in case they are not available.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/sdk/WebKit/CMBaseObjectSPI.h: Added.
+        * Source/webrtc/sdk/WebKit/VTVideoDecoderSPI.h: Added.
+        * Source/webrtc/sdk/WebKit/WebKitDecoder.mm:
+        (webrtc::createWebKitDecoderFactory):
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.h:
+        * Source/webrtc/sdk/WebKit/WebKitVP9Decoder.cpp:
+        (webrtc::createWebKitVP9Decoder):
+        * Source/webrtc/sdk/objc/api/video_codec/RTCWrappedNativeVideoDecoder.mm:
+        (-[RTCWrappedNativeVideoDecoder implementationName]):
+        * Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.h:
+        * Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.m:
+        (-[RTCDefaultVideoDecoderFactory initWithH265:vp9:vp9VTB:]):
+        (-[RTCDefaultVideoDecoderFactory createDecoder:]):
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderVTBVP9.h: Added.
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderVTBVP9.mm: Added.
+        (RTCFrameDecodeParams::RTCFrameDecodeParams):
+        (VP9BufferToCMSampleBuffer):
+        (vp9DecompressionOutputCallback):
+        (-[RTCVideoDecoderVTBVP9 dealloc]):
+        (-[RTCVideoDecoderVTBVP9 startDecodeWithNumberOfCores:]):
+        (-[RTCVideoDecoderVTBVP9 decode:missingFrames:codecSpecificInfo:renderTimeMs:]):
+        (-[RTCVideoDecoderVTBVP9 decodeData:size:timeStamp:]):
+        (-[RTCVideoDecoderVTBVP9 setCallback:]):
+        (-[RTCVideoDecoderVTBVP9 setError:]):
+        (-[RTCVideoDecoderVTBVP9 releaseDecoder]):
+        (-[RTCVideoDecoderVTBVP9 resetDecompressionSession]):
+        (-[RTCVideoDecoderVTBVP9 configureDecompressionSession]):
+        (-[RTCVideoDecoderVTBVP9 destroyDecompressionSession]):
+        (-[RTCVideoDecoderVTBVP9 setVideoFormat:]):
+        (-[RTCVideoDecoderVTBVP9 implementationName]):
+        * Source/webrtc/sdk/objc/native/src/objc_video_decoder_factory.mm:
+        (webrtc::ObjCVideoDecoderFactory::CreateVideoDecoder):
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2020-10-13  Keith Rollin  <krollin@apple.com>
 
         Remove leftover MACOSX_DEPLOYMENT_TARGET_macosx support

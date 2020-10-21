@@ -42,9 +42,10 @@ class VideoFrame;
 
 enum class WebKitH265 { Off, On };
 enum class WebKitVP9 { Off, On };
+enum class WebKitVP9VTB { Off, On };
 
 std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory(WebKitH265, WebKitVP9);
-std::unique_ptr<webrtc::VideoDecoderFactory> createWebKitDecoderFactory(WebKitH265, WebKitVP9);
+std::unique_ptr<webrtc::VideoDecoderFactory> createWebKitDecoderFactory(WebKitH265, WebKitVP9, WebKitVP9VTB);
 
 void setApplicationStatus(bool isActive);
 

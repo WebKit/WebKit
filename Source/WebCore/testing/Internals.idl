@@ -793,6 +793,7 @@ enum ContentSizeCategory {
     [Conditional=WEB_RTC] undefined applyRotationForOutgoingVideoSources(RTCPeerConnection connection);
     [Conditional=WEB_RTC] undefined setWebRTCH265Support(boolean allowed);
     [Conditional=WEB_RTC] undefined setWebRTCVP9Support(boolean allowed);
+    [Conditional=WEB_RTC] undefined setWebRTCVP9VTBSupport(boolean allowed);
 
     [Conditional=MEDIA_STREAM] undefined setMockAudioTrackChannelNumber(MediaStreamTrack track, unsigned short count);
     [Conditional=MEDIA_STREAM] undefined setShouldInterruptAudioOnPageVisibilityChange(boolean shouldInterrupt);

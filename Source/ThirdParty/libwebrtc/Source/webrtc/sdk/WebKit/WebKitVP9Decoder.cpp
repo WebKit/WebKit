@@ -25,15 +25,14 @@
 
 #include "WebKitVP9Decoder.h"
 
-#if defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)
-
 #include "WebKitUtilities.h"
-#include <CoreMedia/CMBaseObject.h>
-#include <VideoToolbox/VTVideoDecoder.h>
-#include <VideoToolbox/VTVideoDecoderRegistration.h>
+#include <VideoToolbox/VideoToolbox.h>
 #include "modules/video_coding/codecs/vp9/vp9_impl.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/cpu_info.h"
+
+#include "CMBaseObjectSPI.h"
+#include "VTVideoDecoderSPI.h"
 
 namespace webrtc {
 
@@ -85,15 +84,17 @@ static const CMBaseClass WebKitVP9Decoder_BaseClass =
     finalizeVP9Decoder,
     copyVP9DecoderDebugDescription,
     nullptr, // CopyProperty
-    nullptr // SetProperty
+    nullptr, // SetProperty
+    nullptr,
+    nullptr
 };
 
 static OSStatus startVP9DecoderSession(VTVideoDecoderRef, VTVideoDecoderSession, CMVideoFormatDescriptionRef);
 static OSStatus decodeVP9DecoderFrame(VTVideoDecoderRef, VTVideoDecoderFrame, CMSampleBufferRef, VTDecodeFrameFlags, VTDecodeInfoFlags*);
 
-static const VTVideoDecoderClass WebKitVP9Decoder_VideoEncoderClass =
+static const VTVideoDecoderClass WebKitVP9Decoder_VideoDecoderClass =
 {
-    kVTVideoDecoder_ClassVersion_3,
+    kVTVideoDecoder_ClassVersion_1,
     startVP9DecoderSession,
     decodeVP9DecoderFrame,
     nullptr, // VTVideoDecoderFunction_CopySupportedPropertyDictionary,
@@ -109,7 +110,7 @@ static const VTVideoDecoderClass WebKitVP9Decoder_VideoEncoderClass =
 static const VTVideoDecoderVTable WebKitVP9DecoderVTable =
 {
     { nullptr, &WebKitVP9Decoder_BaseClass },
-    &WebKitVP9Decoder_VideoEncoderClass
+    &WebKitVP9Decoder_VideoDecoderClass
 };
 
 OSStatus createWebKitVP9Decoder(FigVideoCodecType, CFAllocatorRef allocator, VTVideoDecoderRef* decoderOut)
@@ -387,14 +388,3 @@ void WebKitVP9DecoderReceiver::Decoded(VideoFrame& frame, absl::optional<int32_t
 }
 
 }
-
-#else // defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)
-
-namespace webrtc {
-
-void registerWebKitVP9Decoder()
-{
-}
-
-}
-#endif // defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)

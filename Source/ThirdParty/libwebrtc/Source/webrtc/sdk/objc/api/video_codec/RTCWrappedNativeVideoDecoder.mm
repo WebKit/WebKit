@@ -54,7 +54,9 @@
 }
 
 - (NSString *)implementationName {
+#if !defined(WEBRTC_WEBKIT_BUILD)
   RTC_NOTREACHED();
+#endif
   return nil;
 }
 

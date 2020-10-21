@@ -1568,6 +1568,16 @@ void Internals::setWebRTCVP9Support(bool value)
 #endif
 }
 
+void Internals::setWebRTCVP9VTBSupport(bool value)
+{
+#if USE(LIBWEBRTC)
+    if (auto* page = contextDocument()->page()) {
+        page->libWebRTCProvider().setVP9VTBSupport(value);
+        page->libWebRTCProvider().clearFactory();
+    }
+#endif
+}
+
 void Internals::setEnableWebRTCEncryption(bool value)
 {
 #if USE(LIBWEBRTC)

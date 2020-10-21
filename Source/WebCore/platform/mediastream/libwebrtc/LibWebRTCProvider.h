@@ -108,8 +108,10 @@ public:
 
     void setH265Support(bool value) { m_supportsH265 = value; }
     void setVP9Support(bool value) { m_supportsVP9 = value; }
+    void setVP9VTBSupport(bool value) { m_supportsVP9VTB = value; }
     bool isSupportingH265() const { return m_supportsH265; }
     bool isSupportingVP9() const { return m_supportsVP9; }
+    bool isSupportingVP9VTB() const { return m_supportsVP9VTB; }
     virtual void disableNonLocalhostConnections() { m_disableNonLocalhostConnections = true; }
 
     // Callback is executed on a background thread.
@@ -153,6 +155,7 @@ protected:
     bool m_disableNonLocalhostConnections { false };
     bool m_supportsH265 { false };
     bool m_supportsVP9 { false };
+    bool m_supportsVP9VTB { false };
     bool m_enableLogging { true };
     bool m_useDTLS10 { false };
 #endif

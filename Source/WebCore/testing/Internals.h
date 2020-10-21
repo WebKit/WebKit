@@ -599,6 +599,7 @@ public:
     void applyRotationForOutgoingVideoSources(RTCPeerConnection&);
     void setWebRTCH265Support(bool);
     void setWebRTCVP9Support(bool);
+    void setWebRTCVP9VTBSupport(bool);
     void setEnableWebRTCEncryption(bool);
     void setUseDTLS10(bool);
     void setUseGPUProcessForWebRTC(bool);

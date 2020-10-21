@@ -1273,6 +1273,7 @@ webkit.org/b/215611 [ Debug ] fast/scrolling/mac/scrollbars/overflow-overlay-scr
 
 # rdar://65269589 ([ macOS and iOS ] media/vp9.html is failing consistently.)
 [ BigSur+ ] media/vp9.html [ Pass ]
+[ BigSur+ ] webrtc/vp9-vtb.html [ Pass ]
 
 webkit.org/b/215700 [ Debug ] fast/scrolling/mac/scrollbars/overlay-scrollbar-hovered.html [ Pass Failure Timeout ]
 
