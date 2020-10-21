@@ -32,6 +32,7 @@ AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}'.f
 
 AutoInstall.register(Package('atomicwrites', Version(1, 4, 0)))
 AutoInstall.register(Package('attr', Version(19, 1, 0), pypi_name='attrs'))
+AutoInstall.register(Package('bs4', Version(4, 9, 3), pypi_name='beautifulsoup4'))
 AutoInstall.register(Package('configparser', Version(4, 0, 2)))
 AutoInstall.register(Package('contextlib2', Version(0, 6, 0)))
 AutoInstall.register(Package('coverage', Version(5, 2, 1)))
@@ -56,6 +57,7 @@ AutoInstall.register(Package('pytest', Version(3, 6, 2), implicit_deps=['pytest_
 AutoInstall.register(Package('pycodestyle', Version(2, 5, 0)))
 AutoInstall.register(Package('pylint', Version(0, 25, 2)))
 AutoInstall.register(Package('scandir', Version(1, 10, 0)))
+AutoInstall.register(Package('soupsieve', Version(1, 9, 6)))
 AutoInstall.register(Package('selenium', Version(3, 141, 0)))
 AutoInstall.register(Package('toml', Version(0, 10, 1)))
 AutoInstall.register(Package('wcwidth', Version(0, 2, 5)))

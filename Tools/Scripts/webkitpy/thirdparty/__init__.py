@@ -101,53 +101,6 @@ class AutoinstallImportHook(object):
             self.install_chromedriver()
         elif '.geckodriver' in fullname:
             self.install_geckodriver()
-        elif '.bs4' in fullname:
-            self._install_beautifulsoup()
-
-    def _install_pytest_timeout(self):
-        self._install("https://files.pythonhosted.org/packages/cc/b7/b2a61365ea6b6d2e8881360ae7ed8dad0327ad2df89f2f0be4a02304deb2/pytest-timeout-1.2.0.tar.gz",
-                              "pytest-timeout-1.2.0/pytest_timeout.py")
-
-    def _install_pytest(self):
-        self._ensure_autoinstalled_dir_is_in_sys_path()
-        self._install("https://files.pythonhosted.org/packages/90/e3/e075127d39d35f09a500ebb4a90afd10f9ef0a1d28a6d09abeec0e444fdd/py-1.5.2.tar.gz",
-                              "py-1.5.2/py")
-        self._install("https://files.pythonhosted.org/packages/11/bf/cbeb8cdfaffa9f2ea154a30ae31a9d04a1209312e2919138b4171a1f8199/pluggy-0.6.0.tar.gz",
-                              "pluggy-0.6.0/pluggy")
-        self._install("https://files.pythonhosted.org/packages/c0/2f/6773347277d76c5ade4414a6c3f785ef27e7f5c4b0870ec7e888e66a8d83/more-itertools-4.2.0.tar.gz",
-                              "more-itertools-4.2.0/more_itertools")
-
-        self._install("https://files.pythonhosted.org/packages/a1/e1/2d9bc76838e6e6667fde5814aa25d7feb93d6fa471bf6816daac2596e8b2/atomicwrites-1.1.5.tar.gz",
-                              "atomicwrites-1.1.5/atomicwrites")
-        self._install("https://files.pythonhosted.org/packages/94/4a/db842e7a0545de1cdb0439bb80e6e42dfe82aaeaadd4072f2263a4fbed23/funcsigs-1.0.2.tar.gz",
-                              "funcsigs-1.0.2/funcsigs")
-        self._install("https://files.pythonhosted.org/packages/e4/ac/a04671e118b57bee87dabca1e0f2d3bda816b7a551036012d0ca24190e71/attrs-18.1.0.tar.gz",
-                              "attrs-18.1.0/src/attr")
-        self._install("https://files.pythonhosted.org/packages/a2/ec/415d0cccc1ed41cd7fdf69ad989da16a8d13057996371004cab4bafc48f3/pytest-3.6.2.tar.gz",
-                              "pytest-3.6.2/src/_pytest")
-        self._install("https://files.pythonhosted.org/packages/a2/ec/415d0cccc1ed41cd7fdf69ad989da16a8d13057996371004cab4bafc48f3/pytest-3.6.2.tar.gz",
-                              "pytest-3.6.2/src/pytest.py")
-
-    def _install_beautifulsoup(self):
-        if sys.version_info < (3, 0):
-            return
-
-        self._ensure_autoinstalled_dir_is_in_sys_path()
-        self._install("https://files.pythonhosted.org/packages/7f/4e/95a13527e18b6f1a15c93f1c634b86d5fa634c5619dce695f4e0cd68182f/soupsieve-1.9.4.tar.gz",
-                      "soupsieve-1.9.4/soupsieve")
-        did_download_bs4 = self._install("https://files.pythonhosted.org/packages/86/cd/495c68f0536dcd25f016e006731ba7be72e072280305ec52590012c1e6f2/beautifulsoup4-4.8.1.tar.gz",
-                                         "beautifulsoup4-4.8.1/bs4")
-        if did_download_bs4:
-            from multiprocessing import Process
-            from lib2to3.main import main
-
-            try:
-                sys.stdout = open(os.devnull, 'w')
-                process = Process(target=main, args=('lib2to3.fixes', ['-w', self._fs.join(_AUTOINSTALLED_DIR, 'bs4')]))
-                process.start()
-                process.join()
-            finally:
-                sys.stdout = sys.__stdout__
 
     # autoinstalled.buildbot is used by BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py
     # and should ideally match the version of BuildBot used at build.webkit.org.

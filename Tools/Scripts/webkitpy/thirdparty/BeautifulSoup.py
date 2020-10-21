@@ -24,9 +24,9 @@ import sys
 
 if sys.version_info > (3, 0):
     import html5lib
-    import webkitpy.thirdparty.autoinstalled.bs4 as bs4
-    from webkitpy.thirdparty.autoinstalled.bs4.builder import builder_registry, TreeBuilder
-    from webkitpy.thirdparty.autoinstalled.bs4.builder._htmlparser import HTMLParserTreeBuilder
+    import bs4
+    from bs4.builder import builder_registry, TreeBuilder
+    from bs4.builder._htmlparser import HTMLParserTreeBuilder
 
     class BeautifulSoup(bs4.BeautifulSoup):
         HTML_ENTITIES = 'html'

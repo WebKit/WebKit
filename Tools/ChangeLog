@@ -1,3 +1,19 @@
+2020-10-21  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Use webkitcorepy's autoinstaller for beautifulsoup
+        https://bugs.webkit.org/show_bug.cgi?id=218049
+        <rdar://problem/70542684>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/__init__.py:
+        * Scripts/webkitpy/thirdparty/BeautifulSoup.py:
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module): Remove _install_beatifulsoup.
+        (AutoinstallImportHook._install_pytest_timeout): Deleted.
+        (AutoinstallImportHook._install_pytest): Deleted.
+        (AutoinstallImportHook._install_beautifulsoup): Deleted.
+
 2020-10-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         update-webkitgtk-libs and run-webkit-tests fail silently if flatpak has problems updating
