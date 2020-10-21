@@ -4595,3 +4595,6 @@ webkit.org/b/217812 webanimations/accelerated-translate-animation.html [ Skip ]
 webkit.org/b/217922 [ Release ] animations/additive-transform-animations.html [ ImageOnlyFailure ]
 webkit.org/b/217922 animations/needs-layout.html [ ImageOnlyFailure ]
 webkit.org/b/217922 fast/animation/animation-mixed-transform-crash.html [ ImageOnlyFailure ]
+
+webkit.org/b/217997 webanimations/accelerated-overlapping-transform-animations.html [ Pass Failure ]
+
