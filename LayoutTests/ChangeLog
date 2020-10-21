@@ -1,3 +1,43 @@
+2020-10-21  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r268602. rdar://problem/70541712
+
+    [WebAuthn] Remove the "alg" field in the attestation statement
+    https://bugs.webkit.org/show_bug.cgi?id=217720
+    <rdar://problem/70349734>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebKit:
+    
+    This old field was used in an unreleased old attestation statement format and is not used by
+    the final attestation statement format that will be added to the spec:
+    https://github.com/w3c/webauthn/pull/1491.
+    
+    Therefore, remove it to resolve confusion.
+    
+    Covered by existing tests.
+    
+    * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+    (WebKit::LocalAuthenticator::continueMakeCredentialAfterAttested):
+    
+    LayoutTests:
+    
+    * http/wpt/webauthn/public-key-credential-create-success-local.https.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268602 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+            [WebAuthn] Remove the "alg" field in the attestation statement
+            https://bugs.webkit.org/show_bug.cgi?id=217720
+            <rdar://problem/70349734>
+
+            Reviewed by Brent Fulgham.
+
+            * http/wpt/webauthn/public-key-credential-create-success-local.https.html:
+
 2020-10-08  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r266909. rdar://problem/69101091
