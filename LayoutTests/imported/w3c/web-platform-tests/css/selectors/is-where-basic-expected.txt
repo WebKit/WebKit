@@ -1,0 +1,17 @@
+
+PASS :is() matches expected elements
+PASS :is(#a) matches expected elements
+PASS :is(#a, #f) matches expected elements
+PASS :is(#a, #c) :where(#a #d, #c #f) matches expected elements
+PASS #c > :is(#c > #f) matches expected elements
+PASS #c > :is(#b > #f) matches expected elements
+PASS #a div:is(#d) matches expected elements
+PASS :is(div) > div matches expected elements
+PASS :is(*) > div matches expected elements
+PASS :is(*) div matches expected elements
+PASS div > :where(#e, #f) matches expected elements
+PASS div > :where(*) matches expected elements
+PASS :is(*) > :where(*) matches expected elements
+PASS :is(#a + #b) + :is(#c) matches expected elements
+PASS :is(#a, #b) + div matches expected elements
+
