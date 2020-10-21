@@ -52,7 +52,7 @@ PASS   node1 = new ConvolverNode(c, {"buffer":null} did not throw an exception.
 PASS   node1.buffer is equal to null.
 PASS < [nullable buffer] All assertions passed. (total 2 assertions)
 PASS > [illegal sample-rate]
-PASS   node1 = new ConvolverNode(c, {"buffer":{}} threw NotSupportedError: "The operation is not supported.".
+PASS   node1 = new ConvolverNode(c, {"buffer":{}} threw NotSupportedError: "Buffer sample rate does not match the context's sample rate".
 PASS < [illegal sample-rate] All assertions passed. (total 1 assertions)
 PASS > [construct with options]
 PASS   node = new ConvolverNode(c, {"buffer":{},"disableNormalization":false}) did not throw an exception.

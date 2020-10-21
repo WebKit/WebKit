@@ -1,3 +1,19 @@
+2020-10-21  Chris Dumez  <cdumez@apple.com>
+
+        Make sure WebAudio API throws exceptions with useful error messages
+        https://bugs.webkit.org/show_bug.cgi?id=218033
+
+        Reviewed by Darin Adler.
+
+        Rebaseline existing tests now that exception messages have been improved.
+
+        * webaudio/Oscillator/oscillator-basic-expected.txt:
+        * webaudio/ScriptProcessor/scriptprocessornode-expected.txt:
+        * webaudio/convolver-channels-expected.txt:
+        * webaudio/convolver-setBuffer-different-samplerate-expected.txt:
+        * webaudio/delaynode-maxdelaylimit-expected.txt:
+        * webaudio/dom-exceptions-expected.txt:
+
 2020-10-21  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r263729): transform transition doesn't restart

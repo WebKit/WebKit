@@ -414,7 +414,7 @@ ExceptionOr<Ref<ScriptProcessorNode>> BaseAudioContext::createScriptProcessor(si
     case 16384:
         break;
     default:
-        return Exception { IndexSizeError };
+        return Exception { IndexSizeError, "Unsupported buffer size for ScriptProcessorNode"_s };
     }
 
     // An IndexSizeError exception must be thrown if bufferSize or numberOfInputChannels or numberOfOutputChannels
@@ -422,19 +422,19 @@ ExceptionOr<Ref<ScriptProcessorNode>> BaseAudioContext::createScriptProcessor(si
     // In this case an IndexSizeError must be thrown.
 
     if (!numberOfInputChannels && !numberOfOutputChannels)
-        return Exception { NotSupportedError };
+        return Exception { NotSupportedError, "numberOfInputChannels and numberOfOutputChannels cannot both be 0"_s };
 
     // This parameter [numberOfInputChannels] determines the number of channels for this node's input. Values of
     // up to 32 must be supported. A NotSupportedError must be thrown if the number of channels is not supported.
 
     if (numberOfInputChannels > maxNumberOfChannels())
-        return Exception { NotSupportedError };
+        return Exception { NotSupportedError, "numberOfInputChannels exceeds maximum number of channels"_s };
 
     // This parameter [numberOfOutputChannels] determines the number of channels for this node's output. Values of
     // up to 32 must be supported. A NotSupportedError must be thrown if the number of channels is not supported.
 
     if (numberOfOutputChannels > maxNumberOfChannels())
-        return Exception { NotSupportedError };
+        return Exception { NotSupportedError, "numberOfOutputChannels exceeds maximum number of channels"_s };
 
     return ScriptProcessorNode::create(*this, bufferSize, numberOfInputChannels, numberOfOutputChannels);
 }
@@ -925,7 +925,7 @@ void BaseAudioContext::finishedRendering(bool didRendering)
     ASSERT(isOfflineContext());
     ASSERT(isMainThread());
     auto finishedRenderingScope = WTF::makeScopeExit([this] {
-        didFinishOfflineRendering(Exception { InvalidStateError });
+        didFinishOfflineRendering(Exception { InvalidStateError, "Offline rendering failed"_s });
     });
 
     if (!isMainThread())

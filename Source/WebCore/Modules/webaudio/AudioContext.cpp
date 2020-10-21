@@ -86,7 +86,7 @@ ExceptionOr<Ref<AudioContext>> AudioContext::create(Document& document, AudioCon
     ASSERT(isMainThread());
 #if OS(WINDOWS)
     if (s_hardwareContextCount >= maxHardwareContexts)
-        return Exception { QuotaExceededError };
+        return Exception { QuotaExceededError, "Reached maximum number of hardware contexts on this platform"_s };
 #endif
     
     if (!document.isFullyActive())

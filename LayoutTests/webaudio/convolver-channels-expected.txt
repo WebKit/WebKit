@@ -7,92 +7,92 @@ PASS ConvolverNode with buffer of 1 channels did not throw exception.
 PASS ConvolverNode with buffer of 2 channels did not throw exception.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS ConvolverNode with buffer of 4 channels did not throw exception.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS function () {
                 convolver.buffer = buffer;
-            } threw exception NotSupportedError: The operation is not supported..
+            } threw exception NotSupportedError: Buffer should have 1, 2 or 4 channels.
 PASS successfullyParsed is true
 
 TEST COMPLETE

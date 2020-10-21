@@ -49,9 +49,9 @@ PASS > [createMediaStreamSource]
 PASS   context.createMediaStreamSource(null) threw TypeError: "Argument 1 ('mediaStream') to AudioContext.createMediaStreamSource must be an instance of MediaStream".
 PASS < [createMediaStreamSource] All assertions passed. (total 1 assertions)
 PASS > [createScriptProcessor]
-PASS   context.createScriptProcessor(1, 1, 1) threw IndexSizeError: "The index is not in the allowed range.".
-PASS   context.createScriptProcessor(4096, 100, 1) threw NotSupportedError: "The operation is not supported.".
-PASS   context.createScriptProcessor(4096, 1, 100) threw NotSupportedError: "The operation is not supported.".
+PASS   context.createScriptProcessor(1, 1, 1) threw IndexSizeError: "Unsupported buffer size for ScriptProcessorNode".
+PASS   context.createScriptProcessor(4096, 100, 1) threw NotSupportedError: "numberOfInputChannels exceeds maximum number of channels".
+PASS   context.createScriptProcessor(4096, 1, 100) threw NotSupportedError: "numberOfOutputChannels exceeds maximum number of channels".
 PASS   context.createScriptProcessor() did not throw an exception.
 PASS   context.createScriptProcessor(0) did not throw an exception.
 PASS < [createScriptProcessor] All assertions passed. (total 5 assertions)
@@ -222,7 +222,7 @@ PASS > [convolver]
 PASS   oc = new OfflineAudioContext(1, 44100, 44100) did not throw an exception.
 PASS   conv = oc.createConvolver() did not throw an exception.
 PASS   conv.buffer = {} threw TypeError: "The ConvolverNode.buffer attribute must be an instance of AudioBuffer".
-PASS   conv.buffer = oc.createBuffer(1, 100, 22050) threw NotSupportedError: "The operation is not supported.".
+PASS   conv.buffer = oc.createBuffer(1, 100, 22050) threw NotSupportedError: "Buffer sample rate does not match the context's sample rate".
 PASS   conv.buffer is equal to null.
 PASS < [convolver] All assertions passed. (total 5 assertions)
 PASS > [panner]

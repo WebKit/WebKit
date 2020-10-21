@@ -123,7 +123,7 @@ ExceptionOr<void> DefaultAudioDestinationNode::startRendering()
 {
     ASSERT(isInitialized());
     if (!isInitialized())
-        return Exception { InvalidStateError };
+        return Exception { InvalidStateError, "AudioDestinationNode is not initialized"_s };
 
     m_destination->start(dispatchToRenderThreadFunction());
     return { };

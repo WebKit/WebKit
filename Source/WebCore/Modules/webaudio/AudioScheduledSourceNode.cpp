@@ -153,7 +153,7 @@ ExceptionOr<void> AudioScheduledSourceNode::startLater(double when)
     ALWAYS_LOG(LOGIDENTIFIER, when);
 
     if (m_playbackState != UNSCHEDULED_STATE)
-        return Exception { InvalidStateError };
+        return Exception { InvalidStateError, "Cannot call start() more than once"_s };
 
     if (!std::isfinite(when) || when < 0)
         return Exception { RangeError, "when value should be positive"_s };

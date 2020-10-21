@@ -45,9 +45,8 @@ inline OfflineAudioContext::OfflineAudioContext(Document& document, unsigned num
 
 ExceptionOr<Ref<OfflineAudioContext>> OfflineAudioContext::create(ScriptExecutionContext& context, unsigned numberOfChannels, size_t length, float sampleRate)
 {
-    // FIXME: Add support for workers.
     if (!is<Document>(context))
-        return Exception { NotSupportedError };
+        return Exception { NotSupportedError, "OfflineAudioContext is only supported in Document contexts"_s };
     if (!numberOfChannels || numberOfChannels > maxNumberOfChannels())
         return Exception { SyntaxError, "Number of channels is not in range"_s };
     if (!length)

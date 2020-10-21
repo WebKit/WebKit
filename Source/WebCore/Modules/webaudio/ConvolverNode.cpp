@@ -118,17 +118,20 @@ ExceptionOr<void> ConvolverNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
         return { };
 
     if (buffer->sampleRate() != context().sampleRate())
-        return Exception { NotSupportedError };
+        return Exception { NotSupportedError, "Buffer sample rate does not match the context's sample rate"_s };
 
     unsigned numberOfChannels = buffer->numberOfChannels();
     size_t bufferLength = buffer->length();
 
     // The current implementation supports only 1-, 2-, or 4-channel impulse responses, with the
     // 4-channel response being interpreted as true-stereo (see Reverb class).
-    bool isChannelCountGood = (numberOfChannels == 1 || numberOfChannels == 2 || numberOfChannels == 4) && bufferLength;
+    bool isChannelCountGood = (numberOfChannels == 1 || numberOfChannels == 2 || numberOfChannels == 4);
 
     if (!isChannelCountGood)
-        return Exception { NotSupportedError };
+        return Exception { NotSupportedError, "Buffer should have 1, 2 or 4 channels"_s };
+
+    if (!bufferLength)
+        return Exception { NotSupportedError, "Buffer length cannot be 0"_s };
 
     // Wrap the AudioBuffer by an AudioBus. It's an efficient pointer set and not a memcpy().
     // This memory is simply used in the Reverb constructor and no reference to it is kept for later use in that class.

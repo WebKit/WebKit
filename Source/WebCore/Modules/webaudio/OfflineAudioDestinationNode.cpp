@@ -91,7 +91,7 @@ ExceptionOr<void> OfflineAudioDestinationNode::startRendering()
     ASSERT(isMainThread());
     ASSERT(m_renderTarget.get());
     if (!m_renderTarget.get())
-        return Exception { InvalidStateError };
+        return Exception { InvalidStateError, "OfflineAudioContextNode has no rendering buffer"_s };
     
     if (m_startedRendering)
         return Exception { InvalidStateError, "Already started rendering"_s };

@@ -3,12 +3,12 @@ PASS # AUDIT TASK RUNNER STARTED.
 PASS Executing "test"
 PASS Audit report
 PASS > [test] Basic ScriptProcessorNode properties
-PASS   createScriptProcessor(512, 0, 0) threw NotSupportedError: "The operation is not supported.".
+PASS   createScriptProcessor(512, 0, 0) threw NotSupportedError: "numberOfInputChannels and numberOfOutputChannels cannot both be 0".
 PASS   context.createScriptProcessor(512, 1, 0) did not throw an exception.
 PASS   context.createScriptProcessor(512, 2, 0) did not throw an exception.
 PASS   context.createScriptProcessor(512, 0, 1) did not throw an exception.
 PASS   context.createScriptProcessor(512, 0, 2) did not throw an exception.
-PASS   context.createScriptProcessor(511, 1, 1) threw IndexSizeError: "The index is not in the allowed range.".
+PASS   context.createScriptProcessor(511, 1, 1) threw IndexSizeError: "Unsupported buffer size for ScriptProcessorNode".
 PASS   context.createScriptProcessor(256, 1, 1) did not throw an exception.
 PASS   context.createScriptProcessor(512, 1, 1) did not throw an exception.
 PASS   context.createScriptProcessor(1024, 1, 1) did not throw an exception.
