@@ -951,6 +951,12 @@ void MediaPlayer::setVisible(bool b)
     m_private->setVisible(b);
 }
 
+void MediaPlayer::setVisibleForCanvas(bool visible)
+{
+    m_visible = visible;
+    m_private->setVisibleForCanvas(visible);
+}
+
 MediaPlayer::Preload MediaPlayer::preload() const
 {
     return m_preload;
