@@ -94,11 +94,11 @@ void AudioSummingJunction::updateRenderingState()
 unsigned AudioSummingJunction::maximumNumberOfChannels() const
 {
     unsigned maxChannels = 0;
-    std::for_each(m_outputs.begin(), m_outputs.end(), [&](auto* output) {
+    for (auto* output : m_outputs) {
         // Use output()->numberOfChannels() instead of output->bus()->numberOfChannels(),
         // because the calling of AudioNodeOutput::bus() is not safe here.
         maxChannels = std::max(maxChannels, output->numberOfChannels());
-    });
+    }
     return maxChannels;
 }
 
