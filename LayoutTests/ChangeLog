@@ -1,5 +1,20 @@
 2020-10-21  Chris Dumez  <cdumez@apple.com>
 
+        MessagePort & MessageEvent should be exposed to AudioWorklets
+        https://bugs.webkit.org/show_bug.cgi?id=218037
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * http/wpt/webaudio/the-audio-api/the-audioworklet-interface/exposed-properties.https-expected.txt: Added.
+        * http/wpt/webaudio/the-audio-api/the-audioworklet-interface/exposed-properties.https.html: Added.
+        * http/wpt/webaudio/the-audio-api/the-audioworklet-interface/processors/exposed-properties-processor.js: Added.
+        (ExposedPropertiesTestProcessor.prototype.process):
+        (ExposedPropertiesTestProcessor):
+
+2020-10-21  Chris Dumez  <cdumez@apple.com>
+
         Make sure WebAudio API throws exceptions with useful error messages
         https://bugs.webkit.org/show_bug.cgi?id=218033
 

@@ -33,7 +33,7 @@ typedef (WindowProxy or MessagePort) MessageEventSource;
 #endif
 
 [
-    Exposed=(Window,Worker),
+    Exposed=(Window,Worker,AudioWorklet),
     JSCustomMarkFunction,
     ReportExtraMemoryCost,
 ] interface MessageEvent : Event {

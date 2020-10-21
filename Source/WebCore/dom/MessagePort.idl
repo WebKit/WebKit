@@ -27,7 +27,7 @@
 
 [
     ActiveDOMObject,
-    Exposed=(Window,Worker),
+    Exposed=(Window,Worker,AudioWorklet),
     GenerateIsReachable=Impl,
     JSCustomMarkFunction,
 ] interface MessagePort : EventTarget {
