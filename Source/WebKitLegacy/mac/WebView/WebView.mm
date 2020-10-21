@@ -7908,6 +7908,21 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::JSGlobalObject* lexicalGlo
         _private->page->resumeAllMediaPlayback();
 }
 
+#if PLATFORM(MAC)
+- (BOOL)_allowsLinkPreview
+{
+    if (WebImmediateActionController *immediateActionController = _private->immediateActionController)
+        return immediateActionController.enabled;
+    return NO;
+}
+
+- (void)_setAllowsLinkPreview:(BOOL)allowsLinkPreview
+{
+    if (WebImmediateActionController *immediateActionController = _private->immediateActionController)
+        immediateActionController.enabled = allowsLinkPreview;
+}
+#endif
+
 - (void)addVisitedLinks:(NSArray *)visitedLinks
 {
     WebVisitedLinkStore& visitedLinkStore = _private->group->visitedLinkStore();

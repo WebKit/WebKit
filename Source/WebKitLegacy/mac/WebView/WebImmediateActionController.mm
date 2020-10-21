@@ -100,6 +100,22 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
     _currentActionContext = nil;
 }
 
+- (BOOL)isEnabled
+{
+    return [_immediateActionRecognizer isEnabled];
+}
+
+- (void)setEnabled:(BOOL)enabled
+{
+    if (enabled == [_immediateActionRecognizer isEnabled])
+        return;
+
+    [_immediateActionRecognizer setEnabled:enabled];
+
+    if (![_immediateActionRecognizer isEnabled])
+        [self _cancelImmediateAction];
+}
+
 - (void)webView:(WebView *)webView didHandleScrollWheel:(NSEvent *)event
 {
     [_currentQLPreviewMenuItem close];
@@ -115,8 +131,10 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
 - (void)_cancelImmediateAction
 {
     // Reset the recognizer by turning it off and on again.
-    [_immediateActionRecognizer setEnabled:NO];
-    [_immediateActionRecognizer setEnabled:YES];
+    if ([_immediateActionRecognizer isEnabled]) {
+        [_immediateActionRecognizer setEnabled:NO];
+        [_immediateActionRecognizer setEnabled:YES];
+    }
 
     [self _clearImmediateActionState];
     [_webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorWindowDismissalAnimation::FadeOut];

@@ -314,6 +314,10 @@ typedef enum {
 - (void)suspendAllMediaPlayback;
 - (void)resumeAllMediaPlayback;
 
+#if !TARGET_OS_IPHONE
+@property (nonatomic, setter=_setAllowsLinkPreview:) BOOL _allowsLinkPreview;
+#endif
+
 // Add visited links
 - (void)addVisitedLinks:(NSArray *)visitedLinks;
 #if TARGET_OS_IPHONE

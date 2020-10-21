@@ -58,6 +58,8 @@ struct DictionaryPopupInfo;
 - (instancetype)initWithWebView:(WebView *)webView recognizer:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer;
 - (void)webViewClosed;
 
+@property (nonatomic, getter=isEnabled) BOOL enabled;
+
 - (void)webView:(WebView *)webView didHandleScrollWheel:(NSEvent *)event;
 
 - (NSImmediateActionGestureRecognizer *)immediateActionRecognizer;
