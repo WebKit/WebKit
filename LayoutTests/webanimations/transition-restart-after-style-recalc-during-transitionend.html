@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Forcing a style update in a transitionend event for an accelerated animation should not prevent another transition for the same property from running later</title>
+<body>
+<script src="../resources/ui-helper.js"></script>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+
+'use strict';
+
+promise_test(async t => {
+    const target = document.body.appendChild(document.createElement("div"));
+    const animatedStyle = "transition: transform 1ms linear; transform: translateX(100px)";
+
+    // Start a transform transition.
+    getComputedStyle(target).transform;
+    target.setAttribute("style", animatedStyle);
+
+    // Wait until it completes, and in the "transitionend" event handler, force a style recalc
+    // before removing the transition style.
+    await new Promise(resolve => {
+        target.addEventListener("transitionend", event => {
+            target.getAnimations();
+            target.removeAttribute("style");
+            resolve();
+        }, { once: true });
+    });
+
+    // Wait until the accelerated animation has completed.
+    await UIHelper.ensurePresentationUpdate();
+
+    // Start another transform transition.
+    getComputedStyle(target).transform;
+    target.setAttribute("style", animatedStyle);
+
+    // Check that it starts and ends.
+    await new Promise(resolve => target.addEventListener("transitionend", resolve, { once: true }));
+}, "Forcing a style update in a transitionend event for an accelerated animation should not prevent another transition for the same property from running later.");
+
+</script>
+</body>

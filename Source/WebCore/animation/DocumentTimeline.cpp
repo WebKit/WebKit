@@ -297,8 +297,11 @@ void DocumentTimeline::transitionDidComplete(RefPtr<CSSTransition> transition)
     ASSERT(transition);
     removeAnimation(*transition);
     if (is<KeyframeEffect>(transition->effect())) {
-        if (auto styleable = downcast<KeyframeEffect>(transition->effect())->targetStyleable())
-            styleable->ensureCompletedTransitionsByProperty().set(transition->property(), transition);
+        if (auto styleable = downcast<KeyframeEffect>(transition->effect())->targetStyleable()) {
+            auto property = transition->property();
+            if (styleable->hasRunningTransitionForProperty(property))
+                styleable->ensureCompletedTransitionsByProperty().set(property, transition);
+        }
     }
 }
 

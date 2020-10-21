@@ -1,5 +1,19 @@
 2020-10-21  Antoine Quint  <graouts@webkit.org>
 
+        REGRESSION (r263729): transform transition doesn't restart
+        https://bugs.webkit.org/show_bug.cgi?id=218011
+        <rdar://problem/70035130>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test that checks that forcing a style update during dispatch of the "transitionend" event
+        does not prevent the completed transition from starting again if reset.
+
+        * webanimations/transition-restart-after-style-recalc-during-transitionend-expected.txt: Added.
+        * webanimations/transition-restart-after-style-recalc-during-transitionend.html: Added.
+
+2020-10-21  Antoine Quint  <graouts@webkit.org>
+
         [WK1] webanimations/accelerated-overlapping-transform-animations.html is a failure
         https://bugs.webkit.org/show_bug.cgi?id=217997
         <rdar://problem/70505533>
