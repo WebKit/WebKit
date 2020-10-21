@@ -1,3 +1,22 @@
+2020-10-21  Alex Christensen  <achristensen@webkit.org>
+
+        Don't crash when deallocating WKWebView during TLS handshake
+        https://bugs.webkit.org/show_bug.cgi?id=218025
+        <rdar://problem/70225969>
+
+        Reviewed by Tim Horton.
+
+        NetworkProcessProxy::didReceiveAuthenticationChallenge would sometimes dereference an unchecked
+        Optional<SecurityOriginData> which would result in a null dereference crash.  Also, sometimes
+        Connection::initializeSendSource would assert because it was trying to set up a cancel handler for
+        a send port that had not been successfully set up yet.  I added a test that reproduces both of these
+        issues most of the time.
+
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::Connection::initializeSendSource):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didReceiveAuthenticationChallenge):
+
 2020-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: add support for wheel actions

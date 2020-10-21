@@ -1,3 +1,14 @@
+2020-10-21  Alex Christensen  <achristensen@webkit.org>
+
+        Don't crash when deallocating WKWebView during TLS handshake
+        https://bugs.webkit.org/show_bug.cgi?id=218025
+        <rdar://problem/70225969>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (TEST):
+
 2020-10-20  Sam Weinig  <weinig@apple.com>
 
         Cleanup DumpRenderTree in preparation for supporting arbitrary test header commands

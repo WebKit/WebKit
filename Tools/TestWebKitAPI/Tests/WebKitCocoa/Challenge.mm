@@ -240,6 +240,29 @@ TEST(Challenge, SecIdentity)
     Util::run(&navigationFinished);
 }
 
+TEST(Challenge, DeallocateDuringChallenge)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server({{ "/", { "hi" }}}, HTTPServer::Protocol::Https);
+
+    auto delegate = [[TestNavigationDelegate new] autorelease];
+    delegate.didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    };
+
+    @autoreleasepool {
+        Vector<RetainPtr<WKWebView>> views;
+        for (size_t i = 0; i < 100; i++)
+            views.append(adoptNS([WKWebView new]));
+        for (auto& view : views) {
+            [view setNavigationDelegate:delegate];
+            [view loadRequest:server.request()];
+        }
+        Util::spinRunLoop(10);
+    }
+    Util::spinRunLoop(1000);
+}
+
 @interface ClientCertificateDelegate : NSObject <WKNavigationDelegate> {
     Vector<RetainPtr<NSString>> _authenticationMethods;
 }
