@@ -1,3 +1,15 @@
+2020-10-21  Youenn Fablet  <youenn@apple.com>
+
+        [iOS] Disable audio capture in the background for non Safari applications
+        https://bugs.webkit.org/show_bug.cgi?id=217948
+        <rdar://problem/70241557>
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios/mediastream/video-muted-in-background-tab.html:
+        By default, audio capture will be muted in WTR if page goes to background.
+        Update the test to explicitly request for audio capture to continue while in background.
+
 2020-10-21  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB][GTK] Unreviewed test gardening. Update test expectations.

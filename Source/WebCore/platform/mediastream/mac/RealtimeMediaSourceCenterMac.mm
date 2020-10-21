@@ -28,11 +28,16 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "RuntimeApplicationChecks.h"
+
 namespace WebCore {
 
 bool RealtimeMediaSourceCenter::shouldInterruptAudioOnPageVisibilityChange()
 {
 #if PLATFORM(IOS)
+    if (!WebCore::IOSApplication::isMobileSafari() && !WebCore::IOSApplication::isSafariViewService())
+        return true;
+
     NSArray *modes = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIBackgroundModes"];
     if (!modes)
         return true;
