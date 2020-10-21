@@ -79,6 +79,7 @@
 
     readonly attribute DOMString port;
     readonly attribute DOMString platform;
+    readonly attribute DOMString platformVersionName;
 
     void showContextMenu(Event event, sequence<ContextMenuItem> items);
     void dispatchEventAsContextMenuEvent(Event event);
