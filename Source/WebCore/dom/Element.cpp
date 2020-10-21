@@ -2300,7 +2300,7 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
     {
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-        if (renderer())
+        if (renderer() || hasDisplayContents())
             RenderTreeUpdater::tearDownRenderers(*this);
 
         ensureElementRareData().setShadowRoot(WTFMove(newShadowRoot));
