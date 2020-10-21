@@ -3768,6 +3768,23 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
         return nullptr;
     }
 
+    auto failedOSREntry = [&] (CodeBlock* entryBlock) {
+        FTL::ForOSREntryJITCode* entryCode = entryBlock->jitCode()->ftlForOSREntry();
+        entryCode->countEntryFailure();
+        if (entryCode->entryFailureCount() <
+            Options::ftlOSREntryFailureCountForReoptimization()) {
+            CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("OSR entry failed"));
+            jitCode->setOptimizationThresholdBasedOnCompilationResult(
+                codeBlock, CompilationDeferred);
+            return nullptr;
+        }
+
+        CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("OSR entry failed too many times"));
+        codeBlock->baselineVersion()->countReoptimization();
+        jitCode->clearOSREntryBlockAndResetThresholds(codeBlock);
+        return nullptr;
+    };
+
     // If we can OSR Enter, do it right away.
     if (canOSREnterHere) {
         auto iter = jitCode->bytecodeIndexToStreamIndex.find(originBytecodeIndex);
@@ -3781,6 +3798,8 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
                     CODEBLOCK_LOG_EVENT(entryBlock, "osrEntry", ("at ", originBytecodeIndex));
                     return tagCodePtrWithStackPointerForJITCall(untagCodePtr<char*, JSEntryPtrTag>(address), callFrame);
                 }
+
+                return failedOSREntry(entryBlock);
             }
         }
     }
@@ -3822,21 +3841,7 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
             return nullptr;
         }
 
-        FTL::ForOSREntryJITCode* entryCode = entryBlock->jitCode()->ftlForOSREntry();
-        entryCode->countEntryFailure();
-        if (entryCode->entryFailureCount() <
-            Options::ftlOSREntryFailureCountForReoptimization()) {
-            CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("OSR entry failed"));
-            jitCode->setOptimizationThresholdBasedOnCompilationResult(
-                codeBlock, CompilationDeferred);
-            return nullptr;
-        }
-
-        // OSR entry failed. Oh no! This implies that we need to retry. We retry
-        // without exponential backoff and we only do this for the entry code block.
-        CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("OSR entry failed too many times"));
-        jitCode->clearOSREntryBlockAndResetThresholds(codeBlock);
-        return nullptr;
+        return failedOSREntry(entryBlock);
     }
 
     // It's time to try to compile code for OSR entry.
@@ -3933,7 +3938,7 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
     ASSERT(canOSREnterHere);
     void* address = FTL::prepareOSREntry(vm, callFrame, codeBlock, jitCode->osrEntryBlock(), originBytecodeIndex, streamIndex);
     if (!address)
-        return nullptr;
+        return failedOSREntry(jitCode->osrEntryBlock());
     return tagCodePtrWithStackPointerForJITCall(untagCodePtr<char*, JSEntryPtrTag>(address), callFrame);
 }
 

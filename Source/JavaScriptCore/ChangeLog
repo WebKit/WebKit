@@ -1,3 +1,36 @@
+2020-10-20  Saam Barati  <sbarati@apple.com>
+
+        Don't OSR exit to bc#0 for FTL argument type checks during loop OSR entry
+        https://bugs.webkit.org/show_bug.cgi?id=217925
+        <rdar://problem/70369407>
+
+        Reviewed by Michael Saboff and Tadeu Zagallo.
+
+        When the FTL was emitting type checks for the named arguments of a function,
+        it was always emitting these type checks with an exit origin of bc#0. It was
+        doing this even if we were an OSR entry compilation! This meant that type
+        checks for arguments that failed during loop OSR entry would incorrectly exit
+        back to bc#0.
+        
+        This patch fixes this by having the OSR entry runtime code validate the
+        argument types before OSR entering. The current OSR entry compiled code in
+        the FTL is designed to only allow exiting after all ExtractOSREntryLocal and
+        MovHints have executed, so it is simpler to put the type checks in the runtime
+        instead of the compiled code.
+        
+        This patch also makes it so we do exponential backoff when failing to OSR
+        enter. This is needed due to insufficient profiling where we never properly
+        profile the type of arguments. Before this, we'd OSR exit in the FTL code
+        itself, which does exponential backoff when recompiling. This patch builds
+        this same exponential backoff in for when we fail to OSR enter enough times
+        to give up on the OSR entry compilation.
+
+        * ftl/FTLForOSREntryJITCode.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        * ftl/FTLOSREntry.cpp:
+        (JSC::FTL::prepareOSREntry):
+
 2020-10-20  Michael Saboff  <msaboff@apple.com>
 
         [JSC] Update RegExp UCD to version 13.0

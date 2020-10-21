@@ -74,6 +74,31 @@ void* prepareOSREntry(
     for (int argument = values.numberOfArguments(); argument--;) {
         JSValue valueOnStack = callFrame->r(virtualRegisterForArgumentIncludingThis(argument)).asanUnsafeJSValue();
         Optional<JSValue> reconstructedValue = values.argument(argument);
+        {
+            JSValue valueToValidate = reconstructedValue ? *reconstructedValue : valueOnStack;
+            auto flushFormat = entryCode->argumentFlushFormats()[argument];
+            switch (flushFormat) {
+            case DFG::FlushedInt32:
+                if (!valueToValidate.isInt32())
+                    return nullptr;
+                break;
+            case DFG::FlushedBoolean:
+                if (!valueToValidate.isBoolean())
+                    return nullptr;
+                break;
+            case DFG::FlushedCell:
+                if (!valueToValidate.isCell())
+                    return nullptr;
+                break;
+            case DFG::FlushedJSValue:
+                break;
+            default:
+                dataLogLn("Unknown flush format for argument during FTL osr entry: ", flushFormat);
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+        }
+
         if (!argument) {
             // |this| argument can be unboxed. We should store boxed value instead for loop OSR entry since FTL assumes that all arguments are flushed JSValue.
             // To make this valid, we will modify the stack on the fly: replacing the value with boxed value.

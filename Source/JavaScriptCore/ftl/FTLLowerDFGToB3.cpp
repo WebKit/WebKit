@@ -358,28 +358,36 @@ public:
                     Availability(FlushedAt(FlushedJSValue, virtualRegisterForArgumentIncludingThis(i)));
             }
 
-            for (unsigned i = codeBlock()->numParameters(); i--;) {
-                MethodOfGettingAValueProfile profile(&m_graph.m_profiledBlock->valueProfileForArgument(i));
-                VirtualRegister operand = virtualRegisterForArgumentIncludingThis(i);
-                LValue jsValue = m_out.load64(addressFor(operand));
-                
-                switch (m_graph.m_argumentFormats[0][i]) {
-                case FlushedInt32:
-                    speculate(BadType, jsValueValue(jsValue), profile, isNotInt32(jsValue));
-                    break;
-                case FlushedBoolean:
-                    speculate(BadType, jsValueValue(jsValue), profile, isNotBoolean(jsValue));
-                    break;
-                case FlushedCell:
-                    speculate(BadType, jsValueValue(jsValue), profile, isNotCell(jsValue));
-                    break;
-                case FlushedJSValue:
-                    break;
-                default:
-                    DFG_CRASH(m_graph, nullptr, "Bad flush format for argument");
-                    break;
+            if (m_graph.m_plan.mode() == FTLForOSREntryMode) {
+                auto* jitCode = m_ftlState.jitCode->ftlForOSREntry();
+                jitCode->argumentFlushFormats().reserveInitialCapacity(codeBlock()->numParameters());
+                for (unsigned i = codeBlock()->numParameters(); i--;)
+                    jitCode->argumentFlushFormats().append(m_graph.m_argumentFormats[0][i]);
+            } else {
+                for (unsigned i = codeBlock()->numParameters(); i--;) {
+                    MethodOfGettingAValueProfile profile(&m_graph.m_profiledBlock->valueProfileForArgument(i));
+                    VirtualRegister operand = virtualRegisterForArgumentIncludingThis(i);
+                    LValue jsValue = m_out.load64(addressFor(operand));
+                    
+                    switch (m_graph.m_argumentFormats[0][i]) {
+                    case FlushedInt32:
+                        speculate(BadType, jsValueValue(jsValue), profile, isNotInt32(jsValue));
+                        break;
+                    case FlushedBoolean:
+                        speculate(BadType, jsValueValue(jsValue), profile, isNotBoolean(jsValue));
+                        break;
+                    case FlushedCell:
+                        speculate(BadType, jsValueValue(jsValue), profile, isNotCell(jsValue));
+                        break;
+                    case FlushedJSValue:
+                        break;
+                    default:
+                        DFG_CRASH(m_graph, nullptr, "Bad flush format for argument");
+                        break;
+                    }
                 }
             }
+
             m_out.jump(firstDFGBasicBlock);
         }
 

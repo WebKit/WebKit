@@ -1,3 +1,13 @@
+2020-10-20  Saam Barati  <sbarati@apple.com>
+
+        Don't OSR exit to bc#0 for FTL argument type checks during loop OSR entry
+        https://bugs.webkit.org/show_bug.cgi?id=217925
+        <rdar://problem/70369407>
+
+        Reviewed by Michael Saboff and Tadeu Zagallo.
+
+        * stress/ftl-osr-entry-should-not-exit-to-bc-zero.js: Added.
+
 2020-10-20  Michael Saboff  <msaboff@apple.com>
 
         [JSC] Update RegExp UCD to version 13.0
