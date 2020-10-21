@@ -1198,5 +1198,3 @@ webkit.org/b/215325 [ Mojave ] media/remote-control-command-seek.html [ Pass Tim
 webkit.org/b/217761 [ Mojave+ Debug ] webgl/2.0.0/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Pass Crash ]
 
 webkit.org/b/217934 inspector/debugger/breakpoint-resolve-when-script-added.html [ Skip ]
-
-webkit.org/b/217997 webanimations/accelerated-overlapping-transform-animations.html [ Pass Failure ]

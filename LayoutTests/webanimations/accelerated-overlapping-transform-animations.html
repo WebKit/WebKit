@@ -14,6 +14,15 @@
 <script src="../resources/ui-helper.js"></script>
 <script>
 
+const waitForAnimationCommit = async (animation) => {
+    await animation.ready;
+    if (!UIHelper.isWebKit2()) {
+        await UIHelper.renderingUpdate();
+        await UIHelper.renderingUpdate();
+    } else
+        await UIHelper.ensureStablePresentationUpdate()
+}
+
 (async () => {
     if (window.testRunner)
         testRunner.waitUntilDone();
@@ -23,19 +32,10 @@
     // Make the animations last a whole minute so they don't end while the test is running. 
     const duration = 60 * 1000;
 
-    // Start a first stationary "transform" animation.
-    const firstAnimation = target.animate({ transform: ["translateX(100px)", "translateX(100px)"] }, duration);
-
-    // Wait until this first animation has been applied.
-    await firstAnimation.ready;
-    await UIHelper.ensureStablePresentationUpdate();
-
-    // Now start a second stationary "transform" animation, which should replace the previous animation.
-    const secondAnimation = target.animate({ transform: ["translateX(200px)", "translateX(200px)"] }, duration);
-
-    // Wait until this second animation has been applied.
-    await secondAnimation.ready;
-    await UIHelper.ensureStablePresentationUpdate();
+    // Start a first stationary "transform" animation and wait until it has been applied before starting
+    // a second stationary "transform" animation which should replace the first one.
+    await waitForAnimationCommit(target.animate({ transform: ["translateX(100px)", "translateX(100px)"] }, duration));
+    await waitForAnimationCommit(target.animate({ transform: ["translateX(200px)", "translateX(200px)"] }, duration));
 
     if (window.testRunner)
         testRunner.notifyDone();
