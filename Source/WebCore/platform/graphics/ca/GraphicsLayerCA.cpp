@@ -1079,34 +1079,30 @@ void GraphicsLayerCA::pauseAnimation(const String& animationName, double timeOff
 {
     LOG_WITH_STREAM(Animations, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " pauseAnimation " << animationName << " (is running " << animationIsRunning(animationName) << ")");
 
-    auto index = m_animations.findMatching([&](LayerPropertyAnimation animation) {
-        return animation.m_name == animationName && !animation.m_pendingRemoval;
-    });
+    for (auto& animation : m_animations) {
+        // There may be several animations with the same name in the case of transform animations
+        // animating multiple components as individual animations.
+        if (animation.m_name == animationName && !animation.m_pendingRemoval) {
+            animation.m_playState = PlayState::PausePending;
+            animation.m_timeOffset = Seconds { timeOffset };
 
-    if (index == notFound)
-        return;
-
-    auto& animation = m_animations[index];
-    animation.m_playState = PlayState::PausePending;
-    animation.m_timeOffset = Seconds { timeOffset };
-
-    noteLayerPropertyChanged(AnimationChanged);
+            noteLayerPropertyChanged(AnimationChanged);
+        }
+    }
 }
 
 void GraphicsLayerCA::removeAnimation(const String& animationName)
 {
     LOG_WITH_STREAM(Animations, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " removeAnimation " << animationName << " (is running " << animationIsRunning(animationName) << ")");
 
-    auto index = m_animations.findMatching([&](LayerPropertyAnimation animation) {
-        return animation.m_name == animationName && !animation.m_pendingRemoval;
-    });
-
-    if (index == notFound)
-        return;
-
-    m_animations[index].m_pendingRemoval = true;
-
-    noteLayerPropertyChanged(AnimationChanged | CoverageRectChanged);
+    for (auto& animation : m_animations) {
+        // There may be several animations with the same name in the case of transform animations
+        // animating multiple components as individual animations.
+        if (animation.m_name == animationName && !animation.m_pendingRemoval) {
+            animation.m_pendingRemoval = true;
+            noteLayerPropertyChanged(AnimationChanged | CoverageRectChanged);
+        }
+    }
 }
 
 void GraphicsLayerCA::platformCALayerAnimationStarted(const String& animationKey, MonotonicTime startTime)
@@ -2960,6 +2956,14 @@ void GraphicsLayerCA::updateAnimations()
             rotateAnimation = &animation;
             break;
         case AnimatedPropertyTransform:
+            // In the case of animations targeting the "transform" CSS property, there may be several
+            // animations created for a single KeyframeEffect, one for each transform component. In that
+            // case the animation index starts at 0 and increases for each component. If we encounter an
+            // index of 0 this means this animation establishes a new group of animation belonging to a
+            // single KeyframeEffect. As such, since the top-most KeyframeEffect replaces the previous
+            // ones, we can remove all the previously-added "transform" animations.
+            if (!animation.m_index)
+                transformAnimations.clear();
             transformAnimations.append(&animation);
             break;
         case AnimatedPropertyOpacity:
