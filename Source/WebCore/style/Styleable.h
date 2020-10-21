@@ -96,14 +96,14 @@ struct Styleable {
         return element.animations(pseudoId);
     }
 
-    bool hasCompletedTransitionsForProperty(CSSPropertyID property) const
+    bool hasCompletedTransitionForProperty(CSSPropertyID property) const
     {
-        return element.hasCompletedTransitionsForProperty(pseudoId, property);
+        return element.hasCompletedTransitionForProperty(pseudoId, property);
     }
 
-    bool hasRunningTransitionsForProperty(CSSPropertyID property) const
+    bool hasRunningTransitionForProperty(CSSPropertyID property) const
     {
-        return element.hasRunningTransitionsForProperty(pseudoId, property);
+        return element.hasRunningTransitionForProperty(pseudoId, property);
     }
 
     bool hasRunningTransitions() const

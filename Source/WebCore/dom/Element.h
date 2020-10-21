@@ -492,8 +492,8 @@ public:
     OptionSet<AnimationImpact> applyKeyframeEffects(PseudoId, RenderStyle&);
 
     const AnimationCollection* animations(PseudoId) const;
-    bool hasCompletedTransitionsForProperty(PseudoId, CSSPropertyID) const;
-    bool hasRunningTransitionsForProperty(PseudoId, CSSPropertyID) const;
+    bool hasCompletedTransitionForProperty(PseudoId, CSSPropertyID) const;
+    bool hasRunningTransitionForProperty(PseudoId, CSSPropertyID) const;
     bool hasRunningTransitions(PseudoId) const;
     AnimationCollection& ensureAnimations(PseudoId);
 
