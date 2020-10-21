@@ -39,7 +39,6 @@
 #import <UIKit/UIContextMenuConfiguration.h>
 #import <UIKit/UIDatePicker_Private.h>
 #import <UIKit/UIDevice_Private.h>
-#import <UIKit/UIDocumentMenuViewController_Private.h>
 #import <UIKit/UIDocumentPasswordView.h>
 #import <UIKit/UIDocumentPickerViewController_Private.h>
 #import <UIKit/UIFont_Private.h>
@@ -961,10 +960,6 @@ typedef enum {
 - (void)setPaused:(BOOL)paused;
 - (void)sendScrollEventIfNecessaryWasUserScroll:(BOOL)userScroll;
 @property (nonatomic) BOOL inputViewObeysDOMFocus;
-@end
-
-@interface UIDocumentMenuViewController ()
-- (instancetype)_initIgnoringApplicationEntitlementForImportOfTypes:(NSArray *)types;
 @end
 
 @protocol UIDocumentPasswordViewDelegate;
