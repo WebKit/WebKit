@@ -25,4 +25,4 @@ sys.path.insert(0, os.path.join(top_level_directory, "Tools", "flatpak"))
 from flatpakutils import WebkitFlatpak
 
 if __name__ == "__main__":
-    WebkitFlatpak.load_from_args(["--update"] + sys.argv[1:]).run()
+    sys.exit(WebkitFlatpak.load_from_args(["--update"] + sys.argv[1:]).run())

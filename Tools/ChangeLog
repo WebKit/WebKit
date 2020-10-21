@@ -1,3 +1,17 @@
+2020-10-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        update-webkitgtk-libs and run-webkit-tests fail silently if flatpak has problems updating
+        https://bugs.webkit.org/show_bug.cgi?id=218047
+
+        Reviewed by Philippe Normand.
+
+        This scripts were returning zero status when flatpak failed to
+        update in some cases. Fix them to return a non-zero status.
+
+        * Scripts/update-webkit-flatpak: Add missing sys.exit call with the return code.
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox): In python false is zero when casted to int.
+
 2020-10-21  Lauro Moura  <lmoura@igalia.com>
 
         webkitpy: Check for duplicated keys in json expectation files

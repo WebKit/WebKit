@@ -659,7 +659,7 @@ class WebkitFlatpak:
 
     def run_in_sandbox(self, *args, **kwargs):
         if not self.setup_builddir():
-            return False
+            return 1
         cwd = kwargs.get("cwd", None)
         extra_env_vars = kwargs.get("env", {})
         stdout = kwargs.get("stdout", sys.stdout)
