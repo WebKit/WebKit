@@ -2729,6 +2729,7 @@ void MediaPlayerPrivateGStreamer::updateDownloadBufferingFlag()
 
 void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url, const String& pipelineName)
 {
+    GST_INFO("Creating pipeline for %s player", m_player->isVideoPlayer() ? "video" : "audio");
     const char* playbinName = "playbin";
 
     // MSE doesn't support playbin3. Mediastream requires playbin3. Regular
@@ -2813,7 +2814,9 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url, const String&
 
     g_object_set(m_pipeline.get(), "text-sink", m_textAppSink.get(), nullptr);
 
-    g_object_set(m_pipeline.get(), "video-sink", createVideoSink(), "audio-sink", createAudioSink(), nullptr);
+    g_object_set(m_pipeline.get(), "audio-sink", createAudioSink(), nullptr);
+    if (m_player->isVideoPlayer())
+        g_object_set(m_pipeline.get(), "video-sink", createVideoSink(), nullptr);
 
     configurePlaySink();
 
@@ -2825,6 +2828,9 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url, const String&
         else
             g_object_set(m_pipeline.get(), "audio-filter", scale, nullptr);
     }
+
+    if (!m_player->isVideoPlayer())
+        return;
 
     if (!m_canRenderingBeAccelerated) {
         // If not using accelerated compositing, let GStreamer handle
