@@ -67,6 +67,9 @@ LineLayout::~LineLayout() = default;
 
 LineLayout* LineLayout::containing(RenderObject& renderer)
 {
+    if (!is<RenderText>(renderer) && !is<RenderLineBreak>(renderer) && !is<RenderImage>(renderer))
+        return nullptr;
+    
     if (auto* parent = renderer.parent()) {
         if (is<RenderBlockFlow>(*parent))
             return downcast<RenderBlockFlow>(*parent).layoutFormattingContextLineLayout();
