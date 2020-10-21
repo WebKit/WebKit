@@ -92,6 +92,9 @@ WebAutomationSession::WebAutomationSession()
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     m_inputSources.add(SimulatedInputSource::create(SimulatedInputSourceType::Keyboard));
 #endif
+#if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+    m_inputSources.add(SimulatedInputSource::create(SimulatedInputSourceType::Wheel));
+#endif
     m_inputSources.add(SimulatedInputSource::create(SimulatedInputSourceType::Null));
 #endif // ENABLE(WEBDRIVER_ACTIONS_API)
 }
@@ -164,6 +167,13 @@ void WebAutomationSession::terminate()
         callback(AUTOMATION_COMMAND_ERROR_WITH_NAME(InternalError));
     }
 #endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
+
+#if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+    for (auto& identifier : copyToVector(m_pendingWheelEventsFlushedCallbacksPerPage.keys())) {
+        auto callback = m_pendingWheelEventsFlushedCallbacksPerPage.take(identifier);
+        callback(AUTOMATION_COMMAND_ERROR_WITH_NAME(InternalError));
+    }
+#endif // ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
 
 #if ENABLE(REMOTE_INSPECTOR)
     if (Inspector::FrontendChannel* channel = m_remoteChannel) {
@@ -676,6 +686,15 @@ void WebAutomationSession::willShowJavaScriptDialog(WebPageProxy& page)
         }
 #endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     });
+
+#if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+        if (!m_pendingWheelEventsFlushedCallbacksPerPage.isEmpty()) {
+            for (auto key : copyToVector(m_pendingWheelEventsFlushedCallbacksPerPage.keys())) {
+                auto callback = m_pendingWheelEventsFlushedCallbacksPerPage.take(key);
+                callback(WTF::nullopt);
+            }
+        }
+#endif // ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
 }
     
 void WebAutomationSession::didEnterFullScreenForPage(const WebPageProxy&)
@@ -816,6 +835,16 @@ void WebAutomationSession::keyboardEventsFlushedForPage(const WebPageProxy& page
 #endif
 }
 
+void WebAutomationSession::wheelEventsFlushedForPage(const WebPageProxy& page)
+{
+#if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+    if (auto callback = m_pendingWheelEventsFlushedCallbacksPerPage.take(page.identifier()))
+        callback(WTF::nullopt);
+#else
+    UNUSED_PARAM(page);
+#endif
+}
+
 void WebAutomationSession::willClosePage(const WebPageProxy& page)
 {
     String handle = handleForWebPageProxy(page);
@@ -829,6 +858,10 @@ void WebAutomationSession::willClosePage(const WebPageProxy& page)
 #endif
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     if (auto callback = m_pendingKeyboardEventsFlushedCallbacksPerPage.take(page.identifier()))
+        callback(AUTOMATION_COMMAND_ERROR_WITH_NAME(WindowNotFound));
+#endif
+#if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+    if (auto callback = m_pendingWheelEventsFlushedCallbacksPerPage.take(page.identifier()))
         callback(AUTOMATION_COMMAND_ERROR_WITH_NAME(WindowNotFound));
 #endif
 
@@ -1525,6 +1558,10 @@ bool WebAutomationSession::isSimulatingUserInteraction() const
     if (!m_pendingKeyboardEventsFlushedCallbacksPerPage.isEmpty())
         return true;
 #endif
+#if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+    if (!m_pendingWheelEventsFlushedCallbacksPerPage.isEmpty())
+        return true;
+#endif
 #if ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
     if (m_simulatingTouchInteraction)
         return true;
@@ -1671,6 +1708,40 @@ void WebAutomationSession::simulateKeyboardInteraction(WebPageProxy& page, Keybo
     // Otherwise, wait for keyboardEventsFlushedCallback to run when all events are handled.
 }
 #endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
+
+#if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+void WebAutomationSession::simulateWheelInteraction(WebPageProxy& page, const WebCore::IntPoint& locationInViewport, const WebCore::IntSize& delta, AutomationCompletionHandler&& completionHandler)
+{
+    page.getWindowFrameWithCallback([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler), page = makeRef(page), locationInViewport, delta](WebCore::FloatRect windowFrame) mutable {
+        auto clippedX = std::min(std::max(0.0f, static_cast<float>(locationInViewport.x())), windowFrame.size().width());
+        auto clippedY = std::min(std::max(0.0f, static_cast<float>(locationInViewport.y())), windowFrame.size().height());
+        if (clippedX != locationInViewport.x() || clippedY != locationInViewport.y()) {
+            completionHandler(AUTOMATION_COMMAND_ERROR_WITH_NAME(TargetOutOfBounds));
+            return;
+        }
+
+        // Bridge the flushed callback to our command's completion handler.
+        auto wheelEventsFlushedCallback = [completionHandler = WTFMove(completionHandler)](Optional<AutomationCommandError> error) mutable {
+            completionHandler(error);
+        };
+
+        auto& callbackInMap = m_pendingWheelEventsFlushedCallbacksPerPage.add(page->identifier(), nullptr).iterator->value;
+        if (callbackInMap)
+            callbackInMap(AUTOMATION_COMMAND_ERROR_WITH_NAME(Timeout));
+        callbackInMap = WTFMove(wheelEventsFlushedCallback);
+
+        platformSimulateWheelInteraction(page, locationInViewport, delta);
+
+        // If the event does not hit test anything in the window, then it may not have been delivered.
+        if (callbackInMap && !page->isProcessingWheelEvents()) {
+            auto callbackToCancel = m_pendingWheelEventsFlushedCallbacksPerPage.take(page->identifier());
+            callbackToCancel(WTF::nullopt);
+        }
+
+        // Otherwise, wait for wheelEventsFlushedCallback to run when all events are handled.
+    });
+}
+#endif
 #endif // ENABLE(WEBDRIVER_ACTIONS_API)
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
@@ -1854,6 +1925,8 @@ static SimulatedInputSourceType simulatedInputSourceTypeFromProtocolSourceType(I
         return SimulatedInputSourceType::Mouse;
     case Inspector::Protocol::Automation::InputSourceType::Touch:
         return SimulatedInputSourceType::Touch;
+    case Inspector::Protocol::Automation::InputSourceType::Wheel:
+        return SimulatedInputSourceType::Wheel;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -1965,6 +2038,10 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
         if (inputSourceType == SimulatedInputSourceType::Keyboard)
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Keyboard input sources are not yet supported.");
 #endif
+#if !ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+        if (inputSourceType == SimulatedInputSourceType::Wheel)
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Wheel input sources are not yet supported.");
+#endif
         if (typeToSourceIdMap.contains(inputSourceType))
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Two input sources with the same type were specified.");
         if (sourceIdToInputSourceMap.contains(sourceId))
@@ -2050,6 +2127,13 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
                 auto y = locationObject->getInteger("y"_s);
                 if (x && y)
                     sourceState.location = WebCore::IntPoint(*x, *y);
+            }
+
+            if (auto deltaObject = stateObject->getObject("delta"_s)) {
+                auto deltaX = deltaObject->getInteger("width"_s);
+                auto deltaY = deltaObject->getInteger("height"_s);
+                if (deltaX && deltaY)
+                    sourceState.scrollDelta = WebCore::IntSize(*deltaX, *deltaY);
             }
 
             if (auto duration = stateObject->getInteger("duration"_s))

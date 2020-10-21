@@ -2619,6 +2619,8 @@ static const char* automationSourceType(InputSource::Type type)
         return "Mouse";
     case InputSource::Type::Key:
         return "Keyboard";
+    case InputSource::Type::Wheel:
+        return "Wheel";
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -2709,6 +2711,7 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
                         break;
                     case Action::Subtype::KeyUp:
                     case Action::Subtype::KeyDown:
+                    case Action::Subtype::Scroll:
                         ASSERT_NOT_REACHED();
                     }
                     if (currentState.pressedButton)
@@ -2743,6 +2746,7 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
                     case Action::Subtype::PointerDown:
                     case Action::Subtype::PointerMove:
                     case Action::Subtype::PointerCancel:
+                    case Action::Subtype::Scroll:
                         ASSERT_NOT_REACHED();
                     }
                     if (currentState.pressedKey)
@@ -2755,6 +2759,36 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
                         state->setArray("pressedVirtualKeys"_s, WTFMove(virtualKeys));
                     }
                     break;
+                case Action::Type::Wheel:
+                    switch (action.subtype) {
+                    case Action::Subtype::Scroll: {
+                        state->setString("origin"_s, automationOriginType(action.origin->type));
+                        auto location = JSON::Object::create();
+                        location->setInteger("x"_s, action.x.value());
+                        location->setInteger("y"_s, action.y.value());
+                        state->setObject("location"_s, WTFMove(location));
+
+                        auto delta = JSON::Object::create();
+                        delta->setInteger("width"_s, action.deltaX.value());
+                        delta->setInteger("height"_s, action.deltaY.value());
+                        state->setObject("delta"_s, WTFMove(delta));
+
+                        if (action.origin->type == PointerOrigin::Type::Element)
+                            state->setString("nodeHandle"_s, action.origin->elementID.value());
+                        FALLTHROUGH;
+                    }
+                    case Action::Subtype::Pause:
+                        if (action.duration)
+                            state->setDouble("duration"_s, action.duration.value());
+                        break;
+                    case Action::Subtype::PointerUp:
+                    case Action::Subtype::PointerDown:
+                    case Action::Subtype::PointerMove:
+                    case Action::Subtype::PointerCancel:
+                    case Action::Subtype::KeyUp:
+                    case Action::Subtype::KeyDown:
+                        ASSERT_NOT_REACHED();
+                    }
                 }
                 states->pushObject(WTFMove(state));
             }

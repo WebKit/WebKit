@@ -31,6 +31,7 @@
 #include "WebPageProxy.h"
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/GtkVersioning.h>
+#include <WebCore/Scrollbar.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -327,5 +328,15 @@ void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const
     } while (*p);
 }
 #endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
+
+#if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+void WebAutomationSession::platformSimulateWheelInteraction(WebPageProxy& page, const WebCore::IntPoint& locationInViewport, const WebCore::IntSize& delta)
+{
+    auto* viewWidget = reinterpret_cast<WebKitWebViewBase*>(page.viewWidget());
+    FloatSize scrollDelta(delta);
+    scrollDelta.scale(1 / static_cast<float>(Scrollbar::pixelsPerLineStep()));
+    webkitWebViewBaseSynthesizeWheelEvent(viewWidget, -scrollDelta.width(), -scrollDelta.height(), locationInViewport.x(), locationInViewport.y(), WheelEventPhase::NoPhase, WheelEventPhase::NoPhase);
+}
+#endif // ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
 
 } // namespace WebKit

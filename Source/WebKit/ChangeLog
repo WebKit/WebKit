@@ -1,3 +1,36 @@
+2020-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: add support for wheel actions
+        https://bugs.webkit.org/show_bug.cgi?id=217174
+
+        Reviewed by Brian Burg.
+
+        * UIProcess/Automation/Automation.json: Add scroll delta to action state.
+        * UIProcess/Automation/SimulatedInputDispatcher.cpp:
+        (WebKit::SimulatedInputSourceState::emptyStateForSourceType): Initialize scrollDelta for wheel actions.
+        (WebKit::SimulatedInputDispatcher::transitionInputSourceToState): Handle SimulatedInputSourceType::Wheel.
+        * UIProcess/Automation/SimulatedInputDispatcher.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::WebAutomationSession): Add SimulatedInputSourceType::Wheel.
+        (WebKit::WebAutomationSession::terminate): Handle pending wheel events.
+        (WebKit::WebAutomationSession::willShowJavaScriptDialog): Ditto.
+        (WebKit::WebAutomationSession::wheelEventsFlushedForPage): Ditto.
+        (WebKit::WebAutomationSession::willClosePage): Ditto.
+        (WebKit::WebAutomationSession::isSimulatingUserInteraction const): Return true if there are pending wheel events too.
+        (WebKit::WebAutomationSession::simulateWheelInteraction): Handle the wheel action.
+        (WebKit::simulatedInputSourceTypeFromProtocolSourceType): Handle Inspector::Protocol::Automation::InputSourceType::Wheel.
+        (WebKit::WebAutomationSession::performInteractionSequence): Initialize the scroll delta for wheel action.
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp:
+        (WebKit::WebAutomationSession::platformSimulateWheelInteraction): Synthesize a wheel event.
+        * UIProcess/Automation/wpe/WebAutomationSessionWPE.cpp:
+        (WebKit::WebAutomationSession::platformSimulateWheelInteraction): Ditto.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isProcessingWheelEvents const): Return whether page has pending wheel events.
+        (WebKit::WebPageProxy::didReceiveEvent): Notify automation that pending wheel events have been processed.
+        * UIProcess/WebPageProxy.h:
+        * config.h:
+
 2020-10-20  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process] Some WebAudio layout tests generate strange noises

@@ -1,3 +1,23 @@
+2020-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: add support for wheel actions
+        https://bugs.webkit.org/show_bug.cgi?id=217174
+
+        Reviewed by Brian Burg.
+
+        Handle wheel actions.
+
+        * Actions.h:
+        * Session.cpp:
+        (WebDriver::automationSourceType): Handle InputSource::Type::Wheel.
+        (WebDriver::Session::performActions): Handle Action::Type::Wheel.
+        * WebDriverService.cpp:
+        (WebDriver::processKeyAction): Assert if Action::Subtype::Scroll.
+        (WebDriver::processPointerMoveAction): Move this code to a helper to be used by both pointer move and scroll actions.
+        (WebDriver::processPointerAction): Use processPointerMoveAction().
+        (WebDriver::processWheelAction): Call processPointerMoveAction() and process the scroll delta too.
+        (WebDriver::processInputActionSequence): Handle InputSource::Type::Wheel.
+
 2020-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: add support for right variations of virtual keys

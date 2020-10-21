@@ -182,6 +182,7 @@ my (
     $webdriverMouseInteractionsSupport,
     $webdriverSupport,
     $webdriverTouchInteractionsSupport,
+    $webdriverWheelInteractionsSupport,
     $webgl2Support,
     $webglSupport,
     $webgpuSupport,
@@ -552,6 +553,9 @@ my @features = (
 
     { option => "webdriver-touch-interactions", desc => "Toggle WebDriver touch interactions",
       define => "ENABLE_WEBDRIVER_TOUCH_INTERACTIONS", value => \$webdriverTouchInteractionsSupport },
+
+    { option => "webdriver-wheel-interactions", desc => "Toggle WebDriver wheel interactions",
+      define => "ENABLE_WEBDRIVER_WHEEL_INTERACTIONS", value => \$webdriverWheelInteractionsSupport },
 
     { option => "webgl", desc => "Toggle WebGL support",
       define => "ENABLE_WEBGL", value => \$webglSupport },

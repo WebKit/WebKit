@@ -1,3 +1,16 @@
+2020-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: add support for wheel actions
+        https://bugs.webkit.org/show_bug.cgi?id=217174
+
+        Reviewed by Brian Burg.
+
+        Enable WEBDRIVER_WHEEL_INTERACTIONS for GTK and WPE ports.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2020-10-20  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Move ENABLE_ASYNC_SCROLLING build option to right place in OptionsGTK.cmake

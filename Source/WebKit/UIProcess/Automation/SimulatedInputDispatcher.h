@@ -29,6 +29,7 @@
 
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntPoint.h>
+#include <WebCore/IntSize.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashSet.h>
 #include <wtf/Optional.h>
@@ -67,6 +68,7 @@ enum class SimulatedInputSourceType {
     Keyboard,
     Mouse,
     Touch,
+    Wheel,
 };
 
 enum class TouchInteraction {
@@ -82,6 +84,7 @@ struct SimulatedInputSourceState {
     Optional<MouseMoveOrigin> origin;
     Optional<String> nodeHandle;
     Optional<WebCore::IntPoint> location;
+    Optional<WebCore::IntSize> scrollDelta;
     Optional<Seconds> duration;
 
     static SimulatedInputSourceState emptyStateForSourceType(SimulatedInputSourceType);
@@ -133,6 +136,9 @@ public:
 #endif
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
         virtual void simulateKeyboardInteraction(WebPageProxy&, KeyboardInteraction, WTF::Variant<VirtualKey, CharKey>&&, AutomationCompletionHandler&&) = 0;
+#endif
+#if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+        virtual void simulateWheelInteraction(WebPageProxy&, const WebCore::IntPoint& locationInView, const WebCore::IntSize& delta, AutomationCompletionHandler&&) = 0;
 #endif
         virtual void viewportInViewCenterPointOfElement(WebPageProxy&, Optional<WebCore::FrameIdentifier>, const String& nodeHandle, Function<void (Optional<WebCore::IntPoint>, Optional<AutomationCommandError>)>&&) = 0;
     };

@@ -43,6 +43,9 @@ SimulatedInputSourceState SimulatedInputSourceState::emptyStateForSourceType(Sim
     case SimulatedInputSourceType::Null:
     case SimulatedInputSourceType::Keyboard:
         break;
+    case SimulatedInputSourceType::Wheel:
+        result.scrollDelta = WebCore::IntSize();
+        FALLTHROUGH;
     case SimulatedInputSourceType::Mouse:
     case SimulatedInputSourceType::Touch:
         result.location = WebCore::IntPoint();
@@ -379,6 +382,35 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
         } else
             eventDispatchFinished(WTF::nullopt);
 #endif // !ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
+        break;
+    case SimulatedInputSourceType::Wheel:
+#if !ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+        RELEASE_ASSERT_NOT_REACHED();
+#else
+        resolveLocation(a.location.valueOr(WebCore::IntPoint()), b.location, b.origin.valueOr(MouseMoveOrigin::Viewport), b.nodeHandle, [this, &a, &b, eventDispatchFinished = WTFMove(eventDispatchFinished)](Optional<WebCore::IntPoint> location, Optional<AutomationCommandError> error) mutable {
+            if (error) {
+                eventDispatchFinished(error);
+                return;
+            }
+
+            if (!location) {
+                eventDispatchFinished(AUTOMATION_COMMAND_ERROR_WITH_NAME(ElementNotInteractable));
+                return;
+            }
+
+            b.location = location;
+
+            if (!a.scrollDelta->isZero())
+                b.scrollDelta->contract(a.scrollDelta->width(), a.scrollDelta->height());
+
+            if (!b.scrollDelta->isZero()) {
+                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating Wheel from (%d, %d) to (%d, %d) for transition to %d.%d", this, a.scrollDelta->width(), a.scrollDelta->height(), b.scrollDelta->width(), b.scrollDelta->height(), m_keyframeIndex, m_inputSourceStateIndex);
+                // FIXME: This does not interpolate mouse scrolls per the "perform a scroll" algorithm (§15.4.4 Wheel actions).
+                m_client.simulateWheelInteraction(m_page, b.location.value(), b.scrollDelta.value(), WTFMove(eventDispatchFinished));
+            } else
+                eventDispatchFinished(WTF::nullopt);
+        });
+#endif // !ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
         break;
     }
 }

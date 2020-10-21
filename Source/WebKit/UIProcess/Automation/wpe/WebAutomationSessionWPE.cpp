@@ -364,5 +364,30 @@ void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const
 }
 #endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
 
+#if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+void WebAutomationSession::platformSimulateWheelInteraction(WebPageProxy& page, const WebCore::IntPoint& locationInView, const WebCore::IntSize& delta)
+{
+#if WPE_CHECK_VERSION(1, 5, 0)
+    struct wpe_input_axis_2d_event event;
+    memset(&event, 0, sizeof(event));
+    event.base.type = static_cast<wpe_input_axis_event_type>(wpe_input_axis_event_type_mask_2d | wpe_input_axis_event_type_motion_smooth);
+    event.base.x = locationInView.x();
+    event.base.y = locationInView.y();
+    event.x_axis = -delta.width();
+    event.y_axis = -delta.height();
+    wpe_view_backend_dispatch_axis_event(page.viewBackend(), &event.base);
+#else
+    if (auto deltaX = delta.width()) {
+        struct wpe_input_axis_event event = { wpe_input_axis_event_type_motion, 0, locationInView.x(), locationInView.y(), 1, -deltaX, 0 };
+        wpe_view_backend_dispatch_axis_event(page.viewBackend(), &event);
+    }
+    if (auto deltaY = delta.height()) {
+        struct wpe_input_axis_event event = { wpe_input_axis_event_type_motion, 0, locationInView.x(), locationInView.y(), 0, -deltaY, 0 };
+        wpe_view_backend_dispatch_axis_event(page.viewBackend(), &event);
+    }
+#endif
+}
+#endif // ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+
 } // namespace WebKit
 

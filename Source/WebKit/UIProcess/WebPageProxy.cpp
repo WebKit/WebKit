@@ -6426,6 +6426,11 @@ bool WebPageProxy::isProcessingMouseEvents() const
     return !m_mouseEventQueue.isEmpty();
 }
 
+bool WebPageProxy::isProcessingWheelEvents() const
+{
+    return m_wheelEventCoalescer && m_wheelEventCoalescer->hasEventsBeingProcessed();
+}
+
 NativeWebMouseEvent* WebPageProxy::currentlyProcessedMouseDownEvent()
 {
     // <https://bugs.webkit.org/show_bug.cgi?id=57904> We need to keep track of the mouse down event in the case where we
@@ -6942,6 +6947,8 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 
         if (auto eventToSend = wheelEventCoalescer().nextEventToDispatch())
             sendWheelEvent(*eventToSend);
+        else if (auto* automationSession = process().processPool().automationSession())
+            automationSession->wheelEventsFlushedForPage(*this);
         break;
     }
 

@@ -1909,6 +1909,7 @@ static Optional<Action> processKeyAction(const String& id, JSON::Object& actionI
     case Action::Subtype::PointerDown:
     case Action::Subtype::PointerMove:
     case Action::Subtype::PointerCancel:
+    case Action::Subtype::Scroll:
         ASSERT_NOT_REACHED();
     }
 
@@ -1929,6 +1930,60 @@ static MouseButton actionMouseButton(unsigned button)
     }
 
     return MouseButton::None;
+}
+
+static bool processPointerMoveAction(JSON::Object& actionItem, Action& action, Optional<String>& errorMessage)
+{
+    if (auto durationValue = actionItem.getValue("duration"_s)) {
+        auto duration = unsignedValue(*durationValue);
+        if (!duration) {
+            errorMessage = String("The parameter 'duration' is invalid in action");
+            return false;
+        }
+        action.duration = duration.value();
+    }
+
+    if (auto originValue = actionItem.getValue("origin"_s)) {
+        if (auto originObject = originValue->asObject()) {
+            auto elementID = originObject->getString(Session::webElementIdentifier());
+            if (!elementID) {
+                errorMessage = String("The parameter 'origin' is not a valid web element object in action");
+                return false;
+            }
+            action.origin = PointerOrigin { PointerOrigin::Type::Element, elementID };
+        } else {
+            auto origin = originValue->asString();
+            if (origin == "viewport")
+                action.origin = PointerOrigin { PointerOrigin::Type::Viewport, WTF::nullopt };
+            else if (origin == "pointer")
+                action.origin = PointerOrigin { PointerOrigin::Type::Pointer, WTF::nullopt };
+            else {
+                errorMessage = String("The parameter 'origin' is invalid in action");
+                return false;
+            }
+        }
+    } else
+        action.origin = PointerOrigin { PointerOrigin::Type::Viewport, WTF::nullopt };
+
+    if (auto xValue = actionItem.getValue("x"_s)) {
+        auto x = valueAsNumberInRange(*xValue, INT_MIN);
+        if (!x) {
+            errorMessage = String("The paramater 'x' is invalid for action");
+            return false;
+        }
+        action.x = x.value();
+    }
+
+    if (auto yValue = actionItem.getValue("y"_s)) {
+        auto y = valueAsNumberInRange(*yValue, INT_MIN);
+        if (!y) {
+            errorMessage = String("The paramater 'y' is invalid for action");
+            return false;
+        }
+        action.y = y.value();
+    }
+
+    return true;
 }
 
 static Optional<Action> processPointerAction(const String& id, PointerParameters& parameters, JSON::Object& actionItem, Optional<String>& errorMessage)
@@ -1973,61 +2028,69 @@ static Optional<Action> processPointerAction(const String& id, PointerParameters
         action.button = actionMouseButton(button.value());
         break;
     }
-    case Action::Subtype::PointerMove: {
-        if (auto durationValue = actionItem.getValue("duration"_s)) {
-            auto duration = unsignedValue(*durationValue);
-            if (!duration) {
-                errorMessage = String("The parameter 'duration' is invalid in pointer move action");
-                return WTF::nullopt;
-            }
-            action.duration = duration.value();
-        }
-
-        if (auto originValue = actionItem.getValue("origin"_s)) {
-            if (auto originObject = originValue->asObject()) {
-                auto elementID = originObject->getString(Session::webElementIdentifier());
-                if (!elementID) {
-                    errorMessage = String("The parameter 'origin' is not a valid web element object in pointer move action");
-                    return WTF::nullopt;
-                }
-                action.origin = PointerOrigin { PointerOrigin::Type::Element, elementID };
-            } else {
-                auto origin = originValue->asString();
-                if (origin == "viewport")
-                    action.origin = PointerOrigin { PointerOrigin::Type::Viewport, WTF::nullopt };
-                else if (origin == "pointer")
-                    action.origin = PointerOrigin { PointerOrigin::Type::Pointer, WTF::nullopt };
-                else {
-                    errorMessage = String("The parameter 'origin' is invalid in pointer move action");
-                    return WTF::nullopt;
-                }
-            }
-        } else
-            action.origin = PointerOrigin { PointerOrigin::Type::Viewport, WTF::nullopt };
-
-        if (auto xValue = actionItem.getValue("x"_s)) {
-            auto x = valueAsNumberInRange(*xValue, INT_MIN);
-            if (!x) {
-                errorMessage = String("The paramater 'x' is invalid for pointer move action");
-                return WTF::nullopt;
-            }
-            action.x = x.value();
-        }
-
-        if (auto yValue = actionItem.getValue("y"_s)) {
-            auto y = valueAsNumberInRange(*yValue, INT_MIN);
-            if (!y) {
-                errorMessage = String("The paramater 'y' is invalid for pointer move action");
-                return WTF::nullopt;
-            }
-            action.y = y.value();
-        }
+    case Action::Subtype::PointerMove:
+        if (!processPointerMoveAction(actionItem, action, errorMessage))
+            return WTF::nullopt;
         break;
-    }
     case Action::Subtype::PointerCancel:
         break;
     case Action::Subtype::KeyUp:
     case Action::Subtype::KeyDown:
+    case Action::Subtype::Scroll:
+        ASSERT_NOT_REACHED();
+    }
+
+    return action;
+}
+
+static Optional<Action> processWheelAction(const String& id, JSON::Object& actionItem, Optional<String>& errorMessage)
+{
+    Action::Subtype actionSubtype;
+    auto subtype = actionItem.getString("type"_s);
+    if (subtype == "pause")
+        actionSubtype = Action::Subtype::Pause;
+    else if (subtype == "scroll")
+        actionSubtype = Action::Subtype::Scroll;
+    else {
+        errorMessage = String("The parameter 'type' of wheel action is invalid");
+        return WTF::nullopt;
+    }
+
+    Action action(id, Action::Type::Wheel, actionSubtype);
+
+    switch (actionSubtype) {
+    case Action::Subtype::Pause:
+        if (!processPauseAction(actionItem, action, errorMessage))
+            return WTF::nullopt;
+        break;
+    case Action::Subtype::Scroll:
+        if (!processPointerMoveAction(actionItem, action, errorMessage))
+            return WTF::nullopt;
+
+        if (auto deltaXValue = actionItem.getValue("deltaX"_s)) {
+            auto deltaX = valueAsNumberInRange(*deltaXValue, INT_MIN);
+            if (!deltaX) {
+                errorMessage = String("The paramater 'deltaX' is invalid for action");
+                return WTF::nullopt;
+            }
+            action.deltaX = deltaX.value();
+        }
+
+        if (auto deltaYValue = actionItem.getValue("deltaY"_s)) {
+            auto deltaY = valueAsNumberInRange(*deltaYValue, INT_MIN);
+            if (!deltaY) {
+                errorMessage = String("The paramater 'deltaY' is invalid for action");
+                return WTF::nullopt;
+            }
+            action.deltaY = deltaY.value();
+        }
+        break;
+    case Action::Subtype::KeyUp:
+    case Action::Subtype::KeyDown:
+    case Action::Subtype::PointerUp:
+    case Action::Subtype::PointerDown:
+    case Action::Subtype::PointerMove:
+    case Action::Subtype::PointerCancel:
         ASSERT_NOT_REACHED();
     }
 
@@ -2080,6 +2143,8 @@ static Optional<Vector<Action>> processInputActionSequence(Session& session, JSO
         inputSourceType = InputSource::Type::Key;
     else if (type == "pointer")
         inputSourceType = InputSource::Type::Pointer;
+    else if (type == "wheel")
+        inputSourceType = InputSource::Type::Wheel;
     else if (type == "none")
         inputSourceType = InputSource::Type::None;
     else {
@@ -2136,6 +2201,8 @@ static Optional<Vector<Action>> processInputActionSequence(Session& session, JSO
             action = processKeyAction(id, *actionItem, errorMessage);
         else if (inputSourceType == InputSource::Type::Pointer)
             action = processPointerAction(id, parameters.value(), *actionItem, errorMessage);
+        else if (inputSourceType == InputSource::Type::Wheel)
+            action = processWheelAction(id, *actionItem, errorMessage);
         if (!action)
             return WTF::nullopt;
 
