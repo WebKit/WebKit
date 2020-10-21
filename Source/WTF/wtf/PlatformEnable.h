@@ -446,10 +446,6 @@
 #endif
 
 #if !defined(ENABLE_SPEECH_SYNTHESIS)
-#define ENABLE_SPEECH_SYNTHESIS 1
-#endif
-
-#if !defined(ENABLE_SPEECH_SYNTHESIS)
 #define ENABLE_SPEECH_SYNTHESIS 0
 #endif
 
