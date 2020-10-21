@@ -195,14 +195,13 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
     ASSERT(continuousContent.logicalWidth() > lineStatus.availableWidth);
     if (continuousContent.hasTrailingCollapsibleContent()) {
         ASSERT(isTextContent(continuousContent));
-        auto IsEndOfLine = isContentWrappingAllowed(continuousContent) ? IsEndOfLine::Yes : IsEndOfLine::No;
         // First check if the content fits without the trailing collapsible part.
         if (continuousContent.nonCollapsibleLogicalWidth() <= lineStatus.availableWidth)
-            return { Result::Action::Keep, IsEndOfLine };
+            return { Result::Action::Keep, IsEndOfLine::No };
         // Now check if we can trim the line too.
         if (lineStatus.hasFullyCollapsibleTrailingRun && continuousContent.isFullyCollapsible()) {
             // If this new content is fully collapsible, it should surely fit.
-            return { Result::Action::Keep, IsEndOfLine };
+            return { Result::Action::Keep, IsEndOfLine::No };
         }
     } else if (lineStatus.collapsibleWidth && isNonContentRunsOnly(continuousContent)) {
         // Let's see if the non-content runs fit when the line has trailing collapsible content.
