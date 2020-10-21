@@ -34,11 +34,6 @@ namespace WebCore {
 
 namespace LayoutIntegration {
 
-inline FloatRect verticallyRoundedRect(const FloatRect& rect)
-{
-    return { FloatPoint(rect.x(), roundf(rect.y())), rect.size() };
-}
-
 class RunIteratorModernPath {
 public:
     RunIteratorModernPath(const InlineContent& inlineContent)
@@ -54,7 +49,7 @@ public:
 
     bool isText() const { return !!run().textContent(); }
 
-    FloatRect rect() const { return verticallyRoundedRect(run().rect()); }
+    FloatRect rect() const { return run().rect(); }
 
     bool isHorizontal() const { return true; }
     bool dirOverride() const { return false; }
