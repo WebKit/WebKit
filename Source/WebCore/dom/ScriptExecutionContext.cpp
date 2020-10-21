@@ -481,10 +481,8 @@ JSC::VM& ScriptExecutionContext::vm()
 {
     if (is<Document>(*this))
         return commonVM();
-    if (is<WorkerGlobalScope>(*this))
-        return downcast<WorkerGlobalScope>(*this).script()->vm();
-    if (is<WorkletGlobalScope>(*this))
-        return downcast<WorkletGlobalScope>(*this).script()->vm();
+    if (is<WorkerOrWorkletGlobalScope>(*this))
+        return downcast<WorkerOrWorkletGlobalScope>(*this).script()->vm();
 
     RELEASE_ASSERT_NOT_REACHED();
     return commonVM();
