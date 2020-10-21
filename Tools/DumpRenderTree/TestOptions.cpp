@@ -30,6 +30,44 @@
 
 namespace WTR {
 
+const TestFeatures& TestOptions::defaults()
+{
+    static TestFeatures features;
+    if (features.boolWebPreferenceFeatures.empty()) {
+        features.boolWebPreferenceFeatures = {
+            // These are WebPreference values that must always be set as they may
+            // differ from the default set in the WebPreferences*.yaml configuration.
+            { "AllowCrossOriginSubresourcesToAskForCredentials", false },
+            { "AllowTopNavigationToDataURLs", true },
+            { "AcceleratedDrawingEnabled", false },
+            { "AttachmentElementEnabled", false },
+            { "UsesBackForwardCache", false },
+            { "ColorFilterEnabled", false },
+            { "InspectorAdditionsEnabled", false },
+            { "IntersectionObserverEnabled", false },
+            { "KeygenElementEnabled", false },
+            { "MenuItemElementEnabled", false },
+            { "ModernMediaControlsEnabled", true },
+
+            { "CSSLogicalEnabled", false },
+            { "LineHeightUnitsEnabled", false },
+            { "SelectionAcrossShadowBoundariesEnabled", true },
+            { "LayoutFormattingContextIntegrationEnabled", true },
+
+            { "AdClickAttributionEnabled", false },
+            { "AspectRatioOfImgFromWidthAndHeightEnabled", false },
+            { "AsyncClipboardAPIEnabled", false },
+            { "CSSOMViewSmoothScrollingEnabled", false },
+            { "ContactPickerAPIEnabled", false },
+            { "CoreMathMLEnabled", false },
+            { "RequestIdleCallbackEnabled", false },
+            { "ResizeObserverEnabled", false },
+            { "WebGPUEnabled", false },
+        };
+    }
+    return features;
+}
+
 const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMapping()
 {
     static const std::unordered_map<std::string, TestHeaderKeyType> map {
@@ -47,56 +85,47 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
     return map;
 }
 
-template<typename T> static void setValueIfSetInMap(T& valueToSet, std::string key, const std::unordered_map<std::string, T>& map)
+bool TestOptions::webViewIsCompatibleWithOptions(const TestOptions& options) const
+{
+    if (m_features.experimentalFeatures != options.m_features.experimentalFeatures)
+        return false;
+    if (m_features.internalDebugFeatures != options.m_features.internalDebugFeatures)
+        return false;
+    if (m_features.boolWebPreferenceFeatures != options.m_features.boolWebPreferenceFeatures)
+        return false;
+    if (m_features.doubleWebPreferenceFeatures != options.m_features.doubleWebPreferenceFeatures)
+        return false;
+    if (m_features.uint32WebPreferenceFeatures != options.m_features.uint32WebPreferenceFeatures)
+        return false;
+    if (m_features.stringWebPreferenceFeatures != options.m_features.stringWebPreferenceFeatures)
+        return false;
+    if (m_features.boolTestRunnerFeatures != options.m_features.boolTestRunnerFeatures)
+        return false;
+    if (m_features.doubleTestRunnerFeatures != options.m_features.doubleTestRunnerFeatures)
+        return false;
+    if (m_features.stringTestRunnerFeatures != options.m_features.stringTestRunnerFeatures)
+        return false;
+    if (m_features.stringVectorTestRunnerFeatures != options.m_features.stringVectorTestRunnerFeatures)
+        return false;
+    return true;
+}
+
+template<typename T> T featureValue(std::string key, T defaultValue, const std::unordered_map<std::string, T>& map)
 {
     auto it = map.find(key);
-    if (it == map.end())
-        return;
-    valueToSet = it->second;
+    if (it != map.end())
+        return it->second;
+    return defaultValue;
 }
 
-TestOptions::TestOptions(TestFeatures testFeatures)
+bool TestOptions::boolTestRunnerFeatureValue(std::string key, bool defaultValue) const
 {
-    setValueIfSetInMap(allowCrossOriginSubresourcesToAskForCredentials, "AllowCrossOriginSubresourcesToAskForCredentials", testFeatures.boolWebPreferenceFeatures);
-    setValueIfSetInMap(allowTopNavigationToDataURLs, "AllowTopNavigationToDataURLs", testFeatures.boolWebPreferenceFeatures);
-    setValueIfSetInMap(enableAcceleratedDrawing, "AcceleratedDrawingEnabled", testFeatures.boolWebPreferenceFeatures);
-    setValueIfSetInMap(enableAttachmentElement, "AttachmentElementEnabled", testFeatures.boolWebPreferenceFeatures);
-    setValueIfSetInMap(enableBackForwardCache, "UsesBackForwardCache", testFeatures.boolWebPreferenceFeatures);
-    setValueIfSetInMap(enableColorFilter, "ColorFilterEnabled", testFeatures.boolWebPreferenceFeatures);
-    setValueIfSetInMap(enableInspectorAdditions, "InspectorAdditionsEnabled", testFeatures.boolWebPreferenceFeatures);
-    setValueIfSetInMap(enableIntersectionObserver, "IntersectionObserverEnabled", testFeatures.boolWebPreferenceFeatures);
-    setValueIfSetInMap(enableKeygenElement, "KeygenElementEnabled", testFeatures.boolWebPreferenceFeatures);
-    setValueIfSetInMap(enableMenuItemElement, "MenuItemElementEnabled", testFeatures.boolWebPreferenceFeatures);
-    setValueIfSetInMap(enableModernMediaControls, "ModernMediaControlsEnabled", testFeatures.boolWebPreferenceFeatures);
-
-    setValueIfSetInMap(enableDragDestinationActionLoad, "enableDragDestinationActionLoad", testFeatures.boolTestRunnerFeatures);
-    setValueIfSetInMap(dumpJSConsoleLogInStdErr, "dumpJSConsoleLogInStdErr", testFeatures.boolTestRunnerFeatures);
-    setValueIfSetInMap(layerBackedWebView, "layerBackedWebView", testFeatures.boolTestRunnerFeatures);
-    setValueIfSetInMap(useEphemeralSession, "useEphemeralSession", testFeatures.boolTestRunnerFeatures);
-
-    setValueIfSetInMap(additionalSupportedImageTypes, "additionalSupportedImageTypes", testFeatures.stringTestRunnerFeatures);
-    setValueIfSetInMap(jscOptions, "jscOptions", testFeatures.stringTestRunnerFeatures);
-
-    setValueIfSetInMap(enableCSSLogical, "CSSLogicalEnabled", testFeatures.internalDebugFeatures);
-    setValueIfSetInMap(enableLineHeightUnits, "LineHeightUnitsEnabled", testFeatures.internalDebugFeatures);
-    setValueIfSetInMap(enableSelectionAcrossShadowBoundaries, "selectionAcrossShadowBoundariesEnabled", testFeatures.internalDebugFeatures);
-    setValueIfSetInMap(layoutFormattingContextIntegrationEnabled, "LayoutFormattingContextIntegrationEnabled", testFeatures.internalDebugFeatures);
-
-    setValueIfSetInMap(adClickAttributionEnabled, "AdClickAttributionEnabled", testFeatures.experimentalFeatures);
-    setValueIfSetInMap(enableAspectRatioOfImgFromWidthAndHeight, "AspectRatioOfImgFromWidthAndHeightEnabled", testFeatures.experimentalFeatures);
-    setValueIfSetInMap(enableAsyncClipboardAPI, "AsyncClipboardAPIEnabled", testFeatures.experimentalFeatures);
-    setValueIfSetInMap(enableCSSOMViewSmoothScrolling, "CSSOMViewSmoothScrollingEnabled", testFeatures.experimentalFeatures);
-    setValueIfSetInMap(enableContactPickerAPI, "ContactPickerAPIEnabled", testFeatures.experimentalFeatures);
-    setValueIfSetInMap(enableCoreMathML, "CoreMathMLEnabled", testFeatures.experimentalFeatures);
-    setValueIfSetInMap(enableRequestIdleCallback, "RequestIdleCallbackEnabled", testFeatures.experimentalFeatures);
-    setValueIfSetInMap(enableResizeObserver, "ResizeObserverEnabled", testFeatures.experimentalFeatures);
-    setValueIfSetInMap(enableWebGPU, "WebGPUEnabled", testFeatures.experimentalFeatures);
+    return featureValue(key, defaultValue, m_features.boolTestRunnerFeatures);
 }
 
-bool TestOptions::webViewIsCompatibleWithOptions(const TestOptions& other) const
+std::string TestOptions::stringTestRunnerFeatureValue(std::string key, std::string defaultValue) const
 {
-    return other.layerBackedWebView == layerBackedWebView
-        && other.jscOptions == jscOptions;
+    return featureValue(key, defaultValue, m_features.stringTestRunnerFeatures);
 }
 
 }

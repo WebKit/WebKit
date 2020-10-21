@@ -906,28 +906,37 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
 
     preferences->setFontSmoothing(FontSmoothingTypeStandard);
 
+    prefsPrivate->setWebSQLEnabled(true);
+
     prefsPrivate->setDataTransferItemsEnabled(TRUE);
     prefsPrivate->clearNetworkLoaderSession();
 
     setAlwaysAcceptCookies(false);
 }
 
+static bool boolWebPreferenceFeatureValue(std::string key, bool defaultValue, const WTR::TestOptions& options)
+{
+    auto it = options.boolWebPreferenceFeatures().find(key);
+    if (it != options.boolWebPreferenceFeatures().end())
+        return it->second;
+    return defaultValue;
+}
+
 static void setWebPreferencesForTestOptions(IWebPreferences* preferences, const WTR::TestOptions& options)
 {
     COMPtr<IWebPreferencesPrivate8> prefsPrivate { Query, preferences };
 
-    prefsPrivate->setMenuItemElementEnabled(options.enableMenuItemElement);
-    prefsPrivate->setKeygenElementEnabled(options.enableKeygenElement);
-    prefsPrivate->setModernMediaControlsEnabled(options.enableModernMediaControls);
-    prefsPrivate->setInspectorAdditionsEnabled(options.enableInspectorAdditions);
-    prefsPrivate->setRequestIdleCallbackEnabled(options.enableRequestIdleCallback);
-    prefsPrivate->setAsyncClipboardAPIEnabled(options.enableAsyncClipboardAPI);
-    prefsPrivate->setContactPickerAPIEnabled(options.enableContactPickerAPI);
-    prefsPrivate->setWebSQLEnabled(options.enableWebSQL);
-    prefsPrivate->setAllowTopNavigationToDataURLs(options.allowTopNavigationToDataURLs);
-    preferences->setPrivateBrowsingEnabled(options.useEphemeralSession);
-    preferences->setUsesPageCache(options.enableBackForwardCache);
-    prefsPrivate->setCSSOMViewSmoothScrollingEnabled(options.enableCSSOMViewSmoothScrolling);
+    preferences->setPrivateBrowsingEnabled(options.useEphemeralSession());
+    preferences->setUsesPageCache(boolWebPreferenceFeatureValue("UsesBackForwardCache", false, options));
+    prefsPrivate->setMenuItemElementEnabled(boolWebPreferenceFeatureValue("MenuItemElementEnabled", false, options));
+    prefsPrivate->setKeygenElementEnabled(boolWebPreferenceFeatureValue("KeygenElementEnabled", false, options));
+    prefsPrivate->setModernMediaControlsEnabled(boolWebPreferenceFeatureValue("ModernMediaControlsEnabled", true, options));
+    prefsPrivate->setInspectorAdditionsEnabled(boolWebPreferenceFeatureValue("InspectorAdditionsEnabled", false, options));
+    prefsPrivate->setRequestIdleCallbackEnabled(boolWebPreferenceFeatureValue("RequestIdleCallbackEnabled", false, options));
+    prefsPrivate->setAsyncClipboardAPIEnabled(boolWebPreferenceFeatureValue("AsyncClipboardAPIEnabled", false, options));
+    prefsPrivate->setContactPickerAPIEnabled(boolWebPreferenceFeatureValue("ContactPickerAPIEnabled", false, options));
+    prefsPrivate->setAllowTopNavigationToDataURLs(boolWebPreferenceFeatureValue("AllowTopNavigationToDataURLs", true, options));
+    prefsPrivate->setCSSOMViewSmoothScrollingEnabled(boolWebPreferenceFeatureValue("CSSOMViewSmoothScrollingEnabled", false, options));
 }
 
 static String applicationId()
@@ -973,9 +982,9 @@ static void setJSCOptions(const WTR::TestOptions& options)
         savedOptions.clear();
     }
 
-    if (options.jscOptions.length()) {
+    if (!options.jscOptions().empty()) {
         JSC::Options::dumpAllOptionsInALine(savedOptions);
-        JSC::Options::setOptions(options.jscOptions.c_str());
+        JSC::Options::setOptions(options.jscOptions().c_str());
     }
 }
 
@@ -1168,7 +1177,7 @@ static bool handleControlCommand(const char* command)
 
 static WTR::TestOptions testOptionsForTest(const WTR::TestCommand& command)
 {
-    WTR::TestFeatures features;
+    WTR::TestFeatures features = WTR::TestOptions::defaults();
     WTR::merge(features, WTR::hardcodedFeaturesBasedOnPathForTest(command));
     WTR::merge(features, WTR::featureDefaultsFromTestHeaderForTest(command, WTR::TestOptions::keyTypeMapping()));
 
@@ -1229,7 +1238,7 @@ static void runTest(const string& inputLine)
 
     ::gTestRunner = TestRunner::create(testURL.data(), command.expectedPixelHash);
     ::gTestRunner->setCustomTimeout(command.timeout.milliseconds());
-    ::gTestRunner->setDumpJSConsoleLogInStdErr(command.dumpJSConsoleLogInStdErr || options.dumpJSConsoleLogInStdErr);
+    ::gTestRunner->setDumpJSConsoleLogInStdErr(command.dumpJSConsoleLogInStdErr || options.dumpJSConsoleLogInStdErr());
 
     topLoadingFrame = nullptr;
     done = false;

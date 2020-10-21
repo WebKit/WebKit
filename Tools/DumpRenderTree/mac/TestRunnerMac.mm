@@ -576,14 +576,14 @@ void TestRunner::setPagePaused(bool paused)
 
 void TestRunner::setUserStyleSheetEnabled(bool flag)
 {
-    [[WebPreferences standardPreferences] setUserStyleSheetEnabled:flag];
+    [[[mainFrame webView] preferences] setUserStyleSheetEnabled:flag];
 }
 
 void TestRunner::setUserStyleSheetLocation(JSStringRef path)
 {
     RetainPtr<CFStringRef> pathCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, path));
     NSURL *url = [NSURL URLWithString:(__bridge NSString *)pathCF.get()];
-    [[WebPreferences standardPreferences] setUserStyleSheetLocation:url];
+    [[[mainFrame webView] preferences] setUserStyleSheetLocation:url];
 }
 
 void TestRunner::setValueForUser(JSContextRef context, JSValueRef nodeObject, JSStringRef value)
@@ -609,7 +609,7 @@ void TestRunner::overridePreference(JSStringRef key, JSStringRef value)
     RetainPtr<CFStringRef> valueCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, value));
     NSString *valueNS = (__bridge NSString *)valueCF.get();
 
-    [[WebPreferences standardPreferences] _setPreferenceForTestWithValue:valueNS forKey:keyNS];
+    [[[mainFrame webView] preferences] _setPreferenceForTestWithValue:valueNS forKey:keyNS];
 }
 
 void TestRunner::removeAllVisitedLinks()
@@ -700,7 +700,7 @@ bool TestRunner::findString(JSContextRef context, JSStringRef target, JSObjectRe
 
 void TestRunner::setCacheModel(int cacheModel)
 {
-    [[WebPreferences standardPreferences] setCacheModel:(WebCacheModel)cacheModel];
+    [[[mainFrame webView] preferences] setCacheModel:(WebCacheModel)cacheModel];
 }
 
 bool TestRunner::isCommandEnabled(JSStringRef name)

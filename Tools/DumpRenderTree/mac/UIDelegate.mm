@@ -60,7 +60,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)resetToConsistentStateBeforeTesting:(const WTR::TestOptions&)options
 {
-    m_enableDragDestinationActionLoad = options.enableDragDestinationActionLoad;
+    m_enableDragDestinationActionLoad = options.enableDragDestinationActionLoad();
 }
 
 - (void)webView:(WebView *)sender setFrame:(NSRect)frame
@@ -179,7 +179,8 @@ static NSString *addLeadingSpaceStripTrailingSpaces(NSString *string)
     ASSERT(gTestRunner->waitToDump());
 
     WebView *webView = createWebViewAndOffscreenWindow();
-    
+    [webView setPreferences:[sender preferences]];
+
     if (gTestRunner->newWindowsCopyBackForwardList())
         [webView _loadBackForwardListFromOtherView:sender];
     

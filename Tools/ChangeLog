@@ -1,3 +1,25 @@
+2020-10-20  Sam Weinig  <weinig@apple.com>
+
+        Cleanup DumpRenderTree in preparation for supporting arbitrary test header commands
+        https://bugs.webkit.org/show_bug.cgi?id=217962
+
+        Reviewed by Darin Adler.
+
+        - Moves DumpRenderTree's TestOptions to be fully backed by TestFeatures like WebKitTestRunnner,
+          allowing future changes to utilize any WebPreference once SPI is available from WebKitLegacy.
+
+        - Removes use of using namespace std; from DumpRenderTree.mm, which is not something we normally
+          do and made the code a bit confusing.
+
+        - Move some random setting of preferences to centralized reset functions.
+
+        * DumpRenderTree/TestOptions.cpp:
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        * DumpRenderTree/mac/UIDelegate.mm:
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+
 2020-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: add support for wheel actions

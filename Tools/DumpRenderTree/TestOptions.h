@@ -31,53 +31,38 @@
 
 namespace WTR {
 
-struct TestOptions {
-    // FIXME: Remove these and replace with access to TestFeatures set.
-    // Web Preferences
-    bool allowCrossOriginSubresourcesToAskForCredentials { false };
-    bool allowTopNavigationToDataURLs { true };
-    bool enableAcceleratedDrawing { false };
-    bool enableAttachmentElement { false };
-    bool enableBackForwardCache { false };
-    bool enableColorFilter { false };
-    bool enableInspectorAdditions { false };
-    bool enableIntersectionObserver { false };
-    bool enableKeygenElement { false };
-    bool enableMenuItemElement { false };
-    bool enableModernMediaControls { true };
-
-    // FIXME: Remove these and replace with access to TestFeatures set.
-    // Internal Features
-    bool enableCSSLogical { false };
-    bool enableLineHeightUnits { false };
-    bool enableSelectionAcrossShadowBoundaries { true };
-    bool layoutFormattingContextIntegrationEnabled { true };
-
-    // FIXME: Remove these and replace with access to TestFeatures set.
-    // Experimental Features
-    bool adClickAttributionEnabled { false };
-    bool enableAspectRatioOfImgFromWidthAndHeight { false };
-    bool enableAsyncClipboardAPI { false };
-    bool enableCSSOMViewSmoothScrolling { false };
-    bool enableContactPickerAPI { false };
-    bool enableCoreMathML { false };
-    bool enableRequestIdleCallback { false };
-    bool enableResizeObserver { false };
-    bool enableWebGPU { false };
-
-    // Test Runner Specific Features
-    bool dumpJSConsoleLogInStdErr { false };
-    bool enableDragDestinationActionLoad { false };
-    bool enableWebSQL { true };
-    bool layerBackedWebView { false };
-    bool useEphemeralSession { false };
-    std::string additionalSupportedImageTypes;
-    std::string jscOptions;
-
-    explicit TestOptions(TestFeatures);
-    bool webViewIsCompatibleWithOptions(const TestOptions&) const;
-    
+class TestOptions {
+public:
+    static const TestFeatures& defaults();
     static const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMapping();
+
+    explicit TestOptions(TestFeatures features)
+        : m_features(std::move(features))
+    {
+    }
+
+    bool webViewIsCompatibleWithOptions(const TestOptions&) const;
+
+    // Test-Runner-Specific Features
+    bool dumpJSConsoleLogInStdErr() const { return boolTestRunnerFeatureValue("dumpJSConsoleLogInStdErr", false); }
+    bool enableDragDestinationActionLoad() const { return boolTestRunnerFeatureValue("enableDragDestinationActionLoad", false); }
+    bool layerBackedWebView() const { return boolTestRunnerFeatureValue("layerBackedWebView", false); }
+    bool useEphemeralSession() const { return boolTestRunnerFeatureValue("useEphemeralSession", false); }
+    std::string additionalSupportedImageTypes() const { return stringTestRunnerFeatureValue("additionalSupportedImageTypes", { }); }
+    std::string jscOptions() const { return stringTestRunnerFeatureValue("jscOptions", { }); }
+
+    const auto& boolWebPreferenceFeatures() const { return m_features.boolWebPreferenceFeatures; }
+    const auto& doubleWebPreferenceFeatures() const { return m_features.doubleWebPreferenceFeatures; }
+    const auto& uint32WebPreferenceFeatures() const { return m_features.uint32WebPreferenceFeatures; }
+    const auto& stringWebPreferenceFeatures() const { return m_features.stringWebPreferenceFeatures; }
+
+    static std::string toWebKitLegacyPreferenceKey(const std::string&);
+
+private:
+    bool boolTestRunnerFeatureValue(std::string key, bool defaultValue) const;
+    std::string stringTestRunnerFeatureValue(std::string key, std::string defaultValue) const;
+
+    TestFeatures m_features;
 };
 
 }
