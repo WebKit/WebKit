@@ -33,10 +33,10 @@
 #include "ScriptExecutionContext.h"
 #include "Supplementable.h"
 #include "WorkerOrWorkletGlobalScope.h"
+#include "WorkerOrWorkletScriptController.h"
 #include <wtf/URL.h>
 #include "WorkerCacheStorageConnection.h"
 #include "WorkerMessagePortChannelProvider.h"
-#include "WorkerScriptController.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <memory>
@@ -85,9 +85,6 @@ public:
 #if ENABLE(SERVICE_WORKER)
     WorkerSWClientConnection& swClientConnection();
 #endif
-
-    WorkerScriptController* script() final { return m_script.get(); }
-    void clearScript() { m_script = nullptr; }
 
     WorkerInspectorController& inspectorController() const { return *m_inspectorController; }
 
@@ -195,7 +192,7 @@ private:
     mutable RefPtr<WorkerNavigator> m_navigator;
 
     WorkerThread& m_thread;
-    std::unique_ptr<WorkerScriptController> m_script;
+    std::unique_ptr<WorkerOrWorkletScriptController> m_script;
     std::unique_ptr<WorkerInspectorController> m_inspectorController;
 
     bool m_closing { false };

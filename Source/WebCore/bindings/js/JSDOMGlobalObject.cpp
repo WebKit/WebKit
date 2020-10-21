@@ -294,6 +294,13 @@ void JSDOMGlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject* jsGlo
     reportException(jsGlobalObject, exception);
 }
 
+void JSDOMGlobalObject::clearDOMGuardedObjects()
+{
+    auto guardedObjectsCopy = m_guardedObjects;
+    for (auto& guarded : guardedObjectsCopy)
+        guarded->clear();
+}
+
 JSDOMGlobalObject& callerGlobalObject(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
 {
     class GetCallerGlobalObjectFunctor {
@@ -341,11 +348,8 @@ JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext& context, DOMWrapp
     if (is<Document>(context))
         return toJSDOMWindow(downcast<Document>(context).frame(), world);
 
-    if (is<WorkerGlobalScope>(context))
-        return downcast<WorkerGlobalScope>(context).script()->workerGlobalScopeWrapper();
-
-    if (is<WorkletGlobalScope>(context))
-        return downcast<WorkletGlobalScope>(context).script()->workletGlobalScopeWrapper();
+    if (is<WorkerOrWorkletGlobalScope>(context))
+        return downcast<WorkerOrWorkletGlobalScope>(context).script()->globalScopeWrapper();
 
     ASSERT_NOT_REACHED();
     return nullptr;

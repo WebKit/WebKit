@@ -167,7 +167,7 @@ void WorkerThread::workerThread()
     g_main_context_push_thread_default(mainContext.get());
 #endif
 
-    WorkerScriptController* scriptController;
+    WorkerOrWorkletScriptController* scriptController;
     {
         // Mutex protection is necessary to ensure that we don't change m_workerGlobalScope
         // while WorkerThread::stop() is accessing it. Note that WorkerThread::stop() can

@@ -83,7 +83,7 @@ public:
 
     void printErrorMessage(const String&) const;
 
-    JSWindowProxy* proxy() const;
+    JSWindowProxy& proxy() const;
 
     static void fireFrameClearedWatchpointsForWindow(DOMWindow*);
 
@@ -108,7 +108,6 @@ private:
 #endif
 
     RefPtr<DOMWindow> m_wrapped;
-    JSWindowProxy* m_proxy;
 };
 
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::JSGlobalObject*, DOMWindow&);

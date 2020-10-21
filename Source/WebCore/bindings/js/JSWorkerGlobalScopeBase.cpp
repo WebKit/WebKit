@@ -87,13 +87,6 @@ void JSWorkerGlobalScopeBase::finishCreation(VM& vm, JSProxy* proxy)
     ASSERT(inherits(vm, info()));
 }
 
-void JSWorkerGlobalScopeBase::clearDOMGuardedObjects()
-{
-    auto guardedObjects = m_guardedObjects;
-    for (auto& guarded : guardedObjects)
-        guarded->clear();
-}
-
 void JSWorkerGlobalScopeBase::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSWorkerGlobalScopeBase* thisObject = jsCast<JSWorkerGlobalScopeBase*>(cell);
@@ -157,12 +150,12 @@ JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject*, WorkerGlob
 
 JSValue toJS(JSGlobalObject*, WorkerGlobalScope& workerGlobalScope)
 {
-    WorkerScriptController* script = workerGlobalScope.script();
+    auto* script = workerGlobalScope.script();
     if (!script)
         return jsNull();
-    JSWorkerGlobalScope* contextWrapper = script->workerGlobalScopeWrapper();
+    auto* contextWrapper = script->globalScopeWrapper();
     ASSERT(contextWrapper);
-    return contextWrapper->proxy();
+    return &contextWrapper->proxy();
 }
 
 JSDedicatedWorkerGlobalScope* toJSDedicatedWorkerGlobalScope(VM& vm, JSValue value)

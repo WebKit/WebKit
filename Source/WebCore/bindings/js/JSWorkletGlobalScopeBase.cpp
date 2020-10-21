@@ -31,8 +31,8 @@
 #include "JSDOMGlobalObjectTask.h"
 #include "JSDOMGuardedObject.h"
 #include "JSWorkletGlobalScope.h"
+#include "WorkerOrWorkletScriptController.h"
 #include "WorkletGlobalScope.h"
-#include "WorkletScriptController.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/Language.h>
@@ -75,13 +75,6 @@ void JSWorkletGlobalScopeBase::finishCreation(VM& vm, JSProxy* proxy)
 
     Base::finishCreation(vm, m_proxy.get());
     ASSERT(inherits(vm, info()));
-}
-
-void JSWorkletGlobalScopeBase::clearDOMGuardedObjects()
-{
-    auto guardedObjects = m_guardedObjects;
-    for (auto& guarded : guardedObjects)
-        guarded->clear();
 }
 
 void JSWorkletGlobalScopeBase::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -138,10 +131,10 @@ JSValue toJS(JSGlobalObject*, WorkletGlobalScope& workletGlobalScope)
 {
     if (!workletGlobalScope.script())
         return jsUndefined();
-    auto* contextWrapper = workletGlobalScope.script()->workletGlobalScopeWrapper();
+    auto* contextWrapper = workletGlobalScope.script()->globalScopeWrapper();
     if (!contextWrapper)
         return jsUndefined();
-    return contextWrapper->proxy();
+    return &contextWrapper->proxy();
 }
 
 JSWorkletGlobalScope* toJSWorkletGlobalScope(VM& vm, JSValue value)

@@ -40,9 +40,8 @@
 #include "Page.h"
 #include "ScriptController.h"
 #include "WorkerOrWorkletGlobalScope.h"
-#include "WorkerScriptController.h"
+#include "WorkerOrWorkletScriptController.h"
 #include "WorkletGlobalScope.h"
-#include "WorkletScriptController.h"
 #include <JavaScriptCore/CallFrame.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/StrongInlines.h>

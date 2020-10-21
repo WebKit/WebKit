@@ -34,8 +34,8 @@
 #include "ScriptSourceCode.h"
 #include "WorkerEventLoop.h"
 #include "WorkerOrWorkletGlobalScope.h"
+#include "WorkerOrWorkletScriptController.h"
 #include "WorkerScriptLoaderClient.h"
-#include "WorkletScriptController.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <wtf/CompletionHandler.h>
@@ -86,8 +86,6 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
 
-    WorkletScriptController* script() final { return m_script.get(); }
-    void clearScript() { m_script = nullptr; }
     WorkerOrWorkletThread* workerOrWorkletThread() const final { return m_thread.get(); }
 
     void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&) final;
@@ -169,8 +167,6 @@ private:
 
     WeakPtr<Document> m_document;
     RefPtr<WorkerOrWorkletThread> m_thread;
-
-    std::unique_ptr<WorkletScriptController> m_script;
 
     Ref<SecurityOrigin> m_topOrigin;
 

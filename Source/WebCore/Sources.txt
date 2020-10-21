@@ -611,7 +611,6 @@ bindings/js/WebCoreJITOperations.cpp
 bindings/js/WebCoreJSClientData.cpp
 bindings/js/WebCoreTypedArrayController.cpp
 bindings/js/WindowProxy.cpp
-bindings/js/WorkerScriptController.cpp
 bridge/IdentifierRep.cpp
 bridge/NP_jsobject.cpp
 bridge/c/CRuntimeObject.cpp
@@ -2560,6 +2559,8 @@ workers/WorkerGlobalScope.cpp
 workers/WorkerInspectorProxy.cpp
 workers/WorkerLocation.cpp
 workers/WorkerMessagingProxy.cpp
+workers/WorkerOrWorkletGlobalScope.cpp
+workers/WorkerOrWorkletScriptController.cpp
 workers/WorkerRunLoop.cpp
 workers/WorkerScriptLoader.cpp
 workers/WorkerThread.cpp
@@ -2600,10 +2601,8 @@ workers/service/server/SWServerToContextConnection.cpp
 workers/service/server/SWServerWorker.cpp
 worklets/PaintWorkletGlobalScope.cpp
 worklets/Worklet.cpp
-worklets/WorkletConsoleClient.cpp
 worklets/WorkletGlobalScope.cpp
 worklets/WorkletPendingTasks.cpp
-worklets/WorkletScriptController.cpp
 xml/CustomXPathNSResolver.cpp
 xml/DOMParser.cpp
 xml/NativeXPathNSResolver.cpp

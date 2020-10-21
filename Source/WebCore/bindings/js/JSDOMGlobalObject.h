@@ -55,6 +55,7 @@ public:
     static void subspaceFor(JSC::VM&) { RELEASE_ASSERT_NOT_REACHED(); }
 
     static void destroy(JSC::JSCell*);
+
 public:
     Lock& gcLock() { return m_gcLock; }
 
@@ -81,6 +82,10 @@ public:
 
     static void reportUncaughtExceptionAtEventLoop(JSGlobalObject*, JSC::Exception*);
 
+    void clearDOMGuardedObjects();
+
+    JSC::JSProxy& proxy() const { ASSERT(m_proxy); return *m_proxy.get(); }
+
 public:
     ~JSDOMGlobalObject();
 
@@ -105,6 +110,7 @@ protected:
     Ref<DOMWrapperWorld> m_world;
     uint8_t m_worldIsNormal;
     Lock m_gcLock;
+    JSC::WriteBarrier<JSC::JSProxy> m_proxy;
 
 private:
     void addBuiltinGlobals(JSC::VM&);

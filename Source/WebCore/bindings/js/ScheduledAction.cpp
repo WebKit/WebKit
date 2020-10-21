@@ -138,7 +138,7 @@ void ScheduledAction::execute(Document& document)
         return;
 
     if (m_function)
-        executeFunctionInContext(window, window->proxy(), document);
+        executeFunctionInContext(window, &window->proxy(), document);
     else
         frame->script().executeScriptInWorldIgnoringException(m_isolatedWorld, m_code);
 }
@@ -148,10 +148,10 @@ void ScheduledAction::execute(WorkerGlobalScope& workerGlobalScope)
     // In a Worker, the execution should always happen on a worker thread.
     ASSERT(workerGlobalScope.thread().thread() == &Thread::current());
 
-    WorkerScriptController* scriptController = workerGlobalScope.script();
+    auto* scriptController = workerGlobalScope.script();
 
     if (m_function) {
-        JSWorkerGlobalScope* contextWrapper = scriptController->workerGlobalScopeWrapper();
+        auto* contextWrapper = scriptController->globalScopeWrapper();
         executeFunctionInContext(contextWrapper, contextWrapper, workerGlobalScope);
     } else {
         ScriptSourceCode code(m_code, URL(workerGlobalScope.url()));

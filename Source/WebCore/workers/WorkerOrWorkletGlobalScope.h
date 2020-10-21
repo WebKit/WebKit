@@ -37,12 +37,19 @@ public:
     virtual ~WorkerOrWorkletGlobalScope() = default;
 
     virtual bool isClosing() const = 0;
-    virtual WorkerOrWorkletScriptController* script() = 0;
     virtual WorkerOrWorkletThread* workerOrWorkletThread() const = 0;
+
+    WorkerOrWorkletScriptController* script() const { return m_script.get(); }
+    void clearScript();
 
     unsigned long createUniqueIdentifier() { return m_uniqueIdentifier++; }
 
+protected:
+    WorkerOrWorkletGlobalScope();
+    explicit WorkerOrWorkletGlobalScope(Ref<JSC::VM>&&);
+
 private:
+    std::unique_ptr<WorkerOrWorkletScriptController> m_script;
     unsigned long m_uniqueIdentifier { 1 };
 };
 

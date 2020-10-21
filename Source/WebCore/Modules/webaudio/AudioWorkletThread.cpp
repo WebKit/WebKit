@@ -33,6 +33,7 @@
 
 #include "AudioWorkletGlobalScope.h"
 #include "AudioWorkletMessagingProxy.h"
+#include "WorkerOrWorkletScriptController.h"
 
 #if PLATFORM(IOS_FAMILY)
 #include "FloatingPointEnvironment.h"
@@ -116,7 +117,7 @@ void AudioWorkletThread::workletThread()
     g_main_context_push_thread_default(mainContext.get());
 #endif
 
-    WorkletScriptController* scriptController;
+    WorkerOrWorkletScriptController* scriptController;
     {
         auto lock = holdLock(m_threadCreationAndWorkletGlobalScopeLock);
         m_workletGlobalScope = AudioWorkletGlobalScope::create(*this, m_parameters);

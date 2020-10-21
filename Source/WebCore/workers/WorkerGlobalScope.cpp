@@ -66,7 +66,6 @@ WorkerGlobalScope::WorkerGlobalScope(const WorkerParameters& params, Ref<Securit
     , m_identifier(params.identifier)
     , m_userAgent(params.userAgent)
     , m_thread(thread)
-    , m_script(makeUnique<WorkerScriptController>(this))
     , m_inspectorController(makeUnique<WorkerInspectorController>(*this))
     , m_isOnline(params.isOnline)
     , m_shouldBypassMainWorldContentSecurityPolicy(params.shouldBypassMainWorldContentSecurityPolicy)
@@ -187,12 +186,12 @@ String WorkerGlobalScope::userAgent(const URL&) const
 
 void WorkerGlobalScope::disableEval(const String& errorMessage)
 {
-    m_script->disableEval(errorMessage);
+    script()->disableEval(errorMessage);
 }
 
 void WorkerGlobalScope::disableWebAssembly(const String& errorMessage)
 {
-    m_script->disableWebAssembly(errorMessage);
+    script()->disableWebAssembly(errorMessage);
 }
 
 SocketProvider* WorkerGlobalScope::socketProvider()
@@ -357,9 +356,9 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const Vector<String>& urls)
         InspectorInstrumentation::scriptImported(*this, scriptLoader->identifier(), scriptLoader->script());
 
         NakedPtr<JSC::Exception> exception;
-        m_script->evaluate(ScriptSourceCode(scriptLoader->script(), URL(scriptLoader->responseURL())), exception);
+        script()->evaluate(ScriptSourceCode(scriptLoader->script(), URL(scriptLoader->responseURL())), exception);
         if (exception) {
-            m_script->setException(exception);
+            script()->setException(exception);
             return { };
         }
     }
@@ -414,7 +413,7 @@ bool WorkerGlobalScope::isContextThread() const
 
 bool WorkerGlobalScope::isJSExecutionForbidden() const
 {
-    return m_script->isExecutionForbidden();
+    return script()->isExecutionForbidden();
 }
 
 #if ENABLE(WEB_CRYPTO)

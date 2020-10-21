@@ -50,7 +50,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WorkletGlobalScope);
 
 WorkletGlobalScope::WorkletGlobalScope(WorkerOrWorkletThread& thread, const WorkletParameters& parameters)
     : m_thread(&thread)
-    , m_script(makeUnique<WorkletScriptController>(this))
     , m_topOrigin(SecurityOrigin::createUnique())
     , m_url(parameters.windowURL)
     , m_jsRuntimeFlags(parameters.jsRuntimeFlags)
@@ -63,8 +62,8 @@ WorkletGlobalScope::WorkletGlobalScope(WorkerOrWorkletThread& thread, const Work
 }
 
 WorkletGlobalScope::WorkletGlobalScope(Document& document, Ref<JSC::VM>&& vm, ScriptSourceCode&& code)
-    : m_document(makeWeakPtr(document))
-    , m_script(makeUnique<WorkletScriptController>(WTFMove(vm), this))
+    : WorkerOrWorkletGlobalScope(WTFMove(vm))
+    , m_document(makeWeakPtr(document))
     , m_topOrigin(SecurityOrigin::createUnique())
     , m_url(code.url())
     , m_jsRuntimeFlags(document.settings().javaScriptRuntimeFlags())
@@ -81,7 +80,7 @@ WorkletGlobalScope::WorkletGlobalScope(Document& document, Ref<JSC::VM>&& vm, Sc
 
 WorkletGlobalScope::~WorkletGlobalScope()
 {
-    ASSERT(!m_script);
+    ASSERT(!script());
     removeFromContextsMap();
     auto removeResult = allWorkletGlobalScopesSet().remove(this);
     ASSERT_UNUSED(removeResult, removeResult);
@@ -89,7 +88,7 @@ WorkletGlobalScope::~WorkletGlobalScope()
 
 void WorkletGlobalScope::prepareForDestruction()
 {
-    if (!m_script)
+    if (!script())
         return;
     if (m_defaultTaskGroup)
         m_defaultTaskGroup->stopAndDiscardAllTasks();
@@ -98,8 +97,8 @@ void WorkletGlobalScope::prepareForDestruction()
     if (m_eventLoop)
         m_eventLoop->clearMicrotaskQueue();
     removeRejectedPromiseTracker();
-    m_script->vm().notifyNeedTermination();
-    m_script = nullptr;
+    script()->vm().notifyNeedTermination();
+    clearScript();
 }
 
 auto WorkletGlobalScope::allWorkletGlobalScopesSet() -> WorkletGlobalScopesSet&
@@ -129,22 +128,22 @@ String WorkletGlobalScope::userAgent(const URL& url) const
 void WorkletGlobalScope::evaluate()
 {
     if (m_code)
-        m_script->evaluate(*m_code);
+        script()->evaluate(*m_code);
 }
 
 bool WorkletGlobalScope::isJSExecutionForbidden() const
 {
-    return !m_script || m_script->isExecutionForbidden();
+    return !script() || script()->isExecutionForbidden();
 }
 
 void WorkletGlobalScope::disableEval(const String& errorMessage)
 {
-    m_script->disableEval(errorMessage);
+    script()->disableEval(errorMessage);
 }
 
 void WorkletGlobalScope::disableWebAssembly(const String& errorMessage)
 {
-    m_script->disableWebAssembly(errorMessage);
+    script()->disableWebAssembly(errorMessage);
 }
 
 URL WorkletGlobalScope::completeURL(const String& url, ForceUTF8) const
@@ -234,9 +233,9 @@ void WorkletGlobalScope::notifyFinished()
     auto addResult = m_evaluatedModules.add(moduleURL);
     if (addResult.isNewEntry) {
         NakedPtr<JSC::Exception> exception;
-        m_script->evaluate(ScriptSourceCode(m_scriptLoader->script(), WTFMove(moduleURL)), exception);
+        script()->evaluate(ScriptSourceCode(m_scriptLoader->script(), WTFMove(moduleURL)), exception);
         if (exception)
-            m_script->setException(exception);
+            script()->setException(exception);
     }
 
     didCompleteScriptFetchJob(WTFMove(completedJob), { });

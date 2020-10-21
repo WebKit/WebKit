@@ -225,7 +225,7 @@ void setupNewlyCreatedServiceWorker(uint64_t serviceWorkerIdentifier)
         auto& globalObject = *globalScope.globalObject();
         auto& vm = globalObject.vm();
         JSLockHolder locker(vm);
-        auto* contextWrapper = script->workerGlobalScopeWrapper();
+        auto* contextWrapper = script->globalScopeWrapper();
         contextWrapper->putDirect(vm, Identifier::fromString(vm, Internals::internalsId), toJS(&globalObject, contextWrapper, ServiceWorkerInternals::create(identifier)));
     });
 #else
