@@ -247,10 +247,7 @@ WI.contentLoaded = function()
 
     // Add platform style classes so the UI can be tweaked per-platform.
     document.body.classList.add(WI.Platform.name + "-platform");
-    if (WI.Platform.isNightlyBuild)
-        document.body.classList.add("nightly-build");
-
-    if (WI.Platform.name === "mac")
+    if (WI.Platform.version.name)
         document.body.classList.add(WI.Platform.version.name);
 
     document.body.classList.add(WI.sharedApp.debuggableType);
@@ -2798,6 +2795,27 @@ WI.setLayoutDirection = function(value)
         WI._dockRight();
 
     InspectorFrontendHost.reopen();
+};
+
+WI.undockedTitleAreaHeight = function()
+{
+    if (WI.dockConfiguration !== WI.DockConfiguration.Undocked)
+        return 0;
+
+    if (WI.Platform.name === "mac") {
+        switch (WI.Platform.version.name) {
+        case "big-sur":
+            /* keep in sync with `body.mac-platform.big-sur:not(.docked)` */
+            return 27 / WI.getZoomFactor();
+
+        case "catalina":
+        case "mojave":
+            /* keep in sync with `body.mac-platform:not(.big-sur):not(.docked)` */
+            return 22 / WI.getZoomFactor();
+        }
+    }
+
+    return 0;
 };
 
 WI._showTabAtIndexFromShortcut = function(i)

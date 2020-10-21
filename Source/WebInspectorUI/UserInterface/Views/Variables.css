@@ -238,10 +238,12 @@ body.big-sur {
 }
 
 body.mac-platform:not(.big-sur):not(.docked) {
+    /* keep in sync with `WI.undockedTitleAreaHeight` */
     --undocked-title-area-height: calc(22px / var(--zoom-factor));
 }
 
 body.mac-platform.big-sur:not(.docked) {
+    /* keep in sync with `WI.undockedTitleAreaHeight` */
     --undocked-title-area-height: calc(27px / var(--zoom-factor));
 }
 
@@ -408,7 +410,7 @@ body.mac-platform.big-sur:not(.docked) {
     }
 }
 
-body.mac-platform:not(.sierra, .high-sierra) {
+body.mac-platform {
     --selected-foreground-color: -apple-system-alternate-selected-text;
     --selected-background-color: -apple-system-selected-content-background;
     --selected-text-background-color: -apple-system-selected-text-background;
