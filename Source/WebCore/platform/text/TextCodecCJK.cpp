@@ -483,6 +483,10 @@ static Vector<uint8_t> iso2022JPEncode(StringView string, Function<void(UChar32,
 
     Function<void(UChar32)> parseCodePoint;
     parseCodePoint = [&] (UChar32 codePoint) {
+        if ((state == State::ASCII || state == State::Roman) && (codePoint == 0x000E || codePoint == 0x000F || codePoint == 0x001B)) {
+            statefulUnencodableHandler(replacementCharacter, result);
+            return;
+        }
         if (state == State::ASCII && isASCII(codePoint)) {
             result.append(codePoint);
             return;

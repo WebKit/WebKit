@@ -1,3 +1,13 @@
+2020-10-21  Alex Christensen  <achristensen@webkit.org>
+
+        Implement ISO-2022-JP encoder step 3
+        https://bugs.webkit.org/show_bug.cgi?id=218046
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/encoding/iso-2022-jp-encoder-expected.txt:
+        * web-platform-tests/encoding/iso-2022-jp-encoder.html:
+
 2020-10-21  Chris Dumez  <cdumez@apple.com>
 
         Make sure WebAudio API throws exceptions with useful error messages
