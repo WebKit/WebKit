@@ -37,7 +37,7 @@ class MockTestExpectations(TestExpectations):
         port = host.port_factory.get(port)
         self._port_name = port.name()
         self._build_type = build_type
-        self._expectations = json.loads(expectations)
+        self._expectations = self._load_expectation_string(expectations)
 
     def is_skip(self, test, subtest):
         if test in self.skipped_tests():
@@ -185,6 +185,18 @@ class ExpectationsTest(unittest.TestCase):
     }
 }"""
 
+    REPEATED_KEYS = """
+{
+    "TestDummy": {
+        "a": 1
+    },
+    "TestAnother": {
+    },
+    "TestDummy": {
+        "a": 2
+    }
+}"""
+
     def assert_exp(self, test, subtest, result):
         self.assertIn(result, self.expectations.get_expectation(test, subtest))
 
@@ -293,3 +305,6 @@ class ExpectationsTest(unittest.TestCase):
         self.assert_slow('TestWebKit', 'WebKit.WKView', False)
         self.assert_slow('TestWebKit', 'WebKit.MouseMoveAfterCrash', True)
         self.assert_slow('TestWebKit', 'WebKit.WKConnection', False)
+
+    def test_repeated_keys(self):
+        self.assertRaises(ValueError, lambda: MockTestExpectations('gtk', self.REPEATED_KEYS))

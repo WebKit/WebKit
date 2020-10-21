@@ -24,6 +24,17 @@ import json
 import os
 
 
+def check_repeated_keys(args):
+    seen = {}
+    for key, val in args:
+        if key in seen:
+            raise ValueError("Key %s appears more than once" % key)
+        else:
+            seen[key] = val
+
+    return seen
+
+
 class TestExpectations(object):
 
     def __init__(self, port_name, expectations_file, build_type='Release'):
@@ -31,9 +42,12 @@ class TestExpectations(object):
         self._build_type = build_type
         if os.path.isfile(expectations_file):
             with open(expectations_file, 'r') as fd:
-                self._expectations = json.load(fd)
+                self._expectations = self._load_expectation_string(fd.read())
         else:
             self._expectations = {}
+
+    def _load_expectation_string(self, expectations):
+        return json.loads(expectations, object_pairs_hook=check_repeated_keys)
 
     def _port_name_for_expected(self, expected):
         if self._port_name in expected:
