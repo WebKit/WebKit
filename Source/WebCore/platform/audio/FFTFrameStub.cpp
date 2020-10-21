@@ -78,18 +78,6 @@ void FFTFrame::initialize()
 {
 }
 
-float* FFTFrame::realData() const
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-float* FFTFrame::imagData() const
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
 } // namespace WebCore
 
 #endif // !OS(DARWIN) && !USE(WEBAUDIO_GSTREAMER)

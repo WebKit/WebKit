@@ -67,8 +67,10 @@ public:
     void multiply(const FFTFrame& frame); // multiplies ourself with frame : effectively operator*=()
     void scaleFFT(float factor);
 
-    float* realData() const;
-    float* imagData() const;
+    AudioFloatArray& realData() { return m_realData; }
+    AudioFloatArray& imagData() { return m_imagData; }
+    const AudioFloatArray& realData() const { return m_realData; }
+    const AudioFloatArray& imagData() const { return m_imagData; }
 
     static int minFFTSize();
     static int maxFFTSize();
@@ -103,17 +105,16 @@ private:
     FFTSetup m_FFTSetup;
 
     DSPSplitComplex m_frame;
-    AudioFloatArray m_realData;
-    AudioFloatArray m_imagData;
 #endif
 
 #if USE(WEBAUDIO_GSTREAMER)
     GstFFTF32* m_fft;
     GstFFTF32* m_inverseFft;
     UniqueArray<GstFFTF32Complex> m_complexData;
+#endif // USE(WEBAUDIO_GSTREAMER)
+
     AudioFloatArray m_realData;
     AudioFloatArray m_imagData;
-#endif // USE(WEBAUDIO_GSTREAMER)
 };
 
 } // namespace WebCore

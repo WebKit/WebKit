@@ -75,13 +75,13 @@ void FFTFrame::interpolateFrequencyComponents(const FFTFrame& frame1, const FFTF
 {
     // FIXME : with some work, this method could be optimized
 
-    float* realP = realData();
-    float* imagP = imagData();
+    auto& realP = realData();
+    auto& imagP = imagData();
 
-    const float* realP1 = frame1.realData();
-    const float* imagP1 = frame1.imagData();
-    const float* realP2 = frame2.realData();
-    const float* imagP2 = frame2.imagData();
+    const auto& realP1 = frame1.realData();
+    const auto& imagP1 = frame1.imagData();
+    const auto& realP2 = frame2.realData();
+    const auto& imagP2 = frame2.imagData();
 
     m_FFTSize = frame1.fftSize();
     m_log2FFTSize = frame1.log2FFTSize();
@@ -175,8 +175,8 @@ void FFTFrame::interpolateFrequencyComponents(const FFTFrame& frame1, const FFTF
 
 void FFTFrame::scaleFFT(float factor)
 {
-    VectorMath::multiplyByScalar(realData(), factor, realData(), fftSize());
-    VectorMath::multiplyByScalar(imagData(), factor, imagData(), fftSize());
+    VectorMath::multiplyByScalar(realData().data(), factor, realData().data(), realData().size());
+    VectorMath::multiplyByScalar(imagData().data(), factor, imagData().data(), realData().size());
 }
 
 void FFTFrame::multiply(const FFTFrame& frame)
@@ -184,17 +184,23 @@ void FFTFrame::multiply(const FFTFrame& frame)
     FFTFrame& frame1 = *this;
     const FFTFrame& frame2 = frame;
 
-    float* realP1 = frame1.realData();
-    float* imagP1 = frame1.imagData();
-    const float* realP2 = frame2.realData();
-    const float* imagP2 = frame2.imagData();
+    auto& realP1 = frame1.realData();
+    auto& imagP1 = frame1.imagData();
+    const auto& realP2 = frame2.realData();
+    const auto& imagP2 = frame2.imagData();
 
     unsigned halfSize = m_FFTSize / 2;
+
+    RELEASE_ASSERT(realP1.size() >= halfSize);
+    RELEASE_ASSERT(imagP1.size() >= halfSize);
+    RELEASE_ASSERT(realP2.size() >= halfSize);
+    RELEASE_ASSERT(imagP2.size() >= halfSize);
+
     float real0 = realP1[0];
     float imag0 = imagP1[0];
 
     // Complex multiply
-    VectorMath::multiplyComplex(realP1, imagP1, realP2, imagP2, realP1, imagP1, halfSize);
+    VectorMath::multiplyComplex(realP1.data(), imagP1.data(), realP2.data(), imagP2.data(), realP1.data(), imagP1.data(), halfSize);
 
     // Multiply the packed DC/nyquist component
     realP1[0] = real0 * realP2[0];
@@ -203,8 +209,8 @@ void FFTFrame::multiply(const FFTFrame& frame)
 
 double FFTFrame::extractAverageGroupDelay()
 {
-    float* realP = realData();
-    float* imagP = imagData();
+    auto& realP = realData();
+    auto& imagP = imagData();
 
     double aveSum = 0.0;
     double weightSum = 0.0;
@@ -254,8 +260,8 @@ void FFTFrame::addConstantGroupDelay(double sampleFrameDelay)
 {
     int halfSize = fftSize() / 2;
 
-    float* realP = realData();
-    float* imagP = imagData();
+    auto& realP = realData();
+    auto& imagP = imagData();
 
     const double kSamplePhaseDelay = (2.0 * piDouble) / double(fftSize());
 
@@ -280,8 +286,8 @@ void FFTFrame::addConstantGroupDelay(double sampleFrameDelay)
 void FFTFrame::print()
 {
     FFTFrame& frame = *this;
-    float* realP = frame.realData();
-    float* imagP = frame.imagData();
+    auto& realP = frame.realData();
+    auto& imagP = frame.imagData();
     LOG(WebAudio, "**** \n");
     LOG(WebAudio, "DC = %f : nyquist = %f\n", realP[0], imagP[0]);
 

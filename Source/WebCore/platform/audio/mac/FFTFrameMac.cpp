@@ -66,8 +66,6 @@ FFTFrame::FFTFrame(unsigned fftSize)
 
 // Creates a blank/empty frame (interpolate() must later be called)
 FFTFrame::FFTFrame()
-    : m_realData(0)
-    , m_imagData(0)
 {
     // Later will be set to correct values when interpolate() is called
     m_frame.realp = 0;
@@ -90,9 +88,8 @@ FFTFrame::FFTFrame(const FFTFrame& frame)
     m_frame.imagp = m_imagData.data();
 
     // Copy/setup frame data
-    unsigned nbytes = sizeof(float) * m_FFTSize;
-    memcpy(realData(), frame.m_frame.realp, nbytes);
-    memcpy(imagData(), frame.m_frame.imagp, nbytes);
+    memcpy(realData().data(), frame.m_frame.realp, sizeof(float) * realData().size());
+    memcpy(imagData().data(), frame.m_frame.imagp, sizeof(float) * imagData().size());
 }
 
 FFTFrame::~FFTFrame() = default;
@@ -103,13 +100,16 @@ void FFTFrame::doFFT(const float* data)
     vDSP_ctoz(reinterpret_cast<const DSPComplex*>(data), 2, &m_frame, 1, halfSize);
     vDSP_fft_zrip(m_FFTSetup, &m_frame, 1, m_log2FFTSize, FFT_FORWARD);
 
+    RELEASE_ASSERT(realData().size() >= halfSize);
+    RELEASE_ASSERT(imagData().size() >= halfSize);
+
     // To provide the best possible execution speeds, the vDSP library's functions don't always adhere strictly
     // to textbook formulas for Fourier transforms, and must be scaled accordingly.
     // (See https://developer.apple.com/library/archive/documentation/Performance/Conceptual/vDSP_Programming_Guide/UsingFourierTransforms/UsingFourierTransforms.html#//apple_ref/doc/uid/TP40005147-CH3-SW5)
     // In the case of a Real forward Transform like above: RFimp = RFmath * 2 so we need to divide the output
     // by 2 to get the correct value.
-    VectorMath::multiplyByScalar(realData(), 0.5, realData(), halfSize);
-    VectorMath::multiplyByScalar(imagData(), 0.5, imagData(), halfSize);
+    VectorMath::multiplyByScalar(realData().data(), 0.5, realData().data(), halfSize);
+    VectorMath::multiplyByScalar(imagData().data(), 0.5, imagData().data(), halfSize);
 }
 
 void FFTFrame::doInverseFFT(float* data)
@@ -146,16 +146,6 @@ int FFTFrame::maxFFTSize()
 
 void FFTFrame::initialize()
 {
-}
-
-float* FFTFrame::realData() const
-{
-    return m_frame.realp;
-}
-    
-float* FFTFrame::imagData() const
-{
-    return m_frame.imagp;
 }
 
 } // namespace WebCore

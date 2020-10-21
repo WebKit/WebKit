@@ -196,12 +196,15 @@ void PeriodicWave::createBandLimitedTables(const float* realData, const float* i
     for (unsigned rangeIndex = 0; rangeIndex < m_numberOfRanges; ++rangeIndex) {
         // This FFTFrame is used to cull partials (represented by frequency bins).
         FFTFrame frame(fftSize);
-        float* realP = frame.realData();
-        float* imagP = frame.imagData();
+        auto& realP = frame.realData();
+        auto& imagP = frame.imagData();
+
+        RELEASE_ASSERT(realP.size() >= numberOfComponents);
+        RELEASE_ASSERT(imagP.size() >= numberOfComponents);
 
         // Copy from loaded frequency data and scale.
-        VectorMath::multiplyByScalar(realData, fftSize, realP, numberOfComponents);
-        VectorMath::multiplyByScalar(imagData, -static_cast<float>(fftSize), imagP, numberOfComponents);
+        VectorMath::multiplyByScalar(realData, fftSize, realP.data(), numberOfComponents);
+        VectorMath::multiplyByScalar(imagData, -static_cast<float>(fftSize), imagP.data(), numberOfComponents);
 
         // Find the starting bin where we should start culling.
         // We need to clear out the highest frequencies to band-limit the waveform.

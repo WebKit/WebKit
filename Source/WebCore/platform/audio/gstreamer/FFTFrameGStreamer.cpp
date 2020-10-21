@@ -79,8 +79,8 @@ FFTFrame::FFTFrame(const FFTFrame& frame)
     m_inverseFft = gst_fft_f32_new(fftLength, TRUE);
 
     // Copy/setup frame data.
-    memcpy(realData(), frame.realData(), sizeof(float) * unpackedFFTDataSize(m_FFTSize));
-    memcpy(imagData(), frame.imagData(), sizeof(float) * unpackedFFTDataSize(m_FFTSize));
+    memcpy(realData().data(), frame.realData().data(), sizeof(float) * realData().size());
+    memcpy(imagData().data(), frame.imagData().data(), sizeof(float) * imagData().size());
 }
 
 void FFTFrame::initialize()
@@ -126,16 +126,6 @@ void FFTFrame::doInverseFFT(float* data)
 
     // Scale so that a forward then inverse FFT yields exactly the original data.
     VectorMath::multiplyByScalar(data, 1.0 / m_FFTSize, data, m_FFTSize);
-}
-
-float* FFTFrame::realData() const
-{
-    return const_cast<float*>(m_realData.data());
-}
-
-float* FFTFrame::imagData() const
-{
-    return const_cast<float*>(m_imagData.data());
 }
 
 int FFTFrame::minFFTSize()

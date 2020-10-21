@@ -81,7 +81,16 @@ public:
         return data()[i];
     }
 
+    const T& at(size_t i) const
+    {
+        // Note that although it is a size_t, m_size is now guaranteed to be
+        // no greater than max unsigned. This guarantee is enforced in resize().
+        ASSERT_WITH_SECURITY_IMPLICATION(i < size());
+        return data()[i];
+    }
+
     T& operator[](size_t i) { return at(i); }
+    const T& operator[](size_t i) const { return at(i); }
 
     void zero()
     {

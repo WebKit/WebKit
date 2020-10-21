@@ -154,8 +154,8 @@ void RealtimeAnalyser::doFFTAnalysisIfNecessary()
     // Do the analysis.
     m_analysisFrame->doFFT(tempP);
 
-    float* realP = m_analysisFrame->realData();
-    float* imagP = m_analysisFrame->imagData();
+    auto& realP = m_analysisFrame->realData();
+    auto& imagP = m_analysisFrame->imagData();
 
     // Blow away the packed nyquist component.
     imagP[0] = 0;
