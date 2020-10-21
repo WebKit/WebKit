@@ -1,3 +1,12 @@
+2020-10-20  Karl Rackler  <rackler@apple.com>
+
+        Rebaseline test for Big Sur after the changes in r268750
+        https://bugs.webkit.org/show_bug.cgi?id=209813
+
+        Unreviewed test gardening.
+
+        * platform/mac-bigsur/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt: Added.
+
 2020-10-20  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r268483): Map jumps around while zooming on windy.com, strava.com
