@@ -102,8 +102,8 @@ public:
         void setLogicalTop(InlineLayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
         void setLogicalWidth(InlineLayoutUnit logicalWidth) { m_logicalRect.setWidth(logicalWidth); }
         void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_logicalRect.setHeight(logicalHeight); }
-        void setBaseline(InlineLayoutUnit baseline) { m_baseline = baseline; }
-        void setDescent(InlineLayoutUnit descent) { m_descent = descent; }
+        void setBaseline(InlineLayoutUnit);
+        void setDescent(InlineLayoutUnit);
 
         // See https://www.w3.org/TR/css-inline-3/#layout-bounds
         struct LayoutBounds {
@@ -112,7 +112,7 @@ public:
             InlineLayoutUnit ascent { 0 };
             InlineLayoutUnit descent { 0 };
         };
-        void setLayoutBounds(const LayoutBounds& layoutBounds) { m_layoutBounds = layoutBounds; }
+        void setLayoutBounds(const LayoutBounds&);
         LayoutBounds layoutBounds() const { return m_layoutBounds; }
 
     private:

@@ -260,16 +260,16 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         if (run.isBox()) {
             auto& inlineLevelBoxGeometry = formattingContext().geometryForBox(layoutBox);
             auto logicalHeight = inlineLevelBoxGeometry.marginBoxHeight();
-            auto baseline = logicalHeight;
+            auto ascent = logicalHeight;
             if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
                 auto& formattingState = layoutState().establishedInlineFormattingState(downcast<ContainerBox>(layoutBox));
                 auto& lastLine = formattingState.lines().last();
                 auto inlineBlockBaseline = lastLine.logicalTop() + lastLine.baseline();
-                baseline = inlineLevelBoxGeometry.marginBefore() + inlineLevelBoxGeometry.borderTop() + inlineLevelBoxGeometry.paddingTop().valueOr(0) + inlineBlockBaseline;
+                ascent = inlineLevelBoxGeometry.marginBefore() + inlineLevelBoxGeometry.borderTop() + inlineLevelBoxGeometry.paddingTop().valueOr(0) + inlineBlockBaseline;
             }
             auto atomicInlineLevelBox = LineBox::InlineLevelBox::createAtomicInlineLevelBox(layoutBox, logicalLeft, { run.logicalWidth(), logicalHeight });
-            atomicInlineLevelBox->setBaseline(baseline);
-            atomicInlineLevelBox->setLayoutBounds(LineBox::InlineLevelBox::LayoutBounds { baseline, { } });
+            atomicInlineLevelBox->setBaseline(ascent);
+            atomicInlineLevelBox->setLayoutBounds(LineBox::InlineLevelBox::LayoutBounds { ascent, { } });
             if (logicalHeight)
                 atomicInlineLevelBox->setIsNonEmpty();
             lineBox.addInlineLevelBox(WTFMove(atomicInlineLevelBox));
