@@ -95,27 +95,31 @@ static PartialOrdering order(unsigned a, unsigned b)
     return PartialOrdering::equivalent;
 }
 
-// FIXME: Create BoundaryPoint.cpp and move this there.
-PartialOrdering documentOrder(const BoundaryPoint& a, const BoundaryPoint& b)
+template<typename TreeType> PartialOrdering treeOrder(const BoundaryPoint& a, const BoundaryPoint& b)
 {
     if (a.container.ptr() == b.container.ptr())
         return order(a.offset, b.offset);
 
     for (auto ancestor = b.container.ptr(); ancestor; ) {
-        auto nextAncestor = ancestor->parentInComposedTree();
+        auto nextAncestor = parent<TreeType>(*ancestor);
         if (nextAncestor == a.container.ptr())
             return isOffsetBeforeChild(*nextAncestor, a.offset, *ancestor) ? PartialOrdering::less : PartialOrdering::greater;
         ancestor = nextAncestor;
     }
 
     for (auto ancestor = a.container.ptr(); ancestor; ) {
-        auto nextAncestor = ancestor->parentInComposedTree();
+        auto nextAncestor = parent<TreeType>(*ancestor);
         if (nextAncestor == b.container.ptr())
             return isOffsetBeforeChild(*nextAncestor, b.offset, *ancestor) ? PartialOrdering::greater : PartialOrdering::less;
         ancestor = nextAncestor;
     }
 
-    return documentOrder(a.container, b.container);
+    return treeOrder<TreeType>(a.container, b.container);
+}
+
+PartialOrdering documentOrder(const BoundaryPoint& a, const BoundaryPoint& b)
+{
+    return treeOrder<ComposedTree>(a, b);
 }
 
 Optional<SimpleRange> makeRangeSelectingNode(Node& node)
@@ -208,32 +212,57 @@ RefPtr<Node> commonInclusiveAncestor(const SimpleRange& range)
     return commonInclusiveAncestor(range.start.container, range.end.container);
 }
 
+template<typename TreeType> bool isPointInRange(const SimpleRange& range, const BoundaryPoint& point)
+{
+    return is_lteq(treeOrder<TreeType>(range.start, point)) && is_lteq(treeOrder<TreeType>(point, range.end));
+}
+
+template bool isPointInRange<Tree>(const SimpleRange&, const BoundaryPoint&);
+
+template<typename TreeType> bool isPointInRange(const SimpleRange& range, const Optional<BoundaryPoint>& point)
+{
+    return point && isPointInRange<TreeType>(range, *point);
+}
+
 bool isPointInRange(const SimpleRange& range, const BoundaryPoint& point)
 {
-    return is_lteq(documentOrder(range.start, point)) && is_lteq(documentOrder(point, range.end));
+    return isPointInRange<ComposedTree>(range, point);
 }
 
 bool isPointInRange(const SimpleRange& range, const Optional<BoundaryPoint>& point)
 {
-    return point && isPointInRange(range, *point);
+    return isPointInRange<ComposedTree>(range, point);
 }
+
+template<typename TreeType> PartialOrdering treeOrder(const SimpleRange& range, const BoundaryPoint& point)
+{
+    if (auto order = treeOrder<TreeType>(range.start, point); !is_lt(order))
+        return order;
+    if (auto order = treeOrder<TreeType>(range.end, point); !is_gt(order))
+        return order;
+    return PartialOrdering::equivalent;
+}
+
+template<typename TreeType> PartialOrdering treeOrder(const BoundaryPoint& point, const SimpleRange& range)
+{
+    if (auto order = treeOrder<TreeType>(point, range.start); !is_gt(order))
+        return order;
+    if (auto order = treeOrder<TreeType>(point, range.end); !is_lt(order))
+        return order;
+    return PartialOrdering::equivalent;
+}
+
+template PartialOrdering treeOrder<Tree>(const SimpleRange&, const BoundaryPoint&);
+template PartialOrdering treeOrder<Tree>(const BoundaryPoint&, const SimpleRange&);
 
 PartialOrdering documentOrder(const SimpleRange& range, const BoundaryPoint& point)
 {
-    if (auto order = documentOrder(range.start, point); !is_lt(order))
-        return order;
-    if (auto order = documentOrder(range.end, point); !is_gt(order))
-        return order;
-    return PartialOrdering::equivalent;
+    return treeOrder<ComposedTree>(range, point);
 }
 
 PartialOrdering documentOrder(const BoundaryPoint& point, const SimpleRange& range)
 {
-    if (auto order = documentOrder(point, range.start); !is_gt(order))
-        return order;
-    if (auto order = documentOrder(point, range.end); !is_lt(order))
-        return order;
-    return PartialOrdering::equivalent;
+    return treeOrder<ComposedTree>(point, range);
 }
 
 bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange)
@@ -241,9 +270,16 @@ bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange)
     return is_lteq(documentOrder(outerRange.start, innerRange.start)) && is_gteq(documentOrder(outerRange.end, innerRange.end));
 }
 
+template<typename TreeType> bool intersects(const SimpleRange& a, const SimpleRange& b)
+{
+    return is_lteq(treeOrder<TreeType>(a.start, b.end)) && is_lteq(treeOrder<TreeType>(b.start, a.end));
+}
+
+template bool intersects<Tree>(const SimpleRange&, const SimpleRange&);
+
 bool intersects(const SimpleRange& a, const SimpleRange& b)
 {
-    return is_lteq(documentOrder(a.start, b.end)) && is_lteq(documentOrder(b.start, a.end));
+    return intersects<ComposedTree>(a, b);
 }
 
 static bool compareByDocumentOrder(const BoundaryPoint& a, const BoundaryPoint& b)
@@ -272,14 +308,35 @@ bool contains(const SimpleRange& range, const Node& node)
     return nodeRange && contains(range, *nodeRange);
 }
 
-bool intersects(const SimpleRange& range, const Node& node)
+template<typename TreeType> bool contains(const Node& outer, const Node& inner);
+
+template<> bool contains<Tree>(const Node& outer, const Node& inner)
+{
+    return outer.contains(inner);
+}
+
+template<> bool contains<ComposedTree>(const Node& outer, const Node& inner)
+{
+    // FIXME: This is what the code did before, but it is not correct!
+    return outer.contains(inner);
+}
+
+template<typename TreeType> bool intersects(const SimpleRange& range, const Node& node)
 {
     // FIXME: Consider a more efficient algorithm that avoids always computing the node index.
     // FIXME: Does this const_cast point to a design problem?
     auto nodeRange = makeRangeSelectingNode(const_cast<Node&>(node));
     if (!nodeRange)
-        return node.contains(range.start.container.ptr());
-    return is_lt(documentOrder(nodeRange->start, range.end)) && is_lt(documentOrder(range.start, nodeRange->end));
+        return contains<TreeType>(node, range.start.container);
+    return is_lt(treeOrder<TreeType>(nodeRange->start, range.end)) && is_lt(treeOrder<TreeType>(range.start, nodeRange->end));
+
+}
+
+template bool intersects<Tree>(const SimpleRange&, const Node&);
+
+bool intersects(const SimpleRange& range, const Node& node)
+{
+    return intersects<ComposedTree>(range, node);
 
 }
 
