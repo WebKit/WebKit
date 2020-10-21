@@ -25,32 +25,66 @@
 
 #pragma once
 
+#include "EventTarget.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
+class EventLoopTaskGroup;
+class WorkerEventLoop;
 class WorkerOrWorkletScriptController;
 class WorkerOrWorkletThread;
 
-class WorkerOrWorkletGlobalScope : public ScriptExecutionContext {
+class WorkerOrWorkletGlobalScope : public ScriptExecutionContext, public RefCounted<WorkerOrWorkletGlobalScope>, public EventTargetWithInlineData {
+    WTF_MAKE_ISO_ALLOCATED(WorkerOrWorkletGlobalScope);
+    WTF_MAKE_NONCOPYABLE(WorkerOrWorkletGlobalScope);
 public:
-    virtual ~WorkerOrWorkletGlobalScope() = default;
+    virtual ~WorkerOrWorkletGlobalScope();
 
-    virtual bool isClosing() const = 0;
-    virtual WorkerOrWorkletThread* workerOrWorkletThread() const = 0;
+    bool isClosing() const { return m_isClosing; }
+    WorkerOrWorkletThread* workerOrWorkletThread() const { return m_thread; }
 
     WorkerOrWorkletScriptController* script() const { return m_script.get(); }
     void clearScript();
 
     unsigned long createUniqueIdentifier() { return m_uniqueIdentifier++; }
 
+    // ScriptExecutionContext.
+    EventLoopTaskGroup& eventLoop() final;
+    bool isContextThread() const final;
+    void postTask(Task&&) final; // Executes the task on context's thread asynchronously.
+
+    virtual void prepareForDestruction();
+
+    using RefCounted::ref;
+    using RefCounted::deref;
+
 protected:
-    WorkerOrWorkletGlobalScope();
-    explicit WorkerOrWorkletGlobalScope(Ref<JSC::VM>&&);
+    WorkerOrWorkletGlobalScope(Ref<JSC::VM>&&, WorkerOrWorkletThread*);
+
+    // ScriptExecutionContext.
+    bool isJSExecutionForbidden() const final;
+
+    void markAsClosing() { m_isClosing = true; }
 
 private:
+    // ScriptExecutionContext.
+    void disableEval(const String& errorMessage) final;
+    void disableWebAssembly(const String& errorMessage) final;
+    void refScriptExecutionContext() final { ref(); }
+    void derefScriptExecutionContext() final { deref(); }
+
+    // EventTarget.
+    ScriptExecutionContext* scriptExecutionContext() const final { return const_cast<WorkerOrWorkletGlobalScope*>(this); }
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
+
     std::unique_ptr<WorkerOrWorkletScriptController> m_script;
+    WorkerOrWorkletThread* m_thread;
+    RefPtr<WorkerEventLoop> m_eventLoop;
+    std::unique_ptr<EventLoopTaskGroup> m_defaultTaskGroup;
     unsigned long m_uniqueIdentifier { 1 };
+    bool m_isClosing { false };
 };
 
 } // namespace WebCore

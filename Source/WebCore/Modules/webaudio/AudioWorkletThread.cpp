@@ -87,7 +87,7 @@ void AudioWorkletThread::stop()
         m_runLoop.postTaskAndTerminate({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext& context ) {
             auto& workletGlobalScope = downcast<AudioWorkletGlobalScope>(context);
 
-            workletGlobalScope.prepareForTermination();
+            workletGlobalScope.prepareForDestruction();
 
             // Stick a shutdown command at the end of the queue, so that we deal
             // with all the cleanup tasks the databases post first.

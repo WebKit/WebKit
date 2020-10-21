@@ -26,23 +26,81 @@
 #include "config.h"
 #include "WorkerOrWorkletGlobalScope.h"
 
+#include "WorkerEventLoop.h"
 #include "WorkerOrWorkletScriptController.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
-WorkerOrWorkletGlobalScope::WorkerOrWorkletGlobalScope()
-    : m_script(makeUnique<WorkerOrWorkletScriptController>(this))
+WTF_MAKE_ISO_ALLOCATED_IMPL(WorkerOrWorkletGlobalScope);
+
+WorkerOrWorkletGlobalScope::WorkerOrWorkletGlobalScope(Ref<JSC::VM>&& vm, WorkerOrWorkletThread* thread)
+    : m_script(makeUnique<WorkerOrWorkletScriptController>(WTFMove(vm), this))
+    , m_thread(thread)
 {
 }
 
-WorkerOrWorkletGlobalScope::WorkerOrWorkletGlobalScope(Ref<JSC::VM>&& vm)
-    : m_script(makeUnique<WorkerOrWorkletScriptController>(WTFMove(vm), this))
+WorkerOrWorkletGlobalScope::~WorkerOrWorkletGlobalScope() = default;
+
+void WorkerOrWorkletGlobalScope::prepareForDestruction()
 {
+    if (m_defaultTaskGroup)
+        m_defaultTaskGroup->stopAndDiscardAllTasks();
+
+    stopActiveDOMObjects();
+
+    // Event listeners would keep DOMWrapperWorld objects alive for too long. Also, they have references to JS objects,
+    // which become dangling once Heap is destroyed.
+    removeAllEventListeners();
+
+    // MicrotaskQueue and RejectedPromiseTracker reference Heap.
+    if (m_eventLoop)
+        m_eventLoop->clearMicrotaskQueue();
+    removeRejectedPromiseTracker();
 }
 
 void WorkerOrWorkletGlobalScope::clearScript()
 {
     m_script = nullptr;
+}
+
+void WorkerOrWorkletGlobalScope::disableEval(const String& errorMessage)
+{
+    m_script->disableEval(errorMessage);
+}
+
+void WorkerOrWorkletGlobalScope::disableWebAssembly(const String& errorMessage)
+{
+    m_script->disableWebAssembly(errorMessage);
+}
+
+bool WorkerOrWorkletGlobalScope::isJSExecutionForbidden() const
+{
+    return !m_script || m_script->isExecutionForbidden();
+}
+
+EventLoopTaskGroup& WorkerOrWorkletGlobalScope::eventLoop()
+{
+    ASSERT(isContextThread());
+    if (UNLIKELY(!m_defaultTaskGroup)) {
+        m_eventLoop = WorkerEventLoop::create(*this);
+        m_defaultTaskGroup = makeUnique<EventLoopTaskGroup>(*m_eventLoop);
+        if (activeDOMObjectsAreStopped())
+            m_defaultTaskGroup->stopAndDiscardAllTasks();
+    }
+    return *m_defaultTaskGroup;
+}
+
+bool WorkerOrWorkletGlobalScope::isContextThread() const
+{
+    auto* thread = workerOrWorkletThread();
+    return thread ? thread->thread() == &Thread::current() : isMainThread();
+}
+
+void WorkerOrWorkletGlobalScope::postTask(Task&& task)
+{
+    ASSERT(workerOrWorkletThread());
+    workerOrWorkletThread()->runLoop().postTask(WTFMove(task));
 }
 
 } // namespace WebCore

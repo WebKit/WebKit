@@ -33,7 +33,6 @@
 #include "PageConsoleClient.h"
 #include "SecurityOriginPolicy.h"
 #include "Settings.h"
-#include "WorkerEventLoop.h"
 #include "WorkerMessagePortChannelProvider.h"
 #include "WorkerOrWorkletThread.h"
 #include "WorkerScriptLoader.h"
@@ -49,7 +48,7 @@ using namespace Inspector;
 WTF_MAKE_ISO_ALLOCATED_IMPL(WorkletGlobalScope);
 
 WorkletGlobalScope::WorkletGlobalScope(WorkerOrWorkletThread& thread, const WorkletParameters& parameters)
-    : m_thread(&thread)
+    : WorkerOrWorkletGlobalScope(JSC::VM::create(), &thread)
     , m_topOrigin(SecurityOrigin::createUnique())
     , m_url(parameters.windowURL)
     , m_jsRuntimeFlags(parameters.jsRuntimeFlags)
@@ -62,7 +61,7 @@ WorkletGlobalScope::WorkletGlobalScope(WorkerOrWorkletThread& thread, const Work
 }
 
 WorkletGlobalScope::WorkletGlobalScope(Document& document, Ref<JSC::VM>&& vm, ScriptSourceCode&& code)
-    : WorkerOrWorkletGlobalScope(WTFMove(vm))
+    : WorkerOrWorkletGlobalScope(WTFMove(vm), nullptr)
     , m_document(makeWeakPtr(document))
     , m_topOrigin(SecurityOrigin::createUnique())
     , m_url(code.url())
@@ -88,34 +87,18 @@ WorkletGlobalScope::~WorkletGlobalScope()
 
 void WorkletGlobalScope::prepareForDestruction()
 {
-    if (!script())
-        return;
-    if (m_defaultTaskGroup)
-        m_defaultTaskGroup->stopAndDiscardAllTasks();
-    stopActiveDOMObjects();
-    removeAllEventListeners();
-    if (m_eventLoop)
-        m_eventLoop->clearMicrotaskQueue();
-    removeRejectedPromiseTracker();
-    script()->vm().notifyNeedTermination();
-    clearScript();
+    WorkerOrWorkletGlobalScope::prepareForDestruction();
+
+    if (script()) {
+        script()->vm().notifyNeedTermination();
+        clearScript();
+    }
 }
 
 auto WorkletGlobalScope::allWorkletGlobalScopesSet() -> WorkletGlobalScopesSet&
 {
     static NeverDestroyed<WorkletGlobalScopesSet> scopes;
     return scopes;
-}
-
-EventLoopTaskGroup& WorkletGlobalScope::eventLoop()
-{
-    if (UNLIKELY(!m_defaultTaskGroup)) {
-        m_eventLoop = WorkerEventLoop::create(*this);
-        m_defaultTaskGroup = makeUnique<EventLoopTaskGroup>(*m_eventLoop);
-        if (activeDOMObjectsAreStopped())
-            m_defaultTaskGroup->stopAndDiscardAllTasks();
-    }
-    return *m_defaultTaskGroup;
 }
 
 String WorkletGlobalScope::userAgent(const URL& url) const
@@ -129,21 +112,6 @@ void WorkletGlobalScope::evaluate()
 {
     if (m_code)
         script()->evaluate(*m_code);
-}
-
-bool WorkletGlobalScope::isJSExecutionForbidden() const
-{
-    return !script() || script()->isExecutionForbidden();
-}
-
-void WorkletGlobalScope::disableEval(const String& errorMessage)
-{
-    script()->disableEval(errorMessage);
-}
-
-void WorkletGlobalScope::disableWebAssembly(const String& errorMessage)
-{
-    script()->disableWebAssembly(errorMessage);
 }
 
 URL WorkletGlobalScope::completeURL(const String& url, ForceUTF8) const
@@ -255,13 +223,6 @@ MessagePortChannelProvider& WorkletGlobalScope::messagePortChannelProvider()
     if (!m_messagePortChannelProvider)
         m_messagePortChannelProvider = makeUnique<WorkerMessagePortChannelProvider>(*this);
     return *m_messagePortChannelProvider;
-}
-
-bool WorkletGlobalScope::isContextThread() const
-{
-    if (m_thread)
-        return m_thread->thread() == &Thread::current();
-    return isMainThread();
 }
 
 } // namespace WebCore

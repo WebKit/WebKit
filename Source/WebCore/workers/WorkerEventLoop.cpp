@@ -27,22 +27,16 @@
 #include "WorkerEventLoop.h"
 
 #include "Microtasks.h"
-#include "WorkerGlobalScope.h"
-#include "WorkletGlobalScope.h"
+#include "WorkerOrWorkletGlobalScope.h"
 
 namespace WebCore {
 
-Ref<WorkerEventLoop> WorkerEventLoop::create(WorkerGlobalScope& context)
+Ref<WorkerEventLoop> WorkerEventLoop::create(WorkerOrWorkletGlobalScope& context)
 {
     return adoptRef(*new WorkerEventLoop(context));
 }
 
-Ref<WorkerEventLoop> WorkerEventLoop::create(WorkletGlobalScope& context)
-{
-    return adoptRef(*new WorkerEventLoop(context));
-}
-
-WorkerEventLoop::WorkerEventLoop(ScriptExecutionContext& context)
+WorkerEventLoop::WorkerEventLoop(WorkerOrWorkletGlobalScope& context)
     : ContextDestructionObserver(&context)
 {
 }

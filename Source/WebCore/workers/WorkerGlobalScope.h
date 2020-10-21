@@ -28,7 +28,6 @@
 
 #include "Base64Utilities.h"
 #include "CacheStorageConnection.h"
-#include "EventTarget.h"
 #include "ImageBitmap.h"
 #include "ScriptExecutionContext.h"
 #include "Supplementable.h"
@@ -46,10 +45,8 @@ namespace WebCore {
 class CSSValuePool;
 class ContentSecurityPolicyResponseHeaders;
 class Crypto;
-class EventLoopTaskGroup;
 class Performance;
 class ScheduledAction;
-class WorkerEventLoop;
 class WorkerInspectorController;
 class WorkerLocation;
 class WorkerNavigator;
@@ -60,15 +57,13 @@ namespace IDBClient {
 class IDBConnectionProxy;
 }
 
-class WorkerGlobalScope : public RefCounted<WorkerGlobalScope>, public Supplementable<WorkerGlobalScope>, public EventTargetWithInlineData, public Base64Utilities, public WorkerOrWorkletGlobalScope {
+class WorkerGlobalScope : public Supplementable<WorkerGlobalScope>, public Base64Utilities, public WorkerOrWorkletGlobalScope {
     WTF_MAKE_ISO_ALLOCATED(WorkerGlobalScope);
 public:
     virtual ~WorkerGlobalScope();
 
     virtual bool isDedicatedWorkerGlobalScope() const { return false; }
     virtual bool isServiceWorkerGlobalScope() const { return false; }
-
-    EventLoopTaskGroup& eventLoop() final;
 
     const URL& url() const final { return m_url; }
     String origin() const;
@@ -88,11 +83,9 @@ public:
 
     WorkerInspectorController& inspectorController() const { return *m_inspectorController; }
 
-    WorkerThread& thread() const { return m_thread; }
+    WorkerThread& thread() const;
 
     using ScriptExecutionContext::hasPendingActivity;
-
-    void postTask(Task&&) final; // Executes the task on context's thread asynchronously.
 
     WorkerGlobalScope& self() { return *this; }
     WorkerLocation& location() const;
@@ -108,16 +101,10 @@ public:
     ExceptionOr<int> setInterval(JSC::JSGlobalObject&, std::unique_ptr<ScheduledAction>, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
     void clearInterval(int timeoutId);
 
-    bool isContextThread() const final;
     bool isSecureContext() const final;
 
     WorkerNavigator* optionalNavigator() const { return m_navigator.get(); }
     WorkerLocation* optionalLocation() const { return m_location.get(); }
-
-    using RefCounted::ref;
-    using RefCounted::deref;
-
-    bool isClosing() const final { return m_closing; }
 
     void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&) final;
 
@@ -126,7 +113,7 @@ public:
     Crypto& crypto();
     Performance& performance() const;
 
-    void prepareForTermination();
+    void prepareForDestruction() final;
 
     void removeAllEventListeners() final;
 
@@ -147,12 +134,6 @@ protected:
     void applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders&);
 
 private:
-    void refScriptExecutionContext() final { ref(); }
-    void derefScriptExecutionContext() final { deref(); }
-
-    void refEventTarget() final { ref(); }
-    void derefEventTarget() final { deref(); }
-
     void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) final;
 
     // The following addMessage and addConsoleMessage functions are deprecated.
@@ -161,19 +142,14 @@ private:
     void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier) final;
 
     bool isWorkerGlobalScope() const final { return true; }
-    WorkerThread* workerOrWorkletThread() const final { return &m_thread; }
 
-    ScriptExecutionContext* scriptExecutionContext() const final { return const_cast<WorkerGlobalScope*>(this); }
     URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final;
     String userAgent(const URL&) const final;
-    void disableEval(const String& errorMessage) final;
-    void disableWebAssembly(const String& errorMessage) final;
     EventTarget* errorEventTarget() final;
     String resourceRequestIdentifier() const final { return m_identifier; }
     SocketProvider* socketProvider() final;
 
     bool shouldBypassMainWorldContentSecurityPolicy() const final { return m_shouldBypassMainWorldContentSecurityPolicy; }
-    bool isJSExecutionForbidden() const final;
 
 #if ENABLE(WEB_CRYPTO)
     bool wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) final;
@@ -191,16 +167,11 @@ private:
     mutable RefPtr<WorkerLocation> m_location;
     mutable RefPtr<WorkerNavigator> m_navigator;
 
-    WorkerThread& m_thread;
     std::unique_ptr<WorkerOrWorkletScriptController> m_script;
     std::unique_ptr<WorkerInspectorController> m_inspectorController;
 
-    bool m_closing { false };
     bool m_isOnline;
     bool m_shouldBypassMainWorldContentSecurityPolicy;
-
-    RefPtr<WorkerEventLoop> m_eventLoop;
-    std::unique_ptr<EventLoopTaskGroup> m_defaultTaskGroup;
 
     Ref<SecurityOrigin> m_topOrigin;
 

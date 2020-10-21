@@ -320,7 +320,7 @@ void WorkerThread::stop(WTF::Function<void()>&& stoppedCallback)
         m_runLoop.postTaskAndTerminate({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext& context ) {
             WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);
 
-            workerGlobalScope.prepareForTermination();
+            workerGlobalScope.prepareForDestruction();
 
             // Stick a shutdown command at the end of the queue, so that we deal
             // with all the cleanup tasks the databases post first.

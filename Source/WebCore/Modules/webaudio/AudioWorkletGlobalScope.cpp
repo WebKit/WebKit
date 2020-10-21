@@ -143,27 +143,11 @@ RefPtr<AudioWorkletProcessor> AudioWorkletGlobalScope::createProcessor(const Str
     return &jsProcessor.wrapped();
 }
 
-void AudioWorkletGlobalScope::prepareForTermination()
+void AudioWorkletGlobalScope::prepareForDestruction()
 {
-    if (auto* defaultTaskGroup = this->defaultTaskGroup())
-        defaultTaskGroup->stopAndDiscardAllTasks();
-    stopActiveDOMObjects();
-
     m_processorConstructorMap.clear();
 
-    // Event listeners would keep DOMWrapperWorld objects alive for too long. Also, they have references to JS objects,
-    // which become dangling once Heap is destroyed.
-    removeAllEventListeners();
-
-    // MicrotaskQueue and RejectedPromiseTracker reference Heap.
-    if (auto* eventLoop = this->existingEventLoop())
-        eventLoop->clearMicrotaskQueue();
-    removeRejectedPromiseTracker();
-}
-
-void AudioWorkletGlobalScope::postTask(Task&& task)
-{
-    thread().runLoop().postTask(WTFMove(task));
+    WorkletGlobalScope::prepareForDestruction();
 }
 
 std::unique_ptr<AudioWorkletProcessorConstructionData> AudioWorkletGlobalScope::takePendingProcessorConstructionData()
