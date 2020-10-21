@@ -1,5 +1,43 @@
 2020-10-21  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r268701. rdar://problem/70541911
+
+    Fix possible crash in GraphicsLayerCA::computeVisibleAndCoverageRect()
+    https://bugs.webkit.org/show_bug.cgi?id=217930
+    <rdar://problem/70316943>
+    
+    Reviewed by Tim Horton.
+    
+    If we made a m_overflowControlsHostLayerAncestorClippingStack, make sure we unparent
+    its layers when tearing down the RenderLayerBacking, and when we determine that we
+    longer need a m_ancestorClippingStack (having a m_overflowControlsHostLayerAncestorClippingStack
+    implies that we have a m_ancestorClippingStack).
+    
+    * rendering/RenderLayerBacking.cpp:
+    (WebCore::RenderLayerBacking::destroyGraphicsLayers):
+    (WebCore::RenderLayerBacking::updateAncestorClipping):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268701 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-19  Simon Fraser  <simon.fraser@apple.com>
+
+            Fix possible crash in GraphicsLayerCA::computeVisibleAndCoverageRect()
+            https://bugs.webkit.org/show_bug.cgi?id=217930
+            <rdar://problem/70316943>
+
+            Reviewed by Tim Horton.
+
+            If we made a m_overflowControlsHostLayerAncestorClippingStack, make sure we unparent
+            its layers when tearing down the RenderLayerBacking, and when we determine that we
+            longer need a m_ancestorClippingStack (having a m_overflowControlsHostLayerAncestorClippingStack
+            implies that we have a m_ancestorClippingStack).
+
+            * rendering/RenderLayerBacking.cpp:
+            (WebCore::RenderLayerBacking::destroyGraphicsLayers):
+            (WebCore::RenderLayerBacking::updateAncestorClipping):
+
+2020-10-21  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r268473. rdar://problem/70541789
 
     Web Inspector: REGRESSION(r267148): new Big Sur styles are not used
