@@ -2103,15 +2103,15 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
         };
         if (shouldInvalidateLineLayoutPath())
             invalidateLineLayoutPath();
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+        if (auto* lineLayout = layoutFormattingContextLineLayout())
+            lineLayout->updateStyle(*this);
+#endif
     }
 
     if (multiColumnFlow())
         updateStylesForColumnChildren();
-
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (layoutFormattingContextLineLayout())
-        layoutFormattingContextLineLayout()->updateStyle();
-#endif
 }
 
 void RenderBlockFlow::updateStylesForColumnChildren()
@@ -2988,7 +2988,7 @@ void RenderBlockFlow::addOverflowFromInlineChildren()
 {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (layoutFormattingContextLineLayout()) {
-        layoutFormattingContextLineLayout()->collectOverflow(*this);
+        layoutFormattingContextLineLayout()->collectOverflow();
         return;
     }
 #endif
@@ -3676,7 +3676,7 @@ void RenderBlockFlow::layoutLFCLines(bool relayoutChildren, LayoutUnit& repaintL
     layoutFormattingContextLineLayout.layout();
 
     if (view().frameView().layoutContext().layoutState()->isPaginated())
-        layoutFormattingContextLineLayout.adjustForPagination(*this);
+        layoutFormattingContextLineLayout.adjustForPagination();
 
     auto contentHeight = layoutFormattingContextLineLayout.contentLogicalHeight();
     auto contentBoxTop = borderAndPaddingBefore();

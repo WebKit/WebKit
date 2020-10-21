@@ -61,7 +61,7 @@ const LineLayout& InlineContent::lineLayout() const
     return *m_lineLayout;
 }
 
-const RenderObject* InlineContent::rendererForLayoutBox(const Layout::Box& layoutBox) const
+const RenderObject& InlineContent::rendererForLayoutBox(const Layout::Box& layoutBox) const
 {
     return m_lineLayout->rendererForLayoutBox(layoutBox);
 }

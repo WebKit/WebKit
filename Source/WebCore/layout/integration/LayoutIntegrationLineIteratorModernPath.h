@@ -99,7 +99,7 @@ public:
         auto startIndex = line().firstRunIndex();
         auto endIndex = startIndex + line().runCount();
         for (auto runIndex = startIndex; runIndex < endIndex; ++runIndex) {
-            auto& renderer = *m_inlineContent->rendererForLayoutBox(m_inlineContent->runs[runIndex].layoutBox());
+            auto& renderer = m_inlineContent->rendererForLayoutBox(m_inlineContent->runs[runIndex].layoutBox());
             if (renderer.node())
                 return { *m_inlineContent, runIndex };
         }
@@ -111,7 +111,7 @@ public:
         auto startIndex = line().firstRunIndex();
         auto endIndex = startIndex + line().runCount();
         for (auto runIndex = endIndex; runIndex-- > startIndex;) {
-            auto& renderer = *m_inlineContent->rendererForLayoutBox(m_inlineContent->runs[runIndex].layoutBox());
+            auto& renderer = m_inlineContent->rendererForLayoutBox(m_inlineContent->runs[runIndex].layoutBox());
             if (renderer.node())
                 return { *m_inlineContent, runIndex };
         }

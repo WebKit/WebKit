@@ -48,18 +48,19 @@ static RenderStyle rootBoxStyle(const RenderStyle& style)
     return clonedStyle;
 }
 
-BoxTree::BoxTree(const RenderBlockFlow& flow)
-    : m_root(rootBoxStyle(flow.style()))
+BoxTree::BoxTree(RenderBlockFlow& flow)
+    : m_flow(flow)
+    , m_root(rootBoxStyle(flow.style()))
 {
     if (flow.isAnonymous())
         m_root.setIsAnonymous();
 
-    buildTree(flow);
+    buildTree();
 }
 
-void BoxTree::buildTree(const RenderBlockFlow& flow)
+void BoxTree::buildTree()
 {
-    for (auto& childRenderer : childrenOfType<RenderObject>(flow)) {
+    for (auto& childRenderer : childrenOfType<RenderObject>(m_flow)) {
         std::unique_ptr<Layout::Box> childBox;
         if (is<RenderText>(childRenderer)) {
             auto& textRenderer = downcast<RenderText>(childRenderer);
@@ -82,40 +83,69 @@ void BoxTree::buildTree(const RenderBlockFlow& flow)
     }
 }
 
-const Layout::Box* BoxTree::layoutBoxForRenderer(const RenderObject& renderer) const
+void BoxTree::updateStyle(const RenderBoxModelObject& renderer)
 {
+    auto& layoutBox = layoutBoxForRenderer(renderer);
+    auto& style = renderer.style();
+
+    layoutBox.updateStyle(style);
+
+    if (&layoutBox == &m_root) {
+        for (auto* child = m_root.firstChild(); child; child = child->nextSibling()) {
+            if (child->isAnonymous())
+                child->updateStyle(RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::Inline));
+        }
+    }
+}
+
+Layout::Box& BoxTree::layoutBoxForRenderer(const RenderObject& renderer)
+{
+    if (&renderer == &m_flow)
+        return m_root;
+
     if (m_boxes.size() <= smallTreeThreshold) {
         auto index = m_boxes.findMatching([&](auto& entry) {
             return entry.renderer == &renderer;
         });
-        if (index == notFound)
-            return nullptr;
-        return m_boxes[index].box.get();
+        ASSERT(index != notFound);
+        return *m_boxes[index].box;
     }
 
     if (m_rendererToBoxMap.isEmpty()) {
         for (auto& entry : m_boxes)
             m_rendererToBoxMap.add(entry.renderer, entry.box.get());
     }
-    return m_rendererToBoxMap.get(&renderer);
+    return *m_rendererToBoxMap.get(&renderer);
 }
 
-const RenderObject* BoxTree::rendererForLayoutBox(const Layout::Box& box) const
+const Layout::Box& BoxTree::layoutBoxForRenderer(const RenderObject& renderer) const
 {
+    return const_cast<BoxTree&>(*this).layoutBoxForRenderer(renderer);
+}
+
+RenderObject& BoxTree::rendererForLayoutBox(const Layout::Box& box)
+{
+    if (&box == &m_root)
+        return m_flow;
+
     if (m_boxes.size() <= smallTreeThreshold) {
         auto index = m_boxes.findMatching([&](auto& entry) {
             return entry.box.get() == &box;
         });
-        if (index == notFound)
-            return nullptr;
-        return m_boxes[index].renderer;
+        ASSERT(index != notFound);
+        return *m_boxes[index].renderer;
     }
 
     if (m_boxToRendererMap.isEmpty()) {
         for (auto& entry : m_boxes)
             m_boxToRendererMap.add(entry.box.get(), entry.renderer);
     }
-    return m_boxToRendererMap.get(&box);
+    return *m_boxToRendererMap.get(&box);
+}
+
+const RenderObject& BoxTree::rendererForLayoutBox(const Layout::Box& box) const
+{
+    return const_cast<BoxTree&>(*this).rendererForLayoutBox(box);
 }
 
 }

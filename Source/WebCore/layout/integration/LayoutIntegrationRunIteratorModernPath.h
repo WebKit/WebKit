@@ -117,7 +117,7 @@ public:
 
     const RenderObject& renderer() const
     {
-        return *m_inlineContent->rendererForLayoutBox(run().layoutBox());
+        return m_inlineContent->rendererForLayoutBox(run().layoutBox());
     }
 
     void traverseNextTextRun()

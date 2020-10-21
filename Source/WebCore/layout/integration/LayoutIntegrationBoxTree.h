@@ -34,31 +34,41 @@
 namespace WebCore {
 
 class RenderBlockFlow;
+class RenderBoxModelObject;
 
 namespace LayoutIntegration {
 
 class BoxTree {
 public:
-    BoxTree(const RenderBlockFlow&);
+    BoxTree(RenderBlockFlow&);
+
+    void updateStyle(const RenderBoxModelObject&);
+
+    const RenderBlockFlow& flow() const { return m_flow; }
+    RenderBlockFlow& flow() { return m_flow; }
 
     const Layout::InitialContainingBlock& rootLayoutBox() const { return m_root; }
     Layout::InitialContainingBlock& rootLayoutBox() { return m_root; }
 
-    const Layout::Box* layoutBoxForRenderer(const RenderObject&) const;
-    const RenderObject* rendererForLayoutBox(const Layout::Box&) const;
+    const Layout::Box& layoutBoxForRenderer(const RenderObject&) const;
+    Layout::Box& layoutBoxForRenderer(const RenderObject&);
+
+    const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
+    RenderObject& rendererForLayoutBox(const Layout::Box&);
 
 private:
-    void buildTree(const RenderBlockFlow&);
+    void buildTree();
 
+    RenderBlockFlow& m_flow;
     Layout::InitialContainingBlock m_root;
     struct BoxAndRenderer {
-        std::unique_ptr<const Layout::Box> box;
-        const RenderObject* renderer { nullptr };
+        std::unique_ptr<Layout::Box> box;
+        RenderObject* renderer { nullptr };
     };
     Vector<BoxAndRenderer, 1> m_boxes;
 
-    mutable HashMap<const RenderObject*, const Layout::Box*> m_rendererToBoxMap;
-    mutable HashMap<const Layout::Box*, const RenderObject*> m_boxToRendererMap;
+    HashMap<const RenderObject*, Layout::Box*> m_rendererToBoxMap;
+    HashMap<const Layout::Box*, RenderObject*> m_boxToRendererMap;
 };
 
 }

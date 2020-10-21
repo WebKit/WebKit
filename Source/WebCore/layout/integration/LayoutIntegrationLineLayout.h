@@ -42,6 +42,7 @@ class HitTestRequest;
 class HitTestResult;
 class RenderBlockFlow;
 class RenderBox;
+class RenderBoxModelObject;
 struct PaintInfo;
 
 namespace LayoutIntegration {
@@ -51,15 +52,18 @@ struct InlineContent;
 class LineLayout : public CanMakeWeakPtr<LineLayout> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    LineLayout(const RenderBlockFlow&);
+    LineLayout(RenderBlockFlow&);
     ~LineLayout();
+
+    static LineLayout* containing(RenderObject&);
+    static const LineLayout* containing(const RenderObject&);
 
     static bool isEnabled();
     static bool canUseFor(const RenderBlockFlow&);
     static bool canUseForAfterStyleChange(const RenderBlockFlow&, StyleDifference);
 
     void updateReplacedDimensions(const RenderBox&);
-    void updateStyle();
+    void updateStyle(const RenderBoxModelObject&);
     void layout();
 
     LayoutUnit contentLogicalHeight() const;
@@ -68,8 +72,8 @@ public:
     LayoutUnit firstLineBaseline() const;
     LayoutUnit lastLineBaseline() const;
 
-    void adjustForPagination(RenderBlockFlow&);
-    void collectOverflow(RenderBlockFlow&);
+    void adjustForPagination();
+    void collectOverflow();
 
     const InlineContent* inlineContent() const { return m_inlineContent.get(); }
     bool isPaginated() const { return !!m_paginatedHeight; }
@@ -80,7 +84,7 @@ public:
     TextRunIterator textRunsFor(const RenderText&) const;
     RunIterator runFor(const RenderElement&) const;
 
-    const RenderObject* rendererForLayoutBox(const Layout::Box&) const;
+    const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
 
     static void releaseCaches(RenderView&);
 
@@ -90,12 +94,14 @@ private:
     void constructContent();
     InlineContent& ensureInlineContent();
 
+    RenderBlockFlow& flow() { return m_boxTree.flow(); }
+    const RenderBlockFlow& flow() const { return m_boxTree.flow(); }
+
     const Layout::ContainerBox& rootLayoutBox() const;
     Layout::ContainerBox& rootLayoutBox();
     ShadowData* debugTextShadow();
     void releaseInlineItemCache();
 
-    const RenderBlockFlow& m_flow;
     BoxTree m_boxTree;
     Layout::LayoutState m_layoutState;
     Layout::InlineFormattingState& m_inlineFormattingState;
