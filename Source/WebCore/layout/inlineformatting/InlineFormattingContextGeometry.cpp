@@ -53,6 +53,9 @@ private:
     const Box& rootBox() const { return formattingContext().root(); }
     LayoutState& layoutState() const { return formattingContext().layoutState(); }
 
+    bool isRootInlineBox(const LineBox::InlineLevelBox& inlineLevelBox) const { return &inlineLevelBox.layoutBox() == &rootBox(); }
+    bool isRootBox(const ContainerBox& containerBox) const { return &containerBox == &rootBox(); }
+
 private:
     const InlineFormattingContext& m_inlineFormattingContext;
 };
@@ -177,9 +180,12 @@ void LineBoxBuilder::setVerticalGeometryForInlineBox(LineBox::InlineLevelBox& in
     if (lineHeight.isNegative()) {
         // If line-height computes to normal and either text-edge is leading or this is the root inline box,
         // the font’s line gap metric may also be incorporated into A and D by adding half to each side as half-leading.
-        auto lineSpacing = &inlineLevelBox.layoutBox() == &rootBox() ? fontMetrics.lineSpacing() - logicalHeight : InlineLayoutUnit();
-        ascent += lineSpacing / 2;
-        descent += lineSpacing / 2;
+        auto shouldLineGapStretchInlineLevelBox = isRootInlineBox(inlineLevelBox) || inlineLevelBox.isLineBreakBox();
+        if (shouldLineGapStretchInlineLevelBox) {
+            auto halfLineGap = (fontMetrics.lineSpacing() - logicalHeight) / 2;
+            ascent += halfLineGap;
+            descent += halfLineGap;
+        }
     } else {
         InlineLayoutUnit lineHeight = style.computedLineHeight();
         InlineLayoutUnit halfLeading = (lineHeight - (ascent + descent)) / 2;
@@ -223,17 +229,17 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         // We only have to do it on the first run as any subsequent inline content is either at the same/higher nesting level or
         // nested with a [container start] run.
         auto& firstRun = runs[0];
-        auto& firstRunParentInlineBox = firstRun.layoutBox().parent();
+        auto& firstRunParentLayoutBox = firstRun.layoutBox().parent();
         // If the parent is the formatting root, we can stop here. This is root inline box content, there's no nesting inline box from the previous line(s)
         // unless the inline box closing (container end run) is forced over to the current line.
         // e.g.
         // <span>normally the inline box closing forms a continuous content</span>
         // <span>unless it's forced to the next line<br></span>
-        if (&firstRunParentInlineBox == &rootBox() && !firstRun.isContainerEnd())
+        if (isRootBox(firstRunParentLayoutBox) && !firstRun.isContainerEnd())
             return;
-        auto* ancestor = &firstRunParentInlineBox;
+        auto* ancestor = &firstRunParentLayoutBox;
         Vector<const Box*> ancestorsWithoutInlineBoxes;
-        while (ancestor != &rootBox()) {
+        while (!isRootBox(*ancestor)) {
             ancestorsWithoutInlineBoxes.append(ancestor);
             ancestor = &ancestor->parent();
         }
@@ -248,7 +254,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
 
     auto stretchRootInlineBoxIfNeededQuirk = [&] (const auto& layoutBox) {
         auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent());
-        if (&parentInlineBox.layoutBox() != &rootBox() || !parentInlineBox.isEmpty())
+        if (!isRootInlineBox(parentInlineBox) || !parentInlineBox.isEmpty())
             return;
         setVerticalGeometryForInlineBox(parentInlineBox);
         parentInlineBox.setIsNonEmpty();
