@@ -108,6 +108,11 @@ GetByStatus GetByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeInde
         break;
     }
 
+    case op_get_private_name:
+        // FIXME: Consider using LLInt caches or IC information to populate GetByStatus
+        // https://bugs.webkit.org/show_bug.cgi?id=217245
+        return GetByStatus(NoInformation, false);
+
     default: {
         ASSERT_NOT_REACHED();
         return GetByStatus(NoInformation, false);

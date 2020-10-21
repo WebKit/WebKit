@@ -875,6 +875,8 @@ private:
         case TryGetById:
         case GetByValWithThis:
         case GetByOffset:
+        case GetPrivateName:
+        case GetPrivateNameById:
         case MultiGetByOffset:
         case GetDirectPname:
         case Call:

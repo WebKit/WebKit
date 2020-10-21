@@ -1282,7 +1282,11 @@ public:
 
     void compileGetByValOnDirectArguments(Node*);
     void compileGetByValOnScopedArguments(Node*);
-    
+
+    void compileGetPrivateName(Node*);
+    void compileGetPrivateNameById(Node*);
+    void compileGetPrivateNameByVal(Node*, JSValueRegs base, JSValueRegs property);
+
     void compileGetScope(Node*);
     void compileSkipScope(Node*);
     void compileGetGlobalObject(Node*);

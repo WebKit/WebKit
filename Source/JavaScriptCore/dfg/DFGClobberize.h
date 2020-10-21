@@ -673,6 +673,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case PutSetterByVal:
     case PutPrivateName:
     case PutPrivateNameById:
+    case GetPrivateName:
+    case GetPrivateNameById:
     case DefineDataProperty:
     case DefineAccessorProperty:
     case DeleteById:

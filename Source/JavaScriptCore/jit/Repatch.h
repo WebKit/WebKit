@@ -40,6 +40,7 @@ enum class GetByKind {
     WithThis,
     Direct,
     PrivateName,
+    PrivateNameById,
 };
 
 enum class DelByKind {

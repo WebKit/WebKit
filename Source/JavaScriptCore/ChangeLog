@@ -1,3 +1,80 @@
+2020-10-21  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] support op_get_private_name in DFG and FTL
+        https://bugs.webkit.org/show_bug.cgi?id=214861
+
+        Reviewed by Filip Pizlo.
+
+        Adds DFG/FTL support for op_get_private_name.
+
+        During DFG bytecode parsing, we will attempt, if deemed possible by
+        the information available, to output a GetByOffset operation. If a
+        single private field identifier is used in all cases (the common case),
+        but there are too many structure variants, a GetPrivateNameById
+        operation is emitted instead. Failing that, the GetPrivateName
+        operation is produced, which produces a GetByVal IC like in the
+        baseline JIT.
+
+        In FTL, GetPrivateNameByID can be reduced to [Multi]GetByOffset in the
+        DFGConstantFoldingPhase, or a GetByID IC when lowering to B3.
+
+        * bytecode/GetByStatus.cpp:
+        (JSC::GetByStatus::computeFromLLInt):
+        * bytecode/StructureStubInfo.h:
+        (JSC::appropriateOptimizingGetByIdFunction):
+        (JSC::appropriateGenericGetByIdFunction):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::simplifyGetByStatus):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::handleGetPrivateNameById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToGetByOffset):
+        (JSC::DFG::Node::convertToMultiGetByOffset):
+        (JSC::DFG::Node::hasCacheableIdentifier):
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetPrivateName):
+        (JSC::DFG::SpeculativeJIT::compileGetPrivateNameByVal):
+        (JSC::DFG::SpeculativeJIT::compileGetPrivateNameById):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::getPrivateName):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetPrivateName):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetPrivateNameById):
+        * jit/ICStats.h:
+        * jit/JITOperations.cpp:
+        (JSC::getPrivateName):
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jit/JITOperations.h:
+        * jit/Repatch.cpp:
+        (JSC::appropriateOptimizingGetByFunction):
+        (JSC::appropriateGetByFunction):
+        (JSC::tryCacheGetBy):
+        * jit/Repatch.h:
+        * runtime/OptionsList.h:
+
 2020-10-20  Saam Barati  <sbarati@apple.com>
 
         Don't OSR exit to bc#0 for FTL argument type checks during loop OSR entry

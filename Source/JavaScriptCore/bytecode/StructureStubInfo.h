@@ -404,6 +404,8 @@ inline auto appropriateOptimizingGetByIdFunction(AccessType type) -> decltype(&o
         return operationTryGetByIdOptimize;
     case AccessType::GetByIdDirect:
         return operationGetByIdDirectOptimize;
+    case AccessType::GetPrivateName:
+        return operationGetPrivateNameByIdOptimize;
     case AccessType::GetByIdWithThis:
     default:
         ASSERT_NOT_REACHED();
@@ -420,6 +422,8 @@ inline auto appropriateGenericGetByIdFunction(AccessType type) -> decltype(&oper
         return operationTryGetByIdGeneric;
     case AccessType::GetByIdDirect:
         return operationGetByIdDirectGeneric;
+    case AccessType::GetPrivateName:
+        return operationGetPrivateNameByIdGeneric;
     case AccessType::GetByIdWithThis:
     default:
         ASSERT_NOT_REACHED();

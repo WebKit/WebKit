@@ -3348,6 +3348,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         makeHeapTopForNode(node);
         break;
 
+    case GetPrivateNameById:
     case GetByIdDirect:
     case GetByIdDirectFlush:
     case GetById:
@@ -3383,6 +3384,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case GetPrivateName:
     case GetByValWithThis:
     case GetByIdWithThis:
         clobberWorld();

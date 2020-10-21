@@ -244,8 +244,11 @@ private:
 
     template<typename Op>
     void parseGetById(const Instruction*);
+    void simplifyGetByStatus(Node* base, GetByStatus&);
     void handleGetById(
         VirtualRegister destination, SpeculatedType, Node* base, CacheableIdentifier, unsigned identifierNumber, GetByStatus, AccessType, BytecodeIndex osrExitIndex);
+    void handleGetPrivateNameById(
+        VirtualRegister destination, SpeculatedType prediction, Node* base, CacheableIdentifier, unsigned identifierNumber, GetByStatus);
     void emitPutById(
         Node* base, CacheableIdentifier, Node* value,  const PutByIdStatus&, bool isDirect, ECMAMode);
     void handlePutById(
@@ -4530,9 +4533,7 @@ Node* ByteCodeParser::store(Node* base, unsigned identifier, const PutByIdVarian
     return handlePutByOffset(base, identifier, variant.offset(), value);
 }
 
-void ByteCodeParser::handleGetById(
-    VirtualRegister destination, SpeculatedType prediction, Node* base, CacheableIdentifier identifier, unsigned identifierNumber,
-    GetByStatus getByStatus, AccessType type, BytecodeIndex osrExitIndex)
+void ByteCodeParser::simplifyGetByStatus(Node* base, GetByStatus& getByStatus)
 {
     // Attempt to reduce the set of things in the GetByStatus.
     if (base->op() == NewObject) {
@@ -4549,6 +4550,13 @@ void ByteCodeParser::handleGetById(
         if (ok)
             getByStatus.filter(base->structure().get());
     }
+}
+
+void ByteCodeParser::handleGetById(
+    VirtualRegister destination, SpeculatedType prediction, Node* base, CacheableIdentifier identifier, unsigned identifierNumber,
+    GetByStatus getByStatus, AccessType type, BytecodeIndex osrExitIndex)
+{
+    simplifyGetByStatus(base, getByStatus);
     
     NodeType getById;
     if (type == AccessType::GetById)
@@ -4714,6 +4722,76 @@ void ByteCodeParser::handleGetById(
     handleCall(
         destination, Call, InlineCallFrame::GetterCall, osrExitIndex,
         getter, numberOfParameters - 1, registerOffset, *variant.callLinkStatus(), prediction);
+}
+
+// A variant on handleGetById which is more limited in scope
+void ByteCodeParser::handleGetPrivateNameById(
+    VirtualRegister destination, SpeculatedType prediction, Node* base, CacheableIdentifier identifier, unsigned identifierNumber, GetByStatus getByStatus)
+{
+    simplifyGetByStatus(base, getByStatus);
+
+    ASSERT(!getByStatus.isCustom());
+    ASSERT(!getByStatus.makesCalls());
+    if (!getByStatus.isSimple() || !getByStatus.numVariants() || !Options::useAccessInlining()) {
+        set(destination,
+            addToGraph(GetPrivateNameById, OpInfo(identifier), OpInfo(prediction), base, nullptr));
+        return;
+    }
+
+    if (getByStatus.numVariants() > 1) {
+        if (!m_graph.m_plan.isFTL()
+            || !Options::usePolymorphicAccessInlining()
+            || getByStatus.numVariants() > Options::maxPolymorphicAccessInliningListSize()) {
+            set(destination,
+                addToGraph(GetPrivateNameById, OpInfo(identifier), OpInfo(prediction), base, nullptr));
+            return;
+        }
+
+        addToGraph(FilterGetByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addGetByStatus(currentCodeOrigin(), getByStatus)), base);
+
+        Vector<MultiGetByOffsetCase, 2> cases;
+
+        for (const GetByIdVariant& variant : getByStatus.variants()) {
+            ASSERT(variant.intrinsic() == NoIntrinsic);
+            ASSERT(variant.conditionSet().isEmpty());
+
+            GetByOffsetMethod method = GetByOffsetMethod::load(variant.offset());
+            cases.append(MultiGetByOffsetCase(*m_graph.addStructureSet(variant.structureSet()), method));
+        }
+
+        if (UNLIKELY(m_graph.compilation()))
+            m_graph.compilation()->noticeInlinedGetById();
+
+        // 2) Emit a MultiGetByOffset
+        MultiGetByOffsetData* data = m_graph.m_multiGetByOffsetData.add();
+        data->cases = cases;
+        data->identifierNumber = identifierNumber;
+        set(destination,
+            addToGraph(MultiGetByOffset, OpInfo(data), OpInfo(prediction), base));
+        return;
+    }
+
+    // FIXME: If we use the GetByStatus for anything then we should record it and insert a node
+    // after everything else (like the GetByOffset or whatever) that will filter the recorded
+    // GetByStatus. That means that the constant folder also needs to do the same!
+    addToGraph(FilterGetByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addGetByStatus(currentCodeOrigin(), getByStatus)), base);
+
+    ASSERT(getByStatus.numVariants() == 1);
+    GetByIdVariant variant = getByStatus[0];
+
+    Node* loadedValue = load(prediction, base, identifierNumber, variant);
+    if (!loadedValue) {
+        set(destination,
+            addToGraph(GetPrivateNameById, OpInfo(identifier), OpInfo(prediction), base, nullptr));
+        return;
+    }
+
+    if (UNLIKELY(m_graph.compilation()))
+        m_graph.compilation()->noticeInlinedGetById();
+
+    ASSERT(!variant.callLinkStatus());
+    if (variant.intrinsic() == NoIntrinsic)
+        set(destination, loadedValue);
 }
 
 void ByteCodeParser::handleDeleteById(
@@ -6343,6 +6421,41 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_put_setter_by_val: {
             handlePutAccessorByVal(PutSetterByVal, currentInstruction->as<OpPutSetterByVal>());
             NEXT_OPCODE(op_put_setter_by_val);
+        }
+
+        case op_get_private_name: {
+            auto bytecode = currentInstruction->as<OpGetPrivateName>();
+            SpeculatedType prediction = getPredictionWithoutOSRExit();
+            Node* base = get(bytecode.m_base);
+            Node* property = get(bytecode.m_property);
+            bool compileSingleIdentifier = false;
+
+            GetByStatus getByStatus = GetByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin());
+
+            CacheableIdentifier identifier;
+            unsigned identifierNumber = 0;
+            if (!m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
+
+                identifier = getByStatus.singleIdentifier();
+                if (identifier) {
+                    identifierNumber = m_graph.identifiers().ensure(identifier.uid());
+                    ASSERT(identifier.isSymbolCell());
+                    FrozenValue* frozen = m_graph.freezeStrong(identifier.cell());
+                    addToGraph(CheckIsConstant, OpInfo(frozen), property);
+                    compileSingleIdentifier = true;
+                }
+            }
+
+            if (compileSingleIdentifier)
+                handleGetPrivateNameById(bytecode.m_dst, prediction, base, identifier, identifierNumber, getByStatus);
+            else {
+                Node* node = addToGraph(GetPrivateName, OpInfo(), OpInfo(prediction), base, property);
+                m_exitOK = false;
+                set(bytecode.m_dst, node);
+            }
+            NEXT_OPCODE(op_get_private_name);
         }
 
         case op_del_by_id: {

@@ -1780,6 +1780,17 @@ private:
             break;
         }
 
+        case GetPrivateName:
+        case GetPrivateNameById:
+            if (node->child1()->shouldSpeculateCell())
+                fixEdge<CellUse>(node->child1());
+            else
+                fixEdge<UntypedUse>(node->child1());
+
+            if (!node->hasCacheableIdentifier())
+                fixEdge<SymbolUse>(node->child2());
+            break;
+
         case DeleteByVal: {
             if (node->child1()->shouldSpeculateCell()) {
                 fixEdge<CellUse>(node->child1());

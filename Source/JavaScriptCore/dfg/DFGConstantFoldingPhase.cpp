@@ -599,7 +599,8 @@ private:
             case GetByIdDirect:
             case GetByIdDirectFlush:
             case GetById:
-            case GetByIdFlush: {
+            case GetByIdFlush:
+            case GetPrivateNameById: {
                 Edge childEdge = node->child1();
                 Node* child = childEdge.node();
                 UniquedStringImpl* uid = node->cacheableIdentifier().uid();

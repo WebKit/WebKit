@@ -397,6 +397,8 @@ inline CapabilityLevel canCompile(Node* node)
     case PutByValWithThis:
     case PutPrivateName:
     case PutPrivateNameById:
+    case GetPrivateName:
+    case GetPrivateNameById:
     case MatchStructure:
     case FilterCallLinkStatus:
     case FilterGetByStatus:

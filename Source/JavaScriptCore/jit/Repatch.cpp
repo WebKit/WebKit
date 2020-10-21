@@ -165,6 +165,8 @@ inline FunctionPtr<CFunctionPtrTag> appropriateOptimizingGetByFunction(GetByKind
         return operationGetByValOptimize;
     case GetByKind::PrivateName:
         return operationGetPrivateNameOptimize;
+    case GetByKind::PrivateNameById:
+        return operationGetPrivateNameByIdOptimize;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -184,6 +186,8 @@ inline FunctionPtr<CFunctionPtrTag> appropriateGetByFunction(GetByKind kind)
         return operationGetByValGeneric;
     case GetByKind::PrivateName:
         return operationGetPrivateName;
+    case GetByKind::PrivateNameById:
+        return operationGetPrivateNameById;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -203,7 +207,7 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
         if (!baseValue.isCell())
             return GiveUpOnCache;
         JSCell* baseCell = baseValue.asCell();
-        const bool isPrivate = kind == GetByKind::PrivateName;
+        const bool isPrivate = kind == GetByKind::PrivateName || kind == GetByKind::PrivateNameById;
 
         std::unique_ptr<AccessCase> newCase;
 

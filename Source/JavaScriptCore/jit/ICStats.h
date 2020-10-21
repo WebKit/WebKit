@@ -72,7 +72,10 @@ namespace JSC {
     macro(InByIdSelfPatch) \
     macro(DelByReplaceWithJump) \
     macro(DelByReplaceWithGeneric) \
-    macro(OperationGetPrivateNameOptimize)
+    macro(OperationGetPrivateNameOptimize) \
+    macro(OperationGetPrivateNameById) \
+    macro(OperationGetPrivateNameByIdOptimize) \
+    macro(OperationGetPrivateNameByIdGeneric)
 
 class ICEvent {
 public:

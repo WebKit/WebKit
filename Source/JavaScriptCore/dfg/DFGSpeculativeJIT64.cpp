@@ -2617,6 +2617,12 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case GetPrivateName:
+    case GetPrivateNameById: {
+        compileGetPrivateName(node);
+        break;
+    }
+
     case GetByVal: {
         switch (node->arrayMode().type()) {
         case Array::AnyTypedArray:

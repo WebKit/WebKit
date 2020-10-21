@@ -948,6 +948,12 @@ private:
         case GetByIdDirectFlush:
             compileGetById(AccessType::GetByIdDirect);
             break;
+        case GetPrivateName:
+            compileGetPrivateName();
+            break;
+        case GetPrivateNameById:
+            compileGetPrivateNameById();
+            break;
         case InById:
             compileInById();
             break;
@@ -3939,6 +3945,138 @@ private:
 
         LValue result = vmCall(Int64, operationGetByValWithThis, weakPointer(globalObject), base, thisValue, subscript);
         setJSValue(result);
+    }
+
+    LValue getPrivateName(LValue base, LValue property)
+    {
+        Node* node = m_node;
+        PatchpointValue* patchpoint = m_out.patchpoint(Int64);
+        patchpoint->appendSomeRegister(base);
+        patchpoint->appendSomeRegister(property);
+        patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+
+        RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
+
+        State* state = &m_ftlState;
+        bool baseIsCell = abstractValue(node->child1()).isType(SpecCell);
+        patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(node->origin.semantic);
+
+                // This is the direct exit target for operation calls.
+                Box<CCallHelpers::JumpList> exceptions = exceptionHandle->scheduleExitCreation(params)->jumps(jit);
+
+                // This is the exit for call IC's created by the IC for getters. We don't have
+                // to do anything weird other than call this, since it will associate the exit with
+                // the callsite index.
+                exceptionHandle->scheduleExitCreationForUnwind(params, callSiteIndex);
+
+                GPRReg resultGPR = params[0].gpr();
+                GPRReg baseGPR = params[1].gpr();
+                GPRReg propertyGPR = params[2].gpr();
+
+                auto generator = Box<JITGetByValGenerator>::create(
+                    jit.codeBlock(), node->origin.semantic, callSiteIndex, AccessType::GetPrivateName,
+                    params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(resultGPR));
+
+                CCallHelpers::Jump notCell;
+                if (!baseIsCell)
+                    notCell = jit.branchIfNotCell(baseGPR);
+
+                generator->generateFastPath(jit);
+                CCallHelpers::Label done = jit.label();
+
+                params.addLatePath([=] (CCallHelpers& jit) {
+                    AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                    if (notCell.isSet())
+                        notCell.link(&jit);
+                    generator->slowPathJump().link(&jit);
+                    CCallHelpers::Label slowPathBegin = jit.label();
+                    CCallHelpers::Call slowPathCall = callOperation(
+                        *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                        exceptions.get(), operationGetPrivateNameOptimize, resultGPR,
+                        jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                        CCallHelpers::TrustedImmPtr(generator->stubInfo()), baseGPR, propertyGPR).call();
+                    jit.jump().linkTo(done, &jit);
+
+                    generator->reportSlowPathCall(slowPathBegin, slowPathCall);
+
+                    jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                        generator->finalize(linkBuffer, linkBuffer);
+                    });
+                });
+            });
+        
+        return patchpoint;
+    }
+
+    void compileGetPrivateName()
+    {
+        if (m_node->child1().useKind() == CellUse)
+            setJSValue(getPrivateName(lowCell(m_node->child1()), lowSymbol(m_node->child2())));
+        else {
+            LValue base = lowJSValue(m_node->child1());
+            LValue property = lowSymbol(m_node->child2());
+
+            LBasicBlock baseCellCase = m_out.newBlock();
+            LBasicBlock notCellCase = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            m_out.branch(
+                isCell(base, provenType(m_node->child1())), unsure(baseCellCase), unsure(notCellCase));
+
+            LBasicBlock lastNext = m_out.appendTo(baseCellCase, notCellCase);
+
+            ValueFromBlock cellResult = m_out.anchor(getPrivateName(base, property));
+            m_out.jump(continuation);
+
+            m_out.appendTo(notCellCase, continuation);
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+            ValueFromBlock notCellResult = m_out.anchor(vmCall(
+                Int64, operationGetPrivateName,
+                weakPointer(globalObject), m_out.constIntPtr(0), base,
+                property));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            setJSValue(m_out.phi(Int64, cellResult, notCellResult));
+        }
+    }
+
+    void compileGetPrivateNameById()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
+        if (m_node->child1().useKind() == CellUse)
+            setJSValue(getById(lowCell(m_node->child1()), AccessType::GetPrivateName));
+        else {
+            LValue base = lowJSValue(m_node->child1());
+
+            LBasicBlock baseCellCase = m_out.newBlock();
+            LBasicBlock notCellCase = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            m_out.branch(
+                isCell(base, provenType(m_node->child1())), unsure(baseCellCase), unsure(notCellCase));
+
+            LBasicBlock lastNext = m_out.appendTo(baseCellCase, notCellCase);
+
+            ValueFromBlock cellResult = m_out.anchor(getById(base, AccessType::GetPrivateName));
+            m_out.jump(continuation);
+
+            m_out.appendTo(notCellCase, continuation);
+            ValueFromBlock notCellResult = m_out.anchor(vmCall(
+                Int64, operationGetPrivateNameByIdGeneric,
+                weakPointer(globalObject), base,
+                m_out.constIntPtr(m_node->cacheableIdentifier().rawBits())));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            setJSValue(m_out.phi(Int64, cellResult, notCellResult));
+        }
     }
 
     void compilePutByIdWithThis()

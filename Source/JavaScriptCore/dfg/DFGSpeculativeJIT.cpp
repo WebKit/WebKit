@@ -3468,6 +3468,109 @@ void SpeculativeJIT::compileGetByValForObjectWithSymbol(Node* node)
     jsValueResult(resultRegs, node);
 }
 
+void SpeculativeJIT::compileGetPrivateName(Node* node)
+{
+    if (node->hasCacheableIdentifier())
+        return compileGetPrivateNameById(node);
+
+    switch (m_graph.child(node, 0).useKind()) {
+    case CellUse: {
+        SpeculateCellOperand base(this, m_graph.child(node, 0));
+        SpeculateCellOperand property(this, m_graph.child(node, 1));
+
+        compileGetPrivateNameByVal(node, JSValueRegs::payloadOnly(base.gpr()), JSValueRegs::payloadOnly(property.gpr()));
+        break;
+    }
+    case UntypedUse: {
+        JSValueOperand base(this, m_graph.child(node, 0));
+        SpeculateCellOperand property(this, m_graph.child(node, 1));
+
+        compileGetPrivateNameByVal(node, base.jsValueRegs(), JSValueRegs::payloadOnly(property.gpr()));
+        break;
+    }
+    default:
+        DFG_CRASH(m_jit.graph(), node, "Bad use kind");
+    }
+}
+
+void SpeculativeJIT::compileGetPrivateNameByVal(Node* node, JSValueRegs base, JSValueRegs property)
+{
+    DFG_ASSERT(m_jit.graph(), node, node->op() == GetPrivateName);
+    DFG_ASSERT(m_jit.graph(), node, m_graph.child(node, 1).useKind() == SymbolUse);
+    speculateSymbol(m_graph.child(node, 1));
+
+    JSValueRegsTemporary result(this);
+    CodeOrigin codeOrigin = node->origin.semantic;
+    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+    RegisterSet usedRegisters = this->usedRegisters();
+
+    JITCompiler::JumpList slowCases;
+    const bool baseIsKnownCell = m_state.forNode(m_graph.child(node, 0)).isType(SpecCell);
+    if (!baseIsKnownCell)
+        slowCases.append(m_jit.branchIfNotCell(base));
+
+    JITGetByValGenerator gen(
+        m_jit.codeBlock(), codeOrigin, callSite, AccessType::GetPrivateName, usedRegisters,
+        base, property, result.regs());
+    gen.stubInfo()->propertyIsSymbol = true;
+    gen.generateFastPath(m_jit);
+
+    slowCases.append(gen.slowPathJump());
+
+    auto makeSlowPathCall = [&](auto base) {
+        return slowPathCall(
+            slowCases, this, operationGetPrivateNameOptimize,
+            result.regs(), TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(codeOrigin)), gen.stubInfo(),
+            base, CCallHelpers::CellValue(property.payloadGPR()));
+    };
+
+    std::unique_ptr<SlowPathGenerator> slowPath = baseIsKnownCell
+        ? makeSlowPathCall(CCallHelpers::CellValue(base.payloadGPR()))
+        : makeSlowPathCall(base);
+
+    m_jit.addGetByVal(gen, slowPath.get());
+    addSlowPathGenerator(WTFMove(slowPath));
+
+    jsValueResult(result.regs(), node, DataFormatJS);
+}
+
+void SpeculativeJIT::compileGetPrivateNameById(Node* node)
+{
+    switch (m_graph.child(node, 0).useKind()) {
+    case CellUse: {
+        SpeculateCellOperand base(this, m_graph.child(node, 0));
+        JSValueRegsTemporary result(this, Reuse, base);
+
+        JSValueRegs baseRegs = JSValueRegs::payloadOnly(base.gpr());
+        JSValueRegs resultRegs = result.regs();
+
+        cachedGetById(node->origin.semantic, baseRegs, resultRegs, node->cacheableIdentifier(), JITCompiler::Jump(), NeedToSpill, AccessType::GetPrivateName);
+
+        jsValueResult(resultRegs, node, DataFormatJS);
+        break;
+    }
+
+    case UntypedUse: {
+        JSValueOperand base(this, m_graph.child(node, 0));
+        JSValueRegsTemporary result(this, Reuse, base);
+
+        JSValueRegs baseRegs = base.jsValueRegs();
+        JSValueRegs resultRegs = result.regs();
+
+        JITCompiler::Jump notCell = m_jit.branchIfNotCell(baseRegs);
+
+        cachedGetById(node->origin.semantic, baseRegs, resultRegs, node->cacheableIdentifier(), notCell, NeedToSpill, AccessType::GetPrivateName);
+
+        jsValueResult(resultRegs, node, DataFormatJS);
+        break;
+    }
+
+    default:
+        DFG_CRASH(m_jit.graph(), node, "Bad use kind");
+        break;
+    }
+}
+
 void SpeculativeJIT::compilePutByValForCellWithString(Node* node, Edge& child1, Edge& child2, Edge& child3)
 {
     SpeculateCellOperand arg1(this, child1);

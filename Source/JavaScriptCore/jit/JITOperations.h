@@ -269,6 +269,9 @@ JSC_DECLARE_JIT_OPERATION(operationSetupVarargsFrame, CallFrame*, (JSGlobalObjec
 
 JSC_DECLARE_JIT_OPERATION(operationGetPrivateName, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedBase, EncodedJSValue encodedFieldName));
 JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedBase, EncodedJSValue encodedFieldName));
+JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameById, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameByIdOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameByIdGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, uintptr_t));
 
 JSC_DECLARE_JIT_OPERATION(operationSwitchCharWithUnknownKeyType, char*, (JSGlobalObject*, EncodedJSValue key, size_t tableIndex));
 JSC_DECLARE_JIT_OPERATION(operationSwitchImmWithUnknownKeyType, char*, (VM*, EncodedJSValue key, size_t tableIndex));

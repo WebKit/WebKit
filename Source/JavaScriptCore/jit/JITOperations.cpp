@@ -2261,6 +2261,24 @@ ALWAYS_INLINE static JSValue getPrivateName(JSGlobalObject* globalObject, CallFr
     return slot.getValue(globalObject, fieldName);
 }
 
+ALWAYS_INLINE static JSValue getPrivateName(JSGlobalObject* globalObject, CallFrame* callFrame, JSValue baseValue, Identifier fieldName)
+{
+    ASSERT(fieldName.isPrivateName());
+    UNUSED_PARAM(callFrame);
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    baseValue.requireObjectCoercible(globalObject);
+    RETURN_IF_EXCEPTION(scope, JSValue());
+
+    JSObject* base = baseValue.toObject(globalObject);
+    PropertySlot slot(base, PropertySlot::InternalMethodType::GetOwnProperty);
+    base->getPrivateField(globalObject, fieldName, slot);
+    RETURN_IF_EXCEPTION(scope, JSValue());
+
+    return slot.getValue(globalObject, fieldName);
+}
+
 JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameOptimize, EncodedJSValue, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedBase, EncodedJSValue encodedFieldName))
 {
     VM& vm = globalObject->vm();
@@ -2280,7 +2298,6 @@ JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameOptimize, EncodedJSValue, (JSGlo
         ASSERT(fieldName.isSymbol());
 
         JSObject* base = jsCast<JSObject*>(baseValue.asCell());
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
         PropertySlot slot(base, PropertySlot::InternalMethodType::GetOwnProperty);
         base->getPrivateField(globalObject, fieldName, slot);
@@ -2306,9 +2323,81 @@ JSC_DEFINE_JIT_OPERATION(operationGetPrivateName, EncodedJSValue, (JSGlobalObjec
     JSValue baseValue = JSValue::decode(encodedBase);
     JSValue fieldNameValue = JSValue::decode(encodedFieldName);
 
-    stubInfo->tookSlowPath = true;
+    if (stubInfo)
+        stubInfo->tookSlowPath = true;
 
     return JSValue::encode(getPrivateName(globalObject, callFrame, baseValue, fieldNameValue));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameById, EncodedJSValue, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, uintptr_t rawCacheableIdentifier))
+{
+    SuperSamplerScope superSamplerScope(false);
+
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    stubInfo->tookSlowPath = true;
+
+    JSValue baseValue = JSValue::decode(base);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier fieldName = Identifier::fromUid(vm, identifier.uid());
+
+    JSValue result = getPrivateName(globalObject, callFrame, baseValue, fieldName);
+
+    LOG_IC((ICEvent::OperationGetPrivateNameById, baseValue.classInfoOrNull(vm), fieldName, true));
+
+    return JSValue::encode(result);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameByIdOptimize, EncodedJSValue, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, uintptr_t rawCacheableIdentifier))
+{
+    SuperSamplerScope superSamplerScope(false);
+
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue baseValue = JSValue::decode(base);
+    auto fieldName = Identifier::fromUid(vm, identifier.uid());
+
+    if (baseValue.isObject()) {
+        JSObject* base = jsCast<JSObject*>(baseValue.asCell());
+
+        PropertySlot slot(base, PropertySlot::InternalMethodType::GetOwnProperty);
+        base->getPrivateField(globalObject, fieldName, slot);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+        LOG_IC((ICEvent::OperationGetPrivateNameOptimize, baseValue.classInfoOrNull(vm), fieldName, true));
+
+        CodeBlock* codeBlock = callFrame->codeBlock();
+        if (stubInfo->considerCachingBy(vm, codeBlock, baseValue.structureOrNull(vm), identifier))
+            repatchGetBy(globalObject, codeBlock, baseValue, identifier, slot, *stubInfo, GetByKind::PrivateNameById);
+        return JSValue::encode(slot.getValue(globalObject, fieldName));
+    }
+
+    return JSValue::encode(getPrivateName(globalObject, callFrame, baseValue, fieldName));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameByIdGeneric, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue base, uintptr_t rawCacheableIdentifier))
+{
+    SuperSamplerScope superSamplerScope(false);
+
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    JSValue baseValue = JSValue::decode(base);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier fieldName = Identifier::fromUid(vm, identifier.uid());
+
+    JSValue result = getPrivateName(globalObject, callFrame, baseValue, fieldName);
+
+    LOG_IC((ICEvent::OperationGetPrivateNameByIdGeneric, baseValue.classInfoOrNull(vm), fieldName, true));
+
+    return JSValue::encode(result);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationHasIndexedPropertyDefault, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ByValInfo* byValInfo))

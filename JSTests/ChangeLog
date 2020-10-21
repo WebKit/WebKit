@@ -1,3 +1,25 @@
+2020-10-21  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] support op_get_private_name in DFG and FTL
+        https://bugs.webkit.org/show_bug.cgi?id=214861
+
+        Reviewed by Filip Pizlo.
+
+        * microbenchmarks/class-fields-private/monomorphic-get-private-field.js: Added.
+        * microbenchmarks/class-fields-private/polymorphic-get-private-field.js: Added.
+        * stress/dfg-get-private-name-by-id-generic.js: Added.
+        * stress/dfg-get-private-name-by-id-osr-bad-identifier.js: Added.
+        * stress/dfg-get-private-name-by-id.js: Added.
+        * stress/dfg-get-private-name-by-offset-osr-bad-identifier.js: Added.
+        * stress/dfg-get-private-name-by-offset-osr-bad-structure.js: Added.
+        * stress/dfg-get-private-name-by-offset.js: Added.
+        * stress/dfg-get-private-name-by-val-generic.js: Added.
+        * stress/ftl-get-private-name-by-id.js: Added.
+        * stress/ftl-get-private-name-by-offset-multi.js: Added.
+        * stress/get-private-name-with-constant-ident.js: Added.
+        * stress/get-private-name-with-constant-symbol.js: Added.
+        * stress/get-private-name-with-different-symbol.js: Added.
+
 2020-10-20  Saam Barati  <sbarati@apple.com>
 
         Don't OSR exit to bc#0 for FTL argument type checks during loop OSR entry
