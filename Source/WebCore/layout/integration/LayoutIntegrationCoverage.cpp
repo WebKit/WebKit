@@ -322,6 +322,8 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
 #if ALLOW_INLINE_IMAGES
         if (is<RenderImage>(*child)) {
             auto& image = downcast<RenderImage>(*child);
+            if (image.imageMap())
+                SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);                
             if (image.isFloating() || image.isPositioned())
                 SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
             auto& style = image.style();
