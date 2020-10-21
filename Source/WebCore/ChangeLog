@@ -1,5 +1,73 @@
 2020-10-21  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r268398. rdar://problem/70541902
+
+    Webcam video from navigator.mediaDevices.getUserMedia() to 2D canvas fails on Safari on iPhone
+    https://bugs.webkit.org/show_bug.cgi?id=217578
+    <rdar://problem/70183875>
+    
+    Reviewed by Eric Carlson.
+    
+    It is unneeded for MediaStream video backends to enqueue samples to the display layer if the video element is hidden.
+    In iOS, the samples may never be flushed which might cause capture failing after enqueuing too many camera samples.
+    To avoid that, we no longer enqueue samples to the display layer when the player is not visible.
+    In case of canvas painting, other backends need to be made visible for canvas painting to work.
+    For MediaStream backend, we do not need that since we always keep the last sample.
+    For that reason, we keep the backend as not visible even if canvas happens.
+    We do so by introducing a setVisibleForCanvas that is a no-op for MediaStream backend and similar to setVisible for other backends.
+    For good measure, we now flush the MediaStream display layer whenever visibility changed.
+    
+    Manually tested.
+    
+    * html/HTMLVideoElement.cpp:
+    (WebCore::HTMLVideoElement::paintCurrentFrameInContext):
+    * platform/graphics/MediaPlayer.cpp:
+    (WebCore::MediaPlayer::setVisibleForCanvas):
+    * platform/graphics/MediaPlayer.h:
+    * platform/graphics/MediaPlayerPrivate.h:
+    (WebCore::MediaPlayerPrivateInterface::setVisibleForCanvas):
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+    (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample):
+    (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setVisible):
+    (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setVisibleForCanvas):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268398 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-13  Youenn Fablet  <youenn@apple.com>
+
+            Webcam video from navigator.mediaDevices.getUserMedia() to 2D canvas fails on Safari on iPhone
+            https://bugs.webkit.org/show_bug.cgi?id=217578
+            <rdar://problem/70183875>
+
+            Reviewed by Eric Carlson.
+
+            It is unneeded for MediaStream video backends to enqueue samples to the display layer if the video element is hidden.
+            In iOS, the samples may never be flushed which might cause capture failing after enqueuing too many camera samples.
+            To avoid that, we no longer enqueue samples to the display layer when the player is not visible.
+            In case of canvas painting, other backends need to be made visible for canvas painting to work.
+            For MediaStream backend, we do not need that since we always keep the last sample.
+            For that reason, we keep the backend as not visible even if canvas happens.
+            We do so by introducing a setVisibleForCanvas that is a no-op for MediaStream backend and similar to setVisible for other backends.
+            For good measure, we now flush the MediaStream display layer whenever visibility changed.
+
+            Manually tested.
+
+            * html/HTMLVideoElement.cpp:
+            (WebCore::HTMLVideoElement::paintCurrentFrameInContext):
+            * platform/graphics/MediaPlayer.cpp:
+            (WebCore::MediaPlayer::setVisibleForCanvas):
+            * platform/graphics/MediaPlayer.h:
+            * platform/graphics/MediaPlayerPrivate.h:
+            (WebCore::MediaPlayerPrivateInterface::setVisibleForCanvas):
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+            (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample):
+            (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setVisible):
+            (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setVisibleForCanvas):
+
+2020-10-21  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r268712. rdar://problem/70541891
 
     Fix crash in RenderLayerBacking::updateClippingStackLayerGeometry()

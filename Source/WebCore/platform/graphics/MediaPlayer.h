@@ -344,6 +344,7 @@ public:
 
     bool visible() const;
     void setVisible(bool);
+    void setVisibleForCanvas(bool);
 
     void prepareToPlay();
     void play();

@@ -95,6 +95,7 @@ public:
     virtual bool hasAudio() const = 0;
 
     virtual void setVisible(bool) = 0;
+    virtual void setVisibleForCanvas(bool visible) { setVisible(visible); }
 
     virtual float duration() const { return 0; }
     virtual double durationDouble() const { return duration(); }

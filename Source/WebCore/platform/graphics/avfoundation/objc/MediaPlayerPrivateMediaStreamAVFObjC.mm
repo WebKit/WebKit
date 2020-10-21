@@ -252,6 +252,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::videoSampleAvailable(MediaSample& sam
 
 void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaSample& sample)
 {
+    if (!m_visible)
+        return;
+
     auto locker = tryHoldLock(m_sampleBufferDisplayLayerLock);
     if (!locker)
         return;
@@ -593,8 +596,11 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setVisible(bool visible)
         return;
 
     m_visible = visible;
-    if (m_visible)
-        flushRenderers();
+    flushRenderers();
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::setVisibleForCanvas(bool)
+{
 }
 
 MediaTime MediaPlayerPrivateMediaStreamAVFObjC::durationMediaTime() const

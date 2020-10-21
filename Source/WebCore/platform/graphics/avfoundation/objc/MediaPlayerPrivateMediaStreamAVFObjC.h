@@ -124,6 +124,7 @@ private:
     bool hasAudio() const override;
 
     void setVisible(bool) final;
+    void setVisibleForCanvas(bool) final;
 
     MediaTime durationMediaTime() const override;
     MediaTime currentMediaTime() const override;
