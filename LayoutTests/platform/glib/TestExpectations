@@ -840,12 +840,8 @@ webkit.org/b/216359 fast/text/emoji-synthesis.html [ ImageOnlyFailure ]
 # Failing since added in r268138.
 webkit.org/b/217815 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-filter-order.html [ ImageOnlyFailure ]
 
-# Mediasession tests.
-webkit.org/b/217991 imported/w3c/web-platform-tests/mediasession/idlharness.window.html [ Failure ]
-webkit.org/b/217991 imported/w3c/web-platform-tests/mediasession/mediametadata.html [ Failure ]
-webkit.org/b/217991 imported/w3c/web-platform-tests/mediasession/playbackstate.html [ Failure ]
-webkit.org/b/217991 imported/w3c/web-platform-tests/mediasession/positionstate.html [ Failure ]
-webkit.org/b/217991 imported/w3c/web-platform-tests/mediasession/setactionhandler.html [ Failure ]
+# MediaSession is not enabled in GTK/WPE.
+webkit.org/b/217991 imported/w3c/web-platform-tests/mediasession/ [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs
