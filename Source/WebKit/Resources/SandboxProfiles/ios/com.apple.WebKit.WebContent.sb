@@ -612,7 +612,9 @@
        (require-entitlement "com.apple.private.kernel.override-cpumon"))
 
 (deny sysctl-read (with no-report)
-      (sysctl-name "sysctl.proc_native"))
+      (sysctl-name
+          "hw.cpufrequency_compat"
+          "sysctl.proc_native"))
 
 (with-filter (system-attribute apple-internal)
     (allow sysctl-read sysctl-write
@@ -810,7 +812,9 @@
     (sysctl-name
         "hw.activecpu" ;; Needed by JSC engine.
         "hw.availcpu"
+        "hw.byteorder"
         "hw.cachelinesize"
+        "hw.cachelinesize_compat"
         "hw.cpufamily" ;; <rdar://problem/58416475>
         "hw.cputype"
         "hw.l2cachesize"
@@ -824,6 +828,7 @@
         "hw.physicalcpu"
         "hw.physicalcpu_max"
         "hw.product"
+        "hw.vectorunit"
         "kern.bootargs"
         "kern.hostname"
         "kern.maxfilesperproc" ;; <rdar://problem/65900517>
