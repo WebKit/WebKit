@@ -124,11 +124,12 @@ void AccessibilityMenuListPopup::didUpdateActiveOption(int optionIndex)
     ASSERT_ARG(optionIndex, optionIndex >= 0);
     ASSERT_ARG(optionIndex, optionIndex < static_cast<int>(m_children.size()));
 
-    AXObjectCache* cache = axObjectCache();
     RefPtr<AXCoreObject> child = m_children[optionIndex].get();
 
-    cache->postNotification(child.get(), document(), AXObjectCache::AXFocusedUIElementChanged, TargetElement, PostSynchronously);
-    cache->postNotification(child.get(), document(), AXObjectCache::AXMenuListItemSelected, TargetElement, PostSynchronously);
+    if (auto* cache = axObjectCache()) {
+        cache->postNotification(child.get(), document(), AXObjectCache::AXFocusedUIElementChanged, TargetElement, PostAsynchronously);
+        cache->postNotification(child.get(), document(), AXObjectCache::AXMenuListItemSelected, TargetElement, PostAsynchronously);
+    }
 }
 
 } // namespace WebCore
