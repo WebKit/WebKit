@@ -1,3 +1,13 @@
+2020-10-21  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB][GTK] Unreviewed test gardening. Update test expectations.
+
+        Gardened several audioworklet test that are flaky in GTK. Also skip
+        non WPT MediaSession tests in GLIB.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-10-20  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB][GTK] Unreviewwed test gardening. Update test expectations.

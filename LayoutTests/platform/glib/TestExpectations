@@ -842,6 +842,7 @@ webkit.org/b/217815 imported/w3c/web-platform-tests/css/css-masking/clip-path/cl
 
 # MediaSession is not enabled in GTK/WPE.
 webkit.org/b/217991 imported/w3c/web-platform-tests/mediasession/ [ Skip ]
+webkit.org/b/217991 media/media-session/ [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs
