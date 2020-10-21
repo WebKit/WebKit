@@ -402,7 +402,6 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(Vector<uint8_t>&& c
     // https://www.w3.org/TR/webauthn/#attestation-object
     cbor::CBORValue::MapValue attestationStatementMap;
     {
-        attestationStatementMap[cbor::CBORValue("alg")] = cbor::CBORValue(COSE::ES256);
         Vector<cbor::CBORValue> cborArray;
         for (size_t i = 0; i < [certificates count]; i++)
             cborArray.append(cbor::CBORValue(toVector((NSData *)adoptCF(SecCertificateCopyData((__bridge SecCertificateRef)certificates[i])).get())));
