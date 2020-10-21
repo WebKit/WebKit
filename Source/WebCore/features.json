@@ -506,6 +506,16 @@
         "description": "An API that can be used to understand the visibility and position of DOM elements relative to a containing element or to the top-level viewport."
     },
     {
+        "name": "Lazy image loading",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://html.spec.whatwg.org/#attr-img-loading",
+        "keywords": ["lazy", "image", "loading"],
+        "category": "html",
+        "description": "Allows defering loading of images until they are visible in the viewport."
+    },
+    {
         "name": "Media Capture and Streams",
         "status": {
             "status": "Supported"
