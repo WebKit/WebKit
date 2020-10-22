@@ -1,5 +1,13 @@
 2020-10-22  Lauro Moura  <lmoura@igalia.com>
 
+        [GTK] Rebaseline fast/repaint/focus-ring-repaint.html after r268862
+
+        Unreviewed test gardening.
+
+        * platform/gtk/fast/repaint/focus-ring-repaint-expected.txt:
+
+2020-10-22  Lauro Moura  <lmoura@igalia.com>
+
         [GTK] Add media/context-menu-actions baseline after r268865.
 
         Unreviewed test gardening.
