@@ -325,6 +325,11 @@ bool GraphicsLayer::supportsBackgroundColorContent()
     return true;
 }
 
+bool GraphicsLayer::supportsRoundedClip()
+{
+    return true;
+}
+
 bool GraphicsLayer::supportsSubpixelAntialiasedLayerText()
 {
 #if PLATFORM(MAC)
@@ -971,14 +976,13 @@ void GraphicsLayerCA::setContentsRectClipsDescendants(bool contentsRectClipsDesc
     noteLayerPropertyChanged(ChildrenChanged | ContentsRectsChanged);
 }
 
-bool GraphicsLayerCA::setMasksToBoundsRect(const FloatRoundedRect& roundedRect)
+void GraphicsLayerCA::setMasksToBoundsRect(const FloatRoundedRect& roundedRect)
 {
     if (roundedRect == m_masksToBoundsRect)
-        return true;
+        return;
 
     GraphicsLayer::setMasksToBoundsRect(roundedRect);
     noteLayerPropertyChanged(MasksToBoundsRectChanged);
-    return true;
 }
 
 void GraphicsLayerCA::setShapeLayerPath(const Path& path)

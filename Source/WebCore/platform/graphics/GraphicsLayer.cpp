@@ -88,6 +88,11 @@ bool GraphicsLayer::supportsLayerType(Type type)
     return false;
 }
 
+bool GraphicsLayer::supportsRoundedClip()
+{
+    return false;
+}
+
 bool GraphicsLayer::supportsBackgroundColorContent()
 {
 #if USE(TEXTURE_MAPPER)
@@ -380,6 +385,11 @@ void GraphicsLayer::setMaskLayer(RefPtr<GraphicsLayer>&& layer)
     }
     
     m_maskLayer = WTFMove(layer);
+}
+
+void GraphicsLayer::setMasksToBoundsRect(const FloatRoundedRect& roundedRect)
+{
+    m_masksToBoundsRect = roundedRect;
 }
 
 Path GraphicsLayer::shapeLayerPath() const

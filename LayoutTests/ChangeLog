@@ -1,3 +1,14 @@
+2020-10-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Twitter Photo gallery incorrectly rendered after opening another modal
+        https://bugs.webkit.org/show_bug.cgi?id=217737
+        <rdar://problem/70314822>
+
+        Reviewed by Zalan Bujtas.
+
+        * compositing/style-change/border-radius-change-expected.html: Added.
+        * compositing/style-change/border-radius-change.html: Added.
+
 2020-10-22  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening some crashes

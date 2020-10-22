@@ -1322,11 +1322,17 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
         clipLayer->setSize(snappedClippingGraphicsLayer.m_snappedRect.size());
         clipLayer->setOffsetFromRenderer(toLayoutSize(clippingBox.location() - snappedClippingGraphicsLayer.m_snapDelta));
 
-        if ((renderer().style().clipPath() || renderer().style().hasBorderRadius()) && !m_childClippingMaskLayer) {
-            FloatRoundedRect contentsClippingRect = renderBox.roundedBorderBoxRect().pixelSnappedRoundedRectForPainting(deviceScaleFactor);
-            contentsClippingRect.move(LayoutSize(-clipLayer->offsetFromRenderer()));
-            clipLayer->setMasksToBoundsRect(contentsClippingRect);
-        }
+        auto computeMasksToBoundsRect = [&] {
+            if ((renderer().style().clipPath() || renderer().style().hasBorderRadius()) && !m_childClippingMaskLayer) {
+                FloatRoundedRect contentsClippingRect = renderBox.roundedBorderBoxRect().pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+                contentsClippingRect.move(LayoutSize(-clipLayer->offsetFromRenderer()));
+                return contentsClippingRect;
+            }
+
+            return FloatRoundedRect { FloatRect { { }, snappedClippingGraphicsLayer.m_snappedRect.size() } };
+        };
+
+        clipLayer->setMasksToBoundsRect(computeMasksToBoundsRect());
 
         if (m_childClippingMaskLayer && !m_scrollContainerLayer) {
             m_childClippingMaskLayer->setSize(clipLayer->size());
@@ -2210,33 +2216,21 @@ bool RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath)
 
 void RenderLayerBacking::updateChildClippingStrategy(bool needsDescendantsClippingLayer)
 {
-    if (hasClippingLayer() && needsDescendantsClippingLayer) {
-        if (is<RenderBox>(renderer()) && (renderer().style().clipPath() || renderer().style().hasBorderRadius())) {
-            auto* clipLayer = clippingLayer();
-            FloatRoundedRect contentsClippingRect = downcast<RenderBox>(renderer()).roundedBorderBoxRect().pixelSnappedRoundedRectForPainting(deviceScaleFactor());
-            contentsClippingRect.move(LayoutSize(-clipLayer->offsetFromRenderer()));
-            // Note that we have to set this rounded rect again during the geometry update (clipLayer->offsetFromRenderer() may be stale here).
-            if (clipLayer->setMasksToBoundsRect(contentsClippingRect)) {
-                clipLayer->setMaskLayer(nullptr);
-                GraphicsLayer::clear(m_childClippingMaskLayer);
-                return;
-            }
+    auto needsClipMaskLayer = [&] {
+        return needsDescendantsClippingLayer && !GraphicsLayer::supportsRoundedClip() && is<RenderBox>(renderer()) && (renderer().style().hasBorderRadius() || renderer().style().clipPath());
+    };
 
-            if (!m_childClippingMaskLayer) {
-                m_childClippingMaskLayer = createGraphicsLayer("child clipping mask");
-                m_childClippingMaskLayer->setDrawsContent(true);
-                m_childClippingMaskLayer->setPaintingPhase({ GraphicsLayerPaintingPhase::ChildClippingMask });
-                clippingLayer()->setMaskLayer(m_childClippingMaskLayer.copyRef());
-            }
-        }
-    } else {
-        if (m_childClippingMaskLayer) {
-            if (hasClippingLayer())
-                clippingLayer()->setMaskLayer(nullptr);
-            GraphicsLayer::clear(m_childClippingMaskLayer);
-        } else 
-            if (hasClippingLayer())
-                clippingLayer()->setMasksToBoundsRect(FloatRoundedRect(FloatRect({ }, clippingLayer()->size())));
+    auto* clippingLayer = this->clippingLayer();
+    if (needsClipMaskLayer()) {
+        m_childClippingMaskLayer = createGraphicsLayer("child clipping mask");
+        m_childClippingMaskLayer->setDrawsContent(true);
+        m_childClippingMaskLayer->setPaintingPhase({ GraphicsLayerPaintingPhase::ChildClippingMask });
+        if (clippingLayer)
+            clippingLayer->setMaskLayer(m_childClippingMaskLayer.copyRef());
+    } else if (m_childClippingMaskLayer) {
+        if (clippingLayer)
+            clippingLayer->setMaskLayer(nullptr);
+        GraphicsLayer::clear(m_childClippingMaskLayer);
     }
 }
 
