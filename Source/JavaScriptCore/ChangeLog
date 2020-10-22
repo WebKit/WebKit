@@ -1,3 +1,19 @@
+2020-10-22  Robin Morisset  <rmorisset@apple.com>
+
+        Use operand names when dumping Bytecode
+        https://bugs.webkit.org/show_bug.cgi?id=218084
+
+        Reviewed by Saam Barati.
+
+        For example this would output the following:
+          [ 258] put_to_scope       scope:loc7, var:3, value:loc8, getPutInfo:1048576<DoNotThrowIfNotFound|GlobalProperty|Initialization|NotStrictMode>, symbolTableOrScopeDepth:0, offset:0
+        instead of
+          [ 258] put_to_scope       loc7, 3, loc8, 1048576<DoNotThrowIfNotFound|GlobalProperty|Initialization|NotStrictMode>, 0, 0
+
+        * bytecode/BytecodeDumper.h:
+        (JSC::BytecodeDumperBase::dumpOperand):
+        * generator/Opcode.rb:
+
 2020-10-21  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] support op_get_private_name in DFG and FTL

@@ -269,7 +269,7 @@ EOF
         dumper->printLocationAndOp(__location, &"**#{@name}"[2 - __sizeShiftAmount]);
 #{print_args { |arg|
 <<-EOF.chomp
-        dumper->dumpOperand(#{arg.field_name}, #{arg.index == 0});
+        dumper->dumpOperand("#{arg.name}", #{arg.field_name}, #{arg.index == 0});
 EOF
     }}
     }

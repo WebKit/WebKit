@@ -47,10 +47,12 @@ public:
     void printLocationAndOp(InstructionStream::Offset location, const char* op);
 
     template<typename T>
-    void dumpOperand(T operand, bool isFirst = false)
+    void dumpOperand(const char* operandName, T operand, bool isFirst = false)
     {
         if (!isFirst)
             m_out.print(", ");
+        m_out.print(operandName);
+        m_out.print(":");
         dumpValue(operand);
     }
 
