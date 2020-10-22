@@ -49,6 +49,7 @@
 #include "ValidationMessage.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
+#include <wtf/SetForScope.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -496,6 +497,11 @@ bool HTMLFormControlElement::checkValidity(Vector<RefPtr<HTMLFormControlElement>
     return false;
 }
 
+bool HTMLFormControlElement::isFocusingWithValidationMessage() const
+{
+    return m_isFocusingWithValidationMessage;
+}
+
 bool HTMLFormControlElement::isShowingValidationMessage() const
 {
     return m_validationMessage && m_validationMessage->isVisible();
@@ -529,6 +535,8 @@ bool HTMLFormControlElement::reportValidity()
 
 void HTMLFormControlElement::focusAndShowValidationMessage()
 {
+    SetForScope<bool> isFocusingWithValidationMessageScope(m_isFocusingWithValidationMessage, true);
+
     // Calling focus() will scroll the element into view.
     focus();
 

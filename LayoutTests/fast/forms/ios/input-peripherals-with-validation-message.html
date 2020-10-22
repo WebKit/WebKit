@@ -1,0 +1,67 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<form>
+<input type="date" id="date" required>
+<br>
+<input type="text" id="text" required>
+<br>
+<input type="submit" id="submit">
+</form>
+<script>
+jsTestIsAsync = true;
+
+description("Test that input peripherals are not presented when focusing form controls with a validation message.");
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    debug("Tap on submit button with an empty required date input.");
+    await UIHelper.activateElementAndWaitForInputSession(submit);
+    shouldBe("document.activeElement", "date");
+
+    isShowingValidationMessage = await UIHelper.isShowingPopover();
+    shouldBeTrue("isShowingValidationMessage");
+
+    hasInputSession = await UIHelper.hasInputSession();
+    shouldBeFalse("hasInputSession");
+
+    debug("\nDismiss validation bubble and tap on date input.");
+    await UIHelper.tapAt(1, 1);
+    await UIHelper.waitForPopoverToDismiss();
+    await UIHelper.activateElementAndWaitForInputSession(date);
+
+    shouldBe("document.activeElement", "date");
+
+    isShowingValidationMessage = await UIHelper.isShowingPopover();
+    shouldBeFalse("isShowingValidationMessage");
+
+    hasInputSession = await UIHelper.hasInputSession();
+    shouldBeTrue("hasInputSession");
+
+    await UIHelper.tapAt(1, 1);
+    await UIHelper.waitForContextMenuToHide();
+
+    // Fill date, so that the text input receives the validation message on submit.
+    date.value = "2020-10-20";
+
+    debug("\nTap on submit button with an empty required text input.");
+    await UIHelper.activateElementAndWaitForInputSession(submit);
+    shouldBe("document.activeElement", "text");
+
+    isShowingValidationMessage = await UIHelper.isShowingPopover();
+    shouldBeTrue("isShowingValidationMessage");
+
+    hasInputSession = await UIHelper.hasInputSession();
+    shouldBeTrue("hasInputSession");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

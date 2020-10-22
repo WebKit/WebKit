@@ -1,3 +1,51 @@
+2020-10-22  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Prevent presentation of input peripherals when focusing form controls with a validation message
+        https://bugs.webkit.org/show_bug.cgi?id=218004
+        <rdar://problem/70507678>
+
+        Reviewed by Wenson Hsieh.
+
+        Interactive form validation can result in the presentation of a
+        validation message bubble near the first form control that has invalid
+        data. Prior to displaying the message, the invalid control is focused.
+        On iOS, this also has the effect of also presenting a virtual keyboard
+        or another custom input peripheral, such as a context menu for date
+        inputs.
+
+        Attempting to present both the validation message and custom input
+        peripheral can leave the view in an inconsistent state. For example,
+        <select> popovers have a strange flashing behavior when presented
+        alongside a validation message, and context menus can fail to present
+        entirely.
+
+        In order to address these issues, we should never attempt to present
+        both a validation message and an input peripheral. Instead, we can
+        prevent the presentation of input peripherals when the focused control
+        is presenting a validation message. This behavior matches macOS. Note
+        that we still present the keyboard for controls that have a keyboard
+        view, since the keyboard area does overlap the area where a validation
+        message is presented.
+
+        * Shared/FocusedElementInformation.cpp:
+        (WebKit::FocusedElementInformation::encode const):
+        (WebKit::FocusedElementInformation::decode):
+        * Shared/FocusedElementInformation.h:
+
+        Added isFocusingWithValidationMessage to the struct, so that the UIProcess
+        knows that the element gained focus due to the presentation of a
+        validation message.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+
+        Prevent an input view from being shown if the control does not present
+        a keyboard and was focused with a validation message.
+
+        (-[WKContentView _elementDidBlur]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getFocusedElementInformation):
+
 2020-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: handle key events with non-ASCII unicode code point

@@ -106,6 +106,7 @@ public:
     bool reportValidity();
     void focusAndShowValidationMessage();
     bool isShowingValidationMessage() const;
+    WEBCORE_EXPORT bool isFocusingWithValidationMessage() const;
     // This must be called when a validation constraint or control value is changed.
     void updateValidity();
     void setCustomValidity(const String&) override;
@@ -180,6 +181,8 @@ private:
     bool needsMouseFocusableQuirk() const;
 
     std::unique_ptr<ValidationMessage> m_validationMessage;
+    bool m_isFocusingWithValidationMessage { false };
+
     unsigned m_disabled : 1;
     unsigned m_isReadOnly : 1;
     unsigned m_isRequired : 1;

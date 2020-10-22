@@ -3052,6 +3052,9 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
     if (is<HTMLElement>(focusedElement))
         information.isSpellCheckingEnabled = downcast<HTMLElement>(*focusedElement).spellcheck();
 
+    if (is<HTMLFormControlElement>(focusedElement))
+        information.isFocusingWithValidationMessage = downcast<HTMLFormControlElement>(*focusedElement).isFocusingWithValidationMessage();
+
     information.minimumScaleFactor = minimumPageScaleFactor();
     information.maximumScaleFactor = maximumPageScaleFactor();
     information.maximumScaleFactorIgnoringAlwaysScalable = maximumPageScaleFactorIgnoringAlwaysScalable();

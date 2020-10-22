@@ -1,3 +1,22 @@
+2020-10-22  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Prevent presentation of input peripherals when focusing form controls with a validation message
+        https://bugs.webkit.org/show_bug.cgi?id=218004
+        <rdar://problem/70507678>
+
+        Reviewed by Wenson Hsieh.
+
+        Added a test which verifies that focusing on a date input as a result
+        of presenting a validation message, successfully presents the message,
+        and does not present a context menu. The test also ensures that controls
+        that present a keyboard, such as text inputs, present both the message
+        and the keyboard.
+
+        * fast/forms/ios/input-peripherals-with-validation-message-expected.txt: Added.
+        * fast/forms/ios/input-peripherals-with-validation-message.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.isShowingPopover):
+
 2020-10-22  Peng Liu  <peng.liu6@apple.com>
 
         Let webkitDisplayingFullscreen() return true when a video element’s fullscreen mode is not VideoFullscreenModeNone

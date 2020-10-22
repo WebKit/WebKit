@@ -580,6 +580,13 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static isShowingPopover()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript("uiController.isShowingPopover", result => resolve(result === "true"));
+        });
+    }
+
     static hasInputSession()
     {
         return new Promise(resolve => {

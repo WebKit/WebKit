@@ -144,6 +144,7 @@ struct FocusedElementInformation {
     bool shouldAvoidResizingWhenInputViewBoundsChange { false };
     bool shouldAvoidScrollingWhenFocusedContentIsVisible { false };
     bool shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation { false };
+    bool isFocusingWithValidationMessage { false };
 
     FocusedElementIdentifier focusedElementIdentifier { 0 };
 

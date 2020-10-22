@@ -110,6 +110,7 @@ void FocusedElementInformation::encode(IPC::Encoder& encoder) const
     encoder << shouldAvoidResizingWhenInputViewBoundsChange;
     encoder << shouldAvoidScrollingWhenFocusedContentIsVisible;
     encoder << shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation;
+    encoder << isFocusingWithValidationMessage;
 }
 
 bool FocusedElementInformation::decode(IPC::Decoder& decoder, FocusedElementInformation& result)
@@ -244,6 +245,9 @@ bool FocusedElementInformation::decode(IPC::Decoder& decoder, FocusedElementInfo
         return false;
 
     if (!decoder.decode(result.shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation))
+        return false;
+
+    if (!decoder.decode(result.isFocusingWithValidationMessage))
         return false;
 
     return true;
