@@ -75,12 +75,15 @@ public:
     bool unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) final { return false; }
 #endif
 
+    JSC::VM& vm() final { return m_vm; }
+
     using RefCounted::ref;
     using RefCounted::deref;
 
 private:
     EmptyScriptExecutionContext(JSC::VM& vm)
-        : m_origin(SecurityOrigin::createUnique())
+        : m_vm(vm)
+        , m_origin(SecurityOrigin::createUnique())
         , m_eventLoop(EmptyEventLoop::create(vm))
         , m_eventLoopTaskGroup(makeUnique<EventLoopTaskGroup>(m_eventLoop))
     {
@@ -112,6 +115,7 @@ private:
         MicrotaskQueue m_queue;
     };
 
+    Ref<JSC::VM> m_vm;
     Ref<SecurityOrigin> m_origin;
     URL m_url;
     Ref<EmptyEventLoop> m_eventLoop;

@@ -8669,6 +8669,11 @@ void Document::canvasDestroyed(CanvasBase& canvasBase)
     }
 }
 
+JSC::VM& Document::vm()
+{
+    return commonVM();
+}
+
 } // namespace WebCore
 
 #undef RELEASE_LOG_IF_ALLOWED

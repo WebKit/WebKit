@@ -47,6 +47,8 @@ public:
     WorkerOrWorkletScriptController* script() const { return m_script.get(); }
     void clearScript();
 
+    JSC::VM& vm() final;
+
     unsigned long createUniqueIdentifier() { return m_uniqueIdentifier++; }
 
     // ScriptExecutionContext.

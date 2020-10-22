@@ -477,17 +477,6 @@ Seconds ScriptExecutionContext::domTimerAlignmentInterval(bool) const
     return DOMTimer::defaultAlignmentInterval();
 }
 
-JSC::VM& ScriptExecutionContext::vm()
-{
-    if (is<Document>(*this))
-        return commonVM();
-    if (is<WorkerOrWorkletGlobalScope>(*this))
-        return downcast<WorkerOrWorkletGlobalScope>(*this).script()->vm();
-
-    RELEASE_ASSERT_NOT_REACHED();
-    return commonVM();
-}
-
 RejectedPromiseTracker& ScriptExecutionContext::ensureRejectedPromiseTrackerSlow()
 {
     // ScriptExecutionContext::vm() in Worker is only available after WorkerGlobalScope initialization is done.

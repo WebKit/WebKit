@@ -64,6 +64,11 @@ void WorkerOrWorkletGlobalScope::clearScript()
     m_script = nullptr;
 }
 
+JSC::VM& WorkerOrWorkletGlobalScope::vm()
+{
+    return script()->vm();
+}
+
 void WorkerOrWorkletGlobalScope::disableEval(const String& errorMessage)
 {
     m_script->disableEval(errorMessage);
