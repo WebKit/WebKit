@@ -597,7 +597,6 @@ private:
     RetainPtr<CGImageRef> m_pendingContentsImage;
     
     Vector<LayerPropertyAnimation> m_animations;
-    Vector<LayerPropertyAnimation> m_baseValueTransformAnimations;
 
     Vector<FloatRect> m_dirtyRects;
 

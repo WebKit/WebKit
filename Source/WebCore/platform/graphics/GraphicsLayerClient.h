@@ -26,7 +26,6 @@
 #pragma once
 
 #include "TiledBacking.h"
-#include "TransformationMatrix.h"
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 
@@ -38,6 +37,7 @@ class GraphicsContext;
 class GraphicsLayer;
 class IntPoint;
 class IntRect;
+class TransformationMatrix;
 
 enum class GraphicsLayerPaintingPhase {
     Background            = 1 << 0,
@@ -51,9 +51,6 @@ enum class GraphicsLayerPaintingPhase {
 
 enum AnimatedPropertyID {
     AnimatedPropertyInvalid,
-    AnimatedPropertyTranslate,
-    AnimatedPropertyScale,
-    AnimatedPropertyRotate,
     AnimatedPropertyTransform,
     AnimatedPropertyOpacity,
     AnimatedPropertyBackgroundColor,
@@ -62,11 +59,6 @@ enum AnimatedPropertyID {
     AnimatedPropertyWebkitBackdropFilter,
 #endif
 };
-
-inline bool animatedPropertyIsTransformOrRelated(AnimatedPropertyID property)
-{
-    return property == AnimatedPropertyTransform || property == AnimatedPropertyTranslate || property == AnimatedPropertyScale || property == AnimatedPropertyRotate;
-}
 
 enum LayerTreeAsTextBehaviorFlags {
     LayerTreeAsTextBehaviorNormal               = 0,
@@ -146,8 +138,6 @@ public:
     virtual bool needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack(const GraphicsLayer&) const { return false; }
 
     virtual void logFilledVisibleFreshTile(unsigned) { };
-
-    virtual TransformationMatrix transformMatrixForProperty(AnimatedPropertyID) const { return { }; }
 
 #ifndef NDEBUG
     // RenderLayerBacking overrides this to verify that it is not
