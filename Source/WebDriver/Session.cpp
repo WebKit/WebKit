@@ -2094,7 +2094,8 @@ void Session::elementSendKeys(const String& elementID, const String& text, Funct
                     "function focus(element) {"
                     "    let doc = element.ownerDocument || element;"
                     "    let prevActiveElement = doc.activeElement;"
-                    "    if (element != prevActiveElement && prevActiveElement)"
+                    "    let elementRootNode = element.getRootNode();"
+                    "    if (elementRootNode.activeElement !== element && prevActiveElement)"
                     "        prevActiveElement.blur();"
                     "    element.focus();"
                     "    let tagName = element.tagName.toUpperCase();"
@@ -2103,7 +2104,7 @@ void Session::elementSendKeys(const String& elementID, const String& text, Funct
                     "    let isTextElement = tagName === 'TEXTAREA' || (tagName === 'INPUT' && element.type === 'text');"
                     "    if (isTextElement && element.selectionEnd == 0)"
                     "        element.setSelectionRange(element.value.length, element.value.length);"
-                    "    if (element != doc.activeElement)"
+                    "    if (elementRootNode.activeElement !== element)"
                     "        throw {name: 'ElementNotInteractable', message: 'Element is not focusable.'};"
                     "}";
 

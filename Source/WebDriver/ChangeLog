@@ -1,3 +1,16 @@
+2020-10-22  Nitzan Uziely  <linkgoron@gmail.com>
+
+        Elements in Shadow DOM are wrongly marked as stale by the WebDriver
+        https://bugs.webkit.org/show_bug.cgi?id=217635
+
+        Reviewed by Brian Burg.
+
+        Changed stale checking, to check if the root node is the document element, 
+        instead of document.contains which doesn't work for elements in Shadow DOM.
+
+        * Session.cpp:
+        (WebDriver::Session::elementSendKeys):
+
 2020-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: add support for wheel actions

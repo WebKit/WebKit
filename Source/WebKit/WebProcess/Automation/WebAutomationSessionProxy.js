@@ -252,7 +252,8 @@ let AutomationSessionProxy = class AutomationSessionProxy
     _clearStaleNodes()
     {
         for (var [node, identifier] of this._nodeToIdMap) {
-            if (!document.contains(node)) {
+            const rootNode = node.getRootNode({ composed: true });
+            if (rootNode !== document) {
                 this._nodeToIdMap.delete(node);
                 this._idToNodeMap.delete(identifier);
             }
