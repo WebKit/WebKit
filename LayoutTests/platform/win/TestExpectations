@@ -683,6 +683,9 @@ webkit.org/b/149245 imported/w3c/web-platform-tests/css/css-multicol/multicol-sh
 webkit.org/b/149245 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-block-sibling-003.xht [ Skip ]
 webkit.org/b/149245 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-firstchild-001.xht [ Skip ]
 
+# TODO EXIF-resolution is not supported
+imported/w3c/web-platform-tests/density-size-correction/ [ Skip ]
+
 # font-variant-* not implemented on Windows
 webkit.org/b/149630 css3/font-variant-all.html [ ImageOnlyFailure ]
 

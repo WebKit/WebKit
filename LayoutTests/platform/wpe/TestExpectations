@@ -36,6 +36,9 @@ webkit.org/b/215502 fast/flexbox/image-percent-max-height.html [ Failure Pass Im
 # Paint Timing
 webkit.org/b/211221 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-num-chars.html [ Pass Failure ]
 
+# We don't yet support EXIF-based resolution
+webkit.org/b/217821 imported/w3c/web-platform-tests/density-size-correction/ [ Skip ]
+
 # Scrolling coordinator
 webkit.org/b/215508 [ Release ] scrollingcoordinator/overflow-proxy-reattach.html [ Pass Timeout ]
 

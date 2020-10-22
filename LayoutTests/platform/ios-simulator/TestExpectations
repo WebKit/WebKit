@@ -44,6 +44,9 @@ webkit.org/b/170176 fast/inline-block/baseline-vertical-02.html [ ImageOnlyFailu
 webkit.org/b/170176 fast/inline-block/baseline-vertical-03.html [ ImageOnlyFailure ]
 webkit.org/b/170176 fast/inline-block/baseline-vertical-04.html [ ImageOnlyFailure ]
 
+# Imported w3c tests require fuzzy image comparison
+imported/w3c/web-platform-tests/density-size-correction/density-corrected-various-elements.html [ ImageOnlyFailure ]
+
 # WebGL tests which need triaging https://bugs.webkit.org/b/174100
 webgl/1.0.3/conformance/uniforms/uniform-default-values.html [ Failure ]
 

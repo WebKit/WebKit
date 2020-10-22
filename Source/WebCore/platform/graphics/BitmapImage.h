@@ -137,7 +137,7 @@ public:
 
     WEBCORE_EXPORT NativeImagePtr nativeImage(const GraphicsContext* = nullptr) override;
     NativeImagePtr nativeImageForCurrentFrame(const GraphicsContext* = nullptr) override;
-    NativeImagePtr nativeImageForCurrentFrameRespectingOrientation(const GraphicsContext* = nullptr) override;
+    NativeImagePtr preTransformedNativeImageForCurrentFrame(bool respectOrientation, const GraphicsContext* = nullptr) override;
 #if USE(CG)
     NativeImagePtr nativeImageOfSize(const IntSize&, const GraphicsContext* = nullptr) override;
     Vector<NativeImagePtr> framesNativeImages();
@@ -164,6 +164,9 @@ private:
     // If the image is large enough, calls destroyDecodedData() and passes
     // |destroyAll| along.
     void destroyDecodedDataIfNecessary(bool destroyAll = true);
+
+    FloatSize sourceSize(ImageOrientation orientation = ImageOrientation::FromImage) const final { return m_source->sourceSize(orientation); }
+    bool hasDensityCorrectedSize() const override { return m_source->hasDensityCorrectedSize(); }
 
     ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) override;
     void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) override;

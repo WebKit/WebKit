@@ -19,6 +19,7 @@
     "css/selectors": "import", 
     "css/support": "import", 
     "custom-elements": "import", 
+    "density-size-correction": "import", 
     "encrypted-media": "import", 
     "paint-timing/": "import", 
     "paint-timing/fcp-only": "import", 

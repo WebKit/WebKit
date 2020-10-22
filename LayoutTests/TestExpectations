@@ -2038,6 +2038,10 @@ imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-reference-bo
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-svg-invalidate.html [ ImageOnlyFailure ]
 webkit.org/b/104442 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-change-from-empty.html [ ImageOnlyFailure ]
 
+# Imported w3c tests require fuzzy image comparison
+webkit.org/b/149828 imported/w3c/web-platform-tests/density-size-correction/density-corrected-image-svg-aspect-ratio.html [ ImageOnlyFailure ]
+webkit.org/b/149828 imported/w3c/web-platform-tests/density-size-correction/density-corrected-size-bg.html [ ImageOnlyFailure ]
+
 # A support file for a test
 imported/w3c/web-platform-tests/css/css-masking/clip-path/svg-clipPath.svg [ Skip ]
 

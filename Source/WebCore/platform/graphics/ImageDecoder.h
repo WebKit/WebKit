@@ -67,6 +67,7 @@ public:
     virtual IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const = 0;
     virtual bool frameIsCompleteAtIndex(size_t) const = 0;
     virtual ImageOrientation frameOrientationAtIndex(size_t) const = 0;
+    virtual Optional<IntSize> frameDensityCorrectedSizeAtIndex(size_t) const { return WTF::nullopt; }
 
     virtual Seconds frameDurationAtIndex(size_t) const = 0;
     virtual bool frameHasAlphaAtIndex(size_t) const = 0;

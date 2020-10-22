@@ -95,10 +95,14 @@ public:
     String uti();
     String filenameExtension();
     Optional<IntPoint> hotSpot();
+    Optional<IntSize> densityCorrectedSize(ImageOrientation = ImageOrientation::FromImage);
+    bool hasDensityCorrectedSize() { return densityCorrectedSize().hasValue(); }
+
     ImageOrientation orientation();
 
     // Image metadata which is calculated from the first ImageFrame.
     WEBCORE_EXPORT IntSize size(ImageOrientation = ImageOrientation::FromImage);
+    IntSize sourceSize(ImageOrientation = ImageOrientation::FromImage);
     IntSize sizeRespectingOrientation();
     Color singlePixelSolidColor();
     SubsamplingLevel maximumSubsamplingLevel();
@@ -200,6 +204,7 @@ private:
     // Image metadata which is calculated from the first ImageFrame.
     Optional<IntSize> m_size;
     Optional<ImageOrientation> m_orientation;
+    Optional<Optional<IntSize>> m_densityCorrectedSize;
     Optional<Color> m_singlePixelSolidColor;
     Optional<SubsamplingLevel> m_maximumSubsamplingLevel;
 

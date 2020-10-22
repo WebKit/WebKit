@@ -150,6 +150,7 @@ public:
     bool ignoresGammaAndColorProfile() const { return m_ignoreGammaAndColorProfile; }
 
     ImageOrientation frameOrientationAtIndex(size_t) const override { return m_orientation; }
+    Optional<IntSize> frameDensityCorrectedSizeAtIndex(size_t) const override { return m_densityCorrectedSize; }
 
     bool frameAllowSubsamplingAtIndex(size_t) const override { return false; }
 
@@ -201,6 +202,7 @@ protected:
     bool m_premultiplyAlpha;
     bool m_ignoreGammaAndColorProfile;
     ImageOrientation m_orientation;
+    Optional<IntSize> m_densityCorrectedSize;
 
 private:
     virtual void tryDecodeSize(bool) = 0;

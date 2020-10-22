@@ -152,20 +152,26 @@ NativeImagePtr BitmapImage::nativeImageForCurrentFrame(const GraphicsContext* ta
     return frameImageAtIndexCacheIfNeeded(m_currentFrame, SubsamplingLevel::Default, targetContext);
 }
 
-NativeImagePtr BitmapImage::nativeImageForCurrentFrameRespectingOrientation(const GraphicsContext* targetContext)
+NativeImagePtr BitmapImage::preTransformedNativeImageForCurrentFrame(bool respectOrientation, const GraphicsContext* targetContext)
 {
     auto image = nativeImageForCurrentFrame(targetContext);
 
-    ImageOrientation orientation = orientationForCurrentFrame();
-    if (orientation == ImageOrientation::None)
+    auto orientation = respectOrientation ? orientationForCurrentFrame() : ImageOrientation(ImageOrientation::None);
+    auto correctedSize = m_source->densityCorrectedSize(orientation);
+    if (orientation == ImageOrientation::None && !correctedSize)
         return image;
 
-    FloatRect rect = { FloatPoint(), size() };
-    auto buffer = ImageBuffer::create(rect.size(), RenderingMode::Unaccelerated);
+    auto correctedSizeFloat = correctedSize ? FloatSize(correctedSize.value()) : size();
+    auto buffer = ImageBuffer::create(correctedSizeFloat, RenderingMode::Unaccelerated);
     if (!buffer)
         return image;
 
-    buffer->context().drawNativeImage(image, rect.size(), rect, rect, { orientation });
+    auto sourceSize = this->sourceSize();
+
+    FloatRect destRect(FloatPoint(), correctedSizeFloat);
+    FloatRect sourceRect(FloatPoint(), sourceSize);
+
+    buffer->context().drawNativeImage(image, sourceSize, destRect, sourceRect, { orientation });
     return ImageBuffer::sinkIntoNativeImage(WTFMove(buffer));
 }
 
@@ -220,13 +226,21 @@ static inline void drawNativeImage(const NativeImagePtr& image, GraphicsContext&
     context.drawNativeImage(image, subsampledImageSize, destRect, adjustedSrcRect, options);
 }
 
-ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, const FloatRect& requestedSrcRect, const ImagePaintingOptions& options)
 {
-    if (destRect.isEmpty() || srcRect.isEmpty())
+    if (destRect.isEmpty() || requestedSrcRect.isEmpty())
         return ImageDrawResult::DidNothing;
 
-    FloatSize scaleFactorForDrawing = context.scaleFactorForDrawing(destRect, srcRect);
-    IntSize sizeForDrawing = expandedIntSize(size(ImageOrientation::None) * scaleFactorForDrawing);
+    
+    auto srcRect = requestedSrcRect;
+    auto preferredSize = size();
+    auto srcSize = sourceSize();
+
+    if (preferredSize != srcSize)
+        srcRect.scale(srcSize.width() / preferredSize.width(), srcSize.height() / preferredSize.height());
+
+    auto scaleFactorForDrawing = context.scaleFactorForDrawing(destRect, srcRect);
+    auto sizeForDrawing = expandedIntSize(srcSize * scaleFactorForDrawing);
     ImageDrawResult result = ImageDrawResult::DidDraw;
 
     m_currentSubsamplingLevel = m_allowSubsampling ? subsamplingLevelForScaleFactor(context, scaleFactorForDrawing) : SubsamplingLevel::Default;
@@ -308,9 +322,9 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
     auto orientation = options.orientation();
     if (orientation == ImageOrientation::FromImage) {
         orientation = frameOrientationAtIndex(m_currentFrame);
-        drawNativeImage(image, context, destRect, srcRect, IntSize(size(orientation)), { options, orientation });
+        drawNativeImage(image, context, destRect, srcRect, IntSize(sourceSize(orientation)), { options, orientation });
     } else
-        drawNativeImage(image, context, destRect, srcRect, IntSize(size(orientation)), options);
+        drawNativeImage(image, context, destRect, srcRect, IntSize(sourceSize(orientation)), options);
 
     m_currentFrameDecodingStatus = frameDecodingStatusAtIndex(m_currentFrame);
 

@@ -1,3 +1,20 @@
+2020-10-22  Noam Rosenthal  <noam@webkit.org>
+
+        Support EXIF image resolution in CoreGraphics (OSX/iOS)
+        https://bugs.webkit.org/show_bug.cgi?id=217820
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations:
+                For now, expect image failure in tests that require fuzzy matching.
+                The tests pass manually. There is an open bug for fuzzy matching.
+
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wpe/TestExpectations:
+                Disable this feature for platforms where it's not yet supported.
+
 2020-10-22  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Rebaseline fast/repaint/focus-ring-repaint.html after r268862

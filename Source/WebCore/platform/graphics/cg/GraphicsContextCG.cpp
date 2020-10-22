@@ -445,11 +445,7 @@ void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const
     float adjustedX = phase.x() - destRect.x() + tileRect.x() * narrowPrecisionToFloat(patternTransform.a()); // We translated the context so that destRect.x() is the origin, so subtract it out.
     float adjustedY = destRect.height() - (phase.y() - destRect.y() + tileRect.y() * narrowPrecisionToFloat(patternTransform.d()) + scaledTileHeight);
 
-    NativeImagePtr tileImage;
-    if (options.orientation() == ImageOrientation::FromImage)
-        tileImage = image.nativeImageForCurrentFrameRespectingOrientation();
-    else
-        tileImage = image.nativeImageForCurrentFrame();
+    auto tileImage = image.preTransformedNativeImageForCurrentFrame(options.orientation() == ImageOrientation::FromImage);
 
     float h = CGImageGetHeight(tileImage.get());
 

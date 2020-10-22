@@ -68,6 +68,9 @@ public:
     void setOrientation(ImageOrientation orientation) { m_orientation = orientation; };
     ImageOrientation orientation() const { return m_orientation; }
 
+    void setDensityCorrectedSize(const IntSize& size) { m_densityCorrectedSize = size; }
+    Optional<IntSize> densityCorrectedSize() const { return m_densityCorrectedSize; }
+
     void setDuration(const Seconds& duration) { m_duration = duration; }
     Seconds duration() const { return m_duration; }
 
@@ -90,6 +93,7 @@ private:
     DecodingOptions m_decodingOptions;
 
     ImageOrientation m_orientation { ImageOrientation::None };
+    Optional<IntSize> m_densityCorrectedSize;
     Seconds m_duration;
     bool m_hasAlpha { true };
 };

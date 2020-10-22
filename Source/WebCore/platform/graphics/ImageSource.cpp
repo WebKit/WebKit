@@ -272,6 +272,7 @@ void ImageSource::cacheMetadataAtIndex(size_t index, SubsamplingLevel subsamplin
         frame.m_size = m_decoder->frameSizeAtIndex(index, subsamplingLevel);
 
     frame.m_orientation = m_decoder->frameOrientationAtIndex(index);
+    frame.m_densityCorrectedSize = m_decoder->frameDensityCorrectedSizeAtIndex(index);
     frame.m_hasAlpha = m_decoder->frameHasAlphaAtIndex(index);
 
     if (repetitionCount())
@@ -565,7 +566,25 @@ ImageOrientation ImageSource::orientation()
     return frameMetadataAtIndexCacheIfNeeded<ImageOrientation>(0, (&ImageFrame::orientation), &m_orientation, ImageFrame::Caching::Metadata);
 }
 
+Optional<IntSize> ImageSource::densityCorrectedSize(ImageOrientation orientation)
+{
+    auto size = frameMetadataAtIndexCacheIfNeeded<Optional<IntSize>>(0, &ImageFrame::densityCorrectedSize, &m_densityCorrectedSize, ImageFrame::Caching::Metadata);
+    if (!size)
+        return WTF::nullopt;
+
+    if (orientation == ImageOrientation::FromImage)
+        orientation = this->orientation();
+
+    return orientation.usesWidthAsHeight() ? Optional<IntSize>(size.value().transposedSize()) : size;
+}
+
 IntSize ImageSource::size(ImageOrientation orientation)
+{
+    auto preferredSize = densityCorrectedSize(orientation);
+    return preferredSize ? preferredSize.value() : sourceSize(orientation);
+}
+
+IntSize ImageSource::sourceSize(ImageOrientation orientation)
 {
     IntSize size;
 #if !USE(CG)

@@ -1922,6 +1922,7 @@ platform/graphics/ImageDecoder.cpp
 platform/graphics/ImageFrame.cpp
 platform/graphics/ImageSource.cpp
 platform/graphics/InbandGenericCue.cpp
+platform/graphics/ImageResolution.cpp
 platform/graphics/IntPoint.cpp
 platform/graphics/IntRect.cpp
 platform/graphics/IntSize.cpp

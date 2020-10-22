@@ -116,6 +116,8 @@ public:
     virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
     virtual FloatSize size(ImageOrientation = ImageOrientation::FromImage) const = 0;
+    virtual FloatSize sourceSize(ImageOrientation orientation = ImageOrientation::FromImage) const { return size(orientation); }
+    virtual bool hasDensityCorrectedSize() const { return false; }
     FloatRect rect() const { return FloatRect(FloatPoint(), size()); }
     float width() const { return size().width(); }
     float height() const { return size().height(); }
@@ -153,7 +155,7 @@ public:
 
     virtual NativeImagePtr nativeImage(const GraphicsContext* = nullptr) { return nullptr; }
     virtual NativeImagePtr nativeImageForCurrentFrame(const GraphicsContext* = nullptr) { return nullptr; }
-    virtual NativeImagePtr nativeImageForCurrentFrameRespectingOrientation(const GraphicsContext* = nullptr) { return nullptr; }
+    virtual NativeImagePtr preTransformedNativeImageForCurrentFrame(bool = true, const GraphicsContext* = nullptr) { return nullptr; }
     virtual NativeImagePtr nativeImageOfSize(const IntSize&, const GraphicsContext* = nullptr) { return nullptr; }
 
     // Accessors for native image formats.
