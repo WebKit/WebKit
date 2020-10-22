@@ -333,7 +333,7 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
             keyCode = keyCodeForVirtualKey(virtualKey);
         },
         [&] (CharKey charKey) {
-            keyCode = wpe_unicode_to_key_code(g_utf8_get_char(&charKey));
+            keyCode = wpe_unicode_to_key_code(charKey);
         }
     );
     uint32_t modifiers = modifiersForKeyCode(keyCode);

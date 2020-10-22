@@ -1,5 +1,16 @@
 2020-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: handle key events with non-ASCII unicode code point
+        https://bugs.webkit.org/show_bug.cgi?id=217950
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Remove expectations for tests that are now passing.
+
+        * TestExpectations.json:
+
+2020-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Update W3C WebDriver imported tests.
 
         * TestExpectations.json:

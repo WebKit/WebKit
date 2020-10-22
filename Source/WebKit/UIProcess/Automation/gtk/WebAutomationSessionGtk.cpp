@@ -293,7 +293,7 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
             keyCode = keyCodeForVirtualKey(virtualKey);
         },
         [&] (CharKey charKey) {
-            keyCode = gdk_unicode_to_keyval(g_utf8_get_char(&charKey));
+            keyCode = gdk_unicode_to_keyval(charKey);
         }
     );
     unsigned modifiers = modifiersForKeyCode(keyCode);

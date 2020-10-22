@@ -362,18 +362,6 @@
             "test_modifier_key_sends_correct_events[\\ue053-R_META]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
             },
-            "test_printable_key_sends_correct_events[\\xe0-]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
-            "test_printable_key_sends_correct_events[\\u0416-]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
-            "test_printable_key_sends_correct_events[\\u2603-]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
-            "test_printable_key_sends_correct_events[\\uf6c2-]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
             "test_special_key_sends_keydown[META-expected30]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
             },

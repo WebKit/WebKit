@@ -1,3 +1,23 @@
+2020-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: handle key events with non-ASCII unicode code point
+        https://bugs.webkit.org/show_bug.cgi?id=217950
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        We are assuming that key events are limited to ASCII, but they contain a unicode code point.
+
+        Fixes: imported/w3c/webdriver/tests/perform_actions/key_events.py::test_printable_key_sends_correct_events[\xe0-]
+               imported/w3c/webdriver/tests/perform_actions/key_events.py::test_printable_key_sends_correct_events[\u0416-]
+               imported/w3c/webdriver/tests/perform_actions/key_events.py::test_printable_key_sends_correct_events[\u2603-]
+               imported/w3c/webdriver/tests/perform_actions/key_events.py::test_printable_key_sends_correct_events[\uf6c2-]
+
+        * UIProcess/Automation/SimulatedInputDispatcher.h: Use UChar32 instead of char for CharKey.
+        * UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp:
+        (WebKit::WebAutomationSession::platformSimulateKeyboardInteraction): Handle Charkey as a unicode code point.
+        * UIProcess/Automation/wpe/WebAutomationSessionWPE.cpp:
+        (WebKit::WebAutomationSession::platformSimulateKeyboardInteraction): Ditto.
+
 2020-10-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Move function definitions in JSIPCBinding.h into cpp file

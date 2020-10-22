@@ -58,7 +58,7 @@ class WebPageProxy;
 using KeyboardInteraction = Inspector::Protocol::Automation::KeyboardInteractionType;
 using VirtualKey = Inspector::Protocol::Automation::VirtualKey;
 using VirtualKeyMap = HashMap<VirtualKey, VirtualKey, WTF::IntHash<VirtualKey>, WTF::StrongEnumHashTraits<VirtualKey>>;
-using CharKey = char; // For WebDriver, this only needs to support ASCII characters on 102-key keyboard.
+using CharKey = UChar32;
 using MouseButton = Inspector::Protocol::Automation::MouseButton;
 using MouseInteraction = Inspector::Protocol::Automation::MouseInteraction;
 using MouseMoveOrigin = Inspector::Protocol::Automation::MouseMoveOrigin;
