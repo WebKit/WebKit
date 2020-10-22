@@ -29,6 +29,8 @@
 #if ENABLE(IPC_TESTING_API)
 
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSGlobalObjectInlines.h>
+#include <JavaScriptCore/ObjectConstructor.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/RegistrableDomain.h>

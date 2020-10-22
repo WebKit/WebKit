@@ -1,3 +1,14 @@
+2020-10-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        IPC testing API should have the capability to observe messages being sent and received
+        https://bugs.webkit.org/show_bug.cgi?id=217870
+
+        Unreviewed ASAN release build fix.
+
+        * Platform/IPC/JSIPCBinding.cpp:
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::JSMessageListener::JSMessageListener):
+
 2020-10-22  Eric Carlson  <eric.carlson@apple.com>
 
         UIClient isn't notified when page muted state changes

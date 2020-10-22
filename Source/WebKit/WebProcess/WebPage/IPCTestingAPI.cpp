@@ -894,6 +894,8 @@ JSMessageListener::JSMessageListener(JSIPC& jsIPC, Type type, JSContextRef conte
     // since this object is supposed to live as long as the global object is alive.
     JSC::PrivateName uniquePrivateName;
     globalObject->putDirect(vm, uniquePrivateName, toJS(globalObject, callback));
+
+    UNUSED_PARAM(catchScope);
 }
 
 void JSMessageListener::didReceiveMessage(const IPC::Decoder& decoder)
