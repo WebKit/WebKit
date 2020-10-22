@@ -5870,15 +5870,12 @@ double HTMLMediaElement::maxFastForwardRate() const
 
 bool HTMLMediaElement::isFullscreen() const
 {
-    if (m_videoFullscreenMode != VideoFullscreenModeNone)
-        return true;
-
 #if ENABLE(FULLSCREEN_API)
     if (document().fullscreenManager().isFullscreen() && document().fullscreenManager().currentFullscreenElement() == this)
         return true;
 #endif
 
-    return false;
+    return m_videoFullscreenMode != VideoFullscreenModeNone;
 }
 
 bool HTMLMediaElement::isStandardFullscreen() const
@@ -5910,6 +5907,8 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     if (m_waitingToEnterFullscreen)
         return;
 
+    m_changingVideoFullscreenMode = true;
+
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
     if (document().settings().fullScreenEnabled() && mode == VideoFullscreenModeStandard) {
         m_temporarilyAllowingInlinePlaybackAfterFullscreen = false;
@@ -5922,6 +5921,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     m_fullscreenTaskQueue.enqueueTask([this, mode] {
         if (document().hidden()) {
             ALWAYS_LOG(LOGIDENTIFIER, " returning because document is hidden");
+            m_changingVideoFullscreenMode = false;
             return;
         }
 
@@ -5931,7 +5931,9 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
                 ALWAYS_LOG(LOGIDENTIFIER, "Entering fullscreen mode ", mode, ", m_videoFullscreenStandby = ", m_videoFullscreenStandby);
 
                 m_temporarilyAllowingInlinePlaybackAfterFullscreen = false;
-                m_waitingToEnterFullscreen = true;
+                if (mode == VideoFullscreenModeStandard)
+                    m_waitingToEnterFullscreen = true;
+
                 auto oldMode = m_videoFullscreenMode;
                 setFullscreenMode(mode);
                 configureMediaControls();
@@ -5944,8 +5946,12 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
                     scheduleEvent(eventNames().webkitbeginfullscreenEvent);
                 else if (oldMode == VideoFullscreenModeStandard)
                     scheduleEvent(eventNames().webkitendfullscreenEvent);
+
+                return;
             }
         }
+
+        m_changingVideoFullscreenMode = false;
     });
 }
 
@@ -5962,8 +5968,10 @@ void HTMLMediaElement::exitFullscreen()
 
 #if ENABLE(FULLSCREEN_API)
     if (document().settings().fullScreenEnabled() && document().fullscreenManager().currentFullscreenElement() == this) {
-        if (document().fullscreenManager().isFullscreen())
+        if (document().fullscreenManager().isFullscreen()) {
+            m_changingVideoFullscreenMode = true;
             document().fullscreenManager().cancelFullscreen();
+        }
 
         if (m_videoFullscreenMode == VideoFullscreenModeStandard)
             return;
@@ -5991,13 +5999,17 @@ void HTMLMediaElement::exitFullscreen()
 
     if (document().activeDOMObjectsAreSuspended() || document().activeDOMObjectsAreStopped()) {
         setFullscreenMode(VideoFullscreenModeNone);
+        m_changingVideoFullscreenMode = true;
         document().page()->chrome().client().exitVideoFullscreenToModeWithoutAnimation(downcast<HTMLVideoElement>(*this), VideoFullscreenModeNone);
     } else if (document().page()->chrome().client().supportsVideoFullscreen(oldVideoFullscreenMode)) {
         if (m_videoFullscreenStandby) {
             setFullscreenMode(VideoFullscreenModeNone);
+            m_changingVideoFullscreenMode = true;
             document().page()->chrome().client().enterVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this), m_videoFullscreenMode, m_videoFullscreenStandby);
             return;
         }
+
+        m_changingVideoFullscreenMode = true;
 
         if (oldVideoFullscreenMode == VideoFullscreenModeStandard) {
             setFullscreenMode(VideoFullscreenModeNone);
@@ -6070,6 +6082,7 @@ void HTMLMediaElement::didBecomeFullscreenElement()
 {
     ALWAYS_LOG(LOGIDENTIFIER, ", fullscreen mode = ", fullscreenMode());
     m_waitingToEnterFullscreen = false;
+    m_changingVideoFullscreenMode = false;
     scheduleUpdatePlayState();
 }
 
@@ -6077,6 +6090,11 @@ void HTMLMediaElement::willStopBeingFullscreenElement()
 {
     if (fullscreenMode() == VideoFullscreenModeStandard)
         setFullscreenMode(VideoFullscreenModeNone);
+}
+
+void HTMLMediaElement::didStopBeingFullscreenElement()
+{
+    m_changingVideoFullscreenMode = false;
 }
 
 PlatformLayer* HTMLMediaElement::platformLayer() const

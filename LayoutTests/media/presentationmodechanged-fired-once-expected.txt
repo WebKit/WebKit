@@ -5,7 +5,7 @@ EVENT(canplaythrough)
 RUN(video.play())
 RUN(video.webkitSetPresentationMode("picture-in-picture"))
 EVENT(webkitpresentationmodechanged)
-EXPECTED (video.webkitDisplayingFullscreen == 'true') OK
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
 EXPECTED (video.webkitPresentationMode == 'picture-in-picture') OK
 RUN(video.webkitSetPresentationMode("inline"))
 EVENT(webkitpresentationmodechanged)

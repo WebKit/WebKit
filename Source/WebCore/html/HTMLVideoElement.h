@@ -96,10 +96,7 @@ public:
     WEBCORE_EXPORT void setPresentationMode(VideoPresentationMode);
     WEBCORE_EXPORT void didEnterFullscreenOrPictureInPicture(const FloatSize&);
     WEBCORE_EXPORT void didExitFullscreenOrPictureInPicture();
-
-#if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
-    WEBCORE_EXPORT void didBecomeFullscreenElement() final;
-#endif
+    WEBCORE_EXPORT bool isChangingPresentationMode() const;
 
     void setVideoFullscreenFrame(const FloatRect&) final;
 
@@ -143,7 +140,6 @@ private:
 
     unsigned m_lastReportedVideoWidth { 0 };
     unsigned m_lastReportedVideoHeight { 0 };
-    bool m_isChangingVideoFullscreenMode { false };
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     bool m_isEnteringPictureInPicture { false };

@@ -35,7 +35,8 @@
 
     async function beginfullscreen()
     {
-        await testExpectedEventually('video.webkitDisplayingFullscreen', true);
+        await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+        testExpected('video.webkitDisplayingFullscreen', true);
         consoleWrite("Entered fullscreen");
         run('video.currentTime = 5');
         run('video.webkitExitFullscreen()');
@@ -45,7 +46,8 @@
 
     async function endfullscreen()
     {
-        await testExpectedEventually('video.webkitDisplayingFullscreen', false);
+        await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+        testExpected('video.webkitDisplayingFullscreen', false);
         consoleWrite("Exited fullscreen");
         testExpected('video.paused', false);
         run('video.ontimeupdate = timeupdate');

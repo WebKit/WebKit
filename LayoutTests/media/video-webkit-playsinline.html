@@ -30,7 +30,10 @@ function testPlaysInline(requiresPlaysInline, hasWebkitPlaysInline, expectedDisp
             run('video.play()');
         });
     })
-    waitForEventOnce('playing', () => {
+    waitForEventOnce('playing', async () => {
+        if (expectedDisplayingFullscreen)
+            await testExpectedEventually('internals.isChangingPresentationMode(video)', false);
+
         testExpected('video.webkitDisplayingFullscreen', expectedDisplayingFullscreen);
         document.body.removeChild(video);
         runNextTest();

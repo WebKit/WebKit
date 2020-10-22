@@ -361,11 +361,9 @@ bool HTMLVideoElement::webkitSupportsFullscreen()
 bool HTMLVideoElement::webkitDisplayingFullscreen()
 {
     if (document().quirks().needsAkamaiMediaPlayerQuirk(*this))
-        return isFullscreen() || m_isChangingVideoFullscreenMode;
+        return isFullscreen() || isChangingVideoFullscreenMode();
 
-    // This function starts to return true after the video element has entered
-    // fullscreen/picture-in-picture until it has exited fullscreen/picture-in-picture
-    return (isFullscreen() && !waitingToEnterFullscreen()) || (!isFullscreen() && m_isChangingVideoFullscreenMode);
+    return isFullscreen();
 }
 
 void HTMLVideoElement::ancestorWillEnterFullscreen()
@@ -482,7 +480,7 @@ void HTMLVideoElement::webkitSetPresentationMode(VideoPresentationMode mode)
 
 void HTMLVideoElement::setPresentationMode(VideoPresentationMode mode)
 {
-    if (m_isChangingVideoFullscreenMode || toPresentationMode(fullscreenMode()) == mode)
+    if (isChangingVideoFullscreenMode() || toPresentationMode(fullscreenMode()) == mode)
         return;
 
     auto videoFullscreenMode = toFullscreenMode(mode);
@@ -493,7 +491,6 @@ void HTMLVideoElement::setPresentationMode(VideoPresentationMode mode)
             if (toPresentationMode(fullscreenMode()) == VideoPresentationMode::PictureInPicture)
                 m_isExitingPictureInPicture = true;
 
-            m_isChangingVideoFullscreenMode = true;
             exitFullscreen();
         }
 
@@ -508,7 +505,6 @@ void HTMLVideoElement::setPresentationMode(VideoPresentationMode mode)
     else if (fullscreenMode() == VideoFullscreenModePictureInPicture)
         m_isExitingPictureInPicture = true;
 
-    m_isChangingVideoFullscreenMode = true;
     enterFullscreen(videoFullscreenMode);
 }
 
@@ -519,28 +515,19 @@ auto HTMLVideoElement::webkitPresentationMode() const -> VideoPresentationMode
 
 void HTMLVideoElement::didEnterFullscreenOrPictureInPicture(const FloatSize& size)
 {
-    m_isChangingVideoFullscreenMode = false;
-    if (m_isEnteringPictureInPicture || m_isExitingPictureInPicture) {
+    if (m_isEnteringPictureInPicture) {
+        m_isEnteringPictureInPicture = false;
+        setChangingVideoFullscreenMode(false);
+
 #if ENABLE(PICTURE_IN_PICTURE_API)
-        if (m_pictureInPictureObserver) {
-            if (m_isEnteringPictureInPicture)
-                m_pictureInPictureObserver->didEnterPictureInPicture(flooredIntSize(size));
-            else
-                m_pictureInPictureObserver->didExitPictureInPicture();
-        }
+        if (m_pictureInPictureObserver)
+            m_pictureInPictureObserver->didEnterPictureInPicture(flooredIntSize(size));
 #else
         UNUSED_PARAM(size);
 #endif
-        m_isEnteringPictureInPicture = false;
-        m_isExitingPictureInPicture = false;
+        return;
     }
 
-    HTMLMediaElement::didBecomeFullscreenElement();
-}
-
-void HTMLVideoElement::didExitFullscreenOrPictureInPicture()
-{
-    m_isChangingVideoFullscreenMode = false;
     if (m_isExitingPictureInPicture) {
         m_isExitingPictureInPicture = false;
 #if ENABLE(PICTURE_IN_PICTURE_API)
@@ -548,15 +535,30 @@ void HTMLVideoElement::didExitFullscreenOrPictureInPicture()
             m_pictureInPictureObserver->didExitPictureInPicture();
 #endif
     }
-}
 
-#if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
-void HTMLVideoElement::didBecomeFullscreenElement()
-{
-    m_isChangingVideoFullscreenMode = false;
     HTMLMediaElement::didBecomeFullscreenElement();
 }
+
+void HTMLVideoElement::didExitFullscreenOrPictureInPicture()
+{
+    if (m_isExitingPictureInPicture) {
+        m_isExitingPictureInPicture = false;
+        setChangingVideoFullscreenMode(false);
+
+#if ENABLE(PICTURE_IN_PICTURE_API)
+        if (m_pictureInPictureObserver)
+            m_pictureInPictureObserver->didExitPictureInPicture();
 #endif
+        return;
+    }
+
+    HTMLMediaElement::didStopBeingFullscreenElement();
+}
+
+bool HTMLVideoElement::isChangingPresentationMode() const
+{
+    return isChangingVideoFullscreenMode();
+}
 
 void HTMLVideoElement::setVideoFullscreenFrame(const FloatRect& frame)
 {

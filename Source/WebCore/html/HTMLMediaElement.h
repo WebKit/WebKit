@@ -544,8 +544,9 @@ public:
 
     bool isSuspended() const final;
 
-    WEBCORE_EXPORT void didBecomeFullscreenElement() override;
+    WEBCORE_EXPORT void didBecomeFullscreenElement() final;
     WEBCORE_EXPORT void willExitFullscreen();
+    WEBCORE_EXPORT void didStopBeingFullscreenElement() final;
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
     void scheduleEvent(Ref<Event>&&);
@@ -603,7 +604,9 @@ protected:
     void updateMediaControlsAfterPresentationModeChange();
 
     void scheduleEvent(const AtomString&);
-    bool waitingToEnterFullscreen() { return m_waitingToEnterFullscreen; }
+
+    void setChangingVideoFullscreenMode(bool value) { m_changingVideoFullscreenMode = value; }
+    bool isChangingVideoFullscreenMode() const { return m_changingVideoFullscreenMode; }
 
 private:
     void createMediaPlayer();
@@ -1091,6 +1094,7 @@ private:
 
     bool m_isScrubbingRemotely : 1;
     bool m_waitingToEnterFullscreen : 1;
+    bool m_changingVideoFullscreenMode : 1;
 
     bool m_tracksAreReady : 1;
     bool m_haveVisibleTextTrack : 1;

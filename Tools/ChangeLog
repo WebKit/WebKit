@@ -1,3 +1,16 @@
+2020-10-22  Peng Liu  <peng.liu6@apple.com>
+
+        Let webkitDisplayingFullscreen() return true when a video element’s fullscreen mode is not VideoFullscreenModeNone
+        https://bugs.webkit.org/show_bug.cgi?id=216426
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewCloseAllMediaPresentations.mm:
+        (TEST):
+        Use internals.isChangingPresentationMode() to make sure a video presentation mode
+        change (from inline to picture-in-picture) is completed before moving to the next
+        step of the test.
+
 2020-10-22  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Backport GStreamer device monitor patch

@@ -1,3 +1,34 @@
+2020-10-22  Peng Liu  <peng.liu6@apple.com>
+
+        Let webkitDisplayingFullscreen() return true when a video element’s fullscreen mode is not VideoFullscreenModeNone
+        https://bugs.webkit.org/show_bug.cgi?id=216426
+
+        Reviewed by Jer Noble.
+
+        Check Internals::isChangingPresentationMode instead of HTMLVideoElement::webkitDisplayingFullscreen
+        to confirm the video presentation mode change is completed before moving to the next step of a test.
+
+        * http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast-expected.txt:
+        * http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast.html:
+        * media/context-menu-actions.html:
+        * media/media-fullscreen-loop-inline-expected.txt:
+        * media/media-fullscreen-loop-inline.html:
+        * media/media-fullscreen-pause-inline-expected.txt:
+        * media/media-fullscreen-pause-inline.html:
+        * media/media-fullscreen-return-to-inline-expected.txt:
+        * media/media-fullscreen-return-to-inline.html:
+        * media/presentationmodechanged-fired-once-expected.txt:
+        * media/presentationmodechanged-fired-once.html:
+        * media/video-fullscreen-only-playback-expected.txt:
+        * media/video-fullscreen-only-playback.html:
+        * media/video-playsinline-expected.txt:
+        * media/video-playsinline.html:
+        * media/video-presentation-mode-expected.txt:
+        * media/video-presentation-mode.html:
+        * media/video-webkit-playsinline-expected.txt:
+        * media/video-webkit-playsinline.html:
+        * platform/mac/TestExpectations:
+
 2020-10-22  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Lines with outline should be marked having visual overflow

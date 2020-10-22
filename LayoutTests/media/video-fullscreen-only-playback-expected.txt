@@ -7,13 +7,16 @@ EXPECTED (video.webkitSupportsFullscreen == 'true') OK
 EXPECTED (video.webkitDisplayingFullscreen == 'false') OK
 RUN(video.play())
 EVENT(playing)
-EXPECTED (video.webkitDisplayingFullscreen == 'true') OK
 
-** Entered fullscreen
+** Started playing
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
+EXPECTED (video.webkitDisplayingFullscreen == 'true') OK
 RUN(video.webkitExitFullScreen())
 EVENT(webkitpresentationmodechanged)
-EXPECTED (video.webkitDisplayingFullscreen == 'false') OK
 
-** Exited fullscreen
+** Received webkitpresentationmodechanged event
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
+Exited fullscreen
+EXPECTED (video.webkitDisplayingFullscreen == 'false') OK
 END OF TEST
 

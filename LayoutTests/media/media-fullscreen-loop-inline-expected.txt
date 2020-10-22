@@ -7,12 +7,14 @@ EVENT(canplaythrough)
 RUN(video.play())
 Wait to enter fullscreen
 EVENT(webkitpresentationmodechanged)
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
 EXPECTED (video.webkitDisplayingFullscreen == 'true') OK
 Entered fullscreen
 RUN(video.currentTime = 5)
 RUN(video.webkitExitFullscreen())
 Wait to exit fullscreen
 EVENT(webkitpresentationmodechanged)
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
 EXPECTED (video.webkitDisplayingFullscreen == 'false') OK
 Exited fullscreen
 EXPECTED (video.paused == 'false') OK

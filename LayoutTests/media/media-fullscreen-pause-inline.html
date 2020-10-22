@@ -33,14 +33,16 @@
 
     async function playing()
     {
-        await testExpectedEventually('video.webkitDisplayingFullscreen', true);
+        await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+        testExpected('video.webkitDisplayingFullscreen', true);
         waitForEventOnce('webkitpresentationmodechanged', endfullscreen);
         run('video.webkitExitFullscreen()');
     }
 
     async function endfullscreen()
     {
-        await testExpectedEventually('video.webkitDisplayingFullscreen', false);
+        await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+        testExpected('video.webkitDisplayingFullscreen', false);
         testExpected('video.paused', false);
         waitForEventOnce('pause', paused);
         run('video.pause()');
@@ -54,7 +56,8 @@
 
     async function playingAgain()
     {
-        await testExpectedEventually('video.webkitDisplayingFullscreen', true);
+        await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+        testExpected('video.webkitDisplayingFullscreen', true);
         endTest();
     }
     </script>

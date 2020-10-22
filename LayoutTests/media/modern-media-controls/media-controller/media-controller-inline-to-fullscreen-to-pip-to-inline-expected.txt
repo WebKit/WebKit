@@ -8,18 +8,18 @@ PASS shadowRoot.querySelector('.media-controls').classList.contains('inline') is
 Media started playing, we pause it and enter fullscreen by clicking on the matching button.
 
 Media received a webkitpresentationmodechanged event, media.webkitPresentationMode = fullscreen.
-PASS media.webkitDisplayingFullscreen became true
+PASS internals.isChangingPresentationMode(media) became false
 PASS shadowRoot.querySelector('.media-controls').classList.contains('fullscreen') is true
 
 We enter picture-in-picture by clicking on the matching button.
 
 Media received a webkitpresentationmodechanged event, media.webkitPresentationMode = picture-in-picture.
-PASS media.webkitDisplayingFullscreen became true
+PASS internals.isChangingPresentationMode(media) became false
 
 We exit picture-in-picture.
 
 Media received a webkitpresentationmodechanged event, media.webkitPresentationMode = inline.
-PASS media.webkitDisplayingFullscreen became false
+PASS internals.isChangingPresentationMode(media) became false
 PASS shadowRoot.querySelector('.media-controls').classList.contains('inline') is true
 
 PASS successfullyParsed is true

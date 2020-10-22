@@ -553,6 +553,7 @@ enum ContentSizeCategory {
     undefined setFullscreenAutoHideDuration(double duration);
     undefined setFullscreenControlsHidden(boolean hidden);
 
+    [Conditional=VIDEO_PRESENTATION_MODE] boolean isChangingPresentationMode(HTMLVideoElement element);
     [Conditional=VIDEO_PRESENTATION_MODE] undefined setMockVideoPresentationModeEnabled(boolean enabled);
 
     undefined setApplicationCacheOriginQuota(unsigned long long quota);

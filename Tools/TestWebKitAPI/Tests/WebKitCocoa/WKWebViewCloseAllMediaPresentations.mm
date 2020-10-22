@@ -27,6 +27,7 @@
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebCore/PictureInPictureSupport.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -40,25 +41,26 @@ TEST(WKWebViewCloseAllMediaPresentations, PictureInPicture)
     if (!WebCore::supportsPictureInPicture())
         return;
 
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration.get().preferences._allowsPictureInPictureMediaPlayback = YES;
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [[configuration preferences] _setAllowsPictureInPictureMediaPlayback:YES];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
 
     [webView synchronouslyLoadHTMLString:@"<video src=video-with-audio.mp4 webkit-playsinline playsinline loop></video>"];
+    [webView objectByEvaluatingJavaScript:@"document.querySelector('video').addEventListener('webkitpresentationmodechanged', event => { window.webkit.messageHandlers.testHandler.postMessage('presentationmodechanged'); });"];
+
+    __block bool presentationModeChanged = false;
+    [webView performAfterReceivingMessage:@"presentationmodechanged" action:^{ presentationModeChanged = true; }];
 
     [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.querySelector('video').webkitSetPresentationMode('picture-in-picture')"];
-
+    TestWebKitAPI::Util::run(&presentationModeChanged);
     do {
-        id result = [webView objectByEvaluatingJavaScript:@"document.querySelector('video').webkitDisplayingFullscreen"];
-        if ([result boolValue])
+        if (![webView stringByEvaluatingJavaScript:@"window.internals.isChangingPresentationMode(document.querySelector('video'))"].boolValue)
             break;
 
         TestWebKitAPI::Util::sleep(0.5);
     } while (true);
 
-    [webView objectByEvaluatingJavaScript:@"document.querySelector('video').addEventListener('webkitpresentationmodechanged', event => { window.webkit.messageHandlers.testHandler.postMessage('presentationmodechanged'); });"];
-
-    __block bool presentationModeChanged = false;
+    presentationModeChanged = false;
     [webView performAfterReceivingMessage:@"presentationmodechanged" action:^{ presentationModeChanged = true; }];
 
     [webView _closeAllMediaPresentations];
@@ -74,9 +76,9 @@ TEST(WKWebViewCloseAllMediaPresentations, PictureInPicture)
 
 TEST(WKWebViewCloseAllMediaPresentations, VideoFullscreen)
 {
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration.get().preferences._fullScreenEnabled = YES;
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [[configuration preferences] _setFullScreenEnabled:YES];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
 
     [webView synchronouslyLoadHTMLString:@"<video src=video-with-audio.mp4 webkit-playsinline playsinline loop></video>"];
     [webView objectByEvaluatingJavaScript:@"document.querySelector('video').addEventListener('webkitpresentationmodechanged', event => { window.webkit.messageHandlers.testHandler.postMessage('presentationmodechanged'); });"];
@@ -85,8 +87,15 @@ TEST(WKWebViewCloseAllMediaPresentations, VideoFullscreen)
     [webView performAfterReceivingMessage:@"presentationmodechanged" action:^{ presentationModeChanged = true; }];
 
     [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.querySelector('video').webkitEnterFullscreen()"];
+    [webView objectByEvaluatingJavaScript:@"window.internals.setMockVideoPresentationModeEnabled(true)"];
 
     TestWebKitAPI::Util::run(&presentationModeChanged);
+    do {
+        if (![webView stringByEvaluatingJavaScript:@"window.internals.isChangingPresentationMode(document.querySelector('video'))"].boolValue)
+            break;
+
+        TestWebKitAPI::Util::sleep(0.5);
+    } while (true);
 
     presentationModeChanged = false;
     [webView performAfterReceivingMessage:@"presentationmodechanged" action:^{ presentationModeChanged = true; }];
@@ -100,9 +109,9 @@ TEST(WKWebViewCloseAllMediaPresentations, VideoFullscreen)
 
 TEST(WKWebViewCloseAllMediaPresentations, ElementFullscreen)
 {
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration.get().preferences._fullScreenEnabled = YES;
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [[configuration preferences] _setFullScreenEnabled:YES];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
 
     [webView synchronouslyLoadHTMLString:@"<div id=\"target\" style=\"width:100px;height:100px;background-color:red\"></div>"];
     [webView objectByEvaluatingJavaScript:@"document.querySelector('#target').addEventListener('webkitfullscreenchange', event => { window.webkit.messageHandlers.testHandler.postMessage('fullscreenchange'); });"];

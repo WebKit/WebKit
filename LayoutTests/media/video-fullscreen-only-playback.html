@@ -40,16 +40,19 @@
 
             async function playing()
             {
-                await testExpectedEventually("video.webkitDisplayingFullscreen", true);
-                consoleWrite("<br>** Entered fullscreen");
+                consoleWrite("<br>** Started playing");
+                await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+                testExpected("video.webkitDisplayingFullscreen", true);
                 waitForEventOnce('webkitpresentationmodechanged', endfullscreen);
                 run("video.webkitExitFullScreen()");
             }
 
             async function endfullscreen()
             {
-                await testExpectedEventually("video.webkitDisplayingFullscreen", false);
-                consoleWrite("<br>** Exited fullscreen");
+                consoleWrite("<br>** Received webkitpresentationmodechanged event");
+                await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+                consoleWrite("Exited fullscreen");
+                testExpected("video.webkitDisplayingFullscreen", false);
                 endTest();
             }
         </script>

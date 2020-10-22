@@ -512,6 +512,7 @@ public:
     void setFullscreenControlsHidden(bool);
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
+    bool isChangingPresentationMode(HTMLVideoElement&) const;
     void setMockVideoPresentationModeEnabled(bool);
 #endif
 

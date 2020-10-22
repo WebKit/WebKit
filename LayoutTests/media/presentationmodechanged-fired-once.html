@@ -27,7 +27,7 @@
 
         async function presentationModeChanged1()
         {
-            await testExpectedEventually('video.webkitDisplayingFullscreen', true);
+            await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
             testExpected("video.webkitPresentationMode", "picture-in-picture");
             runWithKeyDown('video.webkitSetPresentationMode("inline")');
             waitForEvent("webkitpresentationmodechanged", presentationModeChanged2);
