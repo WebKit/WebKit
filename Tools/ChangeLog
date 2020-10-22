@@ -1,3 +1,26 @@
+2020-10-22  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Use webkitcorepy's autoinstaller for chrome and gecko drivers
+        https://bugs.webkit.org/show_bug.cgi?id=218059
+        <rdar://problem/70551255>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/webkitpy/autoinstalled: Added.
+        * Scripts/webkitpy/autoinstalled/__init__.py: Added.
+        * Scripts/webkitpy/autoinstalled/chromedriver.py: Added.
+        (ChromeDriverPackage): Special listing rules for the chrome driver.
+        * Scripts/webkitpy/autoinstalled/geckodriver.py: Added.
+        (GeckoDriverPackage): Special listing rules for the GeckoDriver.
+        * Scripts/webkitpy/benchmark_runner/utils.py:
+        (get_driver_binary_path):
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module): Remove Chrome and Gecko drivers.
+        (AutoinstallImportHook.install_chromedriver): Deleted.
+        (AutoinstallImportHook.install_geckodriver): Deleted.
+        (get_driver_filename): Deleted.
+        (get_os_info): Deleted.
+
 2020-10-22  Aakash Jain  <aakash_jain@apple.com>
 
         report-non-inclusive-language should also report total for all the non-inclusive terms

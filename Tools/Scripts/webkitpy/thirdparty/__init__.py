@@ -33,22 +33,16 @@ import re
 import sys
 
 if sys.version_info > (3, 0):
-    from urllib.error import URLError
     from urllib.request import urlopen
 else:
-    from urllib2 import URLError, urlopen
+    from urllib2 import urlopen
 
-from collections import namedtuple
-from distutils import spawn
 from webkitpy.common.system.autoinstall import AutoInstaller
 from webkitpy.common.system.filesystem import FileSystem
 from webkitcorepy import AutoInstall
 
 _THIRDPARTY_DIR = os.path.dirname(__file__)
 _AUTOINSTALLED_DIR = os.path.join(_THIRDPARTY_DIR, "autoinstalled")
-
-CHROME_DRIVER_URL = "http://chromedriver.storage.googleapis.com/"
-FIREFOX_RELEASES_URL = "https://api.github.com/repos/mozilla/geckodriver/releases"
 
 # Putting the autoinstall code into webkitpy/thirdparty/__init__.py
 # ensures that no autoinstalling occurs until a caller imports from
@@ -97,10 +91,6 @@ class AutoinstallImportHook(object):
             self._install_buildbot()
         elif '.twisted_15_5_0' in fullname:
             self._install_twisted_15_5_0()
-        elif '.chromedriver' in fullname:
-            self.install_chromedriver()
-        elif '.geckodriver' in fullname:
-            self.install_geckodriver()
 
     # autoinstalled.buildbot is used by BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py
     # and should ideally match the version of BuildBot used at build.webkit.org.
@@ -141,22 +131,6 @@ class AutoinstallImportHook(object):
                 return False
         return True
 
-    def install_chromedriver(self):
-        filename_postfix = get_driver_filename().chrome
-        if filename_postfix != "unsupported":
-            version = urlopen(CHROME_DRIVER_URL + 'LATEST_RELEASE').read().strip()
-            full_chrome_url = "{base_url}{version}/chromedriver_{os}.zip".format(base_url=CHROME_DRIVER_URL, version=version, os=filename_postfix)
-            self.install_binary(full_chrome_url, 'chromedriver')
-
-    def install_geckodriver(self):
-        filename_postfix = get_driver_filename().firefox
-        if filename_postfix != "unsupported":
-            firefox_releases_blob = urlopen(FIREFOX_RELEASES_URL)
-            firefox_releases_line_separated = json.dumps(json.load(firefox_releases_blob), indent=0).strip()
-            all_firefox_release_urls = "\n".join(re.findall(r'.*browser_download_url.*', firefox_releases_line_separated))
-            full_firefox_url = re.findall(r'.*%s.*' % filename_postfix, all_firefox_release_urls)[0].split('"')[3]
-            self.install_binary(full_firefox_url, 'geckodriver')
-
     def _install(self, url, url_subpath=None, target_name=None):
         installer = AutoInstaller(target_dir=_AUTOINSTALLED_DIR)
         return installer.install(url=url, url_subpath=url_subpath, target_name=target_name)
@@ -184,21 +158,3 @@ def autoinstall_everything():
     install_methods = [method for method in dir(_hook.__class__) if method.startswith('_install_')]
     for method in install_methods:
         getattr(_hook, method)()
-
-def get_driver_filename():
-    os_name, os_type = get_os_info()
-    chrome_os, filefox_os = 'unsupported', 'unsupported'
-    if os_name == 'Linux' and os_type == '64':
-        chrome_os, firefox_os = 'linux64', 'linux64'
-    elif os_name == 'Linux':
-        chrome_os, firefox_os = 'linux32', 'linux32'
-    elif os_name == 'Darwin':
-        chrome_os, firefox_os = 'mac64', 'macos'
-    DriverFilenameForBrowser = namedtuple('DriverFilenameForBrowser', ['chrome', 'firefox'])
-    return DriverFilenameForBrowser(chrome_os, firefox_os)
-
-def get_os_info():
-    import platform
-    os_name = platform.system()
-    os_type = platform.machine()[-2:]
-    return (os_name, os_type)

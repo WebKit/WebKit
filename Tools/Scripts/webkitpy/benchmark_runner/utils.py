@@ -52,15 +52,11 @@ def force_remove(path):
 @memoized
 def get_driver_binary_path(browser_name):
     if browser_name.startswith('chrome'):
-        import webkitpy.thirdparty.autoinstalled.chromedriver
-        driver_init_file = webkitpy.thirdparty.autoinstalled.chromedriver.__file__
-        driver_executable = os.path.join(os.path.dirname(os.path.realpath(driver_init_file)), 'chromedriver')
-        return driver_executable
+        from webkitpy.autoinstalled import chromedriver
+        return chromedriver.executable
     elif browser_name.startswith('firefox'):
-        import webkitpy.thirdparty.autoinstalled.geckodriver
-        driver_init_file = webkitpy.thirdparty.autoinstalled.geckodriver.__file__
-        driver_executable = os.path.join(os.path.dirname(os.path.realpath(driver_init_file)), 'geckodriver')
-        return driver_executable
+        from webkitpy.autoinstalled import geckodriver
+        return geckodriver.executable
 
 
 def write_defaults(domain, key, value):
