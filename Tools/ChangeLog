@@ -1,3 +1,19 @@
+2020-10-22  Eric Carlson  <eric.carlson@apple.com>
+
+        UIClient isn't notified when page muted state changes
+        https://bugs.webkit.org/show_bug.cgi?id=218085
+        <rdar://problem/70462420>
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/xcshareddata/xcschemes/TestWebKitAPI.xcscheme:
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaMutedState.mm: Added.
+        (-[AudioStateObserver initWithWebView:]):
+        (-[AudioStateObserver observeValueForKeyPath:ofObject:change:context:]):
+        (-[AudioStateTestView setMuted:]):
+        (TestWebKitAPI::TEST):
+
 2020-10-22  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Detect unrecognized options in build-jsc

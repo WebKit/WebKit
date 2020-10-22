@@ -1,3 +1,30 @@
+2020-10-22  Eric Carlson  <eric.carlson@apple.com>
+
+        UIClient isn't notified when page muted state changes
+        https://bugs.webkit.org/show_bug.cgi?id=218085
+        <rdar://problem/70462420>
+
+        Reviewed by Youenn Fablet.
+
+        API test: WKWebView.MediaMuted
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetMediaState): reportedMediaCaptureState -> reportedMediaState.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _mediaCaptureState]): Ditto.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateReportedMediaCaptureState): Only record current capture
+        state in m_reportedMediaCaptureState. m_delayStopCapturingReporting isn't necessary,
+        remove it.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::reportedMediaState const): Renamed from reportedMediaCaptureState
+        to reflect what it returns.
+        (WebKit::WebPageProxy::mediaStateFlags const): Deleted.
+        (WebKit::WebPageProxy::reportedMediaCaptureState const): Deleted.
+
 2020-10-22  Youenn Fablet  <youenn@apple.com>
 
         Introduce worklet destinations and allow to fetch modules with CORS based on destination

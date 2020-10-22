@@ -8957,24 +8957,23 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducer::MediaStateFlags ne
 
 void WebPageProxy::updateReportedMediaCaptureState()
 {
-    if (m_reportedMediaCaptureState == m_mediaState)
+    auto activeCaptureState = m_mediaState & MediaProducer::MediaCaptureMask;
+    if (m_reportedMediaCaptureState == activeCaptureState)
         return;
 
     bool haveReportedCapture = m_reportedMediaCaptureState & MediaProducer::MediaCaptureMask;
-    bool willReportCapture = m_mediaState & MediaProducer::MediaCaptureMask;
+    bool willReportCapture = activeCaptureState;
 
     if (haveReportedCapture && !willReportCapture && m_delayStopCapturingReportingTimer.isActive())
         return;
 
     if (!haveReportedCapture && willReportCapture) {
-        m_delayStopCapturingReporting = true;
         m_delayStopCapturingReportingTimer.doTask([this] {
-            m_delayStopCapturingReporting = false;
             updateReportedMediaCaptureState();
         }, m_mediaCaptureReportingDelay);
     }
 
-    m_reportedMediaCaptureState = m_mediaState;
+    m_reportedMediaCaptureState = activeCaptureState;
     m_uiClient->mediaCaptureStateDidChange(m_mediaState);
 }
 
