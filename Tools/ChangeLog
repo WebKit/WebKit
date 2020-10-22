@@ -1,3 +1,21 @@
+2020-10-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [JHbuild] Add patch to wpebackend-fdo to fix the build on Ubuntu-18.04
+        https://bugs.webkit.org/show_bug.cgi?id=218068
+
+        Reviewed by Adrian Perez de Castro.
+
+        On r268591 I updated the version of wpebackend-fdo to the last stable 1.8
+        but this version is failing to build on Ubuntu-18.04 because of the cmake version.
+        Backport a patch to fix this.
+
+        * gtk/jhbuild.modules:
+        * gtk/patches/wpebackend-fdo-cmake-buildfix-3.10.patch: Added.
+        * jhbuild/jhbuild-minimal.modules:
+        * jhbuild/patches/wpebackend-fdo-cmake-buildfix-3.10.patch: Added.
+        * wpe/jhbuild.modules:
+        * wpe/patches/wpebackend-fdo-cmake-buildfix-3.10.patch: Added.
+
 2020-10-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         IPC testing API should have the capability to observe messages being sent and received

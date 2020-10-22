@@ -75,7 +75,9 @@
     </dependencies>
     <branch module="wpebackend-fdo-1.8.0.tar.xz" version="1.8.0"
             repo="wpewebkit"
-            hash="sha256:9652a99c75fe1c6eab0585b6395f4e104b2427e4d1f42969f1f77df29920d253"/>
+            hash="sha256:9652a99c75fe1c6eab0585b6395f4e104b2427e4d1f42969f1f77df29920d253">
+    <patch file="wpebackend-fdo-cmake-buildfix-3.10.patch" strip="1"/>
+    </branch>
   </cmake>
 
   <!-- libsoup >= 2.69 required for SameSite cookie support -->
