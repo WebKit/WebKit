@@ -1,3 +1,15 @@
+2020-10-22  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Add media/context-menu-actions baseline after r268865.
+
+        Unreviewed test gardening.
+
+        r268865 changed this test to use set isChangingPresentationMode, which
+        is not yet supported in GTK. Instead of skipping all test, update the
+        baseline to keep testing the other assertions.
+
+        * platform/gtk/media/context-menu-actions-expected.txt: Added.
+
 2020-10-22  Youenn Fablet  <youenn@apple.com>
 
         Introduce worklet destinations and allow to fetch modules with CORS based on destination
