@@ -1,3 +1,30 @@
+2020-10-22  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r266074): Sources: icon for non-JavaScript breakpoints doesn't change when breakpoints are globally disabled
+        https://bugs.webkit.org/show_bug.cgi?id=218064
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/Breakpoint.js:
+        (WI.Breakpoint.prototype.get resolved): Added.
+        * UserInterface/Models/JavaScriptBreakpoint.js:
+        (WI.JavaScriptBreakpoint.prototype.get resolved):
+        Add `get resolved` to the base class based on `WI.debuggerManager.breakpointsEnabled`. Use
+        it in the subclass as part of the result.
+
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WI.BreakpointTreeElement.prototype.updateStatus):
+        (WI.BreakpointTreeElement.prototype._dataUpdated):
+        * UserInterface/Views/BreakpointTreeElement.css:
+        (.item.breakpoint .status > .status-image:not(.resolved)): Added.
+        * UserInterface/Views/JavaScriptBreakpointTreeElement.css:
+        (.item.breakpoint.javascript .status > .status-image): Deleted.
+        (.item.breakpoint.javascript .status > .status-image.resolved): Deleted.
+        * UserInterface/Views/JavaScriptBreakpointTreeElement.js:
+        (WI.JavaScriptBreakpointTreeElement.prototype.updateStatus): Deleted.
+        Eliminate unnecessary protected function now that all breakpoints have a `get resolved`.
+        Drive-by: inline CSS class name constants.
+
 2020-10-20  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r266074): Uncaught Exception: undefined is not an object (evaluating 'this._allListenersBreakpoint.disabled')

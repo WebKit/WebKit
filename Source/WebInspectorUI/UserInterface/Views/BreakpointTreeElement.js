@@ -49,7 +49,7 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
         this._listenerSet.register(WI.debuggerManager, WI.DebuggerManager.Event.ProbeSetRemoved, this._probeSetRemoved);
 
         this.status = WI.ImageUtilities.useSVGSymbol("Images/Breakpoint.svg");
-        this.status.className = WI.BreakpointTreeElement.StatusImageElementStyleClassName;
+        this.status.className = "status-image";
 
         this._listenerSet.register(this.status, "mousedown", this._statusImageElementMouseDown);
         this._listenerSet.register(this.status, "click", this._statusImageElementClicked);
@@ -138,9 +138,10 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
         if (!this.status)
             return;
 
-        this.status.classList.toggle(WI.BreakpointTreeElement.StatusImageDisabledStyleClassName, this._breakpoint.disabled);
+        this.status.classList.toggle("resolved", this._breakpoint.resolved);
+        this.status.classList.toggle("disabled", this._breakpoint.disabled);
         if (this._breakpoint.editable)
-            this.status.classList.toggle(WI.BreakpointTreeElement.StatusImageAutoContinueStyleClassName, this._breakpoint.autoContinue);
+            this.status.classList.toggle("auto-continue", this._breakpoint.autoContinue);
     }
 
     // Private
@@ -191,18 +192,18 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
 
     _dataUpdated()
     {
-        if (this.element.classList.contains(WI.BreakpointTreeElement.ProbeDataUpdatedStyleClassName)) {
+        if (this.element.classList.contains("data-updated")) {
             clearTimeout(this._removeIconAnimationTimeoutIdentifier);
-            this.element.classList.remove(WI.BreakpointTreeElement.ProbeDataUpdatedStyleClassName);
+            this.element.classList.remove("data-updated");
             // We want to restart the animation, which can only be done by removing the class,
             // performing layout, and re-adding the class. Try adding class back on next run loop.
             window.requestAnimationFrame(this._dataUpdated.bind(this));
             return;
         }
 
-        this.element.classList.add(WI.BreakpointTreeElement.ProbeDataUpdatedStyleClassName);
+        this.element.classList.add("data-updated");
         this._removeIconAnimationTimeoutIdentifier = setTimeout(() => {
-            this.element.classList.remove(WI.BreakpointTreeElement.ProbeDataUpdatedStyleClassName);
+            this.element.classList.remove("data-updated");
         }, WI.BreakpointTreeElement.ProbeDataUpdatedAnimationDuration);
     }
 
@@ -217,10 +218,5 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
         this._breakpoint.cycleToNextMode();
     }
 };
-
-WI.BreakpointTreeElement.StatusImageElementStyleClassName = "status-image";
-WI.BreakpointTreeElement.StatusImageAutoContinueStyleClassName = "auto-continue";
-WI.BreakpointTreeElement.StatusImageDisabledStyleClassName = "disabled";
-WI.BreakpointTreeElement.ProbeDataUpdatedStyleClassName = "data-updated";
 
 WI.BreakpointTreeElement.ProbeDataUpdatedAnimationDuration = 400; // milliseconds

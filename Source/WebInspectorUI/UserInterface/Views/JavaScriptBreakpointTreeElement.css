@@ -23,14 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.item.breakpoint.javascript .status > .status-image {
-    filter: grayscale();
-}
-
-.item.breakpoint.javascript .status > .status-image.resolved {
-    filter: none;
-}
-
 body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.breakpoint.javascript.selected .status > .status-image.resolved {
     stroke: var(--selected-foreground-color);
 }

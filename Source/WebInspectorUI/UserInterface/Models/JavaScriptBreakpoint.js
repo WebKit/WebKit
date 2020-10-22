@@ -189,7 +189,7 @@ WI.JavaScriptBreakpoint = class JavaScriptBreakpoint extends WI.Breakpoint
 
     get resolved()
     {
-        return this._resolved;
+        return super.resolved && this._resolved;
     }
 
     set resolved(resolved)
