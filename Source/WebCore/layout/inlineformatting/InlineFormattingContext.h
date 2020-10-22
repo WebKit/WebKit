@@ -50,6 +50,7 @@ public:
     public:
         InlineLayoutUnit initialLineHeight() const;
         bool hasSoftWrapOpportunityAtImage() const;
+        bool shouldInlineLevelBoxStretchLineBox(const LineBox&, const LineBox::InlineLevelBox&) const;
 
     private:
         friend class InlineFormattingContext;

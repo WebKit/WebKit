@@ -40,6 +40,19 @@ InlineLayoutUnit InlineFormattingContext::Quirks::initialLineHeight() const
     return root.style().fontMetrics().floatHeight();
 }
 
+bool InlineFormattingContext::Quirks::shouldInlineLevelBoxStretchLineBox(const LineBox& lineBox, const LineBox::InlineLevelBox& inlineLevelBox) const
+{
+    if (inlineLevelBox.isEmpty())
+        return false;
+    if (layoutState().inNoQuirksMode())
+        return true;
+    if (!inlineLevelBox.isLineBreakBox())
+        return true;
+    // <br> in non-standard mode stretches the line box only when the line is empty.
+    // e.g. <div><span><br></span></div> will stretch but <div>this will not stretch to 200px<span style="font-size: 200px;"><br></span></div>
+    return lineBox.isLineVisuallyEmpty();
+}
+
 bool InlineFormattingContext::Quirks::hasSoftWrapOpportunityAtImage() const
 {
     return !formattingContext().root().isTableCell();

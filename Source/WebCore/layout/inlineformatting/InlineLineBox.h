@@ -80,6 +80,7 @@ public:
         void setIsNonEmpty() { m_isEmpty = false; }
 
         const FontMetrics& fontMetrics() const { return layoutBox().style().fontMetrics(); }
+        VerticalAlign verticalAlign() const { return layoutBox().style().verticalAlign(); }
         const Box& layoutBox() const { return *m_layoutBox; }
 
         bool isInlineBox() const { return m_type == Type::InlineBox || m_type == Type::RootInlineBox; }

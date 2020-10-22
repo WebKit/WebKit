@@ -353,7 +353,7 @@ bool Line::isRunVisuallyNonEmpty(const Run& run) const
         return true;
 
     if (run.isLineBreak())
-        return true;
+        return false;
 
     // Note that this does not check whether the inline container has content. It simply checks if the container itself is considered non-empty.
     if (run.isContainerStart() || run.isContainerEnd()) {
