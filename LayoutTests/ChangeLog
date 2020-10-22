@@ -1,3 +1,12 @@
+2020-10-22  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed test gardening. Move WebAudio test failure entries to GLIB.
+
+        Also gardened a few more flaky failures.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-10-22  Martin Robinson  <mrobinson@igalia.com>
 
         Rename scroll-snap-margin to scroll-margin
