@@ -38,36 +38,43 @@
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
+namespace IPC {
+
 template<typename T, std::enable_if_t<!std::is_arithmetic<T>::value && !std::is_enum<T>::value>* = nullptr>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, const T&)
 {
     return JSC::jsUndefined();
 }
 
-template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, const String& value)
+inline JSC::JSValue jsValueForDecodedStringArgumentValue(JSC::JSGlobalObject* globalObject, const String& value, ASCIILiteral type)
 {
     auto& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto* object = JSC::constructEmptyObject(globalObject, globalObject->objectPrototype());
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    object->putDirect(vm, JSC::Identifier::fromString(vm, "type"_s), JSC::jsNontrivialString(vm, "String"_s));
+    object->putDirect(vm, JSC::Identifier::fromString(vm, "type"_s), JSC::jsNontrivialString(vm, type));
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    object->putDirect(vm, JSC::Identifier::fromString(vm, "value"_s), JSC::jsNontrivialString(vm, value));
+    object->putDirect(vm, JSC::Identifier::fromString(vm, "value"_s), value.isNull() ? JSC::jsNull() : JSC::jsString(vm, value));
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
     return object;
 }
 
 template<>
+JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, const String& value)
+{
+    return jsValueForDecodedStringArgumentValue(globalObject, value, "String"_s);
+}
+
+template<>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, const URL& value)
 {
-    return jsValueForDecodedArgumentValue(globalObject, value.string());
+    return jsValueForDecodedStringArgumentValue(globalObject, value.string(), "URL"_s);
 }
 
 template<>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, const WebCore::RegistrableDomain& value)
 {
-    return jsValueForDecodedArgumentValue(globalObject, value.string());
+    return jsValueForDecodedStringArgumentValue(globalObject, value.string(), "RegistrableDomain"_s);
 }
 
 template<typename T, std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
@@ -207,6 +214,18 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, c
     return jsValueForDecodedArgumentRect(globalObject, value, "FloatRect");
 }
 
+template<typename U>
+JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, const OptionSet<U>& value)
+{    
+    auto& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto result = jsValueForDecodedArgumentValue(globalObject, value.toRaw());
+    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
+    result.getObject()->putDirect(vm, JSC::Identifier::fromString(vm, "isOptionSet"_s), JSC::jsBoolean(true));
+    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
+    return result;
+}
+
 template<size_t remainingSize, typename... Elements>
 struct DecodedArgumentJSValueConverter {
     static bool convert(JSC::JSGlobalObject* globalObject, JSC::JSArray* array, const std::tuple<Elements...>& tuple)
@@ -252,4 +271,6 @@ static Optional<JSC::JSValue> jsValueForDecodedArguments(JSC::JSGlobalObject* gl
     if (!arguments)
         return WTF::nullopt;
     return jsValueForArgumentTuple(globalObject, *arguments);
+}
+
 }

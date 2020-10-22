@@ -1,3 +1,44 @@
+2020-10-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        IPC testing API should have the capability to observe messages being sent and received
+        https://bugs.webkit.org/show_bug.cgi?id=217870
+
+        Reviewed by Darin Adler.
+
+        Added IPC.addIncomingMessageListener and IPC.addOutgoingMessageListener which allows JavaScript
+        to observe IPC messages being sent or received by WebContent process. We use the generated code
+        added in r268503 to decode the IPC arguments.
+
+        Tests: TestWebKitAPI.IPCTestingAPI.CanInterceptAlert
+               TestWebKitAPI.IPCTestingAPI.CanInterceptHasStorageAccess
+               TestWebKitAPI.IPCTestingAPI.CanInterceptFindString
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::sendMessage): Added the code to invoke MessageObserver::willSendMessage.
+        Also remove any stale MessageObserver as neded.
+        (IPC::Connection::addMessageObserver): Added.
+        (IPC::Connection::dispatchMessage): Added the code to invoke MessageObserver::didReceiveMessage.
+        Also remove any stale MessageObserver as neded.
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::MessageObserver): Added. A pure virtual interface for observing IPC messages.
+        * Platform/IPC/JSIPCBinding.h:
+        (IPC::jsValueForDecodedStringArgumentValue): Extracted from jsValueForDecodedArgumentValue<String>.
+        Now takes the type name as an argument.
+        (IPC::jsValueForDecodedArgumentValue<URL>): Use "URL" as the type name.
+        (IPC::jsValueForDecodedArgumentValue<RegistrableDomain>): Use "RegistrableDomain" as the type name.
+        (IPC::jsValueForDecodedArgumentValue<OptionSet<U>>): Added. Specializations for OptionSet<U>
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::JSMessageListener): Added. Implements IPC::MessageObserver.
+        (WebKit::IPCTestingAPI::JSIPC::staticFunctions):
+        (WebKit::IPCTestingAPI::createTypeError): Moved.
+        (WebKit::IPCTestingAPI::JSIPC::addMessageListener): Added.
+        (WebKit::IPCTestingAPI::JSIPC::addIncomingMessageListener): Added.
+        (WebKit::IPCTestingAPI::JSIPC::addOutgoingMessageListener): Added.
+        (WebKit::IPCTestingAPI::JSMessageListener::JSMessageListener): Added.
+        (WebKit::IPCTestingAPI::JSMessageListener::didReceiveMessage): Added.
+        (WebKit::IPCTestingAPI::JSMessageListener::willSendMessage): Added.
+        (WebKit::IPCTestingAPI::JSMessageListener::jsDescriptionFromDecoder): Added.
+
 2020-10-21  Aditya Keerthi  <akeerthi@apple.com>
 
         Remove unused UIDocumentMenuViewController SPI declarations

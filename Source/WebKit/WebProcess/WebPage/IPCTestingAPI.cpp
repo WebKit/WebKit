@@ -54,7 +54,27 @@ namespace WebKit {
 
 namespace IPCTestingAPI {
 
-class JSIPC : public RefCounted<JSIPC> {
+class JSIPC;
+
+class JSMessageListener final : public IPC::Connection::MessageObserver {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    enum class Type { Incoming, Outgoing };
+
+    JSMessageListener(JSIPC&, Type, JSContextRef, JSObjectRef callback);
+
+private:
+    void willSendMessage(const IPC::Encoder&, OptionSet<IPC::SendOption>) override;
+    void didReceiveMessage(const IPC::Decoder&) override;
+    JSC::JSObject* jsDescriptionFromDecoder(JSC::JSGlobalObject*, IPC::Decoder&);
+
+    WeakPtr<JSIPC> m_jsIPC;
+    Type m_type;
+    JSContextRef m_context;
+    JSObjectRef m_callback;
+};
+
+class JSIPC : public RefCounted<JSIPC>, public CanMakeWeakPtr<JSIPC> {
 public:
     static Ref<JSIPC> create(WebPage& webPage, WebFrame& webFrame)
     {
@@ -78,6 +98,10 @@ private:
     static const JSStaticFunction* staticFunctions();
     static const JSStaticValue* staticValues();
 
+    static void addMessageListener(JSMessageListener::Type, JSContextRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef addIncomingMessageListener(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef addOutgoingMessageListener(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+
     static JSValueRef sendMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef sendSyncMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
@@ -92,6 +116,7 @@ private:
 
     WeakPtr<WebPage> m_webPage;
     WeakPtr<WebFrame> m_webFrame;
+    Vector<UniqueRef<JSMessageListener>> m_messageListeners;
 };
 
 JSClassRef JSIPC::wrapperClass()
@@ -135,6 +160,8 @@ void JSIPC::finalize(JSObjectRef object)
 const JSStaticFunction* JSIPC::staticFunctions()
 {
     static const JSStaticFunction functions[] = {
+        { "addIncomingMessageListener", addIncomingMessageListener, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
+        { "addOutgoingMessageListener", addOutgoingMessageListener, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "sendMessage", sendMessage, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "sendSyncMessage", sendSyncMessage, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { 0, 0, 0 }
@@ -169,6 +196,12 @@ static Optional<uint64_t> convertToUint64(JSC::JSValue jsValue)
     return WTF::nullopt;
 }
 
+static JSValueRef createTypeError(JSContextRef context, const String& message)
+{
+    JSC::JSLockHolder lock(toJS(context)->vm());
+    return toRef(JSC::createTypeError(toJS(context), message));
+}
+
 static RefPtr<IPC::Connection> processTargetFromArgument(JSC::JSGlobalObject* globalObject, JSValueRef valueRef, JSValueRef* exception)
 {
     auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
@@ -187,6 +220,53 @@ static RefPtr<IPC::Connection> processTargetFromArgument(JSC::JSGlobalObject* gl
 
     *exception = toRef(JSC::createTypeError(globalObject, "Target process must be UI, GPU, or Networking"_s));
     return nullptr;
+}
+
+void JSIPC::addMessageListener(JSMessageListener::Type type, JSContextRef context, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    auto* globalObject = toJS(context);
+    JSC::JSLockHolder lock(globalObject->vm());
+    auto jsIPC = makeRefPtr(toWrapped(context, thisObject));
+    if (!jsIPC) {
+        *exception = createTypeError(context, "Wrong type"_s);
+        return;
+    }
+
+    if (argumentCount < 1) {
+        *exception = createTypeError(context, "Must specify the target process as the first argument"_s);
+        return;
+    }
+
+    auto connection = processTargetFromArgument(globalObject, arguments[0], exception);
+    if (!connection)
+        return;
+
+    std::unique_ptr<JSMessageListener> listener;
+    if (argumentCount >= 2 && JSValueIsObject(context, arguments[1])) {
+        auto listenerObjectRef = JSValueToObject(context, arguments[1], exception);
+        if (JSObjectIsFunction(context, listenerObjectRef))
+            listener = makeUnique<JSMessageListener>(*jsIPC, type, context, listenerObjectRef);
+    }
+
+    if (!listener) {
+        *exception = createTypeError(context, "Must specify a callback function as the second argument"_s);
+        return;
+    }
+
+    connection->addMessageObserver(*listener);
+    jsIPC->m_messageListeners.append(makeUniqueRefFromNonNullUniquePtr(WTFMove(listener)));
+}
+
+JSValueRef JSIPC::addIncomingMessageListener(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    addMessageListener(JSMessageListener::Type::Incoming, context, thisObject, argumentCount, arguments, exception);
+    return JSValueMakeUndefined(context);
+}
+
+JSValueRef JSIPC::addOutgoingMessageListener(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    addMessageListener(JSMessageListener::Type::Outgoing, context, thisObject, argumentCount, arguments, exception);
+    return JSValueMakeUndefined(context);
 }
 
 static Optional<uint64_t> destinationIDFromArgument(JSC::JSGlobalObject* globalObject, JSValueRef valueRef, JSValueRef* exception)
@@ -233,12 +313,6 @@ static bool encodeTypedArray(IPC::Encoder& encoder, JSContextRef context, JSValu
 
     encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(buffer), bufferSize, 1);
     return true;
-}
-
-static JSValueRef createTypeError(JSContextRef context, const String& message)
-{
-    JSC::JSLockHolder lock(toJS(context)->vm());
-    return toRef(JSC::createTypeError(toJS(context), message));
 }
 
 template<typename PointType> bool encodePointType(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, JSC::CatchScope& scope)
@@ -802,6 +876,104 @@ JSValueRef JSIPC::messages(JSContextRef context, JSObjectRef thisObject, JSStrin
     }
 
     return toRef(vm, messagesObject);
+}
+
+JSMessageListener::JSMessageListener(JSIPC& jsIPC, Type type, JSContextRef context, JSObjectRef callback)
+    : m_jsIPC(makeWeakPtr(jsIPC))
+    , m_type(type)
+    , m_context(context)
+    , m_callback(callback)
+{
+    auto* globalObject = toJS(context);
+    auto& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+
+    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+
+    // We can't retain the global context here as that would cause a leak
+    // since this object is supposed to live as long as the global object is alive.
+    JSC::PrivateName uniquePrivateName;
+    globalObject->putDirect(vm, uniquePrivateName, toJS(globalObject, callback));
+}
+
+void JSMessageListener::didReceiveMessage(const IPC::Decoder& decoder)
+{
+    if (m_type != Type::Incoming)
+        return;
+
+    RELEASE_ASSERT(m_jsIPC);
+    auto protectOwnerOfThis = makeRef(*m_jsIPC);
+    auto* globalObject = toJS(m_context);
+    JSC::JSLockHolder lock(globalObject->vm());
+
+    auto mutableDecoder = IPC::Decoder::create(decoder.buffer(), decoder.length(), nullptr, { });
+    auto* description = jsDescriptionFromDecoder(globalObject, *mutableDecoder);
+
+    JSValueRef arguments[] = { description ? toRef(globalObject, description) : JSValueMakeUndefined(m_context) };
+    JSObjectCallAsFunction(m_context, m_callback, m_callback, std::size(arguments), arguments, nullptr);
+}
+
+void JSMessageListener::willSendMessage(const IPC::Encoder& encoder, OptionSet<IPC::SendOption>)
+{
+    if (m_type != Type::Outgoing)
+        return;
+
+    RELEASE_ASSERT(m_jsIPC);
+    auto protectOwnerOfThis = makeRef(*m_jsIPC);
+    auto* globalObject = toJS(m_context);
+    JSC::JSLockHolder lock(globalObject->vm());
+
+    auto decoder = IPC::Decoder::create(encoder.buffer(), encoder.bufferSize(), nullptr, { });
+    auto* description = jsDescriptionFromDecoder(globalObject, *decoder);
+
+    JSValueRef arguments[] = { description ? toRef(globalObject, description) : JSValueMakeUndefined(m_context) };
+    JSObjectCallAsFunction(m_context, m_callback, m_callback, WTF_ARRAY_LENGTH(arguments), arguments, nullptr);
+}
+
+JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* globalObject, IPC::Decoder& decoder)
+{
+    auto& vm = globalObject->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    auto* jsResult = constructEmptyObject(globalObject, globalObject->objectPrototype());
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "name"), JSC::JSValue(static_cast<unsigned>(decoder.messageName())));
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "description"), JSC::jsString(vm, IPC::description(decoder.messageName())));
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "destinationID"), JSC::JSValue(decoder.destinationID()));
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    if (decoder.isSyncMessage()) {
+        if (uint64_t syncRequestID = 0; decoder.decode(syncRequestID)) {
+            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "syncRequestID"), JSC::JSValue(syncRequestID));
+            RETURN_IF_EXCEPTION(scope, nullptr);
+        }
+    } else if (messageReplyArgumentDescriptions(decoder.messageName())) {
+        if (uint64_t listenerID = 0; decoder.decode(listenerID)) {
+            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "listenerID"), JSC::JSValue(listenerID));
+            RETURN_IF_EXCEPTION(scope, nullptr);
+        }
+    }
+
+    auto arrayBuffer = JSC::ArrayBuffer::create(decoder.buffer(), decoder.length());
+    if (auto* structure = globalObject->arrayBufferStructure(arrayBuffer->sharingMode())) {
+        if (auto* jsArrayBuffer = JSC::JSArrayBuffer::create(vm, structure, WTFMove(arrayBuffer))) {
+            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "buffer"), jsArrayBuffer);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+        }
+    }
+
+    auto jsReplyArguments = jsValueForArguments(globalObject, decoder.messageName(), decoder);
+    if (jsReplyArguments) {
+        jsResult->putDirect(vm, vm.propertyNames->arguments, jsReplyArguments->isEmpty() ? JSC::jsNull() : *jsReplyArguments);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+    }
+
+    return jsResult;
 }
 
 void inject(WebPage& webPage, WebFrame& webFrame, WebCore::DOMWrapperWorld& world)

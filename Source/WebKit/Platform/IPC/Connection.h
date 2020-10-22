@@ -139,6 +139,15 @@ public:
         void derefMessageReceiver() final { ThreadSafeRefCounted::deref(); }
     };
 
+#if ENABLE(IPC_TESTING_API)
+    class MessageObserver : public CanMakeWeakPtr<MessageObserver> {
+    public:
+        virtual ~MessageObserver() = default;
+        virtual void willSendMessage(const Encoder&, OptionSet<SendOption>) = 0;
+        virtual void didReceiveMessage(const Decoder&) = 0;
+    };
+#endif
+
 #if USE(UNIX_DOMAIN_SOCKETS)
     typedef int Identifier;
     static bool identifierIsValid(Identifier identifier) { return identifier != -1; }
@@ -288,6 +297,8 @@ public:
     void enableIncomingMessagesThrottling();
 
 #if ENABLE(IPC_TESTING_API)
+    void addMessageObserver(const MessageObserver&);
+
     void setIgnoreInvalidMessageForTesting() { m_ignoreInvalidMessageForTesting = true; }
     bool ignoreInvalidMessageForTesting() const { return m_ignoreInvalidMessageForTesting; }
 #endif
@@ -418,6 +429,7 @@ private:
     uint64_t m_nextIncomingSyncMessageCallbackID { 0 };
 
 #if ENABLE(IPC_TESTING_API)
+    Vector<WeakPtr<MessageObserver>> m_messageObservers;
     bool m_ignoreInvalidMessageForTesting { false };
 #endif
 

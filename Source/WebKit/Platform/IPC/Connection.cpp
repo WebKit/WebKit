@@ -453,6 +453,20 @@ bool Connection::sendMessage(std::unique_ptr<Encoder> encoder, OptionSet<SendOpt
     if (!isValid())
         return false;
 
+#if ENABLE(IPC_TESTING_API)
+    if (isMainThread()) {
+        bool hasDeadObservers = false;
+        for (auto& observerWeakPtr : m_messageObservers) {
+            if (auto* observer = observerWeakPtr.get())
+                observer->willSendMessage(*encoder, sendOptions);
+            else
+                hasDeadObservers = true;
+        }
+        if (hasDeadObservers)
+            m_messageObservers.removeAllMatching([](auto& observer) { return !observer; });
+    }
+#endif
+
     if (isMainThread() && m_inDispatchMessageMarkedToUseFullySynchronousModeForTesting && !encoder->isSyncMessage() && !(encoder->messageReceiverName() == ReceiverName::IPC) && !sendOptions.contains(SendOption::IgnoreFullySynchronousMode)) {
         uint64_t syncRequestID;
         auto wrappedMessage = createSyncMessageEncoder(MessageName::WrappedAsyncMessageForTesting, encoder->destinationID(), syncRequestID);
@@ -467,6 +481,9 @@ bool Connection::sendMessage(std::unique_ptr<Encoder> encoder, OptionSet<SendOpt
         encoder->setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply::Yes);
     else if (sendOptions.contains(SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply))
         encoder->setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC);
+
+#if ENABLE(IPC_TESTING_API)
+#endif
 
     {
         auto locker = holdLock(m_outgoingMessagesMutex);
@@ -822,6 +839,13 @@ void Connection::enableIncomingMessagesThrottling()
     m_incomingMessagesThrottler = makeUnique<MessagesThrottler>(*this, &Connection::dispatchIncomingMessages);
 }
 
+#if ENABLE(IPC_TESTING_API)
+void Connection::addMessageObserver(const MessageObserver& observer)
+{
+    m_messageObservers.append(makeWeakPtr(observer));
+}
+#endif
+
 void Connection::postConnectionDidCloseOnConnectionWorkQueue()
 {
     m_connectionQueue->dispatch([protectedThis = makeRef(*this)]() mutable {
@@ -1006,6 +1030,20 @@ void Connection::dispatchMessage(Decoder& decoder)
         handler(&decoder);
         return;
     }
+
+#if ENABLE(IPC_TESTING_API)
+    if (isMainThread()) {
+        bool hasDeadObservers = false;
+        for (auto& observerWeakPtr : m_messageObservers) {
+            if (auto* observer = observerWeakPtr.get())
+                observer->didReceiveMessage(decoder);
+            else
+                hasDeadObservers = true;
+        }
+        if (hasDeadObservers)
+            m_messageObservers.removeAllMatching([](auto& observer) { return !observer; });
+    }
+#endif
 
     m_client.didReceiveMessage(*this, decoder);
 }
