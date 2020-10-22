@@ -248,7 +248,11 @@ void AudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
     lazyInitialize();
 
     destinationNode()->resume([this, protectedThis = makeRef(*this)] {
-        setState(State::Running);
+        // Since we update the state asynchronously, we may have been interrupted after the
+        // call to resume() and before this lambda runs. In this case, we don't want to
+        // reset the state to running.
+        bool interrupted = m_mediaSession->state() == PlatformMediaSession::Interrupted;
+        setState(interrupted ? State::Interrupted : State::Running);
     });
 }
 
@@ -402,30 +406,26 @@ void AudioContext::visibilityStateChanged()
 
 void AudioContext::suspend(ReasonForSuspension)
 {
-    if (state() == State::Running) {
-        m_mediaSession->beginInterruption(PlatformMediaSession::PlaybackSuspended);
-        document()->updateIsPlayingMedia();
-    }
+    if (isClosed() || m_wasSuspendedByScript)
+        return;
+
+    m_mediaSession->beginInterruption(PlatformMediaSession::PlaybackSuspended);
+    document()->updateIsPlayingMedia();
 }
 
 void AudioContext::resume()
 {
-    if (state() == State::Interrupted) {
-        m_mediaSession->endInterruption(PlatformMediaSession::MayResumePlaying);
-        document()->updateIsPlayingMedia();
-    }
+    if (isClosed() || m_wasSuspendedByScript)
+        return;
+
+    m_mediaSession->endInterruption(PlatformMediaSession::MayResumePlaying);
+    document()->updateIsPlayingMedia();
 }
 
 void AudioContext::suspendPlayback()
 {
     if (!destinationNode() || state() == State::Closed)
         return;
-
-    if (state() == State::Suspended) {
-        if (m_mediaSession->state() == PlatformMediaSession::Interrupted)
-            setState(State::Interrupted);
-        return;
-    }
 
     lazyInitialize();
 
