@@ -112,9 +112,11 @@ webkit.org/b/216118 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-c
 webkit.org/b/216118 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html [ Crash Failure Pass ]
 
 # AudioWorklet.
+webkit.org/b/218010 http/wpt/webaudio/the-audio-api/the-audioworklet-interface/exposed-properties.https.html [ Failure Pass ]
 webkit.org/b/218010 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-output-channel-count.https.html [ Failure Pass ]
 webkit.org/b/218010 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-process-zero-outputs.https.html [ Failure Pass ]
 webkit.org/b/218010 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-promises.https.html [ Failure Pass ]
+webkit.org/b/218010 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processor-construction-port.https.html [ Failure Pass ]
 webkit.org/b/218010 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/suspended-context-messageport.https.html [ Failure Pass ]
 
 # Synthetic oblique.

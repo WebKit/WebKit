@@ -482,10 +482,15 @@ webkit.org/b/213921 fast/visual-viewport/scroll-event-fired-during-scroll-alone.
 webkit.org/b/215638 http/tests/websocket/tests/hybi/invalid-continuation.html [ Failure ]
 webkit.org/b/215638 http/tests/websocket/tests/hybi/stop-on-resume-in-error-handler.html [ Failure ]
 
+webkit.org/b/217267 http/wpt/service-workers/fetchEvent.https.html [ Failure Pass ]
+webkit.org/b/217267 http/wpt/service-workers/file-upload.html [ Failure Pass ]
+webkit.org/b/217267 http/wpt/service-workers/header-filtering.https.html [ Failure Pass ]
+webkit.org/b/217267 http/wpt/service-workers/online.https.html [ Failure Pass ]
 webkit.org/b/217267 http/wpt/service-workers/service-worker-spinning-activate.https.html [ Pass Failure ]
 webkit.org/b/217267 http/wpt/service-workers/service-worker-spinning-fetch.https.html [ Pass Failure ]
 webkit.org/b/217267 http/wpt/service-workers/service-worker-spinning-install.https.html [ Pass Failure ]
 webkit.org/b/217267 http/wpt/service-workers/service-worker-spinning-message.https.html [ Pass Failure ]
+webkit.org/b/217267 http/tests/contentextensions/service-worker.https.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SOUP and Networking-related bugs
@@ -843,6 +848,9 @@ webkit.org/b/217815 imported/w3c/web-platform-tests/css/css-masking/clip-path/cl
 # MediaSession is not enabled in GTK/WPE.
 webkit.org/b/217991 imported/w3c/web-platform-tests/mediasession/ [ Skip ]
 webkit.org/b/217991 media/media-session/ [ Skip ]
+
+webkit.org/b/217414 imported/w3c/web-platform-tests/user-timing/measure-l3.any.html [ Failure Pass ]
+webkit.org/b/217414 imported/w3c/web-platform-tests/user-timing/measure-l3.any.worker.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs

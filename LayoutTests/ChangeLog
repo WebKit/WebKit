@@ -1,3 +1,10 @@
+2020-10-22  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB][GTK] Unreviewed test gardening. Gardened some of the latest flaky failures.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-10-22  Cathie Chen  <cathiechen@igalia.com>
 
         ResizeObserver is not properly garbage collected
