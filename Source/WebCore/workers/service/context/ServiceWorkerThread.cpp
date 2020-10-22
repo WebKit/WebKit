@@ -99,7 +99,7 @@ void ServiceWorkerThread::runEventLoop()
 
 void ServiceWorkerThread::queueTaskToFireFetchEvent(Ref<ServiceWorkerFetch::Client>&& client, Optional<ServiceWorkerClientIdentifier>&& clientId, ResourceRequest&& request, String&& referrer, FetchOptions&& options)
 {
-    auto serviceWorkerGlobalScope = makeRef(downcast<ServiceWorkerGlobalScope>(*workerGlobalScope()));
+    auto serviceWorkerGlobalScope = makeRef(downcast<ServiceWorkerGlobalScope>(*globalScope()));
     serviceWorkerGlobalScope->eventLoop().queueTask(TaskSource::DOMManipulation, [serviceWorkerGlobalScope, client = WTFMove(client), clientId, request = WTFMove(request), referrer = WTFMove(referrer), options = WTFMove(options)]() mutable {
         ServiceWorkerFetch::dispatchFetchEvent(WTFMove(client), serviceWorkerGlobalScope, clientId, WTFMove(request), WTFMove(referrer), WTFMove(options));
     });
@@ -116,7 +116,7 @@ static void fireMessageEvent(ServiceWorkerGlobalScope& scope, MessageWithMessage
 
 void ServiceWorkerThread::queueTaskToPostMessage(MessageWithMessagePorts&& message, ServiceWorkerOrClientData&& sourceData)
 {
-    auto serviceWorkerGlobalScope = makeRef(downcast<ServiceWorkerGlobalScope>(*workerGlobalScope()));
+    auto serviceWorkerGlobalScope = makeRef(downcast<ServiceWorkerGlobalScope>(*globalScope()));
     serviceWorkerGlobalScope->eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = makeWeakPtr(this), serviceWorkerGlobalScope, message = WTFMove(message), sourceData = WTFMove(sourceData)]() mutable {
         URL sourceURL;
         ExtendableMessageEventSource source;
@@ -145,7 +145,7 @@ void ServiceWorkerThread::queueTaskToPostMessage(MessageWithMessagePorts&& messa
 
 void ServiceWorkerThread::queueTaskToFireInstallEvent()
 {
-    auto serviceWorkerGlobalScope = makeRef(downcast<ServiceWorkerGlobalScope>(*workerGlobalScope()));
+    auto serviceWorkerGlobalScope = makeRef(downcast<ServiceWorkerGlobalScope>(*globalScope()));
     serviceWorkerGlobalScope->eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = makeWeakPtr(this), serviceWorkerGlobalScope]() mutable {
         RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireInstallEvent firing event for worker %llu", serviceWorkerGlobalScope->thread().identifier().toUInt64());
 
@@ -171,7 +171,7 @@ void ServiceWorkerThread::queueTaskToFireInstallEvent()
 
 void ServiceWorkerThread::queueTaskToFireActivateEvent()
 {
-    auto serviceWorkerGlobalScope = makeRef(downcast<ServiceWorkerGlobalScope>(*workerGlobalScope()));
+    auto serviceWorkerGlobalScope = makeRef(downcast<ServiceWorkerGlobalScope>(*globalScope()));
     serviceWorkerGlobalScope->eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = makeWeakPtr(this), serviceWorkerGlobalScope]() mutable {
         RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireActivateEvent firing event for worker %llu", serviceWorkerGlobalScope->thread().identifier().toUInt64());
 
@@ -191,7 +191,7 @@ void ServiceWorkerThread::queueTaskToFireActivateEvent()
 void ServiceWorkerThread::finishedEvaluatingScript()
 {
     ASSERT(!isMainThread());
-    m_doesHandleFetch = workerGlobalScope()->hasEventListeners(eventNames().fetchEvent);
+    m_doesHandleFetch = globalScope()->hasEventListeners(eventNames().fetchEvent);
 }
 
 void ServiceWorkerThread::start(Function<void(const String&, bool)>&& callback)

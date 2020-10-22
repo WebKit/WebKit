@@ -52,6 +52,7 @@ public:
     Document* document();
 
     const Vector<Ref<WorkletGlobalScopeProxy>>& proxies() const { return m_proxies; }
+    const String& identifier() const { return m_identifier; }
 
 protected:
     explicit Worklet(Document&);
@@ -62,6 +63,7 @@ private:
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
 
+    String m_identifier;
     Vector<Ref<WorkletGlobalScopeProxy>> m_proxies;
     HashSet<RefPtr<WorkletPendingTasks>> m_pendingTasksSet;
 };

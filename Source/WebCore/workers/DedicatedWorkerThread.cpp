@@ -54,7 +54,7 @@ Ref<WorkerGlobalScope> DedicatedWorkerThread::createWorkerGlobalScope(const Work
 void DedicatedWorkerThread::runEventLoop()
 {
     // Notify the parent object of our current active state before calling the superclass to run the event loop.
-    m_workerObjectProxy.reportPendingActivity(workerGlobalScope()->hasPendingActivity());
+    m_workerObjectProxy.reportPendingActivity(globalScope()->hasPendingActivity());
     WorkerThread::runEventLoop();
 }
 

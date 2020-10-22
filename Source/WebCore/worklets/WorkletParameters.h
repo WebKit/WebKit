@@ -34,13 +34,15 @@ struct WorkletParameters {
     URL windowURL;
     JSC::RuntimeFlags jsRuntimeFlags;
     float sampleRate;
+    String identifier;
 
     WorkletParameters isolatedCopy() const
     {
         return {
             windowURL.isolatedCopy(),
             jsRuntimeFlags,
-            sampleRate
+            sampleRate,
+            identifier.isolatedCopy()
         };
     }
 };

@@ -246,8 +246,8 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
 
     HashMap<pid_t, String> knownWorkerThreads;
     {
-        LockHolder lock(WorkerThread::workerThreadsMutex());
-        for (auto* thread : WorkerThread::workerThreads(lock)) {
+        auto locker = holdLock(WorkerOrWorkletThread::workerOrWorkletThreadsLock());
+        for (auto* thread : WorkerOrWorkletThread::workerOrWorkletThreads()) {
             // Ignore worker threads that have not been fully started yet.
             if (!thread->thread())
                 continue;

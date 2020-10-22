@@ -61,6 +61,9 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
 
+    virtual void suspend() { }
+    virtual void resume() { }
+
 protected:
     WorkerOrWorkletGlobalScope(Ref<JSC::VM>&&, WorkerOrWorkletThread*);
 

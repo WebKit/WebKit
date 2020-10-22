@@ -30,11 +30,7 @@
 
 #if ENABLE(WEB_AUDIO)
 #include "WorkerOrWorkletThread.h"
-#include "WorkerRunLoop.h"
 #include "WorkletParameters.h"
-#include <wtf/Forward.h>
-#include <wtf/Lock.h>
-#include <wtf/Threading.h>
 
 namespace WebCore {
 
@@ -49,29 +45,22 @@ public:
     }
     ~AudioWorkletThread();
 
-    AudioWorkletGlobalScope* globalScope() const { return m_workletGlobalScope.get(); }
-
-    void start();
-    void stop();
+    AudioWorkletGlobalScope* globalScope() const;
 
     // WorkerOrWorkletThread.
-    WorkerRunLoop& runLoop() final { return m_runLoop; }
     WorkerLoaderProxy& workerLoaderProxy() final;
-    Thread* thread() const final { return m_thread.get(); }
+
     AudioWorkletMessagingProxy& messagingProxy() { return m_messagingProxy; }
 
 private:
     AudioWorkletThread(AudioWorkletMessagingProxy&, const WorkletParameters&);
 
-    void runEventLoop();
-    void workletThread();
+    // WorkerOrWorkletThread.
+    Ref<WTF::Thread> createThread() final;
+    Ref<WorkerOrWorkletGlobalScope> createGlobalScope() final;
 
     AudioWorkletMessagingProxy& m_messagingProxy;
-    RefPtr<Thread> m_thread;
-    WorkerRunLoop m_runLoop;
     WorkletParameters m_parameters;
-    RefPtr<AudioWorkletGlobalScope> m_workletGlobalScope;
-    Lock m_threadCreationAndWorkletGlobalScopeLock;
 };
 
 } // namespace WebCore

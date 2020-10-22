@@ -33,148 +33,39 @@
 
 #include "AudioWorkletGlobalScope.h"
 #include "AudioWorkletMessagingProxy.h"
-#include "WorkerOrWorkletScriptController.h"
-
-#if PLATFORM(IOS_FAMILY)
-#include "FloatingPointEnvironment.h"
-#endif
-
-#if USE(GLIB)
-#include <wtf/glib/GRefPtr.h>
-#endif
+#include <wtf/Threading.h>
 
 namespace WebCore {
 
 AudioWorkletThread::AudioWorkletThread(AudioWorkletMessagingProxy& messagingProxy, const WorkletParameters& parameters)
-    : m_messagingProxy(messagingProxy)
+    : WorkerOrWorkletThread(parameters.identifier.isolatedCopy())
+    , m_messagingProxy(messagingProxy)
     , m_parameters(parameters.isolatedCopy())
 {
 }
 
 AudioWorkletThread::~AudioWorkletThread() = default;
 
-void AudioWorkletThread::start()
+Ref<WorkerOrWorkletGlobalScope> AudioWorkletThread::createGlobalScope()
 {
-    auto lock = holdLock(m_threadCreationAndWorkletGlobalScopeLock);
-
-    Ref<Thread> thread = Thread::create("WebCore: AudioWorklet", [this] {
-        workletThread();
-    }, ThreadType::Audio);
-    // Force the Thread object to be initialized fully before storing it to m_thread (and becoming visible to other threads).
-    WTF::storeStoreFence();
-    m_thread = WTFMove(thread);
-}
-
-void AudioWorkletThread::stop()
-{
-    // Mutex protection is necessary to ensure that m_workerGlobalScope isn't changed by
-    // WorkerThread::workerThread() while we're accessing it. Note also that stop() can
-    // be called before m_workerGlobalScope is fully created.
-    auto locker = tryHoldLock(m_threadCreationAndWorkletGlobalScopeLock);
-    if (!locker) {
-        // The thread is still starting, spin the runloop and try again to avoid deadlocks if the worker thread
-        // needs to interact with the main thread during startup.
-        callOnMainThread([this]() mutable {
-            stop();
-        });
-        return;
-    }
-
-    // Ensure that tasks are being handled by thread event loop. If script execution weren't forbidden, a while(1) loop in JS could keep the thread alive forever.
-    if (m_workletGlobalScope) {
-        m_workletGlobalScope->script()->scheduleExecutionTermination();
-
-        m_runLoop.postTaskAndTerminate({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext& context ) {
-            auto& workletGlobalScope = downcast<AudioWorkletGlobalScope>(context);
-
-            workletGlobalScope.prepareForDestruction();
-
-            // Stick a shutdown command at the end of the queue, so that we deal
-            // with all the cleanup tasks the databases post first.
-            workletGlobalScope.postTask({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext& context) {
-                auto& workletGlobalScope = downcast<AudioWorkletGlobalScope>(context);
-                // It's not safe to call clearScript until all the cleanup tasks posted by functions initiated by WorkerThreadShutdownStartTask have completed.
-                workletGlobalScope.clearScript();
-            } });
-
-        } });
-        return;
-    }
-    m_runLoop.terminate();
-}
-
-void AudioWorkletThread::workletThread()
-{
-    auto protectedThis = makeRef(*this);
-
-    // Propagate the mainThread's fenv to workers.
-#if PLATFORM(IOS_FAMILY)
-    FloatingPointEnvironment::singleton().propagateMainThreadEnvironment();
-#endif
-
-#if USE(GLIB)
-    GRefPtr<GMainContext> mainContext = adoptGRef(g_main_context_new());
-    g_main_context_push_thread_default(mainContext.get());
-#endif
-
-    WorkerOrWorkletScriptController* scriptController;
-    {
-        auto lock = holdLock(m_threadCreationAndWorkletGlobalScopeLock);
-        m_workletGlobalScope = AudioWorkletGlobalScope::create(*this, m_parameters);
-
-        scriptController = m_workletGlobalScope->script();
-
-        if (m_runLoop.terminated()) {
-            // The worker was terminated before the thread had a chance to run. Since the context didn't exist yet,
-            // forbidExecution() couldn't be called from stop().
-            scriptController->scheduleExecutionTermination();
-            scriptController->forbidExecution();
-        }
-    }
-
-    runEventLoop();
-
-#if USE(GLIB)
-    g_main_context_pop_thread_default(mainContext.get());
-#endif
-
-    RefPtr<Thread> protector = m_thread;
-
-    ASSERT(m_workletGlobalScope->hasOneRef());
-
-    RefPtr<AudioWorkletGlobalScope> workletGlobalScopeToDelete;
-    {
-        // Mutex protection is necessary to ensure that we don't change m_workerGlobalScope
-        // while WorkerThread::stop is accessing it.
-        auto lock = holdLock(m_threadCreationAndWorkletGlobalScopeLock);
-
-        // Delay the destruction of the WorkerGlobalScope context until after we've unlocked the
-        // m_threadCreationAndWorkerGlobalScopeMutex. This is needed because destructing the
-        // context will trigger the main thread to race against us to delete the WorkerThread
-        // object, and the WorkerThread object owns the mutex we need to unlock after this.
-        workletGlobalScopeToDelete = WTFMove(m_workletGlobalScope);
-    }
-
-    // The below assignment will destroy the context, which will in turn notify messaging proxy.
-    // We cannot let any objects survive past thread exit, because no other thread will run GC or otherwise destroy them.
-    workletGlobalScopeToDelete = nullptr;
-
-    // Send the last WorkerThread Ref to be Deref'ed on the main thread.
-    callOnMainThread([protectedThis = WTFMove(protectedThis)] { });
-
-    // The thread object may be already destroyed from notification now, don't try to access "this".
-    protector->detach();
-}
-
-void AudioWorkletThread::runEventLoop()
-{
-    // Does not return until terminated.
-    m_runLoop.run(m_workletGlobalScope.get());
+    return AudioWorkletGlobalScope::create(*this, m_parameters);
 }
 
 WorkerLoaderProxy& AudioWorkletThread::workerLoaderProxy()
 {
     return m_messagingProxy;
+}
+
+Ref<Thread> AudioWorkletThread::createThread()
+{
+    return Thread::create("WebCore: AudioWorklet", [this] {
+        workerOrWorkletThread();
+    }, ThreadType::Audio);
+}
+
+AudioWorkletGlobalScope* AudioWorkletThread::globalScope() const
+{
+    return downcast<AudioWorkletGlobalScope>(WorkerOrWorkletThread::globalScope());
 }
 
 } // namespace WebCore

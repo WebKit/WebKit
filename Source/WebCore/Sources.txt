@@ -2563,6 +2563,7 @@ workers/WorkerLocation.cpp
 workers/WorkerMessagingProxy.cpp
 workers/WorkerOrWorkletGlobalScope.cpp
 workers/WorkerOrWorkletScriptController.cpp
+workers/WorkerOrWorkletThread.cpp
 workers/WorkerRunLoop.cpp
 workers/WorkerScriptLoader.cpp
 workers/WorkerThread.cpp

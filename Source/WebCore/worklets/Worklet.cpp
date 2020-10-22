@@ -33,6 +33,7 @@
 #include "WorkletGlobalScope.h"
 #include "WorkletGlobalScopeProxy.h"
 #include "WorkletPendingTasks.h"
+#include <JavaScriptCore/IdentifiersFactory.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/IsoMallocInlines.h>
 
@@ -42,6 +43,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(Worklet);
 
 Worklet::Worklet(Document& document)
     : ActiveDOMObject(&document)
+    , m_identifier("worklet:" + Inspector::IdentifiersFactory::createIdentifier())
 {
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,12 @@
 
 #pragma once
 
+#include "WorkerRunLoop.h"
+#include <wtf/Forward.h>
+#include <wtf/Function.h>
+#include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace WTF {
 class Thread;
@@ -38,11 +43,52 @@ class WorkerRunLoop;
 
 class WorkerOrWorkletThread : public ThreadSafeRefCounted<WorkerOrWorkletThread> {
 public:
-    virtual ~WorkerOrWorkletThread() = default;
+    virtual ~WorkerOrWorkletThread();
 
-    virtual WTF::Thread* thread() const = 0;
-    virtual WorkerRunLoop& runLoop() = 0;
+    WTF::Thread* thread() const { return m_thread.get(); }
     virtual WorkerLoaderProxy& workerLoaderProxy() = 0;
+
+    WorkerOrWorkletGlobalScope* globalScope() const { return m_globalScope.get(); }
+    WorkerRunLoop& runLoop() { return m_runLoop; }
+
+    void start(Function<void(const String&)>&& evaluateCallback = { });
+    void stop(Function<void()>&& terminatedCallback = { });
+
+    void startRunningDebuggerTasks();
+    void stopRunningDebuggerTasks();
+
+    void suspend();
+    void resume();
+
+    const String& identifier() const { return m_identifier; }
+
+    static HashSet<WorkerOrWorkletThread*>& workerOrWorkletThreads();
+    static Lock& workerOrWorkletThreadsLock();
+    static void releaseFastMallocFreeMemoryInAllThreads();
+
+protected:
+    explicit WorkerOrWorkletThread(const String& identifier);
+    void workerOrWorkletThread();
+
+    // Executes the event loop for the worker thread. Derived classes can override to perform actions before/after entering the event loop.
+    virtual void runEventLoop();
+
+private:
+    virtual Ref<WTF::Thread> createThread() = 0;
+    virtual Ref<WorkerOrWorkletGlobalScope> createGlobalScope() = 0;
+    virtual void evaluateScriptIfNecessary(String&) { }
+    virtual bool shouldWaitForWebInspectorOnStartup() const { return false; }
+
+    String m_identifier;
+    Lock m_threadCreationAndGlobalScopeLock;
+    RefPtr<WorkerOrWorkletGlobalScope> m_globalScope;
+    RefPtr<WTF::Thread> m_thread;
+    WorkerRunLoop m_runLoop;
+    Function<void(const String&)> m_evaluateCallback;
+    Function<void()> m_stoppedCallback;
+    BinarySemaphore m_suspensionSemaphore;
+    bool m_isSuspended { false };
+    bool m_pausedForDebugger { false };
 };
 
 } // namespace WebCore

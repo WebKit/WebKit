@@ -51,7 +51,8 @@ static WorkletParameters generateWorkletParameters(AudioWorklet& worklet)
     return {
         document->url(),
         jsRuntimeFlags,
-        worklet.audioContext() ? worklet.audioContext()->sampleRate() : 0.0f
+        worklet.audioContext() ? worklet.audioContext()->sampleRate() : 0.0f,
+        worklet.identifier()
     };
 }
 
