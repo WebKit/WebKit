@@ -2861,25 +2861,6 @@ RefPtr<PlatformCALayer> GraphicsLayerCA::replicatedLayerRoot(ReplicaState& repli
 
 void GraphicsLayerCA::updateAnimations()
 {
-    auto baseTransformAnimationBeginTime = 1_s;
-    auto currentTime = Seconds(CACurrentMediaTime());
-    auto updateBeginTimes = [&](LayerPropertyAnimation& animation)
-    {
-        if (animation.m_pendingRemoval)
-            return;
-
-        // In case we have an offset, and we haven't set an explicit begin time previously,
-        // we need to record the beginTime now.
-        if (animation.m_timeOffset && !animation.m_beginTime)
-            animation.m_beginTime = currentTime;
-
-        // Now check if we have a resolved begin time and ensure the begin time we'll use for
-        // base transform animations matches the smallest known begin time to guarantee that
-        // such animations can combine with other explicit transform animations correctly.
-        if (auto computedBeginTime = animation.computedBeginTime())
-            baseTransformAnimationBeginTime = std::min(baseTransformAnimationBeginTime, *computedBeginTime);
-    };
-
     enum class Additive { Yes, No };
     auto addAnimation = [&](LayerPropertyAnimation& animation, Additive additive = Additive::Yes) {
         animation.m_animation->setAdditive(additive == Additive::Yes);
@@ -2909,7 +2890,7 @@ void GraphicsLayerCA::updateAnimations()
         auto animation = LayerPropertyAnimation(WTFMove(caAnimation), "base-transform-" + createCanonicalUUIDString(), property, 0, 0, 0_s);
         // To ensure the base value transform is applied along with all the interpolating animations, we set it to have started
         // as early as possible, which combined with the infinite duration ensures it's current for any given CA media time.
-        animation.m_beginTime = baseTransformAnimationBeginTime;
+        animation.m_beginTime = Seconds::fromNanoseconds(1);
 
         // Additivity will depend on the source of the matrix, if it was explicitly provided as an identity matrix, it
         // is the initial base value transform animation and must override the current transform value for this layer.
@@ -2919,10 +2900,8 @@ void GraphicsLayerCA::updateAnimations()
         m_baseValueTransformAnimations.append(WTFMove(animation));
     };
 
-    // Iterate through all animations to update each animation's begin time, if necessary,
-    // compute the base transform animation begin times and remove all running CA animations.
+    // Remove all running CA animations.
     for (auto& animation : m_animations) {
-        updateBeginTimes(animation);
         if (animation.m_playState == PlayState::Playing || animation.m_playState == PlayState::Paused)
             removeCAAnimationFromLayer(animation);
     }
@@ -3042,8 +3021,18 @@ void GraphicsLayerCA::setAnimationOnLayer(LayerPropertyAnimation& animation)
 
     auto& caAnim = *animation.m_animation;
 
-    if (auto beginTime = animation.computedBeginTime())
-        caAnim.setBeginTime(beginTime->seconds());
+    if (animation.m_timeOffset) {
+        // In case we have an offset, we need to record the beginTime now since we have to pass in an explicit
+        // value in the first place.
+        if (!animation.m_beginTime)
+            animation.m_beginTime = Seconds(CACurrentMediaTime());
+        caAnim.setBeginTime((animation.m_beginTime - animation.m_timeOffset).seconds());
+    } else if (animation.m_beginTime) {
+        // If we already have a begin time, then we already started in the past and must ensure we use that same
+        // begin time. Any other case will get use the CA transaction's time as its begin time and will be recorded
+        // in platformCALayerAnimationStarted().
+        caAnim.setBeginTime(animation.m_beginTime.seconds());
+    }
 
     String animationID = animation.animationIdentifier();
 
