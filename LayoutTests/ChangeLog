@@ -1,3 +1,18 @@
+2020-10-21  Megan Gardner  <megan_gardner@apple.com>
+
+        Stop gap patch fix for regression in r267329.
+        https://bugs.webkit.org/show_bug.cgi?id=218020
+
+        Reviewed by Darin Adler.
+
+        * editing/selection/double-click-and-drag-over-anchor-to-select-expected.txt: Added.
+        * editing/selection/double-click-and-drag-over-anchor-to-select.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.doubleClickAtMouseDown):
+        (window.UIHelper.mouseUp):
+        (window.UIHelper.dragMouseAcrossElement):
+        (window.UIHelper.doubleClickElementMouseDown):
+
 2020-10-21  Karl Rackler  <rackler@apple.com>
 
         REGRESSION(iOS 14): imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001.html is a constant failure

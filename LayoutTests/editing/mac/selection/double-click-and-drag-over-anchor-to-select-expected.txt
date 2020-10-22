@@ -1,0 +1,56 @@
+
+Before extending the selection:
+| "
+    "
+| <p>
+|   "The "
+|   <span>
+|     id="end"
+|     "quick"
+|   " "
+|   <span>
+|     id="middle3"
+|     "brown"
+|   " "
+|   <span>
+|     id="middle2"
+|     "fox"
+|   " "
+|   <span>
+|     id="middle1"
+|     "jumped"
+|   " "
+|   <span>
+|     id="start"
+|     "over"
+|   " the lazy dog. And then there was another sentence."
+| "
+"
+
+quick brown fox jumped over:
+| "
+    "
+| <p>
+|   "The "
+|   <span>
+|     id="end"
+|     "<#selection-focus>quick"
+|   " "
+|   <span>
+|     id="middle3"
+|     "brown"
+|   " "
+|   <span>
+|     id="middle2"
+|     "fox"
+|   " "
+|   <span>
+|     id="middle1"
+|     "jumped"
+|   " "
+|   <span>
+|     id="start"
+|     "over<#selection-anchor>"
+|   " the lazy dog. And then there was another sentence."
+| "
+"
