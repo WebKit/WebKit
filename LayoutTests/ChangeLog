@@ -1,3 +1,12 @@
+2020-10-22  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Lines with outline should be marked having visual overflow
+        https://bugs.webkit.org/show_bug.cgi?id=218071
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/repaint/focus-ring-repaint-expected.txt:
+
 2020-10-22  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB][GTK] Unreviewed test gardening. Gardened some of the latest flaky failures.

@@ -175,6 +175,9 @@ void InlineFlowBox::addToLine(InlineBox* child)
             child->clearKnownToHaveNoOverflow();
         else if (childStyle.hasOutlineInVisualOverflow())
             child->clearKnownToHaveNoOverflow();
+
+        if (lineStyle().hasOutlineInVisualOverflow())
+            clearKnownToHaveNoOverflow();
         
         if (knownToHaveNoOverflow() && is<InlineFlowBox>(*child) && !downcast<InlineFlowBox>(*child).knownToHaveNoOverflow())
             clearKnownToHaveNoOverflow();
