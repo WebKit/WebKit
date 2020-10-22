@@ -677,7 +677,7 @@ void URL::setPath(StringView path)
 
     parse(makeString(
         StringView(m_string).left(pathStart()),
-        path.startsWith('/') || (hasSpecialScheme() && path.startsWith('\\')) ? "" : "/",
+        path.startsWith('/') || (path.startsWith('\\') && (hasSpecialScheme() || protocolIs("file"))) ? "" : "/",
         escapePathWithoutCopying(path),
         StringView(m_string).substring(m_pathEnd)
     ));

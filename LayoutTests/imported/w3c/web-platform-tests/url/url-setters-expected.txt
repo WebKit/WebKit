@@ -507,9 +507,9 @@ PASS <area>: Setting <https://example.net#nav>.pathname = 'home'
 PASS URL: Setting <https://example.net#nav>.pathname = '../home'
 PASS <a>: Setting <https://example.net#nav>.pathname = '../home'
 PASS <area>: Setting <https://example.net#nav>.pathname = '../home'
-FAIL URL: Setting <http://example.net/home?lang=fr#nav>.pathname = '\a\%2E\b\%2e.\c' \ is a segment delimiter for 'special' URLs assert_equals: expected "http://example.net/a/c?lang=fr#nav" but got "http://example.net//a/c?lang=fr#nav"
-FAIL <a>: Setting <http://example.net/home?lang=fr#nav>.pathname = '\a\%2E\b\%2e.\c' \ is a segment delimiter for 'special' URLs assert_equals: expected "http://example.net/a/c?lang=fr#nav" but got "http://example.net//a/c?lang=fr#nav"
-FAIL <area>: Setting <http://example.net/home?lang=fr#nav>.pathname = '\a\%2E\b\%2e.\c' \ is a segment delimiter for 'special' URLs assert_equals: expected "http://example.net/a/c?lang=fr#nav" but got "http://example.net//a/c?lang=fr#nav"
+PASS URL: Setting <http://example.net/home?lang=fr#nav>.pathname = '\a\%2E\b\%2e.\c' \ is a segment delimiter for 'special' URLs
+PASS <a>: Setting <http://example.net/home?lang=fr#nav>.pathname = '\a\%2E\b\%2e.\c' \ is a segment delimiter for 'special' URLs
+PASS <area>: Setting <http://example.net/home?lang=fr#nav>.pathname = '\a\%2E\b\%2e.\c' \ is a segment delimiter for 'special' URLs
 PASS URL: Setting <view-source+http://example.net/home?lang=fr#nav>.pathname = '\a\%2E\b\%2e.\c' \ is *not* a segment delimiter for non-'special' URLs
 PASS <a>: Setting <view-source+http://example.net/home?lang=fr#nav>.pathname = '\a\%2E\b\%2e.\c' \ is *not* a segment delimiter for non-'special' URLs
 PASS <area>: Setting <view-source+http://example.net/home?lang=fr#nav>.pathname = '\a\%2E\b\%2e.\c' \ is *not* a segment delimiter for non-'special' URLs
@@ -534,15 +534,15 @@ PASS <area>: Setting <sc://example.net>.pathname = '?' ? needs to be encoded, no
 PASS URL: Setting <sc://example.net>.pathname = '#' # needs to be encoded, non-special scheme
 PASS <a>: Setting <sc://example.net>.pathname = '#' # needs to be encoded, non-special scheme
 PASS <area>: Setting <sc://example.net>.pathname = '#' # needs to be encoded, non-special scheme
-FAIL URL: Setting <file://monkey/>.pathname = '\\' File URLs and (back)slashes assert_equals: expected "file://monkey/" but got "file://monkey///"
-FAIL <a>: Setting <file://monkey/>.pathname = '\\' File URLs and (back)slashes assert_equals: expected "file://monkey/" but got "file://monkey///"
-FAIL <area>: Setting <file://monkey/>.pathname = '\\' File URLs and (back)slashes assert_equals: expected "file://monkey/" but got "file://monkey///"
-FAIL URL: Setting <file:///unicorn>.pathname = '//\/' File URLs and (back)slashes assert_equals: expected "file:///" but got "file://////"
-FAIL <a>: Setting <file:///unicorn>.pathname = '//\/' File URLs and (back)slashes assert_equals: expected "file:///" but got "file://////"
-FAIL <area>: Setting <file:///unicorn>.pathname = '//\/' File URLs and (back)slashes assert_equals: expected "file:///" but got "file://////"
-FAIL URL: Setting <file:///unicorn>.pathname = '//monkey/..//' File URLs and (back)slashes assert_equals: expected "file:///" but got "file://///"
-FAIL <a>: Setting <file:///unicorn>.pathname = '//monkey/..//' File URLs and (back)slashes assert_equals: expected "file:///" but got "file://///"
-FAIL <area>: Setting <file:///unicorn>.pathname = '//monkey/..//' File URLs and (back)slashes assert_equals: expected "file:///" but got "file://///"
+PASS URL: Setting <file://monkey/>.pathname = '\\' File URLs and (back)slashes
+PASS <a>: Setting <file://monkey/>.pathname = '\\' File URLs and (back)slashes
+PASS <area>: Setting <file://monkey/>.pathname = '\\' File URLs and (back)slashes
+PASS URL: Setting <file:///unicorn>.pathname = '//\/' File URLs and (back)slashes
+PASS <a>: Setting <file:///unicorn>.pathname = '//\/' File URLs and (back)slashes
+PASS <area>: Setting <file:///unicorn>.pathname = '//\/' File URLs and (back)slashes
+PASS URL: Setting <file:///unicorn>.pathname = '//monkey/..//' File URLs and (back)slashes
+PASS <a>: Setting <file:///unicorn>.pathname = '//monkey/..//' File URLs and (back)slashes
+PASS <area>: Setting <file:///unicorn>.pathname = '//monkey/..//' File URLs and (back)slashes
 PASS URL: Setting <non-spec:/>.pathname = '/.//p' Serialize /. in path
 PASS <a>: Setting <non-spec:/>.pathname = '/.//p' Serialize /. in path
 PASS <area>: Setting <non-spec:/>.pathname = '/.//p' Serialize /. in path

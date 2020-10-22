@@ -202,10 +202,7 @@ void URLDecomposition::setPathname(StringView value)
     auto fullURL = this->fullURL();
     if (fullURL.cannotBeABaseURL() || !fullURL.canSetPathname())
         return;
-    if (value.startsWith('/'))
-        fullURL.setPath(value);
-    else
-        fullURL.setPath(makeString('/', value));
+    fullURL.setPath(value);
     setFullURL(fullURL);
 }
 

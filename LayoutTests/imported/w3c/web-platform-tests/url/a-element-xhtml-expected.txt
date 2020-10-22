@@ -488,6 +488,8 @@ PASS Parsing: <//one/two> against <file:///>
 PASS Parsing: <///one/two> against <file:///>
 PASS Parsing: <////one/two> against <file:///>
 PASS Parsing: <file:///.//> against <file:////>
+PASS Parsing: <file:.//p> against <about:blank>
+PASS Parsing: <file:/.//p> against <about:blank>
 PASS Parsing: <http://[1:0::]> against <http://example.net/>
 PASS Parsing: <http://[0:1:2:3:4:5:6:7:8]> against <http://example.net/>
 PASS Parsing: <https://[0::0::0]> against <about:blank>
