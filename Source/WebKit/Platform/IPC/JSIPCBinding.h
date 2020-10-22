@@ -25,18 +25,30 @@
 
 #pragma once
 
+#if ENABLE(IPC_TESTING_API)
+
 #include "Decoder.h"
 #include "HandleMessage.h"
 #include <JavaScriptCore/JSArray.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/ObjectConstructor.h>
-#include <WebCore/FloatRect.h>
-#include <WebCore/IntRect.h>
-#include <WebCore/RegistrableDomain.h>
 #include <wtf/ObjectIdentifier.h>
-#include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
+
+namespace WTF {
+
+class URL;
+
+}
+
+namespace WebCore {
+
+class FloatRect;
+class IntRect;
+class RegistrableDomain;
+
+}
 
 namespace IPC {
 
@@ -46,36 +58,9 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, const T&)
     return JSC::jsUndefined();
 }
 
-inline JSC::JSValue jsValueForDecodedStringArgumentValue(JSC::JSGlobalObject* globalObject, const String& value, ASCIILiteral type)
-{
-    auto& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    auto* object = JSC::constructEmptyObject(globalObject, globalObject->objectPrototype());
-    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    object->putDirect(vm, JSC::Identifier::fromString(vm, "type"_s), JSC::jsNontrivialString(vm, type));
-    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    object->putDirect(vm, JSC::Identifier::fromString(vm, "value"_s), value.isNull() ? JSC::jsNull() : JSC::jsString(vm, value));
-    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    return object;
-}
-
-template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, const String& value)
-{
-    return jsValueForDecodedStringArgumentValue(globalObject, value, "String"_s);
-}
-
-template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, const URL& value)
-{
-    return jsValueForDecodedStringArgumentValue(globalObject, value.string(), "URL"_s);
-}
-
-template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, const WebCore::RegistrableDomain& value)
-{
-    return jsValueForDecodedStringArgumentValue(globalObject, value.string(), "RegistrableDomain"_s);
-}
+template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, const String&);
+template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, const URL&);
+template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, const WebCore::RegistrableDomain&);
 
 template<typename T, std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, T)
@@ -88,93 +73,18 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, E
     return jsValueForDecodedArgumentValue(globalObject, static_cast<std::underlying_type_t<E>>(value));
 }
 
-template<typename NumericType>
-JSC::JSValue jsValueForDecodedNumericArgumentValue(JSC::JSGlobalObject* globalObject, NumericType value, const String& type)
-{
-    auto& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    auto* object = JSC::constructEmptyObject(globalObject, globalObject->objectPrototype());
-    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    object->putDirect(vm, JSC::Identifier::fromString(vm, "type"_s), JSC::jsNontrivialString(vm, type));
-    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    object->putDirect(vm, JSC::Identifier::fromString(vm, "value"_s), JSC::JSValue(value));
-    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    return object;
-}
+template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, bool);
+template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, double);
+template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, float);
+template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, int8_t);
+template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, int16_t);
+template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, int32_t);
 
-template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, bool value)
-{
-    auto& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    auto* object = JSC::constructEmptyObject(globalObject, globalObject->objectPrototype());
-    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    object->putDirect(vm, JSC::Identifier::fromString(vm, "type"_s), JSC::jsNontrivialString(vm, "bool"));
-    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    object->putDirect(vm, JSC::Identifier::fromString(vm, "value"_s), JSC::jsBoolean(value));
-    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    return object;
-}
-
-template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, double value)
-{
-    return jsValueForDecodedNumericArgumentValue(globalObject, value, "double");
-}
-
-template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, float value)
-{
-    return jsValueForDecodedNumericArgumentValue(globalObject, value, "float");
-}
-
-template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, int8_t value)
-{
-    return jsValueForDecodedNumericArgumentValue(globalObject, value, "int8_t");
-}
-
-template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, int16_t value)
-{
-    return jsValueForDecodedNumericArgumentValue(globalObject, value, "int16_t");
-}
-
-template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, int32_t value)
-{
-    return jsValueForDecodedNumericArgumentValue(globalObject, value, "int32_t");
-}
-
-template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, int64_t value)
-{
-    return jsValueForDecodedNumericArgumentValue(globalObject, value, "int64_t");
-}
-
-template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, uint8_t value)
-{
-    return jsValueForDecodedNumericArgumentValue(globalObject, value, "uint8_t");
-}
-
-template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, uint16_t value)
-{
-    return jsValueForDecodedNumericArgumentValue(globalObject, value, "uint16_t");
-}
-
-template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, uint32_t value)
-{
-    return jsValueForDecodedNumericArgumentValue(globalObject, value, "uint32_t");
-}
-
-template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, uint64_t value)
-{
-    return jsValueForDecodedNumericArgumentValue(globalObject, value, "uint64_t");
-}
+template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, int64_t);
+template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, uint8_t);
+template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, uint16_t);
+template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, uint32_t);
+template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, uint64_t);
 
 template<typename U>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, const ObjectIdentifier<U>& value)
@@ -182,37 +92,8 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, c
     return jsValueForDecodedArgumentValue(globalObject, value.toUInt64());
 }
 
-template<typename RectType>
-JSC::JSValue jsValueForDecodedArgumentRect(JSC::JSGlobalObject* globalObject, const RectType& value, const String& type)
-{
-    auto& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    auto* object = JSC::constructEmptyObject(globalObject, globalObject->objectPrototype());
-    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    object->putDirect(vm, JSC::Identifier::fromString(vm, "type"_s), JSC::jsNontrivialString(vm, type));
-    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    object->putDirect(vm, JSC::Identifier::fromString(vm, "x"_s), JSC::JSValue(value.x()));
-    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    object->putDirect(vm, JSC::Identifier::fromString(vm, "y"_s), JSC::JSValue(value.y()));
-    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    object->putDirect(vm, JSC::Identifier::fromString(vm, "width"_s), JSC::JSValue(value.width()));
-    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    object->putDirect(vm, JSC::Identifier::fromString(vm, "height"_s), JSC::JSValue(value.height()));
-    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    return object;
-}
-
-template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, const WebCore::IntRect& value)
-{
-    return jsValueForDecodedArgumentRect(globalObject, value, "IntRect");
-}
-
-template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, const WebCore::FloatRect& value)
-{
-    return jsValueForDecodedArgumentRect(globalObject, value, "FloatRect");
-}
+template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, const WebCore::IntRect&);
+template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, const WebCore::FloatRect&);
 
 template<typename U>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, const OptionSet<U>& value)
@@ -274,3 +155,5 @@ static Optional<JSC::JSValue> jsValueForDecodedArguments(JSC::JSGlobalObject* gl
 }
 
 }
+
+#endif

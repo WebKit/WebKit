@@ -1447,6 +1447,7 @@
 		9B5499B22362A7EC00DF8BA5 /* _WKTextManipulationExclusionRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B5499B02362A7EC00DF8BA5 /* _WKTextManipulationExclusionRule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B5BEC262400F4A90070C6EF /* WebMediaStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B5BEC242400F4A90070C6EF /* WebMediaStrategy.h */; };
 		9B5BEC2A240101580070C6EF /* RemoteAudioDestinationProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B5BEC28240101580070C6EF /* RemoteAudioDestinationProxy.h */; };
+		9BF5EC642541145600984E77 /* JSIPCBinding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BF5EC6325410E9900984E77 /* JSIPCBinding.cpp */; };
 		9EC532A32447FBAD00215216 /* GeolocationIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 9EC532A22447FBAD00215216 /* GeolocationIdentifier.h */; };
 		9FB5F395169E6A80002C25BF /* WKContextPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FB5F393169E6A80002C25BF /* WKContextPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A102A7081EC0EEE900D81D82 /* com.macromedia.Flash Player ESR.plugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7A5E39491D5BD8A700B4B7CE /* com.macromedia.Flash Player ESR.plugin.sb */; };
@@ -4583,6 +4584,7 @@
 		9B5BEC2E2401018C0070C6EF /* RemoteAudioDestinationProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteAudioDestinationProxy.messages.in; sourceTree = "<group>"; };
 		9BC59D6C1EFCCCB6001E8D09 /* CallbackID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackID.h; sourceTree = "<group>"; };
 		9BC59D6D1EFCDC6D001E8D09 /* OptionalCallbackID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionalCallbackID.h; sourceTree = "<group>"; };
+		9BF5EC6325410E9900984E77 /* JSIPCBinding.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSIPCBinding.cpp; sourceTree = "<group>"; };
 		9EC532A22447FBAD00215216 /* GeolocationIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeolocationIdentifier.h; sourceTree = "<group>"; };
 		9F54F88E16488E87007DF81A /* AuxiliaryProcessMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AuxiliaryProcessMac.mm; sourceTree = "<group>"; };
 		9F54F8941648AE0E007DF81A /* PluginProcessManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginProcessManagerMac.mm; sourceTree = "<group>"; };
@@ -6506,6 +6508,7 @@
 				4151E5C31FBB90A900E47E2D /* FormDataReference.h */,
 				C0CE72AC1247E78D00BC0EC4 /* HandleMessage.h */,
 				1C9AF36124134D2300D3EC02 /* ImageDataReference.h */,
+				9BF5EC6325410E9900984E77 /* JSIPCBinding.cpp */,
 				9B47908E253151CC00EC11AB /* JSIPCBinding.h */,
 				9B47908C25314D8300EC11AB /* MessageArgumentDescriptions.h */,
 				1AC4C82816B876A90069DCCD /* MessageFlags.h */,
@@ -12986,6 +12989,7 @@
 				C1A152D724E5A29A00978C8B /* HandleXPCEndpointMessages.mm in Sources */,
 				2749F6442146561B008380BF /* InjectedBundleNodeHandle.cpp in Sources */,
 				2749F6452146561E008380BF /* InjectedBundleRangeHandle.cpp in Sources */,
+				9BF5EC642541145600984E77 /* JSIPCBinding.cpp in Sources */,
 				2D913441212CF9F000128AFD /* JSNPMethod.cpp in Sources */,
 				2D913442212CF9F000128AFD /* JSNPObject.cpp in Sources */,
 				C14D37FE24ACE086007FF014 /* LaunchServicesDatabaseManager.mm in Sources */,

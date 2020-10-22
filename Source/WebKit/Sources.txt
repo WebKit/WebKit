@@ -137,6 +137,7 @@ Platform/IPC/Connection.cpp @no-unify
 Platform/IPC/DataReference.cpp @no-unify
 Platform/IPC/Decoder.cpp @no-unify
 Platform/IPC/Encoder.cpp @no-unify
+Platform/IPC/JSIPCBinding.cpp @no-unify
 Platform/IPC/MessageReceiverMap.cpp @no-unify
 Platform/IPC/MessageSender.cpp @no-unify
 Platform/IPC/SharedBufferCopy.cpp @no-unify

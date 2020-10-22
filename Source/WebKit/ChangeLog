@@ -1,5 +1,40 @@
 2020-10-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Move function definitions in JSIPCBinding.h into cpp file
+        https://bugs.webkit.org/show_bug.cgi?id=218065
+
+        Reviewed by Wenson Hsieh.
+
+        Added JSIPCBinding.cpp and moved the code from JSIPCBinding.h to JSIPCBinding.cpp.
+
+        No new tests since there is no behavior change.
+
+        * Platform/IPC/JSIPCBinding.cpp: Added.
+        (IPC::jsValueForDecodedStringArgumentValue): Moved from .h.
+        (IPC::jsValueForDecodedArgumentValue<String>): Ditto.
+        (IPC::jsValueForDecodedArgumentValue<URL>): Ditto.
+        (IPC::jsValueForDecodedArgumentValue<RegistrableDomain>): Ditto.
+        (IPC::jsValueForDecodedNumericArgumentValue): Ditto.
+        (IPC::jsValueForDecodedArgumentValue<double>): Ditto.
+        (IPC::jsValueForDecodedArgumentValue<float>): Ditto.
+        (IPC::jsValueForDecodedArgumentValue<int8_t>): Ditto.
+        (IPC::jsValueForDecodedArgumentValue<int16_t>): Ditto.
+        (IPC::jsValueForDecodedArgumentValue<int32_t>): Ditto.
+        (IPC::jsValueForDecodedArgumentValue<int64_t>): Ditto.
+        (IPC::jsValueForDecodedArgumentValue<uint8_t>): Ditto.
+        (IPC::jsValueForDecodedArgumentValue<uint16_t>): Ditto.
+        (IPC::jsValueForDecodedArgumentValue<uint32_t>): Ditto.
+        (IPC::jsValueForDecodedArgumentValue<uint64_t>): Ditto.
+        (IPC::jsValueForDecodedArgumentRect): Ditto.
+        (IPC::jsValueForDecodedArgumentValue<IntRect>): Ditto.
+        (IPC::jsValueForDecodedArgumentValue<FloatRect>): Ditto.
+        * Platform/IPC/JSIPCBinding.h:
+        (IPC::jsValueForDecodedArgumentValue):
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
+2020-10-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         IPC testing API should have the capability to observe messages being sent and received
         https://bugs.webkit.org/show_bug.cgi?id=217870
 
