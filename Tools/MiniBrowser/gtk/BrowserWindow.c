@@ -1131,7 +1131,6 @@ static void browserWindowSwitchTab(GtkNotebook *notebook, BrowserTab *tab, guint
     g_signal_connect(webView, "notify::title", G_CALLBACK(webViewTitleChanged), window);
     g_signal_connect(webView, "notify::is-loading", G_CALLBACK(webViewIsLoadingChanged), window);
     g_signal_connect(webView, "create", G_CALLBACK(webViewCreate), window);
-    g_signal_connect(webView, "close", G_CALLBACK(webViewClose), window);
     g_signal_connect(webView, "load-failed", G_CALLBACK(webViewLoadFailed), window);
     g_signal_connect(webView, "decide-policy", G_CALLBACK(webViewDecidePolicy), window);
     g_signal_connect(webView, "mouse-target-changed", G_CALLBACK(webViewMouseTargetChanged), window);
@@ -1387,6 +1386,9 @@ void browser_window_append_view(BrowserWindow *window, WebKitWebView *webView)
         g_warning("Only one tab is allowed in editable mode");
         return;
     }
+
+    /* We always want close to be connected even for not active tabs */
+    g_signal_connect(webView, "close", G_CALLBACK(webViewClose), window);
 
     GtkWidget *tab = browser_tab_new(webView);
 #if !GTK_CHECK_VERSION(3, 98, 0)

@@ -1,3 +1,13 @@
+2020-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update W3C WebDriver imported tests.
+
+        Always connect to WebKitWebView::close even if the view is never made active.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browserWindowSwitchTab):
+        (browser_window_append_view):
+
 2020-10-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [JHbuild] Add patch to wpebackend-fdo to fix the build on Ubuntu-18.04

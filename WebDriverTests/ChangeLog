@@ -1,3 +1,30 @@
+2020-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update W3C WebDriver imported tests.
+
+        * TestExpectations.json:
+        * imported/w3c/importer.json:
+        * imported/w3c/tools/webdriver/webdriver/client.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/android_weblayer.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/chrome.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/chrome_android.py:
+        * imported/w3c/tools/wptrunner/wptrunner/environment.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/base.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executormarionette.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executorselenium.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executorservodriver.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executorwebdriver.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/protocol.py:
+        * imported/w3c/tools/wptrunner/wptrunner/testdriver-extra.js:
+        * imported/w3c/tools/wptrunner/wptrunner/testharnessreport.js:¡
+        * imported/w3c/tools/wptrunner/wptrunner/webdriver_server.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wptcommandline.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wptrunner.py:
+        * imported/w3c/webdriver/tests/element_click/shadow_dom.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/support/refine.py:
+        * imported/w3c/webdriver/tests/print/printcmd.py:
+        * imported/w3c/webdriver/tests/print/user_prompts.py:
+
 2020-10-21  Lauro Moura  <lmoura@igalia.com>
 
         webkitpy: Check for duplicated keys in json expectation files

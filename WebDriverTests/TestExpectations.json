@@ -377,9 +377,6 @@
             "test_special_key_sends_keydown[META-expected30]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
             },
-            "test_special_key_sends_keydown[NULL-expected32]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
             "test_special_key_sends_keydown[R_META-expected58]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
             },
@@ -387,9 +384,6 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
             },
             "test_special_key_sends_keydown[PAUSE-expected45]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
-            "test_special_key_sends_keydown[CLEAR-expected4]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
             },
             "test_special_key_sends_keydown[EQUALS-expected12]": {
