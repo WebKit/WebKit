@@ -96,6 +96,7 @@ private:
         JSC::JSObject* object = JSC::asObject(value);
     
         ReturnType result;
+        HashMap<KeyType, size_t> resultMap;
     
         // 4. Let keys be ? O.[[OwnPropertyKeys]]().
         JSC::PropertyNameArray keys(vm, JSC::PropertyNameMode::Strings, JSC::PrivateSymbolMode::Exclude);
@@ -131,15 +132,19 @@ private:
                 // Note: It's possible that typedKey is already in result if K is USVString and key contains unpaired surrogates.
                 if constexpr (std::is_same_v<K, IDLUSVString>) {
                     if (!typedKey.is8Bit()) {
-                        auto index = result.findMatching([&](auto& entry) { return entry.key == typedKey; });
-                        if (index != notFound) {
-                            result[index].value = typedValue;
+                        auto iterator = resultMap.find(typedKey);
+                        if (iterator != resultMap.end()) {
+                            ASSERT(result[iterator->value].key == typedKey);
+                            result[iterator->value].value = WTFMove(typedValue);
                             continue;
                         }
+                        resultMap.add(typedKey, result.size());
                     }
-                }
+                } else
+                    UNUSED_VARIABLE(resultMap);
                 
-                result.append({ typedKey, typedValue });
+                // 5. Otherwise, append to result a mapping (typedKey, typedValue).
+                result.append({ WTFMove(typedKey), WTFMove(typedValue) });
             }
         }
 
