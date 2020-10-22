@@ -45,6 +45,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
 #include "RenderDescendantIterator.h"
+#include "RenderImage.h"
 #include "RenderLineBreak.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"

@@ -28,6 +28,8 @@
 
 #include "WorkerEventLoop.h"
 #include "WorkerOrWorkletScriptController.h"
+#include "WorkerOrWorkletThread.h"
+#include "WorkerRunLoop.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

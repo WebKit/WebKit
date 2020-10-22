@@ -25,12 +25,11 @@
 
 #pragma once
 
+#include "SpeechRecognitionResult.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
-
-class SpeechRecognitionResult;
 
 class SpeechRecognitionResultList final : public RefCounted<SpeechRecognitionResultList> {
     WTF_MAKE_ISO_ALLOCATED(SpeechRecognitionResultList);

@@ -31,11 +31,13 @@
 #include <wtf/Lock.h>
 #include <wtf/Markable.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/OptionSet.h>
 #include <wtf/Optional.h>
 
 namespace WebCore {
 
 class PlatformWheelEvent;
+enum class WheelEventProcessingSteps : uint8_t;
 
 class ScrollingTreeLatchingController {
 public:
