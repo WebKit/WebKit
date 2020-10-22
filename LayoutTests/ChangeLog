@@ -1,3 +1,13 @@
+2020-10-22  Cathie Chen  <cathiechen@igalia.com>
+
+        ResizeObserver is not properly garbage collected
+        https://bugs.webkit.org/show_bug.cgi?id=215158
+
+        Reviewed by Frédéric Wang.
+
+        * resize-observer/resize-observer-callback-leak-expected.txt: Added.
+        * resize-observer/resize-observer-callback-leak.html: Added.
+
 2020-10-22  Martin Robinson  <mrobinson@igalia.com>
 
         Scroll snap: don't create implicit snap points at scrollmin/scrollmax

@@ -64,6 +64,8 @@ public:
     bool hasSkippedObservations() const { return m_hasSkippedObservations; }
     void setHasSkippedObservations(bool skipped) { m_hasSkippedObservations = skipped; }
 
+    ResizeObserverCallback* callbackConcurrently() { return m_callback.get(); }
+
 private:
     ResizeObserver(Document&, Ref<ResizeObserverCallback>&&);
 

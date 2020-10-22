@@ -29,7 +29,8 @@
     ActiveDOMObject,
     Conditional=RESIZE_OBSERVER,
     EnabledBySetting=ResizeObserver,
-    Exposed=Window
+    Exposed=Window,
+    JSCustomMarkFunction,
 ] interface ResizeObserver {
     [CallWith=Document] constructor(ResizeObserverCallback callback);
 

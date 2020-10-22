@@ -28,4 +28,5 @@
 [
     Conditional=RESIZE_OBSERVER,
     CallbackThisObject=ResizeObserver,
+    IsWeakCallback,
 ] callback ResizeObserverCallback = undefined (sequence<ResizeObserverEntry> entries, ResizeObserver observer);

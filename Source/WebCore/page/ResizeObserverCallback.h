@@ -39,6 +39,9 @@ class ResizeObserverEntry;
 class ResizeObserverCallback : public RefCounted<ResizeObserverCallback>, public ActiveDOMCallback {
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
+
+    virtual bool hasCallback() const = 0;
+
     virtual CallbackResult<void> handleEvent(ResizeObserver&, const Vector<Ref<ResizeObserverEntry>>&, ResizeObserver&) = 0;
 };
 

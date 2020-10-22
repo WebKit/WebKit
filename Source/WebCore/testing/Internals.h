@@ -447,6 +447,10 @@ public:
     unsigned numberOfIntersectionObservers(const Document&) const;
 #endif
 
+#if ENABLE(RESIZE_OBSERVER)
+    unsigned numberOfResizeObservers(const Document&) const;
+#endif
+
     uint64_t documentIdentifier(const Document&) const;
     bool isDocumentAlive(uint64_t documentIdentifier) const;
 

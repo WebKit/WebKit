@@ -1412,6 +1412,7 @@ public:
 #if ENABLE(RESIZE_OBSERVER)
     void addResizeObserver(ResizeObserver&);
     void removeResizeObserver(ResizeObserver&);
+    unsigned numberOfResizeObservers() const { return m_resizeObservers.size(); }
     bool hasResizeObservers();
     // Return the minDepth of the active observations.
     size_t gatherResizeObservations(size_t deeperThan);

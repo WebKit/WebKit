@@ -1,0 +1,4 @@
+
+PASS ResizeObserver implemented
+PASS test: Resize observer inside callback should be garbage collected if no one refers to it
+
