@@ -98,11 +98,21 @@ ImageDecoderGStreamer::ImageDecoderGStreamer(SharedBuffer& data, const String& m
 
 bool ImageDecoderGStreamer::supportsContainerType(const String& type)
 {
+    // Ideally this decoder should operate only from the WebProcess (or from the GPUProcess) which
+    // should be the only process where GStreamer has been runtime initialized.
+    if (!gst_is_initialized())
+        return false;
+
     return GStreamerRegistryScanner::singleton().isContainerTypeSupported(GStreamerRegistryScanner::Configuration::Decoding, type);
 }
 
 bool ImageDecoderGStreamer::canDecodeType(const String& mimeType)
 {
+    // Ideally this decoder should operate only from the WebProcess (or from the GPUProcess) which
+    // should be the only process where GStreamer has been runtime initialized.
+    if (!gst_is_initialized())
+        return false;
+
     if (mimeType.isEmpty())
         return false;
 
