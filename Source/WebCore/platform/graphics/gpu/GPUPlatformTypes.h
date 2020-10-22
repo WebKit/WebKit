@@ -27,6 +27,8 @@
 
 #if USE(METAL)
 #include "GPUPlatformTypesMetal.h"
+#elif USE(DAWN)
+#include "GPUPlatformTypesDawn.h"
 #else
 #error "Unsupported platform for WebGPU"
 #endif
