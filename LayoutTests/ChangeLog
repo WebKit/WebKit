@@ -1,3 +1,17 @@
+2020-10-22  Youenn Fablet  <youenn@apple.com>
+
+        Introduce worklet destinations and allow to fetch modules with CORS based on destination
+        https://bugs.webkit.org/show_bug.cgi?id=218019
+        <rdar://problem/70526201>
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/webaudio/audioworklet-addModule-cors.sub.https-expected.txt: Added.
+        * http/wpt/webaudio/audioworklet-addModule-cors.sub.https.html: Added.
+        * http/wpt/webaudio/resources/dummy-worklet.py: Added.
+        (main):
+        (DummyProcessor):
+
 2020-10-22  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Prevent presentation of input peripherals when focusing form controls with a validation message

@@ -380,6 +380,8 @@ ResourceLoadInfo NetworkResourceLoader::resourceLoadInfo()
             return ResourceLoadInfo::Type::Other;
         case WebCore::FetchOptions::Destination::Audio:
             return ResourceLoadInfo::Type::Media;
+        case WebCore::FetchOptions::Destination::Audioworklet:
+            return ResourceLoadInfo::Type::Other;
         case WebCore::FetchOptions::Destination::Document:
             return ResourceLoadInfo::Type::Document;
         case WebCore::FetchOptions::Destination::Embed:
@@ -392,6 +394,8 @@ ResourceLoadInfo NetworkResourceLoader::resourceLoadInfo()
             return ResourceLoadInfo::Type::ApplicationManifest;
         case WebCore::FetchOptions::Destination::Object:
             return ResourceLoadInfo::Type::Object;
+        case WebCore::FetchOptions::Destination::Paintworklet:
+            return ResourceLoadInfo::Type::Other;
         case WebCore::FetchOptions::Destination::Report:
             return ResourceLoadInfo::Type::CSPReport;
         case WebCore::FetchOptions::Destination::Script:

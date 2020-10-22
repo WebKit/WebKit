@@ -308,6 +308,8 @@ bool NetworkLoadChecker::isAllowedByContentSecurityPolicy(const ResourceRequest&
 
     auto redirectResponseReceived = isRedirected() ? ContentSecurityPolicy::RedirectResponseReceived::Yes : ContentSecurityPolicy::RedirectResponseReceived::No;
     switch (m_options.destination) {
+    case FetchOptions::Destination::Audioworklet:
+    case FetchOptions::Destination::Paintworklet:
     case FetchOptions::Destination::Worker:
     case FetchOptions::Destination::Serviceworker:
     case FetchOptions::Destination::Sharedworker:

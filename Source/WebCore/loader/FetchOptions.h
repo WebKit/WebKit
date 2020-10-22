@@ -36,7 +36,7 @@
 namespace WebCore {
 
 struct FetchOptions {
-    enum class Destination : uint8_t { EmptyString, Audio, Document, Embed, Font, Image, Manifest, Object, Report, Script, Serviceworker, Sharedworker, Style, Track, Video, Worker, Xslt };
+    enum class Destination : uint8_t { EmptyString, Audio, Audioworklet, Document, Embed, Font, Image, Manifest, Object, Paintworklet, Report, Script, Serviceworker, Sharedworker, Style, Track, Video, Worker, Xslt };
     enum class Mode : uint8_t { Navigate, SameOrigin, NoCors, Cors };
     enum class Credentials : uint8_t { Omit, SameOrigin, Include };
     enum class Cache : uint8_t { Default, NoStore, Reload, NoCache, ForceCache, OnlyIfCached };
@@ -91,7 +91,9 @@ inline bool isNonSubresourceRequest(FetchOptions::Destination destination)
 
 inline bool isScriptLikeDestination(FetchOptions::Destination destination)
 {
-    return destination == FetchOptions::Destination::Script
+    return destination == FetchOptions::Destination::Audioworklet
+        || destination == FetchOptions::Destination::Paintworklet
+        || destination == FetchOptions::Destination::Script
         || destination == FetchOptions::Destination::Serviceworker
         || destination == FetchOptions::Destination::Worker;
 }
@@ -105,12 +107,14 @@ template<> struct EnumTraits<WebCore::FetchOptions::Destination> {
         WebCore::FetchOptions::Destination,
         WebCore::FetchOptions::Destination::EmptyString,
         WebCore::FetchOptions::Destination::Audio,
+        WebCore::FetchOptions::Destination::Audioworklet,
         WebCore::FetchOptions::Destination::Document,
         WebCore::FetchOptions::Destination::Embed,
         WebCore::FetchOptions::Destination::Font,
         WebCore::FetchOptions::Destination::Image,
         WebCore::FetchOptions::Destination::Manifest,
         WebCore::FetchOptions::Destination::Object,
+        WebCore::FetchOptions::Destination::Paintworklet,
         WebCore::FetchOptions::Destination::Report,
         WebCore::FetchOptions::Destination::Script,
         WebCore::FetchOptions::Destination::Serviceworker,

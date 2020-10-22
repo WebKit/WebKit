@@ -171,11 +171,18 @@ void WorkletGlobalScope::processNextScriptFetchJobIfNeeded()
     ResourceRequest request { scriptFetchJob.moduleURL };
 
     FetchOptions fetchOptions;
-    fetchOptions.mode = FetchOptions::Mode::SameOrigin;
+    fetchOptions.mode = FetchOptions::Mode::Cors;
     fetchOptions.cache = FetchOptions::Cache::Default;
     fetchOptions.redirect = FetchOptions::Redirect::Follow;
-    fetchOptions.destination = FetchOptions::Destination::Worker;
     fetchOptions.credentials = scriptFetchJob.credentials;
+#if ENABLE(WEB_AUDIO)
+    if (isAudioWorkletGlobalScope())
+        fetchOptions.destination = FetchOptions::Destination::Audioworklet;
+#endif
+#if ENABLE(CSS_PAINTING_API)
+    if (isPaintWorkletGlobalScope())
+        fetchOptions.destination = FetchOptions::Destination::Paintworklet;
+#endif
 
     auto contentSecurityPolicyEnforcement = shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceChildSrcDirective;
 
