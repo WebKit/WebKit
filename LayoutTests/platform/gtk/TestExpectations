@@ -82,6 +82,10 @@ webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/parsing/cursor-va
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-values/angle-units-003.html [ Pass Crash ]
 webkit.org/b/216777 media/video-display-toggle.html [ Pass Crash ]
 webkit.org/b/216777 webkit.org/b/191009 webrtc/video-mute-vp8.html [ Pass Timeout Crash ]
+webkit.org/b/216777 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/appearance-listbox-001.html [ ImageOnlyFailure Crash ]
+webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transforms/animation/list-interpolation.html [ Pass Crash ]
+webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transitions/parsing/transition-delay-invalid.html [ Pass Crash ]
+webkit.org/b/216777 fast/table/007.html [ Pass Crash ]
 
 # Parsing
 webkit.org/b/217421 fast/parser/entities-in-html.html [ Failure ]

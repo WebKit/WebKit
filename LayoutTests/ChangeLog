@@ -1,3 +1,14 @@
+2020-10-22  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening some crashes
+
+        Unreviewed test gardening.
+
+        Mesa 'hydra' crashes still almost every build.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-10-22  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed test gardening. Move WebAudio test failure entries to GLIB.
