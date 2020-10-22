@@ -1,3 +1,19 @@
+2020-10-22  Martin Robinson  <mrobinson@igalia.com>
+
+        Scroll snap: don't create implicit snap points at scrollmin/scrollmax
+        https://bugs.webkit.org/show_bug.cgi?id=216882
+        <rdar://problem/69443288>
+
+        Reviewed by Simon Fraser.
+
+        Update expectations for these tests.
+
+        * web-platform-tests/css/css-scroll-snap/nested-scrollIntoView-snaps-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/adding-only-snap-area-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/changing-scroll-snap-align-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/snap-to-different-targets-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/snap-area-capturing-remove-scroll-container-expected.txt:
+
 2020-10-21  Alex Christensen  <achristensen@webkit.org>
 
         Update and pass new URL web platform tests

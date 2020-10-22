@@ -4509,8 +4509,6 @@ imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-002.html 
 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/direction-rtl.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/writing-mode-horizontal-tb.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/writing-mode-vertical-lr.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/writing-mode-vertical-rl.html [ ImageOnlyFailure ]
 
 # Cocoa-only
 http/tests/media/hls/hls-hdr-switch.html [ Skip ]

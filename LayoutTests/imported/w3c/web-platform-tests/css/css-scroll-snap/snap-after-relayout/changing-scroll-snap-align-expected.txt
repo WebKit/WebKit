@@ -1,6 +1,6 @@
 
 FAIL Changing the current target's snap alignment should make the scroller resnap to it even if another snap position is closer to the current offset assert_equals: expected 100 but got 0
 FAIL Removing the current target's snap alignment should make the scroller resnap to a new snap area. assert_equals: expected 100 but got 0
-FAIL Changing an element snap alignment from none to start should make thescroller resnap. assert_equals: expected 100 but got 0
-FAIL Changing an element snap alignment from none to start by adding a class should make the scroller resnap. assert_equals: expected 100 but got 0
+PASS Changing an element snap alignment from none to start should make thescroller resnap.
+PASS Changing an element snap alignment from none to start by adding a class should make the scroller resnap.
 

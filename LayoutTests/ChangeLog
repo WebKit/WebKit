@@ -1,3 +1,23 @@
+2020-10-22  Martin Robinson  <mrobinson@igalia.com>
+
+        Scroll snap: don't create implicit snap points at scrollmin/scrollmax
+        https://bugs.webkit.org/show_bug.cgi?id=216882
+        <rdar://problem/69443288>
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations: Mark some tests as passing.
+        * css3/scroll-snap/nested-elements-expected.txt: Update results to eliminate implicit stops.
+        * css3/scroll-snap/scroll-snap-children-with-padding-expected.txt: Ditto.
+        * css3/scroll-snap/scroll-snap-children-with-scroll-snap-margin-expected.txt: Ditto.
+        * css3/scroll-snap/scroll-snap-children-with-transforms-expected.txt: Ditto.
+        * css3/scroll-snap/scroll-snap-elements-container-larger-than-children-expected.txt: Ditto.
+        * css3/scroll-snap/scroll-snap-elements-container-larger-than-children-rtl-expected.txt: Ditto.
+        * css3/scroll-snap/scroll-snap-offsets-expected.txt: Ditto.
+        * css3/scroll-snap/scroll-snap-offsets-rtl-expected.txt: Ditto.
+        * css3/scroll-snap/scroll-snap-positions-expected.txt: Ditto.
+        * css3/scroll-snap/scroll-snap-with-scroll-padding-expected.txt: Ditto.
+
 2020-10-21  Karl Rackler  <rackler@apple.com>
 
         REGRESSION: [ Big Sur ] fast/text/international/complex-character-based-fallback.html is a constant failure
