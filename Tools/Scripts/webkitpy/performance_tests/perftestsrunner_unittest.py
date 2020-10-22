@@ -149,7 +149,7 @@ class MainTest(unittest.TestCase):
                 '--no-show-results',
                 '--reset-results',
                 '--output-json-path=a/output.json',
-                '--slave-config-json-path=a/source.json',
+                '--worker-config-json-path=a/source.json',
                 '--test-results-server=somehost',
                 '--additional-drt-flag=--enable-threaded-parser',
                 '--additional-drt-flag=--awesomesauce',
@@ -167,12 +167,17 @@ class MainTest(unittest.TestCase):
         self.assertFalse(options.show_results)
         self.assertTrue(options.reset_results)
         self.assertEqual(options.output_json_path, 'a/output.json')
-        self.assertEqual(options.slave_config_json_path, 'a/source.json')
+        self.assertEqual(options.worker_config_json_path, 'a/source.json')
         self.assertEqual(options.test_results_server, 'somehost')
         self.assertEqual(options.additional_drt_flag, ['--enable-threaded-parser', '--awesomesauce'])
         self.assertEqual(options.repeat, 5)
         self.assertEqual(options.test_runner_count, 5)
         self.assertEqual(options.no_timeout, True)
+
+    def test_parse_deprecated_args(self):
+        # FIXME: remove this test and the corresponding parameter after all instances of this deprecated parameter have been removed
+        options, _ = PerfTestsRunner._parse_args(['--slave-config-json-path=a/source1.json'])
+        self.assertEqual(options.worker_config_json_path, 'a/source1.json')
 
     def test_upload_json(self):
         runner, port = self.create_runner()

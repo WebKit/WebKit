@@ -937,7 +937,7 @@ class RunAndUploadPerfTests(shell.Test):
     descriptionDone = ["perf-tests"]
     command = ["python", "./Tools/Scripts/run-perf-tests",
                "--output-json-path", "perf-test-results.json",
-               "--slave-config-json-path", "../../perf-test-config.json",
+               "--worker-config-json-path", "../../perf-test-config.json",
                "--no-show-results",
                "--reset-results",
                "--test-results-server", "perf.webkit.org",

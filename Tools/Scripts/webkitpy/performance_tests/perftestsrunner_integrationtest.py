@@ -446,23 +446,23 @@ class MainTest(unittest.TestCase):
         port.host.filesystem.write_text_file('/mock-checkout/output.json', '{"another bad json": "1"}')
         self._test_run_with_json_output(runner, port.host.filesystem, expected_exit_code=PerfTestsRunner.EXIT_CODE_BAD_MERGE)
 
-    def test_run_with_slave_config_json(self):
+    def test_run_with_worker_config_json(self):
         runner, port = self.create_runner_and_setup_results_template(args=['--output-json-path=/mock-checkout/output.json',
-            '--slave-config-json-path=/mock-checkout/slave-config.json', '--test-results-server=some.host'])
-        port.host.filesystem.write_text_file('/mock-checkout/slave-config.json', '{"key": "value"}')
+            '--worker-config-json-path=/mock-checkout/worker-config.json', '--test-results-server=some.host'])
+        port.host.filesystem.write_text_file('/mock-checkout/worker-config.json', '{"key": "value"}')
         self._test_run_with_json_output(runner, port.host.filesystem, upload_succeeds=True)
         self.assertEqual(self._load_output_json(runner), [{
             "buildTime": "2013-02-08T15:19:37.460000", "tests": self._event_target_wrapper_and_inspector_results,
             "revisions": {"WebKit": {"timestamp": "2013-02-01 08:48:05 +0000", "revision": "5678"}}, "builderKey": "value"}])
 
-    def test_run_with_bad_slave_config_json(self):
+    def test_run_with_bad_worker_config_json(self):
         runner, port = self.create_runner_and_setup_results_template(args=['--output-json-path=/mock-checkout/output.json',
-            '--slave-config-json-path=/mock-checkout/slave-config.json', '--test-results-server=some.host'])
+            '--worker-config-json-path=/mock-checkout/worker-config.json', '--test-results-server=some.host'])
         logs = self._test_run_with_json_output(runner, port.host.filesystem, expected_exit_code=PerfTestsRunner.EXIT_CODE_BAD_SOURCE_JSON)
-        self.assertTrue('Missing slave configuration JSON file: /mock-checkout/slave-config.json' in logs)
-        port.host.filesystem.write_text_file('/mock-checkout/slave-config.json', 'bad json')
+        self.assertTrue('Missing worker configuration JSON file: /mock-checkout/worker-config.json' in logs)
+        port.host.filesystem.write_text_file('/mock-checkout/worker-config.json', 'bad json')
         self._test_run_with_json_output(runner, port.host.filesystem, expected_exit_code=PerfTestsRunner.EXIT_CODE_BAD_SOURCE_JSON)
-        port.host.filesystem.write_text_file('/mock-checkout/slave-config.json', '["another bad json"]')
+        port.host.filesystem.write_text_file('/mock-checkout/worker-config.json', '["another bad json"]')
         self._test_run_with_json_output(runner, port.host.filesystem, expected_exit_code=PerfTestsRunner.EXIT_CODE_BAD_SOURCE_JSON)
 
     def test_run_with_multiple_repositories(self):
@@ -490,8 +490,8 @@ class MainTest(unittest.TestCase):
     def test_run_with_upload_json_should_generate_perf_webkit_json(self):
         runner, port = self.create_runner_and_setup_results_template(args=['--output-json-path=/mock-checkout/output.json',
             '--test-results-server', 'some.host', '--platform', 'platform1', '--builder-name', 'builder1', '--build-number', '123',
-            '--slave-config-json-path=/mock-checkout/slave-config.json'])
-        port.host.filesystem.write_text_file('/mock-checkout/slave-config.json', '{"key": "value1"}')
+            '--worker-config-json-path=/mock-checkout/worker-config.json'])
+        port.host.filesystem.write_text_file('/mock-checkout/worker-config.json', '{"key": "value1"}')
 
         self._test_run_with_json_output(runner, port.host.filesystem, upload_succeeds=True)
         generated_json = json.loads(port.host.filesystem.files['/mock-checkout/output.json'])
