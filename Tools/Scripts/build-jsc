@@ -155,6 +155,17 @@ if ($forceCLoop) {
 }
 
 if (isCMakeBuild()) {
+    if (scalar(@ARGV) > 0) {
+        foreach (@ARGV) {
+            my $arg = $_;
+            if ($arg =~ /^-.*/) {
+                print STDERR "Unrecognized option `$arg'\n";
+            } else {
+                print STDERR "Stray anonymous argument `$arg'\n";
+            }
+        }
+        exit 2;
+    }
     if ($forceCLoop) {
         push @cmakeArgs, " -DENABLE_JIT=OFF";
         push @cmakeArgs, " -DENABLE_C_LOOP=ON";

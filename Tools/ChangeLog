@@ -1,3 +1,22 @@
+2020-10-22  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Detect unrecognized options in build-jsc
+        https://bugs.webkit.org/show_bug.cgi?id=218077
+
+        Reviewed by Yusuke Suzuki.
+
+        Currently, Getopt::Long is configured with pass_through, in order to
+        be able to forward arbitrary arguments in buildMyProject. However, that
+        means that typos in option names (e.g. using --cmake-args instead of
+        --cmakeargs) go undetected and the option is silently ignored.
+ 
+        For cmake builds, there is no such forwarding, so check that there are
+        no remaining arguments in ARGV and refuse to continue if so. This runs
+        the risk of breaking wrapper scripts that incorrectly pass unrecognized
+        options, but that seems like a good thing.
+
+        * Scripts/build-jsc:
+
 2020-10-22  Peng Liu  <peng.liu6@apple.com>
 
         Let webkitDisplayingFullscreen() return true when a video element’s fullscreen mode is not VideoFullscreenModeNone
