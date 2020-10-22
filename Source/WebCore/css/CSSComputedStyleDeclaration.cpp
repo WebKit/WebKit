@@ -3795,16 +3795,16 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyPaddingInline:
             return getCSSPropertyValuesFor2SidesShorthand(paddingInlineShorthand());
 #if ENABLE(CSS_SCROLL_SNAP)
-        case CSSPropertyScrollSnapMargin:
-            return getCSSPropertyValuesFor4SidesShorthand(scrollSnapMarginShorthand());
-        case CSSPropertyScrollSnapMarginBottom:
-            return zoomAdjustedPixelValueForLength(style.scrollSnapMarginBottom(), style);
-        case CSSPropertyScrollSnapMarginTop:
-            return zoomAdjustedPixelValueForLength(style.scrollSnapMarginTop(), style);
-        case CSSPropertyScrollSnapMarginRight:
-            return zoomAdjustedPixelValueForLength(style.scrollSnapMarginRight(), style);
-        case CSSPropertyScrollSnapMarginLeft:
-            return zoomAdjustedPixelValueForLength(style.scrollSnapMarginLeft(), style);
+        case CSSPropertyScrollMargin:
+            return getCSSPropertyValuesFor4SidesShorthand(scrollMarginShorthand());
+        case CSSPropertyScrollMarginBottom:
+            return zoomAdjustedPixelValueForLength(style.scrollMarginBottom(), style);
+        case CSSPropertyScrollMarginTop:
+            return zoomAdjustedPixelValueForLength(style.scrollMarginTop(), style);
+        case CSSPropertyScrollMarginRight:
+            return zoomAdjustedPixelValueForLength(style.scrollMarginRight(), style);
+        case CSSPropertyScrollMarginLeft:
+            return zoomAdjustedPixelValueForLength(style.scrollMarginLeft(), style);
         case CSSPropertyScrollPadding:
             return getCSSPropertyValuesFor4SidesShorthand(scrollPaddingShorthand());
         case CSSPropertyScrollPaddingBottom:

@@ -732,11 +732,11 @@ public:
     // Scroll snap area style.
     const StyleScrollSnapArea& scrollSnapArea() const;
     const ScrollSnapAlign& scrollSnapAlign() const;
-    const LengthBox& scrollSnapMargin() const;
-    const Length& scrollSnapMarginTop() const;
-    const Length& scrollSnapMarginBottom() const;
-    const Length& scrollSnapMarginLeft() const;
-    const Length& scrollSnapMarginRight() const;
+    const LengthBox& scrollMargin() const;
+    const Length& scrollMarginTop() const;
+    const Length& scrollMarginBottom() const;
+    const Length& scrollMarginLeft() const;
+    const Length& scrollMarginRight() const;
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -1273,10 +1273,10 @@ public:
     void setScrollPaddingRight(Length&&);
 
     void setScrollSnapAlign(const ScrollSnapAlign&);
-    void setScrollSnapMarginTop(Length&&);
-    void setScrollSnapMarginBottom(Length&&);
-    void setScrollSnapMarginLeft(Length&&);
-    void setScrollSnapMarginRight(Length&&);
+    void setScrollMarginTop(Length&&);
+    void setScrollMarginBottom(Length&&);
+    void setScrollMarginLeft(Length&&);
+    void setScrollMarginRight(Length&&);
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -1677,7 +1677,7 @@ public:
 #if ENABLE(CSS_SCROLL_SNAP)
     static ScrollSnapType initialScrollSnapType();
     static ScrollSnapAlign initialScrollSnapAlign();
-    static Length initialScrollSnapMargin() { return Length(Fixed); }
+    static Length initialScrollMargin() { return Length(Fixed); }
     static Length initialScrollPadding() { return Length(Fixed); }
 #endif
 

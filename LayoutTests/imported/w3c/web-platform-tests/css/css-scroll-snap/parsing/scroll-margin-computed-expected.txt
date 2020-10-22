@@ -1,13 +1,13 @@
 
-FAIL Property scroll-margin-top value '10px' assert_true: scroll-margin-top doesn't seem to be supported in the computed style expected true got false
-FAIL Property scroll-margin-top value 'calc(10px - 0.5em)' assert_true: scroll-margin-top doesn't seem to be supported in the computed style expected true got false
-FAIL Property scroll-margin-right value '10px' assert_true: scroll-margin-right doesn't seem to be supported in the computed style expected true got false
-FAIL Property scroll-margin-right value 'calc(10px - 0.5em)' assert_true: scroll-margin-right doesn't seem to be supported in the computed style expected true got false
-FAIL Property scroll-margin-bottom value '10px' assert_true: scroll-margin-bottom doesn't seem to be supported in the computed style expected true got false
-FAIL Property scroll-margin-bottom value 'calc(10px - 0.5em)' assert_true: scroll-margin-bottom doesn't seem to be supported in the computed style expected true got false
-FAIL Property scroll-margin-left value '10px' assert_true: scroll-margin-left doesn't seem to be supported in the computed style expected true got false
-FAIL Property scroll-margin-left value 'calc(10px - 0.5em)' assert_true: scroll-margin-left doesn't seem to be supported in the computed style expected true got false
-FAIL Property scroll-margin value '10px' assert_true: scroll-margin doesn't seem to be supported in the computed style expected true got false
-FAIL Property scroll-margin value 'calc(10px - 0.5em)' assert_true: scroll-margin doesn't seem to be supported in the computed style expected true got false
-FAIL Property scroll-margin value '1px 2px' assert_true: scroll-margin doesn't seem to be supported in the computed style expected true got false
+PASS Property scroll-margin-top value '10px'
+PASS Property scroll-margin-top value 'calc(10px - 0.5em)'
+PASS Property scroll-margin-right value '10px'
+PASS Property scroll-margin-right value 'calc(10px - 0.5em)'
+PASS Property scroll-margin-bottom value '10px'
+PASS Property scroll-margin-bottom value 'calc(10px - 0.5em)'
+PASS Property scroll-margin-left value '10px'
+PASS Property scroll-margin-left value 'calc(10px - 0.5em)'
+PASS Property scroll-margin value '10px'
+PASS Property scroll-margin value 'calc(10px - 0.5em)'
+PASS Property scroll-margin value '1px 2px'
 

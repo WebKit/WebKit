@@ -6555,6 +6555,80 @@
                 "url": "https://drafts.csswg.org/cssom-view/#propdef-scroll-behavior"
             }
         },
+        "scroll-margin": {
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
+                "longhands": [
+                    "scroll-margin-top",
+                    "scroll-margin-right",
+                    "scroll-margin-bottom",
+                    "scroll-margin-left"
+                ],
+                "aliases": [
+                    "scroll-snap-margin"
+                ]
+            },
+            "specification": {
+                "category": "css-scroll-snap",
+                "url": "https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-margin"
+            }
+        },
+        "scroll-margin-bottom": {
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
+                "initial": "initialScrollMargin",
+                "converter": "Length",
+                "aliases": [
+                    "scroll-snap-margin-bottom"
+                ]
+            },
+            "specification": {
+                "category": "css-scroll-snap",
+                "url": "https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-margin"
+            }
+        },
+        "scroll-margin-left": {
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
+                "initial": "initialScrollMargin",
+                "converter": "Length",
+                "aliases": [
+                    "scroll-snap-margin-left"
+                ]
+            },
+            "specification": {
+                "category": "css-scroll-snap",
+                "url": "https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-margin"
+            }
+        },
+        "scroll-margin-right": {
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
+                "initial": "initialScrollMargin",
+                "converter": "Length",
+                "aliases": [
+                    "scroll-snap-margin-right"
+                ]
+            },
+            "specification": {
+                "category": "css-scroll-snap",
+                "url": "https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-margin"
+            }
+        },
+        "scroll-margin-top": {
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
+                "initial": "initialScrollMargin",
+                "converter": "Length",
+                "aliases": [
+                    "scroll-snap-margin-top"
+                ]
+            },
+            "specification": {
+                "category": "css-scroll-snap",
+                "url": "https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-margin"
+            }
+        },
         "scroll-padding": {
             "codegen-properties": {
                 "enable-if": "ENABLE_CSS_SCROLL_SNAP",
@@ -6704,65 +6778,6 @@
             "codegen-properties": {
                 "converter": "ScrollSnapAlign",
                 "enable-if": "ENABLE_CSS_SCROLL_SNAP"
-            },
-            "specification": {
-                "category": "css-scroll-snap",
-                "url": "https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-padding"
-            }
-        },
-        "scroll-snap-margin": {
-            "codegen-properties": {
-                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
-                "longhands": [
-                    "scroll-snap-margin-top",
-                    "scroll-snap-margin-right",
-                    "scroll-snap-margin-bottom",
-                    "scroll-snap-margin-left"
-                ]
-            },
-            "specification": {
-                "category": "css-scroll-snap",
-                "url": "https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-padding"
-            }
-        },
-        "scroll-snap-margin-bottom": {
-            "codegen-properties": {
-                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
-                "initial": "initialScrollSnapMargin",
-                "converter": "Length"
-            },
-            "specification": {
-                "category": "css-scroll-snap",
-                "url": "https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-padding"
-            }
-        },
-        "scroll-snap-margin-left": {
-            "codegen-properties": {
-                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
-                "initial": "initialScrollSnapMargin",
-                "converter": "Length"
-            },
-            "specification": {
-                "category": "css-scroll-snap",
-                "url": "https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-padding"
-            }
-        },
-        "scroll-snap-margin-right": {
-            "codegen-properties": {
-                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
-                "initial": "initialScrollSnapMargin",
-                "converter": "Length"
-            },
-            "specification": {
-                "category": "css-scroll-snap",
-                "url": "https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-padding"
-            }
-        },
-        "scroll-snap-margin-top": {
-            "codegen-properties": {
-                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
-                "initial": "initialScrollSnapMargin",
-                "converter": "Length"
             },
             "specification": {
                 "category": "css-scroll-snap",

@@ -52,14 +52,14 @@ Ref<StyleScrollSnapArea> StyleScrollSnapArea::copy() const
 }
 
 StyleScrollSnapArea::StyleScrollSnapArea()
-    : scrollSnapMargin(0, 0, 0, 0)
+    : scrollMargin(0, 0, 0, 0)
 {
 }
 
 inline StyleScrollSnapArea::StyleScrollSnapArea(const StyleScrollSnapArea& other)
     : RefCounted()
     , alignment(other.alignment)
-    , scrollSnapMargin(other.scrollSnapMargin)
+    , scrollMargin(other.scrollMargin)
 {
 }
 

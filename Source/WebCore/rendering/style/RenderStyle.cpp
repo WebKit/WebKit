@@ -2449,29 +2449,29 @@ const ScrollSnapAlign& RenderStyle::scrollSnapAlign() const
     return m_rareNonInheritedData->scrollSnapArea->alignment;
 }
 
-const LengthBox& RenderStyle::scrollSnapMargin() const
+const LengthBox& RenderStyle::scrollMargin() const
 {
-    return m_rareNonInheritedData->scrollSnapArea->scrollSnapMargin;
+    return m_rareNonInheritedData->scrollSnapArea->scrollMargin;
 }
 
-const Length& RenderStyle::scrollSnapMarginTop() const
+const Length& RenderStyle::scrollMarginTop() const
 {
-    return scrollSnapMargin().top();
+    return scrollMargin().top();
 }
 
-const Length& RenderStyle::scrollSnapMarginBottom() const
+const Length& RenderStyle::scrollMarginBottom() const
 {
-    return scrollSnapMargin().bottom();
+    return scrollMargin().bottom();
 }
 
-const Length& RenderStyle::scrollSnapMarginLeft() const
+const Length& RenderStyle::scrollMarginLeft() const
 {
-    return scrollSnapMargin().left();
+    return scrollMargin().left();
 }
 
-const Length& RenderStyle::scrollSnapMarginRight() const
+const Length& RenderStyle::scrollMarginRight() const
 {
-    return scrollSnapMargin().right();
+    return scrollMargin().right();
 }
 
 void RenderStyle::setScrollSnapType(const ScrollSnapType& type)
@@ -2504,24 +2504,24 @@ void RenderStyle::setScrollSnapAlign(const ScrollSnapAlign& alignment)
     SET_NESTED_VAR(m_rareNonInheritedData, scrollSnapArea, alignment, alignment);
 }
 
-void RenderStyle::setScrollSnapMarginTop(Length&& length)
+void RenderStyle::setScrollMarginTop(Length&& length)
 {
-    SET_NESTED_VAR(m_rareNonInheritedData, scrollSnapArea, scrollSnapMargin.top(), WTFMove(length));
+    SET_NESTED_VAR(m_rareNonInheritedData, scrollSnapArea, scrollMargin.top(), WTFMove(length));
 }
 
-void RenderStyle::setScrollSnapMarginBottom(Length&& length)
+void RenderStyle::setScrollMarginBottom(Length&& length)
 {
-    SET_NESTED_VAR(m_rareNonInheritedData, scrollSnapArea, scrollSnapMargin.bottom(), WTFMove(length));
+    SET_NESTED_VAR(m_rareNonInheritedData, scrollSnapArea, scrollMargin.bottom(), WTFMove(length));
 }
 
-void RenderStyle::setScrollSnapMarginLeft(Length&& length)
+void RenderStyle::setScrollMarginLeft(Length&& length)
 {
-    SET_NESTED_VAR(m_rareNonInheritedData, scrollSnapArea, scrollSnapMargin.left(), WTFMove(length));
+    SET_NESTED_VAR(m_rareNonInheritedData, scrollSnapArea, scrollMargin.left(), WTFMove(length));
 }
 
-void RenderStyle::setScrollSnapMarginRight(Length&& length)
+void RenderStyle::setScrollMarginRight(Length&& length)
 {
-    SET_NESTED_VAR(m_rareNonInheritedData, scrollSnapArea, scrollSnapMargin.right(), WTFMove(length));
+    SET_NESTED_VAR(m_rareNonInheritedData, scrollSnapArea, scrollMargin.right(), WTFMove(length));
 }
 
 #endif

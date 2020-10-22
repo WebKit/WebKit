@@ -286,8 +286,8 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyGap:
         return get2Values(gapShorthand());
 #if ENABLE(CSS_SCROLL_SNAP)
-    case CSSPropertyScrollSnapMargin:
-        return get4Values(scrollSnapMarginShorthand());
+    case CSSPropertyScrollMargin:
+        return get4Values(scrollMarginShorthand());
     case CSSPropertyScrollPadding:
         return get4Values(scrollPaddingShorthand());
 #endif
@@ -1175,11 +1175,11 @@ String StyleProperties::asText() const
             case CSSPropertyScrollPaddingLeft:
                 shorthandPropertyID = CSSPropertyScrollPadding;
                 break;
-            case CSSPropertyScrollSnapMarginTop:
-            case CSSPropertyScrollSnapMarginRight:
-            case CSSPropertyScrollSnapMarginBottom:
-            case CSSPropertyScrollSnapMarginLeft:
-                shorthandPropertyID = CSSPropertyScrollSnapMargin;
+            case CSSPropertyScrollMarginTop:
+            case CSSPropertyScrollMarginRight:
+            case CSSPropertyScrollMarginBottom:
+            case CSSPropertyScrollMarginLeft:
+                shorthandPropertyID = CSSPropertyScrollMargin;
                 break;
 #endif
             case CSSPropertyTransitionProperty:

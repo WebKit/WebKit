@@ -1,3 +1,17 @@
+2020-10-22  Martin Robinson  <mrobinson@igalia.com>
+
+        Rename scroll-snap-margin to scroll-margin
+        https://bugs.webkit.org/show_bug.cgi?id=218075
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt: Update result for newly passing test.
+        * web-platform-tests/css/css-scroll-snap/inheritance-expected.txt: Ditto
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-margin-computed-expected.txt: Ditto.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-margin-shorthand-expected.txt: Ditto.
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-margin-valid-expected.txt: Ditto.
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt: Ditto.
+
 2020-10-22  Noam Rosenthal  <noam@webkit.org>
 
         Support EXIF image resolution in CoreGraphics (macOS/iOS)

@@ -200,7 +200,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, HTMLElem
         if (!scrollableArea.isScrollView())
             scrollSnapArea.moveBy(scrollPosition);
 
-        scrollSnapArea = computeScrollSnapPortOrAreaRect(scrollSnapArea, child->style().scrollSnapMargin(), InsetOrOutset::Outset);
+        scrollSnapArea = computeScrollSnapPortOrAreaRect(scrollSnapArea, child->style().scrollMargin(), InsetOrOutset::Outset);
         LOG_WITH_STREAM(ScrollSnap, stream << "    Considering scroll snap target area " << scrollSnapArea);
         auto alignment = child->style().scrollSnapAlign();
         if (hasHorizontalSnapOffsets && alignment.x != ScrollSnapAxisAlignType::None) {

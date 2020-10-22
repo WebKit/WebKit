@@ -86,7 +86,7 @@ public:
     bool hasSnapPosition() const { return alignment.x != ScrollSnapAxisAlignType::None || alignment.y != ScrollSnapAxisAlignType::None; }
 
     ScrollSnapAlign alignment;
-    LengthBox scrollSnapMargin { 0, 0, 0, 0 };
+    LengthBox scrollMargin { 0, 0, 0, 0 };
 
 private:
     StyleScrollSnapArea();
@@ -95,7 +95,7 @@ private:
 
 inline bool operator==(const StyleScrollSnapArea& a, const StyleScrollSnapArea& b)
 {
-    return a.alignment == b.alignment && a.scrollSnapMargin == b.scrollSnapMargin;
+    return a.alignment == b.alignment && a.scrollMargin == b.scrollMargin;
 }
 
 inline bool operator!=(const StyleScrollSnapArea& a, const StyleScrollSnapArea& b) { return !(a == b); }

@@ -4142,10 +4142,10 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyPaddingBlockEnd:
         return consumeLengthOrPercent(m_range, m_context.mode, ValueRangeNonNegative, UnitlessQuirk::Forbid);
 #if ENABLE(CSS_SCROLL_SNAP)
-    case CSSPropertyScrollSnapMarginBottom:
-    case CSSPropertyScrollSnapMarginLeft:
-    case CSSPropertyScrollSnapMarginRight:
-    case CSSPropertyScrollSnapMarginTop:
+    case CSSPropertyScrollMarginBottom:
+    case CSSPropertyScrollMarginLeft:
+    case CSSPropertyScrollMarginRight:
+    case CSSPropertyScrollMarginTop:
         return consumeLength(m_range, m_context.mode, ValueRangeAll);
     case CSSPropertyScrollPaddingBottom:
     case CSSPropertyScrollPaddingLeft:
@@ -5825,8 +5825,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     case CSSPropertyPaddingInline:
         return consume2ValueShorthand(paddingInlineShorthand(), important);
 #if ENABLE(CSS_SCROLL_SNAP)
-    case CSSPropertyScrollSnapMargin:
-        return consume4ValueShorthand(scrollSnapMarginShorthand(), important);
+    case CSSPropertyScrollMargin:
+        return consume4ValueShorthand(scrollMarginShorthand(), important);
     case CSSPropertyScrollPadding:
         return consume4ValueShorthand(scrollPaddingShorthand(), important);
 #endif
