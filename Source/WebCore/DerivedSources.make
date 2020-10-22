@@ -1281,23 +1281,13 @@ JS_BINDING_IDLS = \
 
 # --------
 
-ADDITIONAL_BINDING_IDLS =
-
-ifeq ($(findstring ENABLE_IOS_GESTURE_EVENTS,$(FEATURE_AND_PLATFORM_DEFINES)), ENABLE_IOS_GESTURE_EVENTS)
-ADDITIONAL_BINDING_IDLS += GestureEvent.idl
-endif
-
-ifeq ($(findstring ENABLE_IOS_TOUCH_EVENTS,$(FEATURE_AND_PLATFORM_DEFINES)), ENABLE_IOS_TOUCH_EVENTS)
-ADDITIONAL_BINDING_IDLS += \
+ADDITIONAL_BINDING_IDLS = \
     DocumentTouch.idl \
+    GestureEvent.idl \
     Touch.idl \
     TouchEvent.idl \
-    TouchList.idl
-endif
-
-ifeq ($(findstring ENABLE_MAC_GESTURE_EVENTS,$(FEATURE_AND_PLATFORM_DEFINES)), ENABLE_MAC_GESTURE_EVENTS)
-ADDITIONAL_BINDING_IDLS += GestureEvent.idl
-endif
+    TouchList.idl \
+#
 
 vpath %.in $(WEBKITADDITIONS_HEADER_SEARCH_PATHS)
 
@@ -1334,14 +1324,6 @@ JS_BINDING_IDLS += \
             path, \
             $(ADDITIONAL_BINDING_IDLS_PATHS), \
             $(path)/usr/local/include/WebKitAdditions/$(idl)))))
-
-ifneq ($(findstring ENABLE_IOS_TOUCH_EVENTS,$(FEATURE_AND_PLATFORM_DEFINES)), ENABLE_IOS_TOUCH_EVENTS)
-JS_BINDING_IDLS += \
-    $(WebCore)/dom/Document+Touch.idl \
-    $(WebCore)/dom/Touch.idl \
-    $(WebCore)/dom/TouchEvent.idl \
-    $(WebCore)/dom/TouchList.idl
-endif
 
 .PHONY : all
 
@@ -1510,27 +1492,19 @@ ColorData.cpp : $(WebCore)/platform/ColorData.gperf $(WebCore)/make-hash-tools.p
 
 # user agent style sheets
 
-USER_AGENT_STYLE_SHEETS = $(WebCore)/css/html.css $(WebCore)/css/dialog.css $(WebCore)/css/quirks.css $(WebCore)/css/plugIns.css $(WebCore)/css/svg.css
-
-ifeq ($(findstring ENABLE_MATHML,$(FEATURE_AND_PLATFORM_DEFINES)), ENABLE_MATHML)
-    USER_AGENT_STYLE_SHEETS += $(WebCore)/css/mathml.css
-endif
-
-ifeq ($(findstring ENABLE_VIDEO,$(FEATURE_AND_PLATFORM_DEFINES)), ENABLE_VIDEO)
-    USER_AGENT_STYLE_SHEETS += $(WebCore)/css/mediaControls.css
-endif
-
-ifeq ($(findstring ENABLE_FULLSCREEN_API,$(FEATURE_AND_PLATFORM_DEFINES)), ENABLE_FULLSCREEN_API)
-    USER_AGENT_STYLE_SHEETS += $(WebCore)/css/fullscreen.css
-endif
-
-ifeq ($(findstring ENABLE_SERVICE_CONTROLS,$(FEATURE_AND_PLATFORM_DEFINES)), ENABLE_SERVICE_CONTROLS)
-    USER_AGENT_STYLE_SHEETS += $(WebCore)/html/shadow/mac/imageControlsMac.css
-endif
-
-USER_AGENT_STYLE_SHEETS += $(WebCore)/Modules/plugins/QuickTimePluginReplacement.css
-
-USER_AGENT_STYLE_SHEETS += $(WebCore)/html/shadow/meterElementShadow.css
+USER_AGENT_STYLE_SHEETS = \
+    $(WebCore)/css/dialog.css \
+    $(WebCore)/css/fullscreen.css \
+    $(WebCore)/css/html.css \
+    $(WebCore)/css/mathml.css \
+    $(WebCore)/css/mediaControls.css \
+    $(WebCore)/css/plugIns.css \
+    $(WebCore)/css/quirks.css \
+    $(WebCore)/css/svg.css \
+    $(WebCore)/html/shadow/mac/imageControlsMac.css \
+    $(WebCore)/html/shadow/meterElementShadow.css \
+    $(WebCore)/Modules/plugins/QuickTimePluginReplacement.css \
+#
 
 UserAgentStyleSheets.h : $(WebCore)/css/make-css-file-arrays.pl $(WebCore)/bindings/scripts/preprocessor.pm $(USER_AGENT_STYLE_SHEETS) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
 	$(PERL) $< --defines "$(FEATURE_AND_PLATFORM_DEFINES)" $@ UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if defined(ENABLE_SERVICE_CONTROLS) && ENABLE_SERVICE_CONTROLS
+
 .x-webkit-image-controls {
     position: relative;
 }
@@ -39,3 +41,5 @@
 .x-webkit-image-controls:hover .x-webkit-image-controls-button {
     opacity: 1.0;
 }
+
+#endif

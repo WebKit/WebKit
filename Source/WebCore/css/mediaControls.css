@@ -22,6 +22,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
+
 /* media controls */
 
 audio {
@@ -287,3 +289,5 @@ video::-webkit-media-text-track-container u {
 video::-webkit-media-text-track-container i {
     font-style: italic;
 }
+
+#endif
