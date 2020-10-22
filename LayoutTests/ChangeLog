@@ -1,3 +1,12 @@
+2020-10-21  Karl Rackler  <rackler@apple.com>
+
+        REGRESSION: [ Big Sur ] fast/text/international/complex-character-based-fallback.html is a constant failure
+        rdar://70556068
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-10-21  Megan Gardner  <megan_gardner@apple.com>
 
         Stop gap patch fix for regression in r267329.

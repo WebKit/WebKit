@@ -2266,3 +2266,5 @@ webkit.org/b/218031 tiled-drawing/scrolling/non-fast-region/handlers-in-iframes.
 # rdar://70550210 REGRESSION (r267531): [ Big Sur iOS 14 ] imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001.htm is a constant failure
 [ BigSur+ ] imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001.html [ Failure ]
 
+# rdar://70556068 REGRESSION: [ Big Sur ] fast/text/international/complex-character-based-fallback.html is a constant failure
+[ BigSur+ ] fast/text/international/complex-character-based-fallback.html [ Pass Failure ]
