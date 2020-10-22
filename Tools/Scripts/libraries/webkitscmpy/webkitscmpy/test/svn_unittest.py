@@ -25,6 +25,7 @@ import shutil
 import tempfile
 import unittest
 
+from datetime import datetime
 from webkitcorepy import OutputCapture
 from webkitscmpy import local, mocks
 
@@ -89,7 +90,7 @@ class TestSvn(unittest.TestCase):
                     u'Schedule': u'normal',
                     u'Last Changed Author': u'jbedard@apple.com',
                     u'Last Changed Rev': u'6',
-                    u'Last Changed Date': u'2020-10-02 11:58:20 -0100 (Fri, 02 Oct 2020)',
+                    u'Last Changed Date': datetime.fromtimestamp(1601665100).strftime('%Y-%m-%d %H:%M:%S -0100 (%a, %d %b %Y)'),
                 }, local.Svn(self.path).info(),
             )
 

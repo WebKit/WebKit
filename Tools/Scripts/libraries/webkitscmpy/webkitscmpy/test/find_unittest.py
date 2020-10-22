@@ -23,9 +23,10 @@
 import json
 import unittest
 
+from datetime import datetime
 from webkitcorepy import OutputCapture
 from webkitcorepy.mocks import Time as MockTime
-from webkitscmpy import local,  program, mocks
+from webkitscmpy import program, mocks
 
 
 class TestFind(unittest.TestCase):
@@ -122,10 +123,10 @@ class TestFind(unittest.TestCase):
             '''Title: 4th commit
 Author: Jonathan Bedard <jbedard@apple.com>
 Identifier: 3@main
-Date: Fri Oct 02 11:23:20 2020
+Date: {}
 Revision: 4
 Hash: 1abe25b443e9
-''',
+'''.format(datetime.fromtimestamp(1601663000).strftime('%a %b %d %H:%M:%S %Y')),
         )
 
     def test_verbose(self):
@@ -139,12 +140,12 @@ Hash: 1abe25b443e9
             '''Title: 4th commit
 Author: Jonathan Bedard <jbedard@apple.com>
 Identifier: 3@main
-Date: Fri Oct 02 11:23:20 2020
+Date: {}
 Revision: 4
 Hash: 1abe25b443e9
     4th commit
     svn-id: https://svn.webkit.orgrepository/repository/trunk@4 268f45cc-cd09-0410-ab3c-d52691b4dbfc
-''',
+'''.format(datetime.fromtimestamp(1601663000).strftime('%a %b %d %H:%M:%S %Y')),
         )
 
     def test_json(self):

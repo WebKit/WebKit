@@ -23,6 +23,7 @@
 import os
 import unittest
 
+from datetime import datetime
 from webkitcorepy import LoggerCapture
 from webkitcorepy.mocks import Time as MockTime
 from webkitscmpy import local, mocks
@@ -97,7 +98,7 @@ class TestGit(unittest.TestCase):
                     'Schedule': 'normal',
                     'Last Changed Author': 'jbedard@apple.com',
                     'Last Changed Rev': '6',
-                    'Last Changed Date': '2020-10-02 11:56:40',
+                    'Last Changed Date': datetime.fromtimestamp(1601665000).strftime('%Y-%m-%d %H:%M:%S'),
                 }, local.Git(self.path).info(),
             )
 

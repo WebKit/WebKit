@@ -1,3 +1,18 @@
+2020-10-22  Jonathan Bedard  <jbedard@apple.com>
+
+        Few webkitpy tests fail for machines in non-PST timezones
+        https://bugs.webkit.org/show_bug.cgi?id=218079
+        <rdar://problem/70579517>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/find_unittest.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGit.test_info):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/svn_unittest.py:
+        (TestSvn.test_info):
+
 2020-10-22  Eric Carlson  <eric.carlson@apple.com>
 
         UIClient isn't notified when page muted state changes
