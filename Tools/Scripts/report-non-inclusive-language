@@ -78,5 +78,6 @@ for subroot, directories, files in os.walk(root):
             term[3] += term[2]
             term[2] = 0
 
-for term in nonInclusiveTerms:
-    print("total " + term[0] + ": " + str(term[3]))
+details = ['{}: {}'.format(term[0], term[3]) for term in nonInclusiveTerms]
+total = sum([term[3] for term in nonInclusiveTerms])
+print('Total: {} ({})'.format(total, ', '.join(details)))
