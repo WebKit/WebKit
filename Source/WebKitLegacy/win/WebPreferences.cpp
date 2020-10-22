@@ -348,7 +348,7 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitWebSQLEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitCSSIndividualTransformPropertiesEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults, CFSTR(WebKitCSSIndividualTransformPropertiesEnabledPreferenceKey), kCFBooleanFalse);
 
     defaultSettings = defaults;
 #endif

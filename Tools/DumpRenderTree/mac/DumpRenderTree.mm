@@ -840,6 +840,7 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setLinkPreloadResponsiveImagesEnabled:YES];
     [preferences setAspectRatioOfImgFromWidthAndHeightEnabled:YES];
     [preferences setCSSOMViewSmoothScrollingEnabled:YES];
+    [preferences setCSSIndividualTransformPropertiesEnabled:YES];
     [preferences setAudioWorkletEnabled:YES];
 }
 

@@ -1,3 +1,7 @@
+2020-10-22  Alan Coon  <alancoon@apple.com>
+
+        Revert r268616. rdar://problem/70578639
+
 2020-10-17  Sam Weinig  <weinig@apple.com>
 
         [Preferences] Add infrastructure for generating preferences for WWindows WebKitLegacy

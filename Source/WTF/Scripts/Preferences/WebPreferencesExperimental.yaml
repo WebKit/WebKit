@@ -132,11 +132,12 @@ CSSIndividualTransformPropertiesEnabled:
   humanReadableDescription: "Support for the translate, scale and rotate CSS properties"
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      default: true
+      "ENABLE(EXPERIMENTAL_FEATURES)" : true
+      default: false
     WebCore:
-      default: true
+      default: false
 
 CSSOMViewSmoothScrollingEnabled:
   type: bool

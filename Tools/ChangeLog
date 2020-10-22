@@ -1,3 +1,7 @@
+2020-10-22  Alan Coon  <alancoon@apple.com>
+
+        Revert r268616. rdar://problem/70578639
+
 2020-10-17  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] flatpakutils.py reports "KeyError: 'gcc'" error if using with icecc and toolchains aren't generated yet

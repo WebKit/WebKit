@@ -1,3 +1,7 @@
+2020-10-22  Alan Coon  <alancoon@apple.com>
+
+        Revert r268616. rdar://problem/70578639
+
 2020-10-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add system trace points for flushing remote image buffers
