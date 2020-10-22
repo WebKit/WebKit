@@ -1,0 +1,118 @@
+From c66d393e5980aa36e6f2d53cacec6887476bc5e4 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Wed, 21 Oct 2020 09:43:43 +0100
+Subject: [PATCH] devicemonitor: Stop only the already started providers
+
+If a device provider fails to start (for instance the pulseaudio provider unable
+to connect to the PulseAudio daemon) then the monitor should not keep track of
+it in its `started` providers list. Otherwise a false positive critical warning
+would be raised.
+
+This patch also switches the started_count type from bool to int, for
+consistency. This is a counter, after all.
+
+API: gst_device_provider_is_started
+---
+ gst/gstdevicemonitor.c      |  3 ++-
+ gst/gstdeviceprovider.c     | 25 ++++++++++++++++++++++++-
+ gst/gstdeviceprovider.h     |  3 +++
+ tests/check/gst/gstdevice.c |  2 ++
+ 4 files changed, 31 insertions(+), 2 deletions(-)
+
+diff --git a/gst/gstdevicemonitor.c b/gst/gstdevicemonitor.c
+index 43752e15d..fae2f61f5 100644
+--- a/gst/gstdevicemonitor.c
++++ b/gst/gstdevicemonitor.c
+@@ -571,7 +571,8 @@ gst_device_monitor_stop (GstDeviceMonitor * monitor)
+     GstDeviceProvider *provider =
+         g_ptr_array_index (monitor->priv->providers, i);
+ 
+-    started = g_list_prepend (started, gst_object_ref (provider));
++    if (gst_device_provider_is_started (provider))
++      started = g_list_prepend (started, gst_object_ref (provider));
+   }
+   GST_OBJECT_UNLOCK (monitor);
+ 
+diff --git a/gst/gstdeviceprovider.c b/gst/gstdeviceprovider.c
+index 4d159fe6c..547b7a174 100644
+--- a/gst/gstdeviceprovider.c
++++ b/gst/gstdeviceprovider.c
+@@ -55,7 +55,7 @@ struct _GstDeviceProviderPrivate
+ 
+   GMutex start_lock;
+ 
+-  gboolean started_count;
++  gint started_count;
+ 
+   GList *hidden_providers;
+ };
+@@ -165,6 +165,8 @@ gst_device_provider_init (GstDeviceProvider * provider)
+ 
+   g_mutex_init (&provider->priv->start_lock);
+ 
++  provider->priv->started_count = 0;
++
+   provider->priv->bus = gst_bus_new ();
+   gst_bus_set_flushing (provider->priv->bus, TRUE);
+ }
+@@ -854,3 +856,24 @@ gst_device_provider_device_changed (GstDeviceProvider * provider,
+   gst_bus_post (provider->priv->bus, message);
+   gst_object_unparent (GST_OBJECT (changed_device));
+ }
++
++/**
++ * gst_device_provider_is_started:
++ * @provider: a #GstDeviceProvider
++ *
++ * This function can be used to know if the @provider was successfully started.
++ *
++ * Since: 1.20
++ */
++gboolean
++gst_device_provider_is_started (GstDeviceProvider * provider)
++{
++  gboolean started = FALSE;
++
++  g_return_val_if_fail (GST_IS_DEVICE_PROVIDER (provider), FALSE);
++
++  g_mutex_lock (&provider->priv->start_lock);
++  started = provider->priv->started_count > 0;
++  g_mutex_unlock (&provider->priv->start_lock);
++  return started;
++}
+diff --git a/gst/gstdeviceprovider.h b/gst/gstdeviceprovider.h
+index 56ad6209a..cafe37e1c 100644
+--- a/gst/gstdeviceprovider.h
++++ b/gst/gstdeviceprovider.h
+@@ -139,6 +139,9 @@ GST_API
+ const gchar * gst_device_provider_get_metadata       (GstDeviceProvider * provider,
+                                                       const gchar * key);
+ 
++GST_API
++gboolean    gst_device_provider_is_started     (GstDeviceProvider * provider);
++
+ /* device provider class meta data */
+ 
+ GST_API
+diff --git a/tests/check/gst/gstdevice.c b/tests/check/gst/gstdevice.c
+index 70e186ac3..8d4723608 100644
+--- a/tests/check/gst/gstdevice.c
++++ b/tests/check/gst/gstdevice.c
+@@ -244,12 +244,14 @@ GST_START_TEST (test_device_provider)
+   g_list_free_full (devs, (GDestroyNotify) gst_object_unref);
+ 
+   fail_if (gst_device_provider_can_monitor (dp));
++  fail_if (gst_device_provider_is_started (dp));
+   fail_unless (gst_device_provider_start (dp));
+ 
+   bus = gst_device_provider_get_bus (dp);
+   fail_unless (GST_IS_BUS (bus));
+   gst_object_unref (bus);
+ 
++  fail_unless (gst_device_provider_is_started (dp));
+   gst_device_provider_stop (dp);
+ 
+   gst_object_unref (dp);
+-- 
+2.28.0
+

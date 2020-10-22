@@ -1,3 +1,16 @@
+2020-10-22  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Backport GStreamer device monitor patch
+        https://bugs.webkit.org/show_bug.cgi?id=218021
+
+        Reviewed by Adrian Perez de Castro.
+
+        Backport of https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/679 to be shipped in 1.20.
+        This is needed to prevent false-positive critical warnings on the bots. See #217959.
+        
+        * buildstream/elements/sdk/gstreamer.bst:
+        * buildstream/patches/gstreamer-0001-devicemonitor-Stop-only-the-already-started-provider.patch: Added.
+
 2020-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update W3C WebDriver imported tests.
