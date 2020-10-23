@@ -1,3 +1,46 @@
+2020-10-13  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [SOUP] webkit_web_view_get_https_status() broken with service workers
+        https://bugs.webkit.org/show_bug.cgi?id=216038
+
+        Reviewed by Carlos Garcia Campos.
+
+        This implements CertificateInfo::isolatedCopy for libsoup ports. This is impossible to do
+        completely, because we cannot copy the private key portion of the GTlsCertificate, because
+        it is a write-only property, because it might be backed by a hardware token and therefore
+        really impossible to write software to get it. If we were to implement g_tls_certificate_copy()
+        in GLib -- which I will probably do eventually, because I need this outside WebKit as well --
+        then GTlsCertificate implementations could copy the private key or PKCS#11 handle or
+        whatever.
+
+        But anyway, let not perfect be the enemy of the good. We only need this for service workers
+        currently. (Probably that's all we'll *ever* need it for.) So we are only working with
+        server certificates, and the private portion of the certificate is guaranteed to not exist
+        (because servers don't send us their private keys), and we can just forget about it. As
+        long as nobody tries to copy a client certificate in the future -- where we really would
+        need the private key portion of the certificate -- this will be perfectly fine.
+
+        Actually copying the certificate is kind of annoying, because a chain of certificates is
+        represented by having the main (server) certificate keep a reference to its issuer, which is
+        not referenced anywhere else, so we have to reconstruct the chain in reverse order starting
+        from the final certificate, working back towards the server cert. Fun. Let's also be
+        careful to construct a completely new GByteArray rather than expecting the GTlsCertificate
+        implementation to copy it for us. Because GTlsCertificate is implemented by an extension
+        point and applications and system administrators can -- and do -- implement their own,
+        implementations could do anything, including keep a reference to the GByteArray that we
+        pass in.
+
+        It would be nice to have a test for this, but writing tests is hard. Also, I don't really
+        want to learn what service workers are. :)
+
+        Drive-by fix: also remove explicit from a constructor that doesn't need it.
+
+        * platform/network/soup/CertificateInfo.h:
+        (WebCore::CertificateInfo::isolatedCopy const):
+        * platform/network/soup/CertificateInfoSoup.cpp:
+        (WebCore::createCertificate):
+        (WebCore::CertificateInfo::isolatedCopy const):
+
 2020-10-13  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Crash in WebCore::GStreamerRegistryScanner::isAVC1CodecSupported
