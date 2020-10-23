@@ -109,8 +109,8 @@ Leak: 0x7fc506025980  size=432  zone: DefaultMallocZone_0x107c29000   URLConnect
 
 
 Binary Images:
-       0x107ac2000 -        0x107b4aff7 +DumpRenderTree (??? - ???) <5694BE03-A60A-30B2-9D40-27CFFCFB88EE> /Volumes/Data/WebKit-BuildSlave/lion-intel-leaks/build/WebKitBuild/Debug/DumpRenderTree
-       0x107c2f000 -        0x107c58fff +libWebCoreTestSupport.dylib (535.8.0 - compatibility 1.0.0) <E4F7A13E-5807-30F7-A399-62F8395F9106> /Volumes/Data/WebKit-BuildSlave/lion-intel-leaks/build/WebKitBuild/Debug/libWebCoreTestSupport.dylib
+       0x107ac2000 -        0x107b4aff7 +DumpRenderTree (??? - ???) <5694BE03-A60A-30B2-9D40-27CFFCFB88EE> /Volumes/Data/worker/lion-intel-leaks/build/WebKitBuild/Debug/DumpRenderTree
+       0x107c2f000 -        0x107c58fff +libWebCoreTestSupport.dylib (535.8.0 - compatibility 1.0.0) <E4F7A13E-5807-30F7-A399-62F8395F9106> /Volumes/Data/worker/lion-intel-leaks/build/WebKitBuild/Debug/libWebCoreTestSupport.dylib
 17 leaks excluded (not printed)
 """
 

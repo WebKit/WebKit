@@ -348,7 +348,7 @@ def parse_args(args):
         optparse.make_option("--build-name", default="DUMMY_BUILD_NAME",
             help=("The name of the builder used in its path, e.g. webkit-rel.")),
         optparse.make_option("--build-slave", default="DUMMY_BUILD_SLAVE",
-            help=("The name of the buildslave used. e.g. apple-macpro-6.")),
+            help=("The name of the worker used. e.g. apple-macpro-6.")),
         optparse.make_option("--test-results-server", action="append", default=[],
             help=("If specified, upload results json files to this appengine server.")),
         optparse.make_option("--results-server-host", action="append", default=[],

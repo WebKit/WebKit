@@ -180,7 +180,7 @@ class BuildBotTest(unittest.TestCase):
       <td align="center" class="Activity idle">idle<br />3 pending</td>
     <tr>
     <td class="box"><a href="builders/Qt%20Windows%2032-bit%20Debug">Qt Windows 32-bit Debug</a></td>
-      <td align="center" class="LastBuild box failure"><a href="builders/Qt%20Windows%2032-bit%20Debug/builds/2090">60563</a><br />failed<br />failed<br />slave<br />lost</td>
+      <td align="center" class="LastBuild box failure"><a href="builders/Qt%20Windows%2032-bit%20Debug/builds/2090">60563</a><br />failed<br />failed<br />worker<br />lost</td>
       <td align="center" class="Activity building">building<br />ETA in<br />~ 5 mins<br />at 08:25</td>
     </table>
 '''

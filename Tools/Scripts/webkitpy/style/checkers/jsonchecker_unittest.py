@@ -86,7 +86,7 @@ class JSONCheckerTest(unittest.TestCase):
         self.assert_error(1 if sys.version_info > (3, 0) else 0, 'json/syntax', '<<<<<<< HEAD\n{\n}\n')
 
     def test_single_quote(self):
-        self.assert_error(2, 'json/syntax', "{\n'slaves': []\n}\n")
+        self.assert_error(2, 'json/syntax', "{\n'workers': []\n}\n")
 
     def test_init(self):
         error_handler = MockErrorHandler(self.mock_handle_style_error)
@@ -95,13 +95,13 @@ class JSONCheckerTest(unittest.TestCase):
 
     def test_no_error(self):
         self.assert_no_error("""{
-    "slaves":     [ { "name": "test-slave", "platform": "*" },
+    "workers":     [ { "name": "test-worker", "platform": "*" },
                     { "name": "apple-xserve-4", "platform": "mac-snowleopard" }
                   ],
 
     "builders":   [ { "name": "SnowLeopard Intel Release (Build)", "type": "Build", "builddir": "snowleopard-intel-release",
                       "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["apple-xserve-4"]
+                      "workernames": ["apple-xserve-4"]
                     }
                    ],
 

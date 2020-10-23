@@ -162,7 +162,7 @@ class LayoutTestFinder(object):
         if self._options.run_chunk:
             chunk_len = test_size
             # In this case chunk_num can be really large. We need
-            # to make the slave fit in the current number of tests.
+            # to make the worker fit in the current number of tests.
             slice_start = (chunk_num * chunk_len) % num_tests
         else:
             # Validate the data.

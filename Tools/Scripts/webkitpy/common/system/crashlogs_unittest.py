@@ -37,7 +37,7 @@ from webkitpy.port.win import WinPort
 def make_mock_crash_report_darwin(process_name, pid):
     return """Crash log may not start with Process line
 Process:         {process_name} [{pid}]
-Path:            /Volumes/Data/slave/snowleopard-intel-release-tests/build/WebKitBuild/Release/{process_name}
+Path:            /Volumes/Data/worker/snowleopard-intel-release-tests/build/WebKitBuild/Release/{process_name}
 Identifier:      {process_name}
 Version:         ??? (???)
 Code Type:       X86-64 (Native)
@@ -58,7 +58,7 @@ Crashed Thread:  0
 
 Dyld Error Message:
   Library not loaded: /Volumes/Data/WebKit-BuildSlave/snowleopard-intel-release/build/WebKitBuild/Release/WebCore.framework/Versions/A/WebCore
-  Referenced from: /Volumes/Data/slave/snowleopard-intel-release/build/WebKitBuild/Release/WebKit.framework/Versions/A/WebKit
+  Referenced from: /Volumes/Data/worker/snowleopard-intel-release/build/WebKitBuild/Release/WebKit.framework/Versions/A/WebKit
   Reason: image not found
 
 Binary Images:

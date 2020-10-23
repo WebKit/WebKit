@@ -1,3 +1,21 @@
+2020-10-23  Aakash Jain  <aakash_jain@apple.com>
+
+        Rename slave to worker in webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=218123
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+        * Scripts/webkitpy/common/net/resultsjsonparser_unittest.py:
+        * Scripts/webkitpy/common/system/crashlogs_unittest.py:
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/port/leakdetector_unittest.py:
+        * Scripts/webkitpy/style/checkers/jsonchecker_unittest.py:
+
 2020-10-22  Alex Christensen  <achristensen@webkit.org>
 
         Null check platformStrategies when making blob read stream for an NSURLRequest

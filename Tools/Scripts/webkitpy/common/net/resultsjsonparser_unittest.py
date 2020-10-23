@@ -62,7 +62,7 @@ class ParsedJSONResultsTest(unittest.TestCase):
                     "actual": "LEAK",
                     "leaks": [
                         {
-                            "document": "file:///Volumes/Data/slave/webkit/build/LayoutTests/fast/dom/prototype-strawberry.html"
+                            "document": "file:///Volumes/Data/worker/webkit/build/LayoutTests/fast/dom/prototype-strawberry.html"
                         }
                     ]
                 }
@@ -81,7 +81,7 @@ class ParsedJSONResultsTest(unittest.TestCase):
     "interrupted": true,
     "skipped": 450,
     "num_regressions": 15,
-    "layout_tests_dir": "\/b\/build\/slave\/Webkit_Mac10_5\/build\/src\/third_party\/WebKit\/LayoutTests",
+    "layout_tests_dir": "\/b\/build\/worker\/Webkit_Mac10_5\/build\/src\/third_party\/WebKit\/LayoutTests",
     "version": 3,
     "num_passes": 77,
     "has_pretty_patch": false,
@@ -115,7 +115,7 @@ class ParsedJSONResultsTest(unittest.TestCase):
                     "actual": "LEAK",
                     "leaks": [
                         {
-                            "document": "file:///Volumes/Data/slave/webkit/build/LayoutTests/fast/dom/prototype-strawberry.html"
+                            "document": "file:///Volumes/Data/worker/webkit/build/LayoutTests/fast/dom/prototype-strawberry.html"
                         }
                     ]
                 }
@@ -134,7 +134,7 @@ class ParsedJSONResultsTest(unittest.TestCase):
     "interrupted": false,
     "skipped": 450,
     "num_regressions": 15,
-    "layout_tests_dir": "\/b\/build\/slave\/Webkit_Mac10_5\/build\/src\/third_party\/WebKit\/LayoutTests",
+    "layout_tests_dir": "\/b\/build\/worker\/Webkit_Mac10_5\/build\/src\/third_party\/WebKit\/LayoutTests",
     "version": 3,
     "num_passes": 77,
     "has_pretty_patch": false,
@@ -148,7 +148,7 @@ class ParsedJSONResultsTest(unittest.TestCase):
         expected_results = [
             test_results.TestResult("svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr.html", [test_failures.FailureImageHashMismatch()], 0),
             test_results.TestResult("fast/dom/prototype-inheritance.html", [test_failures.FailureTextMismatch(), test_failures.FailureImageHashMismatch(), test_failures.FailureAudioMismatch()], 0),
-            test_results.TestResult("fast/dom/prototype-strawberry.html", [test_failures.FailureDocumentLeak(['file:///Volumes/Data/slave/webkit/build/LayoutTests/fast/dom/prototype-strawberry.html'])], 0),
+            test_results.TestResult("fast/dom/prototype-strawberry.html", [test_failures.FailureDocumentLeak(['file:///Volumes/Data/worker/webkit/build/LayoutTests/fast/dom/prototype-strawberry.html'])], 0),
         ]
         expected_results.sort(key=lambda result: result.test_name)
         parsed_results = ParsedJSONResults(self._example_full_results_json)
