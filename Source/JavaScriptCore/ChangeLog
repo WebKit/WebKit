@@ -1,3 +1,37 @@
+2020-10-23  Keith Miller  <keith_miller@apple.com>
+
+        Using WASM function size as the cap for choosing a register allocator causes performance regressions.
+        https://bugs.webkit.org/show_bug.cgi?id=217290
+
+        Reviewed by Michael Saboff.
+
+        Previously in https://bugs.webkit.org/show_bug.cgi?id=212105 we
+        limited the size of WASM functions we compile with OMG because
+        sufficiently large functions caused us to OOM while register
+        allocating. The memory growth we saw is because the memory usage
+        of graph coloring is O((number of tmps)^2). However, some large
+        WASM functions may not have that many tmps by the time we get to
+        register allocation. This patch changes our heuristic to instead
+        use the total number of tmps right before register allocation
+        instead of the WASM function size. The number of tmps is more
+        likely to represent the worst case memory usage of register
+        allocation. This fixes a performance regression in Safari 14 when running
+        https://dos.zone/en/play/https%3A%2F%2Fdoszone-uploads.s3.dualstack.eu-central-1.amazonaws.com%2Foriginal%2F2X%2Fb%2Fb4b5275904d86a4ab8a20917b2b7e34f0df47bf7.jsdos
+
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::prepareForGeneration):
+        * runtime/OptionsList.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmCompilationMode.cpp:
+        (JSC::Wasm::wasmFunctionSizeCanBeOMGCompiled): Deleted.
+        * wasm/WasmCompilationMode.h:
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+
 2020-10-23  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Fix argument order for double and/or ops on ARMv7

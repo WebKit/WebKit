@@ -49,9 +49,4 @@ const char* makeString(CompilationMode mode)
     return "";
 }
 
-bool wasmFunctionSizeCanBeOMGCompiled(size_t size)
-{
-    return size < Options::webAssemblyBBQFallbackSize();
-}
-
 } } // namespace JSC::Wasm

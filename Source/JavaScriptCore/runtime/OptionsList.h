@@ -413,6 +413,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     \
     v(Bool, logPhaseTimes, false, Normal, nullptr) \
     v(Double, rareBlockPenalty, 0.001, Normal, nullptr) \
+    v(Unsigned, maximumTmpsForGraphColoring, 25000, Normal, "The maximum number of tmps an Air program can have before always register allocating with Linear Scan") \
     v(Bool, airLinearScanVerbose, false, Normal, nullptr) \
     v(Bool, airLinearScanSpillsEverything, false, Normal, nullptr) \
     v(Bool, airForceBriggsAllocator, false, Normal, nullptr) \
@@ -457,7 +458,6 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(Unsigned, webAssemblyBBQAirOptimizationLevel, 0, Normal, "Air Optimization level for BBQ Web Assembly module compilations.") \
     v(Unsigned, webAssemblyBBQB3OptimizationLevel, 1, Normal, "B3 Optimization level for BBQ Web Assembly module compilations.") \
     v(Unsigned, webAssemblyOMGOptimizationLevel, Options::defaultB3OptLevel(), Normal, "B3 Optimization level for OMG Web Assembly module compilations.") \
-    v(Unsigned, webAssemblyBBQFallbackSize, 60000, Normal, "Limit of Wasm function size above which we fallback to BBQ compilation mode.") \
     \
     v(Bool, useBBQTierUpChecks, true, Normal, "Enables tier up checks for our BBQ code.") \
     v(Bool, useWebAssemblyOSR, true, Normal, nullptr) \

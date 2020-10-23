@@ -537,8 +537,7 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
         });
     }
 
-    if (wasmFunctionSizeCanBeOMGCompiled(m_info.functions[m_functionIndex].data.size()))
-        emitEntryTierUpCheck();
+    emitEntryTierUpCheck();
 
     if (m_compilationMode == CompilationMode::OMGForOSREntryMode)
         m_currentBlock = m_proc.addBlock();
@@ -1974,7 +1973,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationC
     // optLevel=1.
     procedure.setNeedsUsedRegisters(false);
     
-    procedure.setOptLevel(compilationMode == CompilationMode::BBQMode || !wasmFunctionSizeCanBeOMGCompiled(function.data.size())
+    procedure.setOptLevel(compilationMode == CompilationMode::BBQMode
         ? Options::webAssemblyBBQB3OptimizationLevel()
         : Options::webAssemblyOMGOptimizationLevel());
 

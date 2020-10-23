@@ -110,7 +110,8 @@ void prepareForGeneration(Code& code)
     
     eliminateDeadCode(code);
 
-    if (code.optLevel() == 1) {
+    size_t numTmps = code.numTmps(Bank::GP) + code.numTmps(Bank::FP);
+    if (code.optLevel() == 1 || numTmps > Options::maximumTmpsForGraphColoring()) {
         // When we're compiling quickly, we do register and stack allocation in one linear scan
         // phase. It's fast because it computes liveness only once.
         allocateRegistersAndStackByLinearScan(code);
