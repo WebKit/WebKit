@@ -301,6 +301,7 @@ void LineBoxBuilder::alignInlineLevelBoxesVerticallyAndComputeLineBoxHeight(Line
     // This function (partially) implements:
     // 2.2. Layout Within Line Boxes
     // https://www.w3.org/TR/css-inline-3/#line-layout
+    auto quirks = formattingContext().quirks();
     Vector<LineBox::InlineLevelBox*> lineBoxRelativeInlineLevelBoxes;
     struct AbsoluteTopAndBottom {
         InlineLayoutUnit top { 0 };
@@ -310,6 +311,7 @@ void LineBoxBuilder::alignInlineLevelBoxesVerticallyAndComputeLineBoxHeight(Line
     HashMap<LineBox::InlineLevelBox*, AbsoluteTopAndBottom> absoluteLogicalTopAndBottomMap;
     auto& rootInlineBox = lineBox.rootInlineBox();
     absoluteLogicalTopAndBottomMap.add(&rootInlineBox, AbsoluteTopAndBottom { { }, rootInlineBox.layoutBounds().height(), &rootInlineBox });
+    auto maximumOffsetFromRootInlineBoxBaseline = rootInlineBox.isEmpty() ? InlineLayoutUnit() : rootInlineBox.layoutBounds().ascent;
 
     auto alignInlineBoxRelativeInlineLevelBoxes = [&] {
         // FIXME: Add proper support for cases when the inline box with line box relative alignment has a child inline box
@@ -323,18 +325,32 @@ void LineBoxBuilder::alignInlineLevelBoxesVerticallyAndComputeLineBoxHeight(Line
             }
             auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent());
             auto logicalTop = InlineLayoutUnit { };
+            auto offsetFromParentInlineBoxBaseline = InlineLayoutUnit { };
             switch (verticalAlignment) {
             case VerticalAlign::Baseline:
-                logicalTop = parentInlineBox.baseline() - inlineLevelBox->baseline();
+                offsetFromParentInlineBoxBaseline = inlineLevelBox->layoutBounds().ascent;
+                logicalTop = parentInlineBox.baseline() - offsetFromParentInlineBoxBaseline;
                 break;
-            case VerticalAlign::TextTop:
-                logicalTop = { };
+            case VerticalAlign::TextTop: {
+                // Note that TextTop aligns with the inline box's font metrics top (ascent) and not the layout bounds top.
+                auto parentAscent = parentInlineBox.fontMetrics().ascent();
+                auto parentInlineBoxLogicalTop = parentInlineBox.layoutBounds().ascent - parentAscent;
+                logicalTop = parentInlineBoxLogicalTop;
+                offsetFromParentInlineBoxBaseline = parentAscent;
                 break;
-            case VerticalAlign::TextBottom:
-                logicalTop = parentInlineBox.layoutBounds().height() - inlineLevelBox->layoutBounds().height();
+            }
+            case VerticalAlign::TextBottom: {
+                // Note that TextBottom aligns with the inline box's font metrics bottom (descent) and not the layout bounds bottom.
+                auto& parentFontMetrics = parentInlineBox.fontMetrics();
+                auto parentInlineBoxLayoutBounds = parentInlineBox.layoutBounds();
+                auto parentInlineBoxLogicalBottom = parentInlineBoxLayoutBounds.height() - parentInlineBoxLayoutBounds.descent + parentFontMetrics.descent();
+                logicalTop = parentInlineBoxLogicalBottom - inlineLevelBox->logicalHeight();
+                offsetFromParentInlineBoxBaseline = inlineLevelBox->logicalHeight() - parentFontMetrics.descent();
                 break;
+            }
             case VerticalAlign::Middle:
-                logicalTop = parentInlineBox.baseline() - (inlineLevelBox->layoutBounds().height() / 2 + parentInlineBox.fontMetrics().xHeight() / 2);
+                offsetFromParentInlineBoxBaseline = (inlineLevelBox->layoutBounds().height() / 2 + parentInlineBox.fontMetrics().xHeight() / 2);
+                logicalTop = parentInlineBox.baseline() - offsetFromParentInlineBoxBaseline;
                 break;
             default:
                 ASSERT_NOT_IMPLEMENTED_YET();
@@ -344,14 +360,16 @@ void LineBoxBuilder::alignInlineLevelBoxesVerticallyAndComputeLineBoxHeight(Line
             auto parentAbsoluteLogicalTop = absoluteLogicalTopAndBottomMap.get(&parentInlineBox).top;
             auto absoluteLogicalTop = parentAbsoluteLogicalTop + logicalTop;
             absoluteLogicalTopAndBottomMap.add(inlineLevelBox.get(), AbsoluteTopAndBottom { absoluteLogicalTop, absoluteLogicalTop + inlineLevelBox->layoutBounds().height(), inlineLevelBox.get() });
+
+            auto affectsRootInlineBoxVerticalPostion = isRootInlineBox(parentInlineBox) && quirks.shouldInlineLevelBoxStretchLineBox(lineBox, *inlineLevelBox);
+            if (affectsRootInlineBoxVerticalPostion)
+                maximumOffsetFromRootInlineBoxBaseline = std::max(maximumOffsetFromRootInlineBoxBaseline, offsetFromParentInlineBoxBaseline);
         }
     };
     alignInlineBoxRelativeInlineLevelBoxes();
 
     auto lineBoxLogicalHeight = InlineLayoutUnit { };
     auto inlineBoxRelativeLogicalHeight = InlineLayoutUnit { };
-    auto quirks = formattingContext().quirks();
-    auto maximumBaselineAlignedAscent = rootInlineBox.isEmpty() ? InlineLayoutUnit() : rootInlineBox.layoutBounds().ascent;
     auto computeLineBoxLogicalHeight = [&] {
         // FIXME: Add support for layout bounds based line box height.
         auto minimumLogicalTop = Optional<InlineLayoutUnit> { };
@@ -362,8 +380,6 @@ void LineBoxBuilder::alignInlineLevelBoxesVerticallyAndComputeLineBoxHeight(Line
                 continue;
             minimumLogicalTop = std::min(minimumLogicalTop.valueOr(absoluteLogicalTopAndBottom.top), absoluteLogicalTopAndBottom.top);
             maximumLogicalBottom = std::max(maximumLogicalBottom.valueOr(absoluteLogicalTopAndBottom.bottom), absoluteLogicalTopAndBottom.bottom);
-            if (inlineLevelBox.verticalAlign() == VerticalAlign::Baseline)
-                maximumBaselineAlignedAscent = std::max(maximumBaselineAlignedAscent, inlineLevelBox.layoutBounds().ascent);
         }
         inlineBoxRelativeLogicalHeight = maximumLogicalBottom.valueOr(InlineLayoutUnit()) - minimumLogicalTop.valueOr(InlineLayoutUnit());
         lineBoxLogicalHeight = inlineBoxRelativeLogicalHeight;
@@ -378,8 +394,8 @@ void LineBoxBuilder::alignInlineLevelBoxesVerticallyAndComputeLineBoxHeight(Line
 
     auto adjustRootInlineBoxVerticalPosition = [&] {
         // FIXME: Add support for cases when the stretching inline boxes are not baseline aligned.
-        auto logicalTop = maximumBaselineAlignedAscent - rootInlineBox.layoutBounds().ascent;
-        rootInlineBox.setLogicalTop(logicalTop);
+        auto rootInlineBoxLogicalTop = maximumOffsetFromRootInlineBoxBaseline - rootInlineBox.layoutBounds().ascent;
+        rootInlineBox.setLogicalTop(rootInlineBoxLogicalTop);
     };
     adjustRootInlineBoxVerticalPosition();
 
