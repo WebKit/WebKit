@@ -1,3 +1,22 @@
+2020-10-23  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [SOUP] Fix crash in WebSocketTask
+        https://bugs.webkit.org/show_bug.cgi?id=217892
+
+        Reviewed by Carlos Garcia Campos.
+
+        The WebSocketTask connects to the "starting" signal of its SoupMessage and never disconnects
+        this signal, which is only safe if it is guaranteed to outlive its SoupMessage. However, it
+        is not. We crash when the signal is emitted after the WebSocketTask is destroyed. To solve
+        this, we just need to disconnect the signal when required. Normally that would be done in
+        the destructor, but the WebSocketTask drops its ownership of the SoupMessage prior to that
+        point, so we need to disconnect on each possible paths.
+
+        * NetworkProcess/soup/WebSocketTaskSoup.cpp:
+        (WebKit::WebSocketTask::~WebSocketTask):
+        (WebKit::WebSocketTask::didConnect):
+        (WebKit::WebSocketTask::didFail):
+
 2020-10-22  Aditya Keerthi  <akeerthi@apple.com>
 
         [Contact Picker API] Add skeleton implementation of ContactsManager.select()

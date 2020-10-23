@@ -89,6 +89,9 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, SoupSession* session
 
 WebSocketTask::~WebSocketTask()
 {
+    if (m_handshakeMessage)
+        g_signal_handlers_disconnect_by_data(m_handshakeMessage.get(), this);
+
     cancel();
 }
 
@@ -133,6 +136,7 @@ void WebSocketTask::didConnect(GRefPtr<SoupWebsocketConnection>&& connection)
     WebCore::ResourceResponse response;
     response.updateFromSoupMessage(m_handshakeMessage.get());
     m_channel.didReceiveHandshakeResponse(WTFMove(response));
+    g_signal_handlers_disconnect_by_data(m_handshakeMessage.get(), this);
     m_handshakeMessage = nullptr;
 }
 
@@ -172,6 +176,7 @@ void WebSocketTask::didFail(const String& errorMessage)
         WebCore::ResourceResponse response;
         response.updateFromSoupMessage(m_handshakeMessage.get());
         m_channel.didReceiveHandshakeResponse(WTFMove(response));
+        g_signal_handlers_disconnect_by_data(m_handshakeMessage.get(), this);
         m_handshakeMessage = nullptr;
     }
     m_channel.didReceiveMessageError(errorMessage);
