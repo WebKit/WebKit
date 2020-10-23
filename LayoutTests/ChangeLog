@@ -1,3 +1,12 @@
+2020-10-23  Hector Lopez  <hector_i_lopez@apple.com>
+
+        2 fast/canvas/canvas* tests are flaky failures
+        <rdar://70623742>
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-10-22  Darin Adler  <darin@apple.com>
 
         REGRESSION(r266295): DOMSelection's addRange and containsNode behaves incorrectly when selection crosses shadow boundaries
