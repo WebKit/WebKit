@@ -151,12 +151,6 @@ class Tester(object):
         # Make sure PYTHONPATH is set up properly.
         sys.path = self.finder.additional_paths(sys.path) + sys.path
 
-        # We autoinstall everything up so that we can run tests concurrently
-        # and not have to worry about autoinstalling packages concurrently.
-        self.printer.write_update("Checking autoinstalled packages ...")
-        from webkitpy.thirdparty import autoinstall_everything
-        autoinstall_everything()
-
         from webkitcorepy import AutoInstall
         AutoInstall.install_everything()
 
@@ -169,9 +163,7 @@ class Tester(object):
             import coverage
             cov = coverage.coverage(omit=[
                 "/usr/*",
-                "*/webkitpy/thirdparty/autoinstalled/*",
-                "*/webkitpy/thirdparty/BeautifulSoup.py",
-                "*/webkitpy/thirdparty/BeautifulSoup_legacy.py",
+                "*/webkitpy/thirdparty/*",
             ])
             cov.start()
 
