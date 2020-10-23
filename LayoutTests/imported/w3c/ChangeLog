@@ -1,3 +1,16 @@
+2020-10-23  Diego Pino Garcia  <dpino@igalia.com>
+
+        REGRESSION (r267402): [ iOS Mojave+ Release ] imported/w3c/web-platform-tests/user-timing/measure-l3.any.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=217414
+
+        Reviewed by Alex Christensen.
+
+        Sometimes lhs of comparison is higher by an infinitisimal margin.
+        Round number to two-digit precision to prevent such scenarios.
+
+        * web-platform-tests/user-timing/measure-l3.any.js:
+        (test):
+
 2020-10-23  Chris Dumez  <cdumez@apple.com>
 
         AnalyserNode's output should only have one channel

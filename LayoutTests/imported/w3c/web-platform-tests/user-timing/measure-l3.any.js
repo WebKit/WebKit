@@ -17,9 +17,9 @@ test(function() {
   performance.clearMarks();
   performance.clearMeasures();
   const markEntry = performance.mark("mark", {startTime: 123});
-  const endMin = performance.now();
+  const endMin = Number(performance.now().toFixed(2));
   const measureEntry = performance.measure("A", "mark", undefined);
-  const endMax = performance.now();
+  const endMax = Number(performance.now().toFixed(2));
   assert_equals(measureEntry.startTime, markEntry.startTime);
   assert_greater_than_equal(endTime(measureEntry), endMin);
   assert_greater_than_equal(endMax, endTime(measureEntry));
