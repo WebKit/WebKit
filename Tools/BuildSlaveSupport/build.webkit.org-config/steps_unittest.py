@@ -45,7 +45,7 @@ class BuildBotConfigLoader(object):
 
     def _add_dependent_modules_to_sys_modules(self):
         self._add_webkitpy_to_sys_path()
-        from webkitpy.thirdparty.autoinstalled import buildbot
+        from webkitpy.autoinstalled import buildbot
         sys.modules['buildbot'] = buildbot
 
 

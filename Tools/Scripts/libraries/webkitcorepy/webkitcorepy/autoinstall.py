@@ -108,7 +108,7 @@ class Package(object):
     def location(self):
         if not AutoInstall.directory:
             raise ValueError('No AutoInstall directory, Package cannot resolve location')
-        return os.path.join(AutoInstall.directory, self.name)
+        return os.path.join(AutoInstall.directory, *self.name.split('.'))
 
     def do_post_install(self, archive_path):
         pass
@@ -154,7 +154,7 @@ class Package(object):
                     extension = 'whl'
 
                 else:
-                    if element.childNodes[0].data.endswith('.tar.gz'):
+                    if element.childNodes[0].data.endswith(('.tar.gz', '.tar.bz2')):
                         extension = 'tar.gz'
                     elif element.childNodes[0].data.endswith('.zip'):
                         extension = 'zip'
@@ -224,7 +224,7 @@ class Package(object):
         archive = self.archives()[-1]
 
         try:
-            install_location = os.path.dirname(self.location)
+            install_location = AutoInstall.directory
             shutil.rmtree(self.location, ignore_errors=True)
 
             AutoInstall.log('Downloading {}...'.format(archive))
@@ -233,12 +233,8 @@ class Package(object):
             temp_location = os.path.join(tempfile.gettempdir(), self.name)
             archive.unpack(temp_location)
 
-            for candidate in [
-                os.path.join(temp_location, str(archive)),
-                os.path.join(temp_location, '{}-{}.{}'.format(archive.name, archive.version.major, archive.version.minor)),
-                os.path.join(temp_location, '{}-{}.{}.{}'.format(archive.name.replace('-', '_'), archive.version.major, archive.version.minor, archive.version.tiny)),
-                os.path.join(temp_location, '{}-{}'.format(archive.name.capitalize(), archive.version)),
-            ]:
+            for candidate in os.listdir(temp_location):
+                candidate = os.path.join(temp_location, candidate)
                 if not os.path.exists(os.path.join(candidate, 'setup.py')):
                     continue
 
@@ -256,14 +252,10 @@ class Package(object):
                             '--home={}'.format(install_location),
                             '--root=/',
                             '--prefix=',
-                            '--single-version-externally-managed',
                             '--install-lib={}'.format(install_location),
                             '--install-scripts={}'.format(os.path.join(install_location, 'bin')),
                             '--install-data={}'.format(os.path.join(install_location, 'data')),
                             '--install-headers={}'.format(os.path.join(install_location, 'headers')),
-                            # Do not automatically install package dependencies, force scripts to be explicit
-                            # Even without this flag, setup.py is not consistent about installing dependencies.
-                            '--old-and-unmanageable',
                         ],
                         cwd=candidate,
                         env=dict(
@@ -277,6 +269,12 @@ class Package(object):
                         stdout=devnull,
                         stderr=devnull,
                     )
+
+                # If we have a package inside another package (like zope.interface), the top-level package needs an __init__.py
+                location = os.path.join(AutoInstall.directory, self.name.split('.')[0])
+                if os.path.isdir(location) and '__init__.py' not in os.listdir(location):
+                    with open(os.path.join(location, '__init__.py'), 'w') as init:
+                        init.write('\n')
 
                 break
             else:

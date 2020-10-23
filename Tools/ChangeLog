@@ -1,3 +1,30 @@
+2020-10-23  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Use webkitcorepy's autoinstaller for buildbot and twisted
+        https://bugs.webkit.org/show_bug.cgi?id=218105
+        <rdar://problem/70593576>
+
+        Rubber-stamped by Aakash Jain.
+
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py:
+        (BuildBotConfigLoader._add_dependent_modules_to_sys_modules):
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (Package.archives): tar.bz2 archives are tar.gz archives.
+        (Package.install): After r267056, we don't need "old-and-unmanageable" and
+        "single-version-externally-managed", handle case of nested modules more completely.
+        * Scripts/webkitpy/autoinstalled/buildbot.py: Added.
+        * Scripts/webkitpy/autoinstalled/twisted.py: Added.
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server/twisted_http_server.py:
+        Import new auto installed twisted.
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py:
+        (SimpleHTTPServerDriver._ensure_http_server_dependencies): Import new auto installed twisted.
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module): Remove all modules.
+        (AutoinstallImportHook._install_buildbot): Deleted.
+        (AutoinstallImportHook._install_twisted_15_5_0): Deleted.
+        * Scripts/webkitpy/thirdparty/__init___unittest.py: Removed.
+
 2020-10-23  Aakash Jain  <aakash_jain@apple.com>
 
         Rename slave to worker in webkitpy

@@ -26,10 +26,8 @@
 """Autoinstalls third-party code required by WebKit."""
 
 
-import codecs
 import json
 import os
-import re
 import sys
 
 if sys.version_info > (3, 0):
@@ -81,46 +79,7 @@ class AutoinstallImportHook(object):
             sys.path.insert(sys.path.index(AutoInstall.directory) + 1 if AutoInstall.directory in sys.path else 0, _AUTOINSTALLED_DIR)
 
     def find_module(self, fullname, path=None):
-        # This method will run before each import. See http://www.python.org/dev/peps/pep-0302/
-        if '.autoinstalled' not in fullname:
-            return
-
-        # Note: all of the methods must follow the "_install_XXX" convention in
-        # order for autoinstall_everything(), below, to work properly.
-        if '.buildbot' in fullname:
-            self._install_buildbot()
-        elif '.twisted_15_5_0' in fullname:
-            self._install_twisted_15_5_0()
-
-    # autoinstalled.buildbot is used by BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py
-    # and should ideally match the version of BuildBot used at build.webkit.org.
-    def _install_buildbot(self):
-        # The buildbot package uses jinja2, for example, in buildbot/status/web/base.py.
-        # buildbot imports jinja2 directly (as though it were installed on the system),
-        # so the search path needs to include jinja2.  We put jinja2 in
-        # its own directory so that we can include it in the search path
-        # without including other modules as a side effect.
-        jinja_dir = self._fs.join(_AUTOINSTALLED_DIR, "jinja2")
-        installer = AutoInstaller(append_to_search_path=True, target_dir=jinja_dir)
-        installer.install(url="https://files.pythonhosted.org/packages/source/J/Jinja2/Jinja2-2.6.tar.gz",
-                                                url_subpath="Jinja2-2.6/jinja2")
-
-        SQLAlchemy_dir = self._fs.join(_AUTOINSTALLED_DIR, "sqlalchemy")
-        installer = AutoInstaller(append_to_search_path=True, target_dir=SQLAlchemy_dir)
-        installer.install(url="https://files.pythonhosted.org/packages/source/S/SQLAlchemy/SQLAlchemy-0.7.7.tar.gz",
-                                                 url_subpath="SQLAlchemy-0.7.7/lib/sqlalchemy")
-
-        twisted_dir = self._fs.join(_AUTOINSTALLED_DIR, "twisted")
-        installer = AutoInstaller(prepend_to_search_path=True, target_dir=twisted_dir)
-        installer.install(url="https://files.pythonhosted.org/packages/source/T/Twisted/Twisted-12.1.0.tar.bz2", url_subpath="Twisted-12.1.0/twisted")
-
-        self._install("https://files.pythonhosted.org/packages/source/b/buildbot/buildbot-0.8.6p1.tar.gz", "buildbot-0.8.6p1/buildbot")
-
-    def _install_twisted_15_5_0(self):
-        twisted_dir = self._fs.join(_AUTOINSTALLED_DIR, "twisted_15_5_0")
-        installer = AutoInstaller(prepend_to_search_path=True, target_dir=twisted_dir)
-        installer.install(url="https://files.pythonhosted.org/packages/source/T/Twisted/Twisted-15.5.0.tar.bz2", url_subpath="Twisted-15.5.0/twisted")
-        installer.install(url="https://files.pythonhosted.org/packages/source/z/zope.interface/zope.interface-4.1.3.tar.gz", url_subpath="zope.interface-4.1.3/src/zope")
+        pass
 
     @staticmethod
     def greater_than_equal_to_version(minimum, version):
