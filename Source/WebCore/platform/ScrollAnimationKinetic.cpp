@@ -128,6 +128,11 @@ void ScrollAnimationKinetic::stop()
     m_verticalData = WTF::nullopt;
 }
 
+bool ScrollAnimationKinetic::isActive() const
+{
+    return m_animationTimer.isActive();
+}
+
 void ScrollAnimationKinetic::appendToScrollHistory(const PlatformWheelEvent& event)
 {
     m_scrollHistory.removeAllMatching([&event] (PlatformWheelEvent& otherEvent) -> bool {

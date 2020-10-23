@@ -2611,6 +2611,8 @@ static bool canCoalesce(const WebWheelEvent& a, const WebWheelEvent& b)
         return false;
     if (a.momentumPhase() != b.momentumPhase())
         return false;
+#endif
+#if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE)
     if (a.hasPreciseScrollingDeltas() != b.hasPreciseScrollingDeltas())
         return false;
 #endif
@@ -2629,6 +2631,8 @@ static WebWheelEvent coalesce(const WebWheelEvent& a, const WebWheelEvent& b)
     FloatSize mergedUnacceleratedScrollingDelta = a.unacceleratedScrollingDelta() + b.unacceleratedScrollingDelta();
 
     return WebWheelEvent(WebEvent::Wheel, b.position(), b.globalPosition(), mergedDelta, mergedWheelTicks, b.granularity(), b.directionInvertedFromDevice(), b.phase(), b.momentumPhase(), b.hasPreciseScrollingDeltas(), b.scrollCount(), mergedUnacceleratedScrollingDelta, b.modifiers(), b.timestamp());
+#elif PLATFORM(GTK) || USE(LIBWPE)
+    return WebWheelEvent(WebEvent::Wheel, b.position(), b.globalPosition(), mergedDelta, mergedWheelTicks, b.phase(), b.momentumPhase(), b.granularity(), b.hasPreciseScrollingDeltas(), b.modifiers(), b.timestamp());
 #else
     return WebWheelEvent(WebEvent::Wheel, b.position(), b.globalPosition(), mergedDelta, mergedWheelTicks, b.granularity(), b.modifiers(), b.timestamp());
 #endif

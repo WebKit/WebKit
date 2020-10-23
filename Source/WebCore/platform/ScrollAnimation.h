@@ -50,6 +50,7 @@ public:
     virtual void updateVisibleLengths() { };
     virtual void setCurrentPosition(const FloatPoint&) { };
     virtual void serviceAnimation() { };
+    virtual bool isActive() const = 0;
 };
 
 } // namespace WebCore

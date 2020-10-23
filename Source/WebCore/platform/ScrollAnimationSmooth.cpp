@@ -85,7 +85,7 @@ bool ScrollAnimationSmooth::scroll(ScrollbarOrientation orientation, ScrollGranu
         maxScrollPosition = extents.maximumScrollPosition.y();
     }
     bool needToScroll = updatePerAxisData(orientation == HorizontalScrollbar ? m_horizontalData : m_verticalData, granularity, step * multiplier, minScrollPosition, maxScrollPosition);
-    if (needToScroll && !animationTimerActive()) {
+    if (needToScroll && !isActive()) {
         m_startTime = orientation == HorizontalScrollbar ? m_horizontalData.startTime : m_verticalData.startTime;
         animationTimerFired();
     }
@@ -99,7 +99,7 @@ void ScrollAnimationSmooth::scroll(const FloatPoint& position)
     bool needToScroll = updatePerAxisData(m_horizontalData, granularity, position.x() - m_horizontalData.currentPosition, extents.minimumScrollPosition.x(), extents.maximumScrollPosition.x(), smoothFactorForProgrammaticScroll);
     needToScroll |=
         updatePerAxisData(m_verticalData, granularity, position.y() - m_verticalData.currentPosition, extents.minimumScrollPosition.y(), extents.maximumScrollPosition.y(), smoothFactorForProgrammaticScroll);
-    if (needToScroll && !animationTimerActive()) {
+    if (needToScroll && !isActive()) {
         m_startTime = m_horizontalData.startTime;
         animationTimerFired();
     }
@@ -449,7 +449,7 @@ void ScrollAnimationSmooth::startNextTimer(Seconds delay)
     m_animationTimer.startOneShot(delay);
 }
 
-bool ScrollAnimationSmooth::animationTimerActive() const
+bool ScrollAnimationSmooth::isActive() const
 {
     return m_animationTimer.isActive();
 }

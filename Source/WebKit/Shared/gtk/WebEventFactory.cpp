@@ -288,6 +288,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, const 
         phase,
         momentumPhase,
         WebWheelEvent::ScrollByPixelWheelEvent,
+        false,
         modifiersForEvent(event),
         wallTimeForEvent(event));
 }

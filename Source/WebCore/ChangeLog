@@ -1,3 +1,52 @@
+2020-10-15  Chris Lord  <clord@igalia.com>
+
+        [GTK][WPE] Add support for smooth scrolling animation with async scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=210382
+
+        Reviewed by Carlos Garcia Campos.
+
+        Respect smooth-scrolling setting and fix deadlock issues with async
+        scrolling on nicosia path.
+
+        No new tests, no functional change.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::scrollAnimatorEnabled const):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::ThreadedScrollingTree):
+        * page/scrolling/ThreadedScrollingTree.h:
+        (WebCore::ThreadedScrollingTree::scrollAnimatorEnabled const):
+        * page/scrolling/nicosia/ScrollingTreeFrameScrollingNodeNicosia.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNodeNicosia::ScrollingTreeFrameScrollingNodeNicosia):
+        (WebCore::ScrollingTreeFrameScrollingNodeNicosia::commitStateAfterChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeNicosia::ensureScrollAnimationKinetic):
+        (WebCore::ScrollingTreeFrameScrollingNodeNicosia::ensureScrollAnimationSmooth):
+        (WebCore::ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent):
+        (WebCore::ScrollingTreeFrameScrollingNodeNicosia::stopScrollAnimations):
+        (WebCore::ScrollingTreeFrameScrollingNodeNicosia::repositionRelatedLayers):
+        * page/scrolling/nicosia/ScrollingTreeFrameScrollingNodeNicosia.h:
+        * page/scrolling/nicosia/ScrollingTreeOverflowScrollingNodeNicosia.cpp:
+        (WebCore::ScrollingTreeOverflowScrollingNodeNicosia::ScrollingTreeOverflowScrollingNodeNicosia):
+        (WebCore::ScrollingTreeOverflowScrollingNodeNicosia::commitStateAfterChildren):
+        (WebCore::ScrollingTreeOverflowScrollingNodeNicosia::repositionScrollingLayers):
+        (WebCore::ScrollingTreeOverflowScrollingNodeNicosia::ensureScrollAnimationKinetic):
+        (WebCore::ScrollingTreeOverflowScrollingNodeNicosia::ensureScrollAnimationSmooth):
+        (WebCore::ScrollingTreeOverflowScrollingNodeNicosia::handleWheelEvent):
+        (WebCore::ScrollingTreeOverflowScrollingNodeNicosia::stopScrollAnimations):
+        * page/scrolling/nicosia/ScrollingTreeOverflowScrollingNodeNicosia.h:
+        * platform/PlatformWheelEvent.h:
+        * platform/ScrollAnimation.h:
+        * platform/ScrollAnimationKinetic.cpp:
+        (WebCore::ScrollAnimationKinetic::isActive const):
+        * platform/ScrollAnimationKinetic.h:
+        * platform/ScrollAnimationSmooth.cpp:
+        (WebCore::ScrollAnimationSmooth::scroll):
+        (WebCore::ScrollAnimationSmooth::isActive const):
+        * platform/ScrollAnimationSmooth.h:
+        * platform/generic/ScrollAnimatorGeneric.cpp:
+        (WebCore::ScrollAnimatorGeneric::ensureSmoothScrollingAnimation):
+
 2020-09-01  Chris Lord  <clord@igalia.com>
 
         [GTK][WPE] Add support for smooth scrolling animation with async scrolling

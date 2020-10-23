@@ -946,6 +946,15 @@ void AsyncScrollingCoordinator::reportSynchronousScrollingReasonsChanged(Monoton
         m_page->performanceLoggingClient()->logScrollingEvent(PerformanceLoggingClient::ScrollingEvent::SwitchedScrollingMode, timestamp, reasons.toRaw());
 }
 
+#if ENABLE(SMOOTH_SCROLLING)
+bool AsyncScrollingCoordinator::scrollAnimatorEnabled() const
+{
+    ASSERT(isMainThread());
+    auto& settings = m_page->mainFrame().settings();
+    return settings.scrollAnimatorEnabled();
+}
+#endif
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)

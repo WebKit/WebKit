@@ -141,9 +141,12 @@ public:
     explicit PlatformWheelEvent(GdkEventScroll*);
 #endif
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE)
     bool hasPreciseScrollingDeltas() const { return m_hasPreciseScrollingDeltas; }
     void setHasPreciseScrollingDeltas(bool hasPreciseScrollingDeltas) { m_hasPreciseScrollingDeltas = hasPreciseScrollingDeltas; }
+#endif
+
+#if PLATFORM(COCOA)
     unsigned scrollCount() const { return m_scrollCount; }
     float unacceleratedScrollingDeltaX() const { return m_unacceleratedScrollingDeltaX; }
     float unacceleratedScrollingDeltaY() const { return m_unacceleratedScrollingDeltaY; }
@@ -191,8 +194,10 @@ protected:
     PlatformWheelEventPhase m_phase { PlatformWheelEventPhaseNone };
     PlatformWheelEventPhase m_momentumPhase { PlatformWheelEventPhaseNone };
 #endif
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE)
     bool m_hasPreciseScrollingDeltas { false };
+#endif
+#if PLATFORM(COCOA)
     unsigned m_scrollCount { 0 };
     float m_unacceleratedScrollingDeltaX { 0 };
     float m_unacceleratedScrollingDeltaY { 0 };
