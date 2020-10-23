@@ -1037,6 +1037,21 @@
         }
     },
     {
+        "name": "Date and Time Input Types",
+        "status": {
+            "status": "Partially Supported"
+        },
+        "url": "https://html.spec.whatwg.org/multipage/input.html#date-state-(type=date)",
+        "specification": "HTML5",
+        "category": "html",
+        "description": "Form controls that allow users to enter a date, time or both. Refers to the following types of input elements: date, time, datetime-local, month, and week.",
+        "comment": "The month input type is unsupported on macOS. The week input type is unsupported on macOS and iOS.",
+        "contact": {
+            "name": "Aditya Keerthi",
+            "email": "akeerthi@apple.com"
+        }
+    },
+    {
         "name": "Dialog Element",
         "status": {
             "status": "Under Consideration"
