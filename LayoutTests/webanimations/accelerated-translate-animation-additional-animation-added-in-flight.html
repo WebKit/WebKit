@@ -20,7 +20,7 @@
 
     // Start an animation that lasts a day.
     const duration = 24 * 60 * 60 * 1000;
-    const translateAnimation = document.getElementById("target").animate({ translate: "200px" }, duration);
+    const translateAnimation = document.getElementById("target").animate({ translate: "100px" }, duration);
     translateAnimation.currentTime = duration / 2;
 
     // Wait until the animation has been applied.
@@ -28,11 +28,11 @@
     await UIHelper.ensureStablePresentationUpdate();
 
     // Add an extra animation.
-    const scaleAnimation = document.getElementById("target").animate({ scale: "0" }, duration);
-    scaleAnimation.currentTime = duration / 2;
+    const transformAnimation = document.getElementById("target").animate({ transform: "translateY(100px)" }, duration);
+    transformAnimation.currentTime = duration / 2;
 
     // Wait until the new animation has been applied.
-    await scaleAnimation.ready;
+    await transformAnimation.ready;
     await UIHelper.ensureStablePresentationUpdate();
 
     if (window.testRunner)

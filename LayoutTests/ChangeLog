@@ -1,3 +1,16 @@
+2020-10-23  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION(r268615): certain animations break when moving from one to display to another or resizing the window
+        https://bugs.webkit.org/show_bug.cgi?id=218080
+        <rdar://problem/70547132>
+
+        Reviewed by Dean Jackson.
+
+        Increase the fidelity of this test where the scale transform would sometimes yield some 0.01% ImageOnlyFailure results.
+
+        * webanimations/accelerated-translate-animation-additional-animation-added-in-flight-expected.html:
+        * webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html:
+
 2020-10-23  Hector Lopez  <hector_i_lopez@apple.com>
 
         2 compositing/contents-scale/* tests are flaky failures
