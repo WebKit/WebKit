@@ -62,7 +62,7 @@ ExceptionOr<Ref<AnalyserNode>> AnalyserNode::create(BaseAudioContext& context, c
 AnalyserNode::AnalyserNode(BaseAudioContext& context)
     : AudioBasicInspectorNode(context, NodeTypeAnalyser)
 {
-    addOutput(2);
+    addOutput(1);
     
     initialize();
 }
