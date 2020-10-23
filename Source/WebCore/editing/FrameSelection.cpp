@@ -1902,7 +1902,7 @@ bool FrameSelection::contains(const LayoutPoint& point) const
     if (!innerNode || !innerNode->renderer())
         return false;
 
-    return isPointInRange(*range, makeBoundaryPoint(innerNode->renderer()->positionForPoint(result.localPoint(), nullptr)));
+    return WebCore::contains<ComposedTree>(*range, makeBoundaryPoint(innerNode->renderer()->positionForPoint(result.localPoint(), nullptr)));
 }
 
 // Workaround for the fact that it's hard to delete a frame.

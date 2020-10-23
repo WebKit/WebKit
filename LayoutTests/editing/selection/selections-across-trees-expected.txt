@@ -1,0 +1,7 @@
+PASS getSelection().setBaseAndExtent(document.body, 0, nodeInSlot, 5); selectionAddRange(shadowNode, 0, shadowRoot, 1); getSelection().focusNode is nodeInSlot
+PASS getSelection().selectAllChildren(document.body); getSelection().containsNode(shadowNode) is false
+PASS getSelection().selectAllChildren(document.body); getSelection().containsNode(shadowNode, true) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
