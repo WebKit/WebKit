@@ -221,7 +221,7 @@ WI.settings = {
     // Experimental
     experimentalEnablePreviewFeatures: new WI.Setting("experimental-enable-preview-features", true),
     experimentalEnableStylesJumpToEffective: new WI.Setting("experimental-styles-jump-to-effective", false),
-    experimentalEnableStyelsJumpToVariableDeclaration: new WI.Setting("experimental-styles-jump-to-variable-declaration", false),
+    experimentalEnableStylesJumpToVariableDeclaration: new WI.Setting("experimental-styles-jump-to-variable-declaration", false),
     experimentalEnableIndependentStylesPanel: new WI.Setting("experimental-independent-styles-panel", false),
 
     // Protocol

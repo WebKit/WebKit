@@ -390,7 +390,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         if (hasCSSDomain) {
             let stylesGroup = experimentalSettingsView.addGroup(WI.UIString("Styles:"));
             stylesGroup.addSetting(WI.settings.experimentalEnableStylesJumpToEffective, WI.UIString("Show jump to effective property button"));
-            stylesGroup.addSetting(WI.settings.experimentalEnableStyelsJumpToVariableDeclaration, WI.UIString("Show jump to variable declaration button"));
+            stylesGroup.addSetting(WI.settings.experimentalEnableStylesJumpToVariableDeclaration, WI.UIString("Show jump to variable declaration button"));
 
             experimentalSettingsView.addSeparator();
         }
@@ -418,7 +418,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         if (hasCSSDomain) {
             listenForChange(WI.settings.experimentalEnableStylesJumpToEffective);
-            listenForChange(WI.settings.experimentalEnableStyelsJumpToVariableDeclaration);
+            listenForChange(WI.settings.experimentalEnableStylesJumpToVariableDeclaration);
         }
 
         listenForChange(WI.settings.experimentalEnableIndependentStylesPanel);
