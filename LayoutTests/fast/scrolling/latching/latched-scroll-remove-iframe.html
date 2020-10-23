@@ -13,12 +13,14 @@
         jsTestIsAsync = true;
         
         let iframe = undefined;
-        function iframeScrolled(offset)
+        async function iframeScrolled(offset)
         {
-            if (offset >= 200)
-                iframe.remove();
-            
-            setTimeout(finishJSTest, 16);
+            if (offset < 200)
+                return;
+
+            iframe.remove();
+            await UIHelper.renderingUpdate();
+            finishJSTest();
         }
 
         async function doTest()
