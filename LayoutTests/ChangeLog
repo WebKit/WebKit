@@ -1,3 +1,14 @@
+2020-10-23  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Implement antialiased rounded rectangle clipping in TextureMapper
+        https://bugs.webkit.org/show_bug.cgi?id=174457
+
+        Reviewed by Carlos Garcia Campos.
+
+        Update expectations for passing test.
+
+        * platform/gtk/TestExpectations:
+
 2020-10-22  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Unreviewed test gardening

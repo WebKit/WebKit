@@ -1,3 +1,15 @@
+2020-10-23  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Implement antialiased rounded rectangle clipping in TextureMapper
+        https://bugs.webkit.org/show_bug.cgi?id=174457
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use the new TextureMapper::beginClip() method that receives a FloatRoundedRect.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::paintToCurrentGLContext):
+
 2020-10-23  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [SOUP] Fix crash in WebSocketTask

@@ -196,8 +196,7 @@ void TextureMapperLayer::paintSelf(const TextureMapperPaintOptions& options)
 
     bool shouldClip = m_state.contentsClippingRect.isRounded() || !m_state.contentsClippingRect.rect().contains(m_state.contentsRect);
     if (shouldClip) {
-        // FIXME: TextureMapper::beginClip doesn't support FloatRoundedRect, so we need to convert m_state.contentsClippingRect to FloatRect.
-        options.textureMapper.beginClip(transform, m_state.contentsClippingRect.rect());
+        options.textureMapper.beginClip(transform, m_state.contentsClippingRect);
     }
 
     m_contentsLayer->paintToTextureMapper(options.textureMapper, m_state.contentsRect, transform, options.opacity);
@@ -230,7 +229,7 @@ void TextureMapperLayer::paintSelfAndChildren(const TextureMapperPaintOptions& o
         clipTransform.translate(options.offset.width(), options.offset.height());
         clipTransform.multiply(options.transform);
         clipTransform.multiply(m_layerTransforms.combined);
-        options.textureMapper.beginClip(clipTransform, layerRect());
+        options.textureMapper.beginClip(clipTransform, FloatRoundedRect(layerRect()));
         m_state.backdropLayer->paintRecursive(options);
         options.textureMapper.endClip();
     }
@@ -249,7 +248,7 @@ void TextureMapperLayer::paintSelfAndChildren(const TextureMapperPaintOptions& o
         clipTransform.translate(options.offset.width(), options.offset.height());
         clipTransform.multiply(options.transform);
         clipTransform.multiply(m_layerTransforms.combined);
-        options.textureMapper.beginClip(clipTransform, layerRect());
+        options.textureMapper.beginClip(clipTransform, FloatRoundedRect(layerRect()));
 
         // If as a result of beginClip(), the clipping area is empty, it means that the intersection of the previous
         // clipping area and the current one don't have any pixels in common. In this case we can skip painting the
@@ -405,7 +404,7 @@ void TextureMapperLayer::paintUsingOverlapRegions(const TextureMapperPaintOption
         if (!rect.intersects(options.textureMapper.clipBounds()))
             continue;
 
-        options.textureMapper.beginClip(TransformationMatrix(), rect);
+        options.textureMapper.beginClip(TransformationMatrix(), FloatRoundedRect(rect));
         paintSelfAndChildrenWithReplica(options);
         options.textureMapper.endClip();
     }

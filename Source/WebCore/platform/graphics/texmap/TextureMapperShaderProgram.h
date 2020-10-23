@@ -48,6 +48,9 @@ namespace WebCore {
     macro(gaussianKernel) \
     macro(blurRadius) \
     macro(shadowOffset) \
+    macro(roundedRectNumber) \
+    macro(roundedRect) \
+    macro(roundedRectInverseTransformMatrix) \
 
 #define TEXMAP_SAMPLER_VARIABLES(macro) \
     macro(sampler) \
@@ -99,6 +102,7 @@ public:
         TextureNV21      = 1L << 20,
         TexturePackedYUV = 1L << 21,
         TextureExternalOES = 1L << 22,
+        RoundedRectClip  = 1L << 23,
     };
 
     enum class VariableID {
