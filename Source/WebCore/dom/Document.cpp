@@ -6643,7 +6643,7 @@ void Document::cancelIdleCallback(int id)
     m_idleCallbackController->removeIdleCallback(id);
 }
 
-void Document::wheelEventHandlersChanged()
+void Document::wheelEventHandlersChanged(Node* node)
 {
     Page* page = this->page();
     if (!page)
@@ -6653,6 +6653,17 @@ void Document::wheelEventHandlersChanged()
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
             scrollingCoordinator->frameViewEventTrackingRegionsChanged(*frameView);
     }
+
+#if ENABLE(WHEEL_EVENT_REGIONS)
+    if (is<Element>(node)) {
+        // Style is affected via eventListenerRegionTypes().
+        downcast<Element>(*node).invalidateStyle();
+    }
+
+    m_frame->invalidateContentEventRegionsIfNeeded(Frame::InvalidateContentEventRegionsReason::EventHandlerChange);
+#else
+    UNUSED_PARAM(node);
+#endif
 
     bool haveHandlers = m_wheelEventTargets && !m_wheelEventTargets->isEmpty();
     page->chrome().client().wheelEventHandlersChanged(haveHandlers);
@@ -6664,8 +6675,7 @@ void Document::didAddWheelEventHandler(Node& node)
         m_wheelEventTargets = makeUnique<EventTargetSet>();
 
     m_wheelEventTargets->add(&node);
-
-    wheelEventHandlersChanged();
+    wheelEventHandlersChanged(&node);
 
     if (Frame* frame = this->frame())
         DebugPageOverlays::didChangeEventHandlers(*frame);
@@ -6699,7 +6709,7 @@ void Document::didRemoveWheelEventHandler(Node& node, EventHandlerRemoval remova
     if (!removeHandlerFromSet(*m_wheelEventTargets, node, removal))
         return;
 
-    wheelEventHandlersChanged();
+    wheelEventHandlersChanged(&node);
 
     if (Frame* frame = this->frame())
         DebugPageOverlays::didChangeEventHandlers(*frame);

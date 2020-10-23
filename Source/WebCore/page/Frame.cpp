@@ -300,26 +300,33 @@ void Frame::setDocument(RefPtr<Document>&& newDocument)
     m_documentIsBeingReplaced = false;
 }
 
-void Frame::invalidateContentEventRegionsIfNeeded()
+void Frame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsReason reason)
 {
     if (!m_page || !m_doc || !m_doc->renderView())
         return;
-    bool hasWheelEventHandlers = false;
-    bool hasTouchActionElements = false;
-    bool hasEditableElements = false;
+
+    bool needsUpdateForWheelEventHandlers = false;
+    bool needsUpdateForTouchActionElements = false;
+    bool needsUpdateForEditableElements = false;
 #if ENABLE(WHEEL_EVENT_REGIONS)
-    hasWheelEventHandlers = m_doc->hasWheelEventHandlers();
+    needsUpdateForWheelEventHandlers = m_doc->hasWheelEventHandlers() || reason == InvalidateContentEventRegionsReason::EventHandlerChange;
+#else
+    UNUSED_PARAM(reason);
 #endif
 #if ENABLE(TOUCH_ACTION_REGIONS)
-    hasTouchActionElements = m_doc->mayHaveElementsWithNonAutoTouchAction();
+    // Document::mayHaveElementsWithNonAutoTouchAction never changes from true to false currently.
+    needsUpdateForTouchActionElements = m_doc->mayHaveElementsWithNonAutoTouchAction();
 #endif
 #if ENABLE(EDITABLE_REGION)
-    hasEditableElements = m_doc->mayHaveEditableElements() && m_page->shouldBuildEditableRegion();
+    // Document::mayHaveEditableElements never changes from true to false currently.
+    needsUpdateForEditableElements = m_doc->mayHaveEditableElements() && m_page->shouldBuildEditableRegion();
 #endif
-    if (!hasTouchActionElements && !hasEditableElements && !hasWheelEventHandlers)
+    if (!needsUpdateForTouchActionElements && !needsUpdateForEditableElements && !needsUpdateForWheelEventHandlers)
         return;
+
     if (!m_doc->renderView()->compositor().viewNeedsToInvalidateEventRegionOfEnclosingCompositingLayerForRepaint())
         return;
+
     if (m_ownerElement)
         m_ownerElement->document().invalidateEventRegionsForFrame(*m_ownerElement);
 }

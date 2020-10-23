@@ -307,12 +307,11 @@ public:
     void didPrewarmLocalStorage();
     bool mayPrewarmLocalStorage() const;
 
-    void invalidateContentEventRegionsIfNeeded();
+    enum class InvalidateContentEventRegionsReason { Layout, EventHandlerChange };
+    void invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsReason);
 
     WEBCORE_EXPORT FloatSize screenSize() const;
     void setOverrideScreenSize(FloatSize&&);
-
-// ========
 
     void selfOnlyRef();
     void selfOnlyDeref();
