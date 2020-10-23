@@ -1768,7 +1768,7 @@ void RenderBlock::insertPositionedObject(RenderBox& positioned)
 {
     ASSERT(!isAnonymousBlock());
 
-    positioned.clearOverrideContainingBlockContentSize();
+    positioned.clearOverridingContainingBlockContentSize();
 
     if (positioned.isRenderFragmentedFlow())
         return;
@@ -2417,19 +2417,19 @@ void RenderBlock::computeChildPreferredLogicalWidths(RenderObject& child, Layout
         return;
     }
     
-    // The preferred widths of flexbox children should never depend on override sizes. They should
+    // The preferred widths of flexbox children should never depend on overriding sizes. They should
     // always be computed without regard for any overrides that are present.
-    Optional<LayoutUnit> overrideHeight;
-    Optional<LayoutUnit> overrideWidth;
+    Optional<LayoutUnit> overridingHeight;
+    Optional<LayoutUnit> overridingWidth;
     
     if (child.isBox()) {
         auto& box = downcast<RenderBox>(child);
         if (box.isFlexItem()) {
-            if (box.hasOverrideLogicalHeight())
-                overrideHeight = Optional<LayoutUnit>(box.overrideLogicalHeight());
-            if (box.hasOverrideLogicalWidth())
-                overrideWidth = Optional<LayoutUnit>(box.overrideLogicalWidth());
-            box.clearOverrideContentSize();
+            if (box.hasOverridingLogicalHeight())
+                overridingHeight = Optional<LayoutUnit>(box.overridingLogicalHeight());
+            if (box.hasOverridingLogicalWidth())
+                overridingWidth = Optional<LayoutUnit>(box.overridingLogicalWidth());
+            box.clearOverridingContentSize();
         }
     }
     
@@ -2438,10 +2438,10 @@ void RenderBlock::computeChildPreferredLogicalWidths(RenderObject& child, Layout
     
     if (child.isBox()) {
         auto& box = downcast<RenderBox>(child);
-        if (overrideHeight)
-            box.setOverrideLogicalHeight(overrideHeight.value());
-        if (overrideWidth)
-            box.setOverrideLogicalWidth(overrideWidth.value());
+        if (overridingHeight)
+            box.setOverridingLogicalHeight(overridingHeight.value());
+        if (overridingWidth)
+            box.setOverridingLogicalWidth(overridingWidth.value());
     }
 
     // For non-replaced blocks if the inline size is min|max-content or a definite
@@ -3219,8 +3219,8 @@ Optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComputation
     
     if (stretchedFlexHeight)
         availableHeight = stretchedFlexHeight;
-    else if (isGridItem() && hasOverrideLogicalHeight())
-        availableHeight = overrideLogicalHeight();
+    else if (isGridItem() && hasOverridingLogicalHeight())
+        availableHeight = overridingLogicalHeight();
     else if (styleToUse.logicalHeight().isFixed()) {
         LayoutUnit contentBoxHeight = adjustContentBoxLogicalHeightForBoxSizing((LayoutUnit)styleToUse.logicalHeight().value());
         availableHeight = std::max(0_lu, constrainContentBoxLogicalHeightByMinMax(contentBoxHeight - scrollbarLogicalHeight(), WTF::nullopt));

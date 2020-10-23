@@ -233,10 +233,10 @@ public:
 
     bool hasRunningAcceleratedAnimations() const;
 
-    virtual Optional<LayoutUnit> overrideContainingBlockContentWidth() const { ASSERT_NOT_REACHED(); return -1_lu; }
-    virtual Optional<LayoutUnit> overrideContainingBlockContentHeight() const { ASSERT_NOT_REACHED(); return -1_lu; }
-    virtual bool hasOverrideContainingBlockContentWidth() const { return false; }
-    virtual bool hasOverrideContainingBlockContentHeight() const { return false; }
+    virtual Optional<LayoutUnit> overridingContainingBlockContentWidth() const { ASSERT_NOT_REACHED(); return -1_lu; }
+    virtual Optional<LayoutUnit> overridingContainingBlockContentHeight() const { ASSERT_NOT_REACHED(); return -1_lu; }
+    virtual bool hasOverridingContainingBlockContentWidth() const { return false; }
+    virtual bool hasOverridingContainingBlockContentHeight() const { return false; }
 
 protected:
     RenderBoxModelObject(Element&, RenderStyle&&, BaseTypeFlags);

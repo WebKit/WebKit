@@ -271,7 +271,7 @@ protected:
     virtual void layoutGridItemForMinSizeComputation(RenderBox&, bool overrideSizeHasChanged) const = 0;
 
     LayoutUnit logicalHeightForChild(RenderBox&) const;
-    bool updateOverrideContainingBlockContentSizeForChild(RenderBox&, GridTrackSizingDirection, Optional<LayoutUnit> = WTF::nullopt) const;
+    bool updateOverridingContainingBlockContentSizeForChild(RenderBox&, GridTrackSizingDirection, Optional<LayoutUnit> = WTF::nullopt) const;
 
     // GridTrackSizingAlgorithm accessors for subclasses.
     LayoutUnit computeTrackBasedSize() const { return m_algorithm.computeTrackBasedSize(); }

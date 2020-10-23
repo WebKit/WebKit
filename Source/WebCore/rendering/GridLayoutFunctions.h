@@ -41,8 +41,8 @@ LayoutUnit computeMarginLogicalSizeForChild(const RenderGrid&, GridTrackSizingDi
 LayoutUnit marginLogicalSizeForChild(const RenderGrid&, GridTrackSizingDirection, const RenderBox&);
 bool isOrthogonalChild(const RenderGrid&, const RenderBox&);
 GridTrackSizingDirection flowAwareDirectionForChild(const RenderGrid&, const RenderBox&, GridTrackSizingDirection);
-bool hasOverrideContainingBlockContentSizeForChild(const RenderBox&, GridTrackSizingDirection);
-Optional<LayoutUnit> overrideContainingBlockContentSizeForChild(const RenderBox&, GridTrackSizingDirection);
+bool hasOverridingContainingBlockContentSizeForChild(const RenderBox&, GridTrackSizingDirection);
+Optional<LayoutUnit> overridingContainingBlockContentSizeForChild(const RenderBox&, GridTrackSizingDirection);
 
 }
 

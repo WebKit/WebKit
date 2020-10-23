@@ -307,31 +307,31 @@ public:
     LayoutUnit minPreferredLogicalWidth() const override;
     LayoutUnit maxPreferredLogicalWidth() const override;
 
-    LayoutUnit overrideLogicalWidth() const;
-    LayoutUnit overrideLogicalHeight() const;
-    bool hasOverrideLogicalHeight() const;
-    bool hasOverrideLogicalWidth() const;
-    void setOverrideLogicalHeight(LayoutUnit);
-    void setOverrideLogicalWidth(LayoutUnit);
-    void clearOverrideContentSize();
-    void clearOverrideLogicalHeight();
-    void clearOverrideLogicalWidth();
+    LayoutUnit overridingLogicalWidth() const;
+    LayoutUnit overridingLogicalHeight() const;
+    bool hasOverridingLogicalHeight() const;
+    bool hasOverridingLogicalWidth() const;
+    void setOverridingLogicalHeight(LayoutUnit);
+    void setOverridingLogicalWidth(LayoutUnit);
+    void clearOverridingContentSize();
+    void clearOverridingLogicalHeight();
+    void clearOverridingLogicalWidth();
 
-    LayoutUnit overrideContentLogicalWidth() const { return overrideLogicalWidth() - borderAndPaddingLogicalWidth() - scrollbarLogicalWidth(); }
-    LayoutUnit overrideContentLogicalHeight() const { return overrideLogicalHeight() - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight(); }
+    LayoutUnit overridingContentLogicalWidth() const { return overridingLogicalWidth() - borderAndPaddingLogicalWidth() - scrollbarLogicalWidth(); }
+    LayoutUnit overridingContentLogicalHeight() const { return overridingLogicalHeight() - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight(); }
 
-    Optional<LayoutUnit> overrideContainingBlockContentWidth() const override;
-    Optional<LayoutUnit> overrideContainingBlockContentHeight() const override;
-    bool hasOverrideContainingBlockContentWidth() const override;
-    bool hasOverrideContainingBlockContentHeight() const override;
-    Optional<LayoutUnit> overrideContainingBlockContentLogicalWidth() const;
-    Optional<LayoutUnit> overrideContainingBlockContentLogicalHeight() const;
-    bool hasOverrideContainingBlockContentLogicalWidth() const;
-    bool hasOverrideContainingBlockContentLogicalHeight() const;
-    void setOverrideContainingBlockContentLogicalWidth(Optional<LayoutUnit>);
-    void setOverrideContainingBlockContentLogicalHeight(Optional<LayoutUnit>);
-    void clearOverrideContainingBlockContentSize();
-    void clearOverrideContainingBlockContentLogicalHeight();
+    Optional<LayoutUnit> overridingContainingBlockContentWidth() const override;
+    Optional<LayoutUnit> overridingContainingBlockContentHeight() const override;
+    bool hasOverridingContainingBlockContentWidth() const override;
+    bool hasOverridingContainingBlockContentHeight() const override;
+    Optional<LayoutUnit> overridingContainingBlockContentLogicalWidth() const;
+    Optional<LayoutUnit> overridingContainingBlockContentLogicalHeight() const;
+    bool hasOverridingContainingBlockContentLogicalWidth() const;
+    bool hasOverridingContainingBlockContentLogicalHeight() const;
+    void setOverridingContainingBlockContentLogicalWidth(Optional<LayoutUnit>);
+    void setOverridingContainingBlockContentLogicalHeight(Optional<LayoutUnit>);
+    void clearOverridingContainingBlockContentSize();
+    void clearOverridingContainingBlockContentLogicalHeight();
 
     LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
     

@@ -283,9 +283,9 @@ LayoutUnit RenderTableSection::calcRowLogicalHeight()
                 // For row spanning cells, |r| is the last row in the span.
                 unsigned cellStartRow = cell->rowIndex();
 
-                if (cell->hasOverrideLogicalHeight()) {
+                if (cell->hasOverridingLogicalHeight()) {
                     cell->clearIntrinsicPadding();
-                    cell->clearOverrideContentSize();
+                    cell->clearOverridingContentSize();
                     cell->setChildNeedsLayout(MarkOnlyThis);
                     cell->layoutIfNeeded();
                 }
@@ -522,7 +522,7 @@ void RenderTableSection::relayoutCellIfFlexed(RenderTableCell& cell, int rowInde
         // Alignment within a cell is based off the calculated
     // height, which becomes irrelevant once the cell has
     // been resized based off its percentage.
-    cell.setOverrideLogicalHeightFromRowHeight(rowHeight);
+    cell.setOverridingLogicalHeightFromRowHeight(rowHeight);
     cell.layoutIfNeeded();
     
     if (!cell.isBaselineAligned())

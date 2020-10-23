@@ -67,13 +67,13 @@ Optional<TextAlignMode> RenderRubyBase::overrideTextAlignmentForLine(bool /* end
 
 void RenderRubyBase::adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const
 {
-    if (rubyRun()->hasOverrideLogicalWidth() && firstRootBox() && !firstRootBox()->nextRootBox()) {
+    if (rubyRun()->hasOverridingLogicalWidth() && firstRootBox() && !firstRootBox()->nextRootBox()) {
         logicalLeft += m_initialOffset;
         logicalWidth -= 2 * m_initialOffset;
         return;
     }
 
-    LayoutUnit maxPreferredLogicalWidth = rubyRun() && rubyRun()->hasOverrideLogicalWidth() ? rubyRun()->overrideLogicalWidth() : this->maxPreferredLogicalWidth();
+    LayoutUnit maxPreferredLogicalWidth = rubyRun() && rubyRun()->hasOverridingLogicalWidth() ? rubyRun()->overridingLogicalWidth() : this->maxPreferredLogicalWidth();
     if (maxPreferredLogicalWidth >= logicalWidth)
         return;
 
