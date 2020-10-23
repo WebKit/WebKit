@@ -1,3 +1,9 @@
+2020-10-23  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.30.2 release
+
+        * wpe/NEWS: Add release notes for 2.30.2.
+
 2020-10-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.30.2 release
