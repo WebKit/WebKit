@@ -36,8 +36,8 @@
 #include "WorkerConsoleAgent.h"
 #include "WorkerDOMDebuggerAgent.h"
 #include "WorkerDebuggerAgent.h"
-#include "WorkerGlobalScope.h"
 #include "WorkerNetworkAgent.h"
+#include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerRuntimeAgent.h"
 #include "WorkerThread.h"
 #include "WorkerToPageFrontendChannel.h"
@@ -57,16 +57,16 @@ namespace WebCore {
 using namespace JSC;
 using namespace Inspector;
 
-WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGlobalScope)
+WorkerInspectorController::WorkerInspectorController(WorkerOrWorkletGlobalScope& globalScope)
     : m_instrumentingAgents(InstrumentingAgents::create(*this))
     , m_injectedScriptManager(makeUnique<WebInjectedScriptManager>(*this, WebInjectedScriptHost::create()))
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
     , m_executionStopwatch(Stopwatch::create())
-    , m_debugger(workerGlobalScope)
-    , m_workerGlobalScope(workerGlobalScope)
+    , m_debugger(globalScope)
+    , m_globalScope(globalScope)
 {
-    ASSERT(workerGlobalScope.isContextThread());
+    ASSERT(globalScope.isContextThread());
 
     auto workerContext = workerAgentContext();
 
@@ -106,7 +106,7 @@ void WorkerInspectorController::connectFrontend()
     m_executionStopwatch->reset();
     m_executionStopwatch->start();
 
-    m_forwardingChannel = makeUnique<WorkerToPageFrontendChannel>(m_workerGlobalScope);
+    m_forwardingChannel = makeUnique<WorkerToPageFrontendChannel>(m_globalScope);
     m_frontendRouter->connectFrontend(*m_forwardingChannel.get());
     m_agents.didCreateFrontendAndBackend(&m_frontendRouter.get(), &m_backendDispatcher.get());
 }
@@ -148,7 +148,7 @@ WorkerAgentContext WorkerInspectorController::workerAgentContext()
 
     WorkerAgentContext workerContext = {
         webContext,
-        m_workerGlobalScope,
+        m_globalScope,
     };
 
     return workerContext;
@@ -168,7 +168,7 @@ void WorkerInspectorController::createLazyAgents()
     m_agents.append(makeUnique<WorkerRuntimeAgent>(workerContext));
 
 #if ENABLE(SERVICE_WORKER)
-    if (is<ServiceWorkerGlobalScope>(m_workerGlobalScope)) {
+    if (is<ServiceWorkerGlobalScope>(m_globalScope)) {
         m_agents.append(makeUnique<ServiceWorkerAgent>(workerContext));
         m_agents.append(makeUnique<WorkerNetworkAgent>(workerContext));
     }
@@ -199,7 +199,7 @@ InspectorEvaluateHandler WorkerInspectorController::evaluateHandler() const
 
 VM& WorkerInspectorController::vm()
 {
-    return m_workerGlobalScope.vm();
+    return m_globalScope.vm();
 }
 
 } // namespace WebCore

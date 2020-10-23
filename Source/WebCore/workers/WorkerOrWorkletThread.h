@@ -38,6 +38,7 @@ class Thread;
 
 namespace WebCore {
 
+class WorkerDebuggerProxy;
 class WorkerLoaderProxy;
 class WorkerRunLoop;
 
@@ -46,6 +47,8 @@ public:
     virtual ~WorkerOrWorkletThread();
 
     WTF::Thread* thread() const { return m_thread.get(); }
+
+    virtual WorkerDebuggerProxy* workerDebuggerProxy() const = 0;
     virtual WorkerLoaderProxy& workerLoaderProxy() = 0;
 
     WorkerOrWorkletGlobalScope* globalScope() const { return m_globalScope.get(); }

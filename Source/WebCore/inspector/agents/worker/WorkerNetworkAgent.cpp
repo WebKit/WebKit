@@ -27,7 +27,7 @@
 #include "WorkerNetworkAgent.h"
 
 #include "WorkerDebuggerProxy.h"
-#include "WorkerGlobalScope.h"
+#include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerThread.h"
 
 namespace WebCore {
@@ -36,9 +36,9 @@ using namespace Inspector;
 
 WorkerNetworkAgent::WorkerNetworkAgent(WorkerAgentContext& context)
     : InspectorNetworkAgent(context)
-    , m_workerGlobalScope(context.workerGlobalScope)
+    , m_globalScope(context.globalScope)
 {
-    ASSERT(context.workerGlobalScope.isContextThread());
+    ASSERT(context.globalScope.isContextThread());
 }
 
 WorkerNetworkAgent::~WorkerNetworkAgent() = default;
@@ -61,12 +61,13 @@ Vector<WebSocket*> WorkerNetworkAgent::activeWebSockets(const LockHolder&)
 
 void WorkerNetworkAgent::setResourceCachingDisabledInternal(bool disabled)
 {
-    m_workerGlobalScope.thread().workerDebuggerProxy().setResourceCachingDisabledByWebInspector(disabled);
+    if (auto* workerDebuggerProxy = m_globalScope.workerOrWorkletThread()->workerDebuggerProxy())
+        workerDebuggerProxy->setResourceCachingDisabledByWebInspector(disabled);
 }
 
 ScriptExecutionContext* WorkerNetworkAgent::scriptExecutionContext(Protocol::ErrorString&, const Protocol::Network::FrameId&)
 {
-    return &m_workerGlobalScope;
+    return &m_globalScope;
 }
 
 } // namespace WebCore

@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class WorkerGlobalScope;
+class WorkerOrWorkletGlobalScope;
 
 class WorkerDebuggerAgent final : public WebDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(WorkerDebuggerAgent);
@@ -48,7 +48,7 @@ private:
 
     Inspector::InjectedScript injectedScriptForEval(Inspector::Protocol::ErrorString&, Optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);
 
-    WorkerGlobalScope& m_workerGlobalScope;
+    WorkerOrWorkletGlobalScope& m_globalScope;
 };
 
 } // namespace WebCore

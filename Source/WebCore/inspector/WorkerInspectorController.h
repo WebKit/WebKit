@@ -41,14 +41,14 @@ namespace WebCore {
 
 class InstrumentingAgents;
 class WebInjectedScriptManager;
-class WorkerGlobalScope;
+class WorkerOrWorkletGlobalScope;
 struct WorkerAgentContext;
 
 class WorkerInspectorController final : public Inspector::InspectorEnvironment {
     WTF_MAKE_NONCOPYABLE(WorkerInspectorController);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit WorkerInspectorController(WorkerGlobalScope&);
+    explicit WorkerInspectorController(WorkerOrWorkletGlobalScope&);
     ~WorkerInspectorController() override;
 
     void workerTerminating();
@@ -81,7 +81,7 @@ private:
     Ref<WTF::Stopwatch> m_executionStopwatch;
     WorkerDebugger m_debugger;
     Inspector::AgentRegistry m_agents;
-    WorkerGlobalScope& m_workerGlobalScope;
+    WorkerOrWorkletGlobalScope& m_globalScope;
     std::unique_ptr<Inspector::FrontendChannel> m_forwardingChannel;
     bool m_didCreateLazyAgents { false };
 };

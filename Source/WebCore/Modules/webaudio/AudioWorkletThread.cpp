@@ -56,6 +56,12 @@ WorkerLoaderProxy& AudioWorkletThread::workerLoaderProxy()
     return m_messagingProxy;
 }
 
+WorkerDebuggerProxy* AudioWorkletThread::workerDebuggerProxy() const
+{
+    // FIXME: Add debugging support for AudioWorklets.
+    return nullptr;
+}
+
 Ref<Thread> AudioWorkletThread::createThread()
 {
     return Thread::create("WebCore: AudioWorklet", [this] {

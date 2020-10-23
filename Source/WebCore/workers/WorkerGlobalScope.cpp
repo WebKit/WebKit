@@ -43,7 +43,6 @@
 #include "SecurityOriginPolicy.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "SocketProvider.h"
-#include "WorkerInspectorController.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerLocation.h"
 #include "WorkerMessagingProxy.h"
@@ -65,7 +64,6 @@ WorkerGlobalScope::WorkerGlobalScope(const WorkerParameters& params, Ref<Securit
     , m_url(params.scriptURL)
     , m_identifier(params.identifier)
     , m_userAgent(params.userAgent)
-    , m_inspectorController(makeUnique<WorkerInspectorController>(*this))
     , m_isOnline(params.isOnline)
     , m_shouldBypassMainWorldContentSecurityPolicy(params.shouldBypassMainWorldContentSecurityPolicy)
     , m_topOrigin(WTFMove(topOrigin))
@@ -121,8 +119,6 @@ void WorkerGlobalScope::prepareForDestruction()
 
     if (m_cacheStorageConnection)
         m_cacheStorageConnection->clearPendingRequests();
-
-    m_inspectorController->workerTerminating();
 }
 
 void WorkerGlobalScope::removeAllEventListeners()

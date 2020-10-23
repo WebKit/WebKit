@@ -27,6 +27,7 @@
 #include "WorkerOrWorkletGlobalScope.h"
 
 #include "WorkerEventLoop.h"
+#include "WorkerInspectorController.h"
 #include "WorkerOrWorkletScriptController.h"
 #include "WorkerOrWorkletThread.h"
 #include "WorkerRunLoop.h"
@@ -39,6 +40,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WorkerOrWorkletGlobalScope);
 WorkerOrWorkletGlobalScope::WorkerOrWorkletGlobalScope(Ref<JSC::VM>&& vm, WorkerOrWorkletThread* thread)
     : m_script(makeUnique<WorkerOrWorkletScriptController>(WTFMove(vm), this))
     , m_thread(thread)
+    , m_inspectorController(makeUnique<WorkerInspectorController>(*this))
 {
 }
 
@@ -59,6 +61,8 @@ void WorkerOrWorkletGlobalScope::prepareForDestruction()
     if (m_eventLoop)
         m_eventLoop->clearMicrotaskQueue();
     removeRejectedPromiseTracker();
+
+    m_inspectorController->workerTerminating();
 }
 
 void WorkerOrWorkletGlobalScope::clearScript()

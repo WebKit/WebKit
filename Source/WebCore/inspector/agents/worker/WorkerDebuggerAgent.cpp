@@ -27,7 +27,7 @@
 #include "WorkerDebuggerAgent.h"
 
 #include "ScriptState.h"
-#include "WorkerGlobalScope.h"
+#include "WorkerOrWorkletGlobalScope.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
@@ -41,16 +41,16 @@ using namespace Inspector;
 
 WorkerDebuggerAgent::WorkerDebuggerAgent(WorkerAgentContext& context)
     : WebDebuggerAgent(context)
-    , m_workerGlobalScope(context.workerGlobalScope)
+    , m_globalScope(context.globalScope)
 {
-    ASSERT(context.workerGlobalScope.isContextThread());
+    ASSERT(context.globalScope.isContextThread());
 }
 
 WorkerDebuggerAgent::~WorkerDebuggerAgent() = default;
 
 void WorkerDebuggerAgent::breakpointActionLog(JSGlobalObject* lexicalGlobalObject, const String& message)
 {
-    m_workerGlobalScope.addConsoleMessage(makeUnique<ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Log, message, createScriptCallStack(lexicalGlobalObject)));
+    m_globalScope.addConsoleMessage(makeUnique<ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Log, message, createScriptCallStack(lexicalGlobalObject)));
 }
 
 InjectedScript WorkerDebuggerAgent::injectedScriptForEval(Protocol::ErrorString& errorString, Optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
@@ -60,7 +60,7 @@ InjectedScript WorkerDebuggerAgent::injectedScriptForEval(Protocol::ErrorString&
         return InjectedScript();
     }
 
-    return injectedScriptManager().injectedScriptFor(globalObject(m_workerGlobalScope));
+    return injectedScriptManager().injectedScriptFor(globalObject(m_globalScope));
 }
 
 } // namespace WebCore

@@ -33,7 +33,7 @@
 #include "WorkerRuntimeAgent.h"
 
 #include "ScriptState.h"
-#include "WorkerGlobalScope.h"
+#include "WorkerOrWorkletGlobalScope.h"
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
 
@@ -44,9 +44,9 @@ using namespace Inspector;
 WorkerRuntimeAgent::WorkerRuntimeAgent(WorkerAgentContext& context)
     : InspectorRuntimeAgent(context)
     , m_backendDispatcher(RuntimeBackendDispatcher::create(context.backendDispatcher, this))
-    , m_workerGlobalScope(context.workerGlobalScope)
+    , m_globalScope(context.globalScope)
 {
-    ASSERT(context.workerGlobalScope.isContextThread());
+    ASSERT(context.globalScope.isContextThread());
 }
 
 WorkerRuntimeAgent::~WorkerRuntimeAgent() = default;
@@ -58,7 +58,7 @@ InjectedScript WorkerRuntimeAgent::injectedScriptForEval(Protocol::ErrorString& 
         return InjectedScript();
     }
 
-    return injectedScriptManager().injectedScriptFor(globalObject(m_workerGlobalScope));
+    return injectedScriptManager().injectedScriptFor(globalObject(m_globalScope));
 }
 
 } // namespace WebCore

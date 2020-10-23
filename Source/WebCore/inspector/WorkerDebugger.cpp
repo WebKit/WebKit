@@ -34,7 +34,8 @@
 
 #include "JSDOMExceptionHandling.h"
 #include "Timer.h"
-#include "WorkerGlobalScope.h"
+#include "WorkerOrWorkletGlobalScope.h"
+#include "WorkerOrWorkletScriptController.h"
 #include "WorkerRunLoop.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/VM.h>
@@ -43,9 +44,9 @@ namespace WebCore {
 
 using namespace Inspector;
 
-WorkerDebugger::WorkerDebugger(WorkerGlobalScope& context)
+WorkerDebugger::WorkerDebugger(WorkerOrWorkletGlobalScope& context)
     : Debugger(context.script()->vm())
-    , m_workerGlobalScope(context)
+    , m_globalScope(context)
 {
 }
 
@@ -53,15 +54,15 @@ void WorkerDebugger::attachDebugger()
 {
     JSC::Debugger::attachDebugger();
 
-    m_workerGlobalScope.script()->attachDebugger(this);
+    m_globalScope.script()->attachDebugger(this);
 }
 
 void WorkerDebugger::detachDebugger(bool isBeingDestroyed)
 {
     JSC::Debugger::detachDebugger(isBeingDestroyed);
 
-    if (m_workerGlobalScope.script())
-        m_workerGlobalScope.script()->detachDebugger(this);
+    if (m_globalScope.script())
+        m_globalScope.script()->detachDebugger(this);
     if (!isBeingDestroyed)
         recompileAllJSFunctions();
 }
@@ -80,7 +81,7 @@ void WorkerDebugger::runEventLoopWhilePaused()
 
     MessageQueueWaitResult result;
     do {
-        result = m_workerGlobalScope.thread().runLoop().runInDebuggerMode(m_workerGlobalScope);
+        result = m_globalScope.workerOrWorkletThread()->runLoop().runInDebuggerMode(m_globalScope);
     } while (result != MessageQueueTerminated && !doneProcessingDebuggerEvents());
 }
 

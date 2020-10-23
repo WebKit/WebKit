@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-class WorkerGlobalScope;
+class WorkerOrWorkletGlobalScope;
 
 class WorkerRuntimeAgent final : public Inspector::InspectorRuntimeAgent {
     WTF_MAKE_NONCOPYABLE(WorkerRuntimeAgent);
@@ -53,7 +53,7 @@ private:
     void unmuteConsole() { }
 
     RefPtr<Inspector::RuntimeBackendDispatcher> m_backendDispatcher;
-    WorkerGlobalScope& m_workerGlobalScope;
+    WorkerOrWorkletGlobalScope& m_globalScope;
 };
 
 } // namespace WebCore

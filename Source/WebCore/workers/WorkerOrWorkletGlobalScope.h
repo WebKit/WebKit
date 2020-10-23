@@ -32,6 +32,7 @@ namespace WebCore {
 
 class EventLoopTaskGroup;
 class WorkerEventLoop;
+class WorkerInspectorController;
 class WorkerOrWorkletScriptController;
 class WorkerOrWorkletThread;
 
@@ -48,6 +49,7 @@ public:
     void clearScript();
 
     JSC::VM& vm() final;
+    WorkerInspectorController& inspectorController() const { return *m_inspectorController; }
 
     unsigned long createUniqueIdentifier() { return m_uniqueIdentifier++; }
 
@@ -88,6 +90,7 @@ private:
     WorkerOrWorkletThread* m_thread;
     RefPtr<WorkerEventLoop> m_eventLoop;
     std::unique_ptr<EventLoopTaskGroup> m_defaultTaskGroup;
+    std::unique_ptr<WorkerInspectorController> m_inspectorController;
     unsigned long m_uniqueIdentifier { 1 };
     bool m_isClosing { false };
 };

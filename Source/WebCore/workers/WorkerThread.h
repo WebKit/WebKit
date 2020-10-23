@@ -75,7 +75,7 @@ public:
     virtual ~WorkerThread();
 
     WorkerLoaderProxy& workerLoaderProxy() final { return m_workerLoaderProxy; }
-    WorkerDebuggerProxy& workerDebuggerProxy() const { return m_workerDebuggerProxy; }
+    WorkerDebuggerProxy* workerDebuggerProxy() const final { return &m_workerDebuggerProxy; }
     WorkerReportingProxy& workerReportingProxy() const { return m_workerReportingProxy; }
 
     // Number of active worker threads.

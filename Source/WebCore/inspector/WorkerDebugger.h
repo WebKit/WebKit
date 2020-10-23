@@ -35,13 +35,13 @@
 
 namespace WebCore {
 
-class WorkerGlobalScope;
+class WorkerOrWorkletGlobalScope;
 
 class WorkerDebugger final : public JSC::Debugger {
     WTF_MAKE_NONCOPYABLE(WorkerDebugger);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WorkerDebugger(WorkerGlobalScope&);
+    WorkerDebugger(WorkerOrWorkletGlobalScope&);
     ~WorkerDebugger() override = default;
 
 
@@ -53,7 +53,7 @@ private:
     void runEventLoopWhilePaused() final;
     void reportException(JSC::JSGlobalObject*, JSC::Exception*) const final;
 
-    WorkerGlobalScope& m_workerGlobalScope;
+    WorkerOrWorkletGlobalScope& m_globalScope;
 };
 
 } // namespace WebCore

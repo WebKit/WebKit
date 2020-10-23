@@ -71,8 +71,8 @@
 #include "WebGLRenderingContextBase.h"
 #include "WebGPUDevice.h"
 #include "WebSocketFrame.h"
-#include "WorkerGlobalScope.h"
 #include "WorkerInspectorController.h"
+#include "WorkerOrWorkletGlobalScope.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/InspectorDebuggerAgent.h>
@@ -1145,9 +1145,9 @@ void InspectorInstrumentation::willDestroyWebGPUPipelineImpl(InstrumentingAgents
         canvasAgent->willDestroyWebGPUPipeline(pipeline);
 }
 
-InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForWebGPUDevice(WebGPUDevice& device)
+InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(WebGPUDevice& device)
 {
-    return instrumentingAgentsForContext(device.scriptExecutionContext());
+    return instrumentingAgents(device.scriptExecutionContext());
 }
 #endif
 
@@ -1220,8 +1220,8 @@ void InspectorInstrumentation::updateApplicationCacheStatusImpl(InstrumentingAge
 bool InspectorInstrumentation::consoleAgentEnabled(ScriptExecutionContext* scriptExecutionContext)
 {
     FAST_RETURN_IF_NO_FRONTENDS(false);
-    if (auto* instrumentingAgents = instrumentingAgentsForContext(scriptExecutionContext)) {
-        if (auto* webConsoleAgent = instrumentingAgents->webConsoleAgent())
+    if (auto* agents = instrumentingAgents(scriptExecutionContext)) {
+        if (auto* webConsoleAgent = agents->webConsoleAgent())
             return webConsoleAgent->enabled();
     }
     return false;
@@ -1230,8 +1230,8 @@ bool InspectorInstrumentation::consoleAgentEnabled(ScriptExecutionContext* scrip
 bool InspectorInstrumentation::timelineAgentTracking(ScriptExecutionContext* scriptExecutionContext)
 {
     FAST_RETURN_IF_NO_FRONTENDS(false);
-    if (auto* instrumentingAgents = instrumentingAgentsForContext(scriptExecutionContext))
-        return instrumentingAgents->trackingTimelineAgent();
+    if (auto* agents = instrumentingAgents(scriptExecutionContext))
+        return agents->trackingTimelineAgent();
     return false;
 }
 
@@ -1303,9 +1303,9 @@ void InspectorInstrumentation::unregisterInstrumentingAgents(InstrumentingAgents
     }
 }
 
-InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForRenderer(RenderObject& renderer)
+InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(RenderObject& renderer)
 {
-    return instrumentingAgentsForFrame(renderer.frame());
+    return instrumentingAgents(renderer.frame());
 }
 
 void InspectorInstrumentation::layerTreeDidChangeImpl(InstrumentingAgents& instrumentingAgents)
@@ -1320,23 +1320,23 @@ void InspectorInstrumentation::renderLayerDestroyedImpl(InstrumentingAgents& ins
         layerTreeAgent->renderLayerDestroyed(renderLayer);
 }
 
-InstrumentingAgents& InspectorInstrumentation::instrumentingAgentsForWorkerGlobalScope(WorkerGlobalScope& workerGlobalScope)
+InstrumentingAgents& InspectorInstrumentation::instrumentingAgents(WorkerOrWorkletGlobalScope& globalScope)
 {
-    return workerGlobalScope.inspectorController().m_instrumentingAgents;
+    return globalScope.inspectorController().m_instrumentingAgents;
 }
 
-InstrumentingAgents& InspectorInstrumentation::instrumentingAgentsForPage(Page& page)
+InstrumentingAgents& InspectorInstrumentation::instrumentingAgents(Page& page)
 {
     ASSERT(isMainThread());
     return page.inspectorController().m_instrumentingAgents.get();
 }
 
-InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForContext(ScriptExecutionContext& context)
+InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(ScriptExecutionContext& context)
 {
     if (is<Document>(context))
-        return instrumentingAgentsForPage(downcast<Document>(context).page());
-    if (is<WorkerGlobalScope>(context))
-        return &instrumentingAgentsForWorkerGlobalScope(downcast<WorkerGlobalScope>(context));
+        return instrumentingAgents(downcast<Document>(context).page());
+    if (is<WorkerOrWorkletGlobalScope>(context))
+        return &instrumentingAgents(downcast<WorkerOrWorkletGlobalScope>(context));
     return nullptr;
 }
 

@@ -44,7 +44,7 @@ private:
     ScriptExecutionContext* scriptExecutionContext(Inspector::Protocol::ErrorString&, const Inspector::Protocol::Network::FrameId&);
     bool shouldForceBufferingNetworkResourceData() const { return true; }
 
-    WorkerGlobalScope& m_workerGlobalScope;
+    WorkerOrWorkletGlobalScope& m_globalScope;
 };
 
 } // namespace WebCore

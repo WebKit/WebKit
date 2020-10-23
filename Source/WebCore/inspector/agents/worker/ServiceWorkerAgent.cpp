@@ -38,10 +38,10 @@ using namespace Inspector;
 
 ServiceWorkerAgent::ServiceWorkerAgent(WorkerAgentContext& context)
     : InspectorAgentBase("ServiceWorker"_s, context)
-    , m_serviceWorkerGlobalScope(downcast<ServiceWorkerGlobalScope>(context.workerGlobalScope))
+    , m_serviceWorkerGlobalScope(downcast<ServiceWorkerGlobalScope>(context.globalScope))
     , m_backendDispatcher(Inspector::ServiceWorkerBackendDispatcher::create(context.backendDispatcher, this))
 {
-    ASSERT(context.workerGlobalScope.isContextThread());
+    ASSERT(context.globalScope.isContextThread());
 }
 
 ServiceWorkerAgent::~ServiceWorkerAgent() = default;

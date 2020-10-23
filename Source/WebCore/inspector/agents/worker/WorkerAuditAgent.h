@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class WorkerGlobalScope;
+class WorkerOrWorkletGlobalScope;
 
 class WorkerAuditAgent final : public Inspector::InspectorAuditAgent {
     WTF_MAKE_NONCOPYABLE(WorkerAuditAgent);
@@ -42,7 +42,7 @@ public:
 private:
     Inspector::InjectedScript injectedScriptForEval(Inspector::Protocol::ErrorString&, Optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);
 
-    WorkerGlobalScope& m_workerGlobalScope;
+    WorkerOrWorkletGlobalScope& m_globalScope;
 };
 
 } // namespace WebCore

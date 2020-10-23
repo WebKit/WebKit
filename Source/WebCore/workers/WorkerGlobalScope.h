@@ -47,7 +47,6 @@ class ContentSecurityPolicyResponseHeaders;
 class Crypto;
 class Performance;
 class ScheduledAction;
-class WorkerInspectorController;
 class WorkerLocation;
 class WorkerNavigator;
 class WorkerSWClientConnection;
@@ -80,8 +79,6 @@ public:
 #if ENABLE(SERVICE_WORKER)
     WorkerSWClientConnection& swClientConnection();
 #endif
-
-    WorkerInspectorController& inspectorController() const { return *m_inspectorController; }
 
     WorkerThread& thread() const;
 
@@ -168,7 +165,6 @@ private:
     mutable RefPtr<WorkerNavigator> m_navigator;
 
     std::unique_ptr<WorkerOrWorkletScriptController> m_script;
-    std::unique_ptr<WorkerInspectorController> m_inspectorController;
 
     bool m_isOnline;
     bool m_shouldBypassMainWorldContentSecurityPolicy;
