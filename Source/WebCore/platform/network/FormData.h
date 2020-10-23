@@ -221,6 +221,7 @@ public:
     // Resolve all blob references so we only have file and data.
     // If the FormData has no blob references to resolve, this is returned.
     WEBCORE_EXPORT Ref<FormData> resolveBlobReferences(BlobRegistryImpl* = nullptr);
+    bool containsBlobElement() const;
 
     WEBCORE_EXPORT FormDataForUpload prepareForUpload();
 

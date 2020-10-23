@@ -81,6 +81,7 @@ private:
     BlobRegistry* m_blobRegistry { };
 };
 
+bool hasPlatformStrategies();
 WEBCORE_EXPORT PlatformStrategies* platformStrategies();
 WEBCORE_EXPORT void setPlatformStrategies(PlatformStrategies*);
     
