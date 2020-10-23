@@ -29,7 +29,6 @@ webkit.org/b/217159 http/wpt/service-workers/file-upload.html [ Pass ]
 #//////////////////////////////////////////////////////////////////////////////////////////
 
 # NetworkProcess
-webkit.org/b/217363 js/throw-large-string-oom.html [ Pass Crash ]
 webkit.org/b/217363 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.html [ Failure Crash ]
 
 # Workers

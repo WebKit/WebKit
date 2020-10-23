@@ -1,3 +1,13 @@
+2020-10-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Gardening of failures happening on the bots.
+
+        Unreviewed gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk-wayland/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-10-22  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION(r268476): [ macOS ] tiled-drawing/scrolling/non-fast-region/handlers-in-iframes.html is a flaky failure

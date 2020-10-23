@@ -3421,7 +3421,7 @@ webkit.org/b/202228 compositing/layer-creation/fixed-position-descendants-out-of
 
 webkit.org/b/202229 css-dark-mode/color-scheme-css.html [ Failure ]
 webkit.org/b/202229 css-dark-mode/color-scheme-meta.html [ Failure ]
-webkit.org/b/202229 css-dark-mode/older-syntax/supported-color-schemes-css.html [ Failure ]
+webkit.org/b/202229 css-dark-mode/older-syntax/supported-color-schemes-css.html [ Crash Failure ]
 webkit.org/b/202229 css-dark-mode/older-syntax/supported-color-schemes-meta.html [ Failure ]
 
 webkit.org/b/202744 compositing/layer-creation/absolute-in-async-overflow-scroll.html [ Failure ]
@@ -3464,6 +3464,8 @@ webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element.html [ Failure
 webkit.org/b/211981 editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-blob-url.html [ Failure ]
 
 webkit.org/b/212744 compositing/repaint/compositing-toggle-in-overflow-scroll-repaint.html [ Failure ]
+
+webkit.org/b/218111 compositing/clipping/border-radius-async-overflow-stacking.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
