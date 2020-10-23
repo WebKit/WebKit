@@ -1187,12 +1187,12 @@ public:
 
     void andDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
     {
-        m_assembler.vand(op1, op2, dest);
+        m_assembler.vand(dest, op1, op2);
     }
 
     void orDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
     {
-        m_assembler.vorr(op1, op2, dest);
+        m_assembler.vorr(dest, op1, op2);
     }
 
     void sqrtDouble(FPRegisterID src, FPRegisterID dest)

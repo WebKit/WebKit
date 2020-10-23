@@ -1,3 +1,21 @@
+2020-10-23  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Fix argument order for double and/or ops on ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=218118
+
+        Reviewed by Adrian Perez de Castro.
+
+        The andDouble and orDouble macro assembler methods for ARMv7
+        incorrectly pass the destination register as the last argument,
+        whereas the assembler expects the destination to be the first
+        argument.
+
+        This fixes a failing testmasm test.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::andDouble):
+        (JSC::MacroAssemblerARMv7::orDouble):
+
 2020-10-22  Robin Morisset  <rmorisset@apple.com>
 
         Use operand names when dumping Bytecode
