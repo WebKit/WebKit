@@ -48,7 +48,7 @@ static JSValue *jsValueWithArrayInContext(NSArray *, JSContext *);
 static JSValue *jsValueWithDictionaryInContext(NSDictionary *, JSContext *);
 static JSValue *jsValueWithAVMetadataItemInContext(AVMetadataItem *, JSContext *);
 static JSValue *jsValueWithValueInContext(id, JSContext *);
-static NSDictionary *NSDictionaryWithAVMetadataItem(AVMetadataItem *);
+static RetainPtr<NSDictionary> NSDictionaryWithAVMetadataItem(AVMetadataItem *);
 #endif
 
 Ref<SerializedPlatformDataCue> SerializedPlatformDataCue::create(SerializedPlatformDataCueValue&& value)
@@ -118,7 +118,7 @@ NSArray *SerializedPlatformDataCueMac::allowedClassesForNativeValues()
 SerializedPlatformDataCueValue SerializedPlatformDataCueMac::encodableValue() const
 {
     if ([m_nativeValue.get() isKindOfClass:PAL::getAVMetadataItemClass()])
-        return { SerializedPlatformDataCueValue::PlatformType::ObjC, NSDictionaryWithAVMetadataItem(m_nativeValue.get()) };
+        return { SerializedPlatformDataCueValue::PlatformType::ObjC, NSDictionaryWithAVMetadataItem(m_nativeValue.get()).get() };
 
     return { SerializedPlatformDataCueValue::PlatformType::ObjC, m_nativeValue.get() };
 }
@@ -206,14 +206,14 @@ static JSValue *jsValueWithDictionaryInContext(NSDictionary *dictionary, JSConte
 
 static JSValue *jsValueWithAVMetadataItemInContext(AVMetadataItem *item, JSContext *context)
 {
-    return jsValueWithDictionaryInContext(NSDictionaryWithAVMetadataItem(item), context);
+    return jsValueWithDictionaryInContext(NSDictionaryWithAVMetadataItem(item).get(), context);
 }
 
-static NSDictionary *NSDictionaryWithAVMetadataItem(AVMetadataItem *item)
+static RetainPtr<NSDictionary> NSDictionaryWithAVMetadataItem(AVMetadataItem *item)
 {
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-
+    auto dictionary = adoptNS([[NSMutableDictionary alloc] init]);
     NSDictionary *extras = [item extraAttributes];
+
     for (id key in [extras keyEnumerator]) {
         if (![key isKindOfClass:[NSString class]])
             continue;
@@ -247,7 +247,7 @@ static NSDictionary *NSDictionaryWithAVMetadataItem(AVMetadataItem *item)
     if (item.value)
         [dictionary setObject:item.value forKey:@"data"];
 
-    return dictionary;
+    return WTFMove(dictionary);
 }
 #endif
 

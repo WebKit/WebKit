@@ -684,7 +684,7 @@ void ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::encodePlatformData(
 {
     ASSERT(value.platformType() == WebCore::SerializedPlatformDataCueValue::PlatformType::ObjC);
     if (value.platformType() == WebCore::SerializedPlatformDataCueValue::PlatformType::ObjC)
-        encodeObject(encoder, value.nativeValue());
+        encodeObject(encoder, value.nativeValue().get());
 }
 
 Optional<WebCore::SerializedPlatformDataCueValue>  ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::decodePlatformData(Decoder& decoder, WebCore::SerializedPlatformDataCueValue::PlatformType platformType)

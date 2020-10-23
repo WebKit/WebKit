@@ -33,8 +33,10 @@
 
 #if PLATFORM(COCOA)
 using PlatformNativeValue = id;
+using PlatformNativeValueSmartPtr = RetainPtr<PlatformNativeValue>;
 #else
 using PlatformNativeValue = void*;
+using PlatformNativeValueSmartPtr = PlatformNativeValue;
 #endif
 
 namespace WebCore {
@@ -57,12 +59,12 @@ public:
 
     PlatformType platformType() const { return m_type; }
 
-    PlatformNativeValue nativeValue() const { return m_nativeValue; }
+    PlatformNativeValueSmartPtr nativeValue() const { return m_nativeValue; }
 
     bool encodingRequiresPlatformData() const { return m_type == PlatformType::ObjC; }
 
 protected:
-    PlatformNativeValue m_nativeValue { nullptr };
+    PlatformNativeValueSmartPtr m_nativeValue { nullptr };
     PlatformType m_type { PlatformType::None };
 };
 
