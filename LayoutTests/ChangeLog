@@ -1,3 +1,18 @@
+2020-10-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Unreviewed test gardening
+
+        Updated expected.png for compositing and transforms tests.
+
+        * platform/gtk/compositing/reflections/animation-inside-reflection-expected.png:
+        * platform/gtk/compositing/webgl/webgl-background-color-expected.png:
+        * platform/gtk/compositing/webgl/webgl-nonpremultiplied-blend-expected.png:
+        * platform/gtk/transforms/3d/point-mapping/3d-point-mapping-2-expected.png:
+        * platform/gtk/transforms/3d/point-mapping/3d-point-mapping-deep-expected.png:
+        * platform/gtk/transforms/3d/point-mapping/3d-point-mapping-expected.png:
+        * platform/gtk/transforms/3d/point-mapping/3d-point-mapping-origins-expected.png:
+        * platform/gtk/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.png:
+
 2020-10-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Gardening of failures happening on the bots.
