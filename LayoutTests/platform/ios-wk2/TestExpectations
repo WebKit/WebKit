@@ -1904,3 +1904,7 @@ webkit.org/b/217268 imported/w3c/web-platform-tests/mathml/relations/html5-tree/
 webkit.org/b/217408 http/tests/cache-storage/page-cache-domcache-pending-promise.html [ Pass Failure ]
 
 webkit.org/b/217641 [ Debug ] imported/w3c/web-platform-tests/xhr/event-timeout.any.worker.html [ Pass Failure ]
+
+#<rdar://70623742> 2 compositing/contents-scale/* tests are flaky failures
+compositing/contents-scale/non-decomposable-matrix.html [ Pass Failure ]
+compositing/contents-scale/rasterization-scale.html [ Pass Failure ]
