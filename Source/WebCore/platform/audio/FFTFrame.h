@@ -31,12 +31,9 @@
 
 #include "AudioArray.h"
 
-#if USE(WEBAUDIO_GSTREAMER)
-#include <glib.h>
-G_BEGIN_DECLS
+#if USE(GSTREAMER)
 #include <gst/fft/gstfftf32.h>
-G_END_DECLS
-#endif // USE(WEBAUDIO_GSTREAMER)
+#endif // USE(GSTREAMER)
 
 #if USE(ACCELERATE)
 #include <Accelerate/Accelerate.h>
@@ -107,11 +104,11 @@ private:
     DSPSplitComplex m_frame;
 #endif
 
-#if USE(WEBAUDIO_GSTREAMER)
+#if USE(GSTREAMER)
     GstFFTF32* m_fft;
     GstFFTF32* m_inverseFft;
     UniqueArray<GstFFTF32Complex> m_complexData;
-#endif // USE(WEBAUDIO_GSTREAMER)
+#endif // USE(GSTREAMER)
 
     AudioFloatArray m_realData;
     AudioFloatArray m_imagData;

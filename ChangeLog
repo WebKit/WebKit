@@ -1,3 +1,16 @@
+2020-10-23  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Replace USE(WEBAUDIO_GSTREAMER) with USE(GSTREAMER)
+        https://bugs.webkit.org/show_bug.cgi?id=218083
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        A separate define was introduced back when we thought enabling WebAudio without enabling
+        <audio> would be a highly relevant scenario. I don't think it is very relevant, let's clean
+        this up.
+
+        * Source/cmake/GStreamerChecks.cmake: Wrap the WebAudio platform bits in the USE(GSTREAMER) umbrella.
+
 2020-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: add support for wheel actions

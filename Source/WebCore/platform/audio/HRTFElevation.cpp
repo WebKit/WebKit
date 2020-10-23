@@ -54,7 +54,7 @@ constexpr size_t ResponseFrameSize = 256;
 // The impulse responses may be resampled to a different sample-rate (depending on the audio hardware) when they are loaded.
 constexpr float ResponseSampleRate = 44100;
 
-#if PLATFORM(COCOA) || USE(WEBAUDIO_GSTREAMER)
+#if PLATFORM(COCOA) || USE(GSTREAMER)
 #define USE_CONCATENATED_IMPULSE_RESPONSES
 #endif
 
