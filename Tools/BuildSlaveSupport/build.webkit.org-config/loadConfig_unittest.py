@@ -87,7 +87,7 @@ class TagsForBuilderTest(unittest.TestCase):
         self.verifyTags('macOS-High-Sierra-Release-32bit-WK2-EWS', ['macOS', 'High', 'Sierra', 'Release', 'WK2', '32bit'])
 
     def test_tags_type(self):
-        tags = loadConfig.getTagsForBuilder({'name': u'iOS-11-EWS'})
+        tags = loadConfig.getTagsForBuilder({'name': 'iOS-11-EWS'})
         self.assertEqual(tags, ['iOS'])
         self.assertEqual(type(tags[0]), str)
 

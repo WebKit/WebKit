@@ -1,4 +1,4 @@
-# Copyright (C) 2011 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,9 +20,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import StringIO
+import sys
 import os
 import unittest
+
+if sys.version_info > (3, 0):
+    from io import StringIO
+else:
+    from StringIO import StringIO
 
 from htdigestparser import HTDigestParser
 
@@ -60,7 +65,7 @@ class HTDigestParserTest(unittest.TestCase):
         self.assertEntriesEqual(entries, additional_content='')
 
     def test_empty_file(self):
-        self.assertEqual([], HTDigestParser(StringIO.StringIO()).entries())
+        self.assertEqual([], HTDigestParser(StringIO()).entries())
 
     def test_too_few_colons(self):
         self.assertEntriesEqual([], additional_content='user1:realm 1\n')
@@ -75,7 +80,7 @@ class HTDigestParserTest(unittest.TestCase):
         self.assertEntriesEqual([], additional_content='user1:realm 1: 36b8aa27fa5e9051095d37b619f92762\n')
 
     def fake_htdigest_file(self):
-        return StringIO.StringIO("""user1:realm 1:36b8aa27fa5e9051095d37b619f92762
+        return StringIO("""user1:realm 1:36b8aa27fa5e9051095d37b619f92762
 user2:realm 2:14f827686fa97778f02fe1314a3337c8
 user3:realm 1:1817fc8a24119cc57fbafc8a630ea5a5
 user3:realm 3:a05f5a2335e9d87bbe75bbe5e53248f0

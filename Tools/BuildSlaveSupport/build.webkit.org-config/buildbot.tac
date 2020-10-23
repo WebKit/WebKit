@@ -12,7 +12,7 @@ else:
     configfile = r'master.cfg'
 rotateLength = 50000000
 maxRotatedFiles = 20
-umask = 022
+umask = 0o022
 
 if basedir == '.':
     basedir = os.path.abspath(os.path.dirname(__file__))

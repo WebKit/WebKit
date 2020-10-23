@@ -180,7 +180,7 @@ def getInvalidTags():
     We generate a list of tags by splitting the builder name. We do not want certain words as tag.
     For e.g. we don't want '11'as tag for builder iOS-11-Simulator-EWS
     """
-    invalid_tags = [str(i) for i in xrange(0, 20)]
+    invalid_tags = [str(i) for i in range(0, 20)]
     invalid_tags.extend(['EWS', 'TryBot'])
     return invalid_tags
 

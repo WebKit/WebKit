@@ -1,5 +1,17 @@
 2020-10-23  Aakash Jain  <aakash_jain@apple.com>
 
+        [build.webkit.org] Add python 3 support - part 2
+        https://bugs.webkit.org/show_bug.cgi?id=218130
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/build.webkit.org-config/buildbot.tac:
+        * BuildSlaveSupport/build.webkit.org-config/htdigestparser_unittest.py:
+        * BuildSlaveSupport/build.webkit.org-config/loadConfig.py:
+        * BuildSlaveSupport/build.webkit.org-config/loadConfig_unittest.py:
+
+2020-10-23  Aakash Jain  <aakash_jain@apple.com>
+
         [build.webkit.org] Create master.cfg for newer buildbot
         https://bugs.webkit.org/show_bug.cgi?id=218102
 
