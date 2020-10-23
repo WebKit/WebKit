@@ -822,6 +822,11 @@ void WebChromeClient::showShareSheet(ShareDataWithParsedURL& shareData, Completi
     m_page.showShareSheet(shareData, WTFMove(callback));
 }
 
+void WebChromeClient::showContactPicker(const WebCore::ContactsRequestData& requestData, WTF::CompletionHandler<void(Optional<Vector<WebCore::ContactInfo>>&&)>&& callback)
+{
+    m_page.showContactPicker(requestData, WTFMove(callback));
+}
+
 void WebChromeClient::loadIconForFiles(const Vector<String>& filenames, FileIconLoader& loader)
 {
     loader.iconLoaded(createIconForFiles(filenames));

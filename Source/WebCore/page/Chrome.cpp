@@ -23,6 +23,8 @@
 #include "Chrome.h"
 
 #include "ChromeClient.h"
+#include "ContactInfo.h"
+#include "ContactsRequestData.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentType.h"
@@ -470,6 +472,11 @@ void Chrome::runOpenPanel(Frame& frame, FileChooser& fileChooser)
 void Chrome::showShareSheet(ShareDataWithParsedURL& shareData, CompletionHandler<void(bool)>&& callback)
 {
     m_client.showShareSheet(shareData, WTFMove(callback));
+}
+
+void Chrome::showContactPicker(const ContactsRequestData& requestData, CompletionHandler<void(Optional<Vector<ContactInfo>>&&)>&& callback)
+{
+    m_client.showContactPicker(requestData, WTFMove(callback));
 }
 
 void Chrome::loadIconForFiles(const Vector<String>& filenames, FileIconLoader& loader)

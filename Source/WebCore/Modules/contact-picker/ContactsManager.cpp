@@ -26,12 +26,22 @@
 #include "config.h"
 #include "ContactsManager.h"
 
+#include "Chrome.h"
 #include "ContactInfo.h"
 #include "ContactProperty.h"
+#include "ContactsRequestData.h"
 #include "ContactsSelectOptions.h"
+#include "Document.h"
+#include "Frame.h"
+#include "JSContactInfo.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Navigator.h"
+#include "Page.h"
+#include "UserGestureIndicator.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/Optional.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
 
@@ -49,6 +59,12 @@ ContactsManager::ContactsManager(Navigator& navigator)
 
 ContactsManager::~ContactsManager() = default;
 
+
+Frame* ContactsManager::frame() const
+{
+    return m_navigator ? m_navigator->frame() : nullptr;
+}
+
 Navigator* ContactsManager::navigator()
 {
     return m_navigator.get();
@@ -62,9 +78,43 @@ void ContactsManager::getProperties(Ref<DeferredPromise>&& promise)
 
 void ContactsManager::select(const Vector<ContactProperty>& properties, const ContactsSelectOptions& options, Ref<DeferredPromise>&& promise)
 {
-    UNUSED_PARAM(properties);
-    UNUSED_PARAM(options);
-    promise->reject(NotSupportedError);
+    auto* frame = this->frame();
+    if (!frame || !frame->isMainFrame() || !frame->document() || !frame->page()) {
+        promise->reject(InvalidStateError);
+        return;
+    }
+
+    if (!UserGestureIndicator::processingUserGesture()) {
+        promise->reject(SecurityError);
+        return;
+    }
+
+    if (m_contactPickerIsShowing) {
+        promise->reject(InvalidStateError);
+        return;
+    }
+
+    if (properties.isEmpty()) {
+        promise->reject(TypeError);
+        return;
+    }
+
+    ContactsRequestData requestData;
+    requestData.properties = properties;
+    requestData.multiple = options.multiple;
+    requestData.url = frame->document()->url().truncatedForUseAsBase().string();
+
+    m_contactPickerIsShowing = true;
+
+    frame->page()->chrome().showContactPicker(requestData, [promise = WTFMove(promise), this] (Optional<Vector<ContactInfo>>&& info) {
+        m_contactPickerIsShowing = false;
+        if (info) {
+            promise->resolve<IDLSequence<IDLDictionary<ContactInfo>>>(*info);
+            return;
+        }
+
+        promise->reject(UnknownError);
+    });
 }
 
 } // namespace WebCore

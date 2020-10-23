@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class DeferredPromise;
+class Frame;
 class Navigator;
 
 enum class ContactProperty : uint8_t;
@@ -45,6 +46,7 @@ public:
     static Ref<ContactsManager> create(Navigator&);
     ~ContactsManager();
 
+    Frame* frame() const;
     Navigator* navigator();
 
     void getProperties(Ref<DeferredPromise>&&);
@@ -54,6 +56,7 @@ private:
     ContactsManager(Navigator&);
 
     WeakPtr<Navigator> m_navigator;
+    bool m_contactPickerIsShowing { false };
 };
 
 } // namespace WebCore

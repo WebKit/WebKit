@@ -25,7 +25,9 @@
 
 // https://wicg.github.io/contact-api/
 
-dictionary ContactInfo {
+[
+    JSGenerateToJSObject,
+] dictionary ContactInfo {
     sequence<USVString> name;
     sequence<USVString> email;
     sequence<USVString> tel;

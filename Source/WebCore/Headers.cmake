@@ -19,6 +19,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/cache/DOMCacheEngine.h
     Modules/cache/RetrieveRecordsOptions.h
 
+    Modules/contact-picker/ContactInfo.h
+    Modules/contact-picker/ContactProperty.h
+    Modules/contact-picker/ContactsRequestData.h
+
     Modules/encryptedmedia/CDMClient.h
 
     Modules/fetch/FetchBodyConsumer.h

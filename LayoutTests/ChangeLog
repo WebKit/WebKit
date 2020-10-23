@@ -1,3 +1,23 @@
+2020-10-22  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Contact Picker API] Add skeleton implementation of ContactsManager.select()
+        https://bugs.webkit.org/show_bug.cgi?id=218050
+        <rdar://problem/69862186>
+
+        Reviewed by Devin Rousso.
+
+        Added tests for failure cases of the API. Note that success cases are
+        untested since no platforms currently display a picker UI, and the
+        specification states that the promise should fail in this case. The
+        success test cases will be added once the UI is implemented for iOS.
+
+        * contact-picker/contacts-select-invalid-properties-and-options-expected.txt: Added.
+        * contact-picker/contacts-select-invalid-properties-and-options.html: Added.
+        * contact-picker/contacts-select-requires-user-gesture-expected.txt: Added.
+        * contact-picker/contacts-select-requires-user-gesture.html: Added.
+        * contact-picker/contacts-select-subframe-expected.txt: Added.
+        * contact-picker/contacts-select-subframe.html: Added.
+
 2020-10-22  Simon Fraser  <simon.fraser@apple.com>
 
         Twitter Photo gallery incorrectly rendered after opening another modal

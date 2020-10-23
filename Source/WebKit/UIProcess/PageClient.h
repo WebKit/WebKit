@@ -35,6 +35,8 @@
 #include "WebPopupMenuProxy.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/AlternativeTextClient.h>
+#include <WebCore/ContactInfo.h>
+#include <WebCore/ContactsRequestData.h>
 #include <WebCore/DragActions.h>
 #include <WebCore/EditorClient.h>
 #include <WebCore/FocusDirection.h>
@@ -256,6 +258,7 @@ public:
 
     virtual bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, const FrameInfoData&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) { return false; }
     virtual bool showShareSheet(const WebCore::ShareDataWithParsedURL&, WTF::CompletionHandler<void (bool)>&&) { return false; }
+    virtual void showContactPicker(const WebCore::ContactsRequestData&, WTF::CompletionHandler<void(Optional<Vector<WebCore::ContactInfo>>&&)>&& completionHandler) { completionHandler(WTF::nullopt); }
 
     virtual void didChangeContentSize(const WebCore::IntSize&) = 0;
 

@@ -57,6 +57,8 @@ class PopupMenuClient;
 class PopupOpeningObserver;
 class SearchPopupMenu;
 
+struct ContactInfo;
+struct ContactsRequestData;
 struct DateTimeChooserParameters;
 struct ShareDataWithParsedURL;
 struct ViewportArguments;
@@ -161,6 +163,7 @@ public:
 
     void runOpenPanel(Frame&, FileChooser&);
     void showShareSheet(ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&);
+    void showContactPicker(const ContactsRequestData&, CompletionHandler<void(Optional<Vector<ContactInfo>>&&)>&&);
     void loadIconForFiles(const Vector<String>&, FileIconLoader&);
 
     void dispatchDisabledAdaptationsDidChange(const OptionSet<DisabledAdaptations>&) const;

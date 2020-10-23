@@ -25,8 +25,23 @@
 
 #pragma once
 
+#include <wtf/EnumTraits.h>
+
 namespace WebCore {
 
 enum class ContactProperty : uint8_t { Email, Name, Tel };
+
+}
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ContactProperty> {
+    using values = EnumValues<
+        WebCore::ContactProperty,
+        WebCore::ContactProperty::Email,
+        WebCore::ContactProperty::Name,
+        WebCore::ContactProperty::Tel
+    >;
+};
 
 }

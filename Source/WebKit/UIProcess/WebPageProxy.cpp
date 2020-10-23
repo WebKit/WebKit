@@ -5862,6 +5862,12 @@ void WebPageProxy::showShareSheet(const ShareDataWithParsedURL& shareData, Compl
     MESSAGE_CHECK(m_process, shareData.files.isEmpty() || m_preferences->webShareFileAPIEnabled());
     pageClient().showShareSheet(shareData, WTFMove(completionHandler));
 }
+
+void WebPageProxy::showContactPicker(const WebCore::ContactsRequestData& requestData, CompletionHandler<void(Optional<Vector<WebCore::ContactInfo>>&&)>&& completionHandler)
+{
+    MESSAGE_CHECK(m_process, m_preferences->contactPickerAPIEnabled());
+    pageClient().showContactPicker(requestData, WTFMove(completionHandler));
+}
     
 void WebPageProxy::printFrame(FrameIdentifier frameID, CompletionHandler<void()>&& completionHandler)
 {
