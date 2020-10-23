@@ -318,7 +318,6 @@ void LineBoxBuilder::alignInlineLevelBoxesVerticallyAndComputeLineBoxHeight(Line
         // with non-line box relative alignment.
         for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
             auto& layoutBox = inlineLevelBox->layoutBox();
-            auto verticalAlignment = layoutBox.style().verticalAlign();
             if (inlineLevelBox->hasLineBoxRelativeAlignment()) {
                 lineBoxRelativeInlineLevelBoxes.append(inlineLevelBox.get());
                 continue;
@@ -326,7 +325,7 @@ void LineBoxBuilder::alignInlineLevelBoxesVerticallyAndComputeLineBoxHeight(Line
             auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent());
             auto logicalTop = InlineLayoutUnit { };
             auto offsetFromParentInlineBoxBaseline = InlineLayoutUnit { };
-            switch (verticalAlignment) {
+            switch (inlineLevelBox->verticalAlign()) {
             case VerticalAlign::Baseline:
                 offsetFromParentInlineBoxBaseline = inlineLevelBox->layoutBounds().ascent;
                 logicalTop = parentInlineBox.baseline() - offsetFromParentInlineBoxBaseline;
@@ -352,6 +351,12 @@ void LineBoxBuilder::alignInlineLevelBoxesVerticallyAndComputeLineBoxHeight(Line
                 offsetFromParentInlineBoxBaseline = (inlineLevelBox->layoutBounds().height() / 2 + parentInlineBox.fontMetrics().xHeight() / 2);
                 logicalTop = parentInlineBox.baseline() - offsetFromParentInlineBoxBaseline;
                 break;
+            case VerticalAlign::Length: {
+                auto& style = layoutBox.style();
+                offsetFromParentInlineBoxBaseline = floatValueForLength(style.verticalAlignLength(), style.computedLineHeight());
+                logicalTop = parentInlineBox.baseline() - offsetFromParentInlineBoxBaseline - inlineLevelBox->logicalHeight();
+                break;
+            }
             default:
                 ASSERT_NOT_IMPLEMENTED_YET();
                 break;
