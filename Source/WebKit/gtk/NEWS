@@ -1,4 +1,18 @@
 ================
+WebKitGTK 2.30.2
+================
+
+What's new in WebKitGTK 2.30.2?
+
+  - Fix scrolling when smooth scrolling is enabled in async scrolling mode.
+  - Fix WebSocket requests with same-site cookies.
+  - Fix TLS certificate information for service workers.
+  - Handle chassis type when its value is quoted.
+  - Fix the build with ENABLE_MEDIA_STREAM enabled and ENABLE_WEB_RTC_DISABLED.
+  - Fix the build with ENABLE_GAMEPAD enabled.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.30.1
 ================
 

@@ -1,3 +1,9 @@
+2020-10-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.30.2 release
+
+        * gtk/NEWS: Add release notes for 2.30.2.
+
 2020-10-02  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK] WPE and backend versions are mixed up in webkit://gpu
