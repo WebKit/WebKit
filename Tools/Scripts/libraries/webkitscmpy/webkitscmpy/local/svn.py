@@ -37,13 +37,17 @@ from webkitscmpy import Commit, Contributor, Version
 
 
 class Svn(Scm):
-    executable = '/usr/bin/svn' if os.path.exists('/usr/bin/svn') else '/usr/local/bin/svn'
     LOG_RE = re.compile(r'r(?P<revision>\d+) \| (?P<email>.*) \| (?P<date>.*)')
     CACHE_VERSION = Version(1)
 
     @classmethod
+    @decorators.Memoize()
+    def executable(cls):
+        return Scm.executable('svn')
+
+    @classmethod
     def is_checkout(cls, path):
-        return run([cls.executable, 'info'], cwd=path, capture_output=True).returncode == 0
+        return run([cls.executable(), 'info'], cwd=path, capture_output=True).returncode == 0
 
     def __init__(self, path, dev_branches=None, prod_branches=None):
         super(Svn, self).__init__(path, dev_branches=dev_branches, prod_branches=prod_branches)
@@ -70,7 +74,7 @@ class Svn(Scm):
         additional_args = ['^/branches/{}'.format(branch)] if branch and branch != self.default_branch else []
         additional_args += ['-r', str(revision)] if revision else []
 
-        info_result = run([self.executable, 'info'] + additional_args, cwd=self.root_path, capture_output=True, encoding='utf-8')
+        info_result = run([self.executable(), 'info'] + additional_args, cwd=self.root_path, capture_output=True, encoding='utf-8')
         if info_result.returncode:
             return {}
 
@@ -100,7 +104,7 @@ class Svn(Scm):
         return self.info()['Relative URL'][2:]
 
     def list(self, category):
-        list_result = run([self.executable, 'list', '^/{}'.format(category)], cwd=self.root_path, capture_output=True, encoding='utf-8')
+        list_result = run([self.executable(), 'list', '^/{}'.format(category)], cwd=self.root_path, capture_output=True, encoding='utf-8')
         if list_result.returncode:
             return []
         return [element.rstrip('/') for element in list_result.stdout.splitlines()]
@@ -141,7 +145,7 @@ class Svn(Scm):
                 kwargs = dict(encoding='utf-8')
 
             log = subprocess.Popen(
-                [self.executable, 'log', '-q', branch_arg],
+                [self.executable(), 'log', '-q', branch_arg],
                 cwd=self.root_path,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -207,7 +211,7 @@ class Svn(Scm):
             return candidate
 
         process = run(
-            [self.executable, 'log', '-v', '-q', self.remote(), '-r', str(revision), '-l', '1'],
+            [self.executable(), 'log', '-v', '-q', self.remote(), '-r', str(revision), '-l', '1'],
             cwd=self.root_path, capture_output=True, encoding='utf-8',
         )
 
@@ -322,7 +326,7 @@ class Svn(Scm):
 
         branch_arg = '^/{}{}'.format('' if branch == self.default_branch else 'branches/', branch)
         log = run(
-            [self.executable, 'log', '-l', '1', '-r', str(revision), branch_arg], cwd=self.root_path,
+            [self.executable(), 'log', '-l', '1', '-r', str(revision), branch_arg], cwd=self.root_path,
             capture_output=True, encoding='utf-8',
         )
         split_log = log.stdout.splitlines()

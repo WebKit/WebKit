@@ -20,7 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
+import os
 import re
 import six
 
@@ -30,13 +30,17 @@ from webkitscmpy import Commit, Contributor
 
 
 class Git(Scm):
-    executable = '/usr/bin/git'
     GIT_COMMIT = re.compile(r'commit (?P<hash>[0-9a-f]+)')
     GIT_SVN_REVISION = re.compile(r'git-svn-id: \S+:\/\/.+@(?P<revision>\d+) .+-.+-.+-.+')
 
     @classmethod
+    @decorators.Memoize()
+    def executable(cls):
+        return Scm.executable('git')
+
+    @classmethod
     def is_checkout(cls, path):
-        return run([cls.executable, 'rev-parse', '--show-toplevel'], cwd=path, capture_output=True).returncode == 0
+        return run([cls.executable(), 'rev-parse', '--show-toplevel'], cwd=path, capture_output=True).returncode == 0
 
     def __init__(self, path, dev_branches=None, prod_branches=None):
         super(Git, self).__init__(path, dev_branches=dev_branches, prod_branches=prod_branches)
@@ -48,7 +52,7 @@ class Git(Scm):
         if not self.is_svn:
             raise self.Exception('Cannot run SVN info on a git checkout which is not git-svn')
 
-        info_result = run([self.executable, 'svn', 'info'], cwd=self.path, capture_output=True, encoding='utf-8')
+        info_result = run([self.executable(), 'svn', 'info'], cwd=self.path, capture_output=True, encoding='utf-8')
         if info_result.returncode:
             return {}
 
@@ -63,7 +67,7 @@ class Git(Scm):
     def is_svn(self):
         try:
             return run(
-                [self.executable, 'svn', 'find-rev', 'r1'],
+                [self.executable(), 'svn', 'find-rev', 'r1'],
                 cwd=self.root_path,
                 capture_output=True,
                 encoding='utf-8',
@@ -79,14 +83,14 @@ class Git(Scm):
     @property
     @decorators.Memoize()
     def root_path(self):
-        result = run([self.executable, 'rev-parse', '--show-toplevel'], cwd=self.path, capture_output=True, encoding='utf-8')
+        result = run([self.executable(), 'rev-parse', '--show-toplevel'], cwd=self.path, capture_output=True, encoding='utf-8')
         if result.returncode:
             return None
         return result.stdout.rstrip()
 
     @property
     def default_branch(self):
-        result = run([self.executable, 'rev-parse', '--abbrev-ref', 'origin/HEAD'], cwd=self.path, capture_output=True, encoding='utf-8')
+        result = run([self.executable(), 'rev-parse', '--abbrev-ref', 'origin/HEAD'], cwd=self.path, capture_output=True, encoding='utf-8')
         if result.returncode:
             candidates = self.branches
             if 'master' in candidates:
@@ -98,13 +102,13 @@ class Git(Scm):
 
     @property
     def branch(self):
-        status = run([self.executable, 'status'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+        status = run([self.executable(), 'status'], cwd=self.root_path, capture_output=True, encoding='utf-8')
         if status.returncode:
             raise self.Exception('Failed to run `git status` for {}'.format(self.root_path))
         if status.stdout.splitlines()[0].startswith('HEAD detached at'):
             return None
 
-        result = run([self.executable, 'rev-parse', '--abbrev-ref', 'HEAD'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+        result = run([self.executable(), 'rev-parse', '--abbrev-ref', 'HEAD'], cwd=self.root_path, capture_output=True, encoding='utf-8')
         if result.returncode:
             raise self.Exception('Failed to retrieve branch for {}'.format(self.root_path))
         return result.stdout.rstrip()
@@ -115,20 +119,20 @@ class Git(Scm):
 
     @property
     def tags(self):
-        tags = run([self.executable, 'tag'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+        tags = run([self.executable(), 'tag'], cwd=self.root_path, capture_output=True, encoding='utf-8')
         if tags.returncode:
             raise self.Exception('Failed to retrieve tag list for {}'.format(self.root_path))
         return tags.stdout.splitlines()
 
     def remote(self, name=None):
-        result = run([self.executable, 'remote', 'get-url', name or 'origin'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+        result = run([self.executable(), 'remote', 'get-url', name or 'origin'], cwd=self.root_path, capture_output=True, encoding='utf-8')
         if result.returncode:
             raise self.Exception('Failed to retrieve remote for {}'.format(self.root_path))
         return result.stdout.rstrip()
 
     def _commit_count(self, native_parameter):
         revision_count = run(
-            [self.executable, 'rev-list', '--count', '--no-merges', native_parameter],
+            [self.executable(), 'rev-list', '--count', '--no-merges', native_parameter],
             cwd=self.root_path, capture_output=True, encoding='utf-8',
         )
         if revision_count.returncode:
@@ -137,7 +141,7 @@ class Git(Scm):
 
     def _branches_for(self, hash=None):
         branch = run(
-            [self.executable, 'branch', '-a'] + (['--contains', hash] if hash else []),
+            [self.executable(), 'branch', '-a'] + (['--contains', hash] if hash else []),
             cwd=self.root_path,
             capture_output=True,
             encoding='utf-8',
@@ -153,7 +157,7 @@ class Git(Scm):
         elif revision:
             revision = Commit._parse_revision(revision, do_assert=True)
             revision_log = run(
-                [self.executable, 'svn', 'find-rev', 'r{}'.format(revision)],
+                [self.executable(), 'svn', 'find-rev', 'r{}'.format(revision)],
                 cwd=self.root_path, capture_output=True, encoding='utf-8',
                 timeout=3,
             )
@@ -195,7 +199,7 @@ class Git(Scm):
             if identifier > base_count:
                 raise self.Exception('Identifier {} cannot be found on the specified branch in the current checkout'.format(identifier))
             log = run(
-                [self.executable, 'log', '{}~{}'.format(branch or 'HEAD', base_count - identifier), '-1'],
+                [self.executable(), 'log', '{}~{}'.format(branch or 'HEAD', base_count - identifier), '-1'],
                 cwd=self.root_path,
                 capture_output=True,
                 encoding='utf-8',
@@ -212,13 +216,13 @@ class Git(Scm):
         elif branch:
             if hash:
                 raise ValueError('Cannot define both branch and hash')
-            log = run([self.executable, 'log', branch, '-1'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+            log = run([self.executable(), 'log', branch, '-1'], cwd=self.root_path, capture_output=True, encoding='utf-8')
             if log.returncode:
                 raise self.Exception("Failed to retrieve commit information for '{}'".format(branch))
 
         else:
             hash = Commit._parse_hash(hash, do_assert=True)
-            log = run([self.executable, 'log', hash or 'HEAD', '-1'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+            log = run([self.executable(), 'log', hash or 'HEAD', '-1'], cwd=self.root_path, capture_output=True, encoding='utf-8')
             if log.returncode:
                 raise self.Exception("Failed to retrieve commit information for '{}'".format(hash or 'HEAD'))
 
@@ -239,7 +243,7 @@ class Git(Scm):
         revision = int(match.group('revision')) if match else None
 
         commit_time = run(
-            [self.executable, 'show', '-s', '--format=%ct', hash],
+            [self.executable(), 'show', '-s', '--format=%ct', hash],
             cwd=self.root_path, capture_output=True, encoding='utf-8',
         )
         if commit_time.returncode:
@@ -270,7 +274,7 @@ class Git(Scm):
             )
 
         output = run(
-            [self.executable, 'rev-parse', argument],
+            [self.executable(), 'rev-parse', argument],
             cwd=self.root_path, capture_output=True, encoding='utf-8',
         )
         if output.returncode:

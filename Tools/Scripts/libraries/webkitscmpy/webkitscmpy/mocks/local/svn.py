@@ -54,6 +54,11 @@ class Svn(mocks.Subprocess):
         self.tags = tags or []
         self.connected = True
 
+        try:
+            self.executable = local.Svn.executable()
+        except (OSError, AssertionError):
+            self.executable = '/usr/bin/svn'
+
         # Provide a reasonable set of commits to test against
         contributor = Contributor(name='Jonathan Bedard', emails=['jbedard@apple.com'])
         self.commits = {
@@ -117,29 +122,35 @@ class Svn(mocks.Subprocess):
 
         super(Svn, self).__init__(
             mocks.Subprocess.Route(
-                local.Svn.executable, 'info',
+                '/usr/bin/which', 'svn',
+                completion=mocks.ProcessCompletion(
+                    returncode=0,
+                    stdout='{}\n'.format(self.executable),
+                ),
+            ), mocks.Subprocess.Route(
+                self.executable, 'info',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self._info(cwd=kwargs.get('cwd',''))
             ), mocks.Subprocess.Route(
-                local.Svn.executable, 'info', self.BRANCH_RE,
+                self.executable, 'info', self.BRANCH_RE,
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self._info(branch=self.BRANCH_RE.match(args[2]).group('branch'), cwd=kwargs.get('cwd', ''))
             ), mocks.Subprocess.Route(
-                local.Svn.executable, 'list', '^/branches',
+                self.executable, 'list', '^/branches',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
                     stdout='/\n'.join(sorted(set(self.branches) | set(self.commits.keys()) - {'trunk'})) + '/\n',
                 ) if self.connected else mocks.ProcessCompletion(returncode=1),
             ), mocks.Subprocess.Route(
-                local.Svn.executable, 'list', '^/tags',
+                self.executable, 'list', '^/tags',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
                     stdout='/\n'.join(self.tags) + '/\n',
                 ) if self.connected else mocks.ProcessCompletion(returncode=1),
             ), mocks.Subprocess.Route(
-                local.Svn.executable, 'log', '-v', '-q', self.remote, '-r', re.compile(r'\d+'),
+                self.executable, 'log', '-v', '-q', self.remote, '-r', re.compile(r'\d+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
@@ -153,7 +164,7 @@ class Svn(mocks.Subprocess):
                         ),
                 ) if self.connected and self.find(revision=args[6]) else mocks.ProcessCompletion(returncode=1),
             ), mocks.Subprocess.Route(
-                local.Svn.executable, 'log', '-q', self.BRANCH_RE,
+                self.executable, 'log', '-q', self.BRANCH_RE,
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
@@ -162,21 +173,21 @@ class Svn(mocks.Subprocess):
                     ]),
                 ) if self.connected and self.BRANCH_RE.match(args[3]).group('branch') in self.commits else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
-                local.Svn.executable, 'log', '-l', '1', '-r', re.compile(r'\d+'), self.BRANCH_RE,
+                self.executable, 'log', '-l', '1', '-r', re.compile(r'\d+'), self.BRANCH_RE,
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self._log_for(
                     branch=self.BRANCH_RE.match(args[6]).group('branch'),
                     revision=args[5],
                 ) if self.connected else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
-                local.Svn.executable,
+                self.executable,
                 cwd=self.path,
                 completion=mocks.ProcessCompletion(
                     returncode=1,
                     stderr="Type 'svn help' for usage.\n",
                 )
             ), mocks.Subprocess.Route(
-                local.Svn.executable,
+                self.executable,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=1,
                     stderr="svn: E155007: '{}' is not a working copy\n".format(kwargs.get('cwd')),

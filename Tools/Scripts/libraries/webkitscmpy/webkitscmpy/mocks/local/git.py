@@ -45,6 +45,11 @@ class Git(mocks.Subprocess):
         self.branches = branches or []
         self.tags = tags or []
 
+        try:
+            self.executable = local.Git.executable()
+        except (OSError, AssertionError):
+            self.executable = '/usr/bin/git'
+
         # Provide a reasonable set of commits to test against
         contributor = Contributor(name='Jonathan Bedard', emails=['jbedard@apple.com'])
         self.commits = {
@@ -117,7 +122,7 @@ class Git(mocks.Subprocess):
         if git_svn:
             git_svn_routes = [
                 mocks.Subprocess.Route(
-                    local.Git.executable, 'svn', 'find-rev', re.compile(r'r\d+'),
+                    self.executable, 'svn', 'find-rev', re.compile(r'r\d+'),
                     cwd=self.path,
                     generator=lambda *args, **kwargs:
                         mocks.ProcessCompletion(
@@ -125,7 +130,7 @@ class Git(mocks.Subprocess):
                             stdout=getattr(self.find(args[3][1:]), 'hash', '\n'),
                         )
                 ), mocks.Subprocess.Route(
-                    local.Git.executable, 'svn', 'info',
+                    self.executable, 'svn', 'info',
                     cwd=self.path,
                     generator=lambda *args, **kwargs:
                         mocks.ProcessCompletion(
@@ -153,14 +158,20 @@ class Git(mocks.Subprocess):
 
         else:
             git_svn_routes = [mocks.Subprocess.Route(
-                local.Git.executable, 'svn',
+                self.executable, 'svn',
                 cwd=self.path,
                 completion=mocks.ProcessCompletion(returncode=1, elapsed=2),
             )]
 
         super(Git, self).__init__(
             mocks.Subprocess.Route(
-                local.Git.executable, 'status',
+                '/usr/bin/which', 'git',
+                completion=mocks.ProcessCompletion(
+                    returncode=0,
+                    stdout='{}\n'.format(self.executable),
+                ),
+            ), mocks.Subprocess.Route(
+                self.executable, 'status',
                 cwd=self.path,
                 generator=lambda *args, **kwargs:
                     mocks.ProcessCompletion(
@@ -175,21 +186,21 @@ nothing to commit, working tree clean
                     ),
             ),
             mocks.Subprocess.Route(
-                local.Git.executable, 'rev-parse', '--show-toplevel',
+                self.executable, 'rev-parse', '--show-toplevel',
                 cwd=self.path,
                 completion=mocks.ProcessCompletion(
                     returncode=0,
                     stdout='{}\n'.format(self.path),
                 ),
             ), mocks.Subprocess.Route(
-                local.Git.executable, 'rev-parse', '--abbrev-ref', 'HEAD',
+                self.executable, 'rev-parse', '--abbrev-ref', 'HEAD',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
                     stdout='{}\n'.format('HEAD' if self.detached else self.branch),
                 ),
             ), mocks.Subprocess.Route(
-                local.Git.executable, 'remote', 'get-url', '.*',
+                self.executable, 'remote', 'get-url', '.*',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
@@ -199,7 +210,7 @@ nothing to commit, working tree clean
                     stderr="fatal: No such remote '{}'\n".format(args[3]),
                 ),
             ), mocks.Subprocess.Route(
-                local.Git.executable, 'branch', '-a',
+                self.executable, 'branch', '-a',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
@@ -207,28 +218,28 @@ nothing to commit, working tree clean
                            '\nremotes/origin/HEAD -> origin/{}\n'.format(default_branch),
                 ),
             ), mocks.Subprocess.Route(
-                local.Git.executable, 'tag',
+                self.executable, 'tag',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
                     stdout='\n'.join(self.tags) + '\n',
                 ),
             ), mocks.Subprocess.Route(
-                local.Git.executable, 'rev-parse', '--abbrev-ref', 'origin/HEAD',
+                self.executable, 'rev-parse', '--abbrev-ref', 'origin/HEAD',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
                     stdout='origin/{}\n'.format(default_branch),
                 ),
             ), mocks.Subprocess.Route(
-                local.Git.executable, 'rev-parse', '.*',
+                self.executable, 'rev-parse', '.*',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
                     stdout='{}\n'.format(self.find(args[2]).hash),
                 ) if self.find(args[2]) else mocks.ProcessCompletion(returncode=128)
             ), mocks.Subprocess.Route(
-                local.Git.executable, 'log', re.compile(r'.+'), '-1',
+                self.executable, 'log', re.compile(r'.+'), '-1',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
@@ -253,14 +264,14 @@ nothing to commit, working tree clean
                         ),
                 ) if self.find(args[2]) else mocks.ProcessCompletion(returncode=128),
             ), mocks.Subprocess.Route(
-                local.Git.executable, 'rev-list', '--count', '--no-merges', re.compile(r'.+'),
+                self.executable, 'rev-list', '--count', '--no-merges', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
                     stdout='{}\n'.format(self.count(args[4]))
                 ) if self.find(args[4]) else mocks.ProcessCompletion(returncode=128),
             ), mocks.Subprocess.Route(
-                local.Git.executable, 'show', '-s', '--format=%ct', re.compile(r'.+'),
+                self.executable, 'show', '-s', '--format=%ct', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
@@ -269,21 +280,21 @@ nothing to commit, working tree clean
                     )
                 ) if self.find(args[4]) else mocks.ProcessCompletion(returncode=128),
             ), mocks.Subprocess.Route(
-                local.Git.executable, 'branch', '-a', '--contains', re.compile(r'.+'),
+                self.executable, 'branch', '-a', '--contains', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
                     stdout='\n'.join(sorted(self.branches_on(args[4]))) + '\n',
                 ) if self.find(args[4]) else mocks.ProcessCompletion(returncode=128),
             ), mocks.Subprocess.Route(
-                local.Git.executable,
+                self.executable,
                 cwd=self.path,
                 completion=mocks.ProcessCompletion(
                     returncode=1,
                     stderr='usage: git [--version] [--help]...\n',
                 ),
             ), mocks.Subprocess.Route(
-                local.Git.executable,
+                self.executable,
                 completion=mocks.ProcessCompletion(
                     returncode=128,
                     stderr='fatal: not a git repository (or any parent up to mount point)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n',

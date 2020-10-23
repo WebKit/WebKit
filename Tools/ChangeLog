@@ -1,3 +1,25 @@
+2020-10-23  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Use 'which' to find git and svn paths
+        https://bugs.webkit.org/show_bug.cgi?id=217717
+        <rdar://problem/70299192>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git):
+        (Git.executable): Generate git path from 'which' call.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/scm.py:
+        (Scm.executable): Generate a program path from a 'which' call.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn):
+        (Svn.executable): Generate svn path from 'which' call.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        (Git):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/svn.py:
+        (Svn.__init__):
+
 2020-10-23  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Add python 3 support - part 2

@@ -22,11 +22,13 @@
 
 
 import logging
+import os
 import re
 import six
 import sys
 
 from logging import NullHandler
+from webkitcorepy import run
 from webkitscmpy import log, Commit
 
 
@@ -39,7 +41,17 @@ class Scm(object):
     DEV_BRANCHES = re.compile(r'.*[(eng)(dev)(bug)]/.+')
     PROD_BRANCHES = re.compile(r'\S+-[\d+\.]+-branch')
 
-    executable = None
+    @classmethod
+    def executable(cls, program):
+        for candidate in ['usr/bin', 'usr/bin/local']:
+            candidate = os.path.join(candidate, program)
+            if os.path.exists(candidate):
+                return candidate
+
+        which = run(['/usr/bin/which', program], capture_output=True, encoding='utf-8')
+        if not which.returncode:
+            return os.path.realpath(which.stdout.rstrip())
+        raise OSError("Cannot find '{}' program".format(program))
 
     @classmethod
     def from_path(cls, path):
