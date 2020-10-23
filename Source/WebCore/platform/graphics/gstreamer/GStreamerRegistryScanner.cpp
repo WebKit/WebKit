@@ -362,6 +362,21 @@ bool GStreamerRegistryScanner::areAllCodecsSupported(const Vector<String>& codec
 
 bool GStreamerRegistryScanner::isAVC1CodecSupported(const String& codec, bool shouldCheckForHardwareUse) const
 {
+    auto checkH264Caps = [&](const char* capsString) {
+        bool supported = false;
+        auto lookupResult = hasElementForMediaType(m_videoDecoderFactories, capsString, true);
+        supported = lookupResult;
+        if (shouldCheckForHardwareUse)
+            supported = lookupResult.isUsingHardware;
+        GST_DEBUG("%s decoding supported for codec %s: %s", shouldCheckForHardwareUse ? "Hardware" : "Software", codec.utf8().data(), boolForPrinting(supported));
+        return supported;
+    };
+
+    if (codec.find('.') == notFound) {
+        GST_DEBUG("Codec has no profile/level, falling back to unconstrained caps");
+        return checkH264Caps("video/x-h264");
+    }
+
     auto components = codec.split('.');
     long int spsAsInteger = strtol(components[1].utf8().data(), nullptr, 16);
     uint8_t sps[3];
@@ -387,16 +402,6 @@ bool GStreamerRegistryScanner::isAVC1CodecSupported(const String& codec, bool sh
     }
 
     GST_DEBUG("Codec %s translates to H.264 profile %s and level %s", codec.utf8().data(), profile, level);
-
-    auto checkH264Caps = [&](const char* capsString) {
-        bool supported = false;
-        auto lookupResult = hasElementForMediaType(m_videoDecoderFactories, capsString, true);
-        supported = lookupResult;
-        if (shouldCheckForHardwareUse)
-            supported = lookupResult.isUsingHardware;
-        GST_DEBUG("%s decoding supported for codec %s: %s", shouldCheckForHardwareUse ? "Hardware" : "Software", codec.utf8().data(), boolForPrinting(supported));
-        return supported;
-    };
 
     if (const char* maxVideoResolution = g_getenv("WEBKIT_GST_MAX_AVC1_RESOLUTION")) {
         uint8_t levelAsInteger = gst_codec_utils_h264_get_level_idc(level);
