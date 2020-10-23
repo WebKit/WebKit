@@ -2484,7 +2484,7 @@ def check_namespace_indentation(clean_lines, line_number, file_extension, file_s
             break
 
 
-# Enum declaration allowlist
+# Enum declaration whitelist
 _ALLOW_ALL_UPPERCASE_ENUM = ['JSTokenType']
 
 
