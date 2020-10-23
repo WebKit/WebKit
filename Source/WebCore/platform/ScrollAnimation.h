@@ -34,6 +34,12 @@ class FloatPoint;
 class ScrollableArea;
 enum class ScrollClamping : bool;
 
+struct ScrollExtents {
+    ScrollPosition minimumScrollPosition;
+    ScrollPosition maximumScrollPosition;
+    IntSize visibleSize;
+};
+
 class ScrollAnimation {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -44,14 +50,6 @@ public:
     virtual void updateVisibleLengths() { };
     virtual void setCurrentPosition(const FloatPoint&) { };
     virtual void serviceAnimation() { };
-
-protected:
-    ScrollAnimation(ScrollableArea& scrollableArea)
-        : m_scrollableArea(scrollableArea)
-    {
-    }
-
-    ScrollableArea& m_scrollableArea;
 };
 
 } // namespace WebCore
