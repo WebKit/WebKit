@@ -3655,17 +3655,23 @@ void RenderBlockFlow::invalidateLineLayoutPath()
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 void RenderBlockFlow::layoutLFCLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
-    if (!layoutFormattingContextLineLayout())
+    bool needsUpdateReplacedDimensions = false;
+
+    if (!layoutFormattingContextLineLayout()) {
         m_lineLayout = makeUnique<LayoutIntegration::LineLayout>(*this);
+        needsUpdateReplacedDimensions = true;
+    }
 
     auto& layoutFormattingContextLineLayout = *this->layoutFormattingContextLineLayout();
 
     for (auto& renderer : childrenOfType<RenderObject>(*this)) {
-        if (!relayoutChildren && !renderer.needsLayout())
+        if (relayoutChildren)
+            renderer.setNeedsLayout(MarkOnlyThis);
+        if (!renderer.needsLayout() && !needsUpdateReplacedDimensions)
             continue;
+
         if (is<RenderReplaced>(renderer)) {
             auto& replaced = downcast<RenderReplaced>(renderer);
-            replaced.setNeedsLayout(MarkOnlyThis);
             replaced.layoutIfNeeded();
             layoutFormattingContextLineLayout.updateReplacedDimensions(replaced);
             continue;

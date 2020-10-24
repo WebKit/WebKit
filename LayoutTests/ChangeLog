@@ -1,3 +1,13 @@
+2020-10-24  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Replaced elements in newly created line layout should always be updated
+        https://bugs.webkit.org/show_bug.cgi?id=218150
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/inline/inline-with-img-dynamic-expected.html: Added.
+        * fast/inline/inline-with-img-dynamic.html: Added.
+
 2020-10-23  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r260276): Unable to click on image and text link at the bottom of https://www.nytimes.com/ article

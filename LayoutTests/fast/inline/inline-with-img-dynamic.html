@@ -1,0 +1,7 @@
+<div id=test><img onload="runTest()" src="../images/resources/green-24x24.jpg"></div>
+<script>
+async function runTest() {
+  await new Promise(requestAnimationFrame);
+  test.appendChild(document.createTextNode("text"));
+}
+</script>
