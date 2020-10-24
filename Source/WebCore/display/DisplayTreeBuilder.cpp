@@ -67,8 +67,8 @@ std::unique_ptr<Tree> TreeBuilder::build(const Layout::LayoutState& layoutState)
     if (!rootLayoutBox.firstChild())
         return makeUnique<Tree>(WTFMove(rootDisplayContainerBox));
 
-    auto borderBox = LayoutRect { geometry.logicalRect() };
-    auto offset = toLayoutSize(borderBox.location());
+    auto borderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(geometry) };
+    auto offset = toLayoutSize(borderBoxRect.location());
     recursiveBuildDisplayTree(layoutState, offset, *rootLayoutBox.firstChild(), *rootDisplayContainerBox);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "Display tree:\n" << displayTreeAsText(*rootDisplayContainerBox));
@@ -124,8 +124,8 @@ Box* TreeBuilder::recursiveBuildDisplayTree(const Layout::LayoutState& layoutSta
     if (!layoutContainerBox.hasChild())
         return result;
 
-    auto borderBox = LayoutRect { geometry.logicalRect() };
-    offsetFromRoot += toLayoutSize(borderBox.location());
+    auto borderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(geometry) };
+    offsetFromRoot += toLayoutSize(borderBoxRect.location());
 
     auto& displayContainerBox = downcast<ContainerBox>(*result);
 
@@ -146,18 +146,18 @@ Box* TreeBuilder::recursiveBuildDisplayTree(const Layout::LayoutState& layoutSta
 std::unique_ptr<Box> TreeBuilder::displayBoxForRootBox(const Layout::BoxGeometry& geometry, const Layout::ContainerBox& rootBox) const
 {
     // FIXME: Need to do logical -> physical coordinate mapping here.
-    auto borderBox = LayoutRect { geometry.logicalRect() };
+    auto borderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(geometry) };
 
     auto style = Style { rootBox.style() };
-    return makeUnique<ContainerBox>(snapRectToDevicePixels(borderBox, m_pixelSnappingFactor), WTFMove(style));
+    return makeUnique<ContainerBox>(snapRectToDevicePixels(borderBoxRect, m_pixelSnappingFactor), WTFMove(style));
 }
 
 std::unique_ptr<Box> TreeBuilder::displayBoxForLayoutBox(const Layout::BoxGeometry& geometry, const Layout::Box& layoutBox, LayoutSize offsetFromRoot) const
 {
     // FIXME: Need to map logical to physical rects.
-    auto borderBox = LayoutRect { geometry.logicalRect() };
-    borderBox.move(offsetFromRoot);
-    auto pixelSnappedBorderBox = snapRectToDevicePixels(borderBox, m_pixelSnappingFactor);
+    auto borderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(geometry) };
+    borderBoxRect.move(offsetFromRoot);
+    auto pixelSnappedBorderBoxRect = snapRectToDevicePixels(borderBoxRect, m_pixelSnappingFactor);
 
     // FIXME: Handle isAnonymous()
     // FIXME: Do hoisting of <body> styles to the root where appropriate.
@@ -168,11 +168,11 @@ std::unique_ptr<Box> TreeBuilder::displayBoxForLayoutBox(const Layout::BoxGeomet
     if (is<Layout::ReplacedBox>(layoutBox)) {
         // FIXME: Wrong; geometry needs to vend the correct replaced content rect.
         auto replacedContentRect = LayoutRect { geometry.contentBoxLeft(), geometry.contentBoxTop(), geometry.contentBoxWidth(), geometry.contentBoxHeight() };
-        replacedContentRect.moveBy(borderBox.location());
+        replacedContentRect.moveBy(borderBoxRect.location());
         auto pixelSnappedReplacedContentRect = snapRectToDevicePixels(replacedContentRect, m_pixelSnappingFactor);
 
         // FIXME: Don't assume it's an image.
-        auto imageBox = makeUnique<ImageBox>(pixelSnappedBorderBox, WTFMove(style), pixelSnappedReplacedContentRect);
+        auto imageBox = makeUnique<ImageBox>(pixelSnappedBorderBoxRect, WTFMove(style), pixelSnappedReplacedContentRect);
 
         if (auto* cachedImage = downcast<Layout::ReplacedBox>(layoutBox).cachedImage())
             imageBox->setImage(cachedImage->image());
@@ -182,10 +182,10 @@ std::unique_ptr<Box> TreeBuilder::displayBoxForLayoutBox(const Layout::BoxGeomet
     
     if (is<Layout::ContainerBox>(layoutBox)) {
         // FIXME: The decision to make a ContainerBox should be made based on whether this Display::Box will have children.
-        return makeUnique<ContainerBox>(pixelSnappedBorderBox, WTFMove(style));
+        return makeUnique<ContainerBox>(pixelSnappedBorderBoxRect, WTFMove(style));
     }
 
-    return makeUnique<Box>(snapRectToDevicePixels(borderBox, m_pixelSnappingFactor), WTFMove(style));
+    return makeUnique<Box>(snapRectToDevicePixels(borderBoxRect, m_pixelSnappingFactor), WTFMove(style));
 }
 
 #if ENABLE(TREE_DEBUGGING)

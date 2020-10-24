@@ -209,8 +209,8 @@ LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(co
         if (formattingContextRoot.hasInFlowChild()) {
             auto& firstBoxGeometry = formattingContext.geometryForBox(*formattingContextRoot.firstInFlowChild(), EscapeReason::NeedsGeometryFromEstablishedFormattingContext);
             auto& lastBoxGeometry = formattingContext.geometryForBox(*formattingContextRoot.lastInFlowChild(), EscapeReason::NeedsGeometryFromEstablishedFormattingContext);
-            top = firstBoxGeometry.logicalRectWithMargin().top();
-            bottom = lastBoxGeometry.logicalRectWithMargin().bottom();
+            top = BoxGeometry::marginBoxRect(firstBoxGeometry).top();
+            bottom = BoxGeometry::marginBoxRect(lastBoxGeometry).bottom();
         }
     } else
         ASSERT_NOT_REACHED();
@@ -288,7 +288,7 @@ LayoutUnit FormattingContext::Geometry::staticVerticalPositionForOutOfFlowPositi
         auto& formattingState = downcast<BlockFormattingState>(layoutState().formattingStateForBox(previousInFlowSibling));
         auto usedVerticalMarginForPreviousBox = formattingState.usedVerticalMargin(previousInFlowSibling);
 
-        top += previousInFlowBoxGeometry.logicalBottom() + usedVerticalMarginForPreviousBox.nonCollapsedValues.after;
+        top += BoxGeometry::borderBoxRect(previousInFlowBoxGeometry).bottom() + usedVerticalMarginForPreviousBox.nonCollapsedValues.after;
     } else
         top = formattingContext.geometryForBox(layoutBox.parent(), EscapeReason::OutOfFlowBoxNeedsInFlowGeometry).contentBoxTop();
 
@@ -298,7 +298,7 @@ LayoutUnit FormattingContext::Geometry::staticVerticalPositionForOutOfFlowPositi
     for (auto* ancestor = &layoutBox.parent(); ancestor != &containingBlock; ancestor = &ancestor->containingBlock()) {
         auto& boxGeometry = formattingContext.geometryForBox(*ancestor, EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
         // BoxGeometry::top is the border box top position in its containing block's coordinate system.
-        top += boxGeometry.logicalTop();
+        top += BoxGeometry::borderBoxTop(boxGeometry);
         ASSERT(!ancestor->isPositioned() || layoutBox.isFixedPositioned());
     }
     // Move the static position relative to the padding box. This is very specific to abolutely positioned boxes.
@@ -320,7 +320,7 @@ LayoutUnit FormattingContext::Geometry::staticHorizontalPositionForOutOfFlowPosi
     for (auto* ancestor = &layoutBox.parent(); ancestor != &containingBlock; ancestor = &ancestor->containingBlock()) {
         auto& boxGeometry = formattingContext.geometryForBox(*ancestor, EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
         // BoxGeometry::left is the border box left position in its containing block's coordinate system.
-        left += boxGeometry.logicalLeft();
+        left += BoxGeometry::borderBoxLeft(boxGeometry);
         ASSERT(!ancestor->isPositioned() || layoutBox.isFixedPositioned());
     }
     // Move the static position relative to the padding box. This is very specific to abolutely positioned boxes.
@@ -826,8 +826,8 @@ ContentHeightAndMargin FormattingContext::Geometry::complicatedCases(const Box& 
             height = 0_lu;
         else if (layoutBox.isDocumentBox() && !layoutBox.establishesFormattingContext()) {
             auto& documentBox = downcast<ContainerBox>(layoutBox);
-            auto top = formattingContext().geometryForBox(*documentBox.firstInFlowChild()).logicalRectWithMargin().top();
-            auto bottom = formattingContext().geometryForBox(*documentBox.lastInFlowChild()).logicalRectWithMargin().bottom();
+            auto top = BoxGeometry::marginBoxRect(formattingContext().geometryForBox(*documentBox.firstInFlowChild())).top();
+            auto bottom = BoxGeometry::marginBoxRect(formattingContext().geometryForBox(*documentBox.lastInFlowChild())).bottom();
             // This is a special (quirk?) behavior since the document box is not a formatting context root and
             // all the float boxes end up at the ICB level.
             auto& initialContainingBlock = documentBox.formattingContextRoot();
@@ -964,7 +964,7 @@ ContentHeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargi
         height = replacedBox.intrinsicHeight();
     } else if (heightIsAuto && replacedBox.hasIntrinsicRatio()) {
         // #3
-        auto usedWidth = formattingContext.geometryForBox(replacedBox).logicalWidth();
+        auto usedWidth = formattingContext.geometryForBox(replacedBox).contentBoxWidth();
         height = usedWidth / replacedBox.intrinsicRatio();
     } else if (heightIsAuto && replacedBox.hasIntrinsicHeight()) {
         // #4

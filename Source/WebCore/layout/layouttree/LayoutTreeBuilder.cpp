@@ -469,8 +469,10 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const BoxG
     else
         stream << "unknown box";
 
-    if (boxGeometry)
-        stream << " at (" << boxGeometry->logicalLeft() << "," << boxGeometry->logicalTop() << ") size " << boxGeometry->logicalWidth() << "x" << boxGeometry->logicalHeight();
+    if (boxGeometry) {
+        auto borderBox = BoxGeometry::borderBoxRect(*boxGeometry);
+        stream << " at (" << borderBox.left() << "," << borderBox.top() << ") size " << borderBox.width() << "x" << borderBox.height();
+    }
     stream << " (" << &layoutBox << ")";
     if (is<InlineTextBox>(layoutBox)) {
         auto textContent = downcast<InlineTextBox>(layoutBox).content();

@@ -485,7 +485,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
                 continue;
             }
             // This is a just a simple box geometry for the line spanning inline box. getBoundingClientRect looks into each line boxes (will turn into fragmented boxes).
-            boxGeometry.setLogicalLeft(std::min(boxGeometry.logicalLeft(), toLayoutUnit(borderBoxLogicalTopLeft.x())));
+            boxGeometry.setLogicalLeft(std::min(BoxGeometry::borderBoxLeft(boxGeometry), toLayoutUnit(borderBoxLogicalTopLeft.x())));
             boxGeometry.setContentBoxWidth(std::max(toLayoutUnit(contentBoxWidth), boxGeometry.contentBoxWidth()));
             boxGeometry.setContentBoxHeight(boxGeometry.contentBoxHeight() + toLayoutUnit(logicalRect.height()));
         }

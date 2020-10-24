@@ -41,20 +41,11 @@ public:
     BoxGeometry() = default;
     ~BoxGeometry();
 
-    LayoutUnit logicalTop() const;
-    LayoutUnit logicalLeft() const;
-    LayoutUnit logicalBottom() const { return logicalTop() + logicalHeight(); }
-    LayoutUnit logicalRight() const { return logicalLeft() + logicalWidth(); }
-
-    LayoutPoint logicalTopLeft() const;
-    LayoutPoint logicalBottomRight() const { return { logicalRight(), logicalBottom() }; }
-
-    LayoutSize logicalSize() const { return { logicalWidth(), logicalHeight() }; }
-    LayoutUnit logicalWidth() const { return borderLeft() + paddingBoxWidth() + borderRight(); }
-    LayoutUnit logicalHeight() const { return borderTop() + paddingBoxHeight() + borderBottom(); }
-    bool isEmpty() const { return logicalSize().isEmpty(); }
-    Rect logicalRect() const { return { logicalTop(), logicalLeft(), logicalWidth(), logicalHeight() }; }
-    Rect logicalRectWithMargin() const { return { logicalTop() - marginBefore(), logicalLeft() - marginStart(), marginStart() + logicalWidth() + marginEnd(), marginBefore() + logicalHeight() + marginAfter() }; }
+    static LayoutUnit borderBoxTop(const BoxGeometry& box) { return box.logicalTop(); }
+    static LayoutUnit borderBoxLeft(const BoxGeometry& box) { return box.logicalLeft(); }
+    static LayoutPoint borderBoxTopLeft(const BoxGeometry& box) { return box.logicalTopLeft(); }
+    static Rect borderBoxRect(const BoxGeometry& box) { return { box.logicalTop(), box.logicalLeft(), box.borderBoxWidth(), box.borderBoxHeight() }; }
+    static Rect marginBoxRect(const BoxGeometry& box) { return { box.logicalTop() - box.marginBefore(), box.logicalLeft() - box.marginStart(), box.marginBoxWidth(), box.marginBoxHeight() }; }
 
     struct VerticalMargin {
         LayoutUnit before;
@@ -137,6 +128,10 @@ public:
     void setPadding(Optional<Layout::Edges>);
 
 private:
+    LayoutUnit logicalTop() const;
+    LayoutUnit logicalLeft() const;
+    LayoutPoint logicalTopLeft() const;
+
 #if ASSERT_ENABLED
     void invalidateMargin();
     void invalidateBorder() { m_hasValidBorder = false; }

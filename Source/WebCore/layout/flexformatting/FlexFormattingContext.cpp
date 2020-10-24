@@ -91,8 +91,8 @@ void FlexFormattingContext::sizeAndPlaceFlexItems(const ConstraintsForInFlowCont
 
             flexItemGeometry.setContentBoxHeight(geometry.contentHeightForFormattingContextRoot(flexItem));
             flexItemGeometry.setContentBoxWidth(flexItemLogicalWidth);
-            flexItemMainAxisEnd= flexItemGeometry.logicalRight();
-            flexItemCrosAxisEnd = std::max(flexItemCrosAxisEnd, flexItemGeometry.logicalBottom());
+            flexItemMainAxisEnd= BoxGeometry::borderBoxRect(flexItemGeometry).right();
+            flexItemCrosAxisEnd = std::max(flexItemCrosAxisEnd, BoxGeometry::borderBoxRect(flexItemGeometry).bottom());
         };
         computeFlexItemGeometry();
     }

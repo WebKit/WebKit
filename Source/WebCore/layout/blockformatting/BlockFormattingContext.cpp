@@ -182,9 +182,9 @@ Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(c
     precomputeVerticalPositionForBoxAndAncestors(layoutBox, constraintsPair);
 
     auto logicalTopInFormattingContextRootCoordinate = [&] (auto& floatAvoider) {
-        auto top = geometryForBox(floatAvoider).logicalTop();
+        auto top = BoxGeometry::borderBoxTop(geometryForBox(floatAvoider));
         for (auto* ancestor = &floatAvoider.containingBlock(); ancestor != &root(); ancestor = &ancestor->containingBlock())
-            top += geometryForBox(*ancestor).logicalTop();
+            top += BoxGeometry::borderBoxTop(geometryForBox(*ancestor));
         return top;
     };
 
@@ -193,7 +193,7 @@ Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(c
             return FloatingContext::Constraints { };
         auto offset = LayoutSize { };
         for (auto* ancestor = &layoutBox.containingBlock(); ancestor != &root(); ancestor = &ancestor->containingBlock())
-            offset += toLayoutSize(geometryForBox(*ancestor).logicalTopLeft());
+            offset += toLayoutSize(BoxGeometry::borderBoxTopLeft(geometryForBox(*ancestor)));
         if (floatConstraints.left)
             floatConstraints.left = PointInContextRoot { *floatConstraints.left - offset };
         if (floatConstraints.right)
@@ -308,7 +308,7 @@ void BlockFormattingContext::computeVerticalPositionForFloatClear(const Floating
         return;
 
     auto& boxGeometry = formattingState().boxGeometry(layoutBox);
-    ASSERT(verticalPositionAndClearance->position >= boxGeometry.logicalTop());
+    ASSERT(verticalPositionAndClearance->position >= BoxGeometry::borderBoxTop(boxGeometry));
     boxGeometry.setLogicalTop(verticalPositionAndClearance->position);
     if (verticalPositionAndClearance->clearance)
         formattingState().setHasClearance(layoutBox);
@@ -476,7 +476,7 @@ LayoutUnit BlockFormattingContext::verticalPositionWithMargin(const Box& layoutB
     // 4. Go to previous box and start from step #1 until we hit the parent box.
     auto& boxGeometry = geometryForBox(layoutBox);
     if (formattingState().hasClearance(layoutBox))
-        return boxGeometry.logicalTop();
+        return BoxGeometry::borderBoxTop(boxGeometry);
 
     auto* currentLayoutBox = &layoutBox;
     while (currentLayoutBox) {
@@ -485,12 +485,12 @@ LayoutUnit BlockFormattingContext::verticalPositionWithMargin(const Box& layoutB
         auto& previousInFlowSibling = *currentLayoutBox->previousInFlowSibling();
         if (!marginCollapse().marginBeforeCollapsesWithPreviousSiblingMarginAfter(*currentLayoutBox)) {
             auto& previousBoxGeometry = geometryForBox(previousInFlowSibling);
-            return previousBoxGeometry.logicalRectWithMargin().bottom() + marginBefore(verticalMargin);
+            return BoxGeometry::marginBoxRect(previousBoxGeometry).bottom() + marginBefore(verticalMargin);
         }
 
         if (!marginCollapse().marginsCollapseThrough(previousInFlowSibling)) {
             auto& previousBoxGeometry = geometryForBox(previousInFlowSibling);
-            return previousBoxGeometry.logicalBottom() + marginBefore(verticalMargin);
+            return BoxGeometry::borderBoxRect(previousBoxGeometry).bottom() + marginBefore(verticalMargin);
         }
         currentLayoutBox = &previousInFlowSibling;
     }

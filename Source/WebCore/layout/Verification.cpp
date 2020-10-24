@@ -179,7 +179,7 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
 
     auto renderBoxLikeMarginBox = [&] (const auto& boxGeometry) {
         if (layoutBox.isInitialContainingBlock())
-            return boxGeometry.logicalRect();
+            return BoxGeometry::borderBoxRect(boxGeometry);
 
         // Produce a RenderBox matching margin box.
         auto containingBlockWidth = layoutState.geometryForBox(layoutBox.containingBlock()).contentBoxWidth();
@@ -220,7 +220,7 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         // When the <table> is out-of-flow positioned, the wrapper table box has the offset
         // while the actual table box is static, inflow.
         auto& tableWrapperBoxGeometry = layoutState.geometryForBox(layoutBox.containingBlock());
-        boxGeometry.moveBy(tableWrapperBoxGeometry.logicalTopLeft());
+        boxGeometry.moveBy(BoxGeometry::borderBoxTopLeft(tableWrapperBoxGeometry));
         // Table wrapper box has the margin values for the table.
         boxGeometry.setHorizontalMargin(tableWrapperBoxGeometry.horizontalMargin());
         boxGeometry.setVerticalMargin(tableWrapperBoxGeometry.verticalMargin());
@@ -234,8 +234,8 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         if (is<RenderTableSection>(renderer) && (downcast<RenderTableSection>(renderer).table()->collapseBorders() || renderer.style().hasBorder()))
             return false;
     }
-    if (!areEssentiallyEqual(frameRect, boxGeometry.logicalRect())) {
-        outputRect("frameBox", renderer.frameRect(), boxGeometry.logicalRect());
+    if (!areEssentiallyEqual(frameRect, BoxGeometry::borderBoxRect(boxGeometry))) {
+        outputRect("frameBox", renderer.frameRect(), BoxGeometry::borderBoxRect(boxGeometry));
         return true;
     }
 

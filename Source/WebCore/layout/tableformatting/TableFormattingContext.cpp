@@ -245,7 +245,7 @@ void TableFormattingContext::setUsedGeometryForSections(const ConstraintsForInFl
         auto sectionContentHeight = LayoutUnit { };
         size_t rowCount = 0;
         for (auto& rowBox : childrenOfType<ContainerBox>(sectionBox)) {
-            sectionContentHeight += geometryForBox(rowBox).logicalHeight();
+            sectionContentHeight += geometryForBox(rowBox).borderBoxHeight();
             ++rowCount;
         }
         sectionContentHeight += verticalSpacing * (rowCount - 1);
@@ -253,7 +253,7 @@ void TableFormattingContext::setUsedGeometryForSections(const ConstraintsForInFl
         sectionBoxGeometry.setLogicalLeft(constraints.horizontal.logicalLeft);
         sectionBoxGeometry.setLogicalTop(logicalTop);
 
-        logicalTop += sectionBoxGeometry.logicalHeight();
+        logicalTop += sectionBoxGeometry.borderBoxHeight();
     }
 }
 
