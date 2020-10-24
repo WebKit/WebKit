@@ -1,3 +1,18 @@
+2020-10-24  Jer Noble  <jer.noble@apple.com>
+
+        [BigSur] Appending a new WebM init segment between Cluster elements throws an error
+        https://bugs.webkit.org/show_bug.cgi?id=218149
+        <rdar://problem/70416537>
+
+        Reviewed by Eric Carlson.
+
+        Add an "OnElementEnd()" callback to libwebm.
+
+        * Source/third_party/libwebm/webm_parser/include/webm/callback.h:
+        * Source/third_party/libwebm/webm_parser/src/callback.cc:
+        * Source/third_party/libwebm/webm_parser/src/master_parser.cc:
+        * Source/third_party/libwebm/webm_parser/src/webm_parser.cc:
+
 2020-10-21  Youenn Fablet  <youenn@apple.com>
 
         WebRTC VP9 Decoder should be able to use VTB

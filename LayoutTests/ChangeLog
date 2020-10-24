@@ -1,3 +1,17 @@
+2020-10-24  Jer Noble  <jer.noble@apple.com>
+
+        [BigSur] Appending a new WebM init segment between Cluster elements throws an error
+        https://bugs.webkit.org/show_bug.cgi?id=218149
+        <rdar://problem/70416537>
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/content/test-vp9-long-manifest.json: Added.
+        * media/media-source/content/test-vp9-long.webm: Added.
+        * media/media-source/media-source-webm-init-inside-segment-expected.txt: Added.
+        * media/media-source/media-source-webm-init-inside-segment.html: Added.
+        * platform/mac/TestExpectations:
+
 2020-10-24  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Replaced elements in newly created line layout should always be updated

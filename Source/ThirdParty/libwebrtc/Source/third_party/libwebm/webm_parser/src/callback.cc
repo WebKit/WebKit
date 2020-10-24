@@ -135,6 +135,10 @@ Status Callback::OnSegmentEnd(const ElementMetadata& /* metadata */) {
   return Status(Status::kOkCompleted);
 }
 
+Status Callback::OnElementEnd(const ElementMetadata& /* metadata */) {
+  return Status(Status::kOkCompleted);
+}
+
 Status Callback::Skip(Reader* reader, std::uint64_t* bytes_remaining) {
   assert(reader != nullptr);
   assert(bytes_remaining != nullptr);
