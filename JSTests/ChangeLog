@@ -1,3 +1,12 @@
+2020-10-24  Caio Lima  <ticaiolima@gmail.com>
+
+        [EWS][ARMv7] Flaky test stress/json-stringify-stack-overflow.js
+        https://bugs.webkit.org/show_bug.cgi?id=218129
+
+        Unreviewed test gardening.
+
+        * stress/json-stringify-stack-overflow.js:
+
 2020-10-21  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] support op_get_private_name in DFG and FTL
