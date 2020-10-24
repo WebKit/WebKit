@@ -241,7 +241,7 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
         return boxGeometry.marginBoxWidth();
 
     if (layoutBox.isReplacedBox())
-        return boxGeometry.borderBoxWidth();
+        return boxGeometry.marginBoxWidth();
 
     if (inlineItem.isContainerStart())
         return boxGeometry.marginStart() + boxGeometry.borderLeft() + boxGeometry.paddingLeft().valueOr(0);
@@ -250,7 +250,7 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
         return boxGeometry.marginEnd() + boxGeometry.borderRight() + boxGeometry.paddingRight().valueOr(0);
 
     // Non-replaced inline box (e.g. inline-block)
-    return boxGeometry.borderBoxWidth();
+    return boxGeometry.marginBoxWidth();
 }
 
 LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, const FloatingContext& floatingContext, const ContainerBox& formattingContextRoot, const InlineItems& inlineItems)
@@ -475,10 +475,10 @@ void LineBuilder::nextContentForLine(LineCandidate& lineCandidate, size_t curren
             continue;
         }
         if (inlineItem.isText() || inlineItem.isContainerStart() || inlineItem.isContainerEnd() || inlineItem.isBox()) {
-            auto inlineItenmWidth = inlineItemWidth(inlineItem, currentLogicalRight);
-            lineCandidate.inlineContent.appendInlineItem(inlineItem, inlineItenmWidth);
-            currentLogicalRight += inlineItenmWidth;
-            accumulatedWidth += inlineItenmWidth;
+            auto logicalWidth = inlineItemWidth(inlineItem, currentLogicalRight);
+            lineCandidate.inlineContent.appendInlineItem(inlineItem, logicalWidth);
+            currentLogicalRight += logicalWidth;
+            accumulatedWidth += logicalWidth;
             continue;
         }
         if (inlineItem.isWordBreakOpportunity()) {

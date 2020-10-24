@@ -316,11 +316,11 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
 
 void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
-    auto& layoutBox = inlineItem.layoutBox();
-    auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-    auto horizontalMargin = boxGeometry.horizontalMargin();
-    m_runs.append({ inlineItem, contentLogicalWidth() + horizontalMargin.start, logicalWidth });
-    m_contentLogicalWidth += logicalWidth + horizontalMargin.start + horizontalMargin.end;
+    auto& boxGeometry = formattingContext().geometryForBox(inlineItem.layoutBox());
+    // Negative margin start pulls the content to the logical left direction.
+    auto adjustedContentStart = contentLogicalWidth() + std::min(boxGeometry.marginStart(), 0_lu);
+    m_runs.append({ inlineItem, adjustedContentStart, logicalWidth });
+    m_contentLogicalWidth += logicalWidth;
     m_trimmableTrailingContent.reset();
     m_trailingSoftHyphenWidth = { };
 }
