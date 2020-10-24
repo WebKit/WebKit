@@ -57,12 +57,19 @@ public:
     std::unique_ptr<Tree> build(const Layout::LayoutState&) const;
 
 private:
+    struct InsertionPosition {
+        Display::ContainerBox& container;
+        Display::Box* currentChild { nullptr };
+    };
+
     std::unique_ptr<Box> displayBoxForRootBox(const Layout::BoxGeometry&, const Layout::ContainerBox&) const;
     std::unique_ptr<Box> displayBoxForLayoutBox(const Layout::BoxGeometry&, const Layout::Box&, LayoutSize offsetFromRoot) const;
 
-    Box* recursiveBuildDisplayTree(const Layout::LayoutState&, LayoutSize offsetFromRoot, const Layout::Box&, Display::ContainerBox& parentDisplayBox, Display::Box* previousSiblingBox = nullptr) const;
+    void recursiveBuildDisplayTree(const Layout::LayoutState&, LayoutSize offsetFromRoot, const Layout::Box&, InsertionPosition&) const;
 
-    void buildInlineDisplayTree(const Layout::LayoutState&, LayoutSize offsetFromRoot, const Layout::ContainerBox&, Display::ContainerBox& parentDisplayBox) const;
+    void buildInlineDisplayTree(const Layout::LayoutState&, LayoutSize offsetFromRoot, const Layout::ContainerBox&, InsertionPosition&) const;
+    
+    void insert(std::unique_ptr<Box>&&, InsertionPosition&) const;
 
     float m_pixelSnappingFactor { 1 };
 };
