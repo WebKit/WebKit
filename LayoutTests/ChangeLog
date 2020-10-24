@@ -1,3 +1,20 @@
+2020-10-23  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r260276): Unable to click on image and text link at the bottom of https://www.nytimes.com/ article
+        https://bugs.webkit.org/show_bug.cgi?id=218137
+        <rdar://problem/70439526>
+
+        Reviewed by Zalan Bujtas.
+
+        New test. Rebaseline tests affected by the self-painting layer change.
+
+        * compositing/shared-backing/overflow-scroll/previous-sibling-prevents-inclusiveness-expected.txt:
+        * compositing/shared-backing/overflow-scroll/relative-in-clipping-in-scroller-in-clipping-expected.txt:
+        * fast/layers/overflow-scroll-self-painting-expected.html: Added.
+        * fast/layers/overflow-scroll-self-painting.html: Added.
+        * platform/ios-wk2/compositing/shared-backing/overflow-scroll/previous-sibling-prevents-inclusiveness-expected.txt:
+        * platform/ios-wk2/compositing/shared-backing/overflow-scroll/relative-in-clipping-in-scroller-in-clipping-expected.txt:
+
 2020-10-23  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, mark imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analyser-output.html as flaky.
