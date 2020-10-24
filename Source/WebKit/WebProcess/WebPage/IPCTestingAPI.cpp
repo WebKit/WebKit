@@ -364,8 +364,7 @@ template<typename IntegralType> bool encodeNumericType(IPC::Encoder& encoder, JS
     return true;
 }
 
-enum class ArrayMode { Tuple, Vector };
-static bool encodeArgument(IPC::Encoder&, JSIPC&, JSContextRef, JSValueRef, JSValueRef* exception, ArrayMode = ArrayMode::Tuple);
+static bool encodeArgument(IPC::Encoder&, JSIPC&, JSContextRef, JSValueRef, JSValueRef* exception);
 
 struct VectorEncodeHelper {
     Ref<JSIPC> jsIPC;
@@ -378,11 +377,48 @@ struct VectorEncodeHelper {
     {
         if (!success)
             return;
-        success = encodeArgument(encoder, jsIPC.get(), context, valueRef, exception, ArrayMode::Vector);
+        success = encodeArgument(encoder, jsIPC.get(), context, valueRef, exception);
     }
 };
 
-static bool encodeArgument(IPC::Encoder& encoder, JSIPC& jsIPC, JSContextRef context, JSValueRef valueRef, JSValueRef* exception, ArrayMode arrayMode)
+enum class ArrayMode { Tuple, Vector };
+static bool encodeArrayArgument(IPC::Encoder& encoder, JSIPC& jsIPC, ArrayMode arrayMode, JSContextRef context, JSValueRef valueRef, JSValueRef* exception)
+{
+    auto objectRef = JSValueToObject(context, valueRef, exception);
+    ASSERT(objectRef);
+
+    auto* globalObject = toJS(context);
+    auto& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
+    auto* jsObject = toJS(objectRef);
+
+    auto jsLength = jsObject->get(globalObject, JSC::Identifier::fromString(vm, "length"_s));
+    if (scope.exception())
+        return false;
+    if (!jsLength.isNumber()) {
+        *exception = createTypeError(context, "Array length is not a number"_s);
+        return false;
+    }
+    auto length = jsLength.asNumber();
+
+    Vector<VectorEncodeHelper> vector;
+    bool success = true;
+    for (unsigned i = 0; i < length; ++i) {
+        auto itemRef = JSObjectGetPropertyAtIndex(context, objectRef, i, exception);
+        if (!itemRef)
+            return false;
+        vector.append(VectorEncodeHelper { jsIPC, context, itemRef, exception, success });
+    }
+    if (arrayMode == ArrayMode::Tuple) {
+        for (auto& item : vector)
+            item.encode(encoder);
+    } else
+        encoder << vector;
+    return success;
+}
+
+static bool encodeArgument(IPC::Encoder& encoder, JSIPC& jsIPC, JSContextRef context, JSValueRef valueRef, JSValueRef* exception)
 {
     auto objectRef = JSValueToObject(context, valueRef, exception);
     if (!objectRef)
@@ -391,38 +427,15 @@ static bool encodeArgument(IPC::Encoder& encoder, JSIPC& jsIPC, JSContextRef con
     if (auto type = JSValueGetTypedArrayType(context, objectRef, exception); type != kJSTypedArrayTypeNone)
         return encodeTypedArray(encoder, context, objectRef, type, exception);
 
+    if (JSValueIsArray(context, objectRef))
+        return encodeArrayArgument(encoder, jsIPC, ArrayMode::Tuple, context, objectRef, exception);
+
     auto* globalObject = toJS(context);
     auto& vm = globalObject->vm();
     JSC::JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
     auto* jsObject = toJS(globalObject, objectRef).getObject();
     ASSERT(jsObject);
-    if (JSValueIsArray(context, objectRef)) {
-        auto jsLength = jsObject->get(globalObject, JSC::Identifier::fromString(vm, "length"_s));
-        if (scope.exception())
-            return false;
-        if (!jsLength.isNumber()) {
-            *exception = createTypeError(context, "Array length is not a number"_s);
-            return false;
-        }
-        auto length = jsLength.asNumber();
-
-        Vector<VectorEncodeHelper> vector;
-        bool success = true;
-        for (unsigned i = 0; i < length; ++i) {
-            auto itemRef = JSObjectGetPropertyAtIndex(context, objectRef, i, exception);
-            if (!itemRef)
-                return false;
-            vector.append(VectorEncodeHelper { jsIPC, context, itemRef, exception, success });
-        }
-        if (arrayMode == ArrayMode::Tuple) {
-            for (auto& item : vector)
-                item.encode(encoder);
-        } else
-            encoder << vector;
-        return success;
-    }
-
     auto jsType = jsObject->get(globalObject, JSC::Identifier::fromString(vm, "type"_s));
     if (scope.exception())
         return false;
@@ -476,6 +489,14 @@ static bool encodeArgument(IPC::Encoder& encoder, JSIPC& jsIPC, JSContextRef con
     auto jsValue = jsObject->get(globalObject, JSC::Identifier::fromString(vm, "value"_s));
     if (scope.exception())
         return false;
+
+    if (type == "Vector") {
+        if (!jsValue.isObject() || !jsValue.inherits<JSC::JSArray>(vm)) {
+            *exception = createTypeError(context, "Vector value must be an array"_s);
+            return false;
+        }
+        return encodeArrayArgument(encoder, jsIPC, ArrayMode::Vector, context, toRef(globalObject, jsValue), exception);
+    }
 
     if (type == "String") {
         if (jsValue.isUndefinedOrNull()) {

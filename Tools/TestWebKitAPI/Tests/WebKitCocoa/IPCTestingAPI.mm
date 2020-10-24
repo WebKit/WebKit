@@ -222,7 +222,12 @@ TEST(IPCTestingAPI, CanInterceptAlert)
     EXPECT_STREQ([alertMessage UTF8String], "ok");
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"messages = messages.filter((message) => message.name == IPC.messages.WebPageProxy_RunJavaScriptAlert.name); messages.length"].UTF8String, "1");
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"messages[0].description"].UTF8String, "WebPageProxy_RunJavaScriptAlert");
-    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"messages[0].arguments.length"].intValue, 3);
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"args = messages[0].arguments; args.length"].intValue, 3);
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"args[0].type"].UTF8String, "uint64_t");
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"args[0].value"].intValue, [webView stringByEvaluatingJavaScript:@"IPC.frameID.toString()"].intValue);
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"args[1] instanceof ArrayBuffer"].boolValue, YES);
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"args[2].type"].UTF8String, "String");
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"args[2].value"].UTF8String, "ok");
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"typeof(messages[0].syncRequestID)"].UTF8String, "number");
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"messages[0].destinationID"].intValue,
         [webView stringByEvaluatingJavaScript:@"IPC.webPageProxyID.toString()"].intValue);

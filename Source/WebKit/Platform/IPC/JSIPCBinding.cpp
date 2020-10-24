@@ -189,6 +189,22 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, c
     return jsValueForDecodedArgumentRect(globalObject, value, "FloatRect");
 }
 
+bool putJSValueForDecodedArgumentAtIndexOrArrayBufferIfUndefined(JSC::JSGlobalObject* globalObject, JSC::JSArray* array, unsigned index, JSC::JSValue value, const uint8_t* buffer, size_t length)
+{
+    auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
+
+    if (value.isUndefined()) {
+        auto arrayBuffer = JSC::ArrayBuffer::create(buffer, length);
+        if (auto* structure = globalObject->arrayBufferStructure(arrayBuffer->sharingMode()))
+            value = JSC::JSArrayBuffer::create(globalObject->vm(), structure, WTFMove(arrayBuffer));
+    }
+
+    array->putDirectIndex(globalObject, index, value);
+    RETURN_IF_EXCEPTION(scope, false);
+
+    return true;
+}
+
 }
 
 #endif

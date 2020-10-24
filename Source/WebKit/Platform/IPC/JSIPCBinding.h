@@ -30,6 +30,7 @@
 #include "Decoder.h"
 #include "HandleMessage.h"
 #include <JavaScriptCore/JSArray.h>
+#include <JavaScriptCore/JSArrayBuffer.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/ObjectConstructor.h>
@@ -107,51 +108,45 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, c
     return result;
 }
 
-template<size_t remainingSize, typename... Elements>
-struct DecodedArgumentJSValueConverter {
-    static bool convert(JSC::JSGlobalObject* globalObject, JSC::JSArray* array, const std::tuple<Elements...>& tuple)
-    {
-        auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
-
-        auto jsValue = jsValueForDecodedArgumentValue(globalObject, std::get<sizeof...(Elements) - remainingSize>(tuple));
-        if (jsValue.isEmpty())
-            return false;
-
-        unsigned index = sizeof...(Elements) - remainingSize;
-        array->putDirectIndex(globalObject, index, jsValue);
-        RETURN_IF_EXCEPTION(scope, false);
-
-        return DecodedArgumentJSValueConverter<remainingSize - 1, Elements...>::convert(globalObject, array, tuple);
-    }
-};
+bool putJSValueForDecodedArgumentAtIndexOrArrayBufferIfUndefined(JSC::JSGlobalObject*, JSC::JSArray*, unsigned index, JSC::JSValue, const uint8_t* buffer, size_t length);
 
 template<typename... Elements>
-struct DecodedArgumentJSValueConverter<0, Elements...> {
-    static bool convert(JSC::JSGlobalObject*, JSC::JSArray*, const std::tuple<Elements...>&)
-    {
-        return true;
-    }
-};
+Optional<JSC::JSValue> putJSValueForDecodeArgumentInArray(JSC::JSGlobalObject*, IPC::Decoder&, JSC::JSArray*, size_t currentIndex, std::tuple<Elements...>*);
 
-template<typename... Elements>
-static JSC::JSValue jsValueForArgumentTuple(JSC::JSGlobalObject* globalObject, const std::tuple<Elements...>& tuple)
+template<>
+inline Optional<JSC::JSValue> putJSValueForDecodeArgumentInArray(JSC::JSGlobalObject* globalObject, IPC::Decoder& decoder, JSC::JSArray* array, size_t currentIndex, std::tuple<>*)
 {
-    auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
-    auto* array = JSC::constructEmptyArray(globalObject, nullptr);
-    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    if (!DecodedArgumentJSValueConverter<sizeof...(Elements), Elements...>::convert(globalObject, array, tuple))
-        return JSC::JSValue();
-    return JSC::JSValue(array);
+    return JSC::JSValue { array };
+}
+
+template<typename T, typename... Elements>
+Optional<JSC::JSValue> putJSValueForDecodeArgumentInArray(JSC::JSGlobalObject* globalObject, IPC::Decoder& decoder, JSC::JSArray* array, size_t currentIndex, std::tuple<T, Elements...>*)
+{
+    auto startingBufferPosition = decoder.currentBufferPosition();
+    Optional<T> value;
+    decoder >> value;
+    if (!value)
+        return WTF::nullopt;
+
+    auto jsValue = jsValueForDecodedArgumentValue(globalObject, *value);
+    if (jsValue.isEmpty())
+        return jsValue;
+
+    putJSValueForDecodedArgumentAtIndexOrArrayBufferIfUndefined(globalObject, array, currentIndex, jsValue,
+        decoder.buffer() + startingBufferPosition, decoder.currentBufferPosition() - startingBufferPosition);
+
+    std::tuple<Elements...>* dummyArguments = nullptr;
+    return putJSValueForDecodeArgumentInArray<Elements...>(globalObject, decoder, array, currentIndex + 1, dummyArguments);
 }
 
 template<typename T>
 static Optional<JSC::JSValue> jsValueForDecodedArguments(JSC::JSGlobalObject* globalObject, IPC::Decoder& decoder)
 {
-    Optional<typename IPC::CodingType<T>::Type> arguments;
-    decoder >> arguments;
-    if (!arguments)
-        return WTF::nullopt;
-    return jsValueForArgumentTuple(globalObject, *arguments);
+    auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
+    auto* array = JSC::constructEmptyArray(globalObject, nullptr);
+    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
+    typename IPC::CodingType<T>::Type* dummyArguments = nullptr;
+    return putJSValueForDecodeArgumentInArray<>(globalObject, decoder, array, 0, dummyArguments);
 }
 
 }
