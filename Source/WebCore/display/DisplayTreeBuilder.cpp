@@ -95,19 +95,31 @@ void TreeBuilder::buildInlineDisplayTree(const Layout::LayoutState& layoutState,
     auto& inlineFormattingState = layoutState.establishedInlineFormattingState(inlineFormattingRoot);
 
     for (auto& run : inlineFormattingState.lineRuns()) {
-        auto& lineGeometry = inlineFormattingState.lines().at(run.lineIndex());
+        if (run.text()) {
+            auto& lineGeometry = inlineFormattingState.lines().at(run.lineIndex());
 
-        auto lineRect = lineGeometry.logicalRect();
-        auto lineLayoutRect = LayoutRect { lineRect.left(), lineRect.top(), lineRect.width(), lineRect.height() };
+            auto lineRect = lineGeometry.logicalRect();
+            auto lineLayoutRect = LayoutRect { lineRect.left(), lineRect.top(), lineRect.width(), lineRect.height() };
 
-        auto runRect = LayoutRect { run.logicalLeft(), run.logicalTop(), run.logicalWidth(), run.logicalHeight() };
-        runRect.moveBy(lineLayoutRect.location());
-        runRect.move(offsetFromRoot);
+            auto runRect = LayoutRect { run.logicalLeft(), run.logicalTop(), run.logicalWidth(), run.logicalHeight() };
+            runRect.moveBy(lineLayoutRect.location());
+            runRect.move(offsetFromRoot);
 
-        auto style = Style { run.layoutBox().style() };
-        auto textBox = makeUnique<TextBox>(snapRectToDevicePixels(runRect, m_pixelSnappingFactor), WTFMove(style), run);
+            auto style = Style { run.layoutBox().style() };
+            auto textBox = makeUnique<TextBox>(snapRectToDevicePixels(runRect, m_pixelSnappingFactor), WTFMove(style), run);
 
-        insert(WTFMove(textBox), insertionPosition);
+            insert(WTFMove(textBox), insertionPosition);
+            continue;
+        }
+
+        if (is<Layout::ContainerBox>(run.layoutBox())) {
+            recursiveBuildDisplayTree(layoutState, offsetFromRoot, run.layoutBox(), insertionPosition);
+            continue;
+        }
+
+        auto geometry = layoutState.geometryForBox(run.layoutBox());
+        auto displayBox = displayBoxForLayoutBox(geometry, run.layoutBox(), offsetFromRoot);
+        insert(WTFMove(displayBox), insertionPosition);
     }
 }
 
