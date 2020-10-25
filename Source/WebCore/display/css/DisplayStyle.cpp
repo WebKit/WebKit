@@ -29,21 +29,43 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "BorderData.h"
+#include "FillLayer.h"
 #include "RenderStyle.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 namespace Display {
 
+static RefPtr<FillLayer> deepCopy(const FillLayer& layer)
+{
+    RefPtr<FillLayer> firstLayer;
+    FillLayer* currCopiedLayer = nullptr;
+
+    for (auto* currLayer = &layer; currLayer; currLayer = currLayer->next()) {
+        RefPtr<FillLayer> layerCopy = currLayer->copy();
+
+        if (!firstLayer) {
+            firstLayer = layerCopy;
+            currCopiedLayer = layerCopy.get();
+        } else {
+            auto nextCopiedLayer = layerCopy.get();
+            currCopiedLayer->setNext(WTFMove(layerCopy));
+            currCopiedLayer = nextCopiedLayer;
+        }
+    }
+    return firstLayer;
+}
+
 Style::Style(const RenderStyle& style)
     : m_fontCascade(style.fontCascade())
     , m_whiteSpace(style.whiteSpace())
     , m_tabSize(style.tabSize())
 {
-    // FIXME: Is currentColor resovled here?
+    // FIXME: Is currentColor resolved here?
     m_color = style.visitedDependentColorWithColorFilter(CSSPropertyColor);
 
     m_backgroundColor = style.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+    m_backgroundLayers = deepCopy(style.backgroundLayers());
 
     const auto& borderData = style.border();
     
@@ -70,6 +92,11 @@ Style::Style(const RenderStyle& style)
 bool Style::hasBackground() const
 {
     return m_backgroundColor.isVisible() || hasBackgroundImage();
+}
+
+bool Style::hasBackgroundImage() const
+{
+    return m_backgroundLayers && m_backgroundLayers->hasImage();
 }
 
 bool Style::hasVisibleBorder() const

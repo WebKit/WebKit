@@ -32,17 +32,34 @@
 namespace WebCore {
 namespace Display {
 
+class BoxDecorationData;
+
 // A box in the sense of the CSS Box Model.
 // This box can draw backgrounds and borders.
 class BoxModelBox : public Box {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BoxModelBox);
 public:
     BoxModelBox(AbsoluteFloatRect borderBox, Style&&, OptionSet<Flags> = { });
-    virtual ~BoxModelBox() = default;
+    virtual ~BoxModelBox();
 
     AbsoluteFloatRect absoluteBorderBoxRect() const { return absoluteBoxRect(); }
 
+    AbsoluteFloatRect absolutePaddingBoxRect() const { return m_paddingBoxRect; }
+    void setAbsolutePaddingBoxRect(const AbsoluteFloatRect& box) { m_paddingBoxRect = box; }
+
+    AbsoluteFloatRect absoluteContentBoxRect() const { return m_contentBoxRect; }
+    void setAbsoluteContentBoxRect(const AbsoluteFloatRect& box) { m_contentBoxRect = box; }
+
+    const BoxDecorationData* boxDecorationData() const { return m_boxDecorationData.get(); }
+    void setBoxDecorationData(std::unique_ptr<BoxDecorationData>&&);
+
     virtual String debugDescription() const;
+
+private:
+    AbsoluteFloatRect m_paddingBoxRect;
+    AbsoluteFloatRect m_contentBoxRect;
+
+    std::unique_ptr<BoxDecorationData> m_boxDecorationData;
 };
 
 } // namespace Display

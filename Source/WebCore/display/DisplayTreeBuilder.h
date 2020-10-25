@@ -65,6 +65,8 @@ private:
     std::unique_ptr<Box> displayBoxForRootBox(const Layout::BoxGeometry&, const Layout::ContainerBox&) const;
     std::unique_ptr<Box> displayBoxForLayoutBox(const Layout::BoxGeometry&, const Layout::Box&, LayoutSize offsetFromRoot) const;
 
+    void computeBoxDecorationData(BoxModelBox&, const Layout::Box&, const Layout::BoxGeometry&, LayoutSize offsetFromRoot) const;
+
     void recursiveBuildDisplayTree(const Layout::LayoutState&, LayoutSize offsetFromRoot, const Layout::Box&, InsertionPosition&) const;
 
     void buildInlineDisplayTree(const Layout::LayoutState&, LayoutSize offsetFromRoot, const Layout::ContainerBox&, InsertionPosition&) const;

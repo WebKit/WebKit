@@ -32,11 +32,13 @@
 
 namespace WebCore {
 
+class FillLayer;
 class GraphicsContext;
 class IntRect;
 
 namespace Display {
 
+class FillLayerImageGeometry;
 class Box;
 class BoxModelBox;
 class ContainerBox;
@@ -52,6 +54,8 @@ public:
 private:
     static void paintBox(const Box&, GraphicsContext&, const IntRect& dirtyRect);
     static void paintBoxDecorations(const BoxModelBox&, GraphicsContext&);
+    static void paintBackgroundImages(const BoxModelBox&, GraphicsContext&);
+    static void paintFillLayer(const BoxModelBox&, const FillLayer&, const FillLayerImageGeometry&, GraphicsContext&);
     static void paintBoxContent(const Box&, GraphicsContext&);
 
     enum class PaintPhase {

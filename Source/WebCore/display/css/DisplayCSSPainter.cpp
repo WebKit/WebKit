@@ -30,31 +30,112 @@
 
 #include "CachedImage.h"
 #include "Color.h"
+#include "DisplayBoxDecorationData.h"
 #include "DisplayContainerBox.h"
+#include "DisplayFillLayerImageGeometry.h"
 #include "DisplayImageBox.h"
 #include "DisplayStyle.h"
 #include "DisplayTextBox.h"
 #include "DisplayTree.h"
+#include "FillLayer.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
+#include "LayoutPoint.h"
 #include "LayoutState.h"
 #include "TextRun.h"
 
 namespace WebCore {
 namespace Display {
 
-void CSSPainter::paintBoxDecorations(const BoxModelBox& displayBox, GraphicsContext& context)
+void CSSPainter::paintFillLayer(const BoxModelBox& box, const FillLayer& layer, const FillLayerImageGeometry& geometry, GraphicsContext& context)
+{
+    GraphicsContextStateSaver stateSaver(context, false);
+
+    auto clipRectForLayer = [](const BoxModelBox& box, const FillLayer& layer) {
+        switch (layer.clip()) {
+        case FillBox::Border:
+            return box.absoluteBorderBoxRect();
+        case FillBox::Padding:
+            return box.absolutePaddingBoxRect();
+        case FillBox::Content:
+            return box.absoluteContentBoxRect();
+        case FillBox::Text:
+            break;
+        }
+        return AbsoluteFloatRect();
+    };
+
+    switch (layer.clip()) {
+    case FillBox::Border:
+    case FillBox::Padding:
+    case FillBox::Content: {
+        stateSaver.save();
+        context.clip(clipRectForLayer(box, layer));
+        break;
+    }
+    case FillBox::Text:
+        break;
+    }
+
+    // FIXME: Handle background compositing modes.
+
+    auto* backgroundImage = layer.image();
+    CompositeOperator op = CompositeOperator::SourceOver;
+
+    if (geometry.destRect().isEmpty())
+        return;
+
+    auto image = backgroundImage->image(nullptr, geometry.tileSize());
+    if (!image)
+        return;
+
+    // FIXME: call image->updateFromSettings().
+
+    ImagePaintingOptions options = {
+        op == CompositeOperator::SourceOver ? layer.composite() : op,
+        layer.blendMode(),
+        DecodingMode::Synchronous,
+        ImageOrientation::FromImage,
+        InterpolationQuality::Default
+    };
+
+    context.drawTiledImage(*image, geometry.destRect(), toFloatPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), options);
+}
+
+void CSSPainter::paintBackgroundImages(const BoxModelBox& box, GraphicsContext& context)
+{
+    const auto& style = box.style();
+
+    Vector<const FillLayer*, 8> layers;
+
+    for (auto* layer = style.backgroundLayers(); layer; layer = layer->next())
+        layers.append(layer);
+
+    auto* boxDecorationData = box.boxDecorationData();
+    ASSERT(boxDecorationData);
+
+    auto& layerGeometryList = boxDecorationData->backgroundImageGeometry();
+
+    for (int i = layers.size() - 1; i >=0; --i) {
+        const auto* layer = layers[i];
+        const auto& geometry = layerGeometryList[i];
+        paintFillLayer(box, *layer, geometry, context);
+    }
+}
+
+void CSSPainter::paintBoxDecorations(const BoxModelBox& box, GraphicsContext& context)
 {
     // FIXME: Table decoration painting is special.
 
-    auto borderBoxRect = displayBox.absoluteBorderBoxRect();
-    
-    const auto& style = displayBox.style();
+    auto borderBoxRect = box.absoluteBorderBoxRect();
+
+    const auto& style = box.style();
 
     // Background color
     if (style.hasBackground()) {
         context.fillRect(borderBoxRect, style.backgroundColor());
-        // FIXME: Paint background image.
+        if (style.hasBackgroundImage())
+            paintBackgroundImages(box, context);
     }
 
     // Border

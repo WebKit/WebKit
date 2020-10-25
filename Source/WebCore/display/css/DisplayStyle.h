@@ -39,6 +39,7 @@
 
 namespace WebCore {
 
+class FillLayer;
 class RenderStyle;
 
 namespace Display {
@@ -46,7 +47,7 @@ namespace Display {
 // Style information needed to paint a Display::Box.
 // All colors should be resolved to their painted values [visitedDependentColorWithColorFilter()].
 // Should contain only absolute float values; no Lengths (which can contain calc values).
-
+// Should be sharable between boxes with different geometry but the same style.
 class Style {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Style);
 public:
@@ -62,7 +63,9 @@ public:
 
     const Color& backgroundColor() const { return m_backgroundColor; }
     bool hasBackground() const;
-    bool hasBackgroundImage() const { return false; } // FIXME
+    bool hasBackgroundImage() const;
+
+    const FillLayer* backgroundLayers() const { return m_backgroundLayers.get(); }
 
     bool hasVisibleBorder() const;
     const BorderValue& borderLeft() const { return m_border.left; }
@@ -94,6 +97,8 @@ private:
 
     Color m_color;
     Color m_backgroundColor;
+
+    RefPtr<FillLayer> m_backgroundLayers;
 
     struct {
         BorderValue left;

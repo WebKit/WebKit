@@ -49,7 +49,7 @@ public:
     };
 
     Box(AbsoluteFloatRect, Style&&, OptionSet<Flags> = { });
-    virtual ~Box() = default;
+    virtual ~Box();
 
     const Style& style() const { return m_style; }
 

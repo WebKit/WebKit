@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "DisplayBoxDecorationData.h"
 #include "DisplayContainerBox.h"
 #include "DisplayImageBox.h"
 #include "DisplayStyle.h"
@@ -123,6 +124,28 @@ void TreeBuilder::buildInlineDisplayTree(const Layout::LayoutState& layoutState,
     }
 }
 
+// FIXME: This should happen as part of Display::Box creation.
+void TreeBuilder::computeBoxDecorationData(BoxModelBox& box, const Layout::Box& layoutBox, const Layout::BoxGeometry& geometry, LayoutSize offsetFromRoot) const
+{
+    auto borderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(geometry) };
+    borderBoxRect.move(offsetFromRoot);
+
+    auto paddingBoxRect = LayoutRect { geometry.paddingBox() };
+    paddingBoxRect.moveBy(borderBoxRect.location());
+    box.setAbsolutePaddingBoxRect(snapRectToDevicePixels(paddingBoxRect, m_pixelSnappingFactor));
+
+    auto contentBoxRect = LayoutRect { geometry.contentBox() };
+    contentBoxRect.moveBy(borderBoxRect.location());
+    box.setAbsoluteContentBoxRect(snapRectToDevicePixels(contentBoxRect, m_pixelSnappingFactor));
+
+    // FIXME: Check for rounded borders when supported.
+    if (!box.style().hasBackground())
+        return;
+
+    auto boxDecorationData = BoxDecorationData::create(box, layoutBox, geometry, offsetFromRoot, m_pixelSnappingFactor);
+    box.setBoxDecorationData(WTFMove(boxDecorationData));
+}
+
 void TreeBuilder::recursiveBuildDisplayTree(const Layout::LayoutState& layoutState, LayoutSize offsetFromRoot, const Layout::Box& box, InsertionPosition& insertionPosition) const
 {
     auto geometry = layoutState.geometryForBox(box);
@@ -187,12 +210,15 @@ std::unique_ptr<Box> TreeBuilder::displayBoxForLayoutBox(const Layout::BoxGeomet
         if (auto* cachedImage = downcast<Layout::ReplacedBox>(layoutBox).cachedImage())
             imageBox->setImage(cachedImage->image());
 
+        computeBoxDecorationData(*imageBox, layoutBox, geometry, offsetFromRoot);
         return imageBox;
     }
     
     if (is<Layout::ContainerBox>(layoutBox)) {
         // FIXME: The decision to make a ContainerBox should be made based on whether this Display::Box will have children.
-        return makeUnique<ContainerBox>(pixelSnappedBorderBoxRect, WTFMove(style));
+        auto containerBox = makeUnique<ContainerBox>(pixelSnappedBorderBoxRect, WTFMove(style));
+        computeBoxDecorationData(*containerBox, layoutBox, geometry, offsetFromRoot);
+        return containerBox;
     }
 
     return makeUnique<Box>(snapRectToDevicePixels(borderBoxRect, m_pixelSnappingFactor), WTFMove(style));

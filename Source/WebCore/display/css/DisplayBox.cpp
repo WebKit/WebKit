@@ -41,6 +41,8 @@ Box::Box(AbsoluteFloatRect absoluteRect, Style&& displayStyle, OptionSet<Flags> 
 {
 }
 
+Box::~Box() = default;
+
 void Box::setNextSibling(std::unique_ptr<Box>&& box)
 {
     m_nextSibling = WTFMove(box);
