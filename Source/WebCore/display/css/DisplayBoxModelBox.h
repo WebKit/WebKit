@@ -43,19 +43,19 @@ public:
     virtual ~BoxModelBox();
 
     AbsoluteFloatRect absoluteBorderBoxRect() const { return absoluteBoxRect(); }
-
     AbsoluteFloatRect absolutePaddingBoxRect() const { return m_paddingBoxRect; }
-    void setAbsolutePaddingBoxRect(const AbsoluteFloatRect& box) { m_paddingBoxRect = box; }
-
     AbsoluteFloatRect absoluteContentBoxRect() const { return m_contentBoxRect; }
-    void setAbsoluteContentBoxRect(const AbsoluteFloatRect& box) { m_contentBoxRect = box; }
 
     const BoxDecorationData* boxDecorationData() const { return m_boxDecorationData.get(); }
-    void setBoxDecorationData(std::unique_ptr<BoxDecorationData>&&);
 
     virtual String debugDescription() const;
 
 private:
+    friend class BoxFactory;
+    void setAbsolutePaddingBoxRect(const AbsoluteFloatRect& box) { m_paddingBoxRect = box; }
+    void setAbsoluteContentBoxRect(const AbsoluteFloatRect& box) { m_contentBoxRect = box; }
+    void setBoxDecorationData(std::unique_ptr<BoxDecorationData>&&);
+
     AbsoluteFloatRect m_paddingBoxRect;
     AbsoluteFloatRect m_contentBoxRect;
 

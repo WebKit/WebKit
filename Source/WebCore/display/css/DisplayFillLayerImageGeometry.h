@@ -29,6 +29,7 @@
 
 #include "FloatRect.h"
 #include "LayoutRect.h"
+#include "RenderStyleConstants.h"
 
 namespace WebCore {
 class FillLayer;
@@ -79,7 +80,7 @@ private:
     bool m_hasNonLocalGeometry { false }; // Has background-attachment: fixed. Implies that we can't always cheaply compute destRect.
 };
 
-Vector<FillLayerImageGeometry, 1> calculateFillLayerImageGeometry(const Box&, const Layout::Box&, const Layout::BoxGeometry&, LayoutSize offsetFromRoot, float pixelSnappingFactor);
+Vector<FillLayerImageGeometry, 1> calculateFillLayerImageGeometry(const Layout::Box&, const Layout::BoxGeometry&, LayoutSize offsetFromRoot, float pixelSnappingFactor);
 
 } // namespace Display
 } // namespace WebCore

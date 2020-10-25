@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "DisplayBox.h"
+#include "DisplayBoxDecorationData.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
@@ -34,19 +34,8 @@
 namespace WebCore {
 namespace Display {
 
-std::unique_ptr<BoxDecorationData> BoxDecorationData::create(const Box& displayBox, const Layout::Box& layoutBox, const Layout::BoxGeometry& layoutGeometry, LayoutSize offsetFromRoot, float pixelSnappingFactor)
-{
-    auto backgroundImageGeometry = calculateFillLayerImageGeometry(displayBox, layoutBox, layoutGeometry, offsetFromRoot, pixelSnappingFactor);
-
-    auto boxDecorationData = makeUnique<BoxDecorationData>();
-    boxDecorationData->setBackgroundImageGeometry(backgroundImageGeometry);
-
-    // FIXME: Compute rounded border rect.
-
-    return boxDecorationData;
-}
-
 BoxDecorationData::BoxDecorationData() = default;
+
 
 } // namespace Display
 } // namespace WebCore

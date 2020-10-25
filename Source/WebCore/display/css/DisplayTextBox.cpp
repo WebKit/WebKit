@@ -37,7 +37,7 @@ namespace Display {
 TextBox::TextBox(AbsoluteFloatRect borderBox, Style&& displayStyle, const Layout::LineRun& lineRun)
     : Box(borderBox, WTFMove(displayStyle), { Flags::TextBox })
     , m_expansion(lineRun.expansion())
-    , m_text(lineRun.text())
+    , m_text(lineRun.text().value())
 {
 }
 
@@ -46,17 +46,15 @@ String TextBox::debugDescription() const
     TextStream stream;
 
     stream << "text box " << absoluteBoxRect() << " (" << this << ")";
-    if (text()) {
-        auto textContent = text()->content().substring(text()->start(), text()->length());
-        textContent.replaceWithLiteral('\\', "\\\\");
-        textContent.replaceWithLiteral('\n', "\\n");
-        const size_t maxPrintedLength = 80;
-        if (textContent.length() > maxPrintedLength) {
-            auto substring = textContent.substring(0, maxPrintedLength);
-            stream << " \"" << substring << "\"…";
-        } else
-            stream << " \"" << textContent << "\"";
-    }
+    auto textContent = text().content().substring(text().start(), text().length());
+    textContent.replaceWithLiteral('\\', "\\\\");
+    textContent.replaceWithLiteral('\n', "\\n");
+    const size_t maxPrintedLength = 80;
+    if (textContent.length() > maxPrintedLength) {
+        auto substring = textContent.substring(0, maxPrintedLength);
+        stream << " \"" << substring << "\"…";
+    } else
+        stream << " \"" << textContent << "\"";
     
     return stream.release();
 }

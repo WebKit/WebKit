@@ -47,7 +47,6 @@ void BoxModelBox::setBoxDecorationData(std::unique_ptr<BoxDecorationData>&& deco
     m_boxDecorationData = WTFMove(decorationData);
 }
 
-
 String BoxModelBox::debugDescription() const
 {
     TextStream stream;

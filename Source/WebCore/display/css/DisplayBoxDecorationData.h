@@ -44,8 +44,6 @@ namespace Display {
 class BoxDecorationData {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BoxDecorationData);
 public:
-    static std::unique_ptr<BoxDecorationData> create(const Box&, const Layout::Box&, const Layout::BoxGeometry&, LayoutSize offsetFromRoot, float pixelSnappingFactor);
-
     BoxDecorationData();
 
     const Vector<FillLayerImageGeometry, 1> backgroundImageGeometry() const { return m_backgroundImageGeometry; }

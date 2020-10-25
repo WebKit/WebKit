@@ -374,7 +374,7 @@ static FillLayerImageGeometry geometryForLayer(const FillLayer& fillLayer, Layou
     return pixelSnappedFillLayerImageGeometry(destinationRect, tileSize, phase, spaceSize, fillLayer.attachment(), pixelSnappingFactor);
 }
 
-Vector<FillLayerImageGeometry, 1> calculateFillLayerImageGeometry(const Box&, const Layout::Box& layoutBox, const Layout::BoxGeometry& boxGeometry, LayoutSize offsetFromRoot, float pixelSnappingFactor)
+Vector<FillLayerImageGeometry, 1> calculateFillLayerImageGeometry(const Layout::Box& layoutBox, const Layout::BoxGeometry& boxGeometry, LayoutSize offsetFromRoot, float pixelSnappingFactor)
 {
     auto& renderStyle = layoutBox.style();
 

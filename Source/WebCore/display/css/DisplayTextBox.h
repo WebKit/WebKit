@@ -40,14 +40,14 @@ public:
     TextBox(AbsoluteFloatRect borderBox, Style&&, const Layout::LineRun&);
 
     Layout::LineRun::Expansion expansion() const { return m_expansion; }
-    Optional<Layout::LineRun::Text> text() const {return m_text; }
+    const Layout::LineRun::Text& text() const { return m_text; }
 
 private:
 
     String debugDescription() const final;
     
     Layout::LineRun::Expansion m_expansion;
-    Optional<Layout::LineRun::Text> m_text;
+    Layout::LineRun::Text m_text;
 };
 
 } // namespace Display

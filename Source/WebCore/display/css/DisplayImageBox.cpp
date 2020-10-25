@@ -34,14 +34,10 @@
 namespace WebCore {
 namespace Display {
 
-ImageBox::ImageBox(AbsoluteFloatRect borderBox, Style&& displayStyle, AbsoluteFloatRect replacedContentRect)
-    : ReplacedBox(borderBox, WTFMove(displayStyle), { Flags::ImageBox }, replacedContentRect)
+ImageBox::ImageBox(AbsoluteFloatRect borderBox, Style&& displayStyle, RefPtr<Image>&& image)
+    : ReplacedBox(borderBox, WTFMove(displayStyle), { Flags::ImageBox })
+    , m_image(WTFMove(image))
 {
-}
-
-void ImageBox::setImage(Image* image)
-{
-    m_image = image;
 }
 
 String ImageBox::debugDescription() const

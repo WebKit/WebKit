@@ -202,8 +202,6 @@ void CSSPainter::paintBoxContent(const Box& box, GraphicsContext& context)
     
     if (is<TextBox>(box)) {
         auto& textBox = downcast<TextBox>(box);
-        if (!textBox.text())
-            return;
 
         auto& style = box.style();
         auto textRect = box.absoluteBoxRect();
@@ -215,7 +213,7 @@ void CSSPainter::paintBoxContent(const Box& box, GraphicsContext& context)
         auto baseline = textRect.y() + style.fontMetrics().ascent();
         auto expansion = textBox.expansion();
 
-        auto textRun = TextRun { textBox.text()->content().substring(textBox.text()->start(), textBox.text()->length()), textRect.x(), expansion.horizontalExpansion, expansion.behavior };
+        auto textRun = TextRun { textBox.text().content().substring(textBox.text().start(), textBox.text().length()), textRect.x(), expansion.horizontalExpansion, expansion.behavior };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         context.drawText(style.fontCascade(), textRun, { textRect.x(), baseline });
         

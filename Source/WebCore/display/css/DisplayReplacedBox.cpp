@@ -33,9 +33,8 @@
 namespace WebCore {
 namespace Display {
 
-ReplacedBox::ReplacedBox(AbsoluteFloatRect borderBox, Style&& displayStyle, OptionSet<Flags> flags, AbsoluteFloatRect replacedContentRect)
+ReplacedBox::ReplacedBox(AbsoluteFloatRect borderBox, Style&& displayStyle, OptionSet<Flags> flags)
     : BoxModelBox(borderBox, WTFMove(displayStyle), flags)
-    , m_replacedContentRect(replacedContentRect)
 {
 }
 

@@ -40,10 +40,9 @@ class Style;
 class ImageBox : public ReplacedBox {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ImageBox);
 public:
-    ImageBox(AbsoluteFloatRect borderBox, Style&&, AbsoluteFloatRect replacedContentRect);
-    
+    ImageBox(AbsoluteFloatRect borderBox, Style&&, RefPtr<Image>&&);
+
     Image* image() const { return m_image.get(); }
-    void setImage(Image*);
 
 private:
     String debugDescription() const final;
