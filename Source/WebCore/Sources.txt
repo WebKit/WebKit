@@ -816,6 +816,7 @@ display/css/DisplayBox.cpp
 display/css/DisplayBoxDecorationData.cpp
 display/css/DisplayBoxFactory.cpp
 display/css/DisplayBoxModelBox.cpp
+display/css/DisplayBoxPainter.cpp
 display/css/DisplayContainerBox.cpp
 display/css/DisplayCSSPainter.cpp
 display/css/DisplayFillLayerImageGeometry.cpp

@@ -47,17 +47,9 @@ class Tree;
 class CSSPainter {
 public:
     static void paintStackingContext(const BoxModelBox&, GraphicsContext&, const IntRect& dirtyRect);
-    
     static void paintTree(const Tree&, GraphicsContext&, const IntRect& dirtyRect);
 
-
 private:
-    static void paintBox(const Box&, GraphicsContext&, const IntRect& dirtyRect);
-    static void paintBoxDecorations(const BoxModelBox&, GraphicsContext&);
-    static void paintBackgroundImages(const BoxModelBox&, GraphicsContext&);
-    static void paintFillLayer(const BoxModelBox&, const FillLayer&, const FillLayerImageGeometry&, GraphicsContext&);
-    static void paintBoxContent(const Box&, GraphicsContext&);
-
     enum class PaintPhase {
         BlockBackgrounds,
         Floats,
