@@ -15,7 +15,8 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSS-namespace-object-class-string.html
-/LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSS.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSCounterStyleRule.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSFontFaceRule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSGroupingRule-cssRules.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSGroupingRule-insertRule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSKeyframeRule.html
@@ -104,6 +105,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-logical-enumeration.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-property-order.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-pseudo.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-resolved-colors.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-resolved-min-max-clamping.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-sticky-pos-percent.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-width-scroll.tentative.html
@@ -121,11 +123,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/medialist-dynamic-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/medialist-interfaces-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/medialist-interfaces-002.html
-/LayoutTests/imported/w3c/web-platform-tests/css/cssom/medialist-interfaces-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/medialist-interfaces-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/mediaquery-sort-dedup.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/overflow-serialization.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/preferred-stylesheet-order.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/preferred-stylesheet-reversed-order.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/removerule-invalidation-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/rule-restrictions.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/selectorSerialize.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/selectorText-modification-restyle-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/selectorText-modification-restyle-001.html

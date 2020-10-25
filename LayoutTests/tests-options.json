@@ -689,6 +689,9 @@
     "imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-subframe-window.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/cssom/idlharness.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements.html": [
         "slow"
     ],

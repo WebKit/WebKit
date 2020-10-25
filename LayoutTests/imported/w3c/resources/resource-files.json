@@ -783,6 +783,7 @@
         "web-platform-tests/css/css-writing-modes/vertical-alignment-vrl-018.xht",
         "web-platform-tests/css/css-writing-modes/vertical-alignment-vrl-020.xht",
         "web-platform-tests/css/cssom-view/iframe.html",
+        "web-platform-tests/css/cssom/removerule-invalidation-crash.html",
         "web-platform-tests/css/cssom/support/xmlss-pi.xhtml",
         "web-platform-tests/css/mediaqueries/media-queries-001.xht",
         "web-platform-tests/css/mediaqueries/media-queries-002.xht",

@@ -1,0 +1,3 @@
+
+FAIL CSSCounterStyleRule.cssText doesn't serialize with newlines undefined is not an object (evaluating 'rule.cssText')
+

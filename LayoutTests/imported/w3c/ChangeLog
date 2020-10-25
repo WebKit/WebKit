@@ -1,3 +1,36 @@
+2020-10-25  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Update CSSOM WPT tests.
+        https://bugs.webkit.org/show_bug.cgi?id=218157
+
+        Reviewed by Simon Fraser.
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/cssom/CSS.html: Removed.
+        * web-platform-tests/css/cssom/CSSCounterStyleRule-expected.txt: Added.
+        * web-platform-tests/css/cssom/CSSCounterStyleRule.html: Added.
+        * web-platform-tests/css/cssom/CSSFontFaceRule-expected.txt: Added.
+        * web-platform-tests/css/cssom/CSSFontFaceRule.html: Added.
+        * web-platform-tests/css/cssom/CSSStyleSheet-constructable-disallow-import.tentative-expected.txt:
+        * web-platform-tests/css/cssom/CSSStyleSheet-constructable-disallow-import.tentative.html:
+        * web-platform-tests/css/cssom/css-style-attr-decl-block.html:
+        * web-platform-tests/css/cssom/cssimportrule.html:
+        * web-platform-tests/css/cssom/escape.html:
+        * web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * web-platform-tests/css/cssom/getComputedStyle-detached-subtree.html:
+        * web-platform-tests/css/cssom/getComputedStyle-resolved-colors-expected.txt: Added.
+        * web-platform-tests/css/cssom/getComputedStyle-resolved-colors.html: Added.
+        * web-platform-tests/css/cssom/medialist-interfaces-003-expected.txt: Removed.
+        * web-platform-tests/css/cssom/medialist-interfaces-003.html: Removed.
+        * web-platform-tests/css/cssom/mediaquery-sort-dedup-expected.txt: Added.
+        * web-platform-tests/css/cssom/mediaquery-sort-dedup.html: Added.
+        * web-platform-tests/css/cssom/removerule-invalidation-crash.html: Added.
+        * web-platform-tests/css/cssom/rule-restrictions-expected.txt: Added.
+        * web-platform-tests/css/cssom/rule-restrictions.html: Added.
+        * web-platform-tests/css/cssom/serialize-media-rule-expected.txt:
+        * web-platform-tests/css/cssom/serialize-media-rule.html:
+        * web-platform-tests/css/cssom/w3c-import.log:
+
 2020-10-23  Diego Pino Garcia  <dpino@igalia.com>
 
         REGRESSION (r267402): [ iOS Mojave+ Release ] imported/w3c/web-platform-tests/user-timing/measure-l3.any.html is a flaky failure

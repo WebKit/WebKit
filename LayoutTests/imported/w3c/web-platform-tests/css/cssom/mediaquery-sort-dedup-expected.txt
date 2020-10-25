@@ -1,0 +1,4 @@
+
+FAIL Media queries are not sorted lexicographically assert_equals: expected "(min-width: 10px) and (min-height: 10px)" but got "(min-height: 10px) and (min-width: 10px)"
+FAIL Media queries are not deduplicated assert_equals: expected "(color) and (color)" but got "(color)"
+
