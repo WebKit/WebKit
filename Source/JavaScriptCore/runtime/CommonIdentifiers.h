@@ -41,6 +41,7 @@
     macro(Function) \
     macro(Infinity) \
     macro(Intl) \
+    macro(ListFormat) \
     macro(Loader) \
     macro(Locale) \
     macro(Map) \

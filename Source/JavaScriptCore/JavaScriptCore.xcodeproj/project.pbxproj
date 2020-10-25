@@ -1795,6 +1795,9 @@
 		E31179AA2288386100514B2C /* SymbolTableOrScopeDepth.h in Headers */ = {isa = PBXBuildFile; fileRef = E31179A92288385D00514B2C /* SymbolTableOrScopeDepth.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E31618131EC5FE170006A218 /* DOMAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = E31618101EC5FE080006A218 /* DOMAnnotation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E31618151EC5FE270006A218 /* DOMAttributeGetterSetter.h in Headers */ = {isa = PBXBuildFile; fileRef = E31618121EC5FE080006A218 /* DOMAttributeGetterSetter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E318CA6B254406B6004DC129 /* IntlListFormatConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E318CA65254406B4004DC129 /* IntlListFormatConstructor.h */; };
+		E318CA6C254406B6004DC129 /* IntlListFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = E318CA66254406B4004DC129 /* IntlListFormat.h */; };
+		E318CA6D254406B6004DC129 /* IntlListFormatPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E318CA67254406B5004DC129 /* IntlListFormatPrototype.h */; };
 		E318CBC11B8AEF5100A2929D /* JSModuleNamespaceObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E318CBBF1B8AEF5100A2929D /* JSModuleNamespaceObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E31C31322511AFD700E7A3A0 /* IntlCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E31C31302511AFD600E7A3A0 /* IntlCache.h */; };
 		E3201C1D1F8E82360076A032 /* JSScriptFetchParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E38D060B1F8E814100649CF2 /* JSScriptFetchParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1846,6 +1849,7 @@
 		E3637EE9236E56B00096BD0A /* LinkTimeConstant.h in Headers */ = {isa = PBXBuildFile; fileRef = E3637EE7236E56B00096BD0A /* LinkTimeConstant.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E365F33A24AA623900C991B2 /* IntlDisplayNamesConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E365F33924AA621200C991B2 /* IntlDisplayNamesConstructor.lut.h */; };
 		E365F33B24AA623B00C991B2 /* IntlDisplayNamesPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E365F33824AA621100C991B2 /* IntlDisplayNamesPrototype.lut.h */; };
+		E366441E254409B30001876F /* IntlListFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E318CA69254406B5004DC129 /* IntlListFormat.cpp */; };
 		E36B767022F8D61900D09818 /* WasmOMGForOSREntryPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = E36B766F22F8D61100D09818 /* WasmOMGForOSREntryPlan.h */; };
 		E36CC9472086314F0051FFD6 /* WasmCreationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = E36CC9462086314F0051FFD6 /* WasmCreationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E36EDCE524F0975700E60DA2 /* Concurrency.h in Headers */ = {isa = PBXBuildFile; fileRef = E36EDCE424F0975700E60DA2 /* Concurrency.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4972,6 +4976,12 @@
 		E31618101EC5FE080006A218 /* DOMAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMAnnotation.h; sourceTree = "<group>"; };
 		E31618111EC5FE080006A218 /* DOMAttributeGetterSetter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMAttributeGetterSetter.cpp; sourceTree = "<group>"; };
 		E31618121EC5FE080006A218 /* DOMAttributeGetterSetter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMAttributeGetterSetter.h; sourceTree = "<group>"; };
+		E318CA65254406B4004DC129 /* IntlListFormatConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlListFormatConstructor.h; sourceTree = "<group>"; };
+		E318CA66254406B4004DC129 /* IntlListFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlListFormat.h; sourceTree = "<group>"; };
+		E318CA67254406B5004DC129 /* IntlListFormatPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlListFormatPrototype.h; sourceTree = "<group>"; };
+		E318CA68254406B5004DC129 /* IntlListFormatPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlListFormatPrototype.cpp; sourceTree = "<group>"; };
+		E318CA69254406B5004DC129 /* IntlListFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlListFormat.cpp; sourceTree = "<group>"; };
+		E318CA6A254406B5004DC129 /* IntlListFormatConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlListFormatConstructor.cpp; sourceTree = "<group>"; };
 		E318CBBE1B8AEF5100A2929D /* JSModuleNamespaceObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSModuleNamespaceObject.cpp; sourceTree = "<group>"; };
 		E318CBBF1B8AEF5100A2929D /* JSModuleNamespaceObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSModuleNamespaceObject.h; sourceTree = "<group>"; };
 		E31C31302511AFD600E7A3A0 /* IntlCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlCache.h; sourceTree = "<group>"; };
@@ -7332,6 +7342,12 @@
 				E353C11824AA4CB6003FBDF3 /* IntlDisplayNamesConstructor.h */,
 				E353C11924AA4CB6003FBDF3 /* IntlDisplayNamesPrototype.cpp */,
 				E353C11B24AA4CB7003FBDF3 /* IntlDisplayNamesPrototype.h */,
+				E318CA69254406B5004DC129 /* IntlListFormat.cpp */,
+				E318CA66254406B4004DC129 /* IntlListFormat.h */,
+				E318CA6A254406B5004DC129 /* IntlListFormatConstructor.cpp */,
+				E318CA65254406B4004DC129 /* IntlListFormatConstructor.h */,
+				E318CA68254406B5004DC129 /* IntlListFormatPrototype.cpp */,
+				E318CA67254406B5004DC129 /* IntlListFormatPrototype.h */,
 				A3AFF92D245A3CFA00C9BA3B /* IntlLocale.cpp */,
 				A3AFF92B245A3CF900C9BA3B /* IntlLocale.h */,
 				A3AFF92F245A3CFB00C9BA3B /* IntlLocaleConstructor.cpp */,
@@ -9845,6 +9861,9 @@
 				E365F33A24AA623900C991B2 /* IntlDisplayNamesConstructor.lut.h in Headers */,
 				E353C12124AA4CB7003FBDF3 /* IntlDisplayNamesPrototype.h in Headers */,
 				E365F33B24AA623B00C991B2 /* IntlDisplayNamesPrototype.lut.h in Headers */,
+				E318CA6C254406B6004DC129 /* IntlListFormat.h in Headers */,
+				E318CA6B254406B6004DC129 /* IntlListFormatConstructor.h in Headers */,
+				E318CA6D254406B6004DC129 /* IntlListFormatPrototype.h in Headers */,
 				E307178E24C7829D00DF0644 /* IntlLocale.h in Headers */,
 				E307178D24C7829A00DF0644 /* IntlLocaleConstructor.h in Headers */,
 				E307178C24C7829800DF0644 /* IntlLocalePrototype.h in Headers */,
@@ -11349,6 +11368,7 @@
 				5333BBDD2110F7E1007618EC /* DFGSpeculativeJIT64.cpp in Sources */,
 				33B2A548226543BF005A0F79 /* FTLLowerDFGToB3.cpp in Sources */,
 				5C4196622270E0000047B7CD /* InspectorBackendDispatcherCompatibility.cpp in Sources */,
+				E366441E254409B30001876F /* IntlListFormat.cpp in Sources */,
 				536B319E1F735F160037FC33 /* LowLevelInterpreter.cpp in Sources */,
 				0FF4274A158EBE91004CB9FF /* udis86.c in Sources */,
 				0FF42740158EBE8B004CB9FF /* udis86_decode.c in Sources */,

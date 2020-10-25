@@ -89,6 +89,7 @@ inline const HashSet<String>& intlDisplayNamesAvailableLocales() { return intlAv
 inline const HashSet<String>& intlNumberFormatAvailableLocales() { return intlAvailableLocales(); }
 inline const HashSet<String>& intlPluralRulesAvailableLocales() { return intlAvailableLocales(); }
 inline const HashSet<String>& intlRelativeTimeFormatAvailableLocales() { return intlAvailableLocales(); }
+inline const HashSet<String>& intlListFormatAvailableLocales() { return intlAvailableLocales(); }
 
 TriState intlBooleanOption(JSGlobalObject*, JSValue options, PropertyName);
 String intlStringOption(JSGlobalObject*, JSValue options, PropertyName, std::initializer_list<const char*> values, const char* notFound, const char* fallback);

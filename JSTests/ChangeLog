@@ -1,3 +1,18 @@
+2020-10-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [ECMA-402] Implement Intl.ListFormat
+        https://bugs.webkit.org/show_bug.cgi?id=209775
+
+        Reviewed by Ross Kirsling.
+
+        * stress/intl-listformat.js: Added.
+        (shouldBe):
+        (shouldNotThrow):
+        (shouldThrow):
+        (test.DerivedListFormat):
+        (test.get shouldThrow):
+        (test):
+
 2020-10-24  Caio Lima  <ticaiolima@gmail.com>
 
         [EWS][ARMv7] Flaky test stress/json-stringify-stack-overflow.js

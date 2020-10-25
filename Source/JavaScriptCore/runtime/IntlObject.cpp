@@ -39,6 +39,9 @@
 #include "IntlDisplayNames.h"
 #include "IntlDisplayNamesConstructor.h"
 #include "IntlDisplayNamesPrototype.h"
+#include "IntlListFormat.h"
+#include "IntlListFormatConstructor.h"
+#include "IntlListFormatPrototype.h"
 #include "IntlLocale.h"
 #include "IntlLocaleConstructor.h"
 #include "IntlLocalePrototype.h"
@@ -91,6 +94,13 @@ static JSValue createDisplayNamesConstructor(VM& vm, JSObject* object)
     IntlObject* intlObject = jsCast<IntlObject*>(object);
     JSGlobalObject* globalObject = intlObject->globalObject(vm);
     return IntlDisplayNamesConstructor::create(vm, IntlDisplayNamesConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<IntlDisplayNamesPrototype*>(globalObject->displayNamesStructure()->storedPrototypeObject()));
+}
+
+static JSValue createListFormatConstructor(VM& vm, JSObject* object)
+{
+    IntlObject* intlObject = jsCast<IntlObject*>(object);
+    JSGlobalObject* globalObject = intlObject->globalObject(vm);
+    return IntlListFormatConstructor::create(vm, IntlListFormatConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<IntlListFormatPrototype*>(globalObject->listFormatStructure()->storedPrototypeObject()));
 }
 
 static JSValue createLocaleConstructor(VM& vm, JSObject* object)
@@ -181,7 +191,12 @@ void IntlObject::finishCreation(VM& vm, JSGlobalObject*)
 #if HAVE(ICU_U_LOCALE_DISPLAY_NAMES)
     putDirectWithoutTransition(vm, vm.propertyNames->DisplayNames, createDisplayNamesConstructor(vm, this), static_cast<unsigned>(PropertyAttribute::DontEnum));
 #else
-    UNUSED_PARAM(createDisplayNamesConstructor);
+    UNUSED_PARAM(&createDisplayNamesConstructor);
+#endif
+#if HAVE(ICU_U_LIST_FORMATTER)
+    putDirectWithoutTransition(vm, vm.propertyNames->ListFormat, createListFormatConstructor(vm, this), static_cast<unsigned>(PropertyAttribute::DontEnum));
+#else
+    UNUSED_PARAM(&createListFormatConstructor);
 #endif
 }
 

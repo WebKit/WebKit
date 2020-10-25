@@ -83,12 +83,12 @@ void IntlDisplayNames::initializeDisplayNames(JSGlobalObject* globalObject, JSVa
         return { };
     };
 
-    auto& availableLocales = intlNumberFormatAvailableLocales();
+    auto& availableLocales = intlDisplayNamesAvailableLocales();
     auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { }, localeData);
 
     m_locale = resolved.locale;
     if (m_locale.isEmpty()) {
-        throwTypeError(globalObject, scope, "failed to initialize DisplayName due to invalid locale"_s);
+        throwTypeError(globalObject, scope, "failed to initialize DisplayNames due to invalid locale"_s);
         return;
     }
 

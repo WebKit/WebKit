@@ -1,3 +1,74 @@
+2020-10-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [ECMA-402] Implement Intl.ListFormat
+        https://bugs.webkit.org/show_bug.cgi?id=209775
+
+        Reviewed by Ross Kirsling.
+
+        This patch implements Intl.ListFormat. Intl.ListFormat requires ulistfmt_openForType.
+        But it is available after ICU 67, and it is draft (unstable) API in ICU 67.
+        But now, this function is stable in ICU 68 without signature change and no major
+        change happened to this API. Thus, we can assume that this API signature won't be changed.
+        We specially undef U_HIDE_DRAFT_API for unicode/ulistformatter.h to use this draft (but stable) APIs.
+
+        While macOS / iOS shipping ICU (AppleICU) is ICU 66, AppleICU has ulistfmt_openForType and related APIs
+        even in ICU 66. We use these APIs in AppleICU 66 to implement Intl.ListFormat.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/CommonIdentifiers.h:
+        * runtime/IntlDisplayNames.cpp:
+        (JSC::IntlDisplayNames::initializeDisplayNames):
+        * runtime/IntlListFormat.cpp: Added.
+        (JSC::UListFormatterDeleter::operator()):
+        (JSC::IntlListFormat::create):
+        (JSC::IntlListFormat::createStructure):
+        (JSC::IntlListFormat::IntlListFormat):
+        (JSC::IntlListFormat::finishCreation):
+        (JSC::IntlListFormat::initializeListFormat):
+        (JSC::stringListFromIterable):
+        (JSC::ListFormatInput::ListFormatInput):
+        (JSC::ListFormatInput::size const):
+        (JSC::ListFormatInput::stringPointers const):
+        (JSC::ListFormatInput::stringLengths const):
+        (JSC::IntlListFormat::format const):
+        (JSC::IntlListFormat::formatToParts const):
+        (JSC::IntlListFormat::resolvedOptions const):
+        (JSC::IntlListFormat::styleString):
+        (JSC::IntlListFormat::typeString):
+        * runtime/IntlListFormat.h: Added.
+        * runtime/IntlListFormatConstructor.cpp: Added.
+        (JSC::IntlListFormatConstructor::create):
+        (JSC::IntlListFormatConstructor::createStructure):
+        (JSC::IntlListFormatConstructor::IntlListFormatConstructor):
+        (JSC::IntlListFormatConstructor::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlListFormatConstructor.h: Added.
+        * runtime/IntlListFormatPrototype.cpp: Added.
+        (JSC::IntlListFormatPrototype::create):
+        (JSC::IntlListFormatPrototype::createStructure):
+        (JSC::IntlListFormatPrototype::IntlListFormatPrototype):
+        (JSC::IntlListFormatPrototype::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlListFormatPrototype.h: Added.
+        * runtime/IntlObject.cpp:
+        (JSC::createListFormatConstructor):
+        (JSC::IntlObject::finishCreation):
+        * runtime/IntlObject.h:
+        (JSC::intlListFormatAvailableLocales):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::listFormatStructure):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2020-10-23  Keith Miller  <keith_miller@apple.com>
 
         Using WASM function size as the cap for choosing a register allocator causes performance regressions.
