@@ -73,8 +73,6 @@ public:
     virtual CSSStyleSheet* parentStyleSheet() const { return nullptr; }
 
     ExceptionOr<void> setPropertyValueInternal(CSSPropertyID, String);
-    Variant<double, String> getPropertyValueInternalForPosOrPixelPrefixed(CSSPropertyID);
-    ExceptionOr<void> setPropertyValueInternalForPosOrPixelPrefixed(CSSPropertyID, Variant<double, String>);
 
     static CSSPropertyID getCSSPropertyIDFromJavaScriptPropertyName(const AtomString&);
 

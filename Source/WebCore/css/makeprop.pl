@@ -1502,10 +1502,10 @@ foreach my $nameOrAlias (grep { $_ =~ /^\-epub\-/ } @namesAndAliases) {
 
 print CSS_STYLE_DECLARATION_PROPERTY_NAMES_IDL << "EOF";
 
-    // Non-standard. Add special cases for all properties not starting with -webkit- or -epub-
-    // that puts an new prefix of css, Css, pos, Pos, pixel and Pixel on each.
-    // Example top -> element.style.posTop
-    // Example top -> element.style.PixelTop
+    // Non-standard. Adds an additional variant of all properties not starting with -webkit- or -epub-
+    // that is the property name prefixed by css and Css.
+    // Example top -> element.style.cssTop
+    // Example top -> element.style.CssTop
 EOF
 foreach my $nameOrAlias (grep { $_ !~ /^\-webkit\-|^\-epub\-/ } @namesAndAliases) {
     my $camelCasedAttributeName = cssPropertyToIDLAttribute($nameOrAlias, 0, 1);
@@ -1519,10 +1519,6 @@ foreach my $nameOrAlias (grep { $_ !~ /^\-webkit\-|^\-epub\-/ } @namesAndAliases
 
     print CSS_STYLE_DECLARATION_PROPERTY_NAMES_IDL "    [CEReactions, ${extendedAttributes}] attribute [LegacyNullToEmptyString] CSSOMString css${camelCasedAttributeName};\n" unless $camelCasedAttributeName eq "Float";
     print CSS_STYLE_DECLARATION_PROPERTY_NAMES_IDL "    [CEReactions, ${extendedAttributes}] attribute [LegacyNullToEmptyString] CSSOMString Css${camelCasedAttributeName};\n" unless $camelCasedAttributeName eq "Float";
-    print CSS_STYLE_DECLARATION_PROPERTY_NAMES_IDL "    [CEReactions, ${extendedAttributes}] attribute (double or [LegacyNullToEmptyString] CSSOMString) pos${camelCasedAttributeName};\n";
-    print CSS_STYLE_DECLARATION_PROPERTY_NAMES_IDL "    [CEReactions, ${extendedAttributes}] attribute (double or [LegacyNullToEmptyString] CSSOMString) Pos${camelCasedAttributeName};\n";
-    print CSS_STYLE_DECLARATION_PROPERTY_NAMES_IDL "    [CEReactions, ${extendedAttributes}] attribute (double or [LegacyNullToEmptyString] CSSOMString) pixel${camelCasedAttributeName};\n";
-    print CSS_STYLE_DECLARATION_PROPERTY_NAMES_IDL "    [CEReactions, ${extendedAttributes}] attribute (double or [LegacyNullToEmptyString] CSSOMString) Pixel${camelCasedAttributeName};\n";
 }
 
 print CSS_STYLE_DECLARATION_PROPERTY_NAMES_IDL << "EOF";

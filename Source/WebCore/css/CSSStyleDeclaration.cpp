@@ -34,8 +34,6 @@
 #include "Settings.h"
 #include "StyledElement.h"
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/Optional.h>
-#include <wtf/Variant.h>
 
 namespace WebCore {
 
@@ -47,13 +45,10 @@ enum class PropertyNamePrefix {
     None,
     Epub,
     CSS,
-    Pixel,
-    Pos,
     WebKit
 };
 
-template<size_t prefixCStringLength>
-static inline bool matchesCSSPropertyNamePrefix(const StringImpl& propertyName, const char (&prefix)[prefixCStringLength])
+template<size_t prefixCStringLength> static inline bool matchesCSSPropertyNamePrefix(const StringImpl& propertyName, const char (&prefix)[prefixCStringLength])
 {
     size_t prefixLength = prefixCStringLength - 1;
 
@@ -98,12 +93,6 @@ static PropertyNamePrefix propertyNamePrefix(const StringImpl& propertyName)
         if (matchesCSSPropertyNamePrefix(propertyName, "epub"))
             return PropertyNamePrefix::Epub;
         break;
-    case 'p':
-        if (matchesCSSPropertyNamePrefix(propertyName, "pos"))
-            return PropertyNamePrefix::Pos;
-        if (matchesCSSPropertyNamePrefix(propertyName, "pixel"))
-            return PropertyNamePrefix::Pixel;
-        break;
     case 'w':
         if (matchesCSSPropertyNamePrefix(propertyName, "webkit"))
             return PropertyNamePrefix::WebKit;
@@ -136,30 +125,23 @@ static inline void writeEpubPrefix(char*& buffer)
     *buffer++ = '-';
 }
 
-struct CSSPropertyInfo {
-    CSSPropertyID propertyID;
-    bool hadPixelOrPosPrefix;
-};
-
-static CSSPropertyInfo parseJavaScriptCSSPropertyName(const AtomString& propertyName)
+static CSSPropertyID parseJavaScriptCSSPropertyName(const AtomString& propertyName)
 {
-    using CSSPropertyInfoMap = HashMap<String, CSSPropertyInfo>;
-    static NeverDestroyed<CSSPropertyInfoMap> propertyInfoCache;
+    using CSSPropertyIDMap = HashMap<String, CSSPropertyID>;
+    static NeverDestroyed<CSSPropertyIDMap> propertyIDCache;
 
-    CSSPropertyInfo propertyInfo = { CSSPropertyInvalid, false };
+    CSSPropertyID propertyID = CSSPropertyInvalid;
 
     auto* propertyNameString = propertyName.impl();
     if (!propertyNameString)
-        return propertyInfo;
+        return propertyID;
     unsigned length = propertyNameString->length();
     if (!length)
-        return propertyInfo;
+        return propertyID;
 
-    propertyInfo = propertyInfoCache.get().get(propertyNameString);
-    if (propertyInfo.propertyID)
-        return propertyInfo;
-
-    bool hadPixelOrPosPrefix = false;
+    propertyID = propertyIDCache.get().get(propertyNameString);
+    if (propertyID)
+        return propertyID;
 
     constexpr size_t bufferSize = maxCSSPropertyNameLength + 1;
     char buffer[bufferSize];
@@ -167,24 +149,16 @@ static CSSPropertyInfo parseJavaScriptCSSPropertyName(const AtomString& property
     const char* name = bufferPtr;
 
     unsigned i = 0;
-    // Prefixes CSS, Pixel, Pos are ignored.
-    // Prefixes Apple, KHTML and Webkit are transposed to "-webkit-".
-    // The prefix "Epub" becomes "-epub-".
+    // Prefix CSS is ignored.
+    // Prefix Webkit becomes "-webkit-".
+    // Prefix Epub becomes "-epub-".
     switch (propertyNamePrefix(*propertyNameString)) {
     case PropertyNamePrefix::None:
         if (isASCIIUpper((*propertyNameString)[0]))
-            return propertyInfo;
+            return propertyID;
         break;
     case PropertyNamePrefix::CSS:
         i += 3;
-        break;
-    case PropertyNamePrefix::Pixel:
-        i += 5;
-        hadPixelOrPosPrefix = true;
-        break;
-    case PropertyNamePrefix::Pos:
-        i += 3;
-        hadPixelOrPosPrefix = true;
         break;
     case PropertyNamePrefix::Epub:
         writeEpubPrefix(bufferPtr);
@@ -203,17 +177,17 @@ static CSSPropertyInfo parseJavaScriptCSSPropertyName(const AtomString& property
     size_t bufferSizeLeft = stringEnd - bufferPtr;
     size_t propertySizeLeft = length - i;
     if (propertySizeLeft > bufferSizeLeft)
-        return propertyInfo;
+        return propertyID;
 
     for (; i < length; ++i) {
         UChar c = (*propertyNameString)[i];
         if (!c || !isASCII(c))
-            return propertyInfo; // illegal character
+            return propertyID; // illegal character
         if (isASCIIUpper(c)) {
             size_t bufferSizeLeft = stringEnd - bufferPtr;
             size_t propertySizeLeft = length - i + 1;
             if (propertySizeLeft > bufferSizeLeft)
-                return propertyInfo;
+                return propertyID;
             *bufferPtr++ = '-';
             *bufferPtr++ = toASCIILowerUnchecked(c);
         } else
@@ -229,22 +203,19 @@ static CSSPropertyInfo parseJavaScriptCSSPropertyName(const AtomString& property
 #endif
 
     auto* hashTableEntry = findProperty(name, outputLength);
-    if (auto propertyID = hashTableEntry ? hashTableEntry->id : 0) {
-        auto id = static_cast<CSSPropertyID>(propertyID);
-        propertyInfo.hadPixelOrPosPrefix = hadPixelOrPosPrefix;
-        propertyInfo.propertyID = id;
-        propertyInfoCache.get().add(propertyNameString, propertyInfo);
+    if (auto id = hashTableEntry ? hashTableEntry->id : 0) {
+        propertyID = static_cast<CSSPropertyID>(id);
+        propertyIDCache.get().add(propertyNameString, propertyID);
     }
-    return propertyInfo;
+    return propertyID;
 }
 
-static CSSPropertyInfo propertyInfoFromJavaScriptCSSPropertyName(const AtomString& propertyName, const Settings* settings)
+static CSSPropertyID propertyIDFromJavaScriptCSSPropertyName(const AtomString& propertyName, const Settings* settings)
 {
-    auto propertyInfo = parseJavaScriptCSSPropertyName(propertyName);
-    auto id = propertyInfo.propertyID;
+    auto id = parseJavaScriptCSSPropertyName(propertyName);
     if (!isEnabledCSSProperty(id) || !isCSSPropertyEnabledBySettings(id, settings))
-        return { CSSPropertyInvalid, false };
-    return propertyInfo;
+        return CSSPropertyInvalid;
+    return id;
 }
 
 }
@@ -267,36 +238,9 @@ ExceptionOr<void> CSSStyleDeclaration::setPropertyValueInternal(CSSPropertyID pr
     return { };
 }
 
-Variant<double, String> CSSStyleDeclaration::getPropertyValueInternalForPosOrPixelPrefixed(CSSPropertyID propertyID)
-{
-    auto value = getPropertyCSSValueInternal(propertyID);
-    if (!value) {
-        // If the property is a shorthand property (such as "padding"), it can only be accessed using getPropertyValue.
-        return getPropertyValueInternal(propertyID);
-    }
-    
-    if (is<CSSPrimitiveValue>(*value)) {
-        // Call this version of the getter so that, e.g., pixelTop returns top as a number
-        // in pixel units and posTop should does the same _if_ this is a positioned element.
-        // FIXME: If not a positioned element, MSIE documentation says posTop should return 0; this rule is not implemented.
-        return downcast<CSSPrimitiveValue>(*value).floatValue(CSSUnitType::CSS_PX);
-    }
-
-    return value->cssText();
-}
-
-ExceptionOr<void> CSSStyleDeclaration::setPropertyValueInternalForPosOrPixelPrefixed(CSSPropertyID propertyID, Variant<double, String> value)
-{
-    auto stringValue = WTF::switchOn(value, [&] (const auto& input) {
-        return makeString(input, "px");
-    });
-
-    return setPropertyValueInternal(propertyID, WTFMove(stringValue));
-}
-
 CSSPropertyID CSSStyleDeclaration::getCSSPropertyIDFromJavaScriptPropertyName(const AtomString& propertyName)
 {
-    return propertyInfoFromJavaScriptCSSPropertyName(propertyName, nullptr).propertyID;
+    return propertyIDFromJavaScriptCSSPropertyName(propertyName, nullptr);
 }
 
 String CSSStyleDeclaration::cssFloat()

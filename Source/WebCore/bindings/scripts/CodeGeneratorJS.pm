@@ -5283,8 +5283,7 @@ sub GenerateAttributeGetterBodyDefinition
         $implIncludes{"CSSPropertyNames.h"} = 1;
         my $propertyID = $attribute->extendedAttributes->{CSSProperty};
         
-        my $getterName = $attribute->type->isUnion ? "getPropertyValueInternalForPosOrPixelPrefixed" : "getPropertyValueInternal";
-        
+        my $getterName = "getPropertyValueInternal";
         my $toJSExpression = NativeToJSValueUsingReferences($attribute, $interface, "impl.${getterName}(CSSProperty${propertyID})", "*thisObject.globalObject()");
         push(@$outputArray, "    auto& impl = thisObject.wrapped();\n");
         push(@$outputArray, "    RELEASE_AND_RETURN(throwScope, (${toJSExpression}));\n");
@@ -5437,8 +5436,8 @@ sub GenerateAttributeSetterBodyDefinition
 
         my $propertyID = $attribute->extendedAttributes->{CSSProperty};
         
-        my $setterName = $attribute->type->isUnion ? "setPropertyValueInternalForPosOrPixelPrefixed" : "setPropertyValueInternal";
-        
+        my $setterName = "setPropertyValueInternal";
+
         my $exceptionThrower = GetAttributeExceptionThrower($interface, $attribute);
         my $toNativeExpression = JSValueToNative($interface, $attribute, "value", $attribute->extendedAttributes->{Conditional}, "&lexicalGlobalObject", "lexicalGlobalObject", "thisObject", "*thisObject.globalObject()", $exceptionThrower);
 
