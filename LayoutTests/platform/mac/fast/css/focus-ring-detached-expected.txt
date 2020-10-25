@@ -16,10 +16,10 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (106,20) size 352x56 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 203x18
                 text run at (1,1) width 203: "The text in this anchor element "
-              RenderInline {A} at (0,0) size 250x36 [color=#0000EE]
-                RenderText {#text} at (203,1) size 48x18
-                  text run at (203,1) width 48: "should "
-                RenderBR {BR} at (250,1) size 1x18
+              RenderInline {A} at (0,0) size 246x36 [color=#0000EE]
+                RenderText {#text} at (203,1) size 44x18
+                  text run at (203,1) width 44: "should"
+                RenderBR {BR} at (246,1) size 1x18
                 RenderText {#text} at (1,19) size 48x18
                   text run at (1,19) width 48: "contain"
               RenderText {#text} at (48,19) size 326x36

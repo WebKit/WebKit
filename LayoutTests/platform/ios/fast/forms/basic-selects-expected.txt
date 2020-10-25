@@ -132,43 +132,35 @@ layer at (0,0) size 800x508
           text run at (626,297) width 9: "b"
         RenderBR {BR} at (634,297) size 1x19
         RenderBR {BR} at (1,313) size 0x19
-        RenderText {#text} at (1,329) size 173x19
-          text run at (1,329) width 173: "select control with size=0: "
-        RenderBR {BR} at (173,329) size 1x19
+        RenderText {#text} at (1,329) size 169x19
+          text run at (1,329) width 169: "select control with size=0:"
+        RenderBR {BR} at (169,329) size 1x19
         RenderMenuList {SELECT} at (3,349) size 185x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 173x14
             RenderText at (0,0) size 67x14
               text run at (0,0) width 67: "Future Series"
-        RenderText {#text} at (190,348) size 4x19
-          text run at (190,348) width 4: " "
-        RenderBR {BR} at (0,0) size 0x0
-        RenderText {#text} at (1,369) size 173x19
-          text run at (1,369) width 173: "select control with size=1: "
-        RenderBR {BR} at (173,369) size 1x19
+        RenderBR {BR} at (190,348) size 0x19
+        RenderText {#text} at (1,369) size 169x19
+          text run at (1,369) width 169: "select control with size=1:"
+        RenderBR {BR} at (169,369) size 1x19
         RenderMenuList {SELECT} at (3,389) size 185x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 173x14
             RenderText at (0,0) size 67x14
               text run at (0,0) width 67: "Future Series"
-        RenderText {#text} at (190,388) size 4x19
-          text run at (190,388) width 4: " "
-        RenderBR {BR} at (0,0) size 0x0
-        RenderText {#text} at (1,409) size 170x19
-          text run at (1,409) width 170: "Non-styled select control: "
-        RenderBR {BR} at (170,409) size 1x19
+        RenderBR {BR} at (190,388) size 0x19
+        RenderText {#text} at (1,409) size 166x19
+          text run at (1,409) width 166: "Non-styled select control:"
+        RenderBR {BR} at (166,409) size 1x19
         RenderMenuList {SELECT} at (3,429) size 185x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 173x14
             RenderText at (0,0) size 67x14
               text run at (0,0) width 67: "Future Series"
-        RenderText {#text} at (190,428) size 4x19
-          text run at (190,428) width 4: " "
-        RenderBR {BR} at (0,0) size 0x0
-        RenderText {#text} at (1,449) size 298x19
-          text run at (1,449) width 298: "Styled select control with large border-radius: "
-        RenderBR {BR} at (298,449) size 1x19
+        RenderBR {BR} at (190,428) size 0x19
+        RenderText {#text} at (1,449) size 294x19
+          text run at (1,449) width 294: "Styled select control with large border-radius:"
+        RenderBR {BR} at (294,449) size 1x19
         RenderMenuList {SELECT} at (3,469) size 185x20 [bgcolor=#33CCFF] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 173x14
             RenderText at (0,0) size 67x14
               text run at (0,0) width 67: "Future Series"
-        RenderText {#text} at (190,468) size 4x19
-          text run at (190,468) width 4: " "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (190,468) size 0x19

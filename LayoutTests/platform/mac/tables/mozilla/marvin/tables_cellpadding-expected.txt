@@ -10,8 +10,8 @@ layer at (0,0) size 800x600
           text run at (0,18) width 383: "a cellpadding of 8 pixels. The second table is not using cell "
           text run at (382,18) width 386: "padding. Notice the difference. There should be a larger gap"
           text run at (0,36) width 203: "between the cell border and it's "
-          text run at (202,36) width 167: "contents in the first table. "
-        RenderBR {BR} at (368,36) size 1x18
+          text run at (202,36) width 163: "contents in the first table."
+        RenderBR {BR} at (364,36) size 1x18
         RenderBR {BR} at (0,54) size 0x18
       RenderTable {TABLE} at (0,72) size 262x82 [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 258x78

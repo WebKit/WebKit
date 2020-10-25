@@ -80,7 +80,6 @@ layer at (0,0) size 785x669
                   RenderText {#text} at (4,169) size 76x15
                     text run at (4,169) width 76: "Commodities"
                 RenderBR {BR} at (79,167) size 1x18
-              RenderText {#text} at (0,0) size 0x0
               RenderBR {BR} at (4,184) size 0x18
               RenderInline {B} at (0,0) size 48x18
                 RenderInline {A} at (0,0) size 48x18
@@ -130,7 +129,6 @@ layer at (0,0) size 785x669
                   RenderText {#text} at (4,307) size 121x15
                     text run at (4,307) width 121: "Negocios Bloomberg"
                 RenderBR {BR} at (124,305) size 1x18
-              RenderText {#text} at (0,0) size 0x0
               RenderBR {BR} at (4,322) size 0x18
               RenderInline {B} at (0,0) size 78x18
                 RenderInline {A} at (0,0) size 78x18
@@ -150,7 +148,6 @@ layer at (0,0) size 785x669
                   RenderText {#text} at (4,370) size 96x15
                     text run at (4,370) width 96: "Wealth Manager"
                 RenderBR {BR} at (99,368) size 1x18
-              RenderText {#text} at (0,0) size 0x0
               RenderBR {BR} at (4,385) size 0x18
               RenderInline {FONT} at (0,0) size 124x15 [color=#FFFFFF]
                 RenderInline {B} at (0,0) size 124x15
@@ -163,7 +160,6 @@ layer at (0,0) size 785x669
                   RenderText {#text} at (4,418) size 89x15
                     text run at (4,418) width 89: "Small Business"
                 RenderBR {BR} at (92,416) size 1x18
-              RenderText {#text} at (0,0) size 0x0
               RenderBR {BR} at (4,433) size 0x18
               RenderInline {B} at (0,0) size 64x18
                 RenderInline {A} at (0,0) size 64x18
@@ -171,7 +167,6 @@ layer at (0,0) size 785x669
                     RenderText {#text} at (4,451) size 64x15
                       text run at (4,451) width 64: "CAREERS"
                   RenderBR {BR} at (67,449) size 1x18
-              RenderText {#text} at (0,0) size 0x0
               RenderBR {BR} at (4,466) size 0x18
               RenderInline {B} at (0,0) size 29x18
                 RenderInline {A} at (0,0) size 29x18
@@ -273,8 +268,7 @@ layer at (0,0) size 785x669
                       text run at (94,315) width 32: "VIDEO"
                   RenderText {#text} at (125,315) size 4x11
                     text run at (125,315) width 4: " "
-                RenderText {#text} at (0,0) size 0x0
-                RenderBR {BR} at (0,0) size 0x0
+                RenderBR {BR} at (128,310) size 1x18
                 RenderBR {BR} at (87,326) size 1x18
                 RenderBR {BR} at (87,344) size 1x18
                 RenderInline {A} at (0,0) size 125x18

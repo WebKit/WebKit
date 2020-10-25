@@ -4,9 +4,9 @@ layer at (0,0) size 800x1387
   RenderBlock {HTML} at (0,0) size 800x1387
     RenderBody {BODY} at (8,8) size 784x1363 [bgcolor=#FFDEAD]
       RenderBlock (anonymous) at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 611x19
-          text run at (0,0) width 611: "If there is missing vertical space between tables and/or tables and other content, it is bug 6997. "
-        RenderBR {BR} at (610,0) size 1x19
+        RenderText {#text} at (0,0) size 607x19
+          text run at (0,0) width 607: "If there is missing vertical space between tables and/or tables and other content, it is bug 6997."
+        RenderBR {BR} at (606,0) size 1x19
       RenderBlock {H1} at (0,41) size 784x77
         RenderInline {FONT} at (0,0) size 470x74 [color=#FF0000]
           RenderText {#text} at (0,1) size 294x36

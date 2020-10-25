@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 354x18
-          text run at (0,0) width 354: "The window needs to be resized smaller to see the bug "
-        RenderBR {BR} at (353,0) size 1x18
+        RenderText {#text} at (0,0) size 350x18
+          text run at (0,0) width 350: "The window needs to be resized smaller to see the bug"
+        RenderBR {BR} at (349,0) size 1x18
       RenderTable {TABLE} at (0,18) size 452x24
         RenderTableSection {TBODY} at (0,0) size 452x24
           RenderTableRow {TR} at (0,2) size 452x20

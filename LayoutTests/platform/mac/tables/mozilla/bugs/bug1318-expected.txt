@@ -12,9 +12,9 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (26,19) size 732x35
                   text run at (26,19) width 183: "The Supreme Court says "
                   text run at (208,19) width 550: "Wisconsin can continue using tuition vouchers to help poor parents send their"
-                  text run at (210,37) width 223: "children to church-run schools. "
-                  text run at (432,37) width 142: "What's your stand? "
-                RenderBR {BR} at (573,37) size 1x17
+                  text run at (212,37) width 223: "children to church-run schools. "
+                  text run at (434,37) width 138: "What's your stand?"
+                RenderBR {BR} at (571,37) size 1x17
                 RenderBR {BR} at (392,55) size 1x17
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,74) size 784x20

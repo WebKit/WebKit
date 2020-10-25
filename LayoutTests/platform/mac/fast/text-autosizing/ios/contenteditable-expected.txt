@@ -13,8 +13,8 @@ layer at (0,0) size 800x600
           text run at (579,0) width 8: " "
           text run at (0,31) width 585: "Maecenas eu nisl leo, vel commodo nibh. Fusce suscipit"
           text run at (584,31) width 8: " "
-          text run at (0,62) width 541: "arcu eu elit vulputate non hendrerit velit consequat. "
-        RenderBR {BR} at (0,0) size 0x0
+          text run at (0,62) width 535: "arcu eu elit vulputate non hendrerit velit consequat."
+        RenderBR {BR} at (534,72) size 1x18
         RenderText {#text} at (0,93) size 585x124
           text run at (0,93) width 578: "Etiam venenatis posuere nisl id sagittis. Fusce tincidunt"
           text run at (577,93) width 8: " "
@@ -36,8 +36,8 @@ layer at (0,0) size 800x600
                     text run at (579,0) width 8: " "
                     text run at (0,31) width 585: "Maecenas eu nisl leo, vel commodo nibh. Fusce suscipit"
                     text run at (584,31) width 8: " "
-                    text run at (0,62) width 541: "arcu eu elit vulputate non hendrerit velit consequat. "
-                  RenderBR {BR} at (0,0) size 0x0
+                    text run at (0,62) width 535: "arcu eu elit vulputate non hendrerit velit consequat."
+                  RenderBR {BR} at (534,72) size 1x18
                   RenderText {#text} at (0,93) size 585x124
                     text run at (0,93) width 578: "Etiam venenatis posuere nisl id sagittis. Fusce tincidunt"
                     text run at (577,93) width 8: " "

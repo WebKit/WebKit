@@ -37,9 +37,9 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,0) size 0x18
       RenderBlock {DIV} at (0,342) size 784x101 [color=#FF0000]
         RenderBlock {P} at (0,0) size 784x66 [color=#008000]
-          RenderText {#text} at (0,10) size 721x28
-            text run at (0,10) width 721: "Line-Through Line-Through Line-Through Line "
-          RenderBR {BR} at (720,18) size 1x18
+          RenderText {#text} at (0,10) size 709x28
+            text run at (0,10) width 709: "Line-Through Line-Through Line-Through Line"
+          RenderBR {BR} at (708,18) size 1x18
           RenderText {#text} at (0,48) size 399x18
             text run at (0,48) width 399: "Line-Through Line-Through Line-Through Line-Through"
           RenderBR {BR} at (398,48) size 1x18

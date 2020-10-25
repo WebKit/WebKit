@@ -41,9 +41,9 @@ layer at (0,0) size 785x1840
                 RenderText {#text} at (275,1) size 194x18
                   text run at (275,1) width 194: "23. Oktober 2001 (21:00 Uhr)"
                 RenderBR {BR} at (468,1) size 1x18
-                RenderText {#text} at (315,19) size 114x18
-                  text run at (315,19) width 114: "Es ist vollbracht! "
-                RenderBR {BR} at (428,19) size 1x18
+                RenderText {#text} at (317,19) size 110x18
+                  text run at (317,19) width 110: "Es ist vollbracht!"
+                RenderBR {BR} at (426,19) size 1x18
                 RenderText {#text} at (210,37) size 324x18
                   text run at (210,37) width 324: "Ich habe nun den .htaccess-BUG bei den Scripten:"
                 RenderBR {BR} at (533,37) size 1x18
@@ -80,9 +80,9 @@ layer at (0,0) size 785x1840
                 RenderText {#text} at (31,19) size 681x36
                   text run at (31,19) width 417: "OK, sorry f\x{FC}r die Unannehmlichkeiten, aber Ihr m\x{FC}sst Euch nun "
                   text run at (447,19) width 265: "noch mal die Scripte runter laden und die"
-                  text run at (41,37) width 211: "admin.cgi erneuern, hier kommt "
-                  text run at (251,37) width 451: "noch das Password-Manager-Script dazu, sollte jetzt alles sicher sein! "
-                RenderBR {BR} at (701,37) size 1x18
+                  text run at (43,37) width 211: "admin.cgi erneuern, hier kommt "
+                  text run at (253,37) width 447: "noch das Password-Manager-Script dazu, sollte jetzt alles sicher sein!"
+                RenderBR {BR} at (699,37) size 1x18
             RenderTableRow {TR} at (0,392) size 744x110
               RenderTableCell {TD} at (0,392) size 744x110 [border: (1px solid #000000)] [r=7 c=0 rs=1 cs=1]
                 RenderText {#text} at (275,1) size 194x18
@@ -219,16 +219,16 @@ layer at (0,0) size 785x1840
                 RenderText {#text} at (328,1) size 88x18
                   text run at (328,1) width 88: "09. Juni 2001"
                 RenderBR {BR} at (415,1) size 1x18
-                RenderText {#text} at (90,19) size 564x18
-                  text run at (90,19) width 453: "Die neue Version (3.3) von The Real Topsites ist online, es gibt einige "
-                  text run at (542,19) width 112: "neue Funktionen "
-                RenderBR {BR} at (653,19) size 1x18
+                RenderText {#text} at (92,19) size 560x18
+                  text run at (92,19) width 453: "Die neue Version (3.3) von The Real Topsites ist online, es gibt einige "
+                  text run at (544,19) width 108: "neue Funktionen"
+                RenderBR {BR} at (651,19) size 1x18
                 RenderText {#text} at (252,37) size 240x18
                   text run at (252,37) width 240: "und es wurde auch einiges ver\x{E4}ndert!"
                 RenderBR {BR} at (491,37) size 1x18
-                RenderText {#text} at (239,55) size 266x18
-                  text run at (239,55) width 266: "Mehr Info unter \"Perl Scripte\" im Men\x{FC}. "
-                RenderBR {BR} at (504,55) size 1x18
+                RenderText {#text} at (241,55) size 262x18
+                  text run at (241,55) width 262: "Mehr Info unter \"Perl Scripte\" im Men\x{FC}."
+                RenderBR {BR} at (502,55) size 1x18
                 RenderText {#text} at (157,73) size 429x18
                   text run at (157,73) width 429: "P.S. den Umstieg auf die Version3.3 kann ich Euch nur empfehlen!"
             RenderTableRow {TR} at (0,1186) size 744x74
@@ -250,9 +250,9 @@ layer at (0,0) size 785x1840
                 RenderText {#text} at (328,1) size 88x18
                   text run at (328,1) width 88: "01. Juni 2001"
                 RenderBR {BR} at (415,1) size 1x18
-                RenderText {#text} at (216,19) size 311x18
-                  text run at (216,19) width 311: "Ein neues Script ist online! G5-ICQ Newsletter. "
-                RenderBR {BR} at (526,19) size 1x18
+                RenderText {#text} at (218,19) size 307x18
+                  text run at (218,19) width 307: "Ein neues Script ist online! G5-ICQ Newsletter."
+                RenderBR {BR} at (524,19) size 1x18
                 RenderText {#text} at (241,37) size 262x18
                   text run at (241,37) width 262: "Mehr Info unter \"Perl Scripte\" im Men\x{FC}."
             RenderTableRow {TR} at (0,1316) size 744x56
@@ -326,9 +326,9 @@ layer at (0,0) size 785x1840
                 RenderText {#text} at (324,1) size 95x18
                   text run at (324,1) width 95: "20. April 2001"
                 RenderBR {BR} at (418,1) size 1x18
-                RenderText {#text} at (195,19) size 353x18
-                  text run at (195,19) width 353: "Auf einige Anfragen habe ich eine Demonstration von "
-                RenderBR {BR} at (547,19) size 1x18
+                RenderText {#text} at (197,19) size 349x18
+                  text run at (197,19) width 349: "Auf einige Anfragen habe ich eine Demonstration von"
+                RenderBR {BR} at (545,19) size 1x18
                 RenderText {#text} at (209,37) size 326x18
                   text run at (209,37) width 326: "\"The Real Topsites\" (Toplist Script) ver\x{F6}ffentlicht!"
                 RenderBR {BR} at (534,37) size 1x18

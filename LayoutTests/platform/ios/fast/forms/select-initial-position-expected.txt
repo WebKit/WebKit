@@ -10,9 +10,7 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (6,3) size 132x14
           RenderText at (0,0) size 112x14
             text run at (0,0) width 112: "this should be selected"
-      RenderText {#text} at (148,21) size 4x19
-        text run at (148,21) width 4: " "
-      RenderBR {BR} at (152,21) size 0x19
+      RenderBR {BR} at (148,21) size 0x19
       RenderText {#text} at (0,44) size 165x19
         text run at (0,44) width 165: "dynamic selected change:"
       RenderBR {BR} at (164,44) size 1x19
@@ -22,8 +20,7 @@ layer at (0,0) size 800x600
             text run at (0,0) width 112: "this should be selected"
       RenderText {#text} at (148,65) size 4x19
         text run at (148,65) width 4: " "
-      RenderText {#text} at (0,0) size 0x0
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (152,65) size 0x19
       RenderText {#text} at (0,88) size 217x19
         text run at (0,88) width 217: "dynamic insert of selected option:"
       RenderBR {BR} at (216,88) size 1x19
@@ -31,9 +28,7 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (6,3) size 132x14
           RenderText at (0,0) size 112x14
             text run at (0,0) width 112: "this should be selected"
-      RenderText {#text} at (148,109) size 4x19
-        text run at (148,109) width 4: " "
-      RenderBR {BR} at (152,109) size 0x19
+      RenderBR {BR} at (148,109) size 0x19
       RenderText {#text} at (0,132) size 98x19
         text run at (0,132) width 98: "initial selected:"
       RenderBR {BR} at (97,132) size 1x19
@@ -41,9 +36,7 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (6,3) size 132x14
           RenderText at (0,0) size 112x14
             text run at (0,0) width 112: "this should be selected"
-      RenderText {#text} at (148,153) size 4x19
-        text run at (148,153) width 4: " "
-      RenderBR {BR} at (152,153) size 0x19
+      RenderBR {BR} at (148,153) size 0x19
       RenderText {#text} at (0,176) size 165x19
         text run at (0,176) width 165: "dynamic selected change:"
       RenderBR {BR} at (164,176) size 1x19
@@ -53,8 +46,7 @@ layer at (0,0) size 800x600
             text run at (0,0) width 112: "this should be selected"
       RenderText {#text} at (148,197) size 4x19
         text run at (148,197) width 4: " "
-      RenderText {#text} at (0,0) size 0x0
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (152,197) size 0x19
       RenderText {#text} at (0,220) size 217x19
         text run at (0,220) width 217: "dynamic insert of selected option:"
       RenderBR {BR} at (216,220) size 1x19

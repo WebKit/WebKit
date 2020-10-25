@@ -14,8 +14,8 @@ layer at (0,0) size 785x1198
           text run at (0,18) width 757: "expected to match the \"Correct output sample\" results. In fact, I do not entirely agree with all of the given test cases in"
           text run at (0,36) width 744: "terms of their expected results, nor do I think that the browser should yet be expected to match all of the cases in the"
           text run at (0,54) width 189: "different languages, but I am "
-          text run at (188,54) width 293: "(at least temporarily) adding the test anyway. "
-        RenderBR {BR} at (480,54) size 1x18
+          text run at (188,54) width 289: "(at least temporarily) adding the test anyway."
+        RenderBR {BR} at (476,54) size 1x18
         RenderBR {BR} at (0,72) size 0x18
       RenderTable {TABLE} at (0,90) size 769x364
         RenderBlock {CAPTION} at (0,0) size 769x18

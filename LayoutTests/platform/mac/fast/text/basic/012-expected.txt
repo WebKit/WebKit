@@ -18,13 +18,13 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,151) size 784x73
         RenderBR {BR} at (0,0) size 0x18
         RenderInline {FONT} at (0,0) size 338x54 [color=#CC0000]
-          RenderText {#text} at (0,18) size 338x18
+          RenderText {#text} at (0,18) size 334x18
             text run at (0,18) width 70: "\x{BB} England "
             text run at (69,18) width 62: "\x{BB} Ireland "
             text run at (130,18) width 73: "\x{BB} Scotland "
             text run at (202,18) width 77: "\x{BB} Germany "
-            text run at (278,18) width 60: "\x{BB} France "
-          RenderBR {BR} at (337,18) size 1x18
+            text run at (278,18) width 56: "\x{BB} France"
+          RenderBR {BR} at (333,18) size 1x18
           RenderBR {BR} at (0,36) size 0x18
           RenderText {#text} at (0,54) size 338x18
             text run at (0,54) width 70: "\x{BB} England "
@@ -32,5 +32,4 @@ layer at (0,0) size 800x600
             text run at (130,54) width 73: "\x{BB} Scotland "
             text run at (202,54) width 77: "\x{BB} Germany "
             text run at (278,54) width 60: "\x{BB} France "
-        RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (0,0) size 0x0

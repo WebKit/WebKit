@@ -4,33 +4,33 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 470x582
       RenderBlock (anonymous) at (0,0) size 470x340
-        RenderText {#text} at (0,0) size 332x19
-          text run at (0,0) width 332: "This tests basic inputs. Here's what you should see: "
-        RenderBR {BR} at (331,0) size 1x19
+        RenderText {#text} at (0,0) size 328x19
+          text run at (0,0) width 328: "This tests basic inputs. Here's what you should see:"
+        RenderBR {BR} at (327,0) size 1x19
         RenderBR {BR} at (0,20) size 0x19
         RenderText {#text} at (0,40) size 462x59
           text run at (0,40) width 445: "first line: the letter \"a\" and then a text input field filled with repeating"
           text run at (0,60) width 86: "\"foobarbaz\", "
           text run at (85,60) width 377: "then the word \"text\" followed by a disabled text input field"
-          text run at (0,80) width 336: "filled with \"foo\" and then the letter \"b\" and then \"a\" "
-        RenderBR {BR} at (335,80) size 1x19
+          text run at (0,80) width 332: "filled with \"foo\" and then the letter \"b\" and then \"a\""
+        RenderBR {BR} at (331,80) size 1x19
         RenderBR {BR} at (0,100) size 0x19
         RenderText {#text} at (0,120) size 469x59
           text run at (0,120) width 439: "second line: and then a password input field that's filled and then the"
           text run at (0,140) width 469: "word \"password\" and then a disabled password field that's filled and then"
-          text run at (0,160) width 86: "the letter \"b\" "
-        RenderBR {BR} at (85,160) size 1x19
+          text run at (0,160) width 82: "the letter \"b\""
+        RenderBR {BR} at (81,160) size 1x19
         RenderBR {BR} at (0,180) size 0x19
         RenderText {#text} at (0,200) size 459x39
           text run at (0,200) width 459: "third line: the letter \"a\" and then a checkbox (unchecked) with the word"
-          text run at (0,220) width 360: "\"checkbox\" and then a disabled checkbox and letter \"b\" "
-        RenderBR {BR} at (359,220) size 1x19
+          text run at (0,220) width 356: "\"checkbox\" and then a disabled checkbox and letter \"b\""
+        RenderBR {BR} at (355,220) size 1x19
         RenderBR {BR} at (0,240) size 0x19
         RenderText {#text} at (0,260) size 457x59
           text run at (0,260) width 411: "fourth line: the last line has the letter \"a\" and then a redio button"
           text run at (0,280) width 457: "(unselected) and then the word \"radio\" and then a disabled radio button"
-          text run at (0,300) width 113: "and the letter \"b\" "
-        RenderBR {BR} at (112,300) size 1x19
+          text run at (0,300) width 109: "and the letter \"b\""
+        RenderBR {BR} at (108,300) size 1x19
         RenderBR {BR} at (0,320) size 0x19
       RenderBlock {DIV} at (10,350) size 450x52 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,2) size 8x19

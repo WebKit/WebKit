@@ -96,9 +96,9 @@ layer at (0,0) size 785x664
           RenderText {#text} at (365,0) size 712x36
             text run at (365,0) width 347: "http://www.w3.org/TR/REC-CSS2/images/tbl-border-"
             text run at (0,18) width 70: "conflict.gif"
-        RenderText {#text} at (69,18) size 10x18
-          text run at (69,18) width 10: ": "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderText {#text} at (69,18) size 6x18
+          text run at (69,18) width 6: ":"
+        RenderBR {BR} at (74,18) size 1x18
         RenderImage {IMG} at (0,36) size 221x22
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,514) size 769x36

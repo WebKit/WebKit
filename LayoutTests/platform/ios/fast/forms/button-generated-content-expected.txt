@@ -33,9 +33,7 @@ layer at (0,0) size 800x292
                 text run at (0,0) width 32: "before"
             RenderText {#text} at (31,0) size 31x14
               text run at (31,0) width 31: "button"
-        RenderText {#text} at (152,1) size 5x19
-          text run at (152,1) width 5: " "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (152,1) size 1x19
         RenderButton {BUTTON} at (2,26) size 47x20 [color=#0000FF] [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 23x14
             RenderInline (generated) at (0,0) size 23x14
@@ -50,9 +48,7 @@ layer at (0,0) size 800x292
             RenderInline (generated) at (0,0) size 23x14
               RenderText at (30,0) size 23x14
                 text run at (30,0) width 23: "after"
-        RenderText {#text} at (134,25) size 5x19
-          text run at (134,25) width 5: " "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (134,25) size 1x19
         RenderButton {BUTTON} at (2,50) size 24x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (28,54) size 4x19
           text run at (28,54) width 4: " "
@@ -60,9 +56,7 @@ layer at (0,0) size 800x292
           RenderBlock (anonymous) at (12,3) size 31x14
             RenderText {#text} at (0,0) size 31x14
               text run at (0,0) width 31: "button"
-        RenderText {#text} at (90,54) size 5x19
-          text run at (90,54) width 5: " "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (90,54) size 1x19
         RenderButton {BUTTON} at (2,79) size 24x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (28,83) size 4x19
           text run at (28,83) width 4: " "
@@ -70,9 +64,7 @@ layer at (0,0) size 800x292
           RenderBlock (anonymous) at (12,3) size 31x14
             RenderText {#text} at (0,0) size 31x14
               text run at (0,0) width 31: "button"
-        RenderText {#text} at (90,83) size 5x19
-          text run at (90,83) width 5: " "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (90,83) size 1x19
         RenderButton {BUTTON} at (2,108) size 56x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 32x14
             RenderInline (generated) at (0,0) size 32x14
@@ -87,9 +79,7 @@ layer at (0,0) size 800x292
                 text run at (0,0) width 32: "before"
             RenderText {#text} at (31,0) size 31x14
               text run at (31,0) width 31: "button"
-        RenderText {#text} at (152,107) size 5x19
-          text run at (152,107) width 5: " "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (152,107) size 1x19
         RenderButton {BUTTON} at (2,132) size 47x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 23x14
             RenderInline (generated) at (0,0) size 23x14
@@ -104,9 +94,7 @@ layer at (0,0) size 800x292
             RenderInline (generated) at (0,0) size 23x14
               RenderText at (30,0) size 23x14
                 text run at (30,0) width 23: "after"
-        RenderText {#text} at (134,131) size 5x19
-          text run at (134,131) width 5: " "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (134,131) size 1x19
         RenderButton {BUTTON} at (2,156) size 56x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 32x14
             RenderInline (generated) at (0,0) size 32x14
@@ -121,9 +109,7 @@ layer at (0,0) size 800x292
                 text run at (0,0) width 32: "before"
             RenderText {#text} at (31,0) size 31x14
               text run at (31,0) width 31: "button"
-        RenderText {#text} at (152,155) size 5x19
-          text run at (152,155) width 5: " "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (152,155) size 1x19
         RenderButton {BUTTON} at (2,180) size 47x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 23x14
             RenderInline (generated) at (0,0) size 23x14
@@ -138,6 +124,4 @@ layer at (0,0) size 800x292
             RenderInline (generated) at (0,0) size 23x14
               RenderText at (30,0) size 23x14
                 text run at (30,0) width 23: "after"
-        RenderText {#text} at (134,179) size 5x19
-          text run at (134,179) width 5: " "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (134,179) size 1x19

@@ -7,7 +7,6 @@ layer at (0,0) size 800x600
       RenderText {#text} at (479,135) size 4x19
         text run at (479,135) width 4: " "
       RenderInline {MAP} at (0,0) size 224x19
-        RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (0,0) size 0x0
         RenderInline {A} at (0,0) size 92x19 [color=#0000EE]
           RenderText {#text} at (0,155) size 92x19

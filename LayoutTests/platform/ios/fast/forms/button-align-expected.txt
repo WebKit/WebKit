@@ -11,23 +11,17 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (12,3) size 276x14
             RenderText {#text} at (58,0) size 160x14
               text run at (58,0) width 160: "This is should be center justified."
-        RenderText {#text} at (300,1) size 4x19
-          text run at (300,1) width 4: " "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (300,1) size 0x19
         RenderButton {BUTTON} at (0,26) size 300x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 276x14
             RenderText {#text} at (58,0) size 160x14
               text run at (58,0) width 160: "This is should be center justified."
-        RenderText {#text} at (300,25) size 4x19
-          text run at (300,25) width 4: " "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (300,25) size 0x19
         RenderButton {BUTTON} at (0,50) size 300x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 276x14
             RenderText {#text} at (58,0) size 160x14
               text run at (58,0) width 160: "This is should be center justified."
-        RenderText {#text} at (300,49) size 4x19
-          text run at (300,49) width 4: " "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (300,49) size 0x19
         RenderButton {BUTTON} at (0,74) size 300x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 276x14
             RenderText {#text} at (58,0) size 160x14

@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 466x19
-        text run at (0,0) width 466: "This tests that the border of a readonly text field should appear dimmed. "
-      RenderBR {BR} at (465,0) size 1x19
+      RenderText {#text} at (0,0) size 462x19
+        text run at (0,0) width 462: "This tests that the border of a readonly text field should appear dimmed."
+      RenderBR {BR} at (461,0) size 1x19
       RenderTextControl {INPUT} at (2,22) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #BCBCBC)]
       RenderText {#text} at (0,0) size 0x0
 layer at (17,33) size 122x14 scrollWidth 149

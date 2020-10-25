@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 411x19
-        text run at (0,0) width 411: "This tests that text can not be inserted into a readonly text field. "
-      RenderBR {BR} at (410,0) size 1x19
+      RenderText {#text} at (0,0) size 407x19
+        text run at (0,0) width 407: "This tests that text can not be inserted into a readonly text field."
+      RenderBR {BR} at (406,0) size 1x19
       RenderTextControl {INPUT} at (2,22) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #BCBCBC)]
       RenderText {#text} at (0,0) size 0x0
 layer at (17,33) size 122x14

@@ -122,8 +122,6 @@ layer at (0,0) size 800x112
           RenderRubyBase (anonymous) at (0,0) size 57x48
             RenderText {#text} at (0,5) size 57x37
               text run at (0,5) width 57: "\x{4EBA}"
-      RenderText {#text} at (570,5) size 33x37
-        text run at (570,5) width 33: " "
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (570,5) size 0x37
       RenderText {#text} at (0,53) size 570x37
         text run at (0,53) width 570: "\x{4E16}\x{4E0A}\x{7121}\x{96E3}\x{4E8B}\x{53EA}\x{6015}\x{6709}\x{5FC3}\x{4EBA}"

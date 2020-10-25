@@ -9,9 +9,7 @@ layer at (0,0) size 800x592
         text run at (288,270) width 4: " "
       RenderBlock {DIV} at (296,4) size 280x280
         RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (580,270) size 4x18
-        text run at (580,270) width 4: " "
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (580,270) size 0x18
       RenderBlock {DIV} at (4,292) size 280x280
         RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (288,558) size 4x18

@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 408x19
-        text run at (0,0) width 408: "This tests that text can not be inserted into a disabled text field. "
-      RenderBR {BR} at (407,0) size 1x19
+      RenderText {#text} at (0,0) size 404x19
+        text run at (0,0) width 404: "This tests that text can not be inserted into a disabled text field."
+      RenderBR {BR} at (403,0) size 1x19
       RenderText {#text} at (0,0) size 0x0
 layer at (10,30) size 135x21
   RenderTextControl {INPUT} at (2,22) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
