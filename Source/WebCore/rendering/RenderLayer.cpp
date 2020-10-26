@@ -3898,7 +3898,6 @@ void RenderLayer::updateScrollInfoAfterLayout()
     ScrollOffset originalScrollOffset = scrollOffset();
 
     computeScrollDimensions();
-    updateSelfPaintingLayer();
 
 #if ENABLE(CSS_SCROLL_SNAP)
     // FIXME: Ensure that offsets are also updated in case of programmatic style changes.
@@ -6504,7 +6503,7 @@ bool RenderLayer::shouldBeSelfPaintingLayer() const
         return true;
 
     return hasOverlayScrollbars()
-        || hasCompositedScrollableOverflow()
+        || canUseCompositedScrolling()
         || renderer().isTableRow()
         || renderer().isCanvas()
         || renderer().isVideo()
