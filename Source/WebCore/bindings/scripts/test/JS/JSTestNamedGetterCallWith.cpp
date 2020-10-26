@@ -46,7 +46,7 @@ using namespace JSC;
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestNamedGetterCallWithConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestNamedGetterCallWithConstructor);
 
 class JSTestNamedGetterCallWithPrototype final : public JSC::JSNonFinalObject {
 public:

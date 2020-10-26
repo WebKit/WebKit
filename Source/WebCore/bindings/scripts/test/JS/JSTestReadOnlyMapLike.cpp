@@ -50,17 +50,17 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunction_get);
-JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunction_has);
-JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunction_entries);
-JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunction_keys);
-JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunction_values);
-JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunction_forEach);
+static JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunction_get);
+static JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunction_has);
+static JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunction_entries);
+static JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunction_keys);
+static JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunction_values);
+static JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunction_forEach);
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestReadOnlyMapLikeConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestReadOnlyMapLike_size);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestReadOnlyMapLikeConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestReadOnlyMapLike_size);
 
 class JSTestReadOnlyMapLikePrototype final : public JSC::JSNonFinalObject {
 public:

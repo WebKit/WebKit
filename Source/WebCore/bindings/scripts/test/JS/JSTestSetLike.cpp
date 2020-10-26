@@ -50,19 +50,19 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_has);
-JSC_DECLARE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_entries);
-JSC_DECLARE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_keys);
-JSC_DECLARE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_values);
-JSC_DECLARE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_forEach);
-JSC_DECLARE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_add);
-JSC_DECLARE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_clear);
-JSC_DECLARE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_delete);
+static JSC_DECLARE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_has);
+static JSC_DECLARE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_entries);
+static JSC_DECLARE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_keys);
+static JSC_DECLARE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_values);
+static JSC_DECLARE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_forEach);
+static JSC_DECLARE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_add);
+static JSC_DECLARE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_clear);
+static JSC_DECLARE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_delete);
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestSetLikeConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestSetLike_size);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestSetLikeConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestSetLike_size);
 
 class JSTestSetLikePrototype final : public JSC::JSNonFinalObject {
 public:

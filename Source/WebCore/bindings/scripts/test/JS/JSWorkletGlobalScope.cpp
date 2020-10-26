@@ -46,9 +46,9 @@ using namespace JSC;
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsWorkletGlobalScopeConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsWorkletGlobalScope_WorkletGlobalScopeConstructor);
-JSC_DECLARE_CUSTOM_SETTER(setJSWorkletGlobalScope_WorkletGlobalScopeConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsWorkletGlobalScopeConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsWorkletGlobalScope_WorkletGlobalScopeConstructor);
+static JSC_DECLARE_CUSTOM_SETTER(setJSWorkletGlobalScope_WorkletGlobalScopeConstructor);
 
 using JSWorkletGlobalScopeDOMConstructor = JSDOMConstructorNotConstructable<JSWorkletGlobalScope>;
 

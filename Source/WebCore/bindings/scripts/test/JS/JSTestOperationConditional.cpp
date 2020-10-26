@@ -49,15 +49,15 @@ using namespace JSC;
 // Functions
 
 #if ENABLE(ConditionBase)
-JSC_DECLARE_HOST_FUNCTION(jsTestOperationConditionalPrototypeFunction_nonConditionalOperation);
+static JSC_DECLARE_HOST_FUNCTION(jsTestOperationConditionalPrototypeFunction_nonConditionalOperation);
 #endif
 #if ENABLE(ConditionBase) && ENABLE(ConditionOperation)
-JSC_DECLARE_HOST_FUNCTION(jsTestOperationConditionalPrototypeFunction_conditionalOperation);
+static JSC_DECLARE_HOST_FUNCTION(jsTestOperationConditionalPrototypeFunction_conditionalOperation);
 #endif
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestOperationConditionalConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestOperationConditionalConstructor);
 
 class JSTestOperationConditionalPrototype final : public JSC::JSNonFinalObject {
 public:

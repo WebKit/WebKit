@@ -50,20 +50,20 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_get);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_has);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_entries);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_keys);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_values);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_forEach);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_set);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_clear);
-JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_delete);
+static JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_get);
+static JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_has);
+static JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_entries);
+static JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_keys);
+static JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_values);
+static JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_forEach);
+static JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_set);
+static JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_clear);
+static JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunction_delete);
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestMapLikeConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestMapLike_size);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestMapLikeConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestMapLike_size);
 
 class JSTestMapLikePrototype final : public JSC::JSNonFinalObject {
 public:

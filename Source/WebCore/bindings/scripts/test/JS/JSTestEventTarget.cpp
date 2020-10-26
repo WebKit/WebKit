@@ -50,11 +50,11 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestEventTargetPrototypeFunction_item);
+static JSC_DECLARE_HOST_FUNCTION(jsTestEventTargetPrototypeFunction_item);
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestEventTargetConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestEventTargetConstructor);
 
 class JSTestEventTargetPrototype final : public JSC::JSNonFinalObject {
 public:

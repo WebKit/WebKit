@@ -127,9 +127,9 @@ template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectio
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestPromiseRejectionEventConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestPromiseRejectionEvent_promise);
-JSC_DECLARE_CUSTOM_GETTER(jsTestPromiseRejectionEvent_reason);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestPromiseRejectionEventConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestPromiseRejectionEvent_promise);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestPromiseRejectionEvent_reason);
 
 class JSTestPromiseRejectionEventPrototype final : public JSC::JSNonFinalObject {
 public:

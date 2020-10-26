@@ -46,8 +46,8 @@ using namespace JSC;
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestGenerateIsReachableConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestGenerateIsReachable_aSecretAttribute);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestGenerateIsReachableConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestGenerateIsReachable_aSecretAttribute);
 
 class JSTestGenerateIsReachablePrototype final : public JSC::JSNonFinalObject {
 public:

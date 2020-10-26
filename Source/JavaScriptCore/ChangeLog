@@ -1,3 +1,26 @@
+2020-10-26  Sam Weinig  <weinig@apple.com>
+
+        JSC special function forward declarations (e.g. JSC_DECLARE_HOST_FUNCTION) that are internal to a cpp file should be declared with static to avoid external linkage
+        https://bugs.webkit.org/show_bug.cgi?id=218159
+
+        Reviewed by Darin Adler.
+
+        Add static prefix when declarations are constrained to the cpp file. This should help out the linker
+        by using the correct linkage type.
+
+        * runtime/ArrayPrototype.cpp:
+        * runtime/AsyncGeneratorFunctionConstructor.cpp:
+        * runtime/AtomicsObject.cpp:
+        * runtime/DateConstructor.cpp:
+        * runtime/DatePrototype.cpp:
+        * runtime/InspectorInstrumentationObject.cpp:
+        * runtime/JSDataViewPrototype.cpp:
+        * runtime/JSONObject.cpp:
+        * runtime/MathObject.cpp:
+        * runtime/ObjectConstructor.cpp:
+        * runtime/RegExpObject.cpp:
+        * runtime/StringPrototype.cpp:
+
 2020-10-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [ECMA-402] Implement Intl.ListFormat

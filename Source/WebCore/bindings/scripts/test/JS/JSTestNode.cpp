@@ -54,24 +54,23 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunction_testWorkerPromise);
-JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunction_calculateSecretResult);
-JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunction_getSecretBoolean);
+static JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunction_testWorkerPromise);
+static JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunction_calculateSecretResult);
+static JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunction_getSecretBoolean);
 #if ENABLE(TEST_FEATURE)
-JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunction_testFeatureGetSecretBoolean);
+static JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunction_testFeatureGetSecretBoolean);
 #endif
-JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunction_toJSON);
-JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunction_SymbolIterator);
-JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunction_entries);
-JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunction_keys);
-JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunction_values);
-JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunction_forEach);
+static JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunction_toJSON);
+static JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunction_entries);
+static JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunction_keys);
+static JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunction_values);
+static JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunction_forEach);
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestNodeConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestNode_name);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestNode_name);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestNodeConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestNode_name);
+static JSC_DECLARE_CUSTOM_SETTER(setJSTestNode_name);
 
 class JSTestNodePrototype final : public JSC::JSNonFinalObject {
 public:

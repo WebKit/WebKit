@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-JSC_DECLARE_HOST_FUNCTION(inspectorInstrumentationObjectLog);
+static JSC_DECLARE_HOST_FUNCTION(inspectorInstrumentationObjectLog);
 
 }
 

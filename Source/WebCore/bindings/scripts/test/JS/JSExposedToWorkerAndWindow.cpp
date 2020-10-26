@@ -87,11 +87,11 @@ JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, J
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsExposedToWorkerAndWindowPrototypeFunction_doSomething);
+static JSC_DECLARE_HOST_FUNCTION(jsExposedToWorkerAndWindowPrototypeFunction_doSomething);
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsExposedToWorkerAndWindowConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsExposedToWorkerAndWindowConstructor);
 
 class JSExposedToWorkerAndWindowPrototype final : public JSC::JSNonFinalObject {
 public:

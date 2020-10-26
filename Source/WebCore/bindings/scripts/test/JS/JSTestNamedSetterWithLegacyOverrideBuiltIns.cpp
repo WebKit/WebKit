@@ -46,7 +46,7 @@ using namespace JSC;
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestNamedSetterWithLegacyOverrideBuiltInsConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestNamedSetterWithLegacyOverrideBuiltInsConstructor);
 
 class JSTestNamedSetterWithLegacyOverrideBuiltInsPrototype final : public JSC::JSNonFinalObject {
 public:

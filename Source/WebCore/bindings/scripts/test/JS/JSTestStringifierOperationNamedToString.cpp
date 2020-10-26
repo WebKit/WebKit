@@ -46,11 +46,11 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestStringifierOperationNamedToStringPrototypeFunction_toString);
+static JSC_DECLARE_HOST_FUNCTION(jsTestStringifierOperationNamedToStringPrototypeFunction_toString);
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestStringifierOperationNamedToStringConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestStringifierOperationNamedToStringConstructor);
 
 class JSTestStringifierOperationNamedToStringPrototype final : public JSC::JSNonFinalObject {
 public:

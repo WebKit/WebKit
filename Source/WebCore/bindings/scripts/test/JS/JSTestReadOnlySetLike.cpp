@@ -50,16 +50,16 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunction_has);
-JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunction_entries);
-JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunction_keys);
-JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunction_values);
-JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunction_forEach);
+static JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunction_has);
+static JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunction_entries);
+static JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunction_keys);
+static JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunction_values);
+static JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunction_forEach);
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestReadOnlySetLikeConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestReadOnlySetLike_size);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestReadOnlySetLikeConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestReadOnlySetLike_size);
 
 class JSTestReadOnlySetLikePrototype final : public JSC::JSNonFinalObject {
 public:

@@ -66,13 +66,13 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestDefaultToJSONInheritPrototypeFunction_toJSON);
+static JSC_DECLARE_HOST_FUNCTION(jsTestDefaultToJSONInheritPrototypeFunction_toJSON);
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONInheritConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONInherit_inheritLongAttribute);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONInherit_inheritLongAttribute);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONInheritConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONInherit_inheritLongAttribute);
+static JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONInherit_inheritLongAttribute);
 
 class JSTestDefaultToJSONInheritPrototype final : public JSC::JSNonFinalObject {
 public:

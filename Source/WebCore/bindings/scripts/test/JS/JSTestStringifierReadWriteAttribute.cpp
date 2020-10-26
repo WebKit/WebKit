@@ -47,13 +47,13 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestStringifierReadWriteAttributePrototypeFunction_toString);
+static JSC_DECLARE_HOST_FUNCTION(jsTestStringifierReadWriteAttributePrototypeFunction_toString);
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestStringifierReadWriteAttributeConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestStringifierReadWriteAttribute_identifier);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestStringifierReadWriteAttribute_identifier);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestStringifierReadWriteAttributeConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestStringifierReadWriteAttribute_identifier);
+static JSC_DECLARE_CUSTOM_SETTER(setJSTestStringifierReadWriteAttribute_identifier);
 
 class JSTestStringifierReadWriteAttributePrototype final : public JSC::JSNonFinalObject {
 public:

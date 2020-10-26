@@ -47,11 +47,11 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestNamedSetterWithIdentifierPrototypeFunction_namedSetter);
+static JSC_DECLARE_HOST_FUNCTION(jsTestNamedSetterWithIdentifierPrototypeFunction_namedSetter);
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestNamedSetterWithIdentifierConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestNamedSetterWithIdentifierConstructor);
 
 class JSTestNamedSetterWithIdentifierPrototype final : public JSC::JSNonFinalObject {
 public:

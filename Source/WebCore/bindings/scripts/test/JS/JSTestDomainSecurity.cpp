@@ -52,14 +52,14 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunction_excitingFunction);
-JSC_DECLARE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunction_postMessage);
-JSC_DECLARE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunction_overloadedMethod);
+static JSC_DECLARE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunction_excitingFunction);
+static JSC_DECLARE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunction_postMessage);
+static JSC_DECLARE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunction_overloadedMethod);
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestDomainSecurityConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestDomainSecurity_excitingAttr);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestDomainSecurityConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestDomainSecurity_excitingAttr);
 
 class JSTestDomainSecurityPrototype final : public JSC::JSNonFinalObject {
 public:

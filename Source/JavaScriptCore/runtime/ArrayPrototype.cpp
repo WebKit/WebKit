@@ -40,19 +40,19 @@
 
 namespace JSC {
 
-JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncToLocaleString);
-JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncJoin);
-JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncKeys);
-JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncEntries);
-JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncPop);
-JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncPush);
-JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncReverse);
-JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncShift);
-JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncSlice);
-JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncSplice);
-JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncUnShift);
-JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncIndexOf);
-JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncLastIndexOf);
+static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncToLocaleString);
+static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncJoin);
+static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncKeys);
+static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncEntries);
+static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncPop);
+static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncPush);
+static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncReverse);
+static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncShift);
+static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncSlice);
+static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncSplice);
+static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncUnShift);
+static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncIndexOf);
+static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncLastIndexOf);
 
 // ------------------------------ ArrayPrototype ----------------------------
 

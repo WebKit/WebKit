@@ -51,7 +51,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(AtomicsObject);
     macro(xor, Xor, 3)
 
 #define DECLARE_FUNC_PROTO(lowerName, upperName, count)  \
-    JSC_DECLARE_HOST_FUNCTION(atomicsFunc ## upperName);
+    static JSC_DECLARE_HOST_FUNCTION(atomicsFunc ## upperName);
 FOR_EACH_ATOMICS_FUNC(DECLARE_FUNC_PROTO)
 #undef DECLARE_FUNC_PROTO
 

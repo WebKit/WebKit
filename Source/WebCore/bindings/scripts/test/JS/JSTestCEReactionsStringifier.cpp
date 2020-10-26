@@ -48,15 +48,15 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestCEReactionsStringifierPrototypeFunction_toString);
+static JSC_DECLARE_HOST_FUNCTION(jsTestCEReactionsStringifierPrototypeFunction_toString);
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestCEReactionsStringifierConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestCEReactionsStringifier_value);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestCEReactionsStringifier_value);
-JSC_DECLARE_CUSTOM_GETTER(jsTestCEReactionsStringifier_valueWithoutReactions);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestCEReactionsStringifier_valueWithoutReactions);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestCEReactionsStringifierConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestCEReactionsStringifier_value);
+static JSC_DECLARE_CUSTOM_SETTER(setJSTestCEReactionsStringifier_value);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestCEReactionsStringifier_valueWithoutReactions);
+static JSC_DECLARE_CUSTOM_SETTER(setJSTestCEReactionsStringifier_valueWithoutReactions);
 
 class JSTestCEReactionsStringifierPrototype final : public JSC::JSNonFinalObject {
 public:

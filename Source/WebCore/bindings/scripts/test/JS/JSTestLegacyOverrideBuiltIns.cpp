@@ -50,11 +50,11 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestLegacyOverrideBuiltInsPrototypeFunction_namedItem);
+static JSC_DECLARE_HOST_FUNCTION(jsTestLegacyOverrideBuiltInsPrototypeFunction_namedItem);
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestLegacyOverrideBuiltInsConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestLegacyOverrideBuiltInsConstructor);
 
 class JSTestLegacyOverrideBuiltInsPrototype final : public JSC::JSNonFinalObject {
 public:

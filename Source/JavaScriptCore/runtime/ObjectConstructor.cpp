@@ -31,20 +31,19 @@
 
 namespace JSC {
 
-JSC_DECLARE_HOST_FUNCTION(objectConstructorAssign);
-JSC_DECLARE_HOST_FUNCTION(objectConstructorValues);
-JSC_DECLARE_HOST_FUNCTION(objectConstructorGetPrototypeOf);
-JSC_DECLARE_HOST_FUNCTION(objectConstructorSetPrototypeOf);
-JSC_DECLARE_HOST_FUNCTION(objectConstructorGetOwnPropertyNames);
-JSC_DECLARE_HOST_FUNCTION(objectConstructorDefineProperty);
-JSC_DECLARE_HOST_FUNCTION(objectConstructorDefineProperties);
-JSC_DECLARE_HOST_FUNCTION(objectConstructorCreate);
-JSC_DECLARE_HOST_FUNCTION(objectConstructorSeal);
-JSC_DECLARE_HOST_FUNCTION(objectConstructorFreeze);
-JSC_DECLARE_HOST_FUNCTION(objectConstructorPreventExtensions);
-JSC_DECLARE_HOST_FUNCTION(objectConstructorIsSealed);
-JSC_DECLARE_HOST_FUNCTION(objectConstructorIsFrozen);
-JSC_DECLARE_HOST_FUNCTION(objectConstructorIsExtensible);
+static JSC_DECLARE_HOST_FUNCTION(objectConstructorAssign);
+static JSC_DECLARE_HOST_FUNCTION(objectConstructorValues);
+static JSC_DECLARE_HOST_FUNCTION(objectConstructorGetPrototypeOf);
+static JSC_DECLARE_HOST_FUNCTION(objectConstructorSetPrototypeOf);
+static JSC_DECLARE_HOST_FUNCTION(objectConstructorDefineProperty);
+static JSC_DECLARE_HOST_FUNCTION(objectConstructorDefineProperties);
+static JSC_DECLARE_HOST_FUNCTION(objectConstructorCreate);
+static JSC_DECLARE_HOST_FUNCTION(objectConstructorSeal);
+static JSC_DECLARE_HOST_FUNCTION(objectConstructorFreeze);
+static JSC_DECLARE_HOST_FUNCTION(objectConstructorPreventExtensions);
+static JSC_DECLARE_HOST_FUNCTION(objectConstructorIsSealed);
+static JSC_DECLARE_HOST_FUNCTION(objectConstructorIsFrozen);
+static JSC_DECLARE_HOST_FUNCTION(objectConstructorIsExtensible);
 
 }
 

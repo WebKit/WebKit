@@ -49,15 +49,14 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunction_SymbolIterator);
-JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunction_entries);
-JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunction_keys);
-JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunction_values);
-JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunction_forEach);
+static JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunction_entries);
+static JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunction_keys);
+static JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunction_values);
+static JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunction_forEach);
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestIterableConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestIterableConstructor);
 
 class JSTestIterablePrototype final : public JSC::JSNonFinalObject {
 public:

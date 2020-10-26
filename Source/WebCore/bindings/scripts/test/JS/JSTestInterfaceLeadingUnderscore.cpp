@@ -46,8 +46,8 @@ using namespace JSC;
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestInterfaceLeadingUnderscoreConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestInterfaceLeadingUnderscore_readonly);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestInterfaceLeadingUnderscoreConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestInterfaceLeadingUnderscore_readonly);
 
 class JSTestInterfaceLeadingUnderscorePrototype final : public JSC::JSNonFinalObject {
 public:

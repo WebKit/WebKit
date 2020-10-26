@@ -46,7 +46,7 @@ using namespace JSC;
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestNamedSetterThrowingExceptionConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestNamedSetterThrowingExceptionConstructor);
 
 class JSTestNamedSetterThrowingExceptionPrototype final : public JSC::JSNonFinalObject {
 public:

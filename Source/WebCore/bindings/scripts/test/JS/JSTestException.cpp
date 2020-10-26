@@ -46,8 +46,8 @@ using namespace JSC;
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestExceptionConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestException_name);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestExceptionConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestException_name);
 
 class JSTestExceptionPrototype final : public JSC::JSNonFinalObject {
 public:

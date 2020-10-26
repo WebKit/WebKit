@@ -29,8 +29,8 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(RegExpObject);
 
 const ClassInfo RegExpObject::s_info = { "RegExp", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RegExpObject) };
 
-JSC_DECLARE_CUSTOM_SETTER(regExpObjectSetLastIndexStrict);
-JSC_DECLARE_CUSTOM_SETTER(regExpObjectSetLastIndexNonStrict);
+static JSC_DECLARE_CUSTOM_SETTER(regExpObjectSetLastIndexStrict);
+static JSC_DECLARE_CUSTOM_SETTER(regExpObjectSetLastIndexNonStrict);
 
 RegExpObject::RegExpObject(VM& vm, Structure* structure, RegExp* regExp)
     : JSNonFinalObject(vm, structure)

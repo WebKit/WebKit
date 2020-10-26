@@ -44,7 +44,7 @@ using namespace JSC;
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestReportExtraMemoryCostConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestReportExtraMemoryCostConstructor);
 
 class JSTestReportExtraMemoryCostPrototype final : public JSC::JSNonFinalObject {
 public:

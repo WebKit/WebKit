@@ -46,9 +46,9 @@ using namespace JSC;
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsPaintWorkletGlobalScopeConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsPaintWorkletGlobalScope_PaintWorkletGlobalScopeConstructor);
-JSC_DECLARE_CUSTOM_SETTER(setJSPaintWorkletGlobalScope_PaintWorkletGlobalScopeConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsPaintWorkletGlobalScopeConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsPaintWorkletGlobalScope_PaintWorkletGlobalScopeConstructor);
+static JSC_DECLARE_CUSTOM_SETTER(setJSPaintWorkletGlobalScope_PaintWorkletGlobalScopeConstructor);
 
 using JSPaintWorkletGlobalScopeDOMConstructor = JSDOMConstructorNotConstructable<JSPaintWorkletGlobalScope>;
 

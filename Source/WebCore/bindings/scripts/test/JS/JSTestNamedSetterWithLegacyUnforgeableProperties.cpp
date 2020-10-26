@@ -48,12 +48,12 @@ using namespace JSC;
 
 // Functions
 
-JSC_DECLARE_HOST_FUNCTION(jsTestNamedSetterWithLegacyUnforgeablePropertiesInstanceFunction_unforgeableOperation);
+static JSC_DECLARE_HOST_FUNCTION(jsTestNamedSetterWithLegacyUnforgeablePropertiesInstanceFunction_unforgeableOperation);
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestNamedSetterWithLegacyUnforgeablePropertiesConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestNamedSetterWithLegacyUnforgeableProperties_unforgeableAttribute);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestNamedSetterWithLegacyUnforgeablePropertiesConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestNamedSetterWithLegacyUnforgeableProperties_unforgeableAttribute);
 
 class JSTestNamedSetterWithLegacyUnforgeablePropertiesPrototype final : public JSC::JSNonFinalObject {
 public:

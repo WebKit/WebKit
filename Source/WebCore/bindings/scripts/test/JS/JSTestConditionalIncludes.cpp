@@ -63,48 +63,48 @@ using namespace JSC;
 // Functions
 
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-JSC_DECLARE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinOperation);
+static JSC_DECLARE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinOperation);
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-JSC_DECLARE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinComplexOperation);
+static JSC_DECLARE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinComplexOperation);
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-JSC_DECLARE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinCustomOperation);
+static JSC_DECLARE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinCustomOperation);
 #endif
 #if (ENABLE(Condition11) && ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-JSC_DECLARE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinConditionalOperation);
+static JSC_DECLARE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinConditionalOperation);
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-JSC_DECLARE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinSettingsConditionalOperation);
+static JSC_DECLARE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinSettingsConditionalOperation);
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-JSC_DECLARE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinResultFieldOperation);
+static JSC_DECLARE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinResultFieldOperation);
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22) && ENABLE(Condition33)) || ENABLE(Condition23)
-JSC_DECLARE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_partialMixinOperationFromPartial);
+static JSC_DECLARE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_partialMixinOperationFromPartial);
 #endif
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestConditionalIncludesConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestConditionalIncludes_testAttr);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestConditionalIncludesConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestConditionalIncludes_testAttr);
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC_DECLARE_CUSTOM_GETTER(jsTestConditionalIncludes_mixinReadOnlyAttribute);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestConditionalIncludes_mixinReadOnlyAttribute);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC_DECLARE_CUSTOM_GETTER(jsTestConditionalIncludes_mixinAttribute);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionalIncludes_mixinAttribute);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestConditionalIncludes_mixinAttribute);
+static JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionalIncludes_mixinAttribute);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC_DECLARE_CUSTOM_GETTER(jsTestConditionalIncludes_mixinCustomAttribute);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionalIncludes_mixinCustomAttribute);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestConditionalIncludes_mixinCustomAttribute);
+static JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionalIncludes_mixinCustomAttribute);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC_DECLARE_CUSTOM_GETTER(jsTestConditionalIncludes_mixinNodeAttribute);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionalIncludes_mixinNodeAttribute);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestConditionalIncludes_mixinNodeAttribute);
+static JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionalIncludes_mixinNodeAttribute);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC_DECLARE_CUSTOM_GETTER(jsTestConditionalIncludes_partialMixinAttributeFromPartial);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestConditionalIncludes_partialMixinAttributeFromPartial);
 #endif
 
 class JSTestConditionalIncludesPrototype final : public JSC::JSNonFinalObject {

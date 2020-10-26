@@ -43,7 +43,7 @@ using namespace JSC;
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONIndirectInheritanceConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONIndirectInheritanceConstructor);
 
 class JSTestDefaultToJSONIndirectInheritancePrototype final : public JSC::JSNonFinalObject {
 public:

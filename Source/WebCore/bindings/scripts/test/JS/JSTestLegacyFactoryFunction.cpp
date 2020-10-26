@@ -48,7 +48,7 @@ using namespace JSC;
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestLegacyFactoryFunctionConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestLegacyFactoryFunctionConstructor);
 
 class JSTestLegacyFactoryFunctionPrototype final : public JSC::JSNonFinalObject {
 public:

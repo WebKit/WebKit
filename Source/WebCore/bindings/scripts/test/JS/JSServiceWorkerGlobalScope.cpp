@@ -46,9 +46,9 @@ using namespace JSC;
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsServiceWorkerGlobalScopeConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsServiceWorkerGlobalScope_ServiceWorkerGlobalScopeConstructor);
-JSC_DECLARE_CUSTOM_SETTER(setJSServiceWorkerGlobalScope_ServiceWorkerGlobalScopeConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsServiceWorkerGlobalScopeConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsServiceWorkerGlobalScope_ServiceWorkerGlobalScopeConstructor);
+static JSC_DECLARE_CUSTOM_SETTER(setJSServiceWorkerGlobalScope_ServiceWorkerGlobalScopeConstructor);
 
 using JSServiceWorkerGlobalScopeDOMConstructor = JSDOMConstructorNotConstructable<JSServiceWorkerGlobalScope>;
 

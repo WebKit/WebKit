@@ -48,9 +48,9 @@ using namespace JSC;
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestEnabledForContextConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestEnabledForContext_TestSubObjEnabledForContextConstructor);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestEnabledForContext_TestSubObjEnabledForContextConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestEnabledForContextConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestEnabledForContext_TestSubObjEnabledForContextConstructor);
+static JSC_DECLARE_CUSTOM_SETTER(setJSTestEnabledForContext_TestSubObjEnabledForContextConstructor);
 
 class JSTestEnabledForContextPrototype final : public JSC::JSNonFinalObject {
 public:

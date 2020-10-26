@@ -4278,6 +4278,7 @@ sub GenerateImplementation
             next if $operation->{overloadIndex} && $operation->{overloadIndex} > 1;
             next if $operation->extendedAttributes->{ForwardDeclareInHeader};
             next if IsJSBuiltin($interface, $operation);
+            next if $operation->name eq "[Symbol.Iterator]";
 
             if ($operation->extendedAttributes->{AppleCopyright}) {
                 if (!$inAppleCopyright) {
@@ -4293,11 +4294,11 @@ sub GenerateImplementation
             my $conditionalString = $conditionalAttribute ? $codeGenerator->GenerateConditionalStringFromAttributeValue($conditionalAttribute) : undef;
             push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
             my $functionName = GetFunctionName($interface, $className, $operation);
-            push(@implContent, "JSC_DECLARE_HOST_FUNCTION(${functionName});\n");
+            push(@implContent, "static JSC_DECLARE_HOST_FUNCTION(${functionName});\n");
             if ($operation->extendedAttributes->{DOMJIT}) {
                 $implIncludes{"DOMJITIDLType.h"} = 1;
                 my $nameOfFunctionWithoutTypeCheck = $codeGenerator->WK_lcfirst($functionName) . "WithoutTypeCheck";
-                my $functionSignature = "JSC_DECLARE_JIT_OPERATION(${nameOfFunctionWithoutTypeCheck}, JSC::EncodedJSValue, (JSC::JSGlobalObject*, $className*";
+                my $functionSignature = "static JSC_DECLARE_JIT_OPERATION(${nameOfFunctionWithoutTypeCheck}, JSC::EncodedJSValue, (JSC::JSGlobalObject*, $className*";
                 foreach my $argument (@{$operation->arguments}) {
                     my $type = $argument->type;
                     my $argumentType = GetArgumentTypeForFunctionWithoutTypeCheck($interface, $type);
@@ -4317,7 +4318,7 @@ sub GenerateImplementation
 
         if (NeedsConstructorProperty($interface)) {
             my $constructorGetter = "js" . $interfaceName . "Constructor";
-            push(@implContent, "JSC_DECLARE_CUSTOM_GETTER(${constructorGetter});\n");
+            push(@implContent, "static JSC_DECLARE_CUSTOM_GETTER(${constructorGetter});\n");
         }
 
         foreach my $attribute (@{$interface->attributes}) {
@@ -4327,7 +4328,7 @@ sub GenerateImplementation
             my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
             push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
             my $getter = GetAttributeGetterName($interface, $className, $attribute);
-            push(@implContent, "JSC_DECLARE_CUSTOM_GETTER(${getter});\n");
+            push(@implContent, "static JSC_DECLARE_CUSTOM_GETTER(${getter});\n");
             if (!IsReadonly($attribute)) {
                 my $readWriteConditional = $attribute->extendedAttributes->{ConditionallyReadWrite};
                 if ($readWriteConditional) {
@@ -4335,7 +4336,7 @@ sub GenerateImplementation
                     push(@implContent, "#if ${readWriteConditionalString}\n");
                 }
                 my $setter = GetAttributeSetterName($interface, $className, $attribute);
-                push(@implContent, "JSC_DECLARE_CUSTOM_SETTER(${setter});\n");
+                push(@implContent, "static JSC_DECLARE_CUSTOM_SETTER(${setter});\n");
                 push(@implContent, "#endif\n") if $readWriteConditional;
             }
             push(@implContent, "#endif\n") if $conditionalString;

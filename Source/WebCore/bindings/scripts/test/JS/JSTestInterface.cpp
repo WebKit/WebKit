@@ -75,90 +75,89 @@ using namespace JSC;
 // Functions
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_mixinOperation);
+static JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_mixinOperation);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_mixinComplexOperation);
+static JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_mixinComplexOperation);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_mixinCustomOperation);
+static JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_mixinCustomOperation);
 #endif
 #if (ENABLE(Condition11) && ENABLE(Condition22)) || ENABLE(Condition23)
-JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_mixinConditionalOperation);
+static JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_mixinConditionalOperation);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_mixinSettingsConditionalOperation);
+static JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_mixinSettingsConditionalOperation);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_mixinResultFieldOperation);
+static JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_mixinResultFieldOperation);
 #endif
 #if (ENABLE(Condition22) && ENABLE(Condition33)) || ENABLE(Condition23)
-JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_partialMixinOperationFromPartial);
+static JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_partialMixinOperationFromPartial);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_supplementalMethod1);
+static JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_supplementalMethod1);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_supplementalMethod2);
+static JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_supplementalMethod2);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_supplementalMethod3);
+static JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_supplementalMethod3);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSC_DECLARE_HOST_FUNCTION(jsTestInterfaceConstructorFunction_supplementalMethod4);
+static JSC_DECLARE_HOST_FUNCTION(jsTestInterfaceConstructorFunction_supplementalMethod4);
 #endif
-JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_SymbolIterator);
-JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_entries);
-JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_keys);
-JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_values);
-JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_forEach);
+static JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_entries);
+static JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_keys);
+static JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_values);
+static JSC_DECLARE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_forEach);
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestInterfaceConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestInterfaceConstructor);
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC_DECLARE_CUSTOM_GETTER(jsTestInterface_mixinReadOnlyAttribute);
-#endif
-#if ENABLE(Condition22) || ENABLE(Condition23)
-JSC_DECLARE_CUSTOM_GETTER(jsTestInterface_mixinAttribute);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestInterface_mixinAttribute);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestInterface_mixinReadOnlyAttribute);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC_DECLARE_CUSTOM_GETTER(jsTestInterface_mixinCustomAttribute);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestInterface_mixinCustomAttribute);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestInterface_mixinAttribute);
+static JSC_DECLARE_CUSTOM_SETTER(setJSTestInterface_mixinAttribute);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC_DECLARE_CUSTOM_GETTER(jsTestInterface_mixinNodeAttribute);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestInterface_mixinNodeAttribute);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestInterface_mixinCustomAttribute);
+static JSC_DECLARE_CUSTOM_SETTER(setJSTestInterface_mixinCustomAttribute);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC_DECLARE_CUSTOM_GETTER(jsTestInterface_partialMixinAttributeFromPartial);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestInterface_mixinNodeAttribute);
+static JSC_DECLARE_CUSTOM_SETTER(setJSTestInterface_mixinNodeAttribute);
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+static JSC_DECLARE_CUSTOM_GETTER(jsTestInterface_partialMixinAttributeFromPartial);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSC_DECLARE_CUSTOM_GETTER(jsTestInterfaceConstructor_supplementalStaticReadOnlyAttr);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestInterfaceConstructor_supplementalStaticReadOnlyAttr);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSC_DECLARE_CUSTOM_GETTER(jsTestInterfaceConstructor_supplementalStaticAttr);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestInterfaceConstructor_supplementalStaticAttr);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestInterfaceConstructor_supplementalStaticAttr);
+static JSC_DECLARE_CUSTOM_SETTER(setJSTestInterfaceConstructor_supplementalStaticAttr);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSC_DECLARE_CUSTOM_GETTER(jsTestInterface_supplementalStr1);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestInterface_supplementalStr1);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSC_DECLARE_CUSTOM_GETTER(jsTestInterface_supplementalStr2);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestInterface_supplementalStr2);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestInterface_supplementalStr2);
+static JSC_DECLARE_CUSTOM_SETTER(setJSTestInterface_supplementalStr2);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSC_DECLARE_CUSTOM_GETTER(jsTestInterface_supplementalStr3);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestInterface_supplementalStr3);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestInterface_supplementalStr3);
+static JSC_DECLARE_CUSTOM_SETTER(setJSTestInterface_supplementalStr3);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSC_DECLARE_CUSTOM_GETTER(jsTestInterface_supplementalNode);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestInterface_supplementalNode);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestInterface_supplementalNode);
+static JSC_DECLARE_CUSTOM_SETTER(setJSTestInterface_supplementalNode);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSC_DECLARE_CUSTOM_GETTER(jsTestInterface_reflectAttribute);
-JSC_DECLARE_CUSTOM_SETTER(setJSTestInterface_reflectAttribute);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestInterface_reflectAttribute);
+static JSC_DECLARE_CUSTOM_SETTER(setJSTestInterface_reflectAttribute);
 #endif
 
 class JSTestInterfacePrototype final : public JSC::JSNonFinalObject {

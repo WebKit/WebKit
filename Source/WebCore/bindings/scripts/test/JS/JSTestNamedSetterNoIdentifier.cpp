@@ -46,7 +46,7 @@ using namespace JSC;
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestNamedSetterNoIdentifierConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestNamedSetterNoIdentifierConstructor);
 
 class JSTestNamedSetterNoIdentifierPrototype final : public JSC::JSNonFinalObject {
 public:

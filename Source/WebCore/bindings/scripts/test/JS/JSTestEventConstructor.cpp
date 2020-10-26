@@ -123,11 +123,11 @@ template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::In
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestEventConstructorConstructor);
-JSC_DECLARE_CUSTOM_GETTER(jsTestEventConstructor_attr1);
-JSC_DECLARE_CUSTOM_GETTER(jsTestEventConstructor_attr2);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestEventConstructorConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestEventConstructor_attr1);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestEventConstructor_attr2);
 #if ENABLE(SPECIAL_EVENT)
-JSC_DECLARE_CUSTOM_GETTER(jsTestEventConstructor_attr3);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestEventConstructor_attr3);
 #endif
 
 class JSTestEventConstructorPrototype final : public JSC::JSNonFinalObject {

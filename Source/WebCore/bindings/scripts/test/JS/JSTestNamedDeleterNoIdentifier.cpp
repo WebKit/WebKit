@@ -46,7 +46,7 @@ using namespace JSC;
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestNamedDeleterNoIdentifierConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestNamedDeleterNoIdentifierConstructor);
 
 class JSTestNamedDeleterNoIdentifierPrototype final : public JSC::JSNonFinalObject {
 public:

@@ -50,7 +50,7 @@ using namespace JSC;
 
 // Attributes
 
-JSC_DECLARE_CUSTOM_GETTER(jsTestOverloadedConstructorsConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestOverloadedConstructorsConstructor);
 
 class JSTestOverloadedConstructorsPrototype final : public JSC::JSNonFinalObject {
 public:
