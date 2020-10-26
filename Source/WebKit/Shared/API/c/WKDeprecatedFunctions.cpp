@@ -66,3 +66,12 @@ WKBundleFileHandleRef WKBundleFileHandleCreateWithPath(WKStringRef)
 {
     return nullptr;
 }
+
+void WKPreferencesSetAccelerated2DCanvasEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetAccelerated2DCanvasEnabled(WKPreferencesRef)
+{
+    return false;
+}

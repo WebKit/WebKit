@@ -1,3 +1,14 @@
+2020-10-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove Accelerated2dCanvasEnabled WebPreferences entry
+        https://bugs.webkit.org/show_bug.cgi?id=218114
+
+        Reviewed by Adrian Perez de Castro.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+        (testWebKitSettings): Adjust the test case to properly evaluate the
+        deprecated no-op behavior.
+
 2020-10-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         IPC testing API should expose ArrayBuffer for an unknown decoded argument

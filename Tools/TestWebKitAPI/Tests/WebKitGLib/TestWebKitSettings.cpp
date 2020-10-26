@@ -281,11 +281,6 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_smooth_scrolling(settings, TRUE);
     g_assert_true(webkit_settings_get_enable_smooth_scrolling(settings));
 
-    // By default, accelerated 2D canvas is disabled.
-    g_assert_false(webkit_settings_get_enable_accelerated_2d_canvas(settings));
-    webkit_settings_set_enable_accelerated_2d_canvas(settings, TRUE);
-    g_assert_true(webkit_settings_get_enable_accelerated_2d_canvas(settings));
-
     // By default, writing of console messages to stdout is disabled.
     g_assert_false(webkit_settings_get_enable_write_console_messages_to_stdout(settings));
     webkit_settings_set_enable_write_console_messages_to_stdout(settings, TRUE);
@@ -365,6 +360,13 @@ static void testWebKitSettings(Test*, gconstpointer)
     g_assert_true(webkit_settings_get_enable_javascript_markup(settings));
     webkit_settings_set_enable_javascript_markup(settings, FALSE);
     g_assert_false(webkit_settings_get_enable_javascript_markup(settings));
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // Accelerated 2D canvas setting is deprecated and no-op.
+    g_assert_false(webkit_settings_get_enable_accelerated_2d_canvas(settings));
+    webkit_settings_set_enable_accelerated_2d_canvas(settings, TRUE);
+    g_assert_false(webkit_settings_get_enable_accelerated_2d_canvas(settings));
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     g_object_unref(G_OBJECT(settings));
 }

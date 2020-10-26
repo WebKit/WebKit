@@ -44,16 +44,6 @@ AVFoundationNSURLSessionEnabled:
     WebKit:
       default: true
 
-Accelerated2dCanvasEnabled:
-  type: bool
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 AcceleratedCompositingEnabled:
   type: bool
   webcoreOnChange: setNeedsRecalcStyleInAllFrames

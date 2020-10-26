@@ -486,16 +486,6 @@ bool WKPreferencesGetWebGLEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->webGLEnabled();
 }
 
-void WKPreferencesSetAccelerated2DCanvasEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setAccelerated2dCanvasEnabled(flag);
-}
-
-bool WKPreferencesGetAccelerated2DCanvasEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->accelerated2dCanvasEnabled();
-}
-
 void WKPreferencesSetNeedsSiteSpecificQuirks(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setNeedsSiteSpecificQuirks(flag);

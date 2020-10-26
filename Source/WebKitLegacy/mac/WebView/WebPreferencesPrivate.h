@@ -164,7 +164,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL webAudioEnabled;
 @property (nonatomic) BOOL webGLEnabled;
 @property (nonatomic, getter=forceLowPowerGPUForWebGL) BOOL forceWebGLUsesLowPower;
-@property (nonatomic) BOOL accelerated2dCanvasEnabled;
 @property (nonatomic) BOOL paginateDuringLayoutEnabled;
 @property (nonatomic) BOOL hyperlinkAuditingEnabled;
 @property (nonatomic) BOOL mediaPlaybackRequiresUserGesture; // Deprecated. Use videoPlaybackRequiresUserGesture and audioPlaybackRequiresUserGesture instead.
@@ -366,6 +365,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL customElementsEnabled;
 @property (nonatomic, getter=isVideoPluginProxyEnabled) BOOL videoPluginProxyEnabled;
 @property (nonatomic, getter=isHixie76WebSocketProtocolEnabled) BOOL hixie76WebSocketProtocolEnabled;
+@property (nonatomic) BOOL accelerated2dCanvasEnabled;
 
 - (void)setDiskImageCacheEnabled:(BOOL)enabled;
 

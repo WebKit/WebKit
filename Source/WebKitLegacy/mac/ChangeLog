@@ -1,3 +1,15 @@
+2020-10-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove Accelerated2dCanvasEnabled WebPreferences entry
+        https://bugs.webkit.org/show_bug.cgi?id=218114
+
+        Reviewed by Adrian Perez de Castro.
+
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences accelerated2dCanvasEnabled]): Make the API function
+        no-op and move it into the deprecated section.
+        (-[WebPreferences setAccelerated2dCanvasEnabled:]): Ditto.
+
 2020-10-21  Devin Rousso  <drousso@apple.com>
 
         [macOS WK1] provide a way for Apple-internal clients to disable link preview

@@ -1,3 +1,32 @@
+2020-10-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove Accelerated2dCanvasEnabled WebPreferences entry
+        https://bugs.webkit.org/show_bug.cgi?id=218114
+
+        Reviewed by Adrian Perez de Castro.
+
+        With the removal of the Accelerated2dCanvasEnabled preference key,
+        relevant API functions in the WK2 C API are made no-op. Similar
+        thing is done for the relevant GLib API, with the addition of marking
+        relevant API funcions as deprecated.
+
+        * Shared/API/c/WKDeprecatedFunctions.cpp:
+        (WKPreferencesSetAccelerated2DCanvasEnabled):
+        (WKPreferencesGetAccelerated2DCanvasEnabled):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetAccelerated2DCanvasEnabled): Deleted.
+        (WKPreferencesGetAccelerated2DCanvasEnabled): Deleted.
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webKitSettingsSetProperty):
+        (webKitSettingsGetProperty):
+        (webkit_settings_class_init):
+        (webkit_settings_get_enable_accelerated_2d_canvas):
+        (webkit_settings_set_enable_accelerated_2d_canvas):
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::m_backend):
+        * UIProcess/API/wpe/WebKitSettings.h:
+
 2020-10-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         IPC testing API should expose ArrayBuffer for an unknown decoded argument
