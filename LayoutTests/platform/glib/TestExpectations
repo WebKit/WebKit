@@ -622,25 +622,9 @@ webkit.org/b/218176 webanimations/accelerated-translate-animation-additional-ani
 
 webkit.org/b/216868 webaudio/AudioParam/audioparam-processing.html [ Failure Pass ]
 
-webkit.org/b/217189 webaudio/Convolver/unmmodified-buffer.html [ Pass Timeout Crash ]
-
-webkit.org/b/217956 webaudio/DynamicsCompressor/dynamicscompressor-simple.html [ Crash Pass ]
-webkit.org/b/217956 webaudio/DynamicsCompressor/dynamicscompressor-clear-internal-state.html [ Crash Pass ]
-
 # AudioContext.
 webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html [ Failure Pass ]
 webkit.org/b/217542 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https.html [ Failure Pass ]
-
-# Convolvernode.
-webkit.org/b/216118 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https.html [ Crash Failure Pass ]
-webkit.org/b/216118 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolution-mono-mono.html [ Crash Failure Pass ]
-webkit.org/b/216118 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-cascade.html [ Crash Pass ]
-webkit.org/b/216118 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-1-chan.html [ Crash Failure Pass ]
-webkit.org/b/216118 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-2-chan.html [ Crash Failure Pass ]
-webkit.org/b/216118 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-4-chan.html [ Crash Failure Pass ]
-webkit.org/b/216118 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-upmixing-1-channel-response.html [ Crash Failure Pass ]
-webkit.org/b/216118 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/ctor-convolver.html [ Crash Pass ]
-webkit.org/b/216118 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html [ Crash Failure Pass ]
 
 # AudioBufferSourceNode.
 webkit.org/b/215255 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-multi-channels.html [ Failure ]

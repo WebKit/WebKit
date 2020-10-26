@@ -1,3 +1,10 @@
+2020-10-26  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GStreamer WebAudio gardening
+
+        * platform/glib/TestExpectations: Unflag flaky webaudio tests consistently passing since
+        r268826.
+
 2020-10-26  Diego Pino Garcia  <dpino@igalia.com>
 
        [GLIB][GTK] Unreviewed test gardening. Gardened latest tests passing on bots.
