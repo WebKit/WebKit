@@ -43,7 +43,7 @@ class Scm(object):
 
     @classmethod
     def executable(cls, program):
-        for candidate in ['usr/bin', 'usr/bin/local']:
+        for candidate in ['/usr/bin', '/usr/bin/local']:
             candidate = os.path.join(candidate, program)
             if os.path.exists(candidate):
                 return candidate
