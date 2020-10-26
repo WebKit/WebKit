@@ -7,9 +7,9 @@ layer at (0,0) size 800x196
         RenderText {#text} at (0,0) size 565x17
           text run at (0,0) width 565: "Each consecutive pair of lines should look exactly the same apart from the trailing ellipsis."
         RenderBR {BR} at (565,0) size 0x17
-        RenderText {#text} at (0,18) size 538x17
-          text run at (0,18) width 538: "The ellipsis should appear on the left for the RTL case and on the right for LTR case. "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderText {#text} at (0,18) size 534x17
+          text run at (0,18) width 534: "The ellipsis should appear on the left for the RTL case and on the right for LTR case."
+        RenderBR {BR} at (533,18) size 1x17
         RenderBR {BR} at (0,36) size 0x17
         RenderText {#text} at (0,54) size 61x17
           text run at (0,54) width 61: "RTL text:"

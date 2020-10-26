@@ -1,3 +1,22 @@
+2020-10-26  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Update expectations after r268973.
+
+        * platform/gtk/fast/css/text-overflow-ellipsis-bidi-expected.txt:
+        * platform/gtk/fast/css/text-overflow-ellipsis-strict-expected.txt:
+        * platform/gtk/fast/forms/basic-buttons-expected.txt:
+        * platform/gtk/fast/repaint/line-flow-with-floats-1-expected.txt:
+        * platform/gtk/fast/repaint/line-flow-with-floats-10-expected.txt:
+        * platform/gtk/fast/repaint/line-flow-with-floats-2-expected.txt:
+        * platform/gtk/fast/repaint/line-flow-with-floats-3-expected.txt:
+        * platform/gtk/fast/repaint/line-flow-with-floats-4-expected.txt:
+        * platform/gtk/fast/repaint/line-flow-with-floats-5-expected.txt:
+        * platform/gtk/fast/repaint/line-flow-with-floats-6-expected.txt:
+        * platform/gtk/fast/repaint/line-flow-with-floats-7-expected.txt:
+        * platform/gtk/fast/repaint/line-flow-with-floats-8-expected.txt:
+        * platform/gtk/fast/repaint/line-flow-with-floats-9-expected.txt:
+        * platform/gtk/svg/text/text-overflow-ellipsis-svgfont-expected.txt:
+
 2020-10-26  Zalan Bujtas  <zalan@apple.com>
 
         Remove unneeded whitespace between content and <br>
