@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 728x17
-          text run at (0,0) width 728: "The INPUT element using the IMAGE attribute is used to load the image in the table. This image flows outside the "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 724x17
+          text run at (0,0) width 724: "The INPUT element using the IMAGE attribute is used to load the image in the table. This image flows outside the"
+        RenderBR {BR} at (723,0) size 1x17
         RenderText {#text} at (0,18) size 275x17
           text run at (0,18) width 275: "the table after the window has been resized."
       RenderTable {TABLE} at (292,52) size 200x24 [bgcolor=#FF0000]

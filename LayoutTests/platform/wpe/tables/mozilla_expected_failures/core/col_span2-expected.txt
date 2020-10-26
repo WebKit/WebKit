@@ -325,9 +325,9 @@ layer at (0,0) size 785x5451
               RenderText {#text} at (2,2) size 27x17
                 text run at (2,2) width 27: "auto"
       RenderBlock (anonymous) at (0,1236) size 769x18
-        RenderText {#text} at (0,0) size 291x17
-          text run at (0,0) width 291: "fixed table - spanned cols based on fix widths "
-        RenderBR {BR} at (291,0) size 0x17
+        RenderText {#text} at (0,0) size 287x17
+          text run at (0,0) width 287: "fixed table - spanned cols based on fix widths"
+        RenderBR {BR} at (287,0) size 0x17
       RenderBlock {HR} at (0,1262) size 402x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,1272) size 534x61 [bgcolor=#FFA500] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 532x59
@@ -565,9 +565,9 @@ layer at (0,0) size 785x5451
                 text run at (2,2) width 27: "auto"
       RenderBlock (anonymous) at (0,2213) size 769x36
         RenderBR {BR} at (0,0) size 0x17
-        RenderText {#text} at (0,18) size 165x17
-          text run at (0,18) width 165: "PERCENT COLSPANS "
-        RenderBR {BR} at (165,18) size 0x17
+        RenderText {#text} at (0,18) size 161x17
+          text run at (0,18) width 161: "PERCENT COLSPANS"
+        RenderBR {BR} at (161,18) size 0x17
       RenderTable {TABLE} at (0,2249) size 500x61 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 498x59
           RenderTableRow {TR} at (0,5) size 498x22
@@ -1231,9 +1231,9 @@ layer at (0,0) size 785x5451
               RenderText {#text} at (2,2) size 89x17
                 text run at (2,2) width 89: "auto auto auto"
       RenderBlock (anonymous) at (0,5191) size 769x18
-        RenderText {#text} at (0,0) size 252x17
-          text run at (0,0) width 252: "fixed table looks more like IE than Nav "
-        RenderBR {BR} at (252,0) size 0x17
+        RenderText {#text} at (0,0) size 248x17
+          text run at (0,0) width 248: "fixed table looks more like IE than Nav"
+        RenderBR {BR} at (248,0) size 0x17
       RenderTable {TABLE} at (0,5209) size 150x226 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 148x224
           RenderTableRow {TR} at (0,2) size 148x220

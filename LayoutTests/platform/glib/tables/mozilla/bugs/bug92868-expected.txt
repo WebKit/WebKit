@@ -11,9 +11,9 @@ layer at (0,0) size 800x600
       RenderInline {A} at (0,0) size 71x17 [color=#0000EE]
         RenderText {#text} at (77,0) size 71x17
           text run at (77,0) width 71: "Show Blue"
-      RenderText {#text} at (148,0) size 12x17
-        text run at (148,0) width 12: "   "
-      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (148,0) size 8x17
+        text run at (148,0) width 8: "  "
+      RenderBR {BR} at (156,0) size 0x17
       RenderText {#text} at (0,18) size 181x17
         text run at (0,18) width 181: "Should not see the blue table"
       RenderBR {BR} at (181,18) size 0x17

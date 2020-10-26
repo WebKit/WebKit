@@ -1,3 +1,200 @@
+2020-10-25  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Unreviewed test gardening. Update baselines after r268958.
+
+        * platform/glib/fast/block/positioning/differing-writing-modes-expected.txt:
+        * platform/glib/fast/block/positioning/differing-writing-modes-replaced-expected.txt:
+        * platform/glib/fast/borders/border-image-01-expected.txt:
+        * platform/glib/fast/borders/border-image-longhand-expected.txt:
+        * platform/glib/fast/borders/border-image-massive-scale-expected.txt:
+        * platform/glib/fast/borders/border-image-outset-expected.txt:
+        * platform/glib/fast/borders/border-image-outset-in-shorthand-expected.txt:
+        * platform/glib/fast/borders/border-image-repeat-expected.txt:
+        * platform/glib/fast/borders/border-image-rotate-transform-expected.txt:
+        * platform/glib/fast/borders/border-image-scale-transform-expected.txt:
+        * platform/glib/fast/borders/border-image-scaled-expected.txt:
+        * platform/glib/fast/borders/border-image-scrambled-expected.txt:
+        * platform/glib/fast/borders/border-image-side-reduction-expected.txt:
+        * platform/glib/fast/borders/border-image-slices-expected.txt:
+        * platform/glib/fast/borders/border-image-source-expected.txt:
+        * platform/glib/fast/borders/mixed-border-styles-expected.txt:
+        * platform/glib/fast/borders/mixed-border-styles-radius-expected.txt:
+        * platform/glib/fast/box-shadow/inset-box-shadow-radius-expected.txt:
+        * platform/glib/fast/box-shadow/inset-box-shadows-expected.txt:
+        * platform/glib/fast/box-shadow/scaled-box-shadow-expected.txt:
+        * platform/glib/fast/css/focus-ring-detached-expected.txt:
+        * platform/glib/fast/images/image-map-anchor-children-expected.txt:
+        * platform/glib/fast/inline-block/006-expected.txt:
+        * platform/glib/fast/ruby/ruby-simple-rp-expected.txt: Renamed from LayoutTests/platform/wpe/fast/ruby/ruby-simple-rp-expected.txt.
+        * platform/glib/fast/text/basic/012-expected.txt: Renamed from LayoutTests/platform/wpe/fast/text/basic/012-expected.txt.
+        * platform/glib/fast/text/emphasis-overlap-expected.txt: Added.
+        * platform/glib/fast/text/indic-expected.txt: Renamed from LayoutTests/platform/gtk/fast/text/indic-expected.txt.
+        * platform/glib/fast/text/justify-nbsp-expected.txt: Renamed from LayoutTests/platform/gtk/fast/text/justify-nbsp-expected.txt.
+        * platform/glib/fast/transforms/identity-matrix-expected.txt:
+        * platform/glib/fonts/monospace-expected.txt: Renamed from LayoutTests/platform/wpe/fonts/monospace-expected.txt.
+        * platform/glib/svg/as-border-image/svg-as-border-image-2-expected.txt:
+        * platform/glib/svg/as-border-image/svg-as-border-image-expected.txt:
+        * platform/glib/svg/custom/getscreenctm-in-mixed-content-expected.txt:
+        * platform/glib/tables/mozilla/bugs/bug11026-expected.txt:
+        * platform/glib/tables/mozilla/bugs/bug28341-expected.txt:
+        * platform/glib/tables/mozilla/bugs/bug4284-expected.txt:
+        * platform/glib/tables/mozilla/bugs/bug4849-2-expected.txt:
+        * platform/glib/tables/mozilla/bugs/bug60992-expected.txt:
+        * platform/glib/tables/mozilla/bugs/bug92868-expected.txt:
+        * platform/glib/tables/mozilla/bugs/bug963-expected.txt:
+        * platform/glib/tables/mozilla/core/col_widths_fix_auto-expected.txt:
+        * platform/glib/tables/mozilla/other/nestedTables-expected.txt:
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug1262-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug1262-expected.txt.
+        * platform/gtk/compositing/iframes/composited-iframe-alignment-expected.txt:
+        * platform/gtk/compositing/overflow/ancestor-overflow-expected.txt:
+        * platform/gtk/compositing/overflow/overflow-scroll-expected.txt:
+        * platform/gtk/fast/block/float/float-in-float-hit-testing-expected.txt:
+        * platform/gtk/fast/block/float/float-in-float-painting-expected.txt:
+        * platform/gtk/fast/borders/border-image-border-radius-expected.txt:
+        * platform/gtk/fast/clip/overflow-border-radius-combinations-expected.txt:
+        * platform/gtk/fast/clip/overflow-border-radius-composited-expected.txt:
+        * platform/gtk/fast/clip/overflow-border-radius-transformed-expected.txt:
+        * platform/gtk/fast/css/first-line-text-decoration-expected.txt:
+        * platform/gtk/fast/css/first-line-text-decoration-inherited-from-parent-expected.txt:
+        * platform/gtk/fast/css/layerZOrderCrash-expected.txt:
+        * platform/gtk/fast/css/text-overflow-ellipsis-expected.txt:
+        * platform/gtk/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/gtk/fast/dom/focus-contenteditable-expected.txt:
+        * platform/gtk/fast/forms/basic-inputs-expected.txt:
+        * platform/gtk/fast/forms/basic-selects-expected.txt:
+        * platform/gtk/fast/forms/button-align-expected.txt:
+        * platform/gtk/fast/forms/button-generated-content-expected.txt:
+        * platform/gtk/fast/forms/button-table-styles-expected.txt:
+        * platform/gtk/fast/forms/caret-rtl-expected.txt:
+        * platform/gtk/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/gtk/fast/forms/hidden-listbox-expected.txt:
+        * platform/gtk/fast/forms/input-align-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-bkcolor-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-default-bkcolor-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-disabled-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-readonly-expected.txt:
+        * platform/gtk/fast/forms/input-baseline-expected.txt:
+        * platform/gtk/fast/forms/input-readonly-dimmed-expected.txt:
+        * platform/gtk/fast/forms/input-spaces-expected.txt:
+        * platform/gtk/fast/forms/listbox-width-change-expected.txt:
+        * platform/gtk/fast/forms/option-script-expected.txt:
+        * platform/gtk/fast/forms/option-text-clip-expected.txt:
+        * platform/gtk/fast/forms/range/slider-padding-expected.txt:
+        * platform/gtk/fast/forms/search-rtl-expected.txt:
+        * platform/gtk/fast/forms/search/search-size-with-decorations-expected.txt:
+        * platform/gtk/fast/forms/select-align-expected.txt:
+        * platform/gtk/fast/forms/select-change-popup-to-listbox-expected.txt:
+        * platform/gtk/fast/forms/select-initial-position-expected.txt:
+        * platform/gtk/fast/forms/select-style-expected.txt:
+        * platform/gtk/fast/forms/textarea-align-expected.txt:
+        * platform/gtk/fast/forms/textarea-scrollbar-expected.txt:
+        * platform/gtk/fast/frames/iframe-with-frameborder-expected.txt:
+        * platform/gtk/fast/frames/onlyCommentInIFrame-expected.txt:
+        * platform/gtk/fast/inline-block/contenteditable-baseline-expected.txt:
+        * platform/gtk/fast/inline/drawStyledEmptyInlines-expected.txt:
+        * platform/gtk/fast/layers/layer-visibility-sublayer-expected.txt:
+        * platform/gtk/fast/repaint/rel-positioned-inline-with-overflow-expected.txt:
+        * platform/gtk/fast/ruby/bopomofo-letter-spacing-expected.txt:
+        * platform/gtk/fast/ruby/ruby-inline-table-expected.txt:
+        * platform/gtk/fast/ruby/ruby-length-expected.txt:
+        * platform/gtk/fast/ruby/ruby-run-break-expected.txt:
+        * platform/gtk/fast/ruby/ruby-runs-expected.txt:
+        * platform/gtk/fast/ruby/ruby-simple-expected.txt:
+        * platform/gtk/fast/ruby/ruby-simple-rp-expected.txt: Removed.
+        * platform/gtk/fast/text/basic/012-expected.txt: Removed.
+        * platform/gtk/fast/text/capitalize-boundaries-expected.txt:
+        * platform/gtk/fast/text/emphasis-overlap-expected.txt: Removed.
+        * platform/gtk/fast/text/international/rtl-white-space-pre-wrap-expected.txt:
+        * platform/gtk/fast/writing-mode/fieldsets-expected.txt:
+        * platform/gtk/fast/writing-mode/vertical-baseline-alignment-expected.txt:
+        * platform/gtk/fast/writing-mode/vertical-baseline-alignment-mixed-expected.txt:
+        * platform/gtk/fonts/monospace-expected.txt: Removed.
+        * platform/gtk/fonts/sans-serif-expected.txt:
+        * platform/gtk/scrollbars/overflow-scrollbar-combinations-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug131020-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug131020_iframe-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug1430-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug19599-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug30559-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug32205-2-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug4382-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug4427-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug46623-1-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug55694-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug9123-1-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug92143-expected.txt:
+        * platform/gtk/tables/mozilla/collapsing_borders/bug41262-3-expected.txt:
+        * platform/gtk/tables/mozilla/core/bloomberg-expected.txt:
+        * platform/gtk/tables/mozilla/core/col_widths_auto_autoFix-expected.txt:
+        * platform/gtk/tables/mozilla/dom/deleteTbodyRebuild1-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/tables_cellpadding-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/tables_cellspacing-expected.txt:
+        * platform/gtk/tables/mozilla/other/wa_table_tr_align-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug56024-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug8499-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/core/col_span2-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/other/test4-expected.txt:
+        * platform/wpe/fast/block/float/float-in-float-hit-testing-expected.txt:
+        * platform/wpe/fast/block/float/float-in-float-painting-expected.txt:
+        * platform/wpe/fast/borders/border-image-border-radius-expected.txt:
+        * platform/wpe/fast/clip/overflow-border-radius-combinations-expected.txt:
+        * platform/wpe/fast/clip/overflow-border-radius-composited-expected.txt:
+        * platform/wpe/fast/clip/overflow-border-radius-transformed-expected.txt:
+        * platform/wpe/fast/css/first-line-text-decoration-expected.txt:
+        * platform/wpe/fast/css/first-line-text-decoration-inherited-from-parent-expected.txt:
+        * platform/wpe/fast/css/layerZOrderCrash-expected.txt:
+        * platform/wpe/fast/css/text-overflow-ellipsis-expected.txt:
+        * platform/wpe/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/wpe/fast/dom/focus-contenteditable-expected.txt:
+        * platform/wpe/fast/frames/iframe-with-frameborder-expected.txt:
+        * platform/wpe/fast/frames/onlyCommentInIFrame-expected.txt:
+        * platform/wpe/fast/inline-block/contenteditable-baseline-expected.txt:
+        * platform/wpe/fast/inline/drawStyledEmptyInlines-expected.txt:
+        * platform/wpe/fast/layers/layer-visibility-sublayer-expected.txt:
+        * platform/wpe/fast/ruby/bopomofo-letter-spacing-expected.txt:
+        * platform/wpe/fast/ruby/ruby-inline-table-expected.txt:
+        * platform/wpe/fast/ruby/ruby-length-expected.txt:
+        * platform/wpe/fast/ruby/ruby-run-break-expected.txt:
+        * platform/wpe/fast/ruby/ruby-runs-expected.txt:
+        * platform/wpe/fast/ruby/ruby-simple-expected.txt:
+        * platform/wpe/fast/text/capitalize-boundaries-expected.txt:
+        * platform/wpe/fast/text/emphasis-overlap-expected.txt: Removed.
+        * platform/wpe/fast/text/indic-expected.txt: Removed.
+        * platform/wpe/fast/text/international/rtl-white-space-pre-wrap-expected.txt:
+        * platform/wpe/fast/text/justify-nbsp-expected.txt: Removed.
+        * platform/wpe/fast/text/svg-font-face-with-kerning-expected.txt:
+        * platform/wpe/fast/writing-mode/fieldsets-expected.txt:
+        * platform/wpe/fast/writing-mode/vertical-baseline-alignment-expected.txt:
+        * platform/wpe/fast/writing-mode/vertical-baseline-alignment-mixed-expected.txt:
+        * platform/wpe/fonts/sans-serif-expected.txt:
+        * platform/wpe/scrollbars/overflow-scrollbar-combinations-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug131020-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug131020_iframe-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug1430-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug19599-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug30559-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug32205-2-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug4382-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug4427-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug46623-1-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug55694-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug9123-1-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug92143-expected.txt:
+        * platform/wpe/tables/mozilla/collapsing_borders/bug41262-3-expected.txt:
+        * platform/wpe/tables/mozilla/core/bloomberg-expected.txt:
+        * platform/wpe/tables/mozilla/core/col_widths_auto_autoFix-expected.txt:
+        * platform/wpe/tables/mozilla/dom/deleteTbodyRebuild1-expected.txt:
+        * platform/wpe/tables/mozilla/marvin/tables_cellpadding-expected.txt:
+        * platform/wpe/tables/mozilla/marvin/tables_cellspacing-expected.txt:
+        * platform/wpe/tables/mozilla/other/wa_table_tr_align-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug1262-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug56024-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug8499-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/core/col_span2-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/other/test4-expected.txt:
+
 2020-10-25  Sam Weinig  <weinig@apple.com>
 
         Remove non-standard 'css'/'Css' prefixed properties on CSSStyleDeclaration

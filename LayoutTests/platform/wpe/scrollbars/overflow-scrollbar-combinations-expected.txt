@@ -79,8 +79,8 @@ layer at (28,28) size 125x100 clip at (29,29) size 110x85 scrollHeight 1728
       text run at (11,627) width 87: "arcu. Maecenas"
       text run at (11,641) width 74: "id lorem a leo"
       text run at (11,655) width 40: "lobortis"
-      text run at (11,669) width 80: "condimentum. "
-    RenderBR {BR} at (91,669) size 0x14
+      text run at (11,669) width 77: "condimentum."
+    RenderBR {BR} at (88,669) size 0x14
     RenderBR {BR} at (11,683) size 0x14
     RenderText {#text} at (11,697) size 90x588
       text run at (11,697) width 83: "Cras commodo"
@@ -124,8 +124,8 @@ layer at (28,28) size 125x100 clip at (29,29) size 110x85 scrollHeight 1728
       text run at (11,1229) width 81: "Maecenas non"
       text run at (11,1243) width 77: "augue. Donec"
       text run at (11,1257) width 84: "hendrerit lectus"
-      text run at (11,1271) width 46: "id enim. "
-    RenderBR {BR} at (57,1271) size 0x14
+      text run at (11,1271) width 43: "id enim."
+    RenderBR {BR} at (54,1271) size 0x14
     RenderBR {BR} at (11,1285) size 0x14
     RenderText {#text} at (11,1299) size 90x420
       text run at (11,1299) width 85: "Nulla ligula dui,"
@@ -208,8 +208,8 @@ layer at (197,28) size 125x100 clip at (198,29) size 110x98 scrollHeight 1728
       text run at (11,627) width 87: "arcu. Maecenas"
       text run at (11,641) width 74: "id lorem a leo"
       text run at (11,655) width 40: "lobortis"
-      text run at (11,669) width 80: "condimentum. "
-    RenderBR {BR} at (91,669) size 0x14
+      text run at (11,669) width 77: "condimentum."
+    RenderBR {BR} at (88,669) size 0x14
     RenderBR {BR} at (11,683) size 0x14
     RenderText {#text} at (11,697) size 90x588
       text run at (11,697) width 83: "Cras commodo"
@@ -253,8 +253,8 @@ layer at (197,28) size 125x100 clip at (198,29) size 110x98 scrollHeight 1728
       text run at (11,1229) width 81: "Maecenas non"
       text run at (11,1243) width 77: "augue. Donec"
       text run at (11,1257) width 84: "hendrerit lectus"
-      text run at (11,1271) width 46: "id enim. "
-    RenderBR {BR} at (57,1271) size 0x14
+      text run at (11,1271) width 43: "id enim."
+    RenderBR {BR} at (54,1271) size 0x14
     RenderBR {BR} at (11,1285) size 0x14
     RenderText {#text} at (11,1299) size 90x420
       text run at (11,1299) width 85: "Nulla ligula dui,"
@@ -299,8 +299,8 @@ layer at (366,28) size 125x100 clip at (367,29) size 110x85 scrollWidth 420 scro
         text run at (10,80) width 390: "tellus nunc iaculis arcu, in molestie sem velit tempus est. In eleifend velit"
         text run at (10,94) width 353: "at sem adipiscing sodales. Nunc sapien felis, aliquam et, volutpat"
         text run at (10,108) width 381: "rhoncus, condimentum ut, tortor. Integer est. Quisque viverra. Praesent"
-        text run at (10,122) width 313: "sed arcu. Maecenas id lorem a leo lobortis condimentum. "
-      RenderBR {BR} at (323,122) size 0x14
+        text run at (10,122) width 310: "sed arcu. Maecenas id lorem a leo lobortis condimentum."
+      RenderBR {BR} at (320,122) size 0x14
       RenderBR {BR} at (10,136) size 0x14
       RenderText {#text} at (10,150) size 395x112
         text run at (10,150) width 377: "Cras commodo rutrum augue. Vivamus iaculis. Nullam est. Maecenas"
@@ -310,8 +310,8 @@ layer at (366,28) size 125x100 clip at (367,29) size 110x85 scrollWidth 420 scro
         text run at (10,206) width 380: "neque, a ultrices arcu urna non nunc. Quisque tellus. Nulla nulla justo,"
         text run at (10,220) width 389: "vehicula nec, pellentesque eu, iaculis et, ligula. Praesent mattis ante vel"
         text run at (10,234) width 386: "sem. Suspendisse porta rhoncus urna. Phasellus felis. Praesent viverra"
-        text run at (10,248) width 385: "convallis libero. Maecenas non augue. Donec hendrerit lectus id enim. "
-      RenderBR {BR} at (395,248) size 0x14
+        text run at (10,248) width 382: "convallis libero. Maecenas non augue. Donec hendrerit lectus id enim."
+      RenderBR {BR} at (392,248) size 0x14
       RenderBR {BR} at (10,262) size 0x14
       RenderText {#text} at (10,276) size 394x84
         text run at (10,276) width 351: "Nulla ligula dui, euismod et, sodales quis, sollicitudin quis, elit. In"
@@ -370,8 +370,8 @@ layer at (535,28) size 125x100 clip at (536,29) size 110x85 scrollHeight 1728
       text run at (11,627) width 87: "arcu. Maecenas"
       text run at (11,641) width 74: "id lorem a leo"
       text run at (11,655) width 40: "lobortis"
-      text run at (11,669) width 80: "condimentum. "
-    RenderBR {BR} at (91,669) size 0x14
+      text run at (11,669) width 77: "condimentum."
+    RenderBR {BR} at (88,669) size 0x14
     RenderBR {BR} at (11,683) size 0x14
     RenderText {#text} at (11,697) size 90x588
       text run at (11,697) width 83: "Cras commodo"
@@ -415,8 +415,8 @@ layer at (535,28) size 125x100 clip at (536,29) size 110x85 scrollHeight 1728
       text run at (11,1229) width 81: "Maecenas non"
       text run at (11,1243) width 77: "augue. Donec"
       text run at (11,1257) width 84: "hendrerit lectus"
-      text run at (11,1271) width 46: "id enim. "
-    RenderBR {BR} at (57,1271) size 0x14
+      text run at (11,1271) width 43: "id enim."
+    RenderBR {BR} at (54,1271) size 0x14
     RenderBR {BR} at (11,1285) size 0x14
     RenderText {#text} at (11,1299) size 90x420
       text run at (11,1299) width 85: "Nulla ligula dui,"
@@ -499,8 +499,8 @@ layer at (28,168) size 125x100 clip at (29,169) size 110x98 scrollHeight 1728
       text run at (11,627) width 87: "arcu. Maecenas"
       text run at (11,641) width 74: "id lorem a leo"
       text run at (11,655) width 40: "lobortis"
-      text run at (11,669) width 80: "condimentum. "
-    RenderBR {BR} at (91,669) size 0x14
+      text run at (11,669) width 77: "condimentum."
+    RenderBR {BR} at (88,669) size 0x14
     RenderBR {BR} at (11,683) size 0x14
     RenderText {#text} at (11,697) size 90x588
       text run at (11,697) width 83: "Cras commodo"
@@ -544,8 +544,8 @@ layer at (28,168) size 125x100 clip at (29,169) size 110x98 scrollHeight 1728
       text run at (11,1229) width 81: "Maecenas non"
       text run at (11,1243) width 77: "augue. Donec"
       text run at (11,1257) width 84: "hendrerit lectus"
-      text run at (11,1271) width 46: "id enim. "
-    RenderBR {BR} at (57,1271) size 0x14
+      text run at (11,1271) width 43: "id enim."
+    RenderBR {BR} at (54,1271) size 0x14
     RenderBR {BR} at (11,1285) size 0x14
     RenderText {#text} at (11,1299) size 90x420
       text run at (11,1299) width 85: "Nulla ligula dui,"
@@ -590,8 +590,8 @@ layer at (197,168) size 125x100 clip at (198,169) size 110x85 scrollWidth 420 sc
         text run at (10,80) width 390: "tellus nunc iaculis arcu, in molestie sem velit tempus est. In eleifend velit"
         text run at (10,94) width 353: "at sem adipiscing sodales. Nunc sapien felis, aliquam et, volutpat"
         text run at (10,108) width 381: "rhoncus, condimentum ut, tortor. Integer est. Quisque viverra. Praesent"
-        text run at (10,122) width 313: "sed arcu. Maecenas id lorem a leo lobortis condimentum. "
-      RenderBR {BR} at (323,122) size 0x14
+        text run at (10,122) width 310: "sed arcu. Maecenas id lorem a leo lobortis condimentum."
+      RenderBR {BR} at (320,122) size 0x14
       RenderBR {BR} at (10,136) size 0x14
       RenderText {#text} at (10,150) size 395x112
         text run at (10,150) width 377: "Cras commodo rutrum augue. Vivamus iaculis. Nullam est. Maecenas"
@@ -601,8 +601,8 @@ layer at (197,168) size 125x100 clip at (198,169) size 110x85 scrollWidth 420 sc
         text run at (10,206) width 380: "neque, a ultrices arcu urna non nunc. Quisque tellus. Nulla nulla justo,"
         text run at (10,220) width 389: "vehicula nec, pellentesque eu, iaculis et, ligula. Praesent mattis ante vel"
         text run at (10,234) width 386: "sem. Suspendisse porta rhoncus urna. Phasellus felis. Praesent viverra"
-        text run at (10,248) width 385: "convallis libero. Maecenas non augue. Donec hendrerit lectus id enim. "
-      RenderBR {BR} at (395,248) size 0x14
+        text run at (10,248) width 382: "convallis libero. Maecenas non augue. Donec hendrerit lectus id enim."
+      RenderBR {BR} at (392,248) size 0x14
       RenderBR {BR} at (10,262) size 0x14
       RenderText {#text} at (10,276) size 394x84
         text run at (10,276) width 351: "Nulla ligula dui, euismod et, sodales quis, sollicitudin quis, elit. In"
@@ -661,8 +661,8 @@ layer at (366,168) size 125x100 clip at (367,169) size 110x98 scrollHeight 1728
       text run at (11,627) width 87: "arcu. Maecenas"
       text run at (11,641) width 74: "id lorem a leo"
       text run at (11,655) width 40: "lobortis"
-      text run at (11,669) width 80: "condimentum. "
-    RenderBR {BR} at (91,669) size 0x14
+      text run at (11,669) width 77: "condimentum."
+    RenderBR {BR} at (88,669) size 0x14
     RenderBR {BR} at (11,683) size 0x14
     RenderText {#text} at (11,697) size 90x588
       text run at (11,697) width 83: "Cras commodo"
@@ -706,8 +706,8 @@ layer at (366,168) size 125x100 clip at (367,169) size 110x98 scrollHeight 1728
       text run at (11,1229) width 81: "Maecenas non"
       text run at (11,1243) width 77: "augue. Donec"
       text run at (11,1257) width 84: "hendrerit lectus"
-      text run at (11,1271) width 46: "id enim. "
-    RenderBR {BR} at (57,1271) size 0x14
+      text run at (11,1271) width 43: "id enim."
+    RenderBR {BR} at (54,1271) size 0x14
     RenderBR {BR} at (11,1285) size 0x14
     RenderText {#text} at (11,1299) size 90x420
       text run at (11,1299) width 85: "Nulla ligula dui,"
@@ -803,8 +803,8 @@ layer at (28,308) size 125x100 clip at (29,309) size 110x98 scrollHeight 1728
       text run at (11,627) width 87: "arcu. Maecenas"
       text run at (11,641) width 74: "id lorem a leo"
       text run at (11,655) width 40: "lobortis"
-      text run at (11,669) width 80: "condimentum. "
-    RenderBR {BR} at (91,669) size 0x14
+      text run at (11,669) width 77: "condimentum."
+    RenderBR {BR} at (88,669) size 0x14
     RenderBR {BR} at (11,683) size 0x14
     RenderText {#text} at (11,697) size 90x588
       text run at (11,697) width 83: "Cras commodo"
@@ -848,8 +848,8 @@ layer at (28,308) size 125x100 clip at (29,309) size 110x98 scrollHeight 1728
       text run at (11,1229) width 81: "Maecenas non"
       text run at (11,1243) width 77: "augue. Donec"
       text run at (11,1257) width 84: "hendrerit lectus"
-      text run at (11,1271) width 46: "id enim. "
-    RenderBR {BR} at (57,1271) size 0x14
+      text run at (11,1271) width 43: "id enim."
+    RenderBR {BR} at (54,1271) size 0x14
     RenderBR {BR} at (11,1285) size 0x14
     RenderText {#text} at (11,1299) size 90x420
       text run at (11,1299) width 85: "Nulla ligula dui,"
@@ -907,8 +907,8 @@ layer at (366,308) size 125x100 clip at (367,309) size 110x85 scrollWidth 420 sc
         text run at (10,80) width 390: "tellus nunc iaculis arcu, in molestie sem velit tempus est. In eleifend velit"
         text run at (10,94) width 353: "at sem adipiscing sodales. Nunc sapien felis, aliquam et, volutpat"
         text run at (10,108) width 381: "rhoncus, condimentum ut, tortor. Integer est. Quisque viverra. Praesent"
-        text run at (10,122) width 313: "sed arcu. Maecenas id lorem a leo lobortis condimentum. "
-      RenderBR {BR} at (323,122) size 0x14
+        text run at (10,122) width 310: "sed arcu. Maecenas id lorem a leo lobortis condimentum."
+      RenderBR {BR} at (320,122) size 0x14
       RenderBR {BR} at (10,136) size 0x14
       RenderText {#text} at (10,150) size 395x112
         text run at (10,150) width 377: "Cras commodo rutrum augue. Vivamus iaculis. Nullam est. Maecenas"
@@ -918,8 +918,8 @@ layer at (366,308) size 125x100 clip at (367,309) size 110x85 scrollWidth 420 sc
         text run at (10,206) width 380: "neque, a ultrices arcu urna non nunc. Quisque tellus. Nulla nulla justo,"
         text run at (10,220) width 389: "vehicula nec, pellentesque eu, iaculis et, ligula. Praesent mattis ante vel"
         text run at (10,234) width 386: "sem. Suspendisse porta rhoncus urna. Phasellus felis. Praesent viverra"
-        text run at (10,248) width 385: "convallis libero. Maecenas non augue. Donec hendrerit lectus id enim. "
-      RenderBR {BR} at (395,248) size 0x14
+        text run at (10,248) width 382: "convallis libero. Maecenas non augue. Donec hendrerit lectus id enim."
+      RenderBR {BR} at (392,248) size 0x14
       RenderBR {BR} at (10,262) size 0x14
       RenderText {#text} at (10,276) size 394x84
         text run at (10,276) width 351: "Nulla ligula dui, euismod et, sodales quis, sollicitudin quis, elit. In"
@@ -940,8 +940,8 @@ layer at (535,308) size 125x100 clip at (536,309) size 110x85 scrollWidth 420 sc
         text run at (10,80) width 390: "tellus nunc iaculis arcu, in molestie sem velit tempus est. In eleifend velit"
         text run at (10,94) width 353: "at sem adipiscing sodales. Nunc sapien felis, aliquam et, volutpat"
         text run at (10,108) width 381: "rhoncus, condimentum ut, tortor. Integer est. Quisque viverra. Praesent"
-        text run at (10,122) width 313: "sed arcu. Maecenas id lorem a leo lobortis condimentum. "
-      RenderBR {BR} at (323,122) size 0x14
+        text run at (10,122) width 310: "sed arcu. Maecenas id lorem a leo lobortis condimentum."
+      RenderBR {BR} at (320,122) size 0x14
       RenderBR {BR} at (10,136) size 0x14
       RenderText {#text} at (10,150) size 395x112
         text run at (10,150) width 377: "Cras commodo rutrum augue. Vivamus iaculis. Nullam est. Maecenas"
@@ -951,8 +951,8 @@ layer at (535,308) size 125x100 clip at (536,309) size 110x85 scrollWidth 420 sc
         text run at (10,206) width 380: "neque, a ultrices arcu urna non nunc. Quisque tellus. Nulla nulla justo,"
         text run at (10,220) width 389: "vehicula nec, pellentesque eu, iaculis et, ligula. Praesent mattis ante vel"
         text run at (10,234) width 386: "sem. Suspendisse porta rhoncus urna. Phasellus felis. Praesent viverra"
-        text run at (10,248) width 385: "convallis libero. Maecenas non augue. Donec hendrerit lectus id enim. "
-      RenderBR {BR} at (395,248) size 0x14
+        text run at (10,248) width 382: "convallis libero. Maecenas non augue. Donec hendrerit lectus id enim."
+      RenderBR {BR} at (392,248) size 0x14
       RenderBR {BR} at (10,262) size 0x14
       RenderText {#text} at (10,276) size 394x84
         text run at (10,276) width 351: "Nulla ligula dui, euismod et, sodales quis, sollicitudin quis, elit. In"
@@ -973,8 +973,8 @@ layer at (28,448) size 125x100 clip at (29,449) size 110x85 scrollWidth 420 scro
         text run at (10,80) width 390: "tellus nunc iaculis arcu, in molestie sem velit tempus est. In eleifend velit"
         text run at (10,94) width 353: "at sem adipiscing sodales. Nunc sapien felis, aliquam et, volutpat"
         text run at (10,108) width 381: "rhoncus, condimentum ut, tortor. Integer est. Quisque viverra. Praesent"
-        text run at (10,122) width 313: "sed arcu. Maecenas id lorem a leo lobortis condimentum. "
-      RenderBR {BR} at (323,122) size 0x14
+        text run at (10,122) width 310: "sed arcu. Maecenas id lorem a leo lobortis condimentum."
+      RenderBR {BR} at (320,122) size 0x14
       RenderBR {BR} at (10,136) size 0x14
       RenderText {#text} at (10,150) size 395x112
         text run at (10,150) width 377: "Cras commodo rutrum augue. Vivamus iaculis. Nullam est. Maecenas"
@@ -984,8 +984,8 @@ layer at (28,448) size 125x100 clip at (29,449) size 110x85 scrollWidth 420 scro
         text run at (10,206) width 380: "neque, a ultrices arcu urna non nunc. Quisque tellus. Nulla nulla justo,"
         text run at (10,220) width 389: "vehicula nec, pellentesque eu, iaculis et, ligula. Praesent mattis ante vel"
         text run at (10,234) width 386: "sem. Suspendisse porta rhoncus urna. Phasellus felis. Praesent viverra"
-        text run at (10,248) width 385: "convallis libero. Maecenas non augue. Donec hendrerit lectus id enim. "
-      RenderBR {BR} at (395,248) size 0x14
+        text run at (10,248) width 382: "convallis libero. Maecenas non augue. Donec hendrerit lectus id enim."
+      RenderBR {BR} at (392,248) size 0x14
       RenderBR {BR} at (10,262) size 0x14
       RenderText {#text} at (10,276) size 394x84
         text run at (10,276) width 351: "Nulla ligula dui, euismod et, sodales quis, sollicitudin quis, elit. In"
@@ -1006,8 +1006,8 @@ layer at (197,448) size 125x100 clip at (198,449) size 110x85 scrollWidth 420 sc
         text run at (10,80) width 390: "tellus nunc iaculis arcu, in molestie sem velit tempus est. In eleifend velit"
         text run at (10,94) width 353: "at sem adipiscing sodales. Nunc sapien felis, aliquam et, volutpat"
         text run at (10,108) width 381: "rhoncus, condimentum ut, tortor. Integer est. Quisque viverra. Praesent"
-        text run at (10,122) width 313: "sed arcu. Maecenas id lorem a leo lobortis condimentum. "
-      RenderBR {BR} at (323,122) size 0x14
+        text run at (10,122) width 310: "sed arcu. Maecenas id lorem a leo lobortis condimentum."
+      RenderBR {BR} at (320,122) size 0x14
       RenderBR {BR} at (10,136) size 0x14
       RenderText {#text} at (10,150) size 395x112
         text run at (10,150) width 377: "Cras commodo rutrum augue. Vivamus iaculis. Nullam est. Maecenas"
@@ -1017,8 +1017,8 @@ layer at (197,448) size 125x100 clip at (198,449) size 110x85 scrollWidth 420 sc
         text run at (10,206) width 380: "neque, a ultrices arcu urna non nunc. Quisque tellus. Nulla nulla justo,"
         text run at (10,220) width 389: "vehicula nec, pellentesque eu, iaculis et, ligula. Praesent mattis ante vel"
         text run at (10,234) width 386: "sem. Suspendisse porta rhoncus urna. Phasellus felis. Praesent viverra"
-        text run at (10,248) width 385: "convallis libero. Maecenas non augue. Donec hendrerit lectus id enim. "
-      RenderBR {BR} at (395,248) size 0x14
+        text run at (10,248) width 382: "convallis libero. Maecenas non augue. Donec hendrerit lectus id enim."
+      RenderBR {BR} at (392,248) size 0x14
       RenderBR {BR} at (10,262) size 0x14
       RenderText {#text} at (10,276) size 394x84
         text run at (10,276) width 351: "Nulla ligula dui, euismod et, sodales quis, sollicitudin quis, elit. In"
@@ -1039,8 +1039,8 @@ layer at (366,448) size 125x100 clip at (367,449) size 110x85 scrollWidth 420 sc
         text run at (10,80) width 390: "tellus nunc iaculis arcu, in molestie sem velit tempus est. In eleifend velit"
         text run at (10,94) width 353: "at sem adipiscing sodales. Nunc sapien felis, aliquam et, volutpat"
         text run at (10,108) width 381: "rhoncus, condimentum ut, tortor. Integer est. Quisque viverra. Praesent"
-        text run at (10,122) width 313: "sed arcu. Maecenas id lorem a leo lobortis condimentum. "
-      RenderBR {BR} at (323,122) size 0x14
+        text run at (10,122) width 310: "sed arcu. Maecenas id lorem a leo lobortis condimentum."
+      RenderBR {BR} at (320,122) size 0x14
       RenderBR {BR} at (10,136) size 0x14
       RenderText {#text} at (10,150) size 395x112
         text run at (10,150) width 377: "Cras commodo rutrum augue. Vivamus iaculis. Nullam est. Maecenas"
@@ -1050,8 +1050,8 @@ layer at (366,448) size 125x100 clip at (367,449) size 110x85 scrollWidth 420 sc
         text run at (10,206) width 380: "neque, a ultrices arcu urna non nunc. Quisque tellus. Nulla nulla justo,"
         text run at (10,220) width 389: "vehicula nec, pellentesque eu, iaculis et, ligula. Praesent mattis ante vel"
         text run at (10,234) width 386: "sem. Suspendisse porta rhoncus urna. Phasellus felis. Praesent viverra"
-        text run at (10,248) width 385: "convallis libero. Maecenas non augue. Donec hendrerit lectus id enim. "
-      RenderBR {BR} at (395,248) size 0x14
+        text run at (10,248) width 382: "convallis libero. Maecenas non augue. Donec hendrerit lectus id enim."
+      RenderBR {BR} at (392,248) size 0x14
       RenderBR {BR} at (10,262) size 0x14
       RenderText {#text} at (10,276) size 394x84
         text run at (10,276) width 351: "Nulla ligula dui, euismod et, sodales quis, sollicitudin quis, elit. In"

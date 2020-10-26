@@ -7,24 +7,19 @@ layer at (0,0) size 800x600
         text run at (0,0) width 93: "initial selected:"
       RenderBR {BR} at (93,0) size 0x17
       RenderListBox {SELECT} at (2,20) size 184x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-      RenderText {#text} at (188,74) size 4x17
-        text run at (188,74) width 4: " "
-      RenderBR {BR} at (192,74) size 0x17
+      RenderBR {BR} at (188,74) size 0x17
       RenderText {#text} at (0,95) size 161x17
         text run at (0,95) width 161: "dynamic selected change:"
       RenderBR {BR} at (161,95) size 0x17
       RenderListBox {SELECT} at (2,115) size 184x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
       RenderText {#text} at (188,169) size 4x17
         text run at (188,169) width 4: " "
-      RenderText {#text} at (0,0) size 0x0
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (192,169) size 0x17
       RenderText {#text} at (0,190) size 211x17
         text run at (0,190) width 211: "dynamic insert of selected option:"
       RenderBR {BR} at (211,190) size 0x17
       RenderListBox {SELECT} at (2,210) size 184x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-      RenderText {#text} at (188,264) size 4x17
-        text run at (188,264) width 4: " "
-      RenderBR {BR} at (192,264) size 0x17
+      RenderBR {BR} at (188,264) size 0x17
       RenderText {#text} at (0,285) size 93x17
         text run at (0,285) width 93: "initial selected:"
       RenderBR {BR} at (93,285) size 0x17
@@ -32,9 +27,7 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (1,1) size 189x28
           RenderText at (5,5) size 163x17
             text run at (5,5) width 163: "this should be selected"
-      RenderText {#text} at (195,311) size 4x17
-        text run at (195,311) width 4: " "
-      RenderBR {BR} at (199,311) size 0x17
+      RenderBR {BR} at (195,311) size 0x17
       RenderText {#text} at (0,337) size 161x17
         text run at (0,337) width 161: "dynamic selected change:"
       RenderBR {BR} at (161,337) size 0x17
@@ -44,8 +37,7 @@ layer at (0,0) size 800x600
             text run at (5,5) width 163: "this should be selected"
       RenderText {#text} at (195,363) size 4x17
         text run at (195,363) width 4: " "
-      RenderText {#text} at (0,0) size 0x0
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (199,363) size 0x17
       RenderText {#text} at (0,389) size 211x17
         text run at (0,389) width 211: "dynamic insert of selected option:"
       RenderBR {BR} at (211,389) size 0x17

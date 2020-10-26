@@ -9,8 +9,8 @@ layer at (0,0) size 800x600
             text run at (3,15) width 358: "a b c d "
         RenderText {#text} at (360,15) size 650x75
           text run at (360,15) width 293: "e f g h"
-          text run at (3,65) width 300: "xxxxxxxxxxx "
-        RenderBR {BR} at (0,0) size 0x0
+          text run at (3,65) width 275: "xxxxxxxxxxx"
+        RenderBR {BR} at (278,53) size 0x25
         RenderInline {SPAN} at (0,0) size 358x25
           RenderText {#text} at (3,115) size 358x25
             text run at (3,115) width 358: "a b c d "

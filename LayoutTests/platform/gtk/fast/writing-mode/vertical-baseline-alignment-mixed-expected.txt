@@ -8,9 +8,9 @@ layer at (548,0) size 252x600
           RenderText {#text} at (15,0) size 26x102
             text run at (15,0) width 102: "\x{7B2C}\x{4E00}\x{6BB5}\x{843D} "
         RenderInline {SPAN} at (0,0) size 108x458
-          RenderText {#text} at (1,102) size 53x337
-            text run at (1,102) width 337: "PARAGRAPH 1 "
-          RenderBR {BR} at (1,438) size 53x1
+          RenderText {#text} at (1,102) size 53x325
+            text run at (1,102) width 325: "PARAGRAPH 1"
+          RenderBR {BR} at (1,426) size 53x1
           RenderText {#text} at (56,0) size 53x294
             text run at (56,0) width 294: "MORE TEXT. "
           RenderInline {SPAN} at (0,0) size 14x165

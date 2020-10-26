@@ -444,9 +444,9 @@ layer at (0,0) size 785x2464
                 text run at (0,0) width 36: "FIVE"
       RenderBlock (anonymous) at (0,1270) size 769x37
         RenderBR {BR} at (0,0) size 0x17
-        RenderText {#text} at (0,18) size 660x17
-          text run at (0,18) width 660: "This is a table formed from a list with display of table-row-group and list items with display of table-cell. "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderText {#text} at (0,18) size 656x17
+          text run at (0,18) width 656: "This is a table formed from a list with display of table-row-group and list items with display of table-cell."
+        RenderBR {BR} at (656,18) size 0x17
       RenderTable at (0,1306) size 230x19
         RenderTableSection {UL} at (0,0) size 230x18
           RenderTableRow (anonymous) at (0,0) size 230x18
@@ -497,9 +497,9 @@ layer at (0,0) size 785x2464
         RenderBR {BR} at (0,0) size 0x17
       RenderBlock {P} at (0,1412) size 769x225
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 430x17
-            text run at (0,0) width 430: "The following table will have its rows and columns in red collapsed "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 426x17
+            text run at (0,0) width 426: "The following table will have its rows and columns in red collapsed"
+          RenderBR {BR} at (426,0) size 0x17
         RenderTable {TABLE} at (0,18) size 138x94 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 138x18
             RenderInline {B} at (0,0) size 44x17
@@ -584,9 +584,9 @@ layer at (0,0) size 785x2464
                   text run at (2,2) width 27: "C33"
       RenderBlock {P} at (0,1652) size 769x235
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 749x17
-            text run at (0,0) width 749: "The following table will have its 2nd row and 2nd col collapsed. A window resize may be necessary to see it properly. "
-          RenderBR {BR} at (748,0) size 1x17
+          RenderText {#text} at (0,0) size 745x17
+            text run at (0,0) width 745: "The following table will have its 2nd row and 2nd col collapsed. A window resize may be necessary to see it properly."
+          RenderBR {BR} at (744,0) size 1x17
         RenderTable {TABLE} at (0,18) size 188x108 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 188x18
             RenderInline {B} at (0,0) size 44x17
@@ -697,9 +697,9 @@ layer at (0,0) size 785x2464
                   text run at (2,2) width 27: "C44"
       RenderBlock {P} at (0,1902) size 769x271
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 459x17
-            text run at (0,0) width 459: "The following table will have its 1st row group collapsed (rows 1 and 2) "
-          RenderBR {BR} at (459,0) size 0x17
+          RenderText {#text} at (0,0) size 455x17
+            text run at (0,0) width 455: "The following table will have its 1st row group collapsed (rows 1 and 2)"
+          RenderBR {BR} at (455,0) size 0x17
         RenderTable {TABLE} at (0,18) size 126x108 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 126x18
             RenderInline {B} at (0,0) size 44x17
@@ -827,8 +827,8 @@ layer at (0,0) size 785x2464
           RenderText {#text} at (0,0) size 755x35
             text run at (0,0) width 554: "The following table is similar to a previous table except that the direction is right-to-left. "
             text run at (554,0) width 201: "It will have its 2nd row and 2nd"
-            text run at (0,18) width 429: "col collapsed. A window resize may be necessary to see it properly. "
-          RenderBR {BR} at (428,18) size 1x17
+            text run at (0,18) width 425: "col collapsed. A window resize may be necessary to see it properly."
+          RenderBR {BR} at (424,18) size 1x17
         RenderTable {TABLE} at (0,36) size 188x108 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 188x18
             RenderInline {B} at (0,0) size 44x17

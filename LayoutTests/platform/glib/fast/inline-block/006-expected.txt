@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 772x35
         text run at (0,0) width 313: "This is a baseline alignment test for inline blocks. "
         text run at (313,0) width 459: "The last lines of the two red-bordered inline blocks should line up and be"
-        text run at (0,18) width 102: "on the baseline. "
-      RenderBR {BR} at (102,18) size 0x17
+        text run at (0,18) width 98: "on the baseline."
+      RenderBR {BR} at (98,18) size 0x17
       RenderBlock {DIV} at (0,64) size 255x60 [border: (2px solid #FF0000)]
         RenderText {#text} at (12,12) size 81x17
           text run at (12,12) width 81: "This is block"

@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 325x17
-          text run at (0,0) width 325: "The bug causes a crash when the page is destroyed "
-        RenderBR {BR} at (325,0) size 0x17
+        RenderText {#text} at (0,0) size 321x17
+          text run at (0,0) width 321: "The bug causes a crash when the page is destroyed"
+        RenderBR {BR} at (321,0) size 0x17
       RenderTable {TABLE} at (0,18) size 182x53
         RenderBlock {CAPTION} at (0,0) size 182x29
           RenderImage {IMG} at (0,0) size 182x29

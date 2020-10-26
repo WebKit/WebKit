@@ -39,9 +39,9 @@ layer at (0,0) size 785x1299
           text run at (0,0) width 111: "It is specifiable as"
       RenderBlock {BLOCKQUOTE} at (40,260) size 689x54
         RenderBlock {P} at (0,0) size 689x54
-          RenderText {#text} at (0,0) size 114x17
-            text run at (0,0) width 114: "Table height: 200 "
-          RenderBR {BR} at (113,0) size 1x17
+          RenderText {#text} at (0,0) size 110x17
+            text run at (0,0) width 110: "Table height: 200"
+          RenderBR {BR} at (109,0) size 1x17
           RenderText {#text} at (0,18) size 129x17
             text run at (0,18) width 129: "First Row : 1 or 1% "
           RenderInline {I} at (0,0) size 216x17
@@ -71,12 +71,12 @@ layer at (0,0) size 785x1299
         RenderText {#text} at (0,0) size 406x17
           text run at (0,0) width 406: "A second attempt is to specify heights that do add up to the total."
       RenderBlock {P} at (0,614) size 769x54
-        RenderText {#text} at (0,0) size 114x17
-          text run at (0,0) width 114: "Table height: 200 "
-        RenderBR {BR} at (113,0) size 1x17
-        RenderText {#text} at (0,18) size 87x17
-          text run at (0,18) width 87: "First Row : 1 "
-        RenderBR {BR} at (87,18) size 0x17
+        RenderText {#text} at (0,0) size 110x17
+          text run at (0,0) width 110: "Table height: 200"
+        RenderBR {BR} at (109,0) size 1x17
+        RenderText {#text} at (0,18) size 83x17
+          text run at (0,18) width 83: "First Row : 1"
+        RenderBR {BR} at (83,18) size 0x17
         RenderText {#text} at (0,36) size 118x17
           text run at (0,36) width 118: "Second Row : 199"
       RenderTable {TABLE} at (0,684) size 88x229 [border: (1px outset #808080)]

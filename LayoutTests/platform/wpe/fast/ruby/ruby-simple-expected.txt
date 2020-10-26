@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 225x17
-          text run at (0,0) width 225: "This is a initial test for simple ruby. "
-        RenderBR {BR} at (225,0) size 0x17
+        RenderText {#text} at (0,0) size 221x17
+          text run at (0,0) width 221: "This is a initial test for simple ruby."
+        RenderBR {BR} at (221,0) size 0x17
         RenderBR {BR} at (0,18) size 0x17
       RenderBlock {P} at (0,52) size 784x28
         RenderText {#text} at (0,10) size 161x17
