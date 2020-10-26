@@ -136,6 +136,3 @@ webkit.org/b/215676 [ Release ] http/tests/security/contentSecurityPolicy/worker
 
 #rdar://69407691 REGRESSION: [ iOS wk2 ] http/wpt/cache-storage/quota-third-party.https.html is a flaky failure
 http/wpt/cache-storage/quota-third-party.https.html [ Slow Pass Failure ]
-
-#rdar://69722963 (REGRESSION: [ iOS wk2 ] ( safari-610-branch ) fast/events/touch/ios/pointer-events-with-modifiers.html is a constant crash)
-fast/events/touch/ios/pointer-events-with-modifiers.html [ Pass Crash ]
