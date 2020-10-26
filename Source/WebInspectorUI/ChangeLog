@@ -1,5 +1,19 @@
 2020-10-26  Patrick Angle  <pangle@apple.com>
 
+        Web Inspector: Uncaught Exception: TypeError: undefined is not an object (evaluating 'this._boxModelDiagramRow.minimumWidth')
+        https://bugs.webkit.org/show_bug.cgi?id=218135
+
+        Reviewed by Brian Burg.
+
+        minimumWidth may be retrieved before the ComputedStylesDetailsPanel has done its initial layout, which means the
+        _boxModelDiagramRow will not have been initialized. In this case, we want to return 0 causing the absolute
+        minimum width of a sidebar to be used for calculations instead.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WI.ComputedStyleDetailsPanel.prototype.get minimumWidth):
+
+2020-10-26  Patrick Angle  <pangle@apple.com>
+
         Web Inspector: Change minimum width of #tab-browser to a more reasonable value
         https://bugs.webkit.org/show_bug.cgi?id=217998
 

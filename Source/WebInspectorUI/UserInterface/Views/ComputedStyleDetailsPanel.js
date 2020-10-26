@@ -39,7 +39,7 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
     get minimumWidth()
     {
-        return this._boxModelDiagramRow.minimumWidth;
+        return this._boxModelDiagramRow?.minimumWidth ?? 0;
     }
 
     refresh(significantChange)
