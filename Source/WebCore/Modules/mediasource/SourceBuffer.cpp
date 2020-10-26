@@ -974,12 +974,12 @@ void SourceBuffer::evictCodedFrames(size_t newDataSize)
         rangeEnd += thirtySeconds;
     }
 
-#if !RELEASE_LOG_DISABLED
     if (!m_bufferFull) {
+#if !RELEASE_LOG_DISABLED
         DEBUG_LOG(LOGIDENTIFIER, "evicted ", initialBufferedSize - extraMemoryCost());
+#endif
         return;
     }
-#endif
 
     // If there still isn't enough free space and there buffers in time ranges after the current range (ie. there is a gap after
     // the current buffered range), delete 30 seconds at a time from duration back to the current time range or 30 seconds after
