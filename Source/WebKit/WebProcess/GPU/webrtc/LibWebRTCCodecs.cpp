@@ -113,8 +113,16 @@ static inline MediaSample::VideoRotation toMediaSampleVideoRotation(webrtc::Vide
 static int32_t encodeVideoFrame(webrtc::WebKitVideoEncoder encoder, const webrtc::VideoFrame& frame, bool shouldEncodeAsKeyFrame)
 {
     RetainPtr<CVPixelBufferRef> newPixelBuffer;
-    auto pixelBuffer = webrtc::pixelBufferFromFrame(frame, [&newPixelBuffer](size_t width, size_t height) -> CVPixelBufferRef {
-        auto pixelBufferPool = WebProcess::singleton().libWebRTCCodecs().pixelBufferPool(width, height);
+    auto pixelBuffer = webrtc::pixelBufferFromFrame(frame, [&newPixelBuffer](size_t width, size_t height, webrtc::BufferType bufferType) -> CVPixelBufferRef {
+        OSType poolBufferType;
+        switch (bufferType) {
+        case webrtc::BufferType::I420:
+            poolBufferType = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
+            break;
+        case webrtc::BufferType::I010:
+            poolBufferType = kCVPixelFormatType_420YpCbCr10BiPlanarFullRange;
+        }
+        auto pixelBufferPool = WebProcess::singleton().libWebRTCCodecs().pixelBufferPool(width, height, poolBufferType);
         if (!pixelBufferPool)
             return nullptr;
 
@@ -359,10 +367,10 @@ void LibWebRTCCodecs::completedEncoding(RTCEncoderIdentifier identifier, IPC::Da
     webrtc::RemoteVideoEncoder::encodeComplete(encoder->encodedImageCallback, const_cast<uint8_t*>(data.data()), data.size(), info, fragmentationHeader.value());
 }
 
-CVPixelBufferPoolRef LibWebRTCCodecs::pixelBufferPool(size_t width, size_t height)
+CVPixelBufferPoolRef LibWebRTCCodecs::pixelBufferPool(size_t width, size_t height, OSType type)
 {
     if (!m_pixelBufferPool || m_pixelBufferPoolWidth != width || m_pixelBufferPoolHeight != height) {
-        m_pixelBufferPool = createPixelBufferPool(width, height);
+        m_pixelBufferPool = createPixelBufferPool(width, height, type);
         m_pixelBufferPoolWidth = width;
         m_pixelBufferPoolHeight = height;
     }

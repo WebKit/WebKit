@@ -88,12 +88,21 @@ RetainPtr<CVPixelBufferRef> createBlackPixelBuffer(size_t width, size_t height)
     return adoptCF(pixelBuffer);
 }
 
-CVPixelBufferPoolRef RealtimeIncomingVideoSourceCocoa::pixelBufferPool(size_t width, size_t height)
+CVPixelBufferPoolRef RealtimeIncomingVideoSourceCocoa::pixelBufferPool(size_t width, size_t height, webrtc::BufferType bufferType)
 {
-    if (!m_pixelBufferPool || m_pixelBufferPoolWidth != width || m_pixelBufferPoolHeight != height) {
-        m_pixelBufferPool = createPixelBufferPool(width, height);
+    if (!m_pixelBufferPool || m_pixelBufferPoolWidth != width || m_pixelBufferPoolHeight != height || m_pixelBufferPoolBufferType != bufferType) {
+        OSType poolBufferType;
+        switch (bufferType) {
+        case webrtc::BufferType::I420:
+            poolBufferType = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
+            break;
+        case webrtc::BufferType::I010:
+            poolBufferType = kCVPixelFormatType_420YpCbCr10BiPlanarFullRange;
+        }
+        m_pixelBufferPool = createPixelBufferPool(width, height, poolBufferType);
         m_pixelBufferPoolWidth = width;
         m_pixelBufferPoolHeight = height;
+        m_pixelBufferPoolBufferType = bufferType;
     }
     return m_pixelBufferPool.get();
 }
@@ -110,8 +119,8 @@ RetainPtr<CVPixelBufferRef> RealtimeIncomingVideoSourceCocoa::pixelBufferFromVid
     }
 
     RetainPtr<CVPixelBufferRef> newPixelBuffer;
-    return webrtc::pixelBufferFromFrame(frame, [this, &newPixelBuffer](size_t width, size_t height) -> CVPixelBufferRef {
-        auto pixelBufferPool = this->pixelBufferPool(width, height);
+    return webrtc::pixelBufferFromFrame(frame, [this, &newPixelBuffer](size_t width, size_t height, webrtc::BufferType bufferType) -> CVPixelBufferRef {
+        auto pixelBufferPool = this->pixelBufferPool(width, height, bufferType);
         if (!pixelBufferPool)
             return nullptr;
 

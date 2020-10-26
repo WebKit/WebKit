@@ -94,7 +94,7 @@ public:
     void registerEncodeFrameCallback(Encoder&, void* encodedImageCallback);
     void setEncodeRates(Encoder&, uint32_t bitRate, uint32_t frameRate);
     
-    CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height);
+    CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height, OSType);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 

@@ -77,8 +77,13 @@
 
 #if defined(RTC_ENABLE_VP9)
   if (supportsVP9) {
-    RTCVideoCodecInfo *vp9Info = [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp9Name];
-    [codecs addObject:vp9Info];
+    [codecs addObject:[[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp9Name parameters: @{
+      @"profile-id" : @"0",
+    }]];
+
+    [codecs addObject:[[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp9Name parameters: @{
+      @"profile-id" : @"2",
+    }]];
   }
 #endif
 
@@ -92,7 +97,7 @@
     return [RTCVideoEncoderVP8 vp8Encoder];
 #if defined(RTC_ENABLE_VP9)
   } else if ([info.name isEqualToString:kRTCVideoCodecVp9Name]) {
-    return [RTCVideoEncoderVP9 vp9Encoder];
+    return [RTCVideoEncoderVP9 vp9Encoder:info];
 #endif
 #if !defined(DISABLE_H265)
   } else if (@available(iOS 11, *)) {

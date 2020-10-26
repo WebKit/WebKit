@@ -362,7 +362,7 @@ OSStatus WebKitVP9DecoderReceiver::decoderFailed(int error)
 
 int32_t WebKitVP9DecoderReceiver::Decoded(VideoFrame& frame)
 {
-    auto pixelBuffer = pixelBufferFromFrame(frame, [this](size_t width, size_t height) -> CVPixelBufferRef {
+    auto pixelBuffer = pixelBufferFromFrame(frame, [this](size_t width, size_t height, BufferType) -> CVPixelBufferRef {
         CVPixelBufferRef pixelBuffer = nullptr;
         if (CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, m_pixelBufferPool, &pixelBuffer) == kCVReturnSuccess)
             return pixelBuffer;

@@ -26,6 +26,7 @@
 #include "WebKitUtilities.h"
 
 #include "native/src/objc_frame_buffer.h"
+#include "rtc_base/logging.h"
 #include "third_party/libyuv/include/libyuv/convert_from.h"
 #include "libyuv/cpu_id.h"
 #include "libyuv/row.h"
@@ -197,51 +198,35 @@ static bool CopyVideoFrameToPixelBuffer(const webrtc::I010BufferInterface* frame
     return true;
 }
 
-CVPixelBufferRef pixelBufferFromFrame(const VideoFrame& frame, const std::function<CVPixelBufferRef(size_t, size_t)>& makePixelBuffer)
+CVPixelBufferRef pixelBufferFromFrame(const VideoFrame& frame, const std::function<CVPixelBufferRef(size_t, size_t, BufferType)>& makePixelBuffer)
 {
-    if (frame.video_frame_buffer()->type() != VideoFrameBuffer::Type::kNative) {
-        auto pixelBuffer = makePixelBuffer(frame.video_frame_buffer()->width(), frame.video_frame_buffer()->height());
-        if (!pixelBuffer)
+    auto buffer = frame.video_frame_buffer();
+    if (buffer->type() != VideoFrameBuffer::Type::kNative) {
+        auto type = buffer->type();
+        if (type != VideoFrameBuffer::Type::kI420 && type != VideoFrameBuffer::Type::kI010) {
+            RTC_LOG(WARNING) << "Video frame buffer type is not expected.";
             return nullptr;
+        }
 
-        if (frame.video_frame_buffer()->type() == VideoFrameBuffer::Type::kI420)
-            CopyVideoFrameToPixelBuffer(frame.video_frame_buffer()->GetI420(), pixelBuffer);
-        else if (frame.video_frame_buffer()->type() == VideoFrameBuffer::Type::kI010)
-            CopyVideoFrameToPixelBuffer(frame.video_frame_buffer()->GetI010(), pixelBuffer);
+        auto pixelBuffer = makePixelBuffer(buffer->width(), buffer->height(), type == VideoFrameBuffer::Type::kI420 ? BufferType::I420 : BufferType::I010);
+        if (!pixelBuffer) {
+            RTC_LOG(WARNING) << "Pixel buffer creation failed.";
+            return nullptr;
+        }
+
+        if (type == VideoFrameBuffer::Type::kI420)
+            CopyVideoFrameToPixelBuffer(buffer->GetI420(), pixelBuffer);
+        else
+            CopyVideoFrameToPixelBuffer(buffer->GetI010(), pixelBuffer);
         return pixelBuffer;
     }
 
-    auto *frameBuffer = static_cast<ObjCFrameBuffer*>(frame.video_frame_buffer().get())->wrapped_frame_buffer();
+    auto *frameBuffer = static_cast<ObjCFrameBuffer*>(buffer.get())->wrapped_frame_buffer();
     if (![frameBuffer isKindOfClass:[RTCCVPixelBuffer class]])
         return nullptr;
 
     auto *rtcPixelBuffer = (RTCCVPixelBuffer *)frameBuffer;
     return rtcPixelBuffer.pixelBuffer;
-}
-
-CVPixelBufferPoolRef createPixelBufferPool(size_t width, size_t height)
-{
-    const OSType videoCaptureFormat = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
-    auto pixelAttributes = @{
-        (__bridge NSString *)kCVPixelBufferWidthKey: @(width),
-        (__bridge NSString *)kCVPixelBufferHeightKey: @(height),
-        (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(videoCaptureFormat),
-        (__bridge NSString *)kCVPixelBufferCGImageCompatibilityKey: @NO,
-#if defined(WEBRTC_IOS)
-        (__bridge NSString *)kCVPixelFormatOpenGLESCompatibility : @YES,
-#else
-        (__bridge NSString *)kCVPixelBufferOpenGLCompatibilityKey : @YES,
-#endif
-        (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ }
-    };
-
-    CVPixelBufferPoolRef pool = nullptr;
-    auto status = CVPixelBufferPoolCreate(kCFAllocatorDefault, nullptr, (__bridge CFDictionaryRef)pixelAttributes, &pool);
-
-    if (status != kCVReturnSuccess)
-        return nullptr;
-
-    return pool;
 }
 
 }

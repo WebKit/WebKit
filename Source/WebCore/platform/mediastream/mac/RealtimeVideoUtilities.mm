@@ -30,9 +30,8 @@
 
 namespace WebCore {
 
-RetainPtr<CVPixelBufferPoolRef> createPixelBufferPool(size_t width, size_t height)
+RetainPtr<CVPixelBufferPoolRef> createPixelBufferPool(size_t width, size_t height, OSType videoCaptureFormat)
 {
-    const OSType videoCaptureFormat = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
     auto pixelAttributes = @{
         (__bridge NSString *)kCVPixelBufferWidthKey: @(width),
         (__bridge NSString *)kCVPixelBufferHeightKey: @(height),

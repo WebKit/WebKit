@@ -41,7 +41,7 @@ static inline OSType preferedPixelBufferFormat()
 #endif
 }
 
-WEBCORE_EXPORT RetainPtr<CVPixelBufferPoolRef> createPixelBufferPool(size_t width, size_t height);
+WEBCORE_EXPORT RetainPtr<CVPixelBufferPoolRef> createPixelBufferPool(size_t width, size_t height, OSType);
 WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> createPixelBufferFromPool(CVPixelBufferPoolRef);
 
 }

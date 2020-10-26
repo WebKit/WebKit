@@ -11,6 +11,7 @@
 #import <Foundation/Foundation.h>
 
 #import "RTCMacros.h"
+#import "RTCVideoCodecInfo.h"
 #import "RTCVideoEncoder.h"
 
 RTC_OBJC_EXPORT
@@ -21,6 +22,6 @@ __attribute__((objc_runtime_name("WK_RTCVideoEncoderVP9")))
  * RTCPeerConnectionFactory. Even though it implements the RTCVideoEncoder protocol, it can not be
  * used independently from the RTCPeerConnectionFactory.
  */
-+ (id<RTCVideoEncoder>)vp9Encoder;
++ (id<RTCVideoEncoder>)vp9Encoder:(RTCVideoCodecInfo *)codecInfo;
 
 @end

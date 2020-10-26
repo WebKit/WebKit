@@ -79,8 +79,13 @@
   [codecs addObject:vp8Info];
 #if defined(RTC_ENABLE_VP9)
   if (_supportsVP9) {
-    RTCVideoCodecInfo *vp9Info = [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp9Name];
-    [codecs addObject:vp9Info];
+    [codecs addObject:[[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp9Name parameters: @{
+      @"profile-id" : @"0",
+    }]];
+
+    [codecs addObject:[[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp9Name parameters: @{
+      @"profile-id" : @"2",
+    }]];
   }
 #endif
 

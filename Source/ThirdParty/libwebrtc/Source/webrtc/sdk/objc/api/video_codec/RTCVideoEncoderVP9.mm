@@ -15,12 +15,13 @@
 #import "RTCWrappedNativeVideoEncoder.h"
 
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
+#include "sdk/objc/api/peerconnection/RTCVideoCodecInfo+Private.h"
 
 @implementation RTCVideoEncoderVP9
 
-+ (id<RTCVideoEncoder>)vp9Encoder {
++ (id<RTCVideoEncoder>)vp9Encoder:(RTCVideoCodecInfo *)codecInfo {
   return [[RTCWrappedNativeVideoEncoder alloc]
-      initWithNativeEncoder:std::unique_ptr<webrtc::VideoEncoder>(webrtc::VP9Encoder::Create())];
+      initWithNativeEncoder:std::unique_ptr<webrtc::VideoEncoder>(webrtc::VP9Encoder::Create(cricket::VideoCodec(codecInfo.nativeSdpVideoFormat)))];
 }
 
 @end

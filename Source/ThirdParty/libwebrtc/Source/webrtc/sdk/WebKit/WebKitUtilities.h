@@ -55,9 +55,8 @@ bool isH264HardwareEncoderAllowed();
 void setH264LowLatencyEncoderEnabled(bool);
 bool isH264LowLatencyEncoderEnabled();
 
-CVPixelBufferRef pixelBufferFromFrame(const VideoFrame&, const std::function<CVPixelBufferRef(size_t, size_t)>&);
+enum class BufferType { I420, I010 };
+CVPixelBufferRef pixelBufferFromFrame(const VideoFrame&, const std::function<CVPixelBufferRef(size_t, size_t, BufferType)>&);
 rtc::scoped_refptr<webrtc::VideoFrameBuffer> pixelBufferToFrame(CVPixelBufferRef);
-
-CVPixelBufferPoolRef createPixelBufferPool(size_t width, size_t height);
 
 }
