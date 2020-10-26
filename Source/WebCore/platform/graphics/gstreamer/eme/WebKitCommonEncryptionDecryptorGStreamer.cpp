@@ -38,7 +38,6 @@ using WebCore::CDMProxy;
 
 #define WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_MEDIA_CENC_DECRYPT, WebKitMediaCommonEncryptionDecryptPrivate))
 struct _WebKitMediaCommonEncryptionDecryptPrivate {
-    GRefPtr<GstEvent> protectionEvent;
     RefPtr<CDMProxy> cdmProxy;
 
     Lock cdmAttachmentMutex;
