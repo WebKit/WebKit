@@ -609,6 +609,8 @@ webkit.org/b/215945 webanimations/accelerated-css-animation-with-easing.html [ I
 
 webkit.org/b/216539 webanimations/accelerated-animation-easing-and-direction-update.html [ ImageOnlyFailure ]
 
+webkit.org/b/218176 webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebAnimations-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -733,6 +735,8 @@ webkit.org/b/215912 http/tests/websocket/tests/hybi/handshake-fail-by-no-cr.html
 # WPT-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+webkit.org/b/172099 imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest_img.html [ Pass ]
+
 imported/w3c/web-platform-tests/WebCryptoAPI/ [ Slow ]
 webkit.org/b/183608 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Failure Pass ]
 webkit.org/b/177226 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Failure Pass ]
@@ -842,6 +846,20 @@ webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/fon
 # Flaky Unhandled promise rejection messages
 webkit.org/b/171094 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.paint.repeat.coord1.html [ Pass Failure ]
 
+webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-change-checkbox.html [ Pass ]
+webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-alpha.html [ Pass ]
+webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-opaque.html [ Pass ]
+webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-visited-link-initial.html [ Pass ]
+
+webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/conic-gradient-center.html [ Pass ]
+webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic-2.html [ Pass ]
+webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/tiled-conic-gradients.html [ Pass ]
+
+webkit.org/b/214461 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-051.html [ Pass ]
+webkit.org/b/214461 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-052.html [ Pass ]
+webkit.org/b/214461 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-053.html [ Pass ]
+webkit.org/b/214461 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-054.html [ Pass ]
+
 webkit.org/b/214472 imported/w3c/web-platform-tests/css/css-images/normalization-conic-degenerate.html [ Timeout ]
 webkit.org/b/214472 imported/w3c/web-platform-tests/css/css-images/normalization-conic.html [ Timeout ]
 
@@ -856,6 +874,14 @@ webkit.org/b/186485 imported/w3c/web-platform-tests/web-animations/animation-mod
 webkit.org/b/186486 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002.html [ Failure ]
 webkit.org/b/186488 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002.html [ Failure ]
 
+webkit.org/b/203448 imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-static-position-table-cell.html [ Pass ]
+
+webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-001.html [ Pass ]
+webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-012.html [ Pass ]
+
+webkit.org/b/207260 imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast.html [ Pass ]
+webkit.org/b/207260 imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-slow.html [ Pass ]
+
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-005.html [ ImageOnlyFailure ]
 
 # New selection wpt tests that are timing out, likely to an unsupported operation.
@@ -869,6 +895,9 @@ webkit.org/b/216358 imported/w3c/web-platform-tests/css/css-fonts/font-feature-r
 # Failing since r266665.
 webkit.org/b/216359 fast/text/emoji-synthesis.html [ ImageOnlyFailure ]
 
+webkit.org/b/217414 imported/w3c/web-platform-tests/user-timing/measure-l3.any.html [ Failure Pass ]
+webkit.org/b/217414 imported/w3c/web-platform-tests/user-timing/measure-l3.any.worker.html [ Failure Pass ]
+
 # Failing since added in r268138.
 webkit.org/b/217815 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-filter-order.html [ ImageOnlyFailure ]
 
@@ -876,8 +905,15 @@ webkit.org/b/217815 imported/w3c/web-platform-tests/css/css-masking/clip-path/cl
 webkit.org/b/217991 imported/w3c/web-platform-tests/mediasession/ [ Skip ]
 webkit.org/b/217991 media/media-session/ [ Skip ]
 
-webkit.org/b/217414 imported/w3c/web-platform-tests/user-timing/measure-l3.any.html [ Failure Pass ]
-webkit.org/b/217414 imported/w3c/web-platform-tests/user-timing/measure-l3.any.worker.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap.tentative.html [ Pass ]
+imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-element-swap-width-height.tentative.html [ Pass ]
+imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-element.tentative.html [ Pass ]
+
+imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content-rendering-rules/canvas-update-with-border-object-fit.html [ Pass ]
+
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/reset-algorithm-rendering.html [ Pass ]
+
+imported/w3c/web-platform-tests/mathml/presentation-markup/menclose/legacy-menclose-radical-notation.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs

@@ -48,7 +48,6 @@ webkit.org/b/215405 inspector/dom/getAccessibilityPropertiesForNode.html [ Failu
 webkit.org/b/216161 imported/w3c/web-platform-tests/css/css-pseudo/text-selection.html [ Failure Pass ]
 
 # Editing
-webkit.org/b/217160 editing/inserting/typing-003.html [ Timeout ]
 
 # GStreamer - GTK-Only. Most GStreamer issues probably will go in the glib expectations
 webkit.org/b/210528 media/video-supports-fullscreen.html [ Crash Pass ]
@@ -388,7 +387,6 @@ webkit.org/b/169918 compositing/layer-creation/spanOverlapsCanvas.html [ Failure
 webkit.org/b/169918 compositing/layer-creation/fixed-position-out-of-view-scaled.html [ Failure Pass ]
 webkit.org/b/169918 compositing/masks/clip-path-composited-descendent.html [ Failure ]
 webkit.org/b/169918 compositing/masks/compositing-clip-path-change-no-repaint.html [ Failure ]
-webkit.org/b/169918 compositing/overflow/ancestor-overflow.html [ Failure ]
 webkit.org/b/169918 compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants.html [ Failure ]
 webkit.org/b/169918 compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2.html [ Failure ]
 webkit.org/b/169918 compositing/overflow/overflow-auto-with-touch-toggle.html [ Failure ]
@@ -1110,6 +1108,8 @@ webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaSt
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-video-is-black.https.html [ Crash Failure ]
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none-manual.https.html [ Crash Failure Pass ]
 webkit.org/b/210385 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-firstframe.https.html [ Failure Crash Pass ]
+
+webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--cover--height.html [ Pass ]
 
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-025.html [ ImageOnlyFailure ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-027.html [ ImageOnlyFailure ]
@@ -2481,7 +2481,6 @@ webkit.org/b/157179 editing/selection/4895428-1.html [ Failure ]
 webkit.org/b/157179 editing/selection/4895428-4.html [ Failure ]
 webkit.org/b/157179 editing/selection/contains-boundaries.html [ Failure ]
 webkit.org/b/157179 editing/selection/drag-text-delay.html [ Failure ]
-webkit.org/b/157179 fast/block/float/float-in-float-hit-testing.html [ Failure ]
 webkit.org/b/157179 fast/events/before-input-events-prevent-drag-and-drop.html [ Failure ]
 webkit.org/b/157179 fast/events/bogus-dropEffect-effectAllowed.html [ Failure ]
 webkit.org/b/157179 fast/events/content-changed-during-drop.html [ Failure ]
@@ -2565,12 +2564,7 @@ Bug(GTK) fast/ruby/rubyDOM-remove-rt2.html [ Failure ]
 Bug(GTK) fast/ruby/rubyDOM-remove-text1.html [ Failure ]
 Bug(GTK) fast/ruby/rubyDOM-remove-text2.html [ Failure ]
 Bug(GTK) fast/ruby/ruby-empty-rt.html [ Failure ]
-Bug(GTK) fast/ruby/ruby-length.html [ Failure ]
-Bug(GTK) fast/ruby/ruby-run-break.html [ Failure ]
-Bug(GTK) fast/ruby/ruby-runs.html [ Failure ]
 Bug(GTK) fast/ruby/ruby-runs-spans.html [ Failure ]
-Bug(GTK) fast/ruby/ruby-simple.html [ Failure ]
-Bug(GTK) fast/ruby/ruby-simple-rp.html [ Failure ]
 Bug(GTK) fast/ruby/ruby-trailing.html [ Failure ]
 Bug(GTK) fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure Timeout Pass ]
 Bug(GTK) http/tests/security/cross-origin-xsl-BLOCKED.html [ Failure ]
@@ -3032,7 +3026,6 @@ webkit.org/b/169909 fast/block/lineboxcontain/block-with-ideographs.xhtml [ Fail
 
 webkit.org/b/209720 fast/css-generated-content/initial-letter-pagination-raised-rl.html [ ImageOnlyFailure ]
 webkit.org/b/209720 fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
-webkit.org/b/209720 fast/writing-mode/vertical-baseline-alignment.html [ Failure ]
 
 webkit.org/b/169910 fast/multicol/simple-line-layout-line-index-after-strut.html [ ImageOnlyFailure ]
 
@@ -3147,8 +3140,6 @@ webkit.org/b/182763 accessibility/gtk/aria-activedescendant-changed-notification
 webkit.org/b/182763 accessibility/gtk/text-in-span-block-in-a-block.html [ Failure ]
 webkit.org/b/182763 accessibility/notification-listeners.html [ Failure ]
 webkit.org/b/182763 accessibility/gtk/caret-offsets.html [ Timeout ]
-
-webkit.org/b/182765 fast/text/emphasis-overlap.html [ Failure ImageOnlyFailure ]
 
 webkit.org/b/198830 media/context-menu-actions.html [ Pass Crash ]
 
