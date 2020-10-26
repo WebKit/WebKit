@@ -1056,6 +1056,8 @@ bool Quirks::needsAkamaiMediaPlayerQuirk(const HTMLVideoElement& element) const
 
     static NeverDestroyed<const AtomString> akamaiHTML5(MAKE_STATIC_STRING_IMPL("akamai-html5"));
     static NeverDestroyed<const AtomString> akamaiMediaElement(MAKE_STATIC_STRING_IMPL("akamai-media-element"));
+    static NeverDestroyed<const AtomString> ampHTML5(MAKE_STATIC_STRING_IMPL("amp-html5"));
+    static NeverDestroyed<const AtomString> ampMediaElement(MAKE_STATIC_STRING_IMPL("amp-media-element"));
 
     if (!needsQuirks())
         return false;
@@ -1064,7 +1066,7 @@ bool Quirks::needsAkamaiMediaPlayerQuirk(const HTMLVideoElement& element) const
         return false;
 
     auto& classNames = element.classNames();
-    return classNames.contains(akamaiHTML5) && classNames.contains(akamaiMediaElement);
+    return (classNames.contains(akamaiHTML5) && classNames.contains(akamaiMediaElement)) || (classNames.contains(ampHTML5) && classNames.contains(ampMediaElement));
 #else
     UNUSED_PARAM(element);
     return false;
