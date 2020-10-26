@@ -46,9 +46,9 @@ layer at (0,0) size 800x600
                   text run at (101,258) width 311: "the ground, Alice soon came to the conclusion"
                   text run at (57,276) width 114: "that it was a very "
                 RenderBlock (floating) {SPAN} at (6,279) size 48x65 [bgcolor=#ADD8E6]
-                RenderText {#text} at (170,276) size 145x18
-                  text run at (170,276) width 145: "difficult game indeed. "
-                RenderBR {BR} at (0,0) size 0x0
+                RenderText {#text} at (170,276) size 141x18
+                  text run at (170,276) width 141: "difficult game indeed."
+                RenderBR {BR} at (310,276) size 1x18
                 RenderText {#text} at (57,294) size 337x18
                   text run at (57,294) width 337: "The players all played at once without waiting "
                 RenderBlock (floating) {SPAN} at (348,315) size 64x81 [bgcolor=#90EE90]
@@ -65,8 +65,8 @@ layer at (0,0) size 800x600
                   text run at (77,348) width 268: " was in a furious passion, and went"
                   text run at (6,366) width 339: "stamping about, and shouting \x{2018}Off with his head!\x{2019} or"
                   text run at (6,384) width 64: "\x{2018}Off with "
-                  text run at (69,384) width 223: "her head!\x{2019} about once in a minute. "
-                RenderBR {BR} at (0,0) size 0x0
+                  text run at (69,384) width 219: "her head!\x{2019} about once in a minute."
+                RenderBR {BR} at (287,384) size 1x18
                 RenderText {#text} at (6,402) size 406x90
                   text run at (6,402) width 387: "Alice began to feel very uneasy: to be sure, she had not as "
                   text run at (392,402) width 20: "yet"

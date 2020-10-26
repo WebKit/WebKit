@@ -4,15 +4,15 @@ layer at (0,0) size 800x319
   RenderBlock {HTML} at (0,0) size 800x319
     RenderBody {BODY} at (8,8) size 784x303
       RenderBlock (anonymous) at (0,0) size 784x72
-        RenderText {#text} at (0,0) size 547x18
-          text run at (0,0) width 547: "Tests for basic button rendering. Creates a table with seven columns and seven rows. "
-        RenderBR {BR} at (546,0) size 1x18
-        RenderText {#text} at (0,18) size 521x18
-          text run at (0,18) width 521: "Creates two different types of buttons, one with an image (a red dot) and another "
-        RenderBR {BR} at (520,18) size 1x18
-        RenderText {#text} at (0,36) size 660x18
-          text run at (0,36) width 660: "with text (\"foo\") and then uses six different paddings to make sure each of the buttons render properly. "
-        RenderBR {BR} at (660,36) size 0x18
+        RenderText {#text} at (0,0) size 543x18
+          text run at (0,0) width 543: "Tests for basic button rendering. Creates a table with seven columns and seven rows."
+        RenderBR {BR} at (542,0) size 1x18
+        RenderText {#text} at (0,18) size 517x18
+          text run at (0,18) width 517: "Creates two different types of buttons, one with an image (a red dot) and another"
+        RenderBR {BR} at (516,18) size 1x18
+        RenderText {#text} at (0,36) size 656x18
+          text run at (0,36) width 656: "with text (\"foo\") and then uses six different paddings to make sure each of the buttons render properly."
+        RenderBR {BR} at (656,36) size 0x18
         RenderBR {BR} at (0,54) size 0x18
       RenderTable {TABLE} at (0,72) size 696x231
         RenderTableSection {TBODY} at (0,0) size 696x231

@@ -1,3 +1,39 @@
+2020-10-26  Zalan Bujtas  <zalan@apple.com>
+
+        Remove unneeded whitespace between content and <br>
+        https://bugs.webkit.org/show_bug.cgi?id=218151
+        <rdar://problem/70662471>
+
+        Reviewed by Antti Koivisto.
+        
+        Missed these files in r268958.
+
+        * fast/css/text-overflow-ellipsis-bidi.html:
+        * fast/css/text-overflow-ellipsis-strict.html:
+        * fast/forms/basic-buttons.html:
+        * fast/repaint/add-table-overpaint-expected.txt:
+        * fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform-expected.txt:
+        * fast/repaint/obscured-background-no-repaint-expected.txt:
+        * fast/repaint/resources/line-flow-with-floats.html:
+        * platform/mac/fast/css/text-overflow-ellipsis-bidi-expected.txt:
+        * platform/mac/fast/css/text-overflow-ellipsis-strict-expected.txt:
+        * platform/mac/fast/forms/basic-buttons-expected.txt:
+        * platform/mac/fast/repaint/japanese-rl-selection-clear-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-1-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-10-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-2-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-3-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-4-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-5-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-6-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-7-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-8-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-9-expected.txt:
+        * platform/mac/svg/text/text-overflow-ellipsis-svgfont-expected.txt:
+        * platform/mac/svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures-expected.txt:
+        * svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures.html:
+        * svg/text/text-overflow-ellipsis-svgfont.html:
+
 2020-10-26  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GStreamer WebAudio gardening
