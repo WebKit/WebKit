@@ -40,6 +40,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/WeakPtr.h>
 
 namespace API {
 class Array;
@@ -149,15 +150,15 @@ public:
     void documentLoaderDetached(uint64_t navigationID);
 
     // Simple listener class used by plug-ins to know when frames finish or fail loading.
-    class LoadListener {
+    class LoadListener : public CanMakeWeakPtr<LoadListener> {
     public:
         virtual ~LoadListener() { }
 
         virtual void didFinishLoad(WebFrame*) = 0;
         virtual void didFailLoad(WebFrame*, bool wasCancelled) = 0;
     };
-    void setLoadListener(LoadListener* loadListener) { m_loadListener = loadListener; }
-    LoadListener* loadListener() const { return m_loadListener; }
+    void setLoadListener(LoadListener* loadListener) { m_loadListener = makeWeakPtr(loadListener); }
+    LoadListener* loadListener() const { return m_loadListener.get(); }
     
 #if PLATFORM(COCOA)
     typedef bool (*FrameFilterFunction)(WKBundleFrameRef, WKBundleFrameRef subframe, void* context);
@@ -192,7 +193,7 @@ private:
     HashMap<uint64_t, CompletionHandler<void()>> m_willSubmitFormCompletionHandlers;
     Optional<DownloadID> m_policyDownloadID;
 
-    LoadListener* m_loadListener { nullptr };
+    WeakPtr<LoadListener> m_loadListener;
     
     WebCore::FrameIdentifier m_frameID;
 

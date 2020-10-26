@@ -33,6 +33,7 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
 typedef struct objc_object* id;
@@ -96,19 +97,14 @@ public:
         static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, Parameters&);
     };
 
-    // Sets the active plug-in controller and initializes the plug-in.
-    bool initialize(PluginController*, const Parameters&);
+    bool initialize(PluginController&, const Parameters&);
 
-    virtual bool isBeingAsynchronouslyInitialized() const = 0;
-
-    // Destroys the plug-in.
     void destroyPlugin();
 
     bool isBeingDestroyed() const { return m_isBeingDestroyed; }
 
-    // Returns the plug-in controller for this plug-in.
-    PluginController* controller() { return m_pluginController; }
-    const PluginController* controller() const { return m_pluginController; }
+    PluginController* controller();
+    const PluginController* controller() const;
 
     virtual ~Plugin();
 
@@ -317,7 +313,7 @@ protected:
     bool m_isBeingDestroyed { false };
 
 private:
-    PluginController* m_pluginController;
+    WeakPtr<PluginController> m_pluginController;
 };
     
 } // namespace WebKit

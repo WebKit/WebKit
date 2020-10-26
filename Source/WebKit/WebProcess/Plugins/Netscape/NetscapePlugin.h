@@ -60,9 +60,6 @@ public:
 
     static RefPtr<NetscapePlugin> fromNPP(NPP);
 
-    // In-process NetscapePlugins don't support asynchronous initialization.
-    bool isBeingAsynchronouslyInitialized() const override { return false; }
-
 #if PLATFORM(COCOA)
     NPError setDrawingModel(NPDrawingModel);
     NPError setEventModel(NPEventModel);

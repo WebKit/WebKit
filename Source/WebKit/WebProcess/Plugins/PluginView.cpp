@@ -334,7 +334,7 @@ void PluginView::destroyPluginAndReset()
 {
     // Cancel all pending frame loads.
     for (FrameLoadMap::iterator it = m_pendingFrameLoads.begin(), end = m_pendingFrameLoads.end(); it != end; ++it)
-        it->key->setLoadListener(0);
+        it->key->setLoadListener(nullptr);
 
     if (m_plugin) {
         m_plugin->destroyPlugin();
@@ -601,7 +601,7 @@ void PluginView::initializePlugin()
     HTMLPlugInImageElement& plugInImageElement = downcast<HTMLPlugInImageElement>(*m_pluginElement);
     m_didPlugInStartOffScreen = !m_webPage->plugInIntersectsSearchRect(plugInImageElement);
 #endif
-    m_plugin->initialize(this, m_parameters);
+    m_plugin->initialize(*this, m_parameters);
     
     // Plug-in initialization continued in didFailToInitializePlugin() or didInitializePlugin().
 }
@@ -1666,7 +1666,7 @@ void PluginView::didFinishLoad(WebFrame* webFrame)
 {
     RefPtr<URLRequest> request = m_pendingFrameLoads.take(webFrame);
     ASSERT(request);
-    webFrame->setLoadListener(0);
+    webFrame->setLoadListener(nullptr);
 
     m_plugin->frameDidFinishLoading(request->requestID());
 }
@@ -1675,7 +1675,7 @@ void PluginView::didFailLoad(WebFrame* webFrame, bool wasCancelled)
 {
     RefPtr<URLRequest> request = m_pendingFrameLoads.take(webFrame);
     ASSERT(request);
-    webFrame->setLoadListener(0);
+    webFrame->setLoadListener(nullptr);
     
     m_plugin->frameDidFail(request->requestID(), wasCancelled);
 }

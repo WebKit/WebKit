@@ -64,8 +64,6 @@ public:
     void didReceivePluginProxyMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveSyncPluginProxyMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
-    bool isBeingAsynchronouslyInitialized() const override { return m_waitingOnAsynchronousInitialization; }
-
 private:
     explicit PluginProxy(uint64_t pluginProcessToken, bool isRestartedProcess);
 

@@ -119,7 +119,7 @@ bool PluginControllerProxy::initialize(const PluginCreationParameters& creationP
     if (creationParameters.windowNPObjectID)
         m_windowNPObject = m_connection->npRemoteObjectMap()->createNPObjectProxy(creationParameters.windowNPObjectID, m_plugin.get());
 
-    bool returnValue = m_plugin->initialize(this, creationParameters.parameters);
+    bool returnValue = m_plugin->initialize(*this, creationParameters.parameters);
 
     if (!returnValue) {
         // Get the plug-in so we can pass it to removePluginControllerProxy. The pointer is only

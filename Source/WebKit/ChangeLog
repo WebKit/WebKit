@@ -1,3 +1,62 @@
+2020-10-26  Alex Christensen  <achristensen@webkit.org>
+
+        Add null checks and smart pointers in PDF and Plugin code
+        https://bugs.webkit.org/show_bug.cgi?id=218144
+        <rdar://problem/69931543>
+
+        Reviewed by Youenn Fablet.
+
+        It's nice when things don't crash.
+        isBeingAsynchronouslyInitialized wasn't called anywhere, so I removed it.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::PDFPlugin):
+        (WebKit::PDFPlugin::~PDFPlugin):
+        (WebKit::PDFPlugin::getResourceBytesAtPosition):
+        (WebKit::PDFPlugin::updateScrollbars):
+        (WebKit::PDFPlugin::createScrollbar):
+        (WebKit::PDFPlugin::isActive const):
+        (WebKit::PDFPlugin::forceUpdateScrollbarsOnMainThreadForPerformanceTesting const):
+        (WebKit::PDFPlugin::jsPDFDocPrint):
+        (WebKit::PDFPlugin::installPDFDocument):
+        (WebKit::PDFPlugin::updatePageAndDeviceScaleFactors):
+        (WebKit::PDFPlugin::calculateSizes):
+        (WebKit::PDFPlugin::willDetachRenderer):
+        (WebKit::PDFPlugin::destroy):
+        (WebKit::PDFPlugin::paintControlForLayerInContext):
+        (WebKit::PDFPlugin::convertFromPDFViewToScreen const):
+        (WebKit::PDFPlugin::boundsOnScreen const):
+        (WebKit::PDFPlugin::visibilityDidChange):
+        (WebKit::PDFPlugin::showContextMenuAtPoint):
+        (WebKit::PDFPlugin::handleContextMenuEvent):
+        (WebKit::PDFPlugin::isFullFramePlugin const):
+        (WebKit::PDFPlugin::handlesPageScaleFactor const):
+        (WebKit::PDFPlugin::clickedLink):
+        (WebKit::PDFPlugin::save):
+        (WebKit::PDFPlugin::openWithPreview):
+        (WebKit::PDFPlugin::saveToPDF):
+        (WebKit::PDFPlugin::openWithNativeApplication):
+        (WebKit::PDFPlugin::showDefinitionForAttributedString):
+        (WebKit::PDFPlugin::notifySelectionChanged):
+        (WebKit::PDFPlugin::notifyCursorChanged):
+        (WebKit::PDFPlugin::axObjectCache const):
+        (WebKit::PDFPlugin::performWebSearch):
+        (WebKit::PDFPlugin::performSpotlightSearch):
+        * WebProcess/Plugins/Plugin.cpp:
+        (WebKit::Plugin::Plugin):
+        (WebKit::Plugin::initialize):
+        (WebKit::Plugin::controller):
+        (WebKit::Plugin::controller const):
+        (WebKit::Plugin::~Plugin): Deleted.
+        * WebProcess/Plugins/Plugin.h:
+        (WebKit::Plugin::controller): Deleted.
+        (WebKit::Plugin::controller const): Deleted.
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/WebPage/WebFrame.h:
+        (WebKit::WebFrame::setLoadListener):
+        (WebKit::WebFrame::loadListener const):
+
 2020-10-26  Youenn Fablet  <youenn@apple.com>
 
         Add support for VP9 Profile 2 (10-bit color) in WebRTC

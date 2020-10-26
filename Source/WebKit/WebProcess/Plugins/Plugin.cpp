@@ -27,6 +27,7 @@
 #include "Plugin.h"
 
 #include "LayerTreeContext.h"
+#include "PluginController.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/IntPoint.h>
 #include <wtf/SetForScope.h>
@@ -82,20 +83,16 @@ bool Plugin::Parameters::decode(IPC::Decoder& decoder, Parameters& parameters)
 
 Plugin::Plugin(PluginType type)
     : m_type(type)
-    , m_pluginController(0)
 {
 }
 
-Plugin::~Plugin()
-{
-}
+Plugin::~Plugin() = default;
 
-bool Plugin::initialize(PluginController* pluginController, const Parameters& parameters)
+bool Plugin::initialize(PluginController& pluginController, const Parameters& parameters)
 {
     ASSERT(!m_pluginController);
-    ASSERT(pluginController);
 
-    m_pluginController = pluginController;
+    m_pluginController = makeWeakPtr(pluginController);
 
     return initialize(parameters);
 }
@@ -118,6 +115,16 @@ IntPoint Plugin::convertToRootView(const IntPoint&) const
 {
     ASSERT_NOT_REACHED();
     return IntPoint();
+}
+
+PluginController* Plugin::controller()
+{
+    return m_pluginController.get();
+}
+
+const PluginController* Plugin::controller() const
+{
+    return m_pluginController.get();
 }
 
 } // namespace WebKit
