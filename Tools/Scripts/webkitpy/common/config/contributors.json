@@ -2051,6 +2051,16 @@
          "fsamuel"
       ]
    },
+   "Federico Bucchi" : {
+      "emails" : [
+         "fbucchi@apple.com",
+         "b.federico@gmail.com"
+      ],
+      "nicks" : [
+         "fbucchi",
+         "federicobucchi"
+      ]
+   },
    "Feng Qian" : {
       "emails" : [
          "feng@chromium.org"
@@ -5896,7 +5906,6 @@
       "nicks" : [
          "yusukesuzuki"
       ],
-      "slackId" : "UTWC5TTSP",
       "status" : "reviewer"
    },
    "Yuta Kitamura" : {
