@@ -244,7 +244,9 @@ void Line::appendNonBreakableSpace(const InlineItem& inlineItem, InlineLayoutUni
 void Line::appendInlineContainerStart(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
     // This is really just a placeholder to mark the start of the inline level container <span>.
-    appendNonBreakableSpace(inlineItem, contentLogicalWidth(), logicalWidth);
+    auto& boxGeometry = formattingContext().geometryForBox(inlineItem.layoutBox());
+    auto adjustedRunStart = contentLogicalWidth() + std::min(boxGeometry.marginStart(), 0_lu);
+    appendNonBreakableSpace(inlineItem, adjustedRunStart, logicalWidth);
 }
 
 void Line::appendInlineContainerEnd(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
@@ -318,8 +320,8 @@ void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, InlineLayout
 {
     auto& boxGeometry = formattingContext().geometryForBox(inlineItem.layoutBox());
     // Negative margin start pulls the content to the logical left direction.
-    auto adjustedContentStart = contentLogicalWidth() + std::min(boxGeometry.marginStart(), 0_lu);
-    m_runs.append({ inlineItem, adjustedContentStart, logicalWidth });
+    auto adjustedRunStart = contentLogicalWidth() + std::min(boxGeometry.marginStart(), 0_lu);
+    m_runs.append({ inlineItem, adjustedRunStart, logicalWidth });
     m_contentLogicalWidth += logicalWidth;
     m_trimmableTrailingContent.reset();
     m_trailingSoftHyphenWidth = { };

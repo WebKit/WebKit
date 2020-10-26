@@ -205,7 +205,8 @@ void LineLayout::constructContent()
 
             if (layoutBox.isReplacedBox()) {
                 auto& renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
-                auto borderBoxLocation = FloatPoint { runRect.x(), runRect.y() + m_layoutState.geometryForBox(layoutBox).marginBefore() };
+                auto& boxGeometry = m_layoutState.geometryForBox(layoutBox);
+                auto borderBoxLocation = FloatPoint { runRect.x() + std::max(boxGeometry.marginStart(), 0_lu), runRect.y() + boxGeometry.marginBefore() };
                 renderer.setLocation(flooredLayoutPoint(borderBoxLocation));
             }
         }
