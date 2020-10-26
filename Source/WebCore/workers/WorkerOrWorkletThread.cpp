@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WorkerOrWorkletThread.h"
 
+#include "ThreadGlobalData.h"
+#include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerOrWorkletScriptController.h"
 
 #if PLATFORM(IOS_FAMILY)

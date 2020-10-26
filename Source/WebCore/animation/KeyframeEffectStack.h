@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class KeyframeEffect;
+class RenderStyle;
 
 class KeyframeEffectStack {
     WTF_MAKE_FAST_ALLOCATED;
