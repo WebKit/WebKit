@@ -1323,7 +1323,7 @@ WI.getMaximumSidebarWidth = function(sidebar)
 {
     console.assert(sidebar instanceof WI.Sidebar);
 
-    const minimumContentBrowserWidth = 100; // Keep in sync with `#tab-browser`
+    const minimumContentBrowserWidth = 200; // Keep in sync with `#tab-browser`
 
     let minimumWidth = window.innerWidth - minimumContentBrowserWidth;
     let tabContentView = WI.tabBrowser.selectedTabContentView;

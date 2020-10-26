@@ -182,7 +182,7 @@ body.docked:matches(.right, .left) #navigation-sidebar.collapsed > .resizer {
 
 #tab-browser {
     flex: 1;
-    min-width: 100px; /* Keep in sync with `WI.getMaximumSidebarWidth(...) -> const minimumContentBrowserWidth` */
+    min-width: 200px; /* Keep in sync with `WI.getMaximumSidebarWidth(...) -> const minimumContentBrowserWidth` */
 }
 
 #details-sidebar {

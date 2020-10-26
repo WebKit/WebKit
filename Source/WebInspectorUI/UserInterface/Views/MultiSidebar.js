@@ -186,7 +186,12 @@ WI.MultiSidebar = class MultiSidebar extends WI.Sidebar
 
     _updateMinimumWidthForMultipleSidebars()
     {
-        let requiredMinimumWidth = this.primarySidebar.minimumWidth;
+        // A 50px of additional required space helps make sure we collapse the multiple sidebars at an appropriate width
+        // without preventing the user from sizing the single sidebar to fill up to the minimum width of the
+        // #tab-browser once the sidebars are collapsed.
+        const minimumWidthEasement = 50;
+
+        let requiredMinimumWidth = this.primarySidebar.minimumWidth + minimumWidthEasement;
         for (let sidebarPanel of this.sidebarPanels) {
             if (sidebarPanel.allowExclusivePresentation)
                 requiredMinimumWidth += Math.max(WI.Sidebar.AbsoluteMinimumWidth, sidebarPanel.minimumWidth);
