@@ -146,7 +146,7 @@ class TestParser(object):
         """Returns whether the test is a manual test according WPT rules."""
         # General rule for manual test i.e. file ends with -manual.htm path
         # See https://web-platform-tests.org/writing-tests/manual.html#requirements-for-a-manual-test
-        if self.filename.endswith('-manual.htm') or self.filename.endswith('-manual.html'):
+        if self.filename.find('-manual.') != -1:
             return True
 
         # Rule specific to CSS WG manual tests i.e. rely on <meta name="flags">

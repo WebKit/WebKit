@@ -1,3 +1,16 @@
+2020-10-26  Youenn Fablet  <youenn@apple.com>
+
+        W3C test importer should not import manual HTTPS tests
+        https://bugs.webkit.org/show_bug.cgi?id=217944
+
+        Reviewed by Jonathan Bedard.
+
+        Uodate manual test detection heuristic to simply search for '-manual.'.
+
+        * Scripts/webkitpy/w3c/test_parser.py:
+        (TestParser.is_wpt_manualtest):
+        * Scripts/webkitpy/w3c/test_parser_unittest.py:
+
 2020-10-26  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove Accelerated2dCanvasEnabled WebPreferences entry
