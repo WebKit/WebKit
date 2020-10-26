@@ -27,6 +27,7 @@
 
 #include "FontCascade.h"
 #include "LayoutRepainter.h"
+#include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
 #include "RenderView.h"
@@ -940,6 +941,69 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
         setHeight(oldHeight);
 }
 
+static bool shouldCheckLines(const RenderBlockFlow& blockFlow)
+{
+    return !blockFlow.isFloatingOrOutOfFlowPositioned() && blockFlow.style().height().isAuto();
+}
+
+static RootInlineBox* lineAtIndex(const RenderBlockFlow& flow, int i)
+{
+    ASSERT(i >= 0);
+
+    if (flow.style().visibility() != Visibility::Visible)
+        return nullptr;
+
+    if (flow.childrenInline()) {
+        for (auto* box = flow.firstRootBox(); box; box = box->nextRootBox()) {
+            if (!i--)
+                return box;
+        }
+        return nullptr;
+    }
+
+    for (auto& blockFlow : childrenOfType<RenderBlockFlow>(flow)) {
+        if (!shouldCheckLines(blockFlow))
+            continue;
+        if (RootInlineBox* box = lineAtIndex(blockFlow, i))
+            return box;
+    }
+
+    return nullptr;
+}
+
+static int getHeightForLineCount(const RenderBlockFlow& block, int lineCount, bool includeBottom, int& count)
+{
+    if (block.style().visibility() != Visibility::Visible)
+        return -1;
+
+    if (block.childrenInline()) {
+        for (auto* box = block.firstRootBox(); box; box = box->nextRootBox()) {
+            if (++count == lineCount)
+                return box->lineBottom() + (includeBottom ? (block.borderBottom() + block.paddingBottom()) : 0_lu);
+        }
+    } else {
+        RenderBox* normalFlowChildWithoutLines = nullptr;
+        for (auto* obj = block.firstChildBox(); obj; obj = obj->nextSiblingBox()) {
+            if (is<RenderBlockFlow>(*obj) && shouldCheckLines(downcast<RenderBlockFlow>(*obj))) {
+                int result = getHeightForLineCount(downcast<RenderBlockFlow>(*obj), lineCount, false, count);
+                if (result != -1)
+                    return result + obj->y() + (includeBottom ? (block.borderBottom() + block.paddingBottom()) : 0_lu);
+            } else if (!obj->isFloatingOrOutOfFlowPositioned())
+                normalFlowChildWithoutLines = obj;
+        }
+        if (normalFlowChildWithoutLines && !lineCount)
+            return normalFlowChildWithoutLines->y() + normalFlowChildWithoutLines->height();
+    }
+
+    return -1;
+}
+
+static int heightForLineCount(const RenderBlockFlow& flow, int lineCount)
+{
+    int count = 0;
+    return getHeightForLineCount(flow, lineCount, true, count);
+}
+
 void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool relayoutChildren)
 {
     int maxLineCount = 0;
@@ -979,7 +1043,7 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
         if (lineCount <= numVisibleLines)
             continue;
 
-        LayoutUnit newHeight = blockChild.heightForLineCount(numVisibleLines);
+        LayoutUnit newHeight = heightForLineCount(blockChild, numVisibleLines);
         if (newHeight == child->height())
             continue;
 
@@ -992,11 +1056,11 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
             continue;
 
         // Get the last line
-        RootInlineBox* lastLine = blockChild.lineAtIndex(lineCount - 1);
+        RootInlineBox* lastLine = lineAtIndex(blockChild, lineCount - 1);
         if (!lastLine)
             continue;
 
-        RootInlineBox* lastVisibleLine = blockChild.lineAtIndex(numVisibleLines - 1);
+        RootInlineBox* lastVisibleLine = lineAtIndex(blockChild, numVisibleLines - 1);
         if (!lastVisibleLine || !lastVisibleLine->firstChild())
             continue;
 

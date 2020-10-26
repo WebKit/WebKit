@@ -87,7 +87,7 @@ InlineBox* EllipsisBox::markupBox() const
     if (!m_shouldPaintMarkupBox)
         return 0;
 
-    RootInlineBox* lastLine = blockFlow().lineAtIndex(blockFlow().lineCount() - 1);
+    RootInlineBox* lastLine = blockFlow().lastRootBox();
     if (!lastLine)
         return 0;
 
