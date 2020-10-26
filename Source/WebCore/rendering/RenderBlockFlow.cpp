@@ -3676,6 +3676,14 @@ void RenderBlockFlow::layoutLFCLines(bool relayoutChildren, LayoutUnit& repaintL
             layoutFormattingContextLineLayout.updateReplacedDimensions(replaced);
             continue;
         }
+        if (is<RenderBlock>(renderer)) {
+            auto& block = downcast<RenderBlock>(renderer);
+            block.layoutIfNeeded();
+            // FIXME: Taking the same path as replaced for now.
+            layoutFormattingContextLineLayout.updateReplacedDimensions(block);
+            continue;
+        }
+
         renderer.clearNeedsLayout();
     }
 

@@ -68,7 +68,10 @@ LineLayout::~LineLayout() = default;
 
 LineLayout* LineLayout::containing(RenderObject& renderer)
 {
-    if (!is<RenderText>(renderer) && !is<RenderLineBreak>(renderer) && !is<RenderImage>(renderer))
+    if (!renderer.isInline())
+        return nullptr;
+
+    if (renderer.isReplica())
         return nullptr;
     
     if (auto* parent = renderer.parent()) {
@@ -519,9 +522,23 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
 
         auto& renderer = m_boxTree.rendererForLayoutBox(run.layoutBox());
 
-        renderer.updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
-        if (result.addNodeToListBasedTestResult(renderer.nodeForHitTest(), request, locationInContainer, runRect) == HitTestProgress::Stop)
-            return true;
+        if (is<RenderText>(renderer)) {
+            renderer.updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
+            if (result.addNodeToListBasedTestResult(renderer.nodeForHitTest(), request, locationInContainer, runRect) == HitTestProgress::Stop)
+                return true;
+            continue;
+        }
+
+        if (is<RenderBox>(renderer)) {
+            auto& renderBox = downcast<RenderBox>(renderer);
+            if (renderBox.hasSelfPaintingLayer())
+                continue;
+            
+            if (renderBox.hitTest(request, result, locationInContainer, accumulatedOffset)) {
+                renderBox.updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
+                return true;
+            }
+        }
     }
 
     return false;

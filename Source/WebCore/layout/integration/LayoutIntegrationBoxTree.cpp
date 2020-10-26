@@ -71,10 +71,12 @@ void BoxTree::buildTree()
             clonedStyle.setFloating(Float::No);
             clonedStyle.setPosition(PositionType::Static);
             childBox = makeUnique<Layout::LineBreakBox>(downcast<RenderLineBreak>(childRenderer).isWBR(), WTFMove(clonedStyle));
-        } else if (is<RenderImage>(childRenderer)) {
-            auto& image = downcast<RenderImage>(childRenderer);
-            auto clonedStyle = RenderStyle::clone(image.style());
-            childBox = makeUnique<Layout::ReplacedBox>(Layout::Box::ElementAttributes { Layout::Box::ElementType::Image }, WTFMove(clonedStyle));
+        } else if (is<RenderReplaced>(childRenderer)) {
+            auto clonedStyle = RenderStyle::clone(childRenderer.style());
+            childBox = makeUnique<Layout::ReplacedBox>(Layout::Box::ElementAttributes { is<RenderImage>(childRenderer) ? Layout::Box::ElementType::Image : Layout::Box::ElementType::GenericElement }, WTFMove(clonedStyle));
+        } else if (is<RenderBlock>(childRenderer)) {
+            auto clonedStyle = RenderStyle::clone(childRenderer.style());
+            childBox = makeUnique<Layout::ReplacedBox>(Layout::Box::ElementAttributes { Layout::Box::ElementType::GenericElement }, WTFMove(clonedStyle));
         }
         ASSERT(childBox);
 
