@@ -227,7 +227,6 @@ webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Ti
 webkit.org/b/191886 webkit.org/b/210800 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure Crash ]
 webkit.org/b/191886 webkit.org/b/210800 [ Release ] fast/mediastream/MediaStream-removeTrack-while-playing.html [ Pass Crash ]
 webkit.org/b/191886 webkit.org/b/210800 [ Debug ] fast/mediastream/MediaStream-removeTrack-while-playing.html [ Crash ]
-webkit.org/b/199876 webaudio/oscillator-sine.html [ Failure ]
 webkit.org/b/216716 fast/mediastream/mediastreamtrack-video-clone.html [ Failure Pass ]
 webkit.org/b/210337 fast/mediastream/mediastreamtrack-audio-clone.html [ Failure Pass ]
 webkit.org/b/210385 fast/mediastream/stream-switch.html [ Crash Timeout ]
@@ -248,11 +247,6 @@ webkit.org/b/211995 fast/images/animated-image-mp4.html [ Failure Timeout ]
 webkit.org/b/214038 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-cuechange.html [ Missing Failure ]
 
 webkit.org/b/214031 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-poster-shown-preload-auto.html [ ImageOnlyFailure ]
-
-webkit.org/b/215886 webaudio/audiobuffersource-playbackrate.html [ Skip ]
-
-webkit.org/b/216118 webaudio/convolver-setBuffer-different-samplerate.html [ Skip ]
-webkit.org/b/216118 webaudio/convolver-setBuffer-null.html [ Skip ]
 
 webkit.org/b/217829 media/video-orientation-canvas.html [ Failure ]
 

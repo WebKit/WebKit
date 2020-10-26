@@ -1,3 +1,19 @@
+2020-10-26  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GStreamer WebAudio gardening
+
+        * platform/glib/TestExpectations: Remove tests consistently passing or that needed a
+        rebaseline which is part of this commit.
+        * platform/glib/webaudio/audiobuffersource-playbackrate-expected.wav:
+        * platform/glib/webaudio/oscillator-custom-expected.wav: Renamed from LayoutTests/platform/gtk/webaudio/oscillator-custom-expected.wav.
+        * platform/glib/webaudio/oscillator-sawtooth-expected.wav: Renamed from LayoutTests/platform/gtk/webaudio/oscillator-sawtooth-expected.wav.
+        * platform/glib/webaudio/oscillator-sine-expected.wav: Renamed from LayoutTests/platform/gtk/webaudio/oscillator-sine-expected.wav.
+        * platform/glib/webaudio/oscillator-square-expected.wav: Added.
+        * platform/glib/webaudio/oscillator-triangle-expected.wav: Added.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/webaudio/oscillator-square-expected.wav: Removed.
+        * platform/gtk/webaudio/oscillator-triangle-expected.wav: Removed.
+
 2020-10-26  Youenn Fablet  <youenn@apple.com>
 
         Add support for VP9 Profile 2 (10-bit color) in WebRTC
