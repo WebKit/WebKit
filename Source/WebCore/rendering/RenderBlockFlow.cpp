@@ -668,7 +668,7 @@ void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& re
     auto computeLineLayoutPath = [&] {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
         if (LayoutIntegration::LineLayout::canUseFor(*this))
-            return LayoutFormattingContextPath;
+            return ModernPath;
 #endif
         return LineBoxesPath;
     };
@@ -677,8 +677,8 @@ void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& re
         setLineLayoutPath(computeLineLayoutPath());
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (lineLayoutPath() == LayoutFormattingContextPath) {
-        layoutLFCLines(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+    if (lineLayoutPath() == ModernPath) {
+        layoutModernLines(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
         return;
     }
 #endif
@@ -2096,7 +2096,7 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
             if (selfNeedsLayout() || complexLineLayout())
                 return true;
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-            if (layoutFormattingContextLineLayout() && !LayoutIntegration::LineLayout::canUseForAfterStyleChange(*this, diff))
+            if (modernLineLayout() && !LayoutIntegration::LineLayout::canUseForAfterStyleChange(*this, diff))
                 return true;
 #endif
             return false;
@@ -2105,7 +2105,7 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
             invalidateLineLayoutPath();
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-        if (auto* lineLayout = layoutFormattingContextLineLayout())
+        if (auto* lineLayout = modernLineLayout())
             lineLayout->updateStyle(*this);
 #endif
     }
@@ -2977,8 +2977,8 @@ bool RenderBlockFlow::hitTestInlineChildren(const HitTestRequest& request, HitTe
     ASSERT(childrenInline());
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (layoutFormattingContextLineLayout())
-        return layoutFormattingContextLineLayout()->hitTest(request, result, locationInContainer, accumulatedOffset, hitTestAction);
+    if (modernLineLayout())
+        return modernLineLayout()->hitTest(request, result, locationInContainer, accumulatedOffset, hitTestAction);
 #endif
 
     return complexLineLayout() && complexLineLayout()->lineBoxes().hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
@@ -2987,8 +2987,8 @@ bool RenderBlockFlow::hitTestInlineChildren(const HitTestRequest& request, HitTe
 void RenderBlockFlow::addOverflowFromInlineChildren()
 {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (layoutFormattingContextLineLayout()) {
-        layoutFormattingContextLineLayout()->collectOverflow();
+    if (modernLineLayout()) {
+        modernLineLayout()->collectOverflow();
         return;
     }
 #endif
@@ -3076,7 +3076,7 @@ void RenderBlockFlow::markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUn
 
     // Floats currently affect the choice of layout path.
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (layoutFormattingContextLineLayout()) {
+    if (modernLineLayout()) {
         invalidateLineLayoutPath();
         return;
     }
@@ -3107,8 +3107,8 @@ Optional<int> RenderBlockFlow::firstLineBaseline() const
         return WTF::nullopt;
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (layoutFormattingContextLineLayout())
-        return floorToInt(layoutFormattingContextLineLayout()->firstLineBaseline());
+    if (modernLineLayout())
+        return floorToInt(modernLineLayout()->firstLineBaseline());
 #endif
 
     ASSERT(firstRootBox());
@@ -3148,8 +3148,8 @@ Optional<int> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirecti
                 + (style.isFlippedLinesWritingMode() ? logicalHeight() - lastRootBox()->logicalBottom() : lastRootBox()->logicalTop());
         }
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-        else if (layoutFormattingContextLineLayout())
-            lastBaseline = floorToInt(layoutFormattingContextLineLayout()->lastLineBaseline());
+        else if (modernLineLayout())
+            lastBaseline = floorToInt(modernLineLayout()->lastLineBaseline());
 #endif
     }
     // According to the CSS spec http://www.w3.org/TR/CSS21/visudet.html, we shouldn't be performing this min, but should
@@ -3255,8 +3255,8 @@ int RenderBlockFlow::lineCount() const
 
     if (childrenInline()) {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-        if (layoutFormattingContextLineLayout())
-            return layoutFormattingContextLineLayout()->lineCount();
+        if (modernLineLayout())
+            return modernLineLayout()->lineCount();
 #endif
         if (complexLineLayout())
             return complexLineLayout()->lineCount();
@@ -3506,8 +3506,8 @@ void RenderBlockFlow::paintInlineChildren(PaintInfo& paintInfo, const LayoutPoin
     ASSERT(childrenInline());
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (layoutFormattingContextLineLayout()) {
-        layoutFormattingContextLineLayout()->paint(paintInfo, paintOffset);
+    if (modernLineLayout()) {
+        modernLineLayout()->paint(paintInfo, paintOffset);
         return;
     }
 #endif
@@ -3566,8 +3566,8 @@ bool RenderBlockFlow::hasLines() const
         return false;
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (layoutFormattingContextLineLayout())
-        return layoutFormattingContextLineLayout()->lineCount();
+    if (modernLineLayout())
+        return modernLineLayout()->lineCount();
 #endif
 
     return complexLineLayout() && complexLineLayout()->lineBoxes().firstLineBox();
@@ -3582,7 +3582,7 @@ void RenderBlockFlow::invalidateLineLayoutPath()
     case LineBoxesPath:
         setLineLayoutPath(UndeterminedPath);
         return;
-    case LayoutFormattingContextPath: // FIXME: Not all clients of invalidateLineLayoutPath() actually need to wipe the layout.
+    case ModernPath: // FIXME: Not all clients of invalidateLineLayoutPath() actually need to wipe the layout.
         m_lineLayout = WTF::Monostate();
         setLineLayoutPath(UndeterminedPath);
         if (needsLayout())
@@ -3595,16 +3595,16 @@ void RenderBlockFlow::invalidateLineLayoutPath()
 }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-void RenderBlockFlow::layoutLFCLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
+void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
     bool needsUpdateReplacedDimensions = false;
 
-    if (!layoutFormattingContextLineLayout()) {
+    if (!modernLineLayout()) {
         m_lineLayout = makeUnique<LayoutIntegration::LineLayout>(*this);
         needsUpdateReplacedDimensions = true;
     }
 
-    auto& layoutFormattingContextLineLayout = *this->layoutFormattingContextLineLayout();
+    auto& layoutFormattingContextLineLayout = *this->modernLineLayout();
 
     for (auto& renderer : childrenOfType<RenderObject>(*this)) {
         if (relayoutChildren)
@@ -3657,7 +3657,7 @@ void RenderBlockFlow::ensureLineBoxes()
 
     bool needsToPaginateComplexLines = [&] {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-        if (layoutFormattingContextLineLayout() && layoutFormattingContextLineLayout()->isPaginated())
+        if (modernLineLayout() && modernLineLayout()->isPaginated())
             return true;
 #endif
         return false;

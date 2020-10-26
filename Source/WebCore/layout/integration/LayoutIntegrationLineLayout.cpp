@@ -76,7 +76,7 @@ LineLayout* LineLayout::containing(RenderObject& renderer)
     
     if (auto* parent = renderer.parent()) {
         if (is<RenderBlockFlow>(*parent))
-            return downcast<RenderBlockFlow>(*parent).layoutFormattingContextLineLayout();
+            return downcast<RenderBlockFlow>(*parent).modernLineLayout();
     }
 
     return nullptr;
@@ -560,7 +560,7 @@ void LineLayout::releaseCaches(RenderView& view)
         return;
 
     for (auto& renderer : descendantsOfType<RenderBlockFlow>(view)) {
-        if (auto* lineLayout = renderer.layoutFormattingContextLineLayout())
+        if (auto* lineLayout = renderer.modernLineLayout())
             lineLayout->releaseInlineItemCache();
     }
 }
