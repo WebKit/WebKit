@@ -72,8 +72,6 @@ public:
     template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, CAAudioStreamDescription&);
 
 private:
-    void calculateFormat();
-
     AudioStreamBasicDescription m_streamDescription;
     mutable PlatformDescription m_platformDescription;
     mutable PCMFormat m_format { None };
