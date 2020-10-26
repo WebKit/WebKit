@@ -1,3 +1,13 @@
+2020-10-26  Karl Rackler  <rackler@apple.com>
+
+        REGRESSION: [ iOS wk2 ] fast/events/touch/ios/pointer-events-with-modifiers.html is a constant crash 
+        rdar://69762963
+        Removing test expectation now that test is passing.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2020-10-21  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r268602. rdar://problem/70541712
