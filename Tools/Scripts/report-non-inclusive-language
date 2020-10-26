@@ -32,7 +32,6 @@ import argparse, os, re
 #
 #   Clever default for use on WebKit source tree instead of current directory by default.
 #   Report third party sources separately from WebKit project files.
-#   Skip known examples on an exception list that we don't intend to fix.
 
 # Hard-coded for now, could read these out of a file instead.
 # Term, then the regular expression for that term.
@@ -45,6 +44,7 @@ nonInclusiveTerms = [
 IGNORE_DIRECTORIES = ['.svn', '.git', 'autoinstalled']
 IGNORE_FILES_STARTING_WITH = ('ChangeLog')
 IGNORE_FILES_ENDING_WITH = ('.log', '.order', '.pyc', '.swp', '.xcuserstate')
+IGNORE_FILE_NAMES = ['report-non-inclusive-language']
 
 parser = argparse.ArgumentParser(description='Report counts and locations of non-inclusive terms.')
 parser.add_argument('--verbose', '-v', action='store_true');
@@ -64,6 +64,8 @@ for subroot, directories, files in os.walk(root):
         if file.startswith(IGNORE_FILES_STARTING_WITH):
             continue
         if file.endswith(IGNORE_FILES_ENDING_WITH):
+            continue
+        if file in IGNORE_FILE_NAMES:
             continue
         handle = open(os.path.join(subroot, file), "r")
         for line in handle.readlines():
