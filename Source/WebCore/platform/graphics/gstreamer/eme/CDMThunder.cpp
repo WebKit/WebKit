@@ -259,7 +259,8 @@ CDMInstanceSessionThunder::CDMInstanceSessionThunder(CDMInstanceThunder& instanc
     ASSERT(isMainThread());
     m_thunderSessionCallbacks.process_challenge_callback = [](OpenCDMSession*, void* userData, const char[], const uint8_t challenge[],
         const uint16_t challengeLength) {
-        GST_DEBUG("Got 'challenge' OCDM notification");
+        GST_DEBUG("Got 'challenge' OCDM notification with length %hu", challengeLength);
+        ASSERT(challengeLength > 0);
         callOnMainThread([session = makeWeakPtr(static_cast<CDMInstanceSessionThunder*>(userData)), buffer = WebCore::SharedBuffer::create(challenge,
             challengeLength)]() mutable {
             if (!session)
