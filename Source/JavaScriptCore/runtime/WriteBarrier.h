@@ -28,8 +28,8 @@
 #include "GCAssertions.h"
 #include "HandleTypes.h"
 #include <type_traits>
-#include <wtf/DumbPtrTraits.h>
-#include <wtf/DumbValueTraits.h>
+#include <wtf/RawPtrTraits.h>
+#include <wtf/RawValueTraits.h>
 
 namespace JSC {
 
@@ -43,7 +43,7 @@ class JSGlobalObject;
 
 template<class T>
 using WriteBarrierTraitsSelect = typename std::conditional<std::is_same<T, Unknown>::value,
-    DumbValueTraits<T>, DumbPtrTraits<T>
+    RawValueTraits<T>, RawPtrTraits<T>
 >::type;
 
 template<class T, typename Traits = WriteBarrierTraitsSelect<T>> class WriteBarrierBase;
@@ -124,7 +124,7 @@ public:
     void clear() { Traits::exchange(m_cell, nullptr); }
 
     // Slot cannot be used when pointers aren't stored as-is.
-    template<typename BarrierT, typename BarrierTraits, std::enable_if_t<std::is_same<BarrierTraits, DumbPtrTraits<BarrierT>>::value, void*> = nullptr>
+    template<typename BarrierT, typename BarrierTraits, std::enable_if_t<std::is_same<BarrierTraits, RawPtrTraits<BarrierT>>::value, void*> = nullptr>
     struct SlotHelper {
         static BarrierT** reinterpret(typename BarrierTraits::StorageType* cell) { return reinterpret_cast<T**>(cell); }
     };
@@ -152,7 +152,7 @@ private:
     StorageType m_cell;
 };
 
-template <> class WriteBarrierBase<Unknown, DumbValueTraits<Unknown>> {
+template <> class WriteBarrierBase<Unknown, RawValueTraits<Unknown>> {
 public:
     void set(VM&, const JSCell* owner, JSValue);
     void setWithoutWriteBarrier(JSValue value)
@@ -218,7 +218,7 @@ public:
 
 enum UndefinedWriteBarrierTagType { UndefinedWriteBarrierTag };
 template <>
-class WriteBarrier<Unknown, DumbValueTraits<Unknown>> : public WriteBarrierBase<Unknown, DumbValueTraits<Unknown>> {
+class WriteBarrier<Unknown, RawValueTraits<Unknown>> : public WriteBarrierBase<Unknown, RawValueTraits<Unknown>> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WriteBarrier()

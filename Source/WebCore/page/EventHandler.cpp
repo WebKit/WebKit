@@ -3911,7 +3911,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
             sourceOperationMask = dragState().dataTransfer->sourceOperationMask();
             
             // Yuck, a draggedImage:moveTo: message can be fired as a result of kicking off the
-            // drag with dragImage! Because of that dumb reentrancy, we may think we've not
+            // drag with dragImage! Because of that reentrancy, we may think we've not
             // started the drag when that happens. So we have to assume it's started before we kick it off.
             dragState().dataTransfer->setDragHasStarted();
         }

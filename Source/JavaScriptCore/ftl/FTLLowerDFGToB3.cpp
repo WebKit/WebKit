@@ -10610,7 +10610,7 @@ private:
                 
                 jit.addPtr(CCallHelpers::TrustedImm32(requiredBytes), CCallHelpers::stackPointerRegister);
                 jit.load64(CCallHelpers::calleeFrameSlot(CallFrameSlot::callee), GPRInfo::regT0);
-                jit.emitDumbVirtualCall(vm, globalObject, callLinkInfo);
+                jit.emitVirtualCall(vm, globalObject, callLinkInfo);
                 
                 done.link(&jit);
                 jit.addPtr(
@@ -17948,7 +17948,7 @@ private:
     LValue unboxBoolean(LValue jsValue)
     {
         // We want to use a cast that guarantees that B3 knows that even the integer
-        // value is just 0 or 1. But for now we do it the dumb way.
+        // value is just 0 or 1. But for now we do it the direct way.
         return m_out.notZero64(m_out.bitAnd(jsValue, m_out.constInt64(1)));
     }
     LValue boxBoolean(LValue value)

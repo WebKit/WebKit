@@ -533,7 +533,7 @@ ptrdiff_t CachedPtrOffsets::offsetOffset()
     return OBJECT_OFFSETOF(CachedPtr<void>, m_offset);
 }
 
-template<typename T, typename Source = SourceType<T>, typename PtrTraits = DumbPtrTraits<Source>>
+template<typename T, typename Source = SourceType<T>, typename PtrTraits = RawPtrTraits<Source>>
 class CachedRefPtr : public CachedObject<RefPtr<Source, PtrTraits>> {
 public:
     void encode(Encoder& encoder, const Source* src)

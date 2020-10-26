@@ -58,7 +58,6 @@ struct VectorMalloc;
 using VectorMalloc = FastMalloc;
 #endif
 
-template<typename> struct DumbPtrTraits;
 template<typename> struct DefaultRefDerefTraits;
 
 template<typename> class CompletionHandler;
@@ -69,8 +68,9 @@ template<typename> class OptionSet;
 template<typename> class Optional;
 template<typename> class Packed;
 template<typename T, size_t = alignof(T)> class PackedAlignedPtr;
-template<typename T, typename = DumbPtrTraits<T>> class Ref;
-template<typename T, typename = DumbPtrTraits<T>, typename = DefaultRefDerefTraits<T>> class RefPtr;
+template<typename> struct RawPtrTraits;
+template<typename T, typename = RawPtrTraits<T>> class Ref;
+template<typename T, typename = RawPtrTraits<T>, typename = DefaultRefDerefTraits<T>> class RefPtr;
 template<typename> class StringBuffer;
 template<typename> class StringParsingBuffer;
 template<typename, typename = void> class StringTypeAdapter;
@@ -87,7 +87,7 @@ template<> struct DefaultHash<StringImpl*>;
 template<> struct DefaultHash<URL>;
 template<typename T, size_t inlineCapacity> struct DefaultHash<Vector<T, inlineCapacity>>;
 
-template<typename> struct DumbValueTraits;
+template<typename> struct RawValueTraits;
 template<typename> struct EnumTraits;
 template<typename E, E...> struct EnumValues;
 template<typename> struct HashTraits;
@@ -110,8 +110,6 @@ using WTF::AtomStringImpl;
 using WTF::BinarySemaphore;
 using WTF::CString;
 using WTF::CompletionHandler;
-using WTF::DumbPtrTraits;
-using WTF::DumbValueTraits;
 using WTF::Function;
 using WTF::FunctionDispatcher;
 using WTF::HashCountedSet;
@@ -124,6 +122,8 @@ using WTF::OptionSet;
 using WTF::Optional;
 using WTF::OrdinalNumber;
 using WTF::PrintStream;
+using WTF::RawPtrTraits;
+using WTF::RawValueTraits;
 using WTF::Ref;
 using WTF::RefPtr;
 using WTF::SHA1;

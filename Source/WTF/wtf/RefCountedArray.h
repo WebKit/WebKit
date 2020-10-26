@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <wtf/DumbPtrTraits.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/RawPtrTraits.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
@@ -45,7 +45,7 @@ namespace WTF {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RefCountedArray);
 
-template<typename T, typename PtrTraits = DumbPtrTraits<T>>
+template<typename T, typename PtrTraits = RawPtrTraits<T>>
 class RefCountedArray {
     enum CommonCopyConstructorTag { CommonCopyConstructor };
 

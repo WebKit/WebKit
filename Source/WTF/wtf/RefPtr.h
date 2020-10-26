@@ -44,7 +44,7 @@ template<typename T> struct DefaultRefDerefTraits {
 };
 
 template<typename T, typename PtrTraits, typename RefDerefTraits> class RefPtr;
-template<typename T, typename PtrTraits = DumbPtrTraits<T>, typename RefDerefTraits = DefaultRefDerefTraits<T>> RefPtr<T, PtrTraits, RefDerefTraits> adoptRef(T*);
+template<typename T, typename PtrTraits = RawPtrTraits<T>, typename RefDerefTraits = DefaultRefDerefTraits<T>> RefPtr<T, PtrTraits, RefDerefTraits> adoptRef(T*);
 
 template<typename T, typename _PtrTraits, typename _RefDerefTraits>
 class RefPtr {
@@ -193,7 +193,7 @@ inline void RefPtr<T, U, V>::swap(RefPtr<X, Y, Z>& o)
     U::swap(m_ptr, o.m_ptr);
 }
 
-template<typename T, typename U, typename V, typename X, typename Y, typename Z, typename = std::enable_if_t<!std::is_same<U, DumbPtrTraits<T>>::value || !std::is_same<Y, DumbPtrTraits<X>>::value>>
+template<typename T, typename U, typename V, typename X, typename Y, typename Z, typename = std::enable_if_t<!std::is_same<U, RawPtrTraits<T>>::value || !std::is_same<Y, RawPtrTraits<X>>::value>>
 inline void swap(RefPtr<T, U, V>& a, RefPtr<X, Y, Z>& b)
 {
     a.swap(b);
@@ -235,7 +235,7 @@ inline bool operator!=(T* a, const RefPtr<X, Y, Z>& b)
     return a != b.get(); 
 }
 
-template<typename T, typename U = DumbPtrTraits<T>, typename V = DefaultRefDerefTraits<T>, typename X, typename Y, typename Z>
+template<typename T, typename U = RawPtrTraits<T>, typename V = DefaultRefDerefTraits<T>, typename X, typename Y, typename Z>
 inline RefPtr<T, U, V> static_pointer_cast(const RefPtr<X, Y, Z>& p)
 { 
     return RefPtr<T, U, V>(static_cast<T*>(p.get()));

@@ -1,3 +1,37 @@
+2020-10-26  Alex Christensen  <achristensen@webkit.org>
+
+        Inclusive software: Remove instances of "dumb" from the code
+        https://bugs.webkit.org/show_bug.cgi?id=217778
+
+        Reviewed by Simon Fraser.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallEval):
+        (JSC::FTL::DFG::LowerDFGToB3::unboxBoolean):
+        * heap/SlotVisitor.h:
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitVirtualCall):
+        (JSC::AssemblyHelpers::emitDumbVirtualCall): Deleted.
+        * jit/AssemblyHelpers.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+        * runtime/CachedTypes.cpp:
+        * runtime/JSCJSValue.h:
+        * runtime/WriteBarrier.h:
+        * runtime/WriteBarrierInlines.h:
+        (JSC::RawValueTraits<Unknown>>::set):
+        (JSC::DumbValueTraits<Unknown>>::set): Deleted.
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addCallIndirect):
+        * wasm/generateWasm.py:
+        (opcodeIterator):
+
 2020-10-26  Sam Weinig  <weinig@apple.com>
 
         JSC special function forward declarations (e.g. JSC_DECLARE_HOST_FUNCTION) that are internal to a cpp file should be declared with static to avoid external linkage

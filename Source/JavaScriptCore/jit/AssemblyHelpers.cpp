@@ -642,7 +642,7 @@ void AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFra
 #endif
 }
 
-void AssemblyHelpers::emitDumbVirtualCall(VM& vm, JSGlobalObject* globalObject, CallLinkInfo* info)
+void AssemblyHelpers::emitVirtualCall(VM& vm, JSGlobalObject* globalObject, CallLinkInfo* info)
 {
     move(TrustedImmPtr(info), GPRInfo::regT2);
     move(TrustedImmPtr(globalObject), GPRInfo::regT3);

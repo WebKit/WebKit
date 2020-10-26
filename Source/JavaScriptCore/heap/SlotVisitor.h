@@ -91,8 +91,8 @@ public:
     template<typename T, typename Traits> void append(const WriteBarrierBase<T, Traits>&);
     template<typename T, typename Traits> void appendHidden(const WriteBarrierBase<T, Traits>&);
     template<typename Iterator> void append(Iterator begin , Iterator end);
-    void appendValues(const WriteBarrierBase<Unknown, DumbValueTraits<Unknown>>*, size_t count);
-    void appendValuesHidden(const WriteBarrierBase<Unknown, DumbValueTraits<Unknown>>*, size_t count);
+    void appendValues(const WriteBarrierBase<Unknown, RawValueTraits<Unknown>>*, size_t count);
+    void appendValuesHidden(const WriteBarrierBase<Unknown, RawValueTraits<Unknown>>*, size_t count);
     
     // These don't require you to prove that you have a WriteBarrier<>. That makes sense
     // for:

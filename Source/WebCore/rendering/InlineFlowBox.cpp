@@ -135,7 +135,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
                 shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
         } else {
             if (child->renderer().isLineBreak()) {
-                // FIXME: This is dumb. We only turn off because current layout test results expect the <br> to be 0-height on the baseline.
+                // FIXME: This isn't ideal. We only turn off because current layout test results expect the <br> to be 0-height on the baseline.
                 // Other than making a zillion tests have to regenerate results, there's no reason to ditch the optimization here.
                 shouldClearDescendantsHaveSameLineHeightAndBaseline = child->renderer().isBR();
             } else {

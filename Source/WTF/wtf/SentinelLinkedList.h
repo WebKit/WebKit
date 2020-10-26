@@ -42,7 +42,7 @@ namespace WTF {
 
 enum SentinelTag { Sentinel };
 
-template<typename T, typename PassedPtrTraits = DumbPtrTraits<T>>
+template<typename T, typename PassedPtrTraits = RawPtrTraits<T>>
 class BasicRawSentinelNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:

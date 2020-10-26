@@ -58,8 +58,6 @@ set(WTF_PUBLIC_HEADERS
     DisallowCType.h
     Dominators.h
     DoublyLinkedList.h
-    DumbPtrTraits.h
-    DumbValueTraits.h
     EnumClassOperatorOverloads.h
     EnumTraits.h
     Expected.h
@@ -202,6 +200,8 @@ set(WTF_PUBLIC_HEADERS
     Range.h
     RangeSet.h
     RawPointer.h
+    RawPtrTraits.h
+    RawValueTraits.h
     ReadWriteLock.h
     RecursableLambda.h
     RecursiveLockAdapter.h

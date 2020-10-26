@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <wtf/DumbPtrTraits.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/RawPtrTraits.h>
 
 namespace WTF {
 
@@ -75,7 +75,7 @@ public:
     T& leakRef() WARN_UNUSED_RETURN
     {
         ASSERT(m_ptr);
-        T& result = *DumbPtrTraits<T>::exchange(m_ptr, nullptr);
+        T& result = *RawPtrTraits<T>::exchange(m_ptr, nullptr);
         return result;
     }
 

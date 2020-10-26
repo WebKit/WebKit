@@ -282,7 +282,7 @@ template<typename T> struct AudioNodeConnectionRefDerefTraits {
 };
 
 template<typename T>
-using AudioConnectionRefPtr = RefPtr<T, DumbPtrTraits<T>, AudioNodeConnectionRefDerefTraits<T>>;
+using AudioConnectionRefPtr = RefPtr<T, RawPtrTraits<T>, AudioNodeConnectionRefDerefTraits<T>>;
 
 String convertEnumerationToString(AudioNode::NodeType);
 

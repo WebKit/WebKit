@@ -79,7 +79,7 @@ enum class Unknown { };
 template <class T, typename Traits> class WriteBarrierBase;
 template<class T>
 using WriteBarrierTraitsSelect = typename std::conditional<std::is_same<T, Unknown>::value,
-    DumbValueTraits<T>, DumbPtrTraits<T>
+    RawValueTraits<T>, RawPtrTraits<T>
 >::type;
 
 enum PreferredPrimitiveType : uint8_t { NoPreference, PreferNumber, PreferString };

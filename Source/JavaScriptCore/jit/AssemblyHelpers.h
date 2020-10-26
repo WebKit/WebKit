@@ -1938,7 +1938,7 @@ public:
         functor(TypeofType::Undefined, true);
     }
     
-    void emitDumbVirtualCall(VM&, JSGlobalObject*, CallLinkInfo*);
+    void emitVirtualCall(VM&, JSGlobalObject*, CallLinkInfo*);
     
     void makeSpaceOnStackForCCall();
     void reclaimSpaceOnStackForCCall();

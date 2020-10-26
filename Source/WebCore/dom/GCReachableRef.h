@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <wtf/DumbPtrTraits.h>
 #include <wtf/HashCountedSet.h>
+#include <wtf/RawPtrTraits.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

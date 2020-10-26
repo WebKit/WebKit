@@ -31,8 +31,8 @@
 namespace WTF {
 
 template<typename T>
-struct DumbValueTraits {
-    template<typename U> using RebindTraits = DumbValueTraits<U>;
+struct RawValueTraits {
+    template<typename U> using RebindTraits = RawValueTraits<U>;
 
     using StorageType = T;
 
@@ -45,4 +45,4 @@ struct DumbValueTraits {
 
 } // namespace WTF
 
-using WTF::DumbValueTraits;
+using WTF::RawValueTraits;

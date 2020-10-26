@@ -2240,7 +2240,7 @@ auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signa
         // FIXME: when we have trap handlers, we can just let the call fail because Signature::invalidIndex is 0. https://bugs.webkit.org/show_bug.cgi?id=177210
         static_assert(sizeof(WasmToWasmImportableFunction::signatureIndex) == sizeof(uint64_t), "Load codegen assumes i64");
 
-        // FIXME: This seems dumb to do two checks just for a nicer error message.
+        // FIXME: This seems wasteful to do two checks just for a nicer error message.
         // We should move just to use a single branch and then figure out what
         // error to use in the exception handler.
 
