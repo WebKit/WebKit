@@ -1,3 +1,12 @@
+2020-10-26  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Drop sorting and deduplication of media queries.
+        https://bugs.webkit.org/show_bug.cgi?id=217751
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/cssom/mediaquery-sort-dedup-expected.txt: annotate progression
+
 2020-10-25  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Update CSSOM WPT tests.

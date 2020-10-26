@@ -1,3 +1,12 @@
+2020-10-26  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Drop sorting and deduplication of media queries.
+        https://bugs.webkit.org/show_bug.cgi?id=217751
+
+        Reviewed by Simon Fraser.
+
+        * fast/media/media-query-serialization.html: Adjust to match spec.
+
 2020-10-26  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK][WPE] Unreviewed test gardening. Update baselines of a few more tests remaining after r268958. 

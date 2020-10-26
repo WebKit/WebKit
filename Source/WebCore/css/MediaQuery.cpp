@@ -74,23 +74,6 @@ MediaQuery::MediaQuery(Restrictor restrictor, const String& mediaType, Vector<Me
     , m_expressions(WTFMove(expressions))
     , m_restrictor(restrictor)
 {
-    std::sort(m_expressions.begin(), m_expressions.end(), [](auto& a, auto& b) {
-        return codePointCompare(a.serialize(), b.serialize()) < 0;
-    });
-
-    // Remove all duplicated expressions.
-    String key;
-    for (int i = m_expressions.size() - 1; i >= 0; --i) {
-
-        // If any expression is invalid the media query must be ignored.
-        if (!m_ignored)
-            m_ignored = !m_expressions[i].isValid();
-
-        if (m_expressions[i].serialize() == key)
-            m_expressions.remove(i);
-        else
-            key = m_expressions[i].serialize();
-    }
 }
 
 // http://dev.w3.org/csswg/cssom/#compare-media-queries

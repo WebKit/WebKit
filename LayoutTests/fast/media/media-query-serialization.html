@@ -16,7 +16,7 @@ description(
 );
 
 
-var expected = "not braille, tv and (max-width: 200px) and (min-width: 100px) and (orientation: landscape), (color)";
+var expected = "not braille, tv and (orientation: landscape) and (min-width: 100px) and (max-width: 200px), (color) and (color)";
 shouldBe("document.styleSheets[0].media.mediaText", "expected");
 
 </script>
