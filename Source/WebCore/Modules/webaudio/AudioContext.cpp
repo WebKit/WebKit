@@ -204,13 +204,13 @@ DefaultAudioDestinationNode* AudioContext::destination()
 
 void AudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
 {
-    if (isOfflineContext() || isStopped()) {
-        promise.reject(InvalidStateError);
+    if (isOfflineContext()) {
+        promise.reject(Exception { InvalidStateError, "Cannot call suspend() on an OfflineAudioContext"_s });
         return;
     }
 
-    if (state() == State::Closed || state() == State::Interrupted || !destinationNode()) {
-        promise.reject();
+    if (isStopped() || state() == State::Closed || state() == State::Interrupted || !destinationNode()) {
+        promise.reject(Exception { InvalidStateError, "Context is closed"_s });
         return;
     }
 
@@ -229,13 +229,13 @@ void AudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
 
 void AudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
 {
-    if (isOfflineContext() || isStopped()) {
-        promise.reject(InvalidStateError);
+    if (isOfflineContext()) {
+        promise.reject(Exception { InvalidStateError, "Cannot call resume() on an OfflineAudioContext"_s });
         return;
     }
 
-    if (state() == State::Closed || !destinationNode()) {
-        promise.reject();
+    if (isStopped() || state() == State::Closed || !destinationNode()) {
+        promise.reject(Exception { InvalidStateError, "Context is closed"_s });
         return;
     }
 
