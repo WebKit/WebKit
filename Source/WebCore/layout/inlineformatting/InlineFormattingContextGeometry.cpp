@@ -456,7 +456,7 @@ InlineLayoutUnit InlineFormattingContext::Geometry::logicalTopForNextLine(const 
     return std::max(previousLineLogicalBottom, InlineLayoutUnit(positionWithClearance->position));
 }
 
-ContentWidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(const Box& formattingContextRoot, const HorizontalConstraints& horizontalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues)
+ContentWidthAndMargin InlineFormattingContext::Geometry::inlineBlockContentWidthAndMargin(const Box& formattingContextRoot, const HorizontalConstraints& horizontalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues)
 {
     ASSERT(formattingContextRoot.isInFlow());
 
@@ -464,7 +464,7 @@ ContentWidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMarg
 
     // Exactly as inline replaced elements.
     if (formattingContextRoot.isReplacedBox())
-        return inlineReplacedWidthAndMargin(downcast<ReplacedBox>(formattingContextRoot), horizontalConstraints, { }, overriddenHorizontalValues);
+        return inlineReplacedContentWidthAndMargin(downcast<ReplacedBox>(formattingContextRoot), horizontalConstraints, { }, overriddenHorizontalValues);
 
     // 10.3.9 'Inline-block', non-replaced elements in normal flow
 
@@ -481,13 +481,13 @@ ContentWidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMarg
     return ContentWidthAndMargin { *width, { computedHorizontalMargin.start.valueOr(0_lu), computedHorizontalMargin.end.valueOr(0_lu) } };
 }
 
-ContentHeightAndMargin InlineFormattingContext::Geometry::inlineBlockHeightAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const OverriddenVerticalValues& overriddenVerticalValues) const
+ContentHeightAndMargin InlineFormattingContext::Geometry::inlineBlockContentHeightAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const OverriddenVerticalValues& overriddenVerticalValues) const
 {
     ASSERT(layoutBox.isInFlow());
 
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block' replaced elements in normal flow and floating replaced elements
     if (layoutBox.isReplacedBox())
-        return inlineReplacedHeightAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, { }, overriddenVerticalValues);
+        return inlineReplacedContentHeightAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, { }, overriddenVerticalValues);
 
     // 10.6.6 Complicated cases
     // - 'Inline-block', non-replaced elements.

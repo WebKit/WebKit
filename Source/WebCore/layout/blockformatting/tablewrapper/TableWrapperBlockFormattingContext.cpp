@@ -205,7 +205,7 @@ void TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox(const 
             usedWidth = *computedMinWidth;
     }
 
-    auto contentWidthAndMargin = geometry.inFlowWidthAndMargin(tableBox, horizontalConstraints, OverriddenHorizontalValues { usedWidth, { } });
+    auto contentWidthAndMargin = geometry.inFlowContentWidthAndMargin(tableBox, horizontalConstraints, OverriddenHorizontalValues { usedWidth, { } });
 
     auto& boxGeometry = formattingState().boxGeometry(tableBox);
     boxGeometry.setContentBoxWidth(contentWidthAndMargin.contentWidth);
@@ -217,7 +217,7 @@ void TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox(const
     ASSERT(tableBox.isTableBox());
     // Table is a special BFC content. Its height is mainly driven by the content. Computed height, min-height and max-height are all
     // already been taken into account during the TFC layout.
-    auto heightAndMargin = geometry().inFlowHeightAndMargin(tableBox, constraints.horizontal, { quirks().overriddenTableHeight(tableBox) });
+    auto heightAndMargin = geometry().inFlowContentHeightAndMargin(tableBox, constraints.horizontal, { quirks().overriddenTableHeight(tableBox) });
 
     auto marginCollapse = this->marginCollapse();
     auto verticalMargin = marginCollapse.collapsedVerticalValues(tableBox, heightAndMargin.nonCollapsedMargin);

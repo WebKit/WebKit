@@ -297,11 +297,11 @@ void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, const 
 {
     auto compute = [&](Optional<LayoutUnit> usedWidth) {
         if (layoutBox.isFloatingPositioned())
-            return geometry().floatingWidthAndMargin(layoutBox, horizontalConstraints, { usedWidth, { } });
+            return geometry().floatingContentWidthAndMargin(layoutBox, horizontalConstraints, { usedWidth, { } });
         if (layoutBox.isInlineBlockBox())
-            return geometry().inlineBlockWidthAndMargin(layoutBox, horizontalConstraints, { usedWidth, { } });
+            return geometry().inlineBlockContentWidthAndMargin(layoutBox, horizontalConstraints, { usedWidth, { } });
         if (layoutBox.isReplacedBox())
-            return geometry().inlineReplacedWidthAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, { }, { usedWidth, { } });
+            return geometry().inlineReplacedContentWidthAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, { }, { usedWidth, { } });
         ASSERT_NOT_REACHED();
         return ContentWidthAndMargin { };
     };
@@ -329,11 +329,11 @@ void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox, const
 {
     auto compute = [&](Optional<LayoutUnit> usedHeight) {
         if (layoutBox.isFloatingPositioned())
-            return geometry().floatingHeightAndMargin(layoutBox, horizontalConstraints, { usedHeight });
+            return geometry().floatingContentHeightAndMargin(layoutBox, horizontalConstraints, { usedHeight });
         if (layoutBox.isInlineBlockBox())
-            return geometry().inlineBlockHeightAndMargin(layoutBox, horizontalConstraints, { usedHeight });
+            return geometry().inlineBlockContentHeightAndMargin(layoutBox, horizontalConstraints, { usedHeight });
         if (layoutBox.isReplacedBox())
-            return geometry().inlineReplacedHeightAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, { }, { usedHeight });
+            return geometry().inlineReplacedContentHeightAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, { }, { usedHeight });
         ASSERT_NOT_REACHED();
         return ContentHeightAndMargin { };
     };

@@ -76,8 +76,8 @@ protected:
     public:
         Geometry(const BlockFormattingContext&);
 
-        ContentHeightAndMargin inFlowHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&);
-        ContentWidthAndMargin inFlowWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&);
+        ContentHeightAndMargin inFlowContentHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&);
+        ContentWidthAndMargin inFlowContentWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&);
 
         Point staticPosition(const Box&, const HorizontalConstraints&, const VerticalConstraints&) const;
         LayoutUnit staticVerticalPosition(const Box&, const VerticalConstraints&) const;
@@ -85,12 +85,12 @@ protected:
 
         IntrinsicWidthConstraints intrinsicWidthConstraints(const Box&);
 
-        ContentWidthAndMargin computedWidthAndMargin(const Box&, const HorizontalConstraints&, Optional<LayoutUnit> availableWidthFloatAvoider);
+        ContentWidthAndMargin computedContentWidthAndMargin(const Box&, const HorizontalConstraints&, Optional<LayoutUnit> availableWidthFloatAvoider);
 
     private:
-        ContentHeightAndMargin inFlowNonReplacedHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&);
-        ContentWidthAndMargin inFlowNonReplacedWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&);
-        ContentWidthAndMargin inFlowReplacedWidthAndMargin(const ReplacedBox&, const HorizontalConstraints&, const OverriddenHorizontalValues&);
+        ContentHeightAndMargin inFlowNonReplacedContentHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&);
+        ContentWidthAndMargin inFlowNonReplacedContentWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&);
+        ContentWidthAndMargin inFlowReplacedContentWidthAndMargin(const ReplacedBox&, const HorizontalConstraints&, const OverriddenHorizontalValues&);
 
         const BlockFormattingContext& formattingContext() const { return downcast<BlockFormattingContext>(FormattingContext::Geometry::formattingContext()); }
     };

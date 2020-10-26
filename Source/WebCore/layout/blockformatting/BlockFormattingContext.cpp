@@ -322,7 +322,7 @@ void BlockFormattingContext::computeWidthAndMargin(const FloatingContext& floati
         // Float avoiders' available width might be shrunk by existing floats in the context.
         availableWidthFloatAvoider = usedAvailableWidthForFloatAvoider(floatingContext, layoutBox, constraintsPair);
     }
-    auto contentWidthAndMargin = geometry().computedWidthAndMargin(layoutBox, constraintsPair.containingBlock.horizontal, availableWidthFloatAvoider);
+    auto contentWidthAndMargin = geometry().computedContentWidthAndMargin(layoutBox, constraintsPair.containingBlock.horizontal, availableWidthFloatAvoider);
     auto& boxGeometry = formattingState().boxGeometry(layoutBox);
     boxGeometry.setContentBoxWidth(contentWidthAndMargin.contentWidth);
     boxGeometry.setHorizontalMargin({ contentWidthAndMargin.usedMargin.start, contentWidthAndMargin.usedMargin.end });
@@ -332,10 +332,10 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox, const 
 {
     auto compute = [&](Optional<LayoutUnit> usedHeight) -> ContentHeightAndMargin {
         if (layoutBox.isInFlow())
-            return geometry().inFlowHeightAndMargin(layoutBox, constraints.horizontal, { usedHeight });
+            return geometry().inFlowContentHeightAndMargin(layoutBox, constraints.horizontal, { usedHeight });
 
         if (layoutBox.isFloatingPositioned())
-            return geometry().floatingHeightAndMargin(layoutBox, constraints.horizontal, { usedHeight });
+            return geometry().floatingContentHeightAndMargin(layoutBox, constraints.horizontal, { usedHeight });
 
         ASSERT_NOT_REACHED();
         return { };
