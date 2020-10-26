@@ -184,12 +184,12 @@ bool CDMProxyClearKey::cencDecryptSubsampled(cencDecryptContext& input)
         }
 
         // FIXME: These are high-frequency messages, not sure if there's a better logging lib in WebCore.
-        LOG(EME, "EME - subsample index %u - %u bytes clear (%lu bytes left to decrypt)", subsampleIndex, subsampleNumClearBytes, input.encryptedBufferSizeInBytes - encryptedBufferByteOffset);
+        LOG(EME, "EME - subsample index %u - %u bytes clear (%zu bytes left to decrypt)", subsampleIndex, subsampleNumClearBytes, input.encryptedBufferSizeInBytes - encryptedBufferByteOffset);
 
         encryptedBufferByteOffset += subsampleNumClearBytes;
 
         if (subsampleNumEncryptedBytes) {
-            LOG(EME, "EME - subsample index %u - %u bytes encrypted (%lu bytes left to decrypt)", subsampleIndex, subsampleNumEncryptedBytes, input.encryptedBufferSizeInBytes - encryptedBufferByteOffset);
+            LOG(EME, "EME - subsample index %u - %u bytes encrypted (%zu bytes left to decrypt)", subsampleIndex, subsampleNumEncryptedBytes, input.encryptedBufferSizeInBytes - encryptedBufferByteOffset);
 
             if (gcry_error_t cipherError = gcry_cipher_decrypt(gCryptHandle(), input.encryptedBuffer + encryptedBufferByteOffset, subsampleNumEncryptedBytes, 0, 0)) {
 #if !LOG_DISABLED

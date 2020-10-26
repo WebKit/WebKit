@@ -314,7 +314,8 @@ public:
             return;
 
         StringView payload(reinterpret_cast<const LChar*>(buffer->data()), buffer->size());
-        size_t typePosition = payload.find(":Type:");
+        StringView type(reinterpret_cast<const LChar*>(":Type:"), 6);
+        size_t typePosition = payload.find(type, 0);
         StringView requestType(payload.characters8(), typePosition != notFound ? typePosition : 0);
         unsigned offset = 0u;
         if (!requestType.isEmpty() && requestType.length() != payload.length())
@@ -463,7 +464,7 @@ void CDMInstanceSessionThunder::requestLicense(LicenseType licenseType, const At
     ASSERT(instance);
     m_initData = InitData(instance->keySystem(), WTFMove(initDataSharedBuffer));
 
-    GST_TRACE("Going to request a new session id, init data size %lu", m_initData.payload()->size());
+    GST_TRACE("Going to request a new session id, init data size %zu", m_initData.payload()->size());
     GST_MEMDUMP("init data", m_initData.payload()->dataAsUInt8Ptr(), m_initData.payload()->size());
 
     OpenCDMSession* session = nullptr;
@@ -529,13 +530,13 @@ void CDMInstanceSessionThunder::updateLicense(const String& sessionID, LicenseTy
                 ParsedResponseMessage parsedResponseMessage(responseMessage);
                 if (parsedResponseMessage.hasPayload()) {
                     Ref<SharedBuffer> message = WTFMove(parsedResponseMessage.payload());
-                    GST_DEBUG("got message of size %lu", message->size());
+                    GST_DEBUG("got message of size %zu", message->size());
                     GST_MEMDUMP("message", message->dataAsUInt8Ptr(), message->size());
                     callback(false, WTF::nullopt, WTF::nullopt,
                         std::make_pair(parsedResponseMessage.typeOr(MediaKeyMessageType::LicenseRequest),
                             WTFMove(message)), SuccessValue::Succeeded);
                 } else {
-                    GST_ERROR("message of size %lu incorrectly formatted", responseMessage ? responseMessage->size() : 0);
+                    GST_ERROR("message of size %zu incorrectly formatted", responseMessage ? responseMessage->size() : 0);
                     callback(false, WTF::nullopt, WTF::nullopt, WTF::nullopt, SuccessValue::Failed);
                 }
             }
@@ -563,12 +564,12 @@ void CDMInstanceSessionThunder::loadSession(LicenseType, const String& sessionID
                 ParsedResponseMessage parsedResponseMessage(responseMessage);
                 if (parsedResponseMessage.hasPayload()) {
                     Ref<SharedBuffer> message = WTFMove(parsedResponseMessage.payload());
-                    GST_DEBUG("got message of size %lu", message->size());
+                    GST_DEBUG("got message of size %zu", message->size());
                     GST_MEMDUMP("message", message->dataAsUInt8Ptr(), message->size());
                     callback(WTF::nullopt, WTF::nullopt, std::make_pair(parsedResponseMessage.typeOr(MediaKeyMessageType::LicenseRequest),
                         WTFMove(message)), SuccessValue::Succeeded, SessionLoadFailure::None);
                 } else {
-                    GST_ERROR("message of size %lu incorrectly formatted", responseMessage ? responseMessage->size() : 0);
+                    GST_ERROR("message of size %zu incorrectly formatted", responseMessage ? responseMessage->size() : 0);
                     callback(WTF::nullopt, WTF::nullopt, WTF::nullopt, SuccessValue::Failed, SessionLoadFailure::Other);
                 }
             }
@@ -609,10 +610,10 @@ void CDMInstanceSessionThunder::removeSessionData(const String& sessionID, Licen
                 ParsedResponseMessage parsedResponseMessage(buffer);
                 if (parsedResponseMessage.hasPayload()) {
                     Ref<SharedBuffer> message = WTFMove(parsedResponseMessage.payload());
-                    GST_DEBUG("session %s removed, message length %lu", m_sessionID.utf8().data(), message->size());
+                    GST_DEBUG("session %s removed, message length %zu", m_sessionID.utf8().data(), message->size());
                     callback(m_keyStore.allKeysAs(MediaKeyStatus::Released), WTFMove(message), SuccessValue::Succeeded);
                 } else {
-                    GST_WARNING("message of size %lu incorrectly formatted as session %s removal answer", buffer ? buffer->size() : 0,
+                    GST_WARNING("message of size %zu incorrectly formatted as session %s removal answer", buffer ? buffer->size() : 0,
                         m_sessionID.utf8().data());
                     callback(m_keyStore.allKeysAs(MediaKeyStatus::InternalError), WTF::nullopt, SuccessValue::Failed);
                 }
