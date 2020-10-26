@@ -342,7 +342,6 @@ public:
 #endif
     void cancelLoad();
 
-    bool visible() const;
     void setVisible(bool);
     void setVisibleForCanvas(bool);
 

@@ -106,7 +106,7 @@ MediaPlayerPrivateAVFoundation::MediaRenderingMode MediaPlayerPrivateAVFoundatio
 
 MediaPlayerPrivateAVFoundation::MediaRenderingMode MediaPlayerPrivateAVFoundation::preferredRenderingMode() const
 {
-    if (!m_player->visible() || assetStatus() == MediaPlayerAVAssetStatusUnknown)
+    if (!m_visible || assetStatus() == MediaPlayerAVAssetStatusUnknown)
         return MediaRenderingNone;
 
     if (supportsAcceleratedRendering() && m_player->renderingCanBeAccelerated())
@@ -434,7 +434,7 @@ bool MediaPlayerPrivateAVFoundation::isReadyForVideoSetup() const
     // AVFoundation will not return true for firstVideoFrameAvailable until
     // an AVPlayerLayer has been added to the AVPlayerItem, so allow video setup
     // here if a video track to trigger allocation of a AVPlayerLayer.
-    return (m_isAllowedToRender || m_cachedHasVideo) && m_readyState >= MediaPlayer::ReadyState::HaveMetadata && m_player->visible();
+    return (m_isAllowedToRender || m_cachedHasVideo) && m_readyState >= MediaPlayer::ReadyState::HaveMetadata && m_visible;
 }
 
 void MediaPlayerPrivateAVFoundation::prepareForRendering()

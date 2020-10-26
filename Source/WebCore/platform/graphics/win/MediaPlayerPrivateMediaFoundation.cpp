@@ -352,7 +352,7 @@ void MediaPlayerPrivateMediaFoundation::setSize(const IntSize& size)
 
 void MediaPlayerPrivateMediaFoundation::paint(GraphicsContext& context, const FloatRect& rect)
 {
-    if (context.paintingDisabled() || !m_player->visible())
+    if (context.paintingDisabled() || !m_visible)
         return;
 
     if (m_presenter)

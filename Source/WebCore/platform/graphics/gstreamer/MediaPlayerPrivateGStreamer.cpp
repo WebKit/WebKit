@@ -3120,7 +3120,7 @@ void MediaPlayerPrivateGStreamer::paint(GraphicsContext& context, const FloatRec
     if (context.paintingDisabled())
         return;
 
-    if (!m_player->visible())
+    if (!m_visible)
         return;
 
     auto sampleLocker = holdLock(m_sampleMutex);
