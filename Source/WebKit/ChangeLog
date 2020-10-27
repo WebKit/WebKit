@@ -1,3 +1,18 @@
+2020-10-27  Alex Christensen  <achristensen@webkit.org>
+
+        Use NSURLSessionAuthChallengeRejectProtectionSpace if WKNavigationDelegate didReceiveAuthenticationChallenge is not implemented
+        https://bugs.webkit.org/show_bug.cgi?id=218008
+
+        Reviewed by Darin Adler.
+
+        This is documented in WKNavigationDelegate.h, and the behavior is basically identical.
+        The difference is if there is a challenge with multiple protection spaces and a delegate that implements didReceiveAuthenticationChallenge
+        is attached between the delegate callbacks, it will receive the second callback.  This is unlikely and next to impossible to test, but
+        out of principle we should behave like we have documented that we do.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::didReceiveAuthenticationChallenge):
+
 2020-10-27  Sam Weinig  <weinig@apple.com>
 
         Rename WKPreferencesSet*ValueForKey SPI to WKPreferencesSet*ValueForKeyForTesting
