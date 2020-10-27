@@ -1,3 +1,13 @@
+2020-10-26  Timothy Horton  <timothy_horton@apple.com>
+
+        fast/events/touch/ios/show-modal-alert-during-touch-start.html logs about unexpected argument
+        https://bugs.webkit.org/show_bug.cgi?id=218214
+
+        Reviewed by Darin Adler.
+
+        * fast/events/touch/ios/show-modal-alert-during-touch-start.html:
+        webkit-test-runner options are not comma separated (and "true," is not a valid value, thus the logging).
+
 2020-10-26  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION (r268865): [macOS WK2] media/modern-media-controls/placard-support/placard-support-pip.html is a flaky timeout
