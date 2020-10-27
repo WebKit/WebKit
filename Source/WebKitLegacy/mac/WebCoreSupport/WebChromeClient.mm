@@ -205,7 +205,7 @@ bool WebChromeClient::canTakeFocus(FocusDirection)
 void WebChromeClient::takeFocus(FocusDirection direction)
 {
 #if !PLATFORM(IOS_FAMILY)
-    if (direction == FocusDirectionForward) {
+    if (direction == FocusDirection::Forward) {
         // Since we're trying to move focus out of m_webView, and because
         // m_webView may contain subviews within it, we ask it for the next key
         // view of the last view in its key view loop. This makes m_webView

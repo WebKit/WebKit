@@ -27,14 +27,14 @@
 
 namespace WebCore {
 
-enum FocusDirection {
-    FocusDirectionNone = 0,
-    FocusDirectionForward,
-    FocusDirectionBackward,
-    FocusDirectionUp,
-    FocusDirectionDown,
-    FocusDirectionLeft,
-    FocusDirectionRight
+enum class FocusDirection: uint8_t {
+    None = 0,
+    Forward,
+    Backward,
+    Up,
+    Down,
+    Left,
+    Right
 };
 
 } // namespace WebCore

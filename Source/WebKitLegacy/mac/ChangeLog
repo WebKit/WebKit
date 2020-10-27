@@ -1,3 +1,15 @@
+2020-10-27  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Make WebCore::FocusDirection to enum class
+        https://bugs.webkit.org/show_bug.cgi?id=218162
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::takeFocus):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView becomeFirstResponder]):
+
 2020-10-26  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove Accelerated2dCanvasEnabled WebPreferences entry

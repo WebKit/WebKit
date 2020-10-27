@@ -224,7 +224,7 @@ bool WebChromeClient::canTakeFocus(FocusDirection)
 
 void WebChromeClient::takeFocus(FocusDirection direction)
 {
-    m_page.send(Messages::WebPageProxy::TakeFocus(direction));
+    m_page.send(Messages::WebPageProxy::TakeFocus(static_cast<uint8_t>(direction)));
 }
 
 void WebChromeClient::focusedElementChanged(Element* element)

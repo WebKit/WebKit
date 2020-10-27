@@ -4615,7 +4615,7 @@ static RefPtr<WebCore::KeyboardEvent> currentKeyboardEvent(WebCore::Frame* coreF
 
     if (auto* document = frame->document())
         document->setFocusedElement(0);
-    page->focusController().setInitialFocus(direction == NSSelectingNext ? WebCore::FocusDirectionForward : WebCore::FocusDirectionBackward,
+    page->focusController().setInitialFocus(direction == NSSelectingNext ? WebCore::FocusDirection::Forward : WebCore::FocusDirection::Backward,
                                              currentKeyboardEvent(frame).get());
     return YES;
 }

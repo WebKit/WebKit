@@ -435,7 +435,7 @@ void BaseDateAndTimeInputType::handleFocusEvent(Node* oldFocusedNode, FocusDirec
     // If the element contains editable components, the element itself should not
     // be focused. Instead, one of it's children should receive focus.
 
-    if (direction == FocusDirectionBackward) {
+    if (direction == FocusDirection::Backward) {
         // If the element received focus when going backwards, advance the focus one more time
         // so that this element no longer has focus. In this case, one of the children should
         // not be focused as the element is losing focus entirely.

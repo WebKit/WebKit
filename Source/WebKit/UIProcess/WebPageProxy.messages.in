@@ -43,7 +43,7 @@ messages -> WebPageProxy {
     SetCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
     SetStatusText(String statusText)
     SetFocus(bool focused)
-    TakeFocus(uint32_t direction)
+    TakeFocus(uint8_t direction)
     FocusedFrameChanged(Optional<WebCore::FrameIdentifier> frameID)
     SetRenderTreeSize(uint64_t treeSize)
     SetToolbarsAreVisible(bool toolbarsAreVisible)

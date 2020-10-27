@@ -1,3 +1,16 @@
+2020-10-27  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Make WebCore::FocusDirection to enum class
+        https://bugs.webkit.org/show_bug.cgi?id=218162
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::canTakeFocus):
+        (WebChromeClient::takeFocus):
+        * WebView.cpp:
+        (WebView::setInitialFocus):
+
 2020-10-22  Darin Adler  <darin@apple.com>
 
         REGRESSION(r266295): DOMSelection's addRange and containsNode behave incorrectly when selection crosses shadow boundaries

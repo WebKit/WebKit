@@ -1,3 +1,22 @@
+2020-10-27  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Make WebCore::FocusDirection to enum class
+        https://bugs.webkit.org/show_bug.cgi?id=218162
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::takeFocus):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::takeFocus):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::takeFocus):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::handleKeyEventByRelinquishingFocusToChrome):
+        (WebKit::WebPage::setInitialFocus):
+
 2020-10-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [GPU Process]: Introduce RemoteResourceCacheProxy to manage the remote resources in Web Process

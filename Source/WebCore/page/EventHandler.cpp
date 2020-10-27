@@ -3494,16 +3494,16 @@ static FocusDirection focusDirectionForKey(const AtomString& keyIdentifier)
     static MainThreadNeverDestroyed<const AtomString> Left("Left", AtomString::ConstructFromLiteral);
     static MainThreadNeverDestroyed<const AtomString> Right("Right", AtomString::ConstructFromLiteral);
 
-    FocusDirection retVal = FocusDirectionNone;
+    FocusDirection retVal = FocusDirection::None;
 
     if (keyIdentifier == Down)
-        retVal = FocusDirectionDown;
+        retVal = FocusDirection::Down;
     else if (keyIdentifier == Up)
-        retVal = FocusDirectionUp;
+        retVal = FocusDirection::Up;
     else if (keyIdentifier == Left)
-        retVal = FocusDirectionLeft;
+        retVal = FocusDirection::Left;
     else if (keyIdentifier == Right)
-        retVal = FocusDirectionRight;
+        retVal = FocusDirection::Right;
 
     return retVal;
 }
@@ -3556,25 +3556,25 @@ static void handleKeyboardSelectionMovement(Frame& frame, KeyboardEvent& event)
     TextGranularity granularity = TextGranularity::CharacterGranularity;
 
     switch (focusDirectionForKey(event.keyIdentifier())) {
-    case FocusDirectionNone:
+    case FocusDirection::None:
         return;
-    case FocusDirectionForward:
-    case FocusDirectionBackward:
+    case FocusDirection::Forward:
+    case FocusDirection::Backward:
         ASSERT_NOT_REACHED();
         return;
-    case FocusDirectionUp:
+    case FocusDirection::Up:
         direction = SelectionDirection::Backward;
         granularity = isCommanded ? TextGranularity::DocumentBoundary : TextGranularity::LineGranularity;
         break;
-    case FocusDirectionDown:
+    case FocusDirection::Down:
         direction = SelectionDirection::Forward;
         granularity = isCommanded ? TextGranularity::DocumentBoundary : TextGranularity::LineGranularity;
         break;
-    case FocusDirectionLeft:
+    case FocusDirection::Left:
         direction = SelectionDirection::Left;
         granularity = (isCommanded) ? TextGranularity::LineBoundary : (isOptioned) ? TextGranularity::WordGranularity : TextGranularity::CharacterGranularity;
         break;
-    case FocusDirectionRight:
+    case FocusDirection::Right:
         direction = SelectionDirection::Right;
         granularity = (isCommanded) ? TextGranularity::LineBoundary : (isOptioned) ? TextGranularity::WordGranularity : TextGranularity::CharacterGranularity;
         break;
@@ -3609,7 +3609,7 @@ bool EventHandler::accessibilityPreventsEventPropagation(KeyboardEvent& event)
     if (event.keyIdentifier() == "U+0009")
         return true;
     FocusDirection direction = focusDirectionForKey(event.keyIdentifier());
-    if (direction != FocusDirectionNone)
+    if (direction != FocusDirection::None)
         return true;
 #else
     UNUSED_PARAM(event);
@@ -3631,7 +3631,7 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent& event)
             defaultBackspaceEventHandler(event);
         else {
             FocusDirection direction = focusDirectionForKey(event.keyIdentifier());
-            if (direction != FocusDirectionNone)
+            if (direction != FocusDirection::None)
                 defaultArrowEventHandler(direction, event);
         }
 
@@ -4112,7 +4112,7 @@ void EventHandler::defaultTabEventHandler(KeyboardEvent& event)
     if (!page->tabKeyCyclesThroughElements())
         return;
 
-    if (page->focusController().advanceFocus(event.shiftKey() ? FocusDirectionBackward : FocusDirectionForward, &event))
+    if (page->focusController().advanceFocus(event.shiftKey() ? FocusDirection::Backward : FocusDirection::Forward, &event))
         event.setDefaultHandled();
 }
 

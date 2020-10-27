@@ -127,7 +127,7 @@ struct FocusCandidate {
     bool isOffscreenAfterScrolling;
 };
 
-bool hasOffscreenRect(Node*, FocusDirection direction = FocusDirectionNone);
+bool hasOffscreenRect(Node*, FocusDirection = FocusDirection::None);
 bool scrollInDirection(Frame*, FocusDirection);
 bool scrollInDirection(Node* container, FocusDirection);
 bool canScrollInDirection(const Node* container, FocusDirection);

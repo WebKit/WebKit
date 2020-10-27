@@ -139,7 +139,7 @@ void WebChromeClient::unfocus()
 bool WebChromeClient::canTakeFocus(FocusDirection direction)
 {
     IWebUIDelegate* uiDelegate = 0;
-    BOOL bForward = (direction == FocusDirectionForward) ? TRUE : FALSE;
+    BOOL bForward = (direction == FocusDirection::Forward) ? TRUE : FALSE;
     BOOL result = FALSE;
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
         uiDelegate->canTakeFocus(m_webView, bForward, &result);
@@ -152,7 +152,7 @@ bool WebChromeClient::canTakeFocus(FocusDirection direction)
 void WebChromeClient::takeFocus(FocusDirection direction)
 {
     IWebUIDelegate* uiDelegate = 0;
-    BOOL bForward = (direction == FocusDirectionForward) ? TRUE : FALSE;
+    BOOL bForward = (direction == FocusDirection::Forward) ? TRUE : FALSE;
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
         uiDelegate->takeFocus(m_webView, bForward);
         uiDelegate->Release();

@@ -59,7 +59,7 @@ public:
     WEBCORE_EXPORT bool setInitialFocus(FocusDirection, KeyboardEvent*);
     bool advanceFocus(FocusDirection, KeyboardEvent*, bool initialFocus = false);
 
-    WEBCORE_EXPORT bool setFocusedElement(Element*, Frame&, FocusDirection = FocusDirectionNone);
+    WEBCORE_EXPORT bool setFocusedElement(Element*, Frame&, FocusDirection = FocusDirection::None);
 
     void setActivityState(OptionSet<ActivityState::Flag>);
 
