@@ -60,15 +60,15 @@ using namespace JSC;
 // Functions
 
 static JSC_DECLARE_HOST_FUNCTION(jsTestDOMJITPrototypeFunction_getAttribute);
-static JSC_DECLARE_JIT_OPERATION(jsTestDOMJITPrototypeFunction_getAttributeWithoutTypeCheck, JSC::EncodedJSValue, (JSC::JSGlobalObject*, JSTestDOMJIT*, DOMJIT::IDLJSArgumentType<IDLDOMString>));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(jsTestDOMJITPrototypeFunction_getAttributeWithoutTypeCheck, JSC::EncodedJSValue, (JSC::JSGlobalObject*, JSTestDOMJIT*, DOMJIT::IDLJSArgumentType<IDLDOMString>));
 static JSC_DECLARE_HOST_FUNCTION(jsTestDOMJITPrototypeFunction_item);
-static JSC_DECLARE_JIT_OPERATION(jsTestDOMJITPrototypeFunction_itemWithoutTypeCheck, JSC::EncodedJSValue, (JSC::JSGlobalObject*, JSTestDOMJIT*, DOMJIT::IDLJSArgumentType<IDLUnsignedShort>, DOMJIT::IDLJSArgumentType<IDLUnsignedShort>));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(jsTestDOMJITPrototypeFunction_itemWithoutTypeCheck, JSC::EncodedJSValue, (JSC::JSGlobalObject*, JSTestDOMJIT*, DOMJIT::IDLJSArgumentType<IDLUnsignedShort>, DOMJIT::IDLJSArgumentType<IDLUnsignedShort>));
 static JSC_DECLARE_HOST_FUNCTION(jsTestDOMJITPrototypeFunction_hasAttribute);
-static JSC_DECLARE_JIT_OPERATION(jsTestDOMJITPrototypeFunction_hasAttributeWithoutTypeCheck, JSC::EncodedJSValue, (JSC::JSGlobalObject*, JSTestDOMJIT*));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(jsTestDOMJITPrototypeFunction_hasAttributeWithoutTypeCheck, JSC::EncodedJSValue, (JSC::JSGlobalObject*, JSTestDOMJIT*));
 static JSC_DECLARE_HOST_FUNCTION(jsTestDOMJITPrototypeFunction_getElementById);
-static JSC_DECLARE_JIT_OPERATION(jsTestDOMJITPrototypeFunction_getElementByIdWithoutTypeCheck, JSC::EncodedJSValue, (JSC::JSGlobalObject*, JSTestDOMJIT*, DOMJIT::IDLJSArgumentType<IDLRequiresExistingAtomStringAdaptor<IDLDOMString>>));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(jsTestDOMJITPrototypeFunction_getElementByIdWithoutTypeCheck, JSC::EncodedJSValue, (JSC::JSGlobalObject*, JSTestDOMJIT*, DOMJIT::IDLJSArgumentType<IDLRequiresExistingAtomStringAdaptor<IDLDOMString>>));
 static JSC_DECLARE_HOST_FUNCTION(jsTestDOMJITPrototypeFunction_getElementsByName);
-static JSC_DECLARE_JIT_OPERATION(jsTestDOMJITPrototypeFunction_getElementsByNameWithoutTypeCheck, JSC::EncodedJSValue, (JSC::JSGlobalObject*, JSTestDOMJIT*, DOMJIT::IDLJSArgumentType<IDLAtomStringAdaptor<IDLDOMString>>));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(jsTestDOMJITPrototypeFunction_getElementsByNameWithoutTypeCheck, JSC::EncodedJSValue, (JSC::JSGlobalObject*, JSTestDOMJIT*, DOMJIT::IDLJSArgumentType<IDLAtomStringAdaptor<IDLDOMString>>));
 
 // Attributes
 
