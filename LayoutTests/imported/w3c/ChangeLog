@@ -1,3 +1,17 @@
+2020-10-27  Noam Rosenthal  <noam@webkit.org>
+
+        compositing/iframes/layout-on-compositing-change.html can assert under ContentfulPaintChecker
+        https://bugs.webkit.org/show_bug.cgi?id=218204
+        <rdar://problem/70694218>
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/paint-timing/resources/subframe-painting.html:
+        * web-platform-tests/paint-timing/fcp-only/fcp-ignore-from-subframe.html:
+        * web-platform-tests/paint-timing/fcp-only/fcp-ignore-from-subframe-expected.txt:
+                Added a new test to assert that painting inside iframes is not automatically considered by the parent.
+                Upstreamed: https://github.com/web-platform-tests/wpt/pull/26303
+
 2020-10-26  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Drop sorting and deduplication of media queries.
