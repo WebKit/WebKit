@@ -238,7 +238,7 @@ webkit.org/b/210498 webkit.org/b/210840 fast/mediastream/play-newly-added-audio-
 
 webkit.org/b/203078 media/media-source/media-source-remove-unload-crash.html [ Crash Timeout Pass ]
 webkit.org/b/210528 media/media-source/media-source-seek-back.html [ Crash Pass ]
-webkit.org/b/214636 media/media-source/media-source-webm.html [ Timeout ]
+webkit.org/b/214636 media/media-source/media-source-webm.html [ Timeout Crash ]
 
 webkit.org/b/210528 media/video-src-blob-replay.html [ Crash Pass ]
 
@@ -686,6 +686,8 @@ webkit.org/b/206583 [ Debug ] webrtc/video-gpuProcess.html [ Timeout ]
 webkit.org/b/216538 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Failure ]
 
 webkit.org/b/216763 webrtc/captureCanvas-webrtc-software-h264-high.html [ Crash Failure ]
+
+webkit.org/b/218221 webrtc/vp9-profile2.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
@@ -1223,6 +1225,9 @@ webkit.org/b/163533 security/contentSecurityPolicy/video-with-data-url-allowed-b
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-disconnect-audioparam.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/217363 js/throw-large-string-oom.html [ Pass Crash Timeout ]
+
+# Fails when built with GCC but passes with Clang
+webkit.org/b/218220 editing/execCommand/switch-list-type-with-orphaned-li.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of NEEDS TRIAGING. Don't put expectations below this section.
