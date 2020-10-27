@@ -28,6 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "LayoutIntegrationBoxTree.h"
+#include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationRunIterator.h"
 #include "LayoutPoint.h"
 #include "LayoutState.h"
@@ -83,8 +84,11 @@ public:
 
     TextRunIterator textRunsFor(const RenderText&) const;
     RunIterator runFor(const RenderElement&) const;
+    LineIterator firstLine() const;
+    LineIterator lastLine() const;
 
     const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
+    const RenderBlockFlow& flow() const { return m_boxTree.flow(); }
 
     static void releaseCaches(RenderView&);
 
@@ -95,7 +99,6 @@ private:
     InlineContent& ensureInlineContent();
 
     RenderBlockFlow& flow() { return m_boxTree.flow(); }
-    const RenderBlockFlow& flow() const { return m_boxTree.flow(); }
 
     const Layout::ContainerBox& rootLayoutBox() const;
     Layout::ContainerBox& rootLayoutBox();

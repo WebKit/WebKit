@@ -136,9 +136,6 @@ public:
 
     IntRect computeCaretRect(float logicalLeftPosition, unsigned caretWidth, LayoutUnit* extraWidthToEndOfLine) const;
 
-    InlineBox* closestLeafChildForPoint(const IntPoint&, bool onlyEditableLeaves);
-    InlineBox* closestLeafChildForLogicalLeftPosition(int, bool onlyEditableLeaves = false);
-
     using CleanLineFloatList = Vector<WeakPtr<RenderBox>>;
     void appendFloat(RenderBox& floatingBox)
     {

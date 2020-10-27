@@ -760,56 +760,6 @@ RenderBlockFlow& RootInlineBox::blockFlow() const
     return downcast<RenderBlockFlow>(renderer());
 }
 
-static bool isEditableLeaf(InlineBox* leaf)
-{
-    return leaf && leaf->renderer().node() && leaf->renderer().node()->hasEditableStyle();
-}
-
-InlineBox* RootInlineBox::closestLeafChildForPoint(const IntPoint& pointInContents, bool onlyEditableLeaves)
-{
-    return closestLeafChildForLogicalLeftPosition(blockFlow().isHorizontalWritingMode() ? pointInContents.x() : pointInContents.y(), onlyEditableLeaves);
-}
-
-InlineBox* RootInlineBox::closestLeafChildForLogicalLeftPosition(int leftPosition, bool onlyEditableLeaves)
-{
-    InlineBox* firstLeaf = firstLeafDescendant();
-    InlineBox* lastLeaf = lastLeafDescendant();
-
-    if (firstLeaf != lastLeaf) {
-        if (firstLeaf->isLineBreak())
-            firstLeaf = firstLeaf->nextLeafOnLineIgnoringLineBreak();
-        else if (lastLeaf->isLineBreak())
-            lastLeaf = lastLeaf->previousLeafOnLineIgnoringLineBreak();
-    }
-
-    if (firstLeaf == lastLeaf && (!onlyEditableLeaves || isEditableLeaf(firstLeaf)))
-        return firstLeaf;
-
-    // Avoid returning a list marker when possible.
-    if (firstLeaf && leftPosition <= firstLeaf->logicalLeft() && !firstLeaf->renderer().isListMarker() && (!onlyEditableLeaves || isEditableLeaf(firstLeaf)))
-        // The leftPosition coordinate is less or equal to left edge of the firstLeaf.
-        // Return it.
-        return firstLeaf;
-
-    if (lastLeaf && leftPosition >= lastLeaf->logicalRight() && !lastLeaf->renderer().isListMarker() && (!onlyEditableLeaves || isEditableLeaf(lastLeaf)))
-        // The leftPosition coordinate is greater or equal to right edge of the lastLeaf.
-        // Return it.
-        return lastLeaf;
-
-    InlineBox* closestLeaf = nullptr;
-    for (InlineBox* leaf = firstLeaf; leaf; leaf = leaf->nextLeafOnLineIgnoringLineBreak()) {
-        if (!leaf->renderer().isListMarker() && (!onlyEditableLeaves || isEditableLeaf(leaf))) {
-            closestLeaf = leaf;
-            if (leftPosition < leaf->logicalRight())
-                // The x coordinate is less than the right edge of the box.
-                // Return it.
-                return leaf;
-        }
-    }
-
-    return closestLeaf ? closestLeaf : lastLeaf;
-}
-
 BidiStatus RootInlineBox::lineBreakBidiStatus() const
 { 
     return { static_cast<UCharDirection>(m_lineBreakBidiStatusEor), static_cast<UCharDirection>(m_lineBreakBidiStatusLastStrong), static_cast<UCharDirection>(m_lineBreakBidiStatusLast), m_lineBreakContext.copyRef() };

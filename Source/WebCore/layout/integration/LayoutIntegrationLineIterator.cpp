@@ -108,6 +108,75 @@ LineRunIterator LineIterator::logicalEndRunWithNode() const
     });
 }
 
+LineIterator firstLineFor(const RenderBlockFlow& flow)
+{
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* lineLayout = flow.modernLineLayout())
+        return lineLayout->firstLine();
+#endif
+
+    return { LineIteratorLegacyPath { flow.firstRootBox() } };
+}
+
+LineIterator lastLineFor(const RenderBlockFlow& flow)
+{
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* lineLayout = flow.modernLineLayout())
+        return lineLayout->lastLine();
+#endif
+
+    return { LineIteratorLegacyPath { flow.lastRootBox() } };
+}
+
+LineRunIterator LineIterator::closestRunForPoint(const IntPoint& pointInContents, bool editableOnly)
+{
+    if (atEnd())
+        return { };
+    return closestRunForLogicalLeftPosition(m_line.isHorizontal() ? pointInContents.x() : pointInContents.y(), editableOnly);
+}
+
+LineRunIterator LineIterator::closestRunForLogicalLeftPosition(int leftPosition, bool editableOnly)
+{
+    auto isEditable = [&](auto run)
+    {
+        return run && run->renderer().node() && run->renderer().node()->hasEditableStyle();
+    };
+
+    auto firstRun = this->firstRun();
+    auto lastRun = this->lastRun();
+
+    if (firstRun != lastRun) {
+        if (firstRun->isLineBreak())
+            firstRun = firstRun.nextOnLineIgnoringLineBreak();
+        else if (lastRun->isLineBreak())
+            lastRun = lastRun.previousOnLineIgnoringLineBreak();
+    }
+
+    if (firstRun == lastRun && (!editableOnly || isEditable(firstRun)))
+        return firstRun;
+
+    if (firstRun && leftPosition <= firstRun->logicalLeft() && !firstRun->renderer().isListMarker() && (!editableOnly || isEditable(firstRun)))
+        return firstRun;
+
+    if (lastRun && leftPosition >= lastRun->logicalRight() && !lastRun->renderer().isListMarker() && (!editableOnly || isEditable(lastRun)))
+        return lastRun;
+
+    auto closestRun = lastRun;
+    for (auto run = firstRun; run; run = run.traverseNextOnLineIgnoringLineBreak()) {
+        if (!run->renderer().isListMarker() && (!editableOnly || isEditable(run))) {
+            if (leftPosition < run->logicalRight())
+                return run;
+            closestRun = run;
+        }
+    }
+
+    return closestRun;
+}
+
+int PathLine::blockDirectionPointInLine() const
+{
+    return !containingBlock().style().isFlippedBlocksWritingMode() ? std::max(top(), selectionTop()) : std::min(bottom(), selectionBottom());
+}
 
 }
 }

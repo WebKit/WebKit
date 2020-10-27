@@ -3369,17 +3369,17 @@ RenderText* RenderBlockFlow::findClosestTextAtAbsolutePoint(const FloatPoint& po
     // Only check the gaps between the root line boxes. We deliberately ignore overflow because
     // experience has shown that hit tests on an exploded text node can fail when within the
     // overflow fragment.
-    for (RootInlineBox* current = blockFlow.firstRootBox(); current && current != blockFlow.lastRootBox(); current = current->nextRootBox()) {
+    for (auto current = LayoutIntegration::firstLineFor(blockFlow), last = LayoutIntegration::lastLineFor(blockFlow); current && current != last; current.traverseNext()) {
         float currentBottom = current->y() + current->logicalHeight();
         if (localPoint.y() < currentBottom)
             return nullptr;
         
-        RootInlineBox* next = current->nextRootBox();
+        auto next = current.next();
         float nextTop = next->y();
         if (localPoint.y() < nextTop) {
-            InlineBox* inlineBox = current->closestLeafChildForLogicalLeftPosition(localPoint.x());
-            if (inlineBox && inlineBox->behavesLikeText() && is<RenderText>(inlineBox->renderer()))
-                return &downcast<RenderText>(inlineBox->renderer());
+            auto run = current.closestRunForLogicalLeftPosition(localPoint.x());
+            if (run && is<RenderText>(run->renderer()))
+                return const_cast<RenderText*>(&downcast<RenderText>(run->renderer()));
         }
     }
     return nullptr;
@@ -3427,7 +3427,8 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
                     || (!blocksAreFlipped && pointInLogicalContents.y() == nextRootBoxWithChildren->lineTopWithLeading())))
                     continue;
             }
-            closestBox = root->closestLeafChildForLogicalLeftPosition(pointInLogicalContents.x());
+            if (auto closestRun = LayoutIntegration::LineIterator(root).closestRunForLogicalLeftPosition(pointInLogicalContents.x()))
+                closestBox = closestRun->legacyInlineBox();
             if (closestBox)
                 break;
         }
@@ -3437,7 +3438,8 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
 
     if (!moveCaretToBoundary && !closestBox && lastRootBoxWithChildren) {
         // y coordinate is below last root line box, pretend we hit it
-        closestBox = lastRootBoxWithChildren->closestLeafChildForLogicalLeftPosition(pointInLogicalContents.x());
+        auto closestRun = LayoutIntegration::LineIterator(lastRootBoxWithChildren).closestRunForLogicalLeftPosition(pointInLogicalContents.x());
+        closestBox = closestRun ? closestRun->legacyInlineBox() : nullptr;
     }
 
     if (closestBox) {

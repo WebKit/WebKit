@@ -56,6 +56,15 @@ public:
     LayoutUnit selectionTopForHitTesting() const;
     LayoutUnit selectionBottom() const;
 
+    float y() const;
+    float logicalHeight() const;
+
+    int blockDirectionPointInLine() const;
+
+    bool isHorizontal() const;
+
+    const RenderBlockFlow& containingBlock() const;
+
 protected:
     friend class LineIterator;
 
@@ -65,6 +74,7 @@ protected:
 class LineIterator {
 public:
     LineIterator() : m_line(LineIteratorLegacyPath { nullptr }) { };
+    LineIterator(const RootInlineBox* rootInlineBox) : m_line(LineIteratorLegacyPath { rootInlineBox }) { };
     LineIterator(PathLine::PathVariant&&);
 
     LineIterator& operator++() { return traverseNext(); }
@@ -91,12 +101,15 @@ public:
     LineRunIterator lastRun() const;
     LineRunIterator logicalStartRunWithNode() const;
     LineRunIterator logicalEndRunWithNode() const;
+    LineRunIterator closestRunForPoint(const IntPoint& pointInContents, bool editableOnly);
+    LineRunIterator closestRunForLogicalLeftPosition(int position, bool editableOnly = false);
 
 private:
     PathLine m_line;
 };
 
-LineIterator lineFor(const PathIterator&);
+LineIterator firstLineFor(const RenderBlockFlow&);
+LineIterator lastLineFor(const RenderBlockFlow&);
 
 // -----------------------------------------------
 
@@ -137,6 +150,34 @@ inline LayoutUnit PathLine::selectionBottom() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.selectionBottom();
+    });
+}
+
+inline float PathLine::y() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.y();
+    });
+}
+
+inline float PathLine::logicalHeight() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.logicalHeight();
+    });
+}
+
+inline bool PathLine::isHorizontal() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.isHorizontal();
+    });
+}
+
+inline const RenderBlockFlow& PathLine::containingBlock() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) -> const RenderBlockFlow& {
+        return path.containingBlock();
     });
 }
 

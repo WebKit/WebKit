@@ -50,6 +50,12 @@ public:
     LayoutUnit selectionTopForHitTesting() const { return m_rootInlineBox->selectionTop(RootInlineBox::ForHitTesting::Yes); }
     LayoutUnit selectionBottom() const { return m_rootInlineBox->selectionBottom(); }
 
+    float y() const { return m_rootInlineBox->y(); }
+    float logicalHeight() const { return m_rootInlineBox->logicalHeight(); }
+    bool isHorizontal() const { return m_rootInlineBox->isHorizontal(); }
+
+    const RenderBlockFlow& containingBlock() const { return m_rootInlineBox->blockFlow(); }
+
     void traverseNext()
     {
         m_rootInlineBox = m_rootInlineBox->nextRootBox();

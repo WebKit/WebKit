@@ -55,6 +55,12 @@ public:
     LayoutUnit selectionTopForHitTesting() const { return top(); }
     LayoutUnit selectionBottom() const { return bottom(); }
 
+    float y() const { return top(); }
+    float logicalHeight() const { return line().rect().height(); }
+    bool isHorizontal() const { return true; }
+
+    const RenderBlockFlow& containingBlock() const { return m_inlineContent->containingBlock(); }
+
     void traverseNext()
     {
         ASSERT(!atEnd());

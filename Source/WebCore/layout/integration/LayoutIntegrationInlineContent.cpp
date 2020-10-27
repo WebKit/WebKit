@@ -66,6 +66,10 @@ const RenderObject& InlineContent::rendererForLayoutBox(const Layout::Box& layou
     return m_lineLayout->rendererForLayoutBox(layoutBox);
 }
 
+const RenderBlockFlow& InlineContent::containingBlock() const
+{
+    return m_lineLayout->flow();
+}
 
 }
 }

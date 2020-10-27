@@ -404,6 +404,22 @@ RunIterator LineLayout::runFor(const RenderElement& renderElement) const
     return { };
 }
 
+LineIterator LineLayout::firstLine() const
+{
+    if (!m_inlineContent)
+        return { };
+
+    return { LineIteratorModernPath(*m_inlineContent, 0) };
+}
+
+LineIterator LineLayout::lastLine() const
+{
+    if (!m_inlineContent)
+        return { };
+
+    return { LineIteratorModernPath(*m_inlineContent, m_inlineContent->lines.isEmpty() ? 0 : m_inlineContent->lines.size() - 1) };
+}
+
 const RenderObject& LineLayout::rendererForLayoutBox(const Layout::Box& layoutBox) const
 {
     return m_boxTree.rendererForLayoutBox(layoutBox);
