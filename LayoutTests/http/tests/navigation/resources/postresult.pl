@@ -26,15 +26,12 @@ if (($submitWithPost && $method eq "POST") || ($redirectHappened && $method eq "
     print <<HERE_DOC_END;
     <html>
     <body style="font-size: 32">
-    This is just a minimal page that we navigate in response to an HTTP POST.
-    <br>
+    This is just a minimal page that we navigate in response to an HTTP POST.<br>
     <br>
     If the next line is empty after the colon, it probably means that we made
-    a mistake and requested this page with a GET with no query instead of a POST.
+    a mistake and requested this page with a GET with no query instead of a POST.<br>
     <br>
-    <br>
-    The first text field contained: $textFieldData
-    <br>
+    The first text field contained: $textFieldData<br>
     This page was requested with an HTTP $method
     </body>
     </html>
@@ -84,10 +81,8 @@ HERE_DOC_END
     print <<HERE_DOC_END
     <html>
     <body style="font-size: 32">
-    Test failure: postresult.pl was called with an unexpected set of parameters.
-    <br>
-    This page was requested with an HTTP $method
-    <br>
+    Test failure: postresult.pl was called with an unexpected set of parameters.<br>
+    This page was requested with an HTTP $method<br>
     The query parameters are: $queryString
     </body>
     </html>

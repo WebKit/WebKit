@@ -17,9 +17,9 @@ layer at (0,0) size 800x600
               RenderText {#text} at (1,39) size 109x19
                 text run at (1,39) width 109: "html, body { "
               RenderBR {BR} at (109,39) size 1x19
-              RenderText {#text} at (1,58) size 202x19
-                text run at (1,58) width 202: "    font-family: Verdana; "
-              RenderBR {BR} at (202,58) size 1x19
+              RenderText {#text} at (1,58) size 197x19
+                text run at (1,58) width 197: "    font-family: Verdana;"
+              RenderBR {BR} at (197,58) size 1x19
               RenderText {#text} at (1,77) size 11x19
                 text run at (1,77) width 11: "}"
               RenderBR {BR} at (11,77) size 1x19

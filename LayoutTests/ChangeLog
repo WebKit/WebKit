@@ -1,3 +1,36 @@
+2020-10-27  Zalan Bujtas  <zalan@apple.com>
+
+        Remove unneeded whitespace between content and <br>
+        https://bugs.webkit.org/show_bug.cgi?id=218151
+        <rdar://problem/70662471>
+
+        Reviewed by Antti Koivisto.
+        
+        Missed these files in r268958.
+
+        * fast/dom/HTMLTextAreaElement/reset-textarea.html:
+        * fast/forms/input-appearance-spinbutton.html:
+        * fast/forms/option-index.html:
+        * fast/text/basic/generic-family-reset.html:
+        * fast/xsl/resources/xslt-enc-cyr.xsl:
+        * fast/xsl/resources/xslt-enc.xsl:
+        * fast/xsl/resources/xslt-enc16.xsl:
+        * http/tests/navigation/resources/postresult.pl:
+        * http/tests/navigation/resources/success200.html:
+        * platform/mac-catalina/fast/forms/input-appearance-spinbutton-expected.txt:
+        * platform/mac/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/mac/fast/forms/option-index-expected.txt:
+        * platform/mac/fast/text/basic/generic-family-reset-expected.txt:
+        * platform/mac/fast/xsl/xslt-enc-cyr-expected.txt:
+        * platform/mac/fast/xsl/xslt-enc-expected.txt:
+        * platform/mac/fast/xsl/xslt-enc16-expected.txt:
+        * platform/mac/fast/xsl/xslt-enc16to16-expected.txt:
+        * platform/mac/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/mac/http/tests/navigation/postredirect-basic-expected.txt:
+        * platform/mac/http/tests/navigation/postredirect-goback1-expected.txt:
+        * platform/mac/svg/wicd/test-rightsizing-b-expected.txt:
+        * svg/wicd/test-rightsizing-b.xhtml:
+
 2020-10-27  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK GStreamer gardening

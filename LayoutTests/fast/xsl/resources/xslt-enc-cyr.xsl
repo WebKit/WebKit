@@ -4,7 +4,7 @@
     <xsl:template match="TEST">
         <html xmlns="http://www.w3.org/1999/xhtml">
             <body>
-              CHARACTERS IN XSLT: Добавленный текст <br/> <xsl:apply-templates/>
+              CHARACTERS IN XSLT: Добавленный текст<br/> <xsl:apply-templates/>
             </body>
         </html>
   </xsl:template>

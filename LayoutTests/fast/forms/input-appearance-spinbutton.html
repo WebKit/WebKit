@@ -15,7 +15,7 @@ parent.innerHTML = '<table><tr><td id=p1><td id=p2></tr></table>';
 for (var size = 8; size < 24; size++) {
     var div = document.createElement('div');
     document.getElementById(size < (24 + 8) / 2 ? 'p1' : 'p2').appendChild(div);
-    div.innerHTML = '<input style="font-size:' + size + 'px"> <br>'
+    div.innerHTML = '<input style="font-size:' + size + 'px"><br>'
         + '<input style="font-size:' + size + 'px" type=number>';
 }
 </script>
