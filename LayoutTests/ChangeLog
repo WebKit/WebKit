@@ -1,3 +1,15 @@
+2020-10-27  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [TextureMapper][GTK] Test compositing/clipping/border-radius-stacking-context-clip.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=214868
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/TestExpectations: Unmarked compositing/clipping/border-radius-stacking-context-clip.html.
+        * platform/gtk/compositing/reflections/nested-reflection-transformed-expected.png: Updated.
+        * platform/gtk/compositing/reflections/nested-reflection-transformed2-expected.png: Updated.
+        * platform/gtk/compositing/reflections/reflection-positioning2-expected.png: Updated.
+
 2020-10-27  Martin Robinson  <mrobinson@igalia.com>
 
         Overflow scrollIntoView wrong with borders

@@ -76,6 +76,9 @@ void TextureMapperLayer::computeTransformsRecursive()
         m_layerTransforms.combinedForChildren = m_layerTransforms.combined;
         m_layerTransforms.combined.translate3d(-originX, -originY, -m_state.anchorPoint.z());
 
+        if (m_isReplica)
+            m_layerTransforms.combined.translate(-m_state.pos.x(), -m_state.pos.y());
+
         if (!m_state.preserves3D)
             m_layerTransforms.combinedForChildren = m_layerTransforms.combinedForChildren.to2dTransform();
         m_layerTransforms.combinedForChildren.multiply(m_state.childrenTransform);
@@ -577,6 +580,7 @@ void TextureMapperLayer::setMaskLayer(TextureMapperLayer* maskLayer)
 void TextureMapperLayer::setReplicaLayer(TextureMapperLayer* replicaLayer)
 {
     if (replicaLayer) {
+        replicaLayer->m_isReplica = true;
         replicaLayer->m_effectTarget = makeWeakPtr(*this);
         m_state.replicaLayer = makeWeakPtr(*replicaLayer);
     } else
