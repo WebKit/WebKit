@@ -50,6 +50,10 @@
     fill: var(--breakpoint-color-disabled);
 }
 
+.item.breakpoint .status > .status-image:not(.resolved) {
+    filter: grayscale();
+}
+
 .item.breakpoint.paused .icon {
     content: url(../Images/TypeIcons.svg#PausedBreakpoint-light);
 }

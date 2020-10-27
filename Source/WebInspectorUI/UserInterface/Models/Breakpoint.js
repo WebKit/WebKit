@@ -96,6 +96,12 @@ WI.Breakpoint = class Breakpoint extends WI.Object
         return false;
     }
 
+    get resolved()
+    {
+        // Overridden by subclasses if needed.
+        return WI.debuggerManager.breakpointsEnabled;
+    }
+
     get disabled()
     {
         return this._disabled;

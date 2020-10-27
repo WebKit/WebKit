@@ -52,18 +52,6 @@ WI.JavaScriptBreakpointTreeElement = class JavaScriptBreakpointTreeElement exten
         return {text: [this.breakpoint.contentIdentifier]};
     }
 
-    // Protected
-
-    updateStatus()
-    {
-        super.updateStatus();
-
-        if (!this.status)
-            return;
-
-        this.status.classList.toggle("resolved", this.breakpoint.resolved && WI.debuggerManager.breakpointsEnabled);
-    }
-
     // Private
 
     _updateTitles()
