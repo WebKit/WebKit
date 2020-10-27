@@ -1386,6 +1386,26 @@ window.UIHelper = class UIHelper {
                 })();`, result => resolve(result === "true"));
         });
     }
+
+    static moveToNextByKeyboardAccessoryBar()
+    {
+        return new Promise((resolve) => {
+            testRunner.runUIScript(`
+                uiController.keyboardAccessoryBarNext();
+                uiController.uiScriptComplete();
+            `, resolve);
+        });
+    }
+
+    static moveToPrevByKeyboardAccessoryBar()
+    {
+        return new Promise((resolve) => {
+            testRunner.runUIScript(`
+                uiController.keyboardAccessoryBarPrevious();
+                uiController.uiScriptComplete();
+            `, resolve);
+        });
+    }
 }
 
 UIHelper.EventStreamBuilder = class {

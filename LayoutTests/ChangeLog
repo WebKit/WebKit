@@ -1,3 +1,23 @@
+2020-10-27  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Accessory bar next/previous buttons do not work on inputs in shadow roots
+        https://bugs.webkit.org/show_bug.cgi?id=203292
+
+        Reviewed by Ryosuke Niwa.
+
+        Introduced testcases only need to run with iOS family.
+
+        * fast/shadow-dom/ios/accessory-bar-work-on-input-with-tabindex-in-shadow-tree-expected.txt: Added.
+        * fast/shadow-dom/ios/accessory-bar-work-on-input-with-tabindex-in-shadow-tree.html: Added.
+        * TestExpectations:
+        * platform/ios/TestExpectations:
+          Avoid to run introduced tests because we don't have to run them and
+          tests are crashed on these platforms.
+        * resources/ui-helper.js:
+        (window.UIHelper.moveToNextByKeyboardAccessoryBar):
+        (window.UIHelper.moveToPrevByKeyboardAccessoryBar):
+        (window.UIHelper):
+
 2020-10-27  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Bad handling of audio files in the ImageDecoder
