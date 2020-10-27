@@ -1249,7 +1249,8 @@ void KeyframeEffect::apply(RenderStyle& targetStyle, Optional<Seconds> startTime
     auto computedTiming = getComputedTiming(startTime);
     if (!startTime) {
         m_phaseAtLastApplication = computedTiming.phase;
-        InspectorInstrumentation::willApplyKeyframeEffect(*targetElementOrPseudoElement(), *this, computedTiming);
+        if (auto* target = targetElementOrPseudoElement())
+            InspectorInstrumentation::willApplyKeyframeEffect(*target, *this, computedTiming);
     }
 
     if (!computedTiming.progress)
