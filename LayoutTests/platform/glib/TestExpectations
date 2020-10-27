@@ -392,11 +392,6 @@ webkit.org/b/197421 imported/w3c/web-platform-tests/imagebitmap-renderingcontext
 
 webkit.org/b/215462 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.html [ Failure Pass ]
 
-# Flaky crash on pushBufferToPlaceholder().
-webkit.org/b/217986 imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.width.transformed.html [ Crash Pass ]
-webkit.org/b/217986 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.selfintersect.1.worker.html [ Crash Pass ]
-webkit.org/b/217986 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.selfintersect.1.html [ Crash Pass ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of OffscreenCanvas-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -39,6 +39,7 @@
 #include "ScriptWrappable.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 #if ENABLE(WEBGL)
@@ -187,11 +188,21 @@ private:
     mutable RefPtr<Image> m_copiedImage;
 
     bool m_hasScheduledCommit { false };
-    WeakPtr<HTMLCanvasElement> m_placeholderCanvas;
-    RefPtr<ImageBufferPipe::Source> m_bufferPipeSource;
 
-    mutable Lock m_commitLock;
-    std::unique_ptr<ImageBuffer> m_pendingCommitBuffer;
+    class PlaceholderData : public ThreadSafeRefCounted<PlaceholderData> {
+    public:
+        static Ref<PlaceholderData> create()
+        {
+            return adoptRef(*new PlaceholderData);
+        }
+
+        WeakPtr<HTMLCanvasElement> canvas;
+        RefPtr<ImageBufferPipe::Source> bufferPipeSource;
+        std::unique_ptr<ImageBuffer> pendingCommitBuffer;
+        mutable Lock bufferLock;
+    };
+
+    RefPtr<PlaceholderData> m_placeholderData;
 };
 
 }
