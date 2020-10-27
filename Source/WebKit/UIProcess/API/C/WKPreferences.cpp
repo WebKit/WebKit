@@ -78,22 +78,22 @@ void WKPreferencesSetInternalDebugFeatureForKey(WKPreferencesRef preferencesRef,
     toImpl(preferencesRef)->setInternalDebugFeatureEnabledForKey(toWTFString(internalDebugFeatureKey), value);
 }
 
-void WKPreferencesSetBoolValueForKey(WKPreferencesRef preferencesRef, bool value, WKStringRef key)
+void WKPreferencesSetBoolValueForKeyForTesting(WKPreferencesRef preferencesRef, bool value, WKStringRef key)
 {
     toImpl(preferencesRef)->setBoolValueForKey(toWTFString(key), value);
 }
 
-void WKPreferencesSetDoubleValueForKey(WKPreferencesRef preferencesRef, double value, WKStringRef key)
+void WKPreferencesSetDoubleValueForKeyForTesting(WKPreferencesRef preferencesRef, double value, WKStringRef key)
 {
     toImpl(preferencesRef)->setBoolValueForKey(toWTFString(key), value);
 }
 
-void WKPreferencesSetUInt32ValueForKey(WKPreferencesRef preferencesRef, uint32_t value, WKStringRef key)
+void WKPreferencesSetUInt32ValueForKeyForTesting(WKPreferencesRef preferencesRef, uint32_t value, WKStringRef key)
 {
     toImpl(preferencesRef)->setUInt32ValueForKey(toWTFString(key), value);
 }
 
-void WKPreferencesSetStringValueForKey(WKPreferencesRef preferencesRef, WKStringRef value, WKStringRef key)
+void WKPreferencesSetStringValueForKeyForTesting(WKPreferencesRef preferencesRef, WKStringRef value, WKStringRef key)
 {
     toImpl(preferencesRef)->setStringValueForKey(toWTFString(key), toWTFString(value));
 }

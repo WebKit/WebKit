@@ -921,17 +921,16 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     platformResetPreferencesToConsistentValues();
 
     for (const auto& [key, value] : options.boolWebPreferenceFeatures())
-        WKPreferencesSetBoolValueForKey(preferences, value, toWK(key).get());
+        WKPreferencesSetBoolValueForKeyForTesting(preferences, value, toWK(key).get());
 
     for (const auto& [key, value] : options.doubleWebPreferenceFeatures())
-        WKPreferencesSetDoubleValueForKey(preferences, value, toWK(key).get());
+        WKPreferencesSetDoubleValueForKeyForTesting(preferences, value, toWK(key).get());
 
     for (const auto& [key, value] : options.uint32WebPreferenceFeatures())
-        WKPreferencesSetUInt32ValueForKey(preferences, value, toWK(key).get());
+        WKPreferencesSetUInt32ValueForKeyForTesting(preferences, value, toWK(key).get());
 
     for (const auto& [key, value] : options.stringWebPreferenceFeatures())
-        WKPreferencesSetStringValueForKey(preferences, toWK(value).get(), toWK(key).get());
-
+        WKPreferencesSetStringValueForKeyForTesting(preferences, toWK(value).get(), toWK(key).get());
 }
 
 bool TestController::resetStateToConsistentValues(const TestOptions& options, ResetStage resetStage)

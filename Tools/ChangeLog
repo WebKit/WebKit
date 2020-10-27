@@ -1,3 +1,14 @@
+2020-10-27  Sam Weinig  <weinig@apple.com>
+
+        Rename WKPreferencesSet*ValueForKey SPI to WKPreferencesSet*ValueForKeyForTesting
+        https://bugs.webkit.org/show_bug.cgi?id=218240
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        Update for renamed function names.
+
 2020-10-27  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Move step for generating the JSC bundle back to the release build bot

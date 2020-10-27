@@ -1,3 +1,24 @@
+2020-10-27  Sam Weinig  <weinig@apple.com>
+
+        Rename WKPreferencesSet*ValueForKey SPI to WKPreferencesSet*ValueForKeyForTesting
+        https://bugs.webkit.org/show_bug.cgi?id=218240
+
+        Reviewed by Darin Adler.
+
+        Addresses feedback from initial naming to make it clear what they are used
+        for and for consistency with WebKitLegacy.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetBoolValueForKeyForTesting):
+        (WKPreferencesSetDoubleValueForKeyForTesting):
+        (WKPreferencesSetUInt32ValueForKeyForTesting):
+        (WKPreferencesSetStringValueForKeyForTesting):
+        (WKPreferencesSetBoolValueForKey): Deleted.
+        (WKPreferencesSetDoubleValueForKey): Deleted.
+        (WKPreferencesSetUInt32ValueForKey): Deleted.
+        (WKPreferencesSetStringValueForKey): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+
 2020-10-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: sequence of char key press is not supported
