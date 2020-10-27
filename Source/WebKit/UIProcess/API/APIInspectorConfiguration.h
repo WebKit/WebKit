@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKRemoteWebInspectorViewController.h"
+#pragma once
 
-#if !TARGET_OS_IPHONE
+#include "APIObject.h"
+#include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
-NS_ASSUME_NONNULL_BEGIN
+namespace WebKit {
+class WebURLSchemeHandler;
+}
 
-@class _WKInspectorDebuggableInfo;
-@protocol _WKDiagnosticLoggingDelegate;
+namespace API {
 
-@interface _WKRemoteWebInspectorViewController (WKPrivate)
+using URLSchemeHandlerPair = std::pair<Ref<WebKit::WebURLSchemeHandler>, WTF::String>;
 
-@property (nonatomic, weak, setter=_setDiagnosticLoggingDelegate:) id<_WKDiagnosticLoggingDelegate> _diagnosticLoggingDelegate;
+class InspectorConfiguration final : public API::ObjectImpl<Object::Type::InspectorConfiguration> {
+public:
+    static Ref<InspectorConfiguration> create();
+    
+    void addURLSchemeHandler(Ref<WebKit::WebURLSchemeHandler>&&, const WTF::String& urlScheme);
+    const Vector<URLSchemeHandlerPair>& urlSchemeHandlers() { return m_customURLSchemes; }
 
-- (void)loadForDebuggable:(_WKInspectorDebuggableInfo *)debuggableInfo backendCommandsURL:(NSURL *)backendCommandsURL;
+private:
+    Vector<URLSchemeHandlerPair> m_customURLSchemes;
+};
 
-@end
-
-
-NS_ASSUME_NONNULL_END
-
-#endif // !TARGET_OS_IPHONE
+} // namespace API

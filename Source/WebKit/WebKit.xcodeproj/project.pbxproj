@@ -1418,6 +1418,9 @@
 		99249AD51F1F1E5600B62FBB /* AutomationFrontendDispatchers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 99249AD31F1F1E3300B62FBB /* AutomationFrontendDispatchers.cpp */; };
 		99249AD61F1F1E5F00B62FBB /* AutomationFrontendDispatchers.h in Headers */ = {isa = PBXBuildFile; fileRef = 99249AD41F1F1E3300B62FBB /* AutomationFrontendDispatchers.h */; };
 		994BADF41F7D781400B571E7 /* WKInspectorViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 994BADF11F7D77EA00B571E7 /* WKInspectorViewController.h */; };
+		994C6042253CA54400BDF060 /* _WKInspectorConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 994C6040253CA54300BDF060 /* _WKInspectorConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		994C6045253CABA200BDF060 /* _WKInspectorConfigurationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 994C6044253CABA200BDF060 /* _WKInspectorConfigurationInternal.h */; };
+		994C6047253CACB800BDF060 /* APIInspectorConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 994C6046253CACB800BDF060 /* APIInspectorConfiguration.h */; };
 		995226D6207D184600F78420 /* SimulatedInputDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 995226D4207D184500F78420 /* SimulatedInputDispatcher.h */; };
 		9955A6EC1C7980C200EB6A93 /* WebAutomationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6EB1C7980BB00EB6A93 /* WebAutomationSession.h */; };
 		9955A6EF1C79810800EB6A93 /* Automation.json in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6E91C7980BB00EB6A93 /* Automation.json */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4534,6 +4537,11 @@
 		9946EF851E7B026600541E79 /* WebAutomationSessionIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAutomationSessionIOS.mm; sourceTree = "<group>"; };
 		994BADF11F7D77EA00B571E7 /* WKInspectorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKInspectorViewController.h; sourceTree = "<group>"; };
 		994BADF21F7D77EB00B571E7 /* WKInspectorViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKInspectorViewController.mm; sourceTree = "<group>"; };
+		994C6040253CA54300BDF060 /* _WKInspectorConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspectorConfiguration.h; sourceTree = "<group>"; };
+		994C6041253CA54400BDF060 /* _WKInspectorConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKInspectorConfiguration.mm; sourceTree = "<group>"; };
+		994C6044253CABA200BDF060 /* _WKInspectorConfigurationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspectorConfigurationInternal.h; sourceTree = "<group>"; };
+		994C6046253CACB800BDF060 /* APIInspectorConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIInspectorConfiguration.h; sourceTree = "<group>"; };
+		994C6048253F820200BDF060 /* APIInspectorConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIInspectorConfiguration.cpp; sourceTree = "<group>"; };
 		995226D4207D184500F78420 /* SimulatedInputDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimulatedInputDispatcher.h; sourceTree = "<group>"; };
 		995226D5207D184600F78420 /* SimulatedInputDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimulatedInputDispatcher.cpp; sourceTree = "<group>"; };
 		9955A6E91C7980BB00EB6A93 /* Automation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Automation.json; sourceTree = "<group>"; };
@@ -7328,6 +7336,9 @@
 				37A64E5418F38E3C00EB30F1 /* _WKInputDelegate.h */,
 				5CAFDE422130843500B1F7E1 /* _WKInspector.h */,
 				5CAFDE432130843600B1F7E1 /* _WKInspector.mm */,
+				994C6040253CA54300BDF060 /* _WKInspectorConfiguration.h */,
+				994C6041253CA54400BDF060 /* _WKInspectorConfiguration.mm */,
+				994C6044253CABA200BDF060 /* _WKInspectorConfigurationInternal.h */,
 				991F492D23A812C50054642B /* _WKInspectorDebuggableInfo.h */,
 				991F492E23A812C60054642B /* _WKInspectorDebuggableInfo.mm */,
 				99036AE123A949CE0000B06A /* _WKInspectorDebuggableInfoInternal.h */,
@@ -9320,6 +9331,8 @@
 				5143B2611DDD0DA00014FAC6 /* APIIconLoadingClient.h */,
 				7A8A9D571EF119AA009801AE /* APIInjectedBundleClient.h */,
 				9197940923DBC4E000257892 /* APIInspectorClient.h */,
+				994C6048253F820200BDF060 /* APIInspectorConfiguration.cpp */,
+				994C6046253CACB800BDF060 /* APIInspectorConfiguration.h */,
 				31B362902141EABC007BFA53 /* APIInternalDebugFeature.cpp */,
 				31B3628E2141EA4D007BFA53 /* APIInternalDebugFeature.h */,
 				7CE4D2061A46775700C7F152 /* APILegacyContextHistoryClient.h */,
@@ -10754,6 +10767,8 @@
 				510F59101DDE296900412FF5 /* _WKIconLoadingDelegate.h in Headers */,
 				37A64E5518F38E3C00EB30F1 /* _WKInputDelegate.h in Headers */,
 				5CAFDE452130846300B1F7E1 /* _WKInspector.h in Headers */,
+				994C6042253CA54400BDF060 /* _WKInspectorConfiguration.h in Headers */,
+				994C6045253CABA200BDF060 /* _WKInspectorConfigurationInternal.h in Headers */,
 				991F492F23A812C60054642B /* _WKInspectorDebuggableInfo.h in Headers */,
 				99036AE223A949CF0000B06A /* _WKInspectorDebuggableInfoInternal.h in Headers */,
 				9197940C23DBC50300257892 /* _WKInspectorDelegate.h in Headers */,
@@ -10867,6 +10882,7 @@
 				7A8A9D5C1EF14598009801AE /* APIInjectedBundlePageResourceLoadClient.h in Headers */,
 				3769079A18F31CB2001DFF04 /* APIInjectedBundlePageUIClient.h in Headers */,
 				9197940A23DBC4E000257892 /* APIInspectorClient.h in Headers */,
+				994C6047253CACB800BDF060 /* APIInspectorConfiguration.h in Headers */,
 				31B3628F2141EA5D007BFA53 /* APIInternalDebugFeature.h in Headers */,
 				7CE4D2071A46776100C7F152 /* APILegacyContextHistoryClient.h in Headers */,
 				1A2464F31891E45100234C5B /* APILoaderClient.h in Headers */,

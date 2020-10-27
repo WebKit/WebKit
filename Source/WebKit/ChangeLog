@@ -1,3 +1,98 @@
+2020-10-27  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Introduce _WKInspectorConfiguration for customizing local and remote Web Inspectors
+        https://bugs.webkit.org/show_bug.cgi?id=217896
+        <rdar://problem/70355910>
+
+        Reviewed by Devin Rousso.
+
+        Introduce _WKInspectorConfiguration for customizing the behavior of Web Inspector instances.
+        The initial customization is to allow for custom WKURLSchemeHandlers to be used by Web Inspector's
+        WebView to load resources from client-controlled locations. This can be used to implement loading
+        of extension resources using a custom scheme such as web-extension://.
+
+        Scheme handlers need to be registered at WebView creation time via WKWebViewConfiguration. In
+        order to configure a inspector page summoned from within WebKit (i.e., Inspect Element context menu item),
+        we need to add a method to the UI delegate to get a configuration when the page is being created.
+
+        This configuration object is used in two different SPI (local and remote cases):
+
+        - As part of WKUIDelegatePrivate, to retrieve a _WKInspectorConfiguration given a _WKInspector.
+        - As an argument to the _WKRemoteWebInspectorViewController initializer. It's used later as needed.
+
+        New API test: WKInspectorDelegate.InspectorConfiguration.
+
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * UIProcess/API/APIInspectorConfiguration.h: Added.
+        * UIProcess/API/APIInspectorConfiguration.cpp: Added.
+        * UIProcess/API/Cocoa/_WKInspectorConfiguration.h: Added.
+        * UIProcess/API/Cocoa/_WKInspectorConfigurationInternal.h: Added.
+        * UIProcess/API/Cocoa/_WKInspectorConfiguration.mm: Added.
+        (-[_WKInspectorConfiguration init]):
+        (-[_WKInspectorConfiguration dealloc]):
+        (-[_WKInspectorConfiguration _apiObject]):
+        (-[_WKInspectorConfiguration setURLSchemeHandler:forURLScheme:]):
+        (-[_WKInspectorConfiguration applyToWebViewConfiguration:]):
+        (-[_WKInspectorConfiguration copyWithZone:]):
+        Create _WKInspectorConfiguration and add a method to register WKURLSchemeHandlers.
+
+        * Shared/API/APIObject.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        Add new API object types. Add missing InspectorExtension.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::configurationForLocalInspector):
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::configurationForLocalInspector):
+        Add new client/delegate method to fetch an inspector configuration as needed.
+
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.h:
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewControllerPrivate.h:
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm:
+        (-[_WKRemoteWebInspectorViewController initWithConfiguration:]): Renamed from -init.
+        (-[_WKRemoteWebInspectorViewController init]): Deleted.
+        (-[_WKRemoteWebInspectorViewController loadForDebuggableType:backendCommandsURL:]):
+        (-[_WKRemoteWebInspectorViewController configurationForDebuggable:]):
+        (-[_WKRemoteWebInspectorViewController _setDiagnosticLoggingDelegate:]):
+        Store a _WKInspectorConfiguration and provide it when asked by RemoteWebInspectorProxy.
+
+        * UIProcess/Inspector/RemoteWebInspectorProxy.h:
+        * UIProcess/Inspector/RemoteWebInspectorProxy.cpp:
+        (WebKit::RemoteWebInspectorProxy::load):
+        Store m_debuggableInfo before creating the page and window. It's used from inside
+        platformCreateFrontendPageAndWindow to pass as an argument to the delegate method.
+
+        * UIProcess/Inspector/mac/RemoteWebInspectorProxyMac.mm:
+        (WebKit::RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow):
+        * UIProcess/Inspector/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateFrontendPage):
+        Obtain a configuration and use it to initialize the WKInspectorViewController.
+
+        * UIProcess/Inspector/mac/WKInspectorViewController.h:
+        * UIProcess/Inspector/mac/WKInspectorViewController.mm:
+        (-[WKInspectorViewController initWithConfiguration:inspectedPage:]):
+        (-[WKInspectorViewController webView]):
+        (-[WKInspectorViewController webViewConfiguration]): Renamed from -configuration.
+        (-[WKInspectorViewController initWithInspectedPage:]): Deleted.
+        (-[WKInspectorViewController configuration]): Deleted.
+        Apply the URL scheme handlers registered in the _WKInspectorConfiguration to the
+        WKWebViewConfiguration.
+
+        * UIProcess/Inspector/glib/RemoteInspectorClient.cpp:
+        * UIProcess/Inspector/socket/RemoteInspectorClient.cpp:
+        Stub out RemoteWebInspectorProxyClient::configurationForRemoteInspector().
+
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.h:
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.mm:
+        Fix build problems caused by repartitioning of unified sources.
+
 2020-10-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [GPU Process]: Implement DisplayList::DrawImageBuffer item

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "APIInspectorConfiguration.h"
 #include "WKPage.h"
 #include "WebEvent.h"
 #include "WebHitTestResultData.h"
@@ -196,6 +197,11 @@ public:
 
     virtual void didAttachLocalInspector(WebKit::WebPageProxy&, WebKit::WebInspectorProxy&) { }
     virtual void willCloseLocalInspector(WebKit::WebPageProxy&, WebKit::WebInspectorProxy&) { }
+    virtual Ref<API::InspectorConfiguration> configurationForLocalInspector(WebKit::WebPageProxy&, WebKit::WebInspectorProxy&)
+    {
+        return API::InspectorConfiguration::create();
+    }
+
 };
 
 } // namespace API

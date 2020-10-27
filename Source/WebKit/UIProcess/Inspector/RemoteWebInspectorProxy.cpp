@@ -65,10 +65,10 @@ void RemoteWebInspectorProxy::setDiagnosticLoggingAvailable(bool available)
 
 void RemoteWebInspectorProxy::load(Ref<API::DebuggableInfo>&& debuggableInfo, const String& backendCommandsURL)
 {
-    createFrontendPageAndWindow();
-
     m_debuggableInfo = WTFMove(debuggableInfo);
     m_backendCommandsURL = backendCommandsURL;
+
+    createFrontendPageAndWindow();
 
     m_inspectorPage->send(Messages::RemoteWebInspectorUI::Initialize(m_debuggableInfo->debuggableInfoData(), backendCommandsURL));
     m_inspectorPage->loadRequest(URL(URL(), WebInspectorProxy::inspectorPageURL()));

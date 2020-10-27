@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKRemoteWebInspectorViewController.h"
+#import "_WKInspectorConfiguration.h"
 
-#if !TARGET_OS_IPHONE
+#import "APIInspectorConfiguration.h"
+#import "WKObject.h"
+
+namespace WebKit {
+
+template<> struct WrapperTraits<API::InspectorConfiguration> {
+    using WrapperClass = _WKInspectorConfiguration;
+};
+
+} // namespace WebKit
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class _WKInspectorDebuggableInfo;
-@protocol _WKDiagnosticLoggingDelegate;
+@interface _WKInspectorConfiguration () <WKObject> {
+@package
+    API::ObjectStorage<API::InspectorConfiguration> _configuration;
+}
 
-@interface _WKRemoteWebInspectorViewController (WKPrivate)
-
-@property (nonatomic, weak, setter=_setDiagnosticLoggingDelegate:) id<_WKDiagnosticLoggingDelegate> _diagnosticLoggingDelegate;
-
-- (void)loadForDebuggable:(_WKInspectorDebuggableInfo *)debuggableInfo backendCommandsURL:(NSURL *)backendCommandsURL;
+- (void)applyToWebViewConfiguration:(WKWebViewConfiguration *)webViewConfiguration;
 
 @end
 
-
 NS_ASSUME_NONNULL_END
-
-#endif // !TARGET_OS_IPHONE

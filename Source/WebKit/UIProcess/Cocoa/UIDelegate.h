@@ -124,6 +124,7 @@ private:
         bool runOpenPanel(WebPageProxy&, WebFrameProxy*, FrameInfoData&&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) final;
         void didExceedBackgroundResourceLimitWhileInForeground(WebPageProxy&, WKResourceLimit) final;
         void saveDataToFileInDownloadsFolder(WebPageProxy*, const WTF::String&, const WTF::String&, const URL&, API::Data&) final;
+        Ref<API::InspectorConfiguration> configurationForLocalInspector(WebPageProxy&, WebInspectorProxy&) final;
         void didAttachLocalInspector(WebPageProxy&, WebInspectorProxy&) final;
         void willCloseLocalInspector(WebPageProxy&, WebInspectorProxy&) final;
 #endif
@@ -201,6 +202,7 @@ private:
         bool webViewSaveDataToFileSuggestedFilenameMimeTypeOriginatingURL : 1;
         bool webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler : 1;
         bool webViewRequestNotificationPermissionForSecurityOriginDecisionHandler : 1;
+        bool webViewConfigurationForLocalInspector : 1;
         bool webViewDidAttachLocalInspector : 1;
         bool webViewWillCloseLocalInspector : 1;
 #endif

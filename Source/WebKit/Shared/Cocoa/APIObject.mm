@@ -79,6 +79,7 @@
 #import "_WKFrameTreeNodeInternal.h"
 #import "_WKGeolocationPositionInternal.h"
 #import "_WKHitTestResultInternal.h"
+#import "_WKInspectorConfigurationInternal.h"
 #import "_WKInspectorDebuggableInfoInternal.h"
 #import "_WKInspectorInternal.h"
 #import "_WKInternalDebugFeatureInternal.h"
@@ -264,7 +265,11 @@ void* Object::newObject(size_t size, Type type)
     case Type::Inspector:
         wrapper = [_WKInspector alloc];
         break;
-        
+
+    case Type::InspectorConfiguration:
+        wrapper = [_WKInspectorConfiguration alloc];
+        break;
+
     case Type::Navigation:
         wrapper = [WKNavigation alloc];
         break;

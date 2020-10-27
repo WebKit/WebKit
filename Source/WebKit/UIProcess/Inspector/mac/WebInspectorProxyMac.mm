@@ -28,14 +28,19 @@
 
 #if PLATFORM(MAC)
 
+#import "APIInspectorClient.h"
+#import "APIInspectorConfiguration.h"
+#import "APIUIClient.h"
 #import "GlobalFindInPageState.h"
 #import "WKInspectorPrivateMac.h"
 #import "WKInspectorViewController.h"
+#import "WKObject.h"
 #import "WKViewInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebInspectorUIMessages.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
+#import "_WKInspectorConfigurationInternal.h"
 #import "_WKInspectorInternal.h"
 #import "_WKInspectorWindow.h"
 #import <SecurityInterface/SFCertificatePanel.h>
@@ -291,7 +296,8 @@ WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
     NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
     [[NSNotificationCenter defaultCenter] addObserver:m_objCAdapter.get() selector:@selector(inspectedViewFrameDidChange:) name:NSViewFrameDidChangeNotification object:inspectedView];
 
-    m_inspectorViewController = adoptNS([[WKInspectorViewController alloc] initWithInspectedPage:inspectedPage()]);
+    auto configuration = inspectedPage()->uiClient().configurationForLocalInspector(*inspectedPage(),  *this);
+    m_inspectorViewController = adoptNS([[WKInspectorViewController alloc] initWithConfiguration: WebKit::wrapper(configuration.get()) inspectedPage:inspectedPage()]);
     [m_inspectorViewController.get() setDelegate:m_objCAdapter.get()];
 
     WebPageProxy *inspectorPage = [m_inspectorViewController webView]->_page.get();

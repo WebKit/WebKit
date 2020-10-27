@@ -1,3 +1,21 @@
+2020-10-27  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Introduce _WKInspectorConfiguration for customizing local and remote Web Inspectors
+        https://bugs.webkit.org/show_bug.cgi?id=217896
+        <rdar://problem/70355910>
+
+        Reviewed by Devin Rousso.
+
+        Add an API test for _WKInspectorConfiguration. Disabled for now, will
+        be turned back on when more web extensions API has landed.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorDelegate.mm:
+        (-[SimpleURLSchemeHandler webView:startURLSchemeTask:]):
+        (-[SimpleURLSchemeHandler webView:stopURLSchemeTask:]):
+        (-[UIDelegate _webView:configurationForLocalInspector:]):
+        (-[UIDelegate _webView:didAttachLocalInspector:]):
+        (TEST):
+
 2020-10-27  Keith Rollin  <krollin@apple.com>
 
         Update generate_xcfilelists to accommodate paths with symlinks

@@ -29,6 +29,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class _WKUserContentWorld;
+@class WKContentWorld;
 @class WKWebView;
 
 typedef NS_ENUM(NSInteger, _WKUserStyleLevel) {

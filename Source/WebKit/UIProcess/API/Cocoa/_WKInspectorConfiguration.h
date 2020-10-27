@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(MAC)
-
+#import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
-#import <wtf/NakedPtr.h>
-
-OBJC_CLASS WKWebView;
-OBJC_CLASS _WKInspectorConfiguration;
-
-namespace WebKit {
-class WebPageProxy;
-}
-
-@protocol WKInspectorViewControllerDelegate;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface WKInspectorViewController : NSObject
+@protocol WKURLSchemeHandler;
 
-@property (nonatomic, readonly) WKWebView *webView;
-@property (nonatomic, weak) id <WKInspectorViewControllerDelegate> delegate;
-
-- (instancetype)initWithConfiguration:(_WKInspectorConfiguration *)configuration inspectedPage:(NakedPtr<WebKit::WebPageProxy>)inspectedPage;
-
-+ (BOOL)viewIsInspectorWebView:(NSView *)view;
-
-@end
-
-@protocol WKInspectorViewControllerDelegate <NSObject>
-@optional
-- (void)inspectorViewControllerDidBecomeActive:(WKInspectorViewController *)inspectorViewController;
-- (void)inspectorViewControllerInspectorDidCrash:(WKInspectorViewController *)inspectorViewController;
-- (BOOL)inspectorViewControllerInspectorIsUnderTest:(WKInspectorViewController *)inspectorViewController;
-- (void)inspectorViewController:(WKInspectorViewController *)inspectorViewController willMoveToWindow:(NSWindow *)newWindow;
-- (void)inspectorViewControllerDidMoveToWindow:(WKInspectorViewController *)inspectorViewController;
-- (void)inspectorViewController:(WKInspectorViewController *)inspectorViewController openURLExternally:(NSURL *)url;
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA))
+@interface _WKInspectorConfiguration : NSObject <NSCopying>
+/**
+ * @abstract Sets the URL scheme handler object for the given URL scheme.
+ * @param urlSchemeHandler The object to register.
+ * @param scheme The URL scheme the object will handle.
+ * @discussion This is used to register additional schemes for loading resources in the inspector page,
+ * such as to register schemes used by extensions. This method has the same behavior and restrictions as
+ * described in the documentation of -[WKWebView setURLSchemeHnadler:forURLScheme:].
+ */
+- (void)setURLSchemeHandler:(id <WKURLSchemeHandler>)urlSchemeHandler forURLScheme:(NSString *)urlScheme;
 @end
 
 NS_ASSUME_NONNULL_END
-
-#endif // PLATFORM(MAC)

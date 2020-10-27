@@ -28,6 +28,7 @@
 #if !TARGET_OS_IPHONE
 
 @class WKWebView;
+@class _WKInspectorConfiguration;
 
 @protocol _WKRemoteWebInspectorViewControllerDelegate;
 
@@ -49,7 +50,9 @@ WK_CLASS_AVAILABLE(macos(10.12.3), ios(10.3))
 
 @property (nonatomic, readonly, retain) NSWindow *window;
 @property (nonatomic, readonly, retain) WKWebView *webView;
+@property (nonatomic, readonly, copy) _WKInspectorConfiguration *configuration;
 
+- (instancetype)initWithConfiguration:(_WKInspectorConfiguration *)configuration;
 - (void)loadForDebuggableType:(WKRemoteWebInspectorDebuggableType)debuggableType backendCommandsURL:(NSURL *)backendCommandsURL;
 - (void)close;
 - (void)show;

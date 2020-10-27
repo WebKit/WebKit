@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKRemoteWebInspectorViewController.h"
+#include "config.h"
+#include "APIInspectorConfiguration.h"
 
-#if !TARGET_OS_IPHONE
+#include "WebURLSchemeHandler.h"
 
-NS_ASSUME_NONNULL_BEGIN
+namespace API {
 
-@class _WKInspectorDebuggableInfo;
-@protocol _WKDiagnosticLoggingDelegate;
+Ref<InspectorConfiguration> InspectorConfiguration::create()
+{
+    return adoptRef(*new InspectorConfiguration);
+}
 
-@interface _WKRemoteWebInspectorViewController (WKPrivate)
+void InspectorConfiguration::addURLSchemeHandler(Ref<WebKit::WebURLSchemeHandler>&& urlSchemeHandler, const WTF::String& urlScheme)
+{
+    m_customURLSchemes.append(std::make_pair(WTFMove(urlSchemeHandler), urlScheme));
+}
 
-@property (nonatomic, weak, setter=_setDiagnosticLoggingDelegate:) id<_WKDiagnosticLoggingDelegate> _diagnosticLoggingDelegate;
+} // namespace API
 
-- (void)loadForDebuggable:(_WKInspectorDebuggableInfo *)debuggableInfo backendCommandsURL:(NSURL *)backendCommandsURL;
-
-@end
-
-
-NS_ASSUME_NONNULL_END
-
-#endif // !TARGET_OS_IPHONE

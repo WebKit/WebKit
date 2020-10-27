@@ -27,6 +27,7 @@
 #import "_WKUserStyleSheetInternal.h"
 
 #import "APIArray.h"
+#import "WKContentWorldInternal.h"
 #import "WKNSArray.h"
 #import "WKNSURLExtras.h"
 #import "WKWebViewInternal.h"

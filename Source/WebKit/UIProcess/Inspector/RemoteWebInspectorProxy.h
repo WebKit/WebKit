@@ -48,10 +48,12 @@ class CertificateInfo;
 
 namespace API {
 class DebuggableInfo;
+class InspectorConfiguration;
 }
 
 namespace WebKit {
 
+class RemoteWebInspectorProxy;
 class WebPageProxy;
 class WebView;
 
@@ -60,6 +62,7 @@ public:
     virtual ~RemoteWebInspectorProxyClient() { }
     virtual void sendMessageToBackend(const String& message) = 0;
     virtual void closeFromFrontend() = 0;
+    virtual Ref<API::InspectorConfiguration> configurationForRemoteInspector(RemoteWebInspectorProxy&) = 0;
 };
 
 class RemoteWebInspectorProxy : public RefCounted<RemoteWebInspectorProxy>, public IPC::MessageReceiver {

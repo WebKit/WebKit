@@ -29,6 +29,7 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "APIDebuggableInfo.h"
+#include "APIInspectorConfiguration.h"
 #include "RemoteWebInspectorProxy.h"
 #include <JavaScriptCore/RemoteInspectorUtils.h>
 #include <WebCore/InspectorDebuggableType.h>
@@ -77,6 +78,8 @@ public:
 #endif
     }
 
+    // MARK: RemoteWebInspectorProxyClient methods
+
     void sendMessageToFrontend(const String& message)
     {
         m_proxy->sendMessageToFrontend(message);
@@ -90,6 +93,11 @@ public:
     void closeFromFrontend() override
     {
         m_inspectorClient.closeFromFrontend(m_connectionID, m_targetID);
+    }
+
+    Ref<API::InspectorConfiguration> configurationForRemoteInspector(RemoteWebInspectorProxy&)
+    {
+        return API::InspectorConfiguration::create();
     }
 
 private:

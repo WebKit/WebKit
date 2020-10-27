@@ -24,15 +24,19 @@
  */
 
 #import "config.h"
-#import "_WKRemoteWebInspectorViewController.h"
+#import "_WKRemoteWebInspectorViewControllerPrivate.h"
 
 #if PLATFORM(MAC)
 
 #import "APIDebuggableInfo.h"
+#import "APIInspectorConfiguration.h"
 #import "DebuggableInfoData.h"
 #import "RemoteWebInspectorProxy.h"
 #import "WKWebViewInternal.h"
+#import "_WKInspectorConfigurationInternal.h"
 #import "_WKInspectorDebuggableInfoInternal.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface _WKRemoteWebInspectorViewController ()
 - (void)sendMessageToBackend:(NSString *)message;
@@ -62,6 +66,11 @@ public:
     {
         [m_controller closeFromFrontend];
     }
+    
+    Ref<API::InspectorConfiguration> configurationForRemoteInspector(RemoteWebInspectorProxy& inspector) override
+    {
+        return static_cast<API::InspectorConfiguration&>([m_controller.configuration _apiObject]);
+    }
 
 private:
     _WKRemoteWebInspectorViewController *m_controller;
@@ -72,12 +81,15 @@ private:
 @implementation _WKRemoteWebInspectorViewController {
     RefPtr<WebKit::RemoteWebInspectorProxy> m_remoteInspectorProxy;
     std::unique_ptr<WebKit::_WKRemoteWebInspectorProxyClient> m_remoteInspectorClient;
+    _WKInspectorConfiguration *_configuration;
 }
 
-- (instancetype)init
+- (instancetype)initWithConfiguration:(_WKInspectorConfiguration *)configuration
 {
     if (!(self = [super init]))
         return nil;
+
+    _configuration = [configuration copy];
 
     m_remoteInspectorProxy = WebKit::RemoteWebInspectorProxy::create();
     m_remoteInspectorClient = makeUnique<WebKit::_WKRemoteWebInspectorProxyClient>(self);
@@ -124,7 +136,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     debuggableInfo.targetPlatformName = @"macOS";
     debuggableInfo.targetBuildVersion = @"Unknown";
     debuggableInfo.targetProductVersion = @"Unknown";
-    debuggableInfo.targetIsSimulator = false;
+    debuggableInfo.targetIsSimulator = NO;
     [self loadForDebuggable:debuggableInfo backendCommandsURL:backendCommandsURL];
 }
 
@@ -148,6 +160,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     m_remoteInspectorProxy->sendMessageToFrontend(message);
 }
 
+// MARK: RemoteWebInspectorProxyClient methods
+
 - (void)sendMessageToBackend:(NSString *)message
 {
     if (_delegate && [_delegate respondsToSelector:@selector(inspectorViewController:sendMessageToBackend:)])
@@ -162,12 +176,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 // MARK: _WKRemoteWebInspectorViewControllerPrivate methods
 
-- (void)_setDiagnosticLoggingDelegate:(id<_WKDiagnosticLoggingDelegate>)delegate
+- (void)_setDiagnosticLoggingDelegate:(id<_WKDiagnosticLoggingDelegate> _Nullable)delegate
 {
     self.webView._diagnosticLoggingDelegate = delegate;
     m_remoteInspectorProxy->setDiagnosticLoggingAvailable(!!delegate);
 }
 
 @end
+
+NS_ASSUME_NONNULL_END
 
 #endif // PLATFORM(MAC)

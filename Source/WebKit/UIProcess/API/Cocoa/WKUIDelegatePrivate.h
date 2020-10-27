@@ -38,6 +38,9 @@
 @class _WKActivatedElementInfo;
 @class _WKElementAction;
 @class _WKFrameHandle;
+@class _WKInspector;
+@class _WKInspectorConfiguration;
+@class _WKInspectorDebuggableInfo;
 
 #if TARGET_OS_IOS
 
@@ -246,6 +249,12 @@ struct UIEdgeInsets;
 - (NSMenu *)_webView:(WKWebView *)webView contextMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element userInfo:(id <NSSecureCoding>)userInfo WK_API_DEPRECATED_WITH_REPLACEMENT("_webView:getContextMenuFromProposedMenu:forElement:userInfo:completionHandler:", macos(10.12, 10.14.4));
 - (void)_webView:(WKWebView *)webView getContextMenuFromProposedMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element userInfo:(id <NSSecureCoding>)userInfo completionHandler:(void (^)(NSMenu *))completionHandler WK_API_AVAILABLE(macos(10.14));
 - (void)_webView:(WKWebView *)webView didPerformDragOperation:(BOOL)handled WK_API_AVAILABLE(macos(10.14.4));
+
+/*! @abstract Called when the _WKInspector for this WKWebView is about to be displayed. The client can
+    provide a custom _WKInspectorConfiguration that should be used when creating the Web Inspector.
+    @param inspector The Web Inspector instance that is about to be initialized.
+ */
+- (_WKInspectorConfiguration *)_webView:(WKWebView *)webView configurationForLocalInspector:(_WKInspector *)inspector WK_API_AVAILABLE(macos(WK_MAC_TBA));
 
 /*! @abstract Called when a Web Inspector instance is attached to this WKWebView. This is not called in the case of remote inspection.
     @param webView The WKWebView instance being inspected.

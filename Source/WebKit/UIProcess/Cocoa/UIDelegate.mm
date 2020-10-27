@@ -29,6 +29,7 @@
 #import "APIArray.h"
 #import "APIFrameInfo.h"
 #import "APIHitTestResult.h"
+#import "APIInspectorConfiguration.h"
 #import "CompletionHandlerCallChecker.h"
 #import "MediaUtilities.h"
 #import "NativeWebWheelEvent.h"
@@ -54,6 +55,7 @@
 #import "_WKContextMenuElementInfo.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKHitTestResultInternal.h"
+#import "_WKInspectorConfigurationInternal.h"
 #import "_WKInspectorInternal.h"
 #import "_WKWebAuthenticationPanelInternal.h"
 #import <AVFoundation/AVCaptureDevice.h>
@@ -131,6 +133,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewSaveDataToFileSuggestedFilenameMimeTypeOriginatingURL = [delegate respondsToSelector:@selector(_webView:saveDataToFile:suggestedFilename:mimeType:originatingURL:)];
     m_delegateMethods.webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRequestNotificationPermissionForSecurityOriginDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestNotificationPermissionForSecurityOrigin:decisionHandler:)];
+    m_delegateMethods.webViewConfigurationForLocalInspector = [delegate respondsToSelector:@selector(_webView:configurationForLocalInspector:)];
     m_delegateMethods.webViewDidAttachLocalInspector = [delegate respondsToSelector:@selector(_webView:didAttachLocalInspector:)];
     m_delegateMethods.webViewWillCloseLocalInspector = [delegate respondsToSelector:@selector(_webView:willCloseLocalInspector:)];
 #endif
@@ -815,6 +818,18 @@ void UIDelegate::UIClient::decidePolicyForNotificationPermissionRequest(WebKit::
         checker->didCallCompletionHandler();
         completionHandler(result);
     }).get()];
+}
+
+Ref<API::InspectorConfiguration> UIDelegate::UIClient::configurationForLocalInspector(WebPageProxy&, WebInspectorProxy& inspector)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewConfigurationForLocalInspector)
+        return API::InspectorConfiguration::create();
+
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return API::InspectorConfiguration::create();
+
+    return static_cast<API::InspectorConfiguration&>([[(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView configurationForLocalInspector:wrapper(inspector)] _apiObject]);
 }
 
 void UIDelegate::UIClient::didAttachLocalInspector(WebPageProxy&, WebInspectorProxy& inspector)
