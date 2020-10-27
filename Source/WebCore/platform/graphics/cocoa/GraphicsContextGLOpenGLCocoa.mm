@@ -334,7 +334,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
 
     // Create the WebGLLayer
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-        m_webGLLayer = adoptNS([[WebGLLayer alloc] initWithClient:this devicePixelRatio:attrs.devicePixelRatio contentsOpaque:!attrs.alpha]);
+        m_webGLLayer = adoptNS([[WebGLLayer alloc] initWithDevicePixelRatio:attrs.devicePixelRatio contentsOpaque:!attrs.alpha]);
 #ifndef NDEBUG
         [m_webGLLayer setName:@"WebGL Layer"];
 #endif
@@ -694,19 +694,19 @@ void GraphicsContextGLOpenGL::prepareForDisplay()
     [m_webGLLayer prepareForDisplayWithContents: {WTFMove(m_displayBufferBacking), m_displayBufferPbuffer}];
     m_displayBufferPbuffer = EGL_NO_SURFACE;
 
+    bool hasNewBacking = false;
     if (recycledBuffer.surface && recycledBuffer.surface->size() == getInternalFramebufferSize()) {
-        if (bindDisplayBufferBacking(WTFMove(recycledBuffer.surface), recycledBuffer.handle))
-            return;
+        hasNewBacking = bindDisplayBufferBacking(WTFMove(recycledBuffer.surface), recycledBuffer.handle);
+        recycledBuffer.handle = nullptr;
     }
     recycledBuffer.surface.reset();
     if (recycledBuffer.handle)
         EGL_DestroySurface(m_displayObj, recycledBuffer.handle);
-    // Error will be handled by next call to makeContextCurrent() which will notice lack of display buffer.
-    reshapeDisplayBufferBacking();
-}
 
-void GraphicsContextGLOpenGL::didDisplay()
-{
+    // Error will be handled by next call to makeContextCurrent() which will notice lack of display buffer.
+    if (!hasNewBacking)
+        reshapeDisplayBufferBacking();
+
     markLayerComposited();
 }
 

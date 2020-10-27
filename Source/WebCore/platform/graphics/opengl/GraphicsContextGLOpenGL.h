@@ -37,7 +37,6 @@
 
 #if PLATFORM(COCOA)
 #include "IOSurface.h"
-#include "WebGLLayerClient.h"
 #endif
 
 #if USE(CA)
@@ -88,9 +87,6 @@ typedef WTF::HashMap<CString, uint64_t> ShaderNameHash;
 class GraphicsContextGLOpenGLPrivate;
 
 class GraphicsContextGLOpenGL final : public GraphicsContextGL
-#if PLATFORM(COCOA)
-    , private WebGLLayerClient
-#endif
 {
 public:
     static RefPtr<GraphicsContextGLOpenGL> create(GraphicsContextGLAttributes, HostWindow*, Destination = Destination::Offscreen);
@@ -546,8 +542,6 @@ private:
     bool allowOfflineRenderers() const;
     bool reshapeDisplayBufferBacking();
     bool bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer);
-    // WebGLLayerClient overrides.
-    void didDisplay() final;
 #endif
 
 #if PLATFORM(COCOA)
