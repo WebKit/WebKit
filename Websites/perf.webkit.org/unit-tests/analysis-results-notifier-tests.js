@@ -86,11 +86,11 @@ describe('AnalysisResultsNotifier', () => {
 
     describe('_validateRules', () => {
         it('should fail the validation for empty rule', () => {
-            assert.throws(() => AnalysisResultsNotifier._validateRules([{}]), 'AssertionError [ERR_ASSERTION]', 'Either tests or platforms should be an array of strings');
+            assert.throws(() => AnalysisResultsNotifier._validateRules([{}]), /AssertionError \[ERR_ASSERTION\]/, 'Either tests or platforms should be an array of strings');
         });
 
         it('should fail the validation for platforms of a rule is not an array of string', () => {
-            assert.throws(() => AnalysisResultsNotifier._validateRules([{tests: [{}]}]), 'AssertionError [ERR_ASSERTION]', 'Either tests or platforms should be an array of strings');
+            assert.throws(() => AnalysisResultsNotifier._validateRules([{tests: [{}]}]), /AssertionError \[ERR_ASSERTION\]/, 'Either tests or platforms should be an array of strings');
         });
 
         it('should pass the validation for if a rule only has tests specified', () => {

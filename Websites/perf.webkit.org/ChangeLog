@@ -1,3 +1,22 @@
+2020-10-26  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Fix and update performance dashboard tests
+        https://bugs.webkit.org/show_bug.cgi?id=218222
+
+        Reviewed by Ryosuke Niwa.
+
+        * public/api/upload-root.php: Add a null check against empty array
+        when accessing invalid key which will show warning since php 7.4.
+        Per https://wiki.php.net/rfc/notice-for-non-valid-array-container.
+        * server-tests/tools-sync-buildbot-integration-tests.js:
+        Fixed a unit test that assumes build request IDs under one test group is
+        one after another. This assumption is wrong when 'StartServers' under
+        'mpm_prefork_module' is set more than one in apache config.
+        Fixed antoher incorrect unit test.
+        * unit-tests/analysis-results-notifier-tests.js:
+        Fixed unit tests which incorrectly used 'assert.throws' per
+        https://nodejs.org/docs/latest-v7.x/api/assert.html#assert_assert_throws_block_error_message.
+
 2020-03-04  Zhifei Fang  <zhifei_fang@apple.com>
 
         Test-freshness page table heaer misplaced

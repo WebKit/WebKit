@@ -27,7 +27,7 @@ function main()
     $build_request_id = $arguments['buildRequest'];
 
     $request_row = $db->select_first_row('build_requests', 'request', array('id' => $build_request_id));
-    if ($request_row['request_test'] || $request_row['request_order'] >= 0)
+    if (!$request_row || $request_row['request_test'] || $request_row['request_order'] >= 0)
         exit_with_error('InvalidBuildRequestType', array('buildRequest' => $build_request_id));
 
     $test_group = $db->select_first_row('analysis_test_groups', 'testgroup', array('id' => $request_row['request_group']));
