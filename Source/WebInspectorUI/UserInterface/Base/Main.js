@@ -3235,7 +3235,7 @@ WI.createResourceLink = function(resource, className)
     let linkNode = document.createElement("a");
     linkNode.classList.add("resource-link", className);
     linkNode.title = resource.url;
-    linkNode.textContent = (resource.urlComponents.lastPathComponent || resource.url).insertWordBreakCharacters();
+    linkNode.textContent = (resource.urlComponents.lastPathComponent || resource.displayURL).insertWordBreakCharacters();
     linkNode.addEventListener("click", handleClick);
     return linkNode;
 };

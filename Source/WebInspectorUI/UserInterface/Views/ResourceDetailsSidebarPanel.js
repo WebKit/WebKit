@@ -232,7 +232,7 @@ WI.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel extends WI.De
         if (!this._resource)
             return;
 
-        this._locationFullURLRow.value = this._resource.url.insertWordBreakCharacters();
+        this._locationFullURLRow.value = this._resource.displayURL.insertWordBreakCharacters();
 
         var urlComponents = this._resource.urlComponents;
         if (urlComponents.scheme) {

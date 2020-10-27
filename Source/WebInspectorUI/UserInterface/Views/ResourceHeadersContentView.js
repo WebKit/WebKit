@@ -249,7 +249,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
 
         for (let redirect of this._resource.redirects)
             this._summarySection.appendKeyValuePair(WI.UIString("URL"), redirect.url.insertWordBreakCharacters(), "url");
-        this._summarySection.appendKeyValuePair(WI.UIString("URL"), this._resource.url.insertWordBreakCharacters(), "url");
+        this._summarySection.appendKeyValuePair(WI.UIString("URL"), this._resource.displayURL.insertWordBreakCharacters(), "url");
 
         let status = emDash;
         if (!isNaN(this._resource.statusCode))
