@@ -410,6 +410,13 @@ inline PtrType untagCFunctionPtr(PtrType ptr) { return untagCFunctionPtrImpl<Ptr
 
 #if CPU(ARM64E)
 
+template <typename IntType>
+inline IntType untagInt(IntType ptrInt, PtrTag tag)
+{
+    static_assert(sizeof(IntType) == sizeof(uintptr_t));
+    return bitwise_cast<IntType>(ptrauth_auth_data(bitwise_cast<void*>(ptrInt), ptrauth_key_process_dependent_data, tag));
+}
+
 template<typename T>
 inline T* tagArrayPtr(std::nullptr_t ptr, size_t length)
 {
@@ -459,7 +466,14 @@ inline PtrType untagCodePtrWithStackPointerForJITCall(PtrType ptr, const void* s
 template <PtrTag tag, typename IntType>
 inline IntType tagInt(IntType ptrInt)
 {
-    static_assert(sizeof(IntType) == sizeof(uintptr_t), "");
+    static_assert(sizeof(IntType) == sizeof(uintptr_t));
+    return bitwise_cast<IntType>(ptrauth_sign_unauthenticated(bitwise_cast<void*>(ptrInt), ptrauth_key_process_dependent_data, tag));
+}
+
+template <typename IntType>
+inline IntType tagInt(IntType ptrInt, PtrTag tag)
+{
+    static_assert(sizeof(IntType) == sizeof(uintptr_t));
     return bitwise_cast<IntType>(ptrauth_sign_unauthenticated(bitwise_cast<void*>(ptrInt), ptrauth_key_process_dependent_data, tag));
 }
 
@@ -519,6 +533,20 @@ inline IntType tagInt(IntType ptrInt)
     return ptrInt;
 }
 
+template <typename IntType>
+inline IntType tagInt(IntType ptrInt, PtrTag)
+{
+    static_assert(sizeof(IntType) == sizeof(uintptr_t));
+    return ptrInt;
+}
+
+template <typename IntType>
+inline IntType untagInt(IntType ptrInt, PtrTag)
+{
+    static_assert(sizeof(IntType) == sizeof(uintptr_t));
+    return ptrInt;
+}
+
 inline bool usesPointerTagging() { return false; }
 
 #define WTF_VTBL_FUNCPTR_PTRAUTH(discriminator)
@@ -553,6 +581,7 @@ using WTF::tagCFunction;
 using WTF::tagCFunctionPtr;
 using WTF::untagCFunctionPtr;
 using WTF::tagInt;
+using WTF::untagInt;
 
 using WTF::assertIsCFunctionPtr;
 using WTF::assertIsNullOrCFunctionPtr;

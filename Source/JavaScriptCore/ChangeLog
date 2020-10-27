@@ -1,5 +1,21 @@
 2020-10-15  Tadeu Zagallo  <tzagallo@apple.com>
 
+        Sign MacroAssembler::jumpsToLink
+        https://bugs.webkit.org/show_bug.cgi?id=217774
+        <rdar://problem/69433058>
+
+        Reviewed by Saam Barati.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::LinkRecord::LinkRecord):
+        (JSC::ARM64Assembler::LinkRecord::setFrom):
+        (JSC::ARM64Assembler::LinkRecord::to const):
+        (JSC::ARM64Assembler::linkJump):
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+
+2020-10-15  Tadeu Zagallo  <tzagallo@apple.com>
+
         Validate addresses returned by LinkBuffer::locationOf
         https://bugs.webkit.org/show_bug.cgi?id=217786
         <rdar://problem/69887913>

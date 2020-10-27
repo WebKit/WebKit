@@ -1,5 +1,17 @@
 2020-10-15  Tadeu Zagallo  <tzagallo@apple.com>
 
+        Sign MacroAssembler::jumpsToLink
+        https://bugs.webkit.org/show_bug.cgi?id=217774
+        <rdar://problem/69433058>
+
+        Reviewed by Saam Barati.
+
+        * wtf/PtrTag.h:
+        (WTF::untagInt):
+        (WTF::tagInt):
+
+2020-10-15  Tadeu Zagallo  <tzagallo@apple.com>
+
         Add extra validation to MetaAllocator::findAndRemoveFreeSpace
         https://bugs.webkit.org/show_bug.cgi?id=217792
         <rdar://problem/69433015>
