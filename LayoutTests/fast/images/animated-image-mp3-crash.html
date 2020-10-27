@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <img>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script>
+         window.jsTestIsAsync = true;
+
+         function loadImage(src) {
+             return new Promise((resolve, reject) => {
+                 const image = document.querySelector('img');
+                 image.src = src;
+                 return image.decode().then(() => { resolve(image); }).catch((error) => { reject(error); });
+             });
+         }
+
+         function endTest() {
+             finishJSTest();
+             if (window.testRunner)
+                 testRunner.notifyDone();
+         }
+
+         description('Test that a mp3 media file loaded as an image should not crash.')
+
+         loadImage("../../media/content/silence.mp3").then(image => {
+             testFailed("Decoding an mp3 file to an <img> is not expected to work");
+             endTest();
+         }).catch((error) => {
+             testPassed("Decoding an mp3 file triggers no crash");
+             endTest();
+         });
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

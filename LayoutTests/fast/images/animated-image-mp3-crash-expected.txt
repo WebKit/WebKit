@@ -1,0 +1,10 @@
+Test that a mp3 media file loaded as an image should not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Decoding an mp3 file triggers no crash
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

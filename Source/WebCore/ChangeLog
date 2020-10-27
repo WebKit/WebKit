@@ -1,3 +1,18 @@
+2020-10-27  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Bad handling of audio files in the ImageDecoder
+        https://bugs.webkit.org/show_bug.cgi?id=218239
+
+        Reviewed by Adrian Perez de Castro.
+
+        The final main thread notification needs to be blocking otherwise the decoder might get
+        disposed of too early.
+
+        Test: fast/images/animated-image-mp3-crash.html
+
+        * platform/graphics/gstreamer/ImageDecoderGStreamer.cpp:
+        (WebCore::ImageDecoderGStreamer::pushEncodedData):
+
 2020-10-05  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GTK][X11] WebProcess crash in WebCore::GLContextGLX::createPbufferContext() with NVidia proprietary drivers

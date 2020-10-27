@@ -394,7 +394,7 @@ void ImageDecoderGStreamer::pushEncodedData(const SharedBuffer& buffer)
         }
     }
     m_innerDecoder = nullptr;
-    callOnMainThread([this] {
+    callOnMainThreadAndWait([&] {
         if (m_encodedDataStatusChangedCallback)
             m_encodedDataStatusChangedCallback(encodedDataStatus());
     });
