@@ -55,6 +55,7 @@
 
 from __future__ import print_function
 
+import itertools
 import os
 import pickle
 import re
@@ -349,13 +350,84 @@ class BaseGenerator(object):
     # Utility for post-processing the initial .xcfilelist content. Used to
     # replace file path segments with the variables that represent those path
     # segments.
+    #
+    # The way we approach this gets a little involved. The straightforward
+    # approach would be to fetch the value (a file system path) of the given
+    # environment variable, and then replace that path with the variable name
+    # in each of the given lines if the particular line is prefixed with that
+    # path. So, for instance, converting:
+    #
+    #   /Volumes/Data/dev/webkit/OpenSource/WebKitBuild/Debug/DerivedSources/JavaScriptCore/ErrorPrototype.lut.h
+    #
+    # to:
+    #
+    #   $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/ErrorPrototype.lut.h
+    #
+    # However, there are issues with symlinks messing up that prefix matching.
+    # It's possible for the entries in "lines" to contain fully resolved paths,
+    # while the variable contains a path that has components that are symlinks.
+    # These symlinks need to be resolved before the prefix matching can be
+    # performed. That is, if BUILT_PRODUCTS_DIR contained
+    # "/Users/Me/webkit/OpenSource/WebKitBuild/Debug", we would need to first
+    # resolve that to "/Volumes/Data/dev/webkit/OpenSource/WebKitBuild/Debug"
+    # before trying to replace it in any lines that are prefixed with it.
+    #
+    # Further, it's not always the case that the entries in "lines" contain
+    # fully-resolved paths. For instance, some of them may refer to something
+    # like <framework>.PrivateHeaders, which may be a symlink in a non-shallow
+    # framework. If an incoming replacement value referred to that
+    # PrivateHeaders directory, after being resolved, it now refers to the
+    # versioned location (that is, <framework>/Versions/A/PrivateHeaders), and
+    # will no longer match a path expressed in terms of
+    # <framework>.PrivateHeaders. This means that each entry in "lines" also
+    # needs to be fully resolved.
+    #
+    # And, yet, there's still a wrinkle. Sometimes we *don't* want to expand
+    # the paths in "lines". An example of this occurs in DumpRenderTree, where
+    # we wanted to convert:
+    #
+    #   /Volumes/Data/dev/webkit/OpenSource/Tools/DumpRenderTree/../TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl
+    #
+    # to:
+    #
+    #   $(PROJECT_DIR)/../TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl
+    #
+    # If we merely resolved the path, it would have been turned into:
+    #
+    #   /Volumes/Data/dev/webkit/OpenSource/Tools/TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl
+    #
+    # and it would no longer have a prefix that matched $PROJECT_DIR. So we
+    # adopt an approach where we'll try both the raw and resolved paths in the
+    # given environment variable, and the raw and resolved paths in each of the
+    # entries in "lines".
 
     @util.LogEntryExit
     def _unexpand(self, lines, variable_name):
-        to_replace = self._getenv(variable_name)
-        if not to_replace:
+        prefix = self._getenv(variable_name)
+        if not prefix:
             return lines
-        return self._replace(lines, "^{}/".format(to_replace), "$({})/".format(variable_name))
+
+        def _expand_if_abs(path):
+            return os.path.realpath(path) if os.path.isabs(path) else path
+
+        def _variations(path):
+            def _gen(path):
+                yield path
+                yield _expand_if_abs(path)
+            return (x for x in _gen(path))
+
+        def _try_unexpand(prefix, line):
+            new_line = re.sub("^{}/".format(prefix), "$({})/".format(variable_name), line)
+            return new_line != line, new_line
+
+        def _do_unexpand(line):
+            for a_prefix, a_line in itertools.product(_variations(prefix), _variations(line)):
+                changed, new_line = _try_unexpand(a_prefix, a_line)
+                if changed:
+                    break
+            return new_line if changed else line
+
+        return set(_do_unexpand(line) for line in lines)
 
     # Given a source file with new .xcfilelist content and a dest file that
     # contains the original/previous .xcfilelist content (that is, likely the

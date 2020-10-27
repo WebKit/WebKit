@@ -1,3 +1,26 @@
+2020-10-27  Keith Rollin  <krollin@apple.com>
+
+        Update generate_xcfilelists to accommodate paths with symlinks
+        https://bugs.webkit.org/show_bug.cgi?id=218223
+        <rdar://problem/70709808>
+
+        Reviewed by Timothy Hatcher.
+
+        There are cases where file system paths are compared against each
+        other, and where the comparisons are failing because one or the other
+        (or both) make use of symlinks, causing paths that refer to the same
+        location to fail to compare correctly. Address this by resolving path
+        components that are symlinks.
+
+        * Scripts/webkitpy/generate_xcfilelists_lib/generators.py:
+        (BaseGenerator):
+        (BaseGenerator._unexpand):
+        (BaseGenerator._unexpand._expand_if_abs):
+        (BaseGenerator._unexpand._variations):
+        (BaseGenerator._unexpand._variations._gen):
+        (BaseGenerator._unexpand._try_unexpand):
+        (BaseGenerator._unexpand._do_unexpand):
+
 2020-10-27  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Don't disable MSE build support on Debian and Ubuntu LTS bots
