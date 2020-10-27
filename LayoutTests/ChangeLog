@@ -1,3 +1,12 @@
+2020-10-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Web Inspector: console command line API should be exposed to breakpoint conditions/actions
+        https://bugs.webkit.org/show_bug.cgi?id=218141
+
+        Unreviewed test gardening.
+
+        * inspector/timeline/line-column-expected.txt: Rebaseline the test after r269023.
+
 2020-10-27  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Unreviewed, GStreamer gardening
