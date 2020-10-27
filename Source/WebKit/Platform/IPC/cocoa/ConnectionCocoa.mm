@@ -394,12 +394,13 @@ void Connection::initializeSendSource()
         }
     });
 
-    ASSERT(MACH_PORT_VALID(m_sendPort));
-    mach_port_t sendPort = m_sendPort;
-    dispatch_source_set_cancel_handler(m_sendSource, ^{
-        // Release our send right.
-        deallocateSendRightSafely(sendPort);
-    });
+    if (MACH_PORT_VALID(m_sendPort)) {
+        mach_port_t sendPort = m_sendPort;
+        dispatch_source_set_cancel_handler(m_sendSource, ^{
+            // Release our send right.
+            deallocateSendRightSafely(sendPort);
+        });
+    }
 }
 
 void Connection::resumeSendSource()
