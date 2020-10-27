@@ -310,11 +310,14 @@ class ParsedResponseMessage {
 public:
     ParsedResponseMessage(const RefPtr<SharedBuffer>& buffer)
     {
-        if (!buffer)
+        if (!buffer || !buffer->size())
             return;
 
+        GST_DEBUG("parsing buffer of size %zu", buffer->size());
+        GST_MEMDUMP("buffer", buffer->dataAsUInt8Ptr(), buffer->size());
+
         StringView payload(reinterpret_cast<const LChar*>(buffer->data()), buffer->size());
-        StringView type(reinterpret_cast<const LChar*>(":Type:"), 6);
+        static NeverDestroyed<StringView> type(reinterpret_cast<const LChar*>(":Type:"), 6);
         size_t typePosition = payload.find(type, 0);
         StringView requestType(payload.characters8(), typePosition != notFound ? typePosition : 0);
         unsigned offset = 0u;
@@ -325,16 +328,22 @@ public:
             m_type = makeOptional(static_cast<WebCore::MediaKeyMessageType>(requestType.toInt()));
 
         m_payload = SharedBuffer::create(payload.characters8() + offset, payload.length() - offset);
+
+        m_isValid = true;
     }
 
+    bool isValid() const { return m_isValid; }
     bool hasPayload() const { return static_cast<bool>(m_payload); }
     const Ref<SharedBuffer>& payload() const& { ASSERT(m_payload); return m_payload.value(); }
     Ref<SharedBuffer>& payload() & { ASSERT(m_payload); return m_payload.value(); }
     bool hasType() const { return static_cast<bool>(m_type); }
     WebCore::MediaKeyMessageType type() const { ASSERT(m_type); return m_type.value(); }
     WebCore::MediaKeyMessageType typeOr(WebCore::MediaKeyMessageType alternate) const { return m_type ? m_type.value() : alternate; }
+    explicit operator bool() const { return m_isValid; }
+    bool operator!() const { return !m_isValid; }
 
 private:
+    bool m_isValid { false };
     Optional<Ref<SharedBuffer>> m_payload;
     Optional<WebCore::MediaKeyMessageType> m_type;
 };
@@ -342,10 +351,12 @@ private:
 void CDMInstanceSessionThunder::challengeGeneratedCallback(RefPtr<SharedBuffer>&& buffer)
 {
     ParsedResponseMessage parsedResponseMessage(buffer);
+    ASSERT(parsedResponseMessage);
 
     if (!m_challengeCallbacks.isEmpty()) {
         m_message = WTFMove(parsedResponseMessage.payload());
-        m_needsIndividualization = parsedResponseMessage.type() == CDMInstanceSession::MessageType::IndividualizationRequest;
+        m_needsIndividualization = parsedResponseMessage.hasType()
+            && parsedResponseMessage.type() == CDMInstanceSession::MessageType::IndividualizationRequest;
 
         for (const auto& challengeCallback : m_challengeCallbacks)
             challengeCallback();
@@ -528,6 +539,7 @@ void CDMInstanceSessionThunder::updateLicense(const String& sessionID, LicenseTy
                 // FIXME: Using JSON reponse messages is much cleaner than using string prefixes, I believe there
                 // will even be other parts of the spec where not having structured data will be bad.
                 ParsedResponseMessage parsedResponseMessage(responseMessage);
+                ASSERT(parsedResponseMessage);
                 if (parsedResponseMessage.hasPayload()) {
                     Ref<SharedBuffer> message = WTFMove(parsedResponseMessage.payload());
                     GST_DEBUG("got message of size %zu", message->size());
@@ -562,6 +574,7 @@ void CDMInstanceSessionThunder::loadSession(LicenseType, const String& sessionID
                 // FIXME: Using JSON reponse messages is much cleaner than using string prefixes, I believe there
                 // will even be other parts of the spec where not having structured data will be bad.
                 ParsedResponseMessage parsedResponseMessage(responseMessage);
+                ASSERT(parsedResponseMessage);
                 if (parsedResponseMessage.hasPayload()) {
                     Ref<SharedBuffer> message = WTFMove(parsedResponseMessage.payload());
                     GST_DEBUG("got message of size %zu", message->size());
@@ -608,6 +621,7 @@ void CDMInstanceSessionThunder::removeSessionData(const String& sessionID, Licen
                 callback(m_keyStore.allKeysAs(MediaKeyStatus::Released), WTF::nullopt, SuccessValue::Succeeded);
             else {
                 ParsedResponseMessage parsedResponseMessage(buffer);
+                ASSERT(parsedResponseMessage);
                 if (parsedResponseMessage.hasPayload()) {
                     Ref<SharedBuffer> message = WTFMove(parsedResponseMessage.payload());
                     GST_DEBUG("session %s removed, message length %zu", m_sessionID.utf8().data(), message->size());
