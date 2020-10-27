@@ -52,9 +52,6 @@ static unsigned long maximumNumberOfOutputChannels()
 {
     initializeDebugCategory();
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=217959
-    return 2;
-
     static int count = 0;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
