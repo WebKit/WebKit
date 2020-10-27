@@ -7,8 +7,13 @@ add_definitions(-DHAVE_CONFIG_H=1)
 
 option(USE_THIN_ARCHIVES "Produce all static libraries as thin archives" ON)
 if (USE_THIN_ARCHIVES)
-    execute_process(COMMAND ${CMAKE_AR} -V OUTPUT_VARIABLE AR_VERSION)
-    if ("${AR_VERSION}" MATCHES "^GNU ar")
+    execute_process(COMMAND ${CMAKE_AR} -V OUTPUT_VARIABLE AR_VERSION ERROR_VARIABLE AR_ERROR)
+    if ("${AR_ERROR}" MATCHES "^usage:")
+        # This `ar` doesn't understand "-V". Ignore the error and treat this as
+        # an unsupported `ar`. TODO: Determine BSD or Xcode equivalent.
+    elseif ("${AR_ERROR}")
+        message(WARNING "Error from `ar`: ${AR_ERROR}")
+    elseif ("${AR_VERSION}" MATCHES "^GNU ar")
         set(CMAKE_CXX_ARCHIVE_CREATE "<CMAKE_AR> crT <TARGET> <LINK_FLAGS> <OBJECTS>")
         set(CMAKE_C_ARCHIVE_CREATE "<CMAKE_AR> crT <TARGET> <LINK_FLAGS> <OBJECTS>")
         set(CMAKE_CXX_ARCHIVE_APPEND "<CMAKE_AR> rT <TARGET> <LINK_FLAGS> <OBJECTS>")

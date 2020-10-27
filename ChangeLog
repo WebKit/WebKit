@@ -1,3 +1,23 @@
+2020-10-27  Keith Rollin  <krollin@apple.com>
+
+        Fix "usage" message when invoking `ar -V`
+        https://bugs.webkit.org/show_bug.cgi?id=218255
+        <rdar://problem/70735674>
+
+        Reviewed by Fujii Hironori.
+
+        The Mac/BSD version of `ar` does not support the -V flag. This flag is
+        used unconditionally in OptionsCommon.cmake when trying to determine
+        if the installed `ar` supports the thinning of archives, leading to a
+        "usage" message being emitted on macOS.
+
+        Avoid this message by capturing the error-output. Examine the output
+        to see if it's a "usage" message. If so, then treat the `ar` as one
+        that does not support thinning. Any other error-output is printed as a
+        warning. If there is no error-output, continue processing as normal.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2020-10-27  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add ENABLE(INSPECTOR_EXTENSIONS) to feature defines
