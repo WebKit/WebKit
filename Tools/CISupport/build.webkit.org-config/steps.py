@@ -124,28 +124,28 @@ class KillOldProcesses(shell.Compile):
     name = "kill-old-processes"
     description = ["killing old processes"]
     descriptionDone = ["killed old processes"]
-    command = ["python", "./Tools/BuildSlaveSupport/kill-old-processes", "buildbot"]
+    command = ["python", "./Tools/CISupport/kill-old-processes", "buildbot"]
 
 
 class TriggerCrashLogSubmission(shell.Compile):
     name = "trigger-crash-log-submission"
     description = ["triggering crash log submission"]
     descriptionDone = ["triggered crash log submission"]
-    command = ["python", "./Tools/BuildSlaveSupport/trigger-crash-log-submission"]
+    command = ["python", "./Tools/CISupport/trigger-crash-log-submission"]
 
 
 class WaitForCrashCollection(shell.Compile):
     name = "wait-for-crash-collection"
     description = ["waiting for crash collection to quiesce"]
     descriptionDone = ["crash collection has quiesced"]
-    command = ["python", "./Tools/BuildSlaveSupport/wait-for-crash-collection", "--timeout", str(5 * 60)]
+    command = ["python", "./Tools/CISupport/wait-for-crash-collection", "--timeout", str(5 * 60)]
 
 
 class CleanBuildIfScheduled(shell.Compile):
     name = "delete-WebKitBuild-directory"
     description = ["deleting WebKitBuild directory"]
     descriptionDone = ["deleted WebKitBuild directory"]
-    command = ["python", "./Tools/BuildSlaveSupport/clean-build", WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
+    command = ["python", "./Tools/CISupport/clean-build", WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
 
     def start(self):
         if not self.getProperty('is_clean'):
@@ -158,7 +158,7 @@ class DeleteStaleBuildFiles(shell.Compile):
     name = "delete-stale-build-files"
     description = ["deleting stale build files"]
     descriptionDone = ["deleted stale build files"]
-    command = ["python", "./Tools/BuildSlaveSupport/delete-stale-build-files", WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
+    command = ["python", "./Tools/CISupport/delete-stale-build-files", WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
 
     def start(self):
         if self.getProperty('is_clean'):  # Nothing to be done if WebKitBuild had been removed.
@@ -274,7 +274,7 @@ class CompileJSCOnly(CompileWebKit):
 
 
 class ArchiveBuiltProduct(shell.ShellCommand):
-    command = ["python", "./Tools/BuildSlaveSupport/built-product-archive",
+    command = ["python", "./Tools/CISupport/built-product-archive",
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "archive"]
     name = "archive-built-product"
     description = ["archiving built product"]
@@ -283,7 +283,7 @@ class ArchiveBuiltProduct(shell.ShellCommand):
 
 
 class ArchiveMinifiedBuiltProduct(ArchiveBuiltProduct):
-    command = ["python", "./Tools/BuildSlaveSupport/built-product-archive",
+    command = ["python", "./Tools/CISupport/built-product-archive",
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "archive", "--minify"]
 
 
@@ -310,7 +310,7 @@ class GenerateMiniBrowserBundle(shell.ShellCommand):
 
 
 class ExtractBuiltProduct(shell.ShellCommand):
-    command = ["python", "./Tools/BuildSlaveSupport/built-product-archive",
+    command = ["python", "./Tools/CISupport/built-product-archive",
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "extract"]
     name = "extract-built-product"
     description = ["extracting built product"]
@@ -337,7 +337,7 @@ class UploadMinifiedBuiltProduct(UploadBuiltProduct):
 
 
 class DownloadBuiltProduct(shell.ShellCommand):
-    command = ["python", "./Tools/BuildSlaveSupport/download-built-product",
+    command = ["python", "./Tools/CISupport/download-built-product",
         WithProperties("--platform=%(platform)s"), WithProperties("--%(configuration)s"),
         WithProperties(S3URL + "archives.webkit.org/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(got_revision)s.zip")]
     name = "download-built-product"
@@ -563,7 +563,7 @@ class RunDashboardTests(RunWebKitTests):
     resultDirectory = os.path.join(RunWebKitTests.resultDirectory, "dashboard-layout-test-results")
 
     def start(self):
-        self.setCommand(self.command + ["--layout-tests-directory", "./Tools/BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests"])
+        self.setCommand(self.command + ["--layout-tests-directory", "./Tools/CISupport/build.webkit.org-config/public_html/dashboard/Scripts/tests"])
         return RunWebKitTests.start(self)
 
 
@@ -1002,7 +1002,7 @@ class RunBenchmarkTests(shell.Test):
 
 
 class ArchiveTestResults(shell.ShellCommand):
-    command = ["python", "./Tools/BuildSlaveSupport/test-result-archive",
+    command = ["python", "./Tools/CISupport/test-result-archive",
                WithProperties("--platform=%(platform)s"), WithProperties("--%(configuration)s"), "archive"]
     name = "archive-test-results"
     description = ["archiving test results"]

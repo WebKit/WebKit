@@ -255,9 +255,9 @@ class CheckPatchRelevance(buildstep.BuildStep):
     ]
 
     services_paths = [
-        'Tools/BuildSlaveSupport/build.webkit.org-config',
-        'Tools/BuildSlaveSupport/ews-build',
-        'Tools/BuildSlaveSupport/Shared',
+        'Tools/CISupport/build.webkit.org-config',
+        'Tools/CISupport/ews-build',
+        'Tools/CISupport/Shared',
         'Tools/Scripts/libraries/resultsdbpy',
     ]
 
@@ -1125,7 +1125,7 @@ class RunBuildWebKitOrgUnitTests(shell.ShellCommand):
     command = ['python', 'steps_unittest.py']
 
     def __init__(self, **kwargs):
-        shell.ShellCommand.__init__(self, workdir='build/Tools/BuildSlaveSupport/build.webkit.org-config', timeout=2 * 60, logEnviron=False, **kwargs)
+        shell.ShellCommand.__init__(self, workdir='build/Tools/CISupport/build.webkit.org-config', timeout=2 * 60, logEnviron=False, **kwargs)
 
     def getResultSummary(self):
         if self.results == SUCCESS:
@@ -1136,7 +1136,7 @@ class RunBuildWebKitOrgUnitTests(shell.ShellCommand):
 class RunEWSUnitTests(shell.ShellCommand):
     name = 'ews-unit-tests'
     description = ['ews-unit-tests running']
-    command = ['python', 'Tools/BuildSlaveSupport/ews-build/runUnittests.py']
+    command = ['python', 'Tools/CISupport/ews-build/runUnittests.py']
 
     def __init__(self, **kwargs):
         super(RunEWSUnitTests, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
@@ -1153,7 +1153,7 @@ class RunEWSBuildbotCheckConfig(shell.ShellCommand):
     command = ['buildbot', 'checkconfig']
 
     def __init__(self, **kwargs):
-        super(RunEWSBuildbotCheckConfig, self).__init__(workdir='build/Tools/BuildSlaveSupport/ews-build', timeout=2 * 60, logEnviron=False, **kwargs)
+        super(RunEWSBuildbotCheckConfig, self).__init__(workdir='build/Tools/CISupport/ews-build', timeout=2 * 60, logEnviron=False, **kwargs)
 
     def getResultSummary(self):
         if self.results == SUCCESS:
@@ -1824,14 +1824,14 @@ class CleanBuild(shell.Compile):
     name = 'delete-WebKitBuild-directory'
     description = ['deleting WebKitBuild directory']
     descriptionDone = ['Deleted WebKitBuild directory']
-    command = ['python', 'Tools/BuildSlaveSupport/clean-build', WithProperties('--platform=%(fullPlatform)s'), WithProperties('--%(configuration)s')]
+    command = ['python', 'Tools/CISupport/clean-build', WithProperties('--platform=%(fullPlatform)s'), WithProperties('--%(configuration)s')]
 
 
 class KillOldProcesses(shell.Compile):
     name = 'kill-old-processes'
     description = ['killing old processes']
     descriptionDone = ['Killed old processes']
-    command = ['python', 'Tools/BuildSlaveSupport/kill-old-processes', 'buildbot']
+    command = ['python', 'Tools/CISupport/kill-old-processes', 'buildbot']
 
     def __init__(self, **kwargs):
         super(KillOldProcesses, self).__init__(timeout=60, logEnviron=False, **kwargs)
@@ -1851,7 +1851,7 @@ class TriggerCrashLogSubmission(shell.Compile):
     name = 'trigger-crash-log-submission'
     description = ['triggering crash log submission']
     descriptionDone = ['Triggered crash log submission']
-    command = ['python', 'Tools/BuildSlaveSupport/trigger-crash-log-submission']
+    command = ['python', 'Tools/CISupport/trigger-crash-log-submission']
 
     def __init__(self, **kwargs):
         super(TriggerCrashLogSubmission, self).__init__(timeout=60, logEnviron=False, **kwargs)
@@ -1866,7 +1866,7 @@ class WaitForCrashCollection(shell.Compile):
     name = 'wait-for-crash-collection'
     description = ['waiting-for-crash-collection-to-quiesce']
     descriptionDone = ['Crash collection has quiesced']
-    command = ['python', 'Tools/BuildSlaveSupport/wait-for-crash-collection', '--timeout', str(5 * 60)]
+    command = ['python', 'Tools/CISupport/wait-for-crash-collection', '--timeout', str(5 * 60)]
 
     def __init__(self, **kwargs):
         super(WaitForCrashCollection, self).__init__(timeout=6 * 60, logEnviron=False, **kwargs)
@@ -2339,7 +2339,7 @@ class RunWebKit1Tests(RunWebKitTests):
 
 
 class ArchiveBuiltProduct(shell.ShellCommand):
-    command = ['python', 'Tools/BuildSlaveSupport/built-product-archive',
+    command = ['python', 'Tools/CISupport/built-product-archive',
                WithProperties('--platform=%(fullPlatform)s'), WithProperties('--%(configuration)s'), 'archive']
     name = 'archive-built-product'
     description = ['archiving built product']
@@ -2414,7 +2414,7 @@ class TransferToS3(master.MasterShellCommand):
 
 
 class DownloadBuiltProduct(shell.ShellCommand):
-    command = ['python', 'Tools/BuildSlaveSupport/download-built-product',
+    command = ['python', 'Tools/CISupport/download-built-product',
         WithProperties('--%(configuration)s'),
         WithProperties(S3URL + 'ews-archives.webkit.org/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')]
     name = 'download-built-product'
@@ -2438,7 +2438,7 @@ class DownloadBuiltProduct(shell.ShellCommand):
 
 
 class DownloadBuiltProductFromMaster(DownloadBuiltProduct):
-    command = ['python', 'Tools/BuildSlaveSupport/download-built-product',
+    command = ['python', 'Tools/CISupport/download-built-product',
         WithProperties('--%(configuration)s'),
         WithProperties(EWS_BUILD_URL + 'archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')]
     haltOnFailure = True
@@ -2454,7 +2454,7 @@ class DownloadBuiltProductFromMaster(DownloadBuiltProduct):
 
 
 class ExtractBuiltProduct(shell.ShellCommand):
-    command = ['python', 'Tools/BuildSlaveSupport/built-product-archive',
+    command = ['python', 'Tools/CISupport/built-product-archive',
                WithProperties('--platform=%(fullPlatform)s'), WithProperties('--%(configuration)s'), 'extract']
     name = 'extract-built-product'
     description = ['extracting built product']
@@ -2696,7 +2696,7 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
             print('Error in sending email for pre-existing failure: {}'.format(e))
 
 class ArchiveTestResults(shell.ShellCommand):
-    command = ['python', 'Tools/BuildSlaveSupport/test-result-archive',
+    command = ['python', 'Tools/CISupport/test-result-archive',
                Interpolate('--platform=%(prop:platform)s'), Interpolate('--%(prop:configuration)s'), 'archive']
     name = 'archive-test-results'
     description = ['archiving test results']

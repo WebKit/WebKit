@@ -65,7 +65,7 @@ class ShouldBuildTest(unittest.TestCase):
         (["Source/WebCore/accessibility/ios/AXObjectCacheIOS.mm"], ["ios-14", "ios-simulator-14", "tvos-14", "tvos-simulator-14", "watchos-7", "watchos-simulator-7"]),
         (["Source/WebCore/rendering/RenderThemeMac.mm", "Source/WebCore/rendering/RenderThemeMac.h"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave"]),
         (["Source/WebCore/rendering/RenderThemeIOS.mm", "Source/WebCore/rendering/RenderThemeIOS.h"], ["ios-14", "ios-simulator-14", "tvos-14", "tvos-simulator-14", "watchos-7", "watchos-simulator-7"]),
-        (["Tools/BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksViewer.js"], []),
+        (["Tools/CISupport/build.webkit.org-config/public_html/LeaksViewer/LeaksViewer.js"], []),
     ]
 
     def test_should_build(self):

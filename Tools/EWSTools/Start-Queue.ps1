@@ -99,5 +99,5 @@ while ($true) {
 
     perl ./Tools/Scripts/update-webkit;
     python ./Tools/Scripts/webkit-patch $queue --bot-id=$name --no-confirm --exit-after-iteration $iterations;
-    python /Tools/BuildSlaveSupport/kill-old-processes
+    python /Tools/CISupport/kill-old-processes
 }

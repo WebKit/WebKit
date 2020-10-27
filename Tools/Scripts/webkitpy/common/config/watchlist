@@ -33,8 +33,8 @@
         "WebIDL": {
             "filename": r"Source/WebCore/(?!inspector)(?!testing).*\.idl"
         },
-        "BuildSlaveSupport": {
-            "filename": r"Tools/BuildSlaveSupport/",
+        "CISupport": {
+            "filename": r"Tools/CISupport/",
         },
         "webkitpy": {
             "filename": r"Tools/Scripts/webkitpy/",
@@ -412,7 +412,7 @@
         "Animation" : [ "simon.fraser@apple.com", "dino@apple.com", "dstockwell@chromium.org" ],
         "MotionMark" : [ "sabouhallawa@apple.com" ],
         "BindingsScripts": [ "cdumez@apple.com" ],
-        "BuildSlaveSupport": [ "aakash_jain@apple.com" ],
+        "CISupport": [ "aakash_jain@apple.com" ],
         "CMake": [ "gyuyoung.kim@webkit.org", "ryuan.choi@navercorp.com", "sergio@correia.cc", "annulen@yandex.ru" ],
         "CoordinatedGraphics" : [ "noam@webkit.org", "zeno@webkit.org", "cmarcelo@webkit.org", "luiz@webkit.org", "ryuan.choi@navercorp.com", "sergio@correia.cc", "gyuyoung.kim@webkit.org" ],
         "ConsoleUsage" : [ "mkwst@chromium.org" ],

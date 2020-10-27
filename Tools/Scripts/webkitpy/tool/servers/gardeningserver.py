@@ -69,7 +69,7 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
         '..',
         '..',
         '..',
-        'BuildSlaveSupport',
+        'CISupport',
         'build.webkit.org-config',
         'public_html',
         'TestFailures')

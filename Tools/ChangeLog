@@ -1,3 +1,28 @@
+2020-10-27  Aakash Jain  <aakash_jain@apple.com>
+
+        Rename BuildSlaveSupport to CISupport
+        https://bugs.webkit.org/show_bug.cgi?id=218026
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport: Copied from Tools/BuildSlaveSupport.
+        * CISupport/build.webkit.org-config/public_html/TestFailures/scripts/builders_unittests.js:
+        * CISupport/build.webkit.org-config/steps.py:
+        * CISupport/build.webkit.org-config/wkbuild.py:
+        * CISupport/build.webkit.org-config/wkbuild_unittest.py:
+        * CISupport/ews-app/ews/views/statusbubble.py:
+        * CISupport/ews-build/steps.py:
+        * CISupport/ews-build/steps_unittest.py:
+        * BuildSlaveSupport: Replaced.
+        * EWSTools/Start-Queue.ps1:
+        * Scripts/bisect-builds:
+        * Scripts/run-dashboard-tests:
+        * Scripts/webkitpy/common/config/watchlist:
+        * Scripts/webkitpy/layout_tests/views/buildbot_results.py:
+        * Scripts/webkitpy/style/checker_unittest.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        * .gitattributes:
+
 2020-10-27  Sam Weinig  <weinig@apple.com>
 
         Rename WKPreferencesSet*ValueForKey SPI to WKPreferencesSet*ValueForKeyForTesting
