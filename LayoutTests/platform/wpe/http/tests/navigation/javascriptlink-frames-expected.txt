@@ -16,8 +16,8 @@ layer at (0,0) size 800x600
                   text run at (333,37) width 416: "It includes a form so that we can"
                   text run at (0,74) width 717: "test saving and restoring of form data, and it needs to be"
                   text run at (0,111) width 745: "long enough that we can test saving and restoring of scroll"
-                  text run at (0,148) width 119: "position. "
-                RenderBR {BR} at (119,148) size 0x36
+                  text run at (0,148) width 111: "position."
+                RenderBR {BR} at (111,148) size 0x36
                 RenderBR {BR} at (0,185) size 0x36
                 RenderBR {BR} at (0,222) size 0x36
               RenderBlock {HR} at (0,275) size 769x2 [border: (1px inset #000000)]

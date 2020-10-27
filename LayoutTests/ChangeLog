@@ -1,3 +1,36 @@
+2020-10-27  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Rebaseline tests after r269044 and r269036
+        https://bugs.webkit.org/show_bug.cgi?id=218151
+
+        Unreviewed gardening.
+
+        * platform/gtk/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/gtk/fast/forms/option-index-expected.txt:
+        * platform/gtk/fast/text/basic/generic-family-reset-expected.txt:
+        * platform/gtk/fast/xsl/xslt-enc-cyr-expected.txt:
+        * platform/gtk/fast/xsl/xslt-enc-expected.txt:
+        * platform/gtk/fast/xsl/xslt-enc16-expected.txt:
+        * platform/gtk/fast/xsl/xslt-enc16to16-expected.txt:
+        * platform/gtk/http/tests/navigation/postredirect-basic-expected.txt:
+        * platform/gtk/http/tests/navigation/postredirect-goback1-expected.txt:
+        * platform/gtk/inspector/timeline/line-column-expected.txt:
+        * platform/gtk/svg/wicd/test-rightsizing-b-expected.txt:
+        * platform/wpe/fast/css/text-overflow-ellipsis-bidi-expected.txt:
+        * platform/wpe/fast/css/text-overflow-ellipsis-strict-expected.txt:
+        * platform/wpe/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/wpe/fast/text/basic/generic-family-reset-expected.txt:
+        * platform/wpe/fast/xsl/xslt-enc-cyr-expected.txt:
+        * platform/wpe/fast/xsl/xslt-enc-expected.txt:
+        * platform/wpe/fast/xsl/xslt-enc16-expected.txt:
+        * platform/wpe/fast/xsl/xslt-enc16to16-expected.txt:
+        * platform/wpe/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/wpe/http/tests/navigation/postredirect-basic-expected.txt:
+        * platform/wpe/http/tests/navigation/postredirect-goback1-expected.txt:
+        * platform/wpe/svg/text/text-overflow-ellipsis-svgfont-expected.txt:
+        * platform/wpe/svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures-expected.txt:
+        * platform/wpe/svg/wicd/test-rightsizing-b-expected.txt:
+
 2020-10-27  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess] Use async IPC for RemoteAudioDestinationManager's StartAudioDestination / StopAudioDestination
