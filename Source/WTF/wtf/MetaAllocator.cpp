@@ -211,7 +211,7 @@ MetaAllocator::FreeSpacePtr MetaAllocator::findAndRemoveFreeSpace(size_t sizeInB
         return nullptr;
     
     size_t nodeSizeInBytes = node->sizeInBytes();
-    ASSERT(nodeSizeInBytes >= sizeInBytes);
+    RELEASE_ASSERT(nodeSizeInBytes >= sizeInBytes);
 
     m_freeSpaceSizeMap.remove(node);
 
@@ -246,6 +246,7 @@ MetaAllocator::FreeSpacePtr MetaAllocator::findAndRemoveFreeSpace(size_t sizeInB
             m_freeSpaceStartAddressMap.remove(node->m_start);
 
             node->m_start += sizeInBytes;
+            RELEASE_ASSERT(nodeStartAsInt < node->m_start.untaggedPtr<uintptr_t>() && node->m_start.untaggedPtr<uintptr_t>() < node->m_end.untaggedPtr<uintptr_t>());
 
             m_freeSpaceSizeMap.insert(node);
             m_freeSpaceStartAddressMap.add(node->m_start, node);
