@@ -72,6 +72,44 @@ uint64_t RemoteRenderingBackend::messageSenderDestinationID() const
     return m_renderingBackendIdentifier.toUInt64();
 }
 
+bool RemoteRenderingBackend::applyResourceItem(const DisplayList::Item& item, GraphicsContext& context)
+{
+    if (item.type() == DisplayList::ItemType::DrawImageBuffer) {
+        auto& drawItem = static_cast<const DisplayList::DrawImageBuffer&>(item);
+        auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(drawItem.renderingResourceIdentifier());
+        if (!imageBuffer)
+            return false;
+
+        imageBuffer->draw(context, drawItem.destinationRect(), drawItem.source(), drawItem.options());
+        return true;
+    }
+
+    return false;
+}
+
+bool RemoteRenderingBackend::applyMediaItem(const DisplayList::Item& item, GraphicsContext& context)
+{
+    if (item.type() != WebCore::DisplayList::ItemType::PaintFrameForMedia)
+        return false;
+
+    auto& mediaItem = static_cast<const DisplayList::PaintFrameForMedia&>(item);
+
+    auto process = gpuConnectionToWebProcess();
+    if (!process)
+        return false;
+
+    auto playerProxy = process->remoteMediaPlayerManagerProxy().getProxy(mediaItem.identifier());
+    if (!playerProxy)
+        return false;
+
+    auto player = playerProxy->mediaPlayer();
+    if (!player)
+        return false;
+
+    context.paintFrameForMedia(*player, mediaItem.destination());
+    return true;
+}
+
 void RemoteRenderingBackend::imageBufferBackendWasCreated(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, ImageBufferBackendHandle handle, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     send(Messages::RemoteRenderingBackendProxy::ImageBufferBackendWasCreated(logicalSize, backendSize, resolutionScale, colorSpace, WTFMove(handle), renderingResourceIdentifier), m_renderingBackendIdentifier);

@@ -64,6 +64,7 @@ enum class ItemType : uint8_t {
     DrawImage,
     DrawTiledImage,
     DrawTiledScaledImage,
+    DrawImageBuffer,
     DrawNativeImage,
     DrawPattern,
     DrawRect,

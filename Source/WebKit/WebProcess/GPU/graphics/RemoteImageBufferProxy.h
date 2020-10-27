@@ -145,6 +145,7 @@ protected:
 
         TraceScope tracingScope(FlushRemoteImageBufferStart, FlushRemoteImageBufferEnd, 1);
         m_sentFlushIdentifier = m_remoteRenderingBackendProxy->flushDisplayListAndCommit(displayList, m_renderingResourceIdentifier);
+        m_remoteRenderingBackendProxy->remoteResourceCacheProxy().unlockRemoteResourcesForRemoteClient(m_renderingResourceIdentifier);
         displayList.clear();
     }
 
@@ -155,6 +156,14 @@ protected:
 
         TraceScope tracingScope(FlushRemoteImageBufferStart, FlushRemoteImageBufferEnd);
         m_remoteRenderingBackendProxy->flushDisplayList(displayList, m_renderingResourceIdentifier);
+        m_remoteRenderingBackendProxy->remoteResourceCacheProxy().unlockRemoteResourcesForRemoteClient(m_renderingResourceIdentifier);
+    }
+
+    bool lockRemoteImageBuffer(WebCore::ImageBuffer& imageBuffer) override
+    {
+        if (!m_remoteRenderingBackendProxy)
+            return false;
+        return m_remoteRenderingBackendProxy->remoteResourceCacheProxy().lockRemoteImageBufferForRemoteClient(imageBuffer, m_renderingResourceIdentifier);
     }
 
     void willAppendItem(const WebCore::DisplayList::Item&) override

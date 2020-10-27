@@ -78,31 +78,12 @@ private:
             return true;
         }
 
-        if (item.type() == WebCore::DisplayList::ItemType::PaintFrameForMedia) {
-            apply(static_cast<WebCore::DisplayList::PaintFrameForMedia&>(item), context);
+        if (m_remoteRenderingBackend.applyResourceItem(item, context))
             return true;
-        }
 
-        return false;
+        return m_remoteRenderingBackend.applyMediaItem(item, context);
     }
 
-    void apply(WebCore::DisplayList::PaintFrameForMedia& item, WebCore::GraphicsContext& context)
-    {
-        auto process = m_remoteRenderingBackend.gpuConnectionToWebProcess();
-        if (!process)
-            return;
-
-        auto playerProxy = process->remoteMediaPlayerManagerProxy().getProxy(item.identifier());
-        if (!playerProxy)
-            return;
-
-        auto player = playerProxy->mediaPlayer();
-        if (!player)
-            return;
-
-        context.paintFrameForMedia(*player, item.destination());
-    }
-    
     RemoteRenderingBackend& m_remoteRenderingBackend;
 };
 

@@ -110,6 +110,8 @@ size_t Item::sizeInBytes(const Item& item)
         return sizeof(downcast<DrawTiledImage>(item));
     case ItemType::DrawTiledScaledImage:
         return sizeof(downcast<DrawTiledScaledImage>(item));
+    case ItemType::DrawImageBuffer:
+        return sizeof(downcast<DrawImageBuffer>(item));
     case ItemType::DrawNativeImage:
         return sizeof(downcast<DrawNativeImage>(item));
     case ItemType::DrawPattern:
@@ -735,6 +737,32 @@ static TextStream& operator<<(TextStream& ts, const DrawTiledScaledImage& item)
     ts.dumpProperty("image", item.image());
     ts.dumpProperty("source-rect", item.source());
     ts.dumpProperty("dest-rect", item.destination());
+    return ts;
+}
+
+DrawImageBuffer::DrawImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+    : DrawingItem(ItemType::DrawImageBuffer)
+    , m_renderingResourceIdentifier(renderingResourceIdentifier)
+    , m_destinationRect(destRect)
+    , m_srcRect(srcRect)
+    , m_options(options)
+{
+}
+
+DrawImageBuffer::~DrawImageBuffer() = default;
+
+void DrawImageBuffer::apply(GraphicsContext&) const
+{
+    // Should be handled by the delegate.
+    ASSERT_NOT_REACHED();
+}
+
+static TextStream& operator<<(TextStream& ts, const DrawImageBuffer& item)
+{
+    ts << static_cast<const DrawingItem&>(item);
+    ts.dumpProperty("remote-resource-identifier", item.renderingResourceIdentifier());
+    ts.dumpProperty("source-rect", item.source());
+    ts.dumpProperty("dest-rect", item.destinationRect());
     return ts;
 }
 
@@ -1496,6 +1524,7 @@ static TextStream& operator<<(TextStream& ts, const ItemType& type)
     case ItemType::DrawImage: ts << "draw-image"; break;
     case ItemType::DrawTiledImage: ts << "draw-tiled-image"; break;
     case ItemType::DrawTiledScaledImage: ts << "draw-tiled-scaled-image"; break;
+    case ItemType::DrawImageBuffer: ts << "draw-image-buffer"; break;
     case ItemType::DrawNativeImage: ts << "draw-native-image"; break;
     case ItemType::DrawPattern: ts << "draw-pattern"; break;
     case ItemType::DrawRect: ts << "draw-rect"; break;
@@ -1601,6 +1630,9 @@ TextStream& operator<<(TextStream& ts, const Item& item)
         break;
     case ItemType::DrawTiledScaledImage:
         ts << downcast<DrawTiledScaledImage>(item);
+        break;
+    case ItemType::DrawImageBuffer:
+        ts << downcast<DrawImageBuffer>(item);
         break;
     case ItemType::DrawNativeImage:
         ts << downcast<DrawNativeImage>(item);

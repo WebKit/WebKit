@@ -30,6 +30,7 @@
 #include "DisplayListDrawingContext.h"
 #include "DisplayListItems.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include "Logging.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
@@ -164,6 +165,15 @@ ImageDrawResult Recorder::drawTiledImage(Image& image, const FloatRect& destinat
 {
     appendItemAndUpdateExtent(DrawTiledScaledImage::create(image, destination, source, tileScaleFactor, hRule, vRule, imagePaintingOptions));
     return ImageDrawResult::DidRecord;
+}
+
+bool Recorder::drawImageBuffer(WebCore::ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+{
+    if (!m_delegate || !m_delegate->lockRemoteImageBuffer(imageBuffer))
+        return false;
+
+    appendItemAndUpdateExtent(DrawImageBuffer::create(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options));
+    return true;
 }
 
 void Recorder::drawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)

@@ -42,6 +42,7 @@
 namespace WebCore {
 namespace DisplayList {
 class DisplayList;
+class Item;
 }
 class FloatSize;
 enum class ColorSpace : uint8_t;
@@ -60,6 +61,10 @@ public:
     virtual ~RemoteRenderingBackend();
 
     GPUConnectionToWebProcess* gpuConnectionToWebProcess() const;
+
+    // Rendering operations.
+    bool applyResourceItem(const WebCore::DisplayList::Item&, WebCore::GraphicsContext&);
+    bool applyMediaItem(const WebCore::DisplayList::Item&, WebCore::GraphicsContext&);
 
     // Messages to be sent.
     void imageBufferBackendWasCreated(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle, WebCore::RenderingResourceIdentifier);

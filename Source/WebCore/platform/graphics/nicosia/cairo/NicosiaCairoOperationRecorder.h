@@ -67,6 +67,8 @@ private:
     WebCore::ImageDrawResult drawImage(WebCore::Image&, const WebCore::FloatRect&, const WebCore::FloatRect&, const WebCore::ImagePaintingOptions&) override;
     WebCore::ImageDrawResult drawTiledImage(WebCore::Image&, const WebCore::FloatRect&, const WebCore::FloatPoint&, const WebCore::FloatSize&, const WebCore::FloatSize&, const WebCore::ImagePaintingOptions&) override;
     WebCore::ImageDrawResult drawTiledImage(WebCore::Image&, const WebCore::FloatRect&, const WebCore::FloatRect&, const WebCore::FloatSize&, WebCore::Image::TileRule, WebCore::Image::TileRule, const WebCore::ImagePaintingOptions&) override;
+
+    bool drawImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect& destination, const WebCore::FloatRect& source, const WebCore::ImagePaintingOptions&) override;
     void drawNativeImage(const WebCore::NativeImagePtr&, const WebCore::FloatSize&, const WebCore::FloatRect&, const WebCore::FloatRect&, const WebCore::ImagePaintingOptions&) override;
     void drawPattern(WebCore::Image&, const WebCore::FloatRect&, const WebCore::FloatRect&, const WebCore::AffineTransform&, const WebCore::FloatPoint&, const WebCore::FloatSize&, const WebCore::ImagePaintingOptions&) override;
 

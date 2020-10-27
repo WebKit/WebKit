@@ -37,7 +37,7 @@ void RemoteResourceCache::cacheImageBuffer(RenderingResourceIdentifier rendering
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
-WebCore::ImageBuffer* RemoteResourceCache::cachedImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
+ImageBuffer* RemoteResourceCache::cachedImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
 {
     return m_imageBuffers.get(renderingResourceIdentifier);
 }

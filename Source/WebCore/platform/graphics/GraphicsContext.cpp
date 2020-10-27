@@ -812,6 +812,9 @@ void GraphicsContext::drawImageBuffer(ImageBuffer& image, const FloatRect& desti
     if (paintingDisabled())
         return;
 
+    if (m_impl && m_impl->drawImageBuffer(image, destination, source, options))
+        return;
+
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, options.interpolationQuality());
     image.draw(*this, destination, source, options);
 }
@@ -836,7 +839,10 @@ void GraphicsContext::drawConsumingImageBuffer(std::unique_ptr<ImageBuffer> imag
 {
     if (paintingDisabled() || !image)
         return;
-    
+
+    if (m_impl && m_impl->drawImageBuffer(*image, destination, source, options))
+        return;
+
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, options.interpolationQuality());
     ImageBuffer::drawConsuming(WTFMove(image), *this, destination, source, options);
 }

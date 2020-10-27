@@ -46,10 +46,20 @@ public:
     WebCore::ImageBuffer* cachedImageBuffer(WebCore::RenderingResourceIdentifier);
     void releaseImageBuffer(WebCore::RenderingResourceIdentifier);
 
+    bool lockRemoteImageBufferForRemoteClient(WebCore::ImageBuffer&, WebCore::RenderingResourceIdentifier remoteClientIdentifier);
+    void unlockRemoteResourcesForRemoteClient(WebCore::RenderingResourceIdentifier remoteClientIdentifier);
+
 private:
+    using RemoteClientsHashSet = HashSet<WebCore::RenderingResourceIdentifier>;
+    using RemoteResourceClientsHashMap = HashMap<WebCore::RenderingResourceIdentifier, RemoteClientsHashSet>;
     using RemoteImageBufferProxyHashMap = HashMap<WebCore::RenderingResourceIdentifier, WebCore::ImageBuffer*>;
-    
+
+    void lockRemoteResourceForRemoteClient(WebCore::RenderingResourceIdentifier, WebCore::RenderingResourceIdentifier remoteClientIdentifier);
+    void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
+
     RemoteImageBufferProxyHashMap m_imageBuffers;
+    RemoteResourceClientsHashMap m_lockedRemoteResourceForRemoteClients;
+    RemoteResourceClientsHashMap m_pendingUnlockRemoteResourceForRemoteClients;
     RemoteRenderingBackendProxy& m_remoteRenderingBackendProxy;
 };
 

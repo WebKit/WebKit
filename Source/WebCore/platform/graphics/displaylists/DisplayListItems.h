@@ -35,6 +35,7 @@
 #include "ImageData.h"
 #include "MediaPlayerIdentifier.h"
 #include "Pattern.h"
+#include "RenderingResourceIdentifier.h"
 #include "SharedBuffer.h"
 #include <wtf/TypeCasts.h>
 
@@ -1531,6 +1532,71 @@ Optional<Ref<DrawTiledScaledImage>> DrawTiledScaledImage::decode(Decoder& decode
         return WTF::nullopt;
 
     return DrawTiledScaledImage::create(*imageHandle->image, *destination, *source, *tileScaleFactor, hRule, vRule, *imagePaintingOptions);
+}
+
+class DrawImageBuffer : public DrawingItem {
+public:
+    static Ref<DrawImageBuffer> create(RenderingResourceIdentifier renderingResourceIdentifier, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& options)
+    {
+        return adoptRef(*new DrawImageBuffer(renderingResourceIdentifier, destination, source, options));
+    }
+
+    WEBCORE_EXPORT virtual ~DrawImageBuffer();
+
+    RenderingResourceIdentifier renderingResourceIdentifier() const { return m_renderingResourceIdentifier; }
+    FloatRect source() const { return m_srcRect; }
+    FloatRect destinationRect() const { return m_destinationRect; }
+    ImagePaintingOptions options() const { return m_options; }
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<DrawImageBuffer>> decode(Decoder&);
+
+private:
+    WEBCORE_EXPORT DrawImageBuffer(RenderingResourceIdentifier, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&);
+
+    void apply(GraphicsContext&) const override;
+
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_destinationRect; }
+
+    RenderingResourceIdentifier m_renderingResourceIdentifier;
+    FloatRect m_destinationRect;
+    FloatRect m_srcRect;
+    ImagePaintingOptions m_options;
+};
+
+template<class Encoder>
+void DrawImageBuffer::encode(Encoder& encoder) const
+{
+    encoder << m_renderingResourceIdentifier;
+    encoder << m_destinationRect;
+    encoder << m_srcRect;
+    encoder << m_options;
+}
+
+template<class Decoder>
+Optional<Ref<DrawImageBuffer>> DrawImageBuffer::decode(Decoder& decoder)
+{
+    Optional<RenderingResourceIdentifier> renderingResourceIdentifier;
+    decoder >> renderingResourceIdentifier;
+    if (!renderingResourceIdentifier)
+        return WTF::nullopt;
+
+    Optional<FloatRect> destination;
+    decoder >> destination;
+    if (!destination)
+        return WTF::nullopt;
+
+    Optional<FloatRect> source;
+    decoder >> source;
+    if (!source)
+        return WTF::nullopt;
+
+    Optional<ImagePaintingOptions> options;
+    decoder >> options;
+    if (!options)
+        return WTF::nullopt;
+
+    return DrawImageBuffer::create(*renderingResourceIdentifier, *destination, *source, *options);
 }
 
 class DrawNativeImage : public DrawingItem {
@@ -3066,6 +3132,9 @@ void Item::encode(Encoder& encoder) const
     case ItemType::DrawTiledScaledImage:
         encoder << downcast<DrawTiledScaledImage>(*this);
         break;
+    case ItemType::DrawImageBuffer:
+        encoder << downcast<DrawImageBuffer>(*this);
+        break;
     case ItemType::DrawNativeImage:
         encoder << downcast<DrawNativeImage>(*this);
         break;
@@ -3263,6 +3332,10 @@ Optional<Ref<Item>> Item::decode(Decoder& decoder)
         if (auto item = DrawTiledScaledImage::decode(decoder))
             return static_reference_cast<Item>(WTFMove(*item));
         break;
+    case ItemType::DrawImageBuffer:
+        if (auto item = DrawImageBuffer::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
     case ItemType::DrawNativeImage:
         if (auto item = DrawNativeImage::decode(decoder))
             return static_reference_cast<Item>(WTFMove(*item));
@@ -3425,6 +3498,7 @@ SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawGlyphs)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawImage)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawTiledImage)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawTiledScaledImage)
+SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawImageBuffer)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawNativeImage)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawPattern)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawRect)
@@ -3487,6 +3561,7 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::DrawImage,
     WebCore::DisplayList::ItemType::DrawTiledImage,
     WebCore::DisplayList::ItemType::DrawTiledScaledImage,
+    WebCore::DisplayList::ItemType::DrawImageBuffer,
     WebCore::DisplayList::ItemType::DrawNativeImage,
     WebCore::DisplayList::ItemType::DrawPattern,
     WebCore::DisplayList::ItemType::DrawRect,
