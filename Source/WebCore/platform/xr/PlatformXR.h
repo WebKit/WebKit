@@ -75,7 +75,8 @@ class Instance {
 public:
     static Instance& singleton();
 
-    void enumerateImmersiveXRDevices(CompletionHandler<void(const Vector<std::unique_ptr<Device>>&)>&&);
+    using DeviceList = Vector<UniqueRef<Device>>;
+    void enumerateImmersiveXRDevices(CompletionHandler<void(const DeviceList&)>&&);
 
 private:
     friend LazyNeverDestroyed<Instance>;
@@ -85,7 +86,7 @@ private:
     struct Impl;
     UniqueRef<Impl> m_impl;
 
-    Vector<std::unique_ptr<Device>> m_immersiveXRDevices;
+    DeviceList m_immersiveXRDevices;
 };
 
 #endif // ENABLE(WEBXR)

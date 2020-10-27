@@ -26,6 +26,7 @@
 
 #if USE_OPENXR
 #include <openxr/openxr.h>
+#include <wtf/WorkQueue.h>
 
 namespace PlatformXR {
 
@@ -43,8 +44,9 @@ namespace PlatformXR {
 // the XRSystem is basically the entry point for the WebXR API available via the Navigator object.
 class OpenXRDevice final : public Device {
 public:
-    OpenXRDevice(XrSystemId, XrInstance);
+    OpenXRDevice(XrSystemId, XrInstance, WorkQueue&, CompletionHandler<void()>&&);
     XrSystemId xrSystemId() const { return m_systemId; }
+
 private:
     void collectSupportedSessionModes();
     void collectConfigurationViews();
@@ -61,6 +63,8 @@ private:
     XrSystemId m_systemId;
     XrInstance m_instance;
     XrSession m_session;
+
+    WorkQueue& m_queue;
 };
 
 } // namespace PlatformXR

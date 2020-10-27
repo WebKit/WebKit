@@ -88,20 +88,22 @@ void WebXRSystem::ensureImmersiveXRDeviceIsSelected(CompletionHandler<void()>&& 
     platformXR.enumerateImmersiveXRDevices([this, protectedThis = makeRef(*this), isFirstXRDevicesEnumeration, callback = WTFMove(callback)](auto& immersiveXRDevices) mutable {
         m_immersiveXRDevicesHaveBeenEnumerated = true;
 
+        auto callbackOnExit = makeScopeExit([&]() {
+            callOnMainThread(WTFMove(callback));
+        });
+
         // https://immersive-web.github.io/webxr/#select-an-immersive-xr-device
         auto* oldDevice = m_activeImmersiveDevice.get();
         if (immersiveXRDevices.isEmpty()) {
             m_activeImmersiveDevice = nullptr;
-            callback();
             return;
         }
         if (immersiveXRDevices.size() == 1) {
             m_activeImmersiveDevice = makeWeakPtr(immersiveXRDevices.first().get());
-            callback();
             return;
         }
 
-        if (m_activeImmersiveSession && oldDevice && immersiveXRDevices.findMatching([&](auto& entry) { return entry.get() == oldDevice; }) != notFound)
+        if (m_activeImmersiveSession && oldDevice && immersiveXRDevices.findMatching([&](auto& entry) { return &entry == oldDevice; }) != notFound)
             ASSERT(m_activeImmersiveDevice.get() == oldDevice);
         else {
             // FIXME: implement a better UA selection mechanism if required.
@@ -109,15 +111,12 @@ void WebXRSystem::ensureImmersiveXRDeviceIsSelected(CompletionHandler<void()>&& 
         }
 
         if (isFirstXRDevicesEnumeration || m_activeImmersiveDevice.get() == oldDevice) {
-            callback();
             return;
         }
 
         // FIXME: 7. Shut down any active XRSessions.
         // FIXME: 8. Set the XR compatible boolean of all WebGLRenderingContextBase instances to false.
         // FIXME: 9. Queue a task to fire an event named devicechange on the context object.
-
-        callback();
     });
 }
 
