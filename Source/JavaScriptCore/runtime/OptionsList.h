@@ -571,7 +571,7 @@ enum ExperimentalOptionFlags {
 };
 
 #define FOR_EACH_JSC_EXPERIMENTAL_OPTION(v) \
-    v(usePrivateClassFields, SupportsFTL | SupportsDFG, "https://bugs.webkit.org/show_bug.cgi?id=212781", "https://bugs.webkit.org/show_bug.cgi?id=212784")
+    v(usePrivateClassFields, (SupportsFTL | SupportsDFG), "https://bugs.webkit.org/show_bug.cgi?id=212781", "https://bugs.webkit.org/show_bug.cgi?id=212784")
 
 constexpr size_t countNumberOfJSCOptions()
 {
