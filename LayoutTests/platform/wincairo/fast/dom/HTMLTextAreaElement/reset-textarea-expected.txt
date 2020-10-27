@@ -14,9 +14,9 @@ layer at (0,0) size 800x600
               text run at (0,0) width 36: "Reset"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,64) size 784x80
-        RenderText {#text} at (0,0) size 345x19
-          text run at (0,0) width 345: "This test verifies that textarea controls are properly reset. "
-        RenderBR {BR} at (345,0) size 0x19
+        RenderText {#text} at (0,0) size 341x19
+          text run at (0,0) width 341: "This test verifies that textarea controls are properly reset."
+        RenderBR {BR} at (341,0) size 0x19
         RenderText {#text} at (0,20) size 451x19
           text run at (0,20) width 451: "You should see two element IDs below, and the word \"SUCCESS\" twice: "
         RenderBR {BR} at (451,20) size 0x19

@@ -23,12 +23,10 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,102) size 191x28 [bgcolor=#FFFF00]
         RenderText {#text} at (1,0) size 190x27
           text run at (1,0) width 190 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}? \x{5E9}\x{5EA}\x{5D4} \x{5DE}\x{5D9}\x{5E5}!"
-      RenderBlock (anonymous) at (0,130) size 784x89
+      RenderBlock (anonymous) at (0,130) size 784x84
         RenderBR {BR} at (0,0) size 0x19
-        RenderText {#text} at (199,69) size 4x19
-          text run at (199,69) width 4: " "
-        RenderBR {BR} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,219) size 191x28 [bgcolor=#FFFF00]
+        RenderBR {BR} at (199,69) size 0x19
+      RenderBlock {DIV} at (0,214) size 191x28 [bgcolor=#FFFF00]
         RenderText {#text} at (1,0) size 190x27
           text run at (1,0) width 190 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}? \x{5E9}\x{5EA}\x{5D4} \x{5DE}\x{5D9}\x{5E5}!"
 layer at (8,160) size 199x60 clip at (9,161) size 197x58

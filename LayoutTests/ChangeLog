@@ -1,3 +1,32 @@
+2020-10-27  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/fast/box-shadow/inset-box-shadow-radius-expected.txt:
+        * platform/wincairo/fast/box-shadow/inset-box-shadows-expected.txt:
+        * platform/wincairo/fast/clip/overflow-border-radius-combinations-expected.txt:
+        * platform/wincairo/fast/clip/overflow-border-radius-composited-expected.txt:
+        * platform/wincairo/fast/clip/overflow-border-radius-transformed-expected.txt:
+        * platform/wincairo/fast/css/first-line-text-decoration-expected.txt:
+        * platform/wincairo/fast/css/first-line-text-decoration-inherited-from-parent-expected.txt:
+        * platform/wincairo/fast/css/focus-ring-detached-expected.txt:
+        * platform/wincairo/fast/css/layerZOrderCrash-expected.txt:
+        * platform/wincairo/fast/css/text-overflow-ellipsis-bidi-expected.txt:
+        * platform/wincairo/fast/css/text-overflow-ellipsis-expected.txt:
+        * platform/wincairo/fast/css/text-overflow-ellipsis-strict-expected.txt:
+        * platform/wincairo/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/wincairo/fast/dom/focus-contenteditable-expected.txt:
+        * platform/wincairo/fast/inline-block/006-expected.txt:
+        * platform/wincairo/fast/inline-block/contenteditable-baseline-expected.txt:
+        * platform/wincairo/fast/text/basic/012-expected.txt:
+        * platform/wincairo/fast/text/capitalize-boundaries-expected.txt:
+        * platform/wincairo/fast/text/indic-expected.txt:
+        * platform/wincairo/fast/text/international/rtl-white-space-pre-wrap-expected.txt:
+        * platform/wincairo/fonts/monospace-expected.txt:
+        * platform/wincairo/fonts/sans-serif-expected.txt:
+        * platform/wincairo/fonts/serif-expected.txt:
+        * platform/wincairo/http/tests/local/file-url-sent-as-referer-expected.txt:
+
 2020-10-26  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: console command line API should be exposed to breakpoint conditions/actions

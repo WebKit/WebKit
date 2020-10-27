@@ -8,9 +8,9 @@ layer at (0,0) size 785x770
           text run at (0,0) width 531: "This tests checks that the text-overflow:ellipsis property is handled correctly for bidi text."
         RenderBR {BR} at (531,0) size 0x19
         RenderBR {BR} at (0,20) size 0x19
-        RenderText {#text} at (0,40) size 705x19
-          text run at (0,40) width 705: "Pass if the ellipsis do not overlap the text and the underlines for the links are placed under the text and not the ellipsis. "
-        RenderBR {BR} at (705,40) size 0x19
+        RenderText {#text} at (0,40) size 701x19
+          text run at (0,40) width 701: "Pass if the ellipsis do not overlap the text and the underlines for the links are placed under the text and not the ellipsis."
+        RenderBR {BR} at (701,40) size 0x19
         RenderBR {BR} at (0,60) size 0x19
         RenderText {#text} at (0,80) size 31x19
           text run at (0,80) width 31: "RTL:"

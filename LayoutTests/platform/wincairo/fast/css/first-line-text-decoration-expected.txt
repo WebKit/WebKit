@@ -40,9 +40,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 547x19
           text run at (0,0) width 547: "Text-decoration LINE-THROUGH : Only the first line must have a line through it."
       RenderBlock {DIV} at (0,402) size 784x89 [color=#008000]
-        RenderText {#text} at (0,10) size 725x27
-          text run at (0,10) width 725: "Line-Through Line-Through Line-Through Line "
-        RenderBR {BR} at (725,16) size 0x19
+        RenderText {#text} at (0,10) size 713x27
+          text run at (0,10) width 713: "Line-Through Line-Through Line-Through Line"
+        RenderBR {BR} at (713,16) size 0x19
         RenderText {#text} at (0,48) size 340x19
           text run at (0,48) width 340: "Line-Through Line-Through Line-Through Line-Through"
         RenderBR {BR} at (340,48) size 0x19
