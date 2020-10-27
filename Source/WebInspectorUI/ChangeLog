@@ -1,3 +1,34 @@
+2020-10-26  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r268786. rdar://problem/70702339
+
+    Web Inspector: REGRESSION(r266074): Uncaught Exception: undefined is not an object (evaluating 'this._allListenersBreakpoint.disabled')
+    https://bugs.webkit.org/show_bug.cgi?id=217992
+    
+    Reviewed by Joseph Pecoraro.
+    
+    r266074 changed it such that `_allListenersBreakpoint` doesn't always exist, so check that
+    it exists before getting a property from it.
+    
+    * UserInterface/Controllers/DOMDebuggerManager.js:
+    (WI.DOMDebuggerManager.prototype.listenerBreakpointForEventName):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268786 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-20  Devin Rousso  <drousso@apple.com>
+
+            Web Inspector: REGRESSION(r266074): Uncaught Exception: undefined is not an object (evaluating 'this._allListenersBreakpoint.disabled')
+            https://bugs.webkit.org/show_bug.cgi?id=217992
+
+            Reviewed by Joseph Pecoraro.
+
+            r266074 changed it such that `_allListenersBreakpoint` doesn't always exist, so check that
+            it exists before getting a property from it.
+
+            * UserInterface/Controllers/DOMDebuggerManager.js:
+            (WI.DOMDebuggerManager.prototype.listenerBreakpointForEventName):
+
 2020-10-16  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r266669): DOMBreakpoint.js:106:23: CONSOLE ASSERT ERROR domNode should not change once set

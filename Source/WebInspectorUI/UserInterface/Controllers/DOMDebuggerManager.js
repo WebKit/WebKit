@@ -354,7 +354,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
     listenerBreakpointForEventName(eventName)
     {
-        if (DOMDebuggerManager.supportsAllListenersBreakpoint() && !this._allListenersBreakpoint.disabled)
+        if (DOMDebuggerManager.supportsAllListenersBreakpoint() && this._allListenersBreakpoint && !this._allListenersBreakpoint.disabled)
             return this._allListenersBreakpoint;
         return this._listenerBreakpoints.find((breakpoint) => breakpoint.eventName === eventName) || null;
     }
