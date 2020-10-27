@@ -93,10 +93,10 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
         this._inputElement.select();
 
         if (performSearch)
-            this.performSearch(this._inputElement.value);
+            this.performSearch(this._inputElement.value, {omitFocus: true});
     }
 
-    performSearch(searchQuery)
+    performSearch(searchQuery, {omitFocus} = {})
     {
         this._inputElement.value = searchQuery;
         this._searchQuerySetting.value = searchQuery;
@@ -141,7 +141,7 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
             createSearchingPlaceholder();
             WI.whenTargetsAvailable().then(() => {
                 if (this._searchQuerySetting.value === searchQuery)
-                    this.performSearch(searchQuery);
+                    this.performSearch(searchQuery, {omitFocus});
             });
             return;
         }
@@ -176,8 +176,10 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
 
             parentTreeElement.appendChild(matchTreeElement);
 
-            if (!this.contentTreeOutline.selectedTreeElement)
-                matchTreeElement.revealAndSelect(false, true);
+            if (!this.contentTreeOutline.selectedTreeElement) {
+                const selectedByUser = true;
+                matchTreeElement.revealAndSelect(omitFocus ?? false, selectedByUser);
+            }
         }
 
         function forEachMatch(lineContent, callback)

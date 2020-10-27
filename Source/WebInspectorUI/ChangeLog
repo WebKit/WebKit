@@ -1,5 +1,16 @@
 2020-10-27  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Search: don't steal focus from the search field when shown
+        https://bugs.webkit.org/show_bug.cgi?id=218260
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WI.SearchSidebarPanel.prototype.focusSearchField):
+        (WI.SearchSidebarPanel.prototype.performSearch.createTreeElementForMatchObject):
+
+2020-10-27  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION(r266669): Uncaught Exception: TypeError: node.nodeType is not a function. (In 'node.nodeType()', 'node.nodeType' is undefined)
         https://bugs.webkit.org/show_bug.cgi?id=218254
 
