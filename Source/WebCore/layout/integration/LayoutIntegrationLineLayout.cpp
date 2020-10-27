@@ -71,7 +71,8 @@ LineLayout* LineLayout::containing(RenderObject& renderer)
     if (!renderer.isInline())
         return nullptr;
 
-    if (renderer.isReplica())
+    // FIXME: These fake renderers have their parent set but are not actually in the tree.
+    if (renderer.isReplica() || renderer.isRenderScrollbarPart())
         return nullptr;
     
     if (auto* parent = renderer.parent()) {
