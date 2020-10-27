@@ -1,3 +1,17 @@
+2020-10-27  Chris Dumez  <cdumez@apple.com>
+
+        Calling AudioContext.suspend() / resume() while already suspended / running should resolve the promise right away
+        https://bugs.webkit.org/show_bug.cgi?id=218236
+
+        Reviewed by Sam Weinig.
+
+        Add layout test coverage.
+
+        * webaudio/resume-context-while-running-expected.txt: Added.
+        * webaudio/resume-context-while-running.html: Added.
+        * webaudio/suspend-context-while-suspended-expected.txt: Added.
+        * webaudio/suspend-context-while-suspended.html: Added.
+
 2020-10-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Web Inspector: console command line API should be exposed to breakpoint conditions/actions

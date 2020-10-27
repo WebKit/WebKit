@@ -214,16 +214,18 @@ void AudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
         return;
     }
 
-    addReaction(State::Suspended, WTFMove(promise));
     m_wasSuspendedByScript = true;
 
-    if (!willPausePlayback())
+    if (!willPausePlayback()) {
+        addReaction(State::Suspended, WTFMove(promise));
         return;
+    }
 
     lazyInitialize();
 
-    destinationNode()->suspend([this, protectedThis = makeRef(*this)] {
+    destinationNode()->suspend([this, protectedThis = makeRef(*this), promise = WTFMove(promise)]() mutable {
         setState(State::Suspended);
+        promise.resolve();
     });
 }
 
@@ -239,20 +241,25 @@ void AudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
         return;
     }
 
-    addReaction(State::Running, WTFMove(promise));
     m_wasSuspendedByScript = false;
 
-    if (!willBeginPlayback())
+    if (!willBeginPlayback()) {
+        addReaction(State::Running, WTFMove(promise));
         return;
+    }
 
     lazyInitialize();
 
-    destinationNode()->resume([this, protectedThis = makeRef(*this)] {
+    destinationNode()->resume([this, protectedThis = makeRef(*this), promise = WTFMove(promise)]() mutable {
         // Since we update the state asynchronously, we may have been interrupted after the
         // call to resume() and before this lambda runs. In this case, we don't want to
         // reset the state to running.
         bool interrupted = m_mediaSession->state() == PlatformMediaSession::Interrupted;
         setState(interrupted ? State::Interrupted : State::Running);
+        if (interrupted)
+            addReaction(State::Running, WTFMove(promise));
+        else
+            promise.resolve();
     });
 }
 
