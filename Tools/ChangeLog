@@ -1,3 +1,23 @@
+2020-10-27  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Move step for generating the JSC bundle back to the release build bot
+        https://bugs.webkit.org/show_bug.cgi?id=218207
+
+        Reviewed by Adrian Perez de Castro.
+
+        On r266208 I moved the step to generate the JSC bundle from the default
+        GTK release build bot to the new bots for Ubuntu-20.04 packaging.
+
+        But it seems the ICU version of Ubuntu-20.04 (66) is not new enough for
+        testing some Intl features like Intl.ListFormat as JS Intl feature behaviors
+        are derived from ICU versions.
+
+        Move back this step to the GTK release build bot that runs with flatpak,
+        so it bundles the version of ICU from the FreeDesktop SDK (67 currently)
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py:
+
 2020-10-26  Federico Bucchi  <fbucchi@apple.com>
 
         Add Federico Bucchi to list of WebKit contributors

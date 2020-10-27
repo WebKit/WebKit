@@ -291,7 +291,7 @@
                       "workernames": ["bot545"]
                     },
                     {
-                      "name": "GTK-Linux-64-bit-Release-Build", "factory": "BuildFactory", "builddir": "gtk-linux-64-release",
+                      "name": "GTK-Linux-64-bit-Release-Build", "factory": "BuildAndGenerateJSCBundleFactory", "builddir": "gtk-linux-64-release",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["gtk-linux-64-release-tests", "gtk-linux-64-release-tests-js", "gtk-linux-64-release-tests-webdriver",
                                    "gtk-linux-64-release-wayland-tests", "gtk-linux-64-release-perf-tests"],
@@ -364,7 +364,7 @@
                       "workernames": ["gtk-linux-bot-16"]
                     },
                     {
-                      "name": "GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004", "factory": "BuildAndGenerateMiniBrowserJSCBundleFactory", "builddir": "gtk-linux-64-packaging-nigthly-ubuntu2004",
+                      "name": "GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004", "factory": "BuildAndGenerateMiniBrowserBundleFactory", "builddir": "gtk-linux-64-packaging-nigthly-ubuntu2004",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-bubblewrap-sandbox"],
                       "workernames": ["gtk-linux-bot-17"]
