@@ -333,4 +333,12 @@ float AcceleratedCompositingContext::deviceScaleFactor() const
     return m_webView.deviceScaleFactor();
 }
 
+String AcceleratedCompositingContext::layerTreeAsString() const
+{
+    if (!m_rootLayer)
+        return { };
+
+    return m_rootLayer->layerTreeAsText(LayerTreeAsTextShowAll);
+}
+
 #endif // USE(TEXTURE_MAPPER_GL)

@@ -7878,11 +7878,14 @@ HRESULT WebView::layerTreeAsString(_Deref_opt_out_ BSTR* treeBstr)
         return S_OK;
 
     String tree = m_layerTreeHost->layerTreeAsString();
-
+#elif USE(TEXTURE_MAPPER_GL)
+    if (!isAcceleratedCompositing())
+        return S_OK;
+    String tree = m_acceleratedCompositingContext->layerTreeAsString();
+#endif
     *treeBstr = BString(tree).release();
     if (!*treeBstr && tree.length())
         return E_OUTOFMEMORY;
-#endif
 
     return S_OK;
 }

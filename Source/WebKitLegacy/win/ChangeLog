@@ -1,3 +1,19 @@
+2020-10-27  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][WK1] Implement WebView::layerTreeAsString
+        https://bugs.webkit.org/show_bug.cgi?id=218217
+
+        Reviewed by Don Olmstead.
+
+        The menu item "Show Layer Tree" didn't work in WinCairo WebKit1
+        MiniBrowser.
+
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::layerTreeAsString const): Added.
+        * WebCoreSupport/AcceleratedCompositingContext.h:
+        * WebView.cpp:
+        (WebView::layerTreeAsString): Added code for USE(TEXTURE_MAPPER_GL).
+
 2020-10-27  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Make WebCore::FocusDirection to enum class
