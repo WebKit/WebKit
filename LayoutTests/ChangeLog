@@ -1,3 +1,16 @@
+2020-10-26  Peng Liu  <peng.liu6@apple.com>
+
+        REGRESSION (r268865): [macOS WK2] media/modern-media-controls/placard-support/placard-support-pip.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=218208
+
+        Reviewed by Darin Adler.
+
+        Fix the flakiness by holding a video presentation mode change until the ongoing
+        mode change is completed.
+
+        * media/modern-media-controls/placard-support/placard-support-pip-expected.txt:
+        * media/modern-media-controls/placard-support/placard-support-pip.html:
+
 2020-10-26  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r260276): Unable to click on image and text link at the bottom of https://www.nytimes.com/ article

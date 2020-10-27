@@ -38,7 +38,13 @@ const button = document.body.appendChild(document.createElement("div"));
 button.innerText = "Enter picture-in-picture";
 
 button.addEventListener("click", togglePiP);
-media.addEventListener("webkitpresentationmodechanged", () => {
+media.addEventListener("webkitpresentationmodechanged", async () => {
+    if (window.internals) {
+        await new Promise(resolve => shouldBecomeEqual("internals.isChangingPresentationMode(media)", "false", () => {
+            resolve();
+        }));
+    }
+
     if (media.webkitPresentationMode == "picture-in-picture") {
         shouldBecomeEqual("media.webkitDisplayingFullscreen", "true", () => {
             shouldBe("mediaController.controls.placard", "mediaController.controls.pipPlacard");
