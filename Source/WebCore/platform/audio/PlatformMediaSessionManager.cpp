@@ -139,7 +139,7 @@ void PlatformMediaSessionManager::beginInterruption(PlatformMediaSession::Interr
     forEachSession([type] (auto& session) {
         session.beginInterruption(type);
     });
-    updateSessionState();
+    scheduleUpdateSessionState();
 }
 
 void PlatformMediaSessionManager::endInterruption(PlatformMediaSession::EndInterruptionFlags flags)
@@ -163,7 +163,7 @@ void PlatformMediaSessionManager::addSession(PlatformMediaSession& session)
     m_logger->addLogger(session.logger());
 #endif
 
-    updateSessionState();
+    scheduleUpdateSessionState();
 }
 
 bool PlatformMediaSessionManager::hasNoSession() const
@@ -190,7 +190,7 @@ void PlatformMediaSessionManager::removeSession(PlatformMediaSession& session)
     m_logger->removeLogger(session.logger());
 #endif
 
-    updateSessionState();
+    scheduleUpdateSessionState();
 }
 
 void PlatformMediaSessionManager::addRestriction(PlatformMediaSession::MediaType type, SessionRestrictions restriction)
@@ -281,7 +281,7 @@ void PlatformMediaSessionManager::sessionWillEndPlayback(PlatformMediaSession& s
 
 void PlatformMediaSessionManager::sessionStateChanged(PlatformMediaSession&)
 {
-    updateSessionState();
+    scheduleUpdateSessionState();
 }
 
 void PlatformMediaSessionManager::setCurrentSession(PlatformMediaSession& session)
@@ -561,7 +561,7 @@ void PlatformMediaSessionManager::addAudioCaptureSource(PlatformMediaSession::Au
 {
     ASSERT(!m_audioCaptureSources.contains(source));
     m_audioCaptureSources.add(source);
-    updateSessionState();
+    scheduleUpdateSessionState();
 }
 
 
@@ -569,7 +569,17 @@ void PlatformMediaSessionManager::removeAudioCaptureSource(PlatformMediaSession:
 {
     ASSERT(m_audioCaptureSources.contains(source));
     m_audioCaptureSources.remove(source);
-    updateSessionState();
+    scheduleUpdateSessionState();
+}
+
+void PlatformMediaSessionManager::scheduleUpdateSessionState()
+{
+    if (updateSessionStateQueue.hasPendingTasks())
+        return;
+
+    updateSessionStateQueue.enqueueTask([this] {
+        updateSessionState();
+    });
 }
 
 #if USE(AUDIO_SESSION)

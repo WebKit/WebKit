@@ -81,6 +81,13 @@ class AudioSessionPrivate {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit AudioSessionPrivate() = default;
+
+    void addSampleRateObserverIfNeeded();
+    void addBufferSizeObserverIfNeeded();
+
+    static OSStatus handleSampleRateChange(AudioObjectID, UInt32, const AudioObjectPropertyAddress*, void* inClientData);
+    static OSStatus handleBufferSizeChange(AudioObjectID, UInt32, const AudioObjectPropertyAddress*, void* inClientData);
+
     Optional<bool> lastMutedState;
     AudioSession::CategoryType category { AudioSession::None };
 #if ENABLE(ROUTING_ARBITRATION)
@@ -90,7 +97,66 @@ public:
 #endif
     AudioSession::CategoryType m_categoryOverride;
     bool inRoutingArbitration { false };
+    bool hasSampleRateObserver { false };
+    bool hasBufferSizeObserver { false };
+    Optional<double> sampleRate;
+    Optional<size_t> bufferSize;
 };
+
+void AudioSessionPrivate::addSampleRateObserverIfNeeded()
+{
+    if (hasSampleRateObserver)
+        return;
+    hasSampleRateObserver = true;
+
+    AudioObjectPropertyAddress nominalSampleRateAddress = { kAudioDevicePropertyNominalSampleRate, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
+    AudioObjectAddPropertyListener(defaultDevice(), &nominalSampleRateAddress, handleSampleRateChange, this);
+}
+
+OSStatus AudioSessionPrivate::handleSampleRateChange(AudioObjectID device, UInt32, const AudioObjectPropertyAddress* sampleRateAddress, void* inClientData)
+{
+    ASSERT(inClientData);
+    if (!inClientData)
+        return noErr;
+
+    auto* sessionPrivate = static_cast<AudioSessionPrivate*>(inClientData);
+
+    Float64 nominalSampleRate;
+    UInt32 nominalSampleRateSize = sizeof(Float64);
+    OSStatus result = AudioObjectGetPropertyData(device, sampleRateAddress, 0, 0, &nominalSampleRateSize, (void*)&nominalSampleRate);
+    if (result)
+        return result;
+
+    sessionPrivate->sampleRate = narrowPrecisionToFloat(nominalSampleRate);
+    return noErr;
+}
+
+void AudioSessionPrivate::addBufferSizeObserverIfNeeded()
+{
+    if (hasBufferSizeObserver)
+        return;
+
+    AudioObjectPropertyAddress bufferSizeAddress = { kAudioDevicePropertyBufferFrameSize, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
+    AudioObjectAddPropertyListener(defaultDevice(), &bufferSizeAddress, handleBufferSizeChange, this);
+}
+
+OSStatus AudioSessionPrivate::handleBufferSizeChange(AudioObjectID device, UInt32, const AudioObjectPropertyAddress* bufferSizeAddress, void* inClientData)
+{
+    ASSERT(inClientData);
+    if (!inClientData)
+        return noErr;
+
+    auto* sessionPrivate = static_cast<AudioSessionPrivate*>(inClientData);
+
+    UInt32 bufferSize;
+    UInt32 bufferSizeSize = sizeof(bufferSize);
+    OSStatus result = AudioObjectGetPropertyData(device, bufferSizeAddress, 0, 0, &bufferSizeSize, &bufferSize);
+    if (result)
+        return result;
+
+    sessionPrivate->bufferSize = bufferSize;
+    return noErr;
+}
 
 AudioSession::AudioSession()
     : m_private(makeUnique<AudioSessionPrivate>())
@@ -187,6 +253,11 @@ void AudioSession::setCategoryOverride(CategoryType category)
 
 float AudioSession::sampleRate() const
 {
+    if (m_private->sampleRate)
+        return *m_private->sampleRate;
+
+    m_private->addSampleRateObserverIfNeeded();
+
     Float64 nominalSampleRate;
     UInt32 nominalSampleRateSize = sizeof(Float64);
 
@@ -198,11 +269,18 @@ float AudioSession::sampleRate() const
     if (result)
         return 0;
 
+    m_private->sampleRate = narrowPrecisionToFloat(nominalSampleRate);
+
     return narrowPrecisionToFloat(nominalSampleRate);
 }
 
 size_t AudioSession::bufferSize() const
 {
+    if (m_private->bufferSize)
+        return *m_private->bufferSize;
+
+    m_private->addBufferSizeObserverIfNeeded();
+
     UInt32 bufferSize;
     UInt32 bufferSizeSize = sizeof(bufferSize);
 
@@ -214,6 +292,9 @@ size_t AudioSession::bufferSize() const
 
     if (result)
         return 0;
+
+    m_private->bufferSize = bufferSize;
+
     return bufferSize;
 }
 
@@ -267,22 +348,14 @@ String AudioSession::routingContextUID() const
 
 size_t AudioSession::preferredBufferSize() const
 {
-    UInt32 bufferSize;
-    UInt32 bufferSizeSize = sizeof(bufferSize);
-
-    AudioObjectPropertyAddress preferredBufferSizeAddress = {
-        kAudioDevicePropertyBufferFrameSize,
-        kAudioObjectPropertyScopeGlobal,
-        kAudioObjectPropertyElementMaster };
-    OSStatus result = AudioObjectGetPropertyData(defaultDevice(), &preferredBufferSizeAddress, 0, 0, &bufferSizeSize, &bufferSize);
-
-    if (result)
-        return 0;
-    return bufferSize;
+    return bufferSize();
 }
 
 void AudioSession::setPreferredBufferSize(size_t bufferSize)
 {
+    if (m_private->bufferSize == bufferSize)
+        return;
+
     AudioValueRange bufferSizeRange = {0, 0};
     UInt32 bufferSizeRangeSize = sizeof(AudioValueRange);
     AudioObjectPropertyAddress bufferSizeRangeAddress = {
@@ -305,9 +378,10 @@ void AudioSession::setPreferredBufferSize(size_t bufferSize)
 
     result = AudioObjectSetPropertyData(defaultDevice(), &preferredBufferSizeAddress, 0, 0, sizeof(bufferSizeOut), (void*)&bufferSizeOut);
 
-#if LOG_DISABLED
-    UNUSED_PARAM(result);
-#else
+    if (!result)
+        m_private->bufferSize = bufferSizeOut;
+
+#if !LOG_DISABLED
     if (result)
         LOG(Media, "AudioSession::setPreferredBufferSize(%zu) - failed with error %d", bufferSize, static_cast<int>(result));
     else

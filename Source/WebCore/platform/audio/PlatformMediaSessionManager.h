@@ -27,6 +27,7 @@
 #define PlatformMediaSessionManager_h
 
 #include "DocumentIdentifier.h"
+#include "GenericTaskQueue.h"
 #include "MediaSessionIdentifier.h"
 #include "PlatformMediaSession.h"
 #include "Timer.h"
@@ -179,6 +180,7 @@ protected:
 private:
     friend class Internals;
 
+    void scheduleUpdateSessionState();
     virtual void updateSessionState() { }
 
     Vector<WeakPtr<PlatformMediaSession>> sessionsMatching(const Function<bool(const PlatformMediaSession&)>&) const;
@@ -197,6 +199,7 @@ private:
 #endif
 
     WeakHashSet<PlatformMediaSession::AudioCaptureSource> m_audioCaptureSources;
+    GenericTaskQueue<Timer> updateSessionStateQueue;
 
 #if !RELEASE_LOG_DISABLED
     Ref<AggregateLogger> m_logger;

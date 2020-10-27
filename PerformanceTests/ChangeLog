@@ -1,3 +1,14 @@
+2020-10-27  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Audio and Video element creation up to 300x slower than other browsers
+        https://bugs.webkit.org/show_bug.cgi?id=218206
+        <rdar://problem/62451019>
+
+        Reviewed by Eric Carlson.
+
+        * Media/AudioElementCreation.html: Added.
+        * Media/VideoElementCreation.html: Added.
+
 2020-10-27  Caio Lima  <ticaiolima@gmail.com>
 
         Make WebAssembly tests on JetStream 2 be feature detactable
