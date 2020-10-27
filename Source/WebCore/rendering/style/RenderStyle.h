@@ -1024,7 +1024,7 @@ public:
     void setMarginStart(Length&&);
     void setMarginEnd(Length&&);
 
-    void resetPadding() { SET_VAR(m_surroundData, padding, LengthBox(Auto)); }
+    void resetPadding() { SET_VAR(m_surroundData, padding, LengthBox(initialPadding().intValue())); }
     void setPaddingBox(LengthBox&& box) { SET_VAR(m_surroundData, padding, WTFMove(box)); }
     void setPaddingTop(Length&& length) { SET_VAR(m_surroundData, padding.top(), WTFMove(length)); }
     void setPaddingBottom(Length&& length) { SET_VAR(m_surroundData, padding.bottom(), WTFMove(length)); }
