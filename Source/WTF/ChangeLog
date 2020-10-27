@@ -1,3 +1,15 @@
+2020-10-27  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add ENABLE(INSPECTOR_EXTENSIONS) to feature defines
+        https://bugs.webkit.org/show_bug.cgi?id=218237
+        <rdar://problem/69968787>
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/PlatformEnable.h:
+        * wtf/PlatformEnableCocoa.h:
+        Add ENABLE(INSPECTOR_EXTENSIONS), which is only on for the Cocoa macOS port.
+
 2020-10-15  Tadeu Zagallo  <tzagallo@apple.com>
 
         Sign MacroAssembler::jumpsToLink
