@@ -1900,17 +1900,9 @@ webkit.org/b/198113 fast/mediastream/media-stream-page-muted.html [ Crash Timeou
 webkit.org/b/191886 fast/mediastream/apply-constraints-advanced.html [ Pass Crash ]
 
 # GLX error in gst_gl_context_glx_create_context
-webkit.org/b/198830 http/tests/media/media-document-referer.html [ Pass Crash ]
-webkit.org/b/198830 media/accessibility-closed-captions-has-aria-owns.html [ Pass Crash ]
-webkit.org/b/198830 media/W3C/video/events/event_canplay_manual.html [ Pass Crash ]
-webkit.org/b/198830 media/track/track-active-cues.html [ Pass Crash ]
-webkit.org/b/198830 media/track/track-mode-not-changed-by-new-track.html [ Crash Pass Timeout ]
 webkit.org/b/198830 media/video-dom-autoplay.html [ Crash Pass ]
 webkit.org/b/198830 userscripts/user-script-audio-document.html [ Crash Pass ]
-webkit.org/b/198830 webkit.org/b/210374 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Failure Crash Pass ]
-webkit.org/b/198830 compositing/overflow/overflow-compositing-descendant.html [ Crash Pass ]
-webkit.org/b/198830 media/video-plays-past-end-of-test.html [ Crash Pass ]
-webkit.org/b/198830 media/audio-play-with-video-element.html [ Crash Pass ]
+webkit.org/b/198830 webkit.org/b/210374 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Failure Pass ]
 
 webkit.org/b/205110 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Failure Crash Pass ]
 

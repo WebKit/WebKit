@@ -1,3 +1,9 @@
+2020-10-27  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK GStreamer gardening
+
+        * platform/gtk/TestExpectations: Remove flaky expectations for a few tests consistently passing.
+
 2020-10-27  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         REGRESSION (r268386): Flashes of inverted color when zooming the map on windy.com
