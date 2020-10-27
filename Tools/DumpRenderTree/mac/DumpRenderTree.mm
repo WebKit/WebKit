@@ -1216,14 +1216,6 @@ static void prepareConsistentTestingEnvironment()
 
     [[WebPreferences standardPreferences] setAutosaves:NO];
 
-    // +[WebPreferences _switchNetworkLoaderToNewTestingSession] calls +[NSURLCache sharedURLCache], which initializes a default cache on disk.
-    // Making the shared cache memory-only avoids touching the file system.
-    RetainPtr<NSURLCache> sharedCache =
-        adoptNS([[NSURLCache alloc] initWithMemoryCapacity:1024 * 1024
-                                      diskCapacity:0
-                                          diskPath:nil]);
-    [NSURLCache setSharedURLCache:sharedCache.get()];
-
     [WebPreferences _switchNetworkLoaderToNewTestingSession];
 
 #if !PLATFORM(IOS_FAMILY)

@@ -1,3 +1,19 @@
+2020-10-27  Sam Weinig  <weinig@apple.com>
+
+        DumpRenderTree spams stderr with CFNetwork warnings about null diskcache path
+        https://bugs.webkit.org/show_bug.cgi?id=218241
+
+        Reviewed by Darin Adler.
+
+        Remove attempt at using a memory only shared URL cache, as subsequent calls
+        to [WebPreferences setCacheModel:] cause a disk cache to be used anyway. All
+        this really seems to do is cause CFNetwork to log to stderr. It's unlikely
+        this optimization is worthwhile anyway these days, as avoiding touching the
+        filesystem is less necessary.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (prepareConsistentTestingEnvironment):
+
 2020-10-27  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Introduce _WKInspectorConfiguration for customizing local and remote Web Inspectors
