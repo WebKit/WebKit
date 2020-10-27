@@ -1,3 +1,15 @@
+2020-10-27  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r265515): fast/events/touch/ios/touch-events-with-modifiers.html is a frequent failure
+        https://bugs.webkit.org/show_bug.cgi?id=218249
+        <rdar://problem/67079948>
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/events/touch/ios/resources/finish-test-after-scrolling-with-touch-event-handlers.html:
+        Don't notifyDone until both the scroll event happen and the event stream is done being dispatched.
+        Otherwise, we can move on and then send part of our event stream to the next page.
+
 2020-10-27  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Accessory bar next/previous buttons do not work on inputs in shadow roots

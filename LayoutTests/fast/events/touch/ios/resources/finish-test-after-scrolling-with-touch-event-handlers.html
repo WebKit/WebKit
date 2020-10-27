@@ -23,13 +23,22 @@
     }
     </style>
     <script>
+        var scrolled = false;
+        var finishedSendingEventStream = false;
+
+        function maybeNotifyDone() {
+            if (scrolled && finishedSendingEventStream)
+                testRunner.notifyDone();
+        }
+
         async function finishTest() {
             const scroller = document.getElementById("scroller");
             scroller.addEventListener("touchstart", () => { });
             scroller.addEventListener("touchend", () => { });
             scroller.addEventListener("scroll", () => { 
                 content.textContent = "Scrolled!";
-                testRunner.notifyDone()
+                scrolled = true;
+                maybeNotifyDone();
             }, { once : true });
 
             const eventStreamData = new UIHelper.EventStreamBuilder()
@@ -41,6 +50,9 @@
                 .takeResult();
 
             await UIHelper.sendEventStream(eventStreamData);
+
+            finishedSendingEventStream = true;
+            maybeNotifyDone();
         }
 
         addEventListener("load", finishTest);
