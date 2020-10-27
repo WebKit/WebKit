@@ -351,6 +351,10 @@ void LineBoxBuilder::alignInlineLevelBoxesVerticallyAndComputeLineBoxHeight(Line
                 offsetFromParentInlineBoxBaseline = (inlineLevelBox->layoutBounds().height() / 2 + parentInlineBox.fontMetrics().xHeight() / 2);
                 logicalTop = parentInlineBox.baseline() - offsetFromParentInlineBoxBaseline;
                 break;
+            case VerticalAlign::BaselineMiddle:
+                offsetFromParentInlineBoxBaseline = inlineLevelBox->layoutBounds().height() / 2;
+                logicalTop = parentInlineBox.baseline() - offsetFromParentInlineBoxBaseline;
+                break;
             case VerticalAlign::Length: {
                 auto& style = layoutBox.style();
                 offsetFromParentInlineBoxBaseline = floatValueForLength(style.verticalAlignLength(), style.computedLineHeight());
