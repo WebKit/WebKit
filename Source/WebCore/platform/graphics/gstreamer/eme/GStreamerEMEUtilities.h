@@ -26,6 +26,7 @@
 #include "GStreamerCommon.h"
 #include "SharedBuffer.h"
 #include <gst/gst.h>
+#include <wtf/text/Base64.h>
 #include <wtf/text/WTFString.h>
 
 #define WEBCORE_GSTREAMER_EME_UTILITIES_CLEARKEY_UUID "1077efec-c0b2-4d02-ace3-3c1e52e2fb4b"
@@ -51,12 +52,14 @@ public:
             ASSERT_NOT_REACHED();
         }
         m_payload = mappedInitData->createSharedBuffer();
+        decodeBase64IfNeeded();
     }
 
     InitData(const String& systemId, RefPtr<SharedBuffer>&& payload)
         : m_systemId(systemId)
         , m_payload(WTFMove(payload))
     {
+        decodeBase64IfNeeded();
     }
 
     void append(InitData&& initData)
@@ -73,6 +76,22 @@ public:
         m_systemId = initData.m_systemId;
 
         m_payload->append(*initData.payload());
+    }
+
+    void decodeBase64IfNeeded()
+    {
+        GST_CAT_LEVEL_LOG(webkit_media_common_encryption_decrypt_debug_category, GST_LEVEL_TRACE, nullptr, "payload size %zu", m_payload->size());
+        if (!m_payload->size())
+            return;
+
+        Vector<char> out;
+        if (!base64Decode(m_payload->data(), m_payload->size(), out)) {
+            GST_CAT_LEVEL_LOG(webkit_media_common_encryption_decrypt_debug_category, GST_LEVEL_TRACE, nullptr, "payload did not decode base64, considering ok");
+            return;
+        }
+
+        GST_CAT_LEVEL_LOG(webkit_media_common_encryption_decrypt_debug_category, GST_LEVEL_TRACE, nullptr, "payload decoded to base64, new size %zu", out.size());
+        m_payload = SharedBuffer::create(out.data(), out.size());
     }
 
     const RefPtr<SharedBuffer>& payload() const { return m_payload; }
