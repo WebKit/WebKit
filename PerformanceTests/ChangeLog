@@ -1,3 +1,17 @@
+2020-10-27  Caio Lima  <ticaiolima@gmail.com>
+
+        Make WebAssembly tests on JetStream 2 be feature detactable
+        https://bugs.webkit.org/show_bug.cgi?id=218198
+
+        Reviewed by Saam Barati.
+
+        This patch is disabling JetStream 2's WASM tests when it's not
+        possible to find WebAssembly constructor on global object. This allows
+        us to run JetStream 2 on devices without WASM support, like 32-bits
+        ports of WebKit.
+
+        * JetStream2/JetStreamDriver.js:
+
 2020-10-13  Keith Rollin  <krollin@apple.com>
 
         Remove leftover MACOSX_DEPLOYMENT_TARGET_macosx support

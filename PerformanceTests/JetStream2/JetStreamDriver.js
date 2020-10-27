@@ -1643,6 +1643,8 @@ let runWorkerTests = !!isInBrowser;
 let runSeaMonster = true;
 let runCodeLoad = true;
 let runWasm = true;
+if (typeof WebAssembly === "undefined")
+    runWasm = false;
 
 if (false) {
     runOctane = false;
