@@ -1110,6 +1110,18 @@ Node* RootInlineBox::getLogicalEndBoxWithNode(InlineBox*& endBox) const
 }
 
 #if ENABLE(TREE_DEBUGGING)
+
+void RootInlineBox::outputLineBox(WTF::TextStream& stream, bool mark, int depth) const
+{
+    stream << "-------- --";
+    int printedCharacters = 0;
+    while (++printedCharacters <= depth * 2)
+        stream << " ";
+    stream << "Line: (top: " << lineTop() << " bottom: " << lineBottom() << ") with leading (top: " << lineTopWithLeading() << " bottom: " << lineBottomWithLeading() << ")";
+    stream.nextLine();
+    InlineBox::outputLineBox(stream, mark, depth);
+}
+
 const char* RootInlineBox::boxName() const
 {
     return "RootInlineBox";

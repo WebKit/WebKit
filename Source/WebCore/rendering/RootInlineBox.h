@@ -194,6 +194,7 @@ public:
     virtual bool isTrailingFloatsRootInlineBox() const { return false; }
 
 #if ENABLE(TREE_DEBUGGING)
+    void outputLineBox(WTF::TextStream&, bool mark, int depth) const final;
     const char* boxName() const final;
 #endif
 private:
