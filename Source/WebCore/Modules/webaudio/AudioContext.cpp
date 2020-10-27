@@ -209,7 +209,7 @@ void AudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
         return;
     }
 
-    if (isStopped() || state() == State::Closed || state() == State::Interrupted || !destinationNode()) {
+    if (isStopped() || state() == State::Closed || !destinationNode()) {
         promise.reject(Exception { InvalidStateError, "Context is closed"_s });
         return;
     }

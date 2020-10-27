@@ -1,3 +1,15 @@
+2020-10-27  Chris Dumez  <cdumez@apple.com>
+
+        AudioContext.suspend() should not reject promise when audio session is interrupted
+        https://bugs.webkit.org/show_bug.cgi?id=218235
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * webaudio/suspend-context-while-interrupted-expected.txt: Added.
+        * webaudio/suspend-context-while-interrupted.html: Added.
+
 2020-10-27  Zalan Bujtas  <zalan@apple.com>
 
         Remove unneeded whitespace between content and <br>
