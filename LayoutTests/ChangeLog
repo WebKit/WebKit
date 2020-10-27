@@ -1,3 +1,11 @@
+2020-10-27  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed, GStreamer gardening
+
+        * platform/glib/TestExpectations: Marked
+        media/encrypted-media/clearKey/clearKey-webm-video-playback-mse.html
+        as [ Timeout ].
+
 2020-10-27  Chris Dumez  <cdumez@apple.com>
 
         AudioContext.suspend() should not reject promise when audio session is interrupted
