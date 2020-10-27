@@ -388,9 +388,6 @@
             },
             "test_special_key_sends_keydown[SEPARATOR-expected63]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
-            "test_sequence_of_keydown_printable_keys_sends_events": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
             }
         }
     },

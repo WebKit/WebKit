@@ -339,17 +339,46 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
 #endif // !ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
         break;
     }
-    case SimulatedInputSourceType::Keyboard:
+    case SimulatedInputSourceType::Keyboard: {
 #if !ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
         RELEASE_ASSERT_NOT_REACHED();
 #else
+        auto comparePressedCharKeys = [](const auto& a, const auto& b) {
+            if (a.size() != b.size())
+                return false;
+            for (const auto& charKey : a) {
+                if (!b.contains(charKey))
+                    return false;
+            }
+            return true;
+        };
+
         // The "dispatch a key{Down,Up} action" algorithms (§17.4 Dispatching Actions).
-        if (!a.pressedCharKey && b.pressedCharKey) {
-            LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyPress[key=%c] for transition to %d.%d", this, b.pressedCharKey.value(), m_keyframeIndex, m_inputSourceStateIndex);
-            m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyPress, b.pressedCharKey.value(), WTFMove(eventDispatchFinished));
-        } else if (a.pressedCharKey && !b.pressedCharKey) {
-            LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyRelease[key=%c] for transition to %d.%d", this, a.pressedCharKey.value(), m_keyframeIndex, m_inputSourceStateIndex);
-            m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyRelease, a.pressedCharKey.value(), WTFMove(eventDispatchFinished));
+        if (!comparePressedCharKeys(a.pressedCharKeys, b.pressedCharKeys)) {
+            bool simulatedAnInteraction = false;
+            for (auto charKey : b.pressedCharKeys) {
+                if (!a.pressedCharKeys.contains(charKey)) {
+                    ASSERT_WITH_MESSAGE(!simulatedAnInteraction, "Only one CharKey may differ at a time between two input source states.");
+                    if (simulatedAnInteraction)
+                        continue;
+                    simulatedAnInteraction = true;
+
+                    LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyPress[key=%c] for transition to %d.%d", this, charKey, m_keyframeIndex, m_inputSourceStateIndex);
+                    m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyPress, charKey, WTFMove(eventDispatchFinished));
+                }
+            }
+
+            for (auto charKey : a.pressedCharKeys) {
+                if (!b.pressedCharKeys.contains(charKey)) {
+                    ASSERT_WITH_MESSAGE(!simulatedAnInteraction, "Only one CharKey may differ at a time between two input source states.");
+                    if (simulatedAnInteraction)
+                        continue;
+                    simulatedAnInteraction = true;
+
+                    LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyRelease[key=%c] for transition to %d.%d", this, charKey, m_keyframeIndex, m_inputSourceStateIndex);
+                    m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyRelease, charKey, WTFMove(eventDispatchFinished));
+                }
+            }
         } else if (a.pressedVirtualKeys != b.pressedVirtualKeys) {
             bool simulatedAnInteraction = false;
             for (const auto& iter : b.pressedVirtualKeys) {
@@ -383,6 +412,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
             eventDispatchFinished(WTF::nullopt);
 #endif // !ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
         break;
+    }
     case SimulatedInputSourceType::Wheel:
 #if !ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
         RELEASE_ASSERT_NOT_REACHED();

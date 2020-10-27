@@ -32,6 +32,7 @@
 #include <WebCore/IntSize.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
@@ -59,6 +60,7 @@ using KeyboardInteraction = Inspector::Protocol::Automation::KeyboardInteraction
 using VirtualKey = Inspector::Protocol::Automation::VirtualKey;
 using VirtualKeyMap = HashMap<VirtualKey, VirtualKey, WTF::IntHash<VirtualKey>, WTF::StrongEnumHashTraits<VirtualKey>>;
 using CharKey = UChar32;
+using CharKeySet = ListHashSet<CharKey>;
 using MouseButton = Inspector::Protocol::Automation::MouseButton;
 using MouseInteraction = Inspector::Protocol::Automation::MouseInteraction;
 using MouseMoveOrigin = Inspector::Protocol::Automation::MouseMoveOrigin;
@@ -78,7 +80,7 @@ enum class TouchInteraction {
 };
 
 struct SimulatedInputSourceState {
-    Optional<CharKey> pressedCharKey;
+    CharKeySet pressedCharKeys;
     VirtualKeyMap pressedVirtualKeys;
     Optional<MouseButton> pressedMouseButton;
     Optional<MouseMoveOrigin> origin;

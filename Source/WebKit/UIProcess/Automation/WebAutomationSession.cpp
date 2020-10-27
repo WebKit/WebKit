@@ -2085,7 +2085,7 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
 
             auto pressedCharKeyString = stateObject->getString("pressedCharKey"_s);
             if (!!pressedCharKeyString)
-                sourceState.pressedCharKey = pressedCharKeyString.characterAt(0);
+                sourceState.pressedCharKeys.add(pressedCharKeyString.characterAt(0));
 
             if (auto pressedVirtualKeysArray = stateObject->getArray("pressedVirtualKeys"_s)) {
                 VirtualKeyMap pressedVirtualKeys;

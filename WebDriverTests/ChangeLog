@@ -1,3 +1,14 @@
+2020-10-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: sequence of char key press is not supported
+        https://bugs.webkit.org/show_bug.cgi?id=217951
+
+        Reviewed by Brian Burg.
+
+        Remove expectations for test that is now passing.
+
+        * TestExpectations.json:
+
 2020-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: handle key events with non-ASCII unicode code point

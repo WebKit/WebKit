@@ -1,3 +1,21 @@
+2020-10-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: sequence of char key press is not supported
+        https://bugs.webkit.org/show_bug.cgi?id=217951
+
+        Reviewed by Brian Burg.
+
+        We are assuming there can be only one char key pressed at a time. Use a HashSet to store the currently pressed
+        char keys and the handle them the same way we do with virtual keys.
+
+        Fixes: imported/w3c/webdriver/tests/perform_actions/key_events.py::test_sequence_of_keydown_printable_keys_sends_events
+
+        * UIProcess/Automation/SimulatedInputDispatcher.cpp:
+        (WebKit::SimulatedInputDispatcher::transitionInputSourceToState):
+        * UIProcess/Automation/SimulatedInputDispatcher.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::performInteractionSequence):
+
 2020-10-27  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Make WebCore::FocusDirection to enum class
