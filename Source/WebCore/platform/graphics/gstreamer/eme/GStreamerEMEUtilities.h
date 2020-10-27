@@ -33,6 +33,8 @@
 #define WEBCORE_GSTREAMER_EME_UTILITIES_WIDEVINE_UUID "edef8ba9-79d6-4ace-a3c8-27dcd51d21ed"
 #endif
 
+GST_DEBUG_CATEGORY_EXTERN(webkit_media_common_encryption_decrypt_debug_category);
+
 namespace WebCore {
 class InitData {
 public:
@@ -45,7 +47,7 @@ public:
     {
         auto mappedInitData = GstMappedOwnedBuffer::create(initData);
         if (!mappedInitData) {
-            GST_ERROR("cannot map %s protection data", systemId.utf8().data());
+            GST_CAT_LEVEL_LOG(webkit_media_common_encryption_decrypt_debug_category, GST_LEVEL_ERROR, nullptr, "cannot map %s protection data", systemId.utf8().data());
             ASSERT_NOT_REACHED();
         }
         m_payload = mappedInitData->createSharedBuffer();

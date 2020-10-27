@@ -53,7 +53,7 @@ static GstFlowReturn transformInPlace(GstBaseTransform*, GstBuffer*);
 static gboolean sinkEventHandler(GstBaseTransform*, GstEvent*);
 static void setContext(GstElement*, GstContext*);
 
-GST_DEBUG_CATEGORY_STATIC(webkit_media_common_encryption_decrypt_debug_category);
+GST_DEBUG_CATEGORY(webkit_media_common_encryption_decrypt_debug_category);
 #define GST_CAT_DEFAULT webkit_media_common_encryption_decrypt_debug_category
 
 #define webkit_media_common_encryption_decrypt_parent_class parent_class
