@@ -237,6 +237,12 @@ void Debugger::registerCodeBlock(CodeBlock* codeBlock)
         codeBlock->setSteppingMode(CodeBlock::SteppingModeEnabled);
 }
 
+void Debugger::setClient(Client* client)
+{
+    ASSERT(!!m_client != !!client);
+    m_client = client;
+}
+
 void Debugger::addObserver(Observer& observer)
 {
     bool wasEmpty = m_observers.isEmpty();
@@ -609,7 +615,7 @@ bool Debugger::evaluateBreakpointCondition(Breakpoint& breakpoint, JSGlobalObjec
 
     NakedPtr<Exception> exception;
     DebuggerCallFrame& debuggerCallFrame = currentDebuggerCallFrame();
-    JSObject* scopeExtensionObject = nullptr;
+    JSObject* scopeExtensionObject = m_client ? m_client->scopeExtensionObject(*this, globalObject, debuggerCallFrame) : nullptr;
     JSValue result = debuggerCallFrame.evaluateWithScopeExtension(condition, scopeExtensionObject, exception);
 
     // We can lose the debugger while executing JavaScript.
@@ -643,7 +649,7 @@ void Debugger::evaluateBreakpointActions(Breakpoint& breakpoint, JSGlobalObject*
 
         case Breakpoint::Action::Type::Evaluate: {
             NakedPtr<Exception> exception;
-            JSObject* scopeExtensionObject = nullptr;
+            JSObject* scopeExtensionObject = m_client ? m_client->scopeExtensionObject(*this, globalObject, debuggerCallFrame) : nullptr;
             debuggerCallFrame.evaluateWithScopeExtension(action.data, scopeExtensionObject, exception);
             if (exception)
                 reportException(debuggerCallFrame.globalObject(), exception);
@@ -658,7 +664,7 @@ void Debugger::evaluateBreakpointActions(Breakpoint& breakpoint, JSGlobalObject*
 
         case Breakpoint::Action::Type::Probe: {
             NakedPtr<Exception> exception;
-            JSObject* scopeExtensionObject = nullptr;
+            JSObject* scopeExtensionObject = m_client ? m_client->scopeExtensionObject(*this, globalObject, debuggerCallFrame) : nullptr;
             JSValue result = debuggerCallFrame.evaluateWithScopeExtension(action.data, scopeExtensionObject, exception);
             JSC::JSGlobalObject* debuggerGlobalObject = debuggerCallFrame.globalObject();
             if (exception)

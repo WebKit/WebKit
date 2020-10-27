@@ -409,6 +409,11 @@ let InjectedScript = class InjectedScript
         delete this._objectGroups[objectGroupName];
     }
 
+    createCommandLineAPIObject(callFrame)
+    {
+        return new CommandLineAPI(callFrame || null);
+    }
+
     // CommandLineAPI
 
     inspectObject(object)
@@ -565,7 +570,7 @@ let InjectedScript = class InjectedScript
     {
         let commandLineAPI = null;
         if (includeCommandLineAPI)
-            commandLineAPI = new CommandLineAPI(isEvalOnCallFrame ? object : null);
+            commandLineAPI = this.createCommandLineAPIObject(isEvalOnCallFrame ? object : null);
         return evalFunction.call(object, expression, commandLineAPI);
     }
 

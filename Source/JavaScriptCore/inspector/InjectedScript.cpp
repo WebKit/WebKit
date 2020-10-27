@@ -442,6 +442,17 @@ void InjectedScript::releaseObjectGroup(const String& objectGroup)
     ASSERT_UNUSED(callResult, callResult);
 }
 
+JSC::JSObject* InjectedScript::createCommandLineAPIObject(JSC::JSValue callFrame) const
+{
+    ASSERT(!hasNoValue());
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), "createCommandLineAPIObject"_s, inspectorEnvironment()->functionCallHandler());
+    function.appendArgument(callFrame);
+
+    auto callResult = callFunctionWithEvalEnabled(function);
+    ASSERT(callResult);
+    return callResult ? asObject(callResult.value()) : nullptr;
+}
+
 JSC::JSValue InjectedScript::arrayFromVector(Vector<JSC::JSValue>&& vector)
 {
     JSC::JSGlobalObject* globalObject = this->globalObject();

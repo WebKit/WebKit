@@ -164,7 +164,7 @@ WI.BreakpointActionView = class BreakpointActionView extends WI.Object
 
             this._codeMirrorViewport = {from: null, to: null};
 
-            var completionController = new WI.CodeMirrorCompletionController(this._codeMirror);
+            var completionController = new WI.CodeMirrorCompletionController(this._delegate.breakpointActionViewCodeMirrorCompletionControllerMode(this, this._codeMirror), this._codeMirror);
             completionController.addExtendedCompletionProvider("javascript", WI.javaScriptRuntimeCompletionProvider);
 
             // CodeMirror needs a refresh after the popover displays to layout otherwise it doesn't appear.

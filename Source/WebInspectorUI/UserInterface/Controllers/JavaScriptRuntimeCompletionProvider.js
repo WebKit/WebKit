@@ -140,11 +140,12 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
         // and functions once instead of repetitively. Sure, there can be difference each time the base is evaluated,
         // but this optimization gives us more of a win. We clear the cache after 30 seconds or when stepping in the
         // debugger to make sure we don't use stale properties in most cases.
-        if (this._lastBase === base && this._lastPropertyNames) {
+        if (this._lastMode === completionController.mode && this._lastBase === base && this._lastPropertyNames) {
             receivedPropertyNames.call(this, this._lastPropertyNames);
             return;
         }
 
+        this._lastMode = completionController.mode;
         this._lastBase = base;
         this._lastPropertyNames = null;
 
@@ -278,18 +279,38 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                     propertyNames.push(savedResultAlias + "_");
 
                 let target = WI.runtimeManager.activeExecutionContext.target;
+                let targetData = WI.debuggerManager.paused ? WI.debuggerManager.dataForTarget(target) : {};
 
-                if (WI.debuggerManager.paused) {
-                    let targetData = WI.debuggerManager.dataForTarget(target);
-                    if (targetData.pauseReason === WI.DebuggerManager.PauseReason.Listener || targetData.pauseReason === WI.DebuggerManager.PauseReason.EventListener) {
-                        propertyNames.push("$event");
-                        if (savedResultAlias)
-                            propertyNames.push(savedResultAlias + "event");
-                    } else if (targetData.pauseReason === WI.DebuggerManager.PauseReason.Exception) {
-                        propertyNames.push("$exception");
-                        if (savedResultAlias)
-                            propertyNames.push(savedResultAlias + "exception");
+                function shouldExposeEvent() {
+                    switch (completionController.mode) {
+                    case WI.CodeMirrorCompletionController.Mode.FullConsoleCommandLineAPI:
+                    case WI.CodeMirrorCompletionController.Mode.EventBreakpoint:
+                        return true;
+                    case WI.CodeMirrorCompletionController.Mode.PausedConsoleCommandLineAPI:
+                        return targetData.pauseReason === WI.DebuggerManager.PauseReason.Listener || targetData.pauseReason === WI.DebuggerManager.PauseReason.EventListener;
                     }
+                    return false;
+                }
+                if (shouldExposeEvent()) {
+                    propertyNames.push("$event");
+                    if (savedResultAlias)
+                        propertyNames.push(savedResultAlias + "event");
+                }
+
+                function shouldExposeException() {
+                    switch (completionController.mode) {
+                    case WI.CodeMirrorCompletionController.Mode.FullConsoleCommandLineAPI:
+                    case WI.CodeMirrorCompletionController.Mode.ExceptionBreakpoint:
+                        return true;
+                    case WI.CodeMirrorCompletionController.Mode.PausedConsoleCommandLineAPI:
+                        return targetData.pauseReason === WI.DebuggerManager.PauseReason.Exception;
+                    }
+                    return false;
+                }
+                if (shouldExposeException()) {
+                    propertyNames.push("$exception");
+                    if (savedResultAlias)
+                        propertyNames.push(savedResultAlias + "exception");
                 }
 
                 switch (target.type) {

@@ -240,6 +240,7 @@ void InspectorDebuggerAgent::internalEnable()
 {
     m_enabled = true;
 
+    m_debugger.setClient(this);
     m_debugger.addObserver(*this);
 
     for (auto* listener : copyToVector(m_listeners))
@@ -261,6 +262,7 @@ void InspectorDebuggerAgent::internalDisable(bool isBeingDestroyed)
     for (auto* listener : copyToVector(m_listeners))
         listener->debuggerWasDisabled();
 
+    m_debugger.setClient(nullptr);
     m_debugger.removeObserver(*this, isBeingDestroyed);
 
     clearInspectorBreakpointState();
@@ -1099,6 +1101,18 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setPauseForInternalScripts
     }
 
     return { };
+}
+
+JSC::JSObject* InspectorDebuggerAgent::scopeExtensionObject(JSC::Debugger& debugger, JSC::JSGlobalObject* globalObject, JSC::DebuggerCallFrame& debuggerCallFrame)
+{
+    auto injectedScript = m_injectedScriptManager.injectedScriptFor(globalObject);
+    ASSERT(!injectedScript.hasNoValue());
+    if (injectedScript.hasNoValue())
+        return JSC::Debugger::Client::scopeExtensionObject(debugger, globalObject, debuggerCallFrame);
+
+    auto* debuggerGlobalObject = debuggerCallFrame.scope()->globalObject();
+    auto callFrame = toJS(debuggerGlobalObject, debuggerGlobalObject, JavaScriptCallFrame::create(debuggerCallFrame).ptr());
+    return injectedScript.createCommandLineAPIObject(callFrame);
 }
 
 void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const JSC::Debugger::Script& script)

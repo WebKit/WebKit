@@ -25,12 +25,14 @@
 
 WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends WI.Object
 {
-    constructor(codeMirror, delegate, stopCharactersRegex)
+    constructor(mode, codeMirror, delegate, stopCharactersRegex)
     {
+        console.assert(Object.values(WI.CodeMirrorCompletionController.Mode).includes(mode), mode);
+        console.assert(codeMirror instanceof CodeMirror, codeMirror);
+
         super();
 
-        console.assert(codeMirror);
-
+        this._mode = mode;
         this._codeMirror = codeMirror;
         this._stopCharactersRegex = stopCharactersRegex || null;
         this._delegate = delegate || null;
@@ -74,10 +76,7 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
 
     // Public
 
-    get delegate()
-    {
-        return this._delegate;
-    }
+    get mode() { return this._mode; }
 
     addExtendedCompletionProvider(modeName, provider)
     {
@@ -896,6 +895,14 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
 
         this.hideCompletions();
     }
+};
+
+WI.CodeMirrorCompletionController.Mode = {
+    Basic: "basic",
+    EventBreakpoint: "event-breakpoint",
+    ExceptionBreakpoint: "exception-breakpoint",
+    FullConsoleCommandLineAPI: "full-console-command-line-api",
+    PausedConsoleCommandLineAPI: "paused-console-command-line-api",
 };
 
 WI.CodeMirrorCompletionController.UpdatePromise = {

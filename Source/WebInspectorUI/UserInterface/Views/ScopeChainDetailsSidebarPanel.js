@@ -379,7 +379,7 @@ WI.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel extends W
             "Enter": () => { this._popoverCommitted = true; popover.dismiss(); },
         });
 
-        let completionController = new WI.CodeMirrorCompletionController(this._codeMirror);
+        let completionController = new WI.CodeMirrorCompletionController(WI.CodeMirrorCompletionController.Mode.FullConsoleCommandLineAPI, this._codeMirror);
         completionController.addExtendedCompletionProvider("javascript", WI.javaScriptRuntimeCompletionProvider);
 
         // Resize the popover as best we can when the CodeMirror editor changes size.

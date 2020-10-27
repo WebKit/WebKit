@@ -91,6 +91,8 @@ public:
     void releaseObject(const String& objectId);
     void releaseObjectGroup(const String& objectGroup);
 
+    JSC::JSObject* createCommandLineAPIObject(JSC::JSValue callFrame = { }) const;
+
 private:
     JSC::JSValue arrayFromVector(Vector<JSC::JSValue>&&);
 

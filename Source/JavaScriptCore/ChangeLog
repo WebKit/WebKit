@@ -1,3 +1,36 @@
+2020-10-26  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: console command line API should be exposed to breakpoint conditions/actions
+        https://bugs.webkit.org/show_bug.cgi?id=218141
+        <rdar://problem/70636727>
+
+        Reviewed by Brian Burg.
+
+        * debugger/Debugger.h:
+        (JSC::Debugger::Client::scopeExtensionObject): Added.
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::setClient): Added.
+        (JSC::Debugger::evaluateBreakpointCondition):
+        (JSC::Debugger::evaluateBreakpointActions):
+        Introduce an optional `Debugger::Client` virtual class that can be used to adjust behavior
+        in various situations. Right now it is used when evaluating breakpoint conditions/actions
+        to get a scope extension object.
+
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::internalEnable):
+        (Inspector::InspectorDebuggerAgent::internalDisable):
+        (Inspector::InspectorDebuggerAgent::scopeExtensionObject): Added.
+        Implement `Debugger::Client` and provide a newly created `CommandLineAPI` instance.
+
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::createCommandLineAPIObject const): Added.
+        * inspector/InjectedScriptSource.js:
+        (let.InjectedScript.prototype.createCommandLineAPIObject): Added.
+        (let.InjectedScript.prototype._evaluateOn):
+        Expose a way for the C++ to create `CommandLineAPI` instances.
+
 2020-10-15  Tadeu Zagallo  <tzagallo@apple.com>
 
         Sign MacroAssembler::jumpsToLink

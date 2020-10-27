@@ -62,6 +62,11 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.BreakpointPo
 
     // Protected
 
+    get codeMirrorCompletionControllerMode()
+    {
+        return WI.CodeMirrorCompletionController.Mode.EventBreakpoint;
+    }
+
     populateContent()
     {
         let eventLabelElement = document.createElement("label");

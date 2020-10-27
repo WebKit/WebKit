@@ -56,6 +56,71 @@ TestPage.registerInitializer(() => {
             },
         });
 
+        suite.addTestCase({
+            name: suite.name + "." + testCaseNamePrefix + "Options.Condition.ConsoleCommandLineAPI",
+            description: "Check the console command line API is exposed to the breakpoint condition.",
+            async test() {
+                let pauseCount = 0;
+
+                let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    ++pauseCount;
+                    WI.debuggerManager.resume();
+                });
+
+                InspectorTest.log("Adding saved console value 'false'...");
+                let firstEvaluateResult = await RuntimeAgent.evaluate.invoke({
+                    expression: "false",
+                    objectGroup: "test",
+                    includeCommandLineAPI: true,
+                    doNotPauseOnExceptionsAndMuteConsole: true,
+                    saveResult: true,
+                });
+                InspectorTest.assert(!firstEvaluateResult.wasThrown, "Should not throw.");
+                InspectorTest.assert(firstEvaluateResult.savedResultIndex, "Should have saved result index.");
+
+                let breakpoint = await createBreakpoint();
+
+                InspectorTest.newline();
+
+                InspectorTest.log("Setting condition to saved console value...");
+                breakpoint.condition = "$" + firstEvaluateResult.savedResultIndex;
+
+                for (let i = 1; i <= 4; ++i) {
+                    if (i === 3) {
+                        InspectorTest.newline();
+
+                        InspectorTest.log("Adding saved console value 'true'...");
+                        let secondEvaluateResult = await RuntimeAgent.evaluate.invoke({
+                            expression: "true",
+                            objectGroup: "test",
+                            includeCommandLineAPI: true,
+                            doNotPauseOnExceptionsAndMuteConsole: true,
+                            saveResult: true,
+                        });
+                        InspectorTest.assert(!secondEvaluateResult.wasThrown, "Should not throw.");
+                        InspectorTest.assert(secondEvaluateResult.savedResultIndex, "Should have saved result index.");
+
+                        InspectorTest.log("Setting condition to saved console value...");
+                        breakpoint.condition = "$" + secondEvaluateResult.savedResultIndex;
+                    }
+
+                    InspectorTest.newline();
+
+                    InspectorTest.log("Triggering breakpoint...");
+                    await triggerBreakpoint(breakpoint);
+
+                    if (i <= 2)
+                        InspectorTest.expectEqual(pauseCount, 0, "Should not pause.");
+                    else
+                        InspectorTest.expectEqual(pauseCount, i - 2, "Should pause.");
+                }
+
+                removeBreakpoint(breakpoint);
+
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+            },
+        });
+
         if (!skip?.ignoreCount) {
             suite.addTestCase({
                 name: suite.name + "." + testCaseNamePrefix + "Options.IgnoreCount",
@@ -178,6 +243,80 @@ TestPage.registerInitializer(() => {
 
                         InspectorTest.log("Editing evaluate action...");
                         action.data = `window.BREAKPOINT_ACTION_EVALUATE = ${i};`;
+
+                        if (i === 3) {
+                            InspectorTest.log("Enabling auto-continue...");
+                            breakpoint.autoContinue = true;
+                        }
+                    }
+
+                    InspectorTest.newline();
+
+                    InspectorTest.log("Triggering breakpoint...");
+                    await triggerBreakpoint(breakpoint);
+
+                    let breakpointActionEvaluateResult = await InspectorTest.evaluateInPage(`window.BREAKPOINT_ACTION_EVALUATE`);
+                    InspectorTest.expectEqual(breakpointActionEvaluateResult, i, "Should execute breakpoint action.");
+
+                    if (i <= 2)
+                        InspectorTest.expectEqual(pauseCount, i, "Should pause.");
+                    else
+                        InspectorTest.expectEqual(pauseCount, 2, "Should not pause.");
+                }
+
+                removeBreakpoint(breakpoint);
+
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+            },
+        });
+
+        suite.addTestCase({
+            name: suite.name + "." + testCaseNamePrefix + "Options.Actions.Evaluate.ConsoleCommandLineAPI",
+            description: "Check the console command line API is exposed to breakpoint actions.",
+            async test() {
+                let pauseCount = 0;
+
+                let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    ++pauseCount;
+                    WI.debuggerManager.resume();
+                });
+
+                InspectorTest.log("Adding saved console value '1'...");
+                let firstEvaluateResult = await RuntimeAgent.evaluate.invoke({
+                    expression: "1",
+                    objectGroup: "test",
+                    includeCommandLineAPI: true,
+                    doNotPauseOnExceptionsAndMuteConsole: true,
+                    saveResult: true,
+                });
+                InspectorTest.assert(!firstEvaluateResult.wasThrown, "Should not throw.");
+                InspectorTest.assert(firstEvaluateResult.savedResultIndex, "Should have saved result index.");
+
+                let breakpoint = await createBreakpoint();
+
+                InspectorTest.newline();
+
+                InspectorTest.log("Adding evaluate action using saved console value...");
+                let action = new WI.BreakpointAction(WI.BreakpointAction.Type.Evaluate, {data: `window.BREAKPOINT_ACTION_EVALUATE = $${firstEvaluateResult.savedResultIndex};`});
+                breakpoint.addAction(action);
+
+                for (let i = 1; i <= 4; ++i) {
+                    if (i > 1) {
+                        InspectorTest.newline();
+
+                        InspectorTest.log(`Adding saved console value '${i}'...`);
+                        let secondEvaluateResult = await RuntimeAgent.evaluate.invoke({
+                            expression: String(i),
+                            objectGroup: "test",
+                            includeCommandLineAPI: true,
+                            doNotPauseOnExceptionsAndMuteConsole: true,
+                            saveResult: true,
+                        });
+                        InspectorTest.assert(!secondEvaluateResult.wasThrown, "Should not throw.");
+                        InspectorTest.assert(secondEvaluateResult.savedResultIndex, "Should have saved result index.");
+
+                        InspectorTest.log("Editing evaluate action using saved console value...");
+                        action.data = `window.BREAKPOINT_ACTION_EVALUATE = $${secondEvaluateResult.savedResultIndex};`;
 
                         if (i === 3) {
                             InspectorTest.log("Enabling auto-continue...");

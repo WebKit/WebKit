@@ -140,6 +140,15 @@ public:
 
     void registerCodeBlock(CodeBlock*);
 
+    class Client {
+    public:
+        virtual ~Client() = default;
+
+        virtual JSObject* scopeExtensionObject(Debugger&, JSGlobalObject*, DebuggerCallFrame&) { return nullptr; }
+    };
+
+    void setClient(Client*);
+
     // FIXME: <https://webkit.org/b/162773> Web Inspector: Simplify Debugger::Script to use SourceProvider
     struct Script {
         String url;
@@ -325,6 +334,7 @@ private:
     HashSet<Observer*> m_observers;
     bool m_dispatchingFunctionToObservers { false };
 
+    Client* m_client { nullptr };
     ProfilingClient* m_profilingClient { nullptr };
 
     bool m_doneProcessingDebuggerEvents { true };
