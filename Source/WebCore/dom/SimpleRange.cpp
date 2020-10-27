@@ -95,26 +95,26 @@ static PartialOrdering order(unsigned a, unsigned b)
     return PartialOrdering::equivalent;
 }
 
-template<typename TreeType> PartialOrdering treeOrder(const BoundaryPoint& a, const BoundaryPoint& b)
+template<TreeType treeType> PartialOrdering treeOrder(const BoundaryPoint& a, const BoundaryPoint& b)
 {
     if (a.container.ptr() == b.container.ptr())
         return order(a.offset, b.offset);
 
     for (auto ancestor = b.container.ptr(); ancestor; ) {
-        auto nextAncestor = parent<TreeType>(*ancestor);
+        auto nextAncestor = parent<treeType>(*ancestor);
         if (nextAncestor == a.container.ptr())
             return isOffsetBeforeChild(*nextAncestor, a.offset, *ancestor) ? PartialOrdering::less : PartialOrdering::greater;
         ancestor = nextAncestor;
     }
 
     for (auto ancestor = a.container.ptr(); ancestor; ) {
-        auto nextAncestor = parent<TreeType>(*ancestor);
+        auto nextAncestor = parent<treeType>(*ancestor);
         if (nextAncestor == b.container.ptr())
             return isOffsetBeforeChild(*nextAncestor, b.offset, *ancestor) ? PartialOrdering::greater : PartialOrdering::less;
         ancestor = nextAncestor;
     }
 
-    return treeOrder<TreeType>(a.container, b.container);
+    return treeOrder<treeType>(a.container, b.container);
 }
 
 PartialOrdering documentOrder(const BoundaryPoint& a, const BoundaryPoint& b)
@@ -212,42 +212,34 @@ RefPtr<Node> commonInclusiveAncestor(const SimpleRange& range)
     return commonInclusiveAncestor(range.start.container, range.end.container);
 }
 
-template<typename TreeType> bool isPointInRange(const SimpleRange& range, const BoundaryPoint& point)
+template<TreeType treeType> bool contains(const SimpleRange& range, const BoundaryPoint& point)
 {
-    return is_lteq(treeOrder<TreeType>(range.start, point)) && is_lteq(treeOrder<TreeType>(point, range.end));
+    return is_lteq(treeOrder<treeType>(range.start, point)) && is_lteq(treeOrder<treeType>(point, range.end));
 }
 
-template bool isPointInRange<Tree>(const SimpleRange&, const BoundaryPoint&);
+template bool contains<Tree>(const SimpleRange&, const BoundaryPoint&);
 
-template<typename TreeType> bool isPointInRange(const SimpleRange& range, const Optional<BoundaryPoint>& point)
+template<TreeType treeType> bool contains(const SimpleRange& range, const Optional<BoundaryPoint>& point)
 {
-    return point && isPointInRange<TreeType>(range, *point);
+    return point && contains<treeType>(range, *point);
 }
 
-bool isPointInRange(const SimpleRange& range, const BoundaryPoint& point)
-{
-    return isPointInRange<ComposedTree>(range, point);
-}
+template bool contains<ComposedTree>(const SimpleRange&, const Optional<BoundaryPoint>&);
 
-bool isPointInRange(const SimpleRange& range, const Optional<BoundaryPoint>& point)
+template<TreeType treeType> PartialOrdering treeOrder(const SimpleRange& range, const BoundaryPoint& point)
 {
-    return isPointInRange<ComposedTree>(range, point);
-}
-
-template<typename TreeType> PartialOrdering treeOrder(const SimpleRange& range, const BoundaryPoint& point)
-{
-    if (auto order = treeOrder<TreeType>(range.start, point); !is_lt(order))
+    if (auto order = treeOrder<treeType>(range.start, point); !is_lt(order))
         return order;
-    if (auto order = treeOrder<TreeType>(range.end, point); !is_gt(order))
+    if (auto order = treeOrder<treeType>(range.end, point); !is_gt(order))
         return order;
     return PartialOrdering::equivalent;
 }
 
-template<typename TreeType> PartialOrdering treeOrder(const BoundaryPoint& point, const SimpleRange& range)
+template<TreeType treeType> PartialOrdering treeOrder(const BoundaryPoint& point, const SimpleRange& range)
 {
-    if (auto order = treeOrder<TreeType>(point, range.start); !is_gt(order))
+    if (auto order = treeOrder<treeType>(point, range.start); !is_gt(order))
         return order;
-    if (auto order = treeOrder<TreeType>(point, range.end); !is_lt(order))
+    if (auto order = treeOrder<treeType>(point, range.end); !is_lt(order))
         return order;
     return PartialOrdering::equivalent;
 }
@@ -265,14 +257,21 @@ PartialOrdering documentOrder(const BoundaryPoint& point, const SimpleRange& ran
     return treeOrder<ComposedTree>(point, range);
 }
 
-bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange)
+template<TreeType treeType> bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange)
 {
-    return is_lteq(documentOrder(outerRange.start, innerRange.start)) && is_gteq(documentOrder(outerRange.end, innerRange.end));
+    return is_lteq(treeOrder<treeType>(outerRange.start, innerRange.start)) && is_gteq(treeOrder<treeType>(outerRange.end, innerRange.end));
 }
 
-template<typename TreeType> bool intersects(const SimpleRange& a, const SimpleRange& b)
+template bool contains<Tree>(const SimpleRange&, const SimpleRange&);
+
+bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange)
 {
-    return is_lteq(treeOrder<TreeType>(a.start, b.end)) && is_lteq(treeOrder<TreeType>(b.start, a.end));
+    return contains<ComposedTree>(outerRange, innerRange);
+}
+
+template<TreeType treeType> bool intersects(const SimpleRange& a, const SimpleRange& b)
+{
+    return is_lteq(treeOrder<treeType>(a.start, b.end)) && is_lteq(treeOrder<treeType>(b.start, a.end));
 }
 
 template bool intersects<Tree>(const SimpleRange&, const SimpleRange&);
@@ -300,15 +299,22 @@ Optional<SimpleRange> intersection(const Optional<SimpleRange>& a, const Optiona
     return { { std::max(a->start, b->start, compareByDocumentOrder), std::min(a->end, b->end, compareByDocumentOrder) } };
 }
 
-bool contains(const SimpleRange& range, const Node& node)
+template<TreeType treeType> bool contains(const SimpleRange& range, const Node& node)
 {
     // FIXME: Consider a more efficient algorithm that avoids always computing the node index.
     // FIXME: Does this const_cast point to a design problem?
     auto nodeRange = makeRangeSelectingNode(const_cast<Node&>(node));
-    return nodeRange && contains(range, *nodeRange);
+    return nodeRange && contains<treeType>(range, *nodeRange);
 }
 
-template<typename TreeType> bool contains(const Node& outer, const Node& inner);
+template bool contains<Tree>(const SimpleRange&, const Node&);
+
+bool contains(const SimpleRange& range, const Node& node)
+{
+    return contains<ComposedTree>(range, node);
+}
+
+template<TreeType treeType> bool contains(const Node& outer, const Node& inner);
 
 template<> bool contains<Tree>(const Node& outer, const Node& inner)
 {
@@ -321,15 +327,14 @@ template<> bool contains<ComposedTree>(const Node& outer, const Node& inner)
     return outer.contains(inner);
 }
 
-template<typename TreeType> bool intersects(const SimpleRange& range, const Node& node)
+template<TreeType treeType> bool intersects(const SimpleRange& range, const Node& node)
 {
     // FIXME: Consider a more efficient algorithm that avoids always computing the node index.
     // FIXME: Does this const_cast point to a design problem?
     auto nodeRange = makeRangeSelectingNode(const_cast<Node&>(node));
     if (!nodeRange)
-        return contains<TreeType>(node, range.start.container);
-    return is_lt(treeOrder<TreeType>(nodeRange->start, range.end)) && is_lt(treeOrder<TreeType>(range.start, nodeRange->end));
-
+        return contains<treeType>(node, range.start.container);
+    return is_lt(treeOrder<treeType>(nodeRange->start, range.end)) && is_lt(treeOrder<treeType>(range.start, nodeRange->end));
 }
 
 template bool intersects<Tree>(const SimpleRange&, const Node&);

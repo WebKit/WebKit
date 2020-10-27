@@ -57,22 +57,37 @@ template<typename T> auto makeBoundaryPointHelper(T&& argument) -> decltype(make
 
 template<typename ...T> auto makeSimpleRange(T&& ...arguments) -> decltype(makeSimpleRangeHelper(makeBoundaryPointHelper(std::forward<T>(arguments))...)) { return makeSimpleRangeHelper(makeBoundaryPointHelper(std::forward<T>(arguments))...); }
 
-// FIXME: Would like these to have shorter names; another option is to change prefix to makeSimpleRange.
+// FIXME: Would like these two functions to have shorter names; another option is to change prefix to makeSimpleRange.
 WEBCORE_EXPORT Optional<SimpleRange> makeRangeSelectingNode(Node&);
 WEBCORE_EXPORT SimpleRange makeRangeSelectingNodeContents(Node&);
 
-WEBCORE_EXPORT RefPtr<Node> commonInclusiveAncestor(const SimpleRange&);
-
 bool operator==(const SimpleRange&, const SimpleRange&);
 
-template<typename TreeType> bool isPointInRange(const SimpleRange&, const BoundaryPoint&);
-template<typename TreeType> bool isPointInRange(const SimpleRange&, const Optional<BoundaryPoint>&);
-WEBCORE_EXPORT bool isPointInRange(const SimpleRange&, const BoundaryPoint&);
-bool isPointInRange(const SimpleRange&, const Optional<BoundaryPoint>&);
+template<TreeType = Tree> bool contains(const SimpleRange&, const BoundaryPoint&);
+template<TreeType = Tree> bool contains(const SimpleRange&, const Optional<BoundaryPoint>&);
+template<TreeType> bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange);
+template<TreeType> bool contains(const SimpleRange&, const Node&);
 
+template<TreeType> bool intersects(const SimpleRange&, const SimpleRange&);
+template<TreeType> bool intersects(const SimpleRange&, const Node&);
+
+// Returns equivalent if point is in range.
+template<TreeType = Tree> PartialOrdering treeOrder(const SimpleRange&, const BoundaryPoint&);
+template<TreeType = Tree> PartialOrdering treeOrder(const BoundaryPoint&, const SimpleRange&);
+
+struct OffsetRange {
+    unsigned start { 0 };
+    unsigned end { 0 };
+};
+OffsetRange characterDataOffsetRange(const SimpleRange&, const Node&);
+
+// FIXME: Start of functions that are deprecated since they silently default to ComposedTree.
+
+WEBCORE_EXPORT RefPtr<Node> commonInclusiveAncestor(const SimpleRange&);
 WEBCORE_EXPORT bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange);
 template<typename TreeType> bool intersects(const SimpleRange&, const SimpleRange&);
 WEBCORE_EXPORT bool intersects(const SimpleRange&, const SimpleRange&);
+WEBCORE_EXPORT bool intersects(const SimpleRange&, const Node&);
 WEBCORE_EXPORT SimpleRange unionRange(const SimpleRange&, const SimpleRange&);
 WEBCORE_EXPORT Optional<SimpleRange> intersection(const Optional<SimpleRange>&, const Optional<SimpleRange>&);
 
@@ -80,9 +95,6 @@ WEBCORE_EXPORT bool contains(const SimpleRange&, const Node&);
 template<typename TreeType> bool intersects(const SimpleRange&, const Node&);
 WEBCORE_EXPORT bool intersects(const SimpleRange&, const Node&);
 
-// Returns equivalent if point is in range.
-template<typename TreeType = Tree> PartialOrdering treeOrder(const SimpleRange&, const BoundaryPoint&);
-template<typename TreeType = Tree> PartialOrdering treeOrder(const BoundaryPoint&, const SimpleRange&);
 WEBCORE_EXPORT PartialOrdering documentOrder(const SimpleRange&, const BoundaryPoint&);
 WEBCORE_EXPORT PartialOrdering documentOrder(const BoundaryPoint&, const SimpleRange&);
 
@@ -92,11 +104,7 @@ IntersectingNodeRange intersectingNodes(const SimpleRange&);
 class IntersectingNodeRangeWithQuirk;
 IntersectingNodeRangeWithQuirk intersectingNodesWithDeprecatedZeroOffsetStartQuirk(const SimpleRange&);
 
-struct OffsetRange {
-    unsigned start { 0 };
-    unsigned end { 0 };
-};
-OffsetRange characterDataOffsetRange(const SimpleRange&, const Node&);
+// FIXME: End of functions that are deprecated since they silently default to ComposedTree.
 
 class IntersectingNodeIterator : public std::iterator<std::forward_iterator_tag, Node> {
 public:

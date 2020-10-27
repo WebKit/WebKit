@@ -155,7 +155,7 @@ ExceptionOr<bool> Range::isPointInRange(Node& container, unsigned offset)
             return false;
         return checkResult.releaseException();
     }
-    return WebCore::isPointInRange<Tree>(makeSimpleRange(*this), { container, offset });
+    return contains<Tree>(makeSimpleRange(*this), { container, offset });
 }
 
 ExceptionOr<short> Range::comparePoint(Node& container, unsigned offset) const

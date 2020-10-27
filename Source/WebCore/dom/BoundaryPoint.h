@@ -41,7 +41,7 @@ struct BoundaryPoint {
 bool operator==(const BoundaryPoint&, const BoundaryPoint&);
 bool operator!=(const BoundaryPoint&, const BoundaryPoint&);
 
-template<typename TreeType = Tree> PartialOrdering treeOrder(const BoundaryPoint&, const BoundaryPoint&);
+template<TreeType = Tree> PartialOrdering treeOrder(const BoundaryPoint&, const BoundaryPoint&);
 WEBCORE_EXPORT PartialOrdering documentOrder(const BoundaryPoint&, const BoundaryPoint&);
 
 WEBCORE_EXPORT Optional<BoundaryPoint> makeBoundaryPointBeforeNode(Node&);

@@ -755,12 +755,11 @@ constexpr bool is_neq(PartialOrdering);
 constexpr bool is_lteq(PartialOrdering);
 constexpr bool is_gteq(PartialOrdering);
 
-struct Tree { };
-struct ShadowIncludingTree { };
-struct ComposedTree { };
-template<typename TreeType = Tree> ContainerNode* parent(const Node&);
-template<typename TreeType = Tree> PartialOrdering treeOrder(const Node&, const Node&);
+enum TreeType { Tree, ShadowIncludingTree, ComposedTree };
+template<TreeType = Tree> ContainerNode* parent(const Node&);
+template<TreeType = Tree> PartialOrdering treeOrder(const Node&, const Node&);
 
+// FIXME: Dprecated because this silently defaults to ComposedTree. Use treeOrder instead.
 WEBCORE_EXPORT PartialOrdering documentOrder(const Node&, const Node&);
 
 #if ASSERT_ENABLED

@@ -2632,11 +2632,11 @@ template<> ContainerNode* parent<ComposedTree>(const Node& node)
     return node.parentInComposedTree();
 }
 
-template<typename TreeType> size_t depth(const Node& node)
+template<TreeType treeType> size_t depth(const Node& node)
 {
     size_t depth = 0;
     auto ancestor = &node;
-    while ((ancestor = parent<TreeType>(*ancestor)))
+    while ((ancestor = parent<treeType>(*ancestor)))
         ++depth;
     return depth;
 }
@@ -2647,7 +2647,7 @@ struct AncestorAndChildren {
     const Node* distinctAncestorB;
 };
 
-template<typename TreeType> AncestorAndChildren commonInclusiveAncestorAndChildren(const Node& a, const Node& b)
+template<TreeType treeType> AncestorAndChildren commonInclusiveAncestorAndChildren(const Node& a, const Node& b)
 {
     // This check isn't needed for correctness, but it is cheap and likely to be
     // common enough to be worth optimizing so we don't have to walk to the root.
@@ -2656,21 +2656,21 @@ template<typename TreeType> AncestorAndChildren commonInclusiveAncestorAndChildr
     // FIXME: Could optimize cases where nodes are both in the same shadow tree.
     // FIXME: Could optimize cases where nodes are in different documents to quickly return false.
     // FIXME: Could optimize cases where one node is connected and the other is not to quickly return false.
-    auto [depthA, depthB] = std::make_tuple(depth<TreeType>(a), depth<TreeType>(b));
+    auto [depthA, depthB] = std::make_tuple(depth<treeType>(a), depth<treeType>(b));
     auto [x, y, difference] = depthA >= depthB
         ? std::make_tuple(&a, &b, depthA - depthB)
         : std::make_tuple(&b, &a, depthB - depthA);
     decltype(x) distinctAncestorA = nullptr;
     for (decltype(difference) i = 0; i < difference; ++i) {
         distinctAncestorA = x;
-        x = parent<TreeType>(*x);
+        x = parent<treeType>(*x);
     }
     decltype(y) distinctAncestorB = nullptr;
     while (x != y) {
         distinctAncestorA = x;
         distinctAncestorB = y;
-        x = parent<TreeType>(*x);
-        y = parent<TreeType>(*y);
+        x = parent<treeType>(*x);
+        y = parent<treeType>(*y);
     }
     if (depthA < depthB)
         std::swap(distinctAncestorA, distinctAncestorB);
@@ -2695,11 +2695,11 @@ static bool isSiblingSubsequent(const Node& siblingA, const Node& siblingB)
     return false;
 }
 
-template<typename TreeType> PartialOrdering treeOrder(const Node& a, const Node& b)
+template<TreeType treeType> PartialOrdering treeOrder(const Node& a, const Node& b)
 {
     if (&a == &b)
         return PartialOrdering::equivalent;
-    auto result = commonInclusiveAncestorAndChildren<TreeType>(a, b);
+    auto result = commonInclusiveAncestorAndChildren<treeType>(a, b);
     if (!result.commonAncestor)
         return PartialOrdering::unordered;
     if (!result.distinctAncestorA)

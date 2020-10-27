@@ -704,7 +704,7 @@ static bool isWhiteSpaceBetweenSentences(const VisiblePosition& position)
         return false;
 
     auto range = makeSimpleRange(start, end);
-    return range && isPointInRange(*range, makeBoundaryPoint(position));
+    return range && contains<ComposedTree>(*range, makeBoundaryPoint(position));
 }
 
 static VisibleSelection sentenceAtPositionForAtkBoundary(const AccessibilityObject*, const VisiblePosition& position, AtkTextBoundary boundaryType)

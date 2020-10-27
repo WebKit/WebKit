@@ -69,7 +69,7 @@ static bool selectionContainsPosition(const VisiblePosition& position, const Vis
         return false;
 
     auto selectedRange = selection.firstRange();
-    return selectedRange && isPointInRange(*selectedRange, makeBoundaryPoint(position));
+    return selectedRange && contains<ComposedTree>(*selectedRange, makeBoundaryPoint(position));
 }
 
 Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeForSelection(const VisibleSelection& selection)

@@ -962,7 +962,7 @@ IntPoint AccessibilityRenderObject::linkClickPoint()
     if (auto range = elementRange()) {
         auto start = VisiblePosition { makeContainerOffsetPosition(range->start) };
         auto end = nextVisiblePosition(start);
-        if (isPointInRange(*range, makeBoundaryPoint(end)))
+        if (contains<ComposedTree>(*range, makeBoundaryPoint(end)))
             return { boundsForRange(*makeSimpleRange(start, end)).center() };
     }
     return AccessibilityObject::clickPoint();
@@ -1693,10 +1693,10 @@ void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range
         auto& node = *this->node();
         auto elementRange = this->elementRange();
         auto start = visiblePositionForIndexUsingCharacterIterator(node, range.start);
-        if (!isPointInRange(*elementRange, makeBoundaryPoint(start)))
+        if (!contains<ComposedTree>(*elementRange, makeBoundaryPoint(start)))
             start = makeContainerOffsetPosition(elementRange->start);
         auto end = visiblePositionForIndexUsingCharacterIterator(node, range.start + range.length);
-        if (!isPointInRange(*elementRange, makeBoundaryPoint(end)))
+        if (!contains<ComposedTree>(*elementRange, makeBoundaryPoint(end)))
             end = makeContainerOffsetPosition(elementRange->start);
         m_renderer->frame().selection().setSelection(VisibleSelection(start, end), FrameSelection::defaultSetSelectionOptions(UserTriggered));
     }
@@ -2247,7 +2247,7 @@ void AccessibilityRenderObject::setSelectedVisiblePositionRange(const VisiblePos
 
         auto start = range.start;
         if (auto elementRange = this->elementRange()) {
-            if (!isPointInRange(*elementRange, makeBoundaryPoint(start)))
+            if (!contains<ComposedTree>(*elementRange, makeBoundaryPoint(start)))
                 start = makeContainerOffsetPosition(elementRange->start);
         }
 

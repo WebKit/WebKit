@@ -1,5 +1,102 @@
 2020-10-26  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r268940. rdar://problem/70702182
+
+    Source/WebCore:
+    REGRESSION(r266295): DOMSelection's addRange and containsNode behave incorrectly when selection crosses shadow boundaries
+    https://bugs.webkit.org/show_bug.cgi?id=218007
+    
+    Reviewed by Ryosuke Niwa.
+    
+    Test: editing/selection/selections-across-trees.html
+    
+    * accessibility/AccessibilityRenderObject.cpp:
+    (WebCore::AccessibilityRenderObject::linkClickPoint): Update for the new name of
+    isPointInRange, contains<ComposedTree>. We can return and change it from ComposedTree
+    to something else since that's likely not the tree we need here.
+    (WebCore::AccessibilityRenderObject::setSelectedTextRange): Ditto.
+    (WebCore::AccessibilityRenderObject::setSelectedVisiblePositionRange const): Ditto.
+    * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+    (isWhiteSpaceBetweenSentences): Ditto.
+    
+    * dom/BoundaryPoint.h: Update to use TreeType enumeration instead of classes.
+    * dom/Node.cpp:
+    (WebCore::depth): Ditto.
+    (WebCore::commonInclusiveAncestorAndChildren): Ditto.
+    (WebCore::treeOrder): Ditto.
+    * dom/Node.h: Ditto.
+    
+    * dom/Range.cpp:
+    (WebCore::Range::isPointInRange): Updated since we renamed isPointInRange to be
+    an overload of contains.
+    
+    * dom/SimpleRange.cpp:
+    (WebCore::treeOrder): Update to use TreeType enumeration instead of classes.
+    (WebCore::contains): Ditto. Also renamed isPointInRange to an overload of contains.
+    Also added converted the contains that takes two ranges to a function template.
+    (WebCore::intersects): Ditto.
+    
+    * dom/SimpleRange.h: Reorganized the functions so all the deprecated functions
+    that silently use ComposedTree are grouped together. Updated the function templates
+    to use TreeType enumeration instead of classes. Added a couple more function
+    templates that we used to fix DOMSelection.
+    
+    * editing/FrameSelection.cpp:
+    (WebCore::FrameSelection::contains const): Update for the new name of sPointInRange,
+    contains<ComposedTree>. We can return and change it from ComposedTree to something
+    else since that's likely not the tree we need here.
+    * editing/mac/DictionaryLookupLegacy.mm:
+    (WebCore::selectionContainsPosition): Ditto.
+    
+    * page/DOMSelection.cpp:
+    (WebCore::DOMSelection::addRange): Use intersects<Tree> because we don't want to
+    use the composed tree here.
+    (WebCore::DOMSelection::containsNode const): Use intersects<Tree> and contains<Tree>.
+    Evantually <Tree> will be the default and we can come back here and edit down these
+    calls for brevity, but first we have to make all the uses of ComposedTree explicit.
+    
+    Source/WebKitLegacy/win:
+    REGRESSION(r266295): DOMSelection's addRange and containsNode behave incorrectly when selection crosses shadow boundaries
+    https://bugs.webkit.org/show_bug.cgi?id=218007
+    
+    Reviewed by Ryosuke Niwa.
+    
+    * AccessibleTextImpl.cpp:
+    (AccessibleText::isInRange): Updated since we renamed isPointInRange to be
+    an overload of contains.
+    
+    Tools:
+    REGRESSION(r266295): DOMSelection's addRange and containsNode behave incorrectly when selection crosses shadow boundaries
+    https://bugs.webkit.org/show_bug.cgi?id=218007
+    
+    Reviewed by Ryosuke Niwa.
+    
+    * TestWebKitAPI/Tests/WebCore/DocumentOrder.cpp: Disabled the isPointInRange
+    test and added comments about how we will restore it in the future.
+    
+    LayoutTests:
+    REGRESSION(r266295): DOMSelection's addRange and containsNode behaves incorrectly when selection crosses shadow boundaries
+    https://bugs.webkit.org/show_bug.cgi?id=218007
+    
+    Reviewed by Ryosuke Niwa.
+    
+    * editing/selection/selections-across-trees-expected.txt: Added.
+    * editing/selection/selections-across-trees.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268940 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-22  Darin Adler  <darin@apple.com>
+
+            REGRESSION(r266295): DOMSelection's addRange and containsNode behave incorrectly when selection crosses shadow boundaries
+            https://bugs.webkit.org/show_bug.cgi?id=218007
+
+            Reviewed by Ryosuke Niwa.
+
+            * TestWebKitAPI/Tests/WebCore/DocumentOrder.cpp: Disabled the isPointInRange
+            test and added comments about how we will restore it in the future.
+
+2020-10-26  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r268796. rdar://problem/70702309
 
     Don't crash when deallocating WKWebView during TLS handshake

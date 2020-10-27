@@ -756,5 +756,5 @@ HRESULT AccessibleText::initialCheck()
 bool AccessibleText::isInRange(VisiblePosition& current, VisiblePositionRange& wordRange)
 {
     auto range = makeSimpleRange(wordRange);
-    return range && isPointInRange(*range, makeBoundaryPoint(current));
+    return range && contains<ComposedTree>(*range, makeBoundaryPoint(current));
 }
