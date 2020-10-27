@@ -72,62 +72,62 @@ uint64_t RemoteRenderingBackend::messageSenderDestinationID() const
     return m_renderingBackendIdentifier.toUInt64();
 }
 
-void RemoteRenderingBackend::imageBufferBackendWasCreated(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, ImageBufferBackendHandle handle, RemoteResourceIdentifier remoteResourceIdentifier)
+void RemoteRenderingBackend::imageBufferBackendWasCreated(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, ImageBufferBackendHandle handle, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    send(Messages::RemoteRenderingBackendProxy::ImageBufferBackendWasCreated(logicalSize, backendSize, resolutionScale, colorSpace, WTFMove(handle), remoteResourceIdentifier), m_renderingBackendIdentifier);
+    send(Messages::RemoteRenderingBackendProxy::ImageBufferBackendWasCreated(logicalSize, backendSize, resolutionScale, colorSpace, WTFMove(handle), renderingResourceIdentifier), m_renderingBackendIdentifier);
 }
 
-void RemoteRenderingBackend::flushDisplayListWasCommitted(DisplayListFlushIdentifier flushIdentifier, RemoteResourceIdentifier remoteResourceIdentifier)
+void RemoteRenderingBackend::flushDisplayListWasCommitted(DisplayListFlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    send(Messages::RemoteRenderingBackendProxy::FlushDisplayListWasCommitted(flushIdentifier, remoteResourceIdentifier), m_renderingBackendIdentifier);
+    send(Messages::RemoteRenderingBackendProxy::FlushDisplayListWasCommitted(flushIdentifier, renderingResourceIdentifier), m_renderingBackendIdentifier);
 }
 
-void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace, WebCore::RemoteResourceIdentifier remoteResourceIdentifier)
+void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
 {
     ASSERT(renderingMode == RenderingMode::RemoteAccelerated || renderingMode == RenderingMode::RemoteUnaccelerated);
 
     std::unique_ptr<WebCore::ImageBuffer> image;
 
     if (renderingMode == RenderingMode::RemoteAccelerated)
-        image = AcceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, *this, remoteResourceIdentifier);
+        image = AcceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, *this, renderingResourceIdentifier);
 
     if (!image)
-        image = UnacceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, *this, remoteResourceIdentifier);
+        image = UnacceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, *this, renderingResourceIdentifier);
 
     if (image) {
-        m_remoteResourceCache.cacheImageBuffer(remoteResourceIdentifier, WTFMove(image));
+        m_remoteResourceCache.cacheImageBuffer(renderingResourceIdentifier, WTFMove(image));
         return;
     }
 
     ASSERT_NOT_REACHED();
 }
 
-void RemoteRenderingBackend::flushDisplayList(const WebCore::DisplayList::DisplayList& displayList, RemoteResourceIdentifier remoteResourceIdentifier)
+void RemoteRenderingBackend::flushDisplayList(const WebCore::DisplayList::DisplayList& displayList, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(remoteResourceIdentifier))
+    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier))
         imageBuffer->flushDisplayList(displayList);
 }
 
-void RemoteRenderingBackend::flushDisplayListAndCommit(const WebCore::DisplayList::DisplayList& displayList, DisplayListFlushIdentifier flushIdentifier, RemoteResourceIdentifier remoteResourceIdentifier)
+void RemoteRenderingBackend::flushDisplayListAndCommit(const WebCore::DisplayList::DisplayList& displayList, DisplayListFlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(remoteResourceIdentifier)) {
+    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier)) {
         imageBuffer->flushDisplayList(displayList);
         imageBuffer->flushContext();
-        flushDisplayListWasCommitted(flushIdentifier, remoteResourceIdentifier);
+        flushDisplayListWasCommitted(flushIdentifier, renderingResourceIdentifier);
     }
 }
 
-void RemoteRenderingBackend::getImageData(WebCore::AlphaPremultiplication outputFormat, WebCore::IntRect srcRect, RemoteResourceIdentifier remoteResourceIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&& completionHandler)
+void RemoteRenderingBackend::getImageData(WebCore::AlphaPremultiplication outputFormat, WebCore::IntRect srcRect, RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&& completionHandler)
 {
     RefPtr<ImageData> imageData;
-    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(remoteResourceIdentifier))
+    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier))
         imageData = imageBuffer->getImageData(outputFormat, srcRect);
     completionHandler(IPC::ImageDataReference(WTFMove(imageData)));
 }
 
-void RemoteRenderingBackend::releaseRemoteResource(RemoteResourceIdentifier remoteResourceIdentifier)
+void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    m_remoteResourceCache.releaseRemoteResource(remoteResourceIdentifier);
+    m_remoteResourceCache.releaseRemoteResource(renderingResourceIdentifier);
 }
 
 } // namespace WebKit

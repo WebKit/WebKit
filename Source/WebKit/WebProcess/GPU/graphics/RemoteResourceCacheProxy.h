@@ -27,24 +27,32 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "PlatformImageBufferShareableBackend.h"
-#include "RemoteImageBufferProxy.h"
+#include <WebCore/RenderingResourceIdentifier.h>
+#include <wtf/HashMap.h>
+
+namespace WebCore {
+class ImageBuffer;
+}
 
 namespace WebKit {
 
-using UnacceleratedRemoteImageBufferProxy = RemoteImageBufferProxy<UnacceleratedImageBufferShareableBackend>;
-using AcceleratedRemoteImageBufferProxy = RemoteImageBufferProxy<AcceleratedImageBufferShareableBackend>;
+class RemoteRenderingBackendProxy;
+
+class RemoteResourceCacheProxy {
+public:
+    RemoteResourceCacheProxy(RemoteRenderingBackendProxy&);
+
+    void cacheImageBuffer(WebCore::RenderingResourceIdentifier, WebCore::ImageBuffer*);
+    WebCore::ImageBuffer* cachedImageBuffer(WebCore::RenderingResourceIdentifier);
+    void releaseImageBuffer(WebCore::RenderingResourceIdentifier);
+
+private:
+    using RemoteImageBufferProxyHashMap = HashMap<WebCore::RenderingResourceIdentifier, WebCore::ImageBuffer*>;
+    
+    RemoteImageBufferProxyHashMap m_imageBuffers;
+    RemoteRenderingBackendProxy& m_remoteRenderingBackendProxy;
+};
 
 } // namespace WebKit
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::UnacceleratedRemoteImageBufferProxy)
-    static bool isType(const WebCore::ImageBuffer& imageBuffer) { return imageBuffer.renderingResourceIdentifier() && !imageBuffer.isAccelerated(); }
-SPECIALIZE_TYPE_TRAITS_END()
-
-#if HAVE(IOSURFACE)
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::AcceleratedRemoteImageBufferProxy)
-    static bool isType(const WebCore::ImageBuffer& imageBuffer) { return imageBuffer.renderingResourceIdentifier() && imageBuffer.isAccelerated(); }
-SPECIALIZE_TYPE_TRAITS_END()
-#endif
 
 #endif // ENABLE(GPU_PROCESS)

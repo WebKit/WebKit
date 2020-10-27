@@ -23,17 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "RemoteResourceCacheProxy.h"
 
 #if ENABLE(GPU_PROCESS)
 
-#include <wtf/ObjectIdentifier.h>
+#include "RemoteRenderingBackendProxy.h"
 
-namespace WebCore {
+namespace WebKit {
+using namespace WebCore;
 
-enum RemoteResourceIdentifierType { };
-using RemoteResourceIdentifier = ObjectIdentifier<RemoteResourceIdentifierType>;
+RemoteResourceCacheProxy::RemoteResourceCacheProxy(RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
+    : m_remoteRenderingBackendProxy(remoteRenderingBackendProxy)
+{
+}
 
-} // namespace WebCore
+void RemoteResourceCacheProxy::cacheImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier, WebCore::ImageBuffer* imageBuffer)
+{
+    auto addResult = m_imageBuffers.add(renderingResourceIdentifier, imageBuffer);
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+}
+
+ImageBuffer* RemoteResourceCacheProxy::cachedImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
+{
+    return m_imageBuffers.get(renderingResourceIdentifier);
+}
+
+void RemoteResourceCacheProxy::releaseImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
+{
+    bool found = m_imageBuffers.remove(renderingResourceIdentifier);
+    ASSERT_UNUSED(found, found);
+    m_remoteRenderingBackendProxy.releaseRemoteResource(renderingResourceIdentifier);
+}
+
+} // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

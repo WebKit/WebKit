@@ -62,8 +62,8 @@ public:
     GPUConnectionToWebProcess* gpuConnectionToWebProcess() const;
 
     // Messages to be sent.
-    void imageBufferBackendWasCreated(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle, WebCore::RemoteResourceIdentifier);
-    void flushDisplayListWasCommitted(DisplayListFlushIdentifier, WebCore::RemoteResourceIdentifier);
+    void imageBufferBackendWasCreated(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle, WebCore::RenderingResourceIdentifier);
+    void flushDisplayListWasCommitted(DisplayListFlushIdentifier, WebCore::RenderingResourceIdentifier);
 
 private:
     RemoteRenderingBackend(GPUConnectionToWebProcess&, RenderingBackendIdentifier);
@@ -77,11 +77,11 @@ private:
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
 
     // Messages to be received.
-    void createImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace, WebCore::RemoteResourceIdentifier);
-    void flushDisplayList(const WebCore::DisplayList::DisplayList&, WebCore::RemoteResourceIdentifier);
-    void flushDisplayListAndCommit(const WebCore::DisplayList::DisplayList&, DisplayListFlushIdentifier, WebCore::RemoteResourceIdentifier);
-    void getImageData(WebCore::AlphaPremultiplication outputFormat, WebCore::IntRect srcRect, WebCore::RemoteResourceIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&&);
-    void releaseRemoteResource(WebCore::RemoteResourceIdentifier);
+    void createImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace, WebCore::RenderingResourceIdentifier);
+    void flushDisplayList(const WebCore::DisplayList::DisplayList&, WebCore::RenderingResourceIdentifier);
+    void flushDisplayListAndCommit(const WebCore::DisplayList::DisplayList&, DisplayListFlushIdentifier, WebCore::RenderingResourceIdentifier);
+    void getImageData(WebCore::AlphaPremultiplication outputFormat, WebCore::IntRect srcRect, WebCore::RenderingResourceIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&&);
+    void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
 
     RemoteResourceCache m_remoteResourceCache;
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;

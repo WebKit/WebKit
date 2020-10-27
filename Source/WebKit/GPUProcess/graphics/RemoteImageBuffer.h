@@ -41,16 +41,16 @@ class RemoteImageBuffer : public WebCore::ConcreteImageBuffer<BackendType>, publ
     using BaseConcreteImageBuffer::putImageData;
 
 public:
-    static auto create(const WebCore::FloatSize& size, float resolutionScale, WebCore::ColorSpace colorSpace, RemoteRenderingBackend& remoteRenderingBackend, WebCore::RemoteResourceIdentifier remoteResourceIdentifier)
+    static auto create(const WebCore::FloatSize& size, float resolutionScale, WebCore::ColorSpace colorSpace, RemoteRenderingBackend& remoteRenderingBackend, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
     {
-        return BaseConcreteImageBuffer::template create<RemoteImageBuffer>(size, resolutionScale, colorSpace, nullptr, remoteRenderingBackend, remoteResourceIdentifier);
+        return BaseConcreteImageBuffer::template create<RemoteImageBuffer>(size, resolutionScale, colorSpace, nullptr, remoteRenderingBackend, renderingResourceIdentifier);
     }
 
-    RemoteImageBuffer(std::unique_ptr<BackendType>&& backend, RemoteRenderingBackend& remoteRenderingBackend, WebCore::RemoteResourceIdentifier remoteResourceIdentifier)
+    RemoteImageBuffer(std::unique_ptr<BackendType>&& backend, RemoteRenderingBackend& remoteRenderingBackend, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
         : BaseConcreteImageBuffer(WTFMove(backend))
         , m_remoteRenderingBackend(remoteRenderingBackend)
     {
-        m_remoteRenderingBackend.imageBufferBackendWasCreated(m_backend->logicalSize(), m_backend->backendSize(), m_backend->resolutionScale(), m_backend->colorSpace(), m_backend->createImageBufferBackendHandle(), remoteResourceIdentifier);
+        m_remoteRenderingBackend.imageBufferBackendWasCreated(m_backend->logicalSize(), m_backend->backendSize(), m_backend->resolutionScale(), m_backend->colorSpace(), m_backend->createImageBufferBackendHandle(), renderingResourceIdentifier);
     }
 
     ~RemoteImageBuffer()

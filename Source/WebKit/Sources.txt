@@ -558,8 +558,8 @@ WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp
 
 WebProcess/GPU/GPUProcessConnection.cpp
 WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp
-WebProcess/GPU/graphics/RemoteImageBufferMessageHandlerProxy.cpp
 WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp
+WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp
 WebProcess/GPU/media/AudioTrackPrivateRemote.cpp
 WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp
 WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp

@@ -50,13 +50,8 @@ public:
             return nullptr;
         return std::unique_ptr<ImageBufferType>(new ImageBufferType(WTFMove(backend), std::forward<Arguments>(arguments)...));
     }
-    
-    bool isAccelerated() const override
-    {
-        if (auto* backend = ensureBackendCreated())
-            return backend->isAccelerated();
-        return false;
-    }
+
+    bool isAccelerated() const override { return BackendType::isAccelerated; }
 
 protected:
     ConcreteImageBuffer(std::unique_ptr<BackendType>&& backend)

@@ -32,7 +32,7 @@ namespace WebCore {
 namespace DisplayList {
 
 template<typename BackendType>
-class ImageBuffer : public ConcreteImageBuffer<BackendType>, public Recorder::Observer {
+class ImageBuffer : public ConcreteImageBuffer<BackendType> {
     using BaseConcreteImageBuffer = ConcreteImageBuffer<BackendType>;
 
 public:
@@ -48,12 +48,12 @@ public:
 
     ImageBuffer(std::unique_ptr<BackendType>&& dataBackend, const FloatSize& size)
         : BaseConcreteImageBuffer(WTFMove(dataBackend))
-        , m_drawingContext(size, initialDrawingContextCTM(size), this)
+        , m_drawingContext(size, initialDrawingContextCTM(size))
     {
     }
 
-    ImageBuffer(const FloatSize& size)
-        : m_drawingContext(size, initialDrawingContextCTM(size), this)
+    ImageBuffer(const FloatSize& size, Recorder::Delegate* delegate = nullptr)
+        : m_drawingContext(size, initialDrawingContextCTM(size), delegate)
     {
     }
 

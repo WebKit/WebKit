@@ -27,7 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include <WebCore/RemoteResourceIdentifier.h>
+#include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -42,12 +42,12 @@ class RemoteResourceCache {
 public:
     RemoteResourceCache() = default;
 
-    void cacheImageBuffer(WebCore::RemoteResourceIdentifier, std::unique_ptr<WebCore::ImageBuffer>&&);
-    WebCore::ImageBuffer* cachedImageBuffer(WebCore::RemoteResourceIdentifier);
-    void releaseRemoteResource(WebCore::RemoteResourceIdentifier);
+    void cacheImageBuffer(WebCore::RenderingResourceIdentifier, std::unique_ptr<WebCore::ImageBuffer>&&);
+    WebCore::ImageBuffer* cachedImageBuffer(WebCore::RenderingResourceIdentifier);
+    void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
 
 private:
-    using RemoteImageBufferHashMap = HashMap<WebCore::RemoteResourceIdentifier, std::unique_ptr<WebCore::ImageBuffer>>;
+    using RemoteImageBufferHashMap = HashMap<WebCore::RenderingResourceIdentifier, std::unique_ptr<WebCore::ImageBuffer>>;
 
     RemoteImageBufferHashMap m_imageBuffers;
 };

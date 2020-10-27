@@ -62,9 +62,9 @@ public:
     RefPtr<ImageData> getImageData(AlphaPremultiplication outputFormat, const IntRect&) const override;
     void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
     IOSurface* surface();
-    bool isAccelerated() const override;
 
     static constexpr bool isOriginAtUpperLeftCorner = true;
+    static constexpr bool isAccelerated = true;
 
 protected:
     static RetainPtr<CGColorSpaceRef> contextColorSpace(const GraphicsContext&);

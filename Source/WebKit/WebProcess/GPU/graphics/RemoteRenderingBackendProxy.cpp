@@ -30,6 +30,7 @@
 
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcessConnection.h"
+#include "ImageDataReference.h"
 #include "PlatformRemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
@@ -88,38 +89,75 @@ bool RemoteRenderingBackendProxy::waitForFlushDisplayListWasCommitted()
 
 std::unique_ptr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, ShouldAccelerate shouldAccelerate, float resolutionScale, ColorSpace colorSpace)
 {
+    RenderingMode renderingMode;
+    std::unique_ptr<WebCore::ImageBuffer> imageBuffer;
+
     if (shouldAccelerate == ShouldAccelerate::Yes) {
-        if (auto imageBuffer = AcceleratedRemoteImageBufferProxy::create(size, RenderingMode::RemoteAccelerated, resolutionScale, colorSpace, *this)) {
-            m_imageBufferMessageHandlerMap.add(imageBuffer->remoteResourceIdentifier(), imageBuffer.get());
-            return imageBuffer;
-        }
+        renderingMode = RenderingMode::RemoteAccelerated;
+        imageBuffer = AcceleratedRemoteImageBufferProxy::create(size, resolutionScale, *this);
     }
 
-    if (auto imageBuffer = UnacceleratedRemoteImageBufferProxy::create(size, RenderingMode::RemoteUnaccelerated, resolutionScale, colorSpace, *this)) {
-        m_imageBufferMessageHandlerMap.add(imageBuffer->remoteResourceIdentifier(), imageBuffer.get());
+    if (!imageBuffer) {
+        renderingMode = RenderingMode::RemoteUnaccelerated;
+        imageBuffer = UnacceleratedRemoteImageBufferProxy::create(size, resolutionScale, *this);
+    }
+
+    if (imageBuffer) {
+        send(Messages::RemoteRenderingBackend::CreateImageBuffer(size, renderingMode, resolutionScale, colorSpace, imageBuffer->renderingResourceIdentifier()), m_renderingBackendIdentifier);
+        m_remoteResourceCacheProxy.cacheImageBuffer(imageBuffer->renderingResourceIdentifier(), imageBuffer.get());
         return imageBuffer;
     }
 
+    ASSERT_NOT_REACHED();
     return nullptr;
 }
 
-void RemoteRenderingBackendProxy::releaseRemoteResource(RemoteResourceIdentifier remoteResourceIdentifier)
+RefPtr<ImageData> RemoteRenderingBackendProxy::getImageData(AlphaPremultiplication outputFormat, const IntRect& srcRect, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    // CreateImageBuffer message should have been received before this one.
-    bool found = m_imageBufferMessageHandlerMap.remove(remoteResourceIdentifier);
-    ASSERT_UNUSED(found, found);
+    IPC::ImageDataReference imageDataReference;
+    sendSync(Messages::RemoteRenderingBackend::GetImageData(outputFormat, srcRect, renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetImageData::Reply(imageDataReference), m_renderingBackendIdentifier, 1_s);
+    return imageDataReference.buffer();
 }
 
-void RemoteRenderingBackendProxy::imageBufferBackendWasCreated(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, ImageBufferBackendHandle handle, RemoteResourceIdentifier remoteResourceIdentifier)
+void RemoteRenderingBackendProxy::flushDisplayList(const DisplayList::DisplayList& displayList, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    if (auto imageBuffer = m_imageBufferMessageHandlerMap.get(remoteResourceIdentifier))
-        imageBuffer->createBackend(logicalSize, backendSize, resolutionScale, colorSpace, WTFMove(handle));
+    send(Messages::RemoteRenderingBackend::FlushDisplayList(displayList, renderingResourceIdentifier), m_renderingBackendIdentifier);
 }
 
-void RemoteRenderingBackendProxy::flushDisplayListWasCommitted(DisplayListFlushIdentifier flushIdentifier, RemoteResourceIdentifier remoteResourceIdentifier)
+DisplayListFlushIdentifier RemoteRenderingBackendProxy::flushDisplayListAndCommit(const DisplayList::DisplayList& displayList, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    if (auto imageBuffer = m_imageBufferMessageHandlerMap.get(remoteResourceIdentifier))
-        imageBuffer->commitFlushContext(flushIdentifier);
+    DisplayListFlushIdentifier sentFlushIdentifier = DisplayListFlushIdentifier::generate();
+    send(Messages::RemoteRenderingBackend::FlushDisplayListAndCommit(displayList, sentFlushIdentifier, renderingResourceIdentifier), m_renderingBackendIdentifier);
+    return sentFlushIdentifier;
+}
+
+void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
+{
+    send(Messages::RemoteRenderingBackend::ReleaseRemoteResource(renderingResourceIdentifier), m_renderingBackendIdentifier);
+}
+
+void RemoteRenderingBackendProxy::imageBufferBackendWasCreated(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, ImageBufferBackendHandle handle, RenderingResourceIdentifier renderingResourceIdentifier)
+{
+    auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(renderingResourceIdentifier);
+    if (!imageBuffer)
+        return;
+    
+    if (imageBuffer->isAccelerated())
+        downcast<AcceleratedRemoteImageBufferProxy>(*imageBuffer).createBackend(logicalSize, backendSize, resolutionScale, colorSpace, WTFMove(handle));
+    else
+        downcast<UnacceleratedRemoteImageBufferProxy>(*imageBuffer).createBackend(logicalSize, backendSize, resolutionScale, colorSpace, WTFMove(handle));
+}
+
+void RemoteRenderingBackendProxy::flushDisplayListWasCommitted(DisplayListFlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
+{
+    auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(renderingResourceIdentifier);
+    if (!imageBuffer)
+        return;
+
+    if (imageBuffer->isAccelerated())
+        downcast<AcceleratedRemoteImageBufferProxy>(*imageBuffer).commitFlushDisplayList(flushIdentifier);
+    else
+        downcast<UnacceleratedRemoteImageBufferProxy>(*imageBuffer).commitFlushDisplayList(flushIdentifier);
 }
 
 } // namespace WebKit

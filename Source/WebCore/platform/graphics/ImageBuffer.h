@@ -29,6 +29,7 @@
 
 #include "ImageBufferBackend.h"
 #include "RenderingMode.h"
+#include "RenderingResourceIdentifier.h"
 
 namespace WebCore {
 
@@ -60,6 +61,9 @@ public:
     
     WEBCORE_EXPORT virtual ~ImageBuffer() = default;
 
+    virtual bool isAccelerated() const = 0;
+    virtual RenderingResourceIdentifier renderingResourceIdentifier() const { return { }; }
+    
     virtual GraphicsContext& context() const = 0;
     virtual void flushContext() = 0;
 
@@ -104,8 +108,6 @@ public:
     virtual bool copyToPlatformTexture(GraphicsContextGLOpenGL&, GCGLenum, PlatformGLObject, GCGLenum, bool, bool) const = 0;
     virtual PlatformLayer* platformLayer() const = 0;
     
-    virtual bool isAccelerated() const = 0;
-
 protected:
     ImageBuffer() = default;
 

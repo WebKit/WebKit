@@ -33,9 +33,9 @@
 namespace WebCore {
 namespace DisplayList {
 
-DrawingContext::DrawingContext(const FloatSize& logicalSize, const AffineTransform& initialCTM, Recorder::Observer* observer)
+DrawingContext::DrawingContext(const FloatSize& logicalSize, const AffineTransform& initialCTM, Recorder::Delegate* delegate)
     : m_context([&](GraphicsContext& displayListContext) {
-        return makeUnique<Recorder>(displayListContext, m_displayList, GraphicsContextState(), FloatRect({ }, logicalSize), initialCTM, observer);
+        return makeUnique<Recorder>(displayListContext, m_displayList, GraphicsContextState(), FloatRect({ }, logicalSize), initialCTM, delegate);
     })
 {
 }

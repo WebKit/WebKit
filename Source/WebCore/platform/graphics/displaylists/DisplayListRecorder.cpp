@@ -37,10 +37,10 @@
 namespace WebCore {
 namespace DisplayList {
 
-Recorder::Recorder(GraphicsContext& context, DisplayList& displayList, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, Observer* observer)
+Recorder::Recorder(GraphicsContext& context, DisplayList& displayList, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, Delegate* delegate)
     : GraphicsContextImpl(context, initialClip, AffineTransform())
     , m_displayList(displayList)
-    , m_observer(observer)
+    , m_delegate(delegate)
 {
     LOG_WITH_STREAM(DisplayLists, stream << "\nRecording with clip " << initialClip);
     m_stateStack.append({ state, initialCTM, initialClip });
@@ -93,8 +93,8 @@ static Ref<Item> createStateChangeItem(const GraphicsContextStateChange& changes
 
 void Recorder::willAppendItem(const Item& item)
 {
-    if (m_observer)
-        m_observer->willAppendItem(item);
+    if (m_delegate)
+        m_delegate->willAppendItem(item);
 
     if (item.isDrawingItem()
 #if USE(CG)

@@ -31,15 +31,23 @@
 #include "ImageBufferBackendHandle.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
-#include "RemoteImageBufferMessageHandlerProxy.h"
+#include "RemoteResourceCacheProxy.h"
 #include "RenderingBackendIdentifier.h"
-#include <WebCore/ColorSpace.h>
-#include <WebCore/DisplayList.h>
-#include <WebCore/FloatSize.h>
-#include <WebCore/RemoteResourceIdentifier.h>
-#include <WebCore/RenderingMode.h>
-#include <wtf/HashMap.h>
+#include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/WeakPtr.h>
+
+namespace WebCore {
+namespace DisplayList {
+class DisplayList;
+class Item;
+}
+class FloatSize;
+class ImageData;
+enum class AlphaPremultiplication : uint8_t;
+enum class ColorSpace : uint8_t;
+enum class RenderingMode : uint8_t;
+enum class ShouldAccelerate : bool;
+}
 
 namespace WebKit {
 
@@ -52,7 +60,7 @@ public:
 
     ~RemoteRenderingBackendProxy();
 
-    RenderingBackendIdentifier renderingBackendIdentifier() const { return m_renderingBackendIdentifier; }
+    RemoteResourceCacheProxy& remoteResourceCacheProxy() { return m_remoteResourceCacheProxy; }
 
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const override;
@@ -61,8 +69,12 @@ public:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
+    // Messages to be sent.
     std::unique_ptr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::ShouldAccelerate, float resolutionScale, WebCore::ColorSpace);
-    void releaseRemoteResource(WebCore::RemoteResourceIdentifier);
+    RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect, WebCore::RenderingResourceIdentifier);
+    void flushDisplayList(const WebCore::DisplayList::DisplayList&, WebCore::RenderingResourceIdentifier);
+    DisplayListFlushIdentifier flushDisplayListAndCommit(const WebCore::DisplayList::DisplayList&, WebCore::RenderingResourceIdentifier);
+    void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
 
     bool waitForImageBufferBackendWasCreated();
     bool waitForFlushDisplayListWasCommitted();
@@ -71,11 +83,10 @@ private:
     RemoteRenderingBackendProxy();
 
     // Messages to be received.
-    void imageBufferBackendWasCreated(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle, WebCore::RemoteResourceIdentifier);
-    void flushDisplayListWasCommitted(DisplayListFlushIdentifier, WebCore::RemoteResourceIdentifier);
+    void imageBufferBackendWasCreated(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle, WebCore::RenderingResourceIdentifier);
+    void flushDisplayListWasCommitted(DisplayListFlushIdentifier, WebCore::RenderingResourceIdentifier);
 
-    using ImageBufferMessageHandlerMap = HashMap<WebCore::RemoteResourceIdentifier, RemoteImageBufferMessageHandlerProxy*>;
-    ImageBufferMessageHandlerMap m_imageBufferMessageHandlerMap;
+    RemoteResourceCacheProxy m_remoteResourceCacheProxy { *this };
     RenderingBackendIdentifier m_renderingBackendIdentifier { RenderingBackendIdentifier::generate() };
 };
 

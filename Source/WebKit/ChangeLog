@@ -1,3 +1,77 @@
+2020-10-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [GPU Process]: Introduce RemoteResourceCacheProxy to manage the remote resources in Web Process
+        https://bugs.webkit.org/show_bug.cgi?id=217558
+
+        Reviewed by Simon Fraser.
+
+        Remove RemoteImageBufferMessageHandlerProxy and move sending the messages
+        to RemoteRenderingBackendProxy.
+
+        To allow casting ImageBuffer to RemoteImageBufferProxy, a new method named
+        remoteResourceIdentifier() is added to IamgeBuffer and it is only overridden
+        by RemoteImageBufferProxy. This method is used in SPECIALIZE_TYPE_TRAITS
+        macros along with IamgeBuffer::isAccelerated().
+
+        Introduce RemoteResourceCacheProxy which will manage caching and releasing
+        the RemoteImageBufferProxy. Caching NativeImage will be added to it in
+        future patches. More about controlling the life cycles of remote resources 
+        will be added also when supporting drawing remote resources to remote client
+        in future patches.
+
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        (WebKit::RemoteImageBuffer::create):
+        (WebKit::RemoteImageBuffer::RemoteImageBuffer):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::imageBufferBackendWasCreated):
+        (WebKit::RemoteRenderingBackend::flushDisplayListWasCommitted):
+        (WebKit::RemoteRenderingBackend::createImageBuffer):
+        (WebKit::RemoteRenderingBackend::flushDisplayList):
+        (WebKit::RemoteRenderingBackend::flushDisplayListAndCommit):
+        (WebKit::RemoteRenderingBackend::getImageData):
+        (WebKit::RemoteRenderingBackend::releaseRemoteResource):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * GPUProcess/graphics/RemoteResourceCache.cpp:
+        (WebKit::RemoteResourceCache::cacheImageBuffer):
+        (WebKit::RemoteResourceCache::cachedImageBuffer):
+        (WebKit::RemoteResourceCache::releaseRemoteResource):
+        * GPUProcess/graphics/RemoteResourceCache.h:
+        * Scripts/webkit/messages.py:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/PlatformRemoteImageBufferProxy.h:
+        (isType):
+        * WebProcess/GPU/graphics/RemoteImageBufferMessageHandlerProxy.cpp: Removed.
+        * WebProcess/GPU/graphics/RemoteImageBufferMessageHandlerProxy.h: Removed.
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::create):
+        (WebKit::RemoteImageBufferProxy::~RemoteImageBufferProxy):
+        (WebKit::RemoteImageBufferProxy::createBackend):
+        (WebKit::RemoteImageBufferProxy::commitFlushDisplayList):
+        (WebKit::RemoteImageBufferProxy::RemoteImageBufferProxy):
+        (WebKit::RemoteImageBufferProxy::isPendingFlush const):
+        (WebKit::RemoteImageBufferProxy::timeoutWaitForFlushDisplayListWasCommitted):
+        (WebKit::RemoteImageBufferProxy::flushDrawingContextAndCommit):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::createImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::getImageData):
+        (WebKit::RemoteRenderingBackendProxy::flushDisplayList):
+        (WebKit::RemoteRenderingBackendProxy::flushDisplayListAndCommit):
+        (WebKit::RemoteRenderingBackendProxy::releaseRemoteResource):
+        (WebKit::RemoteRenderingBackendProxy::imageBufferBackendWasCreated):
+        (WebKit::RemoteRenderingBackendProxy::flushDisplayListWasCommitted):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        (WebKit::RemoteRenderingBackendProxy::remoteResourceCacheProxy):
+        (WebKit::RemoteRenderingBackendProxy::renderingBackendIdentifier const): Deleted.
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.messages.in:
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp: Copied from Source/WebKit/GPUProcess/graphics/RemoteResourceCache.cpp.
+        (WebKit::RemoteResourceCacheProxy::RemoteResourceCacheProxy):
+        (WebKit::RemoteResourceCacheProxy::cacheImageBuffer):
+        (WebKit::RemoteResourceCacheProxy::cachedImageBuffer):
+        (WebKit::RemoteResourceCacheProxy::releaseImageBuffer):
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.h: Copied from Source/WebKit/GPUProcess/graphics/RemoteResourceCache.h.
+
 2020-10-26  Alex Christensen  <achristensen@webkit.org>
 
         Add null checks and smart pointers in PDF and Plugin code

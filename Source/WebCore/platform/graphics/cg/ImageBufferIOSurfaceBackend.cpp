@@ -190,11 +190,6 @@ IOSurface* ImageBufferIOSurfaceBackend::surface()
     return m_surface.get();
 }
 
-bool ImageBufferIOSurfaceBackend::isAccelerated() const
-{
-    return true;
-}
-
 } // namespace WebCore
 
 #endif // HAVE(IOSURFACE)

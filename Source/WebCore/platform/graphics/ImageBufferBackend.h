@@ -101,7 +101,7 @@ public:
     virtual bool copyToPlatformTexture(GraphicsContextGLOpenGL&, GCGLenum, PlatformGLObject, GCGLenum, bool, bool) const { return false; }
     
     static constexpr bool isOriginAtUpperLeftCorner = false;
-    virtual bool isAccelerated() const { return false; }
+    static constexpr bool isAccelerated = false;
 
 protected:
     WEBCORE_EXPORT ImageBufferBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace);
