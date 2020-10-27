@@ -1,3 +1,18 @@
+2020-10-13  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Assert that WTF::HashTable does not visit the same bucket twice
+        https://bugs.webkit.org/show_bug.cgi?id=217691
+        <rdar://problem/69887843>
+
+        Reviewed by Saam Barati.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::inlineLookup):
+        (WTF::KeyTraits>::lookupForWriting):
+        (WTF::KeyTraits>::fullLookupForWriting):
+        (WTF::KeyTraits>::addUniqueForInitialization):
+        (WTF::KeyTraits>::add):
+
 2020-10-26  Alex Christensen  <achristensen@webkit.org>
 
         Inclusive software: Remove instances of "dumb" from the code
