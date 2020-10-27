@@ -1,5 +1,76 @@
 2020-10-26  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r268800. rdar://problem/70702272
+
+    REGRESSION(r266295): Range allows start and end containers to belong to different trees
+    https://bugs.webkit.org/show_bug.cgi?id=217895
+    
+    Reviewed by Ryosuke Niwa.
+    
+    Source/WebCore:
+    
+    Test: fast/dom/Range/ranges-across-trees.html
+    
+    * dom/BoundaryPoint.h: Added treeOrder<TreeType>.
+    
+    * dom/Node.cpp:
+    (WebCore::parent<Tree>): Added.
+    (WebCore::parent<ComposedTree>): Added.
+    (WebCore::depth): Changed into a template that takes TreeType.
+    (WebCore::commonInclusiveAncestorAndChildren): Ditto.
+    (WebCore::commonInclusiveAncestor): Changed to explicitly use ComposedTree to preserve
+    the current behavior, but likely will return later to make this a template and have it
+    us the normal tree by default.
+    (WebCore::treeOrder): Changed into a template that takes TreeType.
+    (WebCore::documentOrder): Call treeOrder<ComposedTree> to preserve the current behavior.
+    Likely will delete this later after changing callers to use treeOrder.
+    
+    * dom/Node.h: Added Tree, ShadowIncludingTree, and ComposedTree. Added parent and
+    treeOrder function templates. TreeType currently is a set of classes but they could
+    also be objects of another type. Maybe an enumeration named TreeType instead?
+    
+    * dom/Range.cpp:
+    (WebCore::Range::setStart): Use treeOrder instead of documentOrder to use the normal
+    tree instead of the composed tree.
+    (WebCore::Range::setEnd): Ditto.
+    (WebCore::Range::isPointInRange): Use isPointInRange<Tree> instead of isPointInRange
+    to use the normal tree instead of the composed tree.
+    (WebCore::Range::comparePoint const): Use treeOrder instead of documentOrder to use
+    the normal tree instead of the composed tree.
+    (WebCore::Range::compareNode const): Ditto.
+    (WebCore::Range::compareBoundaryPoints const): Ditto.
+    (WebCore::Range::intersectsNode const): Use intersects<Tree> instead of isPointInRange
+    to use the normal tree instead of the composed tree.
+    
+    * dom/SimpleRange.cpp:
+    (WebCore::treeOrder): Changed into a template that takes TreeType.
+    (WebCore::documentOrder): Call treeOrder<ComposedTree> to preserve the current behavior.
+    Likely will delete this later after changing callers to use treeOrder.
+    (WebCore::isPointInRange): Changed into a template that takes TreeType.
+    For now the default tree type is still ComposedTree, but will change that later.
+    (WebCore::intersects): Ditto.
+    (WebCore::contains<Tree>): Added.
+    (WebCore::contains<ComposedTree>): Added.
+    
+    * dom/SimpleRange.h: Added isPointInRange, intersects, and treeOrder function templates.
+    
+    LayoutTests:
+    
+    * fast/dom/Range/ranges-across-trees.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268800 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-20  Darin Adler  <darin@apple.com>
+
+            REGRESSION(r266295): Range allows start and end containers to belong to different trees
+            https://bugs.webkit.org/show_bug.cgi?id=217895
+
+            Reviewed by Ryosuke Niwa.
+
+            * fast/dom/Range/ranges-across-trees.html: Added.
+
+2020-10-26  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r268695. rdar://problem/70702399
 
     Unreviewed, reverting r267175 and r267779.

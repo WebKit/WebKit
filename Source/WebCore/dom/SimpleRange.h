@@ -65,18 +65,24 @@ WEBCORE_EXPORT RefPtr<Node> commonInclusiveAncestor(const SimpleRange&);
 
 bool operator==(const SimpleRange&, const SimpleRange&);
 
+template<typename TreeType> bool isPointInRange(const SimpleRange&, const BoundaryPoint&);
+template<typename TreeType> bool isPointInRange(const SimpleRange&, const Optional<BoundaryPoint>&);
 WEBCORE_EXPORT bool isPointInRange(const SimpleRange&, const BoundaryPoint&);
 bool isPointInRange(const SimpleRange&, const Optional<BoundaryPoint>&);
 
 WEBCORE_EXPORT bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange);
+template<typename TreeType> bool intersects(const SimpleRange&, const SimpleRange&);
 WEBCORE_EXPORT bool intersects(const SimpleRange&, const SimpleRange&);
 WEBCORE_EXPORT SimpleRange unionRange(const SimpleRange&, const SimpleRange&);
 WEBCORE_EXPORT Optional<SimpleRange> intersection(const Optional<SimpleRange>&, const Optional<SimpleRange>&);
 
 WEBCORE_EXPORT bool contains(const SimpleRange&, const Node&);
+template<typename TreeType> bool intersects(const SimpleRange&, const Node&);
 WEBCORE_EXPORT bool intersects(const SimpleRange&, const Node&);
 
 // Returns equivalent if point is in range.
+template<typename TreeType = Tree> PartialOrdering treeOrder(const SimpleRange&, const BoundaryPoint&);
+template<typename TreeType = Tree> PartialOrdering treeOrder(const BoundaryPoint&, const SimpleRange&);
 WEBCORE_EXPORT PartialOrdering documentOrder(const SimpleRange&, const BoundaryPoint&);
 WEBCORE_EXPORT PartialOrdering documentOrder(const BoundaryPoint&, const SimpleRange&);
 

@@ -2622,11 +2622,21 @@ void* Node::opaqueRootSlow() const
     return const_cast<void*>(static_cast<const void*>(node));
 }
 
-static size_t depthInComposedTree(const Node& node)
+template<> ContainerNode* parent<Tree>(const Node& node)
+{
+    return node.parentNode();
+}
+
+template<> ContainerNode* parent<ComposedTree>(const Node& node)
+{
+    return node.parentInComposedTree();
+}
+
+template<typename TreeType> size_t depth(const Node& node)
 {
     size_t depth = 0;
     auto ancestor = &node;
-    while ((ancestor = ancestor->parentInComposedTree()))
+    while ((ancestor = parent<TreeType>(*ancestor)))
         ++depth;
     return depth;
 }
@@ -2637,8 +2647,7 @@ struct AncestorAndChildren {
     const Node* distinctAncestorB;
 };
 
-// FIXME: This function's name is not explicit about the fact that it's the common inclusive ancestor in the composed tree.
-static AncestorAndChildren commonInclusiveAncestorAndChildren(const Node& a, const Node& b)
+template<typename TreeType> AncestorAndChildren commonInclusiveAncestorAndChildren(const Node& a, const Node& b)
 {
     // This check isn't needed for correctness, but it is cheap and likely to be
     // common enough to be worth optimizing so we don't have to walk to the root.
@@ -2647,31 +2656,31 @@ static AncestorAndChildren commonInclusiveAncestorAndChildren(const Node& a, con
     // FIXME: Could optimize cases where nodes are both in the same shadow tree.
     // FIXME: Could optimize cases where nodes are in different documents to quickly return false.
     // FIXME: Could optimize cases where one node is connected and the other is not to quickly return false.
-    auto [depthA, depthB] = std::make_tuple(depthInComposedTree(a), depthInComposedTree(b));
+    auto [depthA, depthB] = std::make_tuple(depth<TreeType>(a), depth<TreeType>(b));
     auto [x, y, difference] = depthA >= depthB
         ? std::make_tuple(&a, &b, depthA - depthB)
         : std::make_tuple(&b, &a, depthB - depthA);
     decltype(x) distinctAncestorA = nullptr;
     for (decltype(difference) i = 0; i < difference; ++i) {
         distinctAncestorA = x;
-        x = x->parentInComposedTree();
+        x = parent<TreeType>(*x);
     }
     decltype(y) distinctAncestorB = nullptr;
     while (x != y) {
         distinctAncestorA = x;
         distinctAncestorB = y;
-        x = x->parentInComposedTree();
-        y = y->parentInComposedTree();
+        x = parent<TreeType>(*x);
+        y = parent<TreeType>(*y);
     }
     if (depthA < depthB)
         std::swap(distinctAncestorA, distinctAncestorB);
     return { x, distinctAncestorA, distinctAncestorB };
 }
 
-// FIXME: This function's name is not explicit about the fact that it's the common inclusive ancestor in the composed tree.
+// FIXME: Change this to work within the normal tree instead of the composed tree. Or rename and/or split into multiple functions.
 RefPtr<Node> commonInclusiveAncestor(Node& a, Node& b)
 {
-    return const_cast<Node*>(commonInclusiveAncestorAndChildren(a, b).commonAncestor);
+    return const_cast<Node*>(commonInclusiveAncestorAndChildren<ComposedTree>(a, b).commonAncestor);
 }
 
 static bool isSiblingSubsequent(const Node& siblingA, const Node& siblingB)
@@ -2686,11 +2695,11 @@ static bool isSiblingSubsequent(const Node& siblingA, const Node& siblingB)
     return false;
 }
 
-PartialOrdering documentOrder(const Node& a, const Node& b)
+template<typename TreeType> PartialOrdering treeOrder(const Node& a, const Node& b)
 {
     if (&a == &b)
         return PartialOrdering::equivalent;
-    auto result = commonInclusiveAncestorAndChildren(a, b);
+    auto result = commonInclusiveAncestorAndChildren<TreeType>(a, b);
     if (!result.commonAncestor)
         return PartialOrdering::unordered;
     if (!result.distinctAncestorA)
@@ -2708,6 +2717,14 @@ PartialOrdering documentOrder(const Node& a, const Node& b)
         return PartialOrdering::unordered;
     }
     return isSiblingSubsequent(*result.distinctAncestorA, *result.distinctAncestorB) ? PartialOrdering::less : PartialOrdering::greater;
+}
+
+template PartialOrdering treeOrder<Tree>(const Node&, const Node&);
+template PartialOrdering treeOrder<ComposedTree>(const Node&, const Node&);
+
+PartialOrdering documentOrder(const Node& a, const Node& b)
+{
+    return treeOrder<ComposedTree>(a, b);
 }
 
 TextStream& operator<<(TextStream& ts, const Node& node)
