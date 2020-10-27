@@ -568,7 +568,7 @@ void ExtensionsGLANGLE::getPointervRobustANGLERobustANGLE(GCGLenum pname, GCGLsi
     gl::GetPointervRobustANGLERobustANGLE(pname, bufSize, length, params);
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
 static void wipeAlphaChannelFromPixels(int width, int height, unsigned char* pixels)
 {
     // We can assume this doesn't overflow because the calling functions
@@ -606,8 +606,8 @@ void ExtensionsGLANGLE::readnPixelsRobustANGLE(int x, int y, GCGLsizei width, GC
         return;
     }
 
-#if PLATFORM(MAC)
-    if (!readingToPixelBufferObject && !attrs.alpha && (format == GraphicsContextGL::RGBA || format == GraphicsContextGL::BGRA) && (state.boundReadFBO == m_context->m_fbo || (attrs.antialias && state.boundReadFBO == m_context->m_multisampleFBO)))
+#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+    if (!readingToPixelBufferObject && !attrs.alpha && (format == GraphicsContextGL::RGBA || format == GraphicsContextGL::BGRA) && (type == GraphicsContextGL::UNSIGNED_BYTE) && (state.boundReadFBO == m_context->m_fbo || (attrs.antialias && state.boundReadFBO == m_context->m_multisampleFBO)))
         wipeAlphaChannelFromPixels(width, height, static_cast<unsigned char*>(data));
 #else
     UNUSED_PARAM(readingToPixelBufferObject);

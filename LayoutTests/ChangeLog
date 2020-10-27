@@ -1,3 +1,15 @@
+2020-10-27  Kenneth Russell  <kbr@chromium.org>
+
+        [ iOS wk2 ] webgl/1.0.3/conformance/textures/copy-tex-image-2d-formats.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=209139
+
+        Reviewed by Dean Jackson.
+
+        Remove iOS suppression for
+        webgl/1.0.3/conformance/textures/copy-tex-image-2d-formats.html.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-10-27  Chris Dumez  <cdumez@apple.com>
 
         Calling AudioContext.suspend() / resume() while already suspended / running should resolve the promise right away
