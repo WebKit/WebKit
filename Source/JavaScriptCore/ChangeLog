@@ -1,3 +1,16 @@
+2020-10-15  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Validate addresses returned by LinkBuffer::locationOf
+        https://bugs.webkit.org/show_bug.cgi?id=217786
+        <rdar://problem/69887913>
+
+        Reviewed by Saam Barati.
+
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::locationOf):
+        (JSC::LinkBuffer::locationOfNearCall):
+        (JSC::LinkBuffer::getLinkerAddress):
+
 2020-10-26  Alex Christensen  <achristensen@webkit.org>
 
         Inclusive software: Remove instances of "dumb" from the code
