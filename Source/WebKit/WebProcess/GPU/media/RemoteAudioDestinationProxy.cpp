@@ -102,24 +102,22 @@ RemoteAudioDestinationProxy::~RemoteAudioDestinationProxy()
     m_renderThread->waitForCompletion();
 }
 
-void RemoteAudioDestinationProxy::start(Function<void(Function<void()>&&)>&& dispatchToRenderThread)
+void RemoteAudioDestinationProxy::start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&& completionHandler)
 {
-    m_dispatchToRenderThread = WTFMove(dispatchToRenderThread);
-    bool isPlaying;
-    WebProcess::singleton().ensureGPUProcessConnection().connection().sendSync(
-        Messages::RemoteAudioDestinationManager::StartAudioDestination(m_destinationID),
-        Messages::RemoteAudioDestinationManager::StartAudioDestination::Reply(isPlaying), 0);
-    setIsPlaying(isPlaying);
+    WebProcess::singleton().ensureGPUProcessConnection().connection().sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StartAudioDestination(m_destinationID), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler), dispatchToRenderThread = WTFMove(dispatchToRenderThread)](bool isPlaying) mutable {
+        m_dispatchToRenderThread = WTFMove(dispatchToRenderThread);
+        setIsPlaying(isPlaying);
+        completionHandler(isPlaying);
+    });
 }
 
-void RemoteAudioDestinationProxy::stop()
+void RemoteAudioDestinationProxy::stop(CompletionHandler<void(bool)>&& completionHandler)
 {
-    bool isPlaying;
-    WebProcess::singleton().ensureGPUProcessConnection().connection().sendSync(
-        Messages::RemoteAudioDestinationManager::StopAudioDestination(m_destinationID),
-        Messages::RemoteAudioDestinationManager::StopAudioDestination::Reply(isPlaying), 0);
-    setIsPlaying(isPlaying);
-    m_dispatchToRenderThread = nullptr;
+    WebProcess::singleton().ensureGPUProcessConnection().connection().sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StopAudioDestination(m_destinationID), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
+        setIsPlaying(isPlaying);
+        m_dispatchToRenderThread = nullptr;
+        completionHandler(!isPlaying);
+    });
 }
 
 #if PLATFORM(COCOA)

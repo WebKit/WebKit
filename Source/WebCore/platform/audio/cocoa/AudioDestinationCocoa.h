@@ -70,8 +70,8 @@ protected:
 private:
     friend Ref<AudioDestination> AudioDestination::create(AudioIOCallback&, const String&, unsigned, unsigned, float);
 
-    void start(Function<void(Function<void()>&&)>&&) override;
-    void stop() override;
+    void start(Function<void(Function<void()>&&)>&&, CompletionHandler<void(bool)>&&) override;
+    void stop(CompletionHandler<void(bool)>&&) override;
 
     // AudioSourceProvider.
     WEBCORE_EXPORT void provideInput(AudioBus*, size_t framesToProcess) final;

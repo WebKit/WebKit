@@ -34,8 +34,8 @@ public:
     AudioDestinationGStreamer(AudioIOCallback&, unsigned long numberOfOutputChannels, float sampleRate);
     virtual ~AudioDestinationGStreamer();
 
-    void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread) override;
-    void stop() override;
+    void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&&) override;
+    void stop(CompletionHandler<void(bool)>&&) override;
 
     bool isPlaying() override { return m_isPlaying; }
     float sampleRate() const override { return m_sampleRate; }

@@ -27,8 +27,8 @@ messages -> RemoteAudioDestinationManager NotRefCounted {
     CreateAudioDestination(String inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate) -> (WebKit::RemoteAudioDestinationIdentifier identifier) Synchronous
     DeleteAudioDestination(WebKit::RemoteAudioDestinationIdentifier identifier) -> () Async
 
-    StartAudioDestination(WebKit::RemoteAudioDestinationIdentifier identifier) -> (bool isPlaying) Synchronous
-    StopAudioDestination(WebKit::RemoteAudioDestinationIdentifier identifier) -> (bool isPlaying) Synchronous
+    StartAudioDestination(WebKit::RemoteAudioDestinationIdentifier identifier) -> (bool isPlaying) Async
+    StopAudioDestination(WebKit::RemoteAudioDestinationIdentifier identifier) -> (bool isPlaying) Async
 #if PLATFORM(COCOA)
     AudioSamplesStorageChanged(WebKit::RemoteAudioDestinationIdentifier identifier, WebKit::SharedMemory::IPCHandle storageHandle, WebCore::CAAudioStreamDescription description, uint64_t numberOfFrames)
 #endif

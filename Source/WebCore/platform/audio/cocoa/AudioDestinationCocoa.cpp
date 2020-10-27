@@ -99,24 +99,30 @@ unsigned AudioDestinationCocoa::framesPerBuffer() const
     return m_renderBus->length();
 }
 
-void AudioDestinationCocoa::start(Function<void(Function<void()>&&)>&& dispatchToRenderThread)
+void AudioDestinationCocoa::start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&& completionHandler)
 {
     LOG(Media, "AudioDestinationCocoa::start");
     m_dispatchToRenderThread = WTFMove(dispatchToRenderThread);
-    OSStatus result = m_audioOutputUnitAdaptor.start();
-
-    if (!result)
+    auto success = m_audioOutputUnitAdaptor.start() == noErr;
+    if (success)
         setIsPlaying(true);
+
+    callOnMainThread([completionHandler = WTFMove(completionHandler), success]() mutable {
+        completionHandler(success);
+    });
 }
 
-void AudioDestinationCocoa::stop()
+void AudioDestinationCocoa::stop(CompletionHandler<void(bool)>&& completionHandler)
 {
     LOG(Media, "AudioDestinationCocoa::stop");
-    OSStatus result = m_audioOutputUnitAdaptor.stop();
+    auto success = m_audioOutputUnitAdaptor.stop() == noErr;
     m_dispatchToRenderThread = nullptr;
-
-    if (!result)
+    if (success)
         setIsPlaying(false);
+
+    callOnMainThread([completionHandler = WTFMove(completionHandler), success]() mutable {
+        completionHandler(success);
+    });
 }
 
 void AudioDestinationCocoa::setIsPlaying(bool isPlaying)

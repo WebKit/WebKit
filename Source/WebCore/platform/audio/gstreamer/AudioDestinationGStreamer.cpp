@@ -217,33 +217,42 @@ gboolean AudioDestinationGStreamer::handleMessage(GstMessage* message)
     return TRUE;
 }
 
-void AudioDestinationGStreamer::start(Function<void(Function<void()>&&)>&& dispatchToRenderThread)
+void AudioDestinationGStreamer::start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(m_audioSinkAvailable);
-    if (!m_audioSinkAvailable)
-        return;
+    bool success = false;
+    if (m_audioSinkAvailable) {
+        if (dispatchToRenderThread)
+            webkitWebAudioSourceSetDispatchToRenderThreadCallback(WEBKIT_WEB_AUDIO_SRC(m_src.get()), WTFMove(dispatchToRenderThread));
 
-    if (dispatchToRenderThread)
-        webkitWebAudioSourceSetDispatchToRenderThreadCallback(WEBKIT_WEB_AUDIO_SRC(m_src.get()), WTFMove(dispatchToRenderThread));
-
-    GST_DEBUG("Starting");
-    if (gst_element_set_state(m_pipeline.get(), GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
-        g_warning("Error: Failed to set pipeline to playing");
-        m_isPlaying = false;
-        return;
+        GST_DEBUG("Starting");
+        if (gst_element_set_state(m_pipeline.get(), GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
+            g_warning("Error: Failed to set pipeline to playing");
+            m_isPlaying = false;
+        } else {
+            m_isPlaying = true;
+            success = true;
+        }
     }
-    m_isPlaying = true;
+
+    callOnMainThread([completionHandler = WTFMove(completionHandler), success]() mutable {
+        completionHandler(success);
+    });
 }
 
-void AudioDestinationGStreamer::stop()
+void AudioDestinationGStreamer::stop(CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(m_audioSinkAvailable);
-    if (!m_audioSinkAvailable)
-        return;
-
-    GST_DEBUG("Stopping");
-    gst_element_set_state(m_pipeline.get(), GST_STATE_PAUSED);
-    m_isPlaying = false;
+    bool success = false;
+    if (m_audioSinkAvailable) {
+        GST_DEBUG("Stopping");
+        gst_element_set_state(m_pipeline.get(), GST_STATE_PAUSED);
+        m_isPlaying = false;
+        success = true;
+    }
+    callOnMainThread([completionHandler = WTFMove(completionHandler), success]() mutable {
+        completionHandler(success);
+    });
 }
 
 } // namespace WebCore

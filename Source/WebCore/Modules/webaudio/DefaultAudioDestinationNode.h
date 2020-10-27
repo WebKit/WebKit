@@ -43,7 +43,7 @@ public:
     unsigned framesPerBuffer() const;
     float sampleRate() const final { return m_sampleRate; }
     
-    ExceptionOr<void> startRendering() final;
+    void startRendering(CompletionHandler<void(Optional<Exception>&&)>&&) final;
 
 private:
     explicit DefaultAudioDestinationNode(BaseAudioContext&, Optional<float>);
@@ -58,9 +58,9 @@ private:
     bool requiresTailProcessing() const final { return false; }
 
     void enableInput(const String& inputDeviceId) final;
-    void resume(Function<void ()>&&) final;
-    void suspend(Function<void ()>&&) final;
-    void close(Function<void ()>&&) final;
+    void resume(CompletionHandler<void(Optional<Exception>&&)>&&) final;
+    void suspend(CompletionHandler<void(Optional<Exception>&&)>&&) final;
+    void close(CompletionHandler<void()>&&) final;
     unsigned maxChannelCount() const final;
     bool isPlaying() final;
 

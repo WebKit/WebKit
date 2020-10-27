@@ -119,37 +119,53 @@ Function<void(Function<void()>&&)> DefaultAudioDestinationNode::dispatchToRender
     return { };
 }
 
-ExceptionOr<void> DefaultAudioDestinationNode::startRendering()
+void DefaultAudioDestinationNode::startRendering(CompletionHandler<void(Optional<Exception>&&)>&& completionHandler)
 {
     ASSERT(isInitialized());
     if (!isInitialized())
-        return Exception { InvalidStateError, "AudioDestinationNode is not initialized"_s };
+        return completionHandler(Exception { InvalidStateError, "AudioDestinationNode is not initialized"_s });
 
-    m_destination->start(dispatchToRenderThreadFunction());
-    return { };
+    auto innerCompletionHandler = [completionHandler = WTFMove(completionHandler)](bool success) mutable {
+        completionHandler(success ? WTF::nullopt : makeOptional(Exception { InvalidStateError, "Failed to start the audio device"_s }));
+    };
+
+    m_destination->start(dispatchToRenderThreadFunction(), WTFMove(innerCompletionHandler));
 }
 
-void DefaultAudioDestinationNode::resume(Function<void ()>&& function)
+void DefaultAudioDestinationNode::resume(CompletionHandler<void(Optional<Exception>&&)>&& completionHandler)
 {
     ASSERT(isInitialized());
-    if (isInitialized())
-        m_destination->start(dispatchToRenderThreadFunction());
-    context().postTask(WTFMove(function));
+    if (!isInitialized()) {
+        context().postTask([completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler(Exception { InvalidStateError, "AudioDestinationNode is not initialized"_s });
+        });
+        return;
+    }
+    m_destination->start(dispatchToRenderThreadFunction(), [completionHandler = WTFMove(completionHandler)](bool success) mutable {
+        completionHandler(success ? WTF::nullopt : makeOptional(Exception { InvalidStateError, "Failed to start the audio device"_s }));
+    });
 }
 
-void DefaultAudioDestinationNode::suspend(Function<void ()>&& function)
+void DefaultAudioDestinationNode::suspend(CompletionHandler<void(Optional<Exception>&&)>&& completionHandler)
 {
     ASSERT(isInitialized());
-    if (isInitialized())
-        m_destination->stop();
-    context().postTask(WTFMove(function));
+    if (!isInitialized()) {
+        context().postTask([completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler(Exception { InvalidStateError, "AudioDestinationNode is not initialized"_s });
+        });
+        return;
+    }
+
+    m_destination->stop([completionHandler = WTFMove(completionHandler)](bool success) mutable {
+        completionHandler(success ? WTF::nullopt : makeOptional(Exception { InvalidStateError, "Failed to stop the audio device"_s }));
+    });
 }
 
-void DefaultAudioDestinationNode::close(Function<void()>&& function)
+void DefaultAudioDestinationNode::close(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(isInitialized());
     uninitialize();
-    context().postTask(WTFMove(function));
+    context().postTask(WTFMove(completionHandler));
 }
 
 unsigned DefaultAudioDestinationNode::maxChannelCount() const

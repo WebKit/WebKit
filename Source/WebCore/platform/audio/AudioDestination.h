@@ -30,6 +30,7 @@
 #define AudioDestination_h
 
 #include <memory>
+#include <wtf/CompletionHandler.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -50,8 +51,8 @@ public:
 
     virtual ~AudioDestination() = default;
 
-    virtual void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread) = 0;
-    virtual void stop() = 0;
+    virtual void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&& = [](bool) { }) = 0;
+    virtual void stop(CompletionHandler<void(bool)>&& = [](bool) { }) = 0;
     virtual bool isPlaying() = 0;
 
     // Sample-rate conversion may happen in AudioDestination to the hardware sample-rate

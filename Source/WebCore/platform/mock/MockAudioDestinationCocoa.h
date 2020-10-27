@@ -47,8 +47,8 @@ public:
     WEBCORE_EXPORT virtual ~MockAudioDestinationCocoa();
 
 private:
-    void start(Function<void(Function<void()>&&)>&&) final;
-    void stop() final;
+    void start(Function<void(Function<void()>&&)>&&, CompletionHandler<void(bool)>&&) final;
+    void stop(CompletionHandler<void(bool)>&&) final;
 
     void tick();
 

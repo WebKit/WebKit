@@ -16,20 +16,25 @@ description('Basic tests for AudioNode API.');
 var context = null;
 var node = null;
 
+function onAudioContextAutoStart()
+{
+    context.onstatechange = null;
+    shouldBeEqualToString('context.state', 'running');
+
+    debug('Calling context.suspend()');
+    context.suspend().then(suspendSucceeded, suspendFailed);
+}
+
 function runTest() {
     window.jsTestIsAsync = true;
 
     context = new AudioContext();
+    context.onstatechange = onAudioContextAutoStart;
 
-    shouldBe('context.state', '"suspended"');
+    shouldBeEqualToString('context.state', 'suspended');
 
     node = context.createBufferSource();
     evalAndLog('node.connect(context.destination)');
-
-    shouldBe('context.state', '"running"');
-
-    debug('Calling context.suspend()');
-    context.suspend().then(suspendSucceeded, suspendFailed);
 }
 
 function suspendFailed() {

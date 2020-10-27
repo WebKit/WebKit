@@ -75,8 +75,8 @@ public:
 #endif
 
 private:
-    void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread) final;
-    void stop() final;
+    void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&&) final;
+    void stop(CompletionHandler<void(bool)>&&) final;
 
 #if !PLATFORM(COCOA)
     bool isPlaying() final { return false; }

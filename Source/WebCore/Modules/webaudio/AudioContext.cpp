@@ -223,7 +223,11 @@ void AudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
 
     lazyInitialize();
 
-    destinationNode()->suspend([this, protectedThis = makeRef(*this), promise = WTFMove(promise)]() mutable {
+    destinationNode()->suspend([this, protectedThis = makeRef(*this), promise = WTFMove(promise)](Optional<Exception>&& exception) mutable {
+        if (exception) {
+            promise.reject(WTFMove(*exception));
+            return;
+        }
         setState(State::Suspended);
         promise.resolve();
     });
@@ -250,7 +254,12 @@ void AudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
 
     lazyInitialize();
 
-    destinationNode()->resume([this, protectedThis = makeRef(*this), promise = WTFMove(promise)]() mutable {
+    destinationNode()->resume([this, protectedThis = makeRef(*this), promise = WTFMove(promise)](Optional<Exception>&& exception) mutable {
+        if (exception) {
+            promise.reject(WTFMove(*exception));
+            return;
+        }
+
         // Since we update the state asynchronously, we may have been interrupted after the
         // call to resume() and before this lambda runs. In this case, we don't want to
         // reset the state to running.
@@ -286,10 +295,11 @@ void AudioContext::startRendering()
 
     makePendingActivity();
 
-    setState(State::Running);
-
     lazyInitialize();
-    destination()->startRendering();
+    destination()->startRendering([this, protectedThis = makeRef(*this)](Optional<Exception>&& exception) {
+        if (!exception)
+            setState(State::Running);
+    });
 }
 
 void AudioContext::lazyInitialize()
@@ -357,8 +367,8 @@ void AudioContext::mayResumePlayback(bool shouldResume)
 
     lazyInitialize();
 
-    destinationNode()->resume([this, protectedThis = makeRef(*this)] {
-        setState(State::Running);
+    destinationNode()->resume([this, protectedThis = makeRef(*this)](Optional<Exception>&& exception) {
+        setState(exception ? State::Suspended : State::Running);
     });
 }
 
@@ -436,7 +446,10 @@ void AudioContext::suspendPlayback()
 
     lazyInitialize();
 
-    destinationNode()->suspend([this, protectedThis = makeRef(*this)] {
+    destinationNode()->suspend([this, protectedThis = makeRef(*this)](Optional<Exception>&& exception) {
+        if (exception)
+            return;
+
         bool interrupted = m_mediaSession->state() == PlatformMediaSession::Interrupted;
         setState(interrupted ? State::Interrupted : State::Suspended);
     });

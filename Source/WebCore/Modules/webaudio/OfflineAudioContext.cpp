@@ -105,16 +105,17 @@ void OfflineAudioContext::startOfflineRendering(Ref<DeferredPromise>&& promise)
 
     lazyInitialize();
 
-    auto result = destination()->startRendering();
-    if (result.hasException()) {
-        promise->reject(result.releaseException());
-        return;
-    }
+    destination()->startRendering([this, promise = WTFMove(promise), pendingActivity = ActiveDOMObject::makePendingActivity(*this)](Optional<Exception>&& exception) mutable {
+        if (exception) {
+            promise->reject(WTFMove(*exception));
+            return;
+        }
 
-    makePendingActivity();
-    m_pendingOfflineRenderingPromise = WTFMove(promise);
-    m_didStartOfflineRendering = true;
-    setState(State::Running);
+        makePendingActivity();
+        m_pendingOfflineRenderingPromise = WTFMove(promise);
+        m_didStartOfflineRendering = true;
+        setState(State::Running);
+    });
 }
 
 void OfflineAudioContext::suspendOfflineRendering(double suspendTime, Ref<DeferredPromise>&& promise)
@@ -166,15 +167,16 @@ void OfflineAudioContext::resumeOfflineRendering(Ref<DeferredPromise>&& promise)
     }
     ASSERT(state() == AudioContextState::Suspended);
 
-    auto result = destination()->startRendering();
-    if (result.hasException()) {
-        promise->reject(result.releaseException());
-        return;
-    }
+    destination()->startRendering([this, promise = WTFMove(promise), pendingActivity = ActiveDOMObject::makePendingActivity(*this)](Optional<Exception>&& exception) mutable {
+        if (exception) {
+            promise->reject(WTFMove(*exception));
+            return;
+        }
 
-    makePendingActivity();
-    setState(State::Running);
-    promise->resolve();
+        makePendingActivity();
+        setState(State::Running);
+        promise->resolve();
+    });
 }
 
 bool OfflineAudioContext::shouldSuspend()

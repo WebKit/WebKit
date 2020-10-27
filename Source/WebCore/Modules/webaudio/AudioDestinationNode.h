@@ -28,7 +28,7 @@
 #include "AudioIOCallback.h"
 #include "AudioNode.h"
 #include "ExceptionOr.h"
-#include <wtf/Function.h>
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 
@@ -53,10 +53,10 @@ public:
     // Enable local/live input for the specified device.
     virtual void enableInput(const String& inputDeviceId) = 0;
 
-    virtual ExceptionOr<void> startRendering() = 0;
-    virtual void resume(WTF::Function<void ()>&&) { }
-    virtual void suspend(WTF::Function<void ()>&&) { }
-    virtual void close(WTF::Function<void ()>&&) { }
+    virtual void startRendering(CompletionHandler<void(Optional<Exception>&&)>&&) = 0;
+    virtual void resume(CompletionHandler<void(Optional<Exception>&&)>&& completionHandler) { completionHandler(WTF::nullopt); }
+    virtual void suspend(CompletionHandler<void(Optional<Exception>&&)>&& completionHandler) { completionHandler(WTF::nullopt); }
+    virtual void close(CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 
     virtual bool isPlaying() { return false; }
     void isPlayingDidChange() override;
