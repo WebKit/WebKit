@@ -1,5 +1,103 @@
 2020-10-26  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r268932. rdar://problem/70702224
+
+    REGRESSION(r268615): certain animations break when moving from one to display to another or resizing the window
+    https://bugs.webkit.org/show_bug.cgi?id=218080
+    <rdar://problem/70547132>
+    
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    Since transform-related animations include non-interpolating animations meant to insert the static base value for a given
+    transform-related CSS property, we need to update animations on GraphicsLayerCA whenever one of the transform-related CSS
+    properties have a new value.
+    
+    We used to rely on GraphicsLayerCA::setTransform() being called with a different transform than the current one to identify
+    such cases, but that is suboptimal because that method can be called with a compound interpolated value of transform-related
+    CSS properties when a rendering update occurs, such as during resizing or moving a window between displays. In those cases,
+    the static base value of the transform-related CSS properties hasn't actually changed.
+    
+    Instead, we now provide the non-animated style from the last style change event to the function resolving keyframe effects
+    so that for a given element we can compare that style with the new, as-yet-non-animated style and see if any of the transform-
+    related CSS properties have been changed. If that is the case, we inform any KeyframeEffect that has a running accelerated
+    animation for any of those CSS properties so that the effect may enqueue an accelerated action that will then notify the
+    GraphicsLayer of such a change, and trigger an animation update.
+    
+    Since we were changing the applyKeyframeEffects() method signature to add the extra RenderStyle needed to compare the current
+    and previous non-animated styles, we also moved that method from Element to KeyframeEffectStack since no Element private
+    API was required.
+    
+    No new test since this was already tested by webanimations/accelerated-translate-animation-underlying-transform-changed-in-flight.html
+    and it's not clear how to test the live-resizing or display-change scenario.
+    
+    * animation/KeyframeEffect.cpp:
+    (WebCore::KeyframeEffect::isRunningAcceleratedTransformRelatedAnimation const): New method called from KeyframeEffectStack::applyKeyframeEffects()
+    to indicate that a keyframe effect has a running accelerated animation targeting a transform-related property.
+    (WebCore::KeyframeEffect::addPendingAcceleratedAction): Ensure that the new AcceleratedAction::TransformChange accelerated action
+    recorded in transformRelatedPropertyDidChange() is not ever set as m_lastRecordedAcceleratedAction as we use this member to identify
+    whether we have a pending running, pause or stop action.
+    (WebCore::KeyframeEffect::transformRelatedPropertyDidChange): New method meant to be called for an effect that has a running
+    accelerated animation targeting a transform-related property to notify that one or more of the target element's transform-related
+    CSS property static values was changed.
+    (WebCore::KeyframeEffect::applyPendingAcceleratedActions): Call transformRelatedPropertyDidChange() on the composited renderer for
+    a AcceleratedAction::TransformChange action.
+    * animation/KeyframeEffect.h:
+    * animation/KeyframeEffectStack.cpp:
+    (WebCore::KeyframeEffectStack::applyKeyframeEffects): Move the method previously exposed on Element to KeyframeEffectStack. Additionally,
+    accept an extra RenderStyle parameter to provide the non-animated style from the last style change event so that we can compare that style
+    with the new, as-yet-non-animated style and see if any of the transform-related CSS properties have been changed and notify the effect
+    should it run an accelerated animation for one of those properties.
+    * animation/KeyframeEffectStack.h:
+    * dom/Element.cpp:
+    (WebCore::Element::applyKeyframeEffects): Deleted. Moved to KeyframeEffectStack.
+    * dom/Element.h:
+    * platform/graphics/GraphicsLayer.h:
+    (WebCore::GraphicsLayer::transformRelatedPropertyDidChange):
+    * platform/graphics/ca/GraphicsLayerCA.cpp:
+    (WebCore::GraphicsLayerCA::setTransform): Move the animation-update logic to transformRelatedPropertyDidChange()
+    (WebCore::GraphicsLayerCA::transformRelatedPropertyDidChange):
+    * platform/graphics/ca/GraphicsLayerCA.h:
+    * rendering/RenderElement.h:
+    (WebCore::RenderElement::transformRelatedPropertyDidChange):
+    * rendering/RenderLayerBacking.cpp:
+    (WebCore::RenderLayerBacking::transformRelatedPropertyDidChange):
+    * rendering/RenderLayerBacking.h:
+    * rendering/RenderLayerModelObject.cpp:
+    (WebCore::RenderLayerModelObject::transformRelatedPropertyDidChange):
+    * rendering/RenderLayerModelObject.h:
+    * style/StyleTreeResolver.cpp:
+    (WebCore::Style::TreeResolver::createAnimatedElementUpdate): Pass the non-animated style from the last style change event to
+    KeyframeEffectStack::applyKeyframeEffects() to determine whether this style change event includes a change to any of the
+    transform-related properties.
+    * style/Styleable.h:
+    (WebCore::Styleable::applyKeyframeEffects const):
+    
+    LayoutTests:
+    
+    Increase the fidelity of this test where the scale transform would sometimes yield some 0.01% ImageOnlyFailure results.
+    
+    * webanimations/accelerated-translate-animation-additional-animation-added-in-flight-expected.html:
+    * webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268932 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-23  Antoine Quint  <graouts@webkit.org>
+
+            REGRESSION(r268615): certain animations break when moving from one to display to another or resizing the window
+            https://bugs.webkit.org/show_bug.cgi?id=218080
+            <rdar://problem/70547132>
+
+            Reviewed by Dean Jackson.
+
+            Increase the fidelity of this test where the scale transform would sometimes yield some 0.01% ImageOnlyFailure results.
+
+            * webanimations/accelerated-translate-animation-additional-animation-added-in-flight-expected.html:
+            * webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html:
+
+2020-10-26  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r268800. rdar://problem/70702272
 
     REGRESSION(r266295): Range allows start and end containers to belong to different trees

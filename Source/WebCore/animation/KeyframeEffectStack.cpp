@@ -111,4 +111,32 @@ void KeyframeEffectStack::setCSSAnimationList(RefPtr<const AnimationList>&& cssA
     m_isSorted = false;
 }
 
+OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle& targetStyle, const RenderStyle& previousLastStyleChangeEventStyle)
+{
+    OptionSet<AnimationImpact> impact;
+
+    auto transformRelatedPropertyChanged = [&]() -> bool {
+        return !arePointingToEqualData(targetStyle.translate(), previousLastStyleChangeEventStyle.translate())
+            || !arePointingToEqualData(targetStyle.scale(), previousLastStyleChangeEventStyle.scale())
+            || !arePointingToEqualData(targetStyle.rotate(), previousLastStyleChangeEventStyle.rotate())
+            || targetStyle.transform() != previousLastStyleChangeEventStyle.transform();
+    }();
+
+    for (const auto& effect : sortedEffects()) {
+        ASSERT(effect->animation());
+        effect->animation()->resolve(targetStyle);
+
+        if (effect->isRunningAccelerated() || effect->isAboutToRunAccelerated())
+            impact.add(AnimationImpact::RequiresRecomposite);
+
+        if (effect->triggersStackingContext())
+            impact.add(AnimationImpact::ForcesStackingContext);
+
+        if (transformRelatedPropertyChanged && effect->isRunningAcceleratedTransformRelatedAnimation())
+            effect->transformRelatedPropertyDidChange();
+    }
+
+    return impact;
+}
+
 } // namespace WebCore

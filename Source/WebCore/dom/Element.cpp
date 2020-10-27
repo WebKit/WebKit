@@ -3822,24 +3822,6 @@ bool Element::hasKeyframeEffects(PseudoId pseudoId) const
     return false;
 }
 
-OptionSet<AnimationImpact> Element::applyKeyframeEffects(PseudoId pseudoId, RenderStyle& targetStyle)
-{
-    OptionSet<AnimationImpact> impact;
-
-    for (const auto& effect : ensureKeyframeEffectStack(pseudoId).sortedEffects()) {
-        ASSERT(effect->animation());
-        effect->animation()->resolve(targetStyle);
-
-        if (effect->isRunningAccelerated() || effect->isAboutToRunAccelerated())
-            impact.add(AnimationImpact::RequiresRecomposite);
-
-        if (effect->triggersStackingContext())
-            impact.add(AnimationImpact::ForcesStackingContext);
-    }
-
-    return impact;
-}
-
 const AnimationCollection* Element::animations(PseudoId pseudoId) const
 {
     if (auto* animationData = animationRareData(pseudoId))

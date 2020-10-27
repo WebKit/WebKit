@@ -3651,6 +3651,11 @@ void RenderLayerBacking::animationFinished(const String& animationName)
     m_owningLayer.setNeedsCompositingGeometryUpdate();
 }
 
+void RenderLayerBacking::transformRelatedPropertyDidChange()
+{
+    m_graphicsLayer->transformRelatedPropertyDidChange();
+}
+
 void RenderLayerBacking::notifyAnimationStarted(const GraphicsLayer*, const String&, MonotonicTime)
 {
 }
