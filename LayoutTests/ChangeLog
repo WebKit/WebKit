@@ -1,3 +1,13 @@
+2020-10-27  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Bad handling of audio files in the ImageDecoder
+        https://bugs.webkit.org/show_bug.cgi?id=218239
+
+        Reviewed by Adrian Perez de Castro.
+
+        * fast/images/animated-image-mp3-crash-expected.txt: Added.
+        * fast/images/animated-image-mp3-crash.html: Added.
+
 2020-10-27  Kenneth Russell  <kbr@chromium.org>
 
         [ iOS wk2 ] webgl/1.0.3/conformance/textures/copy-tex-image-2d-formats.html is failing.
