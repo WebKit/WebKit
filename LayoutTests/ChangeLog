@@ -1,3 +1,25 @@
+2020-10-27  Martin Robinson  <mrobinson@igalia.com>
+
+        Overflow scrollIntoView wrong with borders
+        https://bugs.webkit.org/show_bug.cgi?id=152660
+
+        Reviewed by Simon Fraser.
+
+        Added a new test for this fix and renamed a similar test to follow a
+        standard naming convention. This will make the two tests easier to find.
+
+        * fast/overflow/scrollIntoView-nested-in-area-with-border-expected.html: Added.
+        * fast/overflow/scrollIntoView-nested-in-area-with-border.html: Added.
+        * fast/overflow/scrollIntoView-overflow-hidden-expected.html: Renamed from LayoutTests/fast/overflow/overflow-hidden-scroll-into-view-expected.html.
+        * fast/overflow/scrollIntoView-overflow-hidden.html: Renamed from LayoutTests/fast/overflow/overflow-hidden-scroll-into-view.html.
+        * fast/spatial-navigation/snav-div-overflow-scrol-hidden-expected.txt: Updated expectation.
+        * platform/ios/TestExpectations: Updated test name in expectations.
+        * platform/mac-wk2/editing/input/caret-at-the-edge-of-contenteditable-expected.txt: Updated expectation.
+        * platform/mac-wk2/editing/input/reveal-caret-of-multiline-contenteditable-expected.txt: Ditto.
+        * platform/mac/editing/input/caret-at-the-edge-of-contenteditable-expected.txt: Ditto.
+        * platform/mac/editing/input/reveal-caret-of-multiline-contenteditable-expected.txt: Ditto.
+        * platform/mac/editing/input/reveal-caret-of-multiline-input-expected.txt: Ditto.
+
 2020-10-27  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r265515): fast/events/touch/ios/touch-events-with-modifiers.html is a frequent failure
