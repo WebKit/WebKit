@@ -151,6 +151,8 @@ private:
     ItemType& appendItem(Ref<ItemType>&&);
     void willAppendItem(const Item&);
 
+    void appendStateChangeItem(const GraphicsContextStateChange&, GraphicsContextState::StateChangeFlags);
+
     FloatRect extentFromLocalBounds(const FloatRect&) const;
     void updateItemExtent(DrawingItem&) const;
     

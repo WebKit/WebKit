@@ -230,7 +230,7 @@ bool Path::isEmpty() const
         return true;
 
 #if ENABLE(INLINE_PATH_DATA)
-    if (hasAnyInlineData())
+    if (hasInlineData())
         return false;
 #endif
 
@@ -348,7 +348,7 @@ void Path::addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& endP
 #if ENABLE(INLINE_PATH_DATA)
     if (isNull() || hasInlineData<MoveData>()) {
         QuadCurveData curve;
-        curve.startPoint = hasAnyInlineData() ? WTF::get<MoveData>(m_inlineData).location : FloatPoint();
+        curve.startPoint = hasInlineData() ? WTF::get<MoveData>(m_inlineData).location : FloatPoint();
         curve.controlPoint = controlPoint;
         curve.endPoint = endPoint;
         m_inlineData = { WTFMove(curve) };
@@ -364,7 +364,7 @@ void Path::addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& c
 #if ENABLE(INLINE_PATH_DATA)
     if (isNull() || hasInlineData<MoveData>()) {
         BezierCurveData curve;
-        curve.startPoint = hasAnyInlineData() ? WTF::get<MoveData>(m_inlineData).location : FloatPoint();
+        curve.startPoint = hasInlineData() ? WTF::get<MoveData>(m_inlineData).location : FloatPoint();
         curve.controlPoint1 = controlPoint1;
         curve.controlPoint2 = controlPoint2;
         curve.endPoint = endPoint;

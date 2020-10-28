@@ -47,8 +47,10 @@ enum class ItemType : uint8_t {
     Scale,
     ConcatenateCTM,
     SetCTM,
-    SetFillColor,
-    SetStrokeState,
+    SetInlineFillGradient,
+    SetInlineFillColor,
+    SetInlineStrokeColor,
+    SetStrokeThickness,
     SetState,
     SetLineCap,
     SetLineDash,
@@ -81,11 +83,17 @@ enum class ItemType : uint8_t {
     FillCompositedRect,
     FillRoundedRect,
     FillRectWithRoundedHole,
+#if ENABLE(INLINE_PATH_DATA)
+    FillInlinePath,
+#endif
     FillPath,
     FillEllipse,
     PutImageData,
     PaintFrameForMedia,
     StrokeRect,
+#if ENABLE(INLINE_PATH_DATA)
+    StrokeInlinePath,
+#endif
     StrokePath,
     StrokeEllipse,
     ClearRect,

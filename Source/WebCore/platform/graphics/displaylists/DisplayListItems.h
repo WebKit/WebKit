@@ -337,119 +337,219 @@ Optional<Ref<ConcatenateCTM>> ConcatenateCTM::decode(Decoder& decoder)
     return ConcatenateCTM::create(*transform);
 }
 
-class SetFillColor : public Item {
+class SetInlineFillGradient : public Item {
 public:
-    WEBCORE_EXPORT static Ref<SetFillColor> create(Color);
+    static constexpr uint8_t maxColorStopCount = 4;
 
-    WEBCORE_EXPORT virtual ~SetFillColor();
+    static Ref<SetInlineFillGradient> create(const Gradient&);
+    static bool isInline(const Gradient&);
 
-    Color color() const { return m_color; }
+    virtual ~SetInlineFillGradient();
+
+    Ref<Gradient> gradient() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<Ref<SetFillColor>> decode(Decoder&);
+    template<class Decoder> static Optional<Ref<SetInlineFillGradient>> decode(Decoder&);
 
 private:
-    SetFillColor(Color color)
-        : Item(ItemType::SetFillColor)
-        , m_color(color)
+    static Ref<SetInlineFillGradient> create(float offsets[maxColorStopCount], SRGBA<uint8_t> colors[maxColorStopCount],
+        const Gradient::Data& data, const AffineTransform& gradientSpaceTransformation, GradientSpreadMethod spreadMethod, uint8_t colorStopCount)
     {
+        return adoptRef(*new SetInlineFillGradient(offsets, colors, data, gradientSpaceTransformation, spreadMethod, colorStopCount));
     }
+
+    WEBCORE_EXPORT SetInlineFillGradient(float offsets[maxColorStopCount], SRGBA<uint8_t> colors[maxColorStopCount], const Gradient::Data&,
+        const AffineTransform& gradientSpaceTransformation, GradientSpreadMethod, uint8_t colorStopCount);
+
+    SetInlineFillGradient(const Gradient&);
 
     void apply(GraphicsContext&) const override;
 
-    Color m_color;
+    float m_offsets[maxColorStopCount];
+    SRGBA<uint8_t> m_colors[maxColorStopCount];
+    Gradient::Data m_data;
+    AffineTransform m_gradientSpaceTransformation;
+    GradientSpreadMethod m_spreadMethod { GradientSpreadMethod::Pad };
+    uint8_t m_colorStopCount { 0 };
 };
 
 template<class Encoder>
-void SetFillColor::encode(Encoder& encoder) const
+void SetInlineFillGradient::encode(Encoder& encoder) const
 {
-    encoder << m_color;
-}
-
-template<class Decoder>
-Optional<Ref<SetFillColor>> SetFillColor::decode(Decoder& decoder)
-{
-    Optional<Color> color;
-    decoder >> color;
-    if (!color)
-        return WTF::nullopt;
-
-    return SetFillColor::create(*color);
-}
-
-class SetStrokeState : public Item {
-public:
-    WEBCORE_EXPORT static Ref<SetStrokeState> create(Optional<Color>&&, Optional<float>&& thickness);
-
-    WEBCORE_EXPORT virtual ~SetStrokeState();
-
-    Color color() const { return m_color; }
-    bool hasColor() const { return m_hasColor; }
-
-    float thickness() const { return m_thickness; }
-    bool hasThickness() const { return m_hasThickness; }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<Ref<SetStrokeState>> decode(Decoder&);
-
-private:
-    SetStrokeState(Optional<Color>&& color, Optional<float>&& thickness)
-        : Item(ItemType::SetStrokeState)
-        , m_color(color.valueOr(Color()))
-        , m_thickness(thickness.valueOr(0))
-        , m_hasColor(color.hasValue())
-        , m_hasThickness(thickness.hasValue())
-    {
+    encoder << m_colorStopCount;
+    for (uint8_t i = 0; i < m_colorStopCount; ++i) {
+        encoder << m_offsets[i];
+        encoder << PackedColor::RGBA { m_colors[i] }.value;
     }
-
-    void apply(GraphicsContext&) const override;
-
-    Color m_color;
-    float m_thickness { 0 };
-    bool m_hasColor { false };
-    bool m_hasThickness { false };
-};
-
-template<class Encoder>
-void SetStrokeState::encode(Encoder& encoder) const
-{
-    encoder << m_hasColor;
-    if (m_hasColor)
-        encoder << m_color;
-
-    encoder << m_hasThickness;
-    if (m_hasThickness)
-        encoder << m_thickness;
+    encoder << m_data;
+    encoder << m_gradientSpaceTransformation;
+    encoder << m_spreadMethod;
 }
 
 template<class Decoder>
-Optional<Ref<SetStrokeState>> SetStrokeState::decode(Decoder& decoder)
+Optional<Ref<SetInlineFillGradient>> SetInlineFillGradient::decode(Decoder& decoder)
 {
-    Optional<bool> hasColor;
-    decoder >> hasColor;
-    if (!hasColor)
+    Optional<uint8_t> colorStopCount;
+    decoder >> colorStopCount;
+    if (!colorStopCount)
         return WTF::nullopt;
 
-    Optional<Color> color;
-    if (*hasColor) {
+    if (*colorStopCount > maxColorStopCount)
+        return WTF::nullopt;
+
+    float offsets[maxColorStopCount];
+    SRGBA<uint8_t> colors[maxColorStopCount];
+    for (uint8_t i = 0; i < *colorStopCount; ++i) {
+        Optional<float> offset;
+        decoder >> offset;
+        if (!offset)
+            return WTF::nullopt;
+
+        Optional<uint32_t> color;
         decoder >> color;
         if (!color)
             return WTF::nullopt;
+
+        colors[i] = asSRGBA(PackedColor::RGBA { *color });
+        offsets[i] = *offset;
     }
 
-    Optional<bool> hasThickness;
-    decoder >> hasThickness;
-    if (!hasThickness)
+    Optional<Gradient::Data> data;
+    decoder >> data;
+    if (!data)
         return WTF::nullopt;
 
-    Optional<float> thickness;
-    if (*hasThickness) {
-        decoder >> thickness;
-        if (!thickness)
-            return WTF::nullopt;
+    Optional<AffineTransform> gradientSpaceTransformation;
+    decoder >> gradientSpaceTransformation;
+    if (!gradientSpaceTransformation)
+        return WTF::nullopt;
+
+    Optional<GradientSpreadMethod> spreadMethod;
+    decoder >> spreadMethod;
+    if (!spreadMethod)
+        return WTF::nullopt;
+
+    return { SetInlineFillGradient::create(offsets, colors, *data, *gradientSpaceTransformation, *spreadMethod, *colorStopCount) };
+}
+
+class SetInlineFillColor : public Item {
+public:
+    WEBCORE_EXPORT static Ref<SetInlineFillColor> create(SRGBA<uint8_t>);
+
+    WEBCORE_EXPORT virtual ~SetInlineFillColor();
+
+    Color color() const { return { m_colorData }; }
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<SetInlineFillColor>> decode(Decoder&);
+
+private:
+    SetInlineFillColor(SRGBA<uint8_t> colorData)
+        : Item(ItemType::SetInlineFillColor)
+        , m_colorData(colorData)
+    {
     }
 
-    return SetStrokeState::create(WTFMove(color), WTFMove(thickness));
+    void apply(GraphicsContext&) const override;
+
+    SRGBA<uint8_t> m_colorData;
+};
+
+template<class Encoder>
+void SetInlineFillColor::encode(Encoder& encoder) const
+{
+    encoder << PackedColor::RGBA { m_colorData }.value;
+}
+
+template<class Decoder>
+Optional<Ref<SetInlineFillColor>> SetInlineFillColor::decode(Decoder& decoder)
+{
+    Optional<uint32_t> value;
+    decoder >> value;
+    if (!value)
+        return WTF::nullopt;
+
+    return SetInlineFillColor::create(asSRGBA(PackedColor::RGBA { *value }));
+}
+
+class SetInlineStrokeColor : public Item {
+public:
+    WEBCORE_EXPORT static Ref<SetInlineStrokeColor> create(SRGBA<uint8_t>);
+
+    WEBCORE_EXPORT virtual ~SetInlineStrokeColor();
+
+    Color color() const { return { m_colorData }; }
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<SetInlineStrokeColor>> decode(Decoder&);
+
+private:
+    SetInlineStrokeColor(SRGBA<uint8_t> colorData)
+        : Item(ItemType::SetInlineStrokeColor)
+        , m_colorData(colorData)
+    {
+    }
+
+    void apply(GraphicsContext&) const override;
+
+    SRGBA<uint8_t> m_colorData;
+};
+
+template<class Encoder>
+void SetInlineStrokeColor::encode(Encoder& encoder) const
+{
+    encoder << PackedColor::RGBA { m_colorData }.value;
+}
+
+template<class Decoder>
+Optional<Ref<SetInlineStrokeColor>> SetInlineStrokeColor::decode(Decoder& decoder)
+{
+    Optional<uint32_t> value;
+    decoder >> value;
+    if (!value)
+        return WTF::nullopt;
+
+    return SetInlineStrokeColor::create(asSRGBA(PackedColor::RGBA { *value }));
+}
+
+class SetStrokeThickness : public Item {
+public:
+    WEBCORE_EXPORT static Ref<SetStrokeThickness> create(float thickness);
+
+    WEBCORE_EXPORT virtual ~SetStrokeThickness();
+
+    float thickness() const { return m_thickness; }
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<SetStrokeThickness>> decode(Decoder&);
+
+private:
+    SetStrokeThickness(float thickness)
+        : Item(ItemType::SetStrokeThickness)
+        , m_thickness(thickness)
+    {
+    }
+
+    void apply(GraphicsContext&) const override;
+
+    float m_thickness { 0 };
+};
+
+template<class Encoder>
+void SetStrokeThickness::encode(Encoder& encoder) const
+{
+    encoder << m_thickness;
+}
+
+template<class Decoder>
+Optional<Ref<SetStrokeThickness>> SetStrokeThickness::decode(Decoder& decoder)
+{
+    Optional<float> thickness;
+    decoder >> thickness;
+    if (!thickness)
+        return WTF::nullopt;
+
+    return SetStrokeThickness::create(*thickness);
 }
 
 class SetState : public Item {
@@ -2577,6 +2677,50 @@ Optional<Ref<FillRectWithRoundedHole>> FillRectWithRoundedHole::decode(Decoder& 
     return FillRectWithRoundedHole::create(*rect, *roundedHoleRect, *color);
 }
 
+#if ENABLE(INLINE_PATH_DATA)
+
+class FillInlinePath : public DrawingItem {
+public:
+    static Ref<FillInlinePath> create(const InlinePathData& pathData)
+    {
+        return adoptRef(*new FillInlinePath(pathData));
+    }
+
+    WEBCORE_EXPORT virtual ~FillInlinePath();
+
+    Path path() const { return Path::from(m_pathData); }
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<FillInlinePath>> decode(Decoder&);
+
+private:
+    WEBCORE_EXPORT FillInlinePath(const InlinePathData&);
+
+    void apply(GraphicsContext&) const override;
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override { return path().fastBoundingRect(); }
+
+    InlinePathData m_pathData;
+};
+
+template<class Encoder>
+void FillInlinePath::encode(Encoder& encoder) const
+{
+    encoder << m_pathData;
+}
+
+template<class Decoder>
+Optional<Ref<FillInlinePath>> FillInlinePath::decode(Decoder& decoder)
+{
+    Optional<InlinePathData> pathData;
+    decoder >> pathData;
+    if (!pathData)
+        return WTF::nullopt;
+
+    return FillInlinePath::create(WTFMove(*pathData));
+}
+
+#endif // ENABLE(INLINE_PATH_DATA)
+
 class FillPath : public DrawingItem {
 public:
     static Ref<FillPath> create(const Path& path)
@@ -2832,6 +2976,50 @@ Optional<Ref<StrokeRect>> StrokeRect::decode(Decoder& decoder)
     return StrokeRect::create(*rect, *lineWidth);
 }
 
+#if ENABLE(INLINE_PATH_DATA)
+
+class StrokeInlinePath : public DrawingItem {
+public:
+    static Ref<StrokeInlinePath> create(const InlinePathData& pathData)
+    {
+        return adoptRef(*new StrokeInlinePath(pathData));
+    }
+
+    WEBCORE_EXPORT virtual ~StrokeInlinePath();
+
+    Path path() const { return Path::from(m_pathData); }
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<StrokeInlinePath>> decode(Decoder&);
+
+private:
+    WEBCORE_EXPORT StrokeInlinePath(const InlinePathData&);
+
+    void apply(GraphicsContext&) const override;
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override;
+
+    InlinePathData m_pathData;
+};
+
+template<class Encoder>
+void StrokeInlinePath::encode(Encoder& encoder) const
+{
+    encoder << m_pathData;
+}
+
+template<class Decoder>
+Optional<Ref<StrokeInlinePath>> StrokeInlinePath::decode(Decoder& decoder)
+{
+    Optional<InlinePathData> pathData;
+    decoder >> pathData;
+    if (!pathData)
+        return WTF::nullopt;
+
+    return StrokeInlinePath::create(WTFMove(*pathData));
+}
+
+#endif // ENABLE(INLINE_PATH_DATA)
+
 class StrokePath : public DrawingItem {
 public:
     static Ref<StrokePath> create(const Path& path)
@@ -3081,11 +3269,17 @@ void Item::encode(Encoder& encoder) const
     case ItemType::ConcatenateCTM:
         encoder << downcast<ConcatenateCTM>(*this);
         break;
-    case ItemType::SetFillColor:
-        encoder << downcast<SetFillColor>(*this);
+    case ItemType::SetInlineFillGradient:
+        encoder << downcast<SetInlineFillGradient>(*this);
         break;
-    case ItemType::SetStrokeState:
-        encoder << downcast<SetStrokeState>(*this);
+    case ItemType::SetInlineFillColor:
+        encoder << downcast<SetInlineFillColor>(*this);
+        break;
+    case ItemType::SetInlineStrokeColor:
+        encoder << downcast<SetInlineStrokeColor>(*this);
+        break;
+    case ItemType::SetStrokeThickness:
+        encoder << downcast<SetStrokeThickness>(*this);
         break;
     case ItemType::SetState:
         encoder << downcast<SetState>(*this);
@@ -3183,6 +3377,11 @@ void Item::encode(Encoder& encoder) const
     case ItemType::FillRectWithRoundedHole:
         encoder << downcast<FillRectWithRoundedHole>(*this);
         break;
+#if ENABLE(INLINE_PATH_DATA)
+    case ItemType::FillInlinePath:
+        encoder << downcast<FillInlinePath>(*this);
+        break;
+#endif
     case ItemType::FillPath:
         encoder << downcast<FillPath>(*this);
         break;
@@ -3198,6 +3397,11 @@ void Item::encode(Encoder& encoder) const
     case ItemType::StrokeRect:
         encoder << downcast<StrokeRect>(*this);
         break;
+#if ENABLE(INLINE_PATH_DATA)
+    case ItemType::StrokeInlinePath:
+        encoder << downcast<StrokeInlinePath>(*this);
+        break;
+#endif
     case ItemType::StrokePath:
         encoder << downcast<StrokePath>(*this);
         break;
@@ -3264,12 +3468,21 @@ Optional<Ref<Item>> Item::decode(Decoder& decoder)
         if (auto item = ConcatenateCTM::decode(decoder))
             return static_reference_cast<Item>(WTFMove(*item));
         break;
-    case ItemType::SetFillColor:
-        if (auto item = SetFillColor::decode(decoder))
+    case ItemType::SetInlineFillGradient: {
+        if (auto item = SetInlineFillGradient::decode(decoder))
             return static_reference_cast<Item>(WTFMove(*item));
         break;
-    case ItemType::SetStrokeState:
-        if (auto item = SetStrokeState::decode(decoder))
+    }
+    case ItemType::SetInlineFillColor:
+        if (auto item = SetInlineFillColor::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
+    case ItemType::SetInlineStrokeColor:
+        if (auto item = SetInlineStrokeColor::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
+    case ItemType::SetStrokeThickness:
+        if (auto item = SetStrokeThickness::decode(decoder))
             return static_reference_cast<Item>(WTFMove(*item));
         break;
     case ItemType::SetState:
@@ -3400,6 +3613,12 @@ Optional<Ref<Item>> Item::decode(Decoder& decoder)
         if (auto item = FillRectWithRoundedHole::decode(decoder))
             return static_reference_cast<Item>(WTFMove(*item));
         break;
+#if ENABLE(INLINE_PATH_DATA)
+    case ItemType::FillInlinePath:
+        if (auto item = FillInlinePath::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
+#endif
     case ItemType::FillPath:
         if (auto item = FillPath::decode(decoder))
             return static_reference_cast<Item>(WTFMove(*item));
@@ -3420,6 +3639,12 @@ Optional<Ref<Item>> Item::decode(Decoder& decoder)
         if (auto item = StrokeRect::decode(decoder))
             return static_reference_cast<Item>(WTFMove(*item));
         break;
+#if ENABLE(INLINE_PATH_DATA)
+    case ItemType::StrokeInlinePath:
+        if (auto item = StrokeInlinePath::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
+#endif
     case ItemType::StrokePath:
         if (auto item = StrokePath::decode(decoder))
             return static_reference_cast<Item>(WTFMove(*item));
@@ -3482,8 +3707,10 @@ SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(Rotate)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(Scale)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(SetCTM)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(ConcatenateCTM)
-SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(SetFillColor)
-SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(SetStrokeState)
+SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(SetInlineFillGradient)
+SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(SetInlineFillColor)
+SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(SetInlineStrokeColor)
+SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(SetStrokeThickness)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(SetState)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(SetLineCap)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(SetLineDash)
@@ -3515,11 +3742,17 @@ SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(FillRectWithGradient)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(FillCompositedRect)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(FillRoundedRect)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(FillRectWithRoundedHole)
+#if ENABLE(INLINE_PATH_DATA)
+SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(FillInlinePath)
+#endif
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(FillPath)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(FillEllipse)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(PutImageData)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(PaintFrameForMedia)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(StrokeRect)
+#if ENABLE(INLINE_PATH_DATA)
+SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(StrokeInlinePath)
+#endif
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(StrokePath)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(StrokeEllipse)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(ClearRect)
@@ -3544,8 +3777,10 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::Scale,
     WebCore::DisplayList::ItemType::SetCTM,
     WebCore::DisplayList::ItemType::ConcatenateCTM,
-    WebCore::DisplayList::ItemType::SetFillColor,
-    WebCore::DisplayList::ItemType::SetStrokeState,
+    WebCore::DisplayList::ItemType::SetInlineFillGradient,
+    WebCore::DisplayList::ItemType::SetInlineFillColor,
+    WebCore::DisplayList::ItemType::SetInlineStrokeColor,
+    WebCore::DisplayList::ItemType::SetStrokeThickness,
     WebCore::DisplayList::ItemType::SetState,
     WebCore::DisplayList::ItemType::SetLineCap,
     WebCore::DisplayList::ItemType::SetLineDash,
@@ -3578,11 +3813,17 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::FillCompositedRect,
     WebCore::DisplayList::ItemType::FillRoundedRect,
     WebCore::DisplayList::ItemType::FillRectWithRoundedHole,
+#if ENABLE(INLINE_PATH_DATA)
+    WebCore::DisplayList::ItemType::FillInlinePath,
+#endif
     WebCore::DisplayList::ItemType::FillPath,
     WebCore::DisplayList::ItemType::FillEllipse,
     WebCore::DisplayList::ItemType::PutImageData,
     WebCore::DisplayList::ItemType::PaintFrameForMedia,
     WebCore::DisplayList::ItemType::StrokeRect,
+#if ENABLE(INLINE_PATH_DATA)
+    WebCore::DisplayList::ItemType::StrokeInlinePath,
+#endif
     WebCore::DisplayList::ItemType::StrokePath,
     WebCore::DisplayList::ItemType::StrokeEllipse,
     WebCore::DisplayList::ItemType::ClearRect,

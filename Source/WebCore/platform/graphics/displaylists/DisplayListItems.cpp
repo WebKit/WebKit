@@ -76,10 +76,14 @@ size_t Item::sizeInBytes(const Item& item)
         return sizeof(downcast<SetCTM>(item));
     case ItemType::ConcatenateCTM:
         return sizeof(downcast<ConcatenateCTM>(item));
-    case ItemType::SetFillColor:
-        return sizeof(downcast<SetFillColor>(item));
-    case ItemType::SetStrokeState:
-        return sizeof(downcast<SetStrokeState>(item));
+    case ItemType::SetInlineFillGradient:
+        return sizeof(downcast<SetInlineFillGradient>(item));
+    case ItemType::SetInlineFillColor:
+        return sizeof(downcast<SetInlineFillColor>(item));
+    case ItemType::SetInlineStrokeColor:
+        return sizeof(downcast<SetInlineStrokeColor>(item));
+    case ItemType::SetStrokeThickness:
+        return sizeof(downcast<SetStrokeThickness>(item));
     case ItemType::SetState:
         return sizeof(downcast<SetState>(item));
     case ItemType::SetLineCap:
@@ -144,6 +148,10 @@ size_t Item::sizeInBytes(const Item& item)
         return sizeof(downcast<FillRoundedRect>(item));
     case ItemType::FillRectWithRoundedHole:
         return sizeof(downcast<FillRectWithRoundedHole>(item));
+#if ENABLE(INLINE_PATH_DATA)
+    case ItemType::FillInlinePath:
+        return sizeof(downcast<FillInlinePath>(item));
+#endif
     case ItemType::FillPath:
         return sizeof(downcast<FillPath>(item));
     case ItemType::FillEllipse:
@@ -154,6 +162,10 @@ size_t Item::sizeInBytes(const Item& item)
         return sizeof(downcast<PaintFrameForMedia>(item));
     case ItemType::StrokeRect:
         return sizeof(downcast<StrokeRect>(item));
+#if ENABLE(INLINE_PATH_DATA)
+    case ItemType::StrokeInlinePath:
+        return sizeof(downcast<StrokeInlinePath>(item));
+#endif
     case ItemType::StrokePath:
         return sizeof(downcast<StrokePath>(item));
     case ItemType::StrokeEllipse:
@@ -322,46 +334,127 @@ static TextStream& operator<<(TextStream& ts, const ConcatenateCTM& item)
     return ts;
 }
 
-Ref<SetFillColor> SetFillColor::create(Color color)
+SetInlineFillGradient::SetInlineFillGradient(const Gradient& gradient)
+    : Item(ItemType::SetInlineFillGradient)
+    , m_data(gradient.data())
+    , m_gradientSpaceTransformation(gradient.gradientSpaceTransform())
+    , m_spreadMethod(gradient.spreadMethod())
+    , m_colorStopCount(static_cast<uint8_t>(gradient.stops().size()))
 {
-    return adoptRef(*new SetFillColor(color));
+    RELEASE_ASSERT(m_colorStopCount <= maxColorStopCount);
+    for (uint8_t i = 0; i < m_colorStopCount; ++i) {
+        m_offsets[i] = gradient.stops()[i].offset;
+        m_colors[i] = gradient.stops()[i].color.asInline();
+    }
 }
 
-SetFillColor::~SetFillColor() = default;
-
-void SetFillColor::apply(GraphicsContext& context) const
+Ref<Gradient> SetInlineFillGradient::gradient() const
 {
-    context.setFillColor(m_color);
+    auto gradient = Gradient::create(Gradient::Data(m_data));
+    for (uint8_t i = 0; i < m_colorStopCount; ++i)
+        gradient->addColorStop({ m_offsets[i], Color(m_colors[i]) });
+    gradient->setSpreadMethod(m_spreadMethod);
+    gradient->setGradientSpaceTransform(m_gradientSpaceTransformation);
+    return gradient;
 }
 
-static TextStream& operator<<(TextStream& ts, const SetFillColor& state)
+Ref<SetInlineFillGradient> SetInlineFillGradient::create(const Gradient& gradient)
+{
+    return adoptRef(*new SetInlineFillGradient(gradient));
+}
+
+SetInlineFillGradient::SetInlineFillGradient(float offsets[maxColorStopCount], SRGBA<uint8_t> colors[maxColorStopCount], const Gradient::Data& data, const AffineTransform& gradientSpaceTransformation, GradientSpreadMethod spreadMethod, uint8_t colorStopCount)
+    : Item(ItemType::SetInlineFillGradient)
+    , m_data(data)
+    , m_gradientSpaceTransformation(gradientSpaceTransformation)
+    , m_spreadMethod(spreadMethod)
+    , m_colorStopCount(colorStopCount)
+{
+    RELEASE_ASSERT(m_colorStopCount <= maxColorStopCount);
+    for (uint8_t i = 0; i < m_colorStopCount; ++i) {
+        m_offsets[i] = offsets[i];
+        m_colors[i] = colors[i];
+    }
+}
+
+SetInlineFillGradient::~SetInlineFillGradient() = default;
+
+void SetInlineFillGradient::apply(GraphicsContext& context) const
+{
+    if (m_colorStopCount <= maxColorStopCount)
+        context.setFillGradient(gradient());
+}
+
+bool SetInlineFillGradient::isInline(const Gradient& gradient)
+{
+    if (gradient.stops().size() > SetInlineFillGradient::maxColorStopCount)
+        return false;
+
+    for (auto& colorStop : gradient.stops()) {
+        if (!colorStop.color.isInline())
+            return false;
+    }
+
+    return true;
+}
+
+static TextStream& operator<<(TextStream& ts, const SetInlineFillGradient&)
+{
+    // FIXME: Dump gradient data.
+    return ts;
+}
+
+Ref<SetInlineFillColor> SetInlineFillColor::create(SRGBA<uint8_t> colorData)
+{
+    return adoptRef(*new SetInlineFillColor(colorData));
+}
+
+SetInlineFillColor::~SetInlineFillColor() = default;
+
+void SetInlineFillColor::apply(GraphicsContext& context) const
+{
+    context.setFillColor(color());
+}
+
+static TextStream& operator<<(TextStream& ts, const SetInlineFillColor& state)
 {
     ts.dumpProperty("color", state.color());
     return ts;
 }
 
-Ref<SetStrokeState> SetStrokeState::create(Optional<Color>&& color, Optional<float>&& thickness)
+Ref<SetInlineStrokeColor> SetInlineStrokeColor::create(SRGBA<uint8_t> colorData)
 {
-    return adoptRef(*new SetStrokeState(WTFMove(color), WTFMove(thickness)));
+    return adoptRef(*new SetInlineStrokeColor(colorData));
 }
 
-SetStrokeState::~SetStrokeState() = default;
+SetInlineStrokeColor::~SetInlineStrokeColor() = default;
 
-void SetStrokeState::apply(GraphicsContext& context) const
+void SetInlineStrokeColor::apply(GraphicsContext& context) const
 {
-    if (m_hasColor)
-        context.setStrokeColor(m_color);
-
-    if (m_hasThickness)
-        context.setStrokeThickness(m_thickness);
+    context.setStrokeColor(color());
 }
 
-static TextStream& operator<<(TextStream& ts, const SetStrokeState& state)
+static TextStream& operator<<(TextStream& ts, const SetInlineStrokeColor& state)
 {
-    if (state.hasColor())
-        ts.dumpProperty("color", state.color());
-    if (state.hasThickness())
-        ts.dumpProperty("thickness", state.thickness());
+    ts.dumpProperty("color", state.color());
+    return ts;
+}
+
+Ref<SetStrokeThickness> SetStrokeThickness::create(float thickness)
+{
+    return adoptRef(*new SetStrokeThickness(thickness));
+}
+
+SetStrokeThickness::~SetStrokeThickness() = default;
+
+void SetStrokeThickness::apply(GraphicsContext& context) const
+{
+    context.setStrokeThickness(m_thickness);
+}
+
+static TextStream& operator<<(TextStream& ts, const SetStrokeThickness& state)
+{
+    ts.dumpProperty("thickness", state.thickness());
     return ts;
 }
 
@@ -1193,6 +1286,30 @@ static TextStream& operator<<(TextStream& ts, const FillRectWithRoundedHole& ite
     return ts;
 }
 
+#if ENABLE(INLINE_PATH_DATA)
+
+FillInlinePath::FillInlinePath(const InlinePathData& pathData)
+    : DrawingItem(ItemType::FillInlinePath)
+    , m_pathData(pathData)
+{
+}
+
+FillInlinePath::~FillInlinePath() = default;
+
+void FillInlinePath::apply(GraphicsContext& context) const
+{
+    context.fillPath(path());
+}
+
+static TextStream& operator<<(TextStream& ts, const FillInlinePath& item)
+{
+    ts << static_cast<const DrawingItem&>(item);
+    ts.dumpProperty("path", item.path());
+    return ts;
+}
+
+#endif // ENABLE(INLINE_PATH_DATA)
+
 FillPath::FillPath(const Path& path)
     : DrawingItem(ItemType::FillPath)
     , m_path(path)
@@ -1204,7 +1321,6 @@ FillPath::~FillPath() = default;
 void FillPath::apply(GraphicsContext& context) const
 {
     context.fillPath(m_path);
-    m_path.releasePlatformPathIfPossible();
 }
 
 static TextStream& operator<<(TextStream& ts, const FillPath& item)
@@ -1354,7 +1470,6 @@ Optional<FloatRect> StrokePath::localBounds(const GraphicsContext& context) cons
 void StrokePath::apply(GraphicsContext& context) const
 {
     context.strokePath(m_path);
-    m_path.releasePlatformPathIfPossible();
 }
 
 static TextStream& operator<<(TextStream& ts, const StrokePath& item)
@@ -1392,6 +1507,40 @@ static TextStream& operator<<(TextStream& ts, const StrokeEllipse& item)
     ts.dumpProperty("rect", item.rect());
     return ts;
 }
+
+#if ENABLE(INLINE_PATH_DATA)
+
+Optional<FloatRect> StrokeInlinePath::localBounds(const GraphicsContext& context) const
+{
+    // FIXME: Need to take stroke thickness into account correctly, via CGPathByStrokingPath().
+    float strokeThickness = context.strokeThickness();
+
+    FloatRect bounds = path().fastBoundingRect();
+    bounds.expand(strokeThickness, strokeThickness);
+    return bounds;
+}
+
+void StrokeInlinePath::apply(GraphicsContext& context) const
+{
+    context.strokePath(path());
+}
+
+static TextStream& operator<<(TextStream& ts, const StrokeInlinePath& item)
+{
+    ts << static_cast<const DrawingItem&>(item);
+    ts.dumpProperty("path", item.path());
+    return ts;
+}
+
+StrokeInlinePath::StrokeInlinePath(const InlinePathData& pathData)
+    : DrawingItem(ItemType::StrokeInlinePath)
+    , m_pathData(pathData)
+{
+}
+
+StrokeInlinePath::~StrokeInlinePath() = default;
+
+#endif // ENABLE(INLINE_PATH_DATA)
 
 StrokePath::StrokePath(const Path& path)
     : DrawingItem(ItemType::StrokePath)
@@ -1508,8 +1657,10 @@ static TextStream& operator<<(TextStream& ts, const ItemType& type)
     case ItemType::Scale: ts << "scale"; break;
     case ItemType::SetCTM: ts << "set-ctm"; break;
     case ItemType::ConcatenateCTM: ts << "concatentate-ctm"; break;
-    case ItemType::SetFillColor: ts << "set-fill-color"; break;
-    case ItemType::SetStrokeState: ts << "set-stroke-state"; break;
+    case ItemType::SetInlineFillGradient: ts << "set-inline-fill-gradient"; break;
+    case ItemType::SetInlineFillColor: ts << "set-inline-fill-color"; break;
+    case ItemType::SetInlineStrokeColor: ts << "set-inline-stroke-color"; break;
+    case ItemType::SetStrokeThickness: ts << "set-stroke-thickness"; break;
     case ItemType::SetState: ts << "set-state"; break;
     case ItemType::SetLineCap: ts << "set-line-cap"; break;
     case ItemType::SetLineDash: ts << "set-line-dash"; break;
@@ -1541,11 +1692,17 @@ static TextStream& operator<<(TextStream& ts, const ItemType& type)
     case ItemType::FillCompositedRect: ts << "fill-composited-rect"; break;
     case ItemType::FillRoundedRect: ts << "fill-rounded-rect"; break;
     case ItemType::FillRectWithRoundedHole: ts << "fill-rect-with-rounded-hole"; break;
+#if ENABLE(INLINE_PATH_DATA)
+    case ItemType::FillInlinePath: ts << "fill-inline-path"; break;
+#endif
     case ItemType::FillPath: ts << "fill-path"; break;
     case ItemType::FillEllipse: ts << "fill-ellipse"; break;
     case ItemType::PutImageData: ts << "put-image-data"; break;
     case ItemType::PaintFrameForMedia: ts << "paint-frame-for-media"; break;
     case ItemType::StrokeRect: ts << "stroke-rect"; break;
+#if ENABLE(INLINE_PATH_DATA)
+    case ItemType::StrokeInlinePath: ts << "stroke-inline-path"; break;
+#endif
     case ItemType::StrokePath: ts << "stroke-path"; break;
     case ItemType::StrokeEllipse: ts << "stroke-ellipse"; break;
     case ItemType::ClearRect: ts << "clear-rect"; break;
@@ -1583,11 +1740,17 @@ TextStream& operator<<(TextStream& ts, const Item& item)
     case ItemType::ConcatenateCTM:
         ts << downcast<ConcatenateCTM>(item);
         break;
-    case ItemType::SetFillColor:
-        ts << downcast<SetFillColor>(item);
+    case ItemType::SetInlineFillGradient:
+        ts << downcast<SetInlineFillGradient>(item);
         break;
-    case ItemType::SetStrokeState:
-        ts << downcast<SetStrokeState>(item);
+    case ItemType::SetInlineFillColor:
+        ts << downcast<SetInlineFillColor>(item);
+        break;
+    case ItemType::SetInlineStrokeColor:
+        ts << downcast<SetInlineStrokeColor>(item);
+        break;
+    case ItemType::SetStrokeThickness:
+        ts << downcast<SetStrokeThickness>(item);
         break;
     case ItemType::SetState:
         ts << downcast<SetState>(item);
@@ -1682,6 +1845,11 @@ TextStream& operator<<(TextStream& ts, const Item& item)
     case ItemType::FillRectWithRoundedHole:
         ts << downcast<FillRectWithRoundedHole>(item);
         break;
+#if ENABLE(INLINE_PATH_DATA)
+    case ItemType::FillInlinePath:
+        ts << downcast<FillInlinePath>(item);
+        break;
+#endif
     case ItemType::FillPath:
         ts << downcast<FillPath>(item);
         break;
@@ -1697,6 +1865,11 @@ TextStream& operator<<(TextStream& ts, const Item& item)
     case ItemType::StrokeRect:
         ts << downcast<StrokeRect>(item);
         break;
+#if ENABLE(INLINE_PATH_DATA)
+    case ItemType::StrokeInlinePath:
+        ts << downcast<StrokeInlinePath>(item);
+        break;
+#endif
     case ItemType::StrokePath:
         ts << downcast<StrokePath>(item);
         break;

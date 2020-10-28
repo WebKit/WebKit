@@ -8,7 +8,7 @@
 (fill-rect
   (extent at (10,140) size 55x50)
   (rect at (10,10) size 55x50))
-(set-fill-color
+(set-inline-fill-color
   (color #0000C880))
 (fill-rect
   (extent at (30,120) size 55x50)

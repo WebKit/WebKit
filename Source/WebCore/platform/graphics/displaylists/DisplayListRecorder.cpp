@@ -58,38 +58,49 @@ void Recorder::putImageData(WebCore::AlphaPremultiplication inputFormat, const W
     appendItem(WebCore::DisplayList::PutImageData::create(inputFormat, imageData, srcRect, destPoint, destFormat));
 }
 
-static bool containsOnlyStrokeColorOrThicknessChange(GraphicsContextState::StateChangeFlags changes)
+static bool containsOnlyInlineStateChanges(const GraphicsContextStateChange& changes, GraphicsContextState::StateChangeFlags changeFlags)
 {
-    static constexpr GraphicsContextState::StateChangeFlags strokeStateChangeFlags {
+    static constexpr GraphicsContextState::StateChangeFlags inlineStateChangeFlags {
         GraphicsContextState::StrokeThicknessChange,
-        GraphicsContextState::StrokeColorChange
+        GraphicsContextState::StrokeColorChange,
+        GraphicsContextState::FillColorChange,
+        GraphicsContextState::FillGradientChange,
     };
-    return changes == (changes & strokeStateChangeFlags);
+
+    if (changeFlags != (changeFlags & inlineStateChangeFlags))
+        return false;
+
+    if (changeFlags.contains(GraphicsContextState::StrokeColorChange) && !changes.m_state.strokeColor.isInline())
+        return false;
+
+    if (changeFlags.contains(GraphicsContextState::FillColorChange) && !changes.m_state.fillColor.isInline())
+        return false;
+
+    if (changeFlags.contains(GraphicsContextState::FillGradientChange)
+        && (!changes.m_state.fillGradient || !SetInlineFillGradient::isInline(*changes.m_state.fillGradient)))
+        return false;
+
+    return true;
 }
 
-static bool containsOnlyFillColorChange(GraphicsContextState::StateChangeFlags changes)
+void Recorder::appendStateChangeItem(const GraphicsContextStateChange& changes, GraphicsContextState::StateChangeFlags changeFlags)
 {
-    return changes == (changes & GraphicsContextState::FillColorChange);
-}
-
-static Ref<Item> createStateChangeItem(const GraphicsContextStateChange& changes, GraphicsContextState::StateChangeFlags changeFlags)
-{
-    if (containsOnlyFillColorChange(changeFlags))
-        return SetFillColor::create(changes.m_state.fillColor);
-
-    if (containsOnlyStrokeColorOrThicknessChange(changeFlags)) {
-        Optional<Color> strokeColor;
-        if (changeFlags.contains(GraphicsContextState::StrokeColorChange))
-            strokeColor = changes.m_state.strokeColor;
-
-        Optional<float> strokeThickness;
-        if (changeFlags.contains(GraphicsContextState::StrokeThicknessChange))
-            strokeThickness = changes.m_state.strokeThickness;
-
-        return SetStrokeState::create(WTFMove(strokeColor), WTFMove(strokeThickness));
+    if (!containsOnlyInlineStateChanges(changes, changeFlags)) {
+        m_displayList.appendItem(SetState::create(changes.m_state, changeFlags));
+        return;
     }
 
-    return SetState::create(changes.m_state, changeFlags);
+    if (changeFlags.contains(GraphicsContextState::StrokeColorChange))
+        m_displayList.appendItem(SetInlineStrokeColor::create(changes.m_state.strokeColor.asInline()));
+
+    if (changeFlags.contains(GraphicsContextState::StrokeThicknessChange))
+        m_displayList.appendItem(SetStrokeThickness::create(changes.m_state.strokeThickness));
+
+    if (changeFlags.contains(GraphicsContextState::FillColorChange))
+        m_displayList.appendItem(SetInlineFillColor::create(changes.m_state.fillColor.asInline()));
+
+    if (changeFlags.contains(GraphicsContextState::FillGradientChange))
+        m_displayList.appendItem(SetInlineFillGradient::create(*changes.m_state.fillGradient));
 }
 
 void Recorder::willAppendItem(const Item& item)
@@ -106,7 +117,7 @@ void Recorder::willAppendItem(const Item& item)
         GraphicsContextState::StateChangeFlags changesFromLastState = stateChanges.changesFromState(currentState().lastDrawingState);
         if (changesFromLastState) {
             LOG_WITH_STREAM(DisplayLists, stream << "pre-drawing, saving state " << GraphicsContextStateChange(stateChanges.m_state, changesFromLastState));
-            m_displayList.append(createStateChangeItem(stateChanges, changesFromLastState));
+            appendStateChangeItem(stateChanges, changesFromLastState);
             stateChanges.m_changeFlags = { };
             currentState().lastDrawingState = stateChanges.m_state;
         }
@@ -324,6 +335,12 @@ void Recorder::fillRectWithRoundedHole(const FloatRect& rect, const FloatRounded
 
 void Recorder::fillPath(const Path& path)
 {
+#if ENABLE(INLINE_PATH_DATA)
+    if (path.hasInlineData()) {
+        appendItemAndUpdateExtent(FillInlinePath::create(path.inlineData()));
+        return;
+    }
+#endif
     appendItemAndUpdateExtent(FillPath::create(path));
 }
 
@@ -339,6 +356,12 @@ void Recorder::strokeRect(const FloatRect& rect, float lineWidth)
 
 void Recorder::strokePath(const Path& path)
 {
+#if ENABLE(INLINE_PATH_DATA)
+    if (path.hasInlineData()) {
+        appendItemAndUpdateExtent(StrokeInlinePath::create(path.inlineData()));
+        return;
+    }
+#endif
     appendItemAndUpdateExtent(StrokePath::create(path));
 }
 

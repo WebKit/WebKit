@@ -133,6 +133,15 @@ public:
     WEBCORE_EXPORT Path& operator=(const Path&);
     WEBCORE_EXPORT Path& operator=(Path&&);
 
+#if ENABLE(INLINE_PATH_DATA)
+    static Path from(const InlinePathData& inlineData)
+    {
+        Path path;
+        path.m_inlineData = inlineData;
+        return path;
+    }
+#endif
+
     static Path polygonPathFromPoints(const Vector<FloatPoint>&);
 
     bool contains(const FloatPoint&, WindRule = WindRule::NonZero) const;
@@ -196,17 +205,6 @@ public:
     PlatformPathPtr platformPath() const { return m_path; }
 #endif
 
-    void releasePlatformPathIfPossible() const
-    {
-#if ENABLE(INLINE_PATH_DATA)
-        if (!hasAnyInlineData() || !m_path)
-            return;
-
-        m_path = nullptr;
-        m_copyPathBeforeMutation = false;
-#endif
-    }
-
 #if !USE(CAIRO)
     // ensurePlatformPath() will allocate a PlatformPath if it has not yet been and will never return null.
     WEBCORE_EXPORT PlatformPathPtr ensurePlatformPath();
@@ -246,12 +244,13 @@ public:
 
 #if ENABLE(INLINE_PATH_DATA)
     template<typename DataType> const DataType& inlineData() const;
+    InlinePathData inlineData() const { return m_inlineData; }
     template<typename DataType> bool hasInlineData() const;
+    bool hasInlineData() const;
 #endif
 
 private:
 #if ENABLE(INLINE_PATH_DATA)
-    bool hasAnyInlineData() const;
     template<typename DataType> DataType& inlineData();
     Optional<FloatRect> fastBoundingRectFromInlineData() const;
     Optional<FloatRect> boundingRectFromInlineData() const;
@@ -308,7 +307,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, const Path&);
 template<class Encoder> void Path::encode(Encoder& encoder) const
 {
 #if ENABLE(INLINE_PATH_DATA)
-    bool hasInlineData = hasAnyInlineData();
+    bool hasInlineData = this->hasInlineData();
     encoder << hasInlineData;
     if (hasInlineData) {
         encoder << m_inlineData;
@@ -440,7 +439,7 @@ template<typename DataType> inline DataType& Path::inlineData()
     return WTF::get<DataType>(m_inlineData);
 }
 
-inline bool Path::hasAnyInlineData() const
+inline bool Path::hasInlineData() const
 {
     return !hasInlineData<Monostate>();
 }

@@ -125,7 +125,7 @@ Path::~Path() = default;
 
 PlatformPathPtr Path::platformPath() const
 {
-    if (!m_path && hasAnyInlineData())
+    if (!m_path && hasInlineData())
         createCGPath();
     return m_path.get();
 }
@@ -144,7 +144,7 @@ PlatformPathPtr Path::ensurePlatformPath()
 
 bool Path::isNull() const
 {
-    return !m_path && !hasAnyInlineData();
+    return !m_path && !hasInlineData();
 }
 
 Path::Path(const Path& other)
