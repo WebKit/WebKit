@@ -12,6 +12,10 @@ class Platform extends LabeledObject {
 
         for (var metric of this._metrics)
             metric.addPlatform(this);
+
+        this._group = object.group;
+        if (this._group)
+            this._group.addPlatform(this);
     }
 
     static findByName(name)
@@ -42,6 +46,8 @@ class Platform extends LabeledObject {
         console.assert(metric instanceof Metric);
         return this._lastModifiedByMetric[metric.id()];
     }
+
+    group() { return this._group; }
 }
 
 if (typeof module != 'undefined')

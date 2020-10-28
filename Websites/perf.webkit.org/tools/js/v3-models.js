@@ -24,6 +24,7 @@ importFromV3('models/measurement-cluster.js', 'MeasurementCluster');
 importFromV3('models/measurement-set.js', 'MeasurementSet');
 importFromV3('models/metric.js', 'Metric');
 importFromV3('models/platform.js', 'Platform');
+importFromV3('models/platform-group.js', 'PlatformGroup');
 importFromV3('models/repository.js', 'Repository');
 importFromV3('models/commit-set.js', 'MeasurementCommitSet');
 importFromV3('models/commit-set.js', 'CommitSet');

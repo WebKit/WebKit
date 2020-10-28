@@ -59,7 +59,9 @@ function merge_platforms($platform_to_merge, $destination_platform) {
 if ($db) {
     if ($action == 'update') {
         if (update_field('platforms', 'platform', 'name')
-            || update_boolean_field('platforms', 'platform', 'hidden'))
+            || update_boolean_field('platforms', 'platform', 'hidden')
+            || update_field('platforms', 'platform', 'hidden')
+            || update_field('platforms', 'platform', 'group'))
             regenerate_manifest();
         else
             notice('Invalid parameters.');
@@ -94,9 +96,37 @@ END;
         return array($content);
     }
 
+    $platform_group_options = $db->fetch_table('platform_groups', 'platformgroup_name');
+    array_push($platform_group_options, array('platformgroup_id' => NULL, 'platformgroup_name' => '-'));
+    function platform_group_list($platform_row)
+    {
+        global $platform_group_options;
+        $id = intval($platform_row['platform_id']);
+        $platform_group_id = $platform_row['platform_group'];
+        $content = <<< END
+<form method="POST"><input type="hidden" name="id" value="$id">
+<select name="group">
+END;
+
+        foreach ($platform_group_options as &$group_option) {
+            $selection_string = $group_option['platformgroup_id'] == $platform_group_id ? " selected" : "";
+            $content .= <<< END
+<option value="{$group_option['platformgroup_id']}"{$selection_string}>{$group_option['platformgroup_name']}</option>
+END;
+        }
+
+        $content .= <<< END
+</select>
+<button type="submit" name="action" value="update">Update</button>
+</form>
+END;
+        return array($content);
+    }
+
     $page = new AdministrativePage($db, 'platforms', 'platform', array(
         'name' => array('editing_mode' => 'string'),
         'hidden' => array('editing_mode' => 'boolean'),
+        'platform group' => array('custom' => function ($platform_row) { return platform_group_list($platform_row); }),
         'merge into' => array('custom' => function ($platform_row) { return merge_list($platform_row); }),
     ));
 

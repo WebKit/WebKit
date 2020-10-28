@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS build_slaves CASCADE;
 DROP TABLE IF EXISTS builders CASCADE;
 DROP TABLE IF EXISTS repositories CASCADE;
 DROP TABLE IF EXISTS platforms CASCADE;
+DROP TABLE IF EXISTS platform_groups CASCADE;
 DROP TABLE IF EXISTS test_metrics CASCADE;
 DROP TABLE IF EXISTS tests CASCADE;
 DROP TABLE IF EXISTS reports CASCADE;
@@ -34,9 +35,15 @@ DROP TABLE IF EXISTS build_requests CASCADE;
 DROP TYPE IF EXISTS build_request_status_type CASCADE;
 
 
+CREATE TABLE platform_groups (
+    platformgroup_id serial PRIMARY KEY,
+    platformgroup_name varchar(64) NOT NULL,
+    CONSTRAINT platform_group_name_must_be_unique UNIQUE (platformgroup_name));
+
 CREATE TABLE platforms (
     platform_id serial PRIMARY KEY,
     platform_name varchar(64) NOT NULL,
+    platform_group integer REFERENCES platform_groups DEFAULT NULL,
     platform_hidden boolean NOT NULL DEFAULT FALSE);
 
 CREATE TABLE repositories (

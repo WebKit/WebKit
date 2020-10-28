@@ -71,6 +71,19 @@ class TimeSeries {
     findById(id) { return this._data.find(function (point) { return point.id == id }); }
 
     findPointAfterTime(time) { return this._data.find(function (point) { return point.time >= time; }); }
+    viewBetweenTime(startTime, endTime)
+    {
+        const startPoint = this.findPointAfterTime(startTime);
+        if (!startPoint)
+            return null;
+        let endPoint = this.findPointAfterTime(endTime);
+        if (!endPoint)
+            endPoint = this.lastPoint();
+        else if (endPoint.time > endTime)
+            endPoint = this.previousPoint(endPoint);
+
+        return this.viewBetweenPoints(startPoint, endPoint);
+    }
 
     viewBetweenPoints(firstPoint, lastPoint)
     {

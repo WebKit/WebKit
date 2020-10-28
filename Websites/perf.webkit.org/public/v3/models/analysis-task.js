@@ -169,7 +169,6 @@ class AnalysisTask extends LabeledObject {
 
     async commitSetsFromTestGroupsAndMeasurementSet()
     {
-
         const platform = this.platform();
         const metric = this.metric();
         if (!platform || !metric)
@@ -178,6 +177,7 @@ class AnalysisTask extends LabeledObject {
         const lastModified = platform.lastModified(metric);
         const measurementSet = MeasurementSet.findSet(platform.id(), metric.id(), lastModified);
         const fetchingMeasurementSetPromise = measurementSet.fetchBetween(this.startTime(), this.endTime());
+        const commitSetsInSamePlatformGroupPromise = this._commitSetsInSamePlatformGroup();
 
         const allTestGroupsInTask = await TestGroup.fetchForTask(this.id());
         const allCommitSetsInTask = new Set;
@@ -189,8 +189,27 @@ class AnalysisTask extends LabeledObject {
         const series = measurementSet.fetchedTimeSeries('current', false, false);
         const startPoint = series.findById(this.startMeasurementId());
         const endPoint = series.findById(this.endMeasurementId());
+        const commitSetList = Array.from(series.viewBetweenPoints(startPoint, endPoint)).map((point) => point.commitSet());
+        const arrayOfCommitSetList = await Promise.all(commitSetsInSamePlatformGroupPromise);
 
-        return Array.from(series.viewBetweenPoints(startPoint, endPoint)).map((point) => point.commitSet());
+        return [...commitSetList.concat(...arrayOfCommitSetList), ...allCommitSetsInTask];
+    }
+
+    _commitSetsInSamePlatformGroup()
+    {
+        const metric = this.metric();
+        if (!metric || !this.platform() || !this.platform().group())
+            return [];
+        const otherPlatforms = this.platform().group().platforms().filter((platform) => platform != this.platform());
+        return otherPlatforms.map(async (platform) => {
+            const lastModified = platform.lastModified(metric);
+            const measurementSet = MeasurementSet.findSet(platform.id(), metric.id(), lastModified);
+            await measurementSet.fetchBetween(this.startTime(), this.endTime());
+            const series = measurementSet.fetchedTimeSeries('current', false, false);
+            const timeSeriesView = series.viewBetweenTime(this.startTime(), this.endTime());
+
+            return timeSeriesView ? Array.from(timeSeriesView).map((point) => point.commitSet()) : [];
+        });
     }
 
     static categories()

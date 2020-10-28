@@ -10,6 +10,7 @@ class Manifest {
         CommitLog.clearStaticMap();
         Metric.clearStaticMap();
         Platform.clearStaticMap();
+        PlatformGroup.clearStaticMap();
         Repository.clearStaticMap();
         CommitSet.clearStaticMap();
         Test.clearStaticMap();
@@ -50,12 +51,14 @@ class Manifest {
             raw.test = Test.findById(raw.test);
         });
 
+        buildObjectsFromIdMap(rawResponse.platformGroups, PlatformGroup);
         buildObjectsFromIdMap(rawResponse.all, Platform, (raw) => {
             raw.lastModifiedByMetric = {};
             raw.lastModified.forEach((lastModified, index) => {
                 raw.lastModifiedByMetric[raw.metrics[index]] = lastModified;
             });
             raw.metrics = raw.metrics.map((id) => { return Metric.findById(id); });
+            raw.group = PlatformGroup.findById(raw.group);
         });
         buildObjectsFromIdMap(rawResponse.builders, Builder);
         buildObjectsFromIdMap(rawResponse.repositories, Repository);

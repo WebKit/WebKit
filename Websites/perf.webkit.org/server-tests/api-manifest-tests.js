@@ -14,7 +14,7 @@ describe('/api/manifest', function () {
     it("should generate an empty manifest when database is empty", () => {
         return TestServer.remoteAPI().getJSON('/api/manifest').then((manifest) => {
             assert.deepEqual(Object.keys(manifest).sort(), ['all', 'bugTrackers', 'builders', 'dashboard', 'dashboards',
-                'fileUploadSizeLimit', 'metrics', 'repositories', 'siteTitle', 'status', 'summaryPages', 'testAgeToleranceInHours', 'tests', 'triggerables']);
+                'fileUploadSizeLimit', 'metrics', 'platformGroups', 'repositories', 'siteTitle', 'status', 'summaryPages', 'testAgeToleranceInHours', 'tests', 'triggerables']);
 
             assert.deepStrictEqual(manifest, {
                 siteTitle: TestServer.testConfig().siteTitle,
@@ -25,6 +25,7 @@ describe('/api/manifest', function () {
                 dashboards: {},
                 fileUploadSizeLimit: 2097152, // 2MB during testing.
                 metrics: {},
+                platformGroups: {},
                 repositories: {},
                 testAgeToleranceInHours: null,
                 tests: {},
@@ -185,8 +186,10 @@ describe('/api/manifest', function () {
             db.insert('test_metrics', {id: 7, test: 2, name: 'Malloc', aggregator: 200}),
             db.insert('test_metrics', {id: 8, test: 3, name: 'Time'}),
             db.insert('test_metrics', {id: 9, test: 4, name: 'Time'}),
-            db.insert('platforms', {id: 23, name: 'iOS 9 iPhone 5s'}),
-            db.insert('platforms', {id: 46, name: 'Trunk Mavericks'}),
+            db.insert('platform_groups', {id: 1, name: 'ios'}),
+            db.insert('platform_groups', {id: 2, name: 'mac'}),
+            db.insert('platforms', {id: 23, name: 'iOS 9 iPhone 5s', group: 1}),
+            db.insert('platforms', {id: 46, name: 'Trunk Mavericks', group: 2}),
             db.insert('test_configurations', {id: 101, metric: 5, platform: 46, type: 'current'}),
             db.insert('test_configurations', {id: 102, metric: 6, platform: 46, type: 'current'}),
             db.insert('test_configurations', {id: 103, metric: 7, platform: 46, type: 'current'}),
@@ -214,16 +217,18 @@ describe('/api/manifest', function () {
 
             let manifest = Manifest._didFetchManifest(content);
 
-            let someTest = Test.findById(1);
-            let someTestMetric = Metric.findById(5);
-            let someOtherTest = Test.findById(2);
-            let someOtherTestTime = Metric.findById(6);
-            let someOtherTestMalloc = Metric.findById(7);
-            let childTest = Test.findById(3);
-            let childTestMetric = Metric.findById(8);
-            let grandChildTest = Test.findById(4);
-            let ios9iphone5s = Platform.findById(23);
-            let mavericks = Platform.findById(46);
+            const someTest = Test.findById(1);
+            const someTestMetric = Metric.findById(5);
+            const someOtherTest = Test.findById(2);
+            const someOtherTestTime = Metric.findById(6);
+            const someOtherTestMalloc = Metric.findById(7);
+            const childTest = Test.findById(3);
+            const childTestMetric = Metric.findById(8);
+            const grandChildTest = Test.findById(4);
+            const ios9iphone5s = Platform.findById(23);
+            const mavericks = Platform.findById(46);
+            const iosGroup = PlatformGroup.findById(1);
+            const macGroup = PlatformGroup.findById(2);
             assert(someTest);
             assert(someTestMetric);
             assert(someOtherTest);
@@ -234,6 +239,8 @@ describe('/api/manifest', function () {
             assert(grandChildTest);
             assert(ios9iphone5s);
             assert(mavericks);
+            assert(iosGroup);
+            assert(macGroup);
 
             assert.equal(mavericks.name(), 'Trunk Mavericks');
             assert(mavericks.hasTest(someTest));
@@ -244,6 +251,7 @@ describe('/api/manifest', function () {
             assert(mavericks.hasMetric(someOtherTestTime));
             assert(mavericks.hasMetric(someOtherTestMalloc));
             assert(mavericks.hasMetric(childTestMetric));
+            assert.equal(mavericks.group(), macGroup);
 
             assert.equal(ios9iphone5s.name(), 'iOS 9 iPhone 5s');
             assert(ios9iphone5s.hasTest(someTest));
@@ -254,6 +262,15 @@ describe('/api/manifest', function () {
             assert(!ios9iphone5s.hasMetric(someOtherTestTime));
             assert(!ios9iphone5s.hasMetric(someOtherTestMalloc));
             assert(!ios9iphone5s.hasMetric(childTestMetric));
+            assert.equal(ios9iphone5s.group(), iosGroup);
+
+            const macPlatforms = macGroup.platforms();
+            assert.equal(macPlatforms.length, 1);
+            assert.equal(macPlatforms[0], mavericks);
+
+            const iosPlatforms = iosGroup.platforms();
+            assert.equal(iosPlatforms.length, 1);
+            assert.equal(iosPlatforms[0], ios9iphone5s);
 
             assert.equal(someTest.name(), 'SomeTest');
             assert.equal(someTest.parentTest(), null);

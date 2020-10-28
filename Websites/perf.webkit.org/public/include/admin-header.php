@@ -15,6 +15,7 @@ require_once('manifest-generator.php');
 <h1><a href="/">WebKit Perf Monitor</a></h1>
 <ul>
     <li><a href="/admin/platforms">Platforms</a></li>
+    <li><a href="/admin/platform-groups">Platform Groups</a></li>
     <li><a href="/admin/tests">Tests</a></li>
     <li><a href="/admin/aggregators">Aggregators</a></li>
     <li><a href="/admin/builders">Builders</a></li>

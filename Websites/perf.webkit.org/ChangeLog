@@ -1,3 +1,53 @@
+2020-10-27  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Refactor 'platforms' table to contain group information.
+        https://bugs.webkit.org/show_bug.cgi?id=193132
+
+        Reviewed by Ryosuke Niwa.
+
+        Group 'platforms' so that bisecting can use commit sets from other platforms which are in the same platform group.
+        This will help to enhance the bisecting capability to higher granularity.
+        Added admin page to manage platform groups.
+        Updated platform admin page to allow update platform group.
+        SQL query to update existing database:
+        '''
+        BEGIN;
+        CREATE TABLE platform_groups (
+            platformgroup_id serial PRIMARY KEY,
+            platformgroup_name varchar(64) NOT NULL,
+            CONSTRAINT platform_group_name_must_be_unique UNIQUE (platformgroup_name));
+
+        ALTER TABLE platforms ADD COLUMN platform_group integer REFERENCES platform_groups DEFAULT NULL;
+        END;
+        '''
+
+        * init-database.sql: Added 'platform_group' column to 'platforms' table.
+        Added 'platform_groups' table.
+        * migrate-database.sql: Updated migration script accordingly.
+        * public/admin/platform-groups.php: Added a page to manage platform groups.
+        * public/admin/platforms.php: Added support to update platform group in admin page.
+        * public/include/admin-header.php: Added link to page that maneges platform groups.
+        * public/include/manifest-generator.php: Added 'platformGroup' in manifest.
+        * public/v3/index.html: Included 'platform-groups.js'.
+        * public/v3/models/analysis-task.js:
+        (AnalysisTask.prototype.async.commitSetsFromTestGroupsAndMeasurementSet):
+        Included measurement commit sets from other platforms in the same platform group.
+        (AnalysisTask.prototype._commitSetsInSamePlatformGroup):
+        Helper function to find measurement commit set for other platforms in same platform group.
+        * public/v3/models/manifest.js: Added step to build 'PlatformGroup' instances.
+        * public/v3/models/platform-group.js: Added 'PlatformGroup' to represent entries in 'platform_groups' table.
+        (PlatformGroup):
+        (PlatformGroup.prototype.addPlatform):
+        (PlatformGroup.prototype.platforms):
+        * public/v3/models/platform.js: Added itself to 'PlatformGroup' in constructor if it belongs
+        to a group.
+        (Platform.prototype.group): Return the platform group of current platform.
+        * public/v3/models/time-series.js: Added helper function to show view between a given time range.
+        (TimeSeries.prototype.viewBetweenTime):
+        * server-tests/api-manifest-tests.js: Updated unit test to also test platform group initialization.
+        * tools/js/database.js: Added prefix for 'platform_groups'.
+        * tools/js/v3-models.js: Added import for platform group.
+
 2020-10-26  Dewei Zhu  <dewei_zhu@apple.com>
 
         Fix and update performance dashboard tests

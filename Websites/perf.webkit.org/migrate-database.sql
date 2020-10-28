@@ -2,6 +2,12 @@ DO $$
 
 BEGIN
 ALTER TABLE build_requests ADD COLUMN IF NOT EXISTS request_status_description varchar(1024) DEFAULT NULL;
+ALTER TABLE platforms ADD COLUMN  IF NOT EXISTS platform_group integer REFERENCES platform_groups DEFAULT NULL;
+
+CREATE TABLE IF NOT EXISTS platform_groups (
+    platformgroup_id serial PRIMARY KEY,
+    platformgroup_name varchar(64) NOT NULL,
+    CONSTRAINT platform_group_name_must_be_unique UNIQUE (platformgroup_name));
 
 IF EXISTS (SELECT NULL FROM information_schema.columns WHERE TABLE_NAME = 'builds' AND COLUMN_NAME = 'build_number') THEN
     ALTER TABLE builds ALTER build_number TYPE varchar(64);
