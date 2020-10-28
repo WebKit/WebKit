@@ -1,3 +1,33 @@
+2020-10-27  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r269016. rdar://problem/70733329
+
+    Validate addresses returned by LinkBuffer::locationOf
+    https://bugs.webkit.org/show_bug.cgi?id=217786
+    <rdar://problem/69887913>
+    
+    Reviewed by Saam Barati.
+    
+    * assembler/LinkBuffer.h:
+    (JSC::LinkBuffer::locationOf):
+    (JSC::LinkBuffer::locationOfNearCall):
+    (JSC::LinkBuffer::getLinkerAddress):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@269016 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-15  Tadeu Zagallo  <tzagallo@apple.com>
+
+            Validate addresses returned by LinkBuffer::locationOf
+            https://bugs.webkit.org/show_bug.cgi?id=217786
+            <rdar://problem/69887913>
+
+            Reviewed by Saam Barati.
+
+            * assembler/LinkBuffer.h:
+            (JSC::LinkBuffer::locationOf):
+            (JSC::LinkBuffer::locationOfNearCall):
+            (JSC::LinkBuffer::getLinkerAddress):
+
 2020-10-14  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r268371. rdar://problem/70267767
