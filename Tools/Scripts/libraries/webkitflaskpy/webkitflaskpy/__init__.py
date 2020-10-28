@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -24,19 +24,18 @@ import os
 import sys
 
 
-def _maybe_add_webkit_python_library_paths():
-    # Hopefully we're beside webkit*py libraries, otherwise webkit*py will need to be installed.
+def _maybe_add_webkitcorepy_path():
+    # Hopefully we're beside webkitcorepy, otherwise webkitcorepy will need to be installed.
     libraries_path = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-    for library in ['webkitcorepy', 'webkitflaskpy']:
-        library_path = os.path.join(libraries_path, library)
-        if os.path.isdir(library_path) and os.path.isdir(os.path.join(library_path, library)) and library_path not in sys.path:
-            sys.path.insert(0, library_path)
+    webkitcorepy_path = os.path.join(libraries_path, 'webkitcorepy')
+    if os.path.isdir(webkitcorepy_path) and os.path.isdir(os.path.join(webkitcorepy_path, 'webkitcorepy')) and webkitcorepy_path not in sys.path:
+        sys.path.insert(0, webkitcorepy_path)
 
 
-_maybe_add_webkit_python_library_paths()
+_maybe_add_webkitcorepy_path()
 
 try:
-    from webkitcorepy.version import Version
+    from webkitcorepy import AutoInstall, Package, Version
 except ImportError:
     raise ImportError(
         "'webkitcorepy' could not be found on your Python path.\n" +
@@ -44,6 +43,13 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(1, 1, 0)
+version = Version(0, 1, 0)
 
-name = 'resultsdbpy'
+AutoInstall.register(Package('click'), Version(7, 1, 2))
+AutoInstall.register(Package('flask'), Version(1, 1, 2))
+AutoInstall.register(Package('itsdangerous'), Version(2, 0, 0))
+AutoInstall.register(Package('jinja2'), Version(3, 0, 0))
+AutoInstall.register(Package('markupsafe'), Version(2, 0, 0))
+AutoInstall.register(Package('werkzeug'), Version(1, 0, 1))
+
+name = 'webkitflaskpy'

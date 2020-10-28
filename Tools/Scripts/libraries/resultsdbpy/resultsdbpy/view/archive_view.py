@@ -20,14 +20,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import json
-
 from flask import abort, jsonify, request, Response
 from resultsdbpy.controller.commit_controller import uuid_range_for_query, HasCommitContext
 from resultsdbpy.controller.configuration_controller import configuration_for_query
 from resultsdbpy.controller.suite_controller import time_range_for_query
-from resultsdbpy.flask_support.util import AssertRequest, boolean_query, cache_for, limit_for_query, query_as_kwargs, query_as_string
 from resultsdbpy.view.site_menu import SiteMenu
+from webkitflaskpy.util import AssertRequest, boolean_query, cache_for, limit_for_query, query_as_kwargs, query_as_string
 
 
 class ArchiveView(HasCommitContext):

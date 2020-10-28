@@ -26,7 +26,6 @@ import time
 
 from flask import abort, jsonify, send_from_directory, redirect, Response
 from jinja2 import Environment, PackageLoader, select_autoescape
-from resultsdbpy.flask_support.util import AssertRequest, cache_for
 from resultsdbpy.flask_support.authed_blueprint import AuthedBlueprint
 from resultsdbpy.view.archive_view import ArchiveView
 from resultsdbpy.view.ci_view import CIView
@@ -34,6 +33,7 @@ from resultsdbpy.view.commit_view import CommitView
 from resultsdbpy.view.site_menu import SiteMenu
 from resultsdbpy.view.suite_view import SuiteView
 from werkzeug.exceptions import HTTPException, InternalServerError
+from webkitflaskpy.util import AssertRequest, cache_for
 
 
 class ViewRoutes(AuthedBlueprint):

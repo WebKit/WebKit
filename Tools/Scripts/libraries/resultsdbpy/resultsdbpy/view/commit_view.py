@@ -22,8 +22,8 @@
 
 from flask import abort, redirect, request
 from resultsdbpy.controller.commit import Commit
-from resultsdbpy.flask_support.util import AssertRequest, query_as_kwargs
 from resultsdbpy.view.site_menu import SiteMenu
+from webkitflaskpy.util import AssertRequest, query_as_kwargs
 
 
 class CommitView(object):

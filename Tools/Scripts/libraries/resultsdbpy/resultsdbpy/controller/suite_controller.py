@@ -24,7 +24,7 @@ from flask import abort, jsonify, request
 from resultsdbpy.controller.commit_controller import uuid_range_for_query, HasCommitContext
 from resultsdbpy.controller.configuration import Configuration
 from resultsdbpy.controller.configuration_controller import configuration_for_query
-from resultsdbpy.flask_support.util import AssertRequest, query_as_kwargs, limit_for_query, boolean_query
+from webkitflaskpy.util import AssertRequest, query_as_kwargs, limit_for_query, boolean_query
 
 
 def time_range_for_query():

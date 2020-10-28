@@ -58,7 +58,7 @@ class AssertRequest(object):
     def query_kwargs_empty(cls, **kwargs):
         for key, value in kwargs.items():
             if value:
-                abort(400, description=f"'{key}' not supported in queries by this endpoint")
+                abort(400, description="'{}' not supported in queries by this endpoint".format(key))
 
 
 def query_as_kwargs():
@@ -66,7 +66,7 @@ def query_as_kwargs():
         def real_method(val, method=method, **kwargs):
             for key, value in request.args.to_dict(flat=False).items():
                 if key in kwargs:
-                    abort(400, description=f'{key} is not a valid query parameter on this endpoint')
+                    abort(400, description='{} is not a valid query parameter on this endpoint'.format(key))
                 kwargs[key] = tuple(value)
             return method(val, **kwargs)
 
@@ -79,7 +79,7 @@ def query_as_string():
     query = '?'
     for key, values in request.args.to_dict(flat=False).items():
         for value in values:
-            query += f'{key}={value}&'
+            query += '{}={}&'.format(key, value)
     return query[:-1]
 
 
@@ -123,7 +123,7 @@ def cache_for(hours=12):
                 response = method(self=self, **kwargs)
             else:
                 response = method(**kwargs)
-            response.headers.add('Cache-Control', f'public,max-age={hours * 60 * 60}')
+            response.headers.add('Cache-Control', 'public,max-age={}'.format(hours * 60 * 60))
             return response
 
         real_method.__name__ = method.__name__

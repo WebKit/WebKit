@@ -25,7 +25,7 @@ import json
 import re
 
 from datetime import datetime
-from resultsdbpy.flask_support.util import FlaskJSONEncoder
+from webkitflaskpy.util import FlaskJSONEncoder
 
 
 class Commit(object):

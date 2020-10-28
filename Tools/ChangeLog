@@ -1,3 +1,27 @@
+2020-10-28  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitflaskpy] Create shared library for WebKit's flask tooling
+        https://bugs.webkit.org/show_bug.cgi?id=218257
+        <rdar://problem/70736269>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/__init__.py:
+        (_maybe_add_webkit_python_library_paths): Add webkitcorepy and webkitflaskpy.
+        (_maybe_add_webkitcorepy_path): Renamed _maybe_add_webkit_python_library_paths.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/flask_support/util.py: Moved to webkitflaskpy/util.py.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/flask_support/util_unittest.py: Moved to webkitflaskpy/util_unittest.py.
+        * Scripts/libraries/webkitflaskpy: Added.
+        * Scripts/libraries/webkitflaskpy/MANIFEST.in: Added.
+        * Scripts/libraries/webkitflaskpy/README.md: Added.
+        * Scripts/libraries/webkitflaskpy/setup.py: Added.
+        * Scripts/libraries/webkitflaskpy/webkitflaskpy: Added.
+        * Scripts/libraries/webkitflaskpy/webkitflaskpy/__init__.py: Added.
+        * Scripts/libraries/webkitflaskpy/webkitflaskpy/util.py: Moved from resultsdpy/flask_support/util.py.
+        * Scripts/libraries/webkitflaskpy/webkitflaskpy/util_unittest.py: Moved from resultsdpy/flask_support/util_unittest.py.
+        * Scripts/webkitpy/test/main.py:
+        (main): Add
+
 2020-10-28  Sam Weinig  <weinig@apple.com>
 
         Reduce Preference Override Methods: TabsToLinks/SpatialNavigation

@@ -21,9 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from flask import abort, redirect, request
-from resultsdbpy.controller.commit import Commit
-from resultsdbpy.flask_support.util import AssertRequest, query_as_kwargs
-from resultsdbpy.view.site_menu import SiteMenu
+from webkitflaskpy.util import query_as_kwargs
 
 
 class CIView(object):

@@ -20,30 +20,31 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
-import sys
+import unittest
+
+from werkzeug.exceptions import BadRequest
+from webkitflaskpy.util import boolean_query, limit_for_query
 
 
-def _maybe_add_webkit_python_library_paths():
-    # Hopefully we're beside webkit*py libraries, otherwise webkit*py will need to be installed.
-    libraries_path = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-    for library in ['webkitcorepy', 'webkitflaskpy']:
-        library_path = os.path.join(libraries_path, library)
-        if os.path.isdir(library_path) and os.path.isdir(os.path.join(library_path, library)) and library_path not in sys.path:
-            sys.path.insert(0, library_path)
+class UtilTest(unittest.TestCase):
 
+    def test_boolean_query(self):
+        self.assertTrue(all(boolean_query('True', 'true')))
+        self.assertTrue(all(boolean_query('Yes', 'yes')))
+        self.assertTrue(all(boolean_query('1', '100')))
 
-_maybe_add_webkit_python_library_paths()
+        self.assertFalse(any(boolean_query('False', 'false')))
+        self.assertFalse(any(boolean_query('No', 'no')))
+        self.assertFalse(any(boolean_query('0', 'any string')))
 
-try:
-    from webkitcorepy.version import Version
-except ImportError:
-    raise ImportError(
-        "'webkitcorepy' could not be found on your Python path.\n" +
-        "You are not running from a WebKit checkout.\n" +
-        "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
-    )
+    def test_limit_decorator(self):
+        @limit_for_query()
+        def func(limit=None):
+            return limit
 
-version = Version(1, 1, 0)
-
-name = 'resultsdbpy'
+        self.assertEqual(func(), 100)
+        self.assertEqual(func(limit=['10']), 10)
+        self.assertEqual(func(limit=['10', '1']), 1)
+        self.assertRaises(BadRequest, func, limit=['string'])
+        self.assertRaises(BadRequest, func, limit=['0'])
+        self.assertRaises(BadRequest, func, limit=['-1'])

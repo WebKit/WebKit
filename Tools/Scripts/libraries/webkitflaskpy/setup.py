@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,31 +20,45 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
-
-from werkzeug.exceptions import BadRequest
-from resultsdbpy.flask_support.util import boolean_query, limit_for_query
+from webkitflaskpy import version
+from setuptools import setup
 
 
-class UtilTest(unittest.TestCase):
+def readme():
+    with open('README.md') as f:
+        return f.read()
 
-    def test_boolean_query(self):
-        self.assertTrue(all(boolean_query('True', 'true')))
-        self.assertTrue(all(boolean_query('Yes', 'yes')))
-        self.assertTrue(all(boolean_query('1', '100')))
 
-        self.assertFalse(any(boolean_query('False', 'false')))
-        self.assertFalse(any(boolean_query('No', 'no')))
-        self.assertFalse(any(boolean_query('0', 'any string')))
-
-    def test_limit_decorator(self):
-        @limit_for_query()
-        def func(limit=None):
-            return limit
-
-        self.assertEqual(func(), 100)
-        self.assertEqual(func(limit=['10']), 10)
-        self.assertEqual(func(limit=['10', '1']), 1)
-        self.assertRaises(BadRequest, func, limit=['string'])
-        self.assertRaises(BadRequest, func, limit=['0'])
-        self.assertRaises(BadRequest, func, limit=['-1'])
+setup(
+    name='webkitflaskpy',
+    version=str(version),
+    description='Library for visualizing, processing and storing test results.',
+    long_description=readme(),
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Framework :: Flask',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: BSD License',
+        'Operating System :: MacOS',
+        'Natural Language :: English',
+        'Programming Language :: Python :: 3 :: Only',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'Topic :: Software Development :: Testing',
+    ],
+    keywords='web javascript webkit',
+    url='https://svn.webkit.org/repository/webkit/trunk/Tools/Scripts/libraries/webkitflaskpy',
+    author='Jonathan Bedard',
+    author_email='jbedard@apple.com',
+    license='Modified BSD',
+    packages=[
+        'webkitflaskpy',
+    ],
+    install_requires=[
+        'Flask',
+        'Flask-Cors',
+        'gunicorn',
+        'webkitcorepy',
+    ],
+    include_package_data=True,
+    zip_safe=False,
+)

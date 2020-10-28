@@ -24,9 +24,9 @@ import json
 
 from collections import defaultdict
 from flask import abort, jsonify, request
-from resultsdbpy.flask_support.util import AssertRequest, query_as_kwargs, limit_for_query
 from resultsdbpy.model.repository import SCMException
 from resultsdbpy.controller.commit import Commit
+from webkitflaskpy.util import AssertRequest, query_as_kwargs, limit_for_query
 
 
 def _find_comparison(commit_context, repository_id, branch, id, uuid, timestamp, priority=min):

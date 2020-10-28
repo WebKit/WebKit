@@ -22,7 +22,7 @@
 
 import json
 
-from resultsdbpy.flask_support.util import FlaskJSONEncoder
+from webkitflaskpy.util import FlaskJSONEncoder
 
 
 class Configuration(object):

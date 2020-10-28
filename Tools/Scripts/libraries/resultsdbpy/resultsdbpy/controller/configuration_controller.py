@@ -20,8 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from resultsdbpy.flask_support.util import boolean_query
 from resultsdbpy.controller.configuration import Configuration
+from webkitflaskpy.util import boolean_query
 
 
 def configuration_for_query():
