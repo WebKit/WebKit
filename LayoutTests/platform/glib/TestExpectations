@@ -932,7 +932,7 @@ webkit.org/b/205860 media/encrypted-media/mock-MediaKeySession-remove.html [ Ski
 
 webkit.org/b/190578 media/encrypted-media/mock-MediaKeySystemAccess.html [ Skip ]
 
-webkit.org/b/210390 media/encrypted-media/clearKey/clearKey-webm-video-playback-mse.html [ Timeout ]
+webkit.org/b/210390 media/encrypted-media/clearKey/clearKey-webm-video-playback-mse.html [ Pass Crash ]
 webkit.org/b/210390 media/encrypted-media/clearKey/clearKey-session-life-cycle.html [ Crash Pass ]
 
 webkit.org/b/190991 media/encrypted-media/encrypted-media-constants.html [ Failure ]

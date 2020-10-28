@@ -1,3 +1,14 @@
+2020-10-28  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed, reverting r269043.
+
+        Original patch was revert, should revert expectations as well
+
+        Reverted changeset:
+
+        "Unreviewed, GStreamer gardening"
+        https://trac.webkit.org/changeset/269043
+
 2020-10-27  Zalan Bujtas  <zalan@apple.com>
 
         Remove unneeded whitespace between content and <br>
