@@ -50,7 +50,8 @@
     -webkit-margin-end: 4px;
 }
 
-.network-table > .table li:not(.filler, .selected) .cell:not(.current-session) {
+.network-table > .table li:not(.filler, .selected) .cell:not(.name, .current-session),
+.network-table > .table li:not(.filler, .selected) .cell.name:not(.current-session) > * {
     opacity: 0.5;
 }
 
