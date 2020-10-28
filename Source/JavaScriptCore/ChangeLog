@@ -1,3 +1,20 @@
+2020-10-28  Robin Morisset  <rmorisset@apple.com>
+
+        DFGIntegerRangeOptimization is wrong for Upsilon (as 'shadow' nodes are not in SSA form)
+        https://bugs.webkit.org/show_bug.cgi?id=218073
+
+        Reviewed by Saam Barati.
+
+        In DFGIntegerRangeOptimization, when visiting an Upsilon node, we call setEquivalence, that calls setRelationship.
+        But despite its name, this function does not overwrite a pre-existing relationship, it simply replaces it by an over-approximation of the intersection of the old and new relationship (see the filter method).
+        Since the old relationship is always (by definition) an over-approximation of this intersection, it will often do nothing at all if it cannot find a closer approximation.
+        This is a problem specifically for Upsilon nodes, because several of them can store to the same "shadow node" corresponding to a given Phi, so they are the only case where there can already be a completely different relationship for the same nodes (coming from a different Upsilon).
+
+        The fix is very simple thanks to a suggestion by Phil: we just remove all relationships referring to the shadow node just before executing an Upsilon.
+        This is correct since the upsilon effectively kills that shadow node, before making it live again with a different value, and we already aggressively prune the relationshipMaps by liveness.
+
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+
 2020-10-27  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         -Wparentheses warning in OptionsList.h

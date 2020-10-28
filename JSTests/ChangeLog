@@ -1,3 +1,16 @@
+2020-10-28  Robin Morisset  <rmorisset@apple.com>
+
+        DFGIntegerRangeOptimization is wrong for Upsilon (as 'shadow' nodes are not in SSA form)
+        https://bugs.webkit.org/show_bug.cgi?id=218073
+
+        Reviewed by Saam Barati.
+
+        The only testcase I managed to get for this bug loops forever when not crashing.
+        So I use a 1s timeout through --watchdog=1000.
+
+        * stress/bounds-checking-in-cold-loop.js: Added.
+        (true.vm.ftlTrue):
+
 2020-10-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [ECMA-402] Implement Intl.ListFormat

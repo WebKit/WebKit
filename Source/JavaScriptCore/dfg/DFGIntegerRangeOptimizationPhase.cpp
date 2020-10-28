@@ -1503,9 +1503,12 @@ private:
         }
             
         case Upsilon: {
-            setEquivalence(
-                node->child1().node(),
-                NodeFlowProjection(node->phi(), NodeFlowProjection::Shadow));
+            auto shadowNode = NodeFlowProjection(node->phi(), NodeFlowProjection::Shadow);
+            // We must first remove all relationships involving the shadow node, because setEquivalence does not overwrite them.
+            // Overwriting is only required here because the shadowNodes are not in SSA form (can be written to by several Upsilons).
+            // Another way to think of it, is that we are maintaining the invariant that relationshipMaps are pruned by liveness.
+            kill(shadowNode);
+            setEquivalence(node->child1().node(), shadowNode);
             break;
         }
             
@@ -1518,6 +1521,22 @@ private:
             
         default:
             break;
+        }
+    }
+
+    void kill(NodeFlowProjection node)
+    {
+        m_relationships.remove(node);
+
+        for (auto& relationships : m_relationships.values()) {
+            unsigned i = 0, j = 0;
+            while (i < relationships.size()) {
+                const Relationship& rel = relationships[i++];
+                ASSERT(rel.left() != node);
+                if (rel.right() != node)
+                    relationships[j++] = rel;
+            }
+            relationships.shrink(j);
         }
     }
     
@@ -1560,7 +1579,7 @@ private:
             return;
         
         if (DFGIntegerRangeOptimizationPhaseInternal::verbose)
-            dataLog("    Setting: ", relationship, " (ttl = ", timeToLive, ")\n");
+            dataLogLn("    Setting: ", relationship, " (ttl = ", timeToLive, ")");
 
         auto result = relationshipMap.add(
             relationship.left(), Vector<Relationship>());
@@ -1642,6 +1661,8 @@ private:
                 if (Relationship filtered = otherRelationship.filter(relationship)) {
                     ASSERT(filtered.left() == relationship.left());
                     otherRelationship = filtered;
+                    if (DFGIntegerRangeOptimizationPhaseInternal::verbose)
+                        dataLogLn("      filtered: ", filtered);
                     found = true;
                 }
             }
@@ -1699,7 +1720,7 @@ private:
                     toAdd.append(newRelationship);
             }
         }
-        
+
         if (!found)
             relationships.append(relationship);
         
