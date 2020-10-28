@@ -1,3 +1,12 @@
+2020-10-28  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Ensure that uat instance doesn't send emails
+        https://bugs.webkit.org/show_bug.cgi?id=218227
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/send_email.py:
+
 2020-10-28  Sam Weinig  <weinig@apple.com>
 
         [Testing] Remove requirement of adding new SPI for each preference that needs testing

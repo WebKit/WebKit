@@ -23,11 +23,14 @@
 import json
 import os
 import smtplib
+import socket
 
 from email.mime.text import MIMEText
 
 is_test_mode_enabled = os.getenv('BUILDBOT_PRODUCTION') is None
 
+CURRENT_HOSTNAME = socket.gethostname().strip()
+EWS_BUILD_HOSTNAME = 'ews-build.webkit.org'
 FROM_EMAIL = 'ews@webkit.org'
 IGALIA_JSC_QUEUES_PATTERNS = ['armv7', 'mips', 'i386']
 IGALIA_GTK_WPE_QUEUES_PATTERNS = ['gtk', 'wpe']
@@ -46,6 +49,9 @@ def get_email_ids(category):
 
 def send_email(to_emails, subject, text, reference=''):
     if is_test_mode_enabled:
+        return
+    if CURRENT_HOSTNAME != EWS_BUILD_HOSTNAME:
+        # Only allow EWS production instance to send emails.
         return
     if not to_emails:
         print('Error: skipping email since no recipient is specified')
