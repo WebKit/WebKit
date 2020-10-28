@@ -47,7 +47,7 @@ private:
     RemoteInspectorServer() { Socket::init(); }
 
     Optional<ConnectionID> doAccept(RemoteInspectorSocketEndpoint&, PlatformSocketType) final;
-    void didClose(RemoteInspectorSocketEndpoint&, ConnectionID) final { };
+    void didChangeStatus(RemoteInspectorSocketEndpoint&, ConnectionID, RemoteInspectorSocketEndpoint::Listener::Status) final { };
 
     Optional<ConnectionID> m_server;
 };

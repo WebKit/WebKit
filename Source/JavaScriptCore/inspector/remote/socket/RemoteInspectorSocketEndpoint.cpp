@@ -31,7 +31,6 @@
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
-#include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
@@ -90,10 +89,15 @@ Optional<ConnectionID> RemoteInspectorSocketEndpoint::connectInet(const char* se
 
 Optional<ConnectionID> RemoteInspectorSocketEndpoint::listenInet(const char* address, uint16_t port, Listener& listener)
 {
-    if (auto socket = Socket::listen(address, port))
-        return createListener(*socket, listener);
+    LockHolder lock(m_connectionsLock);
+    auto id = generateConnectionID();
+    auto connection = makeUnique<ListenerConnection>(id, listener, address, port);
+    if (!connection->isListening())
+        return WTF::nullopt;
 
-    return WTF::nullopt;
+    m_listeners.add(id, WTFMove(connection));
+    wakeupWorkerThread();
+    return id;
 }
 
 bool RemoteInspectorSocketEndpoint::isListening(ConnectionID id)
@@ -102,6 +106,24 @@ bool RemoteInspectorSocketEndpoint::isListening(ConnectionID id)
     if (m_listeners.contains(id))
         return true;
     return false;
+}
+
+int RemoteInspectorSocketEndpoint::pollingTimeout()
+{
+    Optional<MonotonicTime> mostRecentWakeup;
+    for (const auto& connection : m_listeners) {
+        if (connection.value->nextRetryTime) {
+            if (mostRecentWakeup)
+                mostRecentWakeup = std::min<MonotonicTime>(*mostRecentWakeup, *connection.value->nextRetryTime);
+            else
+                mostRecentWakeup = connection.value->nextRetryTime;
+        }
+    }
+
+    if (mostRecentWakeup)
+        return static_cast<int>((*mostRecentWakeup - MonotonicTime::now()).milliseconds());
+
+    return -1;
 }
 
 void RemoteInspectorSocketEndpoint::workerThread()
@@ -128,13 +150,17 @@ void RemoteInspectorSocketEndpoint::workerThread()
                 ids.append(connection.key);
             }
             for (const auto& connection : m_listeners) {
-                pollfds.append(connection.value->poll);
-                ids.append(connection.key);
+                if (!connection.value->isListening() && connection.value->listen())
+                    connection.value->listener.didChangeStatus(*this, connection.key, Listener::Status::Listening);
+                if (connection.value->isListening()) {
+                    pollfds.append(connection.value->poll);
+                    ids.append(connection.key);
+                }
             }
         }
         pollfds.append(wakeup);
 
-        if (!Socket::poll(pollfds, -1))
+        if (!Socket::poll(pollfds, pollingTimeout()))
             continue;
 
         if (Socket::isReadable(pollfds.last())) {
@@ -180,6 +206,9 @@ Optional<ConnectionID> RemoteInspectorSocketEndpoint::createClient(PlatformSocke
     LockHolder lock(m_connectionsLock);
     auto id = generateConnectionID();
     auto connection = makeUnique<ClientConnection>(id, socket, client);
+    if (!Socket::isValid(connection->socket))
+        return WTF::nullopt;
+
     m_clients.add(id, WTFMove(connection));
     wakeupWorkerThread();
 
@@ -194,7 +223,7 @@ void RemoteInspectorSocketEndpoint::disconnect(ConnectionID id)
         m_listeners.remove(id);
         Socket::close(connection->socket);
         lock.unlockEarly();
-        connection->listener.didClose(*this, id);
+        connection->listener.didChangeStatus(*this, id, Listener::Status::Closed);
     } else if (const auto& connection = m_clients.get(id)) {
         m_clients.remove(id);
         Socket::close(connection->socket);
@@ -202,38 +231,6 @@ void RemoteInspectorSocketEndpoint::disconnect(ConnectionID id)
         connection->client.didClose(*this, id);
     } else
         LOG_ERROR("Error: Cannot disconnect: Invalid id");
-}
-
-Optional<ConnectionID> RemoteInspectorSocketEndpoint::createListener(PlatformSocketType socket, Listener& listener)
-{
-    ASSERT(Socket::isValid(socket));
-
-    if (!Socket::setup(socket))
-        return WTF::nullopt;
-
-    LockHolder lock(m_connectionsLock);
-    auto id = generateConnectionID();
-    auto connection = makeUnique<ListenerConnection>(id, socket, listener);
-    m_listeners.add(id, WTFMove(connection));
-    wakeupWorkerThread();
-
-    return id;
-}
-
-Optional<ConnectionID> RemoteInspectorSocketEndpoint::createListener(PlatformSocketType socket, Listener& listener, Client& client)
-{
-    ASSERT(Socket::isValid(socket));
-
-    if (!Socket::setup(socket))
-        return WTF::nullopt;
-
-    LockHolder lock(m_connectionsLock);
-    auto id = generateConnectionID();
-    auto connection = makeUnique<ListenerConnection>(id, socket, listener);
-    m_listeners.add(id, WTFMove(connection));
-    wakeupWorkerThread();
-
-    return id;
 }
 
 void RemoteInspectorSocketEndpoint::invalidateClient(Client& client)
@@ -359,7 +356,13 @@ void RemoteInspectorSocketEndpoint::acceptInetSocketIfEnabled(ConnectionID id)
             lock.unlockEarly();
             if (connection->listener.doAccept(*this, socket.value()))
                 return;
+
             Socket::close(*socket);
+        } else {
+            // If accept() returns error, we have to start over with bind() and listen().
+            // By closing socket here, listen() will be called again at the next loop of worker thread.
+            Socket::close(connection->socket);
+            connection->listener.didChangeStatus(*this, id, Listener::Status::Invalid);
         }
     }
 }

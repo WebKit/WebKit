@@ -56,9 +56,10 @@ Optional<ConnectionID> HTTPServer::doAccept(RemoteInspectorSocketEndpoint& endpo
     return WTF::nullopt;
 }
 
-void HTTPServer::didClose(RemoteInspectorSocketEndpoint&, ConnectionID)
+void HTTPServer::didChangeStatus(RemoteInspectorSocketEndpoint&, ConnectionID, RemoteInspectorSocketEndpoint::Listener::Status status)
 {
-    m_server = WTF::nullopt;
+    if (status == Status::Closed)
+        m_server = WTF::nullopt;
 }
 
 void HTTPRequestHandler::connect(ConnectionID id)

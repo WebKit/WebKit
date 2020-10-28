@@ -1,3 +1,28 @@
+2020-10-28  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [WinCairo][PlayStation] Add handling for accept failure case
+        https://bugs.webkit.org/show_bug.cgi?id=217353
+
+        Reviewed by Alex Christensen.
+
+        It is rare to happen, but listening socket can be invalid state (i.e. cable disconnection, interface error),
+        and accept() will be called because of the poll's false report. In that situation, it is required to rebuild
+        the listening socket from the scratch. The failure of accept is the good place to capture this situation.
+
+        This patch moves listening duty into Listener internal calss and it is possible to make the invalid state
+        while maintained by SocketEndpoint. Also in case of failure continues, the retry will be gradually increasing
+        the intervals.
+
+        * inspector/remote/socket/RemoteInspectorServer.h:
+        * inspector/remote/socket/RemoteInspectorSocketEndpoint.cpp:
+        (Inspector::RemoteInspectorSocketEndpoint::listenInet):
+        (Inspector::RemoteInspectorSocketEndpoint::pollingTimeout):
+        (Inspector::RemoteInspectorSocketEndpoint::workerThread):
+        (Inspector::RemoteInspectorSocketEndpoint::createClient):
+        (Inspector::RemoteInspectorSocketEndpoint::disconnect):
+        (Inspector::RemoteInspectorSocketEndpoint::acceptInetSocketIfEnabled):
+        * inspector/remote/socket/RemoteInspectorSocketEndpoint.h:
+
 2020-10-28  Saam Barati  <sbarati@apple.com>
 
         Better cache our serialization of the outer TDZ environment when creating FunctionExecutables during bytecode generation

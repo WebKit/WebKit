@@ -34,6 +34,7 @@
 #include <wtf/Lock.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
@@ -43,15 +44,24 @@ public:
     class Client {
     public:
         virtual ~Client() { }
+
+        // These callbacks are not guaranteed to be called from the main thread.
         virtual void didReceive(RemoteInspectorSocketEndpoint&, ConnectionID, Vector<uint8_t>&&) = 0;
         virtual void didClose(RemoteInspectorSocketEndpoint&, ConnectionID) = 0;
     };
 
     class Listener {
     public:
+        enum class Status : uint8_t {
+            Listening,
+            Invalid,
+            Closed,
+        };
         virtual ~Listener() { }
+
+        // These callbacks are not guaranteed to be called from the main thread.
         virtual Optional<ConnectionID> doAccept(RemoteInspectorSocketEndpoint&, PlatformSocketType) = 0;
-        virtual void didClose(RemoteInspectorSocketEndpoint&, ConnectionID) = 0;
+        virtual void didChangeStatus(RemoteInspectorSocketEndpoint&, ConnectionID, Status) = 0;
     };
 
     static RemoteInspectorSocketEndpoint& singleton();
@@ -69,7 +79,6 @@ public:
     inline void send(ConnectionID id, const char* data, size_t length) { send(id, reinterpret_cast<const uint8_t*>(data), length); }
 
     Optional<ConnectionID> createClient(PlatformSocketType, Client&);
-    Optional<ConnectionID> createListener(PlatformSocketType, Listener&, Client&);
 
     Optional<uint16_t> getPort(ConnectionID) const;
 
@@ -79,12 +88,25 @@ protected:
     struct BaseConnection {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-        BaseConnection(ConnectionID id, PlatformSocketType socket)
+        BaseConnection(ConnectionID id)
             : id { id }
-            , socket { socket }
-            , poll { Socket::preparePolling(socket) }
+            , socket { INVALID_SOCKET_VALUE }
         {
-            ASSERT(Socket::isValid(socket));
+        }
+
+        bool setSocket(PlatformSocketType newSocket)
+        {
+            ASSERT(Socket::isValid(newSocket));
+
+            if (!Socket::setup(newSocket))
+                return false;
+
+            if (Socket::isValid(socket))
+                Socket::close(socket);
+
+            socket = newSocket;
+            poll = Socket::preparePolling(socket);
+            return true;
         }
 
         ConnectionID id;
@@ -94,9 +116,10 @@ protected:
 
     struct ClientConnection : public BaseConnection {
         ClientConnection(ConnectionID id, PlatformSocketType socket, Client& client)
-            : BaseConnection(id, socket)
+            : BaseConnection(id)
             , client { client }
         {
+            setSocket(socket);
         }
 
         Client& client;
@@ -104,17 +127,52 @@ protected:
     };
 
     struct ListenerConnection : public BaseConnection {
-        ListenerConnection(ConnectionID id, PlatformSocketType socket, Listener& listener)
-            : BaseConnection(id, socket)
+        static constexpr Seconds initialRetryInterval { 200_ms };
+        static constexpr Seconds maxRetryInterval { 5_s };
+
+        ListenerConnection(ConnectionID id, Listener& listener, const char* address, uint16_t port)
+            : BaseConnection(id)
+            , address { address }
+            , port { port }
             , listener { listener }
         {
+            listen();
         }
 
+        bool listen()
+        {
+            ASSERT(!isListening());
+
+            if (nextRetryTime && *nextRetryTime > MonotonicTime::now())
+                return false;
+
+            if (auto newSocket = Socket::listen(address.utf8().data(), port)) {
+                if (setSocket(*newSocket)) {
+                    retryInterval = initialRetryInterval;
+                    return true;
+                }
+                Socket::close(*newSocket);
+            }
+
+            nextRetryTime = MonotonicTime::now() + retryInterval;
+            retryInterval = std::min<Seconds>(retryInterval * 2, maxRetryInterval);
+
+            return false;
+        }
+
+        bool isListening()
+        {
+            return Socket::isListening(socket);
+        }
+
+        String address;
+        uint16_t port;
         Listener& listener;
+        Optional<MonotonicTime> nextRetryTime;
+        Seconds retryInterval { initialRetryInterval };
     };
 
     ConnectionID generateConnectionID();
-    Optional<ConnectionID> createListener(PlatformSocketType, Listener&);
 
     void recvIfEnabled(ConnectionID);
     void sendIfEnabled(ConnectionID);
@@ -122,6 +180,7 @@ protected:
     void wakeupWorkerThread();
     void acceptInetSocketIfEnabled(ConnectionID);
     bool isListening(ConnectionID);
+    int pollingTimeout();
 
     mutable Lock m_connectionsLock;
     HashMap<ConnectionID, std::unique_ptr<ClientConnection>> m_clients;

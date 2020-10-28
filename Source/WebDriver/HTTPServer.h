@@ -95,7 +95,7 @@ public:
 private:
 #if USE(INSPECTOR_SOCKET_SERVER)
     Optional<ConnectionID> doAccept(RemoteInspectorSocketEndpoint&, PlatformSocketType) final;
-    void didClose(RemoteInspectorSocketEndpoint&, ConnectionID) final;
+    void didChangeStatus(RemoteInspectorSocketEndpoint&, ConnectionID, RemoteInspectorSocketEndpoint::Listener::Status) final;
 #endif
 
     HTTPRequestHandler& m_requestHandler;
