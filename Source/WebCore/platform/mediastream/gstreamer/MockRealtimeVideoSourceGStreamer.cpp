@@ -65,16 +65,8 @@ void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
         return;
 
     auto imageSize = size();
-    auto caps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "BGRA",
-        "width", G_TYPE_INT, imageSize.width(), "height", G_TYPE_INT, imageSize.height(), nullptr));
-
-    auto data = imageBuffer->toBGRAData();
-    auto size = data.size();
-    auto buffer = adoptGRef(gst_buffer_new_wrapped(g_memdup(data.releaseBuffer().get(), size), size));
-    auto sampleTime = MediaTime::createWithDouble((elapsedTime() + 100_ms).seconds());
-    GST_BUFFER_PTS(buffer.get()) = toGstClockTime(sampleTime);
-    auto gstSample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
-    auto sample = MediaSampleGStreamer::create(WTFMove(gstSample), imageSize, { });
+    auto sample = MediaSampleGStreamer::createImageSample(imageBuffer->toBGRAData(), imageSize.width(), imageSize.height(), frameRate());
+    sample->offsetTimestampsBy(MediaTime::createWithDouble((elapsedTime() + 100_ms).seconds()));
     dispatchMediaSampleToObservers(sample.get());
 }
 
