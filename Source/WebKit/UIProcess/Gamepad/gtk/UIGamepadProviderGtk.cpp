@@ -40,6 +40,18 @@ using namespace WebCore;
 
 static WebPageProxy* getWebPageProxy(GtkWidget* widget)
 {
+#if USE(GTK4)
+    if (!widget)
+        return nullptr;
+
+    if (WEBKIT_IS_WEB_VIEW_BASE(widget))
+        return gtk_widget_is_visible(widget) ? webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(widget)) : nullptr;
+
+    for (auto* child = gtk_widget_get_first_child(widget); child; child = gtk_widget_get_next_sibling(child)) {
+        if (WebPageProxy* proxy = getWebPageProxy(child))
+            return proxy;
+    }
+#else
     if (!widget || !GTK_IS_CONTAINER(widget))
         return nullptr;
 
@@ -51,6 +63,8 @@ static WebPageProxy* getWebPageProxy(GtkWidget* widget)
         if (WebPageProxy* proxy = getWebPageProxy(GTK_WIDGET(iter->data)))
             return proxy;
     }
+#endif // USE(GTK4)
+
     return nullptr;
 }
 
@@ -61,9 +75,15 @@ WebPageProxy* UIGamepadProvider::platformWebPageProxyForGamepadInput()
         if (!WebCore::widgetIsOnscreenToplevelWindow(GTK_WIDGET(iter->data)))
             continue;
 
+#if USE(GTK4)
+        GtkWidget* window = GTK_WIDGET(iter->data);
+        if (!gtk_widget_has_focus(window))
+            continue;
+#else
         GtkWindow* window = GTK_WINDOW(iter->data);
         if (!gtk_window_has_toplevel_focus(window))
             continue;
+#endif // USE(GTK4)
 
         if (WebPageProxy* proxy = getWebPageProxy(GTK_WIDGET(window)))
             return proxy;

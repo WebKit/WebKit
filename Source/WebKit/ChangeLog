@@ -1,3 +1,21 @@
+2020-10-28  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK4] Build broken with GTK 3.99.3
+        https://bugs.webkit.org/show_bug.cgi?id=218270
+
+        Reviewed by Carlos Garcia Campos.
+
+        No new tests needed.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (toplevelWindowStateChanged): Replace GDK_SURFACE_STATE_MINIMIZED with GDK_TOPLEVEL_STATE_MINIMIZED.
+        * UIProcess/API/gtk/WebKitWebViewGtk.cpp:
+        (surfaceStateChangedCallback): Ditto, and GDK_SURFACE_STATE_MAXIMIZED with GDK_TOPLEVEL_STATE_MAXIMIZED.
+        * UIProcess/Gamepad/gtk/UIGamepadProviderGtk.cpp:
+        (WebKit::getWebPageProxy): Write an implementation which works for GTK4.
+        (WebKit::UIGamepadProvider::platformWebPageProxyForGamepadInput): Accomodate for windows
+        being a bit less special in GTK4 and use gtk_widget_has_focus() directly.
+
 2020-10-27  Alex Christensen  <achristensen@webkit.org>
 
         Use _CFURLConnectionSetFrameworkStubs for SecItemShim instead of DYLD_INTERPOSE on Apple Silicon Macs

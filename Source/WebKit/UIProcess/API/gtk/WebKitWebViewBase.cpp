@@ -1779,7 +1779,7 @@ static void toplevelWindowIsActiveChanged(GtkWindow* window, GParamSpec*, WebKit
 static void toplevelWindowStateChanged(GdkSurface* surface, GParamSpec*, WebKitWebViewBase* webViewBase)
 {
     auto state = gdk_toplevel_get_state(GDK_TOPLEVEL(surface));
-    bool visible = !(state & GDK_SURFACE_STATE_MINIMIZED);
+    bool visible = !(state & GDK_TOPLEVEL_STATE_MINIMIZED);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (visible) {
         if (priv->activityState & ActivityState::IsVisible)
