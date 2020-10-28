@@ -232,7 +232,16 @@ void ImageDecoderGStreamer::InnerDecoder::connectDecoderPad(GstPad* pad)
 {
     auto padCaps = adoptGRef(gst_pad_get_current_caps(pad));
     GST_DEBUG_OBJECT(m_pipeline.get(), "New decodebin pad %" GST_PTR_FORMAT " caps: %" GST_PTR_FORMAT, pad, padCaps.get());
-    RELEASE_ASSERT(doCapsHaveType(padCaps.get(), "video"));
+
+    if (!doCapsHaveType(padCaps.get(), "video")) {
+        GST_DEBUG_OBJECT(m_pipeline.get(), "Non-video pad, plugging to a fakesink");
+        auto* sink = gst_element_factory_make("fakesink", nullptr);
+        gst_bin_add(GST_BIN_CAST(m_pipeline.get()), sink);
+        auto sinkPad = adoptGRef(gst_element_get_static_pad(sink, "sink"));
+        gst_pad_link(pad, sinkPad.get());
+        gst_element_sync_state_with_parent(sink);
+        return;
+    }
 
     GstElement* sink = gst_element_factory_make("appsink", nullptr);
     static GstAppSinkCallbacks callbacks = {
@@ -344,8 +353,6 @@ void ImageDecoderGStreamer::InnerDecoder::preparePipeline()
     g_object_set(source, "stream", m_memoryStream.get(), nullptr);
 
     GstElement* decoder = gst_element_factory_make("decodebin", nullptr);
-    auto allowedCaps = adoptGRef(gst_caps_new_empty_simple("video/x-raw"));
-    g_object_set(decoder, "caps", allowedCaps.get(), "expose-all-streams", false, nullptr);
     g_signal_connect_swapped(decoder, "pad-added", G_CALLBACK(decodebinPadAddedCallback), this);
 
     gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), source, decoder, nullptr);
