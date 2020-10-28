@@ -1,3 +1,19 @@
+2020-10-28  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update Mesa and GTK4 dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=218281
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * buildstream/elements/flatpak/sdk.bst: Switch to app-debug-link as in the upstream FDO SDK.
+        * buildstream/elements/freedesktop-sdk.bst: Bump junction ref.
+        * buildstream/elements/sdk/mesa.bst: Update to 20.1.10 and add patch not present in stable release yet.
+        * buildstream/patches/fdo-0001-pango-Bump-to-1.47.patch: Added.
+        * buildstream/patches/mesa/0001-mesa-rename-_mesa_free_errors_data.patch: Removed.
+        * buildstream/patches/mesa/0002-mesa-add-bool-param-to-_mesa_free_context_data.patch: Removed.
+        * buildstream/patches/mesa/0003-mesa-st-release-debug_output-after-destroying-the-co.patch: Removed.
+        * buildstream/patches/mesa/0004-mesa-clear-texture-s-views-when-texture-is-remove.patch: Added.
+
 2020-10-28  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK4] Build broken with GTK 3.99.3

@@ -1,0 +1,109 @@
+From 045267d1e6238e45eb98f286332ee233dec53312 Mon Sep 17 00:00:00 2001
+From: Danylo Piliaiev <danylo.piliaiev@globallogic.com>
+Date: Mon, 18 May 2020 20:44:58 +0300
+Subject: [PATCH] st/mesa: Clear texture's views when texture is removed from
+ Shared->TexObjects
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+If texture is shared between several contexts, calling glDeleteTextures
+will remove it from ctx->Shared->TexObjects - which makes impossible for
+contexts, when destroyed, to release their views to this texture. Which
+leaves dangling pointers to destroyed contexts.
+
+Closes: https://gitlab.freedesktop.org/mesa/mesa/-/issues/2960
+Signed-off-by: Danylo Piliaiev <danylo.piliaiev@globallogic.com>
+Reviewed-by: Tapani Pälli <tapani.palli@intel.com>
+Reviewed-by: Marek Olšák <marek.olsak@amd.com>
+Part-of: <https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5106>
+---
+ src/mesa/main/dd.h                       |  6 ++++++
+ src/mesa/main/texobj.c                   |  4 ++++
+ src/mesa/state_tracker/st_cb_texture.c   | 17 +++++++++++++++++
+ src/mesa/state_tracker/st_sampler_view.c |  2 +-
+ 4 files changed, 28 insertions(+), 1 deletion(-)
+
+diff --git a/src/mesa/main/dd.h b/src/mesa/main/dd.h
+index 4a7d775db45..a4d1d5bdaa0 100644
+--- a/src/mesa/main/dd.h
++++ b/src/mesa/main/dd.h
+@@ -371,6 +371,12 @@ struct dd_function_table {
+    void (*DeleteTexture)(struct gl_context *ctx,
+                          struct gl_texture_object *texObj);
+ 
++   /**
++    * Called to notify that texture is removed from ctx->Shared->TexObjects
++    */
++   void (*TextureRemovedFromShared)(struct gl_context *ctx,
++                                   struct gl_texture_object *texObj);
++
+    /** Called to allocate a new texture image object. */
+    struct gl_texture_image * (*NewTextureImage)(struct gl_context *ctx);
+ 
+diff --git a/src/mesa/main/texobj.c b/src/mesa/main/texobj.c
+index 8bd9cee4615..3e058975db8 100644
+--- a/src/mesa/main/texobj.c
++++ b/src/mesa/main/texobj.c
+@@ -1514,6 +1514,10 @@ delete_textures(struct gl_context *ctx, GLsizei n, const GLuint *textures)
+              */
+             _mesa_HashRemove(ctx->Shared->TexObjects, delObj->Name);
+ 
++            if (ctx->Driver.TextureRemovedFromShared) {
++               ctx->Driver.TextureRemovedFromShared(ctx, delObj);
++            }
++
+             /* Unreference the texobj.  If refcount hits zero, the texture
+              * will be deleted.
+              */
+diff --git a/src/mesa/state_tracker/st_cb_texture.c b/src/mesa/state_tracker/st_cb_texture.c
+index 1cb85b8b406..32e390c53d6 100644
+--- a/src/mesa/state_tracker/st_cb_texture.c
++++ b/src/mesa/state_tracker/st_cb_texture.c
+@@ -195,6 +195,22 @@ st_DeleteTextureObject(struct gl_context *ctx,
+    _mesa_delete_texture_object(ctx, texObj);
+ }
+ 
++/**
++ * Called via ctx->Driver.TextureRemovedFromShared()
++ * When texture is removed from ctx->Shared->TexObjects we lose
++ * the ability to clean up views on context destruction, which may
++ * lead to dangling pointers to destroyed contexts.
++ * Release the views to prevent this.
++ */
++static void
++st_TextureReleaseAllSamplerViews(struct gl_context *ctx,
++                                 struct gl_texture_object *texObj)
++{
++   struct st_context *st = st_context(ctx);
++   struct st_texture_object *stObj = st_texture_object(texObj);
++
++   st_texture_release_all_sampler_views(st, stObj);
++}
+ 
+ /** called via ctx->Driver.FreeTextureImageBuffer() */
+ static void
+@@ -3355,6 +3371,7 @@ st_init_texture_functions(struct dd_function_table *functions)
+    functions->NewTextureImage = st_NewTextureImage;
+    functions->DeleteTextureImage = st_DeleteTextureImage;
+    functions->DeleteTexture = st_DeleteTextureObject;
++   functions->TextureRemovedFromShared = st_TextureReleaseAllSamplerViews;
+    functions->AllocTextureImageBuffer = st_AllocTextureImageBuffer;
+    functions->FreeTextureImageBuffer = st_FreeTextureImageBuffer;
+    functions->MapTextureImage = st_MapTextureImage;
+diff --git a/src/mesa/state_tracker/st_sampler_view.c b/src/mesa/state_tracker/st_sampler_view.c
+index 102908e1029..a31e573c01a 100644
+--- a/src/mesa/state_tracker/st_sampler_view.c
++++ b/src/mesa/state_tracker/st_sampler_view.c
+@@ -226,7 +226,7 @@ st_texture_release_all_sampler_views(struct st_context *st,
+    for (unsigned i = 0; i < views->count; ++i) {
+       struct st_sampler_view *stsv = &views->views[i];
+       if (stsv->view) {
+-         if (stsv->st != st) {
++         if (stsv->st && stsv->st != st) {
+             /* Transfer this reference to the zombie list.  It will
+              * likely be freed when the zombie list is freed.
+              */
+-- 
+2.20.1
+

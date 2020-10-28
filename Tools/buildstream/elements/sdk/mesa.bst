@@ -106,12 +106,8 @@ sources:
 - kind: git_tag
   url: gitlab_freedesktop_org:mesa/mesa.git
   track: '20.1'
-  ref: mesa-20.1.5-0-g3ba7f954b8a4ca6a8754fec06b8c0d179f2db64a
+  ref: mesa-20.1.10-1-gbdf94921c02b82e0d5f67d7c1ee0aacbce336056
 - kind: patch
   path: patches/mesa/mesa_libdrm_deps.patch
 - kind: patch
-  path: patches/mesa/0001-mesa-rename-_mesa_free_errors_data.patch
-- kind: patch
-  path: patches/mesa/0002-mesa-add-bool-param-to-_mesa_free_context_data.patch
-- kind: patch
-  path: patches/mesa/0003-mesa-st-release-debug_output-after-destroying-the-co.patch
+  path: patches/mesa/0004-mesa-clear-texture-s-views-when-texture-is-remove.patch
