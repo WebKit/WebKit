@@ -443,23 +443,19 @@ void TextureMapperLayer::applyMask(const TextureMapperPaintOptions& options)
     options.textureMapper.setMaskMode(false);
 }
 
-RefPtr<BitmapTexture> TextureMapperLayer::paintIntoSurface(const TextureMapperPaintOptions& options, const IntSize& size)
+void TextureMapperLayer::paintIntoSurface(TextureMapperPaintOptions& options)
 {
-    RefPtr<BitmapTexture> surface = options.textureMapper.acquireTextureFromPool(size, BitmapTexture::SupportsAlpha);
-    TextureMapperPaintOptions paintOptions(options);
-    paintOptions.surface = surface;
-    options.textureMapper.bindSurface(surface.get());
+    options.textureMapper.bindSurface(options.surface.get());
     if (m_isBackdrop) {
+        TextureMapperPaintOptions paintOptions(options);
         paintOptions.backdropLayer = this;
         rootLayer().paintSelfAndChildren(paintOptions);
-        paintOptions.backdropLayer = nullptr;
     } else
-        paintSelfAndChildren(paintOptions);
+        paintSelfAndChildren(options);
     if (m_state.maskLayer)
         m_state.maskLayer->applyMask(options);
-    surface = surface->applyFilters(options.textureMapper, m_currentFilters);
-    options.textureMapper.bindSurface(surface.get());
-    return surface;
+    options.surface = options.surface->applyFilters(options.textureMapper, m_currentFilters);
+    options.textureMapper.bindSurface(options.surface.get());
 }
 
 static void commitSurface(const TextureMapperPaintOptions& options, BitmapTexture& surface, const IntRect& rect, float opacity)
@@ -473,38 +469,27 @@ static void commitSurface(const TextureMapperPaintOptions& options, BitmapTextur
 
 void TextureMapperLayer::paintWithIntermediateSurface(const TextureMapperPaintOptions& options, const IntRect& rect)
 {
-    RefPtr<BitmapTexture> replicaSurface;
-    RefPtr<BitmapTexture> mainSurface;
     TextureMapperPaintOptions paintOptions(options);
+    paintOptions.surface = options.textureMapper.acquireTextureFromPool(rect.size(), BitmapTexture::SupportsAlpha);
     paintOptions.offset = -IntSize(rect.x(), rect.y());
     paintOptions.opacity = 1;
     paintOptions.transform = TransformationMatrix();
     if (m_state.replicaLayer) {
         paintOptions.isReplica = true;
         paintOptions.transform = replicaTransform();
-        replicaSurface = paintIntoSurface(paintOptions, rect.size());
+        paintIntoSurface(paintOptions);
         paintOptions.isReplica = false;
         paintOptions.transform = TransformationMatrix();
         if (m_state.replicaLayer->m_state.maskLayer)
             m_state.replicaLayer->m_state.maskLayer->applyMask(paintOptions);
     }
 
-    if (replicaSurface && options.opacity == 1) {
-        commitSurface(options, *replicaSurface, rect, 1);
-        replicaSurface = nullptr;
-    }
-
     if (m_isBackdrop && m_effectTarget->m_state.replicaLayer && options.isReplica)
         paintOptions.transform = m_effectTarget->replicaTransform();
 
-    mainSurface = paintIntoSurface(paintOptions, rect.size());
-    if (replicaSurface) {
-        options.textureMapper.bindSurface(replicaSurface.get());
-        options.textureMapper.drawTexture(*mainSurface.get(), FloatRect(FloatPoint::zero(), rect.size()));
-        mainSurface = replicaSurface;
-    }
+    paintIntoSurface(paintOptions);
 
-    commitSurface(options, *mainSurface, rect, options.opacity);
+    commitSurface(options, *paintOptions.surface, rect, options.opacity);
 }
 
 void TextureMapperLayer::paintRecursive(const TextureMapperPaintOptions& options)
