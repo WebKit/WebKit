@@ -53,16 +53,6 @@ String DiagnosticLoggingKeys::missingValidatorFieldsKey()
     return "missingValidatorFields"_s;
 }
 
-String DiagnosticLoggingKeys::pluginLoadedKey()
-{
-    return "pluginLoaded"_s;
-}
-
-String DiagnosticLoggingKeys::pluginLoadingFailedKey()
-{
-    return "pluginFailedLoading"_s;
-}
-
 String DiagnosticLoggingKeys::postPageBackgroundingCPUUsageKey()
 {
     return "postPageBackgroundingCPUUsage"_s;
@@ -91,16 +81,6 @@ String DiagnosticLoggingKeys::postPageLoadMemoryUsageKey()
 String DiagnosticLoggingKeys::provisionalLoadKey()
 {
     return "provisionalLoad"_s;
-}
-
-String DiagnosticLoggingKeys::pageContainsPluginKey()
-{
-    return "pageContainsPlugin"_s;
-}
-
-String DiagnosticLoggingKeys::pageContainsAtLeastOnePluginKey()
-{
-    return "pageContainsAtLeastOnePlugin"_s;
 }
 
 String DiagnosticLoggingKeys::pageContainsMediaEngineKey()
@@ -261,11 +241,6 @@ String DiagnosticLoggingKeys::isReloadIgnoringCacheDataKey()
 String DiagnosticLoggingKeys::loadingKey()
 {
     return "loading"_s;
-}
-
-String DiagnosticLoggingKeys::hasPluginsKey()
-{
-    return "hasPlugins"_s;
 }
 
 String DiagnosticLoggingKeys::httpsNoStoreKey()

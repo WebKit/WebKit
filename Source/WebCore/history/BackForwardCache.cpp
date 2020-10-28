@@ -137,7 +137,6 @@ static bool canCacheFrame(Frame& frame, DiagnosticLoggingClient& diagnosticLoggi
     }
     if (frameLoader.subframeLoader().containsPlugins() && !frame.page()->settings().backForwardCacheSupportsPlugins()) {
         PCLOG("   -Frame contains plugins");
-        logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::hasPluginsKey());
         isCacheable = false;
     }
     if (frame.isMainFrame() && frame.document() && frame.document()->url().protocolIs("https") && documentLoader->response().cacheControlContainsNoStore()) {

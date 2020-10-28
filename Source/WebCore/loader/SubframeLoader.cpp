@@ -188,7 +188,7 @@ bool FrameLoader::SubframeLoader::requestPlugin(HTMLPlugInImageElement& ownerEle
     return loadPlugin(ownerElement, url, explicitMIMEType, paramNames, paramValues, useFallback);
 }
 
-static void logPluginRequest(Page* page, const String& mimeType, const URL& url, bool success)
+static void logPluginRequest(Page* page, const String& mimeType, const URL& url)
 {
     if (!page)
         return;
@@ -203,16 +203,6 @@ static void logPluginRequest(Page* page, const String& mimeType, const URL& url,
 
     String pluginFile = page->pluginData().pluginFileForWebVisibleMimeType(newMIMEType);
     String description = !pluginFile ? newMIMEType : pluginFile;
-
-    DiagnosticLoggingClient& diagnosticLoggingClient = page->diagnosticLoggingClient();
-    diagnosticLoggingClient.logDiagnosticMessage(success ? DiagnosticLoggingKeys::pluginLoadedKey() : DiagnosticLoggingKeys::pluginLoadingFailedKey(), description, ShouldSample::No);
-
-    if (!page->hasSeenAnyPlugin())
-        diagnosticLoggingClient.logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsAtLeastOnePluginKey(), emptyString(), ShouldSample::No);
-
-    if (!page->hasSeenPlugin(description))
-        diagnosticLoggingClient.logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsPluginKey(), description, ShouldSample::No);
-
     page->sawPlugin(description);
 }
 
@@ -234,7 +224,7 @@ bool FrameLoader::SubframeLoader::requestObject(HTMLPlugInImageElement& ownerEle
     bool useFallback;
     if (shouldUsePlugin(completedURL, mimeType, hasFallbackContent, useFallback)) {
         bool success = requestPlugin(ownerElement, completedURL, mimeType, paramNames, paramValues, useFallback);
-        logPluginRequest(document.page(), mimeType, completedURL, success);
+        logPluginRequest(document.page(), mimeType, completedURL);
         return success;
     }
 
@@ -280,7 +270,7 @@ RefPtr<Widget> FrameLoader::SubframeLoader::createJavaAppletWidget(const IntSize
     if (m_frame.settings().arePluginsEnabled())
         widget = m_frame.loader().client().createJavaAppletWidget(size, element, baseURL, paramNames, paramValues);
 
-    logPluginRequest(m_frame.page(), element.serviceType(), { }, widget);
+    logPluginRequest(m_frame.page(), element.serviceType(), { });
 
     if (!widget) {
         RenderEmbeddedObject* renderer = element.renderEmbeddedObject();
