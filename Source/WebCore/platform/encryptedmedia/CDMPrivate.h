@@ -74,6 +74,7 @@ public:
     virtual bool supportsServerCertificates() const = 0;
     virtual bool supportsSessions() const = 0;
     virtual bool supportsInitData(const AtomString&, const SharedBuffer&) const = 0;
+    WEBCORE_EXPORT virtual RefPtr<SharedBuffer> sanitizeInitData(const AtomString& initDataType, const SharedBuffer& initData) const;
     virtual RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const = 0;
     virtual Optional<String> sanitizeSessionId(const String&) const = 0;
 

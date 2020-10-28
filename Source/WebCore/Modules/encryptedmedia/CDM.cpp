@@ -137,7 +137,9 @@ bool CDM::supportsInitDataType(const AtomString& initDataType) const
 
 RefPtr<SharedBuffer> CDM::sanitizeInitData(const AtomString& initDataType, const SharedBuffer& initData)
 {
-    return InitDataRegistry::shared().sanitizeInitData(initDataType, initData);
+    if (!m_private)
+        return nullptr;
+    return m_private->sanitizeInitData(initDataType, initData);
 }
 
 bool CDM::supportsInitData(const AtomString& initDataType, const SharedBuffer& initData)

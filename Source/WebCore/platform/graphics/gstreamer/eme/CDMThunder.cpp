@@ -218,6 +218,15 @@ bool CDMPrivateThunder::supportsInitData(const AtomString& initDataType, const S
     return false;
 }
 
+RefPtr<SharedBuffer> CDMPrivateThunder::sanitizeInitData(const AtomString& initDataType, const SharedBuffer& initData) const
+{
+    // Validate the initData buffer as CENC initData. FIXME: Validate it is actually CENC.
+    if (equalLettersIgnoringASCIICase(initDataType, "cenc") && !initData.isEmpty())
+        return initData.copy();
+
+    return CDMPrivate::sanitizeInitData(initDataType, initData);
+}
+
 RefPtr<SharedBuffer> CDMPrivateThunder::sanitizeResponse(const SharedBuffer& response) const
 {
     return response.copy();

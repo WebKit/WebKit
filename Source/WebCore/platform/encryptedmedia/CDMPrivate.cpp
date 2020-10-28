@@ -32,6 +32,7 @@
 #include "CDMMediaCapability.h"
 #include "CDMRequirement.h"
 #include "CDMRestrictions.h"
+#include "InitDataRegistry.h"
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
 #include "ParsedContentType.h"
@@ -512,6 +513,11 @@ void CDMPrivate::getConsentStatus(CDMKeySystemConfiguration&& accumulatedConfigu
 
     // 6. Return Allowed.
     callback(ConsentStatus::Allowed, WTFMove(accumulatedConfiguration), WTFMove(restrictions));
+}
+
+RefPtr<SharedBuffer> CDMPrivate::sanitizeInitData(const AtomString& initDataType, const SharedBuffer& initData) const
+{
+    return InitDataRegistry::shared().sanitizeInitData(initDataType, initData);
 }
 
 
