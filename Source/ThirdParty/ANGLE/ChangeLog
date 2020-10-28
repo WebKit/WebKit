@@ -1,3 +1,31 @@
+2020-10-28  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst WebGL on Apple Silicon devices is using a software renderer
+        https://bugs.webkit.org/show_bug.cgi?id=218303
+        <rdar://problem/70587571>
+
+        Reviewed by Geoffrey Garen.
+
+        * src/gpu_info_util/SystemInfo.h:
+        * src/gpu_info_util/SystemInfo_apple.mm:
+        (angle::GetSystemInfo):
+        We can just use the macOS version of GetSystemInfo in macCatalyst.
+
+        * src/gpu_info_util/SystemInfo_macos.mm:
+        (angle::GetSystemInfo_mac):
+        * src/libANGLE/Display.cpp:
+        * src/libANGLE/formatutils.cpp:
+        (gl::BuildInternalFormatInfoMap):
+        * src/libANGLE/renderer/gl/renderergl_utils.cpp:
+        (rx::nativegl_gl::GenerateCaps):
+        It turns out we must use EAGL in macCatalyst on Apple Silicon in all cases,
+        not just in-process in iOS apps (the problem is not just about coexistence
+        of the two GLs, but actually about our ability to load the accelerated
+        renderer /at all/ in macCatalyst processes).
+
+        I left the runtime switching in place, because there is a future in which
+        we /can/ use CGL in non-iOS-app processes, but that future is not now.
+
 2020-10-13  Keith Rollin  <krollin@apple.com>
 
         Remove leftover MACOSX_DEPLOYMENT_TARGET_macosx support

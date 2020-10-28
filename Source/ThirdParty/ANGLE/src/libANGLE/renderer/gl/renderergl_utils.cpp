@@ -1359,7 +1359,7 @@ void GenerateCaps(const FunctionsGL *functions,
     angle::SystemInfo info;
     if (angle::GetSystemInfo(&info))
     {
-        if (!info.isiOSAppOnMac)
+        if (!info.needsEAGLOnMac)
         {
             VendorID vendor = GetVendorID(functions);
             if ((IsAMD(vendor) || IsIntel(vendor)) && *maxSupportedESVersion >= gl::Version(3, 0))

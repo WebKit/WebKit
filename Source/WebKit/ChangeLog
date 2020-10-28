@@ -1,3 +1,19 @@
+2020-10-28  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst WebGL on Apple Silicon devices is using a software renderer
+        https://bugs.webkit.org/show_bug.cgi?id=218303
+        <rdar://problem/70587571>
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/mac/HighPerformanceGPUManager.mm:
+        (WebKit::HighPerformanceGPUManager::addProcessRequiringHighPerformance):
+        (WebKit::HighPerformanceGPUManager::removeProcessRequiringHighPerformance):
+        (WebKit::HighPerformanceGPUManager::updateState):
+        (WebKit::isiOSAppOnMac): Deleted.
+        HighPerformanceGPUManager is PLATFORM(MAC)-only, which is not true
+        for MACCATALYST, so delete this dead code.
+
 2020-10-28  Sam Weinig  <weinig@apple.com>
 
         Reduce Preference Override Methods: TabsToLinks/SpatialNavigation

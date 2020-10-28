@@ -108,15 +108,10 @@ static EGLDisplay InitializeEGLDisplay()
 static const unsigned statusCheckThreshold = 5;
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-static bool isiOSAppOnMac()
+static bool needsEAGLOnMac()
 {
 #if PLATFORM(MACCATALYST) && CPU(ARM64)
-    static bool isiOSAppOnMac = false;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
-        isiOSAppOnMac = [[NSProcessInfo processInfo] isiOSAppOnMac];
-    });
-    return isiOSAppOnMac;
+    return true;
 #else
     return false;
 #endif
@@ -297,7 +292,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     ExtensionsGL& extensions = getExtensions();
 
-    if (!isiOSAppOnMac()) {
+    if (!needsEAGLOnMac()) {
         static constexpr const char* requiredExtensions[] = {
             "GL_ANGLE_texture_rectangle", // For IOSurface-backed textures.
             "GL_EXT_texture_format_BGRA8888", // For creating the EGL surface from an IOSurface.
@@ -430,7 +425,7 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
 GCGLenum GraphicsContextGLOpenGL::IOSurfaceTextureTarget()
 {
 #if PLATFORM(MACCATALYST)
-    if (isiOSAppOnMac())
+    if (needsEAGLOnMac())
         return TEXTURE_2D;
     return TEXTURE_RECTANGLE_ARB;
 #elif PLATFORM(MAC)
@@ -443,7 +438,7 @@ GCGLenum GraphicsContextGLOpenGL::IOSurfaceTextureTarget()
 GCGLenum GraphicsContextGLOpenGL::IOSurfaceTextureTargetQuery()
 {
 #if PLATFORM(MACCATALYST)
-    if (isiOSAppOnMac())
+    if (needsEAGLOnMac())
         return TEXTURE_BINDING_2D;
     return TEXTURE_BINDING_RECTANGLE_ARB;
 #elif PLATFORM(MAC)
@@ -456,7 +451,7 @@ GCGLenum GraphicsContextGLOpenGL::IOSurfaceTextureTargetQuery()
 GCGLint GraphicsContextGLOpenGL::EGLIOSurfaceTextureTarget()
 {
 #if PLATFORM(MACCATALYST)
-    if (isiOSAppOnMac())
+    if (needsEAGLOnMac())
         return EGL_TEXTURE_2D;
     return EGL_TEXTURE_RECTANGLE_ANGLE;
 #elif PLATFORM(MAC)
