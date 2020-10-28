@@ -1,3 +1,15 @@
+2020-10-27  Chris Dumez  <cdumez@apple.com>
+
+        AudioBuffer.getChannelData(x) should keep returning the same JS wrapper for a given channel
+        https://bugs.webkit.org/show_bug.cgi?id=218265
+
+        Reviewed by Geoff Garen.
+
+        Rebaseline WPT test that is now fully passing. I have verified that this test passes in Chrome and Firefox
+        as well.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/audiobuffer-getChannelData-expected.txt:
+
 2020-10-27  Noam Rosenthal  <noam@webkit.org>
 
         compositing/iframes/layout-on-compositing-change.html can assert under ContentfulPaintChecker

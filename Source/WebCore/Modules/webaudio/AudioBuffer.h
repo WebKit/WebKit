@@ -31,6 +31,7 @@
 
 #include "AudioBufferOptions.h"
 #include "ExceptionOr.h"
+#include "JSValueInWrappedObject.h"
 #include <JavaScriptCore/Float32Array.h>
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
@@ -53,7 +54,7 @@ public:
 
     // Channel data access
     unsigned numberOfChannels() const { return m_channels.size(); }
-    ExceptionOr<Ref<Float32Array>> getChannelData(unsigned channelIndex);
+    ExceptionOr<JSC::JSValue> getChannelData(JSDOMGlobalObject&, unsigned channelIndex);
     ExceptionOr<void> copyFromChannel(Ref<Float32Array>&&, unsigned channelNumber, unsigned bufferOffset);
     ExceptionOr<void> copyToChannel(Ref<Float32Array>&&, unsigned channelNumber, unsigned startInChannel);
     Float32Array* channelData(unsigned channelIndex);
@@ -65,6 +66,8 @@ public:
     void releaseMemory();
 
     size_t memoryCost() const;
+
+    void visitChannelWrappers(JSC::SlotVisitor&);
     
 private:
     AudioBuffer(unsigned numberOfChannels, size_t length, float sampleRate);
@@ -76,6 +79,7 @@ private:
     mutable Lock m_channelsLock;
     size_t m_length;
     Vector<RefPtr<Float32Array>> m_channels;
+    Vector<JSValueInWrappedObject> m_channelWrappers;
 };
 
 } // namespace WebCore

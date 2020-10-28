@@ -29,6 +29,7 @@
 [
     Conditional=WEB_AUDIO,
     ImplementationLacksVTable,
+    JSCustomMarkFunction,
     JSGenerateToJSObject,
     ReportExtraMemoryCost,
     Exposed=Window
@@ -40,7 +41,7 @@
     readonly attribute unsigned long numberOfChannels;
 
     // Channel access
-    [MayThrowException] Float32Array getChannelData(unsigned long channelIndex);
+    [MayThrowException, CallWith=GlobalObject] any getChannelData(unsigned long channelIndex);
     [MayThrowException, EnabledBySetting=ModernUnprefixedWebAudio] undefined copyFromChannel(Float32Array destination, unsigned long channelNumber, optional unsigned long bufferOffset = 0);
     [MayThrowException, EnabledBySetting=ModernUnprefixedWebAudio] undefined copyToChannel(Float32Array source, unsigned long channelNumber, optional unsigned long bufferOffset = 0);
 };

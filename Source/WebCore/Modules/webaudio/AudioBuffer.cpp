@@ -97,6 +97,7 @@ AudioBuffer::AudioBuffer(unsigned numberOfChannels, size_t length, float sampleR
         channelDataArray->setNeuterable(false);
         m_channels.append(WTFMove(channelDataArray));
     }
+    m_channelWrappers.resize(m_channels.size());
 }
 
 AudioBuffer::AudioBuffer(AudioBus& bus)
@@ -117,6 +118,7 @@ AudioBuffer::AudioBuffer(AudioBus& bus)
         channelDataArray->setRange(bus.channel(i)->data(), m_length, 0);
         m_channels.append(WTFMove(channelDataArray));
     }
+    m_channelWrappers.resize(m_channels.size());
 }
 
 void AudioBuffer::invalidate()
@@ -129,14 +131,32 @@ void AudioBuffer::releaseMemory()
 {
     auto locker = holdLock(m_channelsLock);
     m_channels.clear();
+    m_channelWrappers.clear();
 }
 
-ExceptionOr<Ref<Float32Array>> AudioBuffer::getChannelData(unsigned channelIndex)
+ExceptionOr<JSC::JSValue> AudioBuffer::getChannelData(JSDOMGlobalObject& globalObject, unsigned channelIndex)
 {
-    if (channelIndex >= m_channels.size())
+    ASSERT(m_channelWrappers.size() == m_channels.size());
+    if (channelIndex >= m_channelWrappers.size())
         return Exception { IndexSizeError, "Index must be less than number of channels."_s };
-    auto& channelData = *m_channels[channelIndex];
-    return Float32Array::create(channelData.unsharedBuffer(), channelData.byteOffset(), channelData.length());
+
+    auto& channelData = m_channels[channelIndex];
+    auto constructJSArray = [&] {
+        return JSC::JSFloat32Array::create(globalObject.vm(), globalObject.typedArrayStructure(JSC::TypeFloat32), channelData.copyRef());
+    };
+
+    if (globalObject.worldIsNormal()) {
+        if (!m_channelWrappers[channelIndex])
+            m_channelWrappers[channelIndex] = { constructJSArray() };
+        return static_cast<JSC::JSValue>(m_channelWrappers[channelIndex]);
+    }
+    return constructJSArray();
+}
+
+void AudioBuffer::visitChannelWrappers(JSC::SlotVisitor& visitor)
+{
+    for (auto& channelWrapper : m_channelWrappers)
+        channelWrapper.visit(visitor);
 }
 
 Float32Array* AudioBuffer::channelData(unsigned channelIndex)

@@ -480,6 +480,7 @@ bindings/js/JSAbstractRangeCustom.cpp
 bindings/js/JSAnimationEffectCustom.cpp
 bindings/js/JSAnimationTimelineCustom.cpp
 bindings/js/JSAttrCustom.cpp
+bindings/js/JSAudioBufferCustom.cpp
 bindings/js/JSAudioTrackCustom.cpp
 bindings/js/JSAudioTrackListCustom.cpp
 bindings/js/JSAudioWorkletProcessorCustom.cpp
