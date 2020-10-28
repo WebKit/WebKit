@@ -291,11 +291,11 @@ void HTMLVideoElement::updateDisplayState()
         setDisplayMode(Poster);
 }
 
-std::unique_ptr<ImageBuffer> HTMLVideoElement::createBufferForPainting(const FloatSize& size, ShouldAccelerate shouldAccelerate) const
+std::unique_ptr<ImageBuffer> HTMLVideoElement::createBufferForPainting(const FloatSize& size, RenderingMode renderingMode) const
 {
     auto* hostWindow = document().view() && document().view()->root() ? document().view()->root()->hostWindow() : nullptr;
     auto shouldUseDisplayList = document().settings().displayListDrawingEnabled() ? ShouldUseDisplayList::Yes : ShouldUseDisplayList::No;
-    return ImageBuffer::create(size, shouldAccelerate, shouldUseDisplayList, RenderingPurpose::MediaPainting, 1, ColorSpace::SRGB, hostWindow);
+    return ImageBuffer::create(size, renderingMode, shouldUseDisplayList, RenderingPurpose::MediaPainting, 1, ColorSpace::SRGB, hostWindow);
 }
 
 void HTMLVideoElement::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& destRect)

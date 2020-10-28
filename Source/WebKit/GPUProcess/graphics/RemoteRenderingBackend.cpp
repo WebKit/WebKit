@@ -122,11 +122,11 @@ void RemoteRenderingBackend::flushDisplayListWasCommitted(DisplayListFlushIdenti
 
 void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    ASSERT(renderingMode == RenderingMode::RemoteAccelerated || renderingMode == RenderingMode::RemoteUnaccelerated);
+    ASSERT(renderingMode == RenderingMode::Accelerated || renderingMode == RenderingMode::Unaccelerated);
 
     std::unique_ptr<WebCore::ImageBuffer> image;
 
-    if (renderingMode == RenderingMode::RemoteAccelerated)
+    if (renderingMode == RenderingMode::Accelerated)
         image = AcceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, *this, renderingResourceIdentifier);
 
     if (!image)

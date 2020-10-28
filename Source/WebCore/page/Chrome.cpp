@@ -523,14 +523,9 @@ void Chrome::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
     m_client.setCursorHiddenUntilMouseMoves(hiddenUntilMouseMoves);
 }
 
-std::unique_ptr<ImageBuffer> Chrome::createImageBuffer(const FloatSize& size, ShouldAccelerate shouldAccelerate, ShouldUseDisplayList shouldUseDisplayList, RenderingPurpose purpose, float resolutionScale, ColorSpace colorSpace) const
+std::unique_ptr<ImageBuffer> Chrome::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, ColorSpace colorSpace) const
 {
-    return m_client.createImageBuffer(size, shouldAccelerate, shouldUseDisplayList, purpose, resolutionScale, colorSpace);
-}
-
-std::unique_ptr<ImageBuffer> Chrome::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace) const
-{
-    return m_client.createImageBuffer(size, renderingMode, resolutionScale, colorSpace);
+    return m_client.createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace);
 }
 
 PlatformDisplayID Chrome::displayID() const

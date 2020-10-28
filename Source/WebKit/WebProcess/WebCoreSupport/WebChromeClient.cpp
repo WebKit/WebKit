@@ -906,12 +906,12 @@ RemoteRenderingBackendProxy& WebChromeClient::ensureRemoteRenderingBackendProxy(
     return *m_remoteRenderingBackendProxy;
 }
 
-std::unique_ptr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, ShouldAccelerate shouldAccelerate, ShouldUseDisplayList shouldUseDisplayList, RenderingPurpose purpose, float resolutionScale, ColorSpace colorSpace) const
+std::unique_ptr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, ColorSpace colorSpace) const
 {
     if (!m_page.shouldUseRemoteRenderingFor(purpose))
         return nullptr;
 
-    return ensureRemoteRenderingBackendProxy().createImageBuffer(size, shouldAccelerate, resolutionScale, colorSpace);
+    return ensureRemoteRenderingBackendProxy().createImageBuffer(size, renderingMode, resolutionScale, colorSpace);
 }
 
 #endif // ENABLE(GPU_PROCESS)

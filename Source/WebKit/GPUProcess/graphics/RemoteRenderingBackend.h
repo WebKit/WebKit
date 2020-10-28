@@ -46,7 +46,7 @@ class Item;
 }
 class FloatSize;
 enum class ColorSpace : uint8_t;
-enum class RenderingMode : uint8_t;
+enum class RenderingMode : bool;
 }
 
 namespace WebKit {

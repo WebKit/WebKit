@@ -45,8 +45,7 @@ class FloatSize;
 class ImageData;
 enum class AlphaPremultiplication : uint8_t;
 enum class ColorSpace : uint8_t;
-enum class RenderingMode : uint8_t;
-enum class ShouldAccelerate : bool;
+enum class RenderingMode : bool;
 }
 
 namespace WebKit {
@@ -70,7 +69,7 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Messages to be sent.
-    std::unique_ptr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::ShouldAccelerate, float resolutionScale, WebCore::ColorSpace);
+    std::unique_ptr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace);
     RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect, WebCore::RenderingResourceIdentifier);
     void flushDisplayList(const WebCore::DisplayList::DisplayList&, WebCore::RenderingResourceIdentifier);
     DisplayListFlushIdentifier flushDisplayListAndCommit(const WebCore::DisplayList::DisplayList&, WebCore::RenderingResourceIdentifier);

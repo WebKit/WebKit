@@ -1,3 +1,26 @@
+2020-10-27  Said Abou-Hallawa  <said@apple.com>
+
+        Make RenderingMode a bool enum and remove ShouldAccelerate
+        https://bugs.webkit.org/show_bug.cgi?id=218264
+
+        Reviewed by Tim Horton.
+
+        When creating a remote ImageBuffer in WebKit, all we need to know is whether
+        the backend is accelerated or not. RemoteImageBufferProxy has to be backed
+        by a DisplayList. RemoteImageBuffer has to own the real backend. Two enum
+        values for RenderingMode is sufficient for creating the remote ImageBuffer.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::createImageBuffer):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * Shared/WebCoreArgumentCoders.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::createImageBuffer):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createImageBuffer const):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2020-10-27  Tim Horton  <timothy_horton@apple.com>
 
         Adopt the UIPointerInteraction API

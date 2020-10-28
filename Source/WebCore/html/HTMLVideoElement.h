@@ -38,7 +38,7 @@ class ImageBuffer;
 class RenderVideo;
 class PictureInPictureObserver;
 
-enum class ShouldAccelerate : bool;
+enum class RenderingMode : bool;
 
 class HTMLVideoElement final : public HTMLMediaElement, public Supplementable<HTMLVideoElement> {
     WTF_MAKE_ISO_ALLOCATED(HTMLVideoElement);
@@ -70,7 +70,7 @@ public:
     void webkitRequestFullscreen() override;
 #endif
 
-    std::unique_ptr<ImageBuffer> createBufferForPainting(const FloatSize&, ShouldAccelerate) const;
+    std::unique_ptr<ImageBuffer> createBufferForPainting(const FloatSize&, RenderingMode) const;
 
     // Used by canvas to gain raw pixel access
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);

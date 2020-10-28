@@ -33,9 +33,7 @@ class Cursor;
 class ImageBuffer;
 
 enum class ColorSpace : uint8_t;
-enum class RenderingMode : uint8_t;
-enum class ShouldAccelerate : bool;
-enum class ShouldUseDisplayList : bool;
+enum class RenderingMode : bool;
 enum class RenderingPurpose : uint8_t;
 
 class HostWindow {
@@ -62,8 +60,7 @@ public:
     virtual IntPoint accessibilityScreenToRootView(const IntPoint&) const = 0;
     virtual IntRect rootViewToAccessibilityScreen(const IntRect&) const = 0;
 
-    virtual std::unique_ptr<ImageBuffer> createImageBuffer(const FloatSize&, ShouldAccelerate, ShouldUseDisplayList, RenderingPurpose, float resolutionScale, ColorSpace) const = 0;
-    virtual std::unique_ptr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, float resolutionScale, ColorSpace) const = 0;
+    virtual std::unique_ptr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, ColorSpace) const = 0;
 
     // Method for retrieving the native client of the page.
     virtual PlatformPageClient platformPageClient() const = 0;

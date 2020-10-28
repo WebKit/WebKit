@@ -889,12 +889,8 @@ template<> struct EnumTraits<WebCore::ColorSpace> {
 template<> struct EnumTraits<WebCore::RenderingMode> {
     using values = EnumValues<
     WebCore::RenderingMode,
-    WebCore::RenderingMode::Accelerated,
     WebCore::RenderingMode::Unaccelerated,
-    WebCore::RenderingMode::DisplayListAccelerated,
-    WebCore::RenderingMode::DisplayListUnaccelerated,
-    WebCore::RenderingMode::RemoteAccelerated,
-    WebCore::RenderingMode::RemoteUnaccelerated
+    WebCore::RenderingMode::Accelerated
     >;
 };
 
