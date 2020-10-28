@@ -1,3 +1,26 @@
+2020-10-28  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Cocoa] Remove soft linking of Contacts.framework
+        https://bugs.webkit.org/show_bug.cgi?id=218289
+
+        Reviewed by Geoff Garen.
+
+        Since Contacts.framework does not depend on WebKit and soft linking is
+        discouraged, WebKit should link Contacts.framework normally.
+
+        Soft linking requires running the linker at runtime, leading to an
+        unwanted performance cost. By normally linking (on iOS) and weak linking
+        (on macOS), the linkage is declared at build time, which enables running
+        the linker at build/update/install time and avoiding the runtime cost.
+
+        * Configurations/WebKit.xcconfig:
+
+        On macOS, weak link the framework since Contacts.framework is not
+        available on the Base System.
+
+        * Platform/cocoa/PaymentAuthorizationPresenter.mm:
+        (WebKit::toNSError):
+
 2020-10-28  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK4] Build broken with GTK 3.99.3
