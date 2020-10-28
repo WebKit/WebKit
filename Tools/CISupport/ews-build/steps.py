@@ -255,7 +255,7 @@ class CheckPatchRelevance(buildstep.BuildStep):
     ]
 
     services_paths = [
-        'Tools/CISupport/build.webkit.org-config',
+        'Tools/CISupport/build-webkit-org',
         'Tools/CISupport/ews-build',
         'Tools/CISupport/Shared',
         'Tools/Scripts/libraries/resultsdbpy',
@@ -1125,7 +1125,7 @@ class RunBuildWebKitOrgUnitTests(shell.ShellCommand):
     command = ['python', 'steps_unittest.py']
 
     def __init__(self, **kwargs):
-        shell.ShellCommand.__init__(self, workdir='build/Tools/CISupport/build.webkit.org-config', timeout=2 * 60, logEnviron=False, **kwargs)
+        shell.ShellCommand.__init__(self, workdir='build/Tools/CISupport/build-webkit-org', timeout=2 * 60, logEnviron=False, **kwargs)
 
     def getResultSummary(self):
         if self.results == SUCCESS:

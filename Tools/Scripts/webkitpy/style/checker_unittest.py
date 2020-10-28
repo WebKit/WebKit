@@ -501,7 +501,7 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
         """Test paths that should be checked as JSON."""
         paths = [
            os.path.join('Source', 'WebCore', 'inspector', 'Inspector.json'),
-           os.path.join('Tools', 'CISupport', 'build.webkit.org-config', 'config.json'),
+           os.path.join('Tools', 'CISupport', 'build-webkit-org', 'config.json'),
         ]
 
         for path in paths:

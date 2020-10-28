@@ -25,6 +25,6 @@
 
 TOOLS_DIRECTORY="$(dirname $0)"
 RUN_WEBKIT_TESTS="$TOOLS_DIRECTORY/run-webkit-tests"
-TEST_DIRECTORY="$TOOLS_DIRECTORY/../CISupport/build.webkit.org-config/public_html/dashboard/Scripts/tests"
+TEST_DIRECTORY="$TOOLS_DIRECTORY/../CISupport/build-webkit-org/public_html/dashboard/Scripts/tests"
 
 $RUN_WEBKIT_TESTS --layout-tests-directory=$TEST_DIRECTORY "$@"

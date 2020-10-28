@@ -1,3 +1,25 @@
+2020-10-28  Aakash Jain  <aakash_jain@apple.com>
+
+        Rename build.webkit.org-config directory to build-webkit-org
+        https://bugs.webkit.org/show_bug.cgi?id=218302
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org: Copied from Tools/CISupport/build.webkit.org-config.
+        * CISupport/build-webkit-org/htdigestparser_unittest.py:
+        * CISupport/build-webkit-org/public_html/TestFailures/scripts/builders_unittests.js:
+        * CISupport/build-webkit-org/steps.py:
+        * CISupport/build-webkit-org/steps_unittest.py:
+        * CISupport/build-webkit-org/wkbuild.py:
+        * CISupport/build-webkit-org/wkbuild_unittest.py:
+        * CISupport/build.webkit.org-config: Removed.
+        * CISupport/ews-build/steps.py:
+        * CISupport/ews-build/steps_unittest.py:
+        * Scripts/run-dashboard-tests:
+        * Scripts/webkitpy/layout_tests/views/buildbot_results.py:
+        * Scripts/webkitpy/style/checker_unittest.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+
 2020-10-28  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Support finding commit by tag

@@ -87,10 +87,6 @@ user3:realm 3:a05f5a2335e9d87bbe75bbe5e53248f0
 """)
 
 
-# FIXME: We should run this file as part of test-rm .
-# Unfortunately test-rm  currently requires that unittests
-# be located in a directory with a valid module name.
-# 'build.webkit.org-config' is not a valid module name (due to '.' and '-')
-# so for now this is a stand-alone test harness.
+# FIXME: We should run this file as part of test-webkitpy
 if __name__ == '__main__':
     unittest.main()

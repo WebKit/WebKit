@@ -90,7 +90,7 @@ var kExampleWebKitDotOrgBuilderStatusJSON =  {
 var kExampleBuildInfoJSON = {
     "blame": ["abarth@webkit.org"],
     "builderName": "WebKit Linux",
-    "changes": ["Files:\n Tools/CISupport/build.webkit.org-config/public_html/TestFailures/main.js\n Tools/ChangeLog\nAt: Thu 04 Aug 2011 00:50:38\nChanged By: abarth@webkit.org\nComments: Fix types.  Sadly, main.js has no test coverage.  (I need to think\nabout how to test this part of the code.)\n\n* CISupport/build.webkit.org-config/public_html/TestFailures/main.js:Properties: \n\n\n", "Files:\n LayoutTests/ChangeLog\n LayoutTests/platform/chromium-mac/fast/box-shadow/inset-box-shadows-expected.png\n LayoutTests/platform/chromium-mac/fast/repaint/shadow-multiple-horizontal-expected.png\n LayoutTests/platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png\n LayoutTests/platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.png\n LayoutTests/platform/chromium-mac/fast/repaint/shadow-multiple-vertical-expected.png\nAt: Thu 04 Aug 2011 00:50:38\nChanged By: abarth@webkit.org\nComments: Update baselines after <http://trac.webkit.org/changeset/92340>.\n\n* platform/chromium-mac/fast/box-shadow/inset-box-shadows-expected.png:\n* platform/chromium-mac/fast/repaint/shadow-multiple-horizontal-expected.png:\n* platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png:\n* platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.png:\n* platform/chromium-mac/fast/repaint/shadow-multiple-vertical-expected.png:Properties: \n\n\n"],
+    "changes": ["Files:\n Tools/CISupport/build-webkit-org/public_html/TestFailures/main.js\n Tools/ChangeLog\nAt: Thu 04 Aug 2011 00:50:38\nChanged By: abarth@webkit.org\nComments: Fix types.  Sadly, main.js has no test coverage.  (I need to think\nabout how to test this part of the code.)\n\n* CISupport/build-webkit-org/public_html/TestFailures/main.js:Properties: \n\n\n", "Files:\n LayoutTests/ChangeLog\n LayoutTests/platform/chromium-mac/fast/box-shadow/inset-box-shadows-expected.png\n LayoutTests/platform/chromium-mac/fast/repaint/shadow-multiple-horizontal-expected.png\n LayoutTests/platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png\n LayoutTests/platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.png\n LayoutTests/platform/chromium-mac/fast/repaint/shadow-multiple-vertical-expected.png\nAt: Thu 04 Aug 2011 00:50:38\nChanged By: abarth@webkit.org\nComments: Update baselines after <http://trac.webkit.org/changeset/92340>.\n\n* platform/chromium-mac/fast/box-shadow/inset-box-shadows-expected.png:\n* platform/chromium-mac/fast/repaint/shadow-multiple-horizontal-expected.png:\n* platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png:\n* platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.png:\n* platform/chromium-mac/fast/repaint/shadow-multiple-vertical-expected.png:Properties: \n\n\n"],
     "currentStep": null,
     "eta": null,
     "logs": [
@@ -127,8 +127,8 @@ var kExampleBuildInfoJSON = {
             "changes": [{
                 "branch": "trunk",
                 "category": null,
-                "comments": "Fix types.  Sadly, main.js has no test coverage.  (I need to think\nabout how to test this part of the code.)\n\n* CISupport/build.webkit.org-config/public_html/TestFailures/main.js:",
-                "files": ["Tools/CISupport/build.webkit.org-config/public_html/TestFailures/main.js", "Tools/ChangeLog"],
+                "comments": "Fix types.  Sadly, main.js has no test coverage.  (I need to think\nabout how to test this part of the code.)\n\n* CISupport/build-webkit-org/public_html/TestFailures/main.js:",
+                "files": ["Tools/CISupport/build-webkit-org/public_html/TestFailures/main.js", "Tools/ChangeLog"],
                 "number": 43707,
                 "properties": [],
                 "repository": "",
@@ -161,8 +161,8 @@ var kExampleBuildInfoJSON = {
         "changes": [{
             "branch": "trunk",
             "category": null,
-            "comments": "Fix types.  Sadly, main.js has no test coverage.  (I need to think\nabout how to test this part of the code.)\n\n* CISupport/build.webkit.org-config/public_html/TestFailures/main.js:",
-            "files": ["Tools/CISupport/build.webkit.org-config/public_html/TestFailures/main.js", "Tools/ChangeLog"],
+            "comments": "Fix types.  Sadly, main.js has no test coverage.  (I need to think\nabout how to test this part of the code.)\n\n* CISupport/build-webkit-org/public_html/TestFailures/main.js:",
+            "files": ["Tools/CISupport/build-webkit-org/public_html/TestFailures/main.js", "Tools/ChangeLog"],
             "number": 43707,
             "properties": [],
             "repository": "",
@@ -715,7 +715,7 @@ var kExamplePerfBuilderStatusJSON =  {
 var kExamplePerfBuildInfoJSON = {
     "blame": ["abarth@webkit.org"],
     "builderName": "Mac10.6 Perf",
-    "changes": ["Files:\n Tools/CISupport/build.webkit.org-config/public_html/TestFailures/main.js\n Tools/ChangeLog\nAt: Thu 04 Aug 2011 00:50:38\nChanged By: abarth@webkit.org\nComments: Fix types.  Sadly, main.js has no test coverage.  (I need to think\nabout how to test this part of the code.)\n\n* CISupport/build.webkit.org-config/public_html/TestFailures/main.js:Properties: \n\n\n", "Files:\n LayoutTests/ChangeLog\n LayoutTests/platform/chromium-mac/fast/box-shadow/inset-box-shadows-expected.png\n LayoutTests/platform/chromium-mac/fast/repaint/shadow-multiple-horizontal-expected.png\n LayoutTests/platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png\n LayoutTests/platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.png\n LayoutTests/platform/chromium-mac/fast/repaint/shadow-multiple-vertical-expected.png\nAt: Thu 04 Aug 2011 00:50:38\nChanged By: abarth@webkit.org\nComments: Update baselines after <http://trac.webkit.org/changeset/92340>.\n\n* platform/chromium-mac/fast/box-shadow/inset-box-shadows-expected.png:\n* platform/chromium-mac/fast/repaint/shadow-multiple-horizontal-expected.png:\n* platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png:\n* platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.png:\n* platform/chromium-mac/fast/repaint/shadow-multiple-vertical-expected.png:Properties: \n\n\n"],
+    "changes": ["Files:\n Tools/CISupport/build-webkit-org/public_html/TestFailures/main.js\n Tools/ChangeLog\nAt: Thu 04 Aug 2011 00:50:38\nChanged By: abarth@webkit.org\nComments: Fix types.  Sadly, main.js has no test coverage.  (I need to think\nabout how to test this part of the code.)\n\n* CISupport/build-webkit-org/public_html/TestFailures/main.js:Properties: \n\n\n", "Files:\n LayoutTests/ChangeLog\n LayoutTests/platform/chromium-mac/fast/box-shadow/inset-box-shadows-expected.png\n LayoutTests/platform/chromium-mac/fast/repaint/shadow-multiple-horizontal-expected.png\n LayoutTests/platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png\n LayoutTests/platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.png\n LayoutTests/platform/chromium-mac/fast/repaint/shadow-multiple-vertical-expected.png\nAt: Thu 04 Aug 2011 00:50:38\nChanged By: abarth@webkit.org\nComments: Update baselines after <http://trac.webkit.org/changeset/92340>.\n\n* platform/chromium-mac/fast/box-shadow/inset-box-shadows-expected.png:\n* platform/chromium-mac/fast/repaint/shadow-multiple-horizontal-expected.png:\n* platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png:\n* platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.png:\n* platform/chromium-mac/fast/repaint/shadow-multiple-vertical-expected.png:Properties: \n\n\n"],
     "currentStep": null,
     "eta": null,
     "logs": [
@@ -752,8 +752,8 @@ var kExamplePerfBuildInfoJSON = {
             "changes": [{
                 "branch": "trunk",
                 "category": null,
-                "comments": "Fix types.  Sadly, main.js has no test coverage.  (I need to think\nabout how to test this part of the code.)\n\n* CISupport/build.webkit.org-config/public_html/TestFailures/main.js:",
-                "files": ["Tools/CISupport/build.webkit.org-config/public_html/TestFailures/main.js", "Tools/ChangeLog"],
+                "comments": "Fix types.  Sadly, main.js has no test coverage.  (I need to think\nabout how to test this part of the code.)\n\n* CISupport/build-webkit-org/public_html/TestFailures/main.js:",
+                "files": ["Tools/CISupport/build-webkit-org/public_html/TestFailures/main.js", "Tools/ChangeLog"],
                 "number": 43707,
                 "properties": [],
                 "repository": "",
@@ -786,8 +786,8 @@ var kExamplePerfBuildInfoJSON = {
         "changes": [{
             "branch": "trunk",
             "category": null,
-            "comments": "Fix types.  Sadly, main.js has no test coverage.  (I need to think\nabout how to test this part of the code.)\n\n* CISupport/build.webkit.org-config/public_html/TestFailures/main.js:",
-            "files": ["Tools/CISupport/build.webkit.org-config/public_html/TestFailures/main.js", "Tools/ChangeLog"],
+            "comments": "Fix types.  Sadly, main.js has no test coverage.  (I need to think\nabout how to test this part of the code.)\n\n* CISupport/build-webkit-org/public_html/TestFailures/main.js:",
+            "files": ["Tools/CISupport/build-webkit-org/public_html/TestFailures/main.js", "Tools/ChangeLog"],
             "number": 43707,
             "properties": [],
             "repository": "",

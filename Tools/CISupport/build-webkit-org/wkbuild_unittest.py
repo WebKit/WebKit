@@ -65,7 +65,7 @@ class ShouldBuildTest(unittest.TestCase):
         (["Source/WebCore/accessibility/ios/AXObjectCacheIOS.mm"], ["ios-14", "ios-simulator-14", "tvos-14", "tvos-simulator-14", "watchos-7", "watchos-simulator-7"]),
         (["Source/WebCore/rendering/RenderThemeMac.mm", "Source/WebCore/rendering/RenderThemeMac.h"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave"]),
         (["Source/WebCore/rendering/RenderThemeIOS.mm", "Source/WebCore/rendering/RenderThemeIOS.h"], ["ios-14", "ios-simulator-14", "tvos-14", "tvos-simulator-14", "watchos-7", "watchos-simulator-7"]),
-        (["Tools/CISupport/build.webkit.org-config/public_html/LeaksViewer/LeaksViewer.js"], []),
+        (["Tools/CISupport/build-webkit-org/public_html/LeaksViewer/LeaksViewer.js"], []),
     ]
 
     def test_should_build(self):
@@ -76,10 +76,6 @@ class ShouldBuildTest(unittest.TestCase):
                 should_build = platform in platforms or "*" in platforms
                 self.assertEqual(wkbuild.should_build(platform, files), should_build, "%s should%s have built but did%s (files: %s)" % (platform, "" if should_build else "n't", "n't" if should_build else "", str(files)))
 
-# FIXME: We should run this file as part of test-rm .
-# Unfortunately test-rm  currently requires that unittests
-# be located in a directory with a valid module name.
-# 'build.webkit.org-config' is not a valid module name (due to '.' and '-')
-# so for now this is a stand-alone test harness.
+# FIXME: We should run this file as part of test-webkitpy.
 if __name__ == '__main__':
     unittest.main()

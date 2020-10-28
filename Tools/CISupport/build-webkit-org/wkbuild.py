@@ -59,7 +59,7 @@ def _should_file_trigger_build(target_platform, file):
         ("Examples", []),
         ("PerformanceTests", []),
         ("ManualTests", []),
-        ("Tools/CISupport/build.webkit.org-config/public_html", []),
+        ("Tools/CISupport/build-webkit-org/public_html", []),
         ("Websites", []),
         ("opengl", []),
         ("opentype", []),

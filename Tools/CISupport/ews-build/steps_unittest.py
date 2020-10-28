@@ -734,7 +734,7 @@ class TestRunBuildWebKitOrgUnitTests(BuildStepMixinAdditions, unittest.TestCase)
     def test_success(self):
         self.setupStep(RunBuildWebKitOrgUnitTests())
         self.expectRemoteCommands(
-            ExpectShell(workdir='build/Tools/CISupport/build.webkit.org-config',
+            ExpectShell(workdir='build/Tools/CISupport/build-webkit-org',
                         timeout=120,
                         logEnviron=False,
                         command=['python', 'steps_unittest.py'],
@@ -747,7 +747,7 @@ class TestRunBuildWebKitOrgUnitTests(BuildStepMixinAdditions, unittest.TestCase)
     def test_failure(self):
         self.setupStep(RunBuildWebKitOrgUnitTests())
         self.expectRemoteCommands(
-            ExpectShell(workdir='build/Tools/CISupport/build.webkit.org-config',
+            ExpectShell(workdir='build/Tools/CISupport/build-webkit-org',
                         timeout=120,
                         logEnviron=False,
                         command=['python', 'steps_unittest.py'],

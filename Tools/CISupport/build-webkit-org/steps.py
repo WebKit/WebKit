@@ -563,7 +563,7 @@ class RunDashboardTests(RunWebKitTests):
     resultDirectory = os.path.join(RunWebKitTests.resultDirectory, "dashboard-layout-test-results")
 
     def start(self):
-        self.setCommand(self.command + ["--layout-tests-directory", "./Tools/CISupport/build.webkit.org-config/public_html/dashboard/Scripts/tests"])
+        self.setCommand(self.command + ["--layout-tests-directory", "./Tools/CISupport/build-webkit-org/public_html/dashboard/Scripts/tests"])
         return RunWebKitTests.start(self)
 
 

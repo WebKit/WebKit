@@ -680,10 +680,6 @@ class RunBenchmarkTest(unittest.TestCase):
 
 
 # FIXME: We should run this file as part of test-webkitpy.
-# Unfortunately test-webkitpy currently requires that unittests
-# be located in a directory with a valid module name.
-# 'build.webkit.org-config' is not a valid module name (due to '.' and '-')
-# so for now this is a stand-alone test harness.
 if __name__ == '__main__':
     BuildBotConfigLoader()._add_dependent_modules_to_sys_modules()
     from loadConfig import *
