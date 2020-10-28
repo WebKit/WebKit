@@ -130,6 +130,11 @@ extern "C" {
 #import <mach-o/getsect.h>
 }
 
+static RetainPtr<NSString> toNS(const std::string& string)
+{
+    return adoptNS([[NSString alloc] initWithUTF8String:string.c_str()]);
+}
+
 #if !PLATFORM(IOS_FAMILY)
 @interface DumpRenderTreeApplication : NSApplication
 @end
@@ -969,41 +974,21 @@ static void resetWebPreferencesToConsistentValues(WebPreferences *preferences)
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
 }
 
-static bool boolWebPreferenceFeatureValue(std::string key, bool defaultValue, const WTR::TestOptions& options)
+static bool boolWebPreferenceFeatureValue(std::string key, const WTR::TestOptions& options)
 {
     auto it = options.boolWebPreferenceFeatures().find(key);
-    if (it != options.boolWebPreferenceFeatures().end())
-        return it->second;
-    return defaultValue;
+    ASSERT(it != options.boolWebPreferenceFeatures().end());
+    return it->second;
 }
 
 static void setWebPreferencesForTestOptions(WebPreferences *preferences, const WTR::TestOptions& options)
 {
     preferences.privateBrowsingEnabled = options.useEphemeralSession();
 
-    preferences.attachmentElementEnabled = boolWebPreferenceFeatureValue("AttachmentElementEnabled", false, options);
-    preferences.acceleratedDrawingEnabled = boolWebPreferenceFeatureValue("AcceleratedDrawingEnabled", false, options);
-    preferences.menuItemElementEnabled = boolWebPreferenceFeatureValue("MenuItemElementEnabled", false, options);
-    preferences.keygenElementEnabled = boolWebPreferenceFeatureValue("KeygenElementEnabled", false, options);
-    preferences.modernMediaControlsEnabled = boolWebPreferenceFeatureValue("ModernMediaControlsEnabled", true, options);
-    preferences.inspectorAdditionsEnabled = boolWebPreferenceFeatureValue("InspectorAdditionsEnabled", false, options);
-    preferences.allowCrossOriginSubresourcesToAskForCredentials = boolWebPreferenceFeatureValue("AllowCrossOriginSubresourcesToAskForCredentials", false, options);
-    preferences.colorFilterEnabled = boolWebPreferenceFeatureValue("ColorFilterEnabled", false, options);
-    preferences.selectionAcrossShadowBoundariesEnabled = boolWebPreferenceFeatureValue("SelectionAcrossShadowBoundariesEnabled", true, options);
-    preferences.webGPUEnabled = boolWebPreferenceFeatureValue("WebGPUEnabled", false, options);
-    preferences.CSSLogicalEnabled = boolWebPreferenceFeatureValue("CSSLogicalEnabled", false, options);
-    preferences.lineHeightUnitsEnabled = boolWebPreferenceFeatureValue("LineHeightUnitsEnabled", false, options);
-    preferences.adClickAttributionEnabled = boolWebPreferenceFeatureValue("AdClickAttributionEnabled", false, options);
-    preferences.resizeObserverEnabled = boolWebPreferenceFeatureValue("ResizeObserverEnabled", false, options);
-    preferences.CSSOMViewSmoothScrollingEnabled = boolWebPreferenceFeatureValue("CSSOMViewSmoothScrollingEnabled", false, options);
-    preferences.coreMathMLEnabled = boolWebPreferenceFeatureValue("CoreMathMLEnabled", false, options);
-    preferences.requestIdleCallbackEnabled = boolWebPreferenceFeatureValue("RequestIdleCallbackEnabled", false, options);
-    preferences.asyncClipboardAPIEnabled = boolWebPreferenceFeatureValue("AsyncClipboardAPIEnabled", false, options);
-    preferences.usesPageCache = boolWebPreferenceFeatureValue("UsesBackForwardCache", false, options);
-    preferences.layoutFormattingContextIntegrationEnabled = boolWebPreferenceFeatureValue("LayoutFormattingContextIntegrationEnabled", true, options);
-    preferences.aspectRatioOfImgFromWidthAndHeightEnabled = boolWebPreferenceFeatureValue("AspectRatioOfImgFromWidthAndHeightEnabled", false, options);
-    preferences.allowTopNavigationToDataURLs = boolWebPreferenceFeatureValue("AllowTopNavigationToDataURLs", true, options);
-    preferences.contactPickerAPIEnabled = boolWebPreferenceFeatureValue("ContactPickerAPIEnabled", false, options);
+    // FIXME: Remove this once there is a viable mechanism for reseting WebPreferences between tests,
+    // at which point, we will not need to manually reset every supported preference for each test.
+    for (const auto& key : options.supportedBoolWebPreferenceFeatures())
+        [preferences _setBoolPreferenceForTestingWithValue:boolWebPreferenceFeatureValue(key, options) forKey:toNS(WTR::TestOptions::toWebKitLegacyPreferenceKey(key)).get()];
 }
 
 // Called once on DumpRenderTree startup.

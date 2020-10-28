@@ -56,6 +56,10 @@ public:
     const auto& uint32WebPreferenceFeatures() const { return m_features.uint32WebPreferenceFeatures; }
     const auto& stringWebPreferenceFeatures() const { return m_features.stringWebPreferenceFeatures; }
 
+    // FIXME: Remove this once there is a viable mechanism for reseting WebPreferences between tests,
+    // at which point, we will not need to manually reset every supported preference for each test.
+    static const std::vector<std::string>& supportedBoolWebPreferenceFeatures();
+
     static std::string toWebKitLegacyPreferenceKey(const std::string&);
 
 private:

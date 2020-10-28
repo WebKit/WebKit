@@ -1660,26 +1660,6 @@ static NSString *classIBCreatorID = nil;
     [old release];
 }
 
-+ (void)_switchNetworkLoaderToNewTestingSession
-{
-#if PLATFORM(IOS_FAMILY)
-    WebThreadLock();
-#endif
-    NetworkStorageSessionMap::switchToNewTestingSession();
-}
-
-+ (void)_clearNetworkLoaderSession
-{
-    NetworkStorageSessionMap::defaultStorageSession().deleteAllCookies();
-}
-
-+ (void)_setCurrentNetworkLoaderSessionCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy
-{
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = NetworkStorageSessionMap::defaultStorageSession().cookieStorage();
-    ASSERT(cookieStorage); // Will fail when NetworkStorageSessionMap::switchToNewTestingSession() was not called beforehand.
-    CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), policy);
-}
-
 - (BOOL)isDOMPasteAllowed
 {
     return [self _boolValueForKey:WebKitDOMPasteAllowedPreferenceKey];
@@ -1954,11 +1934,6 @@ static NSString *classIBCreatorID = nil;
 - (void)willAddToWebView
 {
     ++_private->numWebViews;
-}
-
-- (void)_setPreferenceForTestWithValue:(NSString *)value forKey:(NSString *)key
-{
-    [self _setStringValue:value forKey:key];
 }
 
 - (void)setFullScreenEnabled:(BOOL)flag
@@ -2999,6 +2974,50 @@ static NSString *classIBCreatorID = nil;
 - (void)_setEnabled:(BOOL)value forFeature:(WebFeature *)feature
 {
     [self _setBoolValue:value forKey:feature.preferencesKey];
+}
+
+@end
+
+@implementation WebPreferences (WebPrivateTesting)
+
++ (void)_switchNetworkLoaderToNewTestingSession
+{
+#if PLATFORM(IOS_FAMILY)
+    WebThreadLock();
+#endif
+    NetworkStorageSessionMap::switchToNewTestingSession();
+}
+
++ (void)_setCurrentNetworkLoaderSessionCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy
+{
+    auto cookieStorage = NetworkStorageSessionMap::defaultStorageSession().cookieStorage();
+    RELEASE_ASSERT(cookieStorage); // Will fail when NetworkStorageSessionMap::switchToNewTestingSession() was not called beforehand.
+    CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), policy);
+}
+
++ (void)_clearNetworkLoaderSession
+{
+    NetworkStorageSessionMap::defaultStorageSession().deleteAllCookies();
+}
+
+- (void)_setBoolPreferenceForTestingWithValue:(BOOL)value forKey:(NSString *)key
+{
+    [self _setBoolValue:value forKey:key];
+}
+
+- (void)_setUInt32PreferenceForTestingWithValue:(uint32_t)value forKey:(NSString *)key
+{
+    [self _setIntegerValue:value forKey:key];
+}
+
+- (void)_setDoublePreferenceForTestingWithValue:(double)value forKey:(NSString *)key
+{
+    [self _setFloatValue:value forKey:key];
+}
+
+- (void)_setStringPreferenceForTestingWithValue:(NSString *)value forKey:(NSString *)key
+{
+    [self _setStringValue:value forKey:key];
 }
 
 @end

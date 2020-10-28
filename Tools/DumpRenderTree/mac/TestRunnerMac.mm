@@ -609,7 +609,7 @@ void TestRunner::overridePreference(JSStringRef key, JSStringRef value)
     RetainPtr<CFStringRef> valueCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, value));
     NSString *valueNS = (__bridge NSString *)valueCF.get();
 
-    [[[mainFrame webView] preferences] _setPreferenceForTestWithValue:valueNS forKey:keyNS];
+    [[[mainFrame webView] preferences] _setStringPreferenceForTestingWithValue:valueNS forKey:keyNS];
 }
 
 void TestRunner::removeAllVisitedLinks()

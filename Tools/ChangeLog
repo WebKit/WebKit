@@ -1,3 +1,37 @@
+2020-10-28  Sam Weinig  <weinig@apple.com>
+
+        [Testing] Remove requirement of adding new SPI for each preference that needs testing
+        https://bugs.webkit.org/show_bug.cgi?id=218267
+
+        Reviewed by Simon Fraser.
+
+        Removes the requirement for WebKitLegacy (macOS), which has already been lifted for
+        modern WebKit, that testing new preferences requires new WebPreferences SPI. Instead,
+        new testing specific SPI ([WebPreferences _set*PreferenceForTestingWithValue:forKey:])
+        are used to allow string based setting.
+        
+        To make this work with the shared WebPreferences*.yaml names, a helper is generated to
+        map from the shared name to the WebKitLegacy specific name.
+
+        This still doesn't quite take us all the way to supporting any WebPreferences*.yaml name
+        in test headers, as is supported in WebKitTestRunner, as we still need a viable mechanism
+        to fully reset WebPreferences between tests. Right now, each preference must be set on
+        each test run, requiring the complete set of preferences to be known up front.
+
+        * DumpRenderTree/CMakeLists.txt:
+        * DumpRenderTree/DerivedSources-input.xcfilelist:
+        * DumpRenderTree/DerivedSources-output.xcfilelist:
+        * DumpRenderTree/DerivedSources.make:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/Scripts/PreferencesTemplates/TestOptionsGeneratedWebKitLegacyKeyMapping.cpp.erb: Added.
+        * DumpRenderTree/TestOptions.cpp:
+        (WTR::TestOptions::supportedBoolWebPreferenceFeatures):
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setWebPreferencesForTestOptions):
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::overridePreference):
+
 2020-10-28  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Update Mesa and GTK4 dependencies

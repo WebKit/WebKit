@@ -30,6 +30,20 @@
 
 namespace WTR {
 
+const std::vector<std::string>& TestOptions::supportedBoolWebPreferenceFeatures()
+{
+    // FIXME: Remove this once there is a viable mechanism for reseting WebPreferences between tests,
+    // at which point, we will not need to manually reset every supported preference for each test.
+
+    static std::vector<std::string> supported = [] {
+        std::vector<std::string> keys;
+        for (const auto& [key, value] : defaults().boolWebPreferenceFeatures)
+            keys.push_back(key);
+        return keys;
+    }();
+    return supported;
+}
+
 const TestFeatures& TestOptions::defaults()
 {
     static TestFeatures features;

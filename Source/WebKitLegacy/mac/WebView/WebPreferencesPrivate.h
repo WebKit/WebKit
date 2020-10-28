@@ -89,13 +89,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 + (void)_setInitialDefaultTextEncodingToSystemEncoding;
 + (void)_setIBCreatorID:(NSString *)string;
 
-// For DumpRenderTree use only.
-+ (void)_switchNetworkLoaderToNewTestingSession;
-+ (void)_setCurrentNetworkLoaderSessionCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)cookieAcceptPolicy;
-+ (void)_clearNetworkLoaderSession;
-// Used to set preference specified in the test via LayoutTestController.overridePreference(..).
-- (void)_setPreferenceForTestWithValue:(NSString *)value forKey:(NSString *)key;
-
 + (void)setWebKitLinkTimeVersion:(int)version;
 
 // For WebView's use only.
@@ -307,6 +300,17 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @interface WebPreferences (WebPrivateFeatures)
 - (BOOL)_isEnabledForFeature:(WebFeature *)feature;
 - (void)_setEnabled:(BOOL)value forFeature:(WebFeature *)feature;
+@end
+
+@interface WebPreferences (WebPrivateTesting)
++ (void)_switchNetworkLoaderToNewTestingSession;
++ (void)_setCurrentNetworkLoaderSessionCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)cookieAcceptPolicy;
++ (void)_clearNetworkLoaderSession;
+
+- (void)_setBoolPreferenceForTestingWithValue:(BOOL)value forKey:(NSString *)key;
+- (void)_setUInt32PreferenceForTestingWithValue:(uint32_t)value forKey:(NSString *)key;
+- (void)_setDoublePreferenceForTestingWithValue:(double)value forKey:(NSString *)key;
+- (void)_setStringPreferenceForTestingWithValue:(NSString *)value forKey:(NSString *)key;
 @end
 
 // FIXME: If these are not used anywhere, we should remove them and only use WebFeature mechanism for the preference.

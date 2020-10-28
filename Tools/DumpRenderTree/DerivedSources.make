@@ -64,6 +64,7 @@ WEB_PREFERENCES = \
 #
 
 WEB_PREFERENCES_GENERATED_FILES = \
+    TestOptionsGeneratedWebKitLegacyKeyMapping.cpp \
     TestOptionsGeneratedKeys.h \
 #
 
