@@ -292,10 +292,15 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
             // Calculate absolute address of the jump target, in the case of backwards
             // branches we need to be precise, forward branches we are pessimistic
             const uint8_t* target;
-            if (jumpsToLink[i].to() >= jumpsToLink[i].from())
-                target = codeOutData + jumpsToLink[i].to() - offset; // Compensate for what we have collapsed so far
+#if CPU(ARM64)
+            const intptr_t to = jumpsToLink[i].to(&macroAssembler.m_assembler);
+#else
+            const intptr_t to = jumpsToLink[i].to();
+#endif
+            if (to >= jumpsToLink[i].from())
+                target = codeOutData + to - offset; // Compensate for what we have collapsed so far
             else
-                target = codeOutData + jumpsToLink[i].to() - executableOffsetFor(jumpsToLink[i].to());
+                target = codeOutData + to - executableOffsetFor(to);
                 
             JumpLinkType jumpLinkType = MacroAssembler::computeJumpType(jumpsToLink[i], codeOutData + writePtr, target);
             // Compact branch if we can...
@@ -307,7 +312,11 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
                     recordLinkOffsets(m_assemblerStorage, jumpsToLink[i].from() - delta, readPtr, readPtr - writePtr);
                 }
             }
+#if CPU(ARM64)
+            jumpsToLink[i].setFrom(&macroAssembler.m_assembler, writePtr);
+#else
             jumpsToLink[i].setFrom(writePtr);
+#endif
         }
     } else {
         if (ASSERT_ENABLED) {
@@ -349,7 +358,12 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
         
     for (unsigned i = 0; i < jumpCount; ++i) {
         uint8_t* location = codeOutData + jumpsToLink[i].from();
-        uint8_t* target = codeOutData + jumpsToLink[i].to() - executableOffsetFor(jumpsToLink[i].to());
+#if CPU(ARM64)
+        const intptr_t to = jumpsToLink[i].to(&macroAssembler.m_assembler);
+#else
+        const intptr_t to = jumpsToLink[i].to();
+#endif
+        uint8_t* target = codeOutData + to - executableOffsetFor(to);
         if (useFastJITPermissions())
             MacroAssembler::link<memcpyWrapper>(jumpsToLink[i], outData + jumpsToLink[i].from(), location, target);
         else
