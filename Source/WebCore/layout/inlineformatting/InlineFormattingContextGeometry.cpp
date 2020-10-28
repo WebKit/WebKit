@@ -118,7 +118,7 @@ static Optional<InlineLayoutUnit> horizontalAlignmentOffset(const Line::RunList&
         // Text is justified according to the method specified by the text-justify property,
         // in order to exactly fill the line box. Unless otherwise specified by text-align-last,
         // the last line before a forced break or the end of the block is start-aligned.
-        if (runs.last().isLineBreak() || isLastLine)
+        if (isLastLine || (!runs.isEmpty() && runs.last().isLineBreak()))
             return TextAlignMode::Start;
         return TextAlignMode::Justify;
     };
