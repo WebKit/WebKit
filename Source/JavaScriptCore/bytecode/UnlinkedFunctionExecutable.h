@@ -70,7 +70,7 @@ public:
         return &vm.unlinkedFunctionExecutableSpace.space;
     }
 
-    static UnlinkedFunctionExecutable* create(VM& vm, const SourceCode& source, FunctionMetadataNode* node, UnlinkedFunctionKind unlinkedFunctionKind, ConstructAbility constructAbility, JSParserScriptMode scriptMode, Optional<CompactVariableMap::Handle> parentScopeTDZVariables, DerivedContextType derivedContextType, NeedsClassFieldInitializer needsClassFieldInitializer, bool isBuiltinDefaultClassConstructor = false)
+    static UnlinkedFunctionExecutable* create(VM& vm, const SourceCode& source, FunctionMetadataNode* node, UnlinkedFunctionKind unlinkedFunctionKind, ConstructAbility constructAbility, JSParserScriptMode scriptMode, Optional<Vector<CompactTDZEnvironmentMap::Handle>> parentScopeTDZVariables, DerivedContextType derivedContextType, NeedsClassFieldInitializer needsClassFieldInitializer, bool isBuiltinDefaultClassConstructor = false)
     {
         UnlinkedFunctionExecutable* instance = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(vm.heap))
             UnlinkedFunctionExecutable(vm, vm.unlinkedFunctionExecutableStructure.get(), source, node, unlinkedFunctionKind, constructAbility, scriptMode, WTFMove(parentScopeTDZVariables), derivedContextType, needsClassFieldInitializer, isBuiltinDefaultClassConstructor);
@@ -168,11 +168,11 @@ public:
         return !m_rareData->m_classSource.isNull();
     }
 
-    VariableEnvironment parentScopeTDZVariables() const
+    Vector<CompactTDZEnvironmentMap::Handle> parentScopeTDZVariables() const
     {
-        if (!m_rareData || !m_rareData->m_parentScopeTDZVariables)
-            return VariableEnvironment();
-        return m_rareData->m_parentScopeTDZVariables.environment().toVariableEnvironment();
+        if (!m_rareData || m_rareData->m_parentScopeTDZVariables.isEmpty())
+            return { };
+        return m_rareData->m_parentScopeTDZVariables;
     }
     
     bool isArrowFunction() const { return isArrowFunctionParseMode(parseMode()); }
@@ -208,7 +208,7 @@ public:
         SourceCode m_classSource;
         String m_sourceURLDirective;
         String m_sourceMappingURLDirective;
-        CompactVariableMap::Handle m_parentScopeTDZVariables;
+        Vector<CompactTDZEnvironmentMap::Handle> m_parentScopeTDZVariables;
         Vector<JSTextPosition> m_instanceFieldLocations;
     };
 
@@ -229,7 +229,7 @@ public:
     }
 
 private:
-    UnlinkedFunctionExecutable(VM&, Structure*, const SourceCode&, FunctionMetadataNode*, UnlinkedFunctionKind, ConstructAbility, JSParserScriptMode, Optional<CompactVariableMap::Handle>,  JSC::DerivedContextType, JSC::NeedsClassFieldInitializer, bool isBuiltinDefaultClassConstructor);
+    UnlinkedFunctionExecutable(VM&, Structure*, const SourceCode&, FunctionMetadataNode*, UnlinkedFunctionKind, ConstructAbility, JSParserScriptMode, Optional<Vector<CompactTDZEnvironmentMap::Handle>>,  JSC::DerivedContextType, JSC::NeedsClassFieldInitializer, bool isBuiltinDefaultClassConstructor);
     UnlinkedFunctionExecutable(Decoder&, const CachedFunctionExecutable&);
 
     static void visitChildren(JSCell*, SlotVisitor&);

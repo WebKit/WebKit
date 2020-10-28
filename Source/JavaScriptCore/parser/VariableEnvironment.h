@@ -29,6 +29,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/IteratorRange.h>
+#include <wtf/Variant.h>
 
 namespace JSC {
 
@@ -119,6 +120,7 @@ struct PrivateNameEntryHashTraits : HashTraits<PrivateNameEntry> {
 };
 
 class VariableEnvironment {
+    WTF_MAKE_FAST_ALLOCATED;
 private:
     typedef HashMap<PackedRefPtr<UniquedStringImpl>, VariableEnvironmentEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, VariableEnvironmentEntryHashTraits> Map;
     typedef HashMap<PackedRefPtr<UniquedStringImpl>, PrivateNameEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, PrivateNameEntryHashTraits> PrivateNames;
@@ -262,56 +264,69 @@ private:
     std::unique_ptr<VariableEnvironment::RareData> m_rareData;
 };
 
-class CompactVariableEnvironment {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(CompactVariableEnvironment);
+using TDZEnvironment = HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash>;
 
-    friend class CachedCompactVariableEnvironment;
+class CompactTDZEnvironment {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(CompactTDZEnvironment);
+
+    friend class CachedCompactTDZEnvironment;
+
+    using Compact = Vector<PackedRefPtr<UniquedStringImpl>>;
+    using Inflated = TDZEnvironment;
+    using Variables = Variant<Compact, Inflated>;
 
 public:
-    CompactVariableEnvironment(const VariableEnvironment&);
-    VariableEnvironment toVariableEnvironment() const;
+    CompactTDZEnvironment(const TDZEnvironment&);
 
-    bool operator==(const CompactVariableEnvironment&) const;
+    bool operator==(const CompactTDZEnvironment&) const;
     unsigned hash() const { return m_hash; }
 
-private:
-    CompactVariableEnvironment() = default;
+    static void sortCompact(Compact&);
 
-    Vector<PackedRefPtr<UniquedStringImpl>> m_variables;
-    Vector<VariableEnvironmentEntry> m_variableMetadata;
+    TDZEnvironment& toTDZEnvironment() const
+    {
+        if (WTF::holds_alternative<Inflated>(m_variables))
+            return const_cast<TDZEnvironment&>(WTF::get<Inflated>(m_variables));
+        return toTDZEnvironmentSlow();
+    }
+
+private:
+    CompactTDZEnvironment() = default;
+    TDZEnvironment& toTDZEnvironmentSlow() const;
+
+    mutable Variables m_variables;
     unsigned m_hash;
-    bool m_isEverythingCaptured;
 };
 
-struct CompactVariableMapKey {
-    CompactVariableMapKey()
+struct CompactTDZEnvironmentKey {
+    CompactTDZEnvironmentKey()
         : m_environment(nullptr)
     {
         ASSERT(isHashTableEmptyValue());
     }
 
-    CompactVariableMapKey(CompactVariableEnvironment& environment)
+    CompactTDZEnvironmentKey(CompactTDZEnvironment& environment)
         : m_environment(&environment)
     { }
 
-    static unsigned hash(const CompactVariableMapKey& key) { return key.m_environment->hash(); }
-    static bool equal(const CompactVariableMapKey& a, const CompactVariableMapKey& b) { return *a.m_environment == *b.m_environment; }
+    static unsigned hash(const CompactTDZEnvironmentKey& key) { return key.m_environment->hash(); }
+    static bool equal(const CompactTDZEnvironmentKey& a, const CompactTDZEnvironmentKey& b) { return *a.m_environment == *b.m_environment; }
     static constexpr bool safeToCompareToEmptyOrDeleted = false;
-    static void makeDeletedValue(CompactVariableMapKey& key)
+    static void makeDeletedValue(CompactTDZEnvironmentKey& key)
     {
-        key.m_environment = reinterpret_cast<CompactVariableEnvironment*>(1);
+        key.m_environment = reinterpret_cast<CompactTDZEnvironment*>(1);
     }
     bool isHashTableDeletedValue() const
     {
-        return m_environment == reinterpret_cast<CompactVariableEnvironment*>(1);
+        return m_environment == reinterpret_cast<CompactTDZEnvironment*>(1);
     }
     bool isHashTableEmptyValue() const
     {
         return !m_environment;
     }
 
-    CompactVariableEnvironment& environment()
+    CompactTDZEnvironment& environment()
     {
         RELEASE_ASSERT(!isHashTableDeletedValue());
         RELEASE_ASSERT(!isHashTableEmptyValue());
@@ -319,7 +334,7 @@ struct CompactVariableMapKey {
     }
 
 private:
-    CompactVariableEnvironment* m_environment;
+    CompactTDZEnvironment* m_environment;
 };
 
 } // namespace JSC
@@ -327,32 +342,32 @@ private:
 namespace WTF {
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::CompactVariableMapKey> : JSC::CompactVariableMapKey { };
+template<> struct DefaultHash<JSC::CompactTDZEnvironmentKey> : JSC::CompactTDZEnvironmentKey { };
 
-template<> struct HashTraits<JSC::CompactVariableMapKey> : GenericHashTraits<JSC::CompactVariableMapKey> {
+template<> struct HashTraits<JSC::CompactTDZEnvironmentKey> : GenericHashTraits<JSC::CompactTDZEnvironmentKey> {
     static constexpr bool emptyValueIsZero = true;
-    static JSC::CompactVariableMapKey emptyValue() { return JSC::CompactVariableMapKey(); }
+    static JSC::CompactTDZEnvironmentKey emptyValue() { return JSC::CompactTDZEnvironmentKey(); }
 
     static constexpr bool hasIsEmptyValueFunction = true;
-    static bool isEmptyValue(JSC::CompactVariableMapKey key) { return key.isHashTableEmptyValue(); }
+    static bool isEmptyValue(JSC::CompactTDZEnvironmentKey key) { return key.isHashTableEmptyValue(); }
 
-    static void constructDeletedValue(JSC::CompactVariableMapKey& key) { JSC::CompactVariableMapKey::makeDeletedValue(key); }
-    static bool isDeletedValue(JSC::CompactVariableMapKey key) { return key.isHashTableDeletedValue(); }
+    static void constructDeletedValue(JSC::CompactTDZEnvironmentKey& key) { JSC::CompactTDZEnvironmentKey::makeDeletedValue(key); }
+    static bool isDeletedValue(JSC::CompactTDZEnvironmentKey key) { return key.isHashTableDeletedValue(); }
 };
 
 } // namespace WTF
 
 namespace JSC {
 
-class CompactVariableMap : public RefCounted<CompactVariableMap> {
+class CompactTDZEnvironmentMap : public RefCounted<CompactTDZEnvironmentMap> {
 public:
     class Handle {
-        friend class CachedCompactVariableMapHandle;
+        friend class CachedCompactTDZEnvironmentMapHandle;
 
     public:
         Handle() = default;
 
-        Handle(CompactVariableEnvironment&, CompactVariableMap&);
+        Handle(CompactTDZEnvironment&, CompactTDZEnvironmentMap&);
 
         Handle(Handle&& other)
         {
@@ -377,7 +392,7 @@ public:
 
         explicit operator bool() const { return !!m_map; }
 
-        const CompactVariableEnvironment& environment() const
+        const CompactTDZEnvironment& environment() const
         {
             return *m_environment;
         }
@@ -389,19 +404,19 @@ public:
             std::swap(other.m_map, m_map);
         }
 
-        CompactVariableEnvironment* m_environment { nullptr };
-        RefPtr<CompactVariableMap> m_map;
+        CompactTDZEnvironment* m_environment { nullptr };
+        RefPtr<CompactTDZEnvironmentMap> m_map;
     };
 
-    Handle get(const VariableEnvironment&);
+    Handle get(const TDZEnvironment&);
 
 private:
     friend class Handle;
-    friend class CachedCompactVariableMapHandle;
+    friend class CachedCompactTDZEnvironmentMapHandle;
 
-    Handle get(CompactVariableEnvironment*, bool& isNewEntry);
+    Handle get(CompactTDZEnvironment*, bool& isNewEntry);
 
-    HashMap<CompactVariableMapKey, unsigned> m_map;
+    HashMap<CompactTDZEnvironmentKey, unsigned> m_map;
 };
 
 } // namespace JSC

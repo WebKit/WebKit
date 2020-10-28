@@ -31,7 +31,7 @@ namespace JSC {
 
 class DirectEvalExecutable final : public EvalExecutable {
 public:
-    static DirectEvalExecutable* create(JSGlobalObject*, const SourceCode&, DerivedContextType, NeedsClassFieldInitializer, bool isArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType, const VariableEnvironment*, ECMAMode);
+    static DirectEvalExecutable* create(JSGlobalObject*, const SourceCode&, DerivedContextType, NeedsClassFieldInitializer, bool isArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType, const TDZEnvironment* parentScopeTDZVariables, const VariableEnvironment* privateNames, ECMAMode);
 private:
     DirectEvalExecutable(JSGlobalObject*, const SourceCode&, bool inStrictContext, DerivedContextType, NeedsClassFieldInitializer, bool isArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType);
 };

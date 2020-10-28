@@ -35,6 +35,8 @@ class SymbolTable;
 class VariableEnvironment;
 class WatchpointSet;
 
+using TDZEnvironment = HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash>;
+
 class JSScope : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
@@ -60,7 +62,7 @@ public:
     static bool hasConstantScope(ResolveType);
     static JSScope* constantScopeForCodeBlock(ResolveType, CodeBlock*);
 
-    static void collectClosureVariablesUnderTDZ(JSScope*, VariableEnvironment& result);
+    static void collectClosureVariablesUnderTDZ(JSScope*, TDZEnvironment& result, VariableEnvironment& privateNames);
 
     static void visitChildren(JSCell*, SlotVisitor&);
 

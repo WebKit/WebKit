@@ -104,64 +104,88 @@ void VariableEnvironment::markVariableAsExported(const RefPtr<UniquedStringImpl>
     findResult->value.setIsExported();
 }
 
-CompactVariableEnvironment::CompactVariableEnvironment(const VariableEnvironment& env)
-    : m_isEverythingCaptured(env.isEverythingCaptured())
+
+void CompactTDZEnvironment::sortCompact(Compact& compact)
 {
-    Vector<std::pair<UniquedStringImpl*, VariableEnvironmentEntry>, 32> sortedEntries;
-    sortedEntries.reserveInitialCapacity(env.mapSize());
-    for (auto& pair : env)
-        sortedEntries.append({ pair.key.get(), pair.value });
-
-    std::sort(sortedEntries.begin(), sortedEntries.end(), [] (const auto& a, const auto& b) {
-        return a.first < b.first;
+    std::sort(compact.begin(), compact.end(), [] (auto& a, auto& b) {
+        return a.get() < b.get();
     });
-
-    m_hash = 0;
-    m_variables.reserveInitialCapacity(sortedEntries.size());
-    m_variableMetadata.reserveInitialCapacity(sortedEntries.size());
-    for (const auto& pair : sortedEntries) {
-        m_variables.append(pair.first);
-        m_variableMetadata.append(pair.second);
-        m_hash ^= pair.first->hash();
-        m_hash += pair.second.bits();
-    }
-
-    if (m_isEverythingCaptured)
-        m_hash *= 2;
 }
 
-bool CompactVariableEnvironment::operator==(const CompactVariableEnvironment& other) const
+CompactTDZEnvironment::CompactTDZEnvironment(const TDZEnvironment& env)
+{
+    Compact compactVariables;
+    compactVariables.reserveCapacity(env.size());
+
+    m_hash = 0; // Note: XOR is commutative so order doesn't matter here.
+    for (auto& key : env) {
+        compactVariables.append(key.get());
+        m_hash ^= key->hash();
+    }
+
+    sortCompact(compactVariables);
+    m_variables = WTFMove(compactVariables);
+}
+
+bool CompactTDZEnvironment::operator==(const CompactTDZEnvironment& other) const
 {
     if (this == &other)
         return true;
-    if (m_isEverythingCaptured != other.m_isEverythingCaptured)
-        return false;
-    if (m_variables != other.m_variables)
-        return false;
-    if (m_variableMetadata != other.m_variableMetadata)
-        return false;
-    return true;
-}
 
-VariableEnvironment CompactVariableEnvironment::toVariableEnvironment() const
-{
-    VariableEnvironment result;
-    ASSERT(m_variables.size() == m_variableMetadata.size());
-    for (size_t i = 0; i < m_variables.size(); ++i) {
-        auto addResult = result.add(m_variables[i]);
-        ASSERT(addResult.isNewEntry);
-        addResult.iterator->value = m_variableMetadata[i];
-    }
+    if (m_hash != other.m_hash)
+        return false;
 
-    if (m_isEverythingCaptured)
-        result.markAllVariablesAsCaptured();
+    auto equal = [&] (const Compact& compact, const Inflated& inflated) {
+        if (compact.size() != inflated.size())
+            return false;
+        for (auto& ident : compact) {
+            if (!inflated.contains(ident))
+                return false;
+        }
+        return true;
+    };
+
+    bool result;
+    WTF::switchOn(m_variables,
+        [&] (const Compact& compact) {
+            WTF::switchOn(other.m_variables,
+                [&] (const Compact& otherCompact) {
+                    result = compact == otherCompact;
+                },
+                [&] (const Inflated& otherInflated) {
+                    result = equal(compact, otherInflated);
+                });
+        },
+        [&] (const Inflated& inflated) {
+            WTF::switchOn(other.m_variables,
+                [&] (const Compact& otherCompact) {
+                    result = equal(otherCompact, inflated);
+                },
+                [&] (const Inflated& otherInflated) {
+                    result = inflated == otherInflated;
+                });
+        });
 
     return result;
 }
 
-CompactVariableMap::Handle CompactVariableMap::get(const VariableEnvironment& env)
+TDZEnvironment& CompactTDZEnvironment::toTDZEnvironmentSlow() const
 {
-    auto* environment = new CompactVariableEnvironment(env);
+    Inflated inflated;
+    {
+        auto& compact = WTF::get<Compact>(m_variables);
+        for (size_t i = 0; i < compact.size(); ++i) {
+            auto addResult = inflated.add(compact[i]);
+            ASSERT_UNUSED(addResult, addResult.isNewEntry);
+        }
+    }
+    m_variables = Variables(WTFMove(inflated));
+    return const_cast<Inflated&>(WTF::get<Inflated>(m_variables));
+}
+
+CompactTDZEnvironmentMap::Handle CompactTDZEnvironmentMap::get(const TDZEnvironment& env)
+{
+    auto* environment = new CompactTDZEnvironment(env);
     bool isNewEntry;
     auto handle = get(environment, isNewEntry);
     if (!isNewEntry)
@@ -169,19 +193,19 @@ CompactVariableMap::Handle CompactVariableMap::get(const VariableEnvironment& en
     return handle;
 }
 
-CompactVariableMap::Handle CompactVariableMap::get(CompactVariableEnvironment* environment, bool& isNewEntry)
+CompactTDZEnvironmentMap::Handle CompactTDZEnvironmentMap::get(CompactTDZEnvironment* environment, bool& isNewEntry)
 {
-    CompactVariableMapKey key { *environment };
+    CompactTDZEnvironmentKey key { *environment };
     auto addResult = m_map.add(key, 1);
     isNewEntry = addResult.isNewEntry;
     if (addResult.isNewEntry)
-        return CompactVariableMap::Handle(*environment, *this);
+        return CompactTDZEnvironmentMap::Handle(*environment, *this);
 
     ++addResult.iterator->value;
-    return CompactVariableMap::Handle(addResult.iterator->key.environment(), *this);
+    return CompactTDZEnvironmentMap::Handle(addResult.iterator->key.environment(), *this);
 }
 
-CompactVariableMap::Handle::~Handle()
+CompactTDZEnvironmentMap::Handle::~Handle()
 {
     if (!m_map) {
         ASSERT(!m_environment);
@@ -190,7 +214,7 @@ CompactVariableMap::Handle::~Handle()
     }
 
     RELEASE_ASSERT(m_environment);
-    auto iter = m_map->m_map.find(CompactVariableMapKey { *m_environment });
+    auto iter = m_map->m_map.find(CompactTDZEnvironmentKey { *m_environment });
     RELEASE_ASSERT(iter != m_map->m_map.end());
     --iter->value;
     if (!iter->value) {
@@ -200,18 +224,18 @@ CompactVariableMap::Handle::~Handle()
     }
 }
 
-CompactVariableMap::Handle::Handle(const CompactVariableMap::Handle& other)
+CompactTDZEnvironmentMap::Handle::Handle(const CompactTDZEnvironmentMap::Handle& other)
     : m_environment(other.m_environment)
     , m_map(other.m_map)
 {
     if (m_map) {
-        auto iter = m_map->m_map.find(CompactVariableMapKey { *m_environment });
+        auto iter = m_map->m_map.find(CompactTDZEnvironmentKey { *m_environment });
         RELEASE_ASSERT(iter != m_map->m_map.end());
         ++iter->value;
     }
 }
 
-CompactVariableMap::Handle::Handle(CompactVariableEnvironment& environment, CompactVariableMap& map)
+CompactTDZEnvironmentMap::Handle::Handle(CompactTDZEnvironment& environment, CompactTDZEnvironmentMap& map)
     : m_environment(&environment)
     , m_map(&map)
 { 

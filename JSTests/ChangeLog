@@ -1,3 +1,13 @@
+2020-10-28  Saam Barati  <sbarati@apple.com>
+
+        Better cache our serialization of the outer TDZ environment when creating FunctionExecutables during bytecode generation
+        https://bugs.webkit.org/show_bug.cgi?id=199866
+        <rdar://problem/53333108>
+
+        Reviewed by Tadeu Zagallo.
+
+        * microbenchmarks/let-const-tdz-environment-parsing-and-hash-consing-speed.js: Added.
+
 2020-10-28  Robin Morisset  <rmorisset@apple.com>
 
         DFGIntegerRangeOptimization is wrong for Upsilon (as 'shadow' nodes are not in SSA form)

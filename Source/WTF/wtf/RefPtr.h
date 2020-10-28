@@ -193,12 +193,6 @@ inline void RefPtr<T, U, V>::swap(RefPtr<X, Y, Z>& o)
     U::swap(m_ptr, o.m_ptr);
 }
 
-template<typename T, typename U, typename V, typename X, typename Y, typename Z, typename = std::enable_if_t<!std::is_same<U, RawPtrTraits<T>>::value || !std::is_same<Y, RawPtrTraits<X>>::value>>
-inline void swap(RefPtr<T, U, V>& a, RefPtr<X, Y, Z>& b)
-{
-    a.swap(b);
-}
-
 template<typename T, typename U, typename V, typename X, typename Y, typename Z>
 inline bool operator==(const RefPtr<T, U, V>& a, const RefPtr<X, Y, Z>& b)
 { 

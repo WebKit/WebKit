@@ -1,3 +1,16 @@
+2020-10-28  Saam Barati  <sbarati@apple.com>
+
+        Better cache our serialization of the outer TDZ environment when creating FunctionExecutables during bytecode generation
+        https://bugs.webkit.org/show_bug.cgi?id=199866
+        <rdar://problem/53333108>
+
+        Reviewed by Tadeu Zagallo.
+
+        * wtf/RefPtr.h:
+        (WTF::swap): Deleted.
+        This function is no longer necessary, and causes ADL (https://en.cppreference.com/w/cpp/language/adl)
+        compile errors when not using DumbPtrTraits and calling sort on a vector of that type.
+
 2020-10-28  Sam Weinig  <weinig@apple.com>
 
         Reduce Preference Override Methods: TabsToLinks/SpatialNavigation

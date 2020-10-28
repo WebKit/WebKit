@@ -1,3 +1,139 @@
+2020-10-28  Saam Barati  <sbarati@apple.com>
+
+        Better cache our serialization of the outer TDZ environment when creating FunctionExecutables during bytecode generation
+        https://bugs.webkit.org/show_bug.cgi?id=199866
+        <rdar://problem/53333108>
+
+        Reviewed by Tadeu Zagallo.
+
+        This patch removes performance pathologies regarding programs with
+        many variables under TDZ (let/const). We had an algorithm for caching
+        the results of gathering all variables under TDZ, but that algorithm
+        wasn't nearly aggressive enough in its caching. This lead us to worst
+        case quadratic runtime, which could happens in practice for large functions.
+        
+        There are a few fixes here:
+        - Instead of flattening the entire TDZ stack, and caching that result,
+        we now cache each stack entry individually. So as you push/pop to the
+        TDZ environment stack, we no longer invalidate everything. Instead, we
+        will just need to cache the newly pushed entry. We also no longer invalidate
+        the cache for lifting a TDZ check. The compromise here is we may emit
+        more runtime TDZ checks for closure variables. This is better than N^2
+        bytecode compile time perf, since a well predicted branch for a TDZ
+        check is essentially free.
+        - We no longer transform the CompactTDZEnvironment (formerly CompactVariableEnvironment)
+        from a Vector into a HashSet each time we generate code for an inner function. Instead,
+        CompactTDZEnvironment can be in two modes: compact and inflated. It starts life off in
+        compact mode (a vector), and will turn into an inflated mode if it's ever needed. Once
+        inflated, it'll stay this way until it's destructed. This improves our algorithm from being 
+        O(EnvSize * NumFunctions) to O(EnvSize) at the cost of using more space in a HashTable versus a 
+        Vector. In the future, we could consider just binary searching through this Vector, and never using
+        a hash table.
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::popLexicalScopeInternal):
+        (JSC::BytecodeGenerator::needsTDZCheck):
+        (JSC::BytecodeGenerator::liftTDZCheckIfPossible):
+        (JSC::BytecodeGenerator::pushTDZVariables):
+        (JSC::BytecodeGenerator::getVariablesUnderTDZ):
+        (JSC::BytecodeGenerator::preserveTDZStack):
+        (JSC::BytecodeGenerator::restoreTDZStack):
+        (JSC::BytecodeGenerator::emitNewInstanceFieldInitializerFunction):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::makeFunction):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluateWithScopeExtension):
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        * parser/Parser.h:
+        (JSC::Parser<LexerType>::parse):
+        (JSC::parse):
+        * parser/VariableEnvironment.cpp:
+        (JSC::CompactTDZEnvironment::sortCompact):
+        (JSC::CompactTDZEnvironment::CompactTDZEnvironment):
+        (JSC::CompactTDZEnvironment::operator== const):
+        (JSC::CompactTDZEnvironment::toTDZEnvironmentSlow const):
+        (JSC::CompactTDZEnvironmentMap::get):
+        (JSC::CompactTDZEnvironmentMap::Handle::~Handle):
+        (JSC::CompactTDZEnvironmentMap::Handle::Handle):
+        (JSC::CompactVariableEnvironment::CompactVariableEnvironment): Deleted.
+        (JSC::CompactVariableEnvironment::operator== const): Deleted.
+        (JSC::CompactVariableEnvironment::toVariableEnvironment const): Deleted.
+        (JSC::CompactVariableMap::get): Deleted.
+        (JSC::CompactVariableMap::Handle::~Handle): Deleted.
+        (JSC::CompactVariableMap::Handle::Handle): Deleted.
+        * parser/VariableEnvironment.h:
+        (JSC::CompactTDZEnvironment::toTDZEnvironment const):
+        (JSC::CompactTDZEnvironmentKey::CompactTDZEnvironmentKey):
+        (JSC::CompactTDZEnvironmentKey::hash):
+        (JSC::CompactTDZEnvironmentKey::equal):
+        (JSC::CompactTDZEnvironmentKey::makeDeletedValue):
+        (JSC::CompactTDZEnvironmentKey::isHashTableDeletedValue const):
+        (JSC::CompactTDZEnvironmentKey::environment):
+        (WTF::HashTraits<JSC::CompactTDZEnvironmentKey>::emptyValue):
+        (WTF::HashTraits<JSC::CompactTDZEnvironmentKey>::isEmptyValue):
+        (WTF::HashTraits<JSC::CompactTDZEnvironmentKey>::constructDeletedValue):
+        (WTF::HashTraits<JSC::CompactTDZEnvironmentKey>::isDeletedValue):
+        (JSC::CompactTDZEnvironmentMap::Handle::environment const):
+        (JSC::CompactVariableEnvironment::hash const): Deleted.
+        (JSC::CompactVariableMapKey::CompactVariableMapKey): Deleted.
+        (JSC::CompactVariableMapKey::hash): Deleted.
+        (JSC::CompactVariableMapKey::equal): Deleted.
+        (JSC::CompactVariableMapKey::makeDeletedValue): Deleted.
+        (JSC::CompactVariableMapKey::isHashTableDeletedValue const): Deleted.
+        (JSC::CompactVariableMapKey::isHashTableEmptyValue const): Deleted.
+        (JSC::CompactVariableMapKey::environment): Deleted.
+        (WTF::HashTraits<JSC::CompactVariableMapKey>::emptyValue): Deleted.
+        (WTF::HashTraits<JSC::CompactVariableMapKey>::isEmptyValue): Deleted.
+        (WTF::HashTraits<JSC::CompactVariableMapKey>::constructDeletedValue): Deleted.
+        (WTF::HashTraits<JSC::CompactVariableMapKey>::isDeletedValue): Deleted.
+        (JSC::CompactVariableMap::Handle::Handle): Deleted.
+        (JSC::CompactVariableMap::Handle::operator=): Deleted.
+        (JSC::CompactVariableMap::Handle::operator bool const): Deleted.
+        (JSC::CompactVariableMap::Handle::environment const): Deleted.
+        (JSC::CompactVariableMap::Handle::swap): Deleted.
+        * runtime/CachedTypes.cpp:
+        (JSC::Decoder::handleForTDZEnvironment const):
+        (JSC::Decoder::setHandleForTDZEnvironment):
+        (JSC::CachedCompactTDZEnvironment::encode):
+        (JSC::CachedCompactTDZEnvironment::decode const):
+        (JSC::CachedCompactTDZEnvironmentMapHandle::encode):
+        (JSC::CachedCompactTDZEnvironmentMapHandle::decode const):
+        (JSC::CachedFunctionExecutableRareData::decode const):
+        (JSC::Decoder::handleForEnvironment const): Deleted.
+        (JSC::Decoder::setHandleForEnvironment): Deleted.
+        (JSC::CachedCompactVariableEnvironment::encode): Deleted.
+        (JSC::CachedCompactVariableEnvironment::decode const): Deleted.
+        (JSC::CachedCompactVariableMapHandle::encode): Deleted.
+        (JSC::CachedCompactVariableMapHandle::decode const): Deleted.
+        * runtime/CachedTypes.h:
+        * runtime/CodeCache.cpp:
+        (JSC::generateUnlinkedCodeBlockImpl):
+        (JSC::generateUnlinkedCodeBlock):
+        (JSC::generateUnlinkedCodeBlockForDirectEval):
+        (JSC::recursivelyGenerateUnlinkedCodeBlockForProgram):
+        (JSC::recursivelyGenerateUnlinkedCodeBlockForModuleProgram):
+        (JSC::CodeCache::getUnlinkedGlobalCodeBlock):
+        * runtime/CodeCache.h:
+        * runtime/Completion.cpp:
+        (JSC::generateProgramBytecode):
+        (JSC::generateModuleBytecode):
+        * runtime/DirectEvalExecutable.cpp:
+        (JSC::DirectEvalExecutable::create):
+        * runtime/DirectEvalExecutable.h:
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::collectClosureVariablesUnderTDZ):
+        * runtime/JSScope.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2020-10-28  Robin Morisset  <rmorisset@apple.com>
 
         DFGIntegerRangeOptimization is wrong for Upsilon (as 'shadow' nodes are not in SSA form)

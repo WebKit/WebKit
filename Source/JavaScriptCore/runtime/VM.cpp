@@ -392,7 +392,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     , interpreter(nullptr)
     , entryScope(nullptr)
     , m_regExpCache(new RegExpCache(this))
-    , m_compactVariableMap(adoptRef(*(new CompactVariableMap)))
+    , m_compactVariableMap(adoptRef(*(new CompactTDZEnvironmentMap)))
 #if ENABLE(REGEXP_TRACING)
     , m_rtTraceList(new RTTraceList())
 #endif
