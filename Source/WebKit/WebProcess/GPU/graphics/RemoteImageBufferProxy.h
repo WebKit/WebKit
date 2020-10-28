@@ -120,6 +120,7 @@ protected:
         // This means that putImageData() is only called when m_resolutionScale == 1.
         ASSERT(m_backend->resolutionScale() == 1);
         m_drawingContext.recorder().putImageData(inputFormat, imageData, srcRect, destPoint, destFormat);
+        flushDrawingContextAndCommit();
     }
 
     void flushContext() override
