@@ -109,6 +109,7 @@ void VideoTrack::setPrivate(VideoTrackPrivate& trackPrivate)
 
     m_private->setSelected(m_selected);
     updateKindFromPrivate();
+    setId(m_private->id());
 }
 
 bool VideoTrack::isValidKind(const AtomString& value) const

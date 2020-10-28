@@ -77,6 +77,7 @@ void InbandTextTrack::setPrivate(InbandTextTrackPrivate& trackPrivate)
 
     setModeInternal(mode());
     updateKindFromPrivate();
+    setId(m_private->id());
 }
 
 void InbandTextTrack::setMode(Mode mode)

@@ -1,3 +1,14 @@
+2020-10-28  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Handle trackId changing across Initialization Segments
+        https://bugs.webkit.org/show_bug.cgi?id=218294
+        <rdar://problem/70771306>
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-trackid-change-expected.txt: Added.
+        * media/media-source/media-source-trackid-change.html: Added.
+
 2020-10-28  Sam Weinig  <weinig@apple.com>
 
         Reduce Preference Override Methods: TabsToLinks/SpatialNavigation
