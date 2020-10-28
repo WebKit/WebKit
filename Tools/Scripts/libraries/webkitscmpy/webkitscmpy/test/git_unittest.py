@@ -63,7 +63,7 @@ class TestGit(unittest.TestCase):
             )
 
     def test_tags(self):
-        with mocks.local.Git(self.path, tags=('tag-1', 'tag-2')):
+        with mocks.local.Git(self.path):
             self.assertEqual(
                 local.Git(self.path).tags,
                 ['tag-1', 'tag-2'],
@@ -196,7 +196,7 @@ class TestGit(unittest.TestCase):
 
     def test_branches_priority(self):
         for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
-            with mocks.local.Git(self.path):
+            with mock:
                 self.assertEqual(
                     'main',
                     local.Git(self.path).prioritize_branches(['main', 'branch-a', 'dev/12345', 'safari-610-branch', 'safari-610.1-branch'])
@@ -215,4 +215,12 @@ class TestGit(unittest.TestCase):
                 self.assertEqual(
                     'branch-a',
                     local.Git(self.path).prioritize_branches(['branch-a', 'dev/12345'])
+                )
+
+    def test_tag(self):
+        for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
+            with mock:
+                self.assertEqual(
+                    '621652add7fc416099bd2063366cc38ff61afe36',
+                    local.Git(self.path).commit(tag='tag-1').hash,
                 )

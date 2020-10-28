@@ -43,7 +43,7 @@ class Git(mocks.Subprocess):
         self.detached = detached or False
 
         self.branches = branches or []
-        self.tags = tags or []
+        self.tags = tags or {}
 
         try:
             self.executable = local.Git.executable()
@@ -118,6 +118,9 @@ class Git(mocks.Subprocess):
                 message='8th commit\n',
             ),
         ]
+
+        self.tags['tag-1'] = self.commits['branch-a'][-1]
+        self.tags['tag-2'] = self.commits['branch-b'][-1]
 
         if git_svn:
             git_svn_routes = [
@@ -222,7 +225,7 @@ nothing to commit, working tree clean
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
-                    stdout='\n'.join(self.tags) + '\n',
+                    stdout='\n'.join(sorted(self.tags.keys())) + '\n',
                 ),
             ), mocks.Subprocess.Route(
                 self.executable, 'rev-parse', '--abbrev-ref', 'origin/HEAD',
@@ -319,6 +322,8 @@ nothing to commit, working tree clean
             return self.commits[self.branch][-1]
         if something in self.commits.keys():
             return self.commits[something][-1]
+        if something in self.tags.keys():
+            return self.tags[something]
 
         something = str(something)
         if '..' in something:

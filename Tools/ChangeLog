@@ -1,5 +1,38 @@
 2020-10-28  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitscmpy] Support finding commit by tag
+        https://bugs.webkit.org/show_bug.cgi?id=218212
+        <rdar://problem/70700121>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.commit): Find a commit referred to by a provided tag.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/scm.py:
+        (Scm.find): Find a commit by tag, if applicable.
+        (Scm.commit):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn.info): Pull information by tag, support non-standard branches.
+        (Svn._cache_revisions): Support non-standard branches.
+        (Svn._branch_for): Return the non-standard branch name for tags.
+        (Svn.commit): Find a commit referred to by a provided tag.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        (Git): Support tags.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/svn.py:
+        (Svn.__init__): Support tags.
+        (Svn.tags): Tags are simply specialized branches, return the names of those tags
+        based on the commit mapping.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/find_unittest.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGit):
+        (TestGit.test_tag):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/svn_unittest.py:
+        (TestSvn):
+        (TestSvn.test_tag):
+
+2020-10-28  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitflaskpy] Create shared library for WebKit's flask tooling
         https://bugs.webkit.org/show_bug.cgi?id=218257
         <rdar://problem/70736269>

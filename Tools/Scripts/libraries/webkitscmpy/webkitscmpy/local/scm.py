@@ -120,6 +120,9 @@ class Scm(object):
         elif argument in self.branches:
             result = self.commit(branch=argument)
 
+        elif argument in self.tags:
+            result = self.commit(tag=argument)
+
         else:
             if offset:
                 raise ValueError("'~' offsets are not supported for revisions and identifiers")
@@ -140,7 +143,7 @@ class Scm(object):
             branch=result.branch,
         )
 
-    def commit(self, hash=None, revision=None, identifier=None, branch=None):
+    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None):
         raise NotImplementedError()
 
     def prioritize_branches(self, branches):

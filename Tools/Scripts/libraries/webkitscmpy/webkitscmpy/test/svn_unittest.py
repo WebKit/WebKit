@@ -61,7 +61,7 @@ class TestSvn(unittest.TestCase):
             )
 
     def test_tags(self):
-        with mocks.local.Svn(self.path, tags=('tag-1', 'tag-2')):
+        with mocks.local.Svn(self.path):
             self.assertEqual(
                 local.Svn(self.path).tags,
                 ['tag-1', 'tag-2'],
@@ -107,7 +107,7 @@ class TestSvn(unittest.TestCase):
 
             # Out-of-bounds commit
             with self.assertRaises(local.Svn.Exception):
-                self.assertEqual(None, local.Svn(self.path).commit(revision=10))
+                self.assertEqual(None, local.Svn(self.path).commit(revision=11))
 
     def test_commit_from_branch(self):
         with mocks.local.Svn(self.path), OutputCapture():
@@ -196,3 +196,7 @@ class TestSvn(unittest.TestCase):
                     local.Svn(dirname).commit(revision=3)
         finally:
             shutil.rmtree(dirname)
+
+    def test_tag(self):
+        with mocks.local.Svn(self.path), OutputCapture():
+            self.assertEqual(9, local.Svn(self.path).commit(tag='tag-1').revision)

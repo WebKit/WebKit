@@ -166,3 +166,19 @@ Hash: 1abe25b443e9
                 branch='main',
                 message='4th commit\nsvn-id: https://svn.webkit.orgrepository/repository/trunk@4 268f45cc-cd09-0410-ab3c-d52691b4dbfc',
             ))
+
+    def test_tag_svn(self):
+        with mocks.local.Git(), mocks.local.Svn(self.path), MockTime, OutputCapture() as captured:
+            self.assertEqual(0, program.main(
+                args=('find', 'tag-1', '-q'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stdout.getvalue(), '2.3@tags/tag-1 | r9 | 9th commit\n')
+
+    def test_tag_git(self):
+        with mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime, OutputCapture() as captured:
+            self.assertEqual(0, program.main(
+                args=('find', 'tag-1', '-q'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stdout.getvalue(), '2.2@branch-a | 621652add7fc, r7 | 7th commit\n')

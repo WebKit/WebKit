@@ -151,10 +151,13 @@ class Git(Scm):
         result = [branch.lstrip(' *') for branch in filter(lambda branch: '->' not in branch, branch.stdout.splitlines())]
         return sorted(set(['/'.join(branch.split('/')[2:]) if branch.startswith('remotes/origin/') else branch for branch in result]))
 
-    def commit(self, hash=None, revision=None, identifier=None, branch=None):
+    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None):
         if revision and not self.is_svn:
             raise self.Exception('This git checkout does not support SVN revisions')
         elif revision:
+            if hash:
+                raise ValueError('Cannot define both hash and revision')
+
             revision = Commit._parse_revision(revision, do_assert=True)
             revision_log = run(
                 [self.executable(), 'svn', 'find-rev', 'r{}'.format(revision)],
@@ -175,6 +178,8 @@ class Git(Scm):
                 raise ValueError('Cannot define both revision and identifier')
             if hash:
                 raise ValueError('Cannot define both hash and identifier')
+            if tag:
+                raise ValueError('Cannot define both tag and identifier')
 
             parsed_branch_point, identifier, parsed_branch = Commit._parse_identifier(identifier, do_assert=True)
             if parsed_branch:
@@ -213,12 +218,15 @@ class Git(Scm):
             if identifier < 0:
                 identifier = None
 
-        elif branch:
+        elif branch or tag:
             if hash:
-                raise ValueError('Cannot define both branch and hash')
-            log = run([self.executable(), 'log', branch, '-1'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+                raise ValueError('Cannot define both tag/branch and hash')
+            if branch and tag:
+                raise ValueError('Cannot define both tag and branch')
+
+            log = run([self.executable(), 'log', branch or tag, '-1'], cwd=self.root_path, capture_output=True, encoding='utf-8')
             if log.returncode:
-                raise self.Exception("Failed to retrieve commit information for '{}'".format(branch))
+                raise self.Exception("Failed to retrieve commit information for '{}'".format(branch or tag))
 
         else:
             hash = Commit._parse_hash(hash, do_assert=True)

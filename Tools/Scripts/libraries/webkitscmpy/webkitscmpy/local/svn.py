@@ -69,9 +69,17 @@ class Svn(Scm):
             self._metadata_cache = dict(version=str(self.CACHE_VERSION))
 
     @decorators.Memoize(cached=False)
-    def info(self, branch=None, revision=None):
+    def info(self, branch=None, revision=None, tag=None):
+        if tag and branch:
+            raise ValueError('Cannot specify both branch and tag')
+        if tag and revision:
+            raise ValueError('Cannot specify both branch and tag')
+
         revision = Commit._parse_revision(revision)
-        additional_args = ['^/branches/{}'.format(branch)] if branch and branch != self.default_branch else []
+        if branch and branch != self.default_branch and '/' not in branch:
+            branch = 'branches/{}'.format(branch)
+        additional_args = ['^/{}'.format(branch)] if branch and branch != self.default_branch else []
+        additional_args += ['^/tags/{}'.format(tag)] if tag else []
         additional_args += ['-r', str(revision)] if revision else []
 
         info_result = run([self.executable(), 'info'] + additional_args, cwd=self.root_path, capture_output=True, encoding='utf-8')
@@ -137,9 +145,12 @@ class Svn(Scm):
             did_warn = False
             count = 0
             log = None
-            candidate_index = -1 if is_default_branch else len(self._metadata_cache[self.default_branch])
 
-            branch_arg = '^/{}{}'.format('' if is_default_branch else 'branches/', branch)
+            if is_default_branch or '/' in branch:
+                branch_arg = '^/{}'.format(branch)
+            else:
+                branch_arg = '^/branches/{}'.format(branch)
+
             kwargs = dict()
             if sys.version_info >= (3, 0):
                 kwargs = dict(encoding='utf-8')
@@ -238,9 +249,14 @@ class Svn(Scm):
         if len(partial) <= 3:
             raise self.Exception('Malformed set  of edited files')
         partial = partial[2:].split(' ')[0]
-        return partial.split('/')[2 if partial.startswith('/branches') else 1]
+        candidate = partial.split('/')[2 if partial.startswith('/branches') else 1]
 
-    def commit(self, hash=None, revision=None, identifier=None, branch=None):
+        # Tags are a unique case for SVN, because they're treated as branches in native SVN
+        if candidate == 'tags':
+            return partial[1:].rstrip('/')
+        return candidate
+
+    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None):
         if hash:
             raise ValueError('SVN does not support Git hashes')
 
@@ -248,6 +264,8 @@ class Svn(Scm):
         if identifier is not None:
             if revision:
                 raise ValueError('Cannot define both revision and identifier')
+            if tag:
+                raise ValueError('Cannot define both tag and identifier')
 
             parsed_branch_point, identifier, parsed_branch = Commit._parse_identifier(identifier, do_assert=True)
             if parsed_branch:
@@ -286,15 +304,23 @@ class Svn(Scm):
         elif revision:
             if branch:
                 raise ValueError('Cannot define both branch and revision')
+            if tag:
+                raise ValueError('Cannot define both tag and revision')
             revision = Commit._parse_revision(revision, do_assert=True)
             branch = self._branch_for(revision)
             info = self.info(cached=True, branch=branch, revision=revision)
 
         else:
-            branch = branch or self.branch
-            info = self.info(branch=branch)
+            if branch and tag:
+                raise ValueError('Cannot define both branch and tag')
+
+            branch = None if tag else branch or self.branch
+            info = self.info(tag=tag) if tag else self.info(branch=branch)
             if not info:
-                raise self.Exception("'{}' is not a recognized branch".format(branch))
+                raise self.Exception("'{}' is not a recognized {}".format(
+                    tag or branch,
+                    'tag' if tag else 'branch',
+                ))
             revision = int(info['Last Changed Rev'])
             if branch != self.default_branch:
                 branch = self._branch_for(revision)
@@ -324,7 +350,11 @@ class Svn(Scm):
         if branch_point and parsed_branch_point and branch_point != parsed_branch_point:
             raise ValueError("Provided 'branch_point' does not match branch point of specified branch")
 
-        branch_arg = '^/{}{}'.format('' if branch == self.default_branch else 'branches/', branch)
+        if branch == self.default_branch or '/' in branch:
+            branch_arg = '^/{}'.format(branch)
+        else:
+            branch_arg = '^/branches/{}'.format(branch)
+
         log = run(
             [self.executable(), 'log', '-l', '1', '-r', str(revision), branch_arg], cwd=self.root_path,
             capture_output=True, encoding='utf-8',
