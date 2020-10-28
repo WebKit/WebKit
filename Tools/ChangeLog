@@ -1,3 +1,63 @@
+2020-10-27  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r268878. rdar://problem/70733353
+
+    UIClient isn't notified when page muted state changes
+    https://bugs.webkit.org/show_bug.cgi?id=218085
+    <rdar://problem/70462420>
+    
+    Reviewed by Youenn Fablet.
+    
+    Source/WebKit:
+    
+    API test: WKWebView.MediaMuted
+    
+    * UIProcess/API/C/WKPage.cpp:
+    (WKPageGetMediaState): reportedMediaCaptureState -> reportedMediaState.
+    
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView _mediaCaptureState]): Ditto.
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::updateReportedMediaCaptureState): Only record current capture
+    state in m_reportedMediaCaptureState. m_delayStopCapturingReporting isn't necessary,
+    remove it.
+    
+    * UIProcess/WebPageProxy.h:
+    (WebKit::WebPageProxy::reportedMediaState const): Renamed from reportedMediaCaptureState
+    to reflect what it returns.
+    (WebKit::WebPageProxy::mediaStateFlags const): Deleted.
+    (WebKit::WebPageProxy::reportedMediaCaptureState const): Deleted.
+    
+    Tools:
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/xcshareddata/xcschemes/TestWebKitAPI.xcscheme:
+    * TestWebKitAPI/Tests/WebKitCocoa/MediaMutedState.mm: Added.
+    (-[AudioStateObserver initWithWebView:]):
+    (-[AudioStateObserver observeValueForKeyPath:ofObject:change:context:]):
+    (-[AudioStateTestView setMuted:]):
+    (TestWebKitAPI::TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268878 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-22  Eric Carlson  <eric.carlson@apple.com>
+
+            UIClient isn't notified when page muted state changes
+            https://bugs.webkit.org/show_bug.cgi?id=218085
+            <rdar://problem/70462420>
+
+            Reviewed by Youenn Fablet.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/xcshareddata/xcschemes/TestWebKitAPI.xcscheme:
+            * TestWebKitAPI/Tests/WebKitCocoa/MediaMutedState.mm: Added.
+            (-[AudioStateObserver initWithWebView:]):
+            (-[AudioStateObserver observeValueForKeyPath:ofObject:change:context:]):
+            (-[AudioStateTestView setMuted:]):
+            (TestWebKitAPI::TEST):
+
 2020-10-14  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r268371. rdar://problem/70267767
