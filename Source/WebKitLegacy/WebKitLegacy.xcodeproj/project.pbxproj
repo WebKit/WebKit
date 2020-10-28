@@ -171,8 +171,6 @@
 		598ADA461202275000ABAE4E /* WebDeviceOrientationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 598ADA451202275000ABAE4E /* WebDeviceOrientationProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C40CD2122D8F9C000E9DAD5 /* PopupMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C01CB82173435C900C5D807 /* PopupMenuMac.mm */; };
 		5C40CD2222D8F9C300E9DAD5 /* SearchPopupMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C01CB84173435C900C5D807 /* SearchPopupMenuMac.mm */; };
-		5C9D925A22D7E8AD008E9266 /* Sources.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5C9D925822D7E8AD008E9266 /* Sources.txt */; };
-		5C9D925B22D7E8AD008E9266 /* SourcesCocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5C9D925922D7E8AD008E9266 /* SourcesCocoa.txt */; };
 		5C9EF2F521F061BE003BDC56 /* PageStorageSessionProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C9EF2F421F061BE003BDC56 /* PageStorageSessionProvider.h */; };
 		5CA46E7821F1451D00CE86B4 /* NetworkStorageSessionMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CA46E7621F1451D00CE86B4 /* NetworkStorageSessionMap.h */; };
 		5CE44F4A206D70EA003EFD01 /* PingHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE44F49206D70E9003EFD01 /* PingHandle.h */; };
@@ -3277,8 +3275,6 @@
 				7CCE766B25223BC8003C7BD2 /* generate-preferences.sh in Resources */,
 				A1382CDF24B15A51001645B0 /* LaBanquePostaleQuirks.js in Resources */,
 				29AEF960134C76FB00FE5096 /* OutlookQuirksUserScript.js in Resources */,
-				5C9D925A22D7E8AD008E9266 /* Sources.txt in Resources */,
-				5C9D925B22D7E8AD008E9266 /* SourcesCocoa.txt in Resources */,
 				939810B70824BF01008DF038 /* url_icon.tiff in Resources */,
 				939810B50824BF01008DF038 /* WebAuthenticationPanel.xib in Resources */,
 				5DE83A7A0D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.xib in Resources */,

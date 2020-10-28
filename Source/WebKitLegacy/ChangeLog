@@ -1,3 +1,20 @@
+2020-10-27  Keith Rollin  <krollin@apple.com>
+
+        Unexpected txt file: .../WebKitLegacy.framework/.../Sources.txt
+        https://bugs.webkit.org/show_bug.cgi?id=218268
+        <rdar://problem/70742539>
+
+        Reviewed by Tim Horton.
+
+        Sources.txt and SourcesCocoa.txt were added to the WebKitLegacy
+        project in https://trac.webkit.org/changeset/247401 as targets of the
+        WebKitLegacy target. This caused them to be treated as resources and
+        so were copied to the framework's Resources directory on a build.
+        These files don't need to be included in the build, and so are removed
+        from that target.
+
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+
 2020-10-17  Sam Weinig  <weinig@apple.com>
 
         [Preferences] Add infrastructure for generating preferences for Windows WebKitLegacy
