@@ -1,3 +1,23 @@
+2020-10-28  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Multi-channel (>2) support for the AudioFileReader
+        https://bugs.webkit.org/show_bug.cgi?id=215255
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/glib/TestExpectations: audiobuffersource-multi-channels.html is now passing.
+        * platform/glib/webaudio/codec-tests/aac/vbr-128kbps-44khz-expected.wav: Added.
+        * platform/glib/webaudio/codec-tests/vorbis/vbr-128kbps-44khz-expected.wav: Added.
+        * platform/glib/webaudio/codec-tests/vorbis/vbr-70kbps-44khz-expected.wav: Added.
+        * platform/glib/webaudio/codec-tests/vorbis/vbr-96kbps-44khz-expected.wav: Added.
+        * platform/glib/webaudio/codec-tests/wav/24bit-22khz-resample-expected.wav: Added.
+        * platform/gtk/webaudio/codec-tests/aac/vbr-128kbps-44khz-expected.wav: Removed.
+        * platform/gtk/webaudio/codec-tests/mp3/128kbps-44khz-expected.wav: Removed.
+        * platform/gtk/webaudio/codec-tests/vorbis/vbr-128kbps-44khz-expected.wav: Removed.
+        * platform/gtk/webaudio/codec-tests/vorbis/vbr-70kbps-44khz-expected.wav: Removed.
+        * platform/gtk/webaudio/codec-tests/vorbis/vbr-96kbps-44khz-expected.wav: Removed.
+        * platform/gtk/webaudio/codec-tests/wav/24bit-44khz-expected.wav: Removed.
+
 2020-10-28  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Unreviewed, reverting r269043.
