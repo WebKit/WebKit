@@ -169,11 +169,6 @@ void WKBundleSetAuthorAndUserStylesEnabled(WKBundleRef bundleRef, WKBundlePageGr
     WebKit::toImpl(bundleRef)->setAuthorAndUserStylesEnabled(WebKit::toImpl(pageGroupRef), enabled);
 }
 
-void WKBundleSetSpatialNavigationEnabled(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)
-{
-    WebKit::toImpl(bundleRef)->setSpatialNavigationEnabled(WebKit::toImpl(pageGroupRef), enabled);
-}
-
 void WKBundleAddOriginAccessAllowListEntry(WKBundleRef bundleRef, WKStringRef sourceOrigin, WKStringRef destinationProtocol, WKStringRef destinationHost, bool allowDestinationSubdomains)
 {
     WebKit::toImpl(bundleRef)->addOriginAccessAllowListEntry(WebKit::toWTFString(sourceOrigin), WebKit::toWTFString(destinationProtocol), WebKit::toWTFString(destinationHost), allowDestinationSubdomains);

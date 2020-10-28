@@ -106,7 +106,6 @@ public:
     void setJavaScriptCanAccessClipboard(WebPageGroupProxy*, bool);
     void setPopupBlockingEnabled(WebPageGroupProxy*, bool);
     void setAuthorAndUserStylesEnabled(WebPageGroupProxy*, bool);
-    void setSpatialNavigationEnabled(WebPageGroupProxy*, bool);
     void addOriginAccessAllowListEntry(const String&, const String&, const String&, bool);
     void removeOriginAccessAllowListEntry(const String&, const String&, const String&, bool);
     void resetOriginAccessAllowLists();

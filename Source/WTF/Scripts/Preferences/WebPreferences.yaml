@@ -2062,16 +2062,6 @@ SystemPreviewEnabled:
     WebCore:
       default: false
 
-# FIXME: This should be reconciled with 'TabsToLinks'.
-TabToLinksEnabled:
-  type: bool
-  webcoreBinding: none
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: false
-
-# FIXME: This should be reconciled with 'TabToLinksEnabled'.
 TabsToLinks:
   type: bool
   webKitLegacyPreferenceKey: WebKitTabToLinksPreferenceKey

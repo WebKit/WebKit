@@ -515,11 +515,6 @@ void TestRunner::setXSSAuditorEnabled(bool enabled)
     [[[mainFrame webView] preferences] setXSSAuditorEnabled:enabled];
 }
 
-void TestRunner::setSpatialNavigationEnabled(bool enabled)
-{
-    [[[mainFrame webView] preferences] setSpatialNavigationEnabled:enabled];
-}
-
 void TestRunner::setAllowUniversalAccessFromFileURLs(bool enabled)
 {
     [[[mainFrame webView] preferences] setAllowUniversalAccessFromFileURLs:enabled];

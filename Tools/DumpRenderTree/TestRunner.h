@@ -126,7 +126,6 @@ public:
     void setUserStyleSheetLocation(JSStringRef path);
     void setValueForUser(JSContextRef, JSValueRef nodeObject, JSStringRef value);
     void setXSSAuditorEnabled(bool flag);
-    void setSpatialNavigationEnabled(bool);
     void setScrollbarPolicy(JSStringRef orientation, JSStringRef policy);
 #if PLATFORM(IOS_FAMILY)
     void setTelephoneNumberParsingEnabled(bool enable);

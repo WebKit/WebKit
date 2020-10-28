@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- webkit-test-runner [ ModernMediaControlsEnabled=false ] -->
+<!DOCTYPE html><!-- webkit-test-runner [ ModernMediaControlsEnabled=false TabsToLinks=true ] -->
 <html>
 <video id="video" controls></video>
 <p id="description"></p>
@@ -15,7 +15,6 @@
 description("This tests that media controls have correct accessibility information.");
 
 if (window.accessibilityController) {
-    testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1); 
     video.src = findMediaFile("video", "content/test");
     
     var videoElement;

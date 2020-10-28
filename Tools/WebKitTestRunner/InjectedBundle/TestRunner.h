@@ -120,7 +120,6 @@ public:
     void removeOriginAccessAllowListEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains);
     void setUserStyleSheetEnabled(bool);
     void setUserStyleSheetLocation(JSStringRef);
-    void setSpatialNavigationEnabled(bool);
     void setTabKeyCyclesThroughElements(bool);
     void setSerializeHTTPLoads();
     void dispatchPendingLoadRequests();

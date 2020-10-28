@@ -872,7 +872,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetAsynchronousPluginInitializationEnabled(preferences, false);
     WKPreferencesSetAsynchronousPluginInitializationEnabledForAllPlugins(preferences, false);
     WKPreferencesSetArtificialPluginInitializationDelayEnabled(preferences, false);
-    WKPreferencesSetTabToLinksEnabled(preferences, false);
+    WKPreferencesSetTabsToLinks(preferences, false);
     WKPreferencesSetInteractiveFormValidationEnabled(preferences, true);
     WKPreferencesSetDataTransferItemsEnabled(preferences, true);
     WKPreferencesSetCustomPasteboardDataEnabled(preferences, true);

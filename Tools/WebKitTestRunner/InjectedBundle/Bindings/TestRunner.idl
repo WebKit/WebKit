@@ -92,7 +92,6 @@ interface TestRunner {
     undefined removeOriginAccessAllowListEntry(DOMString sourceOrigin, DOMString destinationProtocol, DOMString destinationHost, boolean allowDestinationSubdomains);
     undefined setUserStyleSheetEnabled(boolean value);
     undefined setUserStyleSheetLocation(DOMString location);
-    undefined setSpatialNavigationEnabled(boolean value);
     undefined setTabKeyCyclesThroughElements(boolean enabled);
     undefined setSerializeHTTPLoads();
     undefined dispatchPendingLoadRequests();

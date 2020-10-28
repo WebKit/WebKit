@@ -862,7 +862,6 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     preferences->setJavaEnabled(FALSE);
     preferences->setJavaScriptEnabled(TRUE);
     preferences->setEditableLinkBehavior(WebKitEditableLinkOnlyLiveWithShiftKey);
-    preferences->setTabsToLinks(FALSE);
     preferences->setDOMPasteAllowed(TRUE);
     preferences->setShouldPrintBackgrounds(TRUE);
     preferences->setCacheModel(WebCacheModelDocumentBrowser);
@@ -884,7 +883,6 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     preferences->setLoadsImagesAutomatically(TRUE);
     prefsPrivate->setLoadsSiteIconsIgnoringImageLoadingPreference(FALSE);
     prefsPrivate->setFrameFlatteningEnabled(FALSE);
-    prefsPrivate->setSpatialNavigationEnabled(FALSE);
     if (persistentUserStyleSheetLocation) {
         size_t stringLength = CFStringGetLength(persistentUserStyleSheetLocation.get());
         Vector<UniChar> urlCharacters(stringLength + 1, 0);
@@ -927,6 +925,7 @@ static void setWebPreferencesForTestOptions(IWebPreferences* preferences, const 
     COMPtr<IWebPreferencesPrivate8> prefsPrivate { Query, preferences };
 
     preferences->setPrivateBrowsingEnabled(options.useEphemeralSession());
+
     preferences->setUsesPageCache(boolWebPreferenceFeatureValue("UsesBackForwardCache", false, options));
     prefsPrivate->setMenuItemElementEnabled(boolWebPreferenceFeatureValue("MenuItemElementEnabled", false, options));
     prefsPrivate->setKeygenElementEnabled(boolWebPreferenceFeatureValue("KeygenElementEnabled", false, options));
@@ -937,6 +936,8 @@ static void setWebPreferencesForTestOptions(IWebPreferences* preferences, const 
     prefsPrivate->setContactPickerAPIEnabled(boolWebPreferenceFeatureValue("ContactPickerAPIEnabled", false, options));
     prefsPrivate->setAllowTopNavigationToDataURLs(boolWebPreferenceFeatureValue("AllowTopNavigationToDataURLs", true, options));
     prefsPrivate->setCSSOMViewSmoothScrollingEnabled(boolWebPreferenceFeatureValue("CSSOMViewSmoothScrollingEnabled", false, options));
+    prefsPrivate->setSpatialNavigationEnabled(boolWebPreferenceFeatureValue("SpatialNavigationEnabled", false, options));
+    preferences->setTabsToLinks(boolWebPreferenceFeatureValue("TabsToLinks", false, options));
 }
 
 static String applicationId()

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ TabsToLinks=true SpatialNavigationEnabled=true ] -->
 <body>
 
 <select id="multiselect" multiple="multiple">
@@ -7,11 +7,6 @@
 </select>
 
 <script>
-if (window.testRunner) {
-    testRunner.setSpatialNavigationEnabled(true);
-    testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
-}
-
 var multiselect = document.getElementById('multiselect');
 
 if (window.eventSender) {

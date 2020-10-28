@@ -1154,18 +1154,6 @@ static JSValueRef setXSSAuditorEnabledCallback(JSContextRef context, JSObjectRef
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef setSpatialNavigationEnabledCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    // Has mac & windows implementation.
-    if (argumentCount < 1)
-        return JSValueMakeUndefined(context);
-
-    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    controller->setSpatialNavigationEnabled(JSValueToBoolean(context, arguments[0]));
-
-    return JSValueMakeUndefined(context);
-}
-
 static JSValueRef setPrintingCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
@@ -2205,7 +2193,6 @@ const JSStaticFunction* TestRunner::staticFunctions()
         { "setShouldSwapToEphemeralSessionOnNextNavigation", setShouldSwapToEphemeralSessionOnNextNavigationCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setShouldSwapToDefaultSessionOnNextNavigation", setShouldSwapToDefaultSessionOnNextNavigationCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setSerializeHTTPLoads", setSerializeHTTPLoadsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "setSpatialNavigationEnabled", setSpatialNavigationEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setStopProvisionalFrameLoads", setStopProvisionalFrameLoadsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setTabKeyCyclesThroughElements", setTabKeyCyclesThroughElementsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #if PLATFORM(IOS_FAMILY)

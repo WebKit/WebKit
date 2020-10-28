@@ -1046,16 +1046,6 @@ bool WKPreferencesGetArtificialPluginInitializationDelayEnabled(WKPreferencesRef
     return toImpl(preferencesRef)->artificialPluginInitializationDelayEnabled();
 }
 
-void WKPreferencesSetTabToLinksEnabled(WKPreferencesRef preferencesRef, bool enabled)
-{
-    toImpl(preferencesRef)->setTabToLinksEnabled(enabled);
-}
-
-bool WKPreferencesGetTabToLinksEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->tabToLinksEnabled();
-}
-
 void WKPreferencesSetInteractiveFormValidationEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setInteractiveFormValidationEnabled(enabled);

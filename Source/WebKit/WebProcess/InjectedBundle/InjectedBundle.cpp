@@ -154,12 +154,6 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
 {
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
 
-    if (preference == "WebKitTabToLinksPreferenceKey") {
-        WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::tabsToLinksKey(), enabled);
-        for (auto* page : pages)
-            WebPage::fromCorePage(*page).setTabToLinksEnabled(enabled);
-    }
-
     if (preference == "WebKit2AsynchronousPluginInitializationEnabled") {
         WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::asynchronousPluginInitializationEnabledKey(), enabled);
         for (auto* page : pages)
@@ -356,13 +350,6 @@ void InjectedBundle::setAuthorAndUserStylesEnabled(WebPageGroupProxy* pageGroup,
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
     for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
         (*iter)->settings().setAuthorAndUserStylesEnabled(enabled);
-}
-
-void InjectedBundle::setSpatialNavigationEnabled(WebPageGroupProxy* pageGroup, bool enabled)
-{
-    const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
-    for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
-        (*iter)->settings().setSpatialNavigationEnabled(enabled);
 }
 
 void InjectedBundle::addOriginAccessAllowListEntry(const String& sourceOrigin, const String& destinationProtocol, const String& destinationHost, bool allowDestinationSubdomains)

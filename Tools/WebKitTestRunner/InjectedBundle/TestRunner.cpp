@@ -899,12 +899,6 @@ void TestRunner::setUserStyleSheetLocation(JSStringRef location)
         setUserStyleSheetEnabled(true);
 }
 
-void TestRunner::setSpatialNavigationEnabled(bool enabled)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    WKBundleSetSpatialNavigationEnabled(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
-}
-
 void TestRunner::setTabKeyCyclesThroughElements(bool enabled)
 {
     WKBundleSetTabKeyCyclesThroughElements(InjectedBundle::singleton().bundle(), page(), enabled);

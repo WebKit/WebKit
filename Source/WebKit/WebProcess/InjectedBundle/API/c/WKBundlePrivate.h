@@ -52,7 +52,6 @@ WK_EXPORT void WKBundleSetFrameFlatteningEnabled(WKBundleRef bundle, WKBundlePag
 WK_EXPORT void WKBundleSetJavaScriptCanAccessClipboard(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
 WK_EXPORT void WKBundleSetPopupBlockingEnabled(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
 WK_EXPORT void WKBundleSetAuthorAndUserStylesEnabled(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
-WK_EXPORT void WKBundleSetSpatialNavigationEnabled(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
 WK_EXPORT void WKBundleAddOriginAccessAllowListEntry(WKBundleRef bundle, WKStringRef, WKStringRef, WKStringRef, bool);
 WK_EXPORT void WKBundleRemoveOriginAccessAllowListEntry(WKBundleRef bundle, WKStringRef, WKStringRef, WKStringRef, bool);
 WK_EXPORT void WKBundleResetOriginAccessAllowLists(WKBundleRef bundle);

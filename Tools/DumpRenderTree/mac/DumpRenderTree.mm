@@ -871,9 +871,6 @@ static void resetWebPreferencesToConsistentValues(WebPreferences *preferences)
     [preferences setJavaEnabled:NO];
     [preferences setJavaScriptEnabled:YES];
     [preferences setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
-#if !PLATFORM(IOS_FAMILY)
-    [preferences setTabsToLinks:NO];
-#endif
     [preferences setDOMPasteAllowed:YES];
 #if !PLATFORM(IOS_FAMILY)
     [preferences setShouldPrintBackgrounds:YES];
@@ -898,7 +895,6 @@ static void resetWebPreferencesToConsistentValues(WebPreferences *preferences)
     [preferences setLoadsSiteIconsIgnoringImageLoadingPreference:NO];
     [preferences setFrameFlattening:WebKitFrameFlatteningDisabled];
     [preferences setAsyncFrameScrollingEnabled:NO];
-    [preferences setSpatialNavigationEnabled:NO];
     [preferences setMetaRefreshEnabled:YES];
 
     if (persistentUserStyleSheetLocation) {

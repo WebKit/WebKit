@@ -1,3 +1,66 @@
+2020-10-28  Sam Weinig  <weinig@apple.com>
+
+        Reduce Preference Override Methods: TabsToLinks/SpatialNavigation
+        https://bugs.webkit.org/show_bug.cgi?id=218288
+
+        Reviewed by Tim Horton.
+
+        Replace uses of testRunner.overridePreference("WebKitTabToLinksPreferenceKey", ...) and
+        testRunner.setSpatialNavigationEnabled(...) with test header commands, helping to reduce
+        the number of different ways we have to override preferences in LayoutTests.
+
+        * accessibility/mac/caret-browsing-tab-selection.html:
+        * accessibility/mac/focus-setting-selection-syncronizing-not-clearing.html:
+        * accessibility/mac/selection-element-tabbing-to-link.html:
+        * accessibility/mac/selection-notification-focus-change.html:
+        * accessibility/mac/tab-focus-post-notification.html:
+        * fast/events/tab-focus-anchor.html:
+        * fast/events/tab-focus-link-in-canvas.html:
+        * fast/spatial-navigation/snav-1st-stop.html:
+        * fast/spatial-navigation/snav-clipped-overflowed-content.html:
+        * fast/spatial-navigation/snav-container-only-white-space.html:
+        * fast/spatial-navigation/snav-container-white-space.html:
+        * fast/spatial-navigation/snav-display-contents-crash.html:
+        * fast/spatial-navigation/snav-div-overflow-scrol-hidden.html:
+        * fast/spatial-navigation/snav-div-scrollable-but-without-focusable-content.html:
+        * fast/spatial-navigation/snav-fully-aligned-horizontally.html:
+        * fast/spatial-navigation/snav-fully-aligned-vertically.html:
+        * fast/spatial-navigation/snav-hidden-focusable-element.html:
+        * fast/spatial-navigation/snav-hidden-iframe-zero-size.html:
+        * fast/spatial-navigation/snav-hidden-iframe.html:
+        * fast/spatial-navigation/snav-iframe-flattening-simple.html:
+        * fast/spatial-navigation/snav-iframe-nested.html:
+        * fast/spatial-navigation/snav-iframe-no-focusable-content.html:
+        * fast/spatial-navigation/snav-iframe-no-scrollable-content.html:
+        * fast/spatial-navigation/snav-iframe-recursive-offset-parent.html:
+        * fast/spatial-navigation/snav-iframe-with-offscreen-focusable-element.html:
+        * fast/spatial-navigation/snav-imagemap-area-not-focusable.html:
+        * fast/spatial-navigation/snav-imagemap-area-without-image.html:
+        * fast/spatial-navigation/snav-imagemap-overlapped-areas.html:
+        * fast/spatial-navigation/snav-imagemap-simple.html:
+        * fast/spatial-navigation/snav-input.html:
+        * fast/spatial-navigation/snav-media-elements.html:
+        * fast/spatial-navigation/snav-multiple-select-focusring.html:
+        * fast/spatial-navigation/snav-multiple-select-optgroup.html:
+        * fast/spatial-navigation/snav-multiple-select.html:
+        * fast/spatial-navigation/snav-offscreen-content.html:
+        * fast/spatial-navigation/snav-only-clipped-overflow-content.html:
+        * fast/spatial-navigation/snav-radio-group.html:
+        * fast/spatial-navigation/snav-radio.html:
+        * fast/spatial-navigation/snav-search-optimization.html:
+        * fast/spatial-navigation/snav-simple-content-overflow.html:
+        * fast/spatial-navigation/snav-single-select-list.html:
+        * fast/spatial-navigation/snav-single-select.html:
+        * fast/spatial-navigation/snav-table-traversal.html:
+        * fast/spatial-navigation/snav-textarea.html:
+        * fast/spatial-navigation/snav-tiny-table-traversal.html:
+        * fast/spatial-navigation/snav-two-elements-one-line.html:
+        * fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html:
+        * fast/spatial-navigation/snav-z-index.html:
+        * fast/spatial-navigation/snav-zero-margin-content.html:
+        * media/media-controls-accessibility.html:
+        * media/tab-focus-inside-media-elements.html:
+
 2020-10-28  Chris Dumez  <cdumez@apple.com>
 
         AudioBuffer channels should be neuterable / detachable

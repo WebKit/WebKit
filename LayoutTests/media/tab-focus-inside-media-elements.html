@@ -1,4 +1,4 @@
-<!DOCTYPE html!><!-- webkit-test-runner [ ModernMediaControlsEnabled=false ] -->
+<!DOCTYPE html!><!-- webkit-test-runner [ ModernMediaControlsEnabled=false TabsToLinks=true ] -->
 <html>
 <body>
 <audio controls></audio><video controls></video><br>
@@ -19,8 +19,6 @@ else
 
 function runTests()
 {
-    testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
-
     shouldBe('document.body.focus(); eventSender.keyDown("\\t"); document.activeElement', 'mediaElements[0]');
     shouldBeTrue('mediaElements[0] instanceof HTMLAudioElement');
     shouldBeTrue('mediaElements[0].controls');

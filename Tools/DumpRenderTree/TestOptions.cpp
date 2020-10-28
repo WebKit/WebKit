@@ -62,6 +62,8 @@ const TestFeatures& TestOptions::defaults()
             { "KeygenElementEnabled", false },
             { "MenuItemElementEnabled", false },
             { "ModernMediaControlsEnabled", true },
+            { "SpatialNavigationEnabled", false },
+            { "TabsToLinks", false },
 
             { "CSSLogicalEnabled", false },
             { "LineHeightUnitsEnabled", false },
