@@ -1,3 +1,21 @@
+2020-10-27  Alex Christensen  <achristensen@webkit.org>
+
+        Use _CFURLConnectionSetFrameworkStubs for SecItemShim instead of DYLD_INTERPOSE on Apple Silicon Macs
+        https://bugs.webkit.org/show_bug.cgi?id=218269
+        <rdar://problem/70491533>
+
+        Reviewed by Darin Adler.
+
+        r171066 introduced the use of _CFURLConnectionSetFrameworkStubs on iOS for CFNetwork to be able
+        to get and set credentials as the UI process.  This is also needed on Apple Silicon Macs.
+        We should eventually replace it with an even cleaner per-NSURLSession solution, but this is a step
+        in the right direction, and I verified manually that it fixes the radar.
+
+        Covered by an API test that used to fail on Apple Silicon Macs.
+
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::initializeSecItemShim):
+
 2020-10-27  Said Abou-Hallawa  <said@apple.com>
 
         Make RenderingMode a bool enum and remove ShouldAccelerate

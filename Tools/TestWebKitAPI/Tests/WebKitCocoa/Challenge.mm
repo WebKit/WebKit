@@ -366,6 +366,40 @@ TEST(Challenge, BasicProposedCredential)
     [[webView configuration].processPool _clearPermanentCredentialsForProtectionSpace:protectionSpace];
 }
 
+TEST(Challenge, BasicPersistentCredential)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server(HTTPServer::respondWithChallengeThenOK);
+    auto delegate = [[TestNavigationDelegate new] autorelease];
+    __block RetainPtr<NSURLProtectionSpace> protectionSpace;
+    auto credentialStorage = [NSURLCredentialStorage sharedCredentialStorage];
+    delegate.didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        protectionSpace = challenge.protectionSpace;
+        NSURLCredential *existingCredential = [credentialStorage defaultCredentialForProtectionSpace:protectionSpace.get()];
+        EXPECT_NULL(existingCredential);
+        EXPECT_WK_STREQ(protectionSpace.get().authenticationMethod, NSURLAuthenticationMethodHTTPBasic);
+        completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialWithUser:@"testuser" password:@"testpassword" persistence:NSURLCredentialPersistencePermanent]);
+    };
+    auto webView = [[WKWebView new] autorelease];
+    webView.navigationDelegate = delegate;
+    [webView loadRequest:server.request()];
+    [delegate waitForDidFinishNavigation];
+
+    NSURLCredential *storedCredential = nil;
+    while (!storedCredential) {
+        storedCredential = [[NSURLCredentialStorage sharedCredentialStorage] defaultCredentialForProtectionSpace:protectionSpace.get()];
+        Util::spinRunLoop();
+    }
+    EXPECT_NOT_NULL(storedCredential);
+    EXPECT_WK_STREQ(storedCredential.user, "testuser");
+    EXPECT_WK_STREQ(storedCredential.password, "testpassword");
+    EXPECT_EQ(storedCredential.persistence, NSURLCredentialPersistencePermanent);
+
+    [credentialStorage removeCredential:storedCredential forProtectionSpace:protectionSpace.get()];
+    NSURLCredential *removedCredential = [credentialStorage defaultCredentialForProtectionSpace:protectionSpace.get()];
+    EXPECT_NULL(removedCredential);
+}
+
 #if HAVE(SSL)
 static void verifyCertificateAndPublicKey(SecTrustRef trust)
 {
