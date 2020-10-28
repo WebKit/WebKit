@@ -41,23 +41,30 @@ namespace WebCore {
 class AudioBus;
 
 class AudioBuffer : public RefCounted<AudioBuffer> {
-public:   
-    static RefPtr<AudioBuffer> create(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
+public:
+    enum class LegacyPreventNeutering : bool { No, Yes };
+    static RefPtr<AudioBuffer> create(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, LegacyPreventNeutering = LegacyPreventNeutering::No);
     static ExceptionOr<Ref<AudioBuffer>> create(const AudioBufferOptions&);
     // Returns nullptr if data is not a valid audio file.
     static RefPtr<AudioBuffer> createFromAudioFileData(const void* data, size_t dataSize, bool mixToMono, float sampleRate);
 
     // Format
-    size_t length() const { return m_length; }
-    double duration() const { return length() / static_cast<double>(sampleRate()); }
+    size_t originalLength() const { return m_originalLength; }
+    double originalDuration() const { return originalLength() / static_cast<double>(sampleRate()); }
     float sampleRate() const { return m_sampleRate; }
+
+    // The following function may start returning 0 if any of the underlying channel buffers gets detached.
+    size_t length() const { return hasDetachedChannelBuffer() ? 0 : m_originalLength; }
+    double duration() const { return length() / static_cast<double>(sampleRate()); }
 
     // Channel data access
     unsigned numberOfChannels() const { return m_channels.size(); }
     ExceptionOr<JSC::JSValue> getChannelData(JSDOMGlobalObject&, unsigned channelIndex);
     ExceptionOr<void> copyFromChannel(Ref<Float32Array>&&, unsigned channelNumber, unsigned bufferOffset);
     ExceptionOr<void> copyToChannel(Ref<Float32Array>&&, unsigned channelNumber, unsigned startInChannel);
-    Float32Array* channelData(unsigned channelIndex);
+
+    // Native channel data access.
+    RefPtr<Float32Array> channelData(unsigned channelIndex);
     void zero();
 
     // Because an AudioBuffer has a JavaScript wrapper, which will be garbage collected, it may take a while for this object to be deleted.
@@ -70,14 +77,16 @@ public:
     void visitChannelWrappers(JSC::SlotVisitor&);
     
 private:
-    AudioBuffer(unsigned numberOfChannels, size_t length, float sampleRate);
+    AudioBuffer(unsigned numberOfChannels, size_t length, float sampleRate, LegacyPreventNeutering = LegacyPreventNeutering::No);
     explicit AudioBuffer(AudioBus&);
 
     void invalidate();
 
+    bool hasDetachedChannelBuffer() const;
+
     float m_sampleRate;
     mutable Lock m_channelsLock;
-    size_t m_length;
+    size_t m_originalLength;
     Vector<RefPtr<Float32Array>> m_channels;
     Vector<JSValueInWrappedObject> m_channelWrappers;
 };

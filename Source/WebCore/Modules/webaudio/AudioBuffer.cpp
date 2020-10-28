@@ -40,13 +40,13 @@
 
 namespace WebCore {
 
-RefPtr<AudioBuffer> AudioBuffer::create(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
+RefPtr<AudioBuffer> AudioBuffer::create(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, LegacyPreventNeutering preventNeutering)
 {
     if (!BaseAudioContext::isSupportedSampleRate(sampleRate) || !numberOfChannels || numberOfChannels > AudioContext::maxNumberOfChannels() || !numberOfFrames)
         return nullptr;
 
-    auto buffer = adoptRef(*new AudioBuffer(numberOfChannels, numberOfFrames, sampleRate));
-    if (!buffer->m_length)
+    auto buffer = adoptRef(*new AudioBuffer(numberOfChannels, numberOfFrames, sampleRate, preventNeutering));
+    if (!buffer->originalLength())
         return nullptr;
 
     return buffer;
@@ -67,7 +67,7 @@ ExceptionOr<Ref<AudioBuffer>> AudioBuffer::create(const AudioBufferOptions& opti
         return Exception { NotSupportedError, "Sample rate is not in the supported range."_s };
     
     auto buffer = adoptRef(*new AudioBuffer(options.numberOfChannels, options.length, options.sampleRate));
-    if (!buffer->length())
+    if (!buffer->originalLength())
         return Exception { NotSupportedError, "Channel was not able to be created."_s };
     
     return buffer;
@@ -81,20 +81,22 @@ RefPtr<AudioBuffer> AudioBuffer::createFromAudioFileData(const void* data, size_
     return adoptRef(*new AudioBuffer(*bus));
 }
 
-AudioBuffer::AudioBuffer(unsigned numberOfChannels, size_t length, float sampleRate)
+AudioBuffer::AudioBuffer(unsigned numberOfChannels, size_t length, float sampleRate, LegacyPreventNeutering preventNeutering)
     : m_sampleRate(sampleRate)
-    , m_length(length)
+    , m_originalLength(length)
 {
     m_channels.reserveCapacity(numberOfChannels);
 
     for (unsigned i = 0; i < numberOfChannels; ++i) {
-        auto channelDataArray = Float32Array::tryCreate(m_length);
+        auto channelDataArray = Float32Array::tryCreate(m_originalLength);
         if (!channelDataArray) {
             invalidate();
             break;
         }
 
-        channelDataArray->setNeuterable(false);
+        if (preventNeutering == LegacyPreventNeutering::Yes)
+            channelDataArray->setNeuterable(false);
+
         m_channels.append(WTFMove(channelDataArray));
     }
     m_channelWrappers.resize(m_channels.size());
@@ -102,20 +104,19 @@ AudioBuffer::AudioBuffer(unsigned numberOfChannels, size_t length, float sampleR
 
 AudioBuffer::AudioBuffer(AudioBus& bus)
     : m_sampleRate(bus.sampleRate())
-    , m_length(bus.length())
+    , m_originalLength(bus.length())
 {
     // Copy audio data from the bus to the Float32Arrays we manage.
     unsigned numberOfChannels = bus.numberOfChannels();
     m_channels.reserveCapacity(numberOfChannels);
     for (unsigned i = 0; i < numberOfChannels; ++i) {
-        auto channelDataArray = Float32Array::tryCreate(m_length);
+        auto channelDataArray = Float32Array::tryCreate(m_originalLength);
         if (!channelDataArray) {
             invalidate();
             break;
         }
 
-        channelDataArray->setNeuterable(false);
-        channelDataArray->setRange(bus.channel(i)->data(), m_length, 0);
+        channelDataArray->setRange(bus.channel(i)->data(), m_originalLength, 0);
         m_channels.append(WTFMove(channelDataArray));
     }
     m_channelWrappers.resize(m_channels.size());
@@ -124,7 +125,7 @@ AudioBuffer::AudioBuffer(AudioBus& bus)
 void AudioBuffer::invalidate()
 {
     releaseMemory();
-    m_length = 0;
+    m_originalLength = 0;
 }
 
 void AudioBuffer::releaseMemory()
@@ -159,11 +160,13 @@ void AudioBuffer::visitChannelWrappers(JSC::SlotVisitor& visitor)
         channelWrapper.visit(visitor);
 }
 
-Float32Array* AudioBuffer::channelData(unsigned channelIndex)
+RefPtr<Float32Array> AudioBuffer::channelData(unsigned channelIndex)
 {
     if (channelIndex >= m_channels.size())
         return nullptr;
-    return m_channels[channelIndex].get();
+    if (hasDetachedChannelBuffer())
+        return Float32Array::create(0);
+    return m_channels[channelIndex].copyRef();
 }
 
 ExceptionOr<void> AudioBuffer::copyFromChannel(Ref<Float32Array>&& destination, unsigned channelNumber, unsigned bufferOffset)
@@ -225,7 +228,7 @@ ExceptionOr<void> AudioBuffer::copyToChannel(Ref<Float32Array>&& source, unsigne
 void AudioBuffer::zero()
 {
     for (auto& channel : m_channels)
-        channel->zeroRange(0, length());
+        channel->zeroFill();
 }
 
 size_t AudioBuffer::memoryCost() const
@@ -240,6 +243,15 @@ size_t AudioBuffer::memoryCost() const
     for (auto& channel : m_channels)
         cost += channel->byteLength();
     return cost;
+}
+
+bool AudioBuffer::hasDetachedChannelBuffer() const
+{
+    for (auto& channel : m_channels) {
+        if (channel->isNeutered())
+            return true;
+    }
+    return false;
 }
 
 } // namespace WebCore

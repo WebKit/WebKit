@@ -35,8 +35,8 @@
     Exposed=Window
 ] interface AudioBuffer {
     [EnabledBySetting=ModernUnprefixedWebAudio] constructor(AudioBufferOptions options);
-    readonly attribute unsigned long length; // in sample-frames
-    readonly attribute double duration; // in seconds
+    [ImplementedAs=originalLength] readonly attribute unsigned long length; // in sample-frames
+    [ImplementedAs=originalDuration] readonly attribute double duration; // in seconds
     readonly attribute float sampleRate; // in sample-frames per second
     readonly attribute unsigned long numberOfChannels;
 

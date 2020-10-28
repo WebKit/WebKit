@@ -1,3 +1,14 @@
+2020-10-28  Chris Dumez  <cdumez@apple.com>
+
+        AudioBuffer channels should be neuterable / detachable
+        https://bugs.webkit.org/show_bug.cgi?id=218286
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline WPT test that is now passing. This test is also passing in Firefox. It is crashing in Blink.
+
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/transferred-buffer-output-expected.txt:
+
 2020-10-27  Chris Dumez  <cdumez@apple.com>
 
         AudioBuffer.getChannelData(x) should keep returning the same JS wrapper for a given channel

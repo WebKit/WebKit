@@ -130,9 +130,6 @@ ExceptionOr<void> ConvolverNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
     if (!isChannelCountGood)
         return Exception { NotSupportedError, "Buffer should have 1, 2 or 4 channels"_s };
 
-    if (!bufferLength)
-        return Exception { NotSupportedError, "Buffer length cannot be 0"_s };
-
     // Wrap the AudioBuffer by an AudioBus. It's an efficient pointer set and not a memcpy().
     // This memory is simply used in the Reverb constructor and no reference to it is kept for later use in that class.
     auto bufferBus = AudioBus::create(numberOfChannels, bufferLength, false);

@@ -1,3 +1,19 @@
+2020-10-28  Chris Dumez  <cdumez@apple.com>
+
+        AudioBuffer channels should be neuterable / detachable
+        https://bugs.webkit.org/show_bug.cgi?id=218286
+
+        Reviewed by Eric Carlson.
+
+        * webaudio/audiobuffer-neuter-expected.txt:
+        * webaudio/audiobuffer-neuter.html:
+        Extend layout test coverage. I have verified that this new version of the test is fully passing in
+        Gecko. In Blink, the initial checks all pass but it then crashes during rendering.
+
+        * webaudio/resources/audio-testing.js:
+        (createConstantBuffer):
+        Improve createConstantBuffer() so that it can construct buffers with multiple channels.
+
 2020-10-28  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Multi-channel (>2) support for the AudioFileReader
