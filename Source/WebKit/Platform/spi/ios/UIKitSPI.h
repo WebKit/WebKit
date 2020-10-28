@@ -125,11 +125,9 @@
 #import <UIKit/UITargetedPreview_Private.h>
 #endif
 
-#if HAVE(UI_CURSOR_INTERACTION)
-#import <UIKit/_UICursorInteraction.h>
-#import <UIKit/_UICursorInteraction_ForWebKitOnly.h>
-#import <UIKit/_UICursorStyle.h>
-#import <UIKit/_UICursorStyle_Private.h>
+#if HAVE(UI_POINTER_INTERACTION)
+#import <UIKit/UIPointerInteraction_ForWebKitOnly.h>
+#import <UIKit/UIPointerStyle_Private.h>
 #endif
 
 #else // USE(APPLE_INTERNAL_SDK)
@@ -1199,27 +1197,17 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @property (readonly) BOOL isLowConfidence;
 @end
 
-@protocol _UICursorInteractionDelegate
+@interface UIPointerStyle ()
++ (instancetype)_systemPointerStyle;
 @end
 
-@interface _UICursorInteraction : NSObject <UIInteraction>
-- (instancetype)initWithDelegate:(id <_UICursorInteractionDelegate>)delegate;
-- (void)invalidate;
-@property (nonatomic, assign, getter=_pausesCursorUpdatesWhilePanning, setter=_setPausesCursorUpdatesWhilePanning:) BOOL pausesCursorUpdatesWhilePanning;
+@interface UIPointerInteraction ()
+@property (nonatomic, assign, getter=_pausesPointerUpdatesWhilePanning, setter=_setPausesPointerUpdatesWhilePanning:) BOOL pausesPointerUpdatesWhilePanning;
 @end
 
-@interface _UICursorRegion : NSObject <NSCopying>
-+ (instancetype)regionWithIdentifier:(id <NSObject>)identifier rect:(CGRect)rect;
-- (id <NSObject>)identifier;
-@end
-
-@interface _UICursor : NSObject
-+ (instancetype)beamWithPreferredLength:(CGFloat)length axis:(UIAxis)axis;
-+ (instancetype)linkCursor;
-@end
-
-@interface _UICursorStyle : NSObject
-+ (instancetype)styleWithCursor:(_UICursor *)cursor constrainedAxes:(UIAxis)axes;
+@protocol UIPointerInteractionDelegate_ForWebKitOnly <UIPointerInteractionDelegate>
+@optional
+- (void)_pointerInteraction:(UIPointerInteraction *)interaction regionForRequest:(UIPointerRegionRequest *)request defaultRegion:(UIPointerRegion *)defaultRegion completion:(void(^)(UIPointerRegion *region))completion;
 @end
 
 #if PLATFORM(WATCHOS)

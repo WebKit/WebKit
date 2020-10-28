@@ -167,11 +167,11 @@
 static NSString * const webkitShowLinkPreviewsPreferenceKey = @"WebKitShowLinkPreviews";
 #endif
 
-#if HAVE(UI_CURSOR_INTERACTION)
-static NSString * const cursorRegionIdentifier = @"WKCursorRegion";
-static NSString * const editableCursorRegionIdentifier = @"WKEditableCursorRegion";
+#if HAVE(UI_POINTER_INTERACTION)
+static NSString * const pointerRegionIdentifier = @"WKPointerRegion";
+static NSString * const editablePointerRegionIdentifier = @"WKEditablePointerRegion";
 
-@interface WKContentView (WKUICursorInteractionDelegate) <_UICursorInteractionDelegate>
+@interface WKContentView (WKUIPointerInteractionDelegate) <UIPointerInteractionDelegate_ForWebKitOnly>
 @end
 #endif
 
@@ -827,8 +827,8 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self setUpDragAndDropInteractions];
 #endif
 
-#if HAVE(UI_CURSOR_INTERACTION)
-    [self setUpCursorInteraction];
+#if HAVE(UI_POINTER_INTERACTION)
+    [self setUpPointerInteraction];
 #endif
 
 #if HAVE(PENCILKIT_TEXT_INPUT)
@@ -994,9 +994,9 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self teardownDragAndDropInteractions];
 #endif
 
-#if HAVE(UI_CURSOR_INTERACTION)
-    [self removeInteraction:_cursorInteraction.get()];
-    _cursorInteraction = nil;
+#if HAVE(UI_POINTER_INTERACTION)
+    [self removeInteraction:_pointerInteraction.get()];
+    _pointerInteraction = nil;
 #endif
 
 #if HAVE(PENCILKIT_TEXT_INPUT)
@@ -8662,52 +8662,52 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 
 #endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
-#if HAVE(UI_CURSOR_INTERACTION)
+#if HAVE(UI_POINTER_INTERACTION)
 
-- (void)setUpCursorInteraction
+- (void)setUpPointerInteraction
 {
-    _cursorInteraction = adoptNS([[_UICursorInteraction alloc] initWithDelegate:self]);
-    [_cursorInteraction _setPausesCursorUpdatesWhilePanning:NO];
+    _pointerInteraction = adoptNS([[UIPointerInteraction alloc] initWithDelegate:self]);
+    [_pointerInteraction _setPausesPointerUpdatesWhilePanning:NO];
 
-    [self addInteraction:_cursorInteraction.get()];
+    [self addInteraction:_pointerInteraction.get()];
 }
 
-- (void)_cursorInteraction:(_UICursorInteraction *)interaction regionForLocation:(CGPoint)location defaultRegion:(_UICursorRegion *)defaultRegion completion:(void(^)(_UICursorRegion *region))completion
+- (void)_pointerInteraction:(UIPointerInteraction *)interaction regionForRequest:(UIPointerRegionRequest *)request defaultRegion:(UIPointerRegion *)defaultRegion completion:(void(^)(UIPointerRegion *region))completion
 {
     WebKit::InteractionInformationRequest interactionInformationRequest;
-    interactionInformationRequest.point = WebCore::roundedIntPoint(location);
+    interactionInformationRequest.point = WebCore::roundedIntPoint(request.location);
     interactionInformationRequest.includeCaretContext = true;
     interactionInformationRequest.includeHasDoubleClickHandler = false;
 
     BOOL didSynchronouslyReplyWithApproximation = false;
     if (![self _currentPositionInformationIsValidForRequest:interactionInformationRequest] && self.webView._editable && !_positionInformation.shouldNotUseIBeamInEditableContent) {
         didSynchronouslyReplyWithApproximation = true;
-        completion([_UICursorRegion regionWithIdentifier:editableCursorRegionIdentifier rect:self.bounds]);
+        completion([UIPointerRegion regionWithRect:self.bounds identifier:editablePointerRegionIdentifier]);
     }
 
     // If we already have an outstanding interaction information request, defer this one until
     // we hear back, so that requests don't pile up if the Web Content process is slow.
-    if (_hasOutstandingCursorInteractionRequest) {
-        _deferredCursorInteractionRequest = std::make_pair(interactionInformationRequest, makeBlockPtr(completion));
+    if (_hasOutstandingPointerInteractionRequest) {
+        _deferredPointerInteractionRequest = std::make_pair(interactionInformationRequest, makeBlockPtr(completion));
         return;
     }
 
-    _hasOutstandingCursorInteractionRequest = YES;
+    _hasOutstandingPointerInteractionRequest = YES;
 
-    __block BlockPtr<void(WebKit::InteractionInformationAtPosition, void(^)(_UICursorRegion *))> replyHandler;
-    replyHandler = ^(WebKit::InteractionInformationAtPosition interactionInformation, void(^completion)(_UICursorRegion *region)) {
-        if (!_deferredCursorInteractionRequest)
-            _hasOutstandingCursorInteractionRequest = NO;
+    __block BlockPtr<void(WebKit::InteractionInformationAtPosition, void(^)(UIPointerRegion *))> replyHandler;
+    replyHandler = ^(WebKit::InteractionInformationAtPosition interactionInformation, void(^completion)(UIPointerRegion *region)) {
+        if (!_deferredPointerInteractionRequest)
+            _hasOutstandingPointerInteractionRequest = NO;
 
         if (didSynchronouslyReplyWithApproximation) {
             [interaction invalidate];
             return;
         }
 
-        completion([self cursorRegionForPositionInformation:interactionInformation point:location]);
+        completion([self pointerRegionForPositionInformation:interactionInformation point:request.location]);
 
-        if (_deferredCursorInteractionRequest) {
-            auto deferredRequest = std::exchange(_deferredCursorInteractionRequest, WTF::nullopt);
+        if (_deferredPointerInteractionRequest) {
+            auto deferredRequest = std::exchange(_deferredPointerInteractionRequest, WTF::nullopt);
             [self doAfterPositionInformationUpdate:^(WebKit::InteractionInformationAtPosition interactionInformation) {
                 replyHandler(interactionInformation, deferredRequest->second.get());
             } forRequest:deferredRequest->first];
@@ -8720,7 +8720,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
     } forRequest:interactionInformationRequest];
 }
 
-- (_UICursorRegion *)cursorRegionForPositionInformation:(WebKit::InteractionInformationAtPosition&)interactionInformation point:(CGPoint)location
+- (UIPointerRegion *)pointerRegionForPositionInformation:(WebKit::InteractionInformationAtPosition&)interactionInformation point:(CGPoint)location
 {
     WebCore::FloatRect expandedLineRect = enclosingIntRect(interactionInformation.lineCaretExtent);
 
@@ -8731,26 +8731,26 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
     if (interactionInformation.cursor) {
         WebCore::Cursor::Type cursorType = interactionInformation.cursor->type();
         if (cursorType == WebCore::Cursor::Hand)
-            return [_UICursorRegion regionWithIdentifier:cursorRegionIdentifier rect:interactionInformation.bounds];
+            return [UIPointerRegion regionWithRect:interactionInformation.bounds identifier:pointerRegionIdentifier];
 
         if (cursorType == WebCore::Cursor::IBeam && expandedLineRect.contains(location))
-            return [_UICursorRegion regionWithIdentifier:cursorRegionIdentifier rect:expandedLineRect];
+            return [UIPointerRegion regionWithRect:expandedLineRect identifier:pointerRegionIdentifier];
     }
 
     if (self.webView._editable) {
         if (expandedLineRect.contains(location))
-            return [_UICursorRegion regionWithIdentifier:cursorRegionIdentifier rect:expandedLineRect];
-        return [_UICursorRegion regionWithIdentifier:editableCursorRegionIdentifier rect:self.bounds];
+            return [UIPointerRegion regionWithRect:expandedLineRect identifier:pointerRegionIdentifier];
+        return [UIPointerRegion regionWithRect:self.bounds identifier:editablePointerRegionIdentifier];
     }
 
     return nil;
 }
 
-- (_UICursorStyle *)cursorInteraction:(_UICursorInteraction *)interaction styleForRegion:(_UICursorRegion *)region modifiers:(UIKeyModifierFlags)modifiers
+- (UIPointerStyle *)pointerInteraction:(UIPointerInteraction *)interaction styleForRegion:(UIPointerRegion *)region
 {
     double scaleFactor = self._contentZoomScale;
 
-    _UICursorStyle *(^iBeamCursor)(void) = ^{
+    UIPointerStyle *(^iBeamCursor)(void) = ^{
         float beamLength = _positionInformation.caretHeight * scaleFactor;
         UIAxis iBeamConstraintAxes = UIAxisVertical;
 
@@ -8759,10 +8759,10 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
             iBeamConstraintAxes = UIAxisNeither;
 
         // If the region is the size of the view, we should not apply any magnetism.
-        if ([region.identifier isEqual:editableCursorRegionIdentifier])
+        if ([region.identifier isEqual:editablePointerRegionIdentifier])
             iBeamConstraintAxes = UIAxisNeither;
 
-        return [_UICursorStyle styleWithCursor:[_UICursor beamWithPreferredLength:beamLength axis:UIAxisVertical] constrainedAxes:iBeamConstraintAxes];
+        return [UIPointerStyle styleWithShape:[UIPointerShape beamWithPreferredLength:beamLength axis:UIAxisVertical] constrainedAxes:iBeamConstraintAxes];
     };
 
     if (self.webView._editable) {
@@ -8771,11 +8771,11 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
         return iBeamCursor();
     }
 
-    if (_positionInformation.cursor && [region.identifier isEqual:cursorRegionIdentifier]) {
+    if (_positionInformation.cursor && [region.identifier isEqual:pointerRegionIdentifier]) {
         WebCore::Cursor::Type cursorType = _positionInformation.cursor->type();
 
         if (cursorType == WebCore::Cursor::Hand)
-            return [_UICursorStyle styleWithCursor:[_UICursor linkCursor] constrainedAxes:UIAxisNeither];
+            return [UIPointerStyle _systemPointerStyle];
 
         if (cursorType == WebCore::Cursor::IBeam && _positionInformation.lineCaretExtent.contains(_positionInformation.request.point))
             return iBeamCursor();
@@ -8785,7 +8785,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
     return nil;
 }
 
-#endif // HAVE(UI_CURSOR_INTERACTION)
+#endif // HAVE(UI_POINTER_INTERACTION)
 
 #if HAVE(PENCILKIT_TEXT_INPUT)
 
