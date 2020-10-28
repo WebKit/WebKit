@@ -13,7 +13,7 @@ function test(element)
     var result = "FAILED";
     if (element.value == element.defaultValue)
        result = "SUCCESS";
-    document.writeln("<br>" + element.id + ": " + result);
+    document.write("<br>" + element.id + ": " + result);
 }
 var noDefaultText = document.getElementById("noDefaultText");
 var hasDefaultText = document.getElementById("hasDefaultText");

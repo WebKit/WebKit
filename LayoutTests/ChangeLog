@@ -1,3 +1,19 @@
+2020-10-27  Zalan Bujtas  <zalan@apple.com>
+
+        Remove unneeded whitespace between content and <br>
+        https://bugs.webkit.org/show_bug.cgi?id=218151
+        <rdar://problem/70662471>
+
+        Reviewed by Antti Koivisto.
+
+        Missed these files in r268958.
+
+        * accessibility/mac/text-marker-sentence-nav.html:
+        * fast/dom/HTMLTextAreaElement/reset-textarea.html:
+        * fast/text/basic/generic-family-reset.html:
+        * platform/mac/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/mac/fast/text/basic/generic-family-reset-expected.txt:
+
 2020-10-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Concurrent display lists] Add alternate versions of existing display list items that only contain inline data
