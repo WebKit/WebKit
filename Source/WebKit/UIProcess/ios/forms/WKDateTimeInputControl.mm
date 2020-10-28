@@ -49,7 +49,7 @@
 > {
     RetainPtr<UIDatePicker> _datePicker;
     NSString *_formatString;
-    NSString *_initialValue;
+    RetainPtr<NSString> _initialValue;
     NSTimeInterval _initialValueAsNumber;
     BOOL _shouldRemoveTimeZoneInformation;
     BOOL _isTimeInput;
@@ -383,7 +383,7 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
     } else if (_formatString) {
         // Convert the string value to a date object for the fields where we have a format string.
         RetainPtr<NSDateFormatter> dateFormatter = [self dateFormatterForPicker];
-        NSDate *parsedDate = [dateFormatter dateFromString:[self _sanitizeInputValueForFormatter:_initialValue]];
+        NSDate *parsedDate = [dateFormatter dateFromString:[self _sanitizeInputValueForFormatter:_initialValue.get()]];
         [_datePicker setDate:parsedDate ? parsedDate : [NSDate date]];
     } else {
         // Convert the number value to a date object for the fields affected by timezones.
