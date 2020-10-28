@@ -195,7 +195,7 @@ public:
     {
         ASSERT(call.isFlagSet(Call::Linkable));
         ASSERT(!call.isFlagSet(Call::Near));
-        return CodeLocationCall<tag>(MacroAssembler::getLinkerAddress<tag>(code(), applyOffset(call.m_label)));
+        return CodeLocationCall<tag>(getLinkerAddress<tag>(applyOffset(call.m_label)));
     }
 
     template<PtrTag tag>
@@ -203,44 +203,44 @@ public:
     {
         ASSERT(call.isFlagSet(Call::Linkable));
         ASSERT(call.isFlagSet(Call::Near));
-        return CodeLocationNearCall<tag>(MacroAssembler::getLinkerAddress<tag>(code(), applyOffset(call.m_label)),
+        return CodeLocationNearCall<tag>(getLinkerAddress<tag>(applyOffset(call.m_label)),
             call.isFlagSet(Call::Tail) ? NearCallMode::Tail : NearCallMode::Regular);
     }
 
     template<PtrTag tag>
     CodeLocationLabel<tag> locationOf(PatchableJump jump)
     {
-        return CodeLocationLabel<tag>(MacroAssembler::getLinkerAddress<tag>(code(), applyOffset(jump.m_jump.m_label)));
+        return CodeLocationLabel<tag>(getLinkerAddress<tag>(applyOffset(jump.m_jump.m_label)));
     }
 
     template<PtrTag tag>
     CodeLocationLabel<tag> locationOf(Label label)
     {
-        return CodeLocationLabel<tag>(MacroAssembler::getLinkerAddress<tag>(code(), applyOffset(label.m_label)));
+        return CodeLocationLabel<tag>(getLinkerAddress<tag>(applyOffset(label.m_label)));
     }
 
     template<PtrTag tag>
     CodeLocationDataLabelPtr<tag> locationOf(DataLabelPtr label)
     {
-        return CodeLocationDataLabelPtr<tag>(MacroAssembler::getLinkerAddress<tag>(code(), applyOffset(label.m_label)));
+        return CodeLocationDataLabelPtr<tag>(getLinkerAddress<tag>(applyOffset(label.m_label)));
     }
 
     template<PtrTag tag>
     CodeLocationDataLabel32<tag> locationOf(DataLabel32 label)
     {
-        return CodeLocationDataLabel32<tag>(MacroAssembler::getLinkerAddress<tag>(code(), applyOffset(label.m_label)));
+        return CodeLocationDataLabel32<tag>(getLinkerAddress<tag>(applyOffset(label.m_label)));
     }
     
     template<PtrTag tag>
     CodeLocationDataLabelCompact<tag> locationOf(DataLabelCompact label)
     {
-        return CodeLocationDataLabelCompact<tag>(MacroAssembler::getLinkerAddress<tag>(code(), applyOffset(label.m_label)));
+        return CodeLocationDataLabelCompact<tag>(getLinkerAddress<tag>(applyOffset(label.m_label)));
     }
 
     template<PtrTag tag>
     CodeLocationConvertibleLoad<tag> locationOf(ConvertibleLoadLabel label)
     {
-        return CodeLocationConvertibleLoad<tag>(MacroAssembler::getLinkerAddress<tag>(code(), applyOffset(label.m_label)));
+        return CodeLocationConvertibleLoad<tag>(getLinkerAddress<tag>(applyOffset(label.m_label)));
     }
 
     // This method obtains the return address of the call, given as an offset from
@@ -330,6 +330,15 @@ private:
     }
     
     void allocate(MacroAssembler&, JITCompilationEffort);
+
+    template<PtrTag tag, typename T>
+    void* getLinkerAddress(T src)
+    {
+        void *code = this->code();
+        void* address = MacroAssembler::getLinkerAddress<tag>(code, src);
+        RELEASE_ASSERT(code <= untagCodePtr<tag>(address) && untagCodePtr<tag>(address) <= static_cast<char*>(code) + size());
+        return address;
+    }
 
     JS_EXPORT_PRIVATE void linkCode(MacroAssembler&, JITCompilationEffort);
 #if ENABLE(BRANCH_COMPACTION)
