@@ -1,3 +1,16 @@
+2020-10-28  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Null dereference in CompositeEditCommand::cloneParagraphUnderNewElement() due to not checking for top of DOM tree
+        https://bugs.webkit.org/show_bug.cgi?id=218132
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a test to verify that we don't iterate outside the DOM tree while cloning a paragraph.
+        Thanks to Ryosuke Niwa for helping minimize the test and make it more stable.
+
+        * editing/deleting/move-paragraph-crash-expected.txt: Added.
+        * editing/deleting/move-paragraph-crash.html: Added.
+
 2020-10-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r267329): Crash in VisibleSelection::toNormalizedRange()
