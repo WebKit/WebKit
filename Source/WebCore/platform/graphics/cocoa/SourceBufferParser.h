@@ -32,6 +32,10 @@
 #include <JavaScriptCore/Uint8Array.h>
 #include <wtf/RefCounted.h>
 
+namespace WTF {
+class Logger;
+}
+
 namespace WebCore {
 
 class ContentType;
@@ -59,6 +63,9 @@ public:
     virtual bool shouldProvideMediadataForTrackID(uint64_t) = 0;
     virtual void resetParserState() = 0;
     virtual void invalidate() = 0;
+#if !RELEASE_LOG_DISABLED
+    virtual void setLogger(const WTF::Logger&, const void* logIdentifier) = 0;
+#endif
 
     // Will be called on the main thread.
     using InitializationSegment = SourceBufferPrivateClient::InitializationSegment;

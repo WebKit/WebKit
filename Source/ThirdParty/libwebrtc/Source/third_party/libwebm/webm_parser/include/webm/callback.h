@@ -335,6 +335,8 @@ class Callback {
    */
   virtual Status OnSegmentEnd(const ElementMetadata& metadata);
 
+  virtual Status OnElementEnd(const ElementMetadata& metadata);
+
  protected:
   /**
    Calls (and returns the result of) `Reader::Skip()`, skipping (up to) the

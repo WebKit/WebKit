@@ -256,6 +256,14 @@ void SourceBufferParserAVFObjC::invalidate()
     m_parser = nullptr;
 }
 
+#if !RELEASE_LOG_DISABLED
+void SourceBufferParserAVFObjC::setLogger(const Logger& logger, const void* logIdentifier)
+{
+    m_logger = makeRefPtr(logger);
+    m_logIdentifier = logIdentifier;
+}
+#endif
+
 void SourceBufferParserAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
 {
     callOnMainThread([this, strongThis = makeRef(*this), asset = retainPtr(asset)] {
