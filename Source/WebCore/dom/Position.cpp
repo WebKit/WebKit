@@ -751,13 +751,13 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
 
             unsigned textOffset = currentPosition.offsetInLeafNode();
             for (auto run = firstTextRun; run; run.traverseNextTextRunInTextOrder()) {
-                if (textOffset <= run->localEndOffset()) {
-                    if (textOffset > run->localStartOffset())
+                if (textOffset <= run->end()) {
+                    if (textOffset > run->start())
                         return currentPosition;
                     continue;
                 }
 
-                if (textOffset == run->localEndOffset() + 1 && run->isLastTextRunOnLine() && !run->isLastTextRun())
+                if (textOffset == run->end() + 1 && run->isLastTextRunOnLine() && !run->isLastTextRun())
                     return currentPosition;
             }
         }
@@ -854,16 +854,16 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
 
             unsigned textOffset = currentPosition.offsetInLeafNode();
             for (auto run = firstTextRun; run; run.traverseNextTextRunInTextOrder()) {
-                if (!run->length() && textOffset == run->localStartOffset())
+                if (!run->length() && textOffset == run->start())
                     return currentPosition;
 
-                if (textOffset < run->localEndOffset()) {
-                    if (textOffset >= run->localStartOffset())
+                if (textOffset < run->end()) {
+                    if (textOffset >= run->start())
                         return currentPosition;
                     continue;
                 }
 
-                if (textOffset == run->localEndOffset() && run->isLastTextRunOnLine() && !run->isLastTextRun())
+                if (textOffset == run->end() && run->isLastTextRunOnLine() && !run->isLastTextRun())
                     return currentPosition;
             }
         }

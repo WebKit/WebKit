@@ -55,15 +55,15 @@ public:
     bool dirOverride() const { return false; }
     bool isLineBreak() const { return run().isLineBreak(); }
 
-    unsigned minimumCaretOffset() const { return isText() ? localStartOffset() : 0; }
-    unsigned maximumCaretOffset() const { return isText() ? localEndOffset() : 1; }
+    unsigned minimumCaretOffset() const { return isText() ? start() : 0; }
+    unsigned maximumCaretOffset() const { return isText() ? end() : 1; }
 
     unsigned char bidiLevel() const { return 0; }
 
     bool hasHyphen() const { return run().textContent()->needsHyphen(); }
     StringView text() const { return run().textContent()->content(); }
-    unsigned localStartOffset() const { return run().textContent()->start(); }
-    unsigned localEndOffset() const { return run().textContent()->end(); }
+    unsigned start() const { return run().textContent()->start(); }
+    unsigned end() const { return run().textContent()->end(); }
     unsigned length() const { return run().textContent()->length(); }
 
     inline unsigned offsetForPosition(float x) const

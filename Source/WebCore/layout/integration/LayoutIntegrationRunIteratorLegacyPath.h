@@ -55,8 +55,8 @@ public:
 
     bool hasHyphen() const { return inlineTextBox()->hasHyphen(); }
     StringView text() const { return StringView(inlineTextBox()->renderer().text()).substring(inlineTextBox()->start(), inlineTextBox()->len()); }
-    unsigned localStartOffset() const { return inlineTextBox()->start(); }
-    unsigned localEndOffset() const { return inlineTextBox()->end(); }
+    unsigned start() const { return inlineTextBox()->start(); }
+    unsigned end() const { return inlineTextBox()->end(); }
     unsigned length() const { return inlineTextBox()->len(); }
 
     inline unsigned offsetForPosition(float x) const { return inlineTextBox()->offsetForPosition(x); }

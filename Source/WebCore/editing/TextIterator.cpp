@@ -613,7 +613,7 @@ void TextIterator::handleTextRun()
     unsigned start = m_offset;
     unsigned end = (&textNode == m_endContainer) ? static_cast<unsigned>(m_endOffset) : UINT_MAX;
     while (m_textRun) {
-        unsigned textRunStart = m_textRun->localStartOffset();
+        unsigned textRunStart = m_textRun->start();
         unsigned runStart = std::max(textRunStart, start);
 
         // Check for collapsed space at the start of this run.
@@ -666,7 +666,7 @@ void TextIterator::handleTextRun()
                 return;
 
             // Advance and return
-            unsigned nextRunStart = nextTextRun ? nextTextRun->localStartOffset() : rendererText.length();
+            unsigned nextRunStart = nextTextRun ? nextTextRun->start() : rendererText.length();
             if (nextRunStart > runEnd)
                 m_lastTextNodeEndedWithCollapsedSpace = true; // collapsed space between runs or at the end
             m_textRun = nextTextRun;

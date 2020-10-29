@@ -515,7 +515,7 @@ static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const La
     ASSERT(offset >= 0);
 
     if (offset && offset < run->length())
-        return createVisiblePositionForBox(run, run->localStartOffset() + offset, shouldAffinityBeDownstream);
+        return createVisiblePositionForBox(run, run->start() + offset, shouldAffinityBeDownstream);
 
     bool positionIsAtStartOfBox = !offset;
     if (positionIsAtStartOfBox == run->isLeftToRightDirection()) {
@@ -616,7 +616,7 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, const Ren
                 if (pointLineDirection != run->logicalLeft() && point.x() < run->rect().x() + run->logicalWidth()) {
                     int half = run->rect().x() + run->logicalWidth() / 2;
                     auto affinity = point.x() < half ? Affinity::Downstream : Affinity::Upstream;
-                    return createVisiblePosition(run->offsetForPosition(pointLineDirection) + run->localStartOffset(), affinity);
+                    return createVisiblePosition(run->offsetForPosition(pointLineDirection) + run->start(), affinity);
                 }
 #endif
                 if (lineDirectionPointFitsInBox(pointLineDirection, run, shouldAffinityBeDownstream))
@@ -629,7 +629,7 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, const Ren
     if (lastRun) {
         ShouldAffinityBeDownstream shouldAffinityBeDownstream;
         lineDirectionPointFitsInBox(pointLineDirection, lastRun, shouldAffinityBeDownstream);
-        return createVisiblePositionAfterAdjustingOffsetForBiDi(lastRun, lastRun->offsetForPosition(pointLineDirection) + lastRun->localStartOffset(), shouldAffinityBeDownstream);
+        return createVisiblePositionAfterAdjustingOffsetForBiDi(lastRun, lastRun->offsetForPosition(pointLineDirection) + lastRun->start(), shouldAffinityBeDownstream);
     }
     return createVisiblePosition(0, Affinity::Downstream);
 }
@@ -1615,9 +1615,9 @@ int RenderText::caretMinOffset() const
     if (!first)
         return 0;
 
-    int minOffset = first->localStartOffset();
+    int minOffset = first->start();
     for (auto box = first; ++box;)
-        minOffset = std::min<int>(minOffset, box->localStartOffset());
+        minOffset = std::min<int>(minOffset, box->start());
 
     return minOffset;
 }
@@ -1628,9 +1628,9 @@ int RenderText::caretMaxOffset() const
     if (!first)
         return text().length();
 
-    int maxOffset = first->localEndOffset();
+    int maxOffset = first->end();
     for (auto box = first; ++box;)
-        maxOffset = std::max<int>(maxOffset, box->localEndOffset());
+        maxOffset = std::max<int>(maxOffset, box->end());
 
     return maxOffset;
 }
@@ -1639,7 +1639,7 @@ unsigned RenderText::countRenderedCharacterOffsetsUntil(unsigned offset) const
 {
     unsigned result = 0;
     for (auto& run : LayoutIntegration::textRunsFor(*this)) {
-        auto start = run.localStartOffset();
+        auto start = run.start();
         auto length = run.length();
         if (offset < start)
             return result;
@@ -1656,10 +1656,10 @@ enum class OffsetType { Character, Caret };
 static bool containsOffset(const RenderText& text, unsigned offset, OffsetType type)
 {
     for (auto box = LayoutIntegration::firstTextRunInTextOrderFor(text); box; box.traverseNextTextRunInTextOrder()) {
-        auto start = box->localStartOffset();
+        auto start = box->start();
         if (offset < start)
             return false;
-        unsigned end = box->localEndOffset();
+        unsigned end = box->end();
         if (offset >= start && offset <= end) {
             if (offset == end && (type == OffsetType::Character || box->isLineBreak()))
                 continue;

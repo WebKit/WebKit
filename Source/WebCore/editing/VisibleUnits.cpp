@@ -811,7 +811,7 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
         }
     }
 
-    return is<Text>(*startNode) ? Position(downcast<Text>(startNode), downcast<LayoutIntegration::PathTextRun>(*startRun).localStartOffset())
+    return is<Text>(*startNode) ? Position(downcast<Text>(startNode), downcast<LayoutIntegration::PathTextRun>(*startRun).start())
         : positionBeforeNode(startNode);
 }
 
@@ -891,7 +891,7 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
         pos = positionBeforeNode(endNode);
     else if (is<LayoutIntegration::PathTextRun>(*endRun) && is<Text>(*endNode)) {
         auto& endTextRun = downcast<LayoutIntegration::PathTextRun>(*endRun);
-        int endOffset = endTextRun.localStartOffset();
+        int endOffset = endTextRun.start();
         if (!endTextRun.isLineBreak())
             endOffset += endTextRun.length();
         pos = Position(downcast<Text>(endNode), endOffset);

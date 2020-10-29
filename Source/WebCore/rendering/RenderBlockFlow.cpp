@@ -3318,7 +3318,7 @@ static Position positionForRun(const RenderBlockFlow& flow, LayoutIntegration::R
         return makeDeprecatedLegacyPosition(run->renderer().nonPseudoNode(), start ? run->renderer().caretMinOffset() : run->renderer().caretMaxOffset());
 
     auto& textRun = downcast<LayoutIntegration::TextRunIterator>(run);
-    return makeDeprecatedLegacyPosition(textRun->renderer().nonPseudoNode(), start ? textRun->localStartOffset() : textRun->localEndOffset());
+    return makeDeprecatedLegacyPosition(textRun->renderer().nonPseudoNode(), start ? textRun->start() : textRun->end());
 }
 
 RenderText* RenderBlockFlow::findClosestTextAtAbsolutePoint(const FloatPoint& point)

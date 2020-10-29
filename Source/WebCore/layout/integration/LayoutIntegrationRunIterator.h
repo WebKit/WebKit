@@ -103,9 +103,8 @@ public:
     bool hasHyphen() const;
     StringView text() const;
 
-    // These offsets are relative to the text renderer (not flow).
-    unsigned localStartOffset() const;
-    unsigned localEndOffset() const;
+    unsigned start() const;
+    unsigned end() const;
     unsigned length() const;
 
     unsigned offsetForPosition(float x) const;
@@ -298,17 +297,17 @@ inline StringView PathTextRun::text() const
     });
 }
 
-inline unsigned PathTextRun::localStartOffset() const
+inline unsigned PathTextRun::start() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
-        return path.localStartOffset();
+        return path.start();
     });
 }
 
-inline unsigned PathTextRun::localEndOffset() const
+inline unsigned PathTextRun::end() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
-        return path.localEndOffset();
+        return path.end();
     });
 }
 
