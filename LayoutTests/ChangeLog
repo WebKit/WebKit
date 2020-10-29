@@ -1,3 +1,15 @@
+2020-10-29  Karl Rackler  <rackler@apple.com>
+
+        REGRESSION (r269070): [ Big Sur ] editing/input/reveal-caret-of-multiline-input.html is a constant failure
+        rdar://70819245
+        Re-baseline for Big Sur.
+
+        Unreviewed test gardening.
+
+        * platform/mac-bigsur/editing/input/reveal-caret-of-multiline-input-expected.txt:
+        * platform/mac-catalina/editing/Input/reveal-caret-of-multiline-input-expected.txt: Copied from LayoutTests/platform/mac-bigsur/editing/input/reveal-caret-of-multiline-input-expected.txt.
+        * platform/mac-mojave/editing/input/reveal-caret-of-multiline-input-expected.txt: Copied from LayoutTests/platform/mac-bigsur/editing/input/reveal-caret-of-multiline-input-expected.txt.
+
 2020-10-29  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening scroll failure
