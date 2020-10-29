@@ -99,6 +99,8 @@ public:
     void appendQueuedEntry(Ref<IntersectionObserverEntry>&&);
     void notify();
 
+    IntersectionObserverCallback* callbackConcurrently() { return m_callback.get(); }
+
 private:
     IntersectionObserver(Document&, Ref<IntersectionObserverCallback>&&, ContainerNode* root, LengthBox&& parsedRootMargin, Vector<double>&& thresholds);
 

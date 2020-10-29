@@ -1,3 +1,19 @@
+2020-10-29  Cathie Chen  <cathiechen@igalia.com>
+
+        IntersectionObserverCallback leak
+        https://bugs.webkit.org/show_bug.cgi?id=218225
+
+        Reviewed by Ryosuke Niwa.
+
+        In intersection-observer-callback-after-gc.html, the callbacks with observed targets deleted should stay alive as long as observers are alive.
+        In intersection-observer-callback-leak.html, use `internals.numberOfLiveNodes` to check that the objects inside JSIntersectionObserverCallback
+        can be garbage collected.
+
+        * intersection-observer/intersection-observer-callback-after-gc-expected.txt: Added.
+        * intersection-observer/intersection-observer-callback-after-gc.html: Added.
+        * intersection-observer/intersection-observer-callback-leak-expected.txt: Added.
+        * intersection-observer/intersection-observer-callback-leak.html: Added.
+
 2020-10-28  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         Null dereference in CompositeEditCommand::cloneParagraphUnderNewElement() due to not checking for top of DOM tree
