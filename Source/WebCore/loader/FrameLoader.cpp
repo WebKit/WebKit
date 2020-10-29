@@ -3832,6 +3832,9 @@ void FrameLoader::loadItem(HistoryItem& item, HistoryItem* fromItem, FrameLoadTy
     HistoryItem* currentItem = history().currentItem();
     bool sameDocumentNavigation = currentItem && item.shouldDoSameDocumentNavigationTo(*currentItem);
 
+    // If we're continuing this history navigation in a new process, then doing a same document navigation never makes sense.
+    ASSERT(!sameDocumentNavigation || shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::No);
+
     if (sameDocumentNavigation)
         loadSameDocumentItem(item);
     else

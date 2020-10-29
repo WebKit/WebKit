@@ -1,3 +1,55 @@
+2020-10-29  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON): Back/forward navigation may hang 
+        https://bugs.webkit.org/show_bug.cgi?id=216611
+        <rdar://problem/68992714>
+
+        Reviewed by Geoffrey Garen.
+
+        The scenario was as follows:
+        1. Load A in Process P1
+        2. Load A#foo in Process P1 (fragment navigation)
+        3. Load B in Process P2
+        4. history.go(-2) to load A again in P1
+        5. history.go(2) to load B again in P2
+        6. history.back() to go back to A#foo in P1
+        -> Hang
+
+        We doing the process swap at step 3, we would suspend the page containing A#foo
+        in P1 when doing the new load in P2. When process swapping again at step 4,
+        we would go back to process P1 (because it is same origin) but we did not have
+        any suspended WebPage for A so we would create a new WebPage (with a new
+        WebPageIdentifier). The reason we do this is to allow the suspended WebPage
+        for A#foo to remain in process, as we may want it for another back/forward
+        navigation later.
+
+        The issue was that when constructing the new WebPage in P1 for A at step 4,
+        we would restore all history items from the WebPageProxy's BackForwardList
+        and overwrite any existing HistoryItems with the same IDs in the WebProcess.
+        This meant that WebKit layer would construct new HistoryItems for
+        HistoryItems that already existing and are used by the Suspended WebPage
+        containing A#foo.
+
+        Later on, at step 6, when trying to go back A#foo in P1, we would ask
+        the Suspended WebPage in P1 to load a given HistoryItem. This HistoryItem
+        is supposed to be present in the Page's back/forward list and is supposed
+        to have an associated back/forward cache entry. However, it was not the
+        case here because we ended up with a new HistoryItem instance that was
+        restored from the UIProcess earlier.
+
+        To address the issue, The WebPage constructor no longer overwrites
+        existing HistoryItems. Note that before prior to r231048, the WebPage
+        constructor was NOT overwriting existing HistoryItems so this restores
+        previous behavior. Presumably, we started overwriting to stop hitting
+        the assertion in WebBackForwardListProxy::addItemFromUIProcess() that
+        checked that we either wanted to overwrite or that there was no
+        existing HistoryItem with the given ID. This is no longer an issue
+        since I replaced this assertion with an if-check and an early return.
+
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::addItemFromUIProcess):
+        * WebProcess/WebPage/WebPage.cpp:
+
 2020-10-29  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Make WebContent process talk to the WebAuthn process for WebAuthn requests
