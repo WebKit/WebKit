@@ -193,13 +193,13 @@ void RenderLayoutState::computeLineGridPaginationOrigin(const RenderMultiColumnF
     // as established by the line box.
     // FIXME: Need to handle crazy line-box-contain values that cause the root line box to not be considered. I assume
     // the grid should honor line-box-contain.
-    LayoutUnit gridLineHeight = lineGridBox->lineBottomWithLeading() - lineGridBox->lineTopWithLeading();
+    LayoutUnit gridLineHeight = lineGridBox->lineBoxBottom() - lineGridBox->lineBoxTop();
     if (!gridLineHeight)
         return;
 
     bool isHorizontalWritingMode = m_lineGrid->isHorizontalWritingMode();
     LayoutUnit lineGridBlockOffset = isHorizontalWritingMode ? m_lineGridOffset.height() : m_lineGridOffset.width();
-    LayoutUnit firstLineTopWithLeading = lineGridBlockOffset + lineGridBox->lineTopWithLeading();
+    LayoutUnit firstLineTopWithLeading = lineGridBlockOffset + lineGridBox->lineBoxTop();
     LayoutUnit pageLogicalTop = isHorizontalWritingMode ? m_pageOffset.height() : m_pageOffset.width();
     if (pageLogicalTop <= firstLineTopWithLeading)
         return;

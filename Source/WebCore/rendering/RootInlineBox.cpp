@@ -186,8 +186,8 @@ void RootInlineBox::adjustPosition(float dx, float dy)
     LayoutUnit blockDirectionDelta { isHorizontal() ? dy : dx }; // The block direction delta is a LayoutUnit.
     m_lineTop += blockDirectionDelta;
     m_lineBottom += blockDirectionDelta;
-    m_lineTopWithLeading += blockDirectionDelta;
-    m_lineBottomWithLeading += blockDirectionDelta;
+    m_lineBoxTop += blockDirectionDelta;
+    m_lineBoxBottom += blockDirectionDelta;
     if (hasEllipsisBox())
         ellipsisBox()->adjustPosition(dx, dy);
 }
@@ -276,9 +276,9 @@ LayoutUnit RootInlineBox::alignBoxesInBlockDirection(LayoutUnit heightOfBlock, G
     
     maxHeight = std::max<LayoutUnit>(0, maxHeight); // FIXME: Is this really necessary?
 
-    LayoutUnit lineTopWithLeading = heightOfBlock;
-    LayoutUnit lineBottomWithLeading = heightOfBlock + maxHeight;
-    setLineTopBottomPositions(lineTop, lineBottom, lineTopWithLeading, lineBottomWithLeading);
+    LayoutUnit lineBoxTop = heightOfBlock;
+    LayoutUnit lineBoxBottom = heightOfBlock + maxHeight;
+    setLineTopBottomPositions(lineTop, lineBottom, lineBoxTop, lineBoxBottom);
     setPaginatedLineWidth(blockFlow().availableLogicalWidthForContent(heightOfBlock));
 
     LayoutUnit annotationsAdjustment = beforeAnnotationsAdjustment();
@@ -355,14 +355,14 @@ LayoutUnit RootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
     // as established by the line box.
     // FIXME: Need to handle crazy line-box-contain values that cause the root line box to not be considered. I assume
     // the grid should honor line-box-contain.
-    LayoutUnit gridLineHeight = lineGridBox->lineBottomWithLeading() - lineGridBox->lineTopWithLeading();
+    LayoutUnit gridLineHeight = lineGridBox->lineBoxBottom() - lineGridBox->lineBoxTop();
     if (!gridLineHeight)
         return 0;
 
     LayoutUnit lineGridFontAscent = lineGrid->style().fontMetrics().ascent(baselineType());
     LayoutUnit lineGridFontHeight { lineGridBox->logicalHeight() };
     LayoutUnit firstTextTop { lineGridBlockOffset + lineGridBox->logicalTop() };
-    LayoutUnit firstLineTopWithLeading = lineGridBlockOffset + lineGridBox->lineTopWithLeading();
+    LayoutUnit firstLineTopWithLeading = lineGridBlockOffset + lineGridBox->lineBoxTop();
     LayoutUnit firstBaselinePosition = firstTextTop + lineGridFontAscent;
 
     LayoutUnit currentTextTop { blockOffset + logicalTop() + delta };
@@ -375,7 +375,7 @@ LayoutUnit RootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
     // FIXME: If the grid is an ancestor of the pagination establisher, then this is incorrect.
     LayoutUnit pageLogicalTop;
     if (layoutState->isPaginated() && layoutState->pageLogicalHeight()) {
-        pageLogicalTop = blockFlow().pageLogicalTopForOffset(lineTopWithLeading() + delta);
+        pageLogicalTop = blockFlow().pageLogicalTopForOffset(lineBoxTop() + delta);
         if (pageLogicalTop > firstLineTopWithLeading)
             firstTextTop = pageLogicalTop + lineGridBox->logicalTop() - lineGrid->borderAndPaddingBefore() + lineGridPaginationOrigin;
     }
@@ -412,12 +412,12 @@ LayoutUnit RootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
         return result;
     
     // We may end up shifted to a new page. We need to do a re-snap when that happens.
-    LayoutUnit newPageLogicalTop = blockFlow().pageLogicalTopForOffset(lineBottomWithLeading() + result);
+    LayoutUnit newPageLogicalTop = blockFlow().pageLogicalTopForOffset(lineBoxBottom() + result);
     if (newPageLogicalTop == pageLogicalTop)
         return result;
     
     // Put ourselves at the top of the next page to force a snap onto the new grid established by that page.
-    return lineSnapAdjustment(newPageLogicalTop - (blockOffset + lineTopWithLeading()));
+    return lineSnapAdjustment(newPageLogicalTop - (blockOffset + lineBoxTop()));
 }
 
 GapRects RootInlineBox::lineSelectionGap(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
@@ -1112,7 +1112,7 @@ void RootInlineBox::outputLineBox(WTF::TextStream& stream, bool mark, int depth)
     int printedCharacters = 0;
     while (++printedCharacters <= depth * 2)
         stream << " ";
-    stream << "Line: (top: " << lineTop() << " bottom: " << lineBottom() << ") with leading (top: " << lineTopWithLeading() << " bottom: " << lineBottomWithLeading() << ")";
+    stream << "Line: (top: " << lineTop() << " bottom: " << lineBottom() << ") with leading (top: " << lineBoxTop() << " bottom: " << lineBoxBottom() << ")";
     stream.nextLine();
     InlineBox::outputLineBox(stream, mark, depth);
 }

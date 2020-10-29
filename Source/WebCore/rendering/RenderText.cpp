@@ -357,9 +357,9 @@ void RenderText::collectSelectionRects(Vector<SelectionRect>& rects, unsigned st
 
         if (box->root().isFirstAfterPageBreak()) {
             if (box->isHorizontal())
-                rect.shiftYEdgeTo(box->root().lineTopWithLeading());
+                rect.shiftYEdgeTo(box->root().lineBoxTop());
             else
-                rect.shiftXEdgeTo(box->root().lineTopWithLeading());
+                rect.shiftXEdgeTo(box->root().lineBoxTop());
         }
 
         RenderBlock* containingBlock = this->containingBlock();

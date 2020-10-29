@@ -55,8 +55,8 @@ public:
     LayoutUnit selectionTop() const { return top(); }
     LayoutUnit selectionTopForHitTesting() const { return top(); }
     LayoutUnit selectionBottom() const { return bottom(); }
-    LayoutUnit topWithLeading() const { return top(); }
-    LayoutUnit bottomWithLeading() const { return bottom(); }
+    LayoutUnit lineBoxTop() const { return top(); }
+    LayoutUnit lineBoxBottom() const { return bottom(); }
 
     float y() const { return top(); }
     float logicalHeight() const { return line().rect().height(); }

@@ -55,8 +55,8 @@ public:
     LayoutUnit selectionTop() const;
     LayoutUnit selectionTopForHitTesting() const;
     LayoutUnit selectionBottom() const;
-    LayoutUnit topWithLeading() const;
-    LayoutUnit bottomWithLeading() const;
+    LayoutUnit lineBoxTop() const;
+    LayoutUnit lineBoxBottom() const;
 
     float y() const;
     float logicalHeight() const;
@@ -156,17 +156,17 @@ inline LayoutUnit PathLine::selectionBottom() const
     });
 }
 
-inline LayoutUnit PathLine::topWithLeading() const
+inline LayoutUnit PathLine::lineBoxTop() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.topWithLeading();
+        return path.lineBoxTop();
     });
 }
 
-inline LayoutUnit PathLine::bottomWithLeading() const
+inline LayoutUnit PathLine::lineBoxBottom() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.bottomWithLeading();
+        return path.lineBoxBottom();
     });
 }
 

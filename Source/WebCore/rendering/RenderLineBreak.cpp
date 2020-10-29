@@ -212,9 +212,9 @@ void RenderLineBreak::collectSelectionRects(Vector<SelectionRect>& rects, unsign
     LayoutRect rect = rootBox.computeCaretRect(box->logicalLeft(), 0, nullptr);
     if (rootBox.isFirstAfterPageBreak()) {
         if (box->isHorizontal())
-            rect.shiftYEdgeTo(rootBox.lineTopWithLeading());
+            rect.shiftYEdgeTo(rootBox.lineBoxTop());
         else
-            rect.shiftXEdgeTo(rootBox.lineTopWithLeading());
+            rect.shiftXEdgeTo(rootBox.lineBoxTop());
     }
 
     auto* containingBlock = containingBlockForObjectInFlow();

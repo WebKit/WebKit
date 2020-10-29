@@ -1498,7 +1498,7 @@ void ComplexLineLayout::layoutRunsAndFloatsInRange(LineLayoutState& layoutState,
                         continue;
                     }
 
-                    m_flow.setLogicalHeight(lineBox->lineBottomWithLeading());
+                    m_flow.setLogicalHeight(lineBox->lineBoxBottom());
                 }
                     
                 if (paginated) {
@@ -1597,7 +1597,7 @@ void ComplexLineLayout::layoutRunsAndFloatsInRange(LineLayoutState& layoutState,
 
             // We now want to break at this line. Remember for next layout and trigger relayout.
             m_flow.setBreakAtLineToAvoidWidow(lineCountUntil(lineBox));
-            m_flow.markLinesDirtyInBlockRange(lastRootBox()->lineBottomWithLeading(), lineBox->lineBottomWithLeading(), lineBox);
+            m_flow.markLinesDirtyInBlockRange(lastRootBox()->lineBoxBottom(), lineBox->lineBoxBottom(), lineBox);
         }
     }
     m_flow.clearDidBreakAtLineToAvoidWidow();
@@ -1649,7 +1649,7 @@ void ComplexLineLayout::linkToEndLineIfNeeded(LineLayoutState& layoutState)
                     updateFragmentForLine(line);
                 reattachCleanLineFloats(*line, delta, line == firstCleanLine);
             }
-            m_flow.setLogicalHeight(lastRootBox()->lineBottomWithLeading());
+            m_flow.setLogicalHeight(lastRootBox()->lineBoxBottom());
         } else {
             // Delete all the remaining lines.
             deleteLineRange(layoutState, layoutState.endLine());
@@ -1834,7 +1834,7 @@ void ComplexLineLayout::checkFloatInCleanLine(RootInlineBox& cleanLine, RenderBo
         : std::max(originalFloatRect.width(), newSize.width());
     floatHeight = std::min(floatHeight, LayoutUnit::max() - floatTop);
     cleanLine.markDirty();
-    m_flow.markLinesDirtyInBlockRange(cleanLine.lineBottomWithLeading(), floatTop + floatHeight, &cleanLine);
+    m_flow.markLinesDirtyInBlockRange(cleanLine.lineBoxBottom(), floatTop + floatHeight, &cleanLine);
     LayoutRect newFloatRect = originalFloatRect;
     newFloatRect.setSize(newSize);
     matchingFloatWithRect.adjustRect(newFloatRect);
@@ -1961,7 +1961,7 @@ RootInlineBox* ComplexLineLayout::determineStartPosition(LineLayoutState& layout
     layoutState.lineInfo().setPreviousLineBrokeCleanly(!lastLine || lastLine->endsWithBreak());
 
     if (lastLine) {
-        m_flow.setLogicalHeight(lastLine->lineBottomWithLeading());
+        m_flow.setLogicalHeight(lastLine->lineBoxBottom());
         InlineIterator iter = InlineIterator(&m_flow, lastLine->lineBreakObj(), lastLine->lineBreakPos());
         resolver.setPosition(iter, numberOfIsolateAncestors(iter));
         resolver.setStatus(lastLine->lineBreakBidiStatus());
@@ -2021,7 +2021,7 @@ void ComplexLineLayout::determineEndPosition(LineLayoutState& layoutState, RootI
     RootInlineBox* previousLine = lastLine->prevRootBox();
     cleanLineStart = InlineIterator(&m_flow, previousLine->lineBreakObj(), previousLine->lineBreakPos());
     cleanLineBidiStatus = previousLine->lineBreakBidiStatus();
-    layoutState.setEndLineLogicalTop(previousLine->lineBottomWithLeading());
+    layoutState.setEndLineLogicalTop(previousLine->lineBoxBottom());
 
     for (RootInlineBox* line = lastLine; line; line = line->nextRootBox()) {
         // Disconnect all line boxes from their render objects while preserving their connections to one another.
@@ -2063,7 +2063,7 @@ bool ComplexLineLayout::checkPaginationAndFloatsAtEndLine(LineLayoutState& layou
     while (RootInlineBox* nextLine = lastLine->nextRootBox())
         lastLine = nextLine;
 
-    LayoutUnit logicalBottom = lastLine->lineBottomWithLeading() + absoluteValue(lineDelta);
+    LayoutUnit logicalBottom = lastLine->lineBoxBottom() + absoluteValue(lineDelta);
 
     const FloatingObjectSet& floatingObjectSet = m_flow.floatingObjects()->set();
     auto end = floatingObjectSet.end();
@@ -2081,7 +2081,7 @@ bool ComplexLineLayout::lineWidthForPaginatedLineChanged(RootInlineBox* rootBox,
     if (!fragmentedFlow)
         return false;
 
-    RenderFragmentContainer* currentFragment = m_flow.fragmentAtBlockOffset(rootBox->lineTopWithLeading() + lineDelta);
+    RenderFragmentContainer* currentFragment = m_flow.fragmentAtBlockOffset(rootBox->lineBoxTop() + lineDelta);
     // Just bail if the fragment didn't change.
     if (rootBox->containingFragment() == currentFragment)
         return false;
@@ -2111,7 +2111,7 @@ bool ComplexLineLayout::matchedEndLine(LineLayoutState& layoutState, const Inlin
             RootInlineBox* result = line->nextRootBox();
             layoutState.setEndLine(result);
             if (result) {
-                layoutState.setEndLineLogicalTop(line->lineBottomWithLeading());
+                layoutState.setEndLineLogicalTop(line->lineBoxBottom());
                 matched = checkPaginationAndFloatsAtEndLine(layoutState);
             }
 
@@ -2299,7 +2299,7 @@ void ComplexLineLayout::updateFragmentForLine(RootInlineBox* lineBox) const
     if (!m_flow.hasFragmentRangeInFragmentedFlow())
         lineBox->clearContainingFragment();
     else {
-        if (auto containingFragment = m_flow.fragmentAtBlockOffset(lineBox->lineTopWithLeading()))
+        if (auto containingFragment = m_flow.fragmentAtBlockOffset(lineBox->lineBoxTop()))
             lineBox->setContainingFragment(*containingFragment);
         else
             lineBox->clearContainingFragment();

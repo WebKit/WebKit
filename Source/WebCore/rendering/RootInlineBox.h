@@ -54,8 +54,8 @@ public:
     LayoutUnit lineTop() const { return m_lineTop; }
     LayoutUnit lineBottom() const { return m_lineBottom; }
 
-    LayoutUnit lineTopWithLeading() const { return m_lineTopWithLeading; }
-    LayoutUnit lineBottomWithLeading() const { return m_lineBottomWithLeading; }
+    LayoutUnit lineBoxTop() const { return m_lineBoxTop; }
+    LayoutUnit lineBoxBottom() const { return m_lineBoxBottom; }
     
     LayoutUnit paginationStrut() const { return m_paginationStrut; }
     void setPaginationStrut(LayoutUnit strut) { m_paginationStrut = strut; }
@@ -81,12 +81,12 @@ public:
     LayoutUnit selectionHeightAdjustedForPrecedingBlock() const { return std::max<LayoutUnit>(0, selectionBottom() - selectionTopAdjustedForPrecedingBlock()); }
 
     LayoutUnit alignBoxesInBlockDirection(LayoutUnit heightOfBlock, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&);
-    void setLineTopBottomPositions(LayoutUnit top, LayoutUnit bottom, LayoutUnit topWithLeading, LayoutUnit bottomWithLeading)
+    void setLineTopBottomPositions(LayoutUnit top, LayoutUnit bottom, LayoutUnit lineBoxTop, LayoutUnit lineBoxBottom)
     { 
         m_lineTop = top; 
         m_lineBottom = bottom;
-        m_lineTopWithLeading = topWithLeading;
-        m_lineBottomWithLeading = bottomWithLeading;
+        m_lineBoxTop = lineBoxTop;
+        m_lineBoxBottom = lineBoxBottom;
     }
 
     RenderObject* lineBreakObj() const { return m_lineBreakObj.get(); }
@@ -216,8 +216,8 @@ private:
     LayoutUnit m_lineTop;
     LayoutUnit m_lineBottom;
 
-    LayoutUnit m_lineTopWithLeading;
-    LayoutUnit m_lineBottomWithLeading;
+    LayoutUnit m_lineBoxTop;
+    LayoutUnit m_lineBoxBottom;
 
     LayoutUnit m_paginationStrut;
     LayoutUnit m_paginatedLineWidth;
