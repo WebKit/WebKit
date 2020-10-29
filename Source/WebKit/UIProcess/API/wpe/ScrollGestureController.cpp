@@ -26,9 +26,17 @@
 #include "config.h"
 #include "ScrollGestureController.h"
 
+#include "WebKitSettings.h"
 #include <WebCore/Scrollbar.h>
 
 namespace WebKit {
+
+// FIXME: These ought to be either configurable or derived from system
+//        properties, such as screen size and pixel density.
+static constexpr uint32_t scrollCaptureThreshold { 200 };
+static constexpr uint32_t axisLockMovementThreshold { 8 };
+static constexpr uint32_t axisLockActivationThreshold { 15 };
+static constexpr uint32_t axisLockReleaseThreshold { 30 };
 
 bool ScrollGestureController::handleEvent(const struct wpe_input_touch_event_raw* touchPoint)
 {
@@ -39,6 +47,8 @@ bool ScrollGestureController::handleEvent(const struct wpe_input_touch_event_raw
         m_start.y = touchPoint->y;
         m_offset.x = touchPoint->x;
         m_offset.y = touchPoint->y;
+        m_xAxisLockBroken = false;
+        m_yAxisLockBroken = false;
         return false;
     case wpe_input_touch_event_type_motion:
         if (!m_handling) {
@@ -49,7 +59,7 @@ bool ScrollGestureController::handleEvent(const struct wpe_input_touch_event_raw
             int pixelsPerLineStep = WebCore::Scrollbar::pixelsPerLineStep();
             m_handling = std::abs(deltaX) >= pixelsPerLineStep
                 || std::abs(deltaY) >= pixelsPerLineStep
-                || deltaTime >= 200;
+                || deltaTime >= scrollCaptureThreshold;
         }
         if (m_handling) {
 #if WPE_CHECK_VERSION(1, 5, 0)
@@ -58,8 +68,22 @@ bool ScrollGestureController::handleEvent(const struct wpe_input_touch_event_raw
                 touchPoint->time, m_start.x, m_start.y,
                 0, 0, 0,
             };
-            m_axisEvent.x_axis = -(m_offset.x - touchPoint->x);
-            m_axisEvent.y_axis = -(m_offset.y - touchPoint->y);
+
+            auto xOffset = std::abs(touchPoint->x - m_start.x);
+            auto yOffset = std::abs(touchPoint->y - m_start.y);
+
+            if (xOffset >= axisLockReleaseThreshold)
+                m_xAxisLockBroken = true;
+            if (yOffset >= axisLockReleaseThreshold)
+                m_yAxisLockBroken = true;
+
+            if (xOffset >= axisLockMovementThreshold && yOffset >= axisLockMovementThreshold && xOffset < axisLockActivationThreshold && yOffset < axisLockActivationThreshold) {
+                m_xAxisLockBroken = true;
+                m_yAxisLockBroken = true;
+            }
+
+            m_axisEvent.x_axis = (m_xAxisLockBroken || yOffset < axisLockActivationThreshold) ?  -(m_offset.x - touchPoint->x) : 0;
+            m_axisEvent.y_axis = (m_yAxisLockBroken || xOffset < axisLockActivationThreshold) ?  -(m_offset.y - touchPoint->y) : 0;
 #else
             m_axisEvent = {
                 wpe_input_axis_event_type_motion,

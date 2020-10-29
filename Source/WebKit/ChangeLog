@@ -1,3 +1,17 @@
+2020-10-29  Chris Lord  <clord@igalia.com>
+
+        [WPE] Add axis-locking to kinetic scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=209729
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add axis-locking to scroll gestures on WPE, and new WPE-specific
+        settings to control the process.
+
+        * UIProcess/API/wpe/ScrollGestureController.cpp:
+        (WebKit::ScrollGestureController::handleEvent):
+        * UIProcess/API/wpe/ScrollGestureController.h:
+
 2020-10-29  Youenn Fablet  <youenn@apple.com>
 
         Improve LibWebRTCSocketClient logging

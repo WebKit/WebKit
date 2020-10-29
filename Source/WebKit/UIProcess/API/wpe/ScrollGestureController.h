@@ -68,6 +68,9 @@ private:
     struct wpe_input_axis_event m_axisEvent;
 #endif
     WebWheelEvent::Phase m_phase { WebWheelEvent::Phase::PhaseNone };
+
+    bool m_xAxisLockBroken { false };
+    bool m_yAxisLockBroken { false };
 };
 
 } // namespace WebKit
