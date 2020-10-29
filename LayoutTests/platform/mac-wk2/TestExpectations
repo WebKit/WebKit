@@ -1329,3 +1329,5 @@ webkit.org/b/217938 [ Mojave+ ] http/wpt/service-workers/fetchEvent.https.html [
 webkit.org/b/217938 [ Mojave+ ] http/wpt/service-workers/header-filtering.https.html [ Pass Failure ]
 webkit.org/b/217938 [ Mojave+ ] http/wpt/service-workers/mac/throttleable.https.html [ Pass Failure ]
 webkit.org/b/217938 [ Mojave+ ] http/wpt/service-workers/online.https.html [ Pass Failure ]
+
+webkit.org/b/218341 inspector/dom-debugger/attribute-modified-style.html [ Pass Timeout ]
