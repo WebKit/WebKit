@@ -44,7 +44,10 @@ AudioOutputUnitAdaptor::~AudioOutputUnitAdaptor()
 
 OSStatus AudioOutputUnitAdaptor::start()
 {
-    return AudioOutputUnitStart(m_outputUnit);
+    auto result = AudioOutputUnitStart(m_outputUnit);
+    if (result != noErr)
+        WTFLogAlways("ERROR: AudioOutputUnitStart() call failed with error code: %ld", static_cast<long>(result));
+    return result;
 }
 
 OSStatus AudioOutputUnitAdaptor::stop()

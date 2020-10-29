@@ -152,6 +152,8 @@ bool MediaSessionManageriOS::sessionWillBeginPlayback(PlatformMediaSession& sess
     session.setShouldPlayToPlaybackTarget(m_playbackTargetSupportsAirPlayVideo);
 #endif
 
+    providePresentingApplicationPIDIfNecessary();
+
     return true;
 }
 
