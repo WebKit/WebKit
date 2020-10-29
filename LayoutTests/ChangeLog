@@ -1,3 +1,13 @@
+2020-10-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Make scroll-margin independent of scroll snapping and have it apply when scrolling to anchors
+        https://bugs.webkit.org/show_bug.cgi?id=218076
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations: Updated expectations for newly passing tests and marked some tests
+        as flaky.
+
 2020-10-29  Cathie Chen  <cathiechen@igalia.com>
 
         IntersectionObserverCallback leak

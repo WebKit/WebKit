@@ -31,7 +31,6 @@
 #include "StyleTransformData.h"
 #include "StyleImage.h"
 #include "StyleResolver.h"
-#include "StyleScrollSnapPoints.h"
 #include <wtf/PointerComparison.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/TextStream.h>
@@ -62,7 +61,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , gridItem(StyleGridItemData::create())
 #if ENABLE(CSS_SCROLL_SNAP)
     , scrollSnapPort(StyleScrollSnapPort::create())
-    , scrollSnapArea(StyleScrollSnapArea::create())
 #endif
     , willChange(RenderStyle::initialWillChange())
     , mask(FillLayer::create(FillLayerType::Mask))
@@ -139,9 +137,10 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
 #endif
     , grid(o.grid)
     , gridItem(o.gridItem)
+    , scrollMargin(o.scrollMargin)
 #if ENABLE(CSS_SCROLL_SNAP)
     , scrollSnapPort(o.scrollSnapPort)
-    , scrollSnapArea(o.scrollSnapArea)
+    , scrollSnapAlign(o.scrollSnapAlign)
 #endif
     , content(o.content ? o.content->clone() : nullptr)
     , counterDirectives(o.counterDirectives ? makeUnique<CounterDirectiveMap>(*o.counterDirectives) : nullptr)
@@ -241,9 +240,10 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
 #endif
         && grid == o.grid
         && gridItem == o.gridItem
+        && scrollMargin == o.scrollMargin
 #if ENABLE(CSS_SCROLL_SNAP)
         && scrollSnapPort == o.scrollSnapPort
-        && scrollSnapArea == o.scrollSnapArea
+        && scrollSnapAlign == o.scrollSnapAlign
 #endif
         && contentDataEquivalent(o)
         && arePointingToEqualData(counterDirectives, o.counterDirectives)

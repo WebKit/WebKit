@@ -1657,6 +1657,11 @@ LayoutRect RenderElement::absoluteAnchorRect(bool* insideFixed) const
     return enclosingLayoutRect(FloatRect(upperLeft, lowerRight.expandedTo(upperLeft) - upperLeft));
 }
 
+LayoutRect RenderElement::absoluteAnchorRectWithScrollMargin(bool* insideFixed) const
+{
+    return absoluteAnchorRect(insideFixed);
+}
+
 const RenderElement* RenderElement::enclosingRendererWithTextDecoration(OptionSet<TextDecoration> textDecoration, bool firstLine) const
 {
     const RenderElement* current = this;

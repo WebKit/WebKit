@@ -1,3 +1,12 @@
+2020-10-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Make scroll-margin independent of scroll snapping and have it apply when scrolling to anchors
+        https://bugs.webkit.org/show_bug.cgi?id=218076
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/cssom-view/scrollIntoView-scrollMargin-expected.txt: Updated expectation to note new pass.
+
 2020-10-28  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/webaudio tests from upstream

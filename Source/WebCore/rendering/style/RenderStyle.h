@@ -719,7 +719,15 @@ public:
     OptionSet<TouchAction> effectiveTouchActions() const { return m_rareInheritedData->effectiveTouchActions; }
     OptionSet<EventListenerRegionType> eventListenerRegionTypes() const { return m_rareInheritedData->eventListenerRegionTypes; }
 
+    const LengthBox& scrollMargin() const;
+    const Length& scrollMarginTop() const;
+    const Length& scrollMarginBottom() const;
+    const Length& scrollMarginLeft() const;
+    const Length& scrollMarginRight() const;
+
 #if ENABLE(CSS_SCROLL_SNAP)
+    bool hasSnapPosition() const;
+
     // Scroll snap port style.
     const StyleScrollSnapPort& scrollSnapPort() const;
     const ScrollSnapType& scrollSnapType() const;
@@ -729,14 +737,7 @@ public:
     const Length& scrollPaddingLeft() const;
     const Length& scrollPaddingRight() const;
 
-    // Scroll snap area style.
-    const StyleScrollSnapArea& scrollSnapArea() const;
     const ScrollSnapAlign& scrollSnapAlign() const;
-    const LengthBox& scrollMargin() const;
-    const Length& scrollMarginTop() const;
-    const Length& scrollMarginBottom() const;
-    const Length& scrollMarginLeft() const;
-    const Length& scrollMarginRight() const;
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -1265,6 +1266,11 @@ public:
     void setEffectiveTouchActions(OptionSet<TouchAction> touchActions) { SET_VAR(m_rareInheritedData, effectiveTouchActions, touchActions); }
     void setEventListenerRegionTypes(OptionSet<EventListenerRegionType> eventListenerTypes) { SET_VAR(m_rareInheritedData, eventListenerRegionTypes, eventListenerTypes); }
 
+    void setScrollMarginTop(Length&&);
+    void setScrollMarginBottom(Length&&);
+    void setScrollMarginLeft(Length&&);
+    void setScrollMarginRight(Length&&);
+
 #if ENABLE(CSS_SCROLL_SNAP)
     void setScrollSnapType(const ScrollSnapType&);
     void setScrollPaddingTop(Length&&);
@@ -1273,10 +1279,6 @@ public:
     void setScrollPaddingRight(Length&&);
 
     void setScrollSnapAlign(const ScrollSnapAlign&);
-    void setScrollMarginTop(Length&&);
-    void setScrollMarginBottom(Length&&);
-    void setScrollMarginLeft(Length&&);
-    void setScrollMarginRight(Length&&);
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -1674,10 +1676,11 @@ public:
 
     static TouchAction initialTouchActions() { return TouchAction::Auto; }
 
+    static Length initialScrollMargin() { return Length(Fixed); }
+
 #if ENABLE(CSS_SCROLL_SNAP)
     static ScrollSnapType initialScrollSnapType();
     static ScrollSnapAlign initialScrollSnapAlign();
-    static Length initialScrollMargin() { return Length(Fixed); }
     static Length initialScrollPadding() { return Length(Fixed); }
 #endif
 

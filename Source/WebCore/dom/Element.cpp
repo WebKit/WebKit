@@ -861,7 +861,7 @@ void Element::scrollIntoView(Optional<Variant<bool, ScrollIntoViewOptions>>&& ar
         return;
 
     bool insideFixed;
-    LayoutRect absoluteBounds = renderer()->absoluteAnchorRect(&insideFixed);
+    LayoutRect absoluteBounds = renderer()->absoluteAnchorRectWithScrollMargin(&insideFixed);
 
     ScrollIntoViewOptions options;
     if (arg) {
@@ -895,7 +895,7 @@ void Element::scrollIntoView(bool alignToTop)
         return;
 
     bool insideFixed;
-    LayoutRect absoluteBounds = renderer()->absoluteAnchorRect(&insideFixed);
+    LayoutRect absoluteBounds = renderer()->absoluteAnchorRectWithScrollMargin(&insideFixed);
     // Align to the top / bottom and to the closest edge.
     if (alignToTop)
         renderer()->scrollRectToVisible(absoluteBounds, insideFixed, { SelectionRevealMode::Reveal, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignTopAlways, ShouldAllowCrossOriginScrolling::No });
@@ -911,7 +911,7 @@ void Element::scrollIntoViewIfNeeded(bool centerIfNeeded)
         return;
 
     bool insideFixed;
-    LayoutRect absoluteBounds = renderer()->absoluteAnchorRect(&insideFixed);
+    LayoutRect absoluteBounds = renderer()->absoluteAnchorRectWithScrollMargin(&insideFixed);
     if (centerIfNeeded)
         renderer()->scrollRectToVisible(absoluteBounds, insideFixed, { SelectionRevealMode::Reveal, ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded, ShouldAllowCrossOriginScrolling::No });
     else
@@ -926,7 +926,7 @@ void Element::scrollIntoViewIfNotVisible(bool centerIfNotVisible)
         return;
     
     bool insideFixed;
-    LayoutRect absoluteBounds = renderer()->absoluteAnchorRect(&insideFixed);
+    LayoutRect absoluteBounds = renderer()->absoluteAnchorRectWithScrollMargin(&insideFixed);
     if (centerIfNotVisible)
         renderer()->scrollRectToVisible(absoluteBounds, insideFixed, { SelectionRevealMode::Reveal, ScrollAlignment::alignCenterIfNotVisible, ScrollAlignment::alignCenterIfNotVisible, ShouldAllowCrossOriginScrolling::No });
     else

@@ -161,7 +161,7 @@ void RenderBox::willBeDestroyed()
     removeControlStatesForRenderer(*this);
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    if (hasInitializedStyle() && style().scrollSnapArea().hasSnapPosition())
+    if (hasInitializedStyle() && style().hasSnapPosition())
         view().unregisterBoxWithScrollSnapPositions(*this);
 #endif
 
@@ -277,8 +277,8 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle& newStyl
         view().repaintRootContents();
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    bool boxContributesSnapPositions = newStyle.scrollSnapArea().hasSnapPosition();
-    if (boxContributesSnapPositions || (oldStyle && oldStyle->scrollSnapArea().hasSnapPosition())) {
+    bool boxContributesSnapPositions = newStyle.hasSnapPosition();
+    if (boxContributesSnapPositions || (oldStyle && oldStyle->hasSnapPosition())) {
         if (boxContributesSnapPositions)
             view().registerBoxWithScrollSnapPositions(*this);
         else
@@ -5052,6 +5052,28 @@ const RenderBox* RenderBox::findEnclosingScrollableContainer() const
         return document().body()->renderBox();
     
     return nullptr;
+}
+
+LayoutRect RenderBox::absoluteAnchorRectWithScrollMargin(bool* insideFixed) const
+{
+    LayoutRect anchorRect = absoluteAnchorRect(insideFixed);
+    const LengthBox& scrollMargin = style().scrollMargin();
+    if (scrollMargin.isZero())
+        return anchorRect;
+
+    // The scroll snap specification says that the scroll-margin should be applied in the
+    // coordinate system of the scroll container and applied to the rectangular bounding
+    // box of the transformed border box of the target element.
+    // See https://www.w3.org/TR/css-scroll-snap-1/#scroll-margin.
+    const LayoutSize boxSize = size();
+    const LayoutBoxExtent margin(
+        valueForLength(scrollMargin.top(), boxSize.height()),
+        valueForLength(scrollMargin.right(), boxSize.width()),
+        valueForLength(scrollMargin.bottom(), boxSize.height()),
+        valueForLength(scrollMargin.left(), boxSize.width()));
+    anchorRect.expand(margin);
+
+    return anchorRect;
 }
 
 } // namespace WebCore

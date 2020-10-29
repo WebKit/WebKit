@@ -79,27 +79,6 @@ inline bool operator==(const ScrollSnapAlign& a, const ScrollSnapAlign& b)
 
 inline bool operator!=(const ScrollSnapAlign& a, const ScrollSnapAlign& b) { return !(a == b); }
 
-class StyleScrollSnapArea : public RefCounted<StyleScrollSnapArea> {
-public:
-    static Ref<StyleScrollSnapArea> create() { return adoptRef(*new StyleScrollSnapArea); }
-    Ref<StyleScrollSnapArea> copy() const;
-    bool hasSnapPosition() const { return alignment.x != ScrollSnapAxisAlignType::None || alignment.y != ScrollSnapAxisAlignType::None; }
-
-    ScrollSnapAlign alignment;
-    LengthBox scrollMargin { 0, 0, 0, 0 };
-
-private:
-    StyleScrollSnapArea();
-    StyleScrollSnapArea(const StyleScrollSnapArea&);
-};
-
-inline bool operator==(const StyleScrollSnapArea& a, const StyleScrollSnapArea& b)
-{
-    return a.alignment == b.alignment && a.scrollMargin == b.scrollMargin;
-}
-
-inline bool operator!=(const StyleScrollSnapArea& a, const StyleScrollSnapArea& b) { return !(a == b); }
-
 } // namespace WebCore
 
 #endif // ENABLE(CSS_SCROLL_SNAP)

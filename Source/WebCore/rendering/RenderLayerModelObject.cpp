@@ -185,7 +185,12 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
             frameView.updateScrollingCoordinatorScrollSnapProperties();
         }
     }
-    if (oldStyle && oldStyle->scrollSnapArea() != newStyle.scrollSnapArea()) {
+
+    bool scrollMarginChanged =
+        oldStyle && oldStyle->scrollMargin() != newStyle.scrollMargin();
+    bool scrollAlignChanged =
+        oldStyle && oldStyle->scrollSnapAlign() != newStyle.scrollSnapAlign();
+    if (scrollMarginChanged || scrollAlignChanged) {
         auto* scrollSnapBox = enclosingScrollableContainerForSnapping();
         if (scrollSnapBox && scrollSnapBox->layer()) {
             const RenderStyle& style = scrollSnapBox->style();

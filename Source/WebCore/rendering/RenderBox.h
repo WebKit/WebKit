@@ -644,6 +644,8 @@ override;
 
     virtual void adjustBorderBoxRectForPainting(LayoutRect&) { };
 
+    LayoutRect absoluteAnchorRectWithScrollMargin(bool* insideFixed = nullptr) const override;
+
 protected:
     RenderBox(Element&, RenderStyle&&, BaseTypeFlags);
     RenderBox(Document&, RenderStyle&&, BaseTypeFlags);

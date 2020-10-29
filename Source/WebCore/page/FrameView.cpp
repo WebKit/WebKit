@@ -3176,7 +3176,7 @@ void FrameView::scrollToAnchor()
     LayoutRect rect;
     bool insideFixed = false;
     if (anchorNode != frame().document() && anchorNode->renderer())
-        rect = anchorNode->renderer()->absoluteAnchorRect(&insideFixed);
+        rect = anchorNode->renderer()->absoluteAnchorRectWithScrollMargin(&insideFixed);
 
     LOG_WITH_STREAM(Scrolling, stream << " anchor node rect " << rect);
 

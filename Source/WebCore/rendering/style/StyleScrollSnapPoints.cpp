@@ -46,23 +46,6 @@ inline StyleScrollSnapPort::StyleScrollSnapPort(const StyleScrollSnapPort& other
 {
 }
 
-Ref<StyleScrollSnapArea> StyleScrollSnapArea::copy() const
-{
-    return adoptRef(*new StyleScrollSnapArea(*this));
-}
-
-StyleScrollSnapArea::StyleScrollSnapArea()
-    : scrollMargin(0, 0, 0, 0)
-{
-}
-
-inline StyleScrollSnapArea::StyleScrollSnapArea(const StyleScrollSnapArea& other)
-    : RefCounted()
-    , alignment(other.alignment)
-    , scrollMargin(other.scrollMargin)
-{
-}
-
 } // namespace WebCore
 
 #endif /* ENABLE(CSS_SCROLL_SNAP) */

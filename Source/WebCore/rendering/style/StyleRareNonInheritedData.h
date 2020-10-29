@@ -45,6 +45,10 @@
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 
+#if ENABLE(CSS_SCROLL_SNAP)
+#include "StyleScrollSnapPoints.h"
+#endif
+
 namespace WebCore {
 
 class AnimationList;
@@ -60,8 +64,6 @@ class StyleMarqueeData;
 class StyleMultiColData;
 class StyleReflection;
 class StyleResolver;
-class StyleScrollSnapArea;
-class StyleScrollSnapPort;
 class StyleTransformData;
 
 struct LengthSize;
@@ -129,9 +131,10 @@ public:
     DataRef<StyleGridData> grid;
     DataRef<StyleGridItemData> gridItem;
 
+    LengthBox scrollMargin { 0, 0, 0, 0 };
 #if ENABLE(CSS_SCROLL_SNAP)
     DataRef<StyleScrollSnapPort> scrollSnapPort;
-    DataRef<StyleScrollSnapArea> scrollSnapArea;
+    ScrollSnapAlign scrollSnapAlign;
 #endif
 
     std::unique_ptr<ContentData> content;
