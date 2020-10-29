@@ -683,8 +683,12 @@ String HTMLImageElement::crossOrigin() const
 
 bool HTMLImageElement::allowsOrientationOverride() const
 {
-    auto* image = cachedImage();
-    return !image || image->isOriginClean(&(document().securityOrigin()));
+    auto* cachedImage = this->cachedImage();
+    if (!cachedImage)
+        return true;
+
+    auto image = cachedImage->image();
+    return !image || image->sourceURL().protocolIsData() || cachedImage->isCORSSameOrigin();
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)

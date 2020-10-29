@@ -1,0 +1,21 @@
+<script src="../../resources/js-test-pre.js"></script>
+<p>The test should display two images, one rotated and one not.</p>
+<br/>
+<output id="log"></output>
+<script>        
+    const localImageLocation = "resources/exif-orientation-5-lu.jpg";
+    if (window.testRunner)
+        testRunner.dumpAsText(pixeltest = false);
+
+    window.rotatedImage = document.createElement("img");
+    rotatedImage.setAttribute("src", localImageLocation);
+    window.nonRotatedImage = document.createElement("img");
+    nonRotatedImage.setAttribute("src", localImageLocation);
+    nonRotatedImage.style.imageOrientation = 'none'
+    document.body.appendChild(rotatedImage);
+    document.body.appendChild(nonRotatedImage);
+    window.onload = () => {
+        shouldBe("rotatedImage.offsetWidth", "50")
+        shouldBe("nonRotatedImage.offsetWidth", "100")
+    }
+</script>
