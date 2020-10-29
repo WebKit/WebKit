@@ -1,3 +1,17 @@
+2020-10-29  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Add required entitlement for message filtering
+        https://bugs.webkit.org/show_bug.cgi?id=218342
+        <rdar://problem/70810567>
+
+        Reviewed by Brent Fulgham.
+
+        The entitlement 'com.apple.private.security.message-filter' needs to be set to YES. This patch also
+        adds telemetry for mach-bootstrap filtering.
+
+        * Scripts/process-entitlements.sh:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-10-29  Alex Christensen  <achristensen@webkit.org>
 
         Don't look in the keychain for a preferred client certificate in the network process

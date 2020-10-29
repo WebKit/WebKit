@@ -1227,6 +1227,15 @@
 #include <WebKitAdditions/WebContentSandboxAdditionsMac.sb>
 #endif
 
+(when (defined? 'mach-bootstrap)
+    (allow mach-bootstrap
+        (apply-message-filter
+            (allow xpc-message-send (with telemetry))
+            (allow xpc-message-send (with telemetry) (message-number 206))
+        )
+    )
+)
+
 (when (defined? 'mach-kernel-endpoint)
     (allow mach-kernel-endpoint
         (apply-message-filter

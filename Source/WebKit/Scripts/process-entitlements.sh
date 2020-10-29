@@ -22,6 +22,7 @@ function mac_process_webcontent_entitlements()
             plistbuddy Add :com.apple.developer.videotoolbox.client-sandboxed-decoder bool YES
             plistbuddy Add :com.apple.pac.shared_region_id string WebContent
             plistbuddy Add :com.apple.private.pac.exception bool YES
+            plistbuddy Add :com.apple.private.security.message-filter bool YES
         fi
     fi
 
