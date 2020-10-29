@@ -14,11 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-detached-execution-context.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-detached-execution-context.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-getoutputtimestamp.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-not-fully-active.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-suspend-resume.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontextoptions.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/constructor-allowed-to-start.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/promise-methods-after-discard.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html

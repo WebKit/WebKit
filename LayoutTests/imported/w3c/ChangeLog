@@ -1,5 +1,28 @@
 2020-10-28  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/webaudio tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=218313
+
+        Reviewed by Alex Christensen.
+
+        Resync web-platform-tests/webaudio tests from upstream 5fe9553936ab4d7ba2b4.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-detached-execution-context-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-detached-execution-context.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-detached-execution-context.tentative.html.
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-detached-execution-context.tentative-expected.txt: Removed.
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/promise-methods-after-discard-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/promise-methods-after-discard.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/w3c-import.log:
+        * web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html:
+        * web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/offlineaudiocontext-detached-execution-context-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/offlineaudiocontext-detached-execution-context.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/offlineaudiocontext-detached-execution-context.tentative.html.
+        * web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/offlineaudiocontext-detached-execution-context.tentative-expected.txt: Removed.
+        * web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/startrendering-after-discard-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/startrendering-after-discard.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/w3c-import.log:
+
+2020-10-28  Chris Dumez  <cdumez@apple.com>
+
         AudioBuffer channels should be neuterable / detachable
         https://bugs.webkit.org/show_bug.cgi?id=218286
 
