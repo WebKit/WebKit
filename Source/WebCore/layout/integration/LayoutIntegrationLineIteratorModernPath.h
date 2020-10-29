@@ -51,15 +51,19 @@ public:
 
     LayoutUnit top() const { return LayoutUnit::fromFloatRound(line().rect().y()); }
     LayoutUnit bottom() const { return LayoutUnit::fromFloatRound(line().rect().maxY()); }
+    // FIXME: What should these really be?
     LayoutUnit selectionTop() const { return top(); }
     LayoutUnit selectionTopForHitTesting() const { return top(); }
     LayoutUnit selectionBottom() const { return bottom(); }
+    LayoutUnit topWithLeading() const { return top(); }
+    LayoutUnit bottomWithLeading() const { return bottom(); }
 
     float y() const { return top(); }
     float logicalHeight() const { return line().rect().height(); }
     bool isHorizontal() const { return true; }
 
     const RenderBlockFlow& containingBlock() const { return m_inlineContent->containingBlock(); }
+    const RootInlineBox* legacyRootInlineBox() const { return nullptr; }
 
     void traverseNext()
     {

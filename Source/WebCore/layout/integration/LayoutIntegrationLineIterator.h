@@ -55,6 +55,8 @@ public:
     LayoutUnit selectionTop() const;
     LayoutUnit selectionTopForHitTesting() const;
     LayoutUnit selectionBottom() const;
+    LayoutUnit topWithLeading() const;
+    LayoutUnit bottomWithLeading() const;
 
     float y() const;
     float logicalHeight() const;
@@ -64,6 +66,7 @@ public:
     bool isHorizontal() const;
 
     const RenderBlockFlow& containingBlock() const;
+    const RootInlineBox* legacyRootInlineBox() const;
 
 protected:
     friend class LineIterator;
@@ -128,7 +131,7 @@ inline LayoutUnit PathLine::top() const
 inline LayoutUnit PathLine::bottom() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.top();
+        return path.bottom();
     });
 }
 
@@ -150,6 +153,20 @@ inline LayoutUnit PathLine::selectionBottom() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.selectionBottom();
+    });
+}
+
+inline LayoutUnit PathLine::topWithLeading() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.topWithLeading();
+    });
+}
+
+inline LayoutUnit PathLine::bottomWithLeading() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.bottomWithLeading();
     });
 }
 
@@ -178,6 +195,13 @@ inline const RenderBlockFlow& PathLine::containingBlock() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) -> const RenderBlockFlow& {
         return path.containingBlock();
+    });
+}
+
+inline const RootInlineBox* PathLine::legacyRootInlineBox() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.legacyRootInlineBox();
     });
 }
 

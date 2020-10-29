@@ -170,7 +170,6 @@ public:
 
     InlineBox* legacyInlineBox() const
     {
-        ASSERT_NOT_REACHED();
         return nullptr;
     }
 
