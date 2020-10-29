@@ -1,5 +1,15 @@
 2020-10-29  Youenn Fablet  <youenn@apple.com>
 
+        Add some logging to SequenceCheckerImpl::IsCurrent
+        https://bugs.webkit.org/show_bug.cgi?id=218328
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/rtc_base/synchronization/sequence_checker.cc:
+        This might help debugging https://bugs.webkit.org/show_bug.cgi?id=218063.
+
+2020-10-29  Youenn Fablet  <youenn@apple.com>
+
         Disable VP9 VTB hardware decoding
         https://bugs.webkit.org/show_bug.cgi?id=218326
 

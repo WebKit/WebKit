@@ -9,6 +9,8 @@
  */
 #include "rtc_base/synchronization/sequence_checker.h"
 
+#include "rtc_base/logging.h"
+
 #if defined(WEBRTC_MAC)
 #include <dispatch/dispatch.h>
 #endif
@@ -47,12 +49,19 @@ bool SequenceCheckerImpl::IsCurrent() const {
     return true;
   }
   if (valid_queue_ || current_queue) {
+    if (valid_queue_ != current_queue)
+      RTC_LOG(LS_ERROR) << "SequenceCheckerImpl queue check is failing";
     return valid_queue_ == current_queue;
   }
   if (valid_system_queue_ && valid_system_queue_ == current_system_queue) {
+    if (valid_queue_ != current_queue)
+      RTC_LOG(LS_ERROR) << "SequenceCheckerImpl system queue check is failing";
     return true;
   }
-  return rtc::IsThreadRefEqual(valid_thread_, current_thread);
+  auto result = rtc::IsThreadRefEqual(valid_thread_, current_thread);
+  if (!result)
+    RTC_LOG(LS_ERROR) << "SequenceCheckerImpl thread check is failing";
+  return result;
 }
 
 void SequenceCheckerImpl::Detach() {
