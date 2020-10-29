@@ -380,9 +380,6 @@
     (ipc-posix-name-regex #"^CFPBS:")) ; <rdar://problem/13757475>
 (allow system-fsctl (fsctl-command (_IO "h" 47)))
 
-;; Graphics
-(system-graphics)
-
 ;; Networking
 (allow network-outbound
        ;; Local mDNSResponder for DNS, arbitrary outbound TCP
@@ -438,3 +435,12 @@
 
 ;; Data Detectors
 (allow file-read* (subpath "/private/var/db/datadetectors/sys"))
+
+;; Allow accesses to HID
+(allow iokit-open
+    (iokit-user-client-class "IOHIDLibUserClient"))
+
+;; Allow accesses to LocalAuthentication and RemoteService
+(allow mach-lookup
+    (global-name "com.apple.CoreAuthentication.agent.libxpc")
+    (global-name "com.apple.remoted"))

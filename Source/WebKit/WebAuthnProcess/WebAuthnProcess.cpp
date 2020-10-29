@@ -29,6 +29,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "Logging.h"
+#include "MockAuthenticatorManager.h"
 #include "WebAuthnConnectionToWebProcess.h"
 #include "WebAuthnProcessCreationParameters.h"
 #include <wtf/text/AtomString.h>
@@ -38,6 +39,7 @@ using namespace WebCore;
 
 
 WebAuthnProcess::WebAuthnProcess(AuxiliaryProcessInitializationParameters&& parameters)
+    : m_authenticatorManager(makeUniqueRef<AuthenticatorManager>())
 {
     initialize(WTFMove(parameters));
 }
@@ -121,6 +123,15 @@ void WebAuthnProcess::processDidTransitionToBackground()
 WebAuthnConnectionToWebProcess* WebAuthnProcess::webProcessConnection(ProcessIdentifier identifier) const
 {
     return m_webProcessConnections.get(identifier);
+}
+
+void WebAuthnProcess::setMockWebAuthenticationConfiguration(WebCore::MockWebAuthenticationConfiguration&& configuration)
+{
+    if (!m_authenticatorManager->isMock()) {
+        m_authenticatorManager = makeUniqueRef<MockAuthenticatorManager>(WTFMove(configuration));
+        return;
+    }
+    static_cast<MockAuthenticatorManager*>(&m_authenticatorManager)->setTestConfiguration(WTFMove(configuration));
 }
 
 } // namespace WebKit

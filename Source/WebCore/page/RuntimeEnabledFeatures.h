@@ -246,6 +246,11 @@ public:
     bool disableMediaExperiencePIDInheritance() const { return m_disableMediaExperiencePIDInheritance; }
 #endif
 
+#if ENABLE(WEB_AUTHN)
+    void setWebAuthenticationModernEnabled(bool areEnabled) { m_areWebAuthenticationModernEnabled = areEnabled; }
+    bool webAuthenticationModernEnabled() const { return m_areWebAuthenticationModernEnabled; }
+#endif
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures();
@@ -368,6 +373,10 @@ private:
 
 #if HAVE(CELESTIAL)
     bool m_disableMediaExperiencePIDInheritance { false };
+#endif
+
+#if ENABLE(WEB_AUTHN)
+    bool m_areWebAuthenticationModernEnabled { false };
 #endif
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;

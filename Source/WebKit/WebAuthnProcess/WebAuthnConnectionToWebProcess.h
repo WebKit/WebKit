@@ -32,9 +32,18 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/RefCounted.h>
 
+namespace WebCore {
+struct AuthenticatorResponseData;
+struct ExceptionData;
+struct MockWebAuthenticationConfiguration;
+struct PublicKeyCredentialCreationOptions;
+struct PublicKeyCredentialRequestOptions;
+}
+
 namespace WebKit {
 
 class WebAuthnProcess;
+struct WebAuthenticationRequestData;
 
 class WebAuthnConnectionToWebProcess
     : public RefCounted<WebAuthnConnectionToWebProcess>
@@ -51,11 +60,23 @@ public:
     void endSuspension();
 
 private:
+    using RequestCompletionHandler = CompletionHandler<void(const WebCore::AuthenticatorResponseData&, const WebCore::ExceptionData&)>;
+    using QueryCompletionHandler = CompletionHandler<void(bool)>;
+
     WebAuthnConnectionToWebProcess(WebAuthnProcess&, WebCore::ProcessIdentifier, IPC::Connection::Identifier);
 
     // IPC::Connection::Client
     void didClose(IPC::Connection&) final;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+
+    // Receivers.
+    void makeCredential(Vector<uint8_t>&& hash, WebCore::PublicKeyCredentialCreationOptions&&, bool processingUserGesture, RequestCompletionHandler&&);
+    void getAssertion(Vector<uint8_t>&& hash, WebCore::PublicKeyCredentialRequestOptions&&, bool processingUserGesture, RequestCompletionHandler&&);
+    void isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&&);
+    void setMockWebAuthenticationConfiguration(WebCore::MockWebAuthenticationConfiguration&&);
+
+    void handleRequest(WebAuthenticationRequestData&&, RequestCompletionHandler&&);
 
     Ref<IPC::Connection> m_connection;
     Ref<WebAuthnProcess> m_WebAuthnProcess;

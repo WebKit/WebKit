@@ -163,7 +163,14 @@ void AuthenticatorManager::handleRequest(WebAuthenticationRequestData&& data, Ca
 
     // 2. Ask clients to show appropriate UI if any and then start the request.
     initTimeOutTimer();
-    runPanel();
+
+    // FIXME<rdar://problem/70822834>: The WebPageProxy is used to determine whether or not we are in the UIProcess.
+    // If so, continue to the old route. Otherwise, use the modern WebAuthn process way.
+    if (m_pendingRequestData.page) {
+        runPanel();
+        return;
+    }
+    startDiscovery(getTransports());
 }
 
 void AuthenticatorManager::cancelRequest(const PageIdentifier& pageID, const Optional<FrameIdentifier>& frameID)

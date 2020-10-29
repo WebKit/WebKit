@@ -31,10 +31,16 @@
 #include "WebAuthnProcessMessages.h"
 #include <wtf/Function.h>
 #include <wtf/MemoryPressureHandler.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
+
+namespace WebCore {
+struct MockWebAuthenticationConfiguration;
+}
 
 namespace WebKit {
 
+class AuthenticatorManager;
 class WebAuthnConnectionToWebProcess;
 struct WebAuthnProcessCreationParameters;
 
@@ -54,6 +60,9 @@ public:
     void connectionToWebProcessClosed(IPC::Connection&);
 
     WebAuthnConnectionToWebProcess* webProcessConnection(WebCore::ProcessIdentifier) const;
+
+    AuthenticatorManager& authenticatorManager() { return m_authenticatorManager.get(); }
+    void setMockWebAuthenticationConfiguration(WebCore::MockWebAuthenticationConfiguration&&);
 
 private:
     void lowMemoryHandler(Critical);
@@ -77,6 +86,8 @@ private:
 
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<WebAuthnConnectionToWebProcess>> m_webProcessConnections;
+
+    UniqueRef<AuthenticatorManager> m_authenticatorManager;
 };
 
 } // namespace WebKit

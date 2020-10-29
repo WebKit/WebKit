@@ -28,6 +28,11 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "AuthenticatorManager.h"
+#include "LocalService.h"
+#include "WebAuthnProcess.h"
+#include <WebCore/AuthenticatorResponseData.h>
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -60,6 +65,39 @@ void WebAuthnConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection& c
 {
     WTFLogAlways("Received an invalid message \"%s\" from the web process.\n", description(messageName));
     CRASH();
+}
+
+void WebAuthnConnectionToWebProcess::makeCredential(Vector<uint8_t>&& hash, PublicKeyCredentialCreationOptions&& options, bool processingUserGesture, RequestCompletionHandler&& handler)
+{
+    handleRequest({ WTFMove(hash), WTFMove(options), nullptr, WebAuthenticationPanelResult::Unavailable, nullptr, WTF::nullopt, { }, processingUserGesture, String() }, WTFMove(handler));
+}
+
+void WebAuthnConnectionToWebProcess::getAssertion(Vector<uint8_t>&& hash, PublicKeyCredentialRequestOptions&& options, bool processingUserGesture, RequestCompletionHandler&& handler)
+{
+    handleRequest({ WTFMove(hash), WTFMove(options), nullptr, WebAuthenticationPanelResult::Unavailable, nullptr, WTF::nullopt, { }, processingUserGesture, String() }, WTFMove(handler));
+}
+
+void WebAuthnConnectionToWebProcess::handleRequest(WebAuthenticationRequestData&& data, RequestCompletionHandler&& handler)
+{
+    auto callback = [handler = WTFMove(handler)] (Variant<Ref<AuthenticatorResponse>, ExceptionData>&& result) mutable {
+        ASSERT(RunLoop::isMain());
+        WTF::switchOn(result, [&](const Ref<AuthenticatorResponse>& response) {
+            handler(response->data(), { });
+        }, [&](const ExceptionData& exception) {
+            handler({ }, exception);
+        });
+    };
+    m_WebAuthnProcess->authenticatorManager().handleRequest(WTFMove(data), WTFMove(callback));
+}
+
+void WebAuthnConnectionToWebProcess::isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&& handler)
+{
+    handler(LocalService::isAvailable());
+}
+
+void WebAuthnConnectionToWebProcess::setMockWebAuthenticationConfiguration(WebCore::MockWebAuthenticationConfiguration&& configuration)
+{
+    m_WebAuthnProcess->setMockWebAuthenticationConfiguration(WTFMove(configuration));
 }
 
 } // namespace WebKit

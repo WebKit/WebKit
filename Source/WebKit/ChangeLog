@@ -1,3 +1,49 @@
+2020-10-29  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Make WebContent process talk to the WebAuthn process for WebAuthn requests
+        https://bugs.webkit.org/show_bug.cgi?id=218070
+        <rdar://problem/70384404>
+
+        Reviewed by Brent Fulgham.
+
+        Once modern web authentication is enabled, let WebContent process talk to the WebAuthn process
+        for WebAuthn requests.
+
+        * Scripts/process-entitlements.sh:
+        Adds necessary entitlements for the WebAuthn process.
+
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::handleRequest):
+        Adds a way to distinguish if itself is in the UI Process or in the WebAuthn process.
+
+        * WebAuthnProcess/WebAuthnConnectionToWebProcess.cpp:
+        (WebKit::WebAuthnConnectionToWebProcess::makeCredential):
+        (WebKit::WebAuthnConnectionToWebProcess::getAssertion):
+        (WebKit::WebAuthnConnectionToWebProcess::handleRequest):
+        (WebKit::WebAuthnConnectionToWebProcess::isUserVerifyingPlatformAuthenticatorAvailable):
+        (WebKit::WebAuthnConnectionToWebProcess::setMockWebAuthenticationConfiguration):
+        * WebAuthnProcess/WebAuthnConnectionToWebProcess.h:
+        * WebAuthnProcess/WebAuthnConnectionToWebProcess.messages.in:
+        Adds receivers for messages coming from the web content processes.
+
+        * WebAuthnProcess/WebAuthnProcess.cpp:
+        (WebKit::WebAuthnProcess::WebAuthnProcess):
+        (WebKit::WebAuthnProcess::setMockWebAuthenticationConfiguration):
+        * WebAuthnProcess/WebAuthnProcess.h:
+        (WebKit::WebAuthnProcess::authenticatorManager):
+        Handles the authenticator managers.
+
+        * WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in:
+        Relaxes sandbox for necessary hardware accesses.
+
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+        (WebKit::WebAuthenticatorCoordinator::makeCredential):
+        (WebKit::WebAuthenticatorCoordinator::getAssertion):
+        (WebKit::WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::setMockWebAuthenticationConfiguration):
+        Sends messages to the WebAuthn process accordingly.
+
 2020-10-29  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Add required entitlement for message filtering

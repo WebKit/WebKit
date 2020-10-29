@@ -80,6 +80,7 @@
 #include <WebCore/Icon.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
@@ -1383,7 +1384,12 @@ void WebChromeClient::setUserIsInteracting(bool userIsInteracting)
 #if ENABLE(WEB_AUTHN)
 void WebChromeClient::setMockWebAuthenticationConfiguration(const MockWebAuthenticationConfiguration& configuration)
 {
-    m_page.send(Messages::WebPageProxy::SetMockWebAuthenticationConfiguration(configuration));
+    if (!RuntimeEnabledFeatures::sharedFeatures().webAuthenticationModernEnabled()) {
+        m_page.send(Messages::WebPageProxy::SetMockWebAuthenticationConfiguration(configuration));
+        return;
+    }
+
+    WebProcess::singleton().ensureWebAuthnProcessConnection().connection().send(Messages::WebAuthnConnectionToWebProcess::SetMockWebAuthenticationConfiguration(configuration), { });
 }
 #endif
 

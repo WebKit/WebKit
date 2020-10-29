@@ -23,6 +23,12 @@
 #if ENABLE(WEB_AUTHN)
 
 messages -> WebAuthnConnectionToWebProcess {
+
+    MakeCredential(Vector<uint8_t> hash, struct WebCore::PublicKeyCredentialCreationOptions options, bool processingUserGesture) -> (struct WebCore::AuthenticatorResponseData data, struct WebCore::ExceptionData exception) Async
+    GetAssertion(Vector<uint8_t> hash, struct WebCore::PublicKeyCredentialRequestOptions options, bool processingUserGesture) -> (struct WebCore::AuthenticatorResponseData data, struct WebCore::ExceptionData exception) Async
+    IsUserVerifyingPlatformAuthenticatorAvailable() -> (bool result) Async
+
+    SetMockWebAuthenticationConfiguration(struct WebCore::MockWebAuthenticationConfiguration configuration);
 }
 
 #endif // ENABLE(WEB_AUTHN)
