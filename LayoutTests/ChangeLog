@@ -1,3 +1,16 @@
+2020-10-29  Karl Rackler  <rackler@apple.com>
+
+        Unreviewed, reverting r269167.
+
+        This reverts commit 269167 because it was in the incorrect
+        location.
+
+        Reverted changeset:
+
+        "REGRESSION (r269070): [ Big Sur ] editing/input/reveal-caret-
+        of-multiline-input.html is a constant failure"
+        https://trac.webkit.org/changeset/269167
+
 2020-10-29  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Make WebContent process talk to the WebAuthn process for WebAuthn requests
