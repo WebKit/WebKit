@@ -232,6 +232,12 @@ void VisibleSelection::setBaseAndExtentToDeepEquivalents()
         m_extent = m_base;
     else
         m_extent = VisiblePosition(m_focus, m_affinity).deepEquivalent();
+    if (m_base.isNull() != m_extent.isNull()) {
+        if (m_base.isNull())
+            m_base = m_extent;
+        else
+            m_extent = m_base;
+    }
 }
 
 void VisibleSelection::adjustSelectionRespectingGranularity(TextGranularity granularity)

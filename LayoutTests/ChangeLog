@@ -1,3 +1,16 @@
+2020-10-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r267329): Crash in VisibleSelection::toNormalizedRange()
+        https://bugs.webkit.org/show_bug.cgi?id=218276
+
+        Reviewed by Wenson Hsieh.
+
+        Added a regression test and rebaselined the test now that we got the pre-r267329 behavior back.
+
+        * editing/execCommand/insert-list-nested-with-orphaned-expected.txt: Reverted the rebaseline in r267329.
+        * editing/selection/delete-selection-with-disconnected-extent-expected.txt: Added.
+        * editing/selection/delete-selection-with-disconnected-extent.html: Added.
+
 2020-10-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Rebaseline of tests and gardening of failures.
