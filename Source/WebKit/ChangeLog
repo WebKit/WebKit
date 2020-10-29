@@ -1,3 +1,31 @@
+2020-10-29  Alex Christensen  <achristensen@webkit.org>
+
+        Don't look in the keychain for a preferred client certificate in the network process
+        https://bugs.webkit.org/show_bug.cgi?id=218322
+        <rdar://problem/64931374>
+
+        Reviewed by Geoffrey Garen.
+
+        Often, based on a race condition of preconnecting to a server we have just been told to load and
+        the use of Safari's BackgroundLoad class when navigating to a page we have not received any data from yet,
+        and with an installed client certificate and an identity preference in the keychain, the user will be asked
+        if com.apple.WebKit.Networking can access a private key in the keychain instead of if Safari can access a
+        private key in the keychain.  If the user types in the password and clicks "Always Allow" this does not make
+        it always allowed, but it would have if Safari had asked instead of com.apple.WebKit.Networking.
+        This is because Safari is responding to WKNavigationDelegate's didReceiveAuthenticationChallenge with
+        NSURLSessionAuthChallengeUseCredential and nil, which would cause CFNetwork to search in the keychain as the network
+        process for the preferred client certificate.  What we want Safari's network process to do is not search in the keychain
+        for this preconnect request's challenge but wait until the actual request, at which time Safari will use its proper logic
+        to find the correct client certificate and AuthenticationManager::initializeConnection will create a SecKeyProxy
+        to do the signing in the UI process.  Third party applications will not be affected because the SecKeyProxy path is the
+        only one that works for applications lacking Safari's entitlements.  I used the steps in the radar to verify that this
+        is fixed.  Unfortunately, it is not practical to make a unit test that installs a system client certificate and an
+        identity preference because doing so would require the entry of the login keychain password while running the unit test.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::configurationForSessionID):
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+
 2020-10-29  Said Abou-Hallawa  <said@apple.com>
 
         REGRESSION(269065): [GPU Process]: Order of drawing has to be preserved when drawing a canvas to another canvas
