@@ -1034,7 +1034,7 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
     angle::SystemInfo info;
     if (angle::GetSystemInfo(&info))
     {
-        if (info.isiOSAppOnMac)
+        if (info.needsEAGLOnMac)
         {
             // Using OpenGLES.framework.
             AddRGBAFormat(&map, GL_BGRA_EXT,       false,  8,  8,  8,  8, 0, GL_BGRA_EXT,       GL_UNSIGNED_BYTE,               GL_UNSIGNED_NORMALIZED, false, RequireES<2, 0>,                                  AlwaysSupported, RequireES<2, 0>,                                NeverSupported, NeverSupported);

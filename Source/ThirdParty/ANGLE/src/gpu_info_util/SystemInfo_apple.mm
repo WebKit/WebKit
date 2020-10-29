@@ -19,25 +19,7 @@ namespace angle
 
 bool GetSystemInfo(SystemInfo *info)
 {
-#if defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64)
-    static bool isiOSAppOnMac = false;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
-        isiOSAppOnMac = [[NSProcessInfo processInfo] isiOSAppOnMac];
-    });
-
-    if (isiOSAppOnMac)
-    {
-        GetSystemInfo_ios(info);
-        if (info)
-        {
-            info->isiOSAppOnMac = true;
-        }
-        return info;
-    }
-
-    return GetSystemInfo_mac(info);
-#elif defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
+#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
     return GetSystemInfo_mac(info);
 #else
     return GetSystemInfo_ios(info);
