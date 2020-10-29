@@ -10952,7 +10952,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_offset_extractor.rb\" \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\"  \"${BUILT_PRODUCTS_DIR}/JSCLLIntSettingsExtractor\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}/LLIntDesiredOffsets.h\" \"${ARCHS} C_LOOP\"\n";
+			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_offset_extractor.rb\" \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\"  \"${BUILT_PRODUCTS_DIR}/JSCLLIntSettingsExtractor\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}/LLIntDesiredOffsets.h\" \"${ARCHS} C_LOOP\" \"${BUILD_VARIANTS}\"\n";
 		};
 		14BD6892215191450050DAFF /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -11193,7 +11193,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"${ACTION}\" == \"installhdrs\" ]]; then\n    exit 0\nfi\n\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\n\n/usr/bin/env ruby JavaScriptCore/offlineasm/asm.rb \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" JavaScriptCore/llint/LowLevelInterpreter.asm \"${BUILT_PRODUCTS_DIR}/JSCLLIntOffsetsExtractor\" LLIntAssembly.h || exit 1\n";
+			shellScript = "if [[ \"${ACTION}\" == \"installhdrs\" ]]; then\n    exit 0\nfi\n\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\n\n/usr/bin/env ruby JavaScriptCore/offlineasm/asm.rb \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" JavaScriptCore/llint/LowLevelInterpreter.asm \"${BUILT_PRODUCTS_DIR}/JSCLLIntOffsetsExtractor\" LLIntAssembly.h \"${BUILD_VARIANTS}\" || exit 1\n";
 		};
 		65FB3F6509D11E9100F49DEB /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;

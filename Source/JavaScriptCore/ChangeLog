@@ -1,3 +1,43 @@
+2020-10-29  Jérôme Decoodt  <jdecoodt@apple.com>
+
+        JavaScriptCore should support multiple build variants
+        <https://webkit.org/b/218347>
+        <rdar://problem/70786057>
+
+        Reviewed by Keith Miller.
+
+        Update JavaScriptCore to handle BUILD_VARIANTS properly by
+        passing the value to build phase scripts and handling all
+        variants set during the build. For engineering builds,
+        BUILD_VARIANTS=normal.
+
+        * CMakeLists.txt:
+        - Update to pass equivalent ${BUILD_VARIANTS} for non-Apple
+          platforms to asm.rb and generate_offset_extractor.rb.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        (LLInt Offsets | Generate Derived Sources):
+        (Offline Assembler | Offline Assemble):
+        - Update build phase script to pass "${BUILD_VARIANTS}" as an
+          argument to scripts.
+
+        * offlineasm/asm.rb:
+        - Parse BUILD_VARIANTS argument to pass to
+          offsetsAndConfigurationIndexForVariants().
+        * offlineasm/generate_offset_extractor.rb:
+        - Parse BUILD_VARIANTS argument to pass to
+          configurationIndicesForVariants().
+
+        * offlineasm/offsets.rb:
+        (offsetsAndConfigurationIndex):
+        - Update argument list in comment block.
+        (offsetsAndConfigurationIndexForVariants): Add.
+        - Invoke offsetsAndConfigurationIndex() for each build variant.
+        (configurationIndices):
+        - Update argument list in comment block.
+        (configurationIndicesForVariants): Add.
+        - Invoke configurationIndices() for each build variant.
+
 2020-10-28  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [WinCairo][PlayStation] Add handling for accept failure case

@@ -331,6 +331,7 @@ IncludeFile.processIncludeOptions()
 asmFile = ARGV.shift
 offsetsFile = ARGV.shift
 outputFlnm = ARGV.shift
+variants = ARGV.shift.split(/[,\s]+/)
 
 $options = {}
 OptionParser.new do |opts|
@@ -342,7 +343,7 @@ OptionParser.new do |opts|
 end.parse!
 
 begin
-    configurationList = offsetsAndConfigurationIndex(offsetsFile)
+    configurationList = offsetsAndConfigurationIndexForVariants(offsetsFile, variants)
 rescue MissingMagicValuesException
     $stderr.puts "offlineasm: No magic values found. Skipping assembly file generation."
     exit 1

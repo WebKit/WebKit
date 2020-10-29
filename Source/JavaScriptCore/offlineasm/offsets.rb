@@ -139,7 +139,7 @@ def sliceByteArrays(byteArray, pattern)
 end
 
 #
-# offsetsAndConfigurationIndex(ast, file) ->
+# offsetsAndConfigurationIndex(file) ->
 #     [[offsets, index], ...]
 #
 # Parses the offsets from a file and returns a list of offsets and the
@@ -182,7 +182,28 @@ def offsetsAndConfigurationIndex(file)
 end
 
 #
-# configurationIndices(ast, file) ->
+# offsetsAndConfigurationIndex(file) ->
+#     [[offsets, index], ...]
+#
+# Parses the offsets from a file and all its variants and returns a list of
+# offsets and the index of the configuration that is valid in this build target.
+#
+
+def offsetsAndConfigurationIndexForVariants(file, variants)
+    results = []
+    variants.each {
+        | current_variant |
+        suffix = ""
+        unless current_variant == "normal"
+            suffix = "_" + current_variant
+        end
+        results << offsetsAndConfigurationIndex(file + suffix)
+    }
+    return results.flatten(1)
+end
+
+#
+# configurationIndices(file) ->
 #     [[offsets, index], ...]
 #
 # Parses the configurations from a file and returns a list of the indices of
@@ -209,6 +230,27 @@ def configurationIndices(file)
     raise MissingMagicValuesException unless result.length >= 1
 
     return result
+end
+
+#
+# configurationIndicesForVariants(file, variants) ->
+#     [[offsets, index], ...]
+#
+# Parses the configurations from a file and all its variants and returns a list
+# of the indices of the configurations that are valid in this build target.
+#
+
+def configurationIndicesForVariants(file, variants)
+    results = []
+    variants.each {
+        | current_variant |
+        suffix = ""
+        unless current_variant == "normal"
+            suffix = "_" + current_variant
+        end
+        results << configurationIndices(file + suffix)
+    }
+    return results.flatten(1)
 end
 
 #
