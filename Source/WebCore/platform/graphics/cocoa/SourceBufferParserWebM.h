@@ -31,7 +31,6 @@
 #include <common/vp9_header_parser.h>
 #include <webm/callback.h>
 #include <webm/status.h>
-#include <wtf/Deque.h>
 #include <wtf/Function.h>
 #include <wtf/MediaTime.h>
 #include <wtf/UniqueRef.h>
@@ -70,10 +69,28 @@ public:
     void resetParserState() final;
     void invalidate() final;
 
+#if !RELEASE_LOG_DISABLED
+    void setLogger(const WTF::Logger&, const void* identifier) final;
+#endif
+
     enum class ErrorCode : int32_t {
         SourceBufferParserWebMErrorCodeStart = 2000,
         InvalidDocType,
         InvalidInitSegment,
+        ReceivedEbmlInsideSegment,
+    };
+
+    enum class State : uint8_t {
+        None,
+        ReadingEbml,
+        ReadEbml,
+        ReadingSegment,
+        ReadingInfo,
+        ReadInfo,
+        ReadingTracks,
+        ReadingTrack,
+        ReadTrack,
+        ReadingCluster,
     };
 
 private:
@@ -86,8 +103,14 @@ private:
     };
     TrackData* trackDataForTrackNumber(uint64_t);
 
+#if !RELEASE_LOG_DISABLED
+    const WTF::Logger* loggerPtr() const { return m_logger.get(); }
+    const void* logIdentifier() const { return m_logIdentifier; }
+#endif
+
     // webm::Callback
     webm::Status OnElementBegin(const webm::ElementMetadata&, webm::Action*) final;
+    webm::Status OnElementEnd(const webm::ElementMetadata&) final;
     webm::Status OnEbml(const webm::ElementMetadata&, const webm::Ebml&) final;
     webm::Status OnSegmentBegin(const webm::ElementMetadata&, webm::Action*) final;
     webm::Status OnInfo(const webm::ElementMetadata&, const webm::Info&) final;
@@ -108,18 +131,6 @@ private:
     uint32_t m_timescale { 1000 };
     uint64_t m_currentTimecode { 0 };
 
-    enum class State : uint8_t {
-        None,
-        ReadingEbml,
-        ReadEbml,
-        ReadingSegment,
-        ReadingInfo,
-        ReadInfo,
-        ReadingTracks,
-        ReadingTrack,
-        ReadTrack,
-        ReadingCluster,
-    };
     State m_state { State::None };
 
     class StreamingVectorReader;
@@ -128,6 +139,12 @@ private:
     Vector<TrackData> m_tracks;
     using BlockVariant = Variant<webm::Block, webm::SimpleBlock>;
     Optional<BlockVariant> m_currentBlock;
+    Optional<uint64_t> m_rewindToPosition;
+
+#if !RELEASE_LOG_DISABLED
+    RefPtr<const WTF::Logger> m_logger;
+    const void* m_logIdentifier { nullptr };
+#endif
 };
 
 }

@@ -30,8 +30,8 @@
 
 #include "AudioTrackPrivateWebM.h"
 #include "ContentType.h"
-#include "CoreVideoSoftLink.h"
 #include "InbandTextTrackPrivate.h"
+#include "Logging.h"
 #include "MediaDescription.h"
 #include "MediaSampleAVFObjC.h"
 #include "NotImplemented.h"
@@ -39,19 +39,210 @@
 #include "SharedBuffer.h"
 #include "VP9UtilitiesCocoa.h"
 #include "VideoTrackPrivateWebM.h"
-#include "VideoToolboxSoftLink.h"
 #include <JavaScriptCore/DataView.h>
-#include <pal/cf/CoreMediaSoftLink.h>
 #include <webm/webm_parser.h>
 #include <wtf/Algorithms.h>
-#include <wtf/Deque.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/StdList.h>
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/darwin/WeakLinking.h>
 
+#include "CoreVideoSoftLink.h"
+#include "VideoToolboxSoftLink.h"
+#include <pal/cf/CoreMediaSoftLink.h>
+
 WTF_WEAK_LINK_FORCE_IMPORT(webm::swap);
 
+namespace WTF {
+
+template<typename> struct LogArgument;
+
+template<> struct LogArgument<webm::Id> {
+    static String toString(webm::Id id)
+    {
+        switch (id) {
+        case webm::Id::kEbml: return "Ebml"_s;
+        case webm::Id::kEbmlVersion: return "EbmlVersion"_s;
+        case webm::Id::kEbmlReadVersion: return "EbmlReadVersion"_s;
+        case webm::Id::kEbmlMaxIdLength: return "EbmlMaxIdLength"_s;
+        case webm::Id::kEbmlMaxSizeLength: return "EbmlMaxSizeLength"_s;
+        case webm::Id::kDocType: return "DocType"_s;
+        case webm::Id::kDocTypeVersion: return "DocTypeVersion"_s;
+        case webm::Id::kDocTypeReadVersion: return "DocTypeReadVersion"_s;
+        case webm::Id::kVoid: return "Void"_s;
+        case webm::Id::kSegment: return "Segment"_s;
+        case webm::Id::kSeekHead: return "SeekHead"_s;
+        case webm::Id::kSeek: return "Seek"_s;
+        case webm::Id::kSeekId: return "SeekId"_s;
+        case webm::Id::kSeekPosition: return "SeekPosition"_s;
+        case webm::Id::kInfo: return "Info"_s;
+        case webm::Id::kTimecodeScale: return "TimecodeScale"_s;
+        case webm::Id::kDuration: return "Duration"_s;
+        case webm::Id::kDateUtc: return "DateUtc"_s;
+        case webm::Id::kTitle: return "Title"_s;
+        case webm::Id::kMuxingApp: return "MuxingApp"_s;
+        case webm::Id::kWritingApp: return "WritingApp"_s;
+        case webm::Id::kCluster: return "Cluster"_s;
+        case webm::Id::kTimecode: return "Timecode"_s;
+        case webm::Id::kPrevSize: return "PrevSize"_s;
+        case webm::Id::kSimpleBlock: return "SimpleBlock"_s;
+        case webm::Id::kBlockGroup: return "BlockGroup"_s;
+        case webm::Id::kBlock: return "Block"_s;
+        case webm::Id::kBlockVirtual: return "BlockVirtual"_s;
+        case webm::Id::kBlockAdditions: return "BlockAdditions"_s;
+        case webm::Id::kBlockMore: return "BlockMore"_s;
+        case webm::Id::kBlockAddId: return "BlockAddId"_s;
+        case webm::Id::kBlockAdditional: return "BlockAdditional"_s;
+        case webm::Id::kBlockDuration: return "BlockDuration"_s;
+        case webm::Id::kReferenceBlock: return "ReferenceBlock"_s;
+        case webm::Id::kDiscardPadding: return "DiscardPadding"_s;
+        case webm::Id::kSlices: return "Slices"_s;
+        case webm::Id::kTimeSlice: return "TimeSlice"_s;
+        case webm::Id::kLaceNumber: return "LaceNumber"_s;
+        case webm::Id::kTracks: return "Tracks"_s;
+        case webm::Id::kTrackEntry: return "TrackEntry"_s;
+        case webm::Id::kTrackNumber: return "TrackNumber"_s;
+        case webm::Id::kTrackUid: return "TrackUid"_s;
+        case webm::Id::kTrackType: return "TrackType"_s;
+        case webm::Id::kFlagEnabled: return "FlagEnabled"_s;
+        case webm::Id::kFlagDefault: return "FlagDefault"_s;
+        case webm::Id::kFlagForced: return "FlagForced"_s;
+        case webm::Id::kFlagLacing: return "FlagLacing"_s;
+        case webm::Id::kDefaultDuration: return "DefaultDuration"_s;
+        case webm::Id::kName: return "Name"_s;
+        case webm::Id::kLanguage: return "Language"_s;
+        case webm::Id::kCodecId: return "CodecId"_s;
+        case webm::Id::kCodecPrivate: return "CodecPrivate"_s;
+        case webm::Id::kCodecName: return "CodecName"_s;
+        case webm::Id::kCodecDelay: return "CodecDelay"_s;
+        case webm::Id::kSeekPreRoll: return "SeekPreRoll"_s;
+        case webm::Id::kVideo: return "Video"_s;
+        case webm::Id::kFlagInterlaced: return "FlagInterlaced"_s;
+        case webm::Id::kStereoMode: return "StereoMode"_s;
+        case webm::Id::kAlphaMode: return "AlphaMode"_s;
+        case webm::Id::kPixelWidth: return "PixelWidth"_s;
+        case webm::Id::kPixelHeight: return "PixelHeight"_s;
+        case webm::Id::kPixelCropBottom: return "PixelCropBottom"_s;
+        case webm::Id::kPixelCropTop: return "PixelCropTop"_s;
+        case webm::Id::kPixelCropLeft: return "PixelCropLeft"_s;
+        case webm::Id::kPixelCropRight: return "PixelCropRight"_s;
+        case webm::Id::kDisplayWidth: return "DisplayWidth"_s;
+        case webm::Id::kDisplayHeight: return "DisplayHeight"_s;
+        case webm::Id::kDisplayUnit: return "DisplayUnit"_s;
+        case webm::Id::kAspectRatioType: return "AspectRatioType"_s;
+        case webm::Id::kFrameRate: return "FrameRate"_s;
+        case webm::Id::kColour: return "Colour"_s;
+        case webm::Id::kMatrixCoefficients: return "MatrixCoefficients"_s;
+        case webm::Id::kBitsPerChannel: return "BitsPerChannel"_s;
+        case webm::Id::kChromaSubsamplingHorz: return "ChromaSubsamplingHorz"_s;
+        case webm::Id::kChromaSubsamplingVert: return "ChromaSubsamplingVert"_s;
+        case webm::Id::kCbSubsamplingHorz: return "CbSubsamplingHorz"_s;
+        case webm::Id::kCbSubsamplingVert: return "CbSubsamplingVert"_s;
+        case webm::Id::kChromaSitingHorz: return "ChromaSitingHorz"_s;
+        case webm::Id::kChromaSitingVert: return "ChromaSitingVert"_s;
+        case webm::Id::kRange: return "Range"_s;
+        case webm::Id::kTransferCharacteristics: return "TransferCharacteristics"_s;
+        case webm::Id::kPrimaries: return "Primaries"_s;
+        case webm::Id::kMaxCll: return "MaxCll"_s;
+        case webm::Id::kMaxFall: return "MaxFall"_s;
+        case webm::Id::kMasteringMetadata: return "MasteringMetadata"_s;
+        case webm::Id::kPrimaryRChromaticityX: return "PrimaryRChromaticityX"_s;
+        case webm::Id::kPrimaryRChromaticityY: return "PrimaryRChromaticityY"_s;
+        case webm::Id::kPrimaryGChromaticityX: return "PrimaryGChromaticityX"_s;
+        case webm::Id::kPrimaryGChromaticityY: return "PrimaryGChromaticityY"_s;
+        case webm::Id::kPrimaryBChromaticityX: return "PrimaryBChromaticityX"_s;
+        case webm::Id::kPrimaryBChromaticityY: return "PrimaryBChromaticityY"_s;
+        case webm::Id::kWhitePointChromaticityX: return "WhitePointChromaticityX"_s;
+        case webm::Id::kWhitePointChromaticityY: return "WhitePointChromaticityY"_s;
+        case webm::Id::kLuminanceMax: return "LuminanceMax"_s;
+        case webm::Id::kLuminanceMin: return "LuminanceMin"_s;
+        case webm::Id::kProjection: return "Projection"_s;
+        case webm::Id::kProjectionType: return "ProjectionType"_s;
+        case webm::Id::kProjectionPrivate: return "ProjectionPrivate"_s;
+        case webm::Id::kProjectionPoseYaw: return "ProjectionPoseYaw"_s;
+        case webm::Id::kProjectionPosePitch: return "ProjectionPosePitch"_s;
+        case webm::Id::kProjectionPoseRoll: return "ProjectionPoseRoll"_s;
+        case webm::Id::kAudio: return "Audio"_s;
+        case webm::Id::kSamplingFrequency: return "SamplingFrequency"_s;
+        case webm::Id::kOutputSamplingFrequency: return "OutputSamplingFrequency"_s;
+        case webm::Id::kChannels: return "Channels"_s;
+        case webm::Id::kBitDepth: return "BitDepth"_s;
+        case webm::Id::kContentEncodings: return "ContentEncodings"_s;
+        case webm::Id::kContentEncoding: return "ContentEncoding"_s;
+        case webm::Id::kContentEncodingOrder: return "ContentEncodingOrder"_s;
+        case webm::Id::kContentEncodingScope: return "ContentEncodingScope"_s;
+        case webm::Id::kContentEncodingType: return "ContentEncodingType"_s;
+        case webm::Id::kContentEncryption: return "ContentEncryption"_s;
+        case webm::Id::kContentEncAlgo: return "ContentEncAlgo"_s;
+        case webm::Id::kContentEncKeyId: return "ContentEncKeyId"_s;
+        case webm::Id::kContentEncAesSettings: return "ContentEncAesSettings"_s;
+        case webm::Id::kAesSettingsCipherMode: return "AesSettingsCipherMode"_s;
+        case webm::Id::kCues: return "Cues"_s;
+        case webm::Id::kCuePoint: return "CuePoint"_s;
+        case webm::Id::kCueTime: return "CueTime"_s;
+        case webm::Id::kCueTrackPositions: return "CueTrackPositions"_s;
+        case webm::Id::kCueTrack: return "CueTrack"_s;
+        case webm::Id::kCueClusterPosition: return "CueClusterPosition"_s;
+        case webm::Id::kCueRelativePosition: return "CueRelativePosition"_s;
+        case webm::Id::kCueDuration: return "CueDuration"_s;
+        case webm::Id::kCueBlockNumber: return "CueBlockNumber"_s;
+        case webm::Id::kChapters: return "Chapters"_s;
+        case webm::Id::kEditionEntry: return "EditionEntry"_s;
+        case webm::Id::kChapterAtom: return "ChapterAtom"_s;
+        case webm::Id::kChapterUid: return "ChapterUid"_s;
+        case webm::Id::kChapterStringUid: return "ChapterStringUid"_s;
+        case webm::Id::kChapterTimeStart: return "ChapterTimeStart"_s;
+        case webm::Id::kChapterTimeEnd: return "ChapterTimeEnd"_s;
+        case webm::Id::kChapterDisplay: return "ChapterDisplay"_s;
+        case webm::Id::kChapString: return "ChapString"_s;
+        case webm::Id::kChapLanguage: return "ChapLanguage"_s;
+        case webm::Id::kChapCountry: return "ChapCountry"_s;
+        case webm::Id::kTags: return "Tags"_s;
+        case webm::Id::kTag: return "Tag"_s;
+        case webm::Id::kTargets: return "Targets"_s;
+        case webm::Id::kTargetTypeValue: return "TargetTypeValue"_s;
+        case webm::Id::kTargetType: return "TargetType"_s;
+        case webm::Id::kTagTrackUid: return "TagTrackUid"_s;
+        case webm::Id::kSimpleTag: return "SimpleTag"_s;
+        case webm::Id::kTagName: return "TagName"_s;
+        case webm::Id::kTagLanguage: return "TagLanguage"_s;
+        case webm::Id::kTagDefault: return "TagDefault"_s;
+        case webm::Id::kTagString: return "TagString"_s;
+        case webm::Id::kTagBinary: return "TagBinary"_s;
+        }
+        return "Unknown"_s;
+    }
+};
+
+template<> struct LogArgument<WebCore::SourceBufferParserWebM::State> {
+    static String toString(WebCore::SourceBufferParserWebM::State state)
+    {
+        switch (state) {
+        case WebCore::SourceBufferParserWebM::State::None: return "None"_s;
+        case WebCore::SourceBufferParserWebM::State::ReadingEbml: return "ReadingEbml"_s;
+        case WebCore::SourceBufferParserWebM::State::ReadEbml: return "ReadEbml"_s;
+        case WebCore::SourceBufferParserWebM::State::ReadingSegment: return "ReadingSegment"_s;
+        case WebCore::SourceBufferParserWebM::State::ReadingInfo: return "ReadingInfo"_s;
+        case WebCore::SourceBufferParserWebM::State::ReadInfo: return "ReadInfo"_s;
+        case WebCore::SourceBufferParserWebM::State::ReadingTracks: return "ReadingTracks"_s;
+        case WebCore::SourceBufferParserWebM::State::ReadingTrack: return "ReadingTrack"_s;
+        case WebCore::SourceBufferParserWebM::State::ReadTrack: return "ReadTrack"_s;
+        case WebCore::SourceBufferParserWebM::State::ReadingCluster: return "ReadingCluster"_s;
+        }
+        return "Unknown"_s;
+    }
+};
+
+} // namespace WTF
+
+
 namespace WebCore {
+
+#if !RELEASE_LOG_DISABLED
+static WTFLogChannel& logChannel() { return LogMediaSource; }
+static const char* logClassName() { return "SourceBufferParserWebM"; }
+#endif
 
 // FIXME: Remove this once kCMVideoCodecType_VP9 is added to CMFormatDescription.h
 constexpr CMVideoCodecType kCMVideoCodecType_VP9 { 'vp09' };
@@ -71,7 +262,9 @@ public:
     using Segment = Vector<unsigned char>;
     void appendSegment(Segment&& segment)
     {
-        m_data.append(WTFMove(segment));
+        m_data.push_back(WTFMove(segment));
+        if (m_currentSegment == m_data.end())
+            --m_currentSegment;
     }
 
     Status Read(std::size_t numToRead, uint8_t* outputBuffer, uint64_t* numActuallyRead) final
@@ -81,8 +274,8 @@ public:
             return Status(Status::kNotEnoughMemory);
 
         *numActuallyRead = 0;
-        while (!m_data.isEmpty()) {
-            auto& currentSegment = m_data.first();
+        while (m_currentSegment != m_data.end()) {
+            auto& currentSegment = *m_currentSegment;
 
             if (m_positionWithinSegment >= currentSegment.size()) {
                 advanceToNextSegment();
@@ -120,8 +313,8 @@ public:
             return Status(Status::kNotEnoughMemory);
 
         *numActuallySkipped = 0;
-        while (!m_data.isEmpty()) {
-            auto& currentSegment = m_data.first();
+        while (m_currentSegment != m_data.end()) {
+            auto& currentSegment = *m_currentSegment;
 
             if (m_positionWithinSegment >= currentSegment.size()) {
                 advanceToNextSegment();
@@ -157,22 +350,52 @@ public:
     {
         m_position = 0;
         m_data.clear();
+        m_currentSegment = m_data.end();
+    }
+
+    bool rewindTo(uint64_t rewindToPosition)
+    {
+        ASSERT(rewindToPosition <= m_position);
+        if (rewindToPosition > m_position)
+            return false;
+
+        auto rewindAmount = m_position - rewindToPosition;
+        while (rewindAmount) {
+            if (rewindAmount <= m_positionWithinSegment) {
+                m_positionWithinSegment -= rewindAmount;
+                return true;
+            }
+
+            if (m_currentSegment == m_data.begin())
+                return false;
+
+            rewindAmount -= m_positionWithinSegment;
+            --m_currentSegment;
+            m_positionWithinSegment = m_currentSegment->size();
+        }
+        return true;
+    }
+
+    void reclaimSegments()
+    {
+        m_data.erase(m_data.begin(), m_currentSegment);
     }
 
 private:
     void advanceToNextSegment()
     {
-        ASSERT(!m_data.isEmpty());
-        if (m_data.isEmpty())
+        ASSERT(m_currentSegment != m_data.end());
+        if (m_currentSegment == m_data.end())
             return;
 
-        ASSERT(m_positionWithinSegment == m_data.first().size());
+        ASSERT(m_positionWithinSegment == m_currentSegment->size());
 
-        m_data.removeFirst();
+        ++m_currentSegment;
         m_positionWithinSegment = 0;
     }
 
-    Deque<Segment> m_data;
+    StdList<Segment> m_data;
+    StdList<Segment>::iterator m_currentSegment { m_data.end() };
     size_t m_position { 0 };
     size_t m_positionWithinSegment { 0 };
 };
@@ -277,15 +500,44 @@ void SourceBufferParserWebM::appendData(Vector<unsigned char>&& buffer, AppendFl
     if (!m_parser)
         return;
 
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "flags(", appendFlags == AppendFlags::Discontinuity ? "Discontinuity" : "", "), size(", buffer.size(), ")");
+
     if (appendFlags == AppendFlags::Discontinuity) {
         m_reader->reset();
         m_parser->DidSeek();
     }
     m_reader->appendSegment(WTFMove(buffer));
-    m_status = m_parser->Feed(this, &m_reader);
-    if (m_status.ok() || m_status.code == Status::kEndOfFile || m_status.code == Status::kWouldBlock)
-        return;
 
+    while (true) {
+        m_status = m_parser->Feed(this, &m_reader);
+        if (m_status.ok() || m_status.code == Status::kEndOfFile || m_status.code == Status::kWouldBlock) {
+            m_reader->reclaimSegments();
+            return;
+        }
+
+        if (m_status.code != static_cast<int32_t>(ErrorCode::ReceivedEbmlInsideSegment))
+            break;
+
+        // The WebM Byte Stream Format <https://w3c.github.io/media-source/webm-byte-stream-format.html>
+        // states that an "Initialization Segment" starts with an Ebml Element followed by a Segment Element,
+        // and that a "Media Segment" is a single Cluster Element. However, since Cluster Elements are contained
+        // within a Segment Element, this means that a new Ebml Element can be appended at any time while the
+        // parser is still parsing children of a Segment Element. In this scenario, "rewind" the reader to the
+        // position of the incoming Ebml Element, and reset the parser, which will cause the Ebml element to be
+        // parsed as a top-level element, rather than as a child of the Segment.
+        if (!m_reader->rewindTo(*m_rewindToPosition)) {
+            ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "failed to rewind reader, bailing");
+            break;
+        }
+
+        ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "received Ebml element while parsing Segment element. Rewound reader and reset parser, retrying");
+        m_rewindToPosition = WTF::nullopt;
+        m_parser->DidSeek();
+        m_state = State::None;
+        continue;
+    }
+
+    ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "status.code(", m_status.code, ")");
     callOnMainThread([this, protectedThis = makeRef(*this), code = m_status.code] {
         if (m_didEncounterErrorDuringParsingCallback)
             m_didEncounterErrorDuringParsingCallback(code);
@@ -310,6 +562,7 @@ bool SourceBufferParserWebM::shouldProvideMediadataForTrackID(uint64_t)
 
 void SourceBufferParserWebM::resetParserState()
 {
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     m_parser->DidSeek();
     m_state = State::None;
     m_tracks.clear();
@@ -320,11 +573,20 @@ void SourceBufferParserWebM::resetParserState()
 
 void SourceBufferParserWebM::invalidate()
 {
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     m_parser = nullptr;
     m_tracks.clear();
     m_initializationSegment = nullptr;
     m_currentBlock.reset();
 }
+
+#if !RELEASE_LOG_DISABLED
+void SourceBufferParserWebM::setLogger(const Logger& logger, const void* logIdentifier)
+{
+    m_logger = makeRefPtr(logger);
+    m_logIdentifier = logIdentifier;
+}
+#endif
 
 auto SourceBufferParserWebM::trackDataForTrackNumber(uint64_t trackNumber) -> TrackData*
 {
@@ -343,15 +605,22 @@ Status SourceBufferParserWebM::OnElementBegin(const ElementMetadata& metadata, A
     if (!action)
         return Status(Status::kNotEnoughMemory);
 
-    if ((m_state == State::None && metadata.id != Id::kEbml)
-        || (m_state == State::ReadEbml && metadata.id != Id::kSegment)
-        || (m_state == State::ReadingSegment && metadata.id != Id::kInfo)
-        || (m_state == State::ReadInfo && metadata.id != Id::kTracks)
-        || (m_state == State::ReadTrack && metadata.id != Id::kTrackEntry && metadata.id != Id::kCluster)
-        || (metadata.id == Id::kCues || metadata.id == Id::kChapters)) {
+    if (m_state == State::ReadingSegment && metadata.id == Id::kEbml) {
+        m_rewindToPosition = metadata.position;
+        return Status(Status::Code(ErrorCode::ReceivedEbmlInsideSegment));
+    }
+
+    if ((m_state == State::None && metadata.id != Id::kEbml && metadata.id != Id::kSegment)
+        || (m_state == State::ReadingSegment && metadata.id != Id::kInfo && metadata.id != Id::kTracks && metadata.id != Id::kCluster)) {
+        DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, "state(", m_state, "), id(", metadata.id, "), position(", metadata.position, "), headerSize(", metadata.header_size, "), size(", metadata.size, "), skipping");
+
         *action = Action::kSkip;
         return Status(Status::kOkCompleted);
     }
+
+#if !RELEASE_LOG_DISABLED
+    auto oldState = m_state;
+#endif
 
     if (metadata.id == Id::kEbml)
         m_state = State::ReadingEbml;
@@ -366,6 +635,28 @@ Status SourceBufferParserWebM::OnElementBegin(const ElementMetadata& metadata, A
     else if (metadata.id == Id::kCluster)
         m_state = State::ReadingCluster;
 
+    DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, "state(", oldState, "->", m_state, "), id(", metadata.id, "), position(", metadata.position, "), headerSize(", metadata.header_size, "), size(", metadata.size, ")");
+
+    return Status(Status::kOkCompleted);
+}
+
+Status SourceBufferParserWebM::OnElementEnd(const ElementMetadata& metadata)
+{
+    UNUSED_PARAM(metadata);
+
+#if !RELEASE_LOG_DISABLED
+    auto oldState = m_state;
+#endif
+
+    if (metadata.id == Id::kEbml || metadata.id == Id::kSegment)
+        m_state = State::None;
+    else if (metadata.id == Id::kInfo || metadata.id == Id::kTracks || metadata.id == Id::kCluster)
+        m_state = State::ReadingSegment;
+    else if (metadata.id == Id::kTrackEntry)
+        m_state = State::ReadingTracks;
+
+    DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, "state(", oldState, "->", m_state, "), id(", metadata.id, "), size(", metadata.size, ")");
+
     return Status(Status::kOkCompleted);
 }
 
@@ -377,7 +668,6 @@ Status SourceBufferParserWebM::OnEbml(const ElementMetadata& metadata, const Ebm
 
     m_initializationSegmentEncountered = true;
     m_initializationSegment = WTF::makeUniqueWithoutFastMallocCheck<InitializationSegment>();
-    m_state = State::ReadEbml;
 
     return Status(Status::kOkCompleted);
 }
@@ -385,8 +675,10 @@ Status SourceBufferParserWebM::OnEbml(const ElementMetadata& metadata, const Ebm
 Status SourceBufferParserWebM::OnSegmentBegin(const ElementMetadata& metadata, Action* action)
 {
     UNUSED_PARAM(metadata);
-    if (!m_initializationSegmentEncountered)
+    if (!m_initializationSegmentEncountered) {
+        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Encountered Segment before Embl, bailing");
         return Status(Status::Code(ErrorCode::InvalidInitSegment));
+    }
 
     ASSERT(action);
     if (!action)
@@ -399,13 +691,14 @@ Status SourceBufferParserWebM::OnSegmentBegin(const ElementMetadata& metadata, A
 Status SourceBufferParserWebM::OnInfo(const ElementMetadata& metadata, const Info& info)
 {
     UNUSED_PARAM(metadata);
-    if (!m_initializationSegmentEncountered || !m_initializationSegment)
+    if (!m_initializationSegmentEncountered || !m_initializationSegment) {
+        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Encountered Info outside Segment, bailing");
         return Status(Status::Code(ErrorCode::InvalidInitSegment));
+    }
 
     auto timecodeScale = info.timecode_scale.is_present() ? info.timecode_scale.value() : 1000000;
     m_timescale = 1000000000 / timecodeScale;
     m_initializationSegment->duration = info.duration.is_present() ? MediaTime(info.duration.value(), m_timescale) : MediaTime::indefiniteTime();
-    m_state = State::ReadInfo;
 
     return Status(Status::kOkCompleted);
 }
@@ -437,7 +730,6 @@ Status SourceBufferParserWebM::OnClusterBegin(const ElementMetadata& metadata, c
 Status SourceBufferParserWebM::OnTrackEntry(const ElementMetadata& metadata, const TrackEntry& trackEntry)
 {
     UNUSED_PARAM(metadata);
-    m_state = State::ReadTrack;
     if (!trackEntry.track_type.is_present())
         return Status(Status::kOkCompleted);
 

@@ -172,6 +172,7 @@ class WebmParser::DocumentParser {
           PrepareForNextChild();
           callback = original_callback;
           child_metadata_.position = reader->Position();
+          callback->OnElementEnd(child_metadata_);
           continue;
         }
 
