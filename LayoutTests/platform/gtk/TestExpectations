@@ -86,6 +86,11 @@ webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transforms/animation
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transitions/parsing/transition-delay-invalid.html [ Pass Crash ]
 webkit.org/b/216777 fast/table/007.html [ Pass Crash ]
 
+# Navigation
+webkit.org/b/218349 fast/forms/focus2.html [ Failure ]
+webkit.org/b/218349 mathml/presentation/href-enter.html [ ImageOnlyFailure ]
+webkit.org/b/218349 mathml/presentation/href-style.html [ ImageOnlyFailure ]
+
 # Parsing
 webkit.org/b/217421 fast/parser/entities-in-html.html [ Failure ]
 
