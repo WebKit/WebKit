@@ -1057,7 +1057,9 @@ class ExtractTestResults(master.MasterShellCommand):
         return self.build.getProperties().render(self.resultDirectory).replace("public_html/", "/") + "/"
 
     def start(self):
-        self.command = ["unzip", self.build.getProperties().render(self.zipFile), "-d", self.build.getProperties().render(self.resultDirectory)]
+        self.zipfile = self.build.getProperties().render(self.zipFile)
+        self.resultDirectory = self.build.getProperties().render(self.resultDirectory)
+        self.command = ['unzip', '-q', '-o', self.zipfile, '-d', self.resultDirectory]
         return master.MasterShellCommand.start(self)
 
     def addCustomURLs(self):
