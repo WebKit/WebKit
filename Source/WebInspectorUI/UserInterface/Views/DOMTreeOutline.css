@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -91,7 +91,7 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-with
 .tree-outline.dom ol {
     list-style-type: none;
     margin: 0;
-    -webkit-padding-start: calc(var(--sublist-margin-start) + var(--sublist-padding-start) + var(--sublist-border-width-start));
+    padding-inline-start: calc(var(--sublist-margin-start) + var(--sublist-padding-start) + var(--sublist-border-width-start));
 }
 
 .tree-outline.dom ol.children {
@@ -103,8 +103,8 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-with
 }
 
 .tree-outline.dom li:matches(.hovered, .selected) + ol.children.expanded {
-    -webkit-margin-start: var(--sublist-margin-start);
-    -webkit-padding-start: var(--sublist-padding-start);
+    margin-inline-start: var(--sublist-margin-start);
+    padding-inline-start: var(--sublist-padding-start);
     border: 0 solid hsla(0, 0%, 83%, 0.5);
 }
 

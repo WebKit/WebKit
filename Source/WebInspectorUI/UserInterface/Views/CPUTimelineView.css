@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@
     display: inline-block;
     width: 15px;
     height: 15px;
-    -webkit-margin-start: 7px;
+    margin-inline-start: 7px;
     font-size: 12px;
     color: var(--gray-foreground-color);
     background-color: var(--gray-background-color);
@@ -59,16 +59,7 @@
     bottom: 0;
     right: 0;
     left: 0;
-
-    --cpu-timeline-view-details-timeline-ruler-offset-start: 150px;
-}
-
-body[dir=ltr] .timeline-view.cpu > .content > .details > .timeline-ruler {
-    left: var(--cpu-timeline-view-details-timeline-ruler-offset-start);
-}
-
-body[dir=rtl] .timeline-view.cpu > .content > .details > .timeline-ruler {
-    right: var(--cpu-timeline-view-details-timeline-ruler-offset-start);
+    inset-inline: 150px 0;
 }
 
 .timeline-view.cpu > .content > .details > .subtitle,
@@ -111,16 +102,7 @@ body[dir=rtl] .timeline-view.cpu > .content > .details > .timeline-ruler {
 
 .timeline-view.cpu > .content > .overview > .divider {
     margin: 0 5px;
-
-    --cpu-timeline-view-overview-divider-border-end: 1px solid var(--border-color);
-}
-
-body[dir=ltr] .timeline-view.cpu > .content > .overview > .divider {
-    border-right: var(--cpu-timeline-view-overview-divider-border-end);
-}
-
-body[dir=rtl] .timeline-view.cpu > .content > .overview > .divider {
-    border-left: var(--cpu-timeline-view-overview-divider-border-end);
+    border-inline-end: 1px solid var(--border-color);
 }
 
 .timeline-view.cpu > .content > .overview .samples,
@@ -130,7 +112,7 @@ body[dir=rtl] .timeline-view.cpu > .content > .overview > .divider {
 }
 
 .timeline-view.cpu > .content > .overview .legend {
-    -webkit-padding-start: 20px;
+    padding-inline-start: 20px;
     text-align: start;
     -webkit-user-select: text;
 }
@@ -147,7 +129,7 @@ body[dir=rtl] .timeline-view.cpu > .content > .overview > .divider {
     width: 1em;
     height: 1em;
     margin-top: 1px;
-    -webkit-margin-end: 8px;
+    margin-inline-end: 8px;
 }
 
 .timeline-view.cpu > .content > .overview .legend > .row > .swatch.sample-type-javascript {
@@ -367,7 +349,7 @@ body[dir=rtl] .timeline-view.cpu :matches(.area-chart, .stacked-area-chart) .mar
 }
 
 .timeline-view.cpu > .content > .overview > .chart > .container.stats > table .filter.active + .filter.active {
-    -webkit-margin-start: 3px;
+    margin-inline-start: 3px;
 }
 
 @media (prefers-color-scheme: dark) {

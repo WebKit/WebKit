@@ -42,7 +42,7 @@
 }
 
 .popover .cookie-popover-content > table > tr > td {
-    -webkit-padding-start: 4px;
+    padding-inline-start: 4px;
 }
 
 /* FIXME: <https://webkit.org/b/209389> Web Inspector: use native datetime-local picker for changing `expires` value in cookie popover */

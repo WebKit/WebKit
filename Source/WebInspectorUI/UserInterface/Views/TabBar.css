@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -110,11 +110,11 @@ body.window-inactive .tab-bar > .border {
 }
 
 .tab-bar > .navigation-bar > .item.group > .item:nth-child(1 of :not(.hidden)) {
-    -webkit-margin-start: 8px;
+    margin-inline-start: 8px;
 }
 
 .tab-bar > .navigation-bar > .item.group > .item:nth-last-child(1 of :not(.hidden)) {
-    -webkit-margin-end: 8px;
+    margin-inline-end: 8px;
 }
 
 .tab-bar > .navigation-bar .item.divider {
@@ -203,18 +203,14 @@ body.docked .tab-bar > .tabs > .item {
     flex: initial;
 }
 
-body[dir=ltr]:not(.docked) .tab-bar > .tabs > .item:nth-child(n + 3 of :not(.hidden)),
-body[dir=ltr]:not(.docked) .tab-bar > .tabs:not(.hide-border-start) > .item:nth-child(2 of :not(.hidden)),
-body[dir=ltr]:not(.docked) .tab-bar > .tabs.dragging-tab > .item.selected,
-body[dir=rtl]:not(.docked) .tab-bar > .tabs:not(.hide-border-end) > .item:nth-last-child(1 of :not(.hidden)) {
-    border-left: var(--tab-item-medium-border-style);
+body:not(.docked) .tab-bar > .tabs > .item:nth-child(n + 3 of :not(.hidden)),
+body:not(.docked) .tab-bar > .tabs:not(.hide-border-start) > .item:nth-child(2 of :not(.hidden)),
+body:not(.docked) .tab-bar > .tabs.dragging-tab > .item.selected {
+    border-inline-start: var(--tab-item-medium-border-style);
 }
 
-body[dir=ltr]:not(.docked) .tab-bar > .tabs:not(.hide-border-end) > .item:nth-last-child(1 of :not(.hidden)),
-body[dir=rtl]:not(.docked) .tab-bar > .tabs > .item:nth-child(n + 3 of :not(.hidden)),
-body[dir=rtl]:not(.docked) .tab-bar > .tabs:not(.hide-border-start) > .item:nth-child(2 of :not(.hidden)),
-body[dir=rtl]:not(.docked) .tab-bar > .tabs.dragging-tab > .item.selected {
-    border-right: var(--tab-item-medium-border-style);
+body:not(.docked) .tab-bar > .tabs:not(.hide-border-end) > .item:nth-last-child(1 of :not(.hidden)) {
+    border-inline-end: var(--tab-item-medium-border-style);
 }
 
 .tab-bar > .tabs > .item.pinned {
@@ -259,16 +255,13 @@ body.docked .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):h
     background-color: hsl(0, 0%, 95%);
 }
 
-body[dir=ltr]:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover,
-body[dir=ltr]:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover + .item,
-body[dir=rtl]:not(.docked) .tab-bar > .tabs:not(.animating) > .item:last-child:not(.selected, .disabled):hover {
-    border-left-color: var(--tab-item-dark-border-color);
+body:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover,
+body:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover + .item {
+    border-inline-start-color: var(--tab-item-dark-border-color);
 }
 
-body[dir=ltr]:not(.docked) .tab-bar > .tabs:not(.animating) > .item:last-child:not(.selected, .disabled):hover,
-body[dir=rtl]:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover,
-body[dir=rtl]:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover + .item {
-    border-right-color: var(--tab-item-dark-border-color);
+body:not(.docked) .tab-bar > .tabs:not(.animating) > .item:last-child:not(.selected, .disabled):hover {
+    border-inline-end-color: var(--tab-item-dark-border-color);
 }
 
 body:not(.docked).window-inactive .tab-bar > .tabs > .item {
@@ -348,7 +341,7 @@ body.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected > .icon {
 
     min-width: 0;
     max-width: 400px;
-    -webkit-margin-start: 6px;
+    margin-inline-start: 6px;
 }
 
 body.window-inactive .tab-bar > .tabs > .item > .name {

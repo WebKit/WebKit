@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,8 +36,7 @@
 
 .uncaught-exception-sheet {
     min-width: 400px;
-    -webkit-margin-start: 65px;
-    -webkit-margin-end: 55px;
+    margin-inline: 65px 55px;
     padding: 50px 0;
     font-family: -webkit-system-font, sans-serif;
     font-size: 11pt;
@@ -73,7 +72,7 @@
     position: relative;
     height: 35px;
     margin-top: -5px;
-    -webkit-margin-start: -50px;
+    margin-inline-start: -50px;
 }
 
 body[dir=ltr] .uncaught-exception-sheet h1 > img {
@@ -88,7 +87,7 @@ body[dir=rtl] .uncaught-exception-sheet h1 > img {
     position: relative;
     height: 25px;
     margin-top: 0;
-    -webkit-margin-start: -45px;
+    margin-inline-start: -45px;
 }
 
 body[dir=ltr] .uncaught-exception-sheet h2 > img {
@@ -110,14 +109,14 @@ body[dir=rtl] .uncaught-exception-sheet h2 > img {
 
 .uncaught-exception-sheet dd {
     margin: 10px 0 20px;
-    -webkit-margin-start: 10px;
+    margin-inline-start: 10px;
     font-size: 13px;
     line-height: 18px;
 }
 
 .uncaught-exception-sheet ul {
     margin: 0;
-    -webkit-margin-start: 2px;
+    margin-inline-start: 2px;
     padding: 0;
     font-family: Menlo, monospace;
     font-size: 12px;

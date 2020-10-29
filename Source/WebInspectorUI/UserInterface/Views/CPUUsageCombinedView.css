@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,22 +54,13 @@
     flex-shrink: 0;
     width: 150px;
     padding-top: 10px;
-    -webkit-padding-start: 15px;
+    padding-inline-start: 15px;
+    border-inline-end: 1px solid var(--border-color);
     font-size: 12px;
     color: var(--text-color-secondary);
     overflow: hidden;
     text-overflow: ellipsis;
     -webkit-user-select: text;
-
-    --cpu-usage-combined-view-details-border-end: 1px solid var(--border-color);
-}
-
-body[dir=ltr] .cpu-usage-combined-view > .details {
-    border-right: var(--cpu-usage-combined-view-details-border-end);
-}
-
-body[dir=rtl] .cpu-usage-combined-view > .details {
-    border-left: var(--cpu-usage-combined-view-details-border-end);
 }
 
 .cpu-usage-combined-view > :matches(.details, .legend) > .name {
@@ -101,7 +92,7 @@ body[dir=rtl] .cpu-usage-combined-view > .graph {
     width: 1em;
     height: 1em;
     margin-top: 1px;
-    -webkit-margin-end: 4px;
+    margin-inline-end: 4px;
 }
 
 .cpu-usage-combined-view > .details > .legend-container .swatch.total {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,21 +32,24 @@
 }
 
 .content-view.shader-program > .shader.compute,
-.content-view.shader-program > .shader.vertex.shares-vertex-fragment-shader {
-    right: 0;
-    left: 0;
+.content-view.shader-program > .shader.vertex {
+    inset-inline-start: 0;
+}
+
+.content-view.shader-program > .shader.compute,
+.content-view.shader-program > .shader.vertex.shares-vertex-fragment-shader,
+.content-view.shader-program > .shader.fragment {
+    inset-inline-end: 0;
 }
 
 body[dir=ltr] .content-view.shader-program > .shader.vertex:not(.shares-vertex-fragment-shader),
 body[dir=rtl] .content-view.shader-program > .shader.fragment {
     width: calc(50% - 1px);
-    left: 0;
 }
 
 body[dir=ltr] .content-view.shader-program > .shader.fragment,
 body[dir=rtl] .content-view.shader-program > .shader.vertex:not(.shares-vertex-fragment-shader) {
     width: calc(50% + 1px);
-    right: 0;
 }
 
 .content-view.shader-program > .shader + .shader {

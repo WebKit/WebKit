@@ -94,8 +94,8 @@
     margin: 10px 0 0;
     padding: 0;
 
-    -webkit-margin-start: 1em;
-    -webkit-padding-start: 1em;
+    margin-inline-start: 1em;
+    padding-inline-start: 1em;
 }
 
 .layer-tree-popover li {

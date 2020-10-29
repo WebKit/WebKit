@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,7 @@
     vertical-align: top;
     width: 16px;
     height: 16px;
-    -webkit-margin-end: 3px;
+    margin-inline-end: 3px;
 }
 
 .call-frame .titles {

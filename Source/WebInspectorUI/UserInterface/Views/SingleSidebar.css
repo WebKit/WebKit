@@ -35,14 +35,12 @@
     top: var(--navigation-bar-height);
 }
 
-body[dir=ltr] .single-sidebar.trailing > .resizer,
-body[dir=rtl] .single-sidebar.leading > .resizer {
-    left: -3px;
+.single-sidebar.trailing > .resizer {
+    inset-inline-start: -3px;
 }
 
-body[dir=ltr] .single-sidebar.leading > .resizer,
-body[dir=rtl] .single-sidebar.trailing > .resizer {
-    right: -3px;
+.single-sidebar.leading > .resizer {
+    inset-inline-end: -3px;
 }
 
 .single-sidebar.leading {

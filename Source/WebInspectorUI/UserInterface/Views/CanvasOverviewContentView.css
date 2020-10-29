@@ -162,7 +162,7 @@
 }
 
 .content-view.canvas-overview > .content-view.canvas > footer > .view-related-items > img + img {
-    -webkit-margin-start: 4px;
+    margin-inline-start: 4px;
 }
 
 .content-view.canvas-overview > .content-view.canvas > footer > .view-related-items > .view-shader {
@@ -178,7 +178,7 @@
 }
 
 .content-view.canvas-overview > .content-view.canvas > footer .memory-cost {
-    -webkit-padding-start: 4px;
+    padding-inline-start: 4px;
 }
 
 .content-view.canvas-overview > .content-view.canvas.saved-recordings {

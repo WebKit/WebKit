@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,6 +92,7 @@
 .scope-bar > li.multiple > select {
     position: absolute;
     top: 1px;
+    inset-inline-start: calc(var(--scope-bar-padding) - var(--scope-bar-padding-default) - 2px);
     width: 0;
     height: 0;
     margin: 0;
@@ -105,14 +106,6 @@
     outline-offset: -1px;
 }
 
-body[dir=ltr] .scope-bar > li.multiple > select {
-    left: calc(var(--scope-bar-padding) - var(--scope-bar-padding-default) - 2px);
-}
-
-body[dir=rtl] .scope-bar > li.multiple > select {
-    right: calc(var(--scope-bar-padding) - var(--scope-bar-padding-default) - 2px);
-}
-
 .scope-bar > li.multiple:not(.selected) > select {
     display: none;
 }
@@ -124,6 +117,5 @@ body[dir=rtl] .scope-bar > li.multiple > select {
     vertical-align: -2px;
     margin-top: -1px;
     margin-bottom: -1px;
-    -webkit-margin-start: 6px;
-    -webkit-margin-end: 2px;
+    margin-inline: 6px 2px;
 }

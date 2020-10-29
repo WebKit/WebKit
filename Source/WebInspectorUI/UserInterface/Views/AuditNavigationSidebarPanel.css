@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,12 +77,5 @@
 .content-view.tab.audit .content-view .reference-page-link-container {
     position: absolute;
     bottom: 4px;
-}
-
-body[dir=ltr] .content-view.tab.audit .content-view .reference-page-link-container {
-    right: 4px;
-}
-
-body[dir=rtl] .content-view.tab.audit .content-view .reference-page-link-container {
-    left: 4px;
+    inset-inline-end: 4px;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,7 +77,7 @@
     width: 15px;
     min-width: 15px;
     height: 15px;
-    -webkit-margin-start: 6px;
+    margin-inline-start: 6px;
     content: url(../Images/Plus15.svg);
     opacity: 0.7;
 
@@ -91,7 +91,7 @@
 .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle {
     position: relative;
     margin: 0 0 1px;
-    -webkit-margin-end: 5px;
+    margin-inline-end: 5px;
     padding: 2px 4px 3px;
     color: var(--text-color);
     background: none;

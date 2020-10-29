@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,7 @@
     top: var(--details-section-header-top);
     height: var(--details-section-header-height);
     padding: var(--details-section-header-vertical-padding) 0;
-    -webkit-padding-end: 5px;
+    padding-inline-end: 5px;
     font-size: 11px;
     font-weight: bold;
     white-space: nowrap;
@@ -150,7 +150,7 @@ body[dir=rtl] .details-section > .header::before {
 
 .details-section > .header > label > input[type="checkbox"] {
     margin: 0;
-    -webkit-margin-start: 5px;
+    margin-inline-start: 5px;
     vertical-align: 1px;
     font-size: 10px;
 }
@@ -158,7 +158,7 @@ body[dir=rtl] .details-section > .header::before {
 .details-section > .header .go-to-arrow {
     width: 10px;
     height: 15px;
-    -webkit-margin-start: 3px;
+    margin-inline-start: 3px;
 }
 
 .details-section > .content {
@@ -230,13 +230,13 @@ body[dir=rtl] .details-section > .header::before {
 
 .details-section > .content > .group > .row.simple > .label {
     width: 85px;
-    -webkit-padding-start: 6px;
+    padding-inline-start: 6px;
     color: hsl(0, 0%, 20%);
     text-align: end;
 }
 
 .details-section > .content > .group > .row.simple > .value {
-    -webkit-padding-start: 6px;
+    padding-inline-start: 6px;
     word-break: break-all;
     word-wrap: break-word;
     cursor: text;
@@ -246,7 +246,7 @@ body[dir=rtl] .details-section > .header::before {
 .details-section > .content > .group > .row.simple > .value .go-to-arrow {
     width: 10px;
     height: 12px;
-    -webkit-margin-start: 5px;
+    margin-inline-start: 5px;
 }
 
 .details-section > .content > .group > .row.simple.data > .value {

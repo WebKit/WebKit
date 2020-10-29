@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,7 +51,7 @@
 
 /* An array inside an array we should reduce the padding-start. */
 .object-tree-array-index .index-value .object-tree .tree-outline.object {
-    -webkit-padding-start: 6px;
+    padding-inline-start: 6px;
 }
 
 /* An array inside an ObjectTreePropertyTreeElement needs more left shift */
@@ -61,5 +61,5 @@
 
 /* A node inside an array we should reduce the padding-start. */
 .object-tree-array-index .index-value .formatted-node .tree-outline.dom {
-    -webkit-padding-start: 0px;
+    padding-inline-start: 0px;
 }

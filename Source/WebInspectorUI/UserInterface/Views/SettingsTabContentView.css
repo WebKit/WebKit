@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2016 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,13 +81,13 @@
 }
 
 .content-view.tab.settings > .settings-view > .container button {
-    -webkit-margin-end: 4px;
+    margin-inline-end: 4px;
     font-size: inherit;
 }
 
 .content-view.tab.settings > .settings-view > .container > .title {
     width: 50%;
-    -webkit-margin-end: 6px;
+    margin-inline-end: 6px;
     text-align: end;
 }
 
@@ -109,7 +109,7 @@
 }
 
 .content-view.tab.settings > .settings-view > .container > .editor-group > .editor input[type="checkbox"] {
-    -webkit-margin-end: 4px;
+    margin-inline-end: 4px;
     /* Vertically align <select> with the group title text. */
     font-size: 16px;
 }
@@ -127,8 +127,7 @@
 
 .content-view.tab.settings > .settings-view > .container > .editor-group > .editor input[type="number"] {
     max-width: 48px;
-    -webkit-margin-start: 2px;
-    -webkit-margin-end: 5px;
+    margin-inline: 2px 5px;
     padding-top: 0;
     padding-bottom: 0;
     text-align: end;
@@ -155,7 +154,7 @@
 }
 
 .content-view.tab.settings > .settings-view > .container.reference > a {
-    -webkit-margin-start: 16px; /* Balance the size of `.go-to-arrow` so that the text is visually centered. */
+    margin-inline-start: 16px; /* Balance the size of `.go-to-arrow` so that the text is visually centered. */
     color: var(--text-color-secondary);
 }
 

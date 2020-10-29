@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,22 +35,13 @@ body .timeline-overview > .graphs-container > .timeline-overview-graph.cpu {
 .timeline-overview-graph.cpu > .legend {
     position: absolute;
     top: 0;
+    inset-inline-end: 0;
     z-index: var(--timeline-record-z-index);
     padding: 2px;
     font-size: 8px;
     color: hsl(0, 0%, 50%);
     background-color: var(--timeline-odd-background-color);
     pointer-events: none;
-
-    --cpu-timeline-overview-graph-legend-offset-end: 0;
-}
-
-body[dir=ltr] .timeline-overview-graph.cpu > .legend {
-    right: var(--cpu-timeline-overview-graph-legend-offset-end);
-}
-
-body[dir=rtl] .timeline-overview-graph.cpu > .legend {
-    left: var(--cpu-timeline-overview-graph-legend-offset-end);
 }
 
 .timeline-overview-graph.cpu:nth-child(even) > .legend {

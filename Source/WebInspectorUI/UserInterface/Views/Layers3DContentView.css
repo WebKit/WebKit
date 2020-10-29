@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2018-2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,8 +59,8 @@
     margin: 10px 0 0;
     padding: 0;
 
-    -webkit-margin-start: 11px;
-    -webkit-padding-start: 11px;
+    margin-inline-start: 11px;
+    padding-inline-start: 11px;
 }
 
 .content-view.layers-3d .layer-info li {

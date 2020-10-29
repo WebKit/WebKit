@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -277,7 +277,7 @@ body.docked:matches(.right, .left) #navigation-sidebar.collapsed > .resizer {
 
 .go-to-link:not(.dont-float) {
     max-width: 100%;
-    -webkit-margin-start: 5px;
+    margin-inline-start: 5px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
@@ -485,7 +485,7 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
 
 @media (-webkit-device-pixel-ratio: 1) {
     .reference-page-link {
-        -webkit-padding-start: 1px;
+        padding-inline-start: 1px;
 
         --stroke-width: 1px;
     }
@@ -531,7 +531,7 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
 }
 
 .device-settings-content .container > * + * {
-    -webkit-margin-start: 8px;
+    margin-inline-start: 8px;
 }
 
 .device-settings-content .column {
@@ -557,21 +557,13 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
 
 .device-settings-content label > input {
     margin: 0;
-    -webkit-margin-start: 0.5px;
-    -webkit-margin-end: 4px;
+    margin-inline: 0.5px 4px;
 }
 
 .device-settings-content > .reference-page-link-container {
     position: absolute;
     bottom: 0.5em;
-}
-
-body[dir=ltr] .device-settings-content > .reference-page-link-container {
-    right: 0.5em;
-}
-
-body[dir=rtl] .device-settings-content > .reference-page-link-container {
-    left: 0.5em;
+    inset-inline-end: 0.5em;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,7 +74,7 @@
 }
 
 .popover .local-resource-override-popover-content label.is-case-sensitive {
-    -webkit-margin-end: 8px;
+    margin-inline-end: 8px;
 }
 
 .popover .local-resource-override-popover-content .editor.mime {
@@ -87,7 +87,7 @@
 
 .popover .local-resource-override-popover-content .editor.status-text {
     width: 168px;
-    -webkit-margin-start: 12px;
+    margin-inline-start: 12px;
 }
 
 .popover .local-resource-override-popover-content .data-grid tr.header-content-type > :matches(.name-column, .value-column) {

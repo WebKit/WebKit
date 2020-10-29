@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,16 +42,7 @@
     bottom: 0;
     right: 0;
     left: 0;
-
-    --memory-timeline-view-details-timeline-ruler-offset-start: 150px;
-}
-
-body[dir=ltr] .timeline-view.memory > .content > .details > .timeline-ruler {
-    left: var(--memory-timeline-view-details-timeline-ruler-offset-start);
-}
-
-body[dir=rtl] .timeline-view.memory > .content > .details > .timeline-ruler {
-    right: var(--memory-timeline-view-details-timeline-ruler-offset-start);
+    inset-inline-start: 150px;
 }
 
 .timeline-view.memory > .content > .details > .subtitle {
@@ -83,16 +74,7 @@ body[dir=rtl] .timeline-view.memory > .content > .details > .timeline-ruler {
 
 .timeline-view.memory > .content > .overview > .divider {
     margin: 0 5px;
-
-    --memory-timeline-view-overview-divider-border-end: 1px solid var(--border-color);
-}
-
-body[dir=ltr] .timeline-view.memory > .content > .overview > .divider {
-    border-right: var(--memory-timeline-view-overview-divider-border-end);
-}
-
-body[dir=rtl] .timeline-view.memory > .content > .overview > .divider {
-    border-left: var(--memory-timeline-view-overview-divider-border-end);
+    border-inline-end: 1px solid var(--border-color);
 }
 
 .timeline-view.memory > .content > .overview .total-usage,
@@ -103,7 +85,7 @@ body[dir=rtl] .timeline-view.memory > .content > .overview > .divider {
 }
 
 .timeline-view.memory .legend {
-    -webkit-padding-start: 20px;
+    padding-inline-start: 20px;
     text-align: start;
 }
 
@@ -119,7 +101,7 @@ body[dir=rtl] .timeline-view.memory > .content > .overview > .divider {
     width: 1em;
     height: 1em;
     margin-top: 1px;
-    -webkit-margin-end: 8px;
+    margin-inline-end: 8px;
 }
 
 .timeline-view.memory .legend .swatch.javascript {

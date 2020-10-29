@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -909,7 +909,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             // Keep all the elements at the same depth once the maximum is reached.
             childrenSubstring += i === maximumTreeDepth ? " .children" : " > .children";
             styleText += `.${WI.TreeOutline.ElementStyleClassName}:not(.${WI.TreeOutline.CustomIndentStyleClassName})${childrenSubstring} > .item { `;
-            styleText += `-webkit-padding-start: calc(var(--tree-outline-item-padding) + ${depthPadding * i}px);`;
+            styleText += `padding-inline-start: calc(var(--tree-outline-item-padding) + ${depthPadding * i}px);`;
             styleText += ` }\n`;
         }
 

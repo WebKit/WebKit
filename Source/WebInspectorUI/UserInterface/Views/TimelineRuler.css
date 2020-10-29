@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,20 +81,13 @@ body.window-inactive .timeline-ruler > .header > .divider {
 .timeline-ruler > .header > .divider > .label {
     position: absolute;
     top: 6px;
+    inset-inline-end: var(--timeline-ruler-header-divider-label-offset-end);
     font-size: 9px;
     font-weight: normal;
     color: hsl(0, 0%, 50%);
     white-space: nowrap;
 
     --timeline-ruler-header-divider-label-offset-end: 5px;
-}
-
-body[dir=ltr] .timeline-ruler > .header > .divider > .label {
-    right: var(--timeline-ruler-header-divider-label-offset-end);
-}
-
-body[dir=rtl] .timeline-ruler > .header > .divider > .label {
-    left: var(--timeline-ruler-header-divider-label-offset-end);
 }
 
 .timeline-ruler > .markers {
@@ -122,41 +115,27 @@ body[dir=rtl] .timeline-ruler > .header > .divider > .label {
     width: 3px;
     color: hsla(0, 0%, 50%, 0.5);
     border: 0 solid currentColor;
+    border-inline-start-width: var(--timeline-ruler-marker-border-width);
     pointer-events: all;
 
     --timeline-ruler-marker-border-width: 1px;
 }
 
-body[dir=ltr] .timeline-ruler > .markers > .marker {
-    border-left-width: var(--timeline-ruler-marker-border-width);
-}
-
-body[dir=rtl] .timeline-ruler > .markers > .marker {
-    border-right-width: var(--timeline-ruler-marker-border-width);
-}
-
 .timeline-ruler > .markers > .marker::before {
     width: var(--timeline-ruler-marker-before-size);
+    inset-inline-start: calc(-1 * ((var(--timeline-ruler-marker-before-size) + var(--timeline-ruler-marker-border-width)) / 2));
     position: absolute;
     top: 0;
     bottom: 0;
     content: "";
 
     --timeline-ruler-marker-before-size: 6px;
-    --timeline-ruler-marker-before-offset: calc(-1 * ((var(--timeline-ruler-marker-before-size) + var(--timeline-ruler-marker-border-width)) / 2));
-}
-
-body[dir=ltr] .timeline-ruler > .markers > .marker::before {
-    left: var(--timeline-ruler-marker-before-offset);
-}
-
-body[dir=rtl] .timeline-ruler > .markers > .marker::before {
-    right: var(--timeline-ruler-marker-before-offset);
 }
 
 .timeline-ruler > .markers > .marker::after {
     position: absolute;
     top: calc(-1 * (var(--timeline-ruler-marker-after-size) - 1px) / 2);
+    inset-inline-start: var(--timeline-ruler-marker-after-offset);
     content: "";
     border-right: calc(var(--timeline-ruler-marker-after-size) / 2) solid transparent;
     border-left: calc(var(--timeline-ruler-marker-after-size) / 2) solid transparent;
@@ -164,14 +143,6 @@ body[dir=rtl] .timeline-ruler > .markers > .marker::before {
 
     --timeline-ruler-marker-after-size: 10px;
     --timeline-ruler-marker-after-offset: calc(-1 * ((var(--timeline-ruler-marker-after-size) + var(--timeline-ruler-marker-border-width)) / 2));
-}
-
-body[dir=ltr] .timeline-ruler > .markers > .marker::after {
-    left: var(--timeline-ruler-marker-after-offset);
-}
-
-body[dir=rtl] .timeline-ruler > .markers > .marker::after {
-    right: var(--timeline-ruler-marker-after-offset);
 }
 
 .timeline-ruler > .markers > .marker.current-time {
@@ -279,14 +250,12 @@ body[dir=rtl] .timeline-ruler > .selection-handle.left {
     z-index: var(--timeline-selection-z-index);
 }
 
-body[dir=ltr] .timeline-ruler > .shaded-area.left,
-body[dir=rtl] .timeline-ruler > .shaded-area.right {
-    left: 0;
+.timeline-ruler > .shaded-area.left {
+    inset-inline-start: 0;
 }
 
-body[dir=ltr] .timeline-ruler > .shaded-area.right,
-body[dir=rtl] .timeline-ruler > .shaded-area.left {
-    right: 0;
+.timeline-ruler > .shaded-area.right {
+    inset-inline-end: 0;
 }
 
 @media (prefers-color-scheme: dark) {

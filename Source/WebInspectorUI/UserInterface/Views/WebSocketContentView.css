@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,21 +40,14 @@
 }
 
 .web-socket.content-view > .data-grid .data-column > div {
-    -webkit-padding-start: 18px;
+    padding-inline-start: 18px;
 }
 
 .web-socket.content-view .icon {
     position: absolute;
     margin-top: -1px;
-    -webkit-margin-end: 2px;
-}
-
-body[dir=ltr] .web-socket.content-view .icon {
-    left: 4px;
-}
-
-body[dir=rtl] .web-socket.content-view .icon {
-    right: 4px;
+    margin-inline-end: 2px;
+    inset-inline-start: 4px;
 }
 
 .web-socket.content-view .data-grid.variable-height-rows table.data tr:nth-child(odd) {

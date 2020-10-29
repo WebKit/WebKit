@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,9 +29,10 @@
 
 .tree-outline .item.call-frame .status {
     position: absolute;
+    inset-inline-start: var(--call-frame-status-start);
     float: none;
     margin-top: 0;
-    -webkit-margin-start: 1px;
+    margin-inline-start: 1px;
 
     --call-frame-status-start: 1px;
 }
@@ -40,12 +41,7 @@
     --call-frame-status-start: 11px;
 }
 
-body[dir=ltr] .tree-outline .item.call-frame .status {
-    left: var(--call-frame-status-start);
-}
-
 body[dir=rtl] .tree-outline .item.call-frame .status {
-    right: var(--call-frame-status-start);
     transform: scaleX(-1);
 }
 
@@ -69,13 +65,13 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .
 }
 
 .tree-outline:not(.single-thread) > .children > .item.call-frame.async-boundary {
-    -webkit-padding-start: 5px;
+    padding-inline-start: 5px;
 }
 
 .tree-outline .item.call-frame.async-boundary .icon {
     display: inline-block;
     float: none;
-    -webkit-margin-start: 0 !important;
+    margin-inline-start: 0 !important;
 }
 
 .tree-outline .item.call-frame.async-boundary::before,
@@ -90,13 +86,12 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .
 
 .tree-outline .item.call-frame.async-boundary::after {
     width: 100%;
-    -webkit-margin-start: 2px;
+    margin-inline-start: 2px;
 }
 
 .tree-outline .item.call-frame.async-boundary::before {
     width: 30px;
-    -webkit-margin-start: -5px;
-    -webkit-margin-end: 1px;
+    margin-inline: -5px 1px;
 }
 
 .tree-outline.single-thread .item.call-frame.async-boundary::before {

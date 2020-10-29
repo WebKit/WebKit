@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,7 @@
 }
 
 .content-view.audit-test-group > header {
-    -webkit-padding-end: var(--audit-test-horizontal-space);
+    padding-inline-end: var(--audit-test-horizontal-space);
 }
 
 .content-view.audit-test-group.no-matches + .audit-test-group > header {
@@ -96,14 +96,14 @@
 }
 
 .content-view.audit-test-group > header > nav > .scope-bar > li:last-child {
-    -webkit-margin-end: 0;
+    margin-inline-end: 0;
 }
 
 .content-view.audit-test-group > header > nav > .scope-bar > li > img {
     width: 16px;
     height: 16px;
     margin-top: 2px;
-    -webkit-margin-end: 4px;
+    margin-inline-end: 4px;
     vertical-align: -4px;
 }
 
@@ -129,7 +129,7 @@
 
 .content-view.audit-test-group > header > .percentage-pass {
     width: var(--metadata-width);
-    -webkit-margin-start: var(--audit-test-horizontal-space);
+    margin-inline-start: var(--audit-test-horizontal-space);
     font-size: 16px;
     text-align: center;
     font-weight: bold;

@@ -1,3 +1,378 @@
+2020-10-29  Federico Bucchi  <fbucchi@apple.com>
+
+        Web Inspector: update styles to use CSS properties with neutral directionality
+        https://bugs.webkit.org/show_bug.cgi?id=217447
+        <rdar://problem/70064975>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Debug/UncaughtExceptionReporter.css:
+        (.uncaught-exception-sheet):
+        (.uncaught-exception-sheet h1 > img):
+        (.uncaught-exception-sheet h2 > img):
+        (.uncaught-exception-sheet dd):
+        (.uncaught-exception-sheet ul):
+        * UserInterface/Views/AuditNavigationSidebarPanel.css:
+        (.content-view.tab.audit .content-view .reference-page-link-container):
+        (body[dir=ltr] .content-view.tab.audit .content-view .reference-page-link-container): Deleted.
+        (body[dir=rtl] .content-view.tab.audit .content-view .reference-page-link-container): Deleted.
+        * UserInterface/Views/AuditTestCaseContentView.css:
+        (.content-view.audit-test-case > header):
+        (.content-view.audit-test-case > header h1 > img):
+        (.content-view.audit-test-case > header > .metadata > .source):
+        (.content-view.audit-test-case > header > .metadata > .duration):
+        * UserInterface/Views/AuditTestContentView.css:
+        (.content-view.audit-test > header):
+        * UserInterface/Views/AuditTestGroupContentView.css:
+        (.content-view.audit-test-group > header):
+        (.content-view.audit-test-group > header > nav > .scope-bar > li:last-child):
+        (.content-view.audit-test-group > header > nav > .scope-bar > li > img):
+        (.content-view.audit-test-group > header > .percentage-pass):
+        * UserInterface/Views/BezierEditor.css:
+        (.bezier-editor > .bezier-preview-timing):
+        * UserInterface/Views/BlackboxSettingsView.css:
+        (.settings-view.blackbox > table > tbody td.remove-blackbox > .remove-blackbox-button):
+        * UserInterface/Views/BoxModelDetailsSectionRow.css:
+        (.details-section .row.box-model .box.border > .label):
+        * UserInterface/Views/BoxShadowEditor.css:
+        (.box-shadow-editor > table > tr > td):
+        (.box-shadow-editor > table > tr.offset-x > td > svg):
+        * UserInterface/Views/BreakpointActionView.css:
+        (:matches(.breakpoint-action-append-button, .breakpoint-action-remove-button)):
+        (.breakpoint-action-block-body > .description):
+        * UserInterface/Views/BreakpointPopover.css:
+        (.popover .edit-breakpoint-popover-content input:is(#edit-breakpoint-popover-ignore-count, #edit-breakpoint-popover-auto-continue)):
+        (.popover .edit-breakpoint-popover-content > .reference-page-link-container):
+        (body[dir=ltr] .popover .edit-breakpoint-popover-content > .reference-page-link-container): Deleted.
+        (body[dir=rtl] .popover .edit-breakpoint-popover-content > .reference-page-link-container): Deleted.
+        * UserInterface/Views/ButtonNavigationItem.css:
+        (.navigation-bar .item.button.image-and-text > span):
+        * UserInterface/Views/CPUTimelineOverviewGraph.css:
+        (.timeline-overview-graph.cpu > .legend):
+        (body[dir=ltr] .timeline-overview-graph.cpu > .legend): Deleted.
+        (body[dir=rtl] .timeline-overview-graph.cpu > .legend): Deleted.
+        * UserInterface/Views/CPUTimelineView.css:
+        (.timeline-view.cpu > .content .subtitle > .info):
+        (.timeline-view.cpu > .content > .details > .timeline-ruler):
+        (.timeline-view.cpu > .content > .overview > .divider):
+        (.timeline-view.cpu > .content > .overview .legend):
+        (.timeline-view.cpu > .content > .overview .legend .swatch):
+        (.timeline-view.cpu > .content > .overview > .chart > .container.stats > table .filter.active + .filter.active):
+        (body[dir=ltr] .timeline-view.cpu > .content > .details > .timeline-ruler): Deleted.
+        (body[dir=rtl] .timeline-view.cpu > .content > .details > .timeline-ruler): Deleted.
+        (body[dir=ltr] .timeline-view.cpu > .content > .overview > .divider): Deleted.
+        (body[dir=rtl] .timeline-view.cpu > .content > .overview > .divider): Deleted.
+        * UserInterface/Views/CPUUsageCombinedView.css:
+        (.cpu-usage-combined-view > .details):
+        (.cpu-usage-combined-view > .details > .legend-container > .row > .swatch):
+        (body[dir=ltr] .cpu-usage-combined-view > .details): Deleted.
+        (body[dir=rtl] .cpu-usage-combined-view > .details): Deleted.
+        * UserInterface/Views/CPUUsageView.css:
+        (.cpu-usage-view > .details):
+        (body[dir=ltr] .cpu-usage-view > .details): Deleted.
+        (body[dir=rtl] .cpu-usage-view > .details): Deleted.
+        * UserInterface/Views/CallFrameTreeElement.css:
+        (.tree-outline .item.call-frame .status):
+        (body[dir=rtl] .tree-outline .item.call-frame .status):
+        (.tree-outline:not(.single-thread) > .children > .item.call-frame.async-boundary):
+        (.tree-outline .item.call-frame.async-boundary .icon):
+        (.tree-outline .item.call-frame.async-boundary::after):
+        (.tree-outline .item.call-frame.async-boundary::before):
+        (body[dir=ltr] .tree-outline .item.call-frame .status): Deleted.
+        * UserInterface/Views/CallFrameView.css:
+        (.call-frame .icon):
+        * UserInterface/Views/CanvasDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.canvas .details-section.canvas-extensions .content > ul):
+        * UserInterface/Views/CanvasOverviewContentView.css:
+        (.content-view.canvas-overview > .content-view.canvas > footer > .view-related-items > img + img):
+        (.content-view.canvas-overview > .content-view.canvas > footer .memory-cost):
+        * UserInterface/Views/CheckboxNavigationItem.css:
+        (.navigation-bar .item.checkbox label):
+        * UserInterface/Views/ColorPicker.css:
+        (.color-picker .slider):
+        (.color-picker > .color-inputs > div + div):
+        * UserInterface/Views/ComputedStyleSection.css:
+        (.computed-style-section .computed-property-item .disclosure-button):
+        * UserInterface/Views/ConsoleMessageView.css:
+        (.console-message.expandable .console-top-level-message::before):
+        * UserInterface/Views/CookiePopover.css:
+        (.popover .cookie-popover-content > table > tr > td):
+        * UserInterface/Views/CreateAuditPopover.css:
+        (.popover .create-audit-content > .editor-wrapper > .reference-page-link):
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.css:
+        (.sidebar > .panel.dom-node-details .details-section.dom-node-associated-data > .content .row):
+        * UserInterface/Views/DOMTreeContentView.css:
+        (.content-view.dom-tree .tree-outline.dom):
+        (.content-view.dom-tree.show-gutter .tree-outline.dom):
+        (.content-view.dom-tree .tree-outline.dom li .status-image):
+        (body[dir=rtl] .content-view.dom-tree .tree-outline.dom li .status-image):
+        (body[dir=ltr] .content-view.dom-tree .tree-outline.dom li .status-image): Deleted.
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom ol):
+        (.tree-outline.dom li:matches(.hovered, .selected) + ol.children.expanded):
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid th:matches(.sort-ascending, .sort-descending) > .header-cell-content:first-child::after):
+        (.data-grid td .icon):
+        (.data-grid td .go-to-arrow):
+        (body[dir=ltr] .data-grid th:matches(.sort-ascending, .sort-descending) > .header-cell-content:first-child::after): Deleted.
+        (body[dir=rtl] .data-grid th:matches(.sort-ascending, .sort-descending) > .header-cell-content:first-child::after): Deleted.
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section > .header):
+        (.details-section > .header > label > input[type="checkbox"]):
+        (.details-section > .header .go-to-arrow):
+        (.details-section > .content > .group > .row.simple > .label):
+        (.details-section > .content > .group > .row.simple > .value):
+        (.details-section > .content > .group > .row.simple > .value .go-to-arrow):
+        * UserInterface/Views/ErrorObjectView.css:
+        (.error-object > .formatted-error::before):
+        (.error-object .content):
+        * UserInterface/Views/FilterBar.css:
+        (.filter-bar > input[type="search"]):
+        (:matches(.filter-bar, .search-bar) > input[type="search"]::-webkit-search-results-button):
+        (:matches(.filter-bar, .search-bar) > .navigation-bar + input[type="search"]):
+        (:matches(.filter-bar, .search-bar) > input[type="search"]:focus):
+        (:matches(.filter-bar, .search-bar) > input[type="search"] + :empty):
+        (:matches(.filter-bar, .search-bar) > input[type="search"] + .navigation-bar > .item.scope-bar:last-child):
+        * UserInterface/Views/FindBanner.css:
+        (.find-banner > :first-child):
+        (.find-banner > :last-child):
+        (.find-banner > input[type="search"]):
+        (.find-banner > button.segmented):
+        (.find-banner > button.segmented.previous-result):
+        (.find-banner > button.segmented.next-result):
+        (body[dir=ltr] .find-banner > button.segmented.next-result):
+        (body[dir=rtl] .find-banner > button.segmented.next-result):
+        (.find-banner > button.segmented.next-result > .glyph):
+        (.find-banner.console-find-banner > input[type="search"]::-webkit-textfield-decoration-container):
+        (body[dir=ltr] .find-banner > button.segmented.previous-result): Deleted.
+        (body[dir=rtl] .find-banner > button.segmented.previous-result): Deleted.
+        * UserInterface/Views/FlexibleSpaceNavigationItem.css:
+        (.navigation-bar .item.flexible-space.align-start > .item):
+        (.navigation-bar .item.flexible-space.align-end > .item):
+        * UserInterface/Views/FontResourceContentView.css:
+        (.content-view.resource.font .preview > .line > .metric):
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule):
+        (.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle):
+        (.panel.exclusive-presentation.details.css-style > .content > .rules):
+        * UserInterface/Views/GraphicsOverviewContentView.css:
+        (.content-view.graphics-overview > section > .header):
+        * UserInterface/Views/HierarchicalPathComponent.css:
+        (.hierarchical-path-component > :matches(.icon, .selector-arrows)):
+        (.hierarchical-path-component > select):
+        (.hierarchical-path-component > .separator):
+        (.hierarchical-path-component.text-only):
+        (body[dir=ltr] .hierarchical-path-component > select): Deleted.
+        (body[dir=rtl] .hierarchical-path-component > select): Deleted.
+        (body[dir=ltr] .hierarchical-path-component.text-only > select): Deleted.
+        (body[dir=rtl] .hierarchical-path-component.text-only > select): Deleted.
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.css:
+        (.layer-tree-popover ul):
+        * UserInterface/Views/Layers3DContentView.css:
+        (.content-view.layers-3d .layer-info ul):
+        * UserInterface/Views/LocalResourceOverridePopover.css:
+        (.popover .local-resource-override-popover-content label.is-case-sensitive):
+        (.popover .local-resource-override-popover-content .editor.status-text):
+        * UserInterface/Views/LogContentView.css:
+        (.content-view.log > .hidden-messages-banner > button):
+        (.content-view.log > .hidden-messages-banner > .dismiss):
+        (.console-group-title::before):
+        (body[dir=rtl] .console-group-title::before):
+        (body[dir=ltr] .content-view.log > .hidden-messages-banner > .dismiss): Deleted.
+        (body[dir=rtl] .content-view.log > .hidden-messages-banner > .dismiss): Deleted.
+        (body[dir=ltr] .console-group-title::before): Deleted.
+        * UserInterface/Views/Main.css:
+        (.go-to-link:not(.dont-float)):
+        (@media (-webkit-device-pixel-ratio: 1) .reference-page-link):
+        (.device-settings-content .container > * + *):
+        (.device-settings-content label > input):
+        (.device-settings-content > .reference-page-link-container):
+        (body[dir=ltr] .device-settings-content > .reference-page-link-container): Deleted.
+        (body[dir=rtl] .device-settings-content > .reference-page-link-container): Deleted.
+        * UserInterface/Views/MemoryCategoryView.css:
+        (.memory-category-view > .details):
+        (body[dir=ltr] .memory-category-view > .details): Deleted.
+        (body[dir=rtl] .memory-category-view > .details): Deleted.
+        * UserInterface/Views/MemoryTimelineOverviewGraph.css:
+        (.timeline-overview-graph.memory > .legend):
+        (.timeline-overview-graph.memory .memory-pressure-event):
+        (body[dir=ltr] .timeline-overview-graph.memory > .legend): Deleted.
+        (body[dir=rtl] .timeline-overview-graph.memory > .legend): Deleted.
+        (body[dir=ltr] .timeline-overview-graph.memory .memory-pressure-event): Deleted.
+        (body[dir=rtl] .timeline-overview-graph.memory .memory-pressure-event): Deleted.
+        * UserInterface/Views/MemoryTimelineView.css:
+        (.timeline-view.memory > .content > .details > .timeline-ruler):
+        (.timeline-view.memory > .content > .overview > .divider):
+        (.timeline-view.memory .legend):
+        (.timeline-view.memory .legend .swatch):
+        (body[dir=ltr] .timeline-view.memory > .content > .details > .timeline-ruler): Deleted.
+        (body[dir=rtl] .timeline-view.memory > .content > .details > .timeline-ruler): Deleted.
+        (body[dir=ltr] .timeline-view.memory > .content > .overview > .divider): Deleted.
+        (body[dir=rtl] .timeline-view.memory > .content > .overview > .divider): Deleted.
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.content-view.tab.network > .content-browser > .navigation-bar .hierarchical-path .icon):
+        (.content-view.network .network-table > .table .icon):
+        (.network-table > .table.grouped .data-container .cell:not(.parent).name):
+        (.network-table > .table.grouped .data-container .cell.child.name):
+        (.network-table > .table .cell.domain > .lock):
+        (.network-table > .table .cell.name > .status):
+        (.network-table > .table :not(.header) .cell.waterfall):
+        (.network-table > .statistics > .statistic > .text):
+        (body[dir=ltr] .network-table > .table :not(.header) .cell.waterfall): Deleted.
+        (body[dir=rtl] .network-table > .table :not(.header) .cell.waterfall): Deleted.
+        * UserInterface/Views/ObjectTreeArrayIndexTreeElement.css:
+        (.object-tree-array-index .index-value .object-tree .tree-outline.object):
+        (.object-tree-array-index .index-value .formatted-node .tree-outline.dom):
+        * UserInterface/Views/ObjectTreePropertyTreeElement.css:
+        (.item.object-tree-property.prototype-property + ol):
+        * UserInterface/Views/ObjectTreeView.css:
+        (.tree-outline.object ol):
+        (.tree-outline.object li > button[disabled] + .indeterminate-progress-spinner):
+        * UserInterface/Views/OpenResourceDialog.css:
+        (.open-resource-dialog > .field):
+        (.open-resource-dialog > .field::before):
+        (.open-resource-dialog > .field > input):
+        (.open-resource-dialog > .field > img):
+        (.open-resource-dialog > .tree-outline .item):
+        (body[dir=ltr] .open-resource-dialog > .field::before): Deleted.
+        (body[dir=rtl] .open-resource-dialog > .field::before): Deleted.
+        (body[dir=ltr] .open-resource-dialog > .field > img): Deleted.
+        (body[dir=rtl] .open-resource-dialog > .field > img): Deleted.
+        * UserInterface/Views/QuickConsole.css:
+        (.quick-console > .navigation-bar .active-execution-context):
+        (.quick-console > .navigation-bar .active-execution-context > .selector-arrows):
+        (.quick-console > .navigation-bar .active-execution-context:not(.automatic)):
+        * UserInterface/Views/RecordingActionTreeElement.css:
+        (.item.recording-action:not(.initial-state)::before):
+        (.tree-outline:not(.hide-disclosure-buttons) .item.recording-action:not(.initial-state, .parent) > .icon):
+        * UserInterface/Views/RecordingStateDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.recording-state > .content .details-section > .header .source):
+        * UserInterface/Views/ResourceDetailsSection.css:
+        (.resource-details > section > .details):
+        (.resource-details > section > .details > p):
+        (.resource-details > section > .details > .pair):
+        (.resource-details > section > .details > .pair > .key):
+        (body[dir=ltr] .resource-details > section > .details): Deleted.
+        (body[dir=rtl] .resource-details > section > .details): Deleted.
+        * UserInterface/Views/ResourceSecurityContentView.css:
+        (.resource-security .details > .show-certificate > .key > .error):
+        * UserInterface/Views/ResourceSizesContentView.css:
+        (.resource-sizes > .content > section.network .warning):
+        * UserInterface/Views/ResourceTimingBreakdownView.css:
+        (.resource-timing-breakdown > table > tr > td.time):
+        * UserInterface/Views/ScopeBar.css:
+        (.scope-bar > li.multiple > select):
+        (.scope-bar > li.multiple > .arrows):
+        (body[dir=ltr] .scope-bar > li.multiple > select): Deleted.
+        (body[dir=rtl] .scope-bar > li.multiple > select): Deleted.
+        * UserInterface/Views/SearchSidebarPanel.css:
+        (.sidebar > .panel.navigation.search > .search-bar > .search-settings):
+        * UserInterface/Views/SettingsTabContentView.css:
+        (.content-view.tab.settings > .settings-view > .container button):
+        (.content-view.tab.settings > .settings-view > .container > .title):
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor input[type="checkbox"]):
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor input[type="number"]):
+        (.content-view.tab.settings > .settings-view > .container.reference > a):
+        * UserInterface/Views/ShaderProgramContentView.css:
+        (.content-view.shader-program > .shader.compute,):
+        (body[dir=ltr] .content-view.shader-program > .shader.vertex:not(.shares-vertex-fragment-shader),):
+        (body[dir=ltr] .content-view.shader-program > .shader.fragment,):
+        * UserInterface/Views/SingleSidebar.css:
+        (.single-sidebar.trailing > .resizer):
+        (.single-sidebar.leading > .resizer):
+        (body[dir=ltr] .single-sidebar.trailing > .resizer,): Deleted.
+        (body[dir=ltr] .single-sidebar.leading > .resizer,): Deleted.
+        * UserInterface/Views/SourcesNavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation.sources > .content .tree-outline.single-thread):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor .property .select-variable-property):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.css:
+        (.spreadsheet-css-declaration .selector > .icon):
+        (.spreadsheet-css-declaration .selector > .icon + *):
+        (.spreadsheet-css-declaration .selector.style-attribute > span):
+        * UserInterface/Views/SpringEditor.css:
+        (.spring-editor > .spring-timing):
+        (.spring-editor > .spring-timing::before):
+        (.spring-editor > .spring-timing::after):
+        (body[dir=ltr] .spring-editor > .spring-timing::before,): Deleted.
+        (body[dir=ltr] .spring-editor > .spring-timing::after,): Deleted.
+        * UserInterface/Views/TabBar.css:
+        (.tab-bar > .navigation-bar > .item.group > .item:nth-child(1 of :not(.hidden))):
+        (.tab-bar > .navigation-bar > .item.group > .item:nth-last-child(1 of :not(.hidden))):
+        (body:not(.docked) .tab-bar > .tabs > .item:nth-child(n + 3 of :not(.hidden)),):
+        (body:not(.docked) .tab-bar > .tabs:not(.hide-border-end) > .item:nth-last-child(1 of :not(.hidden))):
+        (body:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover,):
+        (body:not(.docked) .tab-bar > .tabs:not(.animating) > .item:last-child:not(.selected, .disabled):hover):
+        (.tab-bar > .tabs > .item > .name):
+        (body[dir=ltr]:not(.docked) .tab-bar > .tabs > .item:nth-child(n + 3 of :not(.hidden)),): Deleted.
+        (body[dir=ltr]:not(.docked) .tab-bar > .tabs:not(.hide-border-end) > .item:nth-last-child(1 of :not(.hidden)),): Deleted.
+        (body[dir=ltr]:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover,): Deleted.
+        (body[dir=ltr]:not(.docked) .tab-bar > .tabs:not(.animating) > .item:last-child:not(.selected, .disabled):hover,): Deleted.
+        * UserInterface/Views/Table.css:
+        (.table > .header > :matches(.sort-ascending, .sort-descending)):
+        (.table > .header > :matches(.sort-ascending, .sort-descending)::after):
+        (.table > .header .cell:not(:first-child)::before):
+        (body[dir=ltr] .table > .header > :matches(.sort-ascending, .sort-descending)::after): Deleted.
+        (body[dir=rtl] .table > .header > :matches(.sort-ascending, .sort-descending)::after): Deleted.
+        (body[dir=ltr] .table > .header .cell:not(:first-child)::before): Deleted.
+        (body[dir=rtl] .table > .header .cell:not(:first-child)::before): Deleted.
+        * UserInterface/Views/ThreadTreeElement.css:
+        (.tree-outline > .item.thread + ol > .item.truncated-call-frames):
+        (.tree-outline > .item.thread + ol > .item.truncated-call-frames .icon):
+        * UserInterface/Views/TimelineOverview.css:
+        (.timeline-overview > :matches(.navigation-bar.timelines, .tree-outline.timelines)):
+        (.timeline-overview:not(.frames) > :matches(.scroll-container, .timeline-ruler, .graphs-container)):
+        (.timeline-overview > .scroll-container > .scroll-width-sizer):
+        (body[dir=ltr] .timeline-overview > :matches(.navigation-bar.timelines, .tree-outline.timelines)): Deleted.
+        (body[dir=rtl] .timeline-overview > :matches(.navigation-bar.timelines, .tree-outline.timelines)): Deleted.
+        (body[dir=ltr] .timeline-overview:not(.frames) > :matches(.scroll-container, .timeline-ruler, .graphs-container)): Deleted.
+        (body[dir=rtl] .timeline-overview:not(.frames) > :matches(.scroll-container, .timeline-ruler, .graphs-container)): Deleted.
+        (body[dir=ltr] .timeline-overview > .scroll-container > .scroll-width-sizer): Deleted.
+        (body[dir=rtl] .timeline-overview > .scroll-container > .scroll-width-sizer): Deleted.
+        * UserInterface/Views/TimelineRecordBar.css:
+        (.timeline-record-bar > img):
+        (.timeline-record-bar > .segment):
+        (body[dir=ltr] .timeline-record-bar > .segment:last-of-type):
+        (body[dir=ltr] .timeline-record-bar > .segment): Deleted.
+        (body[dir=rtl] .timeline-record-bar > .segment): Deleted.
+        * UserInterface/Views/TimelineRecordingContentView.css:
+        (.content-view.timeline-recording > .content-browser .recording-progress > .status > .indeterminate-progress-spinner):
+        * UserInterface/Views/TimelineRuler.css:
+        (.timeline-ruler > .header > .divider > .label):
+        (.timeline-ruler > .markers > .marker):
+        (.timeline-ruler > .markers > .marker::before):
+        (.timeline-ruler > .markers > .marker::after):
+        (.timeline-ruler > .shaded-area.left):
+        (.timeline-ruler > .shaded-area.right):
+        (body[dir=ltr] .timeline-ruler > .header > .divider > .label): Deleted.
+        (body[dir=rtl] .timeline-ruler > .header > .divider > .label): Deleted.
+        (body[dir=ltr] .timeline-ruler > .markers > .marker): Deleted.
+        (body[dir=rtl] .timeline-ruler > .markers > .marker): Deleted.
+        (body[dir=ltr] .timeline-ruler > .markers > .marker::before): Deleted.
+        (body[dir=rtl] .timeline-ruler > .markers > .marker::before): Deleted.
+        (body[dir=ltr] .timeline-ruler > .markers > .marker::after): Deleted.
+        (body[dir=rtl] .timeline-ruler > .markers > .marker::after): Deleted.
+        (body[dir=ltr] .timeline-ruler > .shaded-area.left,): Deleted.
+        (body[dir=ltr] .timeline-ruler > .shaded-area.right,): Deleted.
+        * UserInterface/Views/TreeOutline.css:
+        (.tree-outline:not(.hide-disclosure-buttons) .item:not(.parent) > .icon):
+        (.tree-outline .item .icon):
+        (.tree-outline .item .status):
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline._generateStyleRulesIfNeeded):
+        * UserInterface/Views/TypeTreeElement.css:
+        (.item.type-tree-element.prototype):
+        (.item.type-tree-element.prototype + ol):
+        * UserInterface/Views/TypeTreeView.css:
+        (.tree-outline.type):
+        (.tree-outline.type ol):
+        (.tree-outline.type li .empty-message):
+        * UserInterface/Views/WebSocketContentView.css:
+        (.web-socket.content-view > .data-grid .data-column > div):
+        (.web-socket.content-view .icon):
+        (body[dir=ltr] .web-socket.content-view .icon): Deleted.
+        (body[dir=rtl] .web-socket.content-view .icon): Deleted.
+
 2020-10-28  Federico Bucchi  <fbucchi@apple.com>
 
         Web Inspector: Network: background color of rows from previous session is wrong

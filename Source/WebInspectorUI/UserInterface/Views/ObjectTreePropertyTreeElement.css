@@ -108,7 +108,7 @@
 }
 
 .item.object-tree-property.prototype-property + ol {
-    -webkit-padding-start: 0px;
+    padding-inline-start: 0px;
 }
 
 .object-tree-property :matches(.getter, .setter) {

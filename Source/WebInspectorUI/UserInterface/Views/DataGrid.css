@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -228,6 +228,7 @@
     position: absolute;
     top: 1px;
     bottom: 0;
+    inset-inline-end: var(--data-grid-header-horizontal-padding);
     width: 9px;
     height: var(--data-grid-sorting-indicator-height);
     margin-bottom: auto;
@@ -235,14 +236,6 @@
     content: "";
     background-size: 9px 8px;
     background-repeat: no-repeat;
-}
-
-body[dir=ltr] .data-grid th:matches(.sort-ascending, .sort-descending) > .header-cell-content:first-child::after {
-    right: var(--data-grid-header-horizontal-padding);
-}
-
-body[dir=rtl] .data-grid th:matches(.sort-ascending, .sort-descending) > .header-cell-content:first-child::after {
-    left: var(--data-grid-header-horizontal-padding);
 }
 
 .data-grid th.sort-ascending > .header-cell-content:first-child::after {
@@ -329,13 +322,13 @@ body[dir=rtl] .data-grid tr.parent td.disclosure::before {
     display: inline-block;
     width: 16px;
     height: 16px;
-    -webkit-margin-end: 2px;
+    margin-inline-end: 2px;
     vertical-align: top;
 }
 
 .data-grid td .go-to-arrow {
     display: none;
-    -webkit-margin-start: 2px;
+    margin-inline-start: 2px;
 }
 
 body[dir=ltr] .data-grid td .go-to-arrow {

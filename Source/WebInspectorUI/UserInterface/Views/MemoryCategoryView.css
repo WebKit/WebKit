@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,22 +34,13 @@
     flex-shrink: 0;
     width: 150px;
     padding-top: 10px;
-    -webkit-padding-start: 15px;
+    padding-inline-start: 15px;
+    border-inline-end: 1px solid var(--border-color);
     font-family: -webkit-system-font, sans-serif;
     font-size: 12px;
     color: var(--text-color-secondary);
     overflow: hidden;
     text-overflow: ellipsis;
-
-    --memory-category-view-details-border-end: 1px solid var(--border-color);
-}
-
-body[dir=ltr] .memory-category-view > .details {
-    border-right: var(--memory-category-view-details-border-end);
-}
-
-body[dir=rtl] .memory-category-view > .details {
-    border-left: var(--memory-category-view-details-border-end);
 }
 
 .memory-category-view > .details > .name {

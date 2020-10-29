@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@
     min-height: 18px;
     margin: 0;
     padding-bottom: 2px;
-    -webkit-padding-end: 6px;
+    padding-inline-end: 6px;
     list-style: none;
     outline: none;
 }
@@ -53,7 +53,7 @@
 .tree-outline.type ol {
     display: none;
     margin: 0;
-    -webkit-padding-start: 16px;
+    padding-inline-start: 16px;
     list-style: none;
 }
 
@@ -62,6 +62,6 @@
 }
 
 .tree-outline.type li .empty-message {
-    -webkit-margin-start: 13px;
+    margin-inline-start: 13px;
     color: hsl(0, 0%, 60%);
 }

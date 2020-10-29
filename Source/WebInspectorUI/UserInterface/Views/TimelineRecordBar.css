@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,7 @@
     width: 14px;
     height: 14px;
     margin-top: -1px;
-    -webkit-margin-start: -7px;
+    margin-inline-start: -7px;
 }
 
 .timeline-record-bar > .segment {
@@ -47,17 +47,13 @@
     background-color: hsl(0, 0%, 88%);
     border-top: 1px solid var(--record-bar-segment-border-color);
     border-bottom: 1px solid var(--record-bar-segment-border-color);
+    border-inline: var(--record-bar-segment-border-start) var(--record-bar-segment-border-end);
 
     --record-bar-segment-border-color: hsl(0, 0%, 78%);
     --record-bar-segment-border-start: 1px solid var(--record-bar-segment-border-color);
     --record-bar-segment-border-end: 1px solid var(--record-bar-segment-border-color);
     --record-bar-segment-border-start-radius: 3px;
     --record-bar-segment-border-end-radius: 3px;
-}
-
-body[dir=ltr] .timeline-record-bar > .segment {
-    border-right: var(--record-bar-segment-border-end);
-    border-left: var(--record-bar-segment-border-start);
 }
 
 body[dir=ltr] .timeline-record-bar > .segment:first-of-type {
@@ -68,11 +64,6 @@ body[dir=ltr] .timeline-record-bar > .segment:first-of-type {
 body[dir=ltr] .timeline-record-bar > .segment:last-of-type {
     border-top-right-radius: var(--record-bar-segment-border-end-radius);
     border-bottom-right-radius: var(--record-bar-segment-border-end-radius);
-}
-
-body[dir=rtl] .timeline-record-bar > .segment {
-    border-right: var(--record-bar-segment-border-start);
-    border-left: var(--record-bar-segment-border-end);
 }
 
 body[dir=rtl] .timeline-record-bar > .segment:first-of-type {

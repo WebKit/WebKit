@@ -24,8 +24,7 @@
  */
 
 .content-view.tab.network > .content-browser > .navigation-bar .hierarchical-path .icon {
-    -webkit-margin-start: 8px;
-    -webkit-margin-end: 4px;
+    margin-inline: 8px 4px;
 }
 
 .network-overview-icon > .icon {
@@ -47,7 +46,7 @@
     height: 16px;
     bottom: 1px;
     vertical-align: middle;
-    -webkit-margin-end: 4px;
+    margin-inline-end: 4px;
 }
 
 .network-table > .table li:not(.filler, .selected) .cell:not(.name, .current-session),
@@ -94,11 +93,11 @@ body[dir=rtl] .network-table > .table .cell.dom-node.name .disclosure {
 }
 
 .network-table > .table.grouped .data-container .cell:not(.parent).name {
-    -webkit-padding-start: var(--item-padding-start);
+    padding-inline-start: var(--item-padding-start);
 }
 
 .network-table > .table.grouped .data-container .cell.child.name {
-    -webkit-padding-start: calc(var(--item-padding-start) + var(--item-disclosure-width));
+    padding-inline-start: calc(var(--item-padding-start) + var(--item-disclosure-width));
 }
 
 .network-table > .table .data-container .cell.name .range {
@@ -121,7 +120,7 @@ body[dir=rtl] .network-table > .table .cell.dom-node.name .disclosure {
     width: 8px;
     height: 10px;
     content: url(../Images/Locked.svg);
-    -webkit-margin-end: 5px;
+    margin-inline-end: 5px;
 }
 
 .network-table > .table li.selected .cell.domain > .lock {
@@ -130,7 +129,7 @@ body[dir=rtl] .network-table > .table .cell.dom-node.name .disclosure {
 }
 
 .network-table > .table .cell.name > .status {
-    -webkit-margin-start: 4px;
+    margin-inline-start: 4px;
 }
 
 body[dir=ltr] .network-table > .table .cell.name > .status {
@@ -175,14 +174,7 @@ body[dir=rtl] .network-table > .table .cell.name > .status {
 .network-table > .table :not(.header) .cell.waterfall {
     position: absolute;
     height: 20px;
-}
-
-body[dir=ltr] .network-table > .table :not(.header) .cell.waterfall {
-    border-left: 1px solid var(--graph-line-color);
-}
-
-body[dir=rtl] .network-table > .table :not(.header) .cell.waterfall {
-    border-right: 1px solid var(--graph-line-color);
+    border-inline-start: 1px solid var(--graph-line-color);
 }
 
 .network-table > .table :not(.header) .cell.waterfall .waterfall-container {
@@ -365,7 +357,7 @@ body[dir=rtl] .waterfall.network .block {
 
 .network-table > .statistics > .statistic > .text {
     padding-top: 1px;
-    -webkit-padding-start: 4px;
+    padding-inline-start: 4px;
     -webkit-user-select: all;
     font-variant-numeric: tabular-nums;
 }

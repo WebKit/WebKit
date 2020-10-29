@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,8 +62,7 @@
 .hierarchical-path-component > :matches(.icon, .selector-arrows) {
     margin-top: 2px;
     margin-bottom: 2px;
-    -webkit-margin-start: 4px;
-    -webkit-margin-end: 3px;
+    margin-inline: 4px 3px;
 }
 
 .hierarchical-path-component > .selector-arrows {
@@ -101,19 +100,8 @@
     top: -1px;
     bottom: 0;
 
-    --path-component-select-offset-start: 13px;
-    --path-component-select-offset-end: 0;
-}
-
-/* Positioned so the text in the menu aligns with the text in .title. */
-body[dir=ltr] .hierarchical-path-component > select {
-    left: var(--path-component-select-offset-start);
-    right: var(--path-component-select-offset-end);
-}
-
-body[dir=rtl] .hierarchical-path-component > select {
-    left: var(--path-component-select-offset-end);
-    right: var(--path-component-select-offset-start);
+    /* Positioned so the text in the menu aligns with the text in .title. */
+    inset-inline: 13px 0;
 }
 
 .hierarchical-path:not(.always-show-last-path-component-separator) > .hierarchical-path-component:last-child > .separator {
@@ -124,7 +112,7 @@ body[dir=rtl] .hierarchical-path-component > select {
     display: inline-block;
     width: 7px;
     height: 20px;
-    -webkit-margin-start: 3px;
+    margin-inline-start: 3px;
     vertical-align: top;
     background-image: url(../Images/HierarchicalNavigationItemChevron.svg);
     background-repeat: no-repeat;
@@ -137,17 +125,8 @@ body[dir=rtl] .hierarchical-path-component > .separator {
 }
 
 .hierarchical-path-component.text-only {
-    -webkit-padding-start: 5px;
-    -webkit-padding-end: 1px;
+    padding-inline: 5px 1px;
 
     /* Positions so the text in the menu aligns with the text in .title for text-only path components. */
-    --text-only-path-component-select-offset-start: -8px;
-}
-
-body[dir=ltr] .hierarchical-path-component.text-only > select {
-    left: var(--text-only-path-component-select-offset-start);
-}
-
-body[dir=rtl] .hierarchical-path-component.text-only > select {
-    right: var(--text-only-path-component-select-offset-start);
+    inset-inline-start: -8px;
 }

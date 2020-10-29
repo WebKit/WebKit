@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,5 +29,5 @@
 
 .sidebar > .panel.details.canvas .details-section.canvas-extensions .content > ul {
     margin: 4px 0;
-    -webkit-padding-start: 22.5px;
+    padding-inline-start: 22.5px;
 }

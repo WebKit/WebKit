@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,7 +51,7 @@
     flex: 1;
     min-width: 0;
     margin: 3px 0 4px;
-    -webkit-margin-start: 6px;
+    margin-inline-start: 6px;
 }
 
 :matches(.filter-bar, .search-bar) > input[type="search"] {
@@ -80,7 +80,7 @@
 }
 
 :matches(.filter-bar, .search-bar) > input[type="search"]::-webkit-search-results-button {
-    -webkit-margin-end: 4px;
+    margin-inline-end: 4px;
 }
 
 /* FIXME: use a different image for ::-webkit-search-decoration when :not(:placeholder-shown) */
@@ -94,15 +94,15 @@
 }
 
 :matches(.filter-bar, .search-bar) > .navigation-bar + input[type="search"] {
-    -webkit-margin-start: 0;
+    margin-inline-start: 0;
 }
 
 :matches(.filter-bar, .search-bar) > input[type="search"]:focus {
-    -webkit-margin-end: 6px;
+    margin-inline-end: 6px;
 }
 
 :matches(.filter-bar, .search-bar) > input[type="search"] + :empty {
-    -webkit-margin-start: 6px;
+    margin-inline-start: 6px;
 }
 
 :matches(.filter-bar, .search-bar) > input[type="search"]:focus ~ * {
@@ -110,7 +110,7 @@
 }
 
 :matches(.filter-bar, .search-bar) > input[type="search"] + .navigation-bar > .item.scope-bar:last-child {
-    -webkit-margin-end: 4px;
+    margin-inline-end: 4px;
 }
 
 :matches(.filter-bar, .search-bar).invalid > input[type="search"] {

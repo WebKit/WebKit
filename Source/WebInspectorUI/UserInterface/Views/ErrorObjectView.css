@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@
     display: inline-block;
     vertical-align: baseline;
     margin-bottom: -2px;
-    -webkit-margin-end: 2px;
+    margin-inline-end: 2px;
     width: 13px;
     height: 13px;
     background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
@@ -68,5 +68,5 @@ body[dir=rtl] .error-object > .formatted-error::before {
 }
 
 .error-object .content {
-    -webkit-padding-start: 16px
+    padding-inline-start: 16px
 }

@@ -43,7 +43,7 @@
 }
 
 .box-shadow-editor > table > tr > td {
-    -webkit-padding-start: 4px;
+    padding-inline-start: 4px;
 }
 
 .box-shadow-editor > table > tr > td > input[type="text"] {
@@ -63,7 +63,7 @@
 }
 
 .box-shadow-editor > table > tr.offset-x > td > svg {
-    -webkit-margin-start: 5px;
+    margin-inline-start: 5px;
 }
 
 .box-shadow-editor > table > tr.offset-x > td > svg line.axis {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
+ * Copyright (C) 2017-2020 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,6 +62,6 @@ body[dir=rtl] .sidebar > .panel.dom-node-details .details-section.dom-node-event
 }
 
 .sidebar > .panel.dom-node-details .details-section.dom-node-associated-data > .content .row {
-    -webkit-margin-start: 6px;
+    margin-inline-start: 6px;
     margin-bottom: 4px;
 }

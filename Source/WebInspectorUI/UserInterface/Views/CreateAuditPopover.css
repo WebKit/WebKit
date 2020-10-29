@@ -36,5 +36,5 @@
 
 .popover .create-audit-content > .editor-wrapper > .reference-page-link {
     margin-bottom: 2px;
-    -webkit-margin-start: 0.5em;
+    margin-inline-start: 0.5em;
 }

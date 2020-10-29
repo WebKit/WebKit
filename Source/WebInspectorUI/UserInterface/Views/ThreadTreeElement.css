@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,16 +52,15 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within >
 }
 
 .tree-outline > .item.thread + ol > .item.truncated-call-frames {
-    -webkit-margin-start: 31px;
-    -webkit-margin-end: 6px;
-    -webkit-padding-start: 0;
+    margin-inline: 31px 6px;
+    padding-inline-start: 0;
     color: var(--text-color-gray-medium);
     border-top: dashed 0.5px var(--border-color);
     cursor: default;
 }
 
 .tree-outline > .item.thread + ol > .item.truncated-call-frames .icon {
-    -webkit-margin-start: 0;
+    margin-inline-start: 0;
     content: url(../Images/TypeIcons.svg#Function-light);
     opacity: 0.6;
 }

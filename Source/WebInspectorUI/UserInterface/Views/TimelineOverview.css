@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,22 +27,13 @@
     --timeline-sidebar-width: 197px;
 }
 
-body[dir=ltr] .timeline-overview > :matches(.navigation-bar.timelines, .tree-outline.timelines) {
-    left: 0;
-    border-right: 1px solid var(--border-color);
+.timeline-overview > :matches(.navigation-bar.timelines, .tree-outline.timelines) {
+    border-inline-end: 1px solid var(--border-color);
+    inset-inline-start: 0;
 }
 
-body[dir=rtl] .timeline-overview > :matches(.navigation-bar.timelines, .tree-outline.timelines) {
-    right: 0;
-    border-left: 1px solid var(--border-color);
-}
-
-body[dir=ltr] .timeline-overview:not(.frames) > :matches(.scroll-container, .timeline-ruler, .graphs-container) {
-    left: var(--timeline-sidebar-width);
-}
-
-body[dir=rtl] .timeline-overview:not(.frames) > :matches(.scroll-container, .timeline-ruler, .graphs-container) {
-    right: var(--timeline-sidebar-width);
+.timeline-overview:not(.frames) > :matches(.scroll-container, .timeline-ruler, .graphs-container) {
+    inset-inline-start: var(--timeline-sidebar-width);
 }
 
 .timeline-overview > .navigation-bar.timelines {
@@ -221,17 +212,10 @@ body.mac-platform.legacy .timeline-overview > .graphs-container {
 .timeline-overview > .scroll-container > .scroll-width-sizer {
     position: absolute;
     top: 0;
+    inset-inline-start: 0;
     height: 1px;
     visibility: hidden;
     pointer-events: none;
-}
-
-body[dir=ltr] .timeline-overview > .scroll-container > .scroll-width-sizer {
-    left: 0;
-}
-
-body[dir=rtl] .timeline-overview > .scroll-container > .scroll-width-sizer {
-    right: 0;
 }
 
 @media (prefers-color-scheme: dark) {

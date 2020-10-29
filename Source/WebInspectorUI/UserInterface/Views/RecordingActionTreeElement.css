@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,7 @@
 .item.recording-action:not(.initial-state)::before {
     position: relative;
     top: 3px;
-    -webkit-margin-end: var(--tree-outline-icon-margin-end);
-    -webkit-margin-start: 0;
+    margin-inline: 0 var(--tree-outline-icon-margin-end);
     content: attr(data-index);
     font-family: -webkit-system-font, sans-serif;
     font-size: 9px;
@@ -96,7 +95,7 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .
 }
 
 .tree-outline:not(.hide-disclosure-buttons) .item.recording-action:not(.initial-state, .parent) > .icon {
-    -webkit-margin-start: 0;
+    margin-inline-start: 0;
 }
 
 .item.recording-action.visual:not(.selected, .invalid) {

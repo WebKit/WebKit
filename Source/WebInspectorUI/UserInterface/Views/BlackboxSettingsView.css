@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -91,5 +91,5 @@
 .settings-view.blackbox > table > tbody td.remove-blackbox > .remove-blackbox-button {
     width: 15px;
     height: 15px;
-    -webkit-margin-start: 4px;
+    margin-inline-start: 4px;
 }
