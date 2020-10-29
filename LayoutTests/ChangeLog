@@ -1,3 +1,15 @@
+2020-10-29  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/payment-request tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=218308
+
+        Reviewed by Geoff Garen.
+
+        Skip a few new tests that are failing.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2020-10-29  Said Abou-Hallawa  <said@apple.com>
 
         REGRESSION(269065): [GPU Process]: Order of drawing has to be preserved when drawing a canvas to another canvas

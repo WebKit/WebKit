@@ -1,3 +1,18 @@
+2020-10-29  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/payment-request tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=218308
+
+        Reviewed by Geoff Garen.
+
+        Resync web-platform-tests/payment-request tests from upstream 326f137f2c3d23c.
+
+        It drops a lot of manual tests too, now that our test importer is smart enough not to
+        import them.
+
+        * resources/resource-files.json:
+        * web-platform-tests/payment-request/*: Updated.
+
 2020-10-29  Martin Robinson  <mrobinson@igalia.com>
 
         Make scroll-margin independent of scroll snapping and have it apply when scrolling to anchors

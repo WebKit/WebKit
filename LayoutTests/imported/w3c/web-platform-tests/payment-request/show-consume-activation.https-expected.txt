@@ -1,0 +1,3 @@
+
+FAIL Calling share consumes user activation promise_rejects_dom: function "function () { throw e }" threw object "SecurityError: show() must be triggered by user activation." that is not a DOMException NotAllowedError: property "code" is equal to 18, expected 0
+

@@ -14,19 +14,5 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/complete-method-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/helpers.js
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/methodName-attribute-manual.https.html
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/onpayerdetailchange-attribute-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/onpayerdetailchange-attribute.https.html
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/payerEmail-attribute-manual.https.html
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/payerName-attribute-manual.https.html
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/payerPhone-attribute-manual.https.html
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/payerdetailschange-updateWith-immediate-manual.https.html
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/payerdetailschange-updateWith-manual.https.html
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/rejects_if_not_active-manual.https.html
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/requestId-attribute-manual.https.html
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/retry-method-manual.https.html
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/retry-method-warnings-manual.https.html
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/shippingAddress-attribute-manual.https.html
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/shippingOption-attribute-manual.https.html

@@ -6,5 +6,6 @@ PASS totalAmount in PaymentResponse
 PASS paymentRequestId in PaymentRequest
 PASS paymentRequestId in PaymentResponse
 PASS languageCode in PaymentAddress
+PASS allowPaymentRequest in HTMLIFrameElement
 PASS supportedMethods must not support sequence<DOMString>
 

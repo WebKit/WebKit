@@ -7,8 +7,8 @@
 <meta name="timeout" content="long">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
-<script src="/resources/testdriver-vendor.js"></script>
 <script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
 <body>
   <script>
     "use strict";
@@ -41,7 +41,7 @@
      */
     async function attachIframe(src = "blank.html") {
       const iframe = document.createElement("iframe");
-      iframe.allowPaymentRequest = true;
+      iframe.allow = "payment";
       iframe.src = src;
       document.body.appendChild(iframe);
       await new Promise(resolve => {

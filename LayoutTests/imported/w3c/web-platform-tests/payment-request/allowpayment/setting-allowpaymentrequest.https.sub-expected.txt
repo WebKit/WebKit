@@ -1,0 +1,6 @@
+Blocked access to external URL https://www1.localhost:9443/payment-request/allowpayment/echo-PaymentRequest.html
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT PaymentRequest setting allow="payment" after load and then navigating Test timed out
+
