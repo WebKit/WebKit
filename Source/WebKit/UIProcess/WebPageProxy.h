@@ -2885,6 +2885,8 @@ private:
     bool m_canUseCredentialStorage { true };
 
     size_t m_suspendMediaPlaybackCounter { 0 };
+
+    Optional<WebCore::AdClickAttribution> m_newPageNavigationAdClickAttribution;
 };
 
 } // namespace WebKit

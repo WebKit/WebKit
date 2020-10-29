@@ -4651,12 +4651,18 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 
     frame->didCommitLoad(mimeType, webCertificateInfo, containsPluginDocument);
 
-    if (navigation && frame->isMainFrame()) {
-        if (auto& adClickAttribution = navigation->adClickAttribution()) {
+    if (frame->isMainFrame()) {
+        Optional<WebCore::AdClickAttribution> adClickAttribution;
+        if (m_newPageNavigationAdClickAttribution)
+            adClickAttribution = m_newPageNavigationAdClickAttribution;
+        else if (navigation && navigation->adClickAttribution())
+            adClickAttribution = navigation->adClickAttribution();
+        if (adClickAttribution) {
             if (adClickAttribution->destination().matches(frame->url()))
                 websiteDataStore().networkProcess().send(Messages::NetworkProcess::StoreAdClickAttribution(m_websiteDataStore->sessionID(), *adClickAttribution), 0);
         }
     }
+    m_newPageNavigationAdClickAttribution.reset();
 
     if (frame->isMainFrame()) {
         m_mainFrameHasCustomContentProvider = frameHasCustomContentProvider;
@@ -5518,7 +5524,7 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
     auto* originatingPage = m_process->webPage(originatingPageID);
     auto originatingFrameInfo = API::FrameInfo::create(WTFMove(originatingFrameInfoData), originatingPage);
     auto mainFrameURL = m_mainFrame ? m_mainFrame->url() : URL();
-    auto completionHandler = [this, protectedThis = makeRef(*this), mainFrameURL, request, reply = WTFMove(reply)] (RefPtr<WebPageProxy> newPage) mutable {
+    auto completionHandler = [this, protectedThis = makeRef(*this), mainFrameURL, request, reply = WTFMove(reply), adClickAttribution = navigationActionData.adClickAttribution] (RefPtr<WebPageProxy> newPage) mutable {
         if (!newPage) {
             reply(WTF::nullopt, WTF::nullopt);
             return;
@@ -5530,6 +5536,7 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
 
         newPage->m_shouldSuppressAppLinksInNextNavigationPolicyDecision = mainFrameURL.host() == request.url().host();
 
+        newPage->m_newPageNavigationAdClickAttribution = adClickAttribution;
 #if HAVE(APP_SSO)
         newPage->m_shouldSuppressSOAuthorizationInNextNavigationPolicyDecision = true;
 #endif

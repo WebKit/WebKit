@@ -1,3 +1,20 @@
+2020-10-28  John Wilander  <wilander@apple.com>
+
+        PCM: Accept ad click data when the link opens a new window
+        https://bugs.webkit.org/show_bug.cgi?id=214176
+        <rdar://problem/65358005>
+
+        Reviewed by Brent Fulgham.
+
+        A link with the attribute target="_blank" takes another code path for
+        navigation which involves the creation of a new window and webpage. That
+        code path needs to transfer ad click attribution data to the new webpage
+        where it can be picked up.
+
+        * http/tests/adClickAttribution/attribution-conversion-through-image-redirect-in-new-window-expected.txt: Added.
+        * http/tests/adClickAttribution/attribution-conversion-through-image-redirect-in-new-window.html: Added.
+        * http/tests/adClickAttribution/resources/convertAndPostMessageBack.html: Added.
+
 2020-10-28  Truitt Savell  <tsavell@apple.com>
 
         Rebase for fast/forms/input-appearance-spinbutton.html on Catalina after changes in r269036

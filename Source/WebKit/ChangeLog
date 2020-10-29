@@ -1,3 +1,40 @@
+2020-10-28  John Wilander  <wilander@apple.com>
+
+        PCM: Accept ad click data when the link opens a new window
+        https://bugs.webkit.org/show_bug.cgi?id=214176
+        <rdar://problem/65358005>
+
+        Reviewed by Brent Fulgham.
+
+        A link with the attribute target="_blank" takes another code path for
+        navigation which involves the creation of a new window and webpage. That
+        code path needs to transfer ad click attribution data to the new webpage
+        where it can be picked up in WebPageProxy::didCommitLoadForFrame().
+        The ad click attribution data sits in the NavigationAction which is not
+        available in the completion handler WebPageProxy::createNewPage().
+        The client, which differs between TestRunner and e.g. Safari, consumes
+        the NavigationAction. I don't want to risk a regression in e.g. Safari
+        while still passing the test because TestRunner hasn't regressed.
+
+        Test: http/tests/adClickAttribution/attribution-conversion-through-image-redirect-in-new-window.html
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+            Now also checks for pending ad click attribution data in its new
+            member variable m_newPageNavigationAdClickAttribution.
+        (WebKit::WebPageProxy::createNewPage):
+            Now forwards optional ad click attribution data to the completion
+            handler where it can be stored on the newly created webpage in the
+            new member variable m_newPageNavigationAdClickAttribution.
+        * UIProcess/WebPageProxy.h:
+            Added m_newPageNavigationAdClickAttribution.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createWindow):
+            Added missing navigationAction.adClickAttribution() copy.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+            Added missing navigationAction.adClickAttribution() copy.
+
 2020-10-28  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Eagerly flush the PutImageData item to the GPU Process
