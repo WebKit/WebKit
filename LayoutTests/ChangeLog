@@ -1,3 +1,43 @@
+2020-10-28  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r268791. rdar://problem/70795323
+
+    [iOS] Disable audio capture in the background for non Safari applications
+    https://bugs.webkit.org/show_bug.cgi?id=217948
+    <rdar://problem/70241557>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    We do not have good OS support when capturing audio in a WebProcess for a backgrounded application.
+    Until we have proper support, it seems best to mute audio capture when being backgrounded.
+    Manually tested.
+    
+    * platform/mediastream/mac/RealtimeMediaSourceCenterMac.mm:
+    (WebCore::RealtimeMediaSourceCenter::shouldInterruptAudioOnPageVisibilityChange):
+    
+    LayoutTests:
+    
+    * platform/ios/mediastream/video-muted-in-background-tab.html:
+    By default, audio capture will be muted in WTR if page goes to background.
+    Update the test to explicitly request for audio capture to continue while in background.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268791 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-21  Youenn Fablet  <youenn@apple.com>
+
+            [iOS] Disable audio capture in the background for non Safari applications
+            https://bugs.webkit.org/show_bug.cgi?id=217948
+            <rdar://problem/70241557>
+
+            Reviewed by Eric Carlson.
+
+            * platform/ios/mediastream/video-muted-in-background-tab.html:
+            By default, audio capture will be muted in WTR if page goes to background.
+            Update the test to explicitly request for audio capture to continue while in background.
+
 2020-10-26  Karl Rackler  <rackler@apple.com>
 
         REGRESSION: [ iOS wk2 ] fast/events/touch/ios/pointer-events-with-modifiers.html is a constant crash 
