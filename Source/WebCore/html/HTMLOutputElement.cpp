@@ -79,7 +79,7 @@ void HTMLOutputElement::childrenChanged(const ChildChange& change)
 {
     HTMLFormControlElement::childrenChanged(change);
 
-    if (change.source == ChildChangeSource::Parser || m_isSetTextContentInProgress) {
+    if (change.source == ChildChange::Source::Parser || m_isSetTextContentInProgress) {
         m_isSetTextContentInProgress = false;
         return;
     }

@@ -73,27 +73,28 @@ public:
 
     void cloneChildNodes(ContainerNode& clone);
 
-    enum ChildChangeType { ElementInserted, ElementRemoved, TextInserted, TextRemoved, TextChanged, AllChildrenRemoved, NonContentsChildRemoved, NonContentsChildInserted, AllChildrenReplaced };
-    enum class ChildChangeSource { Parser, API };
     struct ChildChange {
-        ChildChangeType type;
+        enum class Type : uint8_t { ElementInserted, ElementRemoved, TextInserted, TextRemoved, TextChanged, AllChildrenRemoved, NonContentsChildRemoved, NonContentsChildInserted, AllChildrenReplaced };
+        enum class Source : bool { Parser, API };
+
+        ChildChange::Type type;
         Element* previousSiblingElement;
         Element* nextSiblingElement;
-        ChildChangeSource source;
+        ChildChange::Source source;
 
         bool isInsertion() const
         {
             switch (type) {
-            case ElementInserted:
-            case TextInserted:
-            case NonContentsChildInserted:
-            case AllChildrenReplaced:
+            case ChildChange::Type::ElementInserted:
+            case ChildChange::Type::TextInserted:
+            case ChildChange::Type::NonContentsChildInserted:
+            case ChildChange::Type::AllChildrenReplaced:
                 return true;
-            case ElementRemoved:
-            case TextRemoved:
-            case TextChanged:
-            case AllChildrenRemoved:
-            case NonContentsChildRemoved:
+            case ChildChange::Type::ElementRemoved:
+            case ChildChange::Type::TextRemoved:
+            case ChildChange::Type::TextChanged:
+            case ChildChange::Type::AllChildrenRemoved:
+            case ChildChange::Type::NonContentsChildRemoved:
                 return false;
             }
             ASSERT_NOT_REACHED();
@@ -145,8 +146,8 @@ protected:
 private:
     void executePreparedChildrenRemoval();
     enum class DeferChildrenChanged { Yes, No };
-    NodeVector removeAllChildrenWithScriptAssertion(ChildChangeSource, DeferChildrenChanged = DeferChildrenChanged::No);
-    bool removeNodeWithScriptAssertion(Node&, ChildChangeSource);
+    NodeVector removeAllChildrenWithScriptAssertion(ChildChange::Source, DeferChildrenChanged = DeferChildrenChanged::No);
+    bool removeNodeWithScriptAssertion(Node&, ChildChange::Source);
 
     void removeBetween(Node* previousChild, Node* nextChild, Node& oldChild);
     ExceptionOr<void> appendChildWithoutPreInsertionValidityCheck(Node&);

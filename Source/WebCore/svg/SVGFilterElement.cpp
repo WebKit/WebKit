@@ -110,7 +110,7 @@ void SVGFilterElement::childrenChanged(const ChildChange& change)
 {
     SVGElement::childrenChanged(change);
 
-    if (change.source == ChildChangeSource::Parser)
+    if (change.source == ChildChange::Source::Parser)
         return;
 
     if (RenderObject* object = renderer())

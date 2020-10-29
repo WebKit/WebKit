@@ -151,7 +151,7 @@ void SVGFELightElement::childrenChanged(const ChildChange& change)
 {
     SVGElement::childrenChanged(change);
 
-    if (change.source == ChildChangeSource::Parser)
+    if (change.source == ChildChange::Source::Parser)
         return;
     auto parent = makeRefPtr(parentNode());
     if (!parent)

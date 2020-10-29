@@ -105,7 +105,7 @@ unsigned CharacterData::parserAppendData(const String& string, unsigned offset, 
     if (is<Text>(*this) && parentNode())
         downcast<Text>(*this).updateRendererAfterContentChange(oldLength, 0);
 
-    notifyParentAfterChange(ContainerNode::ChildChangeSource::Parser);
+    notifyParentAfterChange(ContainerNode::ChildChange::Source::Parser);
 
     auto mutationRecipients = MutationObserverInterestGroup::createForCharacterDataMutation(*this);
     if (UNLIKELY(mutationRecipients))
@@ -191,12 +191,12 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
     if (document().frame())
         document().frame()->selection().textWasReplaced(this, offsetOfReplacedData, oldLength, newLength);
 
-    notifyParentAfterChange(ContainerNode::ChildChangeSource::API);
+    notifyParentAfterChange(ContainerNode::ChildChange::Source::API);
 
     dispatchModifiedEvent(oldData);
 }
 
-void CharacterData::notifyParentAfterChange(ContainerNode::ChildChangeSource source)
+void CharacterData::notifyParentAfterChange(ContainerNode::ChildChange::Source source)
 {
     document().incDOMTreeVersion();
 
@@ -204,7 +204,7 @@ void CharacterData::notifyParentAfterChange(ContainerNode::ChildChangeSource sou
         return;
 
     ContainerNode::ChildChange change = {
-        ContainerNode::TextChanged,
+        ContainerNode::ChildChange::Type::TextChanged,
         ElementTraversal::previousSibling(*this),
         ElementTraversal::nextSibling(*this),
         source

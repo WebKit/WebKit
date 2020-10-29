@@ -2621,30 +2621,30 @@ static void checkForSiblingStyleChanges(Element& parent, SiblingCheckType checkT
 void Element::childrenChanged(const ChildChange& change)
 {
     ContainerNode::childrenChanged(change);
-    if (change.source == ChildChangeSource::Parser)
+    if (change.source == ChildChange::Source::Parser)
         checkForEmptyStyleChange(*this);
     else {
-        SiblingCheckType checkType = change.type == ElementRemoved ? SiblingElementRemoved : Other;
+        auto checkType = change.type == ChildChange::Type::ElementRemoved ? SiblingElementRemoved : Other;
         checkForSiblingStyleChanges(*this, checkType, change.previousSiblingElement, change.nextSiblingElement);
     }
 
     if (ShadowRoot* shadowRoot = this->shadowRoot()) {
         switch (change.type) {
-        case ElementInserted:
-        case ElementRemoved:
+        case ChildChange::Type::ElementInserted:
+        case ChildChange::Type::ElementRemoved:
             // For elements, we notify shadowRoot in Element::insertedIntoAncestor and Element::removedFromAncestor.
             break;
-        case AllChildrenRemoved:
-        case AllChildrenReplaced:
+        case ChildChange::Type::AllChildrenRemoved:
+        case ChildChange::Type::AllChildrenReplaced:
             shadowRoot->didRemoveAllChildrenOfShadowHost();
             break;
-        case TextInserted:
-        case TextRemoved:
-        case TextChanged:
+        case ChildChange::Type::TextInserted:
+        case ChildChange::Type::TextRemoved:
+        case ChildChange::Type::TextChanged:
             shadowRoot->didChangeDefaultSlot();
             break;
-        case NonContentsChildInserted:
-        case NonContentsChildRemoved:
+        case ChildChange::Type::NonContentsChildInserted:
+        case ChildChange::Type::NonContentsChildRemoved:
             break;
         }
     }

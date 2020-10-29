@@ -88,7 +88,7 @@ void SVGFilterPrimitiveStandardAttributes::childrenChanged(const ChildChange& ch
 {
     SVGElement::childrenChanged(change);
 
-    if (change.source == ChildChangeSource::Parser)
+    if (change.source == ChildChange::Source::Parser)
         return;
     invalidate();
 }
