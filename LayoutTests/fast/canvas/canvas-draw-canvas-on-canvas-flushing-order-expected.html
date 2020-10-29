@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<body>
+    <canvas id="canvas1" width="100" height="100"></canvas>
+    <canvas id="canvas2" width="100" height="100"></canvas>
+    <canvas id="canvas3" width="100" height="100"></canvas>
+    <script>
+        let colors = ['red', 'green', 'blue'];
+        let canvases = ['canvas1', 'canvas2', 'canvas3'];
+
+        colors.forEach(function(color, index, colors) {
+            var canvas = document.getElementById(canvases[index]);
+            var ctx = canvas.getContext('2d');
+            ctx.fillStyle = color;
+            ctx.fillRect(0, 0, 100, 100);
+        });
+    </script>
+</body>

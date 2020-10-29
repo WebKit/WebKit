@@ -125,6 +125,12 @@ void Recorder::willAppendItem(const Item& item)
     }
 }
 
+void Recorder::didAppendItem(const Item& item)
+{
+    if (m_delegate)
+        m_delegate->didAppendItem(item);
+}
+
 void Recorder::updateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
 {
     currentState().stateChange.accumulate(state, flags);
@@ -447,15 +453,17 @@ FloatRect Recorder::roundToDevicePixels(const FloatRect& rect, GraphicsContext::
 
 void Recorder::appendItemAndUpdateExtent(Ref<DrawingItem>&& item)
 {
-    auto& newItem = appendItem(WTFMove(item));
+    DrawingItem& newItem = item.get();
+    appendItem(WTFMove(item));
     updateItemExtent(newItem);
 }
 
-template<typename ItemType>
-ItemType& Recorder::appendItem(Ref<ItemType>&& item)
+void Recorder::appendItem(Ref<Item>&& item)
 {
+    Item& newItem = item.get();
     willAppendItem(item.get());
-    return downcast<ItemType>(m_displayList.append(WTFMove(item)));
+    m_displayList.append(WTFMove(item));
+    didAppendItem(newItem);
 }
 
 void Recorder::updateItemExtent(DrawingItem& item) const

@@ -164,7 +164,10 @@ protected:
     {
         if (!m_remoteRenderingBackendProxy)
             return false;
-        return m_remoteRenderingBackendProxy->remoteResourceCacheProxy().lockRemoteImageBufferForRemoteClient(imageBuffer, m_renderingResourceIdentifier);
+        if (!m_remoteRenderingBackendProxy->remoteResourceCacheProxy().lockRemoteImageBufferForRemoteClient(imageBuffer, m_renderingResourceIdentifier))
+            return false;
+        imageBuffer.flushDrawingContext();
+        return true;
     }
 
     void willAppendItem(const WebCore::DisplayList::Item&) override
@@ -176,6 +179,12 @@ protected:
 
         flushDisplayList(displayList);
         displayList.clear();
+    }
+
+    void didAppendItem(const WebCore::DisplayList::Item& item) override
+    {
+        if (item.type() == WebCore::DisplayList::ItemType::DrawImageBuffer)
+            flushDrawingContext();
     }
 
     DisplayListFlushIdentifier m_sentFlushIdentifier;

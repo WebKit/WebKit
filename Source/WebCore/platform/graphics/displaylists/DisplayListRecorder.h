@@ -68,6 +68,7 @@ public:
         virtual ~Delegate() { }
         virtual bool lockRemoteImageBuffer(WebCore::ImageBuffer&) { return false; }
         virtual void willAppendItem(const Item&) { };
+        virtual void didAppendItem(const Item&) { };
     };
 
 private:
@@ -147,9 +148,9 @@ private:
 
     FloatRect roundToDevicePixels(const FloatRect&, GraphicsContext::RoundingMode) override;
 
-    template<typename ItemType>
-    ItemType& appendItem(Ref<ItemType>&&);
+    void appendItem(Ref<Item>&&);
     void willAppendItem(const Item&);
+    void didAppendItem(const Item&);
 
     void appendStateChangeItem(const GraphicsContextStateChange&, GraphicsContextState::StateChangeFlags);
 
