@@ -280,6 +280,16 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, const 
     float step = static_cast<float>(Scrollbar::pixelsPerLineStep());
     FloatSize delta(wheelTicks.width() * step, wheelTicks.height() * step);
 
+    bool hasPreciseScrollingDeltas = false;
+    GdkScrollDirection direction;
+    if (!gdk_event_get_scroll_direction(event, &direction)) {
+        double deltaX, deltaY;
+        if (gdk_event_get_scroll_deltas(event, &deltaX, &deltaY)) {
+            if (auto* device = gdk_event_get_source_device(event))
+                hasPreciseScrollingDeltas = gdk_device_get_source(device) != GDK_SOURCE_MOUSE;
+        }
+    }
+
     return WebWheelEvent(WebEvent::Wheel,
         position,
         globalPosition,
@@ -288,7 +298,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, const 
         phase,
         momentumPhase,
         WebWheelEvent::ScrollByPixelWheelEvent,
-        false,
+        hasPreciseScrollingDeltas,
         modifiersForEvent(event),
         wallTimeForEvent(event));
 }

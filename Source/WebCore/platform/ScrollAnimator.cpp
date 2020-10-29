@@ -80,7 +80,12 @@ ScrollAnimator::~ScrollAnimator()
 #endif
 }
 
-bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity, float step, float multiplier)
+bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
+{
+    return scrollWithoutAnimation(orientation, granularity, step, multiplier);
+}
+
+bool ScrollAnimator::scrollWithoutAnimation(ScrollbarOrientation orientation, ScrollGranularity, float step, float multiplier)
 {
     FloatPoint currentPosition = this->currentPosition();
     FloatSize delta;
@@ -176,7 +181,10 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
                 if (negative)
                     deltaY = -deltaY;
             }
-            scroll(VerticalScrollbar, granularity, verticalScrollbar->pixelStep(), -deltaY);
+            if (e.hasPreciseScrollingDeltas())
+                scrollWithoutAnimation(VerticalScrollbar, granularity, verticalScrollbar->pixelStep(), -deltaY);
+            else
+                scroll(VerticalScrollbar, granularity, verticalScrollbar->pixelStep(), -deltaY);
         }
 
         if (deltaX) {
@@ -186,7 +194,10 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
                 if (negative)
                     deltaX = -deltaX;
             }
-            scroll(HorizontalScrollbar, granularity, horizontalScrollbar->pixelStep(), -deltaX);
+            if (e.hasPreciseScrollingDeltas())
+                scrollWithoutAnimation(HorizontalScrollbar, granularity, horizontalScrollbar->pixelStep(), -deltaX);
+            else
+                scroll(HorizontalScrollbar, granularity, horizontalScrollbar->pixelStep(), -deltaX);
         }
     }
     return handled;

@@ -30,10 +30,6 @@
 #include "PlatformEvent.h"
 #include <wtf/WindowsExtras.h>
 
-#if PLATFORM(GTK)
-typedef struct _GdkEventScroll GdkEventScroll;
-#endif
-
 namespace WTF {
 class TextStream;
 }
@@ -137,14 +133,8 @@ public:
 
     const FloatSize& scrollingVelocity() const { return m_scrollingVelocity; }
 
-#if PLATFORM(GTK)
-    explicit PlatformWheelEvent(GdkEventScroll*);
-#endif
-
-#if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE)
     bool hasPreciseScrollingDeltas() const { return m_hasPreciseScrollingDeltas; }
     void setHasPreciseScrollingDeltas(bool hasPreciseScrollingDeltas) { m_hasPreciseScrollingDeltas = hasPreciseScrollingDeltas; }
-#endif
 
 #if PLATFORM(COCOA)
     unsigned scrollCount() const { return m_scrollCount; }
@@ -196,9 +186,7 @@ protected:
     PlatformWheelEventPhase m_phase { PlatformWheelEventPhaseNone };
     PlatformWheelEventPhase m_momentumPhase { PlatformWheelEventPhaseNone };
 #endif
-#if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE)
     bool m_hasPreciseScrollingDeltas { false };
-#endif
 #if PLATFORM(COCOA)
     unsigned m_scrollCount { 0 };
     float m_unacceleratedScrollingDeltaX { 0 };

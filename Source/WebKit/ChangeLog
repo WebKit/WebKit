@@ -1,3 +1,15 @@
+2020-10-29  Chris Lord  <clord@igalia.com>
+
+        [GTK] Smooth scrolling should not apply to continuous scrolling with sync scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=218133
+
+        Reviewed by Adrian Perez de Castro.
+
+        Set hasPreciseScrollDeltas appropriately on scroll events created from GdkEvent.
+
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebWheelEvent):
+
 2020-10-28  John Wilander  <wilander@apple.com>
 
         PCM: Accept ad click data when the link opens a new window

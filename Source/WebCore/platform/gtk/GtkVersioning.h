@@ -80,6 +80,12 @@ gdk_event_copy(GdkEvent* event)
     return gdk_event_ref(event);
 }
 
+static inline GdkDevice*
+gdk_event_get_source_device(const GdkEvent* event)
+{
+    return gdk_event_get_device(event);
+}
+
 static inline void
 gtk_widget_size_allocate(GtkWidget* widget, GtkAllocation* allocation)
 {
