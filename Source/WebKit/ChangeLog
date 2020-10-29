@@ -1,3 +1,20 @@
+2020-10-29  Youenn Fablet  <youenn@apple.com>
+
+        Improve LibWebRTCSocketClient logging
+        https://bugs.webkit.org/show_bug.cgi?id=218336
+
+        Reviewed by Eric Carlson.
+
+        Output webrtc socket identifier in case of error.
+        Fix the case of LibWebRTCSocketClient::sendTo that can log too much.
+
+        No observable change of behavior.
+
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.cpp:
+        (WebKit::LibWebRTCSocketClient::sendTo):
+        (WebKit::LibWebRTCSocketClient::close):
+        (WebKit::LibWebRTCSocketClient::setOption):
+
 2020-10-29  Chris Lord  <clord@igalia.com>
 
         [GTK] Smooth scrolling should not apply to continuous scrolling with sync scrolling
