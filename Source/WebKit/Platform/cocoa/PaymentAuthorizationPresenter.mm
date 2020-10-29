@@ -38,6 +38,16 @@
 
 #import <pal/cocoa/PassKitSoftLink.h>
 
+SOFT_LINK_FRAMEWORK(Contacts);
+SOFT_LINK_CONSTANT(Contacts, CNPostalAddressCityKey, NSString *);
+SOFT_LINK_CONSTANT(Contacts, CNPostalAddressCountryKey, NSString *);
+SOFT_LINK_CONSTANT(Contacts, CNPostalAddressISOCountryCodeKey, NSString *);
+SOFT_LINK_CONSTANT(Contacts, CNPostalAddressPostalCodeKey, NSString *);
+SOFT_LINK_CONSTANT(Contacts, CNPostalAddressStateKey, NSString *);
+SOFT_LINK_CONSTANT(Contacts, CNPostalAddressStreetKey, NSString *);
+SOFT_LINK_CONSTANT(Contacts, CNPostalAddressSubAdministrativeAreaKey, NSString *);
+SOFT_LINK_CONSTANT(Contacts, CNPostalAddressSubLocalityKey, NSString *);
+
 namespace WebKit {
 
 // FIXME: Rather than having these free functions scattered about, Apple Pay data types should know
@@ -105,42 +115,42 @@ static NSError *toNSError(const WebCore::PaymentError& error)
             
         case WebCore::PaymentError::ContactField::AddressLines:
             pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
-            postalAddressKey = CNPostalAddressStreetKey;
+            postalAddressKey = getCNPostalAddressStreetKey();
             break;
             
         case WebCore::PaymentError::ContactField::SubLocality:
             pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
-            postalAddressKey = CNPostalAddressSubLocalityKey;
+            postalAddressKey = getCNPostalAddressSubLocalityKey();
             break;
             
         case WebCore::PaymentError::ContactField::Locality:
             pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
-            postalAddressKey = CNPostalAddressCityKey;
+            postalAddressKey = getCNPostalAddressCityKey();
             break;
             
         case WebCore::PaymentError::ContactField::PostalCode:
             pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
-            postalAddressKey = CNPostalAddressPostalCodeKey;
+            postalAddressKey = getCNPostalAddressPostalCodeKey();
             break;
             
         case WebCore::PaymentError::ContactField::SubAdministrativeArea:
             pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
-            postalAddressKey = CNPostalAddressSubAdministrativeAreaKey;
+            postalAddressKey = getCNPostalAddressSubAdministrativeAreaKey();
             break;
             
         case WebCore::PaymentError::ContactField::AdministrativeArea:
             pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
-            postalAddressKey = CNPostalAddressStateKey;
+            postalAddressKey = getCNPostalAddressStateKey();
             break;
             
         case WebCore::PaymentError::ContactField::Country:
             pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
-            postalAddressKey = CNPostalAddressCountryKey;
+            postalAddressKey = getCNPostalAddressCountryKey();
             break;
             
         case WebCore::PaymentError::ContactField::CountryCode:
             pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
-            postalAddressKey = CNPostalAddressISOCountryCodeKey;
+            postalAddressKey = getCNPostalAddressISOCountryCodeKey();
             break;
         }
 
