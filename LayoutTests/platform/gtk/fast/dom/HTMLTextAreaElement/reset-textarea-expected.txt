@@ -20,9 +20,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,18) size 469x17
           text run at (0,18) width 469: "You should see two element IDs below, and the word \"SUCCESS\" twice:"
         RenderBR {BR} at (468,18) size 1x17
-        RenderText {#text} at (0,36) size 174x17
-          text run at (0,36) width 174: "noDefaultText: SUCCESS "
-        RenderBR {BR} at (173,36) size 1x17
+        RenderText {#text} at (0,36) size 170x17
+          text run at (0,36) width 170: "noDefaultText: SUCCESS"
+        RenderBR {BR} at (169,36) size 1x17
         RenderText {#text} at (0,54) size 175x17
           text run at (0,54) width 175: "hasDefaultText: SUCCESS"
 layer at (10,10) size 201x42 clip at (11,11) size 199x40

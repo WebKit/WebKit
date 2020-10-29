@@ -1,3 +1,25 @@
+2020-10-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Rebaseline of tests and gardening of failures.
+
+        Rebaselines some tests and mark some tests as failing after recent changes.
+
+        Unreviewed gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/editing/input/reveal-caret-of-multiline-contenteditable-expected.txt:
+        * platform/gtk/editing/input/reveal-caret-of-multiline-input-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt:
+        * platform/gtk/fast/css/word-space-extra-expected.txt: Copied from LayoutTests/platform/glib/fast/css/word-space-extra-expected.txt.
+        * platform/gtk/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/gtk/fast/html/tab-order-expected.txt: Removed.
+        * platform/gtk/fast/text/basic/generic-family-reset-expected.txt:
+        * platform/gtk/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/wpe/fast/css/word-space-extra-expected.txt: Renamed from LayoutTests/platform/glib/fast/css/word-space-extra-expected.txt.
+        * platform/wpe/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/wpe/fast/text/basic/generic-family-reset-expected.txt:
+
 2020-10-28  John Wilander  <wilander@apple.com>
 
         PCM: Accept ad click data when the link opens a new window

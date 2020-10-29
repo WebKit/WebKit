@@ -239,6 +239,7 @@ webkit.org/b/210498 webkit.org/b/210840 fast/mediastream/play-newly-added-audio-
 webkit.org/b/203078 media/media-source/media-source-remove-unload-crash.html [ Crash Timeout Pass ]
 webkit.org/b/210528 media/media-source/media-source-seek-back.html [ Crash Pass ]
 webkit.org/b/214636 media/media-source/media-source-webm.html [ Timeout Crash ]
+webkit.org/b/218317 media/media-source/media-source-trackid-change.html [ Failure ]
 
 webkit.org/b/210528 media/video-src-blob-replay.html [ Crash Pass ]
 
@@ -251,6 +252,7 @@ webkit.org/b/214031 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/217829 media/video-orientation-canvas.html [ Failure ]
 
 webkit.org/b/217845 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-stereopanner-interface/no-dezippering.html [ Failure ]
+webkit.org/b/218321 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https.html [ Pass Timeout Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
@@ -366,6 +368,7 @@ webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-a
 webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.paint.norepeat.coord2.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.paint.norepeat.coord3.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.paint.norepeat.outside.html [ DumpJSConsoleLogInStdErr ]
+webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.paint.orientation.image.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.paint.repeat.basic.html  [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.paint.repeat.coord2.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.paint.repeat.coord3.html [ DumpJSConsoleLogInStdErr ]
@@ -651,6 +654,8 @@ webkit.org/b/217813 webgl/conformance/extensions/ext-texture-compression-rgtc.ht
 webkit.org/b/217813 webgl/conformance/extensions/s3tc-and-rgtc.html [ Failure ]
 
 webkit.org/b/217816 webgl/conformance2/uniforms/gl-uniform-arrays-sub-source.html [ Failure ]
+
+webkit.org/b/218318 fast/canvas/webgl/webgl-clear-composited-notshowing.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs
