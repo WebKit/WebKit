@@ -1,3 +1,11 @@
+2020-10-29  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening scroll failure
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2020-10-29  Karl Rackler  <rackler@apple.com>
 
         Unreviewed, reverting r269167.
