@@ -1,5 +1,138 @@
 2020-10-28  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r268952. rdar://problem/70795327
+
+    [BigSur] Appending a new WebM init segment between Cluster elements throws an error
+    https://bugs.webkit.org/show_bug.cgi?id=218149
+    <rdar://problem/70416537>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/ThirdParty/libwebrtc:
+    
+    Add an "OnElementEnd()" callback to libwebm.
+    
+    * Source/third_party/libwebm/webm_parser/include/webm/callback.h:
+    * Source/third_party/libwebm/webm_parser/src/callback.cc:
+    * Source/third_party/libwebm/webm_parser/src/master_parser.cc:
+    * Source/third_party/libwebm/webm_parser/src/webm_parser.cc:
+    
+    Source/WebCore:
+    
+    Test: media/media-source/media-source-webm-init-inside-segment.html
+    
+    The WebM Byte Stream Format specification states that an "initialization segment" consists
+    of both a leading Ebml element and Segment element, and a "media segment" consists of a
+    single Cluster element. However, while both Ebml and Segment elements are top-level, Cluster
+    elements are contained within a Segment. This means if a client pushes a new "initialization
+    segment" after parsing some-but-not-all Clusters within a Segment, the new Ebml and Segment
+    elements will  be parsed as children of the preceeding Segment, and the subsquent Segment
+    will overflow its "parent's" size.
+    
+    In order to support appending a new "initialization segment" while still in the middle of
+    parsing the previous Segment element, first improve our state tracking in order to determine
+    what the current parent element is. Then, when we detect that an Ebml element is parsed
+    while still inside a Segment, abort with a simulated error, which when caught, will indicate
+    that the parser needs to be reset, and the reader "rewound" to the Ebml's position.
+    
+    To allow the reader to rewind, we must not throw away appended data as we iterate over them.
+    Instead, we will only discard read samples once each parsing pass is fully complete. This
+    allows us to "rewind" across appended segment boundaries, if necessary.
+    
+    Because all WTF::Deque iterators are invalidated whenever any element is removed, and
+    because we do not need random-access to the elements in the deque, replace the Deque with a
+    StdList to store the incoming data.
+    
+    * platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.h:
+    * platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm:
+    (WebCore::SourceBufferParserAVFObjC::setLogger):
+    * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+    (WebCore::SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC):
+    * platform/graphics/cocoa/SourceBufferParser.h:
+    * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+    (WTF::LogArgument<webm::Id>::toString):
+    (WTF::LogArgument<WebCore::SourceBufferParserWebM::State>::toString):
+    (WebCore::logChannel):
+    (WebCore::logClassName):
+    (WebCore::SourceBufferParserWebM::appendData):
+    (WebCore::SourceBufferParserWebM::resetParserState):
+    (WebCore::SourceBufferParserWebM::invalidate):
+    (WebCore::SourceBufferParserWebM::setLogger):
+    (WebCore::SourceBufferParserWebM::OnElementBegin):
+    (WebCore::SourceBufferParserWebM::OnElementEnd):
+    (WebCore::SourceBufferParserWebM::OnEbml):
+    (WebCore::SourceBufferParserWebM::OnSegmentBegin):
+    (WebCore::SourceBufferParserWebM::OnInfo):
+    (WebCore::SourceBufferParserWebM::OnTrackEntry):
+    * platform/graphics/cocoa/SourceBufferParserWebM.h:
+    
+    LayoutTests:
+    
+    * media/media-source/content/test-vp9-long-manifest.json: Added.
+    * media/media-source/content/test-vp9-long.webm: Added.
+    * media/media-source/media-source-webm-init-inside-segment-expected.txt: Added.
+    * media/media-source/media-source-webm-init-inside-segment.html: Added.
+    * platform/mac/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268952 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-24  Jer Noble  <jer.noble@apple.com>
+
+            [BigSur] Appending a new WebM init segment between Cluster elements throws an error
+            https://bugs.webkit.org/show_bug.cgi?id=218149
+            <rdar://problem/70416537>
+
+            Reviewed by Eric Carlson.
+
+            Test: media/media-source/media-source-webm-init-inside-segment.html
+
+            The WebM Byte Stream Format specification states that an "initialization segment" consists
+            of both a leading Ebml element and Segment element, and a "media segment" consists of a
+            single Cluster element. However, while both Ebml and Segment elements are top-level, Cluster
+            elements are contained within a Segment. This means if a client pushes a new "initialization
+            segment" after parsing some-but-not-all Clusters within a Segment, the new Ebml and Segment
+            elements will  be parsed as children of the preceeding Segment, and the subsquent Segment
+            will overflow its "parent's" size.
+
+            In order to support appending a new "initialization segment" while still in the middle of
+            parsing the previous Segment element, first improve our state tracking in order to determine
+            what the current parent element is. Then, when we detect that an Ebml element is parsed
+            while still inside a Segment, abort with a simulated error, which when caught, will indicate
+            that the parser needs to be reset, and the reader "rewound" to the Ebml's position.
+
+            To allow the reader to rewind, we must not throw away appended data as we iterate over them.
+            Instead, we will only discard read samples once each parsing pass is fully complete. This
+            allows us to "rewind" across appended segment boundaries, if necessary.
+
+            Because all WTF::Deque iterators are invalidated whenever any element is removed, and
+            because we do not need random-access to the elements in the deque, replace the Deque with a
+            StdList to store the incoming data.
+
+            * platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.h:
+            * platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm:
+            (WebCore::SourceBufferParserAVFObjC::setLogger):
+            * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+            (WebCore::SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC):
+            * platform/graphics/cocoa/SourceBufferParser.h:
+            * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+            (WTF::LogArgument<webm::Id>::toString):
+            (WTF::LogArgument<WebCore::SourceBufferParserWebM::State>::toString):
+            (WebCore::logChannel):
+            (WebCore::logClassName):
+            (WebCore::SourceBufferParserWebM::appendData):
+            (WebCore::SourceBufferParserWebM::resetParserState):
+            (WebCore::SourceBufferParserWebM::invalidate):
+            (WebCore::SourceBufferParserWebM::setLogger):
+            (WebCore::SourceBufferParserWebM::OnElementBegin):
+            (WebCore::SourceBufferParserWebM::OnElementEnd):
+            (WebCore::SourceBufferParserWebM::OnEbml):
+            (WebCore::SourceBufferParserWebM::OnSegmentBegin):
+            (WebCore::SourceBufferParserWebM::OnInfo):
+            (WebCore::SourceBufferParserWebM::OnTrackEntry):
+            * platform/graphics/cocoa/SourceBufferParserWebM.h:
+
+2020-10-28  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r268791. rdar://problem/70795323
 
     [iOS] Disable audio capture in the background for non Safari applications
