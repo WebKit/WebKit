@@ -1,3 +1,24 @@
+2020-10-29  Sam Weinig  <weinig@apple.com>
+
+        [Testing] Remove requirement of adding new SPI for each preference that needs testing (WebKitLegacy Windows)
+        https://bugs.webkit.org/show_bug.cgi?id=218291
+
+        Reviewed by Brent Fulgham.
+
+        Adopt set*PreferenceForTesting functions to match DumpRenderTree for cocoa platforms, and
+        make it so that only TestOptions.cpp needs to be touched to add support for new preference
+        in tests.
+        
+        Also adds some helpers to convert between string types and use RetainPtr in a few more places.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (toUTF8):
+        (toBSTR):
+        (resetWebPreferencesToConsistentValues):
+        (boolWebPreferenceFeatureValue):
+        (setWebPreferencesForTestOptions):
+        (runTest):
+
 2020-10-28  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] loadConfig unittest fail depending on locally installed version of buildbot

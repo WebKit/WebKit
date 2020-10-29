@@ -184,7 +184,7 @@
 
 #define WebKitMenuItemElementEnabledPreferenceKey "WebKitMenuItemElementEnabled"
 
-#define WebKitKeygenElementEnabledPreferenceKey "WebKitKeygenElementEnabled"
+#define WebKitKeygenElementEnabledPreferenceKey "WebKitKeygenElementEnabledPreferenceKey"
 
 #define WebKitModernMediaControlsEnabledPreferenceKey "WebKitModernMediaControlsEnabled"
 

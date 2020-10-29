@@ -232,14 +232,23 @@ static String libraryPathForDumpRenderTree()
 }
 #endif
 
-string toUTF8(BSTR bstr)
+std::string toUTF8(BSTR bstr)
 {
     return toUTF8(bstr, SysStringLen(bstr));
 }
 
-string toUTF8(const wstring& wideString)
+std::string toUTF8(const wstring& wideString)
 {
     return toUTF8(wideString.c_str(), wideString.length());
+}
+
+static std::string toUTF8(CFStringRef input)
+{
+    CFIndex maximumURLLengthAsUTF8 = CFStringGetMaximumSizeForEncoding(CFStringGetLength(input), kCFStringEncodingUTF8) + 1;
+    Vector<char> buffer(maximumURLLengthAsUTF8 + 1, 0);
+    CFStringGetCString(input, buffer.data(), maximumURLLengthAsUTF8, kCFStringEncodingUTF8);
+
+    return buffer.data();
 }
 
 wstring cfStringRefToWString(CFStringRef cfStr)
@@ -248,6 +257,19 @@ wstring cfStringRefToWString(CFStringRef cfStr)
     CFStringGetCharacters(cfStr, CFRangeMake(0, CFStringGetLength(cfStr)), (UniChar *)v.data());
 
     return wstring(v.data(), v.size());
+}
+
+static _bstr_t toBSTR(const std::string& input)
+{
+    return input.c_str();
+}
+
+static _bstr_t toBSTR(CFStringRef input)
+{
+    size_t stringLength = CFStringGetLength(input);
+    Vector<UniChar> buffer(stringLength + 1, 0);
+    CFStringGetCharacters(input, CFRangeMake(0, stringLength), buffer.data());
+    return reinterpret_cast<wchar_t*>(buffer.data());
 }
 
 static LRESULT CALLBACK DumpRenderTreeWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -884,11 +906,7 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     prefsPrivate->setLoadsSiteIconsIgnoringImageLoadingPreference(FALSE);
     prefsPrivate->setFrameFlatteningEnabled(FALSE);
     if (persistentUserStyleSheetLocation) {
-        size_t stringLength = CFStringGetLength(persistentUserStyleSheetLocation.get());
-        Vector<UniChar> urlCharacters(stringLength + 1, 0);
-        CFStringGetCharacters(persistentUserStyleSheetLocation.get(), CFRangeMake(0, stringLength), urlCharacters.data());
-        _bstr_t url(reinterpret_cast<wchar_t*>(urlCharacters.data()));
-        preferences->setUserStyleSheetLocation(url);
+        preferences->setUserStyleSheetLocation(toBSTR(persistentUserStyleSheetLocation.get()));
         preferences->setUserStyleSheetEnabled(TRUE);
     } else
         preferences->setUserStyleSheetEnabled(FALSE);
@@ -912,12 +930,11 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     setAlwaysAcceptCookies(false);
 }
 
-static bool boolWebPreferenceFeatureValue(std::string key, bool defaultValue, const WTR::TestOptions& options)
+static bool boolWebPreferenceFeatureValue(std::string key, const WTR::TestOptions& options)
 {
     auto it = options.boolWebPreferenceFeatures().find(key);
-    if (it != options.boolWebPreferenceFeatures().end())
-        return it->second;
-    return defaultValue;
+    ASSERT(it != options.boolWebPreferenceFeatures().end());
+    return it->second;
 }
 
 static void setWebPreferencesForTestOptions(IWebPreferences* preferences, const WTR::TestOptions& options)
@@ -926,18 +943,10 @@ static void setWebPreferencesForTestOptions(IWebPreferences* preferences, const 
 
     preferences->setPrivateBrowsingEnabled(options.useEphemeralSession());
 
-    preferences->setUsesPageCache(boolWebPreferenceFeatureValue("UsesBackForwardCache", false, options));
-    prefsPrivate->setMenuItemElementEnabled(boolWebPreferenceFeatureValue("MenuItemElementEnabled", false, options));
-    prefsPrivate->setKeygenElementEnabled(boolWebPreferenceFeatureValue("KeygenElementEnabled", false, options));
-    prefsPrivate->setModernMediaControlsEnabled(boolWebPreferenceFeatureValue("ModernMediaControlsEnabled", true, options));
-    prefsPrivate->setInspectorAdditionsEnabled(boolWebPreferenceFeatureValue("InspectorAdditionsEnabled", false, options));
-    prefsPrivate->setRequestIdleCallbackEnabled(boolWebPreferenceFeatureValue("RequestIdleCallbackEnabled", false, options));
-    prefsPrivate->setAsyncClipboardAPIEnabled(boolWebPreferenceFeatureValue("AsyncClipboardAPIEnabled", false, options));
-    prefsPrivate->setContactPickerAPIEnabled(boolWebPreferenceFeatureValue("ContactPickerAPIEnabled", false, options));
-    prefsPrivate->setAllowTopNavigationToDataURLs(boolWebPreferenceFeatureValue("AllowTopNavigationToDataURLs", true, options));
-    prefsPrivate->setCSSOMViewSmoothScrollingEnabled(boolWebPreferenceFeatureValue("CSSOMViewSmoothScrollingEnabled", false, options));
-    prefsPrivate->setSpatialNavigationEnabled(boolWebPreferenceFeatureValue("SpatialNavigationEnabled", false, options));
-    preferences->setTabsToLinks(boolWebPreferenceFeatureValue("TabsToLinks", false, options));
+    // FIXME: Remove this once there is a viable mechanism for reseting WebPreferences between tests,
+    // at which point, we will not need to manually reset every supported preference for each test.
+    for (const auto& key : options.supportedBoolWebPreferenceFeatures())
+        prefsPrivate->setBoolPreferenceForTesting(toBSTR(WTR::TestOptions::toWebKitLegacyPreferenceKey(key)), boolWebPreferenceFeatureValue(key, options));
 }
 
 static String applicationId()
@@ -1195,49 +1204,34 @@ static void runTest(const string& inputLine)
 
     static _bstr_t methodBStr(TEXT("GET"));
 
-    CFStringRef str = CFStringCreateWithCString(0, pathOrURL.c_str(), kCFStringEncodingWindowsLatin1);
+    auto str = adoptCF(CFStringCreateWithCString(0, pathOrURL.c_str(), kCFStringEncodingWindowsLatin1));
     if (!str) {
         fprintf(stderr, "Failed to parse \"%s\" as UTF-8\n", pathOrURL.c_str());
         return;
     }
 
-    CFURLRef url = CFURLCreateWithString(0, str, 0);
-
+    auto url = adoptCF(CFURLCreateWithString(0, str.get(), 0));
     if (!url)
-        url = CFURLCreateWithFileSystemPath(0, str, kCFURLWindowsPathStyle, false);
-
-    CFRelease(str);
+        url = adoptCF(CFURLCreateWithFileSystemPath(0, str.get(), kCFURLWindowsPathStyle, false));
 
     if (!url) {
         fprintf(stderr, "Failed to parse \"%s\" as a URL\n", pathOrURL.c_str());
         return;
     }
 
-    String hostName = String(adoptCF(CFURLCopyHostName(url)).get());
-
+    String hostName = String(adoptCF(CFURLCopyHostName(url.get())).get());
     String fallbackPath = findFontFallback(pathOrURL.c_str());
 
-    str = CFURLGetString(url);
+    auto urlCFString = CFURLGetString(url.get());
 
-    CFIndex length = CFStringGetLength(str);
-
-    Vector<UniChar> buffer(length + 1, 0);
-    CFStringGetCharacters(str, CFRangeMake(0, length), buffer.data());
-
-    _bstr_t urlBStr(reinterpret_cast<wchar_t*>(buffer.data()));
-    ASSERT(urlBStr.length() == length);
-
-    CFIndex maximumURLLengthAsUTF8 = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8) + 1;
-    Vector<char> testURL(maximumURLLengthAsUTF8 + 1, 0);
-    CFStringGetCString(str, testURL.data(), maximumURLLengthAsUTF8, kCFStringEncodingUTF8);
-
-    CFRelease(url);
+    auto urlBStr = toBSTR(urlCFString);
+    ASSERT(urlBStr.length() == CFStringGetLength(urlCFString));
 
     auto options = testOptionsForTest(command);
 
     resetWebViewToConsistentStateBeforeTesting(options);
 
-    ::gTestRunner = TestRunner::create(testURL.data(), command.expectedPixelHash);
+    ::gTestRunner = TestRunner::create(toUTF8(urlCFString), command.expectedPixelHash);
     ::gTestRunner->setCustomTimeout(command.timeout.milliseconds());
     ::gTestRunner->setDumpJSConsoleLogInStdErr(command.dumpJSConsoleLogInStdErr || options.dumpJSConsoleLogInStdErr());
 

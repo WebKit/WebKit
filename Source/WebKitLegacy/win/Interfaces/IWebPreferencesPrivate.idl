@@ -269,4 +269,8 @@ interface IWebPreferencesPrivate8 : IWebPreferencesPrivate7
     HRESULT setModernUnprefixedWebAudioEnabled([in] BOOL enabled);
     HRESULT contactPickerAPIEnabled([out, retval] BOOL* enabled);
     HRESULT setContactPickerAPIEnabled([in] BOOL enabled);
+    HRESULT setBoolPreferenceForTesting([in] BSTR key, [in] BOOL value);
+    HRESULT setUInt32PreferenceForTesting([in] BSTR key, [in] unsigned value);
+    HRESULT setDoublePreferenceForTesting([in] BSTR key, [in] double value);
+    HRESULT setStringPreferenceForTesting([in] BSTR key, [in] BSTR value);
 }

@@ -2328,6 +2328,67 @@ HRESULT WebPreferences::setContactPickerAPIEnabled(BOOL enabled)
     return S_OK;
 }
 
+HRESULT WebPreferences::setBoolPreferenceForTesting(_In_ BSTR key, _In_ BOOL value)
+{
+    if (!SysStringLen(key))
+        return E_FAIL;
+
+#if USE(CF)
+    auto keyString = String(key).createCFString();
+    setValueForKey(keyString.get(), value ? kCFBooleanTrue : kCFBooleanFalse);
+#endif
+
+    postPreferencesChangesNotification();
+
+    return S_OK;
+}
+
+HRESULT WebPreferences::setUInt32PreferenceForTesting(_In_ BSTR key, _In_ unsigned value)
+{
+    if (!SysStringLen(key))
+        return E_FAIL;
+
+#if USE(CF)
+    auto keyString = String(key).createCFString();
+    setValueForKey(keyString.get(), cfNumber(static_cast<int>(value)).get());
+#endif
+
+    postPreferencesChangesNotification();
+
+    return S_OK;
+}
+
+HRESULT WebPreferences::setDoublePreferenceForTesting(_In_ BSTR key, _In_ double value)
+{
+    if (!SysStringLen(key))
+        return E_FAIL;
+
+#if USE(CF)
+    auto keyString = String(key).createCFString();
+    setValueForKey(keyString.get(), cfNumber(static_cast<float>(value)).get());
+#endif
+
+    postPreferencesChangesNotification();
+
+    return S_OK;
+}
+
+HRESULT WebPreferences::setStringPreferenceForTesting(_In_ BSTR key, _In_ BSTR value)
+{
+    if (!SysStringLen(key) || !SysStringLen(value))
+        return E_FAIL;
+
+#if USE(CF)
+    auto keyString = String(key).createCFString();
+    auto valueString = String(value).createCFString();
+    setValueForKey(keyString.get(), valueString.get());
+#endif
+
+    postPreferencesChangesNotification();
+
+    return S_OK;
+}
+
 HRESULT WebPreferences::setApplicationId(BSTR applicationId)
 {
 #if USE(CF)
