@@ -378,24 +378,59 @@ void TreeBuilder::buildSubTree(const RenderElement& parentRenderer, ContainerBox
 }
 
 #if ENABLE(TREE_DEBUGGING)
-static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState, const ContainerBox& inlineFormattingRoot, unsigned depth)
+void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, const ContainerBox& inlineFormattingRoot, size_t depth)
 {
     auto& inlineFormattingState = layoutState.establishedInlineFormattingState(inlineFormattingRoot);
     auto& lines = inlineFormattingState.lines();
+    auto& lineBoxes = inlineFormattingState.lineBoxes();
 
     for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
-        size_t printedCharacters = 0;
-        while (++printedCharacters <= depth * 2)
-            stream << " ";
+        auto addSpacing = [&] {
+            size_t printedCharacters = 0;
+            stream << "-------- --";
+            while (++printedCharacters <= depth * 2)
+                stream << " ";
+
+        };
+        addSpacing();
         auto& line = lines[lineIndex];
-        stream << "line at (" << line.logicalLeft() << "," << line.logicalTop() << ") size " << line.logicalWidth() << "x" << line.logicalHeight() << " baseline at (" << line.baseline() << ")";
+        stream << "line at (" << line.logicalLeft() << "," << line.logicalTop() << ") size (" << line.logicalWidth() << "x" << line.logicalHeight() << ") baseline (" << line.baseline() << ")";
+        stream.nextLine();
+
+        addSpacing();
+        stream << "  Inline level boxes:";
+        stream.nextLine();
+        auto& lineBox = lineBoxes[lineIndex];
+        for (auto& inlineLevelBox : lineBox.inlineLevelBoxList()) {
+            addSpacing();
+            stream << "    ";
+            if (inlineLevelBox->isRootInlineBox())
+                stream << "Root inline box";
+            else if (inlineLevelBox->isAtomicInlineLevelBox())
+                stream << "Atomic inline level box";
+            else if (inlineLevelBox->isLineBreakBox())
+                stream << "Line break box";
+            else if (inlineLevelBox->isInlineBox())
+                stream << "Generic inline box";
+            else
+                stream << "Generic inline level box";
+            auto logicalRect = lineBox.logicalRectForInlineLevelBox(inlineLevelBox->layoutBox());
+            stream
+                << " at (" << logicalRect.left() << "," << logicalRect.top() << ")"
+                << " size (" << logicalRect.width() << "x" << logicalRect.height() << ")"
+                << " baseline (" << logicalRect.top() + inlineLevelBox->baseline() << ")"
+                << " ascent (" << inlineLevelBox->baseline() << "/" << inlineLevelBox->layoutBounds().ascent << ")"
+                << " descent (" << inlineLevelBox->descent().valueOr(0.0f) << "/" << inlineLevelBox->layoutBounds().descent << ")";
+            stream.nextLine();
+        }
+
+        addSpacing();
+        stream << "  Runs:";
         stream.nextLine();
         for (auto& run : inlineFormattingState.lineRuns()) {
             if (run.lineIndex() != lineIndex)
                 continue;
-            unsigned printedCharacters = 0;
-            while (++printedCharacters <= depth * 2)
-                stream << " ";
+            addSpacing();
             stream << "    ";
             if (run.text())
                 stream << "text run";
@@ -501,7 +536,7 @@ static void outputLayoutTree(const LayoutState* layoutState, TextStream& stream,
             else
                 outputLayoutBox(stream, child, nullptr, depth);
             if (child.establishesInlineFormattingContext())
-                outputInlineRuns(stream, *layoutState, downcast<ContainerBox>(child), depth + 1);
+                showInlineTreeAndRuns(stream, *layoutState, downcast<ContainerBox>(child), depth + 1);
         } else
             outputLayoutBox(stream, child, nullptr, depth);
 

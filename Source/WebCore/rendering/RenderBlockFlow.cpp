@@ -3699,6 +3699,12 @@ void RenderBlockFlow::ensureLineBoxes()
 #if ENABLE(TREE_DEBUGGING)
 void RenderBlockFlow::outputLineTreeAndMark(WTF::TextStream& stream, const InlineBox* markedBox, int depth) const
 {
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* modernLineLayout = this->modernLineLayout()) {
+        modernLineLayout->outputLineTree(stream, depth);
+        return;
+    }
+#endif
     for (const RootInlineBox* root = firstRootBox(); root; root = root->nextRootBox())
         root->outputLineTreeAndMark(stream, markedBox, depth);
 }

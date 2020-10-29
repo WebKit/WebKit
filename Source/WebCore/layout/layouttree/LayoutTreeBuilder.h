@@ -80,6 +80,7 @@ private:
 String layoutTreeAsText(const Box&, const LayoutState*);
 void showLayoutTree(const Box&, const LayoutState*);
 void showLayoutTree(const Box&);
+void showInlineTreeAndRuns(TextStream&, const LayoutState&, const ContainerBox& inlineFormattingRoot, size_t depth);
 void printLayoutTreeForLiveDocuments();
 #endif
 

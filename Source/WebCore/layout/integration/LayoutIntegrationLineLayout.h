@@ -92,6 +92,10 @@ public:
 
     static void releaseCaches(RenderView&);
 
+#if ENABLE(TREE_DEBUGGING)
+    void outputLineTree(WTF::TextStream&, size_t depth) const;
+#endif
+
 private:
     void prepareLayoutState();
     void prepareFloatingState();

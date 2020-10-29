@@ -587,6 +587,12 @@ void LineLayout::releaseInlineItemCache()
     m_inlineFormattingState.inlineItems().clear();
 }
 
+#if ENABLE(TREE_DEBUGGING)
+void LineLayout::outputLineTree(WTF::TextStream& stream, size_t depth) const
+{
+    showInlineTreeAndRuns(stream, m_layoutState, rootLayoutBox(), depth);
+}
+#endif
 
 }
 }

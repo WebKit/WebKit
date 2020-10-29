@@ -75,6 +75,14 @@ public:
 
         InlineLayoutUnit baseline() const { return m_baseline; }
         Optional<InlineLayoutUnit> descent() const { return m_descent; }
+        // See https://www.w3.org/TR/css-inline-3/#layout-bounds
+        struct LayoutBounds {
+            InlineLayoutUnit height() const { return ascent + descent; }
+
+            InlineLayoutUnit ascent { 0 };
+            InlineLayoutUnit descent { 0 };
+        };
+        LayoutBounds layoutBounds() const { return m_layoutBounds; }
 
         bool isEmpty() const { return m_isEmpty; }
         void setIsNonEmpty() { m_isEmpty = false; }
@@ -84,6 +92,7 @@ public:
         const Box& layoutBox() const { return *m_layoutBox; }
 
         bool isInlineBox() const { return m_type == Type::InlineBox || m_type == Type::RootInlineBox; }
+        bool isRootInlineBox() const { return m_type == Type::RootInlineBox; }
         bool isAtomicInlineLevelBox() const { return m_type == Type::AtomicInlineLevelBox; }
         bool isLineBreakBox() const { return m_type == Type::LineBreakBox; }
         bool hasLineBoxRelativeAlignment() const;
@@ -106,16 +115,7 @@ public:
         void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_logicalRect.setHeight(logicalHeight); }
         void setBaseline(InlineLayoutUnit);
         void setDescent(InlineLayoutUnit);
-
-        // See https://www.w3.org/TR/css-inline-3/#layout-bounds
-        struct LayoutBounds {
-            InlineLayoutUnit height() const { return ascent + descent; }
-
-            InlineLayoutUnit ascent { 0 };
-            InlineLayoutUnit descent { 0 };
-        };
         void setLayoutBounds(const LayoutBounds&);
-        LayoutBounds layoutBounds() const { return m_layoutBounds; }
 
     private:
         WeakPtr<const Box> m_layoutBox;
