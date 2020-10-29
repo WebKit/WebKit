@@ -46,12 +46,12 @@
 #import <WebCore/DragItem.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/LocalCurrentGraphicsContext.h>
+#import <WebCore/NetworkExtensionContentFilter.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/RunLoopObserver.h>
 #import <WebCore/SearchPopupMenuCocoa.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/ValidationBubble.h>
-#import <pal/spi/cocoa/NEFilterSourceSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/SoftLinking.h>
@@ -73,9 +73,6 @@
 SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
 SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
 #endif
-
-SOFT_LINK_FRAMEWORK_OPTIONAL(NetworkExtension);
-SOFT_LINK_CLASS_OPTIONAL(NetworkExtension, NEFilterSource);
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, process().connection(), completion)
@@ -156,7 +153,8 @@ void WebPageProxy::addPlatformLoadParameters(WebProcessProxy& process, LoadParam
 {
     loadParameters.dataDetectionContext = m_uiClient->dataDetectionContext();
 
-    if (!process.hasNetworkExtensionSandboxAccess() && [getNEFilterSourceClass() filterRequired]) {
+#if ENABLE(CONTENT_FILTERING)
+    if (!process.hasNetworkExtensionSandboxAccess() && NetworkExtensionContentFilter::isRequired()) {
         SandboxExtension::Handle helperHandle;
         SandboxExtension::createHandleForMachLookup("com.apple.nehelper"_s, WTF::nullopt, helperHandle);
         loadParameters.neHelperExtensionHandle = WTFMove(helperHandle);
@@ -170,6 +168,7 @@ void WebPageProxy::addPlatformLoadParameters(WebProcessProxy& process, LoadParam
 
         process.markHasNetworkExtensionSandboxAccess();
     }
+#endif
 
 #if PLATFORM(IOS)
     if (!process.hasManagedSessionSandboxAccess() && [getWebFilterEvaluatorClass() isManagedSession]) {

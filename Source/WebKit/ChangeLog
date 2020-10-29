@@ -1,3 +1,20 @@
+2020-10-29  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Cocoa] Remove soft linking of NetworkExtension.framework
+        https://bugs.webkit.org/show_bug.cgi?id=218314
+        <rdar://problem/70785239>
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::addPlatformLoadParameters):
+
+        Replaced the soft linked method call with a new method exported from
+        WebCore.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::platformDidReceiveLoadParameters):
+
 2020-10-29  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON): Back/forward navigation may hang 

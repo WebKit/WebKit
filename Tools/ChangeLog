@@ -1,3 +1,22 @@
+2020-10-29  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Cocoa] Remove soft linking of NetworkExtension.framework
+        https://bugs.webkit.org/show_bug.cgi?id=218314
+        <rdar://problem/70785239>
+
+        Reviewed by Andy Estes.
+
+        Updated a test to reflect that NetworkExtension.framework is no longer
+        loaded at runtime. This test was failing on Catalina after r269109,
+        as the Contacts framework was loading NetworkExtension.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentFiltering.h:
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentFiltering.mm:
+        (-[LazilyLoadPlatformFrameworksController expectParentalControlsLoaded:]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentFilteringPlugIn.mm:
+        (-[ContentFilteringPlugIn checkIfPlatformFrameworksAreLoaded:]):
+
 2020-10-29  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON): Back/forward navigation may hang

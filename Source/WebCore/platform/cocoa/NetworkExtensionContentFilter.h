@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(CONTENT_FILTERING)
+
 #include "PlatformContentFilter.h"
 #include <objc/NSObjCRuntime.h>
 #include <wtf/Compiler.h>
@@ -50,10 +52,9 @@ public:
     void addData(const char* data, int length) override;
     void finishedAddingData() override;
     Ref<SharedBuffer> replacementData() const override;
-#if ENABLE(CONTENT_FILTERING)
     ContentFilterUnblockHandler unblockHandler() const override;
-#endif
 
+    WEBCORE_EXPORT static bool isRequired();
     WEBCORE_EXPORT static void setHasConsumedSandboxExtensions(bool);
 
 private:
@@ -77,3 +78,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(CONTENT_FILTERING)
