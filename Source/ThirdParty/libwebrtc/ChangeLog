@@ -1,3 +1,16 @@
+2020-10-29  Youenn Fablet  <youenn@apple.com>
+
+        Disable VP9 VTB hardware decoding
+        https://bugs.webkit.org/show_bug.cgi?id=218326
+
+        Reviewed by Alex Christensen.
+
+        VP9 hardware decoder does not work properly yet as used in WebRTC pipeline.
+        Disable hardware support for now and use software based VP9 through VTB.
+
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderVTBVP9.mm:
+        (-[RTCVideoDecoderVTBVP9 resetDecompressionSession]):
+
 2020-10-26  Youenn Fablet  <youenn@apple.com>
 
         Add support for VP9 Profile 2 (10-bit color) in WebRTC

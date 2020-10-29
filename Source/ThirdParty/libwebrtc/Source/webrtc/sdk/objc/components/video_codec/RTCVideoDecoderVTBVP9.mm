@@ -260,11 +260,19 @@ void vp9DecompressionOutputCallback(void *decoderRef,
     CFRelease(pixelFormat);
     pixelFormat = nullptr;
   }
+
+  // rdar://problem/70701816. Disable hardware decoding until working properly.
+  auto videoDecoderSpecification = @{
+#if !defined(WEBRTC_IOS)
+    (__bridge NSString *)kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder: @NO
+#endif
+  };
+
   VTDecompressionOutputCallbackRecord record = {
       vp9DecompressionOutputCallback, (__bridge void *)self,
   };
   OSStatus status = VTDecompressionSessionCreate(
-      nullptr, _videoFormat, nullptr, attributes, &record, &_decompressionSession);
+      nullptr, _videoFormat, (__bridge CFDictionaryRef)videoDecoderSpecification, attributes, &record, &_decompressionSession);
   CFRelease(attributes);
   if (status != noErr) {
     RTC_LOG(LS_ERROR) << "Failed to create decompression session: " << status;
