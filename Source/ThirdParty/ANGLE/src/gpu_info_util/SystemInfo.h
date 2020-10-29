@@ -67,9 +67,8 @@ struct SystemInfo
     bool isAMDSwitchable = false;
     // Only true on dual-GPU Mac laptops.
     bool isMacSwitchable = false;
-    // Only true on Apple Silicon Macs when running iOS binaries.
-    // See https://developer.apple.com/documentation/foundation/nsprocessinfo/3608556-iosapponmac
-    bool isiOSAppOnMac   = false;
+    // Only true on Apple Silicon Macs when running in macCatalyst.
+    bool needsEAGLOnMac   = false;
 
     // Only available on Android
     std::string machineManufacturer;

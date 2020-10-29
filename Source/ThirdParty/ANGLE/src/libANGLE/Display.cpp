@@ -279,7 +279,7 @@ rx::DisplayImpl *CreateDisplayFromAttribs(EGLAttrib displayType,
                     break;
                 }
 
-                if (info.isiOSAppOnMac)
+                if (info.needsEAGLOnMac)
                 {
                     impl = new rx::DisplayEAGL(state);
                     break;
