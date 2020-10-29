@@ -111,6 +111,9 @@
 #endif
     ;; OpenCL
     (allow iokit-open
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+        (with telemetry-backtrace)
+#endif
         (iokit-connection "IOAccelerator")
         (iokit-registry-entry-class "IOAccelerationUserClient")
         (iokit-registry-entry-class "IOSurfaceRootUserClient")
@@ -122,15 +125,24 @@
 #endif
     ;; H.264 Acceleration
     (allow iokit-open
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+        (with telemetry-backtrace)
+#endif
         (iokit-registry-entry-class "AppleIntelMEUserClient")
         (iokit-registry-entry-class "AppleSNBFBUserClient"))
     ;; QuartzCore
     (allow iokit-open
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+        (with telemetry-backtrace)
+#endif
         (iokit-registry-entry-class "AGPMClient")
         (iokit-registry-entry-class "AppleGraphicsControlClient")
         (iokit-registry-entry-class "AppleGraphicsPolicyClient"))
     ;; OpenGL
     (allow iokit-open
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+        (with telemetry-backtrace)
+#endif
         (iokit-registry-entry-class "AppleMGPUPowerControlClient"))
     ;; GPU bundles
     (allow file-read*
@@ -673,6 +685,9 @@
 #endif
 
 (allow iokit-open
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+    (with telemetry-backtrace)
+#endif
     (iokit-user-client-class "AppleUpstreamUserClient")
     (iokit-user-client-class "RootDomainUserClient") ;; Needed by WebCore::PerformanceMonitor
     (iokit-user-client-class "AudioAUUC") ;; <rdar://problem/10427451> && <rdar://problem/10808817>
@@ -683,6 +698,9 @@
 ;; <rdar://problem/60088861>
 (if (equal? (param "CPU") "arm64")
     (allow iokit-open
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+        (with telemetry-backtrace)
+#endif
         (iokit-user-client-class "AppleAVDUserClient")
         (iokit-user-client-class "IOMobileFramebufferUserClient")
         (iokit-user-client-class "IOSurfaceAcceleratorClient") ;; <rdar://problem/63696732>
