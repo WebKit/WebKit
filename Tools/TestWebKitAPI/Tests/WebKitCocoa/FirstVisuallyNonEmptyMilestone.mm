@@ -37,7 +37,6 @@
 
 static bool didFirstVisuallyNonEmptyLayout;
 static bool receivedMessage;
-static bool receivedMessageBeforeFirstVisuallyNonEmptyLayout;
 
 @interface FirstPaintMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -55,10 +54,8 @@ static bool receivedMessageBeforeFirstVisuallyNonEmptyLayout;
 @implementation RenderingProgressNavigationDelegate
 - (void)_webView:(WKWebView *)webView renderingProgressDidChange:(_WKRenderingProgressEvents)progressEvents
 {
-    if (progressEvents & _WKRenderingProgressEventFirstVisuallyNonEmptyLayout) {
-        receivedMessageBeforeFirstVisuallyNonEmptyLayout = receivedMessage;
+    if (progressEvents & _WKRenderingProgressEventFirstVisuallyNonEmptyLayout)
         didFirstVisuallyNonEmptyLayout = true;
-    }
 }
 @end
 
@@ -74,36 +71,12 @@ TEST(WebKit, FirstVisuallyNonEmptyMilestoneWithDeferredScript)
     [webView setNavigationDelegate:delegate.get()];
 
     receivedMessage = false;
-    receivedMessageBeforeFirstVisuallyNonEmptyLayout = false;
     didFirstVisuallyNonEmptyLayout = false;
 
     [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"deferred-script-load" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
 
     TestWebKitAPI::Util::run(&receivedMessage);
     EXPECT_TRUE(didFirstVisuallyNonEmptyLayout);
-    EXPECT_FALSE(receivedMessageBeforeFirstVisuallyNonEmptyLayout);
-}
-
-TEST(WebKit, FirstVisuallyNonEmptyMilestoneWithDeferredScriptInEmptyDocument)
-{
-    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto messageHandler = adoptNS([[FirstPaintMessageHandler alloc] init]);
-    [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"firstpaint"];
-
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
-
-    RetainPtr<RenderingProgressNavigationDelegate> delegate = adoptNS([[RenderingProgressNavigationDelegate alloc] init]);
-    [webView setNavigationDelegate:delegate.get()];
-
-    receivedMessage = false;
-    receivedMessageBeforeFirstVisuallyNonEmptyLayout = false;
-    didFirstVisuallyNonEmptyLayout = false;
-
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"deferred-script-load-in-empty-document" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
-
-    TestWebKitAPI::Util::run(&didFirstVisuallyNonEmptyLayout);
-    EXPECT_TRUE(receivedMessage);
-    EXPECT_TRUE(receivedMessageBeforeFirstVisuallyNonEmptyLayout);
 }
 
 @interface NeverFinishLoadingSchemeHandler : NSObject <WKURLSchemeHandler>
