@@ -42,8 +42,10 @@
             }, "Setup stream");
 
             promise_test(async (t) => {
-                if (window.internals)
+                if (window.internals) {
+                    window.internals.setShouldInterruptAudioOnPageVisibilityChange(false);
                     window.internals.setPageVisibility(false);
+                }
                 assert_false(audioTrack.muted, "audio track is active");
                 assert_true(videoTrack.muted, "video track is muted");
             }, "Hide page, only video should be muted");
