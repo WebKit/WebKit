@@ -80,7 +80,7 @@ If you don't use a custom build location in Xcode preferences, you have to updat
 iOS, tvOS and watchOS are all considered embedded builds. The first time after you install a new Xcode, you will need to run:
 
 ```
-sudo Tools/Scripts/configure-xcode-for-ios-development
+sudo Tools/Scripts/configure-xcode-for-embedded-development
 ```
 
 Without this step, you will see the error message: "`target specifies product type ‘com.apple.product-type.tool’, but there’s no such product type for the ‘iphonesimulator’ platform.`" when building target `JSCLLIntOffsetsExtractor` of project `JavaScriptCore`.

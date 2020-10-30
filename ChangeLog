@@ -1,3 +1,13 @@
+2020-10-30  Jonathan Bedard  <jbedard@apple.com>
+
+        Github mirror ReadMe need to update
+        https://bugs.webkit.org/show_bug.cgi?id=218120
+        <rdar://problem/70861595>
+
+        Reviewed by Aakash Jain.
+
+        * ReadMe.md:
+
 2020-10-27  Keith Rollin  <krollin@apple.com>
 
         Fix "usage" message when invoking `ar -V`
