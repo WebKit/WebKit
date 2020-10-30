@@ -1,3 +1,13 @@
+2020-10-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [TextureMapper] Replica layers don't blend correctly because computeOverlapRegions doesn't take TextureMapperPaintOptions::transform into account
+        https://bugs.webkit.org/show_bug.cgi?id=218307
+
+        Reviewed by Don Olmstead.
+
+        * compositing/reflections/opacity-in-reflection-expected.html: Added.
+        * compositing/reflections/opacity-in-reflection.html: Added.
+
 2020-10-30  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/resources tests from upstream
