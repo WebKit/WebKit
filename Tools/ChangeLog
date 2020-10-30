@@ -1,3 +1,16 @@
+2020-10-30  Lauro Moura  <lmoura@igalia.com>
+
+        webkitpy: Sync package versions with WPT suite
+        https://bugs.webkit.org/show_bug.cgi?id=217826
+        <rdar://problem/70619091>
+
+        Reviewed by Carlos Garcia Campos.
+
+        Sync most packages. funcsics is already imported with a newer version
+        in webkitcorepy.
+
+        * Scripts/webkitpy/__init__.py:
+
 2020-10-30  Martin Robinson  <mrobinson@igalia.com>
 
         Re-add Martin Robinson as a committer
