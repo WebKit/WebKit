@@ -873,7 +873,7 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
         auto& layerState = impl.layerState();
         layerState.imageID = imageID;
         layerState.update.isVisible = transformedVisibleRect().intersects(IntRect(contentsRect()));
-        if (layerState.update.isVisible && layerState.nativeImageID != nativeImageID) {
+        if (layerState.update.isVisible && layerState.update.nativeImageID != nativeImageID) {
             auto buffer = Nicosia::Buffer::create(IntSize(image.size()),
                 !image.currentFrameKnownToBeOpaque() ? Nicosia::Buffer::SupportsAlpha : Nicosia::Buffer::NoFlags);
             Nicosia::PaintingContext::paint(buffer,
@@ -882,7 +882,7 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
                     IntRect rect { { }, IntSize { image.size() } };
                     context.drawImage(image, rect, rect, ImagePaintingOptions(CompositeOperator::Copy));
                 });
-            layerState.nativeImageID = nativeImageID;
+            layerState.update.nativeImageID = nativeImageID;
             layerState.update.buffer = WTFMove(buffer);
             m_nicosia.delta.imageBackingChanged = true;
         }
@@ -1185,7 +1185,6 @@ void CoordinatedGraphicsLayer::purgeBackingStores()
     if (m_nicosia.imageBacking) {
         auto& layerState = downcast<Nicosia::ImageBackingTextureMapperImpl>(m_nicosia.imageBacking->impl()).layerState();
         layerState.imageID = 0;
-        layerState.nativeImageID = 0;
         layerState.update = { };
 
         m_nicosia.imageBacking = nullptr;
