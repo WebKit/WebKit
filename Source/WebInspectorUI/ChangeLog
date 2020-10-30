@@ -1,5 +1,16 @@
 2020-10-29  Federico Bucchi  <fbucchi@apple.com>
 
+        Web Inspector: Uncaught Exception: undefined is not an object (evaluating 'value.truncate')
+        https://bugs.webkit.org/show_bug.cgi?id=218061
+        <rdar://problem/70551334>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/DOMStorageContentView.js:
+        (WI.DOMStorageContentView.prototype.itemUpdated):
+
+2020-10-29  Federico Bucchi  <fbucchi@apple.com>
+
         Web Inspector: update styles to use CSS properties with neutral directionality
         https://bugs.webkit.org/show_bug.cgi?id=217447
         <rdar://problem/70064975>

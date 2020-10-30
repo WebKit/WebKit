@@ -131,7 +131,7 @@ WI.DOMStorageContentView = class DOMStorageContentView extends WI.ContentView
 
     itemUpdated(event)
     {
-        let {key, value} = event.data;
+        let {key, newValue: value} = event.data;
         let originalValue = value;
         value = this._truncateValue(value);
 
