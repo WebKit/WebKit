@@ -417,6 +417,13 @@ PASS CSSStyleDeclaration interface: getComputedStyle(svg_element) must inherit p
 PASS CSSStyleDeclaration interface: calling removeProperty(CSSOMString) on getComputedStyle(svg_element) with too few arguments must throw TypeError
 PASS CSSStyleDeclaration interface: getComputedStyle(svg_element) must inherit property "parentRule" with the proper type
 PASS CSSStyleDeclaration interface: getComputedStyle(svg_element) must inherit property "cssFloat" with the proper type
+PASS CSS namespace: extended attributes
+PASS CSS namespace: property descriptor
+PASS CSS namespace: [[Extensible]] is true
+FAIL CSS namespace: [[Prototype]] is Object.prototype assert_equals: expected (object) object "[object Object]" but got (function) function "function () {
+    [native code]
+}"
+FAIL CSS namespace: typeof is "object" assert_equals: expected "object" but got "function"
 PASS CSS namespace: operation escape(CSSOMString)
 PASS SVGElement interface: attribute style
 PASS SVGElement interface: svg_element must inherit property "style" with the proper type

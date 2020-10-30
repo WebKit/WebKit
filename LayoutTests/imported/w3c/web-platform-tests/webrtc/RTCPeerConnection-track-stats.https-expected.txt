@@ -1,10 +1,6 @@
 
 PASS addTrack() without setLocalDescription() yields track stats
-FAIL addTrack() without setLocalDescription() yields media stream stats assert_true: Has stats for stream expected true got false
 PASS addTrack() with setLocalDescription() yields track stats
-FAIL addTrack() with setLocalDescription() yields media stream stats assert_true: Has stats for stream expected true got false
-FAIL addTrack(): Media stream stats references track stats assert_true: Has stats for track and stream expected true got false
-FAIL Media stream stats references track stats assert_true: Has stats for track and stream expected true got false
 PASS O/A exchange yields outbound RTP stream stats for sending track
 PASS O/A exchange yields inbound RTP stream stats for receiving track
 PASS replaceTrack() before offer: new track attachment stats present

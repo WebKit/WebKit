@@ -23,7 +23,7 @@
     const pc = new RTCPeerConnection();
     t.add_cleanup(() => pc.close());
     let track;
-    return getUserMediaTracksAndStreams(1)
+    getUserMediaTracksAndStreams(1)
     .then(t.step_func(([tracks, streams]) => {
       t.add_cleanup(() => tracks.forEach(track => track.stop()));
       track = tracks[0];
@@ -48,31 +48,9 @@
   async_test(t => {
     const pc = new RTCPeerConnection();
     t.add_cleanup(() => pc.close());
-    let stream;
-    return getUserMediaTracksAndStreams(1)
-    .then(t.step_func(([tracks, streams]) => {
-      t.add_cleanup(() => tracks.forEach(track => track.stop()));
-      let track = tracks[0];
-      stream = streams[0];
-      pc.addTrack(track, stream);
-      return pc.getStats();
-    }))
-    .then(t.step_func(report => {
-      let streamStats = findStatsByTypeAndId(report, 'stream', stream.id);
-      assert_true(streamStats != null, 'Has stats for stream');
-      validateRtcStats(report, streamStats);
-      t.done();
-    }))
-    .catch(t.step_func(reason => {
-      assert_unreached(reason);
-    }));
-  }, 'addTrack() without setLocalDescription() yields media stream stats');
 
-  async_test(t => {
-    const pc = new RTCPeerConnection();
-    t.add_cleanup(() => pc.close());
     let track;
-    return getUserMediaTracksAndStreams(1)
+    getUserMediaTracksAndStreams(1)
     .then(t.step_func(([tracks, streams]) => {
       t.add_cleanup(() => tracks.forEach(track => track.stop()));
       track = tracks[0];
@@ -97,113 +75,12 @@
   }, 'addTrack() with setLocalDescription() yields track stats');
 
   async_test(t => {
-    const pc = new RTCPeerConnection();
-    t.add_cleanup(() => pc.close());
-    let stream;
-    return getUserMediaTracksAndStreams(1)
-    .then(t.step_func(([tracks, streams]) => {
-      t.add_cleanup(() => tracks.forEach(track => track.stop()));
-      let track = tracks[0];
-      stream = streams[0];
-      pc.addTrack(track, stream);
-      return pc.createOffer();
-    }))
-    .then(t.step_func(offer => {
-      return pc.setLocalDescription(offer);
-    }))
-    .then(t.step_func(() => {
-      return pc.getStats();
-    }))
-    .then(t.step_func(report => {
-      let streamStats = findStatsByTypeAndId(report, 'stream', stream.id);
-      assert_true(streamStats != null, 'Has stats for stream');
-      validateRtcStats(report, streamStats);
-      t.done();
-    }))
-    .catch(t.step_func(reason => {
-      assert_unreached(reason);
-    }));
-  }, 'addTrack() with setLocalDescription() yields media stream stats');
-
-  async_test(t => {
-    const pc = new RTCPeerConnection();
-    t.add_cleanup(() => pc.close());
-    let track;
-    let stream;
-    return getUserMediaTracksAndStreams(1)
-    .then(t.step_func(([tracks, streams]) => {
-      t.add_cleanup(() => tracks.forEach(track => track.stop()));
-      track = tracks[0];
-      stream = streams[0];
-      pc.addTrack(track, stream);
-      return pc.createOffer();
-    }))
-    .then(t.step_func(offer => {
-      return pc.setLocalDescription(offer);
-    }))
-    .then(t.step_func(() => {
-      return pc.getStats();
-    }))
-    .then(t.step_func(report => {
-      let trackStats = findStatsByTypeAndId(report, 'track', track.id);
-      let streamStats = findStatsByTypeAndId(report, 'stream', stream.id);
-      assert_true(trackStats != null && streamStats != null,
-                  'Has stats for track and stream');
-      assert_array_equals(streamStats.trackIds, [ trackStats.id ],
-                          'streamStats.trackIds == [ trackStats.id ]');
-      validateRtcStats(report, trackStats);
-      validateRtcStats(report, streamStats);
-      t.done();
-    }))
-    .catch(t.step_func(reason => {
-      assert_unreached(reason);
-    }));
-  }, 'addTrack(): Media stream stats references track stats');
-
-  async_test(t => {
-    const pc = new RTCPeerConnection();
-    t.add_cleanup(() => pc.close());
-    let track;
-    let stream;
-    return getUserMediaTracksAndStreams(1)
-    .then(t.step_func(([tracks, streams]) => {
-      t.add_cleanup(() => tracks.forEach(track => track.stop()));
-      track = tracks[0];
-      stream = streams[0];
-      stream.addTrack(track);
-      for (const track of stream.getTracks())
-        pc.addTrack(track, stream);
-      return pc.createOffer();
-    }))
-    .then(t.step_func(offer => {
-      return pc.setLocalDescription(offer);
-    }))
-    .then(t.step_func(() => {
-      return pc.getStats();
-    }))
-    .then(t.step_func(report => {
-      let trackStats = findStatsByTypeAndId(report, 'track', track.id);
-      let streamStats = findStatsByTypeAndId(report, 'stream', stream.id);
-      assert_true(trackStats != null && streamStats != null,
-                  'Has stats for track and stream');
-      assert_array_equals(streamStats.trackIds, [ trackStats.id ],
-                          'streamStats.trackIds == [ trackStats.id ]');
-      validateRtcStats(report, trackStats);
-      validateRtcStats(report, streamStats);
-      t.done();
-    }))
-    .catch(t.step_func(reason => {
-      assert_unreached(reason);
-    }));
-  }, 'Media stream stats references track stats');
-
-  async_test(t => {
     const caller = new RTCPeerConnection();
     t.add_cleanup(() => caller.close());
     const callee = new RTCPeerConnection();
     t.add_cleanup(() => callee.close());
     let sendingTrack;
-    return getUserMediaTracksAndStreams(1)
+    getUserMediaTracksAndStreams(1)
     .then(t.step_func(([tracks, streams]) => {
       t.add_cleanup(() => tracks.forEach(track => track.stop()));
       sendingTrack = tracks[0];
@@ -235,10 +112,10 @@
     t.add_cleanup(() => callee.close());
     let receivingTrack;
     callee.ontrack = trackEvent => {
-      assert_true(receivingTrack == undefined, 'ontrack has not fired before');
+      assert_equals(receivingTrack, undefined, 'ontrack has not fired before');
       receivingTrack = trackEvent.track;
     };
-    return getUserMediaTracksAndStreams(1)
+    getUserMediaTracksAndStreams(1)
     .then(t.step_func(([tracks, streams]) => {
       t.add_cleanup(() => tracks.forEach(track => track.stop()));
       caller.addTrack(tracks[0], streams[0]);
@@ -271,7 +148,7 @@
     let sendingTrack1;
     let sendingTrack2;
     let sender;
-    return getUserMediaTracksAndStreams(2)
+    getUserMediaTracksAndStreams(2)
     .then(t.step_func(([tracks, streams]) => {
       t.add_cleanup(() => tracks.forEach(track => track.stop()));
       sendingTrack1 = tracks[0];
@@ -301,7 +178,7 @@
     let sendingTrack1;
     let sendingTrack2;
     let sender;
-    return getUserMediaTracksAndStreams(2)
+    getUserMediaTracksAndStreams(2)
     .then(t.step_func(([tracks, streams]) => {
       t.add_cleanup(() => tracks.forEach(track => track.stop()));
       sendingTrack1 = tracks[0];
@@ -339,7 +216,7 @@
     let sendingTrack1;
     let sendingTrack2;
     let sender;
-    return getUserMediaTracksAndStreams(2)
+    getUserMediaTracksAndStreams(2)
     .then(t.step_func(([tracks, streams]) => {
       t.add_cleanup(() => tracks.forEach(track => track.stop()));
       sendingTrack1 = tracks[0];
@@ -376,7 +253,7 @@
     let sendingTrack1;
     let sendingTrack2;
     let sender;
-    return getUserMediaTracksAndStreams(2)
+    getUserMediaTracksAndStreams(2)
     .then(t.step_func(([tracks, streams]) => {
       t.add_cleanup(() => tracks.forEach(track => track.stop()));
       sendingTrack1 = tracks[0];
@@ -396,7 +273,7 @@
       assert_true(trackStats.objectDeleted);
       let outboundStats = findStatsByTypeAndMember(report, 'outbound-rtp',
                                                    'trackId', trackStats.id);
-      assert_true(outboundStats == null,
+      assert_equals(outboundStats, null,
                   'The outbound RTP stream should no longer reference the ' +
                   'original attachment');
       t.done();

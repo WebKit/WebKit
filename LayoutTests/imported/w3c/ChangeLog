@@ -1,3 +1,36 @@
+2020-10-30  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/resources tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=218351
+
+        Reviewed by Sam Weinig.
+
+        Resync web-platform-tests/resources tests from upstream 5dbb0a3fa631ef73da0.
+
+        * web-platform-tests/resources/*: Updated.
+
+        * web-platform-tests/console/idlharness.any-expected.txt:
+        * web-platform-tests/console/idlharness.any.worker-expected.txt:
+        * web-platform-tests/content-security-policy/frame-src/frame-src-same-document-meta.sub.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-long-crash-expected.txt:
+        * web-platform-tests/css/css-text/text-indent/text-indent-long-line-crash-expected.txt:
+        * web-platform-tests/css/cssom/idlharness-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/anchor-fragment-form-submit-withpath.html:
+        * web-platform-tests/html/cross-origin-embedder-policy/reporting-navigation.https.html:
+        * web-platform-tests/html/cross-origin-embedder-policy/require-corp-about-blank.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/require-corp-about-srcdoc.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/require-corp.https-expected.txt:
+        * web-platform-tests/wasm/jsapi/idlharness.any-expected.txt:
+        * web-platform-tests/web-share/share-url-invalid.https.html:
+        * web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html:
+        * web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-replaceTrack.https.html:
+        * web-platform-tests/webrtc/RTCPeerConnection-track-stats.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-track-stats.https.html:
+        * web-platform-tests/webrtc/legacy/RTCPeerConnection-addStream.https.html:
+        - Rebaseline a few tests that have different output.
+        - I resync'd from upstream a few tests that would have stopped running properly after the
+          resources/ folder resync.
+
 2020-10-29  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/payment-request tests from upstream

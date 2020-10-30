@@ -36,6 +36,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/iframe-consolidate-tests.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/iframe-msg.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/log-insertion.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/no-title.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/order.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/promise-async.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/promise-with-sync.html

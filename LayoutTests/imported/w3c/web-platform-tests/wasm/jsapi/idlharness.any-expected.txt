@@ -1,5 +1,10 @@
 
 PASS wasm-js-api interfaces.
+PASS WebAssembly namespace: extended attributes
+PASS WebAssembly namespace: property descriptor
+PASS WebAssembly namespace: [[Extensible]] is true
+PASS WebAssembly namespace: [[Prototype]] is Object.prototype
+PASS WebAssembly namespace: typeof is "object"
 PASS WebAssembly namespace: operation validate(BufferSource)
 PASS WebAssembly namespace: operation compile(BufferSource)
 PASS WebAssembly namespace: operation instantiate(BufferSource, optional object)
