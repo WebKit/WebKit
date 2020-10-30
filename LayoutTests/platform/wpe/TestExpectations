@@ -2101,7 +2101,7 @@ webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-overflow/text-overfl
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-values/ch-unit-002.html [ ImageOnlyFailure ]
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-values/ch-unit-011.html [ ImageOnlyFailure ]
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-border-image.html [ ImageOnlyFailure ]
-webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-003.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-003.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # UNSORTED Expectations. When in doubt, put it here.

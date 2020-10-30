@@ -122,6 +122,7 @@
     "web-platform-tests/css/css-shadow-parts": "import", 
     "web-platform-tests/css/css-shapes": "import", 
     "web-platform-tests/css/css-shapes/test-plan/index.html": "skip", 
+    "web-platform-tests/css/css-sizing/aspect-ratio": "import", 
     "web-platform-tests/css/css-text": "import", 
     "web-platform-tests/css/css-transitions": "import", 
     "web-platform-tests/css/css-ui": "import", 
