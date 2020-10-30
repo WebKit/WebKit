@@ -1,4 +1,4 @@
-<html>
+<html><!-- webkit-test-runner [ LoadsImagesAutomatically=false ] -->
 <head>
 <script>
 function runTest()
@@ -7,7 +7,6 @@ function runTest()
         testRunner.dumpAsText();
         testRunner.dumpResourceLoadCallbacks();
         testRunner.setIconDatabaseEnabled(true);
-        testRunner.overridePreference("WebKitDisplayImagesKey", 0);
         internals.setLoadsSiteIconsIgnoringImageLoadingSetting(true);
         testRunner.queueReload();
     }

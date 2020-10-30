@@ -21,7 +21,6 @@ found in the LICENSE.txt file.
     }
 
     if (window.layoutTestController) {
-      window.layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
       window.layoutTestController.dumpAsText();
       window.layoutTestController.waitUntilDone();
     }

@@ -8,7 +8,6 @@ var imageOnloadFired = 0;
 
 if (window.testRunner) {
     testRunner.dumpAsText();
-    testRunner.overridePreference('WebKitDisplayImagesKey', 1);
     window.internals.settings.setImagesEnabled(false);
     testRunner.queueReload();
 }

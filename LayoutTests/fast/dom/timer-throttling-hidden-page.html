@@ -1,4 +1,4 @@
-<html>
+<html><!-- webkit-test-runner [ HiddenPageDOMTimerThrottlingEnabled=true ] -->
 <body>
     <script src="../../resources/js-test.js"></script>
     <script>
@@ -31,7 +31,6 @@
                 debug('This test requires testRunner');
                 return;
             }
-            testRunner.overridePreference("WebKitHiddenPageDOMTimerThrottlingEnabled", 1);
 
             timerHandle = setTimeout(testTimer, timeoutInterval);
             shouldBeFalse("internals.isTimerThrottled(timerHandle)");

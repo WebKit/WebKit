@@ -1,3 +1,47 @@
+2020-10-29  Sam Weinig  <weinig@apple.com>
+
+        Remove all remaining boolean overridePreference calls
+        https://bugs.webkit.org/show_bug.cgi?id=218355
+
+        Reviewed by Darin Adler.
+
+        Remove unnecessary testRunner.overridePreference calls (for features on
+        by default) and replace others with test header commands or internals.settings
+        as appropriate. 
+
+        * fast/canvas/webgl/resources/js-test-pre.js:
+        * fast/dom/timer-throttling-hidden-page-non-nested.html:
+        * fast/dom/timer-throttling-hidden-page.html:
+        * fast/events/resources/tabindex-focus-blur-all.js:
+        * fast/harness/override-preferences-2-expected.txt: Removed.
+        * fast/harness/override-preferences-2.html: Removed.
+        * fast/harness/override-preferences-expected.txt: Removed.
+        * fast/harness/override-preferences.html: Removed.
+        * fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html:
+        * fast/loader/images-enabled-unset-can-block-image-and-can-reload-in-place.html:
+        * fast/mediacapturefromelement/resources/webgl-test.js:
+        * fast/parser/noscript-with-javascript-disabled.html:
+        * fast/parser/noscript-with-javascript-enabled.html:
+        * http/tests/cache/display-image-unset-allows-cached-image-load.html:
+        * http/tests/misc/favicon-loads-with-icon-loading-override.html:
+        * http/tests/misc/favicon-loads-with-images-disabled.html:
+        * http/tests/xsl/xslt-transform-with-javascript-disabled.html:
+        * media/remove-video-best-media-element-in-main-frame-crash.html:
+        * platform/mac-wk2/plugins/asychronous-deadlock-with-timer-and-evaluate.html:
+        * platform/mac-wk2/plugins/asynchronous-destroy-before-initialization.html:
+        * platform/mac-wk2/plugins/destroy-during-async-npp-new.html:
+        * platform/mac-wk2/plugins/script-object-access-fails-during-slow-initialization.html:
+        * platform/mac-wk2/plugins/slow/asynchronous-plugin-initialization-multiple.html:
+        * platform/mac-wk2/plugins/slow/asynchronous-plugin-initialization.html:
+        * svg/as-image/svg-image-with-data-uri-images-disabled.html:
+        * webaudio/resources/audio-testing.js:
+        * webgl/1.0.3/resources/webgl_test_files/conformance/more/unit.js:
+        * webgl/1.0.3/resources/webgl_test_files/resources/js-test-pre.js:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/more/unit.js:
+        * webgl/2.0.0/resources/webgl_test_files/js/js-test-pre.js:
+        * webgl/resources/js-test-pre.js:
+        * webgl/resources/webgl_test_files/js/js-test-pre.js:
+
 2020-10-29  Karl Rackler  <rackler@apple.com>
 
         REGRESSION (r269070): [ Big Sur ] editing/input/reveal-caret-of-multiline-input.html is a constant failure

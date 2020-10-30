@@ -38,7 +38,6 @@
     }
 
     if (window.layoutTestController) {
-      layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
       layoutTestController.dumpAsText();
       layoutTestController.waitUntilDone();
     }

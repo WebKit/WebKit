@@ -3,7 +3,7 @@
 <head>
 <script>
 // Opens two windows containing the same image. First window will populate the cache with
-// image. The second window is opened with WebKitDisplayImagesKey unset, but image should
+// image. The second window is opened with loadsImagesAutomatically unset, but image should
 // still load since it is in cache.
 function runTest()
 {
@@ -19,7 +19,7 @@ function runTest()
 
 function image1Loaded()
 {
-    testRunner.overridePreference('WebKitDisplayImagesKey', 0);
+    window.internals.settings.setLoadsImagesAutomatically(false);
     document.getElementById('result').innerHTML = 'FAILURE: image2.html not loaded';
     window.setTimeout(function() {window.open("resources/image2.html", "_blank");}, 0);
 }

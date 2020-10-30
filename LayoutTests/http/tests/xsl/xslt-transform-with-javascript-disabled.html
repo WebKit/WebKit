@@ -4,7 +4,7 @@
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.dumpChildFramesAsText();
-    testRunner.overridePreference("WebKitJavaScriptEnabled", false);
+    window.internals.settings.setScriptEnabled(false);
 }
 
 function shouldNotBeExecuted()

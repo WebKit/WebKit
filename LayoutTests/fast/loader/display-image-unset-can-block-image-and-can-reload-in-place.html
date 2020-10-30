@@ -1,7 +1,7 @@
 <html>
 <head>
 <script>
-// Setting WebKitDisplayImagesKey is asynchronous, so using queueReload and setInterval to check when the setting actually take effect.
+// Setting loadsImagesAutomatically is asynchronous, so using queueReload and setInterval to check when the setting actually take effect.
 
 var intervalId;
 var imageOnloadFired = 0;
@@ -9,7 +9,7 @@ var imageOnloadFired = 0;
 if (window.testRunner) {
     testRunner.dumpAsText();
     window.internals.settings.setImagesEnabled(true);
-    testRunner.overridePreference('WebKitDisplayImagesKey', 0);
+    window.internals.settings.setLoadsImagesAutomatically(false);
     testRunner.queueReload();
 }
 
@@ -17,12 +17,12 @@ function runTest()
 {
     var image = document.getElementById('image');
     if (image.naturalHeight != 0 || image.naturalWidth != 0 || imageOnloadFired != 0) {
-        document.getElementById('result').innerHTML = 'FAILURE: Image should not be loaded when DisplayImage is unset';
+        document.getElementById('result').innerHTML = 'FAILURE: Image should not be loaded when loadsImagesAutomatically is unset';
         return;
     }
 
-    testRunner.overridePreference('WebKitDisplayImagesKey', 1);
-    document.getElementById('result').innerHTML = 'FAILURE: Image should reload in-place when DispalyImage is changes from unset to set';
+    window.internals.settings.setLoadsImagesAutomatically(true);
+    document.getElementById('result').innerHTML = 'FAILURE: Image should reload in-place when loadsImagesAutomatically is changes from unset to set';
     testRunner.waitUntilDone();
     intervalId = window.setInterval(runTestRest, 10);
 }

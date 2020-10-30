@@ -51,19 +51,23 @@ const TestFeatures& TestOptions::defaults()
         features.boolWebPreferenceFeatures = {
             // These are WebPreference values that must always be set as they may
             // differ from the default set in the WebPreferences*.yaml configuration.
+            { "AcceleratedDrawingEnabled", false },
             { "AllowCrossOriginSubresourcesToAskForCredentials", false },
             { "AllowTopNavigationToDataURLs", true },
-            { "AcceleratedDrawingEnabled", false },
             { "AttachmentElementEnabled", false },
-            { "UsesBackForwardCache", false },
             { "ColorFilterEnabled", false },
+            { "HiddenPageDOMTimerThrottlingEnabled", false },
             { "InspectorAdditionsEnabled", false },
             { "IntersectionObserverEnabled", false },
+            { "JavaScriptEnabled", true },
             { "KeygenElementEnabled", false },
+            { "LoadsImagesAutomatically", true },
+            { "MainContentUserGestureOverrideEnabled", false },
             { "MenuItemElementEnabled", false },
             { "ModernMediaControlsEnabled", true },
             { "SpatialNavigationEnabled", false },
             { "TabsToLinks", false },
+            { "UsesBackForwardCache", false },
 
             { "CSSLogicalEnabled", false },
             { "LineHeightUnitsEnabled", false },

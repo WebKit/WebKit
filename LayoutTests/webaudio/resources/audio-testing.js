@@ -1,6 +1,3 @@
-if (window.testRunner)
-    testRunner.overridePreference("WebKitWebAudioEnabled", "1");
-
 function writeString(s, a, offset) {
     for (var i = 0; i < s.length; ++i) {
         a[offset + i] = s.charCodeAt(i);

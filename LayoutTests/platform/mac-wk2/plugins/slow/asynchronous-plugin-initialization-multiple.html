@@ -1,4 +1,4 @@
-<head>
+<head><!-- webkit-test-runner [ AsynchronousPluginInitializationEnabled=true AsynchronousPluginInitializationEnabledForAllPlugins=true ] -->
 <script src="../../../../resources/js-test-pre.js"></script>
 </head>
 <body onload="runTest()">
@@ -24,8 +24,6 @@ function runTest()
 
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
-    testRunner.overridePreference("WebKit2AsynchronousPluginInitializationEnabled", "1");
-    testRunner.overridePreference("WebKit2AsynchronousPluginInitializationEnabledForAllPlugins", "1");
 
     // Grab the time before we create and append 20 slow plug-ins.
     sessionStorage.beforeDate = (new Date).valueOf();

@@ -1,3 +1,16 @@
+2020-10-29  Sam Weinig  <weinig@apple.com>
+
+        Remove all remaining boolean overridePreference calls
+        https://bugs.webkit.org/show_bug.cgi?id=218355
+
+        Reviewed by Darin Adler.
+        
+        Add a few more defaults for DumpRenderTree to allow them to be
+        used as test header commands.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+
 2020-10-29  Aditya Keerthi  <akeerthi@apple.com>
 
         [Cocoa] Remove soft linking of NetworkExtension.framework

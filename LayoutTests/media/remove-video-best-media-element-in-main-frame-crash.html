@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ MainContentUserGestureOverrideEnabled=true ] -->
 <html>
 <body>
 <p id="description">This tests removing a video element inside an iframe while another video in the main frame is playing does not hit a release assertion.</p>
@@ -26,7 +26,6 @@ function continueTest() {
 }
 
 if (window.internals) {
-    testRunner.overridePreference("WebKitMainContentUserGestureOverrideEnabled", 1);
     internals.setMediaElementRestrictions(video, "OverrideUserGestureRequirementForMainContent");
 } else
     description.innerHTML += '<br>This test requries OverrideUserGestureRequirementForMainContent. Manually set this setting or use WebKitTestRunner.';
