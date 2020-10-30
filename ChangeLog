@@ -1,3 +1,23 @@
+2020-10-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add Introduction to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=217017
+
+        Rubber-stamped by Simon Fraser.
+
+        Added the basic introductory documentation for WebKit.
+
+        * Introduction.md: Added.
+        * resources/js-wrapper.png: Added.
+        * resources/webkit2-process-architecture.png: Added.
+        * resources/xcode-add-file.png: Added.
+        * resources/xcode-build-settings-for-run.png: Added.
+        * resources/xcode-export-header.png: Added.
+        * resources/xcode-scheme-dumprendertree.png: Added.
+        * resources/xcode-scheme-layout-test.png: Added.
+        * resources/xcode-workspace-build-location.png: Added.
+        * resources/xcode-workspace-settings.png: Added.
+
 2020-10-30  Jonathan Bedard  <jbedard@apple.com>
 
         Github mirror ReadMe need to update
