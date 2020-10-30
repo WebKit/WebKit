@@ -1,3 +1,12 @@
+2020-10-30  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed GTK gardening
+
+        Remove tests marked as flaky for bug #198830 that have been consistently passing in the last
+        4000 GTK Release builds.
+
+        * platform/gtk/TestExpectations:
+
 2020-10-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Gardening of new failures after r269177 and mark more flaky tests.
