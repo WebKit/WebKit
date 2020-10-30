@@ -339,7 +339,7 @@ ExceptionOr<Ref<AudioBuffer>> BaseAudioContext::createBuffer(unsigned numberOfCh
 void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<AudioBufferCallback>&& successCallback, RefPtr<AudioBufferCallback>&& errorCallback, Optional<Ref<DeferredPromise>>&& promise)
 {
     if (promise && (!document() || !document()->isFullyActive())) {
-        promise.value()->reject(Exception { NotAllowedError, "Document is not fully active"_s });
+        promise.value()->reject(Exception { InvalidStateError, "Document is not fully active"_s });
         return;
     }
 

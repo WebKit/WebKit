@@ -1,3 +1,15 @@
+2020-10-30  Chris Dumez  <cdumez@apple.com>
+
+        BaseAudioContext.decodeAudioData() should throw an InvalidStateError when document is not fully active
+        https://bugs.webkit.org/show_bug.cgi?id=218400
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT tests that are now passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-detached-execution-context-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/offlineaudiocontext-detached-execution-context-expected.txt:
+
 2020-10-30  Rob Buis  <rbuis@igalia.com>
 
         Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream
