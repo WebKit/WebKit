@@ -1,3 +1,12 @@
+2020-10-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Re-add Martin Robinson as a committer
+        https://bugs.webkit.org/show_bug.cgi?id=218376
+
+        Reviewed by Žan Doberšek.
+
+        * Scripts/webkitpy/common/config/contributors.json: Updated with new status.
+
 2020-10-29  Sam Weinig  <weinig@apple.com>
 
         Remove all remaining boolean overridePreference calls

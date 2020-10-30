@@ -3903,7 +3903,8 @@
       "expertise" : "The WebKitGTK Port, Cairo graphics backend, soup HTTP backend",
       "nicks" : [
          "mrobinson"
-      ]
+      ],
+      "status" : "committer"
    },
    "Mary Wu" : {
       "emails" : [
