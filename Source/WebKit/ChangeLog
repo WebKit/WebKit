@@ -1,3 +1,17 @@
+2020-10-30  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct sandbox violations in GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=218356
+        <rdar://problem/70574999>
+
+        Reviewed by Eric Carlson.
+
+        The new GPU Process sandbox is missing 'sysctl.name2oid' from the allow list, even though
+        we allow it everywhere else. We need this for proper function.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+
 2020-10-30  Simon Fraser  <simon.fraser@apple.com>
 
         Convert ScrollingTreeNode change flags to an OptionSet<>
