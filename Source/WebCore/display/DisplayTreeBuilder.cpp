@@ -57,7 +57,9 @@ std::unique_ptr<Tree> TreeBuilder::build(const Layout::LayoutState& layoutState)
 
     auto& rootLayoutBox = layoutState.root();
 
+#if ENABLE(TREE_DEBUGGING)
     LOG_WITH_STREAM(FormattingContextLayout, stream << "Building display tree for:\n" << layoutTreeAsText(rootLayoutBox, &layoutState));
+#endif
 
     auto geometry = layoutState.geometryForBox(rootLayoutBox);
     auto rootDisplayBox = m_boxFactory.displayBoxForRootBox(rootLayoutBox, geometry);
@@ -72,7 +74,9 @@ std::unique_ptr<Tree> TreeBuilder::build(const Layout::LayoutState& layoutState)
 
     recursiveBuildDisplayTree(layoutState, offset, *rootLayoutBox.firstChild(), insertionPosition);
 
+#if ENABLE(TREE_DEBUGGING)
     LOG_WITH_STREAM(FormattingContextLayout, stream << "Display tree:\n" << displayTreeAsText(*rootDisplayContainerBox));
+#endif
 
     return makeUnique<Tree>(WTFMove(rootDisplayContainerBox));
 }
