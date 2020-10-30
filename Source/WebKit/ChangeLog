@@ -1,3 +1,47 @@
+2020-10-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert ScrollingTreeNode change flags to an OptionSet<>
+        https://bugs.webkit.org/show_bug.cgi?id=218374
+
+        Reviewed by Antti Koivisto.
+
+        Address the FIXME in ScrollingStateNode.h and use an OptionSet<> for the
+        ScrollingState tree change flags. This required moving them all into
+        the same enum class in ScrollingStateNode.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateNode>::encode):
+        (ArgumentCoder<ScrollingStateNode>::decode):
+        (ArgumentCoder<ScrollingStateScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateOverflowScrollProxyNode>::encode):
+        (ArgumentCoder<ScrollingStateScrollingNode>::decode):
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::decode):
+        (ArgumentCoder<ScrollingStateOverflowScrollProxyNode>::decode):
+        (ArgumentCoder<ScrollingStateFixedNode>::encode):
+        (ArgumentCoder<ScrollingStateFixedNode>::decode):
+        (ArgumentCoder<ScrollingStateStickyNode>::encode):
+        (ArgumentCoder<ScrollingStateStickyNode>::decode):
+        (ArgumentCoder<ScrollingStatePositionedNode>::encode):
+        (ArgumentCoder<ScrollingStatePositionedNode>::decode):
+        (WebKit::dump):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeFrameScrollingNodeRemoteIOS.mm:
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateBeforeChildren):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateAfterChildren):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::commitStateBeforeChildren):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::commitStateBeforeChildren):
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren):
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.cpp:
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteMac::commitStateBeforeChildren):
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeOverflowScrollingNodeRemoteMac.cpp:
+        (WebKit::ScrollingTreeOverflowScrollingNodeRemoteMac::commitStateBeforeChildren):
+
 2020-10-29  Aditya Keerthi  <akeerthi@apple.com>
 
         [Cocoa] Remove soft linking of NetworkExtension.framework

@@ -63,10 +63,10 @@ Ref<ScrollingStateNode> ScrollingStateStickyNode::clone(ScrollingStateTree& adop
     return adoptRef(*new ScrollingStateStickyNode(*this, adoptiveTree));
 }
 
-void ScrollingStateStickyNode::setPropertyChangedBitsAfterReattach()
+void ScrollingStateStickyNode::setPropertyChangesAfterReattach()
 {
-    setPropertyChangedBit(ViewportConstraints);
-    ScrollingStateNode::setPropertyChangedBitsAfterReattach();
+    setPropertyChangedInternal(Property::ViewportConstraints);
+    ScrollingStateNode::setPropertyChangesAfterReattach();
 }
 
 void ScrollingStateStickyNode::updateConstraints(const StickyPositionViewportConstraints& constraints)
@@ -77,7 +77,7 @@ void ScrollingStateStickyNode::updateConstraints(const StickyPositionViewportCon
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingStateStickyNode " << scrollingNodeID() << " updateConstraints with constraining rect " << constraints.constrainingRectAtLastLayout() << " sticky offset " << constraints.stickyOffsetAtLastLayout() << " layer pos at last layout " << constraints.layerPositionAtLastLayout());
 
     m_constraints = constraints;
-    setPropertyChanged(ViewportConstraints);
+    setPropertyChanged(Property::ViewportConstraints);
 }
 
 FloatPoint ScrollingStateStickyNode::computeLayerPosition(const LayoutRect& viewportRect) const

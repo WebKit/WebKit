@@ -55,34 +55,6 @@ class ScrollingStateScrollingNode : public ScrollingStateNode {
 public:
     virtual ~ScrollingStateScrollingNode();
 
-    enum ChangedProperty {
-        ScrollableAreaSize = NumStateNodeBits,
-        TotalContentsSize,
-        ReachableContentsSize,
-        ScrollPosition,
-        ScrollOrigin,
-        ScrollableAreaParams,
-#if ENABLE(SCROLLING_THREAD)
-        ReasonsForSynchronousScrolling,
-#endif
-        RequestedScrollPosition,
-#if ENABLE(CSS_SCROLL_SNAP)
-        HorizontalSnapOffsets,
-        VerticalSnapOffsets,
-        HorizontalSnapOffsetRanges,
-        VerticalSnapOffsetRanges,
-        CurrentHorizontalSnapOffsetIndex,
-        CurrentVerticalSnapOffsetIndex,
-#endif
-        IsMonitoringWheelEvents,
-        ScrollContainerLayer,
-        ScrolledContentsLayer,
-        HorizontalScrollbarLayer,
-        VerticalScrollbarLayer,
-        PainterForScrollbar,
-        NumScrollingStateNodeBits // This must remain at the last position.
-    };
-
     const FloatSize& scrollableAreaSize() const { return m_scrollableAreaSize; }
     WEBCORE_EXPORT void setScrollableAreaSize(const FloatSize&);
 
@@ -156,7 +128,7 @@ protected:
     ScrollingStateScrollingNode(ScrollingStateTree&, ScrollingNodeType, ScrollingNodeID);
     ScrollingStateScrollingNode(const ScrollingStateScrollingNode&, ScrollingStateTree&);
 
-    void setPropertyChangedBitsAfterReattach() override;
+    void setPropertyChangesAfterReattach() override;
 
     void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 

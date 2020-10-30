@@ -67,7 +67,7 @@ void ScrollingTreeOverflowScrollingNodeMac::commitStateAfterChildren(const Scrol
 
     const auto& overflowStateNode = downcast<ScrollingStateOverflowScrollingNode>(stateNode);
 
-    if (overflowStateNode.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition)) {
+    if (overflowStateNode.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition)) {
         const auto& requestedScrollData = overflowStateNode.requestedScrollData();
         scrollTo(requestedScrollData.scrollPosition, requestedScrollData.scrollType, requestedScrollData.clamping);
     }

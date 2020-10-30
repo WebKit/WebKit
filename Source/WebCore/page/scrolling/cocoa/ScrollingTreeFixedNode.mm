@@ -61,10 +61,10 @@ void ScrollingTreeFixedNode::commitStateBeforeChildren(const ScrollingStateNode&
 {
     const ScrollingStateFixedNode& fixedStateNode = downcast<ScrollingStateFixedNode>(stateNode);
 
-    if (fixedStateNode.hasChangedProperty(ScrollingStateNode::Layer))
+    if (fixedStateNode.hasChangedProperty(ScrollingStateNode::Property::Layer))
         m_layer = static_cast<CALayer*>(fixedStateNode.layer());
 
-    if (stateNode.hasChangedProperty(ScrollingStateFixedNode::ViewportConstraints))
+    if (stateNode.hasChangedProperty(ScrollingStateNode::Property::ViewportConstraints))
         m_constraints = fixedStateNode.viewportConstraints();
 }
 

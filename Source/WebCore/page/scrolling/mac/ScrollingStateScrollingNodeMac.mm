@@ -53,7 +53,7 @@ void ScrollingStateScrollingNode::setScrollerImpsFromScrollbars(Scrollbar* verti
     m_verticalScrollerImp = verticalPainter;
     m_horizontalScrollerImp = horizontalPainter;
 
-    setPropertyChanged(PainterForScrollbar);
+    setPropertyChanged(Property::PainterForScrollbar);
 }
 
 } // namespace WebCore

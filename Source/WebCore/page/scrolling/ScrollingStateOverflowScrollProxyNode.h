@@ -39,10 +39,6 @@ public:
 
     virtual ~ScrollingStateOverflowScrollProxyNode();
 
-    enum {
-        OverflowScrollingNode = NumStateNodeBits
-    };
-
     // This is the node we get our scroll position from.
     ScrollingNodeID overflowScrollingNode() const { return m_overflowScrollingNodeID; }
     WEBCORE_EXPORT void setOverflowScrollingNode(ScrollingNodeID);
@@ -53,7 +49,7 @@ private:
     ScrollingStateOverflowScrollProxyNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateOverflowScrollProxyNode(const ScrollingStateOverflowScrollProxyNode&, ScrollingStateTree&);
 
-    void setPropertyChangedBitsAfterReattach() override;
+    void setPropertyChangesAfterReattach() override;
     
     ScrollingNodeID m_overflowScrollingNodeID { 0 };
 };

@@ -44,10 +44,6 @@ public:
 
     virtual ~ScrollingStateFixedNode();
 
-    enum {
-        ViewportConstraints = NumStateNodeBits
-    };
-
     WEBCORE_EXPORT void updateConstraints(const FixedPositionViewportConstraints&);
     const FixedPositionViewportConstraints& viewportConstraints() const { return m_constraints; }
 
@@ -55,7 +51,7 @@ private:
     ScrollingStateFixedNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateFixedNode(const ScrollingStateFixedNode&, ScrollingStateTree&);
 
-    void setPropertyChangedBitsAfterReattach() override;
+    void setPropertyChangesAfterReattach() override;
 
     void reconcileLayerPositionForViewportRect(const LayoutRect& viewportRect, ScrollingLayerPositionAction) override;
 

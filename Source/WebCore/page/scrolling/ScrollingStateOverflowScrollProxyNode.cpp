@@ -57,11 +57,11 @@ Ref<ScrollingStateNode> ScrollingStateOverflowScrollProxyNode::clone(ScrollingSt
     return adoptRef(*new ScrollingStateOverflowScrollProxyNode(*this, adoptiveTree));
 }
 
-void ScrollingStateOverflowScrollProxyNode::setPropertyChangedBitsAfterReattach()
+void ScrollingStateOverflowScrollProxyNode::setPropertyChangesAfterReattach()
 {
-    setPropertyChangedBit(OverflowScrollingNode);
+    setPropertyChangedInternal(Property::OverflowScrollingNode);
 
-    ScrollingStateNode::setPropertyChangedBitsAfterReattach();
+    ScrollingStateNode::setPropertyChangesAfterReattach();
 }
 
 void ScrollingStateOverflowScrollProxyNode::setOverflowScrollingNode(ScrollingNodeID nodeID)
@@ -70,7 +70,7 @@ void ScrollingStateOverflowScrollProxyNode::setOverflowScrollingNode(ScrollingNo
         return;
     
     m_overflowScrollingNodeID = nodeID;
-    setPropertyChanged(OverflowScrollingNode);
+    setPropertyChanged(Property::OverflowScrollingNode);
 }
 
 void ScrollingStateOverflowScrollProxyNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const

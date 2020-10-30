@@ -63,12 +63,12 @@ void ScrollingTreeStickyNode::commitStateBeforeChildren(const ScrollingStateNode
 {
     auto& stickyStateNode = downcast<ScrollingStateStickyNode>(stateNode);
 
-    if (stickyStateNode.hasChangedProperty(ScrollingStateNode::Layer)) {
+    if (stickyStateNode.hasChangedProperty(ScrollingStateNode::Property::Layer)) {
         auto* layer = static_cast<Nicosia::PlatformLayer*>(stickyStateNode.layer());
         m_layer = downcast<Nicosia::CompositionLayer>(layer);
     }
 
-    if (stickyStateNode.hasChangedProperty(ScrollingStateStickyNode::ViewportConstraints))
+    if (stickyStateNode.hasChangedProperty(ScrollingStateNode::Property::ViewportConstraints))
         m_constraints = stickyStateNode.viewportConstraints();
 }
 

@@ -55,12 +55,12 @@ void ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren(const Scrol
 {
     const ScrollingStateOverflowScrollProxyNode& overflowProxyStateNode = downcast<ScrollingStateOverflowScrollProxyNode>(stateNode);
 
-    if (overflowProxyStateNode.hasChangedProperty(ScrollingStateNode::Layer)) {
+    if (overflowProxyStateNode.hasChangedProperty(ScrollingStateNode::Property::Layer)) {
         auto* layer = static_cast<Nicosia::PlatformLayer*>(stateNode.layer());
         m_layer = downcast<Nicosia::CompositionLayer>(layer);
     }
 
-    if (overflowProxyStateNode.hasChangedProperty(ScrollingStateOverflowScrollProxyNode::OverflowScrollingNode))
+    if (overflowProxyStateNode.hasChangedProperty(ScrollingStateNode::Property::OverflowScrollingNode))
         m_overflowScrollingNodeID = overflowProxyStateNode.overflowScrollingNode();
 
     if (m_overflowScrollingNodeID) {

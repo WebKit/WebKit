@@ -50,10 +50,10 @@ void ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateN
 {
     const ScrollingStateScrollingNode& state = downcast<ScrollingStateScrollingNode>(stateNode);
 
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::ScrollableAreaSize))
+    if (state.hasChangedProperty(ScrollingStateNode::Property::ScrollableAreaSize))
         m_scrollableAreaSize = state.scrollableAreaSize();
 
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize)) {
+    if (state.hasChangedProperty(ScrollingStateNode::Property::TotalContentsSize)) {
         if (scrollingTree().isRubberBandInProgressForNode(scrollingNodeID()))
             m_totalContentsSizeForRubberBand = m_totalContentsSize;
         else
@@ -62,57 +62,57 @@ void ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateN
         m_totalContentsSize = state.totalContentsSize();
     }
 
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::ReachableContentsSize))
+    if (state.hasChangedProperty(ScrollingStateNode::Property::ReachableContentsSize))
         m_reachableContentsSize = state.reachableContentsSize();
 
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::ScrollPosition)) {
+    if (state.hasChangedProperty(ScrollingStateNode::Property::ScrollPosition)) {
         m_lastCommittedScrollPosition = state.scrollPosition();
-        if (m_isFirstCommit && !state.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition))
+        if (m_isFirstCommit && !state.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition))
             m_currentScrollPosition = m_lastCommittedScrollPosition;
     }
 
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::ScrollOrigin))
+    if (state.hasChangedProperty(ScrollingStateNode::Property::ScrollOrigin))
         m_scrollOrigin = state.scrollOrigin();
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::HorizontalSnapOffsets))
+    if (state.hasChangedProperty(ScrollingStateNode::Property::HorizontalSnapOffsets))
         m_snapOffsetsInfo.horizontalSnapOffsets = state.horizontalSnapOffsets();
 
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::VerticalSnapOffsets))
+    if (state.hasChangedProperty(ScrollingStateNode::Property::VerticalSnapOffsets))
         m_snapOffsetsInfo.verticalSnapOffsets = state.verticalSnapOffsets();
 
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::HorizontalSnapOffsetRanges))
+    if (state.hasChangedProperty(ScrollingStateNode::Property::HorizontalSnapOffsetRanges))
         m_snapOffsetsInfo.horizontalSnapOffsetRanges = state.horizontalSnapOffsetRanges();
 
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::VerticalSnapOffsetRanges))
+    if (state.hasChangedProperty(ScrollingStateNode::Property::VerticalSnapOffsetRanges))
         m_snapOffsetsInfo.verticalSnapOffsetRanges = state.verticalSnapOffsetRanges();
 
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::CurrentHorizontalSnapOffsetIndex))
+    if (state.hasChangedProperty(ScrollingStateNode::Property::CurrentHorizontalSnapOffsetIndex))
         m_currentHorizontalSnapPointIndex = state.currentHorizontalSnapPointIndex();
 
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::CurrentVerticalSnapOffsetIndex))
+    if (state.hasChangedProperty(ScrollingStateNode::Property::CurrentVerticalSnapOffsetIndex))
         m_currentVerticalSnapPointIndex = state.currentVerticalSnapPointIndex();
 #endif
 
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::ScrollableAreaParams))
+    if (state.hasChangedProperty(ScrollingStateNode::Property::ScrollableAreaParams))
         m_scrollableAreaParameters = state.scrollableAreaParameters();
 
 #if ENABLE(SCROLLING_THREAD)
-    if (state.hasChangedProperty(ScrollingStateFrameScrollingNode::ReasonsForSynchronousScrolling))
+    if (state.hasChangedProperty(ScrollingStateNode::Property::ReasonsForSynchronousScrolling))
         m_synchronousScrollingReasons = state.synchronousScrollingReasons();
 #endif
 
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::ScrollContainerLayer))
+    if (state.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer))
         m_scrollContainerLayer = state.scrollContainerLayer();
 
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
+    if (state.hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer))
         m_scrolledContentsLayer = state.scrolledContentsLayer();
 }
 
 void ScrollingTreeScrollingNode::commitStateAfterChildren(const ScrollingStateNode& stateNode)
 {
     const ScrollingStateScrollingNode& scrollingStateNode = downcast<ScrollingStateScrollingNode>(stateNode);
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition)) {
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition)) {
         const auto& requestedScrollData = scrollingStateNode.requestedScrollData();
         scrollingTree().scrollingTreeNodeRequestsScroll(scrollingNodeID(), requestedScrollData.scrollPosition, requestedScrollData.scrollType, requestedScrollData.clamping);
     }

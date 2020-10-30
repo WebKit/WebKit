@@ -61,7 +61,7 @@ void ScrollingTreeOverflowScrollingNodeNicosia::commitStateAfterChildren(const S
     ScrollingTreeOverflowScrollingNode::commitStateAfterChildren(stateNode);
 
     const auto& overflowStateNode = downcast<ScrollingStateOverflowScrollingNode>(stateNode);
-    if (overflowStateNode.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition)) {
+    if (overflowStateNode.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition)) {
         stopScrollAnimations();
         const auto& requestedScrollData = overflowStateNode.requestedScrollData();
         scrollTo(requestedScrollData.scrollPosition, requestedScrollData.scrollType, requestedScrollData.clamping);
