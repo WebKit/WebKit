@@ -1,3 +1,18 @@
+2020-10-30  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Extra closing parenthesis added after var in styles panel
+        https://bugs.webkit.org/show_bug.cgi?id=218295
+        <rdar://problem/70771314>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._addVariableTokens):
+        Remove `contents.push(token)` which was adding `)`. The closing parenthesis that was already
+        included in rawTokens above.
+        Drive-by: rawTokens.slice() should never include `i` as the 2nd argument. `i` is an index of an item
+        in the `tokens` - a different array.
+
 2020-10-29  Federico Bucchi  <fbucchi@apple.com>
 
         Web Inspector: Uncaught Exception: undefined is not an object (evaluating 'value.truncate')

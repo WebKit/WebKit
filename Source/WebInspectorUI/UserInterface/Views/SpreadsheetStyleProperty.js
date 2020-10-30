@@ -814,7 +814,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                     if (fallbackStartIndex !== -1) {
                         contents.pushAll(rawTokens.slice(variableNameIndex + 1, fallbackStartIndex));
 
-                        let fallbackTokens = rawTokens.slice(fallbackStartIndex, i);
+                        let fallbackTokens = rawTokens.slice(fallbackStartIndex);
                         fallbackTokens = this._addBoxShadowTokens(fallbackTokens);
                         fallbackTokens = this._addGradientTokens(fallbackTokens);
                         fallbackTokens = this._addColorTokens(fallbackTokens);
@@ -823,8 +823,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                         fallbackTokens = this._addVariableTokens(fallbackTokens);
                         contents.pushAll(fallbackTokens);
                     } else
-                        contents.pushAll(rawTokens.slice(variableNameIndex + 1, i));
-                    contents.push(token);
+                        contents.pushAll(rawTokens.slice(variableNameIndex + 1));
 
                     let text = rawTokens.reduce((accumulator, token) => accumulator + token.value, "");
                     if (this._property.ownerStyle.nodeStyles.computedStyle.resolveVariableValue(text))
