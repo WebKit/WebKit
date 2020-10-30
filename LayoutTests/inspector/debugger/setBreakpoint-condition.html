@@ -3,6 +3,7 @@
 <script src="../../http/tests/inspector/resources/protocol-test.js"></script>
 <script src="resources/breakpoint.js"></script>
 <script>
+
 function test()
 {
     InspectorProtocol.sendCommand("Debugger.enable", {});
@@ -10,6 +11,17 @@ function test()
 
     var inBreakpoint = false;
     var breakpointTriggered = 0;
+
+    function disableDebuggerAndCompleteTest()
+    {
+        delete InspectorProtocol.eventHandler["Debugger.scriptParsed"];
+        delete InspectorProtocol.eventHandler["Debugger.paused"];
+        delete InspectorProtocol.eventHandler["Debugger.resumed"];
+
+        InspectorProtocol.sendCommand("Debugger.disable");
+        ProtocolTest.log("Test is complete, disabling breakpoints.");
+        ProtocolTest.completeTest();
+    }
 
     InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
     {
@@ -48,13 +60,14 @@ function test()
                 ProtocolTest.log("Evaluted value of `a` (expecting number 4) was: " + JSON.stringify(messageObject.result.result));
                 InspectorProtocol.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: callFrameIdentifier, expression: "b"}, function(messageObject) {
                     ProtocolTest.log("Evaluted value of `b` (expecting number 7) was: " + JSON.stringify(messageObject.result.result));
+
                     ProtocolTest.log("PASS: hit breakpoints with expected values");
-                    ProtocolTest.completeTest();
+                    disableDebuggerAndCompleteTest();
                 });
             });
         } else {
             ProtocolTest.log("FAIL: hit too many breakpoints.");
-            ProtocolTest.completeTest();
+            disableDebuggerAndCompleteTest();
         }
     }
 
@@ -69,7 +82,7 @@ function test()
             setTimeout(function() {
                 if (!inBreakpoint) {
                     ProtocolTest.log("FAIL: Did not hit conditional breakpoint the second time");
-                    ProtocolTest.completeTest();
+                    disableDebuggerAndCompleteTest();
                 }
             }, 100);
         });

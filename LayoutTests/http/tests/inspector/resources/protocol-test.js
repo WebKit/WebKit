@@ -65,11 +65,12 @@ TestPage.log = window.log = function(text)
 
 TestPage.closeTest = window.closeTest = function()
 {
-    window.internals.closeDummyInspectorFrontend();
-
     // This code might be executed while the debugger is still running through a stack based EventLoop.
     // Use a setTimeout to defer to a clean stack before letting the testRunner load the next test.
-    setTimeout(() => { testRunner.notifyDone(); }, 0);
+    setTimeout(() => {
+        window.internals.closeDummyInspectorFrontend();
+        testRunner.notifyDone();
+    }, 0);
 };
 
 TestPage.runTest = window.runTest = function()

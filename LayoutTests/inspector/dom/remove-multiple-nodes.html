@@ -92,6 +92,9 @@ function test()
             InspectorProtocol.sendCommand("DOM.requestChildNodes", {nodeId: response.result.nodeIds[i]});
         
         InspectorProtocol.sendCommand("Runtime.evaluate", {"expression": "moveNode()"}, function() {
+            delete InspectorProtocol.eventHandler["DOM.setChildNodes"];
+            delete InspectorProtocol.eventHandler["DOM.childNodeRemoved"];
+            delete InspectorProtocol.eventHandler["DOM.childNodeInserted"];
             ProtocolTest.completeTest();
         });
     }

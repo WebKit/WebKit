@@ -27,7 +27,7 @@
 
 #include "DebuggableInfoData.h"
 #include "MessageReceiver.h"
-#include "WebInspectorFrontendAPIDispatcher.h"
+#include <WebCore/InspectorFrontendAPIDispatcher.h>
 #include <WebCore/InspectorFrontendClient.h>
 #include <WebCore/InspectorFrontendHost.h>
 #include <wtf/Deque.h>
@@ -62,6 +62,10 @@ public:
     // WebCore::InspectorFrontendClient
     void windowObjectCleared() override;
     void frontendLoaded() override;
+
+    void pagePaused() override;
+    void pageUnpaused() override;
+
     void changeSheetRect(const WebCore::FloatRect&) override;
     void startWindowDrag() override;
     void moveWindowBy(float x, float y) override;
@@ -92,6 +96,7 @@ public:
     void inspectedURLChanged(const String&) override;
     void showCertificate(const WebCore::CertificateInfo&) override;
     void sendMessageToBackend(const String&) override;
+    WebCore::InspectorFrontendAPIDispatcher& frontendAPIDispatcher() override { return m_frontendAPIDispatcher; }
 
 #if ENABLE(INSPECTOR_TELEMETRY)
     bool supportsDiagnosticLogging() override;
@@ -110,7 +115,7 @@ private:
     explicit RemoteWebInspectorUI(WebPage&);
 
     WebPage& m_page;
-    WebInspectorFrontendAPIDispatcher m_frontendAPIDispatcher;
+    Ref<WebCore::InspectorFrontendAPIDispatcher> m_frontendAPIDispatcher;
     RefPtr<WebCore::InspectorFrontendHost> m_frontendHost;
     DebuggableInfoData m_debuggableInfo;
     String m_backendCommandsURL;

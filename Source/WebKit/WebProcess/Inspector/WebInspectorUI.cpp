@@ -59,7 +59,7 @@ void WebInspectorUI::enableFrontendFeatures()
 
 WebInspectorUI::WebInspectorUI(WebPage& page)
     : m_page(page)
-    , m_frontendAPIDispatcher(page)
+    , m_frontendAPIDispatcher(InspectorFrontendAPIDispatcher::create(*page.corePage()))
     , m_debuggableInfo(DebuggableInfoData::empty())
 {
     WebInspectorUI::enableFrontendFeatures();
@@ -72,7 +72,7 @@ void WebInspectorUI::establishConnection(WebPageProxyIdentifier inspectedPageIde
     m_underTest = underTest;
     m_inspectionLevel = inspectionLevel;
 
-    m_frontendAPIDispatcher.reset();
+    m_frontendAPIDispatcher->reset();
 
     m_frontendController = &m_page.corePage()->inspectorController();
     m_frontendController->setInspectorFrontendClient(this);
@@ -121,7 +121,7 @@ void WebInspectorUI::windowObjectCleared()
 
 void WebInspectorUI::frontendLoaded()
 {
-    m_frontendAPIDispatcher.frontendLoaded();
+    m_frontendAPIDispatcher->frontendLoaded();
 
     // Tell the new frontend about the current dock state. If the window object
     // cleared due to a reload, the dock state won't be resent from UIProcess.
@@ -244,28 +244,26 @@ void WebInspectorUI::setDockSide(DockSide dockSide)
 
     m_dockSide = dockSide;
 
-    m_frontendAPIDispatcher.dispatchCommand("setDockSide"_s, String(dockSideString));
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDockSide"_s, { JSON::Value::create(String(dockSideString)) });
 }
 
 void WebInspectorUI::setDockingUnavailable(bool unavailable)
 {
     m_dockingUnavailable = unavailable;
 
-    m_frontendAPIDispatcher.dispatchCommand("setDockingUnavailable"_s, unavailable);
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDockingUnavailable"_s, { JSON::Value::create(unavailable) });
 }
 
 void WebInspectorUI::setIsVisible(bool visible)
 {
     m_isVisible = visible;
 
-    m_frontendAPIDispatcher.dispatchCommand("setIsVisible"_s, visible);
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setIsVisible"_s, { JSON::Value::create(visible) });
 }
 
 void WebInspectorUI::updateFindString(const String& findString)
 {
-    StringBuilder builder;
-    JSON::Value::escapeString(builder, findString);
-    m_frontendAPIDispatcher.dispatchCommand("updateFindString"_s, builder.toString());
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("updateFindString"_s, { JSON::Value::create(findString) });
 }
 
 void WebInspectorUI::changeAttachedWindowHeight(unsigned height)
@@ -325,73 +323,73 @@ void WebInspectorUI::setDiagnosticLoggingAvailable(bool available)
     ASSERT(!available || supportsDiagnosticLogging());
     m_diagnosticLoggingAvailable = available;
 
-    m_frontendAPIDispatcher.dispatchCommand("setDiagnosticLoggingAvailable"_s, m_diagnosticLoggingAvailable);
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDiagnosticLoggingAvailable"_s, { JSON::Value::create(m_diagnosticLoggingAvailable) });
 }
 #endif
 
 void WebInspectorUI::showConsole()
 {
-    m_frontendAPIDispatcher.dispatchCommand("showConsole"_s);
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showConsole"_s);
 }
 
 void WebInspectorUI::showResources()
 {
-    m_frontendAPIDispatcher.dispatchCommand("showResources"_s);
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showResources"_s);
 }
 
 void WebInspectorUI::showMainResourceForFrame(const String& frameIdentifier)
 {
-    m_frontendAPIDispatcher.dispatchCommand("showMainResourceForFrame"_s, frameIdentifier);
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showMainResourceForFrame"_s, { JSON::Value::create(frameIdentifier) });
 }
 
 void WebInspectorUI::startPageProfiling()
 {
-    m_frontendAPIDispatcher.dispatchCommand("setTimelineProfilingEnabled"_s, true);
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setTimelineProfilingEnabled"_s, { JSON::Value::create(true) });
 }
 
 void WebInspectorUI::stopPageProfiling()
 {
-    m_frontendAPIDispatcher.dispatchCommand("setTimelineProfilingEnabled"_s, false);
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setTimelineProfilingEnabled"_s, { JSON::Value::create(false) });
 }
 
 void WebInspectorUI::startElementSelection()
 {
-    m_frontendAPIDispatcher.dispatchCommand("setElementSelectionEnabled"_s, true);
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setElementSelectionEnabled"_s, { JSON::Value::create(true) });
 }
 
 void WebInspectorUI::stopElementSelection()
 {
-    m_frontendAPIDispatcher.dispatchCommand("setElementSelectionEnabled"_s, false);
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setElementSelectionEnabled"_s, { JSON::Value::create(false) });
 }
 
 void WebInspectorUI::didSave(const String& url)
 {
-    m_frontendAPIDispatcher.dispatchCommand("savedURL"_s, url);
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("savedURL"_s, { JSON::Value::create(url) });
 }
 
 void WebInspectorUI::didAppend(const String& url)
 {
-    m_frontendAPIDispatcher.dispatchCommand("appendedToURL"_s, url);
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("appendedToURL"_s, { JSON::Value::create(url) });
 }
 
 void WebInspectorUI::sendMessageToFrontend(const String& message)
 {
-    m_frontendAPIDispatcher.dispatchMessageAsync(message);
+    m_frontendAPIDispatcher->dispatchMessageAsync(message);
 }
 
 void WebInspectorUI::evaluateInFrontendForTesting(const String& expression)
 {
-    m_frontendAPIDispatcher.evaluateExpressionForTesting(expression);
+    m_frontendAPIDispatcher->evaluateExpressionForTesting(expression);
 }
 
 void WebInspectorUI::pagePaused()
 {
-    m_frontendAPIDispatcher.suspend();
+    m_frontendAPIDispatcher->suspend();
 }
 
 void WebInspectorUI::pageUnpaused()
 {
-    m_frontendAPIDispatcher.unsuspend();
+    m_frontendAPIDispatcher->unsuspend();
 }
 
 void WebInspectorUI::sendMessageToBackend(const String& message)

@@ -53,7 +53,7 @@ Ref<RemoteWebInspectorUI> RemoteWebInspectorUI::create(WebPage& page)
 
 RemoteWebInspectorUI::RemoteWebInspectorUI(WebPage& page)
     : m_page(page)
-    , m_frontendAPIDispatcher(page)
+    , m_frontendAPIDispatcher(InspectorFrontendAPIDispatcher::create(*page.corePage()))
 {
     WebInspectorUI::enableFrontendFeatures();
 }
@@ -65,30 +65,28 @@ void RemoteWebInspectorUI::initialize(DebuggableInfoData&& debuggableInfo, const
 
     m_page.corePage()->inspectorController().setInspectorFrontendClient(this);
 
-    m_frontendAPIDispatcher.reset();
-    m_frontendAPIDispatcher.dispatchCommand("setDockingUnavailable"_s, true);
+    m_frontendAPIDispatcher->reset();
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDockingUnavailable"_s, { JSON::Value::create(true) });
 }
 
 void RemoteWebInspectorUI::updateFindString(const String& findString)
 {
-    StringBuilder builder;
-    JSON::Value::escapeString(builder, findString);
-    m_frontendAPIDispatcher.dispatchCommand("updateFindString"_s, builder.toString());
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("updateFindString"_s, { JSON::Value::create(findString) });
 }
 
 void RemoteWebInspectorUI::didSave(const String& url)
 {
-    m_frontendAPIDispatcher.dispatchCommand("savedURL"_s, url);
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("savedURL"_s, { JSON::Value::create(url) });
 }
 
 void RemoteWebInspectorUI::didAppend(const String& url)
 {
-    m_frontendAPIDispatcher.dispatchCommand("appendedToURL"_s, url);
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("appendedToURL"_s, { JSON::Value::create(url) });
 }
 
 void RemoteWebInspectorUI::sendMessageToFrontend(const String& message)
 {
-    m_frontendAPIDispatcher.dispatchMessageAsync(message);
+    m_frontendAPIDispatcher->dispatchMessageAsync(message);
 }
 
 void RemoteWebInspectorUI::sendMessageToBackend(const String& message)
@@ -107,11 +105,21 @@ void RemoteWebInspectorUI::windowObjectCleared()
 
 void RemoteWebInspectorUI::frontendLoaded()
 {
-    m_frontendAPIDispatcher.frontendLoaded();
+    m_frontendAPIDispatcher->frontendLoaded();
 
-    m_frontendAPIDispatcher.dispatchCommand("setIsVisible"_s, true);
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setIsVisible"_s, { JSON::Value::create(true) });
 
     bringToFront();
+}
+
+void RemoteWebInspectorUI::pagePaused()
+{
+    m_frontendAPIDispatcher->suspend();
+}
+
+void RemoteWebInspectorUI::pageUnpaused()
+{
+    m_frontendAPIDispatcher->unsuspend();
 }
 
 void RemoteWebInspectorUI::changeSheetRect(const FloatRect& rect)
@@ -246,7 +254,7 @@ void RemoteWebInspectorUI::setDiagnosticLoggingAvailable(bool available)
     ASSERT(!available || supportsDiagnosticLogging());
     m_diagnosticLoggingAvailable = available;
 
-    m_frontendAPIDispatcher.dispatchCommand("setDiagnosticLoggingAvailable"_s, m_diagnosticLoggingAvailable);
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDiagnosticLoggingAvailable"_s, { JSON::Value::create(m_diagnosticLoggingAvailable) });
 }
 #endif
 

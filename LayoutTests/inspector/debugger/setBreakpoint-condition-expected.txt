@@ -16,4 +16,5 @@ Hit Breakpoint!
 Evaluted value of `a` (expecting number 4) was: {"type":"number","value":4,"description":"4"}
 Evaluted value of `b` (expecting number 7) was: {"type":"number","value":7,"description":"7"}
 PASS: hit breakpoints with expected values
+Test is complete, disabling breakpoints.
 

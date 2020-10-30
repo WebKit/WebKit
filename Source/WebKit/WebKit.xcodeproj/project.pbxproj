@@ -1492,7 +1492,6 @@
 		A55BA8251BA25CFB007CD33D /* RemoteWebInspectorProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = A55BA8221BA25BB8007CD33D /* RemoteWebInspectorProxyMessages.h */; };
 		A55BA8261BA25CFD007CD33D /* RemoteWebInspectorProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A55BA8211BA25BB8007CD33D /* RemoteWebInspectorProxyMessageReceiver.cpp */; };
 		A55BA82B1BA38E61007CD33D /* WebInspectorUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = A55BA8281BA38E1E007CD33D /* WebInspectorUtilities.h */; };
-		A55BA8351BA3E70A007CD33D /* WebInspectorFrontendAPIDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = A55BA8331BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.h */; };
 		A5860E71230F67FC00461AAE /* WebResourceInterceptController.h in Headers */ = {isa = PBXBuildFile; fileRef = A5860E70230F67DE00461AAE /* WebResourceInterceptController.h */; };
 		A58B6F0818FCA733008CBA53 /* WKFileUploadPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = A58B6F0618FCA733008CBA53 /* WKFileUploadPanel.h */; };
 		A5C0F0A72000654D00536536 /* _WKNSWindowExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = A5C0F0A62000654400536536 /* _WKNSWindowExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4672,8 +4671,6 @@
 		A55BA8221BA25BB8007CD33D /* RemoteWebInspectorProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteWebInspectorProxyMessages.h; path = DerivedSources/WebKit2/RemoteWebInspectorProxyMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		A55BA8271BA38E1E007CD33D /* WebInspectorUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorUtilities.cpp; sourceTree = "<group>"; };
 		A55BA8281BA38E1E007CD33D /* WebInspectorUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorUtilities.h; sourceTree = "<group>"; };
-		A55BA8321BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorFrontendAPIDispatcher.cpp; sourceTree = "<group>"; };
-		A55BA8331BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorFrontendAPIDispatcher.h; sourceTree = "<group>"; };
 		A5860E6F230F67DE00461AAE /* WebResourceInterceptController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebResourceInterceptController.cpp; path = Network/WebResourceInterceptController.cpp; sourceTree = "<group>"; };
 		A5860E70230F67DE00461AAE /* WebResourceInterceptController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebResourceInterceptController.h; path = Network/WebResourceInterceptController.h; sourceTree = "<group>"; };
 		A58B6F0618FCA733008CBA53 /* WKFileUploadPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFileUploadPanel.h; path = ios/forms/WKFileUploadPanel.h; sourceTree = "<group>"; };
@@ -8707,8 +8704,6 @@
 				1C8E2A1C1277833F00BC7BD0 /* WebInspector.messages.in */,
 				BC111A59112F4FBB00337BAB /* WebInspectorClient.cpp */,
 				BC032D6D10F4378D0058C15A /* WebInspectorClient.h */,
-				A55BA8321BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.cpp */,
-				A55BA8331BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.h */,
 				FEE43FD01E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.cpp */,
 				FEE43FD11E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.h */,
 				FEE43FD21E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.messages.in */,
@@ -11499,7 +11494,6 @@
 				BCCF6ABD12C91EF9008F9C35 /* WebImage.h in Headers */,
 				1C8E28201275D15400BC7BD0 /* WebInspector.h in Headers */,
 				BC032D8210F4378D0058C15A /* WebInspectorClient.h in Headers */,
-				A55BA8351BA3E70A007CD33D /* WebInspectorFrontendAPIDispatcher.h in Headers */,
 				FEE43FD31E67B0180077D6D1 /* WebInspectorInterruptDispatcher.h in Headers */,
 				FEDBDCD71E68D20500A59F8F /* WebInspectorInterruptDispatcherMessages.h in Headers */,
 				1C8E2A361277852400BC7BD0 /* WebInspectorMessages.h in Headers */,

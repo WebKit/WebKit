@@ -103,6 +103,8 @@
 #endif
 
 #if ENABLE(WEB_AUTHN)
+#include "WebAuthnConnectionToWebProcessMessages.h"
+#include "WebAuthnProcessConnection.h"
 #include <WebCore/MockWebAuthenticationConfiguration.h>
 #endif
 

@@ -696,6 +696,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     inspector/InspectorClient.h
     inspector/InspectorController.h
     inspector/InspectorDebuggableType.h
+    inspector/InspectorFrontendAPIDispatcher.h
     inspector/InspectorFrontendClient.h
     inspector/InspectorFrontendClientLocal.h
     inspector/InspectorFrontendHost.h

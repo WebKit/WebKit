@@ -37,6 +37,8 @@ function test()
             ProtocolTest.log("Evaluted value of `a` (expecting number 1) was: " + JSON.stringify(messageObject.result.result));
             InspectorProtocol.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: callFrameIdentifier, expression: "b"}, function(messageObject) {
                 ProtocolTest.log("Evaluted value of `b` (expecting undefined) was: " + JSON.stringify(messageObject.result.result));
+
+                InspectorProtocol.sendCommand("Debugger.disable");
                 ProtocolTest.completeTest();
             });
         });

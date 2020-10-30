@@ -71,6 +71,9 @@ function test()
         // Make sure we receive the children of the "#final_container" as they are added.
         InspectorProtocol.sendCommand("DOM.requestChildNodes", {nodeId: response.result.nodeId});
         InspectorProtocol.sendCommand("Runtime.evaluate", {"expression": "moveNode()"}, function() {
+            delete InspectorProtocol.eventHandler["DOM.setChildNodes"];
+            delete InspectorProtocol.eventHandler["DOM.childNodeRemoved"];
+            delete InspectorProtocol.eventHandler["DOM.childNodeInserted"];
             ProtocolTest.completeTest();
         });
     }

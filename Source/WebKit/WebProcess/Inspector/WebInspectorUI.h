@@ -27,9 +27,9 @@
 
 #include "Connection.h"
 #include "DebuggableInfoData.h"
-#include "WebInspectorFrontendAPIDispatcher.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/InspectorDebuggableType.h>
+#include <WebCore/InspectorFrontendAPIDispatcher.h>
 #include <WebCore/InspectorFrontendClient.h>
 #include <WebCore/InspectorFrontendHost.h>
 
@@ -142,6 +142,7 @@ public:
 #endif
 
     void sendMessageToBackend(const String&) override;
+    WebCore::InspectorFrontendAPIDispatcher& frontendAPIDispatcher() final { return m_frontendAPIDispatcher; }
 
     void pagePaused() override;
     void pageUnpaused() override;
@@ -152,7 +153,7 @@ private:
     explicit WebInspectorUI(WebPage&);
 
     WebPage& m_page;
-    WebInspectorFrontendAPIDispatcher m_frontendAPIDispatcher;
+    Ref<WebCore::InspectorFrontendAPIDispatcher> m_frontendAPIDispatcher;
     RefPtr<WebCore::InspectorFrontendHost> m_frontendHost;
 
     // Keep a pointer to the frontend's inspector controller rather than going through

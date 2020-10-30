@@ -44,6 +44,7 @@ function test()
     InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
     {
         ProtocolTest.log("Hit Breakpoint!");
+        InspectorProtocol.sendCommand("Debugger.disable");
 
         if (!allowedToHitBreakpoint) {
             ProtocolTest.log("FAIL: should not have hit breakpoint.");

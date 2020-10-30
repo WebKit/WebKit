@@ -30,6 +30,8 @@ function test()
     InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
     {
         ProtocolTest.log("Hit Breakpoint!");
+        InspectorProtocol.sendCommand("Debugger.disable");
+
         ProtocolTest.log("PASS");
         ProtocolTest.completeTest();
     }

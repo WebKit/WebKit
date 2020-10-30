@@ -96,7 +96,7 @@ static void deleteSetting(const String& key)
 
 void WebInspectorClient::sendMessageToFrontend(const String& message)
 {
-    m_frontendClient->dispatchMessageAsync(message);
+    m_frontendClient->frontendAPIDispatcher().dispatchMessageAsync(message);
 }
 
 bool WebInspectorClient::inspectorAttachDisabled()

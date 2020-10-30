@@ -1404,6 +1404,7 @@ inspector/InspectorAuditResourcesObject.cpp
 inspector/InspectorCanvas.cpp
 inspector/InspectorController.cpp
 inspector/InspectorDatabaseResource.cpp
+inspector/InspectorFrontendAPIDispatcher.cpp
 inspector/InspectorFrontendClientLocal.cpp
 inspector/InspectorFrontendHost.cpp
 inspector/InspectorHistory.cpp

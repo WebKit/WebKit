@@ -1,3 +1,29 @@
+2020-10-30  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: move InspectorFrontendAPIDispatcher to WebCore, clean up uses
+        https://bugs.webkit.org/show_bug.cgi?id=217835
+        <rdar://problem/70384407>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/dom/dom-remove-events.html:
+        * inspector/dom/remove-multiple-nodes.html:
+        The order of events received has changed slightly due to the new auto-suspend behavior
+        in InspectorFrontendAPIDispatcher. Remove event handlers when the test is complete to 
+        ensure that events which arrive after the test has finished do not stomp on the expected results.
+
+        * inspector/debugger/call-frame-function-name.html:
+        * inspector/debugger/call-frame-this-host.html:
+        * inspector/debugger/hit-breakpoint-from-console.html:
+        * inspector/debugger/setBreakpoint-autoContinue.html:
+        * inspector/debugger/setBreakpoint-column.html:
+        * inspector/debugger/setBreakpoint-condition.html:
+        * inspector/debugger/setBreakpoint.html:
+        * inspector/debugger/setBreakpointByUrl-sourceURL.html:
+        Some tests seem to call ProtocolTest.completeTest() from the handler of Debugger.paused, when
+        the debugger is still paused. This causes timeouts after this refactoring, since not resuming means that
+        we'll get stuck in the debugger's nested run loop and never return.
+
 2020-10-30  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [TextureMapper] Replica layers don't blend correctly because computeOverlapRegions doesn't take TextureMapperPaintOptions::transform into account
