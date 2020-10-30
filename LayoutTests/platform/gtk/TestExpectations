@@ -120,6 +120,7 @@ webkit.org/b/217947 http/tests/security/mixedContent/secure-redirect-to-secure-r
 
 # WebInspector.
 webkit.org/b/217966 [ Release ] inspector/console/queryHolders.html [ Crash Failure Timeout Pass ]
+webkit.org/b/218367 inspector/page/setScreenSizeOverride.html [ Failure Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations
@@ -452,6 +453,8 @@ webkit.org/b/169918 compositing/webgl/webgl-no-alpha.html [ Missing Failure ]
 webkit.org/b/169918 compositing/webgl/webgl-reflection.html [ Missing Failure ]
 webkit.org/b/169918 compositing/fixed-with-fixed-layout.html [ Crash ]
 webkit.org/b/169918 compositing/video/video-background-color.html [ Crash Pass ]
+
+webkit.org/b/218368 compositing/backing/solid-color-with-paints-into-ancestor.html [ ImageOnlyFailure Pass ]
 
 # WebGL related failures
 webkit.org/b/169917 fast/canvas/webgl/antialiasing-enabled.html [ Failure Pass ]

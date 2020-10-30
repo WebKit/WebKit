@@ -16,6 +16,7 @@
 #
 # * Accessibility
 # * CSS
+# * Fonts
 # * GStreamer
 # * HiDPI
 # * IndexedDB
@@ -218,6 +219,45 @@ webkit.org/b/212202 fast/events/platform-wheelevent-in-scrolling-div.html [ Skip
 # End of Events-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# Fonts-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+# Missing support for COLR/CPAL fonts.
+webkit.org/b/218372 fast/text/canvas-color-fonts/COLR.html [ ImageOnlyFailure ]
+webkit.org/b/218372 fast/text/canvas-color-fonts/fill-color-shadow-COLR.html [ ImageOnlyFailure ]
+webkit.org/b/218372 fast/text/canvas-color-fonts/fill-color-shadow-ctm-COLR.html [ ImageOnlyFailure ]
+webkit.org/b/218372 fast/text/canvas-color-fonts/linedash-COLR.html [ ImageOnlyFailure ]
+webkit.org/b/218372 fast/text/canvas-color-fonts/stroke-color-COLR.html [ ImageOnlyFailure ]
+webkit.org/b/218372 fast/text/canvas-color-fonts/stroke-color-shadow-COLR.html [ ImageOnlyFailure ]
+webkit.org/b/218372 fast/text/canvas-color-fonts/stroke-color-shadow-ctm-COLR.html [ ImageOnlyFailure ]
+webkit.org/b/218372 fast/text/canvas-color-fonts/stroke-gradient-COLR-3.html [ ImageOnlyFailure ]
+webkit.org/b/218372 fast/text/canvas-color-fonts/stroke-gradient-COLR-4.html [ ImageOnlyFailure ]
+webkit.org/b/218372 http/tests/canvas/color-fonts/ctm-sbix-2.html [ ImageOnlyFailure ]
+webkit.org/b/218372 http/tests/canvas/color-fonts/ctm-sbix-3.html [ ImageOnlyFailure ]
+webkit.org/b/218372 http/tests/canvas/color-fonts/ctm-sbix-4.html [ ImageOnlyFailure ]
+webkit.org/b/218372 http/tests/canvas/color-fonts/fill-color-sbix-2.html [ ImageOnlyFailure ]
+webkit.org/b/218372 http/tests/canvas/color-fonts/fill-color-sbix-3.html [ ImageOnlyFailure ]
+webkit.org/b/218372 http/tests/canvas/color-fonts/fill-color-sbix-4.html [ ImageOnlyFailure ]
+webkit.org/b/218372 http/tests/canvas/color-fonts/fill-color-shadow-ctm-sbix.html [ ImageOnlyFailure ]
+webkit.org/b/218372 http/tests/canvas/color-fonts/fill-color-shadow-sbix.html [ ImageOnlyFailure ]
+webkit.org/b/218372 http/tests/canvas/color-fonts/fill-gradient-sbix-2.html [ ImageOnlyFailure ]
+webkit.org/b/218372 http/tests/canvas/color-fonts/fill-gradient-sbix-3.html [ ImageOnlyFailure ]
+webkit.org/b/218372 http/tests/canvas/color-fonts/fill-gradient-sbix-4.html [ ImageOnlyFailure ]
+webkit.org/b/218372 http/tests/canvas/color-fonts/stroke-color-sbix.html [ ImageOnlyFailure ]
+webkit.org/b/218372 http/tests/canvas/color-fonts/stroke-color-shadow-ctm-sbix.html [ ImageOnlyFailure ]
+webkit.org/b/218372 http/tests/canvas/color-fonts/stroke-color-shadow-sbix.html [ ImageOnlyFailure ]
+webkit.org/b/218372 http/tests/canvas/color-fonts/stroke-gradient-sbix-2.html [ ImageOnlyFailure ]
+webkit.org/b/218372 http/tests/canvas/color-fonts/stroke-gradient-sbix-3.html [ ImageOnlyFailure ]
+webkit.org/b/218372 http/tests/canvas/color-fonts/stroke-gradient-sbix-4.html [ ImageOnlyFailure ]
+webkit.org/b/218372 http/tests/canvas/color-fonts/text-sbix-2.html [ ImageOnlyFailure ]
+webkit.org/b/218372 http/tests/canvas/color-fonts/text-sbix-3.html [ ImageOnlyFailure ]
+webkit.org/b/218372 http/tests/canvas/color-fonts/text-sbix-4.html [ ImageOnlyFailure ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of Fonts-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # GStreamer-related bugs
@@ -426,6 +466,7 @@ webkit.org/b/116960 perf/adding-radio-buttons.html [ Failure Pass ]
 webkit.org/b/126523 perf/accessibility-title-ui-element.html [ Failure Pass ]
 webkit.org/b/188101 perf/append-text-nodes-without-renderers.html [ Failure Pass ]
 webkit.org/b/211837 perf/rel-list-remove.html [ Failure Pass ]
+webkit.org/b/213520 perf/htmlcollection-backwards-iteration.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Perf-related bugs
@@ -774,6 +815,7 @@ webkit.org/b/212812 imported/w3c/web-platform-tests/html/canvas/element/fill-and
 webkit.org/b/212963 imported/w3c/web-platform-tests/css/css-animations/animation-delay-010.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/213331 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Failure Pass ]
+webkit.org/b/218370 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/no-cors.https.html [ Failure Pass ]
 
 # As of r263626, the imported baseline based on Mojave fails for glib. Added custom baseline for it.
 webkit.org/b/213709 imported/w3c/web-platform-tests/cors/credentials-flag.htm [ Pass ]
