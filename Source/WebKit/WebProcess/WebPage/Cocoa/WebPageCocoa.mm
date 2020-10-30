@@ -81,11 +81,13 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 
     m_dataDetectionContext = parameters.dataDetectionContext;
 
+#if ENABLE(CONTENT_FILTERING)
     if (parameters.neHelperExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.neHelperExtensionHandle);
     if (parameters.neSessionManagerExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.neSessionManagerExtensionHandle);
     NetworkExtensionContentFilter::setHasConsumedSandboxExtensions(parameters.neHelperExtensionHandle.hasValue() && parameters.neSessionManagerExtensionHandle.hasValue());
+#endif
 
 #if PLATFORM(IOS)
     if (parameters.contentFilterExtensionHandle)

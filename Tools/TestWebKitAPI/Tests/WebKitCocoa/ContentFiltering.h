@@ -24,5 +24,5 @@
  */
 
 @protocol ContentFilteringProtocol <NSObject>
-- (void)checkIfPlatformFrameworksAreLoaded:(void (^)(BOOL parentalControlsLoaded, BOOL networkExtensionLoaded))completionHandler;
+- (void)checkIfPlatformFrameworksAreLoaded:(void (^)(BOOL parentalControlsLoaded))completionHandler;
 @end

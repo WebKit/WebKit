@@ -113,15 +113,14 @@ using DecisionPoint = MockContentFilterSettings::DecisionPoint;
     _contentFilterEnabler = contentFilterEnabler;
 }
 
-- (void)checkIfPlatformFrameworksAreLoaded:(void (^)(BOOL parentalControlsLoaded, BOOL networkExtensionLoaded))completionHandler
+- (void)checkIfPlatformFrameworksAreLoaded:(void (^)(BOOL parentalControlsLoaded))completionHandler
 {
     bool parentalControlsLoaded = false;
 #if HAVE(PARENTAL_CONTROLS)
     parentalControlsLoaded = NSVersionOfRunTimeLibrary("WebContentAnalysis") != -1;
 #endif
 
-    bool networkExtensionLoaded = networkExtensionLoaded = NSVersionOfRunTimeLibrary("NetworkExtension") != -1;
-    completionHandler(parentalControlsLoaded, networkExtensionLoaded);
+    completionHandler(parentalControlsLoaded);
 }
 
 @end

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "NetworkExtensionContentFilter.h"
 
+#if ENABLE(CONTENT_FILTERING)
+
 #import "ContentFilterUnblockHandler.h"
 #import "Logging.h"
 #import "ResourceRequest.h"
@@ -37,9 +39,6 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/URL.h>
 #import <wtf/threads/BinarySemaphore.h>
-
-SOFT_LINK_FRAMEWORK_OPTIONAL(NetworkExtension);
-SOFT_LINK_CLASS_OPTIONAL(NetworkExtension, NEFilterSource);
 
 static inline NSData *replacementDataFromDecisionInfo(NSDictionary *decisionInfo)
 {
@@ -62,7 +61,7 @@ bool NetworkExtensionContentFilter::enabled()
         enabled = false;
         break;
     case SandboxExtensionsState::NotSet:
-        enabled = [getNEFilterSourceClass() filterRequired];
+        enabled = isRequired();
         break;
     }
     LOG(ContentFiltering, "NetworkExtensionContentFilter is %s.\n", enabled ? "enabled" : "not enabled");
@@ -80,7 +79,7 @@ void NetworkExtensionContentFilter::initialize(const URL* url)
     ASSERT(!m_neFilterSource);
     m_queue = adoptOSObject(dispatch_queue_create("WebKit NetworkExtension Filtering", DISPATCH_QUEUE_SERIAL));
     ASSERT_UNUSED(url, !url);
-    m_neFilterSource = adoptNS([allocNEFilterSourceInstance() initWithDecisionQueue:m_queue.get()]);
+    m_neFilterSource = adoptNS([[NEFilterSource alloc] initWithDecisionQueue:m_queue.get()]);
     [m_neFilterSource setSourceAppIdentifier:applicationBundleIdentifier()];
     [m_neFilterSource setSourceAppPid:presentingApplicationPID()];
 }
@@ -182,7 +181,6 @@ Ref<SharedBuffer> NetworkExtensionContentFilter::replacementData() const
     return SharedBuffer::create(m_replacementData.get());
 }
 
-#if ENABLE(CONTENT_FILTERING)
 ContentFilterUnblockHandler NetworkExtensionContentFilter::unblockHandler() const
 {
     using DecisionHandlerFunction = ContentFilterUnblockHandler::DecisionHandlerFunction;
@@ -197,7 +195,6 @@ ContentFilterUnblockHandler NetworkExtensionContentFilter::unblockHandler() cons
         }
     };
 }
-#endif
 
 void NetworkExtensionContentFilter::handleDecision(NEFilterSourceStatus status, NSData *replacementData)
 {
@@ -226,6 +223,11 @@ void NetworkExtensionContentFilter::handleDecision(NEFilterSourceStatus status, 
 #endif
 }
 
+bool NetworkExtensionContentFilter::isRequired()
+{
+    return [NEFilterSource filterRequired];
+}
+
 void NetworkExtensionContentFilter::setHasConsumedSandboxExtensions(bool hasConsumedSandboxExtensions)
 {
     if (m_sandboxExtensionsState == SandboxExtensionsState::Consumed)
@@ -235,3 +237,5 @@ void NetworkExtensionContentFilter::setHasConsumedSandboxExtensions(bool hasCons
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(CONTENT_FILTERING)

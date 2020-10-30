@@ -336,7 +336,7 @@ TEST(ContentFiltering, LoadAlternateAfterFinishedAddingDataWK2)
 
 @interface LazilyLoadPlatformFrameworksController : NSObject <WKNavigationDelegate>
 @property (nonatomic, readonly) WKWebView *webView;
-- (void)expectParentalControlsLoaded:(BOOL)parentalControlsShouldBeLoaded networkExtensionLoaded:(BOOL)networkExtensionShouldBeLoaded;
+- (void)expectParentalControlsLoaded:(BOOL)parentalControlsShouldBeLoaded;
 @end
 
 @implementation LazilyLoadPlatformFrameworksController {
@@ -364,14 +364,13 @@ TEST(ContentFiltering, LoadAlternateAfterFinishedAddingDataWK2)
     return _webView.get();
 }
 
-- (void)expectParentalControlsLoaded:(BOOL)parentalControlsShouldBeLoaded networkExtensionLoaded:(BOOL)networkExtensionShouldBeLoaded
+- (void)expectParentalControlsLoaded:(BOOL)parentalControlsShouldBeLoaded
 {
     isDone = false;
-    [_remoteObjectProxy checkIfPlatformFrameworksAreLoaded:^(BOOL parentalControlsLoaded, BOOL networkExtensionLoaded) {
+    [_remoteObjectProxy checkIfPlatformFrameworksAreLoaded:^(BOOL parentalControlsLoaded) {
 #if HAVE(PARENTAL_CONTROLS)
         EXPECT_EQ(static_cast<bool>(parentalControlsShouldBeLoaded), static_cast<bool>(parentalControlsLoaded));
 #endif
-        EXPECT_EQ(static_cast<bool>(networkExtensionShouldBeLoaded), static_cast<bool>(networkExtensionLoaded));
         isDone = true;
     }];
     TestWebKitAPI::Util::run(&isDone);
@@ -406,29 +405,29 @@ TEST(ContentFiltering, LazilyLoadPlatformFrameworks)
 
     @autoreleasepool {
         auto controller = adoptNS([[LazilyLoadPlatformFrameworksController alloc] init]);
-        [controller expectParentalControlsLoaded:NO networkExtensionLoaded:NO];
+        [controller expectParentalControlsLoaded:NO];
 
         isDone = false;
         [[controller webView] loadHTMLString:@"PASS" baseURL:[NSURL URLWithString:@"about:blank"]];
         TestWebKitAPI::Util::run(&isDone);
-        [controller expectParentalControlsLoaded:NO networkExtensionLoaded:NO];
+        [controller expectParentalControlsLoaded:NO];
 
         isDone = false;
         [[controller webView] loadData:[NSData dataWithBytes:"PASS" length:4] MIMEType:@"text/html" characterEncodingName:@"UTF-8" baseURL:[NSURL URLWithString:@"about:blank"]];
         TestWebKitAPI::Util::run(&isDone);
-        [controller expectParentalControlsLoaded:NO networkExtensionLoaded:NO];
+        [controller expectParentalControlsLoaded:NO];
 
         isDone = false;
         NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"ContentFiltering" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
         [[controller webView] loadFileURL:fileURL allowingReadAccessToURL:fileURL];
         TestWebKitAPI::Util::run(&isDone);
-        [controller expectParentalControlsLoaded:NO networkExtensionLoaded:NO];
+        [controller expectParentalControlsLoaded:NO];
 
         isDone = false;
         [TestProtocol registerWithScheme:@"custom"];
         [[controller webView] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"custom://test"]]];
         TestWebKitAPI::Util::run(&isDone);
-        [controller expectParentalControlsLoaded:NO networkExtensionLoaded:NO];
+        [controller expectParentalControlsLoaded:NO];
         [TestProtocol unregister];
 
         isDone = false;
@@ -436,9 +435,9 @@ TEST(ContentFiltering, LazilyLoadPlatformFrameworks)
         [[controller webView] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://test"]]];
         TestWebKitAPI::Util::run(&isDone);
 #if PLATFORM(MAC)
-        [controller expectParentalControlsLoaded:NO networkExtensionLoaded:YES];
+        [controller expectParentalControlsLoaded:NO];
 #else
-        [controller expectParentalControlsLoaded:YES networkExtensionLoaded:YES];
+        [controller expectParentalControlsLoaded:YES];
 #endif
         [TestProtocol unregister];
 
@@ -447,7 +446,7 @@ TEST(ContentFiltering, LazilyLoadPlatformFrameworks)
         [TestProtocol registerWithScheme:@"https"];
         [[controller webView] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://test"]]];
         TestWebKitAPI::Util::run(&isDone);
-        [controller expectParentalControlsLoaded:YES networkExtensionLoaded:YES];
+        [controller expectParentalControlsLoaded:YES];
         [TestProtocol unregister];
 #endif
     }

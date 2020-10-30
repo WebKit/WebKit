@@ -1,5 +1,86 @@
 2020-10-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r269173. rdar://problem/70831161
+
+    [Cocoa] Remove soft linking of NetworkExtension.framework
+    https://bugs.webkit.org/show_bug.cgi?id=218314
+    <rdar://problem/70785239>
+    
+    Reviewed by Andy Estes.
+    
+    Source/WebCore:
+    
+    WebCore should link NetworkExtension.framework normally, to avoid the
+    runtime cost associated with soft linking.
+    
+    * Configurations/WebCore.xcconfig:
+    
+    On macOS, weak link the framework since NetworkExtension.framework is
+    not available on the Base System.
+    
+    * platform/cocoa/NetworkExtensionContentFilter.h:
+    
+    Added the isRequired static method to avoid soft linking
+    NetworkExtension.framework in WebKit.
+    
+    * platform/cocoa/NetworkExtensionContentFilter.mm:
+    
+    Only compile this file in the ENABLE(CONTENT_FILTERING) build, as its
+    functionality is unavailable on tvOS.
+    
+    (WebCore::NetworkExtensionContentFilter::enabled):
+    (WebCore::NetworkExtensionContentFilter::initialize):
+    (WebCore::NetworkExtensionContentFilter::unblockHandler const):
+    (WebCore::NetworkExtensionContentFilter::isRequired):
+    
+    Source/WebKit:
+    
+    * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+    (WebKit::WebPageProxy::addPlatformLoadParameters):
+    
+    Replaced the soft linked method call with a new method exported from
+    WebCore.
+    
+    * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+    (WebKit::WebPage::platformDidReceiveLoadParameters):
+    
+    Tools:
+    
+    Updated a test to reflect that NetworkExtension.framework is no longer
+    loaded at runtime. This test was failing on Catalina after r269109,
+    as the Contacts framework was loading NetworkExtension.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ContentFiltering.h:
+    * TestWebKitAPI/Tests/WebKitCocoa/ContentFiltering.mm:
+    (-[LazilyLoadPlatformFrameworksController expectParentalControlsLoaded:]):
+    (TEST):
+    * TestWebKitAPI/Tests/WebKitCocoa/ContentFilteringPlugIn.mm:
+    (-[ContentFilteringPlugIn checkIfPlatformFrameworksAreLoaded:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@269173 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-29  Aditya Keerthi  <akeerthi@apple.com>
+
+            [Cocoa] Remove soft linking of NetworkExtension.framework
+            https://bugs.webkit.org/show_bug.cgi?id=218314
+            <rdar://problem/70785239>
+
+            Reviewed by Andy Estes.
+
+            Updated a test to reflect that NetworkExtension.framework is no longer
+            loaded at runtime. This test was failing on Catalina after r269109,
+            as the Contacts framework was loading NetworkExtension.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/ContentFiltering.h:
+            * TestWebKitAPI/Tests/WebKitCocoa/ContentFiltering.mm:
+            (-[LazilyLoadPlatformFrameworksController expectParentalControlsLoaded:]):
+            (TEST):
+            * TestWebKitAPI/Tests/WebKitCocoa/ContentFilteringPlugIn.mm:
+            (-[ContentFilteringPlugIn checkIfPlatformFrameworksAreLoaded:]):
+
+2020-10-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r269160. rdar://problem/70831130
 
     Unreviewed, reverting r268192.
