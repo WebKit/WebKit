@@ -4602,3 +4602,7 @@ webkit.org/b/217922 fast/animation/animation-mixed-transform-crash.html [ ImageO
 webkit.org/b/217997 webanimations/accelerated-overlapping-transform-animations.html [ Pass Failure ]
 
 webkit.org/b/218040 svg/clip-path/clip-path-invalid.svg [ Pass Crash ]
+
+# Windows doesn't support color fonts.
+webkit.org/b/218346 fast/text/canvas-color-fonts [ Pass ImageOnlyFailure ]
+webkit.org/b/218346 http/tests/canvas/color-fonts [ Pass ImageOnlyFailure ]

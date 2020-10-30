@@ -1,3 +1,117 @@
+2020-10-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Add tests for sbix and COLR fonts in canvas
+        https://bugs.webkit.org/show_bug.cgi?id=218346
+
+        Reviewed by Simon Fraser.
+
+        Test all the relevant combinations of:
+        {CTM, no CTM} x
+        {line dash, no line dash} x
+        {color style, gradient style} x
+        {shadow, no shadow} x
+        {fill, stroke} x
+        {sbix, COLR}.
+
+        We actually care about the combinations because we have some codepaths (e.g. emulated shadows)
+        that only are triggered when 2 or more of the above are active.
+
+        Image orientation only works in http tests, so the sbix font is used in http/tests/.
+        See https://bugs.webkit.org/show_bug.cgi?id=217808 for more information.
+
+        * fast/text/canvas-color-fonts/COLR-expected.html: Added.
+        * fast/text/canvas-color-fonts/COLR.html: Added.
+        * fast/text/canvas-color-fonts/ctm-COLR-expected.html: Added.
+        * fast/text/canvas-color-fonts/ctm-COLR.html: Added.
+        * fast/text/canvas-color-fonts/fill-color-COLR-expected.html: Added.
+        * fast/text/canvas-color-fonts/fill-color-COLR.html: Added.
+        * fast/text/canvas-color-fonts/fill-color-shadow-COLR-expected.html: Added.
+        * fast/text/canvas-color-fonts/fill-color-shadow-COLR.html: Added.
+        * fast/text/canvas-color-fonts/fill-color-shadow-ctm-COLR-expected.html: Added.
+        * fast/text/canvas-color-fonts/fill-color-shadow-ctm-COLR.html: Added.
+        * fast/text/canvas-color-fonts/fill-gradient-COLR-2-expected-mismatch.html: Added.
+        * fast/text/canvas-color-fonts/fill-gradient-COLR-2.html: Added.
+        * fast/text/canvas-color-fonts/fill-gradient-COLR-expected.html: Added.
+        * fast/text/canvas-color-fonts/fill-gradient-COLR.html: Added.
+        * fast/text/canvas-color-fonts/linedash-COLR-expected-mismatch.html: Added.
+        * fast/text/canvas-color-fonts/linedash-COLR.html: Added.
+        * fast/text/canvas-color-fonts/linedash-outlines-expected-mismatch.html: Added.
+        * fast/text/canvas-color-fonts/linedash-outlines.html: Added.
+        * fast/text/canvas-color-fonts/resources/Ahem-COLR.ttf: Added.
+        * fast/text/canvas-color-fonts/stroke-color-COLR-expected.html: Added.
+        * fast/text/canvas-color-fonts/stroke-color-COLR.html: Added.
+        * fast/text/canvas-color-fonts/stroke-color-shadow-COLR-expected.html: Added.
+        * fast/text/canvas-color-fonts/stroke-color-shadow-COLR.html: Added.
+        * fast/text/canvas-color-fonts/stroke-color-shadow-ctm-COLR-expected.html: Added.
+        * fast/text/canvas-color-fonts/stroke-color-shadow-ctm-COLR.html: Added.
+        * fast/text/canvas-color-fonts/stroke-gradient-COLR-2-expected-mismatch.html: Added.
+        * fast/text/canvas-color-fonts/stroke-gradient-COLR-2.html: Added.
+        * fast/text/canvas-color-fonts/stroke-gradient-COLR-3-expected-mismatch.html: Added.
+        * fast/text/canvas-color-fonts/stroke-gradient-COLR-3.html: Added.
+        * fast/text/canvas-color-fonts/stroke-gradient-COLR-4-expected-mismatch.html: Added.
+        * fast/text/canvas-color-fonts/stroke-gradient-COLR-4.html: Added.
+        * fast/text/canvas-color-fonts/stroke-gradient-COLR-5-expected-mismatch.html: Added.
+        * fast/text/canvas-color-fonts/stroke-gradient-COLR-5.html: Added.
+        * fast/text/canvas-color-fonts/stroke-gradient-COLR-expected.html: Added.
+        * fast/text/canvas-color-fonts/stroke-gradient-COLR.html: Added.
+        * http/tests/canvas/color-fonts/ctm-sbix-2-expected-mismatch.html: Added.
+        * http/tests/canvas/color-fonts/ctm-sbix-2.html: Added.
+        * http/tests/canvas/color-fonts/ctm-sbix-3-expected-mismatch.html: Added.
+        * http/tests/canvas/color-fonts/ctm-sbix-3.html: Added.
+        * http/tests/canvas/color-fonts/ctm-sbix-4-expected-mismatch.html: Added.
+        * http/tests/canvas/color-fonts/ctm-sbix-4.html: Added.
+        * http/tests/canvas/color-fonts/ctm-sbix-expected.html: Added.
+        * http/tests/canvas/color-fonts/ctm-sbix.html: Added.
+        * http/tests/canvas/color-fonts/fill-color-sbix-2-expected-mismatch.html: Added.
+        * http/tests/canvas/color-fonts/fill-color-sbix-2.html: Added.
+        * http/tests/canvas/color-fonts/fill-color-sbix-3-expected-mismatch.html: Added.
+        * http/tests/canvas/color-fonts/fill-color-sbix-3.html: Added.
+        * http/tests/canvas/color-fonts/fill-color-sbix-4-expected-mismatch.html: Added.
+        * http/tests/canvas/color-fonts/fill-color-sbix-4.html: Added.
+        * http/tests/canvas/color-fonts/fill-color-sbix-expected.html: Added.
+        * http/tests/canvas/color-fonts/fill-color-sbix.html: Added.
+        * http/tests/canvas/color-fonts/fill-color-shadow-ctm-sbix-expected.html: Added.
+        * http/tests/canvas/color-fonts/fill-color-shadow-ctm-sbix.html: Added.
+        * http/tests/canvas/color-fonts/fill-color-shadow-sbix-expected.html: Added.
+        * http/tests/canvas/color-fonts/fill-color-shadow-sbix.html: Added.
+        * http/tests/canvas/color-fonts/fill-gradient-sbix-2-expected-mismatch.html: Added.
+        * http/tests/canvas/color-fonts/fill-gradient-sbix-2.html: Added.
+        * http/tests/canvas/color-fonts/fill-gradient-sbix-3-expected-mismatch.html: Added.
+        * http/tests/canvas/color-fonts/fill-gradient-sbix-3.html: Added.
+        * http/tests/canvas/color-fonts/fill-gradient-sbix-4-expected-mismatch.html: Added.
+        * http/tests/canvas/color-fonts/fill-gradient-sbix-4.html: Added.
+        * http/tests/canvas/color-fonts/fill-gradient-sbix-expected.html: Added.
+        * http/tests/canvas/color-fonts/fill-gradient-sbix.html: Added.
+        * http/tests/canvas/color-fonts/linedash-sbix-expected.html: Added.
+        * http/tests/canvas/color-fonts/linedash-sbix.html: Added.
+        * http/tests/canvas/color-fonts/resources/Ahem-sbix.ttf: Added.
+        * http/tests/canvas/color-fonts/resources/image1.jpg: Added.
+        * http/tests/canvas/color-fonts/resources/image2.jpg: Added.
+        * http/tests/canvas/color-fonts/stroke-color-sbix-expected.html: Added.
+        * http/tests/canvas/color-fonts/stroke-color-sbix.html: Added.
+        * http/tests/canvas/color-fonts/stroke-color-shadow-ctm-sbix-expected.html: Added.
+        * http/tests/canvas/color-fonts/stroke-color-shadow-ctm-sbix.html: Added.
+        * http/tests/canvas/color-fonts/stroke-color-shadow-sbix-expected.html: Added.
+        * http/tests/canvas/color-fonts/stroke-color-shadow-sbix.html: Added.
+        * http/tests/canvas/color-fonts/stroke-gradient-sbix-2-expected-mismatch.html: Added.
+        * http/tests/canvas/color-fonts/stroke-gradient-sbix-2.html: Added.
+        * http/tests/canvas/color-fonts/stroke-gradient-sbix-3-expected-mismatch.html: Added.
+        * http/tests/canvas/color-fonts/stroke-gradient-sbix-3.html: Added.
+        * http/tests/canvas/color-fonts/stroke-gradient-sbix-4-expected-mismatch.html: Added.
+        * http/tests/canvas/color-fonts/stroke-gradient-sbix-4.html: Added.
+        * http/tests/canvas/color-fonts/stroke-gradient-sbix-expected.html: Added.
+        * http/tests/canvas/color-fonts/stroke-gradient-sbix.html: Added.
+        * http/tests/canvas/color-fonts/text-sbix-2-expected-mismatch.html: Added.
+        * http/tests/canvas/color-fonts/text-sbix-2.html: Added.
+        * http/tests/canvas/color-fonts/text-sbix-3-expected-mismatch.html: Added.
+        * http/tests/canvas/color-fonts/text-sbix-3.html: Added.
+        * http/tests/canvas/color-fonts/text-sbix-4-expected-mismatch.html: Added.
+        * http/tests/canvas/color-fonts/text-sbix-4.html: Added.
+        * http/tests/canvas/color-fonts/text-sbix-expected.html: Added.
+        * http/tests/canvas/color-fonts/text-sbix.html: Added.
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2020-10-29  Sam Weinig  <weinig@apple.com>
 
         Remove all remaining boolean overridePreference calls
