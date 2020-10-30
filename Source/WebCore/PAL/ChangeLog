@@ -1,3 +1,14 @@
+2020-10-30  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Incorrect list of voices being displayed on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=218293
+
+        Reviewed by Per Arne Vollan.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+        * pal/spi/cocoa/AXSpeechManagerSPI.h: Added.
+
 2020-10-13  Keith Rollin  <krollin@apple.com>
 
         Remove leftover MACOSX_DEPLOYMENT_TARGET_macosx support
