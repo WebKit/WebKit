@@ -110,8 +110,8 @@ class WebPageProxy;
 @class WKTextRange;
 @class _WKTextInputContext;
 
+@class UIPointerInteraction;
 @class UITargetedPreview;
-@class _UICursorInteraction;
 @class _UILookupGestureRecognizer;
 @class _UIHighlightView;
 
@@ -248,10 +248,10 @@ struct WKAutoCorrectionData {
     RetainPtr<UIIndirectScribbleInteraction> _scribbleInteraction;
 #endif
 
-#if HAVE(UI_CURSOR_INTERACTION)
-    RetainPtr<_UICursorInteraction> _cursorInteraction;
-    BOOL _hasOutstandingCursorInteractionRequest;
-    Optional<std::pair<WebKit::InteractionInformationRequest, BlockPtr<void(_UICursorRegion *)>>> _deferredCursorInteractionRequest;
+#if HAVE(UI_POINTER_INTERACTION)
+    RetainPtr<UIPointerInteraction> _pointerInteraction;
+    BOOL _hasOutstandingPointerInteractionRequest;
+    Optional<std::pair<WebKit::InteractionInformationRequest, BlockPtr<void(UIPointerRegion *)>>> _deferredPointerInteractionRequest;
 #endif
 
     RetainPtr<UIWKTextInteractionAssistant> _textInteractionAssistant;
