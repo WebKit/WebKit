@@ -1,5 +1,55 @@
 2020-10-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r268904. rdar://problem/70831149
+
+    Null check platformStrategies when making blob read stream for an NSURLRequest
+    https://bugs.webkit.org/show_bug.cgi?id=218112
+    <rdar://problem/70507102>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2020-10-22
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebCore:
+    
+    r266187 made it possible to create a DataTransfer without a user event, which allows you to make a FileList,
+    which allows you to submit a multipart form without a user event that calls decidePolicyForNavigationAction
+    with a request that has a form data body that would make a blob upload stream.  This causes us to use
+    platformStrategies in the UI process, which dereferences null.  Since the blob only really exists in the network
+    process, just return a nil HTTPBody in such an exotic case instead of crashing.
+    
+    Covered by an API test that would hit this crash.  Web platform tests were insufficient because WebKitTestRunner does not
+    access WKNavigationAction.request, but Safari does.
+    
+    * platform/PlatformStrategies.cpp:
+    (WebCore::hasPlatformStrategies):
+    * platform/PlatformStrategies.h:
+    * platform/network/FormData.cpp:
+    (WebCore::FormData::containsBlobElement const):
+    (WebCore::FormData::resolveBlobReferences):
+    * platform/network/FormData.h:
+    * platform/network/cf/FormDataStreamCFNet.cpp:
+    (WebCore::createHTTPBodyCFReadStream):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/NavigationAction.mm:
+    (TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268904 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-22  Alex Christensen  <achristensen@webkit.org>
+
+            Null check platformStrategies when making blob read stream for an NSURLRequest
+            https://bugs.webkit.org/show_bug.cgi?id=218112
+            <rdar://problem/70507102>
+
+            Reviewed by Wenson Hsieh.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/NavigationAction.mm:
+            (TEST):
+
+2020-10-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r268878. rdar://problem/70831133
 
     UIClient isn't notified when page muted state changes

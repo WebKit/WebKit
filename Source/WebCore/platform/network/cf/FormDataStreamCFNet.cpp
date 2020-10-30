@@ -31,6 +31,7 @@
 
 #include "BlobRegistryImpl.h"
 #include "FormData.h"
+#include "PlatformStrategies.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <wtf/Assertions.h>
@@ -370,6 +371,9 @@ static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, vo
 
 RetainPtr<CFReadStreamRef> createHTTPBodyCFReadStream(FormData& formData)
 {
+    if (!hasPlatformStrategies() && formData.containsBlobElement())
+        return nullptr;
+
     auto resolvedFormData = formData.resolveBlobReferences();
     auto dataForUpload = resolvedFormData->prepareForUpload();
 

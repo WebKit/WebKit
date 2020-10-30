@@ -316,18 +316,19 @@ static void appendBlobResolved(BlobRegistryImpl* blobRegistry, FormData& formDat
     }
 }
 
+bool FormData::containsBlobElement() const
+{
+    for (auto& element : m_elements) {
+        if (WTF::holds_alternative<FormDataElement::EncodedBlobData>(element.data))
+            return true;
+    }
+    return false;
+}
+
 Ref<FormData> FormData::resolveBlobReferences(BlobRegistryImpl* blobRegistryImpl)
 {
     // First check if any blobs needs to be resolved, or we can take the fast path.
-    bool hasBlob = false;
-    for (auto& element : m_elements) {
-        if (WTF::holds_alternative<FormDataElement::EncodedBlobData>(element.data)) {
-            hasBlob = true;
-            break;
-        }
-    }
-
-    if (!hasBlob)
+    if (!containsBlobElement())
         return *this;
 
     // Create a copy to append the result into.

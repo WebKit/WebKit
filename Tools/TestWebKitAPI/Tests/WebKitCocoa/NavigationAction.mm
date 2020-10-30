@@ -25,8 +25,10 @@
 
 #import "config.h"
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <wtf/RetainPtr.h>
@@ -174,4 +176,42 @@ TEST(WKNavigationAction, ShouldPerformDownload_DownloadAttribute_CrossOrigin)
 
     EXPECT_NOT_NULL(navigationDelegate.get().navigationAction);
     EXPECT_FALSE(navigationDelegate.get().navigationAction._shouldPerformDownload);
+}
+
+TEST(WKNavigationAction, BlobRequestBody)
+{
+    NSString *html = @""
+        "<script>"
+            "function bodyLoaded() {"
+                "const form = Object.assign(document.createElement('form'), {"
+                    "action: '/formAction', method: 'POST', enctype: 'multipart/form-data',"
+                "});"
+                "document.body.append(form);"
+                "const fileInput = Object.assign(document.createElement('input'), {"
+                    "type: 'file', name: 'file',"
+                "});"
+                "form.append(fileInput);"
+                "const dataTransfer = new DataTransfer;"
+                "dataTransfer.items.add(new File(['a'], 'filename'));"
+                "fileInput.files = dataTransfer.files;"
+                "form.submit();"
+            "}"
+        "</script>"
+        "<body onload='bodyLoaded()'>";
+    auto delegate = [[TestNavigationDelegate new] autorelease];
+    auto webView = [[WKWebView new] autorelease];
+    webView.navigationDelegate = delegate;
+    __block bool done = false;
+    delegate.decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        EXPECT_NULL(action.request.HTTPBody);
+        if ([action.request.URL.absoluteString isEqualToString:@"about:blank"])
+            completionHandler(WKNavigationActionPolicyAllow);
+        else {
+            EXPECT_WK_STREQ(action.request.URL.absoluteString, "/formAction");
+            completionHandler(WKNavigationActionPolicyCancel);
+            done = true;
+        }
+    };
+    [webView loadHTMLString:html baseURL:nil];
+    TestWebKitAPI::Util::run(&done);
 }

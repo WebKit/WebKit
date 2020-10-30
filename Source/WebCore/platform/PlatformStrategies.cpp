@@ -30,6 +30,11 @@ namespace WebCore {
 
 static PlatformStrategies* s_platformStrategies;
 
+bool hasPlatformStrategies()
+{
+    return !!s_platformStrategies;
+}
+
 PlatformStrategies* platformStrategies()
 {
     ASSERT(s_platformStrategies);
