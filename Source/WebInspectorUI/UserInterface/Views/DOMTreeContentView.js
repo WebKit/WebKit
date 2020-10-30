@@ -500,7 +500,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         if (!this._pendingBreakpointNodes.delete(node))
             return;
 
-        this._updateBreakpointStatus(node.id);
+        this._updateBreakpointStatus(node);
     }
 
     _domTreeSelectionDidChange(event)
