@@ -64,12 +64,13 @@ void RenderTextControl::styleDidChange(StyleDifference diff, const RenderStyle* 
     if (!innerText)
         return;
     RenderTextControlInnerBlock* innerTextRenderer = innerText->renderer();
-    if (innerTextRenderer) {
-        // We may have set the width and the height in the old style in layout().
-        // Reset them now to avoid getting a spurious layout hint.
-        innerTextRenderer->mutableStyle().setHeight(Length());
-        innerTextRenderer->mutableStyle().setWidth(Length());
-        innerTextRenderer->setStyle(textFormControlElement().createInnerTextStyle(style()));
+    if (innerTextRenderer && oldStyle) {
+        // FIXME: The height property of the inner text block style may be mutated by RenderTextControlSingleLine::layout.
+        // See if the original has changed before setting it and triggering a layout.
+        auto newInnerTextStyle = textFormControlElement().createInnerTextStyle(style());
+        auto oldInnerTextStyle = textFormControlElement().createInnerTextStyle(*oldStyle);
+        if (newInnerTextStyle != oldInnerTextStyle)
+            innerTextRenderer->setStyle(WTFMove(newInnerTextStyle));
     }
     textFormControlElement().updatePlaceholderVisibility();
 }
