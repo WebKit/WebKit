@@ -49,7 +49,7 @@ FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES = $(WebCore)/DerivedSources.make
 
 # --------
 
-JS_BINDING_IDLS = \
+JS_BINDING_IDLS := \
     $(WebCore)/Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl \
     $(WebCore)/Modules/applepay/ApplePayCancelEvent.idl \
     $(WebCore)/Modules/applepay/ApplePayContactField.idl \
@@ -316,13 +316,13 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/speech/SpeechSynthesisEvent.idl \
     $(WebCore)/Modules/speech/SpeechSynthesisUtterance.idl \
     $(WebCore)/Modules/speech/SpeechSynthesisVoice.idl \
-	$(WebCore)/Modules/speech/SpeechRecognition.idl \
-	$(WebCore)/Modules/speech/SpeechRecognitionAlternative.idl \
-	$(WebCore)/Modules/speech/SpeechRecognitionErrorCode.idl \
-	$(WebCore)/Modules/speech/SpeechRecognitionErrorEvent.idl \
-	$(WebCore)/Modules/speech/SpeechRecognitionEvent.idl \
-	$(WebCore)/Modules/speech/SpeechRecognitionResult.idl \
-	$(WebCore)/Modules/speech/SpeechRecognitionResultList.idl \
+    $(WebCore)/Modules/speech/SpeechRecognition.idl \
+    $(WebCore)/Modules/speech/SpeechRecognitionAlternative.idl \
+    $(WebCore)/Modules/speech/SpeechRecognitionErrorCode.idl \
+    $(WebCore)/Modules/speech/SpeechRecognitionErrorEvent.idl \
+    $(WebCore)/Modules/speech/SpeechRecognitionEvent.idl \
+    $(WebCore)/Modules/speech/SpeechRecognitionResult.idl \
+    $(WebCore)/Modules/speech/SpeechRecognitionResultList.idl \
     $(WebCore)/Modules/streams/ByteLengthQueuingStrategy.idl \
     $(WebCore)/Modules/streams/CountQueuingStrategy.idl \
     $(WebCore)/Modules/streams/ReadableByteStreamController.idl \
@@ -1296,38 +1296,40 @@ ADDITIONAL_EVENT_TARGET_FACTORY =
 
 -include WebCoreDerivedSourcesAdditions.make
 
-# Convert the IDLs in ADDITIONAL_BINDING_IDLS -- which are just bare names
-# -- into full paths. We want to look for the IDL files in the set of paths
-# given in ADDITIONAL_BINDING_IDLS_PATHS, preferring the order in which the
-# paths are specified.
+# Convert the "bare" IDL names in ADDITIONAL_BINDING_IDLS to full paths by
+# looking for those files in the expected locations: in /usr/local/include in
+# the build output directory, in /usr/local/include in the SDK, or in any of
+# the paths indicated in JS_BINDING_IDLS.
 #
-# We perform this conversions by taking each IDL from ADDITIONAL_BINDING_IDLS
-# in turn. For each one, prepend it with the paths in
-# ADDITIONAL_BINDING_IDLS_PATHS. Then pass those paths for that single IDL to
-# $(realpath) in order to evaluate their existence. Take the resulting list
-# (which should have 1..N items in it, depending on the number of directories
-# in ADDITIONAL_BINDING_IDLS_PATHS and the existence of the IDL file at each
-# location) and pick the first one. That will be the path we use for that IDL.
+# The first step is to get the paths of the IDL files in JS_BINDING_IDLS. We
+# take just the directory parts, convert them to something that has symlinks and
+# other non-canonical parts resolved, and then sort them (which removes
+# duplicates).
 #
-# Note that we don't want to find the IDL files by using `vpath`. Of necessity,
-# those facilities reference directories in $(WebCore) which also include IDL
-# files. We don't want to find any files listed in ADDITIONAL_BINDING_IDLS that
-# exist on those paths. So we go through the process of looking up the IDLs
-# along the desired set of paths ourselves.
+# Next we prepend the "bare" IDL names with the locations in
+# BUILD_PRODUCTS_DIR, SDKROOT, and the paths generated from JS_BINDING_IDLS
+# until we find each file. The resulting full path is added to JS_BINDING_IDLS.
 
-ADDITIONAL_BINDING_IDLS_PATHS = $(BUILT_PRODUCTS_DIR) $(SDKROOT)
+IDL_PATHS := $(sort $(foreach IDL_FILE, $(JS_BINDING_IDLS), $(realpath $(dir $(IDL_FILE)))))
+
+ADDITIONAL_BINDING_IDLS_PATHS = \
+    $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions \
+    $(SDKROOT)/usr/local/include/WebKitAdditions \
+    $(IDL_PATHS)
+
 JS_BINDING_IDLS += \
     $(foreach \
-        idl, \
+        IDL_FILE, \
         $(ADDITIONAL_BINDING_IDLS), \
         $(firstword $(realpath $(foreach \
-            path, \
+            IDL_PATH, \
             $(ADDITIONAL_BINDING_IDLS_PATHS), \
-            $(path)/usr/local/include/WebKitAdditions/$(idl)))))
+            $(IDL_PATH)/$(IDL_FILE)))))
 
 .PHONY : all
 
-JS_DOM_CLASSES=$(basename $(notdir $(JS_BINDING_IDLS)))
+get_bare_name = $(basename $(notdir $(1)))
+JS_DOM_CLASSES=$(call get_bare_name,$(JS_BINDING_IDLS))
 
 JS_DOM_HEADERS=$(filter-out JSEventListener.h, $(JS_DOM_CLASSES:%=JS%.h))
 JS_DOM_IMPLEMENTATIONS=$(filter-out JSEventListener.cpp, $(JS_DOM_CLASSES:%=JS%.cpp))
@@ -1661,7 +1663,7 @@ GENERATE_SETTINGS_TEMPLATES = \
     $(WebCore)/Scripts/SettingsTemplates/Settings.cpp.erb \
     $(WebCore)/Scripts/SettingsTemplates/Settings.h.erb \
 #
-GENERATE_SETTINGS_FILES = $(basename $(notdir $(GENERATE_SETTINGS_TEMPLATES)))
+GENERATE_SETTINGS_FILES = $(call get_bare_name,$(GENERATE_SETTINGS_TEMPLATES))
 GENERATE_SETTINGS_PATTERNS = $(subst .,%,$(GENERATE_SETTINGS_FILES))
 
 all : $(GENERATE_SETTINGS_FILES)
@@ -1697,28 +1699,7 @@ PREPROCESS_IDLS_SCRIPTS = \
 
 IDL_INCLUDES = \
     $(WebCore)/Modules \
-    $(WebCore)/accessibility \
-    $(WebCore)/animation \
-    $(WebCore)/css \
-    $(WebCore)/css/typedom \
-    $(WebCore)/crypto \
-    $(WebCore)/dom \
-    $(WebCore)/fileapi \
-    $(WebCore)/html \
-    $(WebCore)/html/canvas \
-    $(WebCore)/html/shadow \
-    $(WebCore)/html/track \
-    $(WebCore)/inspector \
-    $(WebCore)/loader/appcache \
-    $(WebCore)/mathml \
-    $(WebCore)/page \
-    $(WebCore)/plugins \
-    $(WebCore)/storage \
-    $(WebCore)/svg \
-    $(WebCore)/testing \
-    $(WebCore)/workers \
-    $(WebCore)/worklets \
-    $(WebCore)/xml
+    $(IDL_PATHS)
 
 IDL_COMMON_ARGS = $(IDL_INCLUDES:%=--include %) --write-dependencies --outputDir .
 
@@ -1754,22 +1735,66 @@ $(IDL_INTERMEDIATE_PATTERNS) : $(PREPROCESS_IDLS_SCRIPTS) $(IDL_ATTRIBUTES_FILE)
 	$(shell echo $(JS_BINDING_IDLS) | tr " " "\n" > IDLFileNamesList.txt)
 	$(PERL) $(WebCore)/bindings/scripts/preprocess-idls.pl --defines "$(FEATURE_AND_PLATFORM_DEFINES) LANGUAGE_JAVASCRIPT" --idlFileNamesList IDLFileNamesList.txt --idlAttributesFile $(IDL_ATTRIBUTES_FILE) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) --isoSubspacesHeaderFile $(ISO_SUBSPACES_HEADER_FILE) --windowConstructorsFile $(WINDOW_CONSTRUCTORS_FILE) --workerGlobalScopeConstructorsFile $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --dedicatedWorkerGlobalScopeConstructorsFile $(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --serviceWorkerGlobalScopeConstructorsFile $(SERVICEWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --workletGlobalScopeConstructorsFile $(WORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) --paintWorkletGlobalScopeConstructorsFile $(PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) --audioWorkletGlobalScopeConstructorsFile $(AUDIOWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) --supplementalMakefileDeps $(SUPPLEMENTAL_MAKEFILE_DEPS)
 
-# The "JS%.cpp JS%.h : %.idl ..." rule takes IDL files from a number of
-# locations and compiles them into header and implementation files in one
-# single location. In order for the pattern matching to work, `vpath` needs to
-# be set up to find all of these IDL files, no matter where they are. To build
-# up `vpath`, take the set of IDL files and extract their directory
-# components. When doing this, make sure that the paths containing
-# WebKitAdditions appear first so that they can override the standard IDL
-# files.
+#
+# Emit the rules to generate bindings from IDL files. Note that there are
+# several scenarios we need to support:
+#
+# * Files such as GestureEvent.idl can be provided by some facility external to
+#   the WebKit repository. The file can be made available by appearing in
+#   BUILT_PRODUCTS_DIR or SDKROOT. If found in either of those locations, the
+#   file will be used, otherwise, there will be no GestureEvent facility.
+#
+# * Files such as TouchEvent.idl can also be found in BUILT_PRODUCTS_DIR or
+#   SDKROOT. However, there is also a version of the file in WebCore/dom. If
+#   the file can't be found in either of the first two locations, the version
+#   in WebCore/dom will be used.
+#
+# * Files such as ApplePaySetup.idl used to be provided externally in
+#   BUILT_PRODUCTS_DIR or SDKROOT, but are now "upstreamed" into
+#   WebCore/Modules/applepay. Because they were previously found in SDKROOT,
+#   building against old SDKs will cause the build system to be exposed to old,
+#   out-of-date versions of ApplePaySetup.idl. In these cases, we want to
+#   *ignore* the externally-provided versions and use the versions found in
+#   WebCore.
+#
+# To build the IDL files, we used to have a rule like the following:
+#
+#   JS%.cpp JS%.h : %.idl ...
+#       ...
+#
+# This rule made use of vpath to find the %.idl files in all their myriad
+# locations. However, because of the three scenarios previously outlined, that
+# approach is problematic. In some cases, we want to prefer the files in
+# BUILT_PRODUCTS_DIR or SDKROOT over those in WebCore. In other cases, it's the
+# other way around. So we can't use vpath to find the files indicated by %.idl.
+#
+# Instead, since the IDL files come from many different sources, we need a
+# separate rule for each one, with each rule incorporating the full path of the
+# file. Fortunately, we can do this pretty simply with the $(foreach) function.
+#
+# All that said, we do still need to invoke vpath. There are some
+# auto-generated dependency files (such as SupplementalDependencies.dep) that
+# generate file information without paths, and those still need to benefit from
+# setting search paths with vpath.
 
-IDL_VPATH = $(sort $(foreach f,$(JS_BINDING_IDLS),$(realpath $(dir $(f)))))
-OVERRIDE_IDL_VPATH = $(filter %WebKitAdditions,$(IDL_VPATH))
-STANDARD_IDL_VPATH = $(filter-out %WebKitAdditions,$(IDL_VPATH))
-vpath %.idl $(OVERRIDE_IDL_VPATH) $(STANDARD_IDL_VPATH)
+vpath %.idl $(IDL_PATHS) $(WebCore)/bindings/scripts
 
-JS%.cpp JS%.h : %.idl $(JS_BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(IDL_INTERMEDIATE_FILES) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
-	$(PERL) $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_COMMON_ARGS) --defines "$(FEATURE_AND_PLATFORM_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --idlAttributesFile $(IDL_ATTRIBUTES_FILE) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) $<
+# -------------------------------------------------
+define GENERATE_BINDINGS_template
+
+JS$(call get_bare_name,$(1)).cpp JS$(call get_bare_name,$(1)).h: $(1) $$(JS_BINDINGS_SCRIPTS) $$(IDL_ATTRIBUTES_FILE) $$(IDL_INTERMEDIATE_FILES) $$(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+	$$(PERL) $$(WebCore)/bindings/scripts/generate-bindings.pl \
+		$$(IDL_COMMON_ARGS) \
+		--defines "$$(FEATURE_AND_PLATFORM_DEFINES) LANGUAGE_JAVASCRIPT" \
+		--generator JS \
+		--idlAttributesFile $$(IDL_ATTRIBUTES_FILE) \
+		--supplementalDependencyFile $$(SUPPLEMENTAL_DEPENDENCY_FILE) \
+		$$<
+
+endef
+# -------------------------------------------------
+
+$(foreach IDL_FILE,$(JS_BINDING_IDLS),$(eval $(call GENERATE_BINDINGS_template,$(IDL_FILE))))
 
 ifneq ($(NO_SUPPLEMENTAL_FILES),1)
 -include $(SUPPLEMENTAL_MAKEFILE_DEPS)
@@ -1852,7 +1877,7 @@ WebCore_BUILTINS_DEPENDENCIES_LIST : $(JavaScriptCore_SCRIPTS_DIR)/UpdateContent
 $(WebCore_BUILTINS_WRAPPERS_PATTERNS) : $(WebCore_BUILTINS_SOURCES) WebCore_BUILTINS_SOURCES_LIST $(BUILTINS_GENERATOR_SCRIPTS) WebCore_BUILTINS_DEPENDENCIES_LIST
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins.py --wrappers-only --output-directory . --framework WebCore $(WebCore_BUILTINS_SOURCES)
 
-# See comments for IDL_VPATH for a description of what this is for.
+# See comments for IDL_PATHS for a description of what this is for.
 vpath %.js $(sort $(foreach f,$(WebCore_BUILTINS_SOURCES),$(realpath $(dir $(f)))))
 
 %Builtins.h: %.js $(BUILTINS_GENERATOR_SCRIPTS) WebCore_BUILTINS_DEPENDENCIES_LIST
