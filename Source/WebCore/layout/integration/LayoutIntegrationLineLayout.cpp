@@ -216,6 +216,7 @@ void LineLayout::constructContent()
 
     auto constructDisplayLine = [&] {
         auto& lines = m_inlineFormattingState.lines();
+        auto& lineBoxes = m_inlineFormattingState.lineBoxes();
         auto& runs = displayInlineContent.runs;
         size_t runIndex = 0;
         for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
@@ -244,9 +245,23 @@ void LineLayout::constructContent()
             auto lineRect = FloatRect { line.logicalRect() };
             // Painting code (specifically TextRun's xPos) needs the line box offset to be able to compute tab positions.
             lineRect.setX(lineBoxLogicalRect.left());
-            if (lineNeedsLegacyIntegralVerticalPosition(lineIndex))
+            auto enclosingLineRect = [&] {
+                // Let's (vertically)enclose all the inline level boxes.
+                // This mostly matches 'lineRect', unless line-height triggers line box overflow (not to be confused with ink or scroll overflow).
+                auto enclosingRect = lineRect;
+                auto& lineBox = lineBoxes[lineIndex];
+                for (auto& inlineLevelBox : lineBox.inlineLevelBoxList()) {
+                    auto inlineLevelBoxLogicalRect = lineBox.logicalRectForInlineLevelBox(inlineLevelBox->layoutBox());
+                    enclosingRect.setY(std::min(enclosingRect.y(), inlineLevelBoxLogicalRect.top()));
+                    enclosingRect.shiftMaxYEdgeTo(std::max(enclosingRect.maxY(), inlineLevelBoxLogicalRect.bottom()));
+                }
+                return enclosingRect;
+            }();
+            if (lineNeedsLegacyIntegralVerticalPosition(lineIndex)) {
                 lineRect.setY(roundToInt(lineRect.y()));
-            displayInlineContent.lines.append({ firstRunIndex, runCount, lineRect, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.horizontalAlignmentOffset() });
+                enclosingLineRect.setY(roundToInt(enclosingLineRect.y()));
+            }
+            displayInlineContent.lines.append({ firstRunIndex, runCount, lineRect, enclosingLineRect, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.horizontalAlignmentOffset() });
         }
     };
     constructDisplayLine();

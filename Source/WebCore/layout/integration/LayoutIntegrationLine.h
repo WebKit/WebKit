@@ -35,10 +35,11 @@ namespace LayoutIntegration {
 class Line {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Line(size_t firstRunIndex, size_t runCount, const FloatRect& rect, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, float horizontalAlignmentOffset)
+    Line(size_t firstRunIndex, size_t runCount, const FloatRect& rect, const FloatRect& enclosingRect, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, float horizontalAlignmentOffset)
         : m_firstRunIndex(firstRunIndex)
         , m_runCount(runCount)
         , m_rect(rect)
+        , m_enclosingRect(enclosingRect)
         , m_scrollableOverflow(scrollableOverflow)
         , m_inkOverflow(inkOverflow)
         , m_baseline(baseline)
@@ -49,6 +50,7 @@ public:
     size_t firstRunIndex() const { return m_firstRunIndex; }
     size_t runCount() const { return m_runCount; }
     const FloatRect& rect() const { return m_rect; }
+    const FloatRect& enclosingRect() const { return m_enclosingRect; }
     const FloatRect& scrollableOverflow() const { return m_scrollableOverflow; }
     const FloatRect& inkOverflow() const { return m_inkOverflow; }
     float baseline() const { return m_baseline; }
@@ -58,6 +60,8 @@ private:
     size_t m_firstRunIndex { 0 };
     size_t m_runCount { 0 };
     FloatRect m_rect;
+    // Enclosing rect fully encloses all the inline level boxes on the line.
+    FloatRect m_enclosingRect;
     FloatRect m_scrollableOverflow;
     FloatRect m_inkOverflow;
     float m_baseline { 0 };

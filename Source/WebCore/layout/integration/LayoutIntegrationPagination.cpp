@@ -130,6 +130,7 @@ static Ref<InlineContent> makeAdjustedContent(const InlineContent& inlineContent
             line.firstRunIndex(),
             line.runCount(),
             moveVertically(line.rect(), offset),
+            moveVertically(line.rect(), offset),
             moveVertically(line.scrollableOverflow(), offset),
             moveVertically(line.inkOverflow(), offset),
             line.baseline(),
