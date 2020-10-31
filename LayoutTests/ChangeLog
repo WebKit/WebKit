@@ -1,3 +1,12 @@
+2020-10-30  Karl Rackler  <rackler@apple.com>
+
+        REGRESSION (r268958): [ Big Sur ] fast/forms/basic-inputs.html is a constant failure
+        rdar://70904424
+
+        Unreviewed test gardening.
+
+        * platform/mac/fast/forms/basic-inputs-expected.txt:
+
 2020-10-30  Brian Burg  <bburg@apple.com>
 
         Web Inspector: move InspectorFrontendAPIDispatcher to WebCore, clean up uses
