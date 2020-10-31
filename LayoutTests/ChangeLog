@@ -1,3 +1,16 @@
+2020-10-31  Zalan Bujtas  <zalan@apple.com>
+
+        Remove unneeded whitespace between content and <br>
+        https://bugs.webkit.org/show_bug.cgi?id=218151
+        <rdar://problem/70662471>
+
+        Reviewed by Antti Koivisto.
+
+        Missed these files in r268958.
+
+        * editing/inserting/paragraph-separator-in-table-1.html:
+        * platform/mac/editing/inserting/paragraph-separator-in-table-1-expected.txt:
+
 2020-10-30  Karl Rackler  <rackler@apple.com>
 
         REGRESSION (r269070): [ Big Sur ] editing/input/reveal-caret-of-multiline-input.html is a constant failure
