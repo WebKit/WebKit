@@ -252,6 +252,8 @@ void LineLayout::constructContent()
                 auto& lineBox = lineBoxes[lineIndex];
                 for (auto& inlineLevelBox : lineBox.inlineLevelBoxList()) {
                     auto inlineLevelBoxLogicalRect = lineBox.logicalRectForInlineLevelBox(inlineLevelBox->layoutBox());
+                    // inlineLevelBoxLogicalRect is relative to the line.
+                    inlineLevelBoxLogicalRect.moveBy(lineRect.location());
                     enclosingRect.setY(std::min(enclosingRect.y(), inlineLevelBoxLogicalRect.top()));
                     enclosingRect.shiftMaxYEdgeTo(std::max(enclosingRect.maxY(), inlineLevelBoxLogicalRect.bottom()));
                 }

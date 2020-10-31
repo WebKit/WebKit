@@ -49,16 +49,16 @@ public:
     LineIteratorModernPath& operator=(const LineIteratorModernPath&) = default;
     LineIteratorModernPath& operator=(LineIteratorModernPath&&) = default;
 
-    LayoutUnit top() const { return LayoutUnit::fromFloatRound(line().rect().y()); }
-    LayoutUnit bottom() const { return LayoutUnit::fromFloatRound(line().rect().maxY()); }
+    LayoutUnit top() const { return LayoutUnit::fromFloatRound(line().enclosingRect().y()); }
+    LayoutUnit bottom() const { return LayoutUnit::fromFloatRound(line().enclosingRect().maxY()); }
     // FIXME: What should these really be?
-    LayoutUnit selectionTop() const { return top(); }
-    LayoutUnit selectionTopForHitTesting() const { return top(); }
-    LayoutUnit selectionBottom() const { return bottom(); }
-    LayoutUnit lineBoxTop() const { return top(); }
-    LayoutUnit lineBoxBottom() const { return bottom(); }
+    LayoutUnit selectionTop() const { return lineBoxTop(); }
+    LayoutUnit selectionTopForHitTesting() const { return lineBoxTop(); }
+    LayoutUnit selectionBottom() const { return lineBoxBottom(); }
+    LayoutUnit lineBoxTop() const { return LayoutUnit::fromFloatRound(line().rect().y()); }
+    LayoutUnit lineBoxBottom() const { return LayoutUnit::fromFloatRound(line().rect().maxY()); }
 
-    float y() const { return top(); }
+    float y() const { return lineBoxTop(); }
     float logicalHeight() const { return line().rect().height(); }
     bool isHorizontal() const { return true; }
 
