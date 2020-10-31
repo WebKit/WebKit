@@ -1,3 +1,12 @@
+2020-10-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix internal watchOS and tvOS builds after r269211
+        https://bugs.webkit.org/show_bug.cgi?id=217506
+
+        Unreviewed build fix.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+
 2020-10-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] [GPU Process] Perform image decoding of color fonts in the Web Process

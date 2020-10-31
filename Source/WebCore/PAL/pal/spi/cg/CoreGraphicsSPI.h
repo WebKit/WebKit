@@ -42,6 +42,7 @@
 #include <CoreGraphics/CGFontCache.h>
 #include <CoreGraphics/CGPathPrivate.h>
 #include <CoreGraphics/CoreGraphicsPrivate.h>
+#include <CoreGraphics/CGStylePrivate.h>
 
 #if PLATFORM(MAC)
 #include <ColorSync/ColorSyncPriv.h>
