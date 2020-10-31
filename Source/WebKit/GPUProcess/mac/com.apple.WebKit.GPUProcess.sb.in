@@ -173,6 +173,7 @@
         "kern.version"
         "machdep.cpu.brand_string"
         "security.mac.sandbox.sentinel"
+        "sysctl.name2oid"
         "kern.tcsm_enable"
         "kern.tcsm_available"
         "vm.footprint_suspend")

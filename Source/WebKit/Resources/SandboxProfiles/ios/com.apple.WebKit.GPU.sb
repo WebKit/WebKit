@@ -791,6 +791,7 @@
         "kern.osversion"
         "kern.secure_kernel"
         "kern.version"
+        "sysctl.name2oid"
         "vm.footprint_suspend"))
 
 (allow iokit-get-properties
