@@ -1,3 +1,3 @@
 
-FAIL startRendering() promise_rejects_dom: function "function () { throw e }" threw an exception from the wrong global
+PASS startRendering()
 

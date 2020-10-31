@@ -1,6 +1,4 @@
 
-Harness Error (FAIL), message = Unhandled rejection: FetchEvent.respondWith received an error: undefined
-
 PASS Verify FetchEvent for resources.
 PASS Image load (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test1 cross_origin:)
 PASS Image load (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test2 cross_origin:)

@@ -109,8 +109,8 @@ private:
         {
         }
 
-        void scheduleToRun() final { ASSERT_NOT_REACHED(); };
-        bool isContextThread() const final { return false; };
+        void scheduleToRun() final { ASSERT_NOT_REACHED(); }
+        bool isContextThread() const final { return true; }
 
         MicrotaskQueue m_queue;
     };

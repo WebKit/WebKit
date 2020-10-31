@@ -79,6 +79,10 @@ public:
     void resumeGroup(EventLoopTaskGroup&);
     void stopGroup(EventLoopTaskGroup&);
 
+    void registerGroup(EventLoopTaskGroup&);
+    void unregisterGroup(EventLoopTaskGroup&);
+    void stopAssociatedGroupsIfNecessary();
+
 protected:
     EventLoop() = default;
     void run();
@@ -91,6 +95,7 @@ private:
 
     // Use a global queue instead of multiple task queues since HTML5 spec allows UA to pick arbitrary queue.
     Vector<std::unique_ptr<EventLoopTask>> m_tasks;
+    WeakHashSet<EventLoopTaskGroup> m_associatedGroups;
     WeakHashSet<EventLoopTaskGroup> m_groupsWithSuspenedTasks;
     bool m_isScheduledToRun { false };
 };
@@ -103,6 +108,13 @@ public:
     EventLoopTaskGroup(EventLoop& eventLoop)
         : m_eventLoop(makeWeakPtr(eventLoop))
     {
+        eventLoop.registerGroup(*this);
+    }
+
+    ~EventLoopTaskGroup()
+    {
+        if (auto* eventLoop = m_eventLoop.get())
+            eventLoop->unregisterGroup(*this);
     }
 
     bool hasSameEventLoopAs(EventLoopTaskGroup& otherGroup)
@@ -117,8 +129,22 @@ public:
         return group == this;
     }
 
+    // Marks the group as ready to stop but it won't actually be stopped
+    // until all groups in this event loop are ready to stop.
+    void markAsReadyToStop()
+    {
+        if (isReadyToStop())
+            return;
+
+        m_state = State::ReadyToStop;
+        if (auto* eventLoop = m_eventLoop.get())
+            eventLoop->stopAssociatedGroupsIfNecessary();
+    }
+
+    // This gets called by the event loop when all groups in the EventLoop as ready to stop.
     void stopAndDiscardAllTasks()
     {
+        ASSERT(isReadyToStop());
         m_state = State::Stopped;
         if (auto* eventLoop = m_eventLoop.get())
             eventLoop->stopGroup(*this);
@@ -126,7 +152,8 @@ public:
 
     void suspend()
     {
-        ASSERT(m_state != State::Stopped);
+        ASSERT(!isStoppedPermanently());
+        ASSERT(!isReadyToStop());
         m_state = State::Suspended;
         // We don't remove suspended tasks to preserve the ordering.
         // EventLoop::run checks whether each task's group is suspended or not.
@@ -134,7 +161,8 @@ public:
 
     void resume()
     {
-        ASSERT(m_state != State::Stopped);
+        ASSERT(!isStoppedPermanently());
+        ASSERT(!isReadyToStop());
         m_state = State::Running;
         if (auto* eventLoop = m_eventLoop.get())
             eventLoop->resumeGroup(*this);
@@ -142,6 +170,7 @@ public:
 
     bool isStoppedPermanently() { return m_state == State::Stopped; }
     bool isSuspended() { return m_state == State::Suspended; }
+    bool isReadyToStop() const { return m_state == State::ReadyToStop; }
 
     void queueTask(std::unique_ptr<EventLoopTask>&&);
     WEBCORE_EXPORT void queueTask(TaskSource, EventLoop::TaskFunction&&);
@@ -154,7 +183,7 @@ public:
     void performMicrotaskCheckpoint();
 
 private:
-    enum class State : uint8_t { Running, Suspended, Stopped };
+    enum class State : uint8_t { Running, Suspended, ReadyToStop, Stopped };
 
     WeakPtr<EventLoop> m_eventLoop;
     State m_state { State::Running };

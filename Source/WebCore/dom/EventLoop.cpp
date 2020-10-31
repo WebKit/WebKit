@@ -59,6 +59,31 @@ void EventLoop::resumeGroup(EventLoopTaskGroup& group)
     scheduleToRunIfNeeded();
 }
 
+void EventLoop::registerGroup(EventLoopTaskGroup& group)
+{
+    ASSERT(isContextThread());
+    m_associatedGroups.add(group);
+}
+
+void EventLoop::unregisterGroup(EventLoopTaskGroup& group)
+{
+    ASSERT(isContextThread());
+    if (m_associatedGroups.remove(group))
+        stopAssociatedGroupsIfNecessary();
+}
+
+void EventLoop::stopAssociatedGroupsIfNecessary()
+{
+    ASSERT(isContextThread());
+    for (auto& group : m_associatedGroups) {
+        if (!group.isReadyToStop())
+            return;
+    }
+    auto associatedGroups = std::exchange(m_associatedGroups, { });
+    for (auto& group : associatedGroups)
+        group.stopAndDiscardAllTasks();
+}
+
 void EventLoop::stopGroup(EventLoopTaskGroup& group)
 {
     ASSERT(isContextThread());

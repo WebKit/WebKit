@@ -16,6 +16,11 @@ else {
     window.onload = runTest;
 }
 
+function enoughDocumentCollected()
+{
+    return initialCount + frameCount / 2 > internals.numberOfLiveDocuments();
+}
+
 function runTest() {
     window.initialCount = internals.numberOfLiveDocuments();
     window.frameCount = 20;
@@ -25,11 +30,10 @@ function runTest() {
         frame.contentWindow.requestIdleCallback(() => testFailed('idleCallback called too early'));
     }
     document.querySelectorAll('iframe').forEach((frame) => frame.remove());
-    setTimeout(() => {
+    setInterval(() => {
         GCController.collect();
-        shouldBeTrue('initialCount + frameCount / 2 > internals.numberOfLiveDocuments()');
-        finishJSTest();
-    }, 0);
+    }, 10);
+    shouldBecomeEqual("enoughDocumentCollected()", "true", finishJSTest);
 }
 
 </script>

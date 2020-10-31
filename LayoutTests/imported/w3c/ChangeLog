@@ -1,3 +1,24 @@
+2020-10-31  Chris Dumez  <cdumez@apple.com>
+
+        Promises returned by our DOM API have the caller's global instead of the callee's
+        https://bugs.webkit.org/show_bug.cgi?id=218363
+
+        Reviewed by Darin Adler and Ryosuke Niwa.
+
+        * web-platform-tests/fetch/range/sw.https.window.js:
+        Re-import latest version of the test from upstream. Without those upstream changes, there would be a testharness error
+        when running this test.
+
+        * web-platform-tests/html/cross-origin-embedder-policy/coep-on-response-from-service-worker.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/controller-with-no-fetch-event-handler.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-resources.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-response-taint.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/redirected-response.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/promise-methods-after-discard-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/startrendering-after-discard-expected.txt:
+        Rebaseline WPT tests that are now passing.
+
 2020-10-30  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/interfaces tests from upstream

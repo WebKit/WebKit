@@ -1,5 +1,5 @@
 
-FAIL suspend() promise_rejects_dom: function "function () { throw e }" threw an exception from the wrong global
-FAIL resume() promise_rejects_dom: function "function () { throw e }" threw an exception from the wrong global
-FAIL close() promise_rejects_dom: function "function () { throw e }" threw an exception from the wrong global
+PASS suspend()
+PASS resume()
+PASS close()
 

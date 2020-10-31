@@ -1,3 +1,38 @@
+2020-10-31  Chris Dumez  <cdumez@apple.com>
+
+        Promises returned by our DOM API have the caller's global instead of the callee's
+        https://bugs.webkit.org/show_bug.cgi?id=218363
+
+        Reviewed by Darin Adler and Ryosuke Niwa.
+
+        * fast/js-promise-from-detached-iframe-expected.txt: Added.
+        * fast/js-promise-from-detached-iframe.html: Added.
+        Add layout test to verify that JS promises from iframes properly get settled after the
+        the iframe gets removed from the doucment. I have verified that this test passes in
+        both Firefox and Chrome.
+
+        * http/tests/eventloop/promise-from-cross-origin-detached-iframe-expected.txt: Added.
+        * http/tests/eventloop/promise-from-cross-origin-detached-iframe.html: Added.
+        * http/tests/eventloop/resources/promise-from-cross-origin-detached-iframe-subframe.html: Added.
+        Similar test as above but in a cross-origin iframe. Ryosuke recommended adding this test
+        since event loops only shared between documents of similar origins. I have verified that this
+        test passes in both Firefox and Chrome.
+
+        * platform/mac/editing/input/reveal-caret-of-multiline-input-expected.txt:
+        Rebaseline existing test that has slightly different output.
+
+        * requestidlecallback/requestidlecallback-document-gc-expected.txt:
+        * requestidlecallback/requestidlecallback-document-gc.html:
+        Tweak test to check that enough documents are gc's at regular intervals, instead of expecting
+        them to be collected in a 0-timer.
+
+        * webaudio/promise-global-object-expected.txt: Added.
+        * webaudio/promise-global-object.html: Added.
+        Add test to verify that the global object of the promise is correct when the promise comes
+        from calling a DOM API in an subframe. Previously, we would incorrectly use the caller's
+        global instead of the callee's global. I have verified that this test passes in both Firefox
+        and Chrome.
+
 2020-10-31  Sam Weinig  <weinig@apple.com>
 
         Remove all remaining testRunner.overridePreference calls

@@ -176,7 +176,7 @@ private:
     {
     }
 
-    bool shouldIgnoreRequestToFulfill() const { return isEmpty() || activeDOMObjectAreStopped(); }
+    bool shouldIgnoreRequestToFulfill() const { return isEmpty(); }
 
     JSC::JSPromise* deferred() const { return guarded(); }
 
@@ -314,7 +314,7 @@ inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject
     JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
-    auto& globalObject = callerGlobalObject(lexicalGlobalObject, callFrame);
+    auto& globalObject = *JSC::jsSecureCast<JSDOMGlobalObject*>(vm, &lexicalGlobalObject);
     auto* promise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
     ASSERT(promise);
 
@@ -333,7 +333,7 @@ inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject
     JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
-    auto& globalObject = callerGlobalObject(lexicalGlobalObject, callFrame);
+    auto& globalObject = *JSC::jsSecureCast<JSDOMGlobalObject*>(vm, &lexicalGlobalObject);
     auto* promise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
     ASSERT(promise);
 

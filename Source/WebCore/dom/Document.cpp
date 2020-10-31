@@ -2712,7 +2712,7 @@ void Document::resumeActiveDOMObjects(ReasonForSuspension why)
 void Document::stopActiveDOMObjects()
 {
     if (m_documentTaskGroup)
-        m_documentTaskGroup->stopAndDiscardAllTasks();
+        m_documentTaskGroup->markAsReadyToStop();
     ScriptExecutionContext::stopActiveDOMObjects();
     platformSuspendOrStopActiveDOMObjects();
 }
@@ -6370,7 +6370,7 @@ EventLoopTaskGroup& Document::eventLoop()
     if (UNLIKELY(!m_documentTaskGroup)) {
         m_documentTaskGroup = makeUnique<EventLoopTaskGroup>(windowEventLoop());
         if (activeDOMObjectsAreStopped())
-            m_documentTaskGroup->stopAndDiscardAllTasks();
+            m_documentTaskGroup->markAsReadyToStop();
         else if (activeDOMObjectsAreSuspended())
             m_documentTaskGroup->suspend();
     }

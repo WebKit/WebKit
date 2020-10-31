@@ -1,0 +1,11 @@
+Test that the promise return by startRendering() is from the right global
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS promise.constructor is not window.Promise
+PASS promise.constructor is frame.contentWindow.Promise
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

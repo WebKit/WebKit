@@ -153,7 +153,13 @@ public:
         --m_object.m_pendingActivityInstanceCount;
     }
 
-    void execute() final { m_target->dispatchEvent(m_event.get()); }
+    void execute() final
+    {
+        // If this task executes after the script execution context has been stopped, don't
+        // actually dispatch the event.
+        if (m_object.isAllowedToRunScript())
+            m_target->dispatchEvent(m_event.get());
+    }
 
 private:
     ActiveDOMObject& m_object;

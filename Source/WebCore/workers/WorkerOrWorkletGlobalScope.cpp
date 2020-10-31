@@ -48,8 +48,10 @@ WorkerOrWorkletGlobalScope::~WorkerOrWorkletGlobalScope() = default;
 
 void WorkerOrWorkletGlobalScope::prepareForDestruction()
 {
-    if (m_defaultTaskGroup)
-        m_defaultTaskGroup->stopAndDiscardAllTasks();
+    if (m_defaultTaskGroup) {
+        m_defaultTaskGroup->markAsReadyToStop();
+        ASSERT(m_defaultTaskGroup->isStoppedPermanently());
+    }
 
     stopActiveDOMObjects();
 
