@@ -87,9 +87,9 @@ public:
         bool isEmpty() const { return m_isEmpty; }
         void setIsNonEmpty() { m_isEmpty = false; }
 
-        const FontMetrics& fontMetrics() const { return layoutBox().style().fontMetrics(); }
         VerticalAlign verticalAlign() const { return layoutBox().style().verticalAlign(); }
         const Box& layoutBox() const { return *m_layoutBox; }
+        const RenderStyle& style() const { return m_layoutBox->style(); }
 
         bool isInlineBox() const { return m_type == Type::InlineBox || m_type == Type::RootInlineBox; }
         bool isRootInlineBox() const { return m_type == Type::RootInlineBox; }

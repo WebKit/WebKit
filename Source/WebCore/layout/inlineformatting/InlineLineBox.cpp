@@ -86,7 +86,7 @@ InlineRect LineBox::logicalRectForTextRun(const Line::Run& run) const
     ASSERT(run.isText() || run.isLineBreak());
     auto* parentInlineBox = &inlineLevelBoxForLayoutBox(run.layoutBox().parent());
     ASSERT(parentInlineBox->isInlineBox());
-    auto& fontMetrics = parentInlineBox->fontMetrics();
+    auto& fontMetrics = parentInlineBox->style().fontMetrics();
     auto runlogicalTop = parentInlineBox->logicalTop() + parentInlineBox->baseline() - fontMetrics.ascent();
 
     while (parentInlineBox != m_rootInlineBox.get() && !parentInlineBox->hasLineBoxRelativeAlignment()) {
@@ -103,11 +103,12 @@ InlineRect LineBox::logicalRectForInlineLevelBox(const Box& layoutBox) const
     auto* inlineBox = &inlineLevelBoxForLayoutBox(layoutBox);
     auto inlineBoxLogicalRect = inlineBox->logicalRect();
     auto inlineBoxAbsolutelogicalTop = inlineBox->logicalTop();
-
-    while (inlineBox != m_rootInlineBox.get() && !inlineBox->hasLineBoxRelativeAlignment()) {
-        inlineBox = &inlineLevelBoxForLayoutBox(inlineBox->layoutBox().parent());
-        ASSERT(inlineBox->isInlineBox());
-        inlineBoxAbsolutelogicalTop += inlineBox->logicalTop();
+    if (!inlineBox->hasLineBoxRelativeAlignment()) {
+        while (inlineBox != m_rootInlineBox.get() && !inlineBox->hasLineBoxRelativeAlignment()) {
+            inlineBox = &inlineLevelBoxForLayoutBox(inlineBox->layoutBox().parent());
+            ASSERT(inlineBox->isInlineBox());
+            inlineBoxAbsolutelogicalTop += inlineBox->logicalTop();
+        }
     }
     return { inlineBoxAbsolutelogicalTop, inlineBoxLogicalRect.left(), inlineBoxLogicalRect.width(), inlineBoxLogicalRect.height() };
 }
