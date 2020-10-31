@@ -47,14 +47,15 @@ using namespace Inspector;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WorkletGlobalScope);
 
+static std::atomic<unsigned> gNumberOfWorkletGlobalScopes { 0 };
+
 WorkletGlobalScope::WorkletGlobalScope(WorkerOrWorkletThread& thread, const WorkletParameters& parameters)
     : WorkerOrWorkletGlobalScope(JSC::VM::create(), &thread)
     , m_topOrigin(SecurityOrigin::createUnique())
     , m_url(parameters.windowURL)
     , m_jsRuntimeFlags(parameters.jsRuntimeFlags)
 {
-    auto addResult = allWorkletGlobalScopesSet().add(this);
-    ASSERT_UNUSED(addResult, addResult);
+    ++gNumberOfWorkletGlobalScopes;
 
     setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::create(this->url())));
     setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { this->url() }, *this));
@@ -68,8 +69,7 @@ WorkletGlobalScope::WorkletGlobalScope(Document& document, Ref<JSC::VM>&& vm, Sc
     , m_jsRuntimeFlags(document.settings().javaScriptRuntimeFlags())
     , m_code(WTFMove(code))
 {
-    auto addResult = allWorkletGlobalScopesSet().add(this);
-    ASSERT_UNUSED(addResult, addResult);
+    ++gNumberOfWorkletGlobalScopes;
 
     ASSERT(document.page());
 
@@ -81,8 +81,13 @@ WorkletGlobalScope::~WorkletGlobalScope()
 {
     ASSERT(!script());
     removeFromContextsMap();
-    auto removeResult = allWorkletGlobalScopesSet().remove(this);
-    ASSERT_UNUSED(removeResult, removeResult);
+    ASSERT(gNumberOfWorkletGlobalScopes);
+    --gNumberOfWorkletGlobalScopes;
+}
+
+unsigned WorkletGlobalScope::numberOfWorkletGlobalScopes()
+{
+    return gNumberOfWorkletGlobalScopes;
 }
 
 void WorkletGlobalScope::prepareForDestruction()
@@ -93,12 +98,6 @@ void WorkletGlobalScope::prepareForDestruction()
         script()->vm().notifyNeedTermination();
         clearScript();
     }
-}
-
-auto WorkletGlobalScope::allWorkletGlobalScopesSet() -> WorkletGlobalScopesSet&
-{
-    static NeverDestroyed<WorkletGlobalScopesSet> scopes;
-    return scopes;
 }
 
 String WorkletGlobalScope::userAgent(const URL& url) const

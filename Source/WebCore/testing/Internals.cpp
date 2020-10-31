@@ -2679,11 +2679,7 @@ uint64_t Internals::pageIdentifier(const Document& document) const
 
 bool Internals::isAnyWorkletGlobalScopeAlive() const
 {
-#if ENABLE(CSS_PAINTING_API)
-    return !WorkletGlobalScope::allWorkletGlobalScopesSet().isEmpty();
-#else
-    return false;
-#endif
+    return WorkletGlobalScope::numberOfWorkletGlobalScopes();
 }
 
 String Internals::serviceWorkerClientIdentifier(const Document& document) const

@@ -59,15 +59,14 @@ class WorkletGlobalScope : public WorkerOrWorkletGlobalScope, public WorkerScrip
 public:
     virtual ~WorkletGlobalScope();
 
-    using WorkletGlobalScopesSet = HashSet<const WorkletGlobalScope*>;
-    WEBCORE_EXPORT static WorkletGlobalScopesSet& allWorkletGlobalScopesSet();
-
 #if ENABLE(CSS_PAINTING_API)
     virtual bool isPaintWorkletGlobalScope() const { return false; }
 #endif
 #if ENABLE(WEB_AUDIO)
     virtual bool isAudioWorkletGlobalScope() const { return false; }
 #endif
+
+    WEBCORE_EXPORT static unsigned numberOfWorkletGlobalScopes();
 
     MessagePortChannelProvider& messagePortChannelProvider();
 
