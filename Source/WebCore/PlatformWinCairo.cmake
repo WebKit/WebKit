@@ -22,6 +22,8 @@ list(APPEND WebCore_SOURCES
     platform/graphics/GLContext.cpp
     platform/graphics/PlatformDisplay.cpp
 
+    platform/graphics/displaylists/DisplayListDrawGlyphsRecorderHarfBuzz.cpp
+
     platform/graphics/win/FontCustomPlatformDataCairo.cpp
     platform/graphics/win/FontPlatformDataCairoWin.cpp
     platform/graphics/win/GlyphPageTreeNodeCairoWin.cpp

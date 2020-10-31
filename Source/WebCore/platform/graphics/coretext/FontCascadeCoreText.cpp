@@ -41,6 +41,50 @@
 
 namespace WebCore {
 
+static const AffineTransform& rotateLeftTransform()
+{
+    static AffineTransform result(0, -1, 1, 0, 0, 0);
+    return result;
+}
+
+AffineTransform computeOverallTextMatrix(const Font& font)
+{
+    auto& platformData = font.platformData();
+    AffineTransform result;
+    if (!platformData.isColorBitmapFont())
+        result = CTFontGetMatrix(platformData.ctFont());
+    result.setB(-result.b());
+    result.setD(-result.d());
+    if (platformData.syntheticOblique()) {
+        float obliqueSkew = tanf(deg2rad(FontCascade::syntheticObliqueAngle()));
+        if (platformData.orientation() == FontOrientation::Vertical) {
+            if (font.isTextOrientationFallback())
+                result = AffineTransform(1, obliqueSkew, 0, 1, 0, 0) * result;
+            else
+                result = AffineTransform(1, -obliqueSkew, 0, 1, 0, 0) * result;
+        } else
+            result = AffineTransform(1, 0, -obliqueSkew, 1, 0, 0) * result;
+    }
+
+    // We're emulating the behavior of CGContextSetTextPosition() by adding constant amounts to each glyph's position
+    // (see fillVectorWithHorizontalGlyphPositions() and fillVectorWithVerticalGlyphPositions()).
+    // CGContextSetTextPosition() has the side effect of clobbering the E and F fields of the text matrix,
+    // so we do that explicitly here.
+    result.setE(0);
+    result.setF(0);
+    return result;
+}
+
+AffineTransform computeVerticalTextMatrix(const Font& font, const AffineTransform& previousTextMatrix)
+{
+    ASSERT_UNUSED(font, font.platformData().orientation() == FontOrientation::Vertical);
+    // The translation here ("e" and "f" fields) are irrelevant, because
+    // this matrix is inverted in fillVectorWithVerticalGlyphPositions to place the glyphs in the CTM's coordinate system.
+    // All we're trying to do here is rotate the text matrix so glyphs appear visually upright.
+    // We have to include the previous text matrix because it includes things like synthetic oblique.
+    return rotateLeftTransform() * previousTextMatrix;
+}
+
 #if !PLATFORM(WIN)
 
 // Confusingly, even when CGFontRenderingGetFontSmoothingDisabled() returns true, CGContextSetShouldSmoothFonts() still impacts text
@@ -61,14 +105,16 @@ bool FontCascade::isSubpixelAntialiasingAvailable()
 #endif
 }
 
-static const AffineTransform& rotateLeftTransform()
-{
-    static AffineTransform result(0, -1, 1, 0, 0, 0);
-    return result;
-}
-
 void fillVectorWithHorizontalGlyphPositions(Vector<CGPoint, 256>& positions, CGContextRef context, const CGSize* advances, unsigned count, const FloatPoint& point)
 {
+    // The input positions are in the context's coordinate system, without the text matrix.
+    // However, the positions that CT/CG accept are in the text matrix's coordinate system.
+    // CGContextGetTextMatrix() gives us the matrix that maps from text's coordinate system to the context's (non-text) coordinate system.
+    // We need to figure out what to deliver CT, inside the text's coordinate system, such that it ends up coincident with the input in the context's coordinate system.
+    //
+    // CTM * text matrix * positions we need to deliver to CT = CTM * input positions
+    // Solving for the positions we need to deliver to CT, we get
+    // positions we need to deliver to CT = inverse(text matrix) * input positions
     CGAffineTransform matrix = CGAffineTransformInvert(CGContextGetTextMatrix(context));
     positions[0] = CGPointApplyAffineTransform(point, matrix);
     for (unsigned i = 1; i < count; ++i) {
@@ -135,44 +181,6 @@ static void setCGFontRenderingMode(GraphicsContext& context)
 
     CGContextSetShouldSubpixelPositionFonts(cgContext, true);
     CGContextSetShouldSubpixelQuantizeFonts(cgContext, doSubpixelQuantization);
-}
-
-AffineTransform computeOverallTextMatrix(const Font& font)
-{
-    auto& platformData = font.platformData();
-    AffineTransform result;
-    if (!platformData.isColorBitmapFont())
-        result = CTFontGetMatrix(platformData.font());
-    result.setB(-result.b());
-    result.setD(-result.d());
-    if (platformData.syntheticOblique()) {
-        float obliqueSkew = tanf(deg2rad(FontCascade::syntheticObliqueAngle()));
-        if (platformData.orientation() == FontOrientation::Vertical) {
-            if (font.isTextOrientationFallback())
-                result = AffineTransform(1, obliqueSkew, 0, 1, 0, 0) * result;
-            else
-                result = AffineTransform(1, -obliqueSkew, 0, 1, 0, 0) * result;
-        } else
-            result = AffineTransform(1, 0, -obliqueSkew, 1, 0, 0) * result;
-    }
-
-    // We're emulating the behavior of CGContextSetTextPosition() by adding constant amounts to each glyph's position
-    // (see fillVectorWithHorizontalGlyphPositions() and fillVectorWithVerticalGlyphPositions()).
-    // CGContextSetTextPosition() has the side effect of clobbering the E and F fields of the text matrix,
-    // so we do that explicitly here.
-    result.setE(0);
-    result.setF(0);
-    return result;
-}
-
-AffineTransform computeVerticalTextMatrix(const Font& font, const AffineTransform& previousTextMatrix)
-{
-    ASSERT_UNUSED(font, font.platformData().orientation() == FontOrientation::Vertical);
-    // The translation here ("e" and "f" fields) are irrelevant, because
-    // this matrix is inverted in fillVectorWithVerticalGlyphPositions to place the glyphs in the CTM's coordinate system.
-    // All we're trying to do here is rotate the text matrix so glyphs appear visually upright.
-    // We have to include the previous text matrix because it includes things like synthetic oblique.
-    return rotateLeftTransform() * previousTextMatrix;
 }
 
 void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const GlyphBuffer& glyphBuffer, unsigned from, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode smoothingMode)

@@ -38,6 +38,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#include <CoreGraphics/CGContextDelegatePrivate.h>
 #include <CoreGraphics/CGFontCache.h>
 #include <CoreGraphics/CGPathPrivate.h>
 #include <CoreGraphics/CoreGraphicsPrivate.h>
@@ -58,19 +59,12 @@ struct CGFontHMetrics {
     int minRightSideBearing;
 };
 
-struct CGFontDescriptor {
-    CGRect bbox;
-    CGFloat ascent;
-    CGFloat descent;
-    CGFloat capHeight;
-    CGFloat italicAngle;
-    CGFloat stemV;
-    CGFloat stemH;
-    CGFloat avgWidth;
-    CGFloat maxWidth;
-    CGFloat missingWidth;
-    CGFloat leading;
-    CGFloat xHeight;
+typedef CF_ENUM (int32_t, CGContextDelegateCallbackName)
+{
+    deDrawImage = 7,
+    deDrawGlyphs = 8,
+    deBeginLayer = 17,
+    deEndLayer = 18,
 };
 
 typedef const struct CGColorTransform* CGColorTransformRef;
@@ -179,6 +173,22 @@ typedef struct CGFocusRingStyle CGFocusRingStyle;
 
 #endif // PLATFORM(COCOA)
 
+struct CGShadowStyle {
+    unsigned a;
+    CGFloat b;
+    CGFloat azimuth;
+    CGFloat c;
+    CGFloat height;
+    CGFloat radius;
+    CGFloat d;
+};
+typedef struct CGShadowStyle CGShadowStyle;
+
+typedef CF_ENUM (int32_t, CGStyleType)
+{
+    kCGStyleShadow = 1,
+};
+
 #if PLATFORM(MAC)
 
 typedef CF_ENUM(uint32_t, CGSNotificationType) {
@@ -193,6 +203,12 @@ static const CGSNotificationType kCGSessionConsoleDisconnect = (CGSNotificationT
 
 #endif // PLATFORM(MAC)
 
+typedef struct CGContextDelegate *CGContextDelegateRef;
+typedef void (*CGContextDelegateCallback)(void);
+typedef struct CGRenderingState *CGRenderingStateRef;
+typedef struct CGGState *CGGStateRef;
+typedef struct CGStyle *CGStyleRef;
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #if PLATFORM(COCOA)
@@ -203,7 +219,6 @@ typedef uint32_t CGSWindowID;
 
 typedef CGSWindowID* CGSWindowIDList;
 typedef struct CF_BRIDGED_TYPE(id) CGSRegionObject* CGSRegionObj;
-typedef struct CF_BRIDGED_TYPE(id) CGStyle* CGStyleRef;
 
 typedef void* CGSNotificationArg;
 typedef void* CGSNotificationData;
@@ -233,7 +248,6 @@ void CGContextResetClip(CGContextRef);
 CGContextType CGContextGetType(CGContextRef);
 
 CFStringRef CGFontCopyFamilyName(CGFontRef);
-bool CGFontGetDescriptor(CGFontRef, CGFontDescriptor*);
 bool CGFontGetGlyphAdvancesForStyle(CGFontRef, const CGAffineTransform* , CGFontRenderingStyle, const CGGlyph[], size_t count, CGSize advances[]);
 void CGFontGetGlyphsForUnichars(CGFontRef, const UniChar[], CGGlyph[], size_t count);
 const CGFontHMetrics* CGFontGetHMetrics(CGFontRef);
@@ -251,6 +265,21 @@ void CGContextSetFontAntialiasingStyle(CGContextRef, CGFontAntialiasingStyle);
 bool CGContextGetAllowsFontSubpixelPositioning(CGContextRef);
 bool CGContextDrawsWithCorrectShadowOffsets(CGContextRef);
 CGPatternRef CGPatternCreateWithImage2(CGImageRef, CGAffineTransform, CGPatternTiling);
+
+CGContextDelegateRef CGContextDelegateCreate(void* info);
+void CGContextDelegateSetCallback(CGContextDelegateRef, CGContextDelegateCallbackName, CGContextDelegateCallback);
+CGContextRef CGContextCreateWithDelegate(CGContextDelegateRef, CGContextType, CGRenderingStateRef, CGGStateRef);
+void* CGContextDelegateGetInfo(CGContextDelegateRef);
+void CGContextDelegateRelease(CGContextDelegateRef);
+CGFloat CGGStateGetAlpha(CGGStateRef);
+CGFontRef CGGStateGetFont(CGGStateRef);
+const CGAffineTransform *CGGStateGetCTM(CGGStateRef);
+CGColorRef CGGStateGetFillColor(CGGStateRef);
+CGColorRef CGGStateGetStrokeColor(CGGStateRef);
+CGStyleRef CGGStateGetStyle(CGGStateRef);
+CGStyleType CGStyleGetType(CGStyleRef);
+const void *CGStyleGetData(CGStyleRef);
+CGColorRef CGStyleGetColor(CGStyleRef);
 
 #if HAVE(CGPATH_GET_NUMBER_OF_ELEMENTS)
 size_t CGPathGetNumberOfElements(CGPathRef);
@@ -286,16 +315,9 @@ CGRect* CGSNextRect(const CGSRegionEnumeratorObj);
 CGSRegionEnumeratorObj CGSRegionEnumerator(CGRegionRef);
 CGStyleRef CGStyleCreateFocusRingWithColor(const CGFocusRingStyle*, CGColorRef);
 void CGContextSetStyle(CGContextRef, CGStyleRef);
-
 void CGContextDrawConicGradient(CGContextRef, CGGradientRef, CGPoint center, CGFloat angle);
-
-#if HAVE(CG_PATH_UNEVEN_CORNERS_ROUNDEDRECT)
 void CGPathAddUnevenCornersRoundedRect(CGMutablePathRef, const CGAffineTransform *, CGRect, const CGSize corners[4]);
-#endif
-
-#if HAVE(CG_FONT_RENDERING_GET_FONT_SMOOTHING_DISABLED)
 bool CGFontRenderingGetFontSmoothingDisabled(void);
-#endif
 
 #endif // PLATFORM(COCOA)
 
@@ -328,14 +350,9 @@ bool ColorSyncProfileIsWideGamut(ColorSyncProfileRef);
 size_t CGDisplayModeGetPixelsWide(CGDisplayModeRef);
 size_t CGDisplayModeGetPixelsHigh(CGDisplayModeRef);
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-
 CGError CGSSetDenyWindowServerConnections(bool);
-
 typedef int32_t CGSDisplayID;
 CGSDisplayID CGSMainDisplayID(void);
-
-#endif // ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 
 #endif // PLATFORM(MAC)
 

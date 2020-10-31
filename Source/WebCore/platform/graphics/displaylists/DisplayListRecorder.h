@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DisplayList.h"
+#include "DisplayListDrawGlyphsRecorder.h"
 #include "GraphicsContextImpl.h"
 #include "Image.h" // For Image::TileRule.
 #include "TextFlags.h"
@@ -61,8 +62,6 @@ public:
 
     size_t itemCount() const { return m_displayList.itemCount(); }
 
-    void appendItemAndUpdateExtent(Ref<DrawingItem>&&);
-
     class Delegate {
     public:
         virtual ~Delegate() { }
@@ -72,6 +71,7 @@ public:
     };
 
 private:
+    friend class DrawGlyphsRecorder;
     bool hasPlatformContext() const override { return false; }
     PlatformGraphicsContext* platformContext() const override { return nullptr; }
 
@@ -151,6 +151,7 @@ private:
     void appendItem(Ref<Item>&&);
     void willAppendItem(const Item&);
     void didAppendItem(const Item&);
+    void appendItemAndUpdateExtent(Ref<DrawingItem>&&);
 
     void appendStateChangeItem(const GraphicsContextStateChange&, GraphicsContextState::StateChangeFlags);
 
@@ -195,6 +196,8 @@ private:
     Delegate* m_delegate;
 
     Vector<ContextState, 32> m_stateStack;
+
+    DrawGlyphsRecorder m_drawGlyphsRecorder;
 };
 
 }

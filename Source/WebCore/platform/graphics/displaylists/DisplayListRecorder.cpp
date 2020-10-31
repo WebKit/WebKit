@@ -42,6 +42,7 @@ Recorder::Recorder(GraphicsContext& context, DisplayList& displayList, const Gra
     : GraphicsContextImpl(context, initialClip, AffineTransform())
     , m_displayList(displayList)
     , m_delegate(delegate)
+    , m_drawGlyphsRecorder(*this)
 {
     LOG_WITH_STREAM(DisplayLists, stream << "\nRecording with clip " << initialClip);
     m_stateStack.append({ state, initialCTM, initialClip });
@@ -163,7 +164,7 @@ void Recorder::setMiterLimit(float miterLimit)
 
 void Recorder::drawGlyphs(const Font& font, const GlyphBuffer& glyphBuffer, unsigned from, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
 {
-    appendItemAndUpdateExtent(DrawGlyphs::create(font, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs, startPoint, smoothingMode));
+    m_drawGlyphsRecorder.drawGlyphs(font, glyphBuffer, from, numGlyphs, startPoint, smoothingMode);
 }
 
 ImageDrawResult Recorder::drawImage(Image& image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& imagePaintingOptions)
@@ -243,6 +244,9 @@ void Recorder::scale(const FloatSize& size)
 
 void Recorder::concatCTM(const AffineTransform& transform)
 {
+    if (transform.isIdentity())
+        return;
+
     currentState().concatCTM(transform);
     appendItem(ConcatenateCTM::create(transform));
 }
@@ -428,7 +432,17 @@ void Recorder::clipToImageBuffer(ImageBuffer&, const FloatRect&)
 
 void Recorder::clipToDrawingCommands(const FloatRect& destination, ColorSpace colorSpace, Function<void(GraphicsContext&)>&& drawingFunction)
 {
-    auto recordingContext = makeUnique<DrawingContext>(destination.size());
+    // The initial CTM matches ImageBuffer's initial CTM.
+    AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+    FloatSize scaleFactor(transform.xScale(), transform.yScale());
+    auto scaledSize = expandedIntSize(destination.size() * scaleFactor);
+
+    AffineTransform initialCTM;
+    initialCTM.scale(1, -1);
+    initialCTM.translate(0, -scaledSize.height());
+    initialCTM.scale(scaledSize / destination.size());
+
+    auto recordingContext = makeUnique<DrawingContext>(destination.size(), initialCTM);
     drawingFunction(recordingContext->context());
     appendItem(ClipToDrawingCommands::create(destination, colorSpace, recordingContext->takeDisplayList()));
 }

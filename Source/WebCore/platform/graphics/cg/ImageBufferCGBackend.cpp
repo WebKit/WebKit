@@ -61,6 +61,7 @@ RetainPtr<CGColorSpaceRef> ImageBufferCGBackend::contextColorSpace(const Graphic
 
 void ImageBufferCGBackend::setupContext()
 {
+    // The initial CTM matches DisplayList::Recorder::clipToDrawingCommands()'s initial CTM.
     context().scale(FloatSize(1, -1));
     context().translate(0, -m_backendSize.height());
     context().applyDeviceScaleFactor(m_resolutionScale);

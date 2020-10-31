@@ -5,6 +5,8 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebCore_SOURCES
+    platform/graphics/displaylists/DisplayListDrawGlyphsRecorderHarfBuzz.cpp
+
     platform/graphics/freetype/FontCacheFreeType.cpp
     platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp
     platform/graphics/freetype/FontPlatformDataFreeType.cpp
