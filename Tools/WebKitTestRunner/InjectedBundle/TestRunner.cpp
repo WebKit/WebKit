@@ -846,21 +846,6 @@ void TestRunner::callSetBackingScaleFactorCallback()
     callTestRunnerCallback(SetBackingScaleFactorCallbackID);
 }
 
-static inline bool toBool(JSStringRef value)
-{
-    return JSStringIsEqualToUTF8CString(value, "true") || JSStringIsEqualToUTF8CString(value, "1");
-}
-
-void TestRunner::overridePreference(JSStringRef preference, JSStringRef value)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    // Should use `<!-- webkit-test-runner [ enableBackForwardCache=true ] -->` instead.
-    RELEASE_ASSERT(!JSStringIsEqualToUTF8CString(preference, "WebKitUsesBackForwardCachePreferenceKey"));
-
-    // FIXME: handle non-boolean preferences.
-    WKBundleOverrideBoolPreferenceForTestRunner(injectedBundle.bundle(), injectedBundle.pageGroup(), toWK(preference).get(), toBool(value));
-}
-
 void TestRunner::setAlwaysAcceptCookies(bool accept)
 {
     postSynchronousMessage("SetAlwaysAcceptCookies", accept);

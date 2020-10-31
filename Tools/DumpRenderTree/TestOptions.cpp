@@ -84,6 +84,9 @@ const TestFeatures& TestOptions::defaults()
             { "ResizeObserverEnabled", false },
             { "WebGPUEnabled", false },
         };
+        features.uint32WebPreferenceFeatures = {
+            { "MinimumFontSize", 0 },
+        };
     }
     return features;
 }

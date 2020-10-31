@@ -131,6 +131,9 @@ public:
     void setTelephoneNumberParsingEnabled(bool enable);
     void setPagePaused(bool paused);
 #endif
+#if PLATFORM(WIN)
+    void setShouldInvertColors(bool);
+#endif
 
     void setPageVisibility(const char*);
     void resetPageVisibility();

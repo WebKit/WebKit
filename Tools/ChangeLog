@@ -1,3 +1,33 @@
+2020-10-31  Sam Weinig  <weinig@apple.com>
+
+        Remove all remaining testRunner.overridePreference calls
+        https://bugs.webkit.org/show_bug.cgi?id=218373
+
+        Reviewed by Simon Fraser.
+
+        Remove implementations of testRunner.overridePreference. Adds testRunner.setShouldInvertColors,
+        which is a windows only preference. When we generate preferences for Windows, we can convert
+        this to use test header commands instead.
+        
+        Also add default for MinimumFontSize so it can be used as test header commands for DumpRenderTree.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+        * DumpRenderTree/TestRunner.cpp:
+        (setShouldInvertColors):
+        (TestRunner::staticFunctions):
+        (overridePreferenceCallback): Deleted.
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::overridePreference): Deleted.
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::setShouldInvertColors):
+        (TestRunner::overridePreference): Deleted.
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::toBool): Deleted.
+        (WTR::TestRunner::overridePreference): Deleted.
+
 2020-10-30  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Use allowlist and blocklist

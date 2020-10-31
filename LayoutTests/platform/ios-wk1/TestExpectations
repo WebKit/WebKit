@@ -1094,7 +1094,6 @@ http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html [ 
 http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html [ Failure ]
 http/tests/security/aboutBlank/xss-DENIED-set-opener.html [ Failure ]
 http/tests/security/contentSecurityPolicy/object-src-url-allowed.html [ Failure ]
-http/tests/security/cross-origin-local-storage-wk1.html [ Failure ]
 http/tests/security/frameNavigation/not-opener.html [ Failure ]
 http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure ]
 http/tests/security/mixedContent/insecure-css-in-main-frame.html [ Failure ]

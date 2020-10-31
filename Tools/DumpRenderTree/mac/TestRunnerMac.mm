@@ -596,17 +596,6 @@ void TestRunner::dispatchPendingLoadRequests()
     [[mainFrame webView] _dispatchPendingLoadRequests];
 }
 
-void TestRunner::overridePreference(JSStringRef key, JSStringRef value)
-{
-    RetainPtr<CFStringRef> keyCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, key));
-    NSString *keyNS = (__bridge NSString *)keyCF.get();
-
-    RetainPtr<CFStringRef> valueCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, value));
-    NSString *valueNS = (__bridge NSString *)valueCF.get();
-
-    [[[mainFrame webView] preferences] _setStringPreferenceForTestingWithValue:valueNS forKey:keyNS];
-}
-
 void TestRunner::removeAllVisitedLinks()
 {
     [WebHistory _removeAllVisitedLinks];

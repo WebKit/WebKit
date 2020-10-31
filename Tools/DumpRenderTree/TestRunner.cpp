@@ -555,23 +555,6 @@ static JSValueRef isCommandEnabledCallback(JSContextRef context, JSObjectRef fun
     return JSValueMakeBoolean(context, controller->isCommandEnabled(name.get()));
 }
 
-static JSValueRef overridePreferenceCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    if (argumentCount < 2)
-        return JSValueMakeUndefined(context);
-
-    auto key = WTR::createJSString(context, arguments[0]);
-    auto value = WTR::createJSString(context, arguments[1]);
-
-    // Should use `<!-- webkit-test-runner [ enableBackForwardCache=true ] -->` instead.
-    RELEASE_ASSERT(!JSStringIsEqualToUTF8CString(key.get(), "WebKitUsesBackForwardCachePreferenceKey"));
-
-    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    controller->overridePreference(key.get(), value.get());
-
-    return JSValueMakeUndefined(context);
-}
-
 static JSValueRef keepWebHistoryCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has mac implementation
@@ -2005,6 +1988,21 @@ static JSValueRef runUIScriptCallback(JSContextRef context, JSObjectRef, JSObjec
     return JSValueMakeUndefined(context);
 }
 
+#if PLATFORM(WIN)
+
+static JSValueRef setShouldInvertColorsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    auto controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
+    controller->setShouldInvertColors(JSValueToBoolean(context, arguments[0]));
+
+    return JSValueMakeUndefined(context);
+}
+
+#endif
+
 static void testRunnerObjectFinalize(JSObjectRef object)
 {
     static_cast<TestRunner*>(JSObjectGetPrivate(object))->deref();
@@ -2138,7 +2136,6 @@ const JSStaticFunction* TestRunner::staticFunctions()
         { "keepWebHistory", keepWebHistoryCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "numberOfPendingGeolocationPermissionRequests", numberOfPendingGeolocationPermissionRequestsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "notifyDone", notifyDoneCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "overridePreference", overridePreferenceCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "pathToLocalResource", pathToLocalResourceCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "printToPDF", dumpAsPDFCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "queueBackNavigation", queueBackNavigationCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -2245,6 +2242,9 @@ const JSStaticFunction* TestRunner::staticFunctions()
         { "setOpenPanelFiles", setOpenPanelFilesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setOpenPanelFilesMediaIcon", SetOpenPanelFilesMediaIconCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "forceImmediateCompletion", forceImmediateCompletionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+#if PLATFORM(WIN)
+        { "setShouldInvertColors", setShouldInvertColorsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+#endif
         { 0, 0, 0 }
     };
 

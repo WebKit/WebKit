@@ -858,25 +858,6 @@ void TestRunner::dispatchPendingLoadRequests()
     viewPrivate->dispatchPendingLoadRequests();
 }
 
-void TestRunner::overridePreference(JSStringRef key, JSStringRef value)
-{
-    COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
-        return;
-
-    COMPtr<IWebPreferences> preferences;
-    if (FAILED(webView->preferences(&preferences)))
-        return;
-
-    COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
-    if (!prefsPrivate)
-        return;
-
-    _bstr_t keyBSTR(JSStringCopyBSTR(key), false);
-    _bstr_t valueBSTR(JSStringCopyBSTR(value), false);
-    prefsPrivate->setPreferenceForTest(keyBSTR, valueBSTR);
-}
-
 void TestRunner::removeAllVisitedLinks()
 {
     COMPtr<IWebHistory> history;
@@ -1397,4 +1378,21 @@ unsigned TestRunner::imageCountInGeneralPasteboard() const
 void TestRunner::setSpellCheckerLoggingEnabled(bool enabled)
 {
     fprintf(testResult, "ERROR: TestRunner::setSpellCheckerLoggingEnabled() not implemented\n");
+}
+
+void TestRunner::setShouldInvertColors(bool shouldInvertColors)
+{
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebPreferences> preferences;
+    if (FAILED(webView->preferences(&preferences)))
+        return;
+
+    COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
+    if (!prefsPrivate)
+        return;
+
+    prefsPrivate->setShouldInvertColors(shouldInvertColors);
 }

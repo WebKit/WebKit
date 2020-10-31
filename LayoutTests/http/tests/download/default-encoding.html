@@ -2,7 +2,7 @@
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText();
-    testRunner.overridePreference("WebKitDefaultTextEncodingName", "koi8-r");
+    internals.settings.setDefaultTextEncodingName("koi8-r");
     testRunner.setCustomPolicyDelegate(true, true);
     testRunner.waitForPolicyDelegate();
 }

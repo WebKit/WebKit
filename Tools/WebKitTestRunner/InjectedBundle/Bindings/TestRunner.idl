@@ -197,8 +197,6 @@ interface TestRunner {
     undefined setAlwaysAcceptCookies(boolean accept);
     undefined setOnlyAcceptFirstPartyCookies(boolean accept);
 
-    undefined overridePreference(DOMString preference, DOMString value);
-
     // Page Visibility API
     undefined setPageVisibility(DOMString state);
     undefined resetPageVisibility();
