@@ -1647,7 +1647,8 @@ RequiresUserGestureForMediaPlayback:
   webcoreBinding: custom
   defaultValue:
     WebKitLegacy:
-      default: true
+      "PLATFORM(IOS_FAMILY)": true
+      default: false
     WebKit:
       default: false
 

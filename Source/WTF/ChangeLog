@@ -1,3 +1,18 @@
+2020-10-30  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r267689): Rise of the Tomb Raider gets stuck while launching
+        https://bugs.webkit.org/show_bug.cgi?id=218411
+        <rdar://problem/70622557>
+
+        Reviewed by Zalan Bujtas.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+        Sam accidentally changed the default of RequiresUserGestureForMediaPlayback
+        in r267689; previously it was @YES only in PLATFORM(IOS_FAMILY), he made
+        it true globally.
+
+        Go back to the old, and intended, behavior.
+
 2020-10-30  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Incorrect list of voices being displayed on iOS
