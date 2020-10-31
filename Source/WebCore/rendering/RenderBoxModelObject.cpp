@@ -1455,7 +1455,7 @@ static bool allCornersClippedOut(const RoundedRect& border, const LayoutRect& cl
     return true;
 }
 
-static bool borderWillArcInnerEdge(const LayoutSize& firstRadius, const FloatSize& secondRadius)
+static bool borderWillArcInnerEdge(const LayoutSize& firstRadius, const LayoutSize& secondRadius)
 {
     return !firstRadius.isZero() || !secondRadius.isZero();
 }
@@ -1486,60 +1486,69 @@ static inline bool borderStyleHasUnmatchedColorsAtCorner(BorderStyle style, BoxS
 {
     // These styles match at the top/left and bottom/right.
     if (style == BorderStyle::Inset || style == BorderStyle::Groove || style == BorderStyle::Ridge || style == BorderStyle::Outset) {
-        const BorderEdgeFlags topRightFlags = edgeFlagForSide(BSTop) | edgeFlagForSide(BSRight);
-        const BorderEdgeFlags bottomLeftFlags = edgeFlagForSide(BSBottom) | edgeFlagForSide(BSLeft);
+        BoxSideSet topRightSides = { BoxSideFlag::Top, BoxSideFlag::Right };
+        BoxSideSet bottomLeftSides = { BoxSideFlag::Bottom, BoxSideFlag::Left };
 
-        BorderEdgeFlags flags = edgeFlagForSide(side) | edgeFlagForSide(adjacentSide);
-        return flags == topRightFlags || flags == bottomLeftFlags;
+        BoxSideSet usedSides { edgeFlagForSide(side), edgeFlagForSide(adjacentSide) };
+        return usedSides == topRightSides || usedSides == bottomLeftSides;
     }
     return false;
 }
 
-static inline bool colorsMatchAtCorner(BoxSide side, BoxSide adjacentSide, const BorderEdge edges[])
+static inline bool colorsMatchAtCorner(BoxSide side, BoxSide adjacentSide, const BorderEdges& edges)
 {
-    if (edges[side].shouldRender() != edges[adjacentSide].shouldRender())
+    auto& edge = edges.at(side);
+    auto& adjacentEdge = edges.at(adjacentSide);
+
+    if (edge.shouldRender() != adjacentEdge.shouldRender())
         return false;
 
-    if (!edgesShareColor(edges[side], edges[adjacentSide]))
+    if (!edgesShareColor(edge, adjacentEdge))
         return false;
 
-    return !borderStyleHasUnmatchedColorsAtCorner(edges[side].style(), side, adjacentSide);
+    return !borderStyleHasUnmatchedColorsAtCorner(edge.style(), side, adjacentSide);
 }
 
 
-static inline bool colorNeedsAntiAliasAtCorner(BoxSide side, BoxSide adjacentSide, const BorderEdge edges[])
+static inline bool colorNeedsAntiAliasAtCorner(BoxSide side, BoxSide adjacentSide, const BorderEdges& edges)
 {
-    if (edges[side].color().isOpaque())
+    auto& edge = edges.at(side);
+    auto& adjacentEdge = edges.at(adjacentSide);
+
+    if (edge.color().isOpaque())
         return false;
 
-    if (edges[side].shouldRender() != edges[adjacentSide].shouldRender())
+    if (edge.shouldRender() != adjacentEdge.shouldRender())
         return false;
 
-    if (!edgesShareColor(edges[side], edges[adjacentSide]))
+    if (!edgesShareColor(edge, adjacentEdge))
         return true;
 
-    return borderStyleHasUnmatchedColorsAtCorner(edges[side].style(), side, adjacentSide);
+    return borderStyleHasUnmatchedColorsAtCorner(edge.style(), side, adjacentSide);
 }
 
 // This assumes that we draw in order: top, bottom, left, right.
-static inline bool willBeOverdrawn(BoxSide side, BoxSide adjacentSide, const BorderEdge edges[])
+static inline bool willBeOverdrawn(BoxSide side, BoxSide adjacentSide, const BorderEdges& edges)
 {
     switch (side) {
-    case BSTop:
-    case BSBottom:
-        if (edges[adjacentSide].presentButInvisible())
+    case BoxSide::Top:
+    case BoxSide::Bottom: {
+        auto& edge = edges.at(side);
+        auto& adjacentEdge = edges.at(adjacentSide);
+
+        if (adjacentEdge.presentButInvisible())
             return false;
 
-        if (!edgesShareColor(edges[side], edges[adjacentSide]) && !edges[adjacentSide].color().isOpaque())
+        if (!edgesShareColor(edge, adjacentEdge) && !adjacentEdge.color().isOpaque())
             return false;
         
-        if (!borderStyleFillsBorderArea(edges[adjacentSide].style()))
+        if (!borderStyleFillsBorderArea(adjacentEdge.style()))
             return false;
 
         return true;
-
-    case BSLeft:
-    case BSRight:
+    }
+    case BoxSide::Left:
+    case BoxSide::Right:
         // These draw last, so are never overdrawn.
         return false;
     }
@@ -1560,18 +1569,21 @@ static inline bool borderStylesRequireMitre(BoxSide side, BoxSide adjacentSide, 
     return borderStyleHasUnmatchedColorsAtCorner(style, side, adjacentSide);
 }
 
-static bool joinRequiresMitre(BoxSide side, BoxSide adjacentSide, const BorderEdge edges[], bool allowOverdraw)
+static bool joinRequiresMitre(BoxSide side, BoxSide adjacentSide, const BorderEdges& edges, bool allowOverdraw)
 {
-    if ((edges[side].isTransparent() && edges[adjacentSide].isTransparent()) || !edges[adjacentSide].isPresent())
+    auto& edge = edges.at(side);
+    auto& adjacentEdge = edges.at(adjacentSide);
+
+    if ((edge.isTransparent() && adjacentEdge.isTransparent()) || !adjacentEdge.isPresent())
         return false;
 
     if (allowOverdraw && willBeOverdrawn(side, adjacentSide, edges))
         return false;
 
-    if (!edgesShareColor(edges[side], edges[adjacentSide]))
+    if (!edgesShareColor(edge, adjacentEdge))
         return true;
 
-    if (borderStylesRequireMitre(side, adjacentSide, edges[side].style(), edges[adjacentSide].style()))
+    if (borderStylesRequireMitre(side, adjacentSide, edge.style(), adjacentEdge.style()))
         return true;
     
     return false;
@@ -1589,7 +1601,7 @@ static RoundedRect calculateAdjustedInnerBorder(const RoundedRect&innerBorder, B
     float maxRadii;
 
     switch (side) {
-    case BSTop:
+    case BoxSide::Top:
         overshoot = newRadii.topLeft().width() + newRadii.topRight().width() - newRect.width();
         if (overshoot > 0) {
             ASSERT(!(newRadii.topLeft().width() && newRadii.topRight().width()));
@@ -1597,14 +1609,14 @@ static RoundedRect calculateAdjustedInnerBorder(const RoundedRect&innerBorder, B
             if (!newRadii.topLeft().width())
                 newRect.move(-overshoot, 0);
         }
-        newRadii.setBottomLeft(IntSize(0, 0));
-        newRadii.setBottomRight(IntSize(0, 0));
+        newRadii.setBottomLeft({ });
+        newRadii.setBottomRight({ });
         maxRadii = std::max(newRadii.topLeft().height(), newRadii.topRight().height());
         if (maxRadii > newRect.height())
             newRect.setHeight(maxRadii);
         break;
 
-    case BSBottom:
+    case BoxSide::Bottom:
         overshoot = newRadii.bottomLeft().width() + newRadii.bottomRight().width() - newRect.width();
         if (overshoot > 0) {
             ASSERT(!(newRadii.bottomLeft().width() && newRadii.bottomRight().width()));
@@ -1612,8 +1624,8 @@ static RoundedRect calculateAdjustedInnerBorder(const RoundedRect&innerBorder, B
             if (!newRadii.bottomLeft().width())
                 newRect.move(-overshoot, 0);
         }
-        newRadii.setTopLeft(IntSize(0, 0));
-        newRadii.setTopRight(IntSize(0, 0));
+        newRadii.setTopLeft({ });
+        newRadii.setTopRight({ });
         maxRadii = std::max(newRadii.bottomLeft().height(), newRadii.bottomRight().height());
         if (maxRadii > newRect.height()) {
             newRect.move(0, newRect.height() - maxRadii);
@@ -1621,7 +1633,7 @@ static RoundedRect calculateAdjustedInnerBorder(const RoundedRect&innerBorder, B
         }
         break;
 
-    case BSLeft:
+    case BoxSide::Left:
         overshoot = newRadii.topLeft().height() + newRadii.bottomLeft().height() - newRect.height();
         if (overshoot > 0) {
             ASSERT(!(newRadii.topLeft().height() && newRadii.bottomLeft().height()));
@@ -1629,14 +1641,14 @@ static RoundedRect calculateAdjustedInnerBorder(const RoundedRect&innerBorder, B
             if (!newRadii.topLeft().height())
                 newRect.move(0, -overshoot);
         }
-        newRadii.setTopRight(IntSize(0, 0));
-        newRadii.setBottomRight(IntSize(0, 0));
+        newRadii.setTopRight({ });
+        newRadii.setBottomRight({ });
         maxRadii = std::max(newRadii.topLeft().width(), newRadii.bottomLeft().width());
         if (maxRadii > newRect.width())
             newRect.setWidth(maxRadii);
         break;
 
-    case BSRight:
+    case BoxSide::Right:
         overshoot = newRadii.topRight().height() + newRadii.bottomRight().height() - newRect.height();
         if (overshoot > 0) {
             ASSERT(!(newRadii.topRight().height() && newRadii.bottomRight().height()));
@@ -1644,8 +1656,8 @@ static RoundedRect calculateAdjustedInnerBorder(const RoundedRect&innerBorder, B
             if (!newRadii.topRight().height())
                 newRect.move(0, -overshoot);
         }
-        newRadii.setTopLeft(IntSize(0, 0));
-        newRadii.setBottomLeft(IntSize(0, 0));
+        newRadii.setTopLeft({ });
+        newRadii.setBottomLeft({ });
         maxRadii = std::max(newRadii.topRight().width(), newRadii.bottomRight().width());
         if (maxRadii > newRect.width()) {
             newRect.move(newRect.width() - maxRadii, 0);
@@ -1658,13 +1670,13 @@ static RoundedRect calculateAdjustedInnerBorder(const RoundedRect&innerBorder, B
 }
 
 void RenderBoxModelObject::paintOneBorderSide(GraphicsContext& graphicsContext, const RenderStyle& style, const RoundedRect& outerBorder, const RoundedRect& innerBorder,
-    const LayoutRect& sideRect, BoxSide side, BoxSide adjacentSide1, BoxSide adjacentSide2, const BorderEdge edges[], const Path* path,
+    const LayoutRect& sideRect, BoxSide side, BoxSide adjacentSide1, BoxSide adjacentSide2, const BorderEdges& edges, const Path* path,
     BackgroundBleedAvoidance bleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, const Color* overrideColor)
 {
-    const BorderEdge& edgeToRender = edges[side];
+    auto& edgeToRender = edges.at(side);
     ASSERT(edgeToRender.widthForPainting());
-    const BorderEdge& adjacentEdge1 = edges[adjacentSide1];
-    const BorderEdge& adjacentEdge2 = edges[adjacentSide2];
+    auto& adjacentEdge1 = edges.at(adjacentSide1);
+    auto& adjacentEdge2 = edges.at(adjacentSide2);
 
     bool mitreAdjacentSide1 = joinRequiresMitre(side, adjacentSide1, edges, !antialias);
     bool mitreAdjacentSide2 = joinRequiresMitre(side, adjacentSide2, edges, !antialias);
@@ -1704,25 +1716,31 @@ void RenderBoxModelObject::paintOneBorderSide(GraphicsContext& graphicsContext, 
     }
 }
 
-static LayoutRect calculateSideRect(const RoundedRect& outerBorder, const BorderEdge edges[], int side)
+static LayoutRect calculateSideRect(const RoundedRect& outerBorder, const BorderEdges& edges, BoxSide side)
 {
     LayoutRect sideRect = outerBorder.rect();
-    float width = edges[side].widthForPainting();
+    float width = edges.at(side).widthForPainting();
 
-    if (side == BSTop)
+    switch (side) {
+    case BoxSide::Top:
         sideRect.setHeight(width);
-    else if (side == BSBottom)
-        sideRect.shiftYEdgeTo(sideRect.maxY() - width);
-    else if (side == BSLeft)
-        sideRect.setWidth(width);
-    else
+        break;
+    case BoxSide::Right:
         sideRect.shiftXEdgeTo(sideRect.maxX() - width);
+        break;
+    case BoxSide::Bottom:
+        sideRect.shiftYEdgeTo(sideRect.maxY() - width);
+        break;
+    case BoxSide::Left:
+        sideRect.setWidth(width);
+        break;
+    }
 
     return sideRect;
 }
 
 void RenderBoxModelObject::paintBorderSides(GraphicsContext& graphicsContext, const RenderStyle& style, const RoundedRect& outerBorder, const RoundedRect& innerBorder,
-    const IntPoint& innerBorderAdjustment, const BorderEdge edges[], BorderEdgeFlags edgeSet, BackgroundBleedAvoidance bleedAvoidance,
+    const IntPoint& innerBorderAdjustment, const BorderEdges& edges, BoxSideSet edgeSet, BackgroundBleedAvoidance bleedAvoidance,
     bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, const Color* overrideColor)
 {
     bool renderRadii = outerBorder.isRounded();
@@ -1736,65 +1754,74 @@ void RenderBoxModelObject::paintBorderSides(GraphicsContext& graphicsContext, co
     // is only to be used for solid borders and the shape of the border painted by drawBoxSideFromPath
     // only depends on sideRect when painting solid borders.
 
-    if (edges[BSTop].shouldRender() && includesEdge(edgeSet, BSTop)) {
+    auto paintOneSide = [&](BoxSide side, BoxSide adjacentSide1, BoxSide adjacentSide2) {
+        auto& edge = edges.at(side);
+        if (!edge.shouldRender() || !edgeSet.contains(edgeFlagForSide(side)))
+            return;
+
         LayoutRect sideRect = outerBorder.rect();
-        sideRect.setHeight(edges[BSTop].widthForPainting() + innerBorderAdjustment.y());
+        LayoutSize firstRadius;
+        LayoutSize secondRadius;
 
-        bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSTop].style()) || borderWillArcInnerEdge(innerBorder.radii().topLeft(), innerBorder.radii().topRight()));
-        paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSTop, BSLeft, BSRight, edges, usePath ? &roundedPath : nullptr, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
-    }
+        switch (side) {
+        case BoxSide::Top:
+            sideRect.setHeight(edge.widthForPainting() + innerBorderAdjustment.y());
+            firstRadius = innerBorder.radii().topLeft();
+            secondRadius = innerBorder.radii().topRight();
+            break;
+        case BoxSide::Right:
+            sideRect.shiftXEdgeTo(sideRect.maxX() - edge.widthForPainting() - innerBorderAdjustment.x());
+            firstRadius = innerBorder.radii().bottomRight();
+            secondRadius = innerBorder.radii().topRight();
+            break;
+        case BoxSide::Bottom:
+            sideRect.shiftYEdgeTo(sideRect.maxY() - edge.widthForPainting() - innerBorderAdjustment.y());
+            firstRadius = innerBorder.radii().bottomLeft();
+            secondRadius = innerBorder.radii().bottomRight();
+            break;
+        case BoxSide::Left:
+            sideRect.setWidth(edge.widthForPainting() + innerBorderAdjustment.x());
+            firstRadius = innerBorder.radii().bottomLeft();
+            secondRadius = innerBorder.radii().topLeft();
+            break;
+        }
 
-    if (edges[BSBottom].shouldRender() && includesEdge(edgeSet, BSBottom)) {
-        LayoutRect sideRect = outerBorder.rect();
-        sideRect.shiftYEdgeTo(sideRect.maxY() - edges[BSBottom].widthForPainting() - innerBorderAdjustment.y());
+        bool usePath = renderRadii && (borderStyleHasInnerDetail(edge.style()) || borderWillArcInnerEdge(firstRadius, secondRadius));
+        paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, side, adjacentSide1, adjacentSide2, edges, usePath ? &roundedPath : nullptr, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
+    };
 
-        bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSBottom].style()) || borderWillArcInnerEdge(innerBorder.radii().bottomLeft(), innerBorder.radii().bottomRight()));
-        paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSBottom, BSLeft, BSRight, edges, usePath ? &roundedPath : nullptr, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
-    }
-
-    if (edges[BSLeft].shouldRender() && includesEdge(edgeSet, BSLeft)) {
-        LayoutRect sideRect = outerBorder.rect();
-        sideRect.setWidth(edges[BSLeft].widthForPainting() + innerBorderAdjustment.x());
-
-        bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSLeft].style()) || borderWillArcInnerEdge(innerBorder.radii().bottomLeft(), innerBorder.radii().topLeft()));
-        paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSLeft, BSTop, BSBottom, edges, usePath ? &roundedPath : nullptr, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
-    }
-
-    if (edges[BSRight].shouldRender() && includesEdge(edgeSet, BSRight)) {
-        LayoutRect sideRect = outerBorder.rect();
-        sideRect.shiftXEdgeTo(sideRect.maxX() - edges[BSRight].widthForPainting() - innerBorderAdjustment.x());
-
-        bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSRight].style()) || borderWillArcInnerEdge(innerBorder.radii().bottomRight(), innerBorder.radii().topRight()));
-        paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSRight, BSTop, BSBottom, edges, usePath ? &roundedPath : nullptr, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
-    }
+    paintOneSide(BoxSide::Top, BoxSide::Left, BoxSide::Right);
+    paintOneSide(BoxSide::Bottom, BoxSide::Left, BoxSide::Right);
+    paintOneSide(BoxSide::Left, BoxSide::Top, BoxSide::Bottom);
+    paintOneSide(BoxSide::Right, BoxSide::Top, BoxSide::Bottom);
 }
 
 void RenderBoxModelObject::paintTranslucentBorderSides(GraphicsContext& graphicsContext, const RenderStyle& style, const RoundedRect& outerBorder, const RoundedRect& innerBorder, const IntPoint& innerBorderAdjustment,
-    const BorderEdge edges[], BorderEdgeFlags edgesToDraw, BackgroundBleedAvoidance bleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias)
+    const BorderEdges& edges, BoxSideSet edgesToDraw, BackgroundBleedAvoidance bleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias)
 {
     // willBeOverdrawn assumes that we draw in order: top, bottom, left, right.
     // This is different from BoxSide enum order.
-    static const BoxSide paintOrder[] = { BSTop, BSBottom, BSLeft, BSRight };
+    static constexpr std::array<BoxSide, 4> paintOrderSides = { BoxSide::Top, BoxSide::Bottom, BoxSide::Left, BoxSide::Right };
 
     while (edgesToDraw) {
         // Find undrawn edges sharing a color.
         Color commonColor;
         
-        BorderEdgeFlags commonColorEdgeSet = 0;
-        for (size_t i = 0; i < sizeof(paintOrder) / sizeof(paintOrder[0]); ++i) {
-            BoxSide currSide = paintOrder[i];
-            if (!includesEdge(edgesToDraw, currSide))
+        BoxSideSet commonColorEdgeSet;
+        for (auto side : paintOrderSides) {
+            if (!edgesToDraw.contains(edgeFlagForSide(side)))
                 continue;
 
+            auto& edge = edges.at(side);
             bool includeEdge;
-            if (!commonColorEdgeSet) {
-                commonColor = edges[currSide].color();
+            if (commonColorEdgeSet.isEmpty()) {
+                commonColor = edge.color();
                 includeEdge = true;
             } else
-                includeEdge = edges[currSide].color() == commonColor;
+                includeEdge = edge.color() == commonColor;
 
             if (includeEdge)
-                commonColorEdgeSet |= edgeFlagForSide(currSide);
+                commonColorEdgeSet.add(edgeFlagForSide(side));
         }
 
         bool useTransparencyLayer = includesAdjacentEdges(commonColorEdgeSet) && !commonColor.isOpaque();
@@ -1808,7 +1835,7 @@ void RenderBoxModelObject::paintTranslucentBorderSides(GraphicsContext& graphics
         if (useTransparencyLayer)
             graphicsContext.endTransparencyLayer();
         
-        edgesToDraw &= ~commonColorEdgeSet;
+        edgesToDraw.remove(commonColorEdgeSet);
     }
 }
 
@@ -1833,8 +1860,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
     if (paintNinePieceImage(graphicsContext, rect, style, style.borderImage()))
         return;
 
-    BorderEdge edges[4];
-    BorderEdge::getBorderEdgeInfo(edges, style, document().deviceScaleFactor(), includeLogicalLeftEdge, includeLogicalRightEdge);
+    auto edges = borderEdges(style, document().deviceScaleFactor(), includeLogicalLeftEdge, includeLogicalRightEdge);
     RoundedRect outerBorder = style.getRoundedBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge);
     RoundedRect innerBorder = style.getRoundedInnerBorderFor(borderInnerRectAdjustedForBleedAvoidance(graphicsContext, rect, bleedAvoidance), includeLogicalLeftEdge, includeLogicalRightEdge);
 
@@ -1847,14 +1873,14 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
     bool haveAllDoubleEdges = true;
     int numEdgesVisible = 4;
     bool allEdgesShareColor = true;
-    int firstVisibleEdge = -1;
-    BorderEdgeFlags edgesToDraw = 0;
+    Optional<BoxSide> firstVisibleSide;
+    BoxSideSet edgesToDraw;
 
-    for (int i = BSTop; i <= BSLeft; ++i) {
-        const BorderEdge& currEdge = edges[i];
+    for (auto side : allBoxSides) {
+        auto& currEdge = edges.at(side);
 
-        if (edges[i].shouldRender())
-            edgesToDraw |= edgeFlagForSide(static_cast<BoxSide>(i));
+        if (currEdge.shouldRender())
+            edgesToDraw.add(edgeFlagForSide(side));
 
         if (currEdge.presentButInvisible()) {
             --numEdgesVisible;
@@ -1867,9 +1893,9 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
             continue;
         }
 
-        if (firstVisibleEdge == -1)
-            firstVisibleEdge = i;
-        else if (currEdge.color() != edges[firstVisibleEdge].color())
+        if (!firstVisibleSide)
+            firstVisibleSide = side;
+        else if (currEdge.color() != edges.at(*firstVisibleSide).color())
             allEdgesShareColor = false;
 
         if (!currEdge.color().isOpaque())
@@ -1904,23 +1930,27 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
             if (haveAllDoubleEdges) {
                 LayoutRect innerThirdRect = outerBorder.rect();
                 LayoutRect outerThirdRect = outerBorder.rect();
-                for (int side = BSTop; side <= BSLeft; ++side) {
+                for (auto side : allBoxSides) {
                     LayoutUnit outerWidth;
                     LayoutUnit innerWidth;
-                    edges[side].getDoubleBorderStripeWidths(outerWidth, innerWidth);
-
-                    if (side == BSTop) {
+                    edges.at(side).getDoubleBorderStripeWidths(outerWidth, innerWidth);
+                    switch (side) {
+                    case BoxSide::Top:
                         innerThirdRect.shiftYEdgeTo(innerThirdRect.y() + innerWidth);
                         outerThirdRect.shiftYEdgeTo(outerThirdRect.y() + outerWidth);
-                    } else if (side == BSBottom) {
-                        innerThirdRect.setHeight(innerThirdRect.height() - innerWidth);
-                        outerThirdRect.setHeight(outerThirdRect.height() - outerWidth);
-                    } else if (side == BSLeft) {
-                        innerThirdRect.shiftXEdgeTo(innerThirdRect.x() + innerWidth);
-                        outerThirdRect.shiftXEdgeTo(outerThirdRect.x() + outerWidth);
-                    } else {
+                        break;
+                    case BoxSide::Right:
                         innerThirdRect.setWidth(innerThirdRect.width() - innerWidth);
                         outerThirdRect.setWidth(outerThirdRect.width() - outerWidth);
+                        break;
+                    case BoxSide::Bottom:
+                        innerThirdRect.setHeight(innerThirdRect.height() - innerWidth);
+                        outerThirdRect.setHeight(outerThirdRect.height() - outerWidth);
+                        break;
+                    case BoxSide::Left:
+                        innerThirdRect.shiftXEdgeTo(innerThirdRect.x() + innerWidth);
+                        outerThirdRect.shiftXEdgeTo(outerThirdRect.x() + outerWidth);
+                        break;
                     }
                 }
 
@@ -1947,7 +1977,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
                 path.addRect(pixelSnappedInnerBorder.rect());
             
             graphicsContext.setFillRule(WindRule::EvenOdd);
-            graphicsContext.setFillColor(edges[firstVisibleEdge].color());
+            graphicsContext.setFillColor(edges.at(*firstVisibleSide).color());
             graphicsContext.fillPath(path);
             return;
         } 
@@ -1955,16 +1985,15 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
         if (haveAllSolidEdges && numEdgesVisible != 4 && !outerBorder.isRounded() && haveAlphaColor) {
             Path path;
 
-            for (int i = BSTop; i <= BSLeft; ++i) {
-                const BorderEdge& currEdge = edges[i];
-                if (currEdge.shouldRender()) {
-                    LayoutRect sideRect = calculateSideRect(outerBorder, edges, i);
-                    path.addRect(sideRect);
+            for (auto side : allBoxSides) {
+                if (edges.at(side).shouldRender()) {
+                    auto sideRect = calculateSideRect(outerBorder, edges, side);
+                    path.addRect(sideRect); // FIXME: Need pixel snapping here.
                 }
             }
 
             graphicsContext.setFillRule(WindRule::NonZero);
-            graphicsContext.setFillColor(edges[firstVisibleEdge].color());
+            graphicsContext.setFillColor(edges.at(*firstVisibleSide).color());
             graphicsContext.fillPath(path);
             return;
         }
@@ -1992,7 +2021,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
         paintBorderSides(graphicsContext, style, outerBorder, unadjustedInnerBorder, innerBorderAdjustment, edges, edgesToDraw, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias);
 }
 
-void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext& graphicsContext, const LayoutRect& borderRect, const Path& borderPath, const BorderEdge edges[],
+void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext& graphicsContext, const LayoutRect& borderRect, const Path& borderPath, const BorderEdges& edges,
     float thickness, float drawThickness, BoxSide side, const RenderStyle& style, Color color, BorderStyle borderStyle, BackgroundBleedAvoidance bleedAvoidance,
     bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
@@ -2051,19 +2080,19 @@ void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext& graphicsContext,
         // Get the inner border rects for both the outer border line and the inner border line
         LayoutUnit outerBorderTopWidth;
         LayoutUnit innerBorderTopWidth;
-        edges[BSTop].getDoubleBorderStripeWidths(outerBorderTopWidth, innerBorderTopWidth);
+        edges.top().getDoubleBorderStripeWidths(outerBorderTopWidth, innerBorderTopWidth);
 
         LayoutUnit outerBorderRightWidth;
         LayoutUnit innerBorderRightWidth;
-        edges[BSRight].getDoubleBorderStripeWidths(outerBorderRightWidth, innerBorderRightWidth);
+        edges.right().getDoubleBorderStripeWidths(outerBorderRightWidth, innerBorderRightWidth);
 
         LayoutUnit outerBorderBottomWidth;
         LayoutUnit innerBorderBottomWidth;
-        edges[BSBottom].getDoubleBorderStripeWidths(outerBorderBottomWidth, innerBorderBottomWidth);
+        edges.bottom().getDoubleBorderStripeWidths(outerBorderBottomWidth, innerBorderBottomWidth);
 
         LayoutUnit outerBorderLeftWidth;
         LayoutUnit innerBorderLeftWidth;
-        edges[BSLeft].getDoubleBorderStripeWidths(outerBorderLeftWidth, innerBorderLeftWidth);
+        edges.left().getDoubleBorderStripeWidths(outerBorderLeftWidth, innerBorderLeftWidth);
 
         // Draw inner border line
         {
@@ -2114,10 +2143,10 @@ void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext& graphicsContext,
 
         // Paint inner only
         GraphicsContextStateSaver stateSaver(graphicsContext);
-        LayoutUnit topWidth { edges[BSTop].widthForPainting() / 2 };
-        LayoutUnit bottomWidth { edges[BSBottom].widthForPainting() / 2 };
-        LayoutUnit leftWidth { edges[BSLeft].widthForPainting() / 2 };
-        LayoutUnit rightWidth { edges[BSRight].widthForPainting() / 2 };
+        LayoutUnit topWidth { edges.top().widthForPainting() / 2 };
+        LayoutUnit bottomWidth { edges.bottom().widthForPainting() / 2 };
+        LayoutUnit leftWidth { edges.left().widthForPainting() / 2 };
+        LayoutUnit rightWidth { edges.right().widthForPainting() / 2 };
 
         RoundedRect clipRect = style.getRoundedInnerBorderFor(borderRect,
             topWidth, bottomWidth, leftWidth, rightWidth,
@@ -2164,7 +2193,7 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
     Vector<FloatPoint> quad;
     quad.reserveInitialCapacity(4);
     switch (side) {
-    case BSTop:
+    case BoxSide::Top:
         quad.uncheckedAppend(outerRect.minXMinYCorner());
         quad.uncheckedAppend(innerRect.minXMinYCorner());
         quad.uncheckedAppend(innerRect.maxXMinYCorner());
@@ -2177,7 +2206,7 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
             findIntersection(outerRect.maxXMinYCorner(), innerRect.maxXMinYCorner(), innerRect.minXMinYCorner(), innerRect.maxXMaxYCorner(), quad[2]);
         break;
 
-    case BSLeft:
+    case BoxSide::Left:
         quad.uncheckedAppend(outerRect.minXMinYCorner());
         quad.uncheckedAppend(innerRect.minXMinYCorner());
         quad.uncheckedAppend(innerRect.minXMaxYCorner());
@@ -2190,7 +2219,7 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
             findIntersection(outerRect.minXMaxYCorner(), innerRect.minXMaxYCorner(), innerRect.minXMinYCorner(), innerRect.maxXMaxYCorner(), quad[2]);
         break;
 
-    case BSBottom:
+    case BoxSide::Bottom:
         quad.uncheckedAppend(outerRect.minXMaxYCorner());
         quad.uncheckedAppend(innerRect.minXMaxYCorner());
         quad.uncheckedAppend(innerRect.maxXMaxYCorner());
@@ -2203,7 +2232,7 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
             findIntersection(outerRect.maxXMaxYCorner(), innerRect.maxXMaxYCorner(), innerRect.maxXMinYCorner(), innerRect.minXMaxYCorner(), quad[2]);
         break;
 
-    case BSRight:
+    case BoxSide::Right:
         quad.uncheckedAppend(outerRect.maxXMinYCorner());
         quad.uncheckedAppend(innerRect.maxXMinYCorner());
         quad.uncheckedAppend(innerRect.maxXMaxYCorner());
@@ -2232,7 +2261,7 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
         quad[0],
         quad[1],
         quad[2],
-        side == BSTop || side == BSBottom ? FloatPoint(quad[3].x(), quad[2].y()) : FloatPoint(quad[2].x(), quad[3].y()),
+        side == BoxSide::Top || side == BoxSide::Bottom ? FloatPoint(quad[3].x(), quad[2].y()) : FloatPoint(quad[2].x(), quad[3].y()),
         quad[3]
     };
     bool wasAntialiased = graphicsContext.shouldAntialias();
@@ -2241,7 +2270,7 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
 
     Vector<FloatPoint> secondQuad = {
         quad[0],
-        side == BSTop || side == BSBottom ? FloatPoint(quad[0].x(), quad[1].y()) : FloatPoint(quad[1].x(), quad[0].y()),
+        side == BoxSide::Top || side == BoxSide::Bottom ? FloatPoint(quad[0].x(), quad[1].y()) : FloatPoint(quad[1].x(), quad[0].y()),
         quad[1],
         quad[2],
         quad[3]
@@ -2255,13 +2284,12 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
 
 bool RenderBoxModelObject::borderObscuresBackgroundEdge(const FloatSize& contextScale) const
 {
-    BorderEdge edges[4];
-    BorderEdge::getBorderEdgeInfo(edges, style(), document().deviceScaleFactor());
+    auto edges = borderEdges(style(), document().deviceScaleFactor());
 
-    for (int i = BSTop; i <= BSLeft; ++i) {
-        const BorderEdge& currEdge = edges[i];
+    for (auto side : allBoxSides) {
+        auto& currEdge = edges.at(side);
         // FIXME: for vertical text
-        float axisScale = (i == BSTop || i == BSBottom) ? contextScale.height() : contextScale.width();
+        float axisScale = (side == BoxSide::Top || side == BoxSide::Bottom) ? contextScale.height() : contextScale.width();
         if (!currEdge.obscuresBackgroundEdge(axisScale))
             return false;
     }
@@ -2278,12 +2306,10 @@ bool RenderBoxModelObject::borderObscuresBackground() const
     if (style().borderImage().image())
         return false;
 
-    BorderEdge edges[4];
-    BorderEdge::getBorderEdgeInfo(edges, style(), document().deviceScaleFactor());
+    auto edges = borderEdges(style(), document().deviceScaleFactor());
 
-    for (int i = BSTop; i <= BSLeft; ++i) {
-        const BorderEdge& currEdge = edges[i];
-        if (!currEdge.obscuresBackground())
+    for (auto side : allBoxSides) {
+        if (!edges.at(side).obscuresBackground())
             return false;
     }
 

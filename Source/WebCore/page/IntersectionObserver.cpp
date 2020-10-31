@@ -150,15 +150,14 @@ IntersectionObserver::~IntersectionObserver()
 String IntersectionObserver::rootMargin() const
 {
     StringBuilder stringBuilder;
-    PhysicalBoxSide sides[4] = { PhysicalBoxSide::Top, PhysicalBoxSide::Right, PhysicalBoxSide::Bottom, PhysicalBoxSide::Left };
-    for (auto side : sides) {
+    for (auto side : allBoxSides) {
         auto& length = m_rootMargin.at(side);
         stringBuilder.appendNumber(length.intValue());
         if (length.type() == Percent)
             stringBuilder.append('%');
         else
             stringBuilder.appendLiteral("px");
-        if (side != PhysicalBoxSide::Left)
+        if (side != BoxSide::Left)
             stringBuilder.append(' ');
     }
     return stringBuilder.toString();

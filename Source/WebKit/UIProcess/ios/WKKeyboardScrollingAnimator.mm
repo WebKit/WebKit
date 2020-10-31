@@ -163,17 +163,17 @@ static WebCore::FloatSize perpendicularAbsoluteUnitVector(WebKit::ScrollingDirec
     }
 }
 
-static WebCore::PhysicalBoxSide boxSide(WebKit::ScrollingDirection direction)
+static WebCore::BoxSide boxSide(WebKit::ScrollingDirection direction)
 {
     switch (direction) {
     case WebKit::ScrollingDirection::Up:
-        return WebCore::PhysicalBoxSide::Top;
+        return WebCore::BoxSide::Top;
     case WebKit::ScrollingDirection::Down:
-        return WebCore::PhysicalBoxSide::Bottom;
+        return WebCore::BoxSide::Bottom;
     case WebKit::ScrollingDirection::Left:
-        return WebCore::PhysicalBoxSide::Left;
+        return WebCore::BoxSide::Left;
     case WebKit::ScrollingDirection::Right:
-        return WebCore::PhysicalBoxSide::Right;
+        return WebCore::BoxSide::Right;
     }
 }
 

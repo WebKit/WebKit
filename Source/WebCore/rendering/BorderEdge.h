@@ -27,29 +27,19 @@
 
 #include "Color.h"
 #include "LayoutUnit.h"
+#include "RectEdges.h"
 #include "RenderObjectEnums.h"
 #include "RenderStyleConstants.h"
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
-
-typedef unsigned BorderEdgeFlags;
 
 class RenderStyle;
 
 class BorderEdge {
 public:
-    enum BorderEdgeFlag {
-        TopBorderEdge = 1 << BSTop,
-        RightBorderEdge = 1 << BSRight,
-        BottomBorderEdge = 1 << BSBottom,
-        LeftBorderEdge = 1 << BSLeft,
-        AllBorderEdges = TopBorderEdge | BottomBorderEdge | LeftBorderEdge | RightBorderEdge
-    };
-
     BorderEdge() = default;
     BorderEdge(float edgeWidth, Color edgeColor, BorderStyle edgeStyle, bool edgeIsTransparent, bool edgeIsPresent, float devicePixelRatio);
-
-    static void getBorderEdgeInfo(BorderEdge edges[], const RenderStyle&, float deviceScaleFactor, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
 
     BorderStyle style() const { return m_style; }
     const Color& color() const { return m_color; }
@@ -76,15 +66,19 @@ private:
     bool m_isPresent { false };
 };
 
+using BorderEdges = RectEdges<BorderEdge>;
+BorderEdges borderEdges(const RenderStyle&, float deviceScaleFactor, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
+
 inline bool edgesShareColor(const BorderEdge& firstEdge, const BorderEdge& secondEdge) { return firstEdge.color() == secondEdge.color(); }
-inline BorderEdge::BorderEdgeFlag edgeFlagForSide(BoxSide side) { return static_cast<BorderEdge::BorderEdgeFlag>(1 << side); }
-inline bool includesEdge(BorderEdgeFlags flags, BoxSide side) { return flags & edgeFlagForSide(side); }
-inline bool includesAdjacentEdges(BorderEdgeFlags flags)
+inline BoxSideFlag edgeFlagForSide(BoxSide side) { return static_cast<BoxSideFlag>(1 << static_cast<unsigned>(side)); }
+inline bool includesEdge(OptionSet<BoxSideFlag> flags, BoxSide side) { return flags.contains(edgeFlagForSide(side)); }
+
+inline bool includesAdjacentEdges(OptionSet<BoxSideFlag> flags)
 {
-    return (flags & (BorderEdge::TopBorderEdge | BorderEdge::RightBorderEdge)) == (BorderEdge::TopBorderEdge | BorderEdge::RightBorderEdge)
-        || (flags & (BorderEdge::RightBorderEdge | BorderEdge::BottomBorderEdge)) == (BorderEdge::RightBorderEdge | BorderEdge::BottomBorderEdge)
-        || (flags & (BorderEdge::BottomBorderEdge | BorderEdge::LeftBorderEdge)) == (BorderEdge::BottomBorderEdge | BorderEdge::LeftBorderEdge)
-        || (flags & (BorderEdge::LeftBorderEdge | BorderEdge::TopBorderEdge)) == (BorderEdge::LeftBorderEdge | BorderEdge::TopBorderEdge);
+    return flags.containsAll({ BoxSideFlag::Top, BoxSideFlag::Right })
+        || flags.containsAll({ BoxSideFlag::Right, BoxSideFlag::Bottom })
+        || flags.containsAll({ BoxSideFlag::Bottom, BoxSideFlag::Left })
+        || flags.containsAll({ BoxSideFlag::Left, BoxSideFlag::Top });
 }
 
 } // namespace WebCore

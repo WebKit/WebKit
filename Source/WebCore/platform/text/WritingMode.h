@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include <array>
 #include <wtf/EnumTraits.h>
 
 namespace WebCore {
@@ -121,34 +122,36 @@ enum class LogicalBoxSide : uint8_t {
     Start
 };
 
-enum class PhysicalBoxSide : uint8_t {
+enum class BoxSide : uint8_t {
     Top,
     Right,
     Bottom,
     Left
 };
 
-inline bool isHorizontalPhysicalSide(PhysicalBoxSide physicalSide)
+constexpr std::array<BoxSide, 4> allBoxSides = { BoxSide::Top, BoxSide::Right, BoxSide::Bottom, BoxSide::Left };
+
+inline bool isHorizontalPhysicalSide(BoxSide physicalSide)
 {
-    return physicalSide == PhysicalBoxSide::Left || physicalSide == PhysicalBoxSide::Right;
+    return physicalSide == BoxSide::Left || physicalSide == BoxSide::Right;
 }
 
-inline PhysicalBoxSide mirrorPhysicalSide(PhysicalBoxSide physicalSide)
+inline BoxSide mirrorPhysicalSide(BoxSide physicalSide)
 {
     // top <-> bottom and left <-> right conversion
-    return static_cast<PhysicalBoxSide>((static_cast<int>(physicalSide) + 2) % 4);
+    return static_cast<BoxSide>((static_cast<int>(physicalSide) + 2) % 4);
 }
 
-inline PhysicalBoxSide rotatePhysicalSide(PhysicalBoxSide physicalSide)
+inline BoxSide rotatePhysicalSide(BoxSide physicalSide)
 {
     // top <-> left and right <-> bottom conversion
     bool horizontalSide = isHorizontalPhysicalSide(physicalSide);
-    return static_cast<PhysicalBoxSide>((static_cast<int>(physicalSide) + (horizontalSide ? 1 : 3)) % 4);
+    return static_cast<BoxSide>((static_cast<int>(physicalSide) + (horizontalSide ? 1 : 3)) % 4);
 }
 
-inline PhysicalBoxSide mapLogicalSideToPhysicalSide(TextFlow textflow, LogicalBoxSide logicalSide)
+inline BoxSide mapLogicalSideToPhysicalSide(TextFlow textflow, LogicalBoxSide logicalSide)
 {
-    PhysicalBoxSide physicalSide = static_cast<PhysicalBoxSide>(logicalSide);
+    BoxSide physicalSide = static_cast<BoxSide>(logicalSide);
     bool horizontalSide = isHorizontalPhysicalSide(physicalSide);
 
     if (isVerticalTextFlow(textflow))
@@ -160,7 +163,7 @@ inline PhysicalBoxSide mapLogicalSideToPhysicalSide(TextFlow textflow, LogicalBo
     return physicalSide;
 }
 
-inline PhysicalBoxSide mapLogicalSideToPhysicalSide(WritingMode writingMode, LogicalBoxSide logicalSide)
+inline BoxSide mapLogicalSideToPhysicalSide(WritingMode writingMode, LogicalBoxSide logicalSide)
 {
     // Set the direction such that side is mirrored if isFlippedWritingMode() is true
     TextDirection direction = isFlippedWritingMode(writingMode) ? TextDirection::RTL : TextDirection::LTR;

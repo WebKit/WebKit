@@ -603,8 +603,8 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
         LayoutUnit ruleLogicalLeft = leftToRight ? 0_lu : contentLogicalWidth();
         LayoutUnit inlineDirectionSize = computedColumnWidth();
         BoxSide boxSide = isHorizontalWritingMode()
-            ? leftToRight ? BSLeft : BSRight
-            : leftToRight ? BSTop : BSBottom;
+            ? leftToRight ? BoxSide::Left : BoxSide::Right
+            : leftToRight ? BoxSide::Top : BoxSide::Bottom;
 
         for (unsigned i = 0; i < colCount; i++) {
             // Move to the next position.
@@ -645,7 +645,7 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
 
         ruleRect.moveBy(paintOffset);
 
-        BoxSide boxSide = isHorizontalWritingMode() ? topToBottom ? BSTop : BSBottom : topToBottom ? BSLeft : BSRight;
+        BoxSide boxSide = isHorizontalWritingMode() ? topToBottom ? BoxSide::Top : BoxSide::Bottom : topToBottom ? BoxSide::Left : BoxSide::Right;
 
         LayoutSize step(0_lu, topToBottom ? computedColumnHeight() + colGap : -(computedColumnHeight() + colGap));
         if (!isHorizontalWritingMode())

@@ -27,9 +27,19 @@
 
 #include "WritingMode.h"
 #include <array>
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
-    
+
+enum class BoxSideFlag : uint8_t {
+    Top     = 1 << static_cast<unsigned>(BoxSide::Top),
+    Right   = 1 << static_cast<unsigned>(BoxSide::Right),
+    Bottom  = 1 << static_cast<unsigned>(BoxSide::Bottom),
+    Left    = 1 << static_cast<unsigned>(BoxSide::Left)
+};
+
+using BoxSideSet = OptionSet<BoxSideFlag>;
+
 template<typename T> class RectEdges {
 public:
     RectEdges() = default;
@@ -38,45 +48,47 @@ public:
     RectEdges(U&& top, U&& right, U&& bottom, U&& left)
         : m_sides({ { std::forward<T>(top), std::forward<T>(right), std::forward<T>(bottom), std::forward<T>(left) } })
     { }
-    
-    T& at(PhysicalBoxSide side) { return m_sides[static_cast<size_t>(side)]; }
-    T& top() { return at(PhysicalBoxSide::Top); }
-    T& right() { return at(PhysicalBoxSide::Right); }
-    T& bottom() { return at(PhysicalBoxSide::Bottom); }
-    T& left() { return at(PhysicalBoxSide::Left); }
-    
-    const T& at(PhysicalBoxSide side) const { return m_sides[static_cast<size_t>(side)]; }
-    const T& top() const { return at(PhysicalBoxSide::Top); }
-    const T& right() const { return at(PhysicalBoxSide::Right); }
-    const T& bottom() const { return at(PhysicalBoxSide::Bottom); }
-    const T& left() const { return at(PhysicalBoxSide::Left); }
-    
-    void setAt(PhysicalBoxSide side, const T& v) { at(side) = v; }
-    void setTop(const T& top) { setAt(PhysicalBoxSide::Top, top); }
-    void setRight(const T& right) { setAt(PhysicalBoxSide::Right, right); }
-    void setBottom(const T& bottom) { setAt(PhysicalBoxSide::Bottom, bottom); }
-    void setLeft(const T& left) { setAt(PhysicalBoxSide::Left, left); }
-    
+
+    T& at(BoxSide side) { return m_sides[static_cast<size_t>(side)]; }
+    T& operator[](BoxSide side) { return m_sides[static_cast<size_t>(side)]; }
+    T& top() { return at(BoxSide::Top); }
+    T& right() { return at(BoxSide::Right); }
+    T& bottom() { return at(BoxSide::Bottom); }
+    T& left() { return at(BoxSide::Left); }
+
+    const T& at(BoxSide side) const { return m_sides[static_cast<size_t>(side)]; }
+    const T& operator[](BoxSide side) const { return m_sides[static_cast<size_t>(side)]; }
+    const T& top() const { return at(BoxSide::Top); }
+    const T& right() const { return at(BoxSide::Right); }
+    const T& bottom() const { return at(BoxSide::Bottom); }
+    const T& left() const { return at(BoxSide::Left); }
+
+    void setAt(BoxSide side, const T& v) { at(side) = v; }
+    void setTop(const T& top) { setAt(BoxSide::Top, top); }
+    void setRight(const T& right) { setAt(BoxSide::Right, right); }
+    void setBottom(const T& bottom) { setAt(BoxSide::Bottom, bottom); }
+    void setLeft(const T& left) { setAt(BoxSide::Left, left); }
+
     T& before(WritingMode writingMode) { return at(mapLogicalSideToPhysicalSide(writingMode, LogicalBoxSide::Before)); }
     T& after(WritingMode writingMode) { return at(mapLogicalSideToPhysicalSide(writingMode, LogicalBoxSide::After)); }
     T& start(WritingMode writingMode, TextDirection direction = TextDirection::LTR) { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::Start)); }
     T& end(WritingMode writingMode, TextDirection direction = TextDirection::LTR) { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::End)); }
-    
+
     const T& before(WritingMode writingMode) const { return at(mapLogicalSideToPhysicalSide(writingMode, LogicalBoxSide::Before)); }
     const T& after(WritingMode writingMode) const { return at(mapLogicalSideToPhysicalSide(writingMode, LogicalBoxSide::After)); }
     const T& start(WritingMode writingMode, TextDirection direction = TextDirection::LTR) const { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::Start)); }
     const T& end(WritingMode writingMode, TextDirection direction = TextDirection::LTR) const { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::End)); }
-    
+
     void setBefore(const T& before, WritingMode writingMode) { this->before(writingMode) = before; }
     void setAfter(const T& after, WritingMode writingMode) { this->after(writingMode) = after; }
     void setStart(const T& start, WritingMode writingMode, TextDirection direction = TextDirection::LTR) { this->start(writingMode, direction) = start; }
     void setEnd(const T& end, WritingMode writingMode, TextDirection direction = TextDirection::LTR) { this->end(writingMode, direction) = end; }
-    
+
     bool operator==(const RectEdges& other) const { return m_sides == other.m_sides; }
     bool operator!=(const RectEdges& other) const { return m_sides != other.m_sides; }
 
 private:
-    std::array<T, 4> m_sides {{0, 0, 0, 0}};
+    std::array<T, 4> m_sides { };
 };
 
 }

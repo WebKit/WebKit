@@ -1096,10 +1096,10 @@ LayoutUnit RenderTableSection::offsetTopForRowGroupBorder(RenderTableCell* cell,
 {
     bool isLastRow = row + 1 == m_grid.size();
     if (style().isHorizontalWritingMode())
-        return m_rowPos[row] + (!row && borderSide == BSRight ? -outerBorderTop(&style()) : isLastRow && borderSide == BSLeft ? outerBorderTop(&style()) : 0_lu);
+        return m_rowPos[row] + (!row && borderSide == BoxSide::Right ? -outerBorderTop(&style()) : isLastRow && borderSide == BoxSide::Left ? outerBorderTop(&style()) : 0_lu);
     if (style().isLeftToRightDirection())
-        return (cell ? cell->y() + cell->height() : 0_lu) + (borderSide == BSLeft ? outerBorderTop(&style()) : 0_lu);
-    return borderSide == BSRight ? -outerBorderTop(&style()) : 0_lu;
+        return (cell ? cell->y() + cell->height() : 0_lu) + (borderSide == BoxSide::Left ? outerBorderTop(&style()) : 0_lu);
+    return borderSide == BoxSide::Right ? -outerBorderTop(&style()) : 0_lu;
 }
 
 LayoutUnit RenderTableSection::verticalRowGroupBorderHeight(RenderTableCell* cell, const LayoutRect& rowGroupRect, unsigned row)
@@ -1133,24 +1133,24 @@ void RenderTableSection::paintRowGroupBorderIfRequired(const PaintInfo& paintInf
     const RenderStyle& style = this->style();
     bool antialias = shouldAntialiasLines(paintInfo.context());
     LayoutRect rowGroupRect = LayoutRect(paintOffset, size());
-    rowGroupRect.moveBy(-LayoutPoint(outerBorderLeft(&style), (borderSide == BSRight) ? 0_lu : outerBorderTop(&style)));
+    rowGroupRect.moveBy(-LayoutPoint(outerBorderLeft(&style), (borderSide == BoxSide::Right) ? 0_lu : outerBorderTop(&style)));
 
     switch (borderSide) {
-    case BSTop:
+    case BoxSide::Top:
         paintRowGroupBorder(paintInfo, antialias, LayoutRect(paintOffset.x() + offsetLeftForRowGroupBorder(cell, rowGroupRect, row), rowGroupRect.y(), 
-            horizontalRowGroupBorderWidth(cell, rowGroupRect, row, column), LayoutUnit(style.borderTop().width())), BSTop, CSSPropertyBorderTopColor, style.borderTopStyle(), table()->style().borderTopStyle());
+            horizontalRowGroupBorderWidth(cell, rowGroupRect, row, column), LayoutUnit(style.borderTop().width())), BoxSide::Top, CSSPropertyBorderTopColor, style.borderTopStyle(), table()->style().borderTopStyle());
         break;
-    case BSBottom:
+    case BoxSide::Bottom:
         paintRowGroupBorder(paintInfo, antialias, LayoutRect(paintOffset.x() + offsetLeftForRowGroupBorder(cell, rowGroupRect, row), rowGroupRect.y() + rowGroupRect.height(), 
-            horizontalRowGroupBorderWidth(cell, rowGroupRect, row, column), LayoutUnit(style.borderBottom().width())), BSBottom, CSSPropertyBorderBottomColor, style.borderBottomStyle(), table()->style().borderBottomStyle());
+            horizontalRowGroupBorderWidth(cell, rowGroupRect, row, column), LayoutUnit(style.borderBottom().width())), BoxSide::Bottom, CSSPropertyBorderBottomColor, style.borderBottomStyle(), table()->style().borderBottomStyle());
         break;
-    case BSLeft:
+    case BoxSide::Left:
         paintRowGroupBorder(paintInfo, antialias, LayoutRect(rowGroupRect.x(), rowGroupRect.y() + offsetTopForRowGroupBorder(cell, borderSide, row), LayoutUnit(style.borderLeft().width()),
-            verticalRowGroupBorderHeight(cell, rowGroupRect, row)), BSLeft, CSSPropertyBorderLeftColor, style.borderLeftStyle(), table()->style().borderLeftStyle());
+            verticalRowGroupBorderHeight(cell, rowGroupRect, row)), BoxSide::Left, CSSPropertyBorderLeftColor, style.borderLeftStyle(), table()->style().borderLeftStyle());
         break;
-    case BSRight:
+    case BoxSide::Right:
         paintRowGroupBorder(paintInfo, antialias, LayoutRect(rowGroupRect.x() + rowGroupRect.width(), rowGroupRect.y() + offsetTopForRowGroupBorder(cell, borderSide, row), LayoutUnit(style.borderRight().width()),
-            verticalRowGroupBorderHeight(cell, rowGroupRect, row)), BSRight, CSSPropertyBorderRightColor, style.borderRightStyle(), table()->style().borderRightStyle());
+            verticalRowGroupBorderHeight(cell, rowGroupRect, row)), BoxSide::Right, CSSPropertyBorderRightColor, style.borderRightStyle(), table()->style().borderRightStyle());
         break;
     default:
         break;
@@ -1164,23 +1164,23 @@ static BoxSide physicalBorderForDirection(const RenderStyle* styleForCellFlow, C
     switch (side) {
     case CBSStart:
         if (styleForCellFlow->isHorizontalWritingMode())
-            return styleForCellFlow->isLeftToRightDirection() ? BSLeft : BSRight;
-        return styleForCellFlow->isLeftToRightDirection() ? BSTop : BSBottom;
+            return styleForCellFlow->isLeftToRightDirection() ? BoxSide::Left : BoxSide::Right;
+        return styleForCellFlow->isLeftToRightDirection() ? BoxSide::Top : BoxSide::Bottom;
     case CBSEnd:
         if (styleForCellFlow->isHorizontalWritingMode())
-            return styleForCellFlow->isLeftToRightDirection() ? BSRight : BSLeft;
-        return styleForCellFlow->isLeftToRightDirection() ? BSBottom : BSTop;
+            return styleForCellFlow->isLeftToRightDirection() ? BoxSide::Right : BoxSide::Left;
+        return styleForCellFlow->isLeftToRightDirection() ? BoxSide::Bottom : BoxSide::Top;
     case CBSBefore:
         if (styleForCellFlow->isHorizontalWritingMode())
-            return BSTop;
-        return styleForCellFlow->isLeftToRightDirection() ? BSRight : BSLeft;
+            return BoxSide::Top;
+        return styleForCellFlow->isLeftToRightDirection() ? BoxSide::Right : BoxSide::Left;
     case CBSAfter:
         if (styleForCellFlow->isHorizontalWritingMode())
-            return BSBottom;
-        return styleForCellFlow->isLeftToRightDirection() ? BSLeft : BSRight;
+            return BoxSide::Bottom;
+        return styleForCellFlow->isLeftToRightDirection() ? BoxSide::Left : BoxSide::Right;
     default:
         ASSERT_NOT_REACHED();
-        return BSLeft;
+        return BoxSide::Left;
     }
 }
 

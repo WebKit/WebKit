@@ -1,3 +1,13 @@
+2020-10-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up BoxSide and BorderEdge code
+        https://bugs.webkit.org/show_bug.cgi?id=218197
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/ios/WKKeyboardScrollingAnimator.mm:
+        (boxSide):
+
 2020-10-30  Brian Burg  <bburg@apple.com>
 
         Web Inspector: move InspectorFrontendAPIDispatcher to WebCore, clean up uses
