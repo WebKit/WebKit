@@ -128,6 +128,7 @@ PASS OffscreenCanvasRenderingContext2D includes CanvasImageData: member names ar
 PASS OffscreenCanvasRenderingContext2D includes CanvasPathDrawingStyles: member names are unique
 PASS OffscreenCanvasRenderingContext2D includes CanvasTextDrawingStyles: member names are unique
 PASS OffscreenCanvasRenderingContext2D includes CanvasPath: member names are unique
+PASS ElementInternals includes ARIAMixin: member names are unique
 PASS Window includes GlobalEventHandlers: member names are unique
 PASS Window includes WindowEventHandlers: member names are unique
 PASS Window includes WindowOrWorkerGlobalScope: member names are unique
@@ -150,6 +151,11 @@ PASS WorkerNavigator includes NavigatorLanguage: member names are unique
 PASS WorkerNavigator includes NavigatorOnLine: member names are unique
 PASS WorkerNavigator includes NavigatorConcurrentHardware: member names are unique
 PASS HTMLFrameSetElement includes WindowEventHandlers: member names are unique
+PASS Element includes ARIAMixin: member names are unique
+PASS Element includes ParentNode: member names are unique
+PASS Element includes NonDocumentTypeChildNode: member names are unique
+PASS Element includes ChildNode: member names are unique
+PASS Element includes Slottable: member names are unique
 PASS SVGElement includes GlobalEventHandlers: member names are unique
 PASS SVGElement includes DocumentAndElementEventHandlers: member names are unique
 PASS SVGElement includes SVGElementInstance: member names are unique
@@ -165,10 +171,6 @@ FAIL SVGAElement includes HTMLHyperlinkElementUtils: member names are unique ass
 PASS DocumentFragment includes NonElementParentNode: member names are unique
 PASS DocumentFragment includes ParentNode: member names are unique
 PASS ShadowRoot includes DocumentOrShadowRoot: member names are unique
-PASS Element includes ParentNode: member names are unique
-PASS Element includes NonDocumentTypeChildNode: member names are unique
-PASS Element includes ChildNode: member names are unique
-PASS Element includes Slottable: member names are unique
 PASS HTMLAllCollection interface: existence and properties of interface object
 PASS HTMLAllCollection interface object length
 PASS HTMLAllCollection interface object name
@@ -271,7 +273,6 @@ PASS HTMLElement interface: attribute ondblclick
 PASS HTMLElement interface: attribute ondrag
 PASS HTMLElement interface: attribute ondragend
 PASS HTMLElement interface: attribute ondragenter
-FAIL HTMLElement interface: attribute ondragexit assert_true: The prototype object must have a property "ondragexit" expected true got false
 PASS HTMLElement interface: attribute ondragleave
 PASS HTMLElement interface: attribute ondragover
 PASS HTMLElement interface: attribute ondragstart
@@ -366,7 +367,6 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondrag" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragend" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragenter" with the proper type
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "ondragexit" with the proper type assert_inherits: property "ondragexit" not found in prototype chain
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragleave" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragover" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragstart" with the proper type
@@ -973,10 +973,10 @@ PASS HTMLIFrameElement interface: attribute name
 PASS HTMLIFrameElement interface: attribute sandbox
 PASS HTMLIFrameElement interface: attribute allow
 PASS HTMLIFrameElement interface: attribute allowFullscreen
-FAIL HTMLIFrameElement interface: attribute allowPaymentRequest assert_true: The prototype object must have a property "allowPaymentRequest" expected true got false
 PASS HTMLIFrameElement interface: attribute width
 PASS HTMLIFrameElement interface: attribute height
 PASS HTMLIFrameElement interface: attribute referrerPolicy
+PASS HTMLIFrameElement interface: attribute loading
 PASS HTMLIFrameElement interface: attribute contentDocument
 PASS HTMLIFrameElement interface: attribute contentWindow
 PASS HTMLIFrameElement interface: operation getSVGDocument()
@@ -1135,6 +1135,7 @@ PASS HTMLMediaElement interface: document.createElement("video") must inherit pr
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "paused" with the proper type
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "defaultPlaybackRate" with the proper type
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "playbackRate" with the proper type
+FAIL HTMLMediaElement interface: document.createElement("video") must inherit property "preservesPitch" with the proper type assert_inherits: property "preservesPitch" not found in prototype chain
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "played" with the proper type
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "seekable" with the proper type
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "ended" with the proper type
@@ -1195,6 +1196,7 @@ PASS HTMLMediaElement interface: document.createElement("audio") must inherit pr
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "paused" with the proper type
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "defaultPlaybackRate" with the proper type
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "playbackRate" with the proper type
+FAIL HTMLMediaElement interface: document.createElement("audio") must inherit property "preservesPitch" with the proper type assert_inherits: property "preservesPitch" not found in prototype chain
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "played" with the proper type
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "seekable" with the proper type
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "ended" with the proper type
@@ -1243,6 +1245,7 @@ PASS HTMLMediaElement interface: new Audio() must inherit property "getStartDate
 PASS HTMLMediaElement interface: new Audio() must inherit property "paused" with the proper type
 PASS HTMLMediaElement interface: new Audio() must inherit property "defaultPlaybackRate" with the proper type
 PASS HTMLMediaElement interface: new Audio() must inherit property "playbackRate" with the proper type
+FAIL HTMLMediaElement interface: new Audio() must inherit property "preservesPitch" with the proper type assert_inherits: property "preservesPitch" not found in prototype chain
 PASS HTMLMediaElement interface: new Audio() must inherit property "played" with the proper type
 PASS HTMLMediaElement interface: new Audio() must inherit property "seekable" with the proper type
 PASS HTMLMediaElement interface: new Audio() must inherit property "ended" with the proper type
@@ -1336,6 +1339,7 @@ PASS HTMLMediaElement interface: operation getStartDate()
 PASS HTMLMediaElement interface: attribute paused
 PASS HTMLMediaElement interface: attribute defaultPlaybackRate
 PASS HTMLMediaElement interface: attribute playbackRate
+FAIL HTMLMediaElement interface: attribute preservesPitch assert_true: The prototype object must have a property "preservesPitch" expected true got false
 PASS HTMLMediaElement interface: attribute played
 PASS HTMLMediaElement interface: attribute seekable
 PASS HTMLMediaElement interface: attribute ended
@@ -4229,6 +4233,7 @@ FAIL ElementInternals interface object name assert_own_property: self does not h
 FAIL ElementInternals interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
 FAIL ElementInternals interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
 FAIL ElementInternals interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
+FAIL ElementInternals interface: attribute shadowRoot assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
 FAIL ElementInternals interface: operation setFormValue((File or USVString or FormData)?, optional (File or USVString or FormData)?) assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
 FAIL ElementInternals interface: attribute form assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
 FAIL ElementInternals interface: operation setValidity(optional ValidityStateFlags, optional DOMString, optional HTMLElement) assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
@@ -4317,6 +4322,7 @@ PASS Window interface: attribute frameElement
 PASS Window interface: operation open(optional USVString, optional DOMString, optional DOMString)
 PASS Window interface: attribute navigator
 PASS Window interface: attribute applicationCache
+FAIL Window interface: attribute originIsolated assert_own_property: The global object must have a property "originIsolated" expected property "originIsolated" missing
 PASS Window interface: operation alert()
 PASS Window interface: operation alert(DOMString)
 PASS Window interface: operation confirm(optional DOMString)
@@ -4342,7 +4348,6 @@ PASS Window interface: attribute ondblclick
 PASS Window interface: attribute ondrag
 PASS Window interface: attribute ondragend
 PASS Window interface: attribute ondragenter
-FAIL Window interface: attribute ondragexit assert_own_property: The global object must have a property "ondragexit" expected property "ondragexit" missing
 PASS Window interface: attribute ondragleave
 PASS Window interface: attribute ondragover
 PASS Window interface: attribute ondragstart
@@ -4411,6 +4416,8 @@ PASS Window interface: attribute onstorage
 PASS Window interface: attribute onunhandledrejection
 PASS Window interface: attribute onunload
 PASS Window interface: attribute origin
+PASS Window interface: attribute isSecureContext
+FAIL Window interface: attribute crossOriginIsolated assert_own_property: The global object must have a property "crossOriginIsolated" expected property "crossOriginIsolated" missing
 PASS Window interface: operation btoa(DOMString)
 PASS Window interface: operation atob(DOMString)
 PASS Window interface: operation setTimeout(TimerHandler, optional long, any...)
@@ -4461,6 +4468,7 @@ PASS Window interface: window must inherit property "open(optional USVString, op
 PASS Window interface: calling open(optional USVString, optional DOMString, optional DOMString) on window with too few arguments must throw TypeError
 PASS Window interface: window must inherit property "navigator" with the proper type
 PASS Window interface: window must inherit property "applicationCache" with the proper type
+FAIL Window interface: window must inherit property "originIsolated" with the proper type assert_own_property: expected property "originIsolated" missing
 PASS Window interface: window must inherit property "alert()" with the proper type
 PASS Window interface: window must inherit property "alert(DOMString)" with the proper type
 PASS Window interface: calling alert(DOMString) on window with too few arguments must throw TypeError
@@ -4491,7 +4499,6 @@ PASS Window interface: window must inherit property "ondblclick" with the proper
 PASS Window interface: window must inherit property "ondrag" with the proper type
 PASS Window interface: window must inherit property "ondragend" with the proper type
 PASS Window interface: window must inherit property "ondragenter" with the proper type
-FAIL Window interface: window must inherit property "ondragexit" with the proper type assert_own_property: expected property "ondragexit" missing
 PASS Window interface: window must inherit property "ondragleave" with the proper type
 PASS Window interface: window must inherit property "ondragover" with the proper type
 PASS Window interface: window must inherit property "ondragstart" with the proper type
@@ -4560,6 +4567,8 @@ PASS Window interface: window must inherit property "onstorage" with the proper 
 PASS Window interface: window must inherit property "onunhandledrejection" with the proper type
 PASS Window interface: window must inherit property "onunload" with the proper type
 PASS Window interface: window must inherit property "origin" with the proper type
+PASS Window interface: window must inherit property "isSecureContext" with the proper type
+FAIL Window interface: window must inherit property "crossOriginIsolated" with the proper type assert_own_property: expected property "crossOriginIsolated" missing
 PASS Window interface: window must inherit property "btoa(DOMString)" with the proper type
 PASS Window interface: calling btoa(DOMString) on window with too few arguments must throw TypeError
 PASS Window interface: window must inherit property "atob(DOMString)" with the proper type
@@ -4896,6 +4905,18 @@ PASS EventSource interface: attribute onopen
 PASS EventSource interface: attribute onmessage
 PASS EventSource interface: attribute onerror
 PASS EventSource interface: operation close()
+PASS EventSource must be primary interface of new EventSource("http://invalid")
+PASS Stringification of new EventSource("http://invalid")
+PASS EventSource interface: new EventSource("http://invalid") must inherit property "url" with the proper type
+PASS EventSource interface: new EventSource("http://invalid") must inherit property "withCredentials" with the proper type
+PASS EventSource interface: new EventSource("http://invalid") must inherit property "CONNECTING" with the proper type
+PASS EventSource interface: new EventSource("http://invalid") must inherit property "OPEN" with the proper type
+PASS EventSource interface: new EventSource("http://invalid") must inherit property "CLOSED" with the proper type
+PASS EventSource interface: new EventSource("http://invalid") must inherit property "readyState" with the proper type
+PASS EventSource interface: new EventSource("http://invalid") must inherit property "onopen" with the proper type
+PASS EventSource interface: new EventSource("http://invalid") must inherit property "onmessage" with the proper type
+PASS EventSource interface: new EventSource("http://invalid") must inherit property "onerror" with the proper type
+PASS EventSource interface: new EventSource("http://invalid") must inherit property "close()" with the proper type
 PASS WebSocket interface: existence and properties of interface object
 PASS WebSocket interface object length
 PASS WebSocket interface object name
@@ -5021,6 +5042,14 @@ FAIL SharedWorker interface: attribute port assert_own_property: self does not h
 FAIL SharedWorker interface: attribute onerror assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
 PASS WorkerNavigator interface: existence and properties of interface object
 PASS WorkerLocation interface: existence and properties of interface object
+PASS WorkletGlobalScope interface: existence and properties of interface object
+PASS Worklet interface: existence and properties of interface object
+PASS Worklet interface object length
+PASS Worklet interface object name
+PASS Worklet interface: existence and properties of interface prototype object
+FAIL Worklet interface: existence and properties of interface prototype object's "constructor" property assert_own_property: Worklet.prototype does not have own property "constructor" expected property "constructor" missing
+PASS Worklet interface: existence and properties of interface prototype object's @@unscopables property
+FAIL Worklet interface: operation addModule(USVString, optional WorkletOptions) assert_own_property: interface prototype object missing non-static operation expected property "addModule" missing
 PASS Storage interface: existence and properties of interface object
 PASS Storage interface object length
 PASS Storage interface object name
@@ -5033,6 +5062,30 @@ PASS Storage interface: operation getItem(DOMString)
 PASS Storage interface: operation setItem(DOMString, DOMString)
 PASS Storage interface: operation removeItem(DOMString)
 PASS Storage interface: operation clear()
+PASS Storage must be primary interface of localStorage
+PASS Stringification of localStorage
+PASS Storage interface: localStorage must inherit property "length" with the proper type
+PASS Storage interface: localStorage must inherit property "key(unsigned long)" with the proper type
+PASS Storage interface: calling key(unsigned long) on localStorage with too few arguments must throw TypeError
+PASS Storage interface: localStorage must inherit property "getItem(DOMString)" with the proper type
+PASS Storage interface: calling getItem(DOMString) on localStorage with too few arguments must throw TypeError
+PASS Storage interface: localStorage must inherit property "setItem(DOMString, DOMString)" with the proper type
+PASS Storage interface: calling setItem(DOMString, DOMString) on localStorage with too few arguments must throw TypeError
+PASS Storage interface: localStorage must inherit property "removeItem(DOMString)" with the proper type
+PASS Storage interface: calling removeItem(DOMString) on localStorage with too few arguments must throw TypeError
+PASS Storage interface: localStorage must inherit property "clear()" with the proper type
+PASS Storage must be primary interface of sessionStorage
+PASS Stringification of sessionStorage
+PASS Storage interface: sessionStorage must inherit property "length" with the proper type
+PASS Storage interface: sessionStorage must inherit property "key(unsigned long)" with the proper type
+PASS Storage interface: calling key(unsigned long) on sessionStorage with too few arguments must throw TypeError
+PASS Storage interface: sessionStorage must inherit property "getItem(DOMString)" with the proper type
+PASS Storage interface: calling getItem(DOMString) on sessionStorage with too few arguments must throw TypeError
+PASS Storage interface: sessionStorage must inherit property "setItem(DOMString, DOMString)" with the proper type
+PASS Storage interface: calling setItem(DOMString, DOMString) on sessionStorage with too few arguments must throw TypeError
+PASS Storage interface: sessionStorage must inherit property "removeItem(DOMString)" with the proper type
+PASS Storage interface: calling removeItem(DOMString) on sessionStorage with too few arguments must throw TypeError
+PASS Storage interface: sessionStorage must inherit property "clear()" with the proper type
 PASS StorageEvent interface: existence and properties of interface object
 PASS StorageEvent interface object length
 PASS StorageEvent interface object name
@@ -5045,6 +5098,15 @@ PASS StorageEvent interface: attribute newValue
 PASS StorageEvent interface: attribute url
 PASS StorageEvent interface: attribute storageArea
 PASS StorageEvent interface: operation initStorageEvent(DOMString, optional boolean, optional boolean, optional DOMString?, optional DOMString?, optional DOMString?, optional USVString, optional Storage?)
+PASS StorageEvent must be primary interface of new StorageEvent("storage")
+PASS Stringification of new StorageEvent("storage")
+PASS StorageEvent interface: new StorageEvent("storage") must inherit property "key" with the proper type
+PASS StorageEvent interface: new StorageEvent("storage") must inherit property "oldValue" with the proper type
+PASS StorageEvent interface: new StorageEvent("storage") must inherit property "newValue" with the proper type
+PASS StorageEvent interface: new StorageEvent("storage") must inherit property "url" with the proper type
+PASS StorageEvent interface: new StorageEvent("storage") must inherit property "storageArea" with the proper type
+PASS StorageEvent interface: new StorageEvent("storage") must inherit property "initStorageEvent(DOMString, optional boolean, optional boolean, optional DOMString?, optional DOMString?, optional DOMString?, optional USVString, optional Storage?)" with the proper type
+PASS StorageEvent interface: calling initStorageEvent(DOMString, optional boolean, optional boolean, optional DOMString?, optional DOMString?, optional DOMString?, optional USVString, optional Storage?) on new StorageEvent("storage") with too few arguments must throw TypeError
 PASS HTMLMarqueeElement interface: existence and properties of interface object
 PASS HTMLMarqueeElement interface object length
 PASS HTMLMarqueeElement interface object name
@@ -5208,7 +5270,6 @@ PASS SVGElement interface: attribute ondblclick
 PASS SVGElement interface: attribute ondrag
 PASS SVGElement interface: attribute ondragend
 PASS SVGElement interface: attribute ondragenter
-FAIL SVGElement interface: attribute ondragexit assert_true: The prototype object must have a property "ondragexit" expected true got false
 PASS SVGElement interface: attribute ondragleave
 PASS SVGElement interface: attribute ondragover
 PASS SVGElement interface: attribute ondragstart
@@ -5345,7 +5406,6 @@ PASS Document interface: attribute ondblclick
 PASS Document interface: attribute ondrag
 PASS Document interface: attribute ondragend
 PASS Document interface: attribute ondragenter
-FAIL Document interface: attribute ondragexit assert_true: The prototype object must have a property "ondragexit" expected true got false
 PASS Document interface: attribute ondragleave
 PASS Document interface: attribute ondragover
 PASS Document interface: attribute ondragstart
@@ -5471,7 +5531,6 @@ PASS Document interface: iframe.contentDocument must inherit property "ondblclic
 PASS Document interface: iframe.contentDocument must inherit property "ondrag" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "ondragend" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "ondragenter" with the proper type
-FAIL Document interface: iframe.contentDocument must inherit property "ondragexit" with the proper type assert_inherits: property "ondragexit" not found in prototype chain
 PASS Document interface: iframe.contentDocument must inherit property "ondragleave" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "ondragover" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "ondragstart" with the proper type
@@ -5597,7 +5656,6 @@ PASS Document interface: new Document() must inherit property "ondblclick" with 
 PASS Document interface: new Document() must inherit property "ondrag" with the proper type
 PASS Document interface: new Document() must inherit property "ondragend" with the proper type
 PASS Document interface: new Document() must inherit property "ondragenter" with the proper type
-FAIL Document interface: new Document() must inherit property "ondragexit" with the proper type assert_inherits: property "ondragexit" not found in prototype chain
 PASS Document interface: new Document() must inherit property "ondragleave" with the proper type
 PASS Document interface: new Document() must inherit property "ondragover" with the proper type
 PASS Document interface: new Document() must inherit property "ondragstart" with the proper type
@@ -5723,7 +5781,6 @@ PASS Document interface: documentWithHandlers must inherit property "ondblclick"
 PASS Document interface: documentWithHandlers must inherit property "ondrag" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "ondragend" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "ondragenter" with the proper type
-FAIL Document interface: documentWithHandlers must inherit property "ondragexit" with the proper type assert_inherits: property "ondragexit" found on object expected in prototype chain
 PASS Document interface: documentWithHandlers must inherit property "ondragleave" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "ondragover" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "ondragstart" with the proper type

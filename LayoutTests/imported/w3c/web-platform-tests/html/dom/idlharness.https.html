@@ -38,7 +38,7 @@ const waitForLoad = new Promise(resolve => { addEventListener('load', resolve); 
 
 idl_test(
   ['html'],
-  ['SVG', 'cssom', 'touch-events', 'uievents', 'dom', 'xhr', 'FileAPI', 'mediacapture-streams'],
+  ['wai-aria', 'SVG', 'cssom', 'touch-events', 'uievents', 'dom', 'xhr', 'FileAPI', 'mediacapture-streams'],
   async idlArray => {
     self.documentWithHandlers = new Document();
     const handler = function(e) {};
@@ -211,6 +211,7 @@ idl_test(
       PeerConnection: [],
       MediaStreamEvent: [],
       ErrorEvent: [],
+      EventSource: ['new EventSource("http://invalid")'],
       // https://web-platform-tests.org/writing-tests/server-features.html?tests-involving-multiple-origins
       WebSocket: ['new WebSocket("wss://nonexistent.' + get_host_info().ORIGINAL_HOST + '")'],
       CloseEvent: ['new CloseEvent("close")'],
@@ -226,6 +227,11 @@ idl_test(
       HTMLDirectoryElement: ['document.createElement("dir")'],
       HTMLFontElement: ['document.createElement("font")'],
       DOMStringList: ['location.ancestorOrigins'],
+      Storage: [
+        'localStorage',
+        'sessionStorage',
+      ],
+      StorageEvent: ['new StorageEvent("storage")']
     });
     idlArray.prevent_multiple_testing('HTMLElement');
     await waitForLoad;

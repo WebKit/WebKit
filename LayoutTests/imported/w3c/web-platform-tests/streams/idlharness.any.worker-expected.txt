@@ -1,6 +1,8 @@
 
 PASS idl_test setup
 PASS idl_test validation
+PASS ReadableStreamDefaultReader includes ReadableStreamGenericReader: member names are unique
+PASS ReadableStreamBYOBReader includes ReadableStreamGenericReader: member names are unique
 PASS ReadableStream interface: existence and properties of interface object
 PASS ReadableStream interface object length
 PASS ReadableStream interface object name
@@ -32,35 +34,35 @@ FAIL ReadableStreamDefaultReader interface object name assert_own_property: self
 FAIL ReadableStreamDefaultReader interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
 FAIL ReadableStreamDefaultReader interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
 FAIL ReadableStreamDefaultReader interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
-FAIL ReadableStreamDefaultReader interface: attribute closed assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
-FAIL ReadableStreamDefaultReader interface: operation cancel(optional any) assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
 FAIL ReadableStreamDefaultReader interface: operation read() assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
 FAIL ReadableStreamDefaultReader interface: operation releaseLock() assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
+FAIL ReadableStreamDefaultReader interface: attribute closed assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
+FAIL ReadableStreamDefaultReader interface: operation cancel(optional any) assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
 FAIL ReadableStreamDefaultReader must be primary interface of (new ReadableStream()).getReader() assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
 PASS Stringification of (new ReadableStream()).getReader()
+PASS ReadableStreamDefaultReader interface: (new ReadableStream()).getReader() must inherit property "read()" with the proper type
+PASS ReadableStreamDefaultReader interface: (new ReadableStream()).getReader() must inherit property "releaseLock()" with the proper type
 PASS ReadableStreamDefaultReader interface: (new ReadableStream()).getReader() must inherit property "closed" with the proper type
 PASS ReadableStreamDefaultReader interface: (new ReadableStream()).getReader() must inherit property "cancel(optional any)" with the proper type
 PASS ReadableStreamDefaultReader interface: calling cancel(optional any) on (new ReadableStream()).getReader() with too few arguments must throw TypeError
-PASS ReadableStreamDefaultReader interface: (new ReadableStream()).getReader() must inherit property "read()" with the proper type
-PASS ReadableStreamDefaultReader interface: (new ReadableStream()).getReader() must inherit property "releaseLock()" with the proper type
 FAIL ReadableStreamBYOBReader interface: existence and properties of interface object assert_own_property: self does not have own property "ReadableStreamBYOBReader" expected property "ReadableStreamBYOBReader" missing
 FAIL ReadableStreamBYOBReader interface object length assert_own_property: self does not have own property "ReadableStreamBYOBReader" expected property "ReadableStreamBYOBReader" missing
 FAIL ReadableStreamBYOBReader interface object name assert_own_property: self does not have own property "ReadableStreamBYOBReader" expected property "ReadableStreamBYOBReader" missing
 FAIL ReadableStreamBYOBReader interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ReadableStreamBYOBReader" expected property "ReadableStreamBYOBReader" missing
 FAIL ReadableStreamBYOBReader interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ReadableStreamBYOBReader" expected property "ReadableStreamBYOBReader" missing
 FAIL ReadableStreamBYOBReader interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ReadableStreamBYOBReader" expected property "ReadableStreamBYOBReader" missing
-FAIL ReadableStreamBYOBReader interface: attribute closed assert_own_property: self does not have own property "ReadableStreamBYOBReader" expected property "ReadableStreamBYOBReader" missing
-FAIL ReadableStreamBYOBReader interface: operation cancel(optional any) assert_own_property: self does not have own property "ReadableStreamBYOBReader" expected property "ReadableStreamBYOBReader" missing
 FAIL ReadableStreamBYOBReader interface: operation read(ArrayBufferView) assert_own_property: self does not have own property "ReadableStreamBYOBReader" expected property "ReadableStreamBYOBReader" missing
 FAIL ReadableStreamBYOBReader interface: operation releaseLock() assert_own_property: self does not have own property "ReadableStreamBYOBReader" expected property "ReadableStreamBYOBReader" missing
+FAIL ReadableStreamBYOBReader interface: attribute closed assert_own_property: self does not have own property "ReadableStreamBYOBReader" expected property "ReadableStreamBYOBReader" missing
+FAIL ReadableStreamBYOBReader interface: operation cancel(optional any) assert_own_property: self does not have own property "ReadableStreamBYOBReader" expected property "ReadableStreamBYOBReader" missing
 FAIL ReadableStreamBYOBReader must be primary interface of (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' }) assert_own_property: self does not have own property "ReadableStreamBYOBReader" expected property "ReadableStreamBYOBReader" missing
 PASS Stringification of (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' })
-PASS ReadableStreamBYOBReader interface: (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' }) must inherit property "closed" with the proper type
-PASS ReadableStreamBYOBReader interface: (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' }) must inherit property "cancel(optional any)" with the proper type
-PASS ReadableStreamBYOBReader interface: calling cancel(optional any) on (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' }) with too few arguments must throw TypeError
 PASS ReadableStreamBYOBReader interface: (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' }) must inherit property "read(ArrayBufferView)" with the proper type
 PASS ReadableStreamBYOBReader interface: calling read(ArrayBufferView) on (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' }) with too few arguments must throw TypeError
 PASS ReadableStreamBYOBReader interface: (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' }) must inherit property "releaseLock()" with the proper type
+PASS ReadableStreamBYOBReader interface: (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' }) must inherit property "closed" with the proper type
+PASS ReadableStreamBYOBReader interface: (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' }) must inherit property "cancel(optional any)" with the proper type
+PASS ReadableStreamBYOBReader interface: calling cancel(optional any) on (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' }) with too few arguments must throw TypeError
 FAIL ReadableStreamDefaultController interface: existence and properties of interface object assert_own_property: self does not have own property "ReadableStreamDefaultController" expected property "ReadableStreamDefaultController" missing
 FAIL ReadableStreamDefaultController interface object length assert_own_property: self does not have own property "ReadableStreamDefaultController" expected property "ReadableStreamDefaultController" missing
 FAIL ReadableStreamDefaultController interface object name assert_own_property: self does not have own property "ReadableStreamDefaultController" expected property "ReadableStreamDefaultController" missing

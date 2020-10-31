@@ -49,8 +49,6 @@ PASS TextDecoderStream interface: existence and properties of interface prototyp
 PASS TextDecoderStream interface: attribute encoding
 PASS TextDecoderStream interface: attribute fatal
 PASS TextDecoderStream interface: attribute ignoreBOM
-PASS TextDecoderStream interface: attribute readable
-PASS TextDecoderStream interface: attribute writable
 PASS TextEncoderStream interface: existence and properties of interface object
 PASS TextEncoderStream interface object length
 PASS TextEncoderStream interface object name
@@ -58,6 +56,4 @@ PASS TextEncoderStream interface: existence and properties of interface prototyp
 PASS TextEncoderStream interface: existence and properties of interface prototype object's "constructor" property
 PASS TextEncoderStream interface: existence and properties of interface prototype object's @@unscopables property
 PASS TextEncoderStream interface: attribute encoding
-PASS TextEncoderStream interface: attribute readable
-PASS TextEncoderStream interface: attribute writable
 

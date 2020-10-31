@@ -1,5 +1,32 @@
 2020-10-30  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/interfaces tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=218394
+
+        Reviewed by Sam Weinig.
+
+        Resync web-platform-tests/interfaces tests from upstream 5dbb0a3fa631ef73da06.
+
+        * web-platform-tests/audio-output/idlharness.https.window-expected.txt:
+        * web-platform-tests/encoding/idlharness.any-expected.txt:
+        * web-platform-tests/encoding/idlharness.any.js:
+        * web-platform-tests/encoding/idlharness.any.worker-expected.txt:
+        * web-platform-tests/html/dom/idlharness.https.html:
+        * web-platform-tests/html/dom/idlharness.worker.js:
+        * web-platform-tests/payment-request/idlharness.https.window-expected.txt:
+        * web-platform-tests/resize-observer/idlharness.window-expected.txt:
+        * web-platform-tests/streams/idlharness.any-expected.txt:
+        * web-platform-tests/streams/idlharness.any.worker-expected.txt:
+        * web-platform-tests/web-animations/idlharness.window-expected.txt:
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+        * web-platform-tests/webaudio/idlharness.https.window.js:
+        Rebaseline some WPT tests whose output has changed. Some of the tests had
+        to be resync'd from upstream to keep running. 
+
+        * web-platform-tests/interfaces/*: Updated.
+
+2020-10-30  Chris Dumez  <cdumez@apple.com>
+
         BaseAudioContext.decodeAudioData() should throw an InvalidStateError when document is not fully active
         https://bugs.webkit.org/show_bug.cgi?id=218400
 

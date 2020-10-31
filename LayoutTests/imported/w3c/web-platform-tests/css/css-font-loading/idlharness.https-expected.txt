@@ -26,6 +26,9 @@ FAIL FontFace interface: attribute variant assert_true: The prototype object mus
 PASS FontFace interface: attribute featureSettings
 FAIL FontFace interface: attribute variationSettings assert_true: The prototype object must have a property "variationSettings" expected true got false
 PASS FontFace interface: attribute display
+FAIL FontFace interface: attribute ascentOverride assert_true: The prototype object must have a property "ascentOverride" expected true got false
+FAIL FontFace interface: attribute descentOverride assert_true: The prototype object must have a property "descentOverride" expected true got false
+FAIL FontFace interface: attribute lineGapOverride assert_true: The prototype object must have a property "lineGapOverride" expected true got false
 PASS FontFace interface: attribute status
 PASS FontFace interface: operation load()
 PASS FontFace interface: attribute loaded
@@ -40,6 +43,9 @@ FAIL FontFace interface: fontFace must inherit property "variant" with the prope
 PASS FontFace interface: fontFace must inherit property "featureSettings" with the proper type
 FAIL FontFace interface: fontFace must inherit property "variationSettings" with the proper type assert_inherits: property "variationSettings" not found in prototype chain
 PASS FontFace interface: fontFace must inherit property "display" with the proper type
+FAIL FontFace interface: fontFace must inherit property "ascentOverride" with the proper type assert_inherits: property "ascentOverride" not found in prototype chain
+FAIL FontFace interface: fontFace must inherit property "descentOverride" with the proper type assert_inherits: property "descentOverride" not found in prototype chain
+FAIL FontFace interface: fontFace must inherit property "lineGapOverride" with the proper type assert_inherits: property "lineGapOverride" not found in prototype chain
 PASS FontFace interface: fontFace must inherit property "status" with the proper type
 PASS FontFace interface: fontFace must inherit property "load()" with the proper type
 PASS FontFace interface: fontFace must inherit property "loaded" with the proper type

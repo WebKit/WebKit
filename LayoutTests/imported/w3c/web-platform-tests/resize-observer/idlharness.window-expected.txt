@@ -48,13 +48,4 @@ FAIL ResizeObserverSize interface: existence and properties of interface prototy
 FAIL ResizeObserverSize interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ResizeObserverSize" expected property "ResizeObserverSize" missing
 FAIL ResizeObserverSize interface: attribute inlineSize assert_own_property: self does not have own property "ResizeObserverSize" expected property "ResizeObserverSize" missing
 FAIL ResizeObserverSize interface: attribute blockSize assert_own_property: self does not have own property "ResizeObserverSize" expected property "ResizeObserverSize" missing
-FAIL ResizeObservation interface: existence and properties of interface object assert_own_property: self does not have own property "ResizeObservation" expected property "ResizeObservation" missing
-FAIL ResizeObservation interface object length assert_own_property: self does not have own property "ResizeObservation" expected property "ResizeObservation" missing
-FAIL ResizeObservation interface object name assert_own_property: self does not have own property "ResizeObservation" expected property "ResizeObservation" missing
-FAIL ResizeObservation interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ResizeObservation" expected property "ResizeObservation" missing
-FAIL ResizeObservation interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ResizeObservation" expected property "ResizeObservation" missing
-FAIL ResizeObservation interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ResizeObservation" expected property "ResizeObservation" missing
-FAIL ResizeObservation interface: attribute target assert_own_property: self does not have own property "ResizeObservation" expected property "ResizeObservation" missing
-FAIL ResizeObservation interface: attribute observedBox assert_own_property: self does not have own property "ResizeObservation" expected property "ResizeObservation" missing
-FAIL ResizeObservation interface: attribute lastReportedSizes assert_own_property: self does not have own property "ResizeObservation" expected property "ResizeObservation" missing
 
