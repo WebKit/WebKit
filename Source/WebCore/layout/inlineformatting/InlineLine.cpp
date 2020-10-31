@@ -174,7 +174,7 @@ void Line::visuallyCollapsePreWrapOverflowContent()
             // We are only interested in pre-wrap trailing content.
             break;
         }
-        auto preWrapVisuallyCollapsibleInlineItem = run.isContainerStart() || run.isContainerEnd() || run.hasTrailingWhitespace();
+        auto preWrapVisuallyCollapsibleInlineItem = run.isInlineBoxStart() || run.isInlineBoxEnd() || run.hasTrailingWhitespace();
         if (!preWrapVisuallyCollapsibleInlineItem)
             break;
         ASSERT(!run.hasCollapsibleTrailingWhitespace());
@@ -219,10 +219,10 @@ void Line::append(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
         appendLineBreak(inlineItem);
     else if (inlineItem.isWordBreakOpportunity())
         appendWordBreakOpportunity(inlineItem);
-    else if (inlineItem.isContainerStart())
-        appendInlineContainerStart(inlineItem, logicalWidth);
-    else if (inlineItem.isContainerEnd())
-        appendInlineContainerEnd(inlineItem, logicalWidth);
+    else if (inlineItem.isInlineBoxStart())
+        appendInlineBoxStart(inlineItem, logicalWidth);
+    else if (inlineItem.isInlineBoxEnd())
+        appendInlineBoxEnd(inlineItem, logicalWidth);
     else if (inlineItem.layoutBox().isReplacedBox())
         appendReplacedInlineBox(inlineItem, logicalWidth);
     else if (inlineItem.isBox())
@@ -241,7 +241,7 @@ void Line::appendNonBreakableSpace(const InlineItem& inlineItem, InlineLayoutUni
     m_contentLogicalWidth += logicalWidth;
 }
 
-void Line::appendInlineContainerStart(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
+void Line::appendInlineBoxStart(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
     // This is really just a placeholder to mark the start of the inline level container <span>.
     auto& boxGeometry = formattingContext().geometryForBox(inlineItem.layoutBox());
@@ -249,7 +249,7 @@ void Line::appendInlineContainerStart(const InlineItem& inlineItem, InlineLayout
     appendNonBreakableSpace(inlineItem, adjustedRunStart, logicalWidth);
 }
 
-void Line::appendInlineContainerEnd(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
+void Line::appendInlineBoxEnd(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
     // This is really just a placeholder to mark the end of the inline level container </span>.
     auto removeTrailingLetterSpacing = [&] {
@@ -282,7 +282,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
             // Not that when the inline container has preserve whitespace style, "<span style="white-space: pre">  </span> " <- this whitespace stays around.
             if (run.isText())
                 return run.hasCollapsibleTrailingWhitespace();
-            ASSERT(run.isContainerStart() || run.isContainerEnd() || run.isWordBreakOpportunity());
+            ASSERT(run.isInlineBoxStart() || run.isInlineBoxEnd() || run.isWordBreakOpportunity());
         }
         // Leading whitespace.
         return !isWhitespacePreserved(style);
@@ -358,12 +358,12 @@ bool Line::isRunVisuallyNonEmpty(const Run& run) const
         return false;
 
     // Note that this does not check whether the inline container has content. It simply checks if the container itself is considered non-empty.
-    if (run.isContainerStart() || run.isContainerEnd()) {
+    if (run.isInlineBoxStart() || run.isInlineBoxEnd()) {
         if (!run.logicalWidth())
             return false;
         // Margin does not make the container visually non-empty. Check if it has border or padding.
         auto& boxGeometry = formattingContext().geometryForBox(run.layoutBox());
-        if (run.isContainerStart())
+        if (run.isInlineBoxStart())
             return boxGeometry.borderLeft() || (boxGeometry.paddingLeft() && boxGeometry.paddingLeft().value());
         return boxGeometry.borderRight() || (boxGeometry.paddingRight() && boxGeometry.paddingRight().value());
     }
@@ -445,7 +445,7 @@ InlineLayoutUnit Line::TrimmableTrailingContent::remove()
     // not produce a run since in ::appendText() we see it as a fully collapsible run.
     for (auto index = *m_firstTrimmableRunIndex + 1; index < m_runs.size(); ++index) {
         auto& run = m_runs[index];
-        ASSERT(run.isContainerStart() || run.isContainerEnd() || run.isLineBreak());
+        ASSERT(run.isInlineBoxStart() || run.isInlineBoxEnd() || run.isLineBreak());
         run.moveHorizontally(-trimmableWidth);
     }
     if (!trimmableRun.textContent()->length()) {

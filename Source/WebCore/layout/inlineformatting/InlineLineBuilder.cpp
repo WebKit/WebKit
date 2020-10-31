@@ -174,7 +174,7 @@ LineCandidate::InlineContent::InlineContent(bool ignoreTrailingLetterSpacing)
 
 inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
-    ASSERT(inlineItem.isText() || inlineItem.isBox() || inlineItem.isContainerStart() || inlineItem.isContainerEnd());
+    ASSERT(inlineItem.isText() || inlineItem.isBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd());
     auto collapsibleWidth = [&]() -> Optional<InlineLayoutUnit> {
         if (!inlineItem.isText())
             return { };
@@ -243,10 +243,10 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
     if (layoutBox.isReplacedBox())
         return boxGeometry.marginBoxWidth();
 
-    if (inlineItem.isContainerStart())
+    if (inlineItem.isInlineBoxStart())
         return boxGeometry.marginStart() + boxGeometry.borderLeft() + boxGeometry.paddingLeft().valueOr(0);
 
-    if (inlineItem.isContainerEnd())
+    if (inlineItem.isInlineBoxEnd())
         return boxGeometry.marginEnd() + boxGeometry.borderRight() + boxGeometry.paddingRight().valueOr(0);
 
     // Non-replaced inline box (e.g. inline-block)
@@ -474,7 +474,7 @@ void LineBuilder::nextContentForLine(LineCandidate& lineCandidate, size_t curren
             accumulatedWidth += floatWidth;
             continue;
         }
-        if (inlineItem.isText() || inlineItem.isContainerStart() || inlineItem.isContainerEnd() || inlineItem.isBox()) {
+        if (inlineItem.isText() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isBox()) {
             auto logicalWidth = inlineItemWidth(inlineItem, currentLogicalRight);
             lineCandidate.inlineContent.appendInlineItem(inlineItem, logicalWidth);
             currentLogicalRight += logicalWidth;
@@ -519,7 +519,7 @@ size_t LineBuilder::nextWrapOpportunity(size_t startIndex, const LineBuilder::In
             // [text][float box][text] is essentially just [text][text]
             continue;
         }
-        if (inlineItem.isContainerStart() || inlineItem.isContainerEnd()) {
+        if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd()) {
             // There's no wrapping opportunity between <span>text, <span></span> or </span>text. 
             continue;
         }
@@ -534,7 +534,7 @@ size_t LineBuilder::nextWrapOpportunity(size_t startIndex, const LineBuilder::In
             // [ex-][ample] vs. [ex-][container start][container end][ample]
             // where [ex-] is startContent and [ample] is the nextContent.
             for (auto candidateIndex = *previousInlineItemIndex + 1; candidateIndex < index; ++candidateIndex) {
-                if (m_inlineItems[candidateIndex].isContainerStart()) {
+                if (m_inlineItems[candidateIndex].isInlineBoxStart()) {
                     // inline content and [container start] and [container end] form unbreakable content.
                     // ex-<span></span>ample  : wrap opportunity is after "ex-".
                     // ex-</span></span>ample : wrap opportunity is after "ex-</span></span>".

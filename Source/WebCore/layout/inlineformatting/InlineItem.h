@@ -35,7 +35,7 @@ namespace Layout {
 
 class InlineItem {
 public:
-    enum class Type : uint8_t { Text, HardLineBreak, SoftLineBreak, WordBreakOpportunity, Box, Float, ContainerStart, ContainerEnd };
+    enum class Type : uint8_t { Text, HardLineBreak, SoftLineBreak, WordBreakOpportunity, Box, Float, InlineBoxStart, InlineBoxEnd };
     InlineItem(const Box& layoutBox, Type);
 
     Type type() const { return m_type; }
@@ -49,8 +49,8 @@ public:
     bool isWordBreakOpportunity() const { return type() == Type::WordBreakOpportunity; }
     bool isSoftLineBreak() const { return type() == Type::SoftLineBreak; }
     bool isHardLineBreak() const { return type() == Type::HardLineBreak; }
-    bool isContainerStart() const { return type() == Type::ContainerStart; }
-    bool isContainerEnd() const { return type() == Type::ContainerEnd; }
+    bool isInlineBoxStart() const { return type() == Type::InlineBoxStart; }
+    bool isInlineBoxEnd() const { return type() == Type::InlineBoxEnd; }
 
 private:
     const Box* m_layoutBox { nullptr };

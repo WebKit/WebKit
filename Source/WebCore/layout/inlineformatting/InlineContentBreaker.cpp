@@ -43,7 +43,7 @@ static inline bool isTextContent(const InlineContentBreaker::ContinuousContent& 
     // Due to commit boundary rules, we just need to check the first non-typeless inline item (can't have both [img] and [text])
     for (auto& run : continuousContent.runs()) {
         auto& inlineItem = run.inlineItem;
-        if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
+        if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd())
             continue;
         return inlineItem.isText();
     }
@@ -58,7 +58,7 @@ static inline bool isVisuallyEmptyWhitespaceContent(const InlineContentBreaker::
     for (auto& run : continuousContent.runs()) {
         auto& inlineItem = run.inlineItem;
         // FIXME: check for padding border etc.
-        if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
+        if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd())
             continue;
         return inlineItem.isText() && downcast<InlineTextItem>(inlineItem).isWhitespace();
     }
@@ -70,7 +70,7 @@ static inline bool isNonContentRunsOnly(const InlineContentBreaker::ContinuousCo
     // <span></span> <- non content runs.
     for (auto& run : continuousContent.runs()) {
         auto& inlineItem = run.inlineItem;
-        if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
+        if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd())
             continue;
         return false;
     }
@@ -252,7 +252,7 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
 Optional<TrailingTextContent> InlineContentBreaker::processOverflowingTextContent(const ContinuousContent& continuousContent, const LineStatus& lineStatus) const
 {
     auto isBreakableRun = [] (auto& run) {
-        ASSERT(run.inlineItem.isText() || run.inlineItem.isContainerStart() || run.inlineItem.isContainerEnd());
+        ASSERT(run.inlineItem.isText() || run.inlineItem.isInlineBoxStart() || run.inlineItem.isInlineBoxEnd());
         if (!run.inlineItem.isText()) {
             // Can't break horizontal spacing -> e.g. <span style="padding-right: 100px;">textcontent</span>, if the [container end] is the overflown inline item
             // we need to check if there's another inline item beyond the [container end] to split.
@@ -269,7 +269,7 @@ Optional<TrailingTextContent> InlineContentBreaker::processOverflowingTextConten
     size_t index = 0;
     while (index < runs.size()) {
         auto& run = runs[index];
-        ASSERT(run.inlineItem.isText() || run.inlineItem.isContainerStart() || run.inlineItem.isContainerEnd());
+        ASSERT(run.inlineItem.isText() || run.inlineItem.isInlineBoxStart() || run.inlineItem.isInlineBoxEnd());
         if (accumulatedRunWidth + run.logicalWidth > lineStatus.availableWidth && isBreakableRun(run)) {
             // At this point the available width can very well be negative e.g. when some part of the continuous text content can not be broken into parts ->
             // <span style="word-break: keep-all">textcontentwithnobreak</span><span>textcontentwithyesbreak</span>

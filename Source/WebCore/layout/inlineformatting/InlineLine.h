@@ -71,8 +71,8 @@ public:
         bool isSoftLineBreak() const  { return m_type == InlineItem::Type::SoftLineBreak; }
         bool isHardLineBreak() const { return m_type == InlineItem::Type::HardLineBreak; }
         bool isWordBreakOpportunity() const { return m_type == InlineItem::Type::WordBreakOpportunity; }
-        bool isContainerStart() const { return m_type == InlineItem::Type::ContainerStart; }
-        bool isContainerEnd() const { return m_type == InlineItem::Type::ContainerEnd; }
+        bool isInlineBoxStart() const { return m_type == InlineItem::Type::InlineBoxStart; }
+        bool isInlineBoxEnd() const { return m_type == InlineItem::Type::InlineBoxEnd; }
 
         const Box& layoutBox() const { return *m_layoutBox; }
         const RenderStyle& style() const { return m_layoutBox->style(); }
@@ -140,8 +140,8 @@ private:
     void appendTextContent(const InlineTextItem&, InlineLayoutUnit logicalWidth);
     void appendNonReplacedInlineBox(const InlineItem&, InlineLayoutUnit logicalWidth);
     void appendReplacedInlineBox(const InlineItem&, InlineLayoutUnit logicalWidth);
-    void appendInlineContainerStart(const InlineItem&, InlineLayoutUnit logicalWidth);
-    void appendInlineContainerEnd(const InlineItem&, InlineLayoutUnit logicalWidth);
+    void appendInlineBoxStart(const InlineItem&, InlineLayoutUnit logicalWidth);
+    void appendInlineBoxEnd(const InlineItem&, InlineLayoutUnit logicalWidth);
     void appendLineBreak(const InlineItem&);
     void appendWordBreakOpportunity(const InlineItem&);
 

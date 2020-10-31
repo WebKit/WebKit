@@ -87,7 +87,7 @@ static HangingTrailingWhitespaceContent collectHangingTrailingWhitespaceContent(
     if (isLastLineWithInlineContent)
         hangingContent.setIsConditional();
     for (auto& run : WTF::makeReversedRange(runs)) {
-        if (run.isContainerStart() || run.isContainerEnd())
+        if (run.isInlineBoxStart() || run.isInlineBoxEnd())
             continue;
         if (run.isLineBreak()) {
             hangingContent.setIsConditional();
@@ -234,7 +234,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         // e.g.
         // <span>normally the inline box closing forms a continuous content</span>
         // <span>unless it's forced to the next line<br></span>
-        if (isRootBox(firstRunParentLayoutBox) && !firstRun.isContainerEnd())
+        if (isRootBox(firstRunParentLayoutBox) && !firstRun.isInlineBoxEnd())
             return;
         auto* ancestor = &firstRunParentLayoutBox;
         Vector<const Box*> ancestorsWithoutInlineBoxes;
@@ -270,13 +270,13 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
             if (logicalHeight)
                 atomicInlineLevelBox->setIsNonEmpty();
             lineBox.addInlineLevelBox(WTFMove(atomicInlineLevelBox));
-        } else if (run.isContainerStart()) {
+        } else if (run.isInlineBoxStart()) {
             auto initialLogicalWidth = lineBox.logicalWidth() - run.logicalLeft();
             ASSERT(initialLogicalWidth >= 0);
             auto inlineBox = LineBox::InlineLevelBox::createInlineBox(layoutBox, logicalLeft, initialLogicalWidth);
             setVerticalGeometryForInlineBox(*inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
-        } else if (run.isContainerEnd()) {
+        } else if (run.isInlineBoxEnd()) {
             // Adjust the logical width when the inline level container closes on this line.
             auto& inlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox);
             ASSERT(inlineBox.isInlineBox());

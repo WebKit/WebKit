@@ -361,7 +361,7 @@ void InlineFormattingContext::collectInlineContentIfNeeded()
     if (!formattingState.inlineItems().isEmpty())
         return;
     // Traverse the tree and create inline items out of containers and leaf nodes. This essentially turns the tree inline structure into a flat one.
-    // <span>text<span></span><img></span> -> [ContainerStart][InlineBox][ContainerStart][ContainerEnd][InlineBox][ContainerEnd]
+    // <span>text<span></span><img></span> -> [InlineBoxStart][InlineLevelBox][InlineBoxStart][InlineBoxEnd][InlineLevelBox][InlineBoxEnd]
     ASSERT(root().hasInFlowOrFloatingChild());
     LayoutQueue layoutQueue;
     layoutQueue.append(root().firstInFlowOrFloatingChild());
@@ -372,7 +372,7 @@ void InlineFormattingContext::collectInlineContentIfNeeded()
             if (!isBoxWithInlineContent)
                 break;
             // This is the start of an inline box (e.g. <span>).
-            formattingState.addInlineItem({ layoutBox, InlineItem::Type::ContainerStart });
+            formattingState.addInlineItem({ layoutBox, InlineItem::Type::InlineBoxStart });
             auto& inlineBoxWithInlineContent = downcast<ContainerBox>(layoutBox);
             if (!inlineBoxWithInlineContent.hasInFlowOrFloatingChild())
                 break;
@@ -391,7 +391,7 @@ void InlineFormattingContext::collectInlineContentIfNeeded()
             else if (layoutBox.isInlineTextBox()) {
                 InlineTextItem::createAndAppendTextItems(formattingState.inlineItems(), downcast<InlineTextBox>(layoutBox));
             } else if (layoutBox.isInlineBox())
-                formattingState.addInlineItem({ layoutBox, InlineItem::Type::ContainerEnd });
+                formattingState.addInlineItem({ layoutBox, InlineItem::Type::InlineBoxEnd });
             else
                 ASSERT_NOT_REACHED();
 
