@@ -2,6 +2,16 @@
 
         REGRESSION (r269070): [ Big Sur ] editing/input/reveal-caret-of-multiline-input.html is a constant failure
         rdar://70819245
+        Re-baseline for Catalina after r269174.
+
+        Unreviewed test gardening.
+
+        * platform/mac-catalina/editing/input/reveal-caret-of-multiline-input-expected.txt: Added.
+
+2020-11-01  Karl Rackler  <rackler@apple.com>
+
+        REGRESSION (r269070): [ Big Sur ] editing/input/reveal-caret-of-multiline-input.html is a constant failure
+        rdar://70819245
         Re-baseline for Catalina after r269174.  Capital letter in Input folder.
 
         Unreviewed test gardening.
