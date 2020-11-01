@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/tests/__init__.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/tests/base.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/tests/test_executors.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/tests/test_expectedtree.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/tests/test_formatters.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/tests/test_manifestexpected.py

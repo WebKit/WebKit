@@ -1,6 +1,5 @@
 import errno
 import os
-import platform
 import shutil
 import socket
 import subprocess
@@ -16,7 +15,7 @@ except ImportError:
 
 import pytest
 
-from tools.wpt import wpt
+from tools.wpt import utils, wpt
 
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -44,9 +43,6 @@ def get_persistent_manifest_path():
 
 @pytest.fixture(scope="module", autouse=True)
 def init_manifest():
-    # See https://github.com/pypa/virtualenv/issues/1710
-    if sys.version_info[0] >= 3 and platform.system() == "Windows":
-        pytest.xfail(reason="virtualenv activation fails in Windows for python3")
     with pytest.raises(SystemExit) as excinfo:
         wpt.main(argv=["manifest", "--no-download",
                        "--path", get_persistent_manifest_path()])
@@ -61,7 +57,7 @@ def manifest_dir():
                         os.path.join(path, "MANIFEST.json"))
         yield path
     finally:
-        shutil.rmtree(path)
+        utils.rmtree(path)
 
 
 @pytest.fixture
@@ -86,7 +82,7 @@ def temp_test():
 
     yield make_test
 
-    shutil.rmtree("../../.tools-tests")
+    utils.rmtree("../../.tools-tests")
 
 
 def test_missing():
@@ -174,19 +170,21 @@ def test_run_zero_tests():
         pytest.skip("port 8000 already in use")
 
     with pytest.raises(SystemExit) as excinfo:
-        wpt.main(argv=["run", "--yes", "--no-pause", "--binary-arg", "headless",
+        wpt.main(argv=["run", "--yes", "--no-pause", "--channel", "dev",
+                       "chrome", "/non-existent-dir/non-existent-file.html"])
+    assert excinfo.value.code != 0
+
+    with pytest.raises(SystemExit) as excinfo:
+        wpt.main(argv=["run", "--yes", "--no-pause", "--no-fail-on-unexpected",
                        "--channel", "dev", "chrome",
                        "/non-existent-dir/non-existent-file.html"])
     assert excinfo.value.code != 0
 
-    with pytest.raises(SystemExit) as excinfo:
-        wpt.main(argv=["run", "--yes", "--no-pause", "--binary-arg", "headless",
-                       "--no-fail-on-unexpected", "--channel", "dev",
-                       "chrome", "/non-existent-dir/non-existent-file.html"])
-    assert excinfo.value.code != 0
 
 @pytest.mark.slow
 @pytest.mark.remote_network
+@pytest.mark.skipif(sys.version_info >= (3, 8) and sys.platform == 'darwin',
+                    reason="multiprocessing test hangs in Python 3.8 on macOS (#24880)")
 def test_run_failing_test():
     """Failing tests should be reported with a non-zero exit status unless the
     `--no-fail-on-unexpected` option has been specified."""
@@ -197,19 +195,20 @@ def test_run_failing_test():
     assert os.path.isfile("../../%s" % failing_test)
 
     with pytest.raises(SystemExit) as excinfo:
-        wpt.main(argv=["run", "--yes", "--no-pause", "--binary-arg", "headless",
-                       "--channel", "dev", "chrome", failing_test])
+        wpt.main(argv=["run", "--yes", "--no-pause", "--channel", "dev",
+                       "chrome", failing_test])
     assert excinfo.value.code != 0
 
     with pytest.raises(SystemExit) as excinfo:
-        wpt.main(argv=["run", "--yes", "--no-pause", "--binary-arg", "headless",
-                       "--no-fail-on-unexpected", "--channel", "dev",
-                       "chrome", failing_test])
+        wpt.main(argv=["run", "--yes", "--no-pause", "--no-fail-on-unexpected",
+                       "--channel", "dev", "chrome", failing_test])
     assert excinfo.value.code == 0
 
 
 @pytest.mark.slow
 @pytest.mark.remote_network
+@pytest.mark.skipif(sys.version_info >= (3, 8) and sys.platform == 'darwin',
+                    reason="multiprocessing test hangs in Python 3.8 on macOS (#24880)")
 def test_run_verify_unstable(temp_test):
     """Unstable tests should be reported with a non-zero exit status. Stable
     tests should be reported with a zero exit status."""
@@ -226,50 +225,16 @@ def test_run_verify_unstable(temp_test):
     """)
 
     with pytest.raises(SystemExit) as excinfo:
-        wpt.main(argv=["run", "--yes", "--verify", "--binary-arg", "headless",
-                       "--channel", "dev", "chrome", unstable_test])
+        wpt.main(argv=["run", "--yes", "--verify", "--channel", "dev",
+                       "chrome", unstable_test])
     assert excinfo.value.code != 0
 
     stable_test = temp_test("test(function() {}, 'my test');")
 
     with pytest.raises(SystemExit) as excinfo:
-        wpt.main(argv=["run", "--yes", "--verify", "--binary-arg", "headless",
-                       "--channel", "dev", "chrome", stable_test])
+        wpt.main(argv=["run", "--yes", "--verify", "--channel", "dev",
+                       "chrome", stable_test])
     assert excinfo.value.code == 0
-
-
-@pytest.mark.slow
-@pytest.mark.remote_network
-def test_install_chromedriver():
-    if sys.platform == "win32":
-        chromedriver_path = os.path.join(wpt.localpaths.repo_root, wpt.venv_dir(), "Scripts", "chromedriver.exe")
-    else:
-        chromedriver_path = os.path.join(wpt.localpaths.repo_root, wpt.venv_dir(), "bin", "chromedriver")
-    if os.path.exists(chromedriver_path):
-        os.unlink(chromedriver_path)
-    with pytest.raises(SystemExit) as excinfo:
-        wpt.main(argv=["install", "chrome", "webdriver"])
-    assert excinfo.value.code == 0
-    assert os.path.exists(chromedriver_path)
-    os.unlink(chromedriver_path)
-
-
-@pytest.mark.slow
-@pytest.mark.remote_network
-@pytest.mark.xfail(sys.platform == "win32",
-                   reason="https://github.com/web-platform-tests/wpt/issues/17074")
-def test_install_firefox():
-    if sys.platform == "darwin":
-        fx_path = os.path.join(wpt.localpaths.repo_root, wpt.venv_dir(), "browsers", "nightly", "Firefox Nightly.app")
-    else:
-        fx_path = os.path.join(wpt.localpaths.repo_root, wpt.venv_dir(), "browsers", "nightly", "firefox")
-    if os.path.exists(fx_path):
-        shutil.rmtree(fx_path)
-    with pytest.raises(SystemExit) as excinfo:
-        wpt.main(argv=["install", "firefox", "browser", "--channel=nightly"])
-    assert excinfo.value.code == 0
-    assert os.path.exists(fx_path)
-    shutil.rmtree(fx_path)
 
 
 def test_files_changed(capsys):
@@ -355,7 +320,10 @@ def test_tests_affected_idlharness(capsys, manifest_dir):
         wpt.main(argv=["tests-affected", "--metadata", manifest_dir, "%s~..%s" % (commit, commit)])
     assert excinfo.value.code == 0
     out, err = capsys.readouterr()
-    assert "webrtc-identity/idlharness.https.window.js\nwebrtc-stats/idlharness.window.js\nwebrtc/idlharness.https.window.js\n" == out
+    assert ("webrtc-identity/idlharness.https.window.js\n" +
+            "webrtc-insertable-streams/idlharness.https.window.js\n" +
+            "webrtc-stats/idlharness.window.js\n" +
+            "webrtc/idlharness.https.window.js\n") == out
 
 
 @pytest.mark.slow  # this updates the manifest

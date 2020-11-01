@@ -47,7 +47,7 @@ def fetch_event_data(queue):
 
 def filter_triggers(event, all_tasks):
     is_pr, branch = get_triggers(event)
-    triggered = {}
+    triggered = OrderedDict()
     for name, task in iteritems(all_tasks):
         if "trigger" in task:
             if is_pr and "pull-request" in task["trigger"]:
@@ -102,7 +102,7 @@ def get_extra_jobs(event):
 
 
 def filter_schedule_if(event, tasks):
-    scheduled = {}
+    scheduled = OrderedDict()
     run_jobs = None
     for name, task in iteritems(tasks):
         if "schedule-if" in task:
@@ -199,7 +199,6 @@ def build_full_command(event, task):
 ~/start.sh \
   %(repo_url)s \
   %(fetch_ref)s;
-sudo add-apt-repository ppa:deadsnakes/ppa
 %(install_str)s
 cd web-platform-tests;
 ./tools/ci/run_tc.py %(options_str)s -- %(task_cmd)s;
@@ -239,13 +238,16 @@ def create_tc_task(event, task, taskgroup_id, depends_on_ids, env_extra=None):
         },
         "extra": {
             "github_event": json.dumps(event)
-        }
+        },
+        "routes": ["checks"]
     }
+    if "extra" in task:
+        task_data["extra"].update(task["extra"])
     if env_extra:
         task_data["payload"]["env"].update(env_extra)
     if depends_on_ids:
         task_data["dependencies"] = depends_on_ids
-        task_data["requires"] = "all-completed"
+        task_data["requires"] = task.get("requires", "all-completed")
     return task_id, task_data
 
 
@@ -282,7 +284,26 @@ def build_task_graph(event, all_tasks, tasks):
         task_id_map[task_name] = (task_id, task_data)
 
     for task_name, task in iteritems(tasks):
+        if task_name == "sink-task":
+            # sink-task will be created below at the end of the ordered dict,
+            # so that it can depend on all other tasks.
+            continue
         add_task(task_name, task)
+
+    # GitHub branch protection for pull requests needs us to name explicit
+    # required tasks - which doesn't suffice when using a dynamic task graph.
+    # To work around this we declare a sink task that depends on all the other
+    # tasks completing, and checks if they have succeeded. We can then
+    # make the sink task the sole required task for pull requests.
+    sink_task = tasks.get("sink-task")
+    if sink_task:
+        logger.info("Scheduling sink-task")
+        depends_on_ids = [x[0] for x in task_id_map.values()]
+        sink_task["command"] += " {0}".format(" ".join(depends_on_ids))
+        task_id_map["sink-task"] = create_tc_task(
+            event, sink_task, taskgroup_id, depends_on_ids)
+    else:
+        logger.info("sink-task is not scheduled")
 
     return task_id_map
 

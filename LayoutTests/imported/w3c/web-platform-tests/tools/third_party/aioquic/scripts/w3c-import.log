@@ -14,5 +14,5 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/scripts/build-openssl
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/scripts/build-openssl.bat
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/scripts/fetch-vendor
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/scripts/fetch-vendor.json

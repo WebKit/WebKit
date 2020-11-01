@@ -1,0 +1,29 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/docs/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/docs/Makefile
+/LayoutTests/imported/w3c/web-platform-tests/docs/README.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/docs/commands.json
+/LayoutTests/imported/w3c/web-platform-tests/docs/conf.py
+/LayoutTests/imported/w3c/web-platform-tests/docs/frontend.py
+/LayoutTests/imported/w3c/web-platform-tests/docs/index.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/intro-video-transcript.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/make.bat
+/LayoutTests/imported/w3c/web-platform-tests/docs/requirements.txt
+/LayoutTests/imported/w3c/web-platform-tests/docs/test-suite-design.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/wpt_lint_rules.py

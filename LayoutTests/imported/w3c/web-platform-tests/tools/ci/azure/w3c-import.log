@@ -18,6 +18,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/azure/affected_tests.yml
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/azure/checkout.yml
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/azure/cleanup_win10.yml
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/azure/com.apple.SafariTechnologyPreview.plist
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/azure/fyi_hook.yml
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/azure/install_certs.yml
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/azure/install_chrome.yml

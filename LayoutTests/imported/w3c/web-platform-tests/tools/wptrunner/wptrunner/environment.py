@@ -11,7 +11,7 @@ from mozlog import get_default_logger, handlers, proxy
 
 from .wptlogging import LogLevelRewriter
 
-here = os.path.split(__file__)[0]
+here = os.path.dirname(__file__)
 repo_root = os.path.abspath(os.path.join(here, os.pardir, os.pardir, os.pardir))
 
 sys.path.insert(0, repo_root)
@@ -55,7 +55,7 @@ class TestEnvironment(object):
     websockets servers"""
     def __init__(self, test_paths, testharness_timeout_multipler,
                  pause_after_test, debug_info, options, ssl_config, env_extras,
-                 enable_quic=False):
+                 enable_quic=False, mojojs_path=None):
         self.test_paths = test_paths
         self.server = None
         self.config_ctx = None
@@ -72,6 +72,7 @@ class TestEnvironment(object):
         self.env_extras_cms = None
         self.ssl_config = ssl_config
         self.enable_quic = enable_quic
+        self.mojojs_path = mojojs_path
 
     def __enter__(self):
         self.config_ctx = self.build_config()
@@ -126,15 +127,16 @@ class TestEnvironment(object):
 
         config = serve.ConfigBuilder()
 
-        config.ports = {
+        ports = {
             "http": [8000, 8001],
-            "https": [8443],
+            "https": [8443, 8444],
             "ws": [8888],
             "wss": [8889],
             "h2": [9000],
         }
         if self.enable_quic:
-            config.ports["quic"] = [10000]
+            ports["quic-transport"] = [10000]
+        config.ports = ports
 
         if os.path.exists(override_path):
             with open(override_path) as f:
@@ -161,7 +163,7 @@ class TestEnvironment(object):
     def setup_server_logging(self):
         server_logger = get_default_logger(component="wptserve")
         assert server_logger is not None
-        log_filter = handlers.LogLevelFilter(lambda x:x, "info")
+        log_filter = handlers.LogLevelFilter(lambda x: x, "info")
         # Downgrade errors to warnings for the server
         log_filter = LogLevelRewriter(log_filter, ["error"], "warning")
         server_logger.component_filter = log_filter
@@ -169,7 +171,7 @@ class TestEnvironment(object):
         server_logger = proxy.QueuedProxyLogger(server_logger)
 
         try:
-            #Set as the default logger for wptserve
+            # Set as the default logger for wptserve
             serve.set_logger(server_logger)
             serve.logger = server_logger
         except Exception:
@@ -181,6 +183,11 @@ class TestEnvironment(object):
 
         for path, format_args, content_type, route in [
                 ("testharness_runner.html", {}, "text/html", "/testharness_runner.html"),
+                ("print_reftest_runner.html", {}, "text/html", "/print_reftest_runner.html"),
+                (os.path.join(here, "..", "..", "third_party", "pdf_js", "pdf.js"), None,
+                 "text/javascript", "/_pdf_js/pdf.js"),
+                (os.path.join(here, "..", "..", "third_party", "pdf_js", "pdf.worker.js"), None,
+                 "text/javascript", "/_pdf_js/pdf.worker.js"),
                 (self.options.get("testharnessreport", "testharnessreport.js"),
                  {"output": self.pause_after_test,
                   "timeout_multiplier": self.testharness_timeout_multipler,
@@ -210,6 +217,9 @@ class TestEnvironment(object):
         if "/" not in self.test_paths:
             del route_builder.mountpoint_routes["/"]
 
+        if self.mojojs_path:
+            route_builder.add_mount_point("/gen/", self.mojojs_path)
+
         return route_builder.get_routes()
 
     def ensure_started(self):
@@ -238,6 +248,9 @@ class TestEnvironment(object):
 
         if not failed and self.test_server_port:
             for scheme, servers in iteritems(self.servers):
+                # TODO(Hexcles): Find a way to test QUIC's UDP port.
+                if scheme == "quic-transport":
+                    continue
                 for port, server in servers:
                     s = socket.socket()
                     s.settimeout(0.1)

@@ -26,6 +26,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/tests/test_sanitizer.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/tests/test_serializer.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/tests/test_stream.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/tests/test_tokenizer2.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/tests/test_treeadapters.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/tests/test_treewalkers.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/tests/test_whitespace_filter.py

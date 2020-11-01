@@ -8,7 +8,7 @@ from six import iteritems, string_types
 from .wptmanifest.parser import atoms
 
 atom_reset = atoms["Reset"]
-enabled_tests = {"testharness", "reftest", "wdspec", "crashtest"}
+enabled_tests = {"testharness", "reftest", "wdspec", "crashtest", "print-reftest"}
 
 
 class Result(object):
@@ -101,7 +101,7 @@ class RunInfo(dict):
         except (OSError, subprocess.CalledProcessError):
             rev = None
         if rev:
-            self["revision"] = rev
+            self["revision"] = rev.decode("utf-8")
 
         self["python_version"] = sys.version_info.major
         self["product"] = product
@@ -135,7 +135,7 @@ class RunInfo(dict):
             if path in dirs:
                 break
             dirs.add(str(path))
-            path = os.path.split(path)[0]
+            path = os.path.dirname(path)
 
         mozinfo.find_and_update_from_json(*dirs)
 
@@ -157,15 +157,21 @@ class Test(object):
     default_timeout = 10  # seconds
     long_timeout = 60  # seconds
 
-    def __init__(self, tests_root, url, inherit_metadata, test_metadata,
-                 timeout=None, path=None, protocol="http", quic=False):
+    def __init__(self, url_base, tests_root, url, inherit_metadata, test_metadata,
+                 timeout=None, path=None, protocol="http", subdomain=False,
+                 quic=False):
+        self.url_base = url_base
         self.tests_root = tests_root
         self.url = url
         self._inherit_metadata = inherit_metadata
         self._test_metadata = test_metadata
         self.timeout = timeout if timeout is not None else self.default_timeout
         self.path = path
-        self.environment = {"protocol": protocol, "prefs": self.prefs, "quic": quic}
+        self.subdomain = subdomain
+        self.environment = {"url_base": url_base,
+                            "protocol": protocol,
+                            "prefs": self.prefs,
+                            "quic": quic}
 
     def __eq__(self, other):
         if not isinstance(other, Test):
@@ -184,13 +190,15 @@ class Test(object):
     @classmethod
     def from_manifest(cls, manifest_file, manifest_item, inherit_metadata, test_metadata):
         timeout = cls.long_timeout if manifest_item.timeout == "long" else cls.default_timeout
-        return cls(manifest_file.tests_root,
+        return cls(manifest_file.url_base,
+                   manifest_file.tests_root,
                    manifest_item.url,
                    inherit_metadata,
                    test_metadata,
                    timeout=timeout,
                    path=os.path.join(manifest_file.tests_root, manifest_item.path),
-                   protocol=server_protocol(manifest_item))
+                   protocol=server_protocol(manifest_item),
+                   subdomain=manifest_item.subdomain)
 
     @property
     def id(self):
@@ -393,11 +401,11 @@ class TestharnessTest(Test):
     subtest_result_cls = TestharnessSubtestResult
     test_type = "testharness"
 
-    def __init__(self, tests_root, url, inherit_metadata, test_metadata,
+    def __init__(self, url_base, tests_root, url, inherit_metadata, test_metadata,
                  timeout=None, path=None, protocol="http", testdriver=False,
-                 jsshell=False, scripts=None, quic=False):
-        Test.__init__(self, tests_root, url, inherit_metadata, test_metadata, timeout,
-                      path, protocol, quic)
+                 jsshell=False, scripts=None, subdomain=False, quic=False):
+        Test.__init__(self, url_base, tests_root, url, inherit_metadata, test_metadata, timeout,
+                      path, protocol, subdomain, quic)
 
         self.testdriver = testdriver
         self.jsshell = jsshell
@@ -412,7 +420,8 @@ class TestharnessTest(Test):
         script_metadata = manifest_item.script_metadata or []
         scripts = [v for (k, v) in script_metadata
                    if k == "script"]
-        return cls(manifest_file.tests_root,
+        return cls(manifest_file.url_base,
+                   manifest_file.tests_root,
                    manifest_item.url,
                    inherit_metadata,
                    test_metadata,
@@ -422,6 +431,7 @@ class TestharnessTest(Test):
                    testdriver=testdriver,
                    jsshell=jsshell,
                    scripts=scripts,
+                   subdomain=manifest_item.subdomain,
                    quic=quic)
 
     @property
@@ -452,9 +462,10 @@ class ReftestTest(Test):
     result_cls = ReftestResult
     test_type = "reftest"
 
-    def __init__(self, tests_root, url, inherit_metadata, test_metadata, references,
-                 timeout=None, path=None, viewport_size=None, dpi=None, fuzzy=None, protocol="http", quic=False):
-        Test.__init__(self, tests_root, url, inherit_metadata, test_metadata, timeout,
+    def __init__(self, url_base, tests_root, url, inherit_metadata, test_metadata, references,
+                 timeout=None, path=None, viewport_size=None, dpi=None, fuzzy=None,
+                 protocol="http", quic=False):
+        Test.__init__(self, url_base, tests_root, url, inherit_metadata, test_metadata, timeout,
                       path, protocol, quic)
 
         for _, ref_type in references:
@@ -462,9 +473,16 @@ class ReftestTest(Test):
                 raise ValueError
 
         self.references = references
-        self.viewport_size = viewport_size
+        self.viewport_size = self.get_viewport_size(viewport_size)
         self.dpi = dpi
         self._fuzzy = fuzzy or {}
+
+    @classmethod
+    def cls_kwargs(cls, manifest_test):
+        return {"viewport_size": manifest_test.viewport_size,
+                "dpi": manifest_test.dpi,
+                "protocol": server_protocol(manifest_test),
+                "fuzzy": manifest_test.fuzzy}
 
     @classmethod
     def from_manifest(cls,
@@ -478,18 +496,16 @@ class ReftestTest(Test):
 
         url = manifest_test.url
 
-        node = cls(manifest_file.tests_root,
+        node = cls(manifest_file.url_base,
+                   manifest_file.tests_root,
                    manifest_test.url,
                    inherit_metadata,
                    test_metadata,
                    [],
                    timeout=timeout,
                    path=manifest_test.path,
-                   viewport_size=manifest_test.viewport_size,
-                   dpi=manifest_test.dpi,
-                   protocol=server_protocol(manifest_test),
-                   fuzzy=manifest_test.fuzzy,
-                   quic=quic)
+                   quic=quic,
+                   **cls.cls_kwargs(manifest_test))
 
         refs_by_type = defaultdict(list)
 
@@ -502,20 +518,23 @@ class ReftestTest(Test):
         # Per the logic documented above, this means that none of the mismatches provided match,
         mismatch_walk = None
         if refs_by_type["!="]:
-            mismatch_walk = ReftestTest(manifest_file.tests_root,
+            mismatch_walk = ReftestTest(manifest_file.url_base,
+                                        manifest_file.tests_root,
                                         refs_by_type["!="][0],
                                         [],
                                         None,
                                         [])
             cmp_ref = mismatch_walk
             for ref_url in refs_by_type["!="][1:]:
-                cmp_self = ReftestTest(manifest_file.tests_root,
+                cmp_self = ReftestTest(manifest_file.url_base,
+                                       manifest_file.tests_root,
                                        url,
                                        [],
                                        None,
                                        [])
                 cmp_ref.references.append((cmp_self, "!="))
-                cmp_ref = ReftestTest(manifest_file.tests_root,
+                cmp_ref = ReftestTest(manifest_file.url_base,
+                                      manifest_file.tests_root,
                                       ref_url,
                                       [],
                                       None,
@@ -531,7 +550,8 @@ class ReftestTest(Test):
             # For each == ref, add a reference to this node whose tail is the mismatch list.
             # Per the logic documented above, this means any one of the matches must pass plus all the mismatches.
             for ref_url in refs_by_type["=="]:
-                ref = ReftestTest(manifest_file.tests_root,
+                ref = ReftestTest(manifest_file.url_base,
+                                  manifest_file.tests_root,
                                   ref_url,
                                   [],
                                   None,
@@ -554,6 +574,9 @@ class ReftestTest(Test):
             metadata["url_count"][(self.environment["protocol"], reference.url)] += 1
             reference.update_metadata(metadata)
         return metadata
+
+    def get_viewport_size(self, override):
+        return override
 
     @property
     def id(self):
@@ -589,6 +612,36 @@ class ReftestTest(Test):
                 values[key] = data
         return values
 
+    @property
+    def page_ranges(self):
+        return {}
+
+
+class PrintReftestTest(ReftestTest):
+    test_type = "print-reftest"
+
+    def __init__(self, url_base, tests_root, url, inherit_metadata, test_metadata, references,
+                 timeout=None, path=None, viewport_size=None, dpi=None, fuzzy=None,
+                 page_ranges=None, protocol="http", quic=False):
+        super(PrintReftestTest, self).__init__(url_base, tests_root, url, inherit_metadata, test_metadata,
+                                               references, timeout, path, viewport_size, dpi,
+                                               fuzzy, protocol, quic=quic)
+        self._page_ranges = page_ranges
+
+    @classmethod
+    def cls_kwargs(cls, manifest_test):
+        rv = super(PrintReftestTest, cls).cls_kwargs(manifest_test)
+        rv["page_ranges"] = manifest_test.page_ranges
+        return rv
+
+    def get_viewport_size(self, override):
+        assert override is None
+        return (5*2.54, 3*2.54)
+
+    @property
+    def page_ranges(self):
+        return self._page_ranges
+
 
 class WdspecTest(Test):
     result_cls = WdspecResult
@@ -605,6 +658,7 @@ class CrashTest(Test):
 
 
 manifest_test_cls = {"reftest": ReftestTest,
+                     "print-reftest": PrintReftestTest,
                      "testharness": TestharnessTest,
                      "manual": ManualTest,
                      "wdspec": WdspecTest,

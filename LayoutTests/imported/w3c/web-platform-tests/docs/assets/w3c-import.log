@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/docs/assets/commit-directly.png
+/LayoutTests/imported/w3c/web-platform-tests/docs/assets/commitbtn.png
+/LayoutTests/imported/w3c/web-platform-tests/docs/assets/createpr.png
+/LayoutTests/imported/w3c/web-platform-tests/docs/assets/custom.css
+/LayoutTests/imported/w3c/web-platform-tests/docs/assets/files-changed.png
+/LayoutTests/imported/w3c/web-platform-tests/docs/assets/forkbtn.png
+/LayoutTests/imported/w3c/web-platform-tests/docs/assets/gh-fork-ribbon.scss
+/LayoutTests/imported/w3c/web-platform-tests/docs/assets/more-commits.png
+/LayoutTests/imported/w3c/web-platform-tests/docs/assets/pencil-icon.png
+/LayoutTests/imported/w3c/web-platform-tests/docs/assets/praccepteddelete.png
+/LayoutTests/imported/w3c/web-platform-tests/docs/assets/pullrequestbtn.png
+/LayoutTests/imported/w3c/web-platform-tests/docs/assets/reftest-tutorial-test-screenshot.png
+/LayoutTests/imported/w3c/web-platform-tests/docs/assets/testharness-tutorial-test-screenshot-1.png
+/LayoutTests/imported/w3c/web-platform-tests/docs/assets/testharness-tutorial-test-screenshot-2.png
+/LayoutTests/imported/w3c/web-platform-tests/docs/assets/web-platform.png

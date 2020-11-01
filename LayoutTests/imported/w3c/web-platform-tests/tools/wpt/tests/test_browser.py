@@ -3,11 +3,138 @@ import subprocess
 import logging
 import sys
 import pytest
+import inspect
 
 from tools.wpt import browser
 
 
 logger = logging.getLogger()
+
+
+def test_all_browser_abc():
+    # Make sure all subclasses of Browser implement all abstract methods
+    # (except some known base classes). This is a basic sanity test in case
+    # we change the ABC interface of Browser as we only instantiate some
+    # products in unit tests.
+    classes = inspect.getmembers(browser)
+    for name, cls in classes:
+        if cls in (browser.Browser, browser.ChromeAndroidBase):
+            continue
+        if inspect.isclass(cls) and issubclass(cls, browser.Browser):
+            assert not inspect.isabstract(cls), "%s is abstract" % name
+
+
+def test_edgechromium_webdriver_supports_browser():
+    # EdgeDriver binary cannot be called.
+    edge = browser.EdgeChromium(logger)
+    edge.webdriver_version = mock.MagicMock(return_value=None)
+    assert not edge.webdriver_supports_browser('/usr/bin/edgedriver', '/usr/bin/edge')
+
+    # Browser binary cannot be called.
+    edge = browser.EdgeChromium(logger)
+    edge.webdriver_version = mock.MagicMock(return_value='70.0.1')
+    edge.version = mock.MagicMock(return_value=None)
+    assert edge.webdriver_supports_browser('/usr/bin/edgedriver', '/usr/bin/edge')
+
+    # Browser version matches.
+    edge = browser.EdgeChromium(logger)
+    edge.webdriver_version = mock.MagicMock(return_value='70.0.1')
+    edge.version = mock.MagicMock(return_value='70.1.5')
+    assert edge.webdriver_supports_browser('/usr/bin/edgedriver', '/usr/bin/edge')
+
+    # Browser version doesn't match.
+    edge = browser.EdgeChromium(logger)
+    edge.webdriver_version = mock.MagicMock(return_value='70.0.1')
+    edge.version = mock.MagicMock(return_value='69.0.1')
+    assert not edge.webdriver_supports_browser('/usr/bin/edgedriver', '/usr/bin/edge')
+
+
+# On Windows, webdriver_version directly calls _get_fileversion, so there is no
+# logic to test there.
+@pytest.mark.skipif(sys.platform.startswith('win'), reason='just uses _get_fileversion on Windows')
+@mock.patch('tools.wpt.browser.call')
+def test_edgechromium_webdriver_version(mocked_call):
+    edge = browser.EdgeChromium(logger)
+    webdriver_binary = '/usr/bin/edgedriver'
+
+    # Working cases.
+    mocked_call.return_value = 'MSEdgeDriver 84.0.4147.30'
+    assert edge.webdriver_version(webdriver_binary) == '84.0.4147.30'
+    mocked_call.return_value = 'MSEdgeDriver 87.0.1 (abcd1234-refs/branch-heads/4147@{#310})'
+    assert edge.webdriver_version(webdriver_binary) == '87.0.1'
+
+    # Various invalid version strings
+    mocked_call.return_value = 'Edge 84.0.4147.30 (dev)'
+    assert edge.webdriver_version(webdriver_binary) is None
+    mocked_call.return_value = 'MSEdgeDriver New 84.0.4147.30'
+    assert edge.webdriver_version(webdriver_binary) is None
+    mocked_call.return_value = ''
+    assert edge.webdriver_version(webdriver_binary) is None
+
+    # The underlying subprocess call throws.
+    mocked_call.side_effect = subprocess.CalledProcessError(5, 'cmd', output='Call failed')
+    assert edge.webdriver_version(webdriver_binary) is None
+
+
+def test_chrome_webdriver_supports_browser():
+    # ChromeDriver binary cannot be called.
+    chrome = browser.Chrome(logger)
+    chrome.webdriver_version = mock.MagicMock(return_value=None)
+    assert not chrome.webdriver_supports_browser('/usr/bin/chromedriver', '/usr/bin/chrome', 'stable')
+
+    # Browser binary cannot be called.
+    chrome = browser.Chrome(logger)
+    chrome.webdriver_version = mock.MagicMock(return_value='70.0.1')
+    chrome.version = mock.MagicMock(return_value=None)
+    assert chrome.webdriver_supports_browser('/usr/bin/chromedriver', '/usr/bin/chrome', 'stable')
+
+    # Browser version matches.
+    chrome = browser.Chrome(logger)
+    chrome.webdriver_version = mock.MagicMock(return_value='70.0.1')
+    chrome.version = mock.MagicMock(return_value='70.1.5')
+    assert chrome.webdriver_supports_browser('/usr/bin/chromedriver', '/usr/bin/chrome', 'stable')
+
+    # Browser version doesn't match.
+    chrome = browser.Chrome(logger)
+    chrome.webdriver_version = mock.MagicMock(return_value='70.0.1')
+    chrome.version = mock.MagicMock(return_value='69.0.1')
+    assert not chrome.webdriver_supports_browser('/usr/bin/chromedriver', '/usr/bin/chrome', 'stable')
+
+    # The dev channel switches between beta and ToT ChromeDriver, so is sometimes
+    # a version behind its ChromeDriver. As such, we accept browser version + 1 there.
+    chrome = browser.Chrome(logger)
+    chrome.webdriver_version = mock.MagicMock(return_value='70.0.1')
+    chrome.version = mock.MagicMock(return_value='70.1.0')
+    assert chrome.webdriver_supports_browser('/usr/bin/chromedriver', '/usr/bin/chrome', 'dev')
+    chrome.webdriver_version = mock.MagicMock(return_value='71.0.1')
+    assert chrome.webdriver_supports_browser('/usr/bin/chromedriver', '/usr/bin/chrome', 'dev')
+
+
+# On Windows, webdriver_version directly calls _get_fileversion, so there is no
+# logic to test there.
+@pytest.mark.skipif(sys.platform.startswith('win'), reason='just uses _get_fileversion on Windows')
+@mock.patch('tools.wpt.browser.call')
+def test_chrome_webdriver_version(mocked_call):
+    chrome = browser.Chrome(logger)
+    webdriver_binary = '/usr/bin/chromedriver'
+
+    # Working cases.
+    mocked_call.return_value = 'ChromeDriver 84.0.4147.30'
+    assert chrome.webdriver_version(webdriver_binary) == '84.0.4147.30'
+    mocked_call.return_value = 'ChromeDriver 87.0.1 (abcd1234-refs/branch-heads/4147@{#310})'
+    assert chrome.webdriver_version(webdriver_binary) == '87.0.1'
+
+    # Various invalid version strings
+    mocked_call.return_value = 'Chrome 84.0.4147.30 (dev)'
+    assert chrome.webdriver_version(webdriver_binary) is None
+    mocked_call.return_value = 'ChromeDriver New 84.0.4147.30'
+    assert chrome.webdriver_version(webdriver_binary) is None
+    mocked_call.return_value = ''
+    assert chrome.webdriver_version(webdriver_binary) is None
+
+    # The underlying subprocess call throws.
+    mocked_call.side_effect = subprocess.CalledProcessError(5, 'cmd', output='Call failed')
+    assert chrome.webdriver_version(webdriver_binary) is None
 
 
 @mock.patch('subprocess.check_output')

@@ -1,5 +1,6 @@
 import json
 import time
+import six
 
 from collections import defaultdict
 from mozlog.formatters import base
@@ -8,6 +9,12 @@ from mozlog.formatters import base
 class ChromiumFormatter(base.BaseFormatter):
     """Formatter to produce results matching the Chromium JSON Test Results format.
     https://chromium.googlesource.com/chromium/src/+/master/docs/testing/json_test_results_format.md
+
+    Notably, each test has an "artifacts" field that is a dict consisting of
+        "log": a list of strings (one per subtest + one for harness status, see
+            _append_test_message for the format)
+        "screenshots": a list of strings in the format of "url: base64"
+
     """
 
     def __init__(self):
@@ -24,36 +31,48 @@ class ChromiumFormatter(base.BaseFormatter):
         # the trie and the leaf contains the dict of per-test data.
         self.tests = {}
 
-        # Message dictionary, keyed by test name. Value is a concatenation of
-        # the subtest messages for this test.
-        self.messages = defaultdict(str)
+        # Message dictionary, keyed by test name. Value is a list of strings:
+        # see _append_test_message for the format.
+        self.messages = defaultdict(list)
 
         # List of tests that have failing subtests.
         self.tests_with_subtest_fails = set()
 
-    def _append_test_message(self, test, subtest, status, expected, message):
+        # Browser log for the current test under execution.
+        self.test_log = []
+
+    def _append_test_message(self, test, subtest, wpt_actual_status, message):
         """
-        Appends the message data for a test.
+        Appends the message data for a test or subtest.
         :param str test: the name of the test
-        :param str subtest: the name of the subtest with the message
-        :param str status: the subtest status
-        :param str expected: the expected subtest statuses
+        :param str subtest: the name of the subtest with the message. Will be
+                            None if this is called for a test.
+        :param str wpt_actual_status: the test status as reported by WPT
         :param str message: the string to append to the message for this test
 
-        Here's an example of a message:
-        [TIMEOUT expected FAIL] Test Name foo: assert_equals: expected 1 but got 2
+        Example:
+          [test_or_subtest_name]
+            expected: FAIL
+            message: some test message eg assert failure
         """
-        if not message:
-            return
-        # Add the prefix, with the test status and subtest name (if available)
-        prefix = "[%s" % status
-        if expected and status not in expected:
-            prefix += " expected %s] " % expected
-        else:
-            prefix += "] "
+        # NOTE: throughout this function we output a key called "expected" but
+        # fill it in with the actual status. This is by design. The goal of this
+        # output is to look exactly like WPT's expectation metadata so that it
+        # can be easily diff-ed.
         if subtest:
-            prefix += "%s: " % subtest
-        self.messages[test] += prefix + message + "\n"
+            result = "  [%s]\n    expected: %s\n" % (subtest, wpt_actual_status)
+            if message:
+                result += "    message: %s\n" % message
+            self.messages[test].append(result)
+        else:
+            # No subtest, so this is the top-level test. The result must be
+            # prepended to the list of messages, so that the message for the
+            # test comes before any subtest messages.
+            test_name_last_part = test.split("/")[-1]
+            result = "[%s]\n  expected: %s\n" % (test_name_last_part, wpt_actual_status)
+            if message:
+                result += "  message: %s\n" % message
+            self.messages[test].insert(0, result)
 
     def _append_artifact(self, cur_dict, artifact_name, artifact_value):
         """
@@ -62,21 +81,22 @@ class ChromiumFormatter(base.BaseFormatter):
         :param str artifact_name: the name of the artifact
         :param str artifact_value: the value of the artifact
         """
+        assert isinstance(artifact_value, six.string_types), "artifact_value must be a str"
         if "artifacts" not in cur_dict.keys():
-            cur_dict["artifacts"] = {}
-        # Artifacts are all expected to be lists, so even though we only have a
-        # single |artifact_value| we still put it in a list.
-        cur_dict["artifacts"][artifact_name] = [artifact_value]
+            cur_dict["artifacts"] = defaultdict(list)
+        cur_dict["artifacts"][artifact_name].append(artifact_value)
 
-    def _store_test_result(self, name, actual, expected, message, wpt_actual, subtest_failure):
+    def _store_test_result(self, name, actual, expected, messages, wpt_actual,
+                           subtest_failure, reftest_screenshots):
         """
         Stores the result of a single test in |self.tests|
         :param str name: name of the test.
         :param str actual: actual status of the test.
         :param str expected: expected statuses of the test.
-        :param str message: test output, such as status, subtest, errors etc.
+        :param list messages: a list of test messages.
         :param str wpt_actual: actual status reported by wpt, may differ from |actual|.
-        :param bool subtest_failure: whether this test failed because of subtests
+        :param bool subtest_failure: whether this test failed because of subtests.
+        :param Optional[list] reftest_screenshots: see executors/base.py for definition.
         """
         # The test name can contain a leading / which will produce an empty
         # string in the first position of the list returned by split. We use
@@ -91,8 +111,19 @@ class ChromiumFormatter(base.BaseFormatter):
             self._append_artifact(cur_dict, "wpt_subtest_failure", "true")
         if wpt_actual != actual:
             self._append_artifact(cur_dict, "wpt_actual_status", wpt_actual)
-        if message != "":
+        if wpt_actual == 'CRASH':
+            for line in self.test_log:
+                self._append_artifact(cur_dict, "wpt_crash_log", line)
+        for message in messages:
             self._append_artifact(cur_dict, "log", message)
+
+        # Store screenshots (if any).
+        for item in reftest_screenshots or []:
+            if not isinstance(item, dict):
+                # Skip the relation string.
+                continue
+            data = "%s: %s" % (item["url"], item["screenshot"])
+            self._append_artifact(cur_dict, "screenshots", data)
 
         # Figure out if there was a regression or unexpected status. This only
         # happens for tests that were run
@@ -122,13 +153,9 @@ class ChromiumFormatter(base.BaseFormatter):
             return "SKIP"
         if status == "EXTERNAL-TIMEOUT":
             return "TIMEOUT"
-        if status in ("ERROR", "CRASH", "PRECONDITION_FAILED"):
-            # CRASH in WPT means a browser crash, which Chromium treats as a
-            # test failure.
+        if status in ("ERROR", "PRECONDITION_FAILED"):
             return "FAIL"
         if status == "INTERNAL-ERROR":
-            # CRASH in Chromium refers to an error in the test runner not the
-            # browser.
             return "CRASH"
         # Any other status just gets returned as-is.
         return status
@@ -166,19 +193,23 @@ class ChromiumFormatter(base.BaseFormatter):
 
     def test_status(self, data):
         test_name = data["test"]
-        actual_status = self._map_status_name(data["status"])
+        wpt_actual_status = data["status"]
+        actual_status = self._map_status_name(wpt_actual_status)
         expected_statuses = self._get_expected_status_from_data(actual_status, data)
 
         is_unexpected = actual_status not in expected_statuses
         if is_unexpected and test_name not in self.tests_with_subtest_fails:
             self.tests_with_subtest_fails.add(test_name)
-        if "message" in data:
-            self._append_test_message(test_name, data["subtest"], actual_status, expected_statuses, data["message"])
+        # We should always get a subtest in the data dict, but it's technically
+        # possible that it's missing. Be resilient here.
+        subtest_name = data.get("subtest", "UNKNOWN SUBTEST")
+        self._append_test_message(test_name, subtest_name,
+                                  wpt_actual_status, data.get("message", ""))
 
     def test_end(self, data):
         test_name = data["test"]
-        # Save the status reported by WPT since we might change it when reporting
-        # to Chromium.
+        # Save the status reported by WPT since we might change it when
+        # reporting to Chromium.
         wpt_actual_status = data["status"]
         actual_status = self._map_status_name(wpt_actual_status)
         expected_statuses = self._get_expected_status_from_data(actual_status, data)
@@ -193,18 +224,24 @@ class ChromiumFormatter(base.BaseFormatter):
             if actual_status == "PASS":
                 actual_status = "FAIL"
 
-        if "message" in data:
-            self._append_test_message(test_name, None, actual_status,
-                                      expected_statuses, data["message"])
-        self._store_test_result(test_name, actual_status, expected_statuses,
-                                self.messages[test_name], wpt_actual_status,
-                                subtest_failure)
+        self._append_test_message(test_name, None, wpt_actual_status,
+                                  data.get("message", ""))
+        self._store_test_result(test_name,
+                                actual_status,
+                                expected_statuses,
+                                self.messages[test_name],
+                                wpt_actual_status,
+                                subtest_failure,
+                                data.get("extra", {}).get("reftest_screenshots"))
 
         # Remove the test from messages dict to avoid accumulating too many.
         self.messages.pop(test_name)
 
         # Update the count of how many tests ran with each status.
         self.num_failures_by_status[actual_status] += 1
+
+        # New test, new browser logs.
+        self.test_log = []
 
     def suite_end(self, data):
         # Create the final result dictionary
@@ -218,3 +255,7 @@ class ChromiumFormatter(base.BaseFormatter):
             "tests": self.tests
         }
         return json.dumps(final_result)
+
+    def process_output(self, data):
+        if 'command' in data and 'chromedriver' in data['command']:
+            self.test_log.append(data['data'])

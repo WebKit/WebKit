@@ -1,4 +1,5 @@
 import hashlib
+import json
 import os
 from six.moves.urllib.parse import urlsplit
 from abc import ABCMeta, abstractmethod
@@ -24,6 +25,45 @@ def do_delayed_imports():
     from manifest import manifest
     from manifest import update as manifest_update
     from manifest.download import download_from_github
+
+
+class TestGroupsFile(object):
+    """
+    Mapping object representing {group name: [test ids]}
+    """
+
+    def __init__(self, logger, path):
+        try:
+            with open(path) as f:
+                self._data = json.load(f)
+        except ValueError:
+            logger.critical("test groups file %s not valid json" % path)
+            raise
+
+        self.group_by_test = {}
+        for group, test_ids in iteritems(self._data):
+            for test_id in test_ids:
+                self.group_by_test[test_id] = group
+
+    def __contains__(self, key):
+        return key in self._data
+
+    def __getitem__(self, key):
+        return self._data[key]
+
+
+def update_include_for_groups(test_groups, include):
+    if include is None:
+        # We're just running everything
+        return
+
+    new_include = []
+    for item in include:
+        if item in test_groups:
+            new_include.extend(test_groups[item])
+        else:
+            new_include.append(item)
+    return new_include
 
 
 class TestChunker(object):
@@ -168,6 +208,7 @@ class TestLoader(object):
                  total_chunks=1,
                  chunk_number=1,
                  include_https=True,
+                 include_h2=True,
                  include_quic=False,
                  skip_timeout=False,
                  skip_implementation_status=None,
@@ -182,6 +223,7 @@ class TestLoader(object):
         self.tests = None
         self.disabled_tests = None
         self.include_https = include_https
+        self.include_h2 = include_h2
         self.include_quic = include_quic
         self.skip_timeout = skip_timeout
         self.skip_implementation_status = skip_implementation_status
@@ -269,6 +311,8 @@ class TestLoader(object):
             enabled = not test.disabled()
             if not self.include_https and test.environment["protocol"] == "https":
                 enabled = False
+            if not self.include_h2 and test.environment["protocol"] == "h2":
+                enabled = False
             if not self.include_quic and test.environment["quic"]:
                 enabled = False
             if self.skip_timeout and test.expected() == "TIMEOUT":
@@ -290,6 +334,23 @@ class TestLoader(object):
                 groups.add(group)
 
         return groups
+
+
+def get_test_src(**kwargs):
+    test_source_kwargs = {"processes": kwargs["processes"],
+                          "logger": kwargs["logger"]}
+    chunker_kwargs = {}
+    if kwargs["run_by_dir"] is not False:
+        # A value of None indicates infinite depth
+        test_source_cls = PathGroupedSource
+        test_source_kwargs["depth"] = kwargs["run_by_dir"]
+        chunker_kwargs["depth"] = kwargs["run_by_dir"]
+    elif kwargs["test_groups"]:
+        test_source_cls = GroupFileTestSource
+        test_source_kwargs["test_groups"] = kwargs["test_groups"]
+    else:
+        test_source_cls = SingleTestSource
+    return test_source_cls, test_source_kwargs, chunker_kwargs
 
 
 class TestSource(object):
@@ -397,3 +458,42 @@ class PathGroupedSource(GroupedSource):
     @classmethod
     def group_metadata(cls, state):
         return {"scope": "/%s" % "/".join(state["prev_path"])}
+
+
+class GroupFileTestSource(TestSource):
+    @classmethod
+    def make_queue(cls, tests, **kwargs):
+        tests_by_group = cls.tests_by_group(tests, **kwargs)
+
+        ids_to_tests = {test.id: test for test in tests}
+
+        test_queue = Queue()
+
+        for group_name, test_ids in iteritems(tests_by_group):
+            group_metadata = {"scope": group_name}
+            group = deque()
+
+            for test_id in test_ids:
+                test = ids_to_tests[test_id]
+                group.append(test)
+                test.update_metadata(group_metadata)
+
+            test_queue.put((group, group_metadata))
+
+        return test_queue
+
+    @classmethod
+    def tests_by_group(cls, tests, **kwargs):
+        logger = kwargs["logger"]
+        test_groups = kwargs["test_groups"]
+
+        tests_by_group = defaultdict(list)
+        for test in tests:
+            try:
+                group = test_groups.group_by_test[test.id]
+            except KeyError:
+                logger.error("%s is missing from test groups file" % test.id)
+                raise
+            tests_by_group[group].append(test.id)
+
+        return tests_by_group

@@ -10,6 +10,7 @@ import os
 import shutil
 import stat
 import subprocess
+import sys
 import tempfile
 import threading
 
@@ -171,6 +172,11 @@ def temp_repo():
 
     try:
         subprocess.check_call(['git', 'init'], cwd=directory)
+        # Explicitly create the default branch.
+        subprocess.check_call(
+            ['git', 'checkout', '-b', 'master'],
+            cwd=directory
+        )
         subprocess.check_call(
             ['git', 'config', 'user.name', 'example'],
             cwd=directory
@@ -220,7 +226,7 @@ def synchronize(expected_traffic, refs={}):
 
         child = subprocess.Popen(
             [
-                'python',
+                sys.executable,
                 subject,
                 '--host',
                 'http://{}:{}'.format(test_host, test_port),
@@ -267,7 +273,7 @@ def detect(event, expected_github_traffic, expected_preview_traffic):
 
         child = subprocess.Popen(
             [
-                'python',
+                sys.executable,
                 subject,
                 '--host',
                 'http://{}:{}'.format(test_host, github_port),
@@ -709,6 +715,44 @@ def test_synchronize_delete_collaborator():
     assert returncode == 0
     assert same_members(expected_traffic, actual_traffic)
     assert list(remote_refs) == ['refs/pull/23/head']
+
+
+def test_synchronize_delete_old_pr():
+    # No pull requests from the search, but one outstanding closed PR.
+    expected_traffic = [
+        (Requests.get_rate, Responses.no_limit),
+        (Requests.get_rate, Responses.no_limit),
+        (Requests.search, (200,
+            {
+                'items': [],
+                'incomplete_results': False
+            }
+        )),
+        (Requests.pr_details, (200,
+            {
+                'number': 23,
+                'labels': [],
+                'closed_at': '2019-10-28',
+                'head': {
+                    'repo': {
+                        'full_name': 'test-org/test-repo'
+                    }
+                }
+            }
+        )),
+    ]
+    refs = {
+        'refs/pull/23/head': 'HEAD',
+        'refs/prs-open/23': 'HEAD~',
+        'refs/prs-trusted-for-preview/23': 'HEAD~'
+    }
+
+    returncode, actual_traffic, remote_refs = synchronize(expected_traffic, refs)
+
+    assert returncode == 0
+    assert same_members(expected_traffic, actual_traffic)
+    assert list(remote_refs) == ['refs/pull/23/head']
+
 
 def test_detect_ignore_unknown_env():
     expected_github_traffic = []

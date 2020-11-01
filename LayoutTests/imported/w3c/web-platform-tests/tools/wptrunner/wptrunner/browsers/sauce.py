@@ -20,7 +20,7 @@ from ..executors import executor_kwargs as base_executor_kwargs
 from ..executors.executorselenium import (SeleniumTestharnessExecutor,  # noqa: F401
                                           SeleniumRefTestExecutor)  # noqa: F401
 
-here = os.path.split(__file__)[0]
+here = os.path.dirname(__file__)
 # Number of seconds to wait between polling operations when detecting status of
 # Sauce Connect sub-process.
 sc_poll_period = 1
@@ -68,9 +68,6 @@ def get_capabilities(**kwargs):
         "version": version,
         "prerun": prerun_script.get(browser_name)
     }
-
-    if browser_name == 'MicrosoftEdge':
-        capabilities['selenium-version'] = '2.4.8'
 
     return capabilities
 

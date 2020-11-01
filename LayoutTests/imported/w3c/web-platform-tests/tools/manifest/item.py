@@ -21,6 +21,7 @@ if MYPY:
     from typing import Hashable
     from .manifest import Manifest
     Fuzzy = Dict[Optional[Tuple[Text, Text, Text]], List[int]]
+    PageRanges = Dict[Text, List[int]]
 
 item_types = {}  # type: Dict[str, Type[ManifestItem]]
 
@@ -146,6 +147,14 @@ class URLManifestItem(ManifestItem):
         flags = set(urlparse(self.url).path.rsplit("/", 1)[1].split(".")[1:-1])
         return "h2" in flags
 
+    @property
+    def subdomain(self):
+        # type: () -> bool
+        flags = set(urlparse(self.url).path.rsplit("/", 1)[1].split(".")[1:-1])
+        # Note: this is currently hard-coded to check for `www`, rather than
+        # all possible valid subdomains. It can be extended if needed.
+        return "www" in flags
+
     def to_json(self):
         # type: () -> Tuple[Optional[Text], Dict[Any, Any]]
         rel_url = None if self._url == self.path.replace(os.path.sep, u"/") else self._url
@@ -197,7 +206,7 @@ class TestharnessTest(URLManifestItem):
 
     @property
     def script_metadata(self):
-        # type: () -> Optional[Text]
+        # type: () -> Optional[List[Tuple[Text, Text]]]
         return self._extras.get("script_metadata")
 
     def to_json(self):
@@ -300,6 +309,23 @@ class RefTest(URLManifestItem):
                    url,
                    references,
                    **extras)
+
+
+class PrintRefTest(RefTest):
+    __slots__ = ("references",)
+
+    item_type = "print-reftest"
+
+    @property
+    def page_ranges(self):
+        # type: () -> PageRanges
+        return self._extras.get("page_ranges", {})
+
+    def to_json(self):  # type: ignore
+        rv = super(PrintRefTest, self).to_json()
+        if self.page_ranges:
+            rv[-1]["page_ranges"] = self.page_ranges
+        return rv
 
 
 class ManualTest(URLManifestItem):

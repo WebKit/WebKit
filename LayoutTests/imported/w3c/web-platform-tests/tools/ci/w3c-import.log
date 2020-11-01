@@ -17,8 +17,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/__init__.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/ci_built_diff.sh
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/ci_resources_unittest.sh
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/ci_tools_integration_test.sh
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/ci_tools_unittest.sh
-/LayoutTests/imported/w3c/web-platform-tests/tools/ci/ci_wpt.sh
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/ci_wptrunner_infrastructure.sh
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/commands.json
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/epochs_update.sh
@@ -26,6 +26,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/make_hosts_file.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/manifest_build.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/pr_preview.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/regen_certs.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/run_tc.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/taskcluster-run.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/website_build.sh

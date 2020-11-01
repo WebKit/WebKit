@@ -139,7 +139,7 @@ def test_subtest_messages(capfd):
                        message="t1_b_message")
     logger.test_end("t1", status="PASS", expected="PASS")
     logger.test_start("t2")
-    # Currently, subtests with empty messages will be ignored
+    # Subtests with empty messages should not be ignored.
     logger.test_status("t2", status="PASS", subtest="t2_a")
     # A test-level message will also be appended
     logger.test_end("t2", status="TIMEOUT", expected="PASS",
@@ -157,11 +157,17 @@ def test_subtest_messages(capfd):
     output_json = json.load(output)
 
     t1_artifacts = output_json["tests"]["t1"]["artifacts"]
-    assert t1_artifacts["log"] == ["[FAIL expected PASS] t1_a: t1_a_message\n"
-                                   "[PASS] t1_b: t1_b_message\n"]
+    assert t1_artifacts["log"] == [
+        "[t1]\n  expected: PASS\n",
+        "  [t1_a]\n    expected: FAIL\n    message: t1_a_message\n",
+        "  [t1_b]\n    expected: PASS\n    message: t1_b_message\n",
+    ]
     assert t1_artifacts["wpt_subtest_failure"] == ["true"]
     t2_artifacts = output_json["tests"]["t2"]["artifacts"]
-    assert t2_artifacts["log"] == ["[TIMEOUT expected PASS] t2_message\n"]
+    assert t2_artifacts["log"] == [
+        "[t2]\n  expected: TIMEOUT\n  message: t2_message\n",
+        "  [t2_a]\n    expected: PASS\n",
+    ]
     assert "wpt_subtest_failure" not in t2_artifacts.keys()
 
 
@@ -189,7 +195,7 @@ def test_subtest_failure(capfd):
 
     # The test status is reported as a pass here because the harness was able to
     # run the test to completion.
-    logger.test_end("t1", status="PASS", expected="PASS")
+    logger.test_end("t1", status="PASS", expected="PASS", message="top_message")
     logger.suite_end()
 
     # check nothing got output to stdout/stderr
@@ -204,9 +210,12 @@ def test_subtest_failure(capfd):
 
     test_obj = output_json["tests"]["t1"]
     t1_artifacts = test_obj["artifacts"]
-    assert t1_artifacts["log"] == ["[FAIL expected PASS] t1_a: t1_a_message\n"
-                                   "[PASS] t1_b: t1_b_message\n"
-                                   "[TIMEOUT expected PASS] t1_c: t1_c_message\n"]
+    assert t1_artifacts["log"] == [
+        "[t1]\n  expected: PASS\n  message: top_message\n",
+        "  [t1_a]\n    expected: FAIL\n    message: t1_a_message\n",
+        "  [t1_b]\n    expected: PASS\n    message: t1_b_message\n",
+        "  [t1_c]\n    expected: TIMEOUT\n    message: t1_c_message\n",
+    ]
     assert t1_artifacts["wpt_subtest_failure"] == ["true"]
     # The status of the test in the output is a failure because subtests failed,
     # despite the harness reporting that the test passed. But the harness status
@@ -243,7 +252,7 @@ def test_expected_subtest_failure(capfd):
 
     # The test status is reported as a pass here because the harness was able to
     # run the test to completion.
-    logger.test_end("t1", status="PASS", expected="PASS")
+    logger.test_end("t1", status="OK", expected="OK")
     logger.suite_end()
 
     # check nothing got output to stdout/stderr
@@ -258,9 +267,13 @@ def test_expected_subtest_failure(capfd):
 
     test_obj = output_json["tests"]["t1"]
     t1_log = test_obj["artifacts"]["log"]
-    assert t1_log == ["[FAIL] t1_a: t1_a_message\n"
-                      "[PASS] t1_b: t1_b_message\n"
-                      "[TIMEOUT] t1_c: t1_c_message\n"]
+    print("Lpz t1log=%s" % t1_log)
+    assert t1_log == [
+        "[t1]\n  expected: OK\n",
+        "  [t1_a]\n    expected: FAIL\n    message: t1_a_message\n",
+        "  [t1_b]\n    expected: PASS\n    message: t1_b_message\n",
+        "  [t1_c]\n    expected: TIMEOUT\n    message: t1_c_message\n",
+    ]
     # The status of the test in the output is a pass because the subtest
     # failures were all expected.
     assert test_obj["actual"] == "PASS"
@@ -303,7 +316,10 @@ def test_unexpected_subtest_pass(capfd):
 
     test_obj = output_json["tests"]["t1"]
     t1_artifacts = test_obj["artifacts"]
-    assert t1_artifacts["log"] == ["[PASS expected FAIL] t1_a: t1_a_message\n"]
+    assert t1_artifacts["log"] == [
+        "[t1]\n  expected: PASS\n",
+        "  [t1_a]\n    expected: PASS\n    message: t1_a_message\n",
+    ]
     assert t1_artifacts["wpt_subtest_failure"] == ["true"]
     # Since the subtest status is unexpected, we fail the test. But we report
     # wpt_actual_status as an artifact
@@ -518,3 +534,93 @@ def test_known_intermittent_empty(capfd):
     # anywhere.
     assert test_obj["actual"] == "PASS"
     assert test_obj["expected"] == "PASS"
+
+
+def test_reftest_screenshots(capfd):
+    # reftest_screenshots, if present, should be plumbed into artifacts.
+
+    # Set up the handler.
+    output = StringIO()
+    logger = structuredlog.StructuredLogger("test_a")
+    logger.add_handler(handlers.StreamHandler(output, ChromiumFormatter()))
+
+    # Run a reftest with reftest_screenshots.
+    logger.suite_start(["t1"], run_info={}, time=123)
+    logger.test_start("t1")
+    logger.test_end("t1", status="FAIL", expected="PASS", extra={
+        "reftest_screenshots": [
+            {"url": "foo.html", "hash": "HASH1", "screenshot": "DATA1"},
+            "!=",
+            {"url": "foo-ref.html", "hash": "HASH2", "screenshot": "DATA2"},
+        ]
+    })
+    logger.suite_end()
+
+    # check nothing got output to stdout/stderr
+    # (note that mozlog outputs exceptions during handling to stderr!)
+    captured = capfd.readouterr()
+    assert captured.out == ""
+    assert captured.err == ""
+
+    # check the actual output of the formatter
+    output.seek(0)
+    output_json = json.load(output)
+
+    test_obj = output_json["tests"]["t1"]
+    assert test_obj["artifacts"]["screenshots"] == [
+        "foo.html: DATA1",
+        "foo-ref.html: DATA2",
+    ]
+
+
+def test_process_output_crashing_test(capfd):
+    """Test that chromedriver logs are preserved for crashing tests"""
+
+    # Set up the handler.
+    output = StringIO()
+    logger = structuredlog.StructuredLogger("test_a")
+    logger.add_handler(handlers.StreamHandler(output, ChromiumFormatter()))
+
+    logger.suite_start(["t1", "t2", "t3"], run_info={}, time=123)
+
+    logger.test_start("t1")
+    logger.process_output(100, "This message should be recorded", "/some/path/to/chromedriver --some-flag")
+    logger.process_output(101, "This message should not be recorded", "/some/other/process --another-flag")
+    logger.process_output(100, "This message should also be recorded", "/some/path/to/chromedriver --some-flag")
+    logger.test_end("t1", status="CRASH", expected="CRASH")
+
+    logger.test_start("t2")
+    logger.process_output(100, "Another message for the second test", "/some/path/to/chromedriver --some-flag")
+    logger.test_end("t2", status="CRASH", expected="PASS")
+
+    logger.test_start("t3")
+    logger.process_output(100, "This test fails", "/some/path/to/chromedriver --some-flag")
+    logger.process_output(100, "But the output should not be captured", "/some/path/to/chromedriver --some-flag")
+    logger.process_output(100, "Because it does not crash", "/some/path/to/chromedriver --some-flag")
+    logger.test_end("t3", status="FAIL", expected="PASS")
+
+    logger.suite_end()
+
+    # check nothing got output to stdout/stderr
+    # (note that mozlog outputs exceptions during handling to stderr!)
+    captured = capfd.readouterr()
+    assert captured.out == ""
+    assert captured.err == ""
+
+    # check the actual output of the formatter
+    output.seek(0)
+    output_json = json.load(output)
+
+    test_obj = output_json["tests"]["t1"]
+    assert test_obj["artifacts"]["wpt_crash_log"] == [
+        "This message should be recorded",
+        "This message should also be recorded"
+    ]
+
+    test_obj = output_json["tests"]["t2"]
+    assert test_obj["artifacts"]["wpt_crash_log"] == [
+        "Another message for the second test"
+    ]
+
+    test_obj = output_json["tests"]["t3"]
+    assert "wpt_crash_log" not in test_obj["artifacts"]

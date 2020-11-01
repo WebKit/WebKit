@@ -2,8 +2,9 @@ import json
 import os
 import sys
 import traceback
+from collections import defaultdict
 
-from six.moves.urllib.parse import parse_qs, quote, unquote, urljoin
+from six.moves.urllib.parse import quote, unquote, urljoin
 from six import iteritems
 
 from .constants import content_types
@@ -31,7 +32,6 @@ def guess_content_type(path):
     return "application/octet-stream"
 
 
-
 def filesystem_path(base_path, request, url_base="/"):
     if base_path is None:
         base_path = request.doc_root
@@ -51,6 +51,7 @@ def filesystem_path(base_path, request, url_base="/"):
         raise HTTPException(404)
 
     return new_path
+
 
 class DirectoryHandler(object):
     def __init__(self, base_path=None, url_base="/"):
@@ -121,7 +122,31 @@ class DirectoryHandler(object):
                     "headers": dot_headers_markup})
 
 
+def parse_qs(qs):
+    """Parse a query string given as a string argument (data of type
+    application/x-www-form-urlencoded). Data are returned as a dictionary. The
+    dictionary keys are the unique query variable names and the values are
+    lists of values for each name.
+
+    This implementation is used instead of Python's built-in `parse_qs` method
+    in order to support the semicolon character (which the built-in method
+    interprets as a parameter delimiter)."""
+    pairs = [item.split("=", 1) for item in qs.split('&') if item]
+    rv = defaultdict(list)
+    for pair in pairs:
+        if len(pair) == 1 or len(pair[1]) == 0:
+            continue
+        name = unquote(pair[0].replace('+', ' '))
+        value = unquote(pair[1].replace('+', ' '))
+        rv[name].append(value)
+    return dict(rv)
+
+
 def wrap_pipeline(path, request, response):
+    """Applies pipelines to a response.
+
+    Pipelines are specified in the filename (.sub.) or the query param (?pipe).
+    """
     query = parse_qs(request.url_parts.query)
     pipe_string = ""
 
@@ -140,6 +165,36 @@ def wrap_pipeline(path, request, response):
         response = Pipeline(pipe_string)(request, response)
 
     return response
+
+
+def load_headers(request, path):
+    """Loads headers from files for a given path.
+
+    Attempts to load both the neighbouring __dir__{.sub}.headers and
+    PATH{.sub}.headers (applying template substitution if needed); results are
+    concatenated in that order.
+    """
+    def _load(request, path):
+        headers_path = path + ".sub.headers"
+        if os.path.exists(headers_path):
+            use_sub = True
+        else:
+            headers_path = path + ".headers"
+            use_sub = False
+
+        try:
+            with open(headers_path, "rb") as headers_file:
+                data = headers_file.read()
+        except IOError:
+            return []
+        else:
+            if use_sub:
+                data = template(request, data, escape_type="none")
+            return [tuple(item.strip() for item in line.split(b":", 1))
+                    for line in data.splitlines() if line]
+
+    return (_load(request, os.path.join(os.path.dirname(path), "__dir__")) +
+            _load(request, path))
 
 
 class FileHandler(object):
@@ -174,36 +229,16 @@ class FileHandler(object):
             response = wrap_pipeline(path, request, response)
             return response
 
-        except (IOError, OSError) as e:
-            raise HTTPException(404, e.strerror)
+        except (OSError, IOError):
+            raise HTTPException(404)
 
     def get_headers(self, request, path):
-        rv = (self.load_headers(request, os.path.join(os.path.split(path)[0], "__dir__")) +
-              self.load_headers(request, path))
+        rv = load_headers(request, path)
 
         if not any(key.lower() == b"content-type" for (key, _) in rv):
             rv.insert(0, (b"Content-Type", guess_content_type(path).encode("ascii")))
 
         return rv
-
-    def load_headers(self, request, path):
-        headers_path = path + ".sub.headers"
-        if os.path.exists(headers_path):
-            use_sub = True
-        else:
-            headers_path = path + ".headers"
-            use_sub = False
-
-        try:
-            with open(headers_path, "rb") as headers_file:
-                data = headers_file.read()
-        except IOError:
-            return []
-        else:
-            if use_sub:
-                data = template(request, data, escape_type="none")
-            return [tuple(item.strip() for item in line.split(b":", 1))
-                    for line in data.splitlines() if line]
 
     def get_data(self, response, path, byte_ranges):
         """Return either the handle to a file, or a string containing
@@ -276,8 +311,8 @@ class PythonScriptHandler(object):
             if func is not None:
                 return func(request, response, environ, path)
 
-        except (IOError, OSError) as e:
-            raise HTTPException(404, e.strerror)
+        except IOError:
+            raise HTTPException(404)
         finally:
             sys.path = sys_path
             sys.modules = sys_modules
@@ -292,7 +327,6 @@ class PythonScriptHandler(object):
                 raise HTTPException(500, "No main function in script %s" % path)
 
         self._set_path_and_load_file(request, response, func)
-
 
     def frame_handler(self, request):
         """
@@ -321,7 +355,9 @@ class PythonScriptHandler(object):
             return handler
         return self._set_path_and_load_file(request, None, func)
 
+
 python_script_handler = PythonScriptHandler()
+
 
 class FunctionHandler(object):
     def __init__(self, func):
@@ -351,9 +387,10 @@ class FunctionHandler(object):
             wrap_pipeline('', request, response)
 
 
-#The generic name here is so that this can be used as a decorator
+# The generic name here is so that this can be used as a decorator
 def handler(func):
     return FunctionHandler(func)
+
 
 class JsonHandler(object):
     def __init__(self, func):
@@ -376,8 +413,10 @@ class JsonHandler(object):
         response.headers.set("Content-Length", length)
         return value
 
+
 def json_handler(func):
     return JsonHandler(func)
+
 
 class AsIsHandler(object):
     def __init__(self, base_path=None, url_base="/"):
@@ -388,14 +427,16 @@ class AsIsHandler(object):
         path = filesystem_path(self.base_path, request, self.url_base)
 
         try:
-            with open(path) as f:
+            with open(path, 'rb') as f:
                 response.writer.write_raw_content(f.read())
             wrap_pipeline(path, request, response)
             response.close_connection = True
-        except (IOError, OSError) as e:
-            raise HTTPException(404, e.strerror)
+        except IOError:
+            raise HTTPException(404)
+
 
 as_is_handler = AsIsHandler()
+
 
 class BasicAuthHandler(object):
     def __init__(self, handler, user, password):
@@ -423,7 +464,9 @@ class BasicAuthHandler(object):
                 return response
             return self.handler(request, response)
 
+
 basic_auth_handler = BasicAuthHandler(file_handler, None, None)
+
 
 class ErrorHandler(object):
     def __init__(self, status):
@@ -435,7 +478,7 @@ class ErrorHandler(object):
 
 class StringHandler(object):
     def __init__(self, data, content_type, **headers):
-        """Hander that reads a file from a path and substitutes some fixed data
+        """Handler that returns a fixed data string and headers
 
         :param data: String to use
         :param content_type: Content type header to server the response with
@@ -459,7 +502,9 @@ class StringHandler(object):
 
 class StaticHandler(StringHandler):
     def __init__(self, path, format_args, content_type, **headers):
-        """Hander that reads a file from a path and substitutes some fixed data
+        """Handler that reads a file from a path and substitutes some fixed data
+
+        Note that *.headers files have no effect in this handler.
 
         :param path: Path to the template file to use
         :param format_args: Dictionary of values to substitute into the template file
@@ -467,6 +512,8 @@ class StaticHandler(StringHandler):
         :param headers: List of headers to send with responses"""
 
         with open(path) as f:
-            data = f.read() % format_args
+            data = f.read()
+            if format_args:
+                data = data % format_args
 
         return super(StaticHandler, self).__init__(data, content_type, **headers)

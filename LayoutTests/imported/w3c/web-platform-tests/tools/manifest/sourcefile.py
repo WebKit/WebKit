@@ -2,7 +2,8 @@ import hashlib
 import re
 import os
 from collections import deque
-from six import binary_type, ensure_text, iteritems, text_type
+from io import BytesIO
+from six import binary_type, iteritems, text_type
 from six.moves.urllib.parse import urljoin
 from fnmatch import fnmatch
 
@@ -10,7 +11,6 @@ MYPY = False
 if MYPY:
     # MYPY is set to True when run under Mypy.
     from typing import Any
-    from typing import AnyStr
     from typing import BinaryIO
     from typing import Callable
     from typing import Deque
@@ -33,9 +33,17 @@ except ImportError:
 import html5lib
 
 from . import XMLParser
-from .item import (ManifestItem, ManualTest, WebDriverSpecTest, RefTest, TestharnessTest,
-                   SupportFile, CrashTest, ConformanceCheckerTest, VisualTest)
-from .utils import ContextManagerBytesIO, cached_property
+from .item import (ConformanceCheckerTest,
+                   CrashTest,
+                   ManifestItem,
+                   ManualTest,
+                   PrintRefTest,
+                   RefTest,
+                   SupportFile,
+                   TestharnessTest,
+                   VisualTest,
+                   WebDriverSpecTest)
+from .utils import cached_property
 
 wd_pattern = "*.py"
 js_meta_re = re.compile(br"//\s*META:\s*(\w*)=(.*)$")
@@ -44,6 +52,7 @@ python_meta_re = re.compile(br"#\s*META:\s*(\w*)=(.*)$")
 reference_file_re = re.compile(r'(^|[\-_])(not)?ref[0-9]*([\-_]|$)')
 
 space_chars = u"".join(html5lib.constants.spaceCharacters)  # type: Text
+
 
 def replace_end(s, old, new):
     # type: (Text, Text, Text) -> Text
@@ -176,22 +185,22 @@ def _parse_xml(f):
 
 
 class SourceFile(object):
-    parsers = {"html":_parse_html,
-               "xhtml":_parse_xml,
-               "svg":_parse_xml}  # type: Dict[Text, Callable[[BinaryIO], ElementTree.ElementTree]]
+    parsers = {u"html":_parse_html,
+               u"xhtml":_parse_xml,
+               u"svg":_parse_xml}  # type: Dict[Text, Callable[[BinaryIO], ElementTree.ElementTree]]
 
-    root_dir_non_test = {"common"}
+    root_dir_non_test = {u"common"}
 
-    dir_non_test = {"resources",
-                    "support",
-                    "tools"}
+    dir_non_test = {u"resources",
+                    u"support",
+                    u"tools"}
 
-    dir_path_non_test = {("css21", "archive"),
-                         ("css", "CSS2", "archive"),
-                         ("css", "common")}  # type: Set[Tuple[bytes, ...]]
+    dir_path_non_test = {(u"css21", u"archive"),
+                         (u"css", u"CSS2", u"archive"),
+                         (u"css", u"common")}  # type: Set[Tuple[Text, ...]]
 
-    def __init__(self, tests_root, rel_path_str, url_base, hash=None, contents=None):
-        # type: (AnyStr, AnyStr, Text, Optional[Text], Optional[bytes]) -> None
+    def __init__(self, tests_root, rel_path, url_base, hash=None, contents=None):
+        # type: (Text, Text, Text, Optional[Text], Optional[bytes]) -> None
         """Object representing a file in a source tree.
 
         :param tests_root: Path to the root of the source tree
@@ -200,7 +209,6 @@ class SourceFile(object):
         :param contents: Byte array of the contents of the file or ``None``.
         """
 
-        rel_path = ensure_text(rel_path_str)
         assert not os.path.isabs(rel_path), rel_path
         if os.name == "nt":
             # do slash normalization on Windows
@@ -215,7 +223,7 @@ class SourceFile(object):
 
         meta_flags = name.split(".")[1:]
 
-        self.tests_root = ensure_text(tests_root)  # type: Text
+        self.tests_root = tests_root  # type: Text
         self.rel_path = rel_path  # type: Text
         self.dir_path = dir_path  # type: Text
         self.filename = filename  # type: Text
@@ -240,7 +248,7 @@ class SourceFile(object):
         return rv
 
     def name_prefix(self, prefix):
-        # type: (bytes) -> bool
+        # type: (Text) -> bool
         """Check if the filename starts with a given prefix
 
         :param prefix: The prefix to check"""
@@ -261,13 +269,8 @@ class SourceFile(object):
         * the contents specified in the constructor, if any;
         * a File object opened for reading the file contents.
         """
-
         if self.contents is not None:
-            wrapped = ContextManagerBytesIO(self.contents)
-            if MYPY:
-                file_obj = cast(BinaryIO, wrapped)
-            else:
-                file_obj = wrapped
+            file_obj = BytesIO(self.contents)  # type: BinaryIO
         else:
             file_obj = open(self.path, 'rb')
         return file_obj
@@ -328,11 +331,11 @@ class SourceFile(object):
         """Check if the file name matches the conditions for the file to
         be a non-test file"""
         return (self.is_dir() or
-                self.name_prefix("MANIFEST") or
-                self.filename == "META.yml" or
-                self.filename.startswith(".") or
-                self.filename.endswith(".headers") or
-                self.filename.endswith(".ini") or
+                self.name_prefix(u"MANIFEST") or
+                self.filename == u"META.yml" or
+                self.filename.startswith(u".") or
+                self.filename.endswith(u".headers") or
+                self.filename.endswith(u".ini") or
                 self.in_non_test_dir())
 
     @property
@@ -405,7 +408,8 @@ class SourceFile(object):
     @property
     def name_is_crashtest(self):
         # type: () -> bool
-        return self.type_flag == "crash" or "crashtests" in self.dir_path.split(os.path.sep)
+        return (self.markup_type is not None and
+                (self.type_flag == "crash" or "crashtests" in self.dir_path.split(os.path.sep)))
 
     @property
     def name_is_tentative(self):
@@ -414,7 +418,13 @@ class SourceFile(object):
         tentative file.
 
         See https://web-platform-tests.org/writing-tests/file-names.html#test-features"""
-        return "tentative" in self.meta_flags
+        return "tentative" in self.meta_flags or "tentative" in self.dir_path.split(os.path.sep)
+
+    @property
+    def name_is_print_reftest(self):
+        # type: () -> bool
+        return (self.markup_type is not None and
+                (self.type_flag == "print" or "print" in self.dir_path.split(os.path.sep)))
 
     @property
     def markup_type(self):
@@ -425,14 +435,14 @@ class SourceFile(object):
 
         if not ext:
             return None
-        if ext[0] == ".":
+        if ext[0] == u".":
             ext = ext[1:]
-        if ext in ["html", "htm"]:
-            return "html"
-        if ext in ["xhtml", "xht", "xml"]:
-            return "xhtml"
-        if ext == "svg":
-            return "svg"
+        if ext in [u"html", u"htm"]:
+            return u"html"
+        if ext in [u"xhtml", u"xht", u"xml"]:
+            return u"xhtml"
+        if ext == u"svg":
+            return u"svg"
         return None
 
     @cached_property
@@ -538,6 +548,29 @@ class SourceFile(object):
 
         return self.dpi_nodes[0].attrib.get("content", None)
 
+    def parse_ref_keyed_meta(self, node):
+        # type: (ElementTree.Element) -> Tuple[Optional[Tuple[Text, Text, Text]], Text]
+        item = node.attrib.get(u"content", u"")  # type: Text
+
+        parts = item.rsplit(u":", 1)
+        if len(parts) == 1:
+            key = None  # type: Optional[Tuple[Text, Text, Text]]
+            value = parts[0]
+        else:
+            key_part = urljoin(self.url, parts[0])
+            reftype = None
+            for ref in self.references:  # type: Tuple[Text, Text]
+                if ref[0] == key_part:
+                    reftype = ref[1]
+                    break
+            if reftype not in (u"==", u"!="):
+                raise ValueError("Key %s doesn't correspond to a reference" % key_part)
+            key = (self.url, key_part, reftype)
+            value = parts[1]
+
+        return key, value
+
+
     @cached_property
     def fuzzy_nodes(self):
         # type: () -> List[ElementTree.Element]
@@ -545,6 +578,7 @@ class SourceFile(object):
         specify reftest fuzziness"""
         assert self.root is not None
         return self.root.findall(".//{http://www.w3.org/1999/xhtml}meta[@name='fuzzy']")
+
 
     @cached_property
     def fuzzy(self):
@@ -559,26 +593,10 @@ class SourceFile(object):
         args = [u"maxDifference", u"totalPixels"]
 
         for node in self.fuzzy_nodes:
-            item = node.attrib.get(u"content", u"")  # type: Text
-
-            parts = item.rsplit(u":", 1)
-            if len(parts) == 1:
-                key = None  # type: Optional[Tuple[Text, Text, Text]]
-                value = parts[0]
-            else:
-                key_part = urljoin(self.url, parts[0])
-                reftype = None
-                for ref in self.references:  # type: Tuple[Text, Text]
-                    if ref[0] == key_part:
-                        reftype = ref[1]
-                        break
-                if reftype not in (u"==", u"!="):
-                    raise ValueError("Fuzzy key %s doesn't correspond to a references" % key_part)
-                key = (self.url, key_part, reftype)
-                value = parts[1]
+            key, value = self.parse_ref_keyed_meta(node)
             ranges = value.split(u";")
             if len(ranges) != 2:
-                raise ValueError("Malformed fuzzy value %s" % item)
+                raise ValueError("Malformed fuzzy value %s" % value)
             arg_values = {}  # type: Dict[Text, List[int]]
             positional_args = deque()  # type: Deque[List[int]]
             for range_str_value in ranges:  # type: Text
@@ -612,6 +630,48 @@ class SourceFile(object):
                     arg_value = positional_args.popleft()
                 rv[key].append(arg_value)
             assert len(arg_values) == 0 and len(positional_args) == 0
+        return rv
+
+    @cached_property
+    def page_ranges_nodes(self):
+        # type: () -> List[ElementTree.Element]
+        """List of ElementTree Elements corresponding to nodes in a test that
+        specify print-reftest """
+        assert self.root is not None
+        return self.root.findall(".//{http://www.w3.org/1999/xhtml}meta[@name='reftest-pages']")
+
+    @cached_property
+    def page_ranges(self):
+        # type: () -> Dict[Text, List[List[Optional[int]]]]
+        """List of ElementTree Elements corresponding to nodes in a test that
+        specify print-reftest page ranges"""
+        rv = {}  # type: Dict[Text, List[List[Optional[int]]]]
+        for node in self.page_ranges_nodes:
+            key_data, value = self.parse_ref_keyed_meta(node)
+            # Just key by url
+            if key_data is None:
+                key = self.url
+            else:
+                key = key_data[1]
+            if key in rv:
+                raise ValueError("Duplicate page-ranges value")
+            rv[key] = []
+            for range_str in value.split(","):
+                range_str = range_str.strip()
+                if "-" in range_str:
+                    range_parts_str = [item.strip() for item in range_str.split("-")]
+                    try:
+                        range_parts = [int(item) if item else None for item in range_parts_str]
+                    except ValueError:
+                        raise ValueError("Malformed page-range value %s" % range_str)
+                    if any(item == 0 for item in range_parts):
+                        raise ValueError("Malformed page-range value %s" % range_str)
+                else:
+                    try:
+                        range_parts = [int(range_str)]
+                    except ValueError:
+                        raise ValueError("Malformed page-range value %s" % range_str)
+                rv[key].append(range_parts)
         return rv
 
     @cached_property
@@ -805,8 +865,67 @@ class SourceFile(object):
     @property
     def type(self):
         # type: () -> Text
+        possible_types = self.possible_types
+        if len(possible_types) == 1:
+            return possible_types.pop()
+
         rv, _ = self.manifest_items()
         return rv
+
+    @property
+    def possible_types(self):
+        # type: () -> Set[Text]
+        """Determines the set of possible types without reading the file"""
+
+        if self.items_cache:
+            return {self.items_cache[0]}
+
+        if self.name_is_non_test:
+            return {SupportFile.item_type}
+
+        if self.name_is_manual:
+            return {ManualTest.item_type}
+
+        if self.name_is_conformance:
+            return {ConformanceCheckerTest.item_type}
+
+        if self.name_is_conformance_support:
+            return {SupportFile.item_type}
+
+        if self.name_is_webdriver:
+            return {WebDriverSpecTest.item_type}
+
+        if self.name_is_visual:
+            return {VisualTest.item_type}
+
+        if self.name_is_crashtest:
+            return {CrashTest.item_type}
+
+        if self.name_is_print_reftest:
+            return {PrintRefTest.item_type}
+
+        if self.name_is_multi_global:
+            return {TestharnessTest.item_type}
+
+        if self.name_is_worker:
+            return {TestharnessTest.item_type}
+
+        if self.name_is_window:
+            return {TestharnessTest.item_type}
+
+        if self.markup_type is None:
+            return {SupportFile.item_type}
+
+        if not self.name_is_reference:
+            return {ManualTest.item_type,
+                    TestharnessTest.item_type,
+                    RefTest.item_type,
+                    VisualTest.item_type,
+                    SupportFile.item_type}
+
+        return {TestharnessTest.item_type,
+                RefTest.item_type,
+                SupportFile.item_type}
 
     def manifest_items(self):
         # type: () -> Tuple[Text, List[ManifestItem]]
@@ -851,6 +970,16 @@ class SourceFile(object):
                     self.rel_path
                 )]
 
+        elif self.name_is_webdriver:
+            rv = WebDriverSpecTest.item_type, [
+                WebDriverSpecTest(
+                    self.tests_root,
+                    self.rel_path,
+                    self.url_base,
+                    self.rel_url,
+                    timeout=self.timeout
+                )]
+
         elif self.name_is_visual:
             rv = VisualTest.item_type, [
                 VisualTest(
@@ -867,6 +996,24 @@ class SourceFile(object):
                     self.rel_path,
                     self.url_base,
                     self.rel_url
+                )]
+
+        elif self.name_is_print_reftest:
+            references = self.references
+            if not references:
+                raise ValueError("%s detected as print reftest but doesn't have any refs" %
+                                 self.path)
+            rv = PrintRefTest.item_type, [
+                PrintRefTest(
+                    self.tests_root,
+                    self.rel_path,
+                    self.url_base,
+                    self.rel_url,
+                    references=references,
+                    timeout=self.timeout,
+                    viewport_size=self.viewport_size,
+                    fuzzy=self.fuzzy,
+                    page_ranges=self.page_ranges,
                 )]
 
         elif self.name_is_multi_global:
@@ -926,16 +1073,6 @@ class SourceFile(object):
             ]
             rv = TestharnessTest.item_type, tests
 
-        elif self.name_is_webdriver:
-            rv = WebDriverSpecTest.item_type, [
-                WebDriverSpecTest(
-                    self.tests_root,
-                    self.rel_path,
-                    self.url_base,
-                    self.rel_url,
-                    timeout=self.timeout
-                )]
-
         elif self.content_is_css_manual and not self.name_is_reference:
             rv = ManualTest.item_type, [
                 ManualTest(
@@ -992,6 +1129,7 @@ class SourceFile(object):
                     self.rel_path
                 )]
 
+        assert rv[0] in self.possible_types
         assert len(rv[1]) == len(set(rv[1]))
 
         self.items_cache = rv

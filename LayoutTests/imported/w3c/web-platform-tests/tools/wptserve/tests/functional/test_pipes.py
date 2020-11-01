@@ -3,6 +3,7 @@ import unittest
 import time
 import json
 
+from six import assertRegex
 from six.moves import urllib
 
 import pytest
@@ -37,6 +38,18 @@ class TestHeader(TestUsingServer):
     def test_multiple_append(self):
         resp = self.request("/document.txt", query="pipe=header(X-Test,1)|header(X-Test,2,True)")
         self.assert_multiple_headers(resp, "X-Test", ["1", "2"])
+
+    def test_semicolon(self):
+        resp = self.request("/document.txt", query="pipe=header(Refresh,3;url=http://example.com)")
+        self.assertEqual(resp.info()["Refresh"], "3;url=http://example.com")
+
+    def test_escape_comma(self):
+        resp = self.request("/document.txt", query=r"pipe=header(Expires,Thu\,%2014%20Aug%201986%2018:00:00%20GMT)")
+        self.assertEqual(resp.info()["Expires"], "Thu, 14 Aug 1986 18:00:00 GMT")
+
+    def test_escape_parenthesis(self):
+        resp = self.request("/document.txt", query=r"pipe=header(User-Agent,Mozilla/5.0%20(X11;%20Linux%20x86_64;%20rv:12.0\)")
+        self.assertEqual(resp.info()["User-Agent"], "Mozilla/5.0 (X11; Linux x86_64; rv:12.0)")
 
 class TestSlice(TestUsingServer):
     def test_both_bounds(self):
@@ -94,8 +107,8 @@ server: http://localhost:{0}""".format(self.server.port).encode("ascii")
         self.assertEqual(resp.read().rstrip(), expected.strip())
 
     def test_sub_params(self):
-        resp = self.request("/sub_params.txt", query="test=PASS&pipe=sub")
-        expected = b"PASS"
+        resp = self.request("/sub_params.txt", query="plus+pct-20%20pct-3D%3D=PLUS+PCT-20%20PCT-3D%3D&pipe=sub")
+        expected = b"PLUS PCT-20 PCT-3D="
         self.assertEqual(resp.read().rstrip(), expected)
 
     def test_sub_url_base(self):
@@ -108,7 +121,7 @@ server: http://localhost:{0}""".format(self.server.port).encode("ascii")
 
     def test_sub_uuid(self):
         resp = self.request("/sub_uuid.sub.txt")
-        self.assertRegexpMatches(resp.read().rstrip(), b"Before [a-f0-9-]+ After")
+        assertRegex(self, resp.read().rstrip(), b"Before [a-f0-9-]+ After")
 
     def test_sub_var(self):
         resp = self.request("/sub_var.sub.txt")

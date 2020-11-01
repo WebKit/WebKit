@@ -5,6 +5,7 @@ import os
 import sys
 from six import iteritems, itervalues
 
+import wptserve
 from wptserve import sslutils
 
 from . import environment as env
@@ -19,7 +20,7 @@ from .font import FontInstaller
 from .testrunner import ManagerGroup
 from .browsers.base import NullBrowser
 
-here = os.path.split(__file__)[0]
+here = os.path.dirname(__file__)
 
 logger = None
 
@@ -45,7 +46,8 @@ def setup_logging(*args, **kwargs):
     return logger
 
 
-def get_loader(test_paths, product, debug=None, run_info_extras=None, chunker_kwargs=None, **kwargs):
+def get_loader(test_paths, product, debug=None, run_info_extras=None, chunker_kwargs=None,
+               test_groups=None, **kwargs):
     if run_info_extras is None:
         run_info_extras = {}
 
@@ -62,14 +64,19 @@ def get_loader(test_paths, product, debug=None, run_info_extras=None, chunker_kw
 
     manifest_filters = []
 
-    if kwargs["include"] or kwargs["exclude"] or kwargs["include_manifest"] or kwargs["default_exclude"]:
-        manifest_filters.append(testloader.TestFilter(include=kwargs["include"],
+    include = kwargs["include"]
+    if test_groups:
+        include = testloader.update_include_for_groups(test_groups, include)
+
+    if include or kwargs["exclude"] or kwargs["include_manifest"] or kwargs["default_exclude"]:
+        manifest_filters.append(testloader.TestFilter(include=include,
                                                       exclude=kwargs["exclude"],
                                                       manifest_path=kwargs["include_manifest"],
                                                       test_manifests=test_manifests,
                                                       explicit=kwargs["default_exclude"]))
 
     ssl_enabled = sslutils.get_cls(kwargs["ssl_type"]).ssl_enabled
+    h2_enabled = wptserve.utils.http2_compatible()
     test_loader = testloader.TestLoader(test_manifests,
                                         kwargs["test_types"],
                                         run_info,
@@ -78,6 +85,7 @@ def get_loader(test_paths, product, debug=None, run_info_extras=None, chunker_kw
                                         total_chunks=kwargs["total_chunks"],
                                         chunk_number=kwargs["this_chunk"],
                                         include_https=ssl_enabled,
+                                        include_h2=h2_enabled,
                                         include_quic=kwargs["enable_quic"],
                                         skip_timeout=kwargs["skip_timeout"],
                                         skip_implementation_status=kwargs["skip_implementation_status"],
@@ -166,22 +174,20 @@ def run_tests(config, test_paths, product, **kwargs):
 
         recording.set(["startup", "load_tests"])
 
-        test_source_kwargs = {"processes": kwargs["processes"]}
-        chunker_kwargs = {}
-        if kwargs["run_by_dir"] is False:
-            test_source_cls = testloader.SingleTestSource
-        else:
-            # A value of None indicates infinite depth
-            test_source_cls = testloader.PathGroupedSource
-            test_source_kwargs["depth"] = kwargs["run_by_dir"]
-            chunker_kwargs["depth"] = kwargs["run_by_dir"]
+        test_groups = (testloader.TestGroupsFile(logger, kwargs["test_groups_file"])
+                       if kwargs["test_groups_file"] else None)
 
+        (test_source_cls,
+         test_source_kwargs,
+         chunker_kwargs) = testloader.get_test_src(logger=logger,
+                                                   test_groups=test_groups,
+                                                   **kwargs)
         run_info, test_loader = get_loader(test_paths,
                                            product.name,
                                            run_info_extras=product.run_info_extras(**kwargs),
                                            chunker_kwargs=chunker_kwargs,
+                                           test_groups=test_groups,
                                            **kwargs)
-
 
         logger.info("Using %i client processes" % kwargs["processes"])
 
@@ -203,7 +209,11 @@ def run_tests(config, test_paths, product, **kwargs):
                                        "host_cert_path": kwargs["host_cert_path"],
                                        "ca_cert_path": kwargs["ca_cert_path"]}}
 
-        testharness_timeout_multipler = product.get_timeout_multiplier("testharness", run_info, **kwargs)
+        testharness_timeout_multipler = product.get_timeout_multiplier("testharness",
+                                                                       run_info,
+                                                                       **kwargs)
+
+        mojojs_path = kwargs["mojojs_path"] if kwargs["enable_mojojs"] else None
 
         recording.set(["startup", "start_environment"])
         with env.TestEnvironment(test_paths,
@@ -213,7 +223,8 @@ def run_tests(config, test_paths, product, **kwargs):
                                  product.env_options,
                                  ssl_config,
                                  env_extras,
-                                 kwargs["enable_quic"]) as test_environment:
+                                 kwargs["enable_quic"],
+                                 mojojs_path) as test_environment:
             recording.set(["startup", "ensure_environment"])
             try:
                 test_environment.ensure_started()
@@ -241,7 +252,13 @@ def run_tests(config, test_paths, product, **kwargs):
                 for test_type in test_loader.test_types:
                     tests.extend(test_loader.tests[test_type])
 
-                logger.suite_start(test_source_cls.tests_by_group(tests, **test_source_kwargs),
+                try:
+                    test_groups = test_source_cls.tests_by_group(tests, **test_source_kwargs)
+                except Exception:
+                    logger.critical("Loading tests failed")
+                    return False
+
+                logger.suite_start(test_groups,
                                    name='web-platform-test',
                                    run_info=run_info,
                                    extra={"run_by_dir": kwargs["run_by_dir"]})

@@ -25,6 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/manifestinclude.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/manifestupdate.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/metadata.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/print_reftest_runner.html
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/process.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/products.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/stability.py

@@ -14,7 +14,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/examples/README.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/examples/demo.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/examples/doq_client.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/examples/doq_server.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/examples/http3_client.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/examples/http3_server.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/examples/httpx_client.py

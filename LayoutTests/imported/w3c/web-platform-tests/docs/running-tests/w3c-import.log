@@ -1,0 +1,27 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/docs/running-tests/android_webview.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/running-tests/chrome.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/running-tests/chrome_android.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/running-tests/command-line-arguments.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/running-tests/custom-runner.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/running-tests/from-ci.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/running-tests/from-local-system.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/running-tests/from-web.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/running-tests/index.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/running-tests/safari.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/running-tests/webkitgtk_minibrowser.md

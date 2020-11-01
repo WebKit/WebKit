@@ -20,7 +20,7 @@ from .base import (ConnectionlessProtocol,
                    reftest_result_converter,
                    TimedRunner,
                    WdspecExecutor,
-                   WebDriverProtocol)
+                   WdspecProtocol)
 from .process import ProcessTestExecutor
 from ..browsers.base import browser_command
 from ..process import cast_env
@@ -209,7 +209,7 @@ class ServoRefTestExecutor(ProcessTestExecutor):
         os.rmdir(self.tempdir)
         ProcessTestExecutor.teardown(self)
 
-    def screenshot(self, test, viewport_size, dpi):
+    def screenshot(self, test, viewport_size, dpi, page_ranges):
         with TempFilename(self.tempdir) as output_path:
             extra_args = ["--exit",
                           "--output=%s" % output_path,
@@ -264,7 +264,7 @@ class ServoRefTestExecutor(ProcessTestExecutor):
             with open(output_path, "rb") as f:
                 # Might need to strip variable headers or something here
                 data = f.read()
-                return True, ensure_str(base64.b64encode(data))
+                return True, [ensure_str(base64.b64encode(data))]
 
     def do_test(self, test):
         result = self.implementation.run_test(test)
@@ -281,7 +281,7 @@ class ServoRefTestExecutor(ProcessTestExecutor):
                                        " ".join(self.command))
 
 
-class ServoDriverProtocol(WebDriverProtocol):
+class ServoDriverProtocol(WdspecProtocol):
     server_cls = ServoDriverServer
 
 

@@ -169,6 +169,10 @@ class Request(object):
     Regexp match object from matching the request path to the route
     selected for the request.
 
+    .. attribute:: client_address
+
+    Contains a tuple of the form (host, port) representing the client's address.
+
     .. attribute:: protocol_version
 
     HTTP version specified in the request.
@@ -245,6 +249,7 @@ class Request(object):
     def __init__(self, request_handler):
         self.doc_root = request_handler.server.router.doc_root
         self.route_match = None  # Set by the router
+        self.client_address = request_handler.client_address
 
         self.protocol_version = request_handler.protocol_version
         self.method = request_handler.command
@@ -294,7 +299,12 @@ class Request(object):
     @property
     def GET(self):
         if self._GET is None:
-            params = parse_qsl(self.url_parts.query, keep_blank_values=True)
+            kwargs = {
+                "keep_blank_values": True,
+            }
+            if PY3:
+                kwargs["encoding"] = "iso-8859-1"
+            params = parse_qsl(self.url_parts.query, **kwargs)
             self._GET = MultiDict()
             for key, value in params:
                 self._GET.add(isomorphic_encode(key), isomorphic_encode(value))
@@ -554,6 +564,17 @@ class MultiDict(dict):
         elif default is not missing:
             return default
         raise KeyError(key)
+
+    # We need to explicitly override dict.get; otherwise, it won't call
+    # __getitem__ and would return a list instead.
+    def get(self, key, default=None):
+        """Get the first value with a given key
+
+        :param key: The key to lookup
+        :param default: The default to return if key is
+                        not found (None by default)
+        """
+        return self.first(key, default)
 
     def get_list(self, key):
         """Get all values with a given key as a list

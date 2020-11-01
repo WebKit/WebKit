@@ -126,8 +126,25 @@ def test_name_is_tentative():
     s = create("css/css-ui/appearance-revert-001.tentative.html")
     assert s.name_is_tentative
 
+    s = create("css/css-ui/tentative/appearance-revert-001.html")
+    assert s.name_is_tentative
+
     s = create("css/css-ui/appearance-revert-001.html")
     assert not s.name_is_tentative
+
+
+@pytest.mark.parametrize("rel_path", [
+    "webdriver/tests/foo.py",
+    "webdriver/tests/print/foo.py",
+    "webdriver/tests/foo-crash.py",
+    "webdriver/tests/foo-visual.py",
+])
+def test_name_is_webdriver(rel_path):
+    s = create(rel_path)
+    assert s.name_is_webdriver
+
+    item_type, items = s.manifest_items()
+    assert item_type == "wdspec"
 
 
 def test_worker():
@@ -860,6 +877,35 @@ def test_reftest_fuzzy_multi(fuzzy, expected):
 
     assert s.content_is_ref_node
     assert s.fuzzy == expected
+
+
+@pytest.mark.parametrize("page_ranges, expected", [
+    (b"1-2", [[1, 2]]),
+    (b"1-1,3-4", [[1, 1], [3, 4]]),
+    (b"1,3", [[1], [3]]),
+    (b"2-", [[2, None]]),
+    (b"-2", [[None, 2]]),
+    (b"-2,2-", [[None, 2], [2, None]]),
+    (b"1,6-7,8", [[1], [6, 7], [8]])])
+def test_page_ranges(page_ranges, expected):
+    content = b"""<link rel=match href=ref.html>
+<meta name=reftest-pages content="%s">
+""" % page_ranges
+
+    s = create("foo/test-print.html", content)
+
+    assert s.page_ranges == {"/foo/test-print.html": expected}
+
+
+@pytest.mark.parametrize("page_ranges", [b"a", b"1-a", b"1=2", b"1-2:2-3"])
+def test_page_ranges_invalid(page_ranges):
+    content = b"""<link rel=match href=ref.html>
+<meta name=reftest-pages content="%s">
+""" % page_ranges
+
+    s = create("foo/test-print.html", content)
+    with pytest.raises(ValueError):
+        s.page_ranges
 
 
 def test_hash():

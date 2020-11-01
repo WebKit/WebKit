@@ -8,7 +8,7 @@ import uuid
 from .base import Step, StepRunner
 from .tree import Commit
 
-here = os.path.abspath(os.path.split(__file__)[0])
+here = os.path.abspath(os.path.dirname(__file__))
 
 
 def copy_wpt_tree(tree, dest, excludes=None, includes=None):
@@ -41,7 +41,7 @@ def copy_wpt_tree(tree, dest, excludes=None, includes=None):
         source_path = os.path.join(tree.root, tree_path)
         dest_path = os.path.join(dest, tree_path)
 
-        dest_dir = os.path.split(dest_path)[0]
+        dest_dir = os.path.dirname(dest_path)
         if not os.path.isdir(source_path):
             if not os.path.exists(dest_dir):
                 os.makedirs(dest_dir)
@@ -50,7 +50,7 @@ def copy_wpt_tree(tree, dest, excludes=None, includes=None):
     for source, destination in [("testharness_runner.html", ""),
                                 ("testdriver-vendor.js", "resources/")]:
         source_path = os.path.join(here, os.pardir, source)
-        dest_path = os.path.join(dest, destination, os.path.split(source)[1])
+        dest_path = os.path.join(dest, destination, os.path.basename(source))
         shutil.copy2(source_path, dest_path)
 
 
@@ -92,24 +92,18 @@ class GetSyncTargetCommit(Step):
         self.logger.debug("New base commit is %s" % state.sync_commit.sha1)
 
 
-class LoadManifest(Step):
-    """Load the test manifest"""
+class UpdateManifest(Step):
+    """Update the manifest to match the tests in the sync tree checkout"""
 
     provides = ["manifest_path", "test_manifest"]
 
     def create(self, state):
         from manifest import manifest
         state.manifest_path = os.path.join(state.metadata_path, "MANIFEST.json")
-        state.test_manifest = manifest.Manifest("/")
-
-
-class UpdateManifest(Step):
-    """Update the manifest to match the tests in the sync tree checkout"""
-
-    def create(self, state):
-        from manifest import manifest, update
-        update.update(state.sync["path"], state.test_manifest)
-        manifest.write(state.test_manifest, state.manifest_path)
+        state.test_manifest = manifest.load_and_update(state.sync["path"],
+                                                       state.manifest_path,
+                                                       "/",
+                                                       write_manifest=True)
 
 
 class CopyWorkTree(Step):
@@ -149,7 +143,6 @@ class SyncFromUpstreamRunner(StepRunner):
     """(Sub)Runner for doing an upstream sync"""
     steps = [UpdateCheckout,
              GetSyncTargetCommit,
-             LoadManifest,
              UpdateManifest,
              CopyWorkTree,
              CreateSyncPatch]

@@ -18,4 +18,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/tc/__init__.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/tc/decision.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/tc/download.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/tc/github_checks_output.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/tc/sink_task.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/tc/taskgraph.py

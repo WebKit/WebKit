@@ -7,7 +7,7 @@ from six import iteritems
 
 from ..wptcommandline import require_arg  # noqa: F401
 
-here = os.path.split(__file__)[0]
+here = os.path.dirname(__file__)
 
 
 def inherit(super_module, child_globals, product_name):
@@ -126,6 +126,12 @@ class Browser(object):
         pass
 
     def settings(self, test):
+        """Dictionary of metadata that is constant for a specific launch of a browser.
+
+        This is used to determine when the browser instance configuration changes, requiring
+        a relaunch of the browser. The test runner calls this method for each test, and if the
+        returned value differs from that for the previous test, the browser is relaunched.
+        """
         return {}
 
     @abstractmethod
