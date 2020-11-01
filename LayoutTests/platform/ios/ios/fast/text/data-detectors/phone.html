@@ -6,7 +6,7 @@
     <script type="text/javascript">
         if (window.testRunner) {
             Markup.waitUntilDone();
-            testRunner.setTelephoneNumberParsingEnabled(true);
+            internals.settings.setTelephoneNumberParsingEnabled(true);
         }
 
         window.addEventListener('load', function() {
@@ -15,7 +15,7 @@
 
             Markup.description('<rdar://problem/8909578> Reintegrate iOS telephone parsing with new HTML5 parser');
             Markup.dump('body', 'phone number detection');
-            testRunner.setTelephoneNumberParsingEnabled(false);
+            internals.settings.setTelephoneNumberParsingEnabled(false);
 
             Markup.notifyDone();
         }, false);

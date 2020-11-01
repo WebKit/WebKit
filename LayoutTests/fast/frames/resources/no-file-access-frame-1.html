@@ -1,11 +1,9 @@
-<html>
+<html><!-- webkit-test-runner [ AllowUniversalAccessFromFileURLs=false AllowFileAccessFromFileURLs=false ] -->
 <head>
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
-    testRunner.setAllowUniversalAccessFromFileURLs(false);
-    testRunner.setAllowFileAccessFromFileURLs(false);
 }
 window.onload = function() {
     parent.frames[1].location='no-file-access-frame-2.html';

@@ -60,7 +60,7 @@ function openWindow(evt) {
 }
 
 function doClick() {
-    testRunner.setPopupBlockingEnabled(window.popupBlockerIsEnabled);
+    internals.settings.setJavaScriptCanOpenWindowsAutomatically(!window.popupBlockerIsEnabled);
     // Send a mouse-click event to click the button.
     eventSender.mouseMoveTo(0, 0);
     eventSender.mouseMoveTo(20, 20);

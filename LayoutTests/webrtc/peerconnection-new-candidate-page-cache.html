@@ -1,4 +1,4 @@
-<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!-- webkit-test-runner [ UsesBackForwardCache=true WebRTCMDNSICECandidatesEnabled=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -8,8 +8,6 @@
 <script>
 t = async_test();
 
-if (window.testRunner)
-    testRunner.setWebRTCMDNSICECandidatesEnabled(true);
 if (window.internals) {
     internals.useMockRTCPeerConnectionFactory("ICECandidatesWithDelay");
     internals.setICECandidateFiltering(true);

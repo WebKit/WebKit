@@ -404,11 +404,6 @@ void TestRunner::setAppCacheMaximumSize(unsigned long long size)
     [WebApplicationCache setMaximumSize:size];
 }
 
-void TestRunner::setAuthorAndUserStylesEnabled(bool flag)
-{
-    [[[mainFrame webView] preferences] setAuthorAndUserStylesEnabled:flag];
-}
-
 void TestRunner::setCustomPolicyDelegate(bool setDelegate, bool permissive)
 {
     if (!setDelegate) {
@@ -510,41 +505,6 @@ void TestRunner::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
     [[[mainFrame webView] preferences] setPrivateBrowsingEnabled:privateBrowsingEnabled];
 }
 
-void TestRunner::setXSSAuditorEnabled(bool enabled)
-{
-    [[[mainFrame webView] preferences] setXSSAuditorEnabled:enabled];
-}
-
-void TestRunner::setAllowUniversalAccessFromFileURLs(bool enabled)
-{
-    [[[mainFrame webView] preferences] setAllowUniversalAccessFromFileURLs:enabled];
-}
-
-void TestRunner::setAllowFileAccessFromFileURLs(bool enabled)
-{
-    [[[mainFrame webView] preferences] setAllowFileAccessFromFileURLs:enabled];
-}
-
-void TestRunner::setNeedsStorageAccessFromFileURLsQuirk(bool needsQuirk)
-{
-    [[[mainFrame webView] preferences] setNeedsStorageAccessFromFileURLsQuirk:needsQuirk];
-}
-
-void TestRunner::setPopupBlockingEnabled(bool popupBlockingEnabled)
-{
-    [[[mainFrame webView] preferences] setJavaScriptCanOpenWindowsAutomatically:!popupBlockingEnabled];
-}
-
-void TestRunner::setPluginsEnabled(bool pluginsEnabled)
-{
-    [[[mainFrame webView] preferences] setPlugInsEnabled:pluginsEnabled];
-}
-
-void TestRunner::setJavaScriptCanAccessClipboard(bool enabled)
-{
-    [[[mainFrame webView] preferences] setJavaScriptCanAccessClipboard:enabled];
-}
-
 void TestRunner::setAutomaticLinkDetectionEnabled(bool enabled)
 {
 #if !PLATFORM(IOS_FAMILY)
@@ -558,11 +518,6 @@ void TestRunner::setTabKeyCyclesThroughElements(bool cycles)
 }
 
 #if PLATFORM(IOS_FAMILY)
-void TestRunner::setTelephoneNumberParsingEnabled(bool enabled)
-{
-    [[[mainFrame webView] preferences] _setTelephoneNumberParsingEnabled:enabled];
-}
-
 void TestRunner::setPagePaused(bool paused)
 {
     [gWebBrowserView setPaused:paused];
@@ -761,11 +716,6 @@ void TestRunner::addUserStyleSheet(JSStringRef source, bool allFrames)
     RetainPtr<CFStringRef> sourceCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, source));
     NSString *sourceNS = (__bridge NSString *)sourceCF.get();
     [WebView _addUserStyleSheetToGroup:@"org.webkit.DumpRenderTree" world:[WebScriptWorld world] source:sourceNS url:nil includeMatchPatternStrings:nil excludeMatchPatternStrings:nil injectedFrames:(allFrames ? WebInjectInAllFrames : WebInjectInTopFrameOnly)];
-}
-
-void TestRunner::setDeveloperExtrasEnabled(bool enabled)
-{
-    [[[mainFrame webView] preferences] setDeveloperExtrasEnabled:enabled];
 }
 
 void TestRunner::showWebInspector()

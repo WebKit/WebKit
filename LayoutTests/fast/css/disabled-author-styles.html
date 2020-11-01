@@ -8,7 +8,7 @@
                return;
             }
             testRunner.waitUntilDone();
-            testRunner.setAuthorAndUserStylesEnabled(false);
+            internals.settings.setAuthorAndUserStylesEnabled(false);
 
             // Check the matched rules after a timeout to give time for WebPreferences to update WebCore::Settings.
             setTimeout(checkMatchedRules, 0);

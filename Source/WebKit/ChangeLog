@@ -1,3 +1,37 @@
+2020-11-01  Sam Weinig  <weinig@apple.com>
+
+        Remove remaining alternative preference setting mechanisms from LayoutTests
+        https://bugs.webkit.org/show_bug.cgi?id=218417
+
+        Reviewed by Simon Fraser.
+
+        Remove now unused bundle SPI that was only used by the WebKitTestRuner.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleOverrideBoolPreferenceForTestRunner): Deleted.
+        (WKBundleSetAllowUniversalAccessFromFileURLs): Deleted.
+        (WKBundleSetAllowFileAccessFromFileURLs): Deleted.
+        (WKBundleSetAllowStorageAccessFromFileURLS): Deleted.
+        (WKBundleSetMinimumLogicalFontSize): Deleted.
+        (WKBundleSetFrameFlatteningEnabled): Deleted.
+        (WKBundleSetJavaScriptCanAccessClipboard): Deleted.
+        (WKBundleSetPopupBlockingEnabled): Deleted.
+        (WKBundleSetAuthorAndUserStylesEnabled): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::addOriginAccessAllowListEntry):
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner): Deleted.
+        (WebKit::InjectedBundle::setAllowUniversalAccessFromFileURLs): Deleted.
+        (WebKit::InjectedBundle::setAllowFileAccessFromFileURLs): Deleted.
+        (WebKit::InjectedBundle::setNeedsStorageAccessFromFileURLsQuirk): Deleted.
+        (WebKit::InjectedBundle::setMinimumLogicalFontSize): Deleted.
+        (WebKit::InjectedBundle::setFrameFlatteningEnabled): Deleted.
+        (WebKit::InjectedBundle::setAsyncFrameScrollingEnabled): Deleted.
+        (WebKit::InjectedBundle::setJavaScriptCanAccessClipboard): Deleted.
+        (WebKit::InjectedBundle::setPopupBlockingEnabled): Deleted.
+        (WebKit::InjectedBundle::setAuthorAndUserStylesEnabled): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+
 2020-10-31  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up BoxSide and BorderEdge code

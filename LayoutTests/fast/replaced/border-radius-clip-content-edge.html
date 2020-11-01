@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ PluginsEnabled=false ] -->
 <style>
   body {
     width: 600px;
@@ -25,18 +25,12 @@
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText(true);
-    testRunner.setPluginsEnabled(false);
 }
 </script>
 
 <body>
 <!-- Replaced elements with border-radius should clip to the content edge curve. -->
 
-<script>
-// Disable plugins, because otherwise the "Test WebKit PlugIn" steals <embed>s referencing PNGs.
-if (window.testRunner)
-  testRunner.setPluginsEnabled(false);
-</script>
 
 <div>
   <object data="resources/square-blue-100x100.png"></object>

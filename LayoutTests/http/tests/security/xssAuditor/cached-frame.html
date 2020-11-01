@@ -1,11 +1,8 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ XSSAuditorEnabled=true ] -->
 <html>
 <head>
     <script src="/js-test-resources/js-test-pre.js"></script>
     <script>
-        if (window.testRunner)
-            testRunner.setXSSAuditorEnabled(true);
-
         description('Check that an X-XSS-Protection header added by a 304 response does not override one from the original request.');
         debug('Two console messages should be generated, noting that JavaScript was blocked.');
         window.jsTestIsAsync = true;

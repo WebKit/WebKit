@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ JavaScriptCanAccessClipboard=false ] -->
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
@@ -8,11 +8,6 @@
 <div id="console"></div>
 <script>
 description("This test checks whether javascript programs can access clipboard.");
-
-if (window.testRunner)
-{
-    window.testRunner.setJavaScriptCanAccessClipboard(false);
-}
 
 var nonEditableParagraph = document.createElement("p");
 nonEditableParagraph.appendChild(document.createTextNode("x"));

@@ -1,11 +1,10 @@
-<html> 
+<html> <!-- webkit-test-runner [ JavaScriptCanOpenWindowsAutomatically=false ] -->
 <body>
 <a id="test" onclick="go()">Go?</a>
 <script> 
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.setCanOpenWindows();
-    testRunner.setPopupBlockingEnabled(true);
     testRunner.setCloseRemainingWindowsWhenComplete(true);
 }
 

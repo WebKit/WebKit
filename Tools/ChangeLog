@@ -1,3 +1,98 @@
+2020-11-01  Sam Weinig  <weinig@apple.com>
+
+        Remove remaining alternative preference setting mechanisms from LayoutTests
+        https://bugs.webkit.org/show_bug.cgi?id=218417
+
+        Reviewed by Simon Fraser.
+
+        Remove various one off solutions for setting preferences in WebKitTestRunner and DumpRenderTree
+        keeping only test header commands (which can be set without JS and can be in place before the 
+        inital load) and internals.settings, which can be used when dynamic changing is required.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (WTR::TestOptions::supportedUInt32WebPreferenceFeatures):
+        (WTR::TestOptions::defaults):
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/TestRunner.cpp:
+        (setPagePausedCallback):
+        (TestRunner::staticFunctions):
+        (setAuthorAndUserStylesEnabledCallback): Deleted.
+        (setJavaScriptCanAccessClipboardCallback): Deleted.
+        (setXSSAuditorEnabledCallback): Deleted.
+        (setAllowUniversalAccessFromFileURLsCallback): Deleted.
+        (setAllowFileAccessFromFileURLsCallback): Deleted.
+        (setNeedsStorageAccessFromFileURLsQuirkCallback): Deleted.
+        (setTelephoneNumberParsingEnabledCallback): Deleted.
+        (setPopupBlockingEnabledCallback): Deleted.
+        (setPluginsEnabledCallback): Deleted.
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (enableExperimentalFeatures):
+        (resetWebPreferencesToConsistentValues):
+        (webPreferenceFeatureValue):
+        (setWebPreferencesForTestOptions):
+        (runTest):
+        (boolWebPreferenceFeatureValue): Deleted.
+        (shouldEnableDeveloperExtras): Deleted.
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::setAuthorAndUserStylesEnabled): Deleted.
+        (TestRunner::setXSSAuditorEnabled): Deleted.
+        (TestRunner::setAllowUniversalAccessFromFileURLs): Deleted.
+        (TestRunner::setAllowFileAccessFromFileURLs): Deleted.
+        (TestRunner::setNeedsStorageAccessFromFileURLsQuirk): Deleted.
+        (TestRunner::setPopupBlockingEnabled): Deleted.
+        (TestRunner::setPluginsEnabled): Deleted.
+        (TestRunner::setJavaScriptCanAccessClipboard): Deleted.
+        (TestRunner::setTelephoneNumberParsingEnabled): Deleted.
+        (TestRunner::setDeveloperExtrasEnabled): Deleted.
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebPreferencesToConsistentValues):
+        (webPreferenceFeatureValue):
+        (setWebPreferencesForTestOptions):
+        (runTest):
+        (shouldEnableDeveloperExtras): Deleted.
+        (boolWebPreferenceFeatureValue): Deleted.
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::setAuthorAndUserStylesEnabled): Deleted.
+        (TestRunner::setXSSAuditorEnabled): Deleted.
+        (TestRunner::setAllowUniversalAccessFromFileURLs): Deleted.
+        (TestRunner::setAllowFileAccessFromFileURLs): Deleted.
+        (TestRunner::setNeedsStorageAccessFromFileURLsQuirk): Deleted.
+        (TestRunner::setPopupBlockingEnabled): Deleted.
+        (TestRunner::setPluginsEnabled): Deleted.
+        (TestRunner::setJavaScriptCanAccessClipboard): Deleted.
+        (TestRunner::setDeveloperExtrasEnabled): Deleted.
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::overridePreference): Deleted.
+        (WTR::TestRunner::setXSSAuditorEnabled): Deleted.
+        (WTR::TestRunner::setMediaDevicesEnabled): Deleted.
+        (WTR::TestRunner::setWebRTCMDNSICECandidatesEnabled): Deleted.
+        (WTR::TestRunner::setWebAPIStatisticsEnabled): Deleted.
+        (WTR::TestRunner::setModernMediaControlsEnabled): Deleted.
+        (WTR::TestRunner::setWebGL2Enabled): Deleted.
+        (WTR::TestRunner::setWritableStreamAPIEnabled): Deleted.
+        (WTR::TestRunner::setTransformStreamAPIEnabled): Deleted.
+        (WTR::TestRunner::setReadableByteStreamAPIEnabled): Deleted.
+        (WTR::TestRunner::setEncryptedMediaAPIEnabled): Deleted.
+        (WTR::TestRunner::setPictureInPictureAPIEnabled): Deleted.
+        (WTR::TestRunner::setGenericCueAPIEnabled): Deleted.
+        (WTR::TestRunner::setAllowUniversalAccessFromFileURLs): Deleted.
+        (WTR::TestRunner::setAllowFileAccessFromFileURLs): Deleted.
+        (WTR::TestRunner::setNeedsStorageAccessFromFileURLsQuirk): Deleted.
+        (WTR::TestRunner::setPluginsEnabled): Deleted.
+        (WTR::TestRunner::setJavaScriptCanAccessClipboard): Deleted.
+        (WTR::TestRunner::setPopupBlockingEnabled): Deleted.
+        (WTR::TestRunner::setAuthorAndUserStylesEnabled): Deleted.
+        (WTR::TestRunner::setOffscreenCanvasEnabled): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+
 2020-10-31  Sam Weinig  <weinig@apple.com>
 
         Remove all remaining testRunner.overridePreference calls

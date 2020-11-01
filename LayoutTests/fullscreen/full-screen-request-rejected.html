@@ -1,4 +1,4 @@
-<body>
+<body><!-- webkit-test-runner [ JavaScriptCanOpenWindowsAutomatically=false ] -->
 <script src="full-screen-test.js"></script>
 <div>This tests that a full-screen request which is not user-initiated will be rejected.
 <script>
@@ -11,8 +11,6 @@
            logResult("Entered full screen.", false); 
            endTest();
         });
-        if (testRunner)
-            testRunner.setPopupBlockingEnabled(true);
         waitForEventAndEnd(document, 'webkitfullscreenerror');
         document.documentElement.webkitRequestFullScreen();
     }

@@ -95,26 +95,19 @@ public:
     void queueReload();
     void removeAllVisitedLinks();
     void setAcceptsEditing(bool);
-    void setAllowUniversalAccessFromFileURLs(bool);
-    void setAllowFileAccessFromFileURLs(bool);
-    void setNeedsStorageAccessFromFileURLsQuirk(bool);
     void setAppCacheMaximumSize(unsigned long long quota);
-    void setAuthorAndUserStylesEnabled(bool);
     void setCacheModel(int);
     void setCustomPolicyDelegate(bool setDelegate, bool permissive);
     void setDatabaseQuota(unsigned long long quota);
     void setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme);
     void setDefersLoading(bool);
     void setIconDatabaseEnabled(bool);
-    void setJavaScriptCanAccessClipboard(bool flag);
     void setAutomaticLinkDetectionEnabled(bool flag);
     void setMainFrameIsFirstResponder(bool flag);
     void setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma);
     void setMockGeolocationPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed, bool providesFloorLevel, double floorLevel);
     void setMockGeolocationPositionUnavailableError(JSStringRef message);
     void setPersistentUserStyleSheetLocation(JSStringRef path);
-    void setPluginsEnabled(bool);
-    void setPopupBlockingEnabled(bool);
     void setPrivateBrowsingEnabled(bool);
 
     void willNavigate();
@@ -125,10 +118,8 @@ public:
     void setUserStyleSheetEnabled(bool flag);
     void setUserStyleSheetLocation(JSStringRef path);
     void setValueForUser(JSContextRef, JSValueRef nodeObject, JSStringRef value);
-    void setXSSAuditorEnabled(bool flag);
     void setScrollbarPolicy(JSStringRef orientation, JSStringRef policy);
 #if PLATFORM(IOS_FAMILY)
-    void setTelephoneNumberParsingEnabled(bool enable);
     void setPagePaused(bool paused);
 #endif
 #if PLATFORM(WIN)
@@ -325,7 +316,6 @@ public:
     bool isGeolocationPermissionSet() const { return m_isGeolocationPermissionSet; }
     bool geolocationPermission() const { return m_geolocationPermission; }
 
-    void setDeveloperExtrasEnabled(bool);
     void showWebInspector();
     void closeWebInspector();
     void evaluateInWebInspector(JSStringRef script);

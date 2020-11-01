@@ -101,20 +101,7 @@ public:
     void setAcceptsEditing(bool value) { m_shouldAllowEditing = value; }
     void setCanOpenWindows();
     void setCloseRemainingWindowsWhenComplete(bool value) { m_shouldCloseExtraWindows = value; }
-    void setXSSAuditorEnabled(bool);
-    void setModernMediaControlsEnabled(bool);
-    void setWebGL2Enabled(bool);
-    void setWritableStreamAPIEnabled(bool);
-    void setReadableByteStreamAPIEnabled(bool);
-    void setTransformStreamAPIEnabled(bool);
 
-    void setAllowUniversalAccessFromFileURLs(bool);
-    void setAllowFileAccessFromFileURLs(bool);
-    void setNeedsStorageAccessFromFileURLsQuirk(bool);
-    void setPluginsEnabled(bool);
-    void setJavaScriptCanAccessClipboard(bool);
-    void setPopupBlockingEnabled(bool);
-    void setAuthorAndUserStylesEnabled(bool);
     void setCustomPolicyDelegate(bool enabled, bool permissive = false);
     void addOriginAccessAllowListEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains);
     void removeOriginAccessAllowListEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains);
@@ -128,13 +115,7 @@ public:
     void setAllowsAnySSLCertificate(bool);
     void setShouldSwapToEphemeralSessionOnNextNavigation(bool);
     void setShouldSwapToDefaultSessionOnNextNavigation(bool);
-    void setEncryptedMediaAPIEnabled(bool);
-    void setPictureInPictureAPIEnabled(bool);
-    void setGenericCueAPIEnabled(bool);
-    void setMediaDevicesEnabled(bool);
-    void setWebRTCMDNSICECandidatesEnabled(bool);
     void setCustomUserAgent(JSStringRef);
-    void setWebAPIStatisticsEnabled(bool);
 
     // Special DOM functions.
     void clearBackForwardList();
@@ -529,8 +510,6 @@ public:
     void setAdClickAttributionOverrideTimerForTesting(bool value);
     void setAdClickAttributionConversionURLForTesting(JSStringRef);
     void markAdClickAttributionsAsExpiredForTesting();
-
-    void setOffscreenCanvasEnabled(bool);
 
 private:
     TestRunner();

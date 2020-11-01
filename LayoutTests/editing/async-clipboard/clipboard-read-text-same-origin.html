@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true DOMPasteAllowed=false ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true DOMPasteAllowed=false JavaScriptCanAccessClipboard=false ] -->
 <html>
     <meta charset="utf8">
     <head>
@@ -17,9 +17,6 @@
     <script>
         jsTestIsAsync = true;
         finishedCopying = false;
-
-        if (window.testRunner)
-            testRunner.setJavaScriptCanAccessClipboard(false);
 
         async function runTest() {
             description("This test verifies that navigator.clipboard.readText can be used to read text from the clipboard without showing DOM paste UI for same-origin data. To run the test manually, click 'Copy' and then click 'Paste'. DOM paste UI should not appear.");

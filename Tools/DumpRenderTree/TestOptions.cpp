@@ -44,6 +44,20 @@ const std::vector<std::string>& TestOptions::supportedBoolWebPreferenceFeatures(
     return supported;
 }
 
+const std::vector<std::string>& TestOptions::supportedUInt32WebPreferenceFeatures()
+{
+    // FIXME: Remove this once there is a viable mechanism for reseting WebPreferences between tests,
+    // at which point, we will not need to manually reset every supported preference for each test.
+
+    static std::vector<std::string> supported = [] {
+        std::vector<std::string> keys;
+        for (const auto& [key, value] : defaults().uint32WebPreferenceFeatures)
+            keys.push_back(key);
+        return keys;
+    }();
+    return supported;
+}
+
 const TestFeatures& TestOptions::defaults()
 {
     static TestFeatures features;
@@ -52,37 +66,45 @@ const TestFeatures& TestOptions::defaults()
             // These are WebPreference values that must always be set as they may
             // differ from the default set in the WebPreferences*.yaml configuration.
             { "AcceleratedDrawingEnabled", false },
+            { "AdClickAttributionEnabled", false },
             { "AllowCrossOriginSubresourcesToAskForCredentials", false },
+            { "AllowFileAccessFromFileURLs", true },
             { "AllowTopNavigationToDataURLs", true },
+            { "AllowUniversalAccessFromFileURLs", true },
+            { "AspectRatioOfImgFromWidthAndHeightEnabled", false },
+            { "AsyncClipboardAPIEnabled", false },
             { "AttachmentElementEnabled", false },
+            { "CSSLogicalEnabled", false },
+            { "CSSOMViewSmoothScrollingEnabled", false },
             { "ColorFilterEnabled", false },
+            { "ContactPickerAPIEnabled", false },
+            { "CoreMathMLEnabled", false },
+            { "DOMPasteAllowed", true },
+            { "DeveloperExtrasEnabled", true },
             { "HiddenPageDOMTimerThrottlingEnabled", false },
             { "InspectorAdditionsEnabled", false },
             { "IntersectionObserverEnabled", false },
+            { "JavaScriptCanAccessClipboard", true },
+            { "JavaScriptCanOpenWindowsAutomatically", true },
             { "JavaScriptEnabled", true },
             { "KeygenElementEnabled", false },
+            { "LayoutFormattingContextIntegrationEnabled", true },
+            { "LineHeightUnitsEnabled", false },
             { "LoadsImagesAutomatically", true },
             { "MainContentUserGestureOverrideEnabled", false },
             { "MenuItemElementEnabled", false },
             { "ModernMediaControlsEnabled", true },
-            { "SpatialNavigationEnabled", false },
-            { "TabsToLinks", false },
-            { "UsesBackForwardCache", false },
-
-            { "CSSLogicalEnabled", false },
-            { "LineHeightUnitsEnabled", false },
-            { "SelectionAcrossShadowBoundariesEnabled", true },
-            { "LayoutFormattingContextIntegrationEnabled", true },
-
-            { "AdClickAttributionEnabled", false },
-            { "AspectRatioOfImgFromWidthAndHeightEnabled", false },
-            { "AsyncClipboardAPIEnabled", false },
-            { "CSSOMViewSmoothScrollingEnabled", false },
-            { "ContactPickerAPIEnabled", false },
-            { "CoreMathMLEnabled", false },
+            { "NeedsStorageAccessFromFileURLsQuirk", false },
+            { "PluginsEnabled", true },
             { "RequestIdleCallbackEnabled", false },
             { "ResizeObserverEnabled", false },
+            { "SelectionAcrossShadowBoundariesEnabled", true },
+            { "SpatialNavigationEnabled", false },
+            { "TabsToLinks", false },
+            { "TelephoneNumberParsingEnabled", false },
+            { "UsesBackForwardCache", false },
             { "WebGPUEnabled", false },
+            { "XSSAuditorEnabled", false },
         };
         features.uint32WebPreferenceFeatures = {
             { "MinimumFontSize", 0 },

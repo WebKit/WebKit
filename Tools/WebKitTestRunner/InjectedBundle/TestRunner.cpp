@@ -184,12 +184,6 @@ static bool postSynchronousPageMessageReturningUInt64(const char* name, JSString
     return postSynchronousPageMessageReturningUInt64(name, toWK(string));
 }
 
-static void overridePreference(const char* name, bool value)
-{
-    auto& bundle = InjectedBundle::singleton();
-    WKBundleOverrideBoolPreferenceForTestRunner(bundle.bundle(), bundle.pageGroup(), toWK(name).get(), value);
-}
-
 bool TestRunner::shouldDumpPixels() const
 {
     return postSynchronousMessageReturningBoolean("GetDumpPixels");
@@ -445,69 +439,9 @@ void TestRunner::setCanOpenWindows()
     postSynchronousMessage("SetCanOpenWindows", true);
 }
 
-void TestRunner::setXSSAuditorEnabled(bool enabled)
-{
-    WTR::overridePreference("WebKitXSSAuditorEnabled", enabled);
-}
-
-void TestRunner::setMediaDevicesEnabled(bool enabled)
-{
-    WTR::overridePreference("WebKitMediaDevicesEnabled", enabled);
-}
-
-void TestRunner::setWebRTCMDNSICECandidatesEnabled(bool enabled)
-{
-    WTR::overridePreference("WebKitWebRTCMDNSICECandidatesEnabled", enabled);
-}
-
 void TestRunner::setCustomUserAgent(JSStringRef userAgent)
 {
     postSynchronousMessage("SetCustomUserAgent", toWK(userAgent));
-}
-
-void TestRunner::setWebAPIStatisticsEnabled(bool enabled)
-{
-    WTR::overridePreference("WebKitWebAPIStatisticsEnabled", enabled);
-}
-
-void TestRunner::setModernMediaControlsEnabled(bool enabled)
-{
-    WTR::overridePreference("WebKitModernMediaControlsEnabled", enabled);
-}
-
-void TestRunner::setWebGL2Enabled(bool enabled)
-{
-    WTR::overridePreference("WebKitWebGL2Enabled", enabled);
-}
-
-void TestRunner::setWritableStreamAPIEnabled(bool enabled)
-{
-    WTR::overridePreference("WebKitWritableStreamAPIEnabled", enabled);
-}
-
-void TestRunner::setTransformStreamAPIEnabled(bool enabled)
-{
-    WTR::overridePreference("WebKitTransformStreamAPIEnabled", enabled);
-}
-
-void TestRunner::setReadableByteStreamAPIEnabled(bool enabled)
-{
-    WTR::overridePreference("WebKitReadableByteStreamAPIEnabled", enabled);
-}
-
-void TestRunner::setEncryptedMediaAPIEnabled(bool enabled)
-{
-    WTR::overridePreference("WebKitEncryptedMediaAPIEnabled", enabled);
-}
-
-void TestRunner::setPictureInPictureAPIEnabled(bool enabled)
-{
-    WTR::overridePreference("WebKitPictureInPictureAPIEnabled", enabled);
-}
-
-void TestRunner::setGenericCueAPIEnabled(bool enabled)
-{
-    WTR::overridePreference("WebKitGenericCueAPIEnabled", enabled);
 }
 
 void TestRunner::setAllowsAnySSLCertificate(bool enabled)
@@ -524,47 +458,6 @@ void TestRunner::setShouldSwapToEphemeralSessionOnNextNavigation(bool shouldSwap
 void TestRunner::setShouldSwapToDefaultSessionOnNextNavigation(bool shouldSwap)
 {
     postSynchronousPageMessage("SetShouldSwapToDefaultSessionOnNextNavigation", shouldSwap);
-}
-
-void TestRunner::setAllowUniversalAccessFromFileURLs(bool enabled)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    WKBundleSetAllowUniversalAccessFromFileURLs(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
-}
-
-void TestRunner::setAllowFileAccessFromFileURLs(bool enabled)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    WKBundleSetAllowFileAccessFromFileURLs(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
-}
-
-void TestRunner::setNeedsStorageAccessFromFileURLsQuirk(bool needsQuirk)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    WKBundleSetAllowStorageAccessFromFileURLS(injectedBundle.bundle(), injectedBundle.pageGroup(), needsQuirk);
-}
-    
-void TestRunner::setPluginsEnabled(bool enabled)
-{
-    WTR::overridePreference("WebKitPluginsEnabled", enabled);
-}
-
-void TestRunner::setJavaScriptCanAccessClipboard(bool enabled)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    WKBundleSetJavaScriptCanAccessClipboard(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
-}
-
-void TestRunner::setPopupBlockingEnabled(bool enabled)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    WKBundleSetPopupBlockingEnabled(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
-}
-
-void TestRunner::setAuthorAndUserStylesEnabled(bool enabled)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    WKBundleSetAuthorAndUserStylesEnabled(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
 }
 
 void TestRunner::addOriginAccessAllowListEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
@@ -2109,11 +2002,6 @@ void TestRunner::setAdClickAttributionConversionURLForTesting(JSStringRef urlStr
 void TestRunner::markAdClickAttributionsAsExpiredForTesting()
 {
     postSynchronousPageMessage("MarkAdClickAttributionsAsExpiredForTesting");
-}
-
-void TestRunner::setOffscreenCanvasEnabled(bool enabled)
-{
-    WTR::overridePreference("OffscreenCanvasEnabled", enabled);
 }
 
 bool TestRunner::hasAppBoundSession()

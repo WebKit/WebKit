@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ PluginsEnabled=false ] --><!-- Disable plugins, because otherwise the "Test WebKit PlugIn" steals <embed>s referencing PNGs. -->
 <style>
   .group {
     float: left; width: 180px;
@@ -19,9 +19,6 @@
 if (window.testRunner) {
     var dumpPixelResults = true;
     testRunner.dumpAsText(dumpPixelResults);
-    
-    // Disable plugins, because otherwise the "Test WebKit PlugIn" steals <embed>s referencing PNGs.
-    testRunner.setPluginsEnabled(false);
 }
 </script>
 

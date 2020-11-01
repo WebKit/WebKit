@@ -95,17 +95,6 @@ public:
     WebConnection* webConnectionToUIProcess() const;
 
     // TestRunner only SPI
-    void overrideBoolPreferenceForTestRunner(WebPageGroupProxy*, const String& preference, bool enabled);
-    void setAllowUniversalAccessFromFileURLs(WebPageGroupProxy*, bool);
-    void setAllowFileAccessFromFileURLs(WebPageGroupProxy*, bool);
-    void setNeedsStorageAccessFromFileURLsQuirk(WebPageGroupProxy*, bool);
-    void setMinimumLogicalFontSize(WebPageGroupProxy*, int size);
-    void setFrameFlatteningEnabled(WebPageGroupProxy*, bool);
-    void setAsyncFrameScrollingEnabled(WebPageGroupProxy*, bool);
-    void setPluginsEnabled(WebPageGroupProxy*, bool);
-    void setJavaScriptCanAccessClipboard(WebPageGroupProxy*, bool);
-    void setPopupBlockingEnabled(WebPageGroupProxy*, bool);
-    void setAuthorAndUserStylesEnabled(WebPageGroupProxy*, bool);
     void addOriginAccessAllowListEntry(const String&, const String&, const String&, bool);
     void removeOriginAccessAllowListEntry(const String&, const String&, const String&, bool);
     void resetOriginAccessAllowLists();

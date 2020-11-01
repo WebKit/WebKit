@@ -10,7 +10,7 @@ if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.dumpChildFramesAsText();
     testRunner.waitUntilDone();
-    testRunner.setXSSAuditorEnabled(true);
+    internals.settings.setXSSAuditorEnabled(true);
 }
 </script>
 </head>

@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true DOMPasteAllowed=false ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true DOMPasteAllowed=false JavaScriptCanAccessClipboard=false ] -->
 <html>
     <meta charset="utf8">
     <head>
@@ -17,9 +17,6 @@
     <script>
         jsTestIsAsync = true;
         shouldCheckString = true;
-
-        if (window.testRunner)
-            testRunner.setJavaScriptCanAccessClipboard(false);
 
         async function runTest() {
             description("This test verifies that navigator.clipboard.readText causes DOM paste UI to appear, if the text was written using platform API. To run the test manually, copy text from elsewhere on the system, and then click 'Paste'; DOM paste UI should appear when clicking 'Paste', and pasting should allow the page to read the text that was copied.");

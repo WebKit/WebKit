@@ -1,3 +1,13 @@
+2020-11-01  Sam Weinig  <weinig@apple.com>
+
+        Remove remaining alternative preference setting mechanisms from LayoutTests
+        https://bugs.webkit.org/show_bug.cgi?id=218417
+
+        Reviewed by Simon Fraser.
+
+        * WebPreferenceKeysPrivate.h:
+        Update key to match cocoa WebKitLegacy for shared use by DumpRenderTree.
+
 2020-10-29  Sam Weinig  <weinig@apple.com>
 
         [Testing] Remove requirement of adding new SPI for each preference that needs testing (WebKitLegacy Windows)

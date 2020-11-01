@@ -79,7 +79,7 @@ async function resetCookies(urls)
             if (window.testRunner) {
                 testRunner.setCanOpenWindows(true);
                 testRunner.setAlwaysAcceptCookies(true);
-                testRunner.setPopupBlockingEnabled(false);
+                internals.settings.setJavaScriptCanOpenWindowsAutomatically(true);
             }
             resolve();
         });

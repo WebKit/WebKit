@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true JavaScriptCanAccessClipboard=false ] -->
 <html>
     <meta charset="utf8">
     <head>
@@ -12,9 +12,6 @@
 
         async function runTest() {
             description("This test verifies that navigator.clipboard.writeText requires a user gesture.");
-
-            if (window.testRunner)
-                testRunner.setJavaScriptCanAccessClipboard(false);
 
             try {
                 await navigator.clipboard.writeText("This should not be written.");

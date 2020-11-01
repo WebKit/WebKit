@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true PluginsEnabled=false ] -->
 <html>
 <head>
 <meta name="viewport" content="width=device-width">
@@ -38,8 +38,6 @@ function cacheTestResource(then)
 function runTest()
 {
     cacheTestResource(function() {
-        if (window.testRunner)
-            testRunner.setPluginsEnabled(false);
         if (window.internals)
             internals.clearMemoryCache();
 

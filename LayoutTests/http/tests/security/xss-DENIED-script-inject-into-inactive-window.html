@@ -1,4 +1,4 @@
-<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!-- webkit-test-runner [ UsesBackForwardCache=true JavaScriptCanOpenWindowsAutomatically=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -7,7 +7,6 @@
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.setCanOpenWindows();
-    testRunner.setPopupBlockingEnabled(false);
     testRunner.setCloseRemainingWindowsWhenComplete(true);
     testRunner.waitUntilDone();
 }

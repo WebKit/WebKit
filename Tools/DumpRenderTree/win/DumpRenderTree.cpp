@@ -807,11 +807,6 @@ static bool shouldDumpAsText(const char* pathOrURL)
     return strstr(pathOrURL, "/dumpAsText/") || strstr(pathOrURL, "\\dumpAsText\\");
 }
 
-static bool shouldEnableDeveloperExtras(const char* pathOrURL)
-{
-    return true;
-}
-
 static void enableExperimentalFeatures(IWebPreferences* preferences)
 {
     COMPtr<IWebPreferencesPrivate7> prefsPrivate { Query, preferences };
@@ -899,7 +894,6 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     preferences->setJavaScriptCanOpenWindowsAutomatically(TRUE);
     prefsPrivate->setJavaScriptCanAccessClipboard(TRUE);
     prefsPrivate->setOfflineWebApplicationCacheEnabled(TRUE);
-    prefsPrivate->setDeveloperExtrasEnabled(FALSE);
     prefsPrivate->setJavaScriptRuntimeFlags(WebKitJavaScriptRuntimeFlagsAllEnabled);
     // Set JS experiments enabled: YES
     preferences->setLoadsImagesAutomatically(TRUE);
@@ -930,10 +924,10 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     setAlwaysAcceptCookies(false);
 }
 
-static bool boolWebPreferenceFeatureValue(std::string key, const WTR::TestOptions& options)
+template<typename T> T webPreferenceFeatureValue(const std::string& key, const std::unordered_map<std::string, T>& map)
 {
-    auto it = options.boolWebPreferenceFeatures().find(key);
-    ASSERT(it != options.boolWebPreferenceFeatures().end());
+    auto it = map.find(key);
+    ASSERT(it != map.end());
     return it->second;
 }
 
@@ -946,7 +940,9 @@ static void setWebPreferencesForTestOptions(IWebPreferences* preferences, const 
     // FIXME: Remove this once there is a viable mechanism for reseting WebPreferences between tests,
     // at which point, we will not need to manually reset every supported preference for each test.
     for (const auto& key : options.supportedBoolWebPreferenceFeatures())
-        prefsPrivate->setBoolPreferenceForTesting(toBSTR(WTR::TestOptions::toWebKitLegacyPreferenceKey(key)), boolWebPreferenceFeatureValue(key, options));
+        prefsPrivate->setBoolPreferenceForTesting(toBSTR(WTR::TestOptions::toWebKitLegacyPreferenceKey(key)), webPreferenceFeatureValue(key, options.boolWebPreferenceFeatures()));
+    for (const auto& key : options.supportedUInt32WebPreferenceFeatures())
+        prefsPrivate->setUInt32PreferenceForTesting(toBSTR(WTR::TestOptions::toWebKitLegacyPreferenceKey(key)), webPreferenceFeatureValue(key, options.uint32WebPreferenceFeatures()));
 }
 
 static String applicationId()
@@ -1259,12 +1255,9 @@ static void runTest(const string& inputLine)
         }
     }
 
-    if (shouldEnableDeveloperExtras(pathOrURL.c_str())) {
-        ::gTestRunner->setDeveloperExtrasEnabled(true);
-        if (shouldDumpAsText(pathOrURL.c_str())) {
-            ::gTestRunner->setDumpAsText(true);
-            ::gTestRunner->setGeneratePixelResults(false);
-        }
+    if (shouldDumpAsText(pathOrURL.c_str())) {
+        ::gTestRunner->setDumpAsText(true);
+        ::gTestRunner->setGeneratePixelResults(false);
     }
 
     COMPtr<IWebHistory> history;
@@ -1316,10 +1309,7 @@ static void runTest(const string& inputLine)
 
     // If the test page could have possibly opened the Web Inspector frontend,
     // then try to close it in case it was accidentally left open.
-    if (shouldEnableDeveloperExtras(pathOrURL.c_str())) {
-        ::gTestRunner->closeWebInspector();
-        ::gTestRunner->setDeveloperExtrasEnabled(false);
-    }
+    ::gTestRunner->closeWebInspector();
 
     if (::gTestRunner->closeRemainingWindowsWhenComplete()) {
         Vector<HWND> windows = openWindows();

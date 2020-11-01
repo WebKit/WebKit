@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true  ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true JavaScriptCanAccessClipboard=false ] -->
 <html>
     <meta charset="utf8">
     <head>
@@ -14,9 +14,6 @@
     <script>
         jsTestIsAsync = true;
         successfullyWrote = false;
-
-        if (window.testRunner)
-            testRunner.setJavaScriptCanAccessClipboard(false);
 
         description("This test verifies that clipboard items can be written while dispatching the 'copy' event. To manually run the test, copy the 'Copy me' text below.");
 

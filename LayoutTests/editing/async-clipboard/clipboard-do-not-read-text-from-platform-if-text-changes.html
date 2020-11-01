@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true DOMPasteAllowed=false ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true DOMPasteAllowed=false JavaScriptCanAccessClipboard=false ] -->
 <html>
     <meta charset="utf8">
     <head>
@@ -16,9 +16,6 @@
     </head>
     <script>
         jsTestIsAsync = true;
-
-        if (window.testRunner)
-            testRunner.setJavaScriptCanAccessClipboard(false);
 
         async function runTest() {
             description("This test verifies that navigator.clipboard.readText rejects if the contents of the platform pasteboard change while reading. This test requires WebKitTestRunner.");

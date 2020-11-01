@@ -153,7 +153,6 @@ JSValueRef TestRunner::originsWithApplicationCache(JSContextRef context)
     return JSValueMakeUndefined(context);
 }
 
-
 void TestRunner::clearAllDatabases()
 {
     COMPtr<IWebDatabaseManager> databaseManager;
@@ -402,23 +401,6 @@ void TestRunner::setAppCacheMaximumSize(unsigned long long size)
     applicationCache->setMaximumSize(size);
 }
 
-void TestRunner::setAuthorAndUserStylesEnabled(bool flag)
-{
-    COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
-        return;
-
-    COMPtr<IWebPreferences> preferences;
-    if (FAILED(webView->preferences(&preferences)))
-        return;
-
-    COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
-    if (!prefsPrivate)
-        return;
-
-    prefsPrivate->setAuthorAndUserStylesEnabled(flag);
-}
-
 void TestRunner::setCustomPolicyDelegate(bool setDelegate, bool permissive)
 {
     COMPtr<IWebView> webView;
@@ -527,117 +509,6 @@ void TestRunner::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
         return;
 
     preferences->setPrivateBrowsingEnabled(privateBrowsingEnabled);
-}
-
-void TestRunner::setXSSAuditorEnabled(bool enabled)
-{
-    COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
-        return;
-
-    COMPtr<IWebPreferences> preferences;
-    if (FAILED(webView->preferences(&preferences)))
-        return;
-
-    COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
-    if (!prefsPrivate)
-        return;
-
-    prefsPrivate->setXSSAuditorEnabled(enabled);
-}
-
-void TestRunner::setAllowUniversalAccessFromFileURLs(bool enabled)
-{
-    COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
-        return;
-
-    COMPtr<IWebPreferences> preferences;
-    if (FAILED(webView->preferences(&preferences)))
-        return;
-
-    COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
-    if (!prefsPrivate)
-        return;
-
-    prefsPrivate->setAllowUniversalAccessFromFileURLs(enabled);
-}
-
-void TestRunner::setAllowFileAccessFromFileURLs(bool enabled)
-{
-    COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
-        return;
-
-    COMPtr<IWebPreferences> preferences;
-    if (FAILED(webView->preferences(&preferences)))
-        return;
-
-    COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
-    if (!prefsPrivate)
-        return;
-
-    prefsPrivate->setAllowFileAccessFromFileURLs(enabled);
-}
-
-void TestRunner::setNeedsStorageAccessFromFileURLsQuirk(bool needsQuirk)
-{
-    COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
-        return;
-
-    COMPtr<IWebPreferences> preferences;
-    if (FAILED(webView->preferences(&preferences)))
-        return;
-
-    COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
-    if (!prefsPrivate)
-        return;
-
-    // FIXME: <https://webkit.org/b/164575> Call IWebPreferencesPrivate method when available.
-}
-
-void TestRunner::setPopupBlockingEnabled(bool enabled)
-{
-    COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
-        return;
-
-    COMPtr<IWebPreferences> preferences;
-    if (FAILED(webView->preferences(&preferences)))
-        return;
-
-    preferences->setJavaScriptCanOpenWindowsAutomatically(!enabled);
-}
-
-void TestRunner::setPluginsEnabled(bool flag)
-{
-    COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
-        return;
-
-    COMPtr<IWebPreferences> preferences;
-    if (FAILED(webView->preferences(&preferences)))
-        return;
-
-    preferences->setPlugInsEnabled(flag);
-}
-
-void TestRunner::setJavaScriptCanAccessClipboard(bool enabled)
-{
-    COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
-        return;
-
-    COMPtr<IWebPreferences> preferences;
-    if (FAILED(webView->preferences(&preferences)))
-        return;
-
-    COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
-    if (!prefsPrivate)
-        return;
-
-    prefsPrivate->setJavaScriptCanAccessClipboard(enabled);
 }
 
 void TestRunner::setAutomaticLinkDetectionEnabled(bool)
@@ -1086,23 +957,6 @@ void TestRunner::addUserStyleSheet(JSStringRef source, bool allFrames)
 
     webView->addUserStyleSheetToGroup(_bstr_t(L"org.webkit.DumpRenderTree").GetBSTR(), world.get(), bstrT(source).GetBSTR(),
         nullptr, 0, nullptr, 0, nullptr, allFrames ? WebInjectInAllFrames : WebInjectInTopFrameOnly);
-}
-
-void TestRunner::setDeveloperExtrasEnabled(bool enabled)
-{
-    COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
-        return;
-
-    COMPtr<IWebPreferences> preferences;
-    if (FAILED(webView->preferences(&preferences)))
-        return;
-
-    COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
-    if (!prefsPrivate)
-        return;
-
-    prefsPrivate->setDeveloperExtrasEnabled(enabled);
 }
 
 void TestRunner::showWebInspector()

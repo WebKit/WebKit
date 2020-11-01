@@ -492,16 +492,6 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
 #endif
 #endif
 
-    // Don't change experimental or internal features here; those should be set in TestController::resetPreferencesToConsistentValues().
-    WKBundleSetAllowUniversalAccessFromFileURLs(m_bundle, m_pageGroup, true);
-    WKBundleSetJavaScriptCanAccessClipboard(m_bundle, m_pageGroup, true);
-    WKBundleSetAuthorAndUserStylesEnabled(m_bundle, m_pageGroup, true);
-    WKBundleSetFrameFlatteningEnabled(m_bundle, m_pageGroup, false);
-    WKBundleSetMinimumLogicalFontSize(m_bundle, m_pageGroup, 9);
-    WKBundleSetAllowFileAccessFromFileURLs(m_bundle, m_pageGroup, true);
-    WKBundleSetPopupBlockingEnabled(m_bundle, m_pageGroup, false);
-    WKBundleSetAllowStorageAccessFromFileURLS(m_bundle, m_pageGroup, false);
-
 #if PLATFORM(IOS_FAMILY)
     WKBundlePageSetUseTestingViewportConfiguration(page()->page(), !booleanValue(settings, "UseFlexibleViewport"));
 #endif
@@ -510,29 +500,12 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(toWTFString(stringValue(settings, "additionalSupportedImageTypes")));
 #endif
 
-    m_testRunner->setPluginsEnabled(true);
-
     m_testRunner->setUserStyleSheetEnabled(false);
-    m_testRunner->setXSSAuditorEnabled(false);
-
-    m_testRunner->setWebGL2Enabled(true);
-
-    m_testRunner->setWritableStreamAPIEnabled(true);
-    m_testRunner->setReadableByteStreamAPIEnabled(true);
-    m_testRunner->setTransformStreamAPIEnabled(true);
-
-    m_testRunner->setEncryptedMediaAPIEnabled(true);
-    m_testRunner->setPictureInPictureAPIEnabled(true);
-    m_testRunner->setGenericCueAPIEnabled(false);
 
     m_testRunner->setCloseRemainingWindowsWhenComplete(false);
     m_testRunner->setAcceptsEditing(true);
     m_testRunner->setTabKeyCyclesThroughElements(true);
     m_testRunner->clearTestRunnerCallbacks();
-
-#if PLATFORM(WPE) || PLATFORM(GTK)
-    m_testRunner->setOffscreenCanvasEnabled(true);
-#endif
 
     if (m_timeout > 0_s)
         m_testRunner->setCustomTimeout(m_timeout);

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ JavaScriptCanAccessClipboard=false ] -->
 <html>
 <head>
 <meta charset="utf-8">
@@ -8,11 +8,6 @@
 <script>
 
 description("This test checks that JavaScript programs can execute copy and paste commands, but only during a user gesture.");
-
-// Override the test runner default befavior of allowing all keyboard access, and act more like
-// a browser.
-if (window.testRunner)
-    window.testRunner.setJavaScriptCanAccessClipboard(false);
 
 function clearSelectionContainer()
 {

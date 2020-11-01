@@ -79,14 +79,6 @@ interface TestRunner {
     undefined setAcceptsEditing(boolean value);
     undefined setCanOpenWindows();
     undefined setCloseRemainingWindowsWhenComplete(boolean value);
-    undefined setXSSAuditorEnabled(boolean value);
-    undefined setAllowUniversalAccessFromFileURLs(boolean value);
-    undefined setAllowFileAccessFromFileURLs(boolean value);
-    undefined setNeedsStorageAccessFromFileURLsQuirk(boolean value);
-    undefined setPluginsEnabled(boolean value);
-    undefined setJavaScriptCanAccessClipboard(boolean value);
-    undefined setPopupBlockingEnabled(boolean value);
-    undefined setAuthorAndUserStylesEnabled(boolean value);
     undefined setCustomPolicyDelegate(boolean enabled, boolean permissive);
     undefined addOriginAccessAllowListEntry(DOMString sourceOrigin, DOMString destinationProtocol, DOMString destinationHost, boolean allowDestinationSubdomains);
     undefined removeOriginAccessAllowListEntry(DOMString sourceOrigin, DOMString destinationProtocol, DOMString destinationHost, boolean allowDestinationSubdomains);
@@ -362,10 +354,7 @@ interface TestRunner {
     undefined setShouldDismissJavaScriptAlertsAsynchronously(boolean value);
     undefined abortModal();
 
-    undefined setWebRTCMDNSICECandidatesEnabled(boolean value);
     undefined setCustomUserAgent(DOMString userAgent);
-
-    undefined setWebAPIStatisticsEnabled(boolean value);
 
     undefined terminateNetworkProcess();
     undefined terminateServiceWorkers();

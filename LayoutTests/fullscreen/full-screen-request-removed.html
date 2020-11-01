@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ JavaScriptCanOpenWindowsAutomatically=false ] -->
 <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=62320">bug 62320</a>: 
 Emit an error event when a request to enter full-screen is rejected.</p>
 <p>Tests that the document is still messaged if the element requesting full screen is removed before the event is generated.</p>
@@ -11,9 +12,6 @@ function runTest() {
     waitForEventAndEnd(document, 'webkitfullscreenerror', function() {
         consoleWrite("SUCCEED - did not enter full screen!");
     });
-
-    if (testRunner)
-        testRunner.setPopupBlockingEnabled(true);
 
     var div = document.createElement('div');
     document.documentElement.appendChild(div);

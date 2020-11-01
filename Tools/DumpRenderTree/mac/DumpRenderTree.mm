@@ -821,7 +821,6 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setWebAnimationsMutableTimelinesEnabled:YES];
     [preferences setCSSCustomPropertiesAndValuesEnabled:YES];
     [preferences setWebGL2Enabled:YES];
-    // FIXME: AsyncFrameScrollingEnabled
     [preferences setCacheAPIEnabled:NO];
     [preferences setReadableByteStreamAPIEnabled:YES];
     [preferences setWritableStreamAPIEnabled:YES];
@@ -854,9 +853,6 @@ static void resetWebPreferencesToConsistentValues(WebPreferences *preferences)
 {
     enableExperimentalFeatures(preferences);
 
-    [preferences setNeedsStorageAccessFromFileURLsQuirk: NO];
-    [preferences setAllowUniversalAccessFromFileURLs:YES];
-    [preferences setAllowFileAccessFromFileURLs:YES];
     [preferences setStandardFontFamily:@"Times"];
     [preferences setFixedFontFamily:@"Courier"];
     [preferences setSerifFontFamily:@"Times"];
@@ -866,35 +862,22 @@ static void resetWebPreferencesToConsistentValues(WebPreferences *preferences)
     [preferences setPictographFontFamily:@"Apple Color Emoji"];
     [preferences setDefaultFontSize:16];
     [preferences setDefaultFixedFontSize:13];
-    [preferences setMinimumFontSize:0];
     [preferences setDefaultTextEncodingName:@"ISO-8859-1"];
     [preferences setJavaEnabled:NO];
-    [preferences setJavaScriptEnabled:YES];
     [preferences setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
-    [preferences setDOMPasteAllowed:YES];
 #if !PLATFORM(IOS_FAMILY)
     [preferences setShouldPrintBackgrounds:YES];
 #endif
     [preferences setCacheModel:WebCacheModelDocumentBrowser];
-    [preferences setXSSAuditorEnabled:NO];
     [preferences setExperimentalNotificationsEnabled:NO];
-    [preferences setPlugInsEnabled:YES];
 #if !PLATFORM(IOS_FAMILY)
     [preferences setTextAreasAreResizable:YES];
 #endif
-
-    [preferences setPrivateBrowsingEnabled:NO];
-    [preferences setAuthorAndUserStylesEnabled:YES];
     [preferences setShrinksStandaloneImagesToFit:YES];
-    [preferences setJavaScriptCanOpenWindowsAutomatically:YES];
-    [preferences setJavaScriptCanAccessClipboard:YES];
     [preferences setOfflineWebApplicationCacheEnabled:YES];
-    [preferences setDeveloperExtrasEnabled:NO];
     [preferences setJavaScriptRuntimeFlags:WebKitJavaScriptRuntimeFlagsAllEnabled];
-    [preferences setLoadsImagesAutomatically:YES];
     [preferences setLoadsSiteIconsIgnoringImageLoadingPreference:NO];
     [preferences setFrameFlattening:WebKitFrameFlatteningDisabled];
-    [preferences setAsyncFrameScrollingEnabled:NO];
     [preferences setMetaRefreshEnabled:YES];
 
     if (persistentUserStyleSheetLocation) {
@@ -915,14 +898,8 @@ static void resetWebPreferencesToConsistentValues(WebPreferences *preferences)
     // Enable the tracker before creating the first WebView will
     // cause initialization to use the correct database paths.
     [preferences setStorageTrackerEnabled:YES];
-    [preferences _setTelephoneNumberParsingEnabled:NO];
 #endif
-
     [preferences _setTextAutosizingEnabled:NO];
-
-    // The back/forward cache is causing problems due to layouts during transition from one page to another.
-    // So, turn it off for now, but we might want to turn it back on some day.
-    [preferences setUsesPageCache:NO];
     [preferences setAcceleratedCompositingEnabled:YES];
 #if USE(CA)
     [preferences setCanvasUsesAcceleratedDrawing:YES];
@@ -933,34 +910,23 @@ static void resetWebPreferencesToConsistentValues(WebPreferences *preferences)
 #if !PLATFORM(IOS_FAMILY)
     [preferences setMockScrollbarsEnabled:YES];
 #endif
-
     [preferences setWebAudioEnabled:YES];
     [preferences setModernUnprefixedWebAudioEnabled:YES];
     [preferences setMediaSourceEnabled:YES];
     [preferences setSourceBufferChangeTypeEnabled:YES];
-
     [preferences setDataTransferItemsEnabled:YES];
     [preferences setCustomPasteboardDataEnabled:YES];
     [preferences setDialogElementEnabled:YES];
-
     [preferences setWebGL2Enabled:YES];
-
     [preferences setDownloadAttributeEnabled:YES];
     [preferences setDirectoryUploadEnabled:YES];
-
     [preferences setHiddenPageDOMTimerThrottlingEnabled:NO];
     [preferences setHiddenPageCSSAnimationSuspensionEnabled:NO];
     [preferences setRemotePlaybackEnabled:YES];
-
     [preferences setMediaDevicesEnabled:YES];
-
     [preferences setLargeImageAsyncDecodingEnabled:NO];
-
     [preferences setModernMediaControlsEnabled:YES];
-
-    [preferences setCacheAPIEnabled:NO];
     [preferences setMediaCapabilitiesEnabled:YES];
-
     [preferences setSelectionAcrossShadowBoundariesEnabled:YES];
 
     [preferences setWebSQLEnabled:YES];
@@ -970,10 +936,10 @@ static void resetWebPreferencesToConsistentValues(WebPreferences *preferences)
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
 }
 
-static bool boolWebPreferenceFeatureValue(std::string key, const WTR::TestOptions& options)
+template<typename T> T webPreferenceFeatureValue(const std::string& key, const std::unordered_map<std::string, T>& map)
 {
-    auto it = options.boolWebPreferenceFeatures().find(key);
-    ASSERT(it != options.boolWebPreferenceFeatures().end());
+    auto it = map.find(key);
+    ASSERT(it != map.end());
     return it->second;
 }
 
@@ -981,10 +947,12 @@ static void setWebPreferencesForTestOptions(WebPreferences *preferences, const W
 {
     preferences.privateBrowsingEnabled = options.useEphemeralSession();
 
-    // FIXME: Remove this once there is a viable mechanism for reseting WebPreferences between tests,
+    // FIXME: Remove these once there is a viable mechanism for reseting WebPreferences between tests,
     // at which point, we will not need to manually reset every supported preference for each test.
     for (const auto& key : options.supportedBoolWebPreferenceFeatures())
-        [preferences _setBoolPreferenceForTestingWithValue:boolWebPreferenceFeatureValue(key, options) forKey:toNS(WTR::TestOptions::toWebKitLegacyPreferenceKey(key)).get()];
+        [preferences _setBoolPreferenceForTestingWithValue:webPreferenceFeatureValue(key, options.boolWebPreferenceFeatures()) forKey:toNS(WTR::TestOptions::toWebKitLegacyPreferenceKey(key)).get()];
+    for (const auto& key : options.supportedUInt32WebPreferenceFeatures())
+        [preferences _setUInt32PreferenceForTestingWithValue:webPreferenceFeatureValue(key, options.uint32WebPreferenceFeatures()) forKey:toNS(WTR::TestOptions::toWebKitLegacyPreferenceKey(key)).get()];
 }
 
 // Called once on DumpRenderTree startup.
@@ -1782,11 +1750,6 @@ static bool shouldDumpAsText(const char* pathOrURL)
     return strstr(pathOrURL, "dumpAsText/");
 }
 
-static bool shouldEnableDeveloperExtras(const char* pathOrURL)
-{
-    return true;
-}
-
 #if PLATFORM(IOS_FAMILY)
 static bool shouldMakeViewportFlexible(const char* pathOrURL)
 {
@@ -2030,12 +1993,9 @@ static void runTest(const std::string& inputLine)
     else
         [[mainFrame webView] setHistoryDelegate:nil];
 
-    if (shouldEnableDeveloperExtras(pathOrURL.c_str())) {
-        gTestRunner->setDeveloperExtrasEnabled(true);
-        if (shouldDumpAsText(pathOrURL.c_str())) {
-            gTestRunner->setDumpAsText(true);
-            gTestRunner->setGeneratePixelResults(false);
-        }
+    if (shouldDumpAsText(pathOrURL.c_str())) {
+        gTestRunner->setDumpAsText(true);
+        gTestRunner->setGeneratePixelResults(false);
     }
 
 #if PLATFORM(IOS_FAMILY)
@@ -2086,10 +2046,7 @@ static void runTest(const std::string& inputLine)
 
         // If the test page could have possibly opened the Web Inspector frontend,
         // then try to close it in case it was accidentally left open.
-        if (shouldEnableDeveloperExtras(pathOrURL.c_str())) {
-            gTestRunner->closeWebInspector();
-            gTestRunner->setDeveloperExtrasEnabled(false);
-        }
+        gTestRunner->closeWebInspector();
 
 #if PLATFORM(MAC)
         // Make sure the WebView is parented, since the test may have unparented it.

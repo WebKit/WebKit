@@ -38,18 +38,28 @@ const TestFeatures& TestOptions::defaults()
         features.boolWebPreferenceFeatures = {
             // These are WebPreference values that must always be set as they may
             // differ from the default set in the WebPreferences*.yaml configuration.
+            { "AllowFileAccessFromFileURLs", true },
             { "AllowTopNavigationToDataURLs", true },
+            { "AllowUniversalAccessFromFileURLs", true },
             { "CaptureAudioInGPUProcessEnabled", false },
             { "CaptureAudioInUIProcessEnabled", false },
             { "CaptureVideoInGPUProcessEnabled", false },
             { "CaptureVideoInUIProcessEnabled", false },
             { "DOMPasteAllowed", true },
+            { "FrameFlatteningEnabled", false },
+            { "GenericCueAPIEnabled", false },
+            { "JavaScriptCanAccessClipboard", true },
+            { "JavaScriptCanOpenWindowsAutomatically", true },
             { "MockScrollbarsEnabled", true },
             { "ModernMediaControlsEnabled", true },
             { "NeedsSiteSpecificQuirks", false },
+            { "NeedsStorageAccessFromFileURLsQuirk", false },
+            { "OffscreenCanvasEnabled", true },
             { "PageVisibilityBasedProcessSuppressionEnabled", false },
+            { "PluginsEnabled", true },
             { "UsesBackForwardCache", false },
             { "WebAuthenticationEnabled", true },
+            { "XSSAuditorEnabled", false },
         };
         features.boolTestRunnerFeatures = {
             { "allowsLinkPreview", true },
