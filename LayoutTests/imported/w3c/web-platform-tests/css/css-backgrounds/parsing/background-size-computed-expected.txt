@@ -7,7 +7,7 @@ PASS Property background-size value 'auto auto'
 PASS Property background-size value 'auto 4%'
 PASS Property background-size value 'contain'
 PASS Property background-size value 'cover'
-FAIL Property background-size value 'calc(10px + 0.5em) calc(10px - 0.5em)' assert_equals: expected "30px 0px" but got "30px -10px"
-FAIL Property background-size value 'calc(10px - 0.5em) calc(10px + 0.5em)' assert_equals: expected "0px 30px" but got "-10px 30px"
+PASS Property background-size value 'calc(10px + 0.5em) calc(10px - 0.5em)'
+PASS Property background-size value 'calc(10px - 0.5em) calc(10px + 0.5em)'
 PASS Property background-size value 'auto 1px, 2% 3%, contain'
 

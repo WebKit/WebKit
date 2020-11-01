@@ -1,3 +1,15 @@
+2020-11-01  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        background-size should not accept negative values
+        https://bugs.webkit.org/show_bug.cgi?id=183990
+
+        Reviewed by Darin Adler.
+
+        We now reject negative background-size values.  Update newly passing
+        test expectations to reflect this.
+
+        * TestExpectations:
+
 2020-11-01  Sam Weinig  <weinig@apple.com>
 
         Remove remaining alternative preference setting mechanisms from LayoutTests

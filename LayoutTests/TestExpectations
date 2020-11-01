@@ -3440,7 +3440,7 @@ webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-local/attachment-local-positioning-4.html [ ImageOnlyFailure ]
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-position-negative-percentage-comparison.html [ ImageOnlyFailure ]
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-cover-003.html [ ImageOnlyFailure ]
-webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-with-negative-value.html [ ImageOnlyFailure ]
+webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-with-negative-value.html [ Pass ]
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover-svg.html [ ImageOnlyFailure ]
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/background-size-vector-003.html [ ImageOnlyFailure ]
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/background-size-vector-004.html [ ImageOnlyFailure ]
