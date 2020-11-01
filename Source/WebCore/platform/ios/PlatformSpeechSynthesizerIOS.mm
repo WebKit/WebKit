@@ -267,7 +267,13 @@ void PlatformSpeechSynthesizer::initializeVoiceList()
         
         // Only show built-in voices when requesting through WebKit to reduce fingerprinting surface area.
 #if HAVE(AVSPEECHSYNTHESIS_SYSTEMVOICE)
-        if (voice.isSystemVoice)
+        // FIXME: Remove respondsToSelector check when is available on all SDKs.
+        BOOL includeVoice = NO;
+        if ([voice respondsToSelector:@selector(isSystemVoice)])
+            includeVoice = voice.isSystemVoice;
+        else
+            includeVoice = voice.quality == AVSpeechSynthesisVoiceQualityDefault;
+        if (includeVoice)
 #else
         if (voice.quality == AVSpeechSynthesisVoiceQualityDefault)
 #endif
