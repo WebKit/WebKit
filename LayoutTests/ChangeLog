@@ -1,3 +1,13 @@
+2020-11-01  Karl Rackler  <rackler@apple.com>
+
+        REGRESSION (r269070): [ Big Sur ] editing/input/reveal-caret-of-multiline-input.html is a constant failure
+        rdar://70819245
+        Re-baseline for Catalina after r269174.  Capital letter in Input folder.
+
+        Unreviewed test gardening.
+
+        * platform/mac-catalina/editing/Input/reveal-caret-of-multiline-input-expected.txt: Removed.
+
 2020-10-31  Chris Dumez  <cdumez@apple.com>
 
         Promises returned by our DOM API have the caller's global instead of the callee's
