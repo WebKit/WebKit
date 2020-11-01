@@ -4404,6 +4404,8 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
             if (child->isListMarker())
                 stripFrontSpaces = true;
         } else {
+            if (styleToUse.collapseWhiteSpace())
+                stripTrailingSpace(inlineMax, inlineMin, trailingSpaceChild);
             minLogicalWidth = preferredWidth(minLogicalWidth, inlineMin);
             maxLogicalWidth = preferredWidth(maxLogicalWidth, inlineMax);
             inlineMin = inlineMax = 0;

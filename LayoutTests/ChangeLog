@@ -1,3 +1,14 @@
+2020-11-01  Zalan Bujtas  <zalan@apple.com>
+
+        [LegacyInlineLayout] Remove collapsible trailing whitespace when it is followed by a hard line break
+        https://bugs.webkit.org/show_bug.cgi?id=216902
+        <rdar://problem/69812136>
+
+        Reviewed by Darin Adler.
+
+        * fast/text/trimmable-whitespace-followed-by-br-expected.html: Added.
+        * fast/text/trimmable-whitespace-followed-by-br.html: Added.
+
 2020-11-01  Tyler Wilcock  <twilco.o@protonmail.com>
 
         background-size should not accept negative values
