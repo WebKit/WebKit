@@ -101,14 +101,15 @@ InlineRect LineBox::logicalRectForTextRun(const Line::Run& run) const
 InlineRect LineBox::logicalRectForInlineLevelBox(const Box& layoutBox) const
 {
     auto* inlineBox = &inlineLevelBoxForLayoutBox(layoutBox);
+    if (inlineBox->hasLineBoxRelativeAlignment())
+        return inlineBox->logicalRect();
+
     auto inlineBoxLogicalRect = inlineBox->logicalRect();
-    auto inlineBoxAbsolutelogicalTop = inlineBox->logicalTop();
-    if (!inlineBox->hasLineBoxRelativeAlignment()) {
-        while (inlineBox != m_rootInlineBox.get() && !inlineBox->hasLineBoxRelativeAlignment()) {
-            inlineBox = &inlineLevelBoxForLayoutBox(inlineBox->layoutBox().parent());
-            ASSERT(inlineBox->isInlineBox());
-            inlineBoxAbsolutelogicalTop += inlineBox->logicalTop();
-        }
+    auto inlineBoxAbsolutelogicalTop = inlineBoxLogicalRect.top();
+    while (inlineBox != m_rootInlineBox.get() && !inlineBox->hasLineBoxRelativeAlignment()) {
+        inlineBox = &inlineLevelBoxForLayoutBox(inlineBox->layoutBox().parent());
+        ASSERT(inlineBox->isInlineBox());
+        inlineBoxAbsolutelogicalTop += inlineBox->logicalTop();
     }
     return { inlineBoxAbsolutelogicalTop, inlineBoxLogicalRect.left(), inlineBoxLogicalRect.width(), inlineBoxLogicalRect.height() };
 }

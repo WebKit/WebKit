@@ -66,13 +66,6 @@ public:
         static std::unique_ptr<LineBox::InlineLevelBox> createLineBreakBox(const Box&, InlineLayoutUnit logicalLeft);
         static std::unique_ptr<LineBox::InlineLevelBox> createGenericInlineLevelBox(const Box&, InlineLayoutUnit logicalLeft);
 
-        const InlineRect& logicalRect() const { return m_logicalRect; }
-        InlineLayoutUnit logicalTop() const { return m_logicalRect.top(); }
-        InlineLayoutUnit logicalBottom() const { return m_logicalRect.bottom(); }
-        InlineLayoutUnit logicalLeft() const { return m_logicalRect.left(); }
-        InlineLayoutUnit logicalWidth() const { return m_logicalRect.width(); }
-        InlineLayoutUnit logicalHeight() const { return m_logicalRect.height(); }
-
         InlineLayoutUnit baseline() const { return m_baseline; }
         Optional<InlineLayoutUnit> descent() const { return m_descent; }
         // See https://www.w3.org/TR/css-inline-3/#layout-bounds
@@ -109,6 +102,14 @@ public:
 
     private:
         friend class LineBoxBuilder;
+        friend class LineBox;
+
+        const InlineRect& logicalRect() const { return m_logicalRect; }
+        InlineLayoutUnit logicalTop() const { return m_logicalRect.top(); }
+        InlineLayoutUnit logicalBottom() const { return m_logicalRect.bottom(); }
+        InlineLayoutUnit logicalLeft() const { return m_logicalRect.left(); }
+        InlineLayoutUnit logicalWidth() const { return m_logicalRect.width(); }
+        InlineLayoutUnit logicalHeight() const { return m_logicalRect.height(); }
 
         void setLogicalTop(InlineLayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
         void setLogicalWidth(InlineLayoutUnit logicalWidth) { m_logicalRect.setWidth(logicalWidth); }
