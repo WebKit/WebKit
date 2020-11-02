@@ -208,7 +208,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         auto rootInlineBox = LineBox::InlineLevelBox::createRootInlineBox(rootBox(), horizontalAligmentOffset, lineBox.logicalWidth());
 
         auto lineHasImaginaryStrut = layoutState().inNoQuirksMode();
-        auto isInitiallyConsideredNonEmpty = lineHasImaginaryStrut && !runs.isEmpty();
+        auto isInitiallyConsideredNonEmpty = !lineBox.isLineVisuallyEmpty() && lineHasImaginaryStrut;
         if (isInitiallyConsideredNonEmpty)
             rootInlineBox->setIsNonEmpty();
         setVerticalGeometryForInlineBox(*rootInlineBox);
