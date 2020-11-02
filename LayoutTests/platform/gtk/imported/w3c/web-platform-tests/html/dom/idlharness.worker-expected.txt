@@ -1,3 +1,4 @@
+Blocked access to external URL http://invalid/
 
 PASS idl_test setup
 PASS idl_test validation
@@ -124,6 +125,7 @@ PASS OffscreenCanvasRenderingContext2D includes CanvasImageData: member names ar
 PASS OffscreenCanvasRenderingContext2D includes CanvasPathDrawingStyles: member names are unique
 PASS OffscreenCanvasRenderingContext2D includes CanvasTextDrawingStyles: member names are unique
 PASS OffscreenCanvasRenderingContext2D includes CanvasPath: member names are unique
+PASS ElementInternals includes ARIAMixin: member names are unique
 PASS Window includes GlobalEventHandlers: member names are unique
 PASS Window includes WindowEventHandlers: member names are unique
 PASS Window includes WindowOrWorkerGlobalScope: member names are unique
@@ -146,13 +148,14 @@ PASS WorkerNavigator includes NavigatorLanguage: member names are unique
 PASS WorkerNavigator includes NavigatorOnLine: member names are unique
 PASS WorkerNavigator includes NavigatorConcurrentHardware: member names are unique
 PASS HTMLFrameSetElement includes WindowEventHandlers: member names are unique
-PASS DocumentFragment includes NonElementParentNode: member names are unique
-PASS DocumentFragment includes ParentNode: member names are unique
-PASS ShadowRoot includes DocumentOrShadowRoot: member names are unique
+PASS Element includes ARIAMixin: member names are unique
 PASS Element includes ParentNode: member names are unique
 PASS Element includes NonDocumentTypeChildNode: member names are unique
 PASS Element includes ChildNode: member names are unique
 PASS Element includes Slottable: member names are unique
+PASS DocumentFragment includes NonElementParentNode: member names are unique
+PASS DocumentFragment includes ParentNode: member names are unique
+PASS ShadowRoot includes DocumentOrShadowRoot: member names are unique
 PASS HTMLAllCollection interface: existence and properties of interface object
 PASS HTMLFormControlsCollection interface: existence and properties of interface object
 PASS RadioNodeList interface: existence and properties of interface object
@@ -490,6 +493,18 @@ PASS EventSource interface: attribute onopen
 PASS EventSource interface: attribute onmessage
 PASS EventSource interface: attribute onerror
 PASS EventSource interface: operation close()
+PASS EventSource must be primary interface of new EventSource("http://invalid")
+PASS Stringification of new EventSource("http://invalid")
+PASS EventSource interface: new EventSource("http://invalid") must inherit property "url" with the proper type
+PASS EventSource interface: new EventSource("http://invalid") must inherit property "withCredentials" with the proper type
+PASS EventSource interface: new EventSource("http://invalid") must inherit property "CONNECTING" with the proper type
+PASS EventSource interface: new EventSource("http://invalid") must inherit property "OPEN" with the proper type
+PASS EventSource interface: new EventSource("http://invalid") must inherit property "CLOSED" with the proper type
+PASS EventSource interface: new EventSource("http://invalid") must inherit property "readyState" with the proper type
+PASS EventSource interface: new EventSource("http://invalid") must inherit property "onopen" with the proper type
+PASS EventSource interface: new EventSource("http://invalid") must inherit property "onmessage" with the proper type
+PASS EventSource interface: new EventSource("http://invalid") must inherit property "onerror" with the proper type
+PASS EventSource interface: new EventSource("http://invalid") must inherit property "close()" with the proper type
 PASS WebSocket interface: existence and properties of interface object
 PASS WebSocket interface object length
 PASS WebSocket interface object name
@@ -519,32 +534,32 @@ PASS WebSocket interface: operation send(USVString)
 PASS WebSocket interface: operation send(Blob)
 PASS WebSocket interface: operation send(ArrayBuffer)
 PASS WebSocket interface: operation send(ArrayBufferView)
-PASS WebSocket must be primary interface of new WebSocket("ws://foo")
-PASS Stringification of new WebSocket("ws://foo")
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "url" with the proper type
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "CONNECTING" with the proper type
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "OPEN" with the proper type
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "CLOSING" with the proper type
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "CLOSED" with the proper type
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "readyState" with the proper type
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "bufferedAmount" with the proper type
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "onopen" with the proper type
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "onerror" with the proper type
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "onclose" with the proper type
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "extensions" with the proper type
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "protocol" with the proper type
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "close(optional unsigned short, optional USVString)" with the proper type
-PASS WebSocket interface: calling close(optional unsigned short, optional USVString) on new WebSocket("ws://foo") with too few arguments must throw TypeError
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "onmessage" with the proper type
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "binaryType" with the proper type
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "send(USVString)" with the proper type
-PASS WebSocket interface: calling send(USVString) on new WebSocket("ws://foo") with too few arguments must throw TypeError
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "send(Blob)" with the proper type
-PASS WebSocket interface: calling send(Blob) on new WebSocket("ws://foo") with too few arguments must throw TypeError
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "send(ArrayBuffer)" with the proper type
-PASS WebSocket interface: calling send(ArrayBuffer) on new WebSocket("ws://foo") with too few arguments must throw TypeError
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "send(ArrayBufferView)" with the proper type
-PASS WebSocket interface: calling send(ArrayBufferView) on new WebSocket("ws://foo") with too few arguments must throw TypeError
+PASS WebSocket must be primary interface of new WebSocket("ws://invalid")
+PASS Stringification of new WebSocket("ws://invalid")
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "url" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "CONNECTING" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "OPEN" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "CLOSING" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "CLOSED" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "readyState" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "bufferedAmount" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "onopen" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "onerror" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "onclose" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "extensions" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "protocol" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "close(optional unsigned short, optional USVString)" with the proper type
+PASS WebSocket interface: calling close(optional unsigned short, optional USVString) on new WebSocket("ws://invalid") with too few arguments must throw TypeError
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "onmessage" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "binaryType" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "send(USVString)" with the proper type
+PASS WebSocket interface: calling send(USVString) on new WebSocket("ws://invalid") with too few arguments must throw TypeError
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "send(Blob)" with the proper type
+PASS WebSocket interface: calling send(Blob) on new WebSocket("ws://invalid") with too few arguments must throw TypeError
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "send(ArrayBuffer)" with the proper type
+PASS WebSocket interface: calling send(ArrayBuffer) on new WebSocket("ws://invalid") with too few arguments must throw TypeError
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "send(ArrayBufferView)" with the proper type
+PASS WebSocket interface: calling send(ArrayBufferView) on new WebSocket("ws://invalid") with too few arguments must throw TypeError
 PASS CloseEvent interface: existence and properties of interface object
 PASS CloseEvent interface object length
 PASS CloseEvent interface object name
@@ -607,6 +622,8 @@ PASS WorkerGlobalScope interface: attribute ononline
 PASS WorkerGlobalScope interface: attribute onrejectionhandled
 PASS WorkerGlobalScope interface: attribute onunhandledrejection
 PASS WorkerGlobalScope interface: attribute origin
+PASS WorkerGlobalScope interface: attribute isSecureContext
+FAIL WorkerGlobalScope interface: attribute crossOriginIsolated assert_true: The prototype object must have a property "crossOriginIsolated" expected true got false
 PASS WorkerGlobalScope interface: operation btoa(DOMString)
 PASS WorkerGlobalScope interface: operation atob(DOMString)
 PASS WorkerGlobalScope interface: operation setTimeout(TimerHandler, optional long, any...)
@@ -668,6 +685,8 @@ PASS WorkerGlobalScope interface: self must inherit property "ononline" with the
 PASS WorkerGlobalScope interface: self must inherit property "onrejectionhandled" with the proper type
 PASS WorkerGlobalScope interface: self must inherit property "onunhandledrejection" with the proper type
 PASS WorkerGlobalScope interface: self must inherit property "origin" with the proper type
+PASS WorkerGlobalScope interface: self must inherit property "isSecureContext" with the proper type
+FAIL WorkerGlobalScope interface: self must inherit property "crossOriginIsolated" with the proper type assert_inherits: property "crossOriginIsolated" not found in prototype chain
 PASS WorkerGlobalScope interface: self must inherit property "btoa(DOMString)" with the proper type
 PASS WorkerGlobalScope interface: calling btoa(DOMString) on self with too few arguments must throw TypeError
 PASS WorkerGlobalScope interface: self must inherit property "atob(DOMString)" with the proper type
@@ -699,14 +718,7 @@ FAIL Worker interface: operation postMessage(any, optional PostMessageOptions) a
 FAIL Worker interface: attribute onmessage assert_own_property: self does not have own property "Worker" expected property "Worker" missing
 FAIL Worker interface: attribute onmessageerror assert_own_property: self does not have own property "Worker" expected property "Worker" missing
 FAIL Worker interface: attribute onerror assert_own_property: self does not have own property "Worker" expected property "Worker" missing
-FAIL SharedWorker interface: existence and properties of interface object assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
-FAIL SharedWorker interface object length assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
-FAIL SharedWorker interface object name assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
-FAIL SharedWorker interface: existence and properties of interface prototype object assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
-FAIL SharedWorker interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
-FAIL SharedWorker interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
-FAIL SharedWorker interface: attribute port assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
-FAIL SharedWorker interface: attribute onerror assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
+PASS SharedWorker interface: existence and properties of interface object
 PASS WorkerNavigator interface: existence and properties of interface object
 PASS WorkerNavigator interface object length
 PASS WorkerNavigator interface object name
@@ -772,6 +784,8 @@ PASS WorkerLocation interface: self.location must inherit property "port" with t
 PASS WorkerLocation interface: self.location must inherit property "pathname" with the proper type
 PASS WorkerLocation interface: self.location must inherit property "search" with the proper type
 PASS WorkerLocation interface: self.location must inherit property "hash" with the proper type
+PASS WorkletGlobalScope interface: existence and properties of interface object
+PASS Worklet interface: existence and properties of interface object
 PASS Storage interface: existence and properties of interface object
 PASS StorageEvent interface: existence and properties of interface object
 PASS HTMLMarqueeElement interface: existence and properties of interface object

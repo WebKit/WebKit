@@ -1,3 +1,12 @@
+2020-11-01  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Unreviewed test gardening. Update baselines of WPT test 'html/dom/idlharness' after r269214.
+
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.worker-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/html/dom/idlharness.worker-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.worker-expected.txt:
+
 2020-11-01  Zalan Bujtas  <zalan@apple.com>
 
         [LegacyInlineLayout] Remove collapsible trailing whitespace when it is followed by a hard line break
