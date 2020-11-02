@@ -1,3 +1,13 @@
+2020-11-01  Mason Xiao  <me@masonx.ca>
+
+        REGRESSION (r252689): box-shadow with inset and negative spread renders incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=209930
+
+        Reviewed by Simon Fraser.
+
+        * fast/box-shadow/negative-inset-box-shadow-expected.html: Added.
+        * fast/box-shadow/negative-inset-box-shadow.html: Added.
+
 2020-11-01  Diego Pino Garcia  <dpino@igalia.com>
 
         Emit baselines for WPT css-sizing/aspect-ratio/quirks-mode* tests after resync in r269187
