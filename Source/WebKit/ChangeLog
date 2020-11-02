@@ -1,3 +1,35 @@
+2020-11-02  Chris Dumez  <cdumez@apple.com>
+
+        Crash under ProcessThrottler::setAssertionType()
+        https://bugs.webkit.org/show_bug.cgi?id=218448
+        <rdar://problem/67419221>
+
+        Reviewed by Geoffrey Garen.
+
+        A ProcessThrottler object is owned by its associated AuxiliaryProcessProxy. The crash was happening
+        in ProcessThrottler::setAssertionType(), we would replace m_assertion with a new "Suspended"
+        assertion and then crash on the next line when using m_assertion. The reason we crash is that
+        when we replaced m_assertion with a new assertion, the destruction of the previous assertion
+        caused the UIProcess's background task to get released (because this was the last non-suspended
+        process assertion). When we release the UIProcess' background task, we call
+        WebProcessPool::notifyProcessPoolsApplicationIsAboutToSuspend(), which destroys non-critical
+        WebProcesses (e.g. WebProcesses in the back/forward cache), which in turns destroy their
+        ProcessThrottler. As a result, when replacing m_assertion, the ProcessAssertion may get
+        destroyed, which is why we would crash on the next line when trying to use m_assertion.
+
+        To address the issue, we now release the UIProcess's background task asynchronously when
+        releasing the last non-suspended ProcessAssertion, making sure we still need to release
+        the assertion beforehand. This has 2 benefits:
+        - The ProcessThrottler can no longer get destroyed synchronously when releasing its
+          ProcessAssertion.
+        - In the case where the ProcessThrottler replaces a foreground assertion with a background
+          assertion (or vice-versa) and this is the last non-suspended assertion, this avoids
+          unnecessarily releasing and retaking the UIProcess's background task. This also avoids
+          killing non-critical processes unnecessarily.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager _updateBackgroundTask]):
+
 2020-11-02  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Remove unneeded shmem access to ColorSync

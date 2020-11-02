@@ -179,8 +179,14 @@ static bool processHasActiveRunTimeLimitation()
             RELEASE_LOG_ERROR(ProcessSuspension, "WKProcessAssertionBackgroundTaskManager: Failed to acquire FinishTaskInterruptable assertion for own process, error: %{public}@", acquisitionError);
         else
             RELEASE_LOG(ProcessSuspension, "WKProcessAssertionBackgroundTaskManager: Successfully took a FinishTaskInterruptable assertion for own process");
-    } else if (_assertionsNeedingBackgroundTask.computesEmpty())
-        [self _releaseBackgroundTask];
+    } else if (_assertionsNeedingBackgroundTask.computesEmpty()) {
+        // Release the background task asynchronously because releasing the background task may destroy the ProcessThrottler and we don't
+        // want it to get destroyed while in the middle of updating its assertion.
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (_assertionsNeedingBackgroundTask.computesEmpty())
+                [self _releaseBackgroundTask];
+        });
+    }
 }
 
 - (void)assertionWillInvalidate:(RBSAssertion *)assertion
