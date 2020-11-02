@@ -2662,9 +2662,14 @@ class TestExtractBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
 class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
+        import steps
+        self.current_hostname = steps.CURRENT_HOSTNAME
+        steps.CURRENT_HOSTNAME = steps.EWS_BUILD_HOSTNAME
         return self.setUpBuildStep()
 
     def tearDown(self):
+        import steps
+        steps.CURRENT_HOSTNAME = self.current_hostname
         return self.tearDownBuildStep()
 
     def test_success(self):
