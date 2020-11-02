@@ -1,0 +1,3 @@
+
+PASS Forcing a style update in a transitionend event for an accelerated animation should not prevent another transition for the same property from running later.
+
