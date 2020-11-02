@@ -1,3 +1,14 @@
+2020-11-02  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed test gardening. Remove outdated baselines no longer necessary after r269104.
+
+        * platform/wpe/webaudio/codec-tests/aac/vbr-128kbps-44khz-expected.wav: Removed.
+        * platform/wpe/webaudio/codec-tests/mp3/128kbps-44khz-expected.wav: Removed.
+        * platform/wpe/webaudio/codec-tests/vorbis/vbr-128kbps-44khz-expected.wav: Removed.
+        * platform/wpe/webaudio/codec-tests/vorbis/vbr-70kbps-44khz-expected.wav: Removed.
+        * platform/wpe/webaudio/codec-tests/vorbis/vbr-96kbps-44khz-expected.wav: Removed.
+        * platform/wpe/webaudio/codec-tests/wav/24bit-44khz-expected.wav: Removed.
+
 2020-11-02  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, skip imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections.html on mac-arm64 only.
