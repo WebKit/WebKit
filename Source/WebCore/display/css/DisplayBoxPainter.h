@@ -38,19 +38,21 @@ class IntRect;
 
 namespace Display {
 
-class FillLayerImageGeometry;
 class Box;
 class BoxModelBox;
+class FillLayerImageGeometry;
+
+struct PaintingContext;
 
 class BoxPainter {
 public:
-    static void paintBox(const Box&, GraphicsContext&, const IntRect& dirtyRect);
-    static void paintBoxDecorations(const BoxModelBox&, GraphicsContext&);
-    static void paintBoxContent(const Box&, GraphicsContext&);
+    static void paintBox(const Box&, PaintingContext&, const IntRect& dirtyRect);
+    static void paintBoxDecorations(const BoxModelBox&, PaintingContext&);
+    static void paintBoxContent(const Box&, PaintingContext&);
 
 private:
-    static void paintBackgroundImages(const BoxModelBox&, GraphicsContext&);
-    static void paintFillLayer(const BoxModelBox&, const FillLayer&, const FillLayerImageGeometry&, GraphicsContext&);
+    static void paintBackgroundImages(const BoxModelBox&, PaintingContext&);
+    static void paintFillLayer(const BoxModelBox&, const FillLayer&, const FillLayerImageGeometry&, PaintingContext&);
 };
 
 } // namespace Display

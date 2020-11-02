@@ -30,6 +30,7 @@
 
 #include "DisplayBoxPainter.h"
 #include "DisplayContainerBox.h"
+#include "DisplayPaintingContext.h"
 #include "DisplayStyle.h"
 #include "DisplayTree.h"
 #include "GraphicsContext.h"
@@ -39,7 +40,7 @@ namespace WebCore {
 namespace Display {
 
 // FIXME: Make this an iterator.
-void CSSPainter::recursivePaintDescendants(const ContainerBox& containerBox, GraphicsContext& context, PaintPhase paintPhase)
+void CSSPainter::recursivePaintDescendants(const ContainerBox& containerBox, PaintingContext& paintingContext, PaintPhase paintPhase)
 {
     for (const auto* child = containerBox.firstChild(); child; child = child->nextSibling()) {
         auto& box = *child;
@@ -49,37 +50,37 @@ void CSSPainter::recursivePaintDescendants(const ContainerBox& containerBox, Gra
         switch (paintPhase) {
         case PaintPhase::BlockBackgrounds:
             if (!box.style().isFloating() && !box.style().isPositioned() && is<BoxModelBox>(box))
-                BoxPainter::paintBoxDecorations(downcast<BoxModelBox>(box), context);
+                BoxPainter::paintBoxDecorations(downcast<BoxModelBox>(box), paintingContext);
             break;
         case PaintPhase::Floats:
             if (box.style().isFloating() && !box.style().isPositioned() && is<BoxModelBox>(box))
-                BoxPainter::paintBoxDecorations(downcast<BoxModelBox>(box), context);
+                BoxPainter::paintBoxDecorations(downcast<BoxModelBox>(box), paintingContext);
             break;
         case PaintPhase::BlockForegrounds:
             if (!box.style().isFloating() && !box.style().isPositioned())
-                BoxPainter::paintBoxContent(box, context);
+                BoxPainter::paintBoxContent(box, paintingContext);
         };
         if (is<ContainerBox>(box))
-            recursivePaintDescendants(downcast<ContainerBox>(box), context, paintPhase);
+            recursivePaintDescendants(downcast<ContainerBox>(box), paintingContext, paintPhase);
     }
 }
 
-void CSSPainter::paintStackingContext(const BoxModelBox& contextRoot, GraphicsContext& context, const IntRect& dirtyRect)
+void CSSPainter::paintStackingContext(const BoxModelBox& contextRoot, PaintingContext& paintingContext, const IntRect& dirtyRect)
 {
     UNUSED_PARAM(dirtyRect);
     
-    BoxPainter::paintBoxDecorations(contextRoot, context);
+    BoxPainter::paintBoxDecorations(contextRoot, paintingContext);
 
     auto paintDescendants = [&](const ContainerBox& containerBox) {
         // For all its in-flow, non-positioned, block-level descendants in tree order: If the element is a block, list-item, or other block equivalent:
         // Box decorations.
         // Table decorations.
-        recursivePaintDescendants(containerBox, context, PaintPhase::BlockBackgrounds);
+        recursivePaintDescendants(containerBox, paintingContext, PaintPhase::BlockBackgrounds);
 
         // All non-positioned floating descendants, in tree order. For each one of these, treat the element as if it created a new stacking context,
         // but any positioned descendants and descendants which actually create a new stacking context should be considered part of the parent
         // stacking context, not this new one.
-        recursivePaintDescendants(containerBox, context, PaintPhase::Floats);
+        recursivePaintDescendants(containerBox, paintingContext, PaintPhase::Floats);
 
         // If the element is an inline element that generates a stacking context, then:
         // FIXME: Handle this case.
@@ -87,7 +88,7 @@ void CSSPainter::paintStackingContext(const BoxModelBox& contextRoot, GraphicsCo
         // Otherwise: first for the element, then for all its in-flow, non-positioned, block-level descendants in tree order:
         // 1. If the element is a block-level replaced element, then: the replaced content, atomically.
         // 2. Otherwise, for each line box of that element...
-        recursivePaintDescendants(containerBox, context, PaintPhase::BlockForegrounds);
+        recursivePaintDescendants(containerBox, paintingContext, PaintPhase::BlockForegrounds);
     };
 
     if (is<ContainerBox>(contextRoot)) {
@@ -107,7 +108,7 @@ void CSSPainter::paintStackingContext(const BoxModelBox& contextRoot, GraphicsCo
 
         // Stacking contexts formed by positioned descendants with negative z-indices (excluding 0) in z-index order (most negative first) then tree order.
         for (auto* box : negativeZOrderList)
-            paintStackingContext(*box, context, dirtyRect);
+            paintStackingContext(*box, paintingContext, dirtyRect);
 
         paintDescendants(containerBox);
 
@@ -117,12 +118,12 @@ void CSSPainter::paintStackingContext(const BoxModelBox& contextRoot, GraphicsCo
         // generated atomically.
         for (auto* box : positiveZOrderList) {
             if (box->style().isStackingContext())
-                paintStackingContext(*box, context, dirtyRect);
+                paintStackingContext(*box, paintingContext, dirtyRect);
             else if (is<ContainerBox>(*box)) {
-                BoxPainter::paintBoxDecorations(*box, context);
+                BoxPainter::paintBoxDecorations(*box, paintingContext);
                 paintDescendants(downcast<ContainerBox>(*box));
             } else
-                BoxPainter::paintBox(*box, context, dirtyRect);
+                BoxPainter::paintBox(*box, paintingContext, dirtyRect);
         }
     }
 }
@@ -154,9 +155,9 @@ void CSSPainter::recursiveCollectLayers(const ContainerBox& containerBox, Vector
     }
 }
 
-void CSSPainter::paintTree(const Tree& displayTree, GraphicsContext& context, const IntRect& dirtyRect)
+void CSSPainter::paintTree(const Tree& displayTree, PaintingContext& paintingContext, const IntRect& dirtyRect)
 {
-    paintStackingContext(displayTree.rootBox(), context, dirtyRect);
+    paintStackingContext(displayTree.rootBox(), paintingContext, dirtyRect);
 }
 
 } // namespace Display

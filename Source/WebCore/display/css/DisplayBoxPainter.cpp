@@ -34,6 +34,7 @@
 #include "DisplayContainerBox.h"
 #include "DisplayFillLayerImageGeometry.h"
 #include "DisplayImageBox.h"
+#include "DisplayPaintingContext.h"
 #include "DisplayStyle.h"
 #include "DisplayTextBox.h"
 #include "DisplayTree.h"
@@ -46,9 +47,9 @@
 namespace WebCore {
 namespace Display {
 
-void BoxPainter::paintFillLayer(const BoxModelBox& box, const FillLayer& layer, const FillLayerImageGeometry& geometry, GraphicsContext& context)
+void BoxPainter::paintFillLayer(const BoxModelBox& box, const FillLayer& layer, const FillLayerImageGeometry& geometry, PaintingContext& paintingContext)
 {
-    GraphicsContextStateSaver stateSaver(context, false);
+    GraphicsContextStateSaver stateSaver(paintingContext.context, false);
 
     auto clipRectForLayer = [](const BoxModelBox& box, const FillLayer& layer) {
         switch (layer.clip()) {
@@ -69,7 +70,7 @@ void BoxPainter::paintFillLayer(const BoxModelBox& box, const FillLayer& layer, 
     case FillBox::Padding:
     case FillBox::Content: {
         stateSaver.save();
-        context.clip(clipRectForLayer(box, layer));
+        paintingContext.context.clip(clipRectForLayer(box, layer));
         break;
     }
     case FillBox::Text:
@@ -98,10 +99,10 @@ void BoxPainter::paintFillLayer(const BoxModelBox& box, const FillLayer& layer, 
         InterpolationQuality::Default
     };
 
-    context.drawTiledImage(*image, geometry.destRect(), toFloatPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), options);
+    paintingContext.context.drawTiledImage(*image, geometry.destRect(), toFloatPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), options);
 }
 
-void BoxPainter::paintBackgroundImages(const BoxModelBox& box, GraphicsContext& context)
+void BoxPainter::paintBackgroundImages(const BoxModelBox& box, PaintingContext& paintingContext)
 {
     const auto& style = box.style();
 
@@ -118,11 +119,11 @@ void BoxPainter::paintBackgroundImages(const BoxModelBox& box, GraphicsContext& 
     for (int i = layers.size() - 1; i >=0; --i) {
         const auto* layer = layers[i];
         const auto& geometry = layerGeometryList[i];
-        paintFillLayer(box, *layer, geometry, context);
+        paintFillLayer(box, *layer, geometry, paintingContext);
     }
 }
 
-void BoxPainter::paintBoxDecorations(const BoxModelBox& box, GraphicsContext& context)
+void BoxPainter::paintBoxDecorations(const BoxModelBox& box, PaintingContext& paintingContext)
 {
     // FIXME: Table decoration painting is special.
 
@@ -132,9 +133,9 @@ void BoxPainter::paintBoxDecorations(const BoxModelBox& box, GraphicsContext& co
 
     // Background color
     if (style.hasBackground()) {
-        context.fillRect(borderBoxRect, style.backgroundColor());
+        paintingContext.context.fillRect(borderBoxRect, style.backgroundColor());
         if (style.hasBackgroundImage())
-            paintBackgroundImages(box, context);
+            paintBackgroundImages(box, paintingContext);
     }
 
     // Border
@@ -144,12 +145,12 @@ void BoxPainter::paintBoxDecorations(const BoxModelBox& box, GraphicsContext& co
                 return;
             if (borderStyle.style() == BorderStyle::None || borderStyle.style() == BorderStyle::Hidden)
                 return;
-            context.setStrokeColor(borderStyle.color());
-            context.setStrokeThickness(borderStyle.width());
-            context.drawLine(start, end);
+            paintingContext.context.setStrokeColor(borderStyle.color());
+            paintingContext.context.setStrokeThickness(borderStyle.width());
+            paintingContext.context.drawLine(start, end);
         };
 
-        context.setFillColor(Color::transparentBlack);
+        paintingContext.context.setFillColor(Color::transparentBlack);
 
         // Top
         {
@@ -185,7 +186,7 @@ void BoxPainter::paintBoxDecorations(const BoxModelBox& box, GraphicsContext& co
     }
 }
 
-void BoxPainter::paintBoxContent(const Box& box, GraphicsContext& context)
+void BoxPainter::paintBoxContent(const Box& box, PaintingContext& paintingContext)
 {
     if (is<ImageBox>(box)) {
         auto& imageBox = downcast<ImageBox>(box);
@@ -194,7 +195,7 @@ void BoxPainter::paintBoxContent(const Box& box, GraphicsContext& context)
         auto imageRect = imageBox.replacedContentRect();
 
         if (image)
-            context.drawImage(*image, imageRect);
+            paintingContext.context.drawImage(*image, imageRect);
 
         return;
     }
@@ -205,8 +206,8 @@ void BoxPainter::paintBoxContent(const Box& box, GraphicsContext& context)
         auto& style = box.style();
         auto textRect = box.absoluteBoxRect();
 
-        context.setStrokeColor(style.color());
-        context.setFillColor(style.color());
+        paintingContext.context.setStrokeColor(style.color());
+        paintingContext.context.setFillColor(style.color());
 
         // FIXME: Add non-baseline align painting
         auto baseline = textRect.y() + style.fontMetrics().ascent();
@@ -214,13 +215,12 @@ void BoxPainter::paintBoxContent(const Box& box, GraphicsContext& context)
 
         auto textRun = TextRun { textBox.text().content().substring(textBox.text().start(), textBox.text().length()), textRect.x(), expansion.horizontalExpansion, expansion.behavior };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
-        context.drawText(style.fontCascade(), textRun, { textRect.x(), baseline });
-        
+        paintingContext.context.drawText(style.fontCascade(), textRun, { textRect.x(), baseline });
         return;
     }
 }
 
-void BoxPainter::paintBox(const Box& box, GraphicsContext& context, const IntRect& dirtyRect)
+void BoxPainter::paintBox(const Box& box, PaintingContext& paintingContext, const IntRect& dirtyRect)
 {
     auto absoluteRect = box.absoluteBoxRect();
     // FIXME: Need to account for visual overflow.
@@ -234,13 +234,13 @@ void BoxPainter::paintBox(const Box& box, GraphicsContext& context, const IntRec
         auto imageRect = imageBox.replacedContentRect();
 
         if (image)
-            context.drawImage(*image, imageRect);
+            paintingContext.context.drawImage(*image, imageRect);
     }
 
     if (is<BoxModelBox>(box))
-        paintBoxDecorations(downcast<BoxModelBox>(box), context);
+        paintBoxDecorations(downcast<BoxModelBox>(box), paintingContext);
 
-    paintBoxContent(box, context);
+    paintBoxContent(box, paintingContext);
 }
 
 } // namespace Display

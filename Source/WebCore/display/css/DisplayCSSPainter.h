@@ -44,10 +44,12 @@ class BoxModelBox;
 class ContainerBox;
 class Tree;
 
+struct PaintingContext;
+
 class CSSPainter {
 public:
-    static void paintStackingContext(const BoxModelBox&, GraphicsContext&, const IntRect& dirtyRect);
-    static void paintTree(const Tree&, GraphicsContext&, const IntRect& dirtyRect);
+    static void paintStackingContext(const BoxModelBox&, PaintingContext&, const IntRect& dirtyRect);
+    static void paintTree(const Tree&, PaintingContext&, const IntRect& dirtyRect);
 
 private:
     enum class PaintPhase {
@@ -55,7 +57,7 @@ private:
         Floats,
         BlockForegrounds
     };
-    static void recursivePaintDescendants(const ContainerBox&, GraphicsContext&, PaintPhase);
+    static void recursivePaintDescendants(const ContainerBox&, PaintingContext&, PaintPhase);
 
     static bool isStackingContextPaintingBoundary(const Box&);
     static void recursiveCollectLayers(const ContainerBox&, Vector<const BoxModelBox*>& negativeZOrderList, Vector<const BoxModelBox*>& positiveZOrderList);

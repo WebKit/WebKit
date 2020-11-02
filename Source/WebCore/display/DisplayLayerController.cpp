@@ -31,6 +31,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DisplayCSSPainter.h"
+#include "DisplayPaintingContext.h"
 #include "DisplayTree.h"
 #include "DisplayView.h"
 #include "Frame.h"
@@ -58,8 +59,10 @@ void LayerController::RootLayerClient::paintContents(const GraphicsLayer* layer,
 {
     ASSERT_UNUSED(layer, layer == m_layerController.contentLayer());
 
-    if (auto* displayTree = m_layerController.m_displayTree.get())
-        CSSPainter::paintTree(*displayTree, context, enclosingIntRect(dirtyRect));
+    if (auto* displayTree = m_layerController.m_displayTree.get()) {
+        PaintingContext paintingContext { context, deviceScaleFactor() };
+        CSSPainter::paintTree(*displayTree, paintingContext, enclosingIntRect(dirtyRect));
+    }
 }
 
 float LayerController::RootLayerClient::deviceScaleFactor() const
