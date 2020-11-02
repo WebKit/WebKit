@@ -1,3 +1,13 @@
+2020-11-01  Diego Pino Garcia  <dpino@igalia.com>
+
+        Emit baselines for WPT css-sizing/aspect-ratio/quirks-mode* tests after resync in r269187
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/quirks-mode-001-expected.txt: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/quirks-mode-002-expected.txt: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/quirks-mode-003-expected.txt: Added.
+
 2020-11-01  Zalan Bujtas  <zalan@apple.com>
 
         [LegacyInlineLayout] Remove collapsible trailing whitespace when it is followed by a hard line break
