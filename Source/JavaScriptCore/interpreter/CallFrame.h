@@ -89,7 +89,7 @@ namespace JSC  {
     };
     static_assert(CallerFrameAndPC::sizeInRegisters == sizeof(CallerFrameAndPC) / sizeof(Register), "CallerFrameAndPC::sizeInRegisters is incorrect.");
 
-    enum class CallFrameSlot : int {
+    enum class CallFrameSlot {
         codeBlock = CallerFrameAndPC::sizeInRegisters,
         callee = codeBlock + 1,
         argumentCountIncludingThis = callee + 1,

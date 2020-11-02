@@ -97,7 +97,7 @@ void Data::performAssertions(VM& vm)
     ASSERT(!CallFrame::callerFrameOffset());
     STATIC_ASSERT(CallerFrameAndPC::sizeInRegisters == (MachineRegisterSize * 2) / SlotSize);
     ASSERT(CallFrame::returnPCOffset() == CallFrame::callerFrameOffset() + MachineRegisterSize);
-    ASSERT(CallFrameSlot::codeBlock * sizeof(Register) == CallFrame::returnPCOffset() + MachineRegisterSize);
+    ASSERT(static_cast<std::underlying_type_t<CallFrameSlot>>(CallFrameSlot::codeBlock) * sizeof(Register) == CallFrame::returnPCOffset() + MachineRegisterSize);
     STATIC_ASSERT(CallFrameSlot::callee * sizeof(Register) == CallFrameSlot::codeBlock * sizeof(Register) + SlotSize);
     STATIC_ASSERT(CallFrameSlot::argumentCountIncludingThis * sizeof(Register) == CallFrameSlot::callee * sizeof(Register) + SlotSize);
     STATIC_ASSERT(CallFrameSlot::thisArgument * sizeof(Register) == CallFrameSlot::argumentCountIncludingThis * sizeof(Register) + SlotSize);

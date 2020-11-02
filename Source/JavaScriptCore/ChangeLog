@@ -1,3 +1,20 @@
+2020-11-02  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Remove compiler warning in LLIntData.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=218443
+
+        Reviewed by Mark Lam.
+
+        Fix compiler warning by casting a scoped enum to its underlying
+        type. Not allowing implicit type conversions is the whole point of
+        scoped enums.
+
+        * interpreter/CallFrame.h: remove underlying type specifier, since
+        we are using the default anyway ('int').
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions): cast the scoped enum to its
+        underlying type.
+
 2020-10-29  Jérôme Decoodt  <jdecoodt@apple.com>
 
         JavaScriptCore should support multiple build variants
