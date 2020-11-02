@@ -1,3 +1,13 @@
+2020-11-02  James Savage  <james.savage@apple.com>
+
+        Changes to SWIFT_MODULE_ONLY_ARCHS
+        https://bugs.webkit.org/show_bug.cgi?id=218404
+
+        Reviewed by Tim Horton.
+
+        * SwiftOverlay/Configurations/WebKitSwiftOverlay.xcconfig: Simplify how
+        we specify these options.
+
 2020-11-02  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Link Contacts.framework during build
