@@ -101,19 +101,21 @@ void OfflineAudioDestinationNode::startRendering(CompletionHandler<void(Optional
 
     auto offThreadRendering = [this, protectedThis = WTFMove(protectedThis)]() mutable {
         auto result = offlineRender();
-        callOnMainThread([this, result, currentSampleFrame = m_currentSampleFrame, protectedThis = WTFMove(protectedThis)] {
-            m_startedRendering = false;
-            switch (result) {
-            case OfflineRenderResult::Failure:
-                context().finishedRendering(false);
-                break;
-            case OfflineRenderResult::Complete:
-                context().finishedRendering(true);
-                break;
-            case OfflineRenderResult::Suspended:
-                context().didSuspendRendering(currentSampleFrame);
-                break;
-            }
+        callOnMainThread([this, result, currentSampleFrame = m_currentSampleFrame, protectedThis = WTFMove(protectedThis)]() mutable {
+            context().postTask([this, protectedThis = WTFMove(protectedThis), result, currentSampleFrame]() mutable {
+                m_startedRendering = false;
+                switch (result) {
+                case OfflineRenderResult::Failure:
+                    context().finishedRendering(false);
+                    break;
+                case OfflineRenderResult::Complete:
+                    context().finishedRendering(true);
+                    break;
+                case OfflineRenderResult::Suspended:
+                    context().didSuspendRendering(currentSampleFrame);
+                    break;
+                }
+            });
         });
     };
 
