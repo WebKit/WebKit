@@ -63,7 +63,7 @@ Vector<Ref<HTMLInputElement>> RadioButtonGroup::members() const
     for (auto& member : m_members)
         sortedMembers.append(member);
     std::sort(sortedMembers.begin(), sortedMembers.end(), [](auto& a, auto& b) {
-        return is_lt(documentOrder(a, b));
+        return is_lt(treeOrder<ComposedTree>(a, b));
     });
     return sortedMembers;
 }

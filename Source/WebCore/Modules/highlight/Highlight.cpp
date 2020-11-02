@@ -55,26 +55,15 @@ void Highlight::initializeSetLike(DOMSetAdapter& set)
         set.add<IDLInterface<StaticRange>>(rangeData->range);
 }
 
-static void repaintRange(const StaticRange& range)
+static void repaintRange(const SimpleRange& range)
 {
-    auto startNode = makeRefPtr(&range.startContainer());
-    auto endNode = makeRefPtr(&range.endContainer());
-    auto ordering = documentOrder(*startNode.get(), *endNode.get());
-    if (is_eq(ordering)) {
-        if (auto renderer = startNode->renderer())
+    // FIXME: Unclear precisely why we need to handle out of order cases here, but not unordered cases.
+    auto sortedRange = range;
+    if (is_gt(treeOrder<ComposedTree>(range.start, range.end)))
+        std::swap(sortedRange.start, sortedRange.end);
+    for (auto& node : intersectingNodes(sortedRange)) {
+        if (auto renderer = node.renderer())
             renderer->repaint();
-        return;
-    }
-    if (is_gt(ordering)) {
-        startNode = &range.endContainer();
-        endNode = &range.startContainer();
-    }
-    auto simpleRange = makeSimpleRange(makeBoundaryPointBeforeNode(*startNode.get()), makeBoundaryPointAfterNode(*endNode.get()));
-    if (simpleRange) {
-        for (auto& node : intersectingNodes(simpleRange.value())) {
-            if (auto renderer = node.renderer())
-                renderer->repaint();
-        }
     }
 }
 
@@ -90,7 +79,6 @@ void Highlight::clearFromSetLike()
 {
     for (auto& data : m_rangesData)
         repaintRange(data->range);
-
     m_rangesData.clear();
 }
 
@@ -100,7 +88,6 @@ bool Highlight::addToSetLike(StaticRange& range)
         return false;
     repaintRange(range);
     m_rangesData.append(HighlightRangeData::create(range));
-    
     return true;
 }
 

@@ -1,3 +1,20 @@
+2020-11-01  Darin Adler  <darin@apple.com>
+
+        Start removing functions that implicitly use composed tree
+        https://bugs.webkit.org/show_bug.cgi?id=218424
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/rangeContainsNode-expected.txt: Added.
+        * fast/dom/rangeContainsNode.html: Added.
+        * fast/dom/rangeContainsRange-expected.txt: Added.
+        * fast/dom/rangeContainsRange.html: Added.
+        * fast/dom/treeOrder-expected.txt: Added.
+        * fast/dom/treeOrder.html: Added.
+        These tests were formerly part of TestWebKitAPI, although treeOrder was named documentOrder.
+        Moving to internals-style tests at Ryosuke's suggestion since these are not something exposed
+        as API or even SPI.
+
 2020-11-02  Martin Robinson  <mrobinson@igalia.com>
 
         [GLIB] REGRESSION(r269144) imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-scrollMargin.html is failing

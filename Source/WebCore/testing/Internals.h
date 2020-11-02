@@ -47,6 +47,7 @@
 
 namespace WebCore {
 
+class AbstractRange;
 class AnimationTimeline;
 class AudioContext;
 class AudioTrack;
@@ -1062,6 +1063,11 @@ public:
     ExceptionOr<double> currentMediaSessionPosition(const MediaSession&);
     ExceptionOr<void> sendMediaSessionAction(MediaSession&, const MediaSessionActionDetails&);
 #endif
+
+    enum TreeType : uint8_t { Tree, ShadowIncludingTree, ComposedTree };
+    String treeOrder(Node&, Node&, TreeType);
+    bool rangeContainsNode(const AbstractRange&, Node&, TreeType);
+    bool rangeContainsRange(const AbstractRange&, const AbstractRange&, TreeType);
 
 private:
     explicit Internals(Document&);

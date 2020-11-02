@@ -2627,6 +2627,11 @@ template<> ContainerNode* parent<Tree>(const Node& node)
     return node.parentNode();
 }
 
+template<> ContainerNode* parent<ShadowIncludingTree>(const Node& node)
+{
+    return node.parentOrShadowHostNode();
+}
+
 template<> ContainerNode* parent<ComposedTree>(const Node& node)
 {
     return node.parentInComposedTree();
@@ -2720,11 +2725,21 @@ template<TreeType treeType> PartialOrdering treeOrder(const Node& a, const Node&
 }
 
 template PartialOrdering treeOrder<Tree>(const Node&, const Node&);
+template PartialOrdering treeOrder<ShadowIncludingTree>(const Node&, const Node&);
 template PartialOrdering treeOrder<ComposedTree>(const Node&, const Node&);
 
-PartialOrdering documentOrder(const Node& a, const Node& b)
+PartialOrdering treeOrderForTesting(TreeType type, const Node& a, const Node& b)
 {
-    return treeOrder<ComposedTree>(a, b);
+    switch (type) {
+    case Tree:
+        return treeOrder<Tree>(a, b);
+    case ShadowIncludingTree:
+        return treeOrder<ShadowIncludingTree>(a, b);
+    case ComposedTree:
+        return treeOrder<ComposedTree>(a, b);
+    }
+    ASSERT_NOT_REACHED();
+    return PartialOrdering::unordered;
 }
 
 TextStream& operator<<(TextStream& ts, const Node& node)

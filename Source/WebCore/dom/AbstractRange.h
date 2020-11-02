@@ -47,7 +47,7 @@ public:
     virtual bool isLiveRange() const = 0;
 };
 
-SimpleRange makeSimpleRange(const AbstractRange&);
+WEBCORE_EXPORT SimpleRange makeSimpleRange(const AbstractRange&);
 SimpleRange makeSimpleRange(const Ref<AbstractRange>&);
 Optional<SimpleRange> makeSimpleRange(const AbstractRange*);
 Optional<SimpleRange> makeSimpleRange(const RefPtr<AbstractRange>&);

@@ -93,6 +93,12 @@ enum ContentSizeCategory {
     "XXXL"
 };
 
+enum TreeType {
+    "Tree",
+    "ShadowIncludingTree",
+    "ComposedTree"
+};
+
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     Conditional=VIDEO,
@@ -958,4 +964,8 @@ enum ContentSizeCategory {
 
     [Conditional=MEDIA_SESSION, MayThrowException] double currentMediaSessionPosition(MediaSession session);
     [Conditional=MEDIA_SESSION, MayThrowException] undefined sendMediaSessionAction(MediaSession session, MediaSessionActionDetails actionDetails);
+
+    DOMString treeOrder(Node a, Node b, optional TreeType tree = "Tree");
+    boolean rangeContainsNode(AbstractRange range, Node node, optional TreeType tree = "Tree");
+    boolean rangeContainsRange(AbstractRange outerRange, AbstractRange innerRange, optional TreeType tree = "Tree");
 };

@@ -1,3 +1,14 @@
+2020-11-01  Darin Adler  <darin@apple.com>
+
+        Start removing functions that implicitly use composed tree
+        https://bugs.webkit.org/show_bug.cgi?id=218424
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestWebKitAPI/Tests/WebCore/DocumentOrder.cpp: Moved the tests of documentOrder
+        for two nodes and contains for range/range or range/node into internals-based tests
+        in the LayoutTests directory. Eventually we'll move the rest of these tests, too.
+
 2020-11-02  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Don't fail the build on S3 upload failure

@@ -44,10 +44,6 @@
 #define EXPECT_LESS(a, b) EXPECT_BOTH(a, b, "less", "greater")
 #define EXPECT_UNORDERED(a, b) EXPECT_BOTH(a, b, "unordered", "unordered")
 
-#define EXPECT_CONTAINS_SELF(a) EXPECT_TRUE(contains(a, a))
-#define EXPECT_NESTED(a, b) do { EXPECT_TRUE(contains(a, b)); EXPECT_FALSE(contains(b, a)); } while (0)
-#define EXPECT_NOT_CONTAINED(a, b) do { EXPECT_FALSE(contains(a, b)); EXPECT_FALSE(contains(b, a)); } while (0)
-
 #define EXPECT_INTERSECTS_SELF(a) EXPECT_TRUE(intersects(a, a))
 #define EXPECT_INTERSECTS_BOTH_WAYS(a, b) do { EXPECT_TRUE(intersects(a, b)); EXPECT_TRUE(intersects(b, a)); } while (0)
 #define EXPECT_NOT_INTERSECTING_BOTH_WAYS(a, b) do { EXPECT_FALSE(intersects(a, b)); EXPECT_FALSE(intersects(b, a)); } while (0)
@@ -91,77 +87,6 @@ static PartialOrdering operator-(PartialOrdering ordering)
     if (is_gt(ordering))
         return PartialOrdering::less;
     return ordering;
-}
-
-TEST(DocumentOrder, Node)
-{
-    HTMLNames::init();
-
-    auto document = createDocument();
-    auto& body = *document->body();
-
-    EXPECT_EQUIVALENT(document, document);
-
-    EXPECT_EQUIVALENT(body, body);
-    EXPECT_LESS(document, body);
-    EXPECT_LESS(document, body);
-
-    auto a = HTMLDivElement::create(document);
-    EXPECT_EQUIVALENT(a, a);
-    EXPECT_UNORDERED(body, a);
-    EXPECT_UNORDERED(a, body);
-
-    body.appendChild(a);
-    EXPECT_LESS(body, a);
-    EXPECT_LESS(body, a);
-    EXPECT_EQUIVALENT(a, a);
-
-    auto b = HTMLDivElement::create(document);
-    body.appendChild(b);
-    EXPECT_LESS(body, b);
-    EXPECT_LESS(body, b);
-    EXPECT_LESS(a, b);
-    EXPECT_LESS(a, b);
-
-    auto c = HTMLDivElement::create(document);
-    b->appendChild(c);
-    EXPECT_LESS(body, c);
-    EXPECT_LESS(body, c);
-    EXPECT_LESS(a, c);
-    EXPECT_LESS(b, c);
-    EXPECT_LESS(a, c);
-    EXPECT_LESS(b, c);
-
-    auto d = HTMLDivElement::create(document);
-    a->appendChild(d);
-    EXPECT_LESS(body, d);
-    EXPECT_LESS(body, d);
-    EXPECT_LESS(a, d);
-    EXPECT_LESS(d, b);
-    EXPECT_LESS(d, c);
-    EXPECT_LESS(a, d);
-    EXPECT_LESS(d, b);
-    EXPECT_LESS(d, c);
-
-    auto e = HTMLDivElement::create(document);
-    auto f = HTMLDivElement::create(document);
-    e->appendChild(f);
-    EXPECT_UNORDERED(body, f);
-    EXPECT_UNORDERED(f, body);
-
-    auto g = HTMLTextAreaElement::create(document);
-    c->appendChild(g);
-    EXPECT_LESS(body, g);
-
-    auto& h = *g->innerTextElement();
-    EXPECT_LESS(body, h);
-
-    auto& i = a->attachShadow({ ShadowRootMode::Closed }).releaseReturnValue();
-    EXPECT_LESS(body, i);
-    EXPECT_LESS(i, d);
-    EXPECT_LESS(i, b);
-
-    // FIXME: Add tests that cover slots and assignment.
 }
 
 TEST(DocumentOrder, BoundaryPointOffsetZero)
@@ -535,61 +460,6 @@ TEST(DocumentOrder, IsPointInRange)
 
 #endif
 
-TEST(DocumentOrder, RangeContainsRange)
-{
-    auto document = createDocument();
-    auto& documentElement = *document->documentElement();
-    auto& body = *document->body();
-
-    EXPECT_CONTAINS_SELF(makeRangeSelectingNodeContents(document));
-    EXPECT_CONTAINS_SELF(makeRangeSelectingNodeContents(documentElement));
-    EXPECT_CONTAINS_SELF(makeRangeSelectingNodeContents(body));
-
-    EXPECT_NESTED(makeRangeSelectingNodeContents(document), makeRangeSelectingNodeContents(documentElement));
-    EXPECT_NESTED(makeRangeSelectingNodeContents(document), makeRangeSelectingNodeContents(body));
-    EXPECT_NESTED(makeRangeSelectingNodeContents(documentElement), makeRangeSelectingNodeContents(body));
-
-    EXPECT_NESTED(makeRangeSelectingNodeContents(document), makeRangeSelectingNodeContents(documentElement));
-
-    EXPECT_NESTED(makeRangeSelectingNodeContents(documentElement), makeRangeSelectingNodeContents(body));
-
-    EXPECT_NESTED(makeRangeSelectingNodeContents(document), makeSimpleRange(makeBoundaryPoint(document, 0)));
-    EXPECT_NESTED(makeRangeSelectingNodeContents(document), makeSimpleRange(makeBoundaryPoint(document, 1)));
-    EXPECT_NOT_CONTAINED(makeRangeSelectingNodeContents(document), makeSimpleRange(makeBoundaryPoint(document, 2)));
-
-    EXPECT_NESTED(makeSimpleRange(makeBoundaryPoint(document, 0), makeBoundaryPoint(document, 2)), makeRangeSelectingNodeContents(document));
-    EXPECT_NOT_CONTAINED(makeRangeSelectingNodeContents(document), makeSimpleRange(makeBoundaryPoint(document, 1), makeBoundaryPoint(document, 2)));
-
-    EXPECT_NOT_CONTAINED(makeSimpleRange(makeBoundaryPoint(document, 0), makeBoundaryPoint(documentElement, 0)), makeRangeSelectingNodeContents(body));
-    EXPECT_NESTED(makeSimpleRange(makeBoundaryPoint(document, 0), makeBoundaryPoint(body, 0)), makeSimpleRange(makeBoundaryPoint(body, 0)));
-
-    auto a = HTMLDivElement::create(document);
-    EXPECT_NOT_CONTAINED(makeRangeSelectingNodeContents(document), makeRangeSelectingNodeContents(a));
-
-    body.appendChild(a);
-
-    auto b = HTMLDivElement::create(document);
-    body.appendChild(b);
-
-    auto c = HTMLDivElement::create(document);
-    b->appendChild(c);
-
-    auto d = HTMLDivElement::create(document);
-    a->appendChild(d);
-
-    auto e = HTMLDivElement::create(document);
-    auto f = HTMLDivElement::create(document);
-    e->appendChild(f);
-    EXPECT_NOT_CONTAINED(makeRangeSelectingNodeContents(body), makeRangeSelectingNodeContents(f));
-
-    auto g = HTMLTextAreaElement::create(document);
-    auto& h = *g->innerTextElement();
-    c->appendChild(g);
-    EXPECT_NESTED(makeRangeSelectingNodeContents(body), makeRangeSelectingNodeContents(h));
-
-    // FIXME: Add tests that cover shadow trees.
-}
-
 TEST(DocumentOrder, RangeIntersectsRange)
 {
     auto document = createDocument();
@@ -641,50 +511,6 @@ TEST(DocumentOrder, RangeIntersectsRange)
     auto& h = *g->innerTextElement();
     c->appendChild(g);
     EXPECT_INTERSECTS_BOTH_WAYS(makeRangeSelectingNodeContents(body), makeRangeSelectingNodeContents(h));
-
-    // FIXME: Add tests that cover shadow trees.
-}
-
-TEST(DocumentOrder, RangeContainsNode)
-{
-    auto document = createDocument();
-    auto& documentElement = *document->documentElement();
-    auto& body = *document->body();
-
-    EXPECT_TRUE(contains(makeRangeSelectingNodeContents(document), documentElement));
-    EXPECT_TRUE(contains(makeRangeSelectingNodeContents(document), body));
-    EXPECT_TRUE(contains(makeRangeSelectingNodeContents(documentElement), body));
-
-    EXPECT_FALSE(contains(makeRangeSelectingNodeContents(document), document));
-    EXPECT_FALSE(contains(makeSimpleRange(makeBoundaryPoint(document, 0), makeBoundaryPoint(document, 2)), document));
-    EXPECT_FALSE(contains(makeSimpleRange(makeBoundaryPoint(document, 0), makeBoundaryPoint(documentElement, 0)), body));
-    EXPECT_FALSE(contains(makeSimpleRange(makeBoundaryPoint(document, 0), makeBoundaryPoint(body, 0)), body));
-    EXPECT_FALSE(contains(makeSimpleRange(makeBoundaryPoint(document, 0), makeBoundaryPoint(body, 1)), body));
-    EXPECT_TRUE(contains(makeSimpleRange(makeBoundaryPoint(document, 0), makeBoundaryPoint(documentElement, 1)), body));
-
-    auto a = HTMLDivElement::create(document);
-    EXPECT_FALSE(contains(makeRangeSelectingNodeContents(document), a));
-
-    body.appendChild(a);
-
-    auto b = HTMLDivElement::create(document);
-    body.appendChild(b);
-
-    auto c = HTMLDivElement::create(document);
-    b->appendChild(c);
-
-    auto d = HTMLDivElement::create(document);
-    a->appendChild(d);
-
-    auto e = HTMLDivElement::create(document);
-    auto f = HTMLDivElement::create(document);
-    e->appendChild(f);
-    EXPECT_FALSE(contains(makeRangeSelectingNodeContents(body), f));
-
-    auto g = HTMLTextAreaElement::create(document);
-    auto& h = *g->innerTextElement();
-    c->appendChild(g);
-    EXPECT_TRUE(contains(makeRangeSelectingNodeContents(body), h));
 
     // FIXME: Add tests that cover shadow trees.
 }

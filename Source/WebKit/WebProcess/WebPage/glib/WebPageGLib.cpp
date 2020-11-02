@@ -109,7 +109,7 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
         auto surroundingStart = startOfEditableContent(selectionStart);
         auto surroundingRange = makeSimpleRange(surroundingStart, endOfEditableContent(selectionStart));
         auto compositionRange = frame.editor().compositionRange();
-        if (surroundingRange && compositionRange && contains(*surroundingRange, *compositionRange)) {
+        if (surroundingRange && compositionRange && contains<ComposedTree>(*surroundingRange, *compositionRange)) {
             auto beforeText = plainText({ surroundingRange->start, compositionRange->start });
             postLayoutData.surroundingContext = beforeText + plainText({ compositionRange->end, surroundingRange->end });
             postLayoutData.surroundingContextCursorPosition = beforeText.length();

@@ -1,0 +1,42 @@
+Test the contains function that checks if a range contains another range.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.rangeContainsRange(contentsRange(document), contentsRange(document), 'ComposedTree') is true
+PASS internals.rangeContainsRange(contentsRange(documentElement), contentsRange(documentElement), 'ComposedTree') is true
+PASS internals.rangeContainsRange(contentsRange(body), contentsRange(body), 'ComposedTree') is true
+PASS internals.rangeContainsRange(contentsRange(document), contentsRange(documentElement), 'ComposedTree') is true
+PASS internals.rangeContainsRange(contentsRange(documentElement), contentsRange(document), 'ComposedTree') is false
+PASS internals.rangeContainsRange(contentsRange(document), contentsRange(body), 'ComposedTree') is true
+PASS internals.rangeContainsRange(contentsRange(body), contentsRange(document), 'ComposedTree') is false
+PASS internals.rangeContainsRange(contentsRange(documentElement), contentsRange(body), 'ComposedTree') is true
+PASS internals.rangeContainsRange(contentsRange(body), contentsRange(documentElement), 'ComposedTree') is false
+PASS internals.rangeContainsRange(contentsRange(document), contentsRange(documentElement), 'ComposedTree') is true
+PASS internals.rangeContainsRange(contentsRange(documentElement), contentsRange(document), 'ComposedTree') is false
+PASS internals.rangeContainsRange(contentsRange(documentElement), contentsRange(body), 'ComposedTree') is true
+PASS internals.rangeContainsRange(contentsRange(body), contentsRange(documentElement), 'ComposedTree') is false
+PASS internals.rangeContainsRange(contentsRange(document), collapsedRange(document, 0), 'ComposedTree') is true
+PASS internals.rangeContainsRange(collapsedRange(document, 0), contentsRange(document), 'ComposedTree') is false
+PASS internals.rangeContainsRange(contentsRange(document), collapsedRange(document, 1), 'ComposedTree') is true
+PASS internals.rangeContainsRange(collapsedRange(document, 1), contentsRange(document), 'ComposedTree') is false
+PASS internals.rangeContainsRange(contentsRange(document), collapsedRange(document, 2), 'ComposedTree') is false
+PASS internals.rangeContainsRange(collapsedRange(document, 2), contentsRange(document), 'ComposedTree') is false
+PASS internals.rangeContainsRange(range(document, 0, document, 2), contentsRange(document), 'ComposedTree') is true
+PASS internals.rangeContainsRange(contentsRange(document), range(document, 0, document, 2), 'ComposedTree') is false
+PASS internals.rangeContainsRange(contentsRange(document), range(document, 1, document, 2), 'ComposedTree') is false
+PASS internals.rangeContainsRange(range(document, 1, document, 2), contentsRange(document), 'ComposedTree') is false
+PASS internals.rangeContainsRange(range(document, 0, documentElement, 0), contentsRange(body), 'ComposedTree') is false
+PASS internals.rangeContainsRange(contentsRange(body), range(document, 0, documentElement, 0), 'ComposedTree') is false
+PASS internals.rangeContainsRange(range(document, 0, body, 0), collapsedRange(body, 0), 'ComposedTree') is true
+PASS internals.rangeContainsRange(collapsedRange(body, 0), range(document, 0, body, 0), 'ComposedTree') is false
+PASS internals.rangeContainsRange(contentsRange(document), contentsRange(a), 'ComposedTree') is false
+PASS internals.rangeContainsRange(contentsRange(a), contentsRange(document), 'ComposedTree') is false
+PASS internals.rangeContainsRange(contentsRange(body), contentsRange(f), 'ComposedTree') is false
+PASS internals.rangeContainsRange(contentsRange(f), contentsRange(body), 'ComposedTree') is false
+PASS internals.rangeContainsRange(contentsRange(body), contentsRange(h), 'ComposedTree') is true
+PASS internals.rangeContainsRange(contentsRange(h), contentsRange(body), 'ComposedTree') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

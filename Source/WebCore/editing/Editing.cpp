@@ -1124,7 +1124,7 @@ static bool isVisiblyAdjacent(const Position& first, const Position& second)
 // Call this function to determine whether a node is visibly fit inside selectedRange
 bool isNodeVisiblyContainedWithin(Node& node, const SimpleRange& range)
 {
-    if (contains(range, node))
+    if (contains<ComposedTree>(range, node))
         return true;
 
     auto startPosition = makeDeprecatedLegacyPosition(range.start);

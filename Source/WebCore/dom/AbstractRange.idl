@@ -29,6 +29,7 @@
 
 [
     CustomToJSObject,
+    ExportMacro=WEBCORE_EXPORT,
     Exposed=Window,
 ] interface AbstractRange {
     readonly attribute Node startContainer;

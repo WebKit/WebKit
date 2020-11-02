@@ -781,7 +781,7 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
         auto& selection = sourceFrame->selection().selection();
         bool isSingleAttachmentSelection = selection.start() == Position(attachment.get(), Position::PositionIsBeforeAnchor) && selection.end() == Position(attachment.get(), Position::PositionIsAfterAnchor);
         auto selectedRange = selection.firstRange();
-        if (isSingleAttachmentSelection || !selectedRange || !contains(*selectedRange, *attachment)) {
+        if (isSingleAttachmentSelection || !selectedRange || !contains<ComposedTree>(*selectedRange, *attachment)) {
             state.type = DragSourceAction::Attachment;
             return attachment.get();
         }

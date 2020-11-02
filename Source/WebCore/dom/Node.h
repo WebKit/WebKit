@@ -759,8 +759,7 @@ enum TreeType { Tree, ShadowIncludingTree, ComposedTree };
 template<TreeType = Tree> ContainerNode* parent(const Node&);
 template<TreeType = Tree> PartialOrdering treeOrder(const Node&, const Node&);
 
-// FIXME: Dprecated because this silently defaults to ComposedTree. Use treeOrder instead.
-WEBCORE_EXPORT PartialOrdering documentOrder(const Node&, const Node&);
+WEBCORE_EXPORT PartialOrdering treeOrderForTesting(TreeType, const Node&, const Node&);
 
 #if ASSERT_ENABLED
 

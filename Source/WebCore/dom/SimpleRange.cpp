@@ -263,10 +263,20 @@ template<TreeType treeType> bool contains(const SimpleRange& outerRange, const S
 }
 
 template bool contains<Tree>(const SimpleRange&, const SimpleRange&);
+template bool contains<ComposedTree>(const SimpleRange&, const SimpleRange&);
 
-bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange)
+bool containsForTesting(TreeType type, const SimpleRange& outerRange, const SimpleRange& innerRange)
 {
-    return contains<ComposedTree>(outerRange, innerRange);
+    switch (type) {
+    case Tree:
+        return contains<Tree>(outerRange, innerRange);
+    case ShadowIncludingTree:
+        return contains<ShadowIncludingTree>(outerRange, innerRange);
+    case ComposedTree:
+        return contains<ComposedTree>(outerRange, innerRange);
+    }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 template<TreeType treeType> bool intersects(const SimpleRange& a, const SimpleRange& b)
@@ -308,10 +318,20 @@ template<TreeType treeType> bool contains(const SimpleRange& range, const Node& 
 }
 
 template bool contains<Tree>(const SimpleRange&, const Node&);
+template bool contains<ComposedTree>(const SimpleRange&, const Node&);
 
-bool contains(const SimpleRange& range, const Node& node)
+bool containsForTesting(TreeType type, const SimpleRange& range, const Node& node)
 {
-    return contains<ComposedTree>(range, node);
+    switch (type) {
+    case Tree:
+        return contains<Tree>(range, node);
+    case ShadowIncludingTree:
+        return contains<ShadowIncludingTree>(range, node);
+    case ComposedTree:
+        return contains<ComposedTree>(range, node);
+    }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 template<TreeType treeType> bool contains(const Node& outer, const Node& inner);

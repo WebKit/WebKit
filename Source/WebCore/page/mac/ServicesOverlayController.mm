@@ -630,7 +630,7 @@ ServicesOverlayController::Highlight* ServicesOverlayController::findTelephoneNu
         return nullptr;
 
     for (auto& highlight : m_potentialHighlights) {
-        if (highlight->type() == Highlight::TelephoneNumberType && contains(highlight->range(), *selectionRange))
+        if (highlight->type() == Highlight::TelephoneNumberType && contains<ComposedTree>(highlight->range(), *selectionRange))
             return highlight.get();
     }
 

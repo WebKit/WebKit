@@ -68,6 +68,9 @@ template<TreeType = Tree> bool contains(const SimpleRange&, const Optional<Bound
 template<TreeType> bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange);
 template<TreeType> bool contains(const SimpleRange&, const Node&);
 
+WEBCORE_EXPORT bool containsForTesting(TreeType, const SimpleRange& outerRange, const SimpleRange& innerRange);
+WEBCORE_EXPORT bool containsForTesting(TreeType, const SimpleRange&, const Node&);
+
 template<TreeType> bool intersects(const SimpleRange&, const SimpleRange&);
 template<TreeType> bool intersects(const SimpleRange&, const Node&);
 
@@ -84,14 +87,12 @@ OffsetRange characterDataOffsetRange(const SimpleRange&, const Node&);
 // FIXME: Start of functions that are deprecated since they silently default to ComposedTree.
 
 WEBCORE_EXPORT RefPtr<Node> commonInclusiveAncestor(const SimpleRange&);
-WEBCORE_EXPORT bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange);
 template<typename TreeType> bool intersects(const SimpleRange&, const SimpleRange&);
 WEBCORE_EXPORT bool intersects(const SimpleRange&, const SimpleRange&);
 WEBCORE_EXPORT bool intersects(const SimpleRange&, const Node&);
 WEBCORE_EXPORT SimpleRange unionRange(const SimpleRange&, const SimpleRange&);
 WEBCORE_EXPORT Optional<SimpleRange> intersection(const Optional<SimpleRange>&, const Optional<SimpleRange>&);
 
-WEBCORE_EXPORT bool contains(const SimpleRange&, const Node&);
 template<typename TreeType> bool intersects(const SimpleRange&, const Node&);
 WEBCORE_EXPORT bool intersects(const SimpleRange&, const Node&);
 

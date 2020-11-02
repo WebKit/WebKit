@@ -1,3 +1,13 @@
+2020-11-01  Darin Adler  <darin@apple.com>
+
+        Start removing functions that implicitly use composed tree
+        https://bugs.webkit.org/show_bug.cgi?id=218424
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebProcess/WebPage/glib/WebPageGLib.cpp:
+        (WebKit::WebPage::getPlatformEditorState const): Use contains<ComposedTree>.
+
 2020-11-02  David Kilzer  <ddkilzer@apple.com>
 
         Fix link error with WebKit.framework

@@ -6001,5 +6001,44 @@ ExceptionOr<void> Internals::sendMediaSessionAction(MediaSession& session, const
 }
 #endif
 
+constexpr ASCIILiteral string(PartialOrdering ordering)
+{
+    if (is_lt(ordering))
+        return "less"_s;
+    if (is_gt(ordering))
+        return "greater"_s;
+    if (is_eq(ordering))
+        return "equivalent"_s;
+    return "unordered"_s;
+}
+
+constexpr TreeType convertType(Internals::TreeType type)
+{
+    switch (type) {
+    case Internals::Tree:
+        return Tree;
+    case Internals::ShadowIncludingTree:
+        return ShadowIncludingTree;
+    case Internals::ComposedTree:
+        return ComposedTree;
+    }
+    ASSERT_NOT_REACHED();
+    return Tree;
+}
+
+String Internals::treeOrder(Node& a, Node& b, TreeType type)
+{
+    return string(treeOrderForTesting(convertType(type), a, b));
+}
+
+bool Internals::rangeContainsNode(const AbstractRange& range, Node& node, TreeType type)
+{
+    return containsForTesting(convertType(type), makeSimpleRange(range), node);
+}
+
+bool Internals::rangeContainsRange(const AbstractRange& outerRange, const AbstractRange& innerRange, TreeType type)
+{
+    return containsForTesting(convertType(type), makeSimpleRange(outerRange), makeSimpleRange(innerRange));
+}
 
 } // namespace WebCore

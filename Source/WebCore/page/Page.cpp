@@ -736,7 +736,7 @@ auto Page::findTextMatches(const String& target, FindOptions options, unsigned l
         if (options.contains(Backwards)) {
             for (size_t i = result.ranges.size(); i > 0; --i) {
                 // FIXME: Seems like this should be is_gteq to correctly handle the same string found twice in a row.
-                if (is_gt(documentOrder(selectedRange.start, result.ranges[i - 1].end))) {
+                if (is_gt(treeOrder<ComposedTree>(selectedRange.start, result.ranges[i - 1].end))) {
                     result.indexForSelection = i - 1;
                     break;
                 }
@@ -744,7 +744,7 @@ auto Page::findTextMatches(const String& target, FindOptions options, unsigned l
         } else {
             for (size_t i = 0, size = result.ranges.size(); i < size; ++i) {
                 // FIXME: Seems like this should be is_lteq to correctly handle the same string found twice in a row.
-                if (is_lt(documentOrder(selectedRange.end, result.ranges[i].start))) {
+                if (is_lt(treeOrder<ComposedTree>(selectedRange.end, result.ranges[i].start))) {
                     result.indexForSelection = i;
                     break;
                 }
@@ -861,8 +861,8 @@ static void replaceRanges(Page& page, const Vector<FindReplacementRange>& ranges
             return false;
 
         if (firstFrame == secondFrame) {
-            // Use documentOrder instead of Node::compareDocumentPosition because some editing roots are inside shadow roots.
-            return is_gt(documentOrder(*firstNode, *secondNode));
+            // Must not use Node::compareDocumentPosition here because some editing roots are inside shadow roots.
+            return is_gt(treeOrder<ComposedTree>(*firstNode, *secondNode));
         }
 
         return frameToTraversalIndexMap.get(firstFrame) > frameToTraversalIndexMap.get(secondFrame);
