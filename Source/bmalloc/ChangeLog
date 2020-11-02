@@ -1,3 +1,9 @@
+2020-11-02  David Kilzer  <ddkilzer@apple.com>
+
+        Sort Xcode project file
+
+        * bmalloc.xcodeproj/project.pbxproj:
+
 2020-10-13  Keith Rollin  <krollin@apple.com>
 
         Remove leftover MACOSX_DEPLOYMENT_TARGET_macosx support

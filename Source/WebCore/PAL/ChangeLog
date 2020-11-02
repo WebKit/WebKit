@@ -1,3 +1,9 @@
+2020-11-02  David Kilzer  <ddkilzer@apple.com>
+
+        Sort Xcode project file
+
+        * PAL.xcodeproj/project.pbxproj:
+
 2020-11-01  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Provide build workaround while isSystemVoice is not in all SDKs

@@ -775,6 +775,7 @@
 				077E87B2226A460300A2AFF0 /* AVFoundationSoftLink.h in Headers */,
 				0C7785891F45130F00F4EBB6 /* AVFoundationSPI.h in Headers */,
 				0C2DA13E1F3BEB4900DBC317 /* AVKitSPI.h in Headers */,
+				29CDEBA62548D57F007C07B7 /* AXSpeechManagerSPI.h in Headers */,
 				CDF91113220E4EEC001EA39E /* CelestialSPI.h in Headers */,
 				0C2DA06D1F33CA8400DBC317 /* CFLocaleSPI.h in Headers */,
 				0C2DA06E1F33CA8400DBC317 /* CFNetworkConnectionCacheSPI.h in Headers */,
@@ -901,7 +902,6 @@
 				0C2DA1471F3BEB4900DBC317 /* URLFormattingSPI.h in Headers */,
 				07611DB6243FA5BF00D80704 /* UsageTrackingSoftLink.h in Headers */,
 				0C2DA1591F3BEB4900DBC317 /* WebFilterEvaluatorSPI.h in Headers */,
-				29CDEBA62548D57F007C07B7 /* AXSpeechManagerSPI.h in Headers */,
 				A10826F91F576292004772AC /* WebPanel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
