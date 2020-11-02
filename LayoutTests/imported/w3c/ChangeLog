@@ -1,3 +1,14 @@
+2020-11-02  Diego Pino Garcia  <dpino@igalia.com>
+
+        Update baselines of tests failing after WPT resync
+
+        Unreviewed test gardening.
+
+        These tests are failing in several platforms (iOS, Mac, GTK, WPE, ...) with the same diff. Thus, the general expectations file is updated.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/parsing/contain-intrinsic-size-invalid-expected.txt: Needs update after r269187.
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing-expected.txt: Needs update after r269235.
+
 2020-11-01  Diego Pino Garcia  <dpino@igalia.com>
 
         Emit baselines for WPT css-sizing/aspect-ratio/quirks-mode* tests after resync in r269187
