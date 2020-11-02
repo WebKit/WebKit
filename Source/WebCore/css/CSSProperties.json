@@ -6557,7 +6557,6 @@
         },
         "scroll-margin": {
             "codegen-properties": {
-                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
                 "longhands": [
                     "scroll-margin-top",
                     "scroll-margin-right",
@@ -6575,7 +6574,6 @@
         },
         "scroll-margin-bottom": {
             "codegen-properties": {
-                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
                 "initial": "initialScrollMargin",
                 "converter": "Length",
                 "aliases": [
@@ -6589,7 +6587,6 @@
         },
         "scroll-margin-left": {
             "codegen-properties": {
-                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
                 "initial": "initialScrollMargin",
                 "converter": "Length",
                 "aliases": [
@@ -6603,7 +6600,6 @@
         },
         "scroll-margin-right": {
             "codegen-properties": {
-                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
                 "initial": "initialScrollMargin",
                 "converter": "Length",
                 "aliases": [
@@ -6617,7 +6613,6 @@
         },
         "scroll-margin-top": {
             "codegen-properties": {
-                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
                 "initial": "initialScrollMargin",
                 "converter": "Length",
                 "aliases": [
