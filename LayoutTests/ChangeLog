@@ -1,3 +1,13 @@
+2020-11-02  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Update baselines of several tests failing.
+
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/html5-tree/math-global-event-handlers.tentative-expected.txt: Needs update after r269224.
+        * platform/gtk/editing/inserting/paragraph-separator-in-table-1-expected.txt: Needs update after r269214.
+        * platform/gtk/editing/inserting/paragraph-separator-in-table-1-expected.png: Needs update after r269214.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-before-br-001-expected.txt: Needs update after r269238.
+        * platform/gtk/tables/mozilla/bugs/bug28928-expected.txt: Needs update after r269238.
+
 2020-11-02  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Do not [ ImageOnlyFailure ] all the tests in fast/layoutformattingcontext
