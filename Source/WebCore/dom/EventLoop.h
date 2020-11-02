@@ -133,7 +133,7 @@ public:
     // until all groups in this event loop are ready to stop.
     void markAsReadyToStop()
     {
-        if (isReadyToStop())
+        if (isReadyToStop() || isStoppedPermanently())
             return;
 
         m_state = State::ReadyToStop;

@@ -65,6 +65,10 @@ public:
 
     void prepareForDestruction() final
     {
+        if (m_hasPreparedForDestruction)
+            return;
+        m_hasPreparedForDestruction = true;
+
         {
             auto locker = holdLock(paintDefinitionLock());
             paintDefinitionMap().clear();
@@ -87,6 +91,7 @@ private:
 
     HashMap<String, std::unique_ptr<PaintDefinition>> m_paintDefinitionMap;
     Lock m_paintDefinitionLock;
+    bool m_hasPreparedForDestruction { false };
 };
 
 } // namespace WebCore
