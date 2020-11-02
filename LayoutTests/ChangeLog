@@ -1,3 +1,12 @@
+2020-11-02  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, deflake  imported/w3c/web-platform-tests/payment-request/show-method-optional-promise-rejects.https.html
+
+        Dump its console logging to stderr to address flakiness.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2020-11-02  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] RenderText::absoluteQuadsForRange should use iterator
