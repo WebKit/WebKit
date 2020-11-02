@@ -45,6 +45,9 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/time_utils.h"
 
+extern const CFStringRef kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms;
+#define VPCodecConfigurationContentsSize 12
+
 // Struct that we pass to the decoder per frame to decode. We receive it again
 // in the decoder callback.
 struct RTCFrameDecodeParams {
@@ -147,9 +150,19 @@ void vp9DecompressionOutputCallback(void *decoderRef,
     return WEBRTC_VIDEO_CODEC_ERROR;
   }
 
+  uint8_t record[VPCodecConfigurationContentsSize];
+  // FIXME: Initialize properly the vpcC decoding configuration.
+  memset((void*)record, 0, VPCodecConfigurationContentsSize);
+  auto configurationDict = @{
+    @"vpcC": (__bridge NSData *)CFDataCreate(kCFAllocatorDefault, record, VPCodecConfigurationContentsSize)
+  };
+  auto extensions = @{
+    (__bridge NSString *)kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms: configurationDict
+  };
+
   CMVideoFormatDescriptionRef formatDescription = nullptr;
   // Use kCMVideoCodecType_VP9 once added to CMFormatDescription.h
-  if (noErr != CMVideoFormatDescriptionCreate(kCFAllocatorDefault, 'vp09', _width, _height, nullptr, &formatDescription))
+  if (noErr != CMVideoFormatDescriptionCreate(kCFAllocatorDefault, 'vp09', _width, _height, (__bridge CFDictionaryRef)extensions, &formatDescription))
     return WEBRTC_VIDEO_CODEC_ERROR;
 
   rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> inputFormat = rtc::ScopedCF(formatDescription);
@@ -167,10 +180,7 @@ void vp9DecompressionOutputCallback(void *decoderRef,
   if (!_videoFormat) {
     // We received a frame but we don't have format information so we can't
     // decode it.
-    // This can happen after backgrounding. We need to wait for the next
-    // sps/pps before we can resume so we request a keyframe by returning an
-    // error.
-    RTC_LOG(LS_WARNING) << "Missing video format. Frame with sps/pps required.";
+    RTC_LOG(LS_WARNING) << "Missing video format.";
     return WEBRTC_VIDEO_CODEC_ERROR;
   }
   auto sampleBuffer = rtc::ScopedCF(VP9BufferToCMSampleBuffer(data, size, _videoFormat));
@@ -224,7 +234,6 @@ void vp9DecompressionOutputCallback(void *decoderRef,
 - (int)resetDecompressionSession {
   [self destroyDecompressionSession];
 
-  // Need to wait for the first SPS to initialize decoder.
   if (!_videoFormat) {
     return WEBRTC_VIDEO_CODEC_OK;
   }
@@ -261,18 +270,11 @@ void vp9DecompressionOutputCallback(void *decoderRef,
     pixelFormat = nullptr;
   }
 
-  // rdar://problem/70701816. Disable hardware decoding until working properly.
-  auto videoDecoderSpecification = @{
-#if !defined(WEBRTC_IOS)
-    (__bridge NSString *)kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder: @NO
-#endif
-  };
-
   VTDecompressionOutputCallbackRecord record = {
       vp9DecompressionOutputCallback, (__bridge void *)self,
   };
   OSStatus status = VTDecompressionSessionCreate(
-      nullptr, _videoFormat, (__bridge CFDictionaryRef)videoDecoderSpecification, attributes, &record, &_decompressionSession);
+      nullptr, _videoFormat, nullptr, attributes, &record, &_decompressionSession);
   CFRelease(attributes);
   if (status != noErr) {
     RTC_LOG(LS_ERROR) << "Failed to create decompression session: " << status;

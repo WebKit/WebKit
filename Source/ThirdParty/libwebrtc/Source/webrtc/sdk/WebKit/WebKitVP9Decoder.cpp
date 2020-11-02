@@ -57,17 +57,21 @@ public:
     void setCurrentFrame(VTVideoDecoderFrame currentFrame) { m_currentFrame = currentFrame; }
     OSStatus decoderFailed(int error);
 
-    void createPixelBufferPoolForFormatDescription(CMFormatDescriptionRef);
+    void initializeFromFormatDescription(CMFormatDescriptionRef);
 
 private:
     int32_t Decoded(VideoFrame&) final;
     int32_t Decoded(VideoFrame&, int64_t decode_time_ms) final;
     void Decoded(VideoFrame&, absl::optional<int32_t> decode_time_ms, absl::optional<uint8_t> qp) final;
 
+    CVPixelBufferPoolRef pixelBufferPool(size_t pixelBufferWidth, size_t pixelBufferHeight, bool is10bit);
+
     VTVideoDecoderSession m_session { nullptr };
     VTVideoDecoderFrame m_currentFrame { nullptr };
     size_t m_pixelBufferWidth { 0 };
     size_t m_pixelBufferHeight { 0 };
+    bool m_is10bit { false };
+    bool m_isFullRange { false };
     CVPixelBufferPoolRef m_pixelBufferPool { nullptr };
 };
 
@@ -172,7 +176,7 @@ OSStatus startVP9DecoderSession(VTVideoDecoderRef instance, VTVideoDecoderSessio
 
     decoder->m_instance = std::make_unique<VP9DecoderImpl>();
     decoder->m_receiver = std::make_unique<WebKitVP9DecoderReceiver>(session);
-    decoder->m_receiver->createPixelBufferPoolForFormatDescription(formatDescription);
+    decoder->m_receiver->initializeFromFormatDescription(formatDescription);
 
     decoder->m_instance->RegisterDecodeCompleteCallback(decoder->m_receiver.get());
 
@@ -257,14 +261,14 @@ WebKitVP9DecoderReceiver::~WebKitVP9DecoderReceiver()
         CFRelease(m_pixelBufferPool);
 }
 
-void WebKitVP9DecoderReceiver::createPixelBufferPoolForFormatDescription(CMFormatDescriptionRef formatDescription)
+void WebKitVP9DecoderReceiver::initializeFromFormatDescription(CMFormatDescriptionRef formatDescription)
 {
     // CoreAnimation doesn't support full-planar YUV, so we must convert the buffers output
     // by libvpx to bi-planar YUV. Create pixel buffer attributes and give those to the
     // decoder session for use in creating its own internal CVPixelBufferPool, which we
     // will use post-decode.
-    bool isFullRange = false;
-    bool is10Bit = false;
+    m_isFullRange = false;
+    m_is10bit = false;
 
     do {
         auto extensions = CMFormatDescriptionGetExtensions(formatDescription);
@@ -287,17 +291,23 @@ void WebKitVP9DecoderReceiver::createPixelBufferPoolForFormatDescription(CMForma
         auto bitDepthChromaAndRange = *(configurationRecordData + 6);
 
         if ((bitDepthChromaAndRange >> 4) == 10)
-            is10Bit = true;
+            m_is10bit = true;
 
         if (bitDepthChromaAndRange & 0x1)
-            isFullRange = true;
+            m_isFullRange = true;
     } while (false);
+}
+
+CVPixelBufferPoolRef WebKitVP9DecoderReceiver::pixelBufferPool(size_t pixelBufferWidth, size_t pixelBufferHeight, bool is10bit)
+{
+    if (m_pixelBufferPool && m_pixelBufferWidth == pixelBufferWidth && m_pixelBufferHeight == pixelBufferHeight && m_is10bit == is10bit)
+        return m_pixelBufferPool;
 
     OSType pixelFormat;
-    if (is10Bit)
-        pixelFormat = isFullRange ? kCVPixelFormatType_420YpCbCr10BiPlanarFullRange : kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
+    if (is10bit)
+        pixelFormat = m_isFullRange ? kCVPixelFormatType_420YpCbCr10BiPlanarFullRange : kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
     else
-        pixelFormat = isFullRange ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
+        pixelFormat = m_isFullRange ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
 
     auto createPixelFormatAttributes = [] (OSType pixelFormat, int32_t borderPixels) {
         auto createNumber = [] (int32_t format) -> CFNumberRef {
@@ -342,6 +352,12 @@ void WebKitVP9DecoderReceiver::createPixelBufferPoolForFormatDescription(CMForma
     m_pixelBufferPool = VTDecoderSessionGetPixelBufferPool(m_session);
     if (m_pixelBufferPool)
         CFRetain(m_pixelBufferPool);
+
+    m_pixelBufferWidth = pixelBufferWidth;
+    m_pixelBufferHeight = pixelBufferHeight;
+    m_is10bit = is10bit;
+
+    return m_pixelBufferPool;
 }
 
 OSStatus WebKitVP9DecoderReceiver::decoderFailed(int error)
@@ -362,7 +378,11 @@ OSStatus WebKitVP9DecoderReceiver::decoderFailed(int error)
 
 int32_t WebKitVP9DecoderReceiver::Decoded(VideoFrame& frame)
 {
-    auto pixelBuffer = pixelBufferFromFrame(frame, [this](size_t width, size_t height, BufferType) -> CVPixelBufferRef {
+    auto pixelBuffer = pixelBufferFromFrame(frame, [this](size_t width, size_t height, BufferType type) -> CVPixelBufferRef {
+        auto pixelBufferPool = this->pixelBufferPool(width, height, type == BufferType::I010);
+        if (!pixelBufferPool)
+            return nullptr;
+
         CVPixelBufferRef pixelBuffer = nullptr;
         if (CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, m_pixelBufferPool, &pixelBuffer) == kCVReturnSuccess)
             return pixelBuffer;

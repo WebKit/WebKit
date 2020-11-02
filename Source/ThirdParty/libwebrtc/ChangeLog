@@ -1,3 +1,26 @@
+2020-11-02  Youenn Fablet  <youenn@apple.com>
+
+        Set vpcC box for hardware WebRTC VP9 decoder
+        https://bugs.webkit.org/show_bug.cgi?id=218337
+
+        Reviewed by Eric Carlson.
+
+        Hardware VP9 decoder code path requires vpcC box information.
+        Provide it as part of the video format.
+        Initialize the vpcC box with a zeroed buffer.
+
+        Make sure WebKitVP9Decoder is able to handle dynamically 10 bits or 8 bits frames.
+
+        * Source/webrtc/sdk/WebKit/WebKitVP9Decoder.cpp:
+        (webrtc::createWebKitVP9Decoder):
+        (webrtc::startVP9DecoderSession):
+        (webrtc::WebKitVP9DecoderReceiver::initializeFromFormatDescription):
+        (webrtc::WebKitVP9DecoderReceiver::pixelBufferPool):
+        (webrtc::WebKitVP9DecoderReceiver::Decoded):
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderVTBVP9.mm:
+        (-[RTCVideoDecoderVTBVP9 decodeData:size:timeStamp:]):
+        (-[RTCVideoDecoderVTBVP9 resetDecompressionSession]):
+
 2020-10-29  Youenn Fablet  <youenn@apple.com>
 
         Add some logging to SequenceCheckerImpl::IsCurrent
