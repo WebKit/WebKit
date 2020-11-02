@@ -1,5 +1,23 @@
 2020-11-02  Angelos Oikonomopoulos  <angelos@igalia.com>
 
+        Don't fail the build on S3 upload failure
+        https://bugs.webkit.org/show_bug.cgi?id=218438
+
+        Reviewed by Aakash Jain.
+
+        This allows buildbots to keep going even when S3 is down. Using
+        S3 is not strictly necessary, as the built product can also be
+        downloaded from the buildbot server.
+
+        Patch-by: aakash_jain@apple.com
+
+        * CISupport/ews-build/steps.py:
+        (CompileWebKit.evaluateCommand):
+        (TransferToS3):
+        (TransferToS3.finished):
+
+2020-11-02  Angelos Oikonomopoulos  <angelos@igalia.com>
+
         Only upload to S3 when running on ews-build.webkit.org
         https://bugs.webkit.org/show_bug.cgi?id=218439
 

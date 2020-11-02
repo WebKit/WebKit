@@ -1400,7 +1400,10 @@ class CompileWebKit(shell.Compile):
         else:
             triggers = self.getProperty('triggers', None)
             if triggers or not self.skipUpload:
-                self.build.addStepsAfterCurrentStep([ArchiveBuiltProduct(), UploadBuiltProduct(), TransferToS3()])
+                steps_to_add = [ArchiveBuiltProduct(), UploadBuiltProduct(), TransferToS3()]
+                if triggers:
+                    steps_to_add.append(Trigger(schedulerNames=triggers))
+                self.build.addStepsAfterCurrentStep(steps_to_add)
 
         return super(CompileWebKit, self).evaluateCommand(cmd)
 
@@ -2381,8 +2384,8 @@ class TransferToS3(master.MasterShellCommand):
     identifier = WithProperties('%(fullPlatform)s-%(architecture)s-%(configuration)s')
     patch_id = WithProperties('%(patch_id)s')
     command = ['python', '../Shared/transfer-archive-to-s3', '--patch_id', patch_id, '--identifier', identifier, '--archive', archive]
-    haltOnFailure = True
-    flunkOnFailure = True
+    haltOnFailure = False
+    flunkOnFailure = False
 
     def __init__(self, **kwargs):
         kwargs['command'] = self.command
@@ -2399,12 +2402,6 @@ class TransferToS3(master.MasterShellCommand):
         # Sample log: S3 URL: https://s3-us-west-2.amazonaws.com/ews-archives.webkit.org/ios-simulator-12-x86_64-release/123456.zip
         if match:
             self.addURL('uploaded archive', match.group('url'))
-
-        if results == SUCCESS:
-            triggers = self.getProperty('triggers', None)
-            if triggers:
-                self.build.addStepsAfterCurrentStep([Trigger(schedulerNames=triggers)])
-
         return super(TransferToS3, self).finished(results)
 
     def doStepIf(self, step):
