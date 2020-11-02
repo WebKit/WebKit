@@ -73,20 +73,6 @@ UserMediaRequest::~UserMediaRequest()
         m_allowCompletionHandler();
 }
 
-SecurityOrigin* UserMediaRequest::userMediaDocumentOrigin() const
-{
-    if (!m_scriptExecutionContext)
-        return nullptr;
-    return m_scriptExecutionContext->securityOrigin();
-}
-
-SecurityOrigin* UserMediaRequest::topLevelDocumentOrigin() const
-{
-    if (!m_scriptExecutionContext)
-        return nullptr;
-    return &m_scriptExecutionContext->topOrigin();
-}
-
 static bool hasInvalidGetDisplayMediaConstraint(const MediaConstraints& constraints)
 {
     // https://w3c.github.io/mediacapture-screen-share/#navigator-additions

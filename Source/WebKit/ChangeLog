@@ -1,3 +1,47 @@
+2020-11-02  Youenn Fablet  <youenn@apple.com>
+
+        Stop sending origins from WebProcess to UIProcess for getUserMedia requests
+        https://bugs.webkit.org/show_bug.cgi?id=218192
+
+        Reviewed by Eric Carlson.
+
+        Pass directly a UserMediaRequestIdentifier through IPC.
+        Stop passing origins from IPC and instead compute them from UIProcess side.
+
+        * Scripts/webkit/messages.py:
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::denyRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::grantRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::finishGrantingRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+        (WebKit::UserMediaPermissionRequestManagerProxy::processUserMediaPermissionRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::processUserMediaPermissionInvalidRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::processUserMediaPermissionValidRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo):
+        (WebKit::UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy):
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+        (WebKit::UserMediaPermissionRequestProxy::create):
+        (WebKit::UserMediaPermissionRequestProxy::userMediaID const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestUserMediaPermissionForFrame):
+        (WebKit::WebPageProxy::enumerateMediaDevicesForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::sendUserMediaRequest):
+        (WebKit::UserMediaPermissionRequestManager::userMediaAccessWasGranted):
+        (WebKit::UserMediaPermissionRequestManager::userMediaAccessWasDenied):
+        (WebKit::UserMediaPermissionRequestManager::enumerateMediaDevices):
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::userMediaAccessWasGranted):
+        (WebKit::WebPage::userMediaAccessWasDenied):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-11-01  Sam Weinig  <weinig@apple.com>
 
         Remove remaining alternative preference setting mechanisms from LayoutTests

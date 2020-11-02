@@ -23,6 +23,7 @@
 #include "UserMediaPermissionRequestProxy.h"
 #include <WebCore/MediaProducer.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/UserMediaRequestIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
@@ -63,7 +64,7 @@ public:
 
     void invalidatePendingRequests();
 
-    void requestUserMediaPermissionForFrame(uint64_t userMediaID, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&&  userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, WebCore::MediaStreamRequest&&);
+    void requestUserMediaPermissionForFrame(WebCore::UserMediaRequestIdentifier, WebCore::FrameIdentifier, WebCore::MediaStreamRequest&&);
 
     void resetAccess(Optional<WebCore::FrameIdentifier> mainFrameID = { });
     void viewIsBecomingVisible();
@@ -71,7 +72,7 @@ public:
     void grantRequest(UserMediaPermissionRequestProxy&);
     void denyRequest(UserMediaPermissionRequestProxy&, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason, const String& invalidConstraint = { });
 
-    void enumerateMediaDevicesForFrame(WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(const Vector<WebCore::CaptureDevice>&, const String&)>&&);
+    void enumerateMediaDevicesForFrame(WebCore::FrameIdentifier, CompletionHandler<void(const Vector<WebCore::CaptureDevice>&, const String&)>&&);
 
     void stopCapture();
     void scheduleNextRejection();
