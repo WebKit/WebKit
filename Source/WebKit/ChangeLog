@@ -1,3 +1,18 @@
+2020-11-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Remove unneeded shmem access to ColorSync
+        https://bugs.webkit.org/show_bug.cgi?id=218395
+        <rdar://problem/70354916>
+
+        Reviewed by Per Arne Vollan.
+
+        ColorSync on macOS has not used shared memory since Mac OS X 10.7, and our sandbox
+        should not have this access. Removing this unused shared memory capability.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-11-01  Darin Adler  <darin@apple.com>
 
         Start removing functions that implicitly use composed tree
