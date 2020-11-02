@@ -262,9 +262,8 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
             if (timeStamp >= endFrame)
                 m_endFrameWhenNotEnoughData = endFrame;
         } else {
-            // We are too close from endFrame, let's back up a little bit.
-            uint64_t framesAvailable = endFrame - timeStamp;
-            m_outputSampleOffset -= sampleCount - framesAvailable;
+            // We are too close from endFrame, let's wait for more data to be pushed.
+            m_outputSampleOffset -= sampleCount;
             dispatch_async(dispatch_get_main_queue(), [logIdentifier = LOGIDENTIFIER, outputSampleOffset = m_outputSampleOffset, this, protectedThis = makeRefPtr(*this)] {
                 ALWAYS_LOG(logIdentifier, "updating offset to ", outputSampleOffset);
             });
