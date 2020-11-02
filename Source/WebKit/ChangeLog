@@ -1,3 +1,17 @@
+2020-11-02  David Kilzer  <ddkilzer@apple.com>
+
+        Fix link error with WebKit.framework
+
+            Undefined symbols for architecture x86_64:
+              "JSC::GenericTypedArrayView<JSC::Uint8Adaptor>::create(WTF::RefPtr<JSC::ArrayBuffer, WTF::RawPtrTraits<JSC::ArrayBuffer>, WTF::DefaultRefDerefTraits<JSC::ArrayBuffer> >&&, unsigned int, unsigned int)", referenced from:
+                  WebKit::convertToUint8Array(IPC::SharedBufferCopy&&) in UnifiedSource7.o
+            ld: symbol(s) not found for architecture x86_64
+
+        * GPUProcess/media/RemoteLegacyCDMSessionProxy.cpp:
+        - Include <JavaScriptCore/GenericTypedArrayViewInlines.h> to fix
+          linker error with some builds of WebKit.
+        - See also WebProcess/GPU/media/RemoteLegacyCDMSession.cpp.
+
 2020-11-02  Youenn Fablet  <youenn@apple.com>
 
         Stop sending origins from WebProcess to UIProcess for getUserMedia requests
