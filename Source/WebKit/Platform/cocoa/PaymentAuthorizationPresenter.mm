@@ -38,6 +38,8 @@
 
 #import <pal/cocoa/PassKitSoftLink.h>
 
+// FIXME: Stop soft linking Contacts once the dependency cycle is removed on macOS (<rdar://problem/70887934>),
+// or when Contacts can be upward linked (<rdar://problem/36135137>).
 SOFT_LINK_FRAMEWORK(Contacts);
 SOFT_LINK_CONSTANT(Contacts, CNPostalAddressCityKey, NSString *);
 SOFT_LINK_CONSTANT(Contacts, CNPostalAddressCountryKey, NSString *);

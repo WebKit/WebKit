@@ -1,3 +1,29 @@
+2020-11-02  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Link Contacts.framework during build
+        https://bugs.webkit.org/show_bug.cgi?id=218289
+        <rdar://problem/70770410>
+
+        Reviewed by Andy Estes.
+
+        Contacts.framework is currrently soft linked in PaymentAuthorizationPresenter.
+        Soft linking is generally discouraged, since it requires running the linker
+        at runtime, leading to an unwanted performance cost. By normally linking
+        the framework, the linkage is declared at build time, which enables running
+        the linker at build/update/install time and avoiding the runtime cost.
+
+        Unfortunately, we still have to soft link the framework on macOS, to avoid
+        introducing a dependency cycle. Upward linking is not an option, since the
+        Contacts framework does not implement InstallAPI.
+
+        The SOFT_LINK_FRAMEWORK macro has been kept in PaymentAuthorizationPresenter
+        to avoid introducing additional #ifs. This should be fine to keep on iOS,
+        since the framework will already loaded in the address space, and the call
+        to dlopen() should be much less expensive.
+
+        * Configurations/WebKit.xcconfig:
+        * Platform/cocoa/PaymentAuthorizationPresenter.mm:
+
 2020-11-02  Chris Dumez  <cdumez@apple.com>
 
         Crash under ProcessThrottler::setAssertionType()
