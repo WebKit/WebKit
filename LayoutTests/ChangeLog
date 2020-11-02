@@ -1,3 +1,13 @@
+2020-11-02  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed test gardening. Update test expectations.
+
+        Also remove stale WPE baseline for test imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-before-br-001.html
+
+        * platform/glib/imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-before-br-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-before-br-001-expected.txt.
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-before-br-001-expected.txt: Removed.
+
 2020-11-02  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, deflake  imported/w3c/web-platform-tests/payment-request/show-method-optional-promise-rejects.https.html

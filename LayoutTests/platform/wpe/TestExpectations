@@ -26,6 +26,11 @@ webkit.org/b/215421 fast/encoding/denormalised-voiced-japanese-chars.html [ Imag
 
 # ContentExtensions
 webkit.org/b/207723 http/tests/contentextensions/hide-on-ping-with-ping-that-redirects.html [ Pass Failure ]
+webkit.org/b/217267 http/tests/contentextensions/service-worker.https.html [ Failure Pass ]
+
+# CSS-masking and clip-path.
+webkit.org/b/217815 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-transform-mutated-002.html [ ImageOnlyFailure ]
+webkit.org/b/217815 imported/w3c/web-platform-tests/css/css-masking/clip-path/reference-mutated.html [ ImageOnlyFailure ]
 
 # CSS3
 webkit.org/b/213829 css3/calc/background-position-parsing.html [ ImageOnlyFailure ]
@@ -897,7 +902,7 @@ imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-001.
 imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-002.html [ Pass ]
 
 # WebXR
-webkit.org/b/212897 imported/w3c/web-platform-tests/webxr/idlharness.https.window.html [ Pass ]
+webkit.org/b/212897 imported/w3c/web-platform-tests/webxr/idlharness.https.window.html [ Failure ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/webGLCanvasContext_makecompatible_contextlost.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_isSessionSupported_inline.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_isSessionSupported_immersive.https.html [ Pass ]
@@ -1612,6 +1617,7 @@ media/media-source/ [ Pass ]
 webkit.org/b/171726 media/media-source/media-source-init-segment-duration.html [ Failure ]
 webkit.org/b/168373 media/media-source/media-source-resize.html [ Failure ]
 webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-valid.html [ Timeout ]
+webkit.org/b/218317 media/media-source/media-source-trackid-change.html [ Failure ]
 
 webkit.org/b/177871 http/wpt/resource-timing/rt-shared-resource-in-workers.html [ Failure ]
 webkit.org/b/168357 http/wpt/resource-timing/rt-initiatorType-media.html [ Pass Failure ]
