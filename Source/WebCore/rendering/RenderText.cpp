@@ -313,19 +313,9 @@ void RenderText::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumu
 
 Vector<IntRect> RenderText::absoluteRectsForRange(unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
 {
-    const_cast<RenderText&>(*this).ensureLineBoxes();
-
-    // Work around signed/unsigned issues. This function takes unsigneds, and is often passed UINT_MAX
-    // to mean "all the way to the end". InlineTextBox coordinates are unsigneds, so changing this 
-    // function to take ints causes various internal mismatches. But selectionRect takes ints, and 
-    // passing UINT_MAX to it causes trouble. Ideally we'd change selectionRect to take unsigneds, but 
-    // that would cause many ripple effects, so for now we'll just clamp our unsigned parameters to INT_MAX.
-    ASSERT(end == UINT_MAX || end <= INT_MAX);
-    ASSERT(start <= INT_MAX);
-    start = std::min(start, static_cast<unsigned>(INT_MAX));
-    end = std::min(end, static_cast<unsigned>(INT_MAX));
-    
-    return m_lineBoxes.absoluteRectsForRange(*this, start, end, useSelectionHeight, wasFixed);
+    return absoluteQuadsForRange(start, end, useSelectionHeight, false /* ignoreEmptyTextSelections */, wasFixed).map([](auto& quad) {
+        return quad.enclosingBoundingBox();
+    });
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -433,6 +423,26 @@ void RenderText::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
     quads.appendVector(m_lineBoxes.absoluteQuads(*this, wasFixed, RenderTextLineBoxes::NoClipping));
 }
 
+static FloatRect localQuadForTextRun(const LayoutIntegration::PathTextRun& run, unsigned start, unsigned end, bool useSelectionHeight)
+{
+    unsigned realEnd = std::min(run.end(), end);
+    LayoutRect boxSelectionRect = run.selectionRect(start, realEnd);
+    if (!boxSelectionRect.height())
+        return { };
+    if (useSelectionHeight)
+        return boxSelectionRect;
+
+    auto rect = run.rect();
+    if (run.isHorizontal()) {
+        boxSelectionRect.setHeight(rect.height());
+        boxSelectionRect.setY(rect.y());
+    } else {
+        boxSelectionRect.setWidth(rect.width());
+        boxSelectionRect.setX(rect.x());
+    }
+    return boxSelectionRect;
+}
+
 Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end, bool useSelectionHeight, bool ignoreEmptyTextSelections, bool* wasFixed) const
 {
     // Work around signed/unsigned issues. This function takes unsigneds, and is often passed UINT_MAX
@@ -445,8 +455,35 @@ Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end
     start = std::min(start, static_cast<unsigned>(INT_MAX));
     end = std::min(end, static_cast<unsigned>(INT_MAX));
 
-    const_cast<RenderText&>(*this).ensureLineBoxes();
-    return m_lineBoxes.absoluteQuadsForRange(*this, start, end, useSelectionHeight, ignoreEmptyTextSelections, wasFixed);
+    Vector<FloatQuad> quads;
+    for (auto& run : LayoutIntegration::textRunsFor(*this)) {
+        if (ignoreEmptyTextSelections && !run.isSelectable(start, end))
+            continue;
+        if (start <= run.start() && run.end() <= end) {
+            auto boundaries = [&] {
+                if (run.legacyInlineBox() && run.legacyInlineBox()->isSVGInlineTextBox())
+                    return run.legacyInlineBox()->calculateBoundaries();
+                return run.rect();
+            }();
+
+            if (useSelectionHeight) {
+                LayoutRect selectionRect = run.selectionRect(start, end);
+                if (run.isHorizontal()) {
+                    boundaries.setHeight(selectionRect.height());
+                    boundaries.setY(selectionRect.y());
+                } else {
+                    boundaries.setWidth(selectionRect.width());
+                    boundaries.setX(selectionRect.x());
+                }
+            }
+            quads.append(localToAbsoluteQuad(boundaries, UseTransforms, wasFixed));
+            continue;
+        }
+        FloatRect rect = localQuadForTextRun(run, start, end, useSelectionHeight);
+        if (!rect.isZero())
+            quads.append(localToAbsoluteQuad(rect, UseTransforms, wasFixed));
+    }
+    return quads;
 }
 
 Position RenderText::positionForPoint(const LayoutPoint& point)

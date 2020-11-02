@@ -52,9 +52,9 @@ public:
     LayoutUnit top() const { return LayoutUnit::fromFloatRound(line().enclosingRect().y()); }
     LayoutUnit bottom() const { return LayoutUnit::fromFloatRound(line().enclosingRect().maxY()); }
     // FIXME: What should these really be?
-    LayoutUnit selectionTop() const { return lineBoxTop(); }
-    LayoutUnit selectionTopForHitTesting() const { return lineBoxTop(); }
-    LayoutUnit selectionBottom() const { return lineBoxBottom(); }
+    LayoutUnit selectionTop() const { return top(); }
+    LayoutUnit selectionTopForHitTesting() const { return top(); }
+    LayoutUnit selectionBottom() const { return bottom(); }
     LayoutUnit lineBoxTop() const { return LayoutUnit::fromFloatRound(line().rect().y()); }
     LayoutUnit lineBoxBottom() const { return LayoutUnit::fromFloatRound(line().rect().maxY()); }
 

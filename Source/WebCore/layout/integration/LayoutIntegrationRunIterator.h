@@ -109,6 +109,9 @@ public:
 
     unsigned offsetForPosition(float x) const;
 
+    bool isSelectable(unsigned start, unsigned end) const;
+    LayoutRect selectionRect(unsigned start, unsigned end) const;
+
     bool isLastTextRunOnLine() const;
     bool isLastTextRun() const;
 
@@ -322,6 +325,20 @@ inline unsigned PathTextRun::offsetForPosition(float x) const
 {
     return WTF::switchOn(m_pathVariant, [&](auto& path) {
         return path.offsetForPosition(x);
+    });
+}
+
+inline bool PathTextRun::isSelectable(unsigned start, unsigned end) const
+{
+    return WTF::switchOn(m_pathVariant, [&](auto& path) {
+        return path.isSelectable(start, end);
+    });
+}
+
+inline LayoutRect PathTextRun::selectionRect(unsigned start, unsigned end) const
+{
+    return WTF::switchOn(m_pathVariant, [&](auto& path) {
+        return path.selectionRect(start, end);
     });
 }
 

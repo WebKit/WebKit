@@ -237,59 +237,6 @@ void RenderTextLineBoxes::collectSelectionRectsForRange(unsigned start, unsigned
     }
 }
 
-static FloatRect localQuadForTextBox(const InlineTextBox& box, unsigned start, unsigned end, bool useSelectionHeight)
-{
-    unsigned realEnd = std::min(box.end(), end);
-    LayoutRect boxSelectionRect = box.localSelectionRect(start, realEnd);
-    if (!boxSelectionRect.height())
-        return FloatRect();
-    if (useSelectionHeight)
-        return boxSelectionRect;
-    // Change the height and y position (or width and x for vertical text)
-    // because selectionRect uses selection-specific values.
-    if (box.isHorizontal()) {
-        boxSelectionRect.setHeight(box.height());
-        boxSelectionRect.setY(box.y());
-    } else {
-        boxSelectionRect.setWidth(box.width());
-        boxSelectionRect.setX(box.x());
-    }
-    return boxSelectionRect;
-}
-
-Vector<FloatQuad> RenderTextLineBoxes::absoluteQuadsForRange(const RenderText& renderer, unsigned start, unsigned end, bool useSelectionHeight, bool ignoreEmptyTextSelections, bool* wasFixed) const
-{
-    Vector<FloatQuad> quads;
-    for (auto* box = m_first; box; box = box->nextTextBox()) {
-        if (ignoreEmptyTextSelections && !box->isSelected(start, end))
-            continue;
-        if (start <= box->start() && box->end() <= end) {
-            FloatRect boundaries = box->calculateBoundaries();
-            if (useSelectionHeight) {
-                LayoutRect selectionRect = box->localSelectionRect(start, end);
-                if (box->isHorizontal()) {
-                    boundaries.setHeight(selectionRect.height());
-                    boundaries.setY(selectionRect.y());
-                } else {
-                    boundaries.setWidth(selectionRect.width());
-                    boundaries.setX(selectionRect.x());
-                }
-            }
-            quads.append(renderer.localToAbsoluteQuad(boundaries, UseTransforms, wasFixed));
-            continue;
-        }
-        FloatRect rect = localQuadForTextBox(*box, start, end, useSelectionHeight);
-        if (!rect.isZero())
-            quads.append(renderer.localToAbsoluteQuad(rect, UseTransforms, wasFixed));
-    }
-    return quads;
-}
-
-Vector<IntRect> RenderTextLineBoxes::absoluteRectsForRange(const RenderText& renderer, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
-{
-    return absoluteQuadsForRange(renderer, start, end, useSelectionHeight, false /* ignoreEmptyTextSelections */, wasFixed).map([](auto& quad) { return quad.enclosingBoundingBox(); });
-}
-
 Vector<FloatQuad> RenderTextLineBoxes::absoluteQuads(const RenderText& renderer, bool* wasFixed, ClippingOption option) const
 {
     Vector<FloatQuad> quads;

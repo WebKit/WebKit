@@ -61,6 +61,9 @@ public:
 
     inline unsigned offsetForPosition(float x) const { return inlineTextBox()->offsetForPosition(x); }
 
+    bool isSelectable(unsigned start, unsigned end) const { return inlineTextBox()->isSelected(start, end); }
+    LayoutRect selectionRect(unsigned start, unsigned end) const { return inlineTextBox()->localSelectionRect(start, end); }
+
     bool isLastTextRunOnLine() const
     {
         auto* next = nextInlineTextBoxInTextOrder();

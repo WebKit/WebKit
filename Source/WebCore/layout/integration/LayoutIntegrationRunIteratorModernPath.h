@@ -77,18 +77,38 @@ public:
         if (localX < 0)
             return 0;
 
-        auto& style = run().style();
-
-        auto createTextRun = [&] {
-            auto expansion = run().expansion();
-            auto xPos = rect.x() - (line().rect().x() + line().horizontalAlignmentOffset());
-            TextRun textRun { text(), xPos, expansion.horizontalExpansion, expansion.behavior };
-            textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
-            return textRun;
-        };
-
         bool includePartialGlyphs = true;
-        return run().style().fontCascade().offsetForPosition(createTextRun(), localX, includePartialGlyphs);
+        return run().style().fontCascade().offsetForPosition(createTextRun(HyphenMode::Ignore), localX, includePartialGlyphs);
+    }
+
+    bool isSelectable(unsigned start, unsigned end) const
+    {
+        return clampedOffset(start) < clampedOffset(end);
+    }
+
+    LayoutRect selectionRect(unsigned rangeStart, unsigned rangeEnd) const
+    {
+        unsigned clampedStart = clampedOffset(rangeStart);
+        unsigned clampedEnd = clampedOffset(rangeEnd);
+
+        if (clampedStart >= clampedEnd && !(rangeStart == rangeEnd && rangeStart >= start() && rangeStart <= end()))
+            return { };
+
+        auto logicalLeft = LayoutUnit(isHorizontal() ? rect().x() : rect().y());
+        auto logicalRight = LayoutUnit(isHorizontal() ? rect().maxX() : rect().maxY());
+        auto logicalWidth = logicalRight - logicalLeft;
+
+        // FIXME: These should share implementation with the line iterator.
+        auto selectionTop = LayoutUnit::fromFloatRound(line().enclosingRect().y());
+        auto selectionHeight = LayoutUnit::fromFloatRound(line().enclosingRect().height());
+
+        LayoutRect selectionRect { logicalLeft, selectionTop, logicalWidth, selectionHeight };
+
+        TextRun textRun = createTextRun(HyphenMode::Include);
+        if (clampedStart != start() || clampedEnd != textRun.length())
+            run().style().fontCascade().adjustSelectionRectForText(textRun, selectionRect, clampedStart - start(), clampedEnd - start());
+
+        return snappedSelectionRect(selectionRect, logicalRight, selectionTop, selectionHeight, isHorizontal());
     }
 
     bool isLastTextRunOnLine() const
@@ -175,6 +195,36 @@ public:
 
 private:
     friend class RunIterator;
+
+    unsigned clampedOffset(unsigned offset) const
+    {
+        auto clampedOffset = std::max(start(), std::min(offset, end()));
+        // We treat the last codepoint in this run and the hyphen as a single unit.
+        if (hasHyphen() && clampedOffset == end())
+            clampedOffset += run().style().hyphenString().length();
+
+        return clampedOffset;
+    }
+
+    enum class HyphenMode { Include, Ignore };
+    TextRun createTextRun(HyphenMode hyphenMode) const
+    {
+        auto& style = run().style();
+        auto expansion = run().expansion();
+        auto rect = this->rect();
+        auto xPos = rect.x() - (line().rect().x() + line().horizontalAlignmentOffset());
+
+        auto textForRun = [&] {
+            if (hyphenMode == HyphenMode::Ignore || !hasHyphen())
+                return text().toStringWithoutCopying();
+
+            return makeString(text(), style.hyphenString());
+        }();
+
+        TextRun textRun { textForRun, xPos, expansion.horizontalExpansion, expansion.behavior };
+        textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
+        return textRun;
+    };
 
     const InlineContent::Runs& runs() const { return m_inlineContent->runs; }
     const Run& run() const { return runs()[m_runIndex]; }

@@ -1,3 +1,16 @@
+2020-11-02  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] RenderText::absoluteQuadsForRange should use iterator
+        https://bugs.webkit.org/show_bug.cgi?id=218444
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/dom/Range/getBoundingClientRect-expected.txt:
+        * fast/dom/Range/getBoundingClientRect.html:
+
+        On legacy path <br> y position is miscomputed affecting getBoundingClientRect().
+        Update the test to match the new behavior. Results now match Firefox and Chrome.
+
 2020-11-02  Chris Dumez  <cdumez@apple.com>
 
         [ macOS ] webaudio/OfflineAudioContext/onstatechange.html is a flaky failure
