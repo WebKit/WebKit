@@ -36,7 +36,7 @@ function test()
                 for (let thread of threads) {
                     if (thread.type === "main")
                         main.push(thread);
-                    else if (thread.targetId)
+                    else if (thread.targetId && thread.name == "WebCore: Worker")
                         workers.push(thread);
                     else
                         others.push(thread);
