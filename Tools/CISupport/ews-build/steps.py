@@ -33,14 +33,17 @@ from layout_test_failures import LayoutTestFailures
 from send_email import send_email_to_patch_author, send_email_to_bot_watchers
 
 import json
+import os
 import re
 import requests
-import os
+import socket
 
 BUG_SERVER_URL = 'https://bugs.webkit.org/'
 S3URL = 'https://s3-us-west-2.amazonaws.com/'
 S3_RESULTS_URL = 'https://ews-build.s3-us-west-2.amazonaws.com/'
-EWS_BUILD_URL = 'https://ews-build.webkit.org/'
+CURRENT_HOSTNAME = socket.gethostname().strip()
+EWS_BUILD_HOSTNAME = 'ews-build.webkit.org'
+EWS_BUILD_URL = os.environ.get('EWS_BUILD_URL', 'https://{}/'.format(EWS_BUILD_HOSTNAME))
 EWS_URL = 'https://ews.webkit.org/'
 RESULTS_DB_URL = 'https://results.webkit.org/'
 WithProperties = properties.WithProperties
@@ -2403,6 +2406,9 @@ class TransferToS3(master.MasterShellCommand):
                 self.build.addStepsAfterCurrentStep([Trigger(schedulerNames=triggers)])
 
         return super(TransferToS3, self).finished(results)
+
+    def doStepIf(self, step):
+        return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
 
     def hideStepIf(self, results, step):
         return results == SUCCESS and self.getProperty('sensitive', False)
