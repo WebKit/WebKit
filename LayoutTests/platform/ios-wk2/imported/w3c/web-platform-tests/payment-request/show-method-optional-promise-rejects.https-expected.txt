@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: SyntaxError: test
 
 FAIL Rejection of detailsPromise must abort the update with an 'AbortError' DOMException. promise_rejects_dom: badDetails must cause acceptPromise to reject with expectedError function "function () { throw e }" threw object "SecurityError: show() must be triggered by user activation." that is not a DOMException AbortError: property "code" is equal to 18, expected 20
 FAIL Total in the update is a string, so converting to IDL must abort the update with a TypeError. promise_rejects_js: badDetails must cause acceptPromise to reject with expectedError function "function () { throw e }" threw object "SecurityError: show() must be triggered by user activation." ("SecurityError") expected instance of function "function TypeError() {
