@@ -1,5 +1,34 @@
 2020-11-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r269190. rdar://problem/70970247
+
+    Increase camera failing timer to 30 seconds
+    https://bugs.webkit.org/show_bug.cgi?id=218389
+    
+    Reviewed by Eric Carlson.
+    
+    From testing, 3 seconds is not always enough if getUserMedia is quickly called multiple times.
+    Let's increase to 30 seconds to give room for slow systems while still being able to identify failures.
+    
+    * platform/mediastream/mac/AVVideoCaptureSource.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@269190 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-30  Youenn Fablet  <youenn@apple.com>
+
+            Increase camera failing timer to 30 seconds
+            https://bugs.webkit.org/show_bug.cgi?id=218389
+
+            Reviewed by Eric Carlson.
+
+            From testing, 3 seconds is not always enough if getUserMedia is quickly called multiple times.
+            Let's increase to 30 seconds to give room for slow systems while still being able to identify failures.
+
+            * platform/mediastream/mac/AVVideoCaptureSource.h:
+
+2020-11-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266364. rdar://problem/70970205
 
     Implement WEBGL_compressed_texture_s3tc_srgb extension
