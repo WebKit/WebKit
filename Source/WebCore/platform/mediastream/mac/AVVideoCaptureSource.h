@@ -139,7 +139,7 @@ private:
     bool m_interrupted { false };
     bool m_isRunning { false };
 
-    static constexpr Seconds verifyCaptureInterval = 3_s;
+    static constexpr Seconds verifyCaptureInterval = 30_s;
     static const uint64_t framesToDropWhenStarting = 4;
 
     Timer m_verifyCapturingTimer;
