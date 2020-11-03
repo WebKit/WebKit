@@ -1,3 +1,30 @@
+2020-11-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Obtain default timezone ID from cached icu::TimeZone
+        https://bugs.webkit.org/show_bug.cgi?id=218531
+        <rdar://problem/64265880>
+
+        Reviewed by Ross Kirsling.
+
+        ICU internally caches icu::TimeZone (icu::TimeZone::createDefault), and it is not updated even if system timezone is changed.
+        As a result, we will see wrong timezone in Intl.DateTimeFormat when system timezone is changed.
+        We have a mechanism that clears TimeZone cache for JS Date. However, this mechanism is not used for Intl.DateTimeFormat.
+
+        This patch retrieves timezone ID from cached icu::TimeZone in VM::dateCache. So system's timezone change can be effective for
+        Intl.DateTimeFormat, and timezone becomes consistent between JS Date and Intl.DateTimeFormat.
+
+        Unfortunately, we need to use C++ APIs since we do not have a way to get timezone ID from icu::TimeZone.
+        Once https://unicode-org.atlassian.net/browse/ICU-21372 is fixed, we can switch to C APIs.
+
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        (JSC::isUTCEquivalent): Deleted.
+        (JSC::defaultTimeZone): Deleted.
+        * runtime/JSDateMath.cpp:
+        (JSC::DateCache::defaultTimeZone):
+        * runtime/JSDateMath.h:
+        (JSC::isUTCEquivalent):
+
 2020-11-03  Saam Barati  <sbarati@apple.com>
 
         Don't assert there is no checkpoint side state when dropping the JSLock

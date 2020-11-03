@@ -67,6 +67,8 @@ public:
 
     JS_EXPORT_PRIVATE void reset();
 
+    String defaultTimeZone();
+
     OpaqueICUTimeZone* timeZoneCache()
     {
         if (!m_timeZoneCache)
@@ -88,5 +90,10 @@ private:
     double m_cachedDateStringValue;
     DateInstanceCache m_dateInstanceCache;
 };
+
+ALWAYS_INLINE bool isUTCEquivalent(StringView timeZone)
+{
+    return timeZone == "Etc/UTC"_s || timeZone == "Etc/GMT"_s;
+}
 
 } // namespace JSC

@@ -85,31 +85,6 @@ void IntlDateTimeFormat::setBoundFormat(VM& vm, JSBoundFunction* format)
     m_boundFormat.set(vm, this, format);
 }
 
-static ALWAYS_INLINE bool isUTCEquivalent(StringView timeZone)
-{
-    return timeZone == "Etc/UTC" || timeZone == "Etc/GMT";
-}
-
-// https://tc39.es/ecma402/#sec-defaulttimezone
-static String defaultTimeZone()
-{
-    String canonical;
-
-    Vector<UChar, 32> buffer;
-    auto status = callBufferProducingFunction(ucal_getDefaultTimeZone, buffer);
-    if (U_SUCCESS(status)) {
-        Vector<UChar, 32> canonicalBuffer;
-        status = callBufferProducingFunction(ucal_getCanonicalTimeZoneID, buffer.data(), buffer.size(), canonicalBuffer, nullptr);
-        if (U_SUCCESS(status))
-            canonical = String(canonicalBuffer);
-    }
-
-    if (canonical.isNull() || isUTCEquivalent(canonical))
-        return "UTC"_s;
-
-    return canonical;
-}
-
 static String canonicalizeTimeZoneName(const String& timeZoneName)
 {
     // 6.4.1 IsValidTimeZoneName (timeZone)
@@ -603,7 +578,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
             return;
         }
     } else
-        tz = defaultTimeZone();
+        tz = vm.dateCache.defaultTimeZone();
     m_timeZone = tz;
 
     StringBuilder skeletonBuilder;

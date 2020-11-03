@@ -82,6 +82,7 @@
 #define U_SHOW_CPLUSPLUS_API 1
 #include <unicode/basictz.h>
 #include <unicode/timezone.h>
+#include <unicode/unistr.h>
 #undef U_SHOW_CPLUSPLUS_API
 #define U_SHOW_CPLUSPLUS_API 0
 
@@ -180,6 +181,27 @@ double DateCache::parseDate(JSGlobalObject* globalObject, VM& vm, const String& 
     m_cachedDateString = date;
     m_cachedDateStringValue = value;
     return value;
+}
+
+// https://tc39.es/ecma402/#sec-defaulttimezone
+String DateCache::defaultTimeZone()
+{
+    icu::UnicodeString timeZoneID;
+    icu::UnicodeString canonicalTimeZoneID;
+    auto& timeZone = *bitwise_cast<icu::TimeZone*>(timeZoneCache());
+    timeZone.getID(timeZoneID);
+
+    UErrorCode status = U_ZERO_ERROR;
+    UBool isSystem = false;
+    icu::TimeZone::getCanonicalID(timeZoneID, canonicalTimeZoneID, isSystem, status);
+    if (U_FAILURE(status))
+        return "UTC"_s;
+
+    String canonical = String(canonicalTimeZoneID.getBuffer(), canonicalTimeZoneID.length());
+    if (isUTCEquivalent(canonical))
+        return "UTC"_s;
+
+    return canonical;
 }
 
 // To confine icu::TimeZone destructor invocation in this file.
