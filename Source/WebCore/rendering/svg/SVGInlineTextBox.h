@@ -24,12 +24,12 @@
 #include "InlineTextBox.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGResource.h"
+#include "SVGTextFragment.h"
 
 namespace WebCore {
 
 class RenderSVGResource;
 class SVGRootInlineBox;
-struct SVGTextFragment;
 
 class SVGInlineTextBox final : public InlineTextBox {
     WTF_MAKE_ISO_ALLOCATED(SVGInlineTextBox);
@@ -52,7 +52,7 @@ public:
 
     bool mapStartEndPositionsIntoFragmentCoordinates(const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition) const;
 
-    FloatRect calculateBoundaries() const override;
+    FloatRect calculateBoundaries() const;
 
     void clearTextFragments() { m_textFragments.clear(); }
     Vector<SVGTextFragment>& textFragments() { return m_textFragments; }
@@ -69,6 +69,8 @@ public:
     
     OptionSet<RenderSVGResourceMode> paintingResourceMode() const { return OptionSet<RenderSVGResourceMode>::fromRaw(m_paintingResourceMode); }
     void setPaintingResourceMode(OptionSet<RenderSVGResourceMode> mode) { m_paintingResourceMode = mode.toRaw(); }
+
+    SVGInlineTextBox* nextTextBox() const { return downcast<SVGInlineTextBox>(InlineTextBox::nextTextBox()); }
     
 private:
     bool isSVGInlineTextBox() const override { return true; }

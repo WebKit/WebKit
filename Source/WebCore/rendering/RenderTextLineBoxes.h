@@ -57,13 +57,8 @@ public:
     InlineTextBox* findNext(int offset, int& position) const;
 
     void setSelectionState(RenderText&, RenderObject::HighlightState);
-    LayoutRect selectionRectForRange(unsigned start, unsigned end);
-    void collectSelectionRectsForRange(unsigned start, unsigned end, Vector<LayoutRect>& rects);
 
     LayoutRect visualOverflowBoundingBox(const RenderText&) const;
-
-    enum ClippingOption { NoClipping, ClipToEllipsis };
-    Vector<FloatQuad> absoluteQuads(const RenderText&, bool* wasFixed, ClippingOption) const;
 
 #if ASSERT_ENABLED
     ~RenderTextLineBoxes();

@@ -47,6 +47,7 @@
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
+#include "SVGInlineTextBox.h"
 #include "Settings.h"
 #include "Text.h"
 #include "TextResourceDecoder.h"
@@ -394,33 +395,75 @@ void RenderText::collectSelectionRects(Vector<SelectionRect>& rects, unsigned st
 }
 #endif
 
-static Vector<FloatQuad> collectAbsoluteQuadsForNonComplexPaths(const RenderText& textRenderer, bool* wasFixed)
+static FloatRect boundariesForTextRun(const LayoutIntegration::PathTextRun& run)
 {
-    // FIXME: This generic function doesn't currently cover everything that is needed for the complex line layout path.
-    ASSERT(!textRenderer.usesComplexLineLayoutPath());
+    if (is<SVGInlineTextBox>(run.legacyInlineBox()))
+        return downcast<SVGInlineTextBox>(*run.legacyInlineBox()).calculateBoundaries();
 
+    return run.rect();
+}
+
+static IntRect ellipsisRectForTextRun(const LayoutIntegration::PathTextRun& run, unsigned start, unsigned end)
+{
+    // FIXME: No ellipsis support in modern path yet.
+    if (!run.legacyInlineBox())
+        return { };
+
+    auto& box = *run.legacyInlineBox();
+
+    unsigned short truncation = box.truncation();
+    if (truncation == cNoTruncation)
+        return { };
+
+    auto ellipsis = box.root().ellipsisBox();
+    if (!ellipsis)
+        return { };
+
+    int ellipsisStartPosition = std::max<int>(start - box.start(), 0);
+    int ellipsisEndPosition = std::min<int>(end - box.start(), box.len());
+
+    // The ellipsis should be considered to be selected if the end of
+    // the selection is past the beginning of the truncation and the
+    // beginning of the selection is before or at the beginning of the truncation.
+    if (ellipsisEndPosition < truncation && ellipsisStartPosition > truncation)
+        return { };
+
+    return ellipsis->selectionRect();
+}
+
+enum class ClippingOption { NoClipping, ClipToEllipsis };
+
+// FIXME: Unify with absoluteQuadsForRange.
+static Vector<FloatQuad> collectAbsoluteQuads(const RenderText& textRenderer, bool* wasFixed, ClippingOption clipping)
+{
     Vector<FloatQuad> quads;
-    for (auto& run : LayoutIntegration::textRunsFor(textRenderer))
-        quads.append(textRenderer.localToAbsoluteQuad(FloatQuad(run.rect()), UseTransforms, wasFixed));
+    for (auto& run : LayoutIntegration::textRunsFor(textRenderer)) {
+        auto boundaries = boundariesForTextRun(run);
+
+        // Shorten the width of this text box if it ends in an ellipsis.
+        if (clipping == ClippingOption::ClipToEllipsis) {
+            auto ellipsisRect = ellipsisRectForTextRun(run, 0, textRenderer.text().length());
+            if (!ellipsisRect.isEmpty()) {
+                if (textRenderer.style().isHorizontalWritingMode())
+                    boundaries.setWidth(ellipsisRect.maxX() - boundaries.x());
+                else
+                    boundaries.setHeight(ellipsisRect.maxY() - boundaries.y());
+            }
+        }
+        
+        quads.append(textRenderer.localToAbsoluteQuad(boundaries, UseTransforms, wasFixed));
+    }
     return quads;
 }
 
 Vector<FloatQuad> RenderText::absoluteQuadsClippedToEllipsis() const
 {
-    if (!usesComplexLineLayoutPath()) {
-        ASSERT(style().textOverflow() != TextOverflow::Ellipsis);
-        return collectAbsoluteQuadsForNonComplexPaths(*this, nullptr);
-    }
-    return m_lineBoxes.absoluteQuads(*this, nullptr, RenderTextLineBoxes::ClipToEllipsis);
+    return collectAbsoluteQuads(*this, nullptr, ClippingOption::ClipToEllipsis);
 }
 
 void RenderText::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-    if (!usesComplexLineLayoutPath()) {
-        quads.appendVector(collectAbsoluteQuadsForNonComplexPaths(*this, wasFixed));
-        return;
-    }
-    quads.appendVector(m_lineBoxes.absoluteQuads(*this, wasFixed, RenderTextLineBoxes::NoClipping));
+    quads.appendVector(collectAbsoluteQuads(*this, wasFixed, ClippingOption::NoClipping));
 }
 
 static FloatRect localQuadForTextRun(const LayoutIntegration::PathTextRun& run, unsigned start, unsigned end, bool useSelectionHeight)
@@ -460,11 +503,7 @@ Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end
         if (ignoreEmptyTextSelections && !run.isSelectable(start, end))
             continue;
         if (start <= run.start() && run.end() <= end) {
-            auto boundaries = [&] {
-                if (run.legacyInlineBox() && run.legacyInlineBox()->isSVGInlineTextBox())
-                    return run.legacyInlineBox()->calculateBoundaries();
-                return run.rect();
-            }();
+            auto boundaries = boundariesForTextRun(run);
 
             if (useSelectionHeight) {
                 LayoutRect selectionRect = run.selectionRect(start, end);
@@ -1621,14 +1660,18 @@ LayoutRect RenderText::collectSelectionRectsForLineBoxes(const RenderLayerModelO
         return IntRect();
 
     LayoutRect resultRect;
-    if (!rects)
-        resultRect = m_lineBoxes.selectionRectForRange(startOffset, endOffset);
-    else {
-        m_lineBoxes.collectSelectionRectsForRange(startOffset, endOffset, *rects);
-        for (auto& rect : *rects) {
-            resultRect.unite(rect);
-            rect = localToContainerQuad(FloatRect(rect), repaintContainer).enclosingBoundingBox();
-        }
+
+    for (auto& run : LayoutIntegration::textRunsFor(*this)) {
+        LayoutRect rect;
+        rect.unite(run.selectionRect(startOffset, endOffset));
+        rect.unite(ellipsisRectForTextRun(run, startOffset, endOffset));
+        if (rect.isEmpty())
+            continue;
+
+        resultRect.unite(rect);
+
+        if (rects)
+            rects->append(localToContainerQuad(FloatRect(rect), repaintContainer).enclosingBoundingBox());
     }
 
     if (clipToVisibleContent)

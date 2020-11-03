@@ -194,69 +194,6 @@ void RenderTextLineBoxes::setSelectionState(RenderText& renderer, RenderObject::
     }
 }
 
-static IntRect ellipsisRectForBox(const InlineTextBox& box, unsigned start, unsigned end)
-{
-    unsigned short truncation = box.truncation();
-    if (truncation == cNoTruncation)
-        return IntRect();
-
-    auto ellipsis = box.root().ellipsisBox();
-    if (!ellipsis)
-        return IntRect();
-    
-    IntRect rect;
-    int ellipsisStartPosition = std::max<int>(start - box.start(), 0);
-    int ellipsisEndPosition = std::min<int>(end - box.start(), box.len());
-    
-    // The ellipsis should be considered to be selected if the end of
-    // the selection is past the beginning of the truncation and the
-    // beginning of the selection is before or at the beginning of the truncation.
-    if (ellipsisEndPosition < truncation && ellipsisStartPosition > truncation)
-        return IntRect();
-    return ellipsis->selectionRect();
-}
-
-LayoutRect RenderTextLineBoxes::selectionRectForRange(unsigned start, unsigned end)
-{
-    LayoutRect rect;
-    for (auto* box = m_first; box; box = box->nextTextBox()) {
-        rect.unite(box->localSelectionRect(start, end));
-        rect.unite(ellipsisRectForBox(*box, start, end));
-    }
-    return rect;
-}
-
-void RenderTextLineBoxes::collectSelectionRectsForRange(unsigned start, unsigned end, Vector<LayoutRect>& rects)
-{
-    for (auto* box = m_first; box; box = box->nextTextBox()) {
-        LayoutRect rect;
-        rect.unite(box->localSelectionRect(start, end));
-        rect.unite(ellipsisRectForBox(*box, start, end));
-        if (!rect.size().isEmpty())
-            rects.append(rect);
-    }
-}
-
-Vector<FloatQuad> RenderTextLineBoxes::absoluteQuads(const RenderText& renderer, bool* wasFixed, ClippingOption option) const
-{
-    Vector<FloatQuad> quads;
-    for (auto* box = m_first; box; box = box->nextTextBox()) {
-        FloatRect boundaries = box->calculateBoundaries();
-
-        // Shorten the width of this text box if it ends in an ellipsis.
-        // FIXME: ellipsisRectForBox should switch to return FloatRect soon with the subpixellayout branch.
-        IntRect ellipsisRect = (option == ClipToEllipsis) ? ellipsisRectForBox(*box, 0, renderer.text().length()) : IntRect();
-        if (!ellipsisRect.isEmpty()) {
-            if (renderer.style().isHorizontalWritingMode())
-                boundaries.setWidth(ellipsisRect.maxX() - boundaries.x());
-            else
-                boundaries.setHeight(ellipsisRect.maxY() - boundaries.y());
-        }
-        quads.append(renderer.localToAbsoluteQuad(boundaries, UseTransforms, wasFixed));
-    }
-    return quads;
-}
-
 void RenderTextLineBoxes::dirtyAll()
 {
     for (auto* box = m_first; box; box = box->nextTextBox())

@@ -38,7 +38,7 @@ public:
 
     RenderSVGInline& renderer() { return static_cast<RenderSVGInline&>(InlineFlowBox::renderer()); }
 
-    FloatRect calculateBoundaries() const override;
+    FloatRect calculateBoundaries() const;
 
     void setLogicalHeight(float h) { m_logicalHeight = h; }
     void paintSelectionBackground(PaintInfo&);

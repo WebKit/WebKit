@@ -62,10 +62,15 @@ void SVGInlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 FloatRect SVGInlineFlowBox::calculateBoundaries() const
 {
     FloatRect childRect;
-    for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
-        if (!child->isSVGInlineTextBox() && !child->isSVGInlineFlowBox())
+    for (auto* child = firstChild(); child; child = child->nextOnLine()) {
+        if (is<SVGInlineTextBox>(child)) {
+            childRect.unite(downcast<SVGInlineTextBox>(*child).calculateBoundaries());
             continue;
-        childRect.unite(child->calculateBoundaries());
+        }
+        if (is<SVGInlineFlowBox>(child)) {
+            childRect.unite(downcast<SVGInlineFlowBox>(*child).calculateBoundaries());
+            continue;
+        }
     }
     return childRect;
 }

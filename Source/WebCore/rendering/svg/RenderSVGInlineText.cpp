@@ -142,8 +142,9 @@ LayoutRect RenderSVGInlineText::localCaretRect(InlineBox* box, unsigned caretOff
 FloatRect RenderSVGInlineText::floatLinesBoundingBox() const
 {
     FloatRect boundingBox;
-    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
+    for (auto* box = firstTextBox(); box; box = box->nextTextBox())
         boundingBox.unite(box->calculateBoundaries());
+
     return boundingBox;
 }
 
@@ -188,12 +189,8 @@ VisiblePosition RenderSVGInlineText::positionForPoint(const LayoutPoint& point, 
     SVGInlineTextBox* closestDistanceBox = nullptr;
 
     AffineTransform fragmentTransform;
-    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
-        if (!is<SVGInlineTextBox>(*box))
-            continue;
-
-        auto& textBox = downcast<SVGInlineTextBox>(*box);
-        Vector<SVGTextFragment>& fragments = textBox.textFragments();
+    for (auto* box = firstTextBox(); box; box = box->nextTextBox()) {
+        Vector<SVGTextFragment>& fragments = box->textFragments();
 
         unsigned textFragmentsSize = fragments.size();
         for (unsigned i = 0; i < textFragmentsSize; ++i) {
@@ -208,7 +205,7 @@ VisiblePosition RenderSVGInlineText::positionForPoint(const LayoutPoint& point, 
 
             if (distance < closestDistance) {
                 closestDistance = distance;
-                closestDistanceBox = &textBox;
+                closestDistanceBox = box;
                 closestDistanceFragment = &fragment;
                 closestDistancePosition = fragmentRect.x();
             }
@@ -249,6 +246,11 @@ void RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& rende
 
     scaledFont = FontCascade(WTFMove(fontDescription), 0, 0);
     scaledFont.update(&renderer.document().fontSelector());
+}
+
+SVGInlineTextBox* RenderSVGInlineText::firstTextBox() const
+{
+    return downcast<SVGInlineTextBox>(RenderText::firstTextBox());
 }
 
 }

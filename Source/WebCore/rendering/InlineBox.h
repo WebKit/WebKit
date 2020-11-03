@@ -104,12 +104,6 @@ public:
     bool isHorizontal() const { return m_bitfields.isHorizontal(); }
     void setIsHorizontal(bool isHorizontal) { m_bitfields.setIsHorizontal(isHorizontal); }
 
-    virtual FloatRect calculateBoundaries() const
-    {
-        ASSERT_NOT_REACHED();
-        return FloatRect();
-    }
-
     bool isConstructed() { return m_bitfields.constructed(); }
     virtual void setConstructed() { m_bitfields.setConstructed(true); }
 
