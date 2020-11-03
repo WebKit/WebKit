@@ -200,3 +200,7 @@ class TestSvn(unittest.TestCase):
     def test_tag(self):
         with mocks.local.Svn(self.path), OutputCapture():
             self.assertEqual(9, local.Svn(self.path).commit(tag='tag-1').revision)
+
+    def test_tag_previous(self):
+        with mocks.local.Svn(self.path), OutputCapture():
+            self.assertEqual(7, local.Svn(self.path).commit(identifier='2.2@tags/tag-1').revision)

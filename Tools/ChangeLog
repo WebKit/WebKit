@@ -1,3 +1,19 @@
+2020-11-03  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Populate parent branch for tags
+        <rdar://problem/70998928>
+        https://bugs.webkit.org/show_bug.cgi?id=218521
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Version bump.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn.commit): Populate cache of commits when the canonical branch does not match
+        the provided commit.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/svn_unittest.py:
+        (TestSvn):
+        (TestSvn.test_tag_previous):
+
 2020-11-03  David Kilzer  <ddkilzer@apple.com>
 
         Add test for cacheModelForMainBundle() in WebKitLegacy

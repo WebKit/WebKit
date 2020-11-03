@@ -300,6 +300,8 @@ class Svn(Scm):
             revision = self._metadata_cache[branch][identifier]
             info = self.info(cached=True, branch=branch, revision=revision)
             branch = self._branch_for(revision)
+            if not self._metadata_cache.get(branch, []) or identifier >= len(self._metadata_cache.get(branch, [])):
+                self._cache_revisions(branch=branch)
 
         elif revision:
             if branch:
