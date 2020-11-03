@@ -17,6 +17,7 @@ function mac_process_webcontent_entitlements()
     then
         plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
         plistbuddy Add :com.apple.rootless.storage.WebKitWebContentSandbox bool YES
+        plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
         then
             plistbuddy Add :com.apple.developer.videotoolbox.client-sandboxed-decoder bool YES
@@ -41,6 +42,7 @@ function mac_process_gpu_entitlements()
         fi
 
         plistbuddy Add :com.apple.rootless.storage.WebKitGPUSandbox bool YES
+        plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
     fi
 }
 
@@ -128,6 +130,7 @@ function maccatalyst_process_webcontent_entitlements()
     plistbuddy Add :com.apple.security.cs.allow-jit bool YES
     plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
     plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
+    plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
     if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
     then
         plistbuddy Add :com.apple.pac.shared_region_id string WebContent
@@ -140,6 +143,7 @@ function maccatalyst_process_gpu_entitlements()
 {
     plistbuddy Add :com.apple.security.network.client bool YES
     plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
+    plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
 }
 
 function maccatalyst_process_network_entitlements()
