@@ -271,7 +271,6 @@ webkit.org/b/216716 fast/mediastream/mediastreamtrack-video-clone.html [ Failure
 webkit.org/b/216716 fast/mediastream/getUserMedia-video-rescaling.html [ Failure Pass ]
 webkit.org/b/210337 fast/mediastream/mediastreamtrack-audio-clone.html [ Failure Pass ]
 webkit.org/b/210385 fast/mediastream/stream-switch.html [ Crash Timeout ]
-webkit.org/b/210385 fast/mediastream/getUserMedia-default.html [ Crash Pass ]
 webkit.org/b/210528 fast/mediastream/MediaStream-MediaElement-setObject-null.html [ Crash Pass ]
 webkit.org/b/210528 fast/mediastream/mediastreamtrack-video-frameRate-clone-decreasing.html [ Crash Pass ]
 webkit.org/b/213011 fast/mediastream/media-stream-track-interrupted.html [ Failure ]
