@@ -1,3 +1,25 @@
+2020-11-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Move passing tests to the top of the TestExpectation files.
+
+        Some tests like http/tests/contentextensions/service-worker.https.html
+        are flaky and we have it marked as such at the GTK/WPE expectation file.
+        But the bots continue to complain about unexpected flakiness for this test.
+        This is because we have our section of tests passing at the bottom
+        of the TestExpectation files. And the layout test runner evaluates
+        the rules from top to bottom and it picks as the valid rule the last
+        one matching.
+        So when we unskip folders from the main TestExpectation file like
+        "http/tests/contentextensions [ Pass ]" we are also resetting the
+        value of all those tests to just Pass.
+        To avoid this problem move the expected passes to the top of the files.
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-11-03  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Remove stale flaky crashes.

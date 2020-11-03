@@ -14,6 +14,14 @@
 # (like WebAnimation, PageOverlay, WebGL) will mirror their top-level LayoutTests/
 # folders, but others like CSS and GStreamer may have entries from multiple folders.
 #
+# * PASSING tests
+#   * Usually to override tests skipped/failing by Mac ports.
+#     NOTE: Passing tests should be on the top of the file to ensure that
+#           expected failures below are not overriden by a folder that is
+#           set to Pass to unskip it from the main expectations file and
+#           declared after the expected failure.
+#           The layout test runner evaluates the rules from top to bottom
+#           and it picks as the valid rule the last one matching.
 # * Accessibility
 # * CSS
 # * Fonts
@@ -32,8 +40,6 @@
 # * WebSocket
 # * WPT
 # * XHR
-# * PASSING tests
-#   * Usually to override tests skipped/failing by Mac ports.
 # * UNSUPPORTED tests
 #   * Things we do not test. (i.e. Skipped)
 # * NEEDS TRIAGING
@@ -44,6 +50,95 @@
 #
 # * Keep them alphabetically sorted - except for the PASSING/NEEDS TRIAGING sections.
 # * Only PASSING/UNSUPPORTED should have expectations without bug entries.
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# TESTS PASSING
+#////////////////////////////////////////////////////////////////////////////////////////
+
+animations/missing-values-first-keyframe.html [ Pass ]
+animations/missing-values-last-keyframe.html [ Pass ]
+
+# RSA-PSS tests are for now skipped on all ports, so we for now explicitly enable the passing ones here.
+crypto/subtle/ecdh-import-pkcs8-key-p256-validate-ecprivatekey-parameters-publickey.html [ Pass ]
+crypto/subtle/ecdh-import-pkcs8-key-p384-validate-ecprivatekey-parameters-publickey.html [ Pass ]
+crypto/subtle/ecdsa-import-pkcs8-key-p256-validate-ecprivatekey-parameters-publickey.html [ Pass ]
+crypto/subtle/ecdsa-import-pkcs8-key-p384-validate-ecprivatekey-parameters-publickey.html [ Pass ]
+crypto/subtle/ecdh-import-spki-key-ecdh-identifier.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha1.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha224.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha256.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha384.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha512.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-pkcs8.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-spki.html [ Pass ]
+crypto/subtle/rsa-pss-generate-key.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-private-key.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-empty-usages.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha1.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha224.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha256.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha384.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha512.html [ Pass ]
+crypto/subtle/rsa-pss-import-key-sign-large-salt.html [ Failure ]
+crypto/subtle/rsa-pss-import-key-sign.html [ Pass ]
+crypto/subtle/rsa-pss-import-key-verify.html [ Pass ]
+crypto/subtle/rsa-pss-import-pkcs8-key.html [ Pass ]
+crypto/subtle/rsa-pss-import-spki-key-empty-usages.html [ Pass ]
+crypto/subtle/rsa-pss-import-spki-key.html [ Pass ]
+crypto/workers/subtle/rsa-pss-import-key-sign.html [ Pass ]
+crypto/workers/subtle/rsa-pss-import-key-verify.html [ Pass ]
+http/wpt/crypto/rsa-pss-crash.any.html [ Pass ]
+http/wpt/crypto/rsa-pss-crash.any.worker.html [ Pass ]
+
+fast/text/emoji-gender-3.html [ Pass ]
+fast/text/emoji-gender-4.html [ Pass ]
+fast/text/emoji-gender-5.html [ Pass ]
+fast/text/emoji-gender-6.html [ Pass ]
+fast/text/emoji-gender-8.html [ Pass ]
+fast/text/emoji-gender-9.html [ Pass ]
+
+# Some Apple ports don't support RTL scrollbars.
+fast/scrolling/rtl-scrollbars-elementFromPoint-static.html [ Pass ]
+fast/scrolling/rtl-scrollbars-iframe-offset.html [ Pass ]
+fast/scrolling/rtl-scrollbars-listbox-select-left.html [ Pass ]
+fast/scrolling/rtl-scrollbars-listbox-select-right.html [ Pass ]
+fast/scrolling/rtl-scrollbars-listbox-simple.html [ Pass ]
+fast/scrolling/rtl-scrollbars-overflow-dir-rtl.html [ Pass ]
+fast/scrolling/rtl-scrollbars-overflow-elementFromPoint.html [ Pass ]
+fast/scrolling/rtl-scrollbars-overflow-padding.html [ Pass ]
+fast/scrolling/rtl-scrollbars-overflow-position-absolute.html [ Pass ]
+fast/scrolling/rtl-scrollbars-overflow-simple.html [ Pass ]
+fast/scrolling/rtl-scrollbars-overflow.html [ Pass ]
+fast/scrolling/rtl-scrollbars-positioned-intersect-scrollbars.html [ Pass ]
+fast/scrolling/rtl-scrollbars-positioning.html [ Pass ]
+fast/scrolling/rtl-scrollbars-simple.html [ Pass ]
+fast/scrolling/rtl-scrollbars.html [ Pass ]
+
+http/tests/storageAccess/ [ Pass ]
+http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture.html [ Skip ]
+webkit.org/b/208400 http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.html [ Failure ]
+
+webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-001.html [ Pass ]
+
+# Should be DumpJSConsoleLogInStdErr, but WPE keeps reporting error despite the difference is a console Log message.
+imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable.html [ Failure Pass ]
+
+imported/mozilla/svg/blend-hard-light.svg [ Pass ]
+imported/mozilla/svg/dynamic-textPath-02.svg [ Pass ]
+imported/mozilla/svg/image/image-filter-01.svg [ Pass ]
+
+inspector/page/setScreenSizeOverride.html [ Pass ]
+
+# Content Extensions
+http/tests/contentextensions [ Pass ]
+http/tests/inspector/network/contentextensions [ Pass ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of PASSING tests.
+#////////////////////////////////////////////////////////////////////////////////////////
+
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # Accessibility-related bugs
@@ -1036,91 +1131,6 @@ imported/w3c/web-platform-tests/encrypted-media/clearkey-update-non-ascii-input.
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of EME feature
-#////////////////////////////////////////////////////////////////////////////////////////
-
-
-#////////////////////////////////////////////////////////////////////////////////////////
-# TESTS PASSING
-#////////////////////////////////////////////////////////////////////////////////////////
-
-animations/missing-values-first-keyframe.html [ Pass ]
-animations/missing-values-last-keyframe.html [ Pass ]
-
-# RSA-PSS tests are for now skipped on all ports, so we for now explicitly enable the passing ones here.
-crypto/subtle/ecdh-import-pkcs8-key-p256-validate-ecprivatekey-parameters-publickey.html [ Pass ]
-crypto/subtle/ecdh-import-pkcs8-key-p384-validate-ecprivatekey-parameters-publickey.html [ Pass ]
-crypto/subtle/ecdsa-import-pkcs8-key-p256-validate-ecprivatekey-parameters-publickey.html [ Pass ]
-crypto/subtle/ecdsa-import-pkcs8-key-p384-validate-ecprivatekey-parameters-publickey.html [ Pass ]
-crypto/subtle/ecdh-import-spki-key-ecdh-identifier.html [ Pass ]
-crypto/subtle/rsa-pss-generate-export-key-jwk-sha1.html [ Pass ]
-crypto/subtle/rsa-pss-generate-export-key-jwk-sha224.html [ Pass ]
-crypto/subtle/rsa-pss-generate-export-key-jwk-sha256.html [ Pass ]
-crypto/subtle/rsa-pss-generate-export-key-jwk-sha384.html [ Pass ]
-crypto/subtle/rsa-pss-generate-export-key-jwk-sha512.html [ Pass ]
-crypto/subtle/rsa-pss-generate-export-key-pkcs8.html [ Pass ]
-crypto/subtle/rsa-pss-generate-export-key-spki.html [ Pass ]
-crypto/subtle/rsa-pss-generate-key.html [ Pass ]
-crypto/subtle/rsa-pss-import-jwk-private-key.html [ Pass ]
-crypto/subtle/rsa-pss-import-jwk-public-key-empty-usages.html [ Pass ]
-crypto/subtle/rsa-pss-import-jwk-public-key-sha1.html [ Pass ]
-crypto/subtle/rsa-pss-import-jwk-public-key-sha224.html [ Pass ]
-crypto/subtle/rsa-pss-import-jwk-public-key-sha256.html [ Pass ]
-crypto/subtle/rsa-pss-import-jwk-public-key-sha384.html [ Pass ]
-crypto/subtle/rsa-pss-import-jwk-public-key-sha512.html [ Pass ]
-crypto/subtle/rsa-pss-import-key-sign-large-salt.html [ Failure ]
-crypto/subtle/rsa-pss-import-key-sign.html [ Pass ]
-crypto/subtle/rsa-pss-import-key-verify.html [ Pass ]
-crypto/subtle/rsa-pss-import-pkcs8-key.html [ Pass ]
-crypto/subtle/rsa-pss-import-spki-key-empty-usages.html [ Pass ]
-crypto/subtle/rsa-pss-import-spki-key.html [ Pass ]
-crypto/workers/subtle/rsa-pss-import-key-sign.html [ Pass ]
-crypto/workers/subtle/rsa-pss-import-key-verify.html [ Pass ]
-http/wpt/crypto/rsa-pss-crash.any.html [ Pass ]
-http/wpt/crypto/rsa-pss-crash.any.worker.html [ Pass ]
-
-fast/text/emoji-gender-3.html [ Pass ]
-fast/text/emoji-gender-4.html [ Pass ]
-fast/text/emoji-gender-5.html [ Pass ]
-fast/text/emoji-gender-6.html [ Pass ]
-fast/text/emoji-gender-8.html [ Pass ]
-fast/text/emoji-gender-9.html [ Pass ]
-
-# Some Apple ports don't support RTL scrollbars.
-fast/scrolling/rtl-scrollbars-elementFromPoint-static.html [ Pass ]
-fast/scrolling/rtl-scrollbars-iframe-offset.html [ Pass ]
-fast/scrolling/rtl-scrollbars-listbox-select-left.html [ Pass ]
-fast/scrolling/rtl-scrollbars-listbox-select-right.html [ Pass ]
-fast/scrolling/rtl-scrollbars-listbox-simple.html [ Pass ]
-fast/scrolling/rtl-scrollbars-overflow-dir-rtl.html [ Pass ]
-fast/scrolling/rtl-scrollbars-overflow-elementFromPoint.html [ Pass ]
-fast/scrolling/rtl-scrollbars-overflow-padding.html [ Pass ]
-fast/scrolling/rtl-scrollbars-overflow-position-absolute.html [ Pass ]
-fast/scrolling/rtl-scrollbars-overflow-simple.html [ Pass ]
-fast/scrolling/rtl-scrollbars-overflow.html [ Pass ]
-fast/scrolling/rtl-scrollbars-positioned-intersect-scrollbars.html [ Pass ]
-fast/scrolling/rtl-scrollbars-positioning.html [ Pass ]
-fast/scrolling/rtl-scrollbars-simple.html [ Pass ]
-fast/scrolling/rtl-scrollbars.html [ Pass ]
-
-http/tests/storageAccess/ [ Pass ]
-http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture.html [ Skip ]
-webkit.org/b/208400 http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.html [ Failure ]
-
-webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
-
-imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-001.html [ Pass ]
-
-# Should be DumpJSConsoleLogInStdErr, but WPE keeps reporting error despite the difference is a console Log message.
-imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable.html [ Failure Pass ]
-
-imported/mozilla/svg/blend-hard-light.svg [ Pass ]
-imported/mozilla/svg/dynamic-textPath-02.svg [ Pass ]
-imported/mozilla/svg/image/image-filter-01.svg [ Pass ]
-
-inspector/page/setScreenSizeOverride.html [ Pass ]
-
-#////////////////////////////////////////////////////////////////////////////////////////
-# End of PASSING tests.
 #////////////////////////////////////////////////////////////////////////////////////////
 
 

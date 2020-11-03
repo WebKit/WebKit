@@ -1,14 +1,222 @@
-#//////////////////////////////////////////////////////////////////////////////////////////
-# Platform-specific directories.
-#//////////////////////////////////////////////////////////////////////////////////////////
+# These are the layout test expectations for the WPE port of WebKit.
+#
+# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+#
+# Never add any tests to this file without opening a bug on bugzilla.webkit.org.
 
+#////////////////////////////////////////////////////////////////////////////////////////
+# TESTS PASSING
+#
+# These tests are passing on WPE but they do not in the Apple ports
+# Note: Passing tests should be on the top of the file to ensure that
+#       expected failures below are not overriden by a folder that is
+#       set to Pass to unskip it from the main expectations file and
+#       declared after the expected failure.
+#       The layout test runner evaluates the rules from top to bottom and
+#       it picks as the valid rule the last one matching.
+#////////////////////////////////////////////////////////////////////////////////////////
+
+# Platform-specific directories.
 scrollingcoordinator/ [ Pass ]
 scrollingcoordinator/mac/ [ Skip ]
 scrollingcoordinator/ios/ [ Skip ]
 
-#//////////////////////////////////////////////////////////////////////////////////////////
-# End platform-specific directories.
-#//////////////////////////////////////////////////////////////////////////////////////////
+# Incorrect upstream, but seem to pass on the bots, possibly with a broken baseline.
+# https://github.com/w3c/web-platform-tests/issues/8407
+css2.1/20110323/replaced-intrinsic-001.htm [ Pass ]
+css2.1/20110323/replaced-intrinsic-002.htm [ Pass ]
+
+fast/events/constructors/keyboard-event-constructor.html [ Pass ]
+
+# Apparently fails on Mac, but I don't know for what reasons. It passes on GTK/WPE.
+webkit.org/b/138676 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
+
+webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_flex-natural-mixed-basis-auto.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-auto-min-width.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-fixed-min-width.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/css-pseudo/first-letter-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-pseudo/first-letter-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/text-overflow-012.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selector-read-write-type-change-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selector-required-type-change-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-display/display-contents-button.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-display/run-in/quotes-applies-to-011.xht [ Pass ]
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-latin.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-lists/counter-increment-inside-display-contents.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-lists/counter-reset-inside-display-contents.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-scoping/stylesheet-title-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/boundary-shaping/boundary-shaping-004.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/boundary-shaping/boundary-shaping-005.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-004.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-005.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-006.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-007.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-008.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-009.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-010.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-014.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-015.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-016.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-017.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-004.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-005.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-006.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-004.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-005.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-006.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-007.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-008.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-009.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-010.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-014.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-015.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-016.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-017.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-before-br-001.html [ Pass ]
+
+# Font variations
+fast/text/variations [ Pass ]
+
+# permessage-deflate WebSocket extension
+http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-comp-bit-onoff.html [ Pass ]
+http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-invalid-parameter.html [ Pass ]
+http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-parameter.html [ Pass ]
+http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-set-bfinal.html [ Pass ]
+http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-split-frames.html [ Pass ]
+http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-unsolicited-negotiation-response.html [ Pass ]
+http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-window-bits.html [ Pass ]
+
+imported/w3c/web-platform-tests/fetch/http-cache/basic-auth-cache-test.html [ Pass ]
+
+imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/002.html [ Pass ]
+imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/choose-_blank-003.html [ Pass ]
+
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-vertical.html [ Pass ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/sizes-dynamic-002.html [ Pass ]
+imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/url-encoded.html [ Pass ]
+
+fast/history/page-cache-indexed-closed-db.html [ Pass ]
+
+# css-values passing for us
+imported/w3c/web-platform-tests/css/css-values/ch-unit-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-values/ch-unit-004.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-values/ch-unit-010.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-values/ch-unit-012.html [ Pass ]
+
+# PointerEvents not enabled globally, but enabled for WPE (EXPERIMENTAL_FEATURES)
+pointerevents/pointer-id-crash.html [ Pass ]
+pointerevents/mouse [ Pass ]
+imported/w3c/web-platform-tests/pointerevents [ Pass ]
+# PointerEvents currently only supports mouse on WPE (no Touch/Pen support)
+webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_change-touch-action-onpointerdown_touch.html [ Skip ]
+webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercancel_touch.html [ Skip ]
+webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerleave_after_pointercancel_touch.html [ Skip ]
+webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_after_pointercancel_touch.html [ Skip ]
+webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_releasepointercapture_onpointercancel_touch.html [ Skip ]
+webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-auto-css_touch.html [ Skip ]
+webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_highest-parent-none_touch.html [ Skip ]
+webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-x-pan-y_touch.html [ Skip ]
+webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_pen.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_touch-action_two-finger_interaction.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_nohover_pointers.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_boundary_events_in_capturing.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_coalesced_events_attributes.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_disabled_form_control.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercapture_in_frame.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_releasepointercapture_events_to_original_target.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_sequence_at_implicit_release_on_drag.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-button-none-test_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_child-auto-child-none_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_child-none_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_child-pan-x-child-pan-x_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_child-pan-x-child-pan-y_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_parent-none_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-none-css_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-none-on-body-when-style-propagates-to-viewport_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-down-css_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-left-css_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-right-css_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-up-css_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-x-css_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-x-pan-y-pan-y_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-y-css_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-span-none-test_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-svg-none-test_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-table-none-test_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_movementxy.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_sequence_at_implicit_release_on_click.html [ Skip ]
+
+imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic.html [ Pass ]
+
+http/tests/cookies/same-site [ Pass ]
+
+fast/multicol/multicol-with-child-renderLayer-for-input.html [ Pass ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/select-sizing-001.html [ Pass ]
+imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration.html [ Pass ]
+
+# Passing since added in r258661.
+imported/w3c/web-platform-tests/css/css-writing-modes/background-position-vrl-022.xht [ Pass ]
+imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-007.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-008.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-002.html [ Pass ]
+
+# WebXR
+webkit.org/b/212897 imported/w3c/web-platform-tests/webxr/idlharness.https.window.html [ Failure ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/webGLCanvasContext_makecompatible_contextlost.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_isSessionSupported_inline.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_isSessionSupported_immersive.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_isSessionSupported_immersive_unsupported.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_immersive.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_immersive_no_gesture.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_immersive_unsupported.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_no_mode.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_non_immersive_no_gesture.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_optionalFeatures.https.html [ Pass ]
+webkit.org/b/209859 webkit.org/b/215637 imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame.https.html [ Pass Failure ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame_invalidhandle.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_features_deviceSupport.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_callback_calls.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/ar-module/idlharness.https.window.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/ar-module/xrDevice_isSessionSupported_immersive-ar.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/ar-module/xrDevice_requestSession_immersive-ar.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_constructor.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_sameObject.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/navigator_xr_sameObject.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrFrame_session_sameObject.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrRigidTransform_constructor.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrSession_prevent_multiple_exclusive.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/render_state_vertical_fov_immersive.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/render_state_update.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrSession_end.https.html [ Pass ]
+
+# Passing since r259532.
+imported/w3c/web-platform-tests/css/css-ui/outline-019.html
+
+# Passing since r260259.
+imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/video-controls-vertical-writing-mode.html
+
+# Passing since r261992.
+fast/scrolling/rtl-scrollbars-animation-property.html [ Pass ]
+
+webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/normal-flow-overconstrained-vrl-004.xht [ Pass ]
+
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Triaged Expectations
@@ -24,9 +232,6 @@ scrollingcoordinator/ios/ [ Skip ]
 webkit.org/b/215355 fonts/ligature.html [ ImageOnlyFailure ]
 webkit.org/b/215421 fast/encoding/denormalised-voiced-japanese-chars.html [ ImageOnlyFailure ]
 
-# ContentExtensions
-webkit.org/b/207723 http/tests/contentextensions/hide-on-ping-with-ping-that-redirects.html [ Pass Failure ]
-webkit.org/b/217267 http/tests/contentextensions/service-worker.https.html [ Failure Pass ]
 
 # CSS-masking and clip-path.
 webkit.org/b/217815 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-transform-mutated-002.html [ ImageOnlyFailure ]
@@ -79,26 +284,23 @@ webkit.org/b/215299 [ Release ] imported/w3c/web-platform-tests/css/css-logical/
 # These are test groups that we haven't yet unskipped, analyzed and then
 # moved into the appropriate section.
 
-# 4. TESTS PASSING
-# Tests that pass for WPE but have different expectations in the global expectations file.
-
-# 5. TESTS CRASHING
+# 4. TESTS CRASHING
 # Please open a bug for each test crashing with any important information.
 # These are in a separate section than failing tests, because they should be
 # priority fixes.
 
-# 6. FLAKY TESTS
+# 5. FLAKY TESTS
 # Tests that sometimes pass.
 
-# 7. SLOW TESTS
+# 6. SLOW TESTS
 # These tests are assigned the SLOW modifier to prevent them timing out as they
 # otherwise pass, but take a long time to complete due to the nature of test,
 # debug configuration or some other performance-affecting factor.
 
-# 8. TESTS TIMING OUT
+# 7. TESTS TIMING OUT
 # Please open a bug for each test timing out with any important information.
 
-# 9. TESTS FAILING
+# 8. TESTS FAILING
 # Each test should (eventually) have a bug. Missing test harness features also go here.
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -739,211 +941,7 @@ webkit.org/b/191497 http/tests/inspector/network/resource-security-certificate.h
 webkit.org/b/191497 http/tests/inspector/network/getSerializedCertificate.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
-# 4. TESTS PASSING
-#////////////////////////////////////////////////////////////////////////////////////////
-
-# Incorrect upstream, but seem to pass on the bots, possibly with a broken baseline.
-# https://github.com/w3c/web-platform-tests/issues/8407
-css2.1/20110323/replaced-intrinsic-001.htm [ Pass ]
-css2.1/20110323/replaced-intrinsic-002.htm [ Pass ]
-
-fast/events/constructors/keyboard-event-constructor.html [ Pass ]
-
-# Apparently fails on Mac, but I don't know for what reasons. It passes on GTK/WPE.
-webkit.org/b/138676 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
-
-webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_flex-natural-mixed-basis-auto.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-auto-min-width.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-fixed-min-width.html [ Pass ]
-
-imported/w3c/web-platform-tests/css/css-pseudo/first-letter-002.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-pseudo/first-letter-003.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-ui/text-overflow-012.html [ Pass ]
-imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-001.html [ Pass ]
-imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-002.html [ Pass ]
-imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-003.html [ Pass ]
-imported/w3c/web-platform-tests/css/selectors/selector-read-write-type-change-002.html [ Pass ]
-imported/w3c/web-platform-tests/css/selectors/selector-required-type-change-002.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-display/display-contents-button.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-display/run-in/quotes-applies-to-011.xht [ Pass ]
-imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-latin.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-lists/counter-increment-inside-display-contents.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-lists/counter-reset-inside-display-contents.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-scoping/stylesheet-title-001.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/boundary-shaping/boundary-shaping-004.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/boundary-shaping/boundary-shaping-005.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-001.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-002.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-003.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-004.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-005.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-006.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-007.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-008.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-009.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-010.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-014.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-015.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-016.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-017.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-001.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-002.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-003.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-004.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-005.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-006.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-001.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-002.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-003.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-004.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-005.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-006.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-007.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-008.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-009.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-010.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-014.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-015.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-016.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-017.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-before-br-001.html [ Pass ]
-
-# Font variations
-fast/text/variations [ Pass ]
-
-# Content Extensions
-http/tests/contentextensions [ Pass ]
-http/tests/inspector/network/contentextensions [ Pass ]
-
-# permessage-deflate WebSocket extension
-http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-comp-bit-onoff.html [ Pass ]
-http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-invalid-parameter.html [ Pass ]
-http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-parameter.html [ Pass ]
-http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-set-bfinal.html [ Pass ]
-http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-split-frames.html [ Pass ]
-http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-unsolicited-negotiation-response.html [ Pass ]
-http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-window-bits.html [ Pass ]
-
-imported/w3c/web-platform-tests/fetch/http-cache/basic-auth-cache-test.html [ Pass ]
-
-imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/002.html [ Pass ]
-imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/choose-_blank-003.html [ Pass ]
-
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-vertical.html [ Pass ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/sizes-dynamic-002.html [ Pass ]
-imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/url-encoded.html [ Pass ]
-
-fast/history/page-cache-indexed-closed-db.html [ Pass ]
-
-# css-values passing for us
-imported/w3c/web-platform-tests/css/css-values/ch-unit-003.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-values/ch-unit-004.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-values/ch-unit-010.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-values/ch-unit-012.html [ Pass ]
-
-# PointerEvents not enabled globally, but enabled for WPE (EXPERIMENTAL_FEATURES)
-pointerevents/pointer-id-crash.html [ Pass ]
-pointerevents/mouse [ Pass ]
-imported/w3c/web-platform-tests/pointerevents [ Pass ]
-# PointerEvents currently only supports mouse on WPE (no Touch/Pen support)
-webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_change-touch-action-onpointerdown_touch.html [ Skip ]
-webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercancel_touch.html [ Skip ]
-webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerleave_after_pointercancel_touch.html [ Skip ]
-webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_after_pointercancel_touch.html [ Skip ]
-webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_releasepointercapture_onpointercancel_touch.html [ Skip ]
-webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-auto-css_touch.html [ Skip ]
-webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_highest-parent-none_touch.html [ Skip ]
-webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-x-pan-y_touch.html [ Skip ]
-webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_pen.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_touch-action_two-finger_interaction.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_nohover_pointers.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_boundary_events_in_capturing.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_coalesced_events_attributes.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_disabled_form_control.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercapture_in_frame.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_releasepointercapture_events_to_original_target.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_sequence_at_implicit_release_on_drag.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-button-none-test_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_child-auto-child-none_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_child-none_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_child-pan-x-child-pan-x_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_child-pan-x-child-pan-y_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_parent-none_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-none-css_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-none-on-body-when-style-propagates-to-viewport_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-down-css_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-left-css_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-right-css_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-up-css_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-x-css_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-x-pan-y-pan-y_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-y-css_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-span-none-test_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-svg-none-test_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-table-none-test_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_movementxy.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_sequence_at_implicit_release_on_click.html [ Skip ]
-
-imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic.html [ Pass ]
-
-http/tests/cookies/same-site [ Pass ]
-
-fast/multicol/multicol-with-child-renderLayer-for-input.html [ Pass ]
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/select-sizing-001.html [ Pass ]
-imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration.html [ Pass ]
-
-# Passing since added in r258661.
-imported/w3c/web-platform-tests/css/css-writing-modes/background-position-vrl-022.xht [ Pass ]
-imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-007.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-008.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-001.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-002.html [ Pass ]
-
-# WebXR
-webkit.org/b/212897 imported/w3c/web-platform-tests/webxr/idlharness.https.window.html [ Failure ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/webGLCanvasContext_makecompatible_contextlost.https.html [ Pass ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_isSessionSupported_inline.https.html [ Pass ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_isSessionSupported_immersive.https.html [ Pass ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_isSessionSupported_immersive_unsupported.https.html [ Pass ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_immersive.https.html [ Pass ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_immersive_no_gesture.https.html [ Pass ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_immersive_unsupported.https.html [ Pass ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_no_mode.https.html [ Pass ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_non_immersive_no_gesture.https.html [ Pass ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_optionalFeatures.https.html [ Pass ]
-webkit.org/b/209859 webkit.org/b/215637 imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame.https.html [ Pass Failure ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame_invalidhandle.https.html [ Pass ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_features_deviceSupport.https.html [ Pass ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_callback_calls.https.html [ Pass ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace.https.html [ Pass ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/ar-module/idlharness.https.window.html [ Pass ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/ar-module/xrDevice_isSessionSupported_immersive-ar.https.html [ Pass ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/ar-module/xrDevice_requestSession_immersive-ar.https.html [ Pass ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_constructor.https.html [ Pass ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_sameObject.https.html [ Pass ]
-imported/w3c/web-platform-tests/webxr/navigator_xr_sameObject.https.html [ Pass ]
-imported/w3c/web-platform-tests/webxr/xrFrame_session_sameObject.https.html [ Pass ]
-imported/w3c/web-platform-tests/webxr/xrRigidTransform_constructor.https.html [ Pass ]
-imported/w3c/web-platform-tests/webxr/xrSession_prevent_multiple_exclusive.https.html [ Pass ]
-imported/w3c/web-platform-tests/webxr/render_state_vertical_fov_immersive.https.html [ Pass ]
-imported/w3c/web-platform-tests/webxr/render_state_update.https.html [ Pass ]
-imported/w3c/web-platform-tests/webxr/xrSession_end.https.html [ Pass ]
-
-# Passing since r259532.
-imported/w3c/web-platform-tests/css/css-ui/outline-019.html
-
-# Passing since r260259.
-imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/video-controls-vertical-writing-mode.html
-
-# Passing since r261992.
-fast/scrolling/rtl-scrollbars-animation-property.html [ Pass ]
-
-webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/normal-flow-overconstrained-vrl-004.xht [ Pass ]
-
-#////////////////////////////////////////////////////////////////////////////////////////
-# 5. TESTS CRASHING
+# 4. TESTS CRASHING
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/177633 editing/async-clipboard/clipboard-change-data-while-writing.html [ Failure ]
@@ -959,7 +957,7 @@ webkit.org/b/207574 [ Debug ] imported/w3c/web-platform-tests/css/css-background
 webkit.org/b/207574 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-percent-height.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
-# 6. FLAKY TESTS
+# 5. FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/111612 animations/animation-delay-changed.html [ Failure Pass ]
@@ -1158,7 +1156,7 @@ webkit.org/b/216650 fast/events/mouse-focus-imagemap.html [ Failure Pass ]
 webkit.org/b/216650 fast/events/mouse-moved-remove-frame-crash.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
-# 7. SLOW TESTS
+# 6. SLOW TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # This test is so slow that a Slow expectation is not enough to avoid flakiness.
@@ -1176,7 +1174,7 @@ webkit.org/b/212960 jquery/manipulation.html [ Slow ]
 imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html [ Slow ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
-# 8. TESTS TIMING OUT
+# 7. TESTS TIMING OUT
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/183902 fast/dom/frame-loading-via-document-write.html [ Timeout ]
@@ -1237,7 +1235,7 @@ webkit.org/b/212202 fast/scrolling/rtl-point-in-iframe.html [ Timeout ]
 webkit.org/b/212350 fast/dom/timer-throttling-hidden-page.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
-# 9. TESTS FAILING
+# 8. TESTS FAILING
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # Implement testRunner.setUseDeferredFrameLoading
