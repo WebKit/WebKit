@@ -69,7 +69,9 @@ public:
     virtual void flushContext() = 0;
 
     virtual DisplayList::DrawingContext* drawingContext() { return nullptr; }
+    virtual bool prefersPreparationForDisplay() { return false; }
     virtual void flushDrawingContext() { }
+    virtual void flushDrawingContextAndCommit() { }
     virtual void flushDisplayList(const DisplayList::DisplayList&) { }
 
     virtual AffineTransform baseTransform() const = 0;

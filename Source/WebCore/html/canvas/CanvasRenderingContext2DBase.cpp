@@ -2039,6 +2039,21 @@ GraphicsContext* CanvasRenderingContext2DBase::drawingContext() const
     return canvasBase().drawingContext();
 }
 
+void CanvasRenderingContext2DBase::prepareForDisplay()
+{
+    if (auto buffer = canvasBase().buffer())
+        buffer->flushDrawingContextAndCommit();
+}
+
+bool CanvasRenderingContext2DBase::needsPreparationForDisplay() const
+{
+    auto buffer = canvasBase().buffer();
+    if (buffer && buffer->prefersPreparationForDisplay())
+        return true;
+
+    return false;
+}
+
 static RefPtr<ImageData> createEmptyImageData(const IntSize& size)
 {
     auto data = ImageData::create(size);

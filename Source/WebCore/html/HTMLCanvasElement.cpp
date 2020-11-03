@@ -950,6 +950,9 @@ void HTMLCanvasElement::createImageBuffer() const
         const_cast<HTMLCanvasElement*>(this)->invalidateStyleAndLayerComposition();
     }
 #endif
+
+    if (m_context && buffer() && buffer()->prefersPreparationForDisplay())
+        const_cast<HTMLCanvasElement*>(this)->addObserver(document());
 }
 
 void HTMLCanvasElement::setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&& buffer)
@@ -1073,12 +1076,10 @@ bool HTMLCanvasElement::needsPreparationForDisplay()
 
 void HTMLCanvasElement::prepareForDisplay()
 {
-#if ENABLE(WEBGL)
     ASSERT(needsPreparationForDisplay());
 
     if (m_context)
         m_context->prepareForDisplay();
-#endif
 }
 
 bool HTMLCanvasElement::isControlledByOffscreen() const

@@ -307,6 +307,8 @@ protected:
     void didDrawEntireCanvas();
 
     void paintRenderingResultsToCanvas() override;
+    bool needsPreparationForDisplay() const final;
+    void prepareForDisplay() final;
 
     GraphicsContext* drawingContext() const;
 
