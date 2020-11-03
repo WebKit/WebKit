@@ -7408,6 +7408,9 @@ void WebGLRenderingContextBase::scheduleTaskToDispatchContextLostEvent()
 
     // It is safe to capture |this| because we keep the canvas element alive and it owns |this|.
     queueTaskKeepingObjectAlive(*canvas, TaskSource::WebGL, [this, canvas] {
+        if (isContextStopped())
+            return;
+
         auto event = WebGLContextEvent::create(eventNames().webglcontextlostEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString());
         canvas->dispatchEvent(event);
         m_restoreAllowed = event->defaultPrevented();
