@@ -14,6 +14,7 @@
 #include "absl/strings/str_format.h"
 
 namespace absl {
+ABSL_NAMESPACE_BEGIN
 namespace str_format_internal {
 namespace {
 
@@ -22,7 +23,16 @@ class FormatArgImplTest : public ::testing::Test {
   enum Color { kRed, kGreen, kBlue };
 
   static const char *hi() { return "hi"; }
+
+  struct X {};
+
+  X x_;
 };
+
+inline FormatConvertResult<FormatConversionCharSet{}> AbslFormatConvert(
+    const FormatArgImplTest::X &, const FormatConversionSpec &, FormatSink *) {
+  return {false};
+}
 
 TEST_F(FormatArgImplTest, ToInt) {
   int out = 0;
@@ -58,6 +68,7 @@ TEST_F(FormatArgImplTest, ToInt) {
       FormatArgImpl(static_cast<int *>(nullptr)), &out));
   EXPECT_FALSE(FormatArgImplFriend::ToInt(FormatArgImpl(hi()), &out));
   EXPECT_FALSE(FormatArgImplFriend::ToInt(FormatArgImpl("hi"), &out));
+  EXPECT_FALSE(FormatArgImplFriend::ToInt(FormatArgImpl(x_), &out));
   EXPECT_TRUE(FormatArgImplFriend::ToInt(FormatArgImpl(kBlue), &out));
   EXPECT_EQ(2, out);
 }
@@ -94,11 +105,12 @@ TEST_F(FormatArgImplTest, OtherPtrDecayToVoidPtr) {
 TEST_F(FormatArgImplTest, WorksWithCharArraysOfUnknownSize) {
   std::string s;
   FormatSinkImpl sink(&s);
-  ConversionSpec conv;
-  conv.set_conv(ConversionChar::FromChar('s'));
-  conv.set_flags(Flags());
-  conv.set_width(-1);
-  conv.set_precision(-1);
+  FormatConversionSpecImpl conv;
+  FormatConversionSpecImplFriend::SetConversionChar(
+      FormatConversionCharInternal::s, &conv);
+  FormatConversionSpecImplFriend::SetFlags(Flags(), &conv);
+  FormatConversionSpecImplFriend::SetWidth(-1, &conv);
+  FormatConversionSpecImplFriend::SetPrecision(-1, &conv);
   EXPECT_TRUE(
       FormatArgImplFriend::Convert(FormatArgImpl(kMyArray), conv, &sink));
   sink.Flush();
@@ -108,4 +120,5 @@ const char kMyArray[] = "ABCDE";
 
 }  // namespace
 }  // namespace str_format_internal
+ABSL_NAMESPACE_END
 }  // namespace absl

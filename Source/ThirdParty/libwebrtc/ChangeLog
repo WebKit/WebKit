@@ -1,5 +1,15 @@
 2020-11-03  Youenn Fablet  <youenn@apple.com>
 
+        Update WebRTC abseil to M87
+        https://bugs.webkit.org/show_bug.cgi?id=218432
+
+        Reviewed by Eric Carlson.
+
+        * CMakeLists.txt:
+        * Source/third_party/abseil-cpp: Resynced.
+
+2020-11-03  Youenn Fablet  <youenn@apple.com>
+
         Update WebRTC opus to M87
         https://bugs.webkit.org/show_bug.cgi?id=218435
 

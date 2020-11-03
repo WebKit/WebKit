@@ -37,8 +37,11 @@
 // types. Hashing of that combined state is separately done by `absl::Hash`.
 //
 // One should assume that a hash algorithm is chosen randomly at the start of
-// each process.  E.g., absl::Hash<int>()(9) in one process and
-// absl::Hash<int>()(9) in another process are likely to differ.
+// each process.  E.g., `absl::Hash<int>{}(9)` in one process and
+// `absl::Hash<int>{}(9)` in another process are likely to differ.
+//
+// `absl::Hash` is intended to strongly mix input bits with a target of passing
+// an [Avalanche Test](https://en.wikipedia.org/wiki/Avalanche_effect).
 //
 // Example:
 //
@@ -73,6 +76,7 @@
 #include "absl/hash/internal/hash.h"
 
 namespace absl {
+ABSL_NAMESPACE_BEGIN
 
 // -----------------------------------------------------------------------------
 // `absl::Hash`
@@ -84,7 +88,6 @@ namespace absl {
 //  * T is an arithmetic or pointer type
 //  * T defines an overload for `AbslHashValue(H, const T&)` for an arbitrary
 //    hash state `H`.
-//  - T defines a specialization of `HASH_NAMESPACE::hash<T>`
 //  - T defines a specialization of `std::hash<T>`
 //
 // `absl::Hash` intrinsically supports the following types:
@@ -97,6 +100,7 @@ namespace absl {
 //   * std::tuple<Ts...>, if all the Ts... are hashable
 //   * std::unique_ptr and std::shared_ptr
 //   * All string-like types including:
+//     * absl::Cord
 //     * std::string
 //     * std::string_view (as well as any instance of std::basic_string that
 //       uses char and std::char_traits)
@@ -123,8 +127,6 @@ namespace absl {
 //   * Natively supported types out of the box (see above)
 //   * Types for which an `AbslHashValue()` overload is provided (such as
 //     user-defined types). See "Adding Type Support to `absl::Hash`" below.
-//   * Types which define a `HASH_NAMESPACE::hash<T>` specialization (aka
-//     `__gnu_cxx::hash<T>` for gcc/Clang or `stdext::hash<T>` for MSVC)
 //   * Types which define a `std::hash<T>` specialization
 //
 // The fallback to legacy hash functions exists mainly for backwards
@@ -317,6 +319,7 @@ class HashState : public hash_internal::HashStateBase<HashState> {
   void (*combine_contiguous_)(void*, const unsigned char*, size_t);
 };
 
+ABSL_NAMESPACE_END
 }  // namespace absl
 
 #endif  // ABSL_HASH_HASH_H_

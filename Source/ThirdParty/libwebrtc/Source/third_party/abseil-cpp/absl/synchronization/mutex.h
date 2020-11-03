@@ -82,6 +82,7 @@
 #endif
 
 namespace absl {
+ABSL_NAMESPACE_BEGIN
 
 class Condition;
 struct SynchWaitParams;
@@ -330,16 +331,15 @@ class ABSL_LOCKABLE Mutex {
   // Mutex::AwaitWithTimeout()
   // Mutex::AwaitWithDeadline()
   //
-  // If `cond` is initially true, do nothing, or act as though `cond` is
-  // initially false.
-  //
-  // If `cond` is initially false, unlock this `Mutex` and block until
-  // simultaneously:
+  // Unlocks this `Mutex` and blocks until simultaneously:
   //   - either `cond` is true or the {timeout has expired, deadline has passed}
   //     and
   //   - this `Mutex` can be reacquired,
   // then reacquire this `Mutex` in the same mode in which it was previously
   // held, returning `true` iff `cond` is `true` on return.
+  //
+  // If the condition is initially `true`, the implementation *may* skip the
+  // release/re-acquire step and return immediately.
   //
   // Deadlines in the past are equivalent to an immediate deadline.
   // Negative timeouts are equivalent to a zero timeout.
@@ -558,8 +558,7 @@ class ABSL_SCOPED_LOCKABLE MutexLock {
 // releases a shared lock on a `Mutex` via RAII.
 class ABSL_SCOPED_LOCKABLE ReaderMutexLock {
  public:
-  explicit ReaderMutexLock(Mutex *mu) ABSL_SHARED_LOCK_FUNCTION(mu)
-      :  mu_(mu) {
+  explicit ReaderMutexLock(Mutex *mu) ABSL_SHARED_LOCK_FUNCTION(mu) : mu_(mu) {
     mu->ReaderLock();
   }
 
@@ -568,9 +567,7 @@ class ABSL_SCOPED_LOCKABLE ReaderMutexLock {
   ReaderMutexLock& operator=(const ReaderMutexLock&) = delete;
   ReaderMutexLock& operator=(ReaderMutexLock&&) = delete;
 
-  ~ReaderMutexLock() ABSL_UNLOCK_FUNCTION() {
-    this->mu_->ReaderUnlock();
-  }
+  ~ReaderMutexLock() ABSL_UNLOCK_FUNCTION() { this->mu_->ReaderUnlock(); }
 
  private:
   Mutex *const mu_;
@@ -592,9 +589,7 @@ class ABSL_SCOPED_LOCKABLE WriterMutexLock {
   WriterMutexLock& operator=(const WriterMutexLock&) = delete;
   WriterMutexLock& operator=(WriterMutexLock&&) = delete;
 
-  ~WriterMutexLock() ABSL_UNLOCK_FUNCTION() {
-    this->mu_->WriterUnlock();
-  }
+  ~WriterMutexLock() ABSL_UNLOCK_FUNCTION() { this->mu_->WriterUnlock(); }
 
  private:
   Mutex *const mu_;
@@ -690,6 +685,11 @@ class Condition {
   //     return processed_ >= current;
   //   };
   //   mu_.Await(Condition(&reached));
+  //
+  // NOTE: never use "mu_.AssertHeld()" instead of "mu_.AssertReadHeld()" in the
+  // lambda as it may be called when the mutex is being unlocked from a scope
+  // holding only a reader lock, which will make the assertion not fulfilled and
+  // crash the binary.
 
   // See class comment for performance advice. In particular, if there
   // might be more than one waiter for the same condition, make sure
@@ -774,6 +774,8 @@ class Condition {
 //
 class CondVar {
  public:
+  // A `CondVar` allocated on the heap or on the stack can use the this
+  // constructor.
   CondVar();
   ~CondVar();
 
@@ -863,10 +865,15 @@ class CondVar {
 class ABSL_SCOPED_LOCKABLE MutexLockMaybe {
  public:
   explicit MutexLockMaybe(Mutex *mu) ABSL_EXCLUSIVE_LOCK_FUNCTION(mu)
-      : mu_(mu) { if (this->mu_ != nullptr) { this->mu_->Lock(); } }
+      : mu_(mu) {
+    if (this->mu_ != nullptr) {
+      this->mu_->Lock();
+    }
+  }
   ~MutexLockMaybe() ABSL_UNLOCK_FUNCTION() {
     if (this->mu_ != nullptr) { this->mu_->Unlock(); }
   }
+
  private:
   Mutex *const mu_;
   MutexLockMaybe(const MutexLockMaybe&) = delete;
@@ -900,9 +907,11 @@ class ABSL_SCOPED_LOCKABLE ReleasableMutexLock {
 };
 
 #ifdef ABSL_INTERNAL_USE_NONPROD_MUTEX
+
 inline constexpr Mutex::Mutex(absl::ConstInitType) : impl_(absl::kConstInit) {}
 
 #else
+
 inline Mutex::Mutex() : mu_(0) {
   ABSL_TSAN_MUTEX_CREATE(this, __tsan_mutex_not_static);
 }
@@ -910,7 +919,8 @@ inline Mutex::Mutex() : mu_(0) {
 inline constexpr Mutex::Mutex(absl::ConstInitType) : mu_(0) {}
 
 inline CondVar::CondVar() : cv_(0) {}
-#endif
+
+#endif  // ABSL_INTERNAL_USE_NONPROD_MUTEX
 
 // static
 template <typename T>
@@ -1000,7 +1010,7 @@ void RegisterCondVarTracer(void (*fn)(const char *msg, const void *cv));
 //
 // 'pc' is the program counter being symbolized, 'out' is the buffer to write
 // into, and 'out_size' is the size of the buffer.  This function can return
-// false if symbolizing failed, or true if a null-terminated symbol was written
+// false if symbolizing failed, or true if a NUL-terminated symbol was written
 // to 'out.'
 //
 // This has the same memory ordering concerns as RegisterMutexProfiler() above.
@@ -1039,6 +1049,7 @@ enum class OnDeadlockCycle {
 // the manner chosen here.
 void SetMutexDeadlockDetectionMode(OnDeadlockCycle mode);
 
+ABSL_NAMESPACE_END
 }  // namespace absl
 
 // In some build configurations we pass --detect-odr-violations to the

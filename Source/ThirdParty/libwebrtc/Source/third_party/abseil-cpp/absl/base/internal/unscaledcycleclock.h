@@ -15,8 +15,8 @@
 // UnscaledCycleClock
 //    An UnscaledCycleClock yields the value and frequency of a cycle counter
 //    that increments at a rate that is approximately constant.
-//    This class is for internal / whitelisted use only, you should consider
-//    using CycleClock instead.
+//    This class is for internal use only, you should consider using CycleClock
+//    instead.
 //
 // Notes:
 // The cycle counter frequency is not necessarily the core clock frequency.
@@ -86,6 +86,7 @@
 #endif
 
 namespace absl {
+ABSL_NAMESPACE_BEGIN
 namespace time_internal {
 class UnscaledCycleClockWrapperForGetCurrentTime;
 }  // namespace time_internal
@@ -108,13 +109,14 @@ class UnscaledCycleClock {
   // value.
   static double Frequency();
 
-  // Whitelisted friends.
+  // Allowed users
   friend class base_internal::CycleClock;
   friend class time_internal::UnscaledCycleClockWrapperForGetCurrentTime;
   friend class base_internal::UnscaledCycleClockWrapperForInitializeFrequency;
 };
 
 }  // namespace base_internal
+ABSL_NAMESPACE_END
 }  // namespace absl
 
 #endif  // ABSL_USE_UNSCALED_CYCLECLOCK

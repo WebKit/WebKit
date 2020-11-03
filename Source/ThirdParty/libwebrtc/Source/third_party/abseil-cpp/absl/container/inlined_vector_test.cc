@@ -30,6 +30,7 @@
 #include "absl/base/internal/exception_testing.h"
 #include "absl/base/internal/raw_logging.h"
 #include "absl/base/macros.h"
+#include "absl/base/options.h"
 #include "absl/container/internal/counting_allocator.h"
 #include "absl/container/internal/test_instance_tracker.h"
 #include "absl/hash/hash_testing.h"
@@ -245,6 +246,16 @@ TEST(IntVec, Erase) {
       }
     }
   }
+}
+
+TEST(IntVec, Hardened) {
+  IntVec v;
+  Fill(&v, 10);
+  EXPECT_EQ(v[9], 9);
+#if !defined(NDEBUG) || ABSL_OPTION_HARDENED
+  EXPECT_DEATH_IF_SUPPORTED(v[10], "");
+  EXPECT_DEATH_IF_SUPPORTED(v[-1], "");
+#endif
 }
 
 // At the end of this test loop, the elements between [erase_begin, erase_end)
@@ -780,7 +791,7 @@ TEST(IntVec, Reserve) {
 TEST(StringVec, SelfRefPushBack) {
   std::vector<std::string> std_v;
   absl::InlinedVector<std::string, 4> v;
-  const std::string s = "A quite long std::string to ensure heap.";
+  const std::string s = "A quite long string to ensure heap.";
   std_v.push_back(s);
   v.push_back(s);
   for (int i = 0; i < 20; ++i) {
@@ -795,7 +806,7 @@ TEST(StringVec, SelfRefPushBack) {
 TEST(StringVec, SelfRefPushBackWithMove) {
   std::vector<std::string> std_v;
   absl::InlinedVector<std::string, 4> v;
-  const std::string s = "A quite long std::string to ensure heap.";
+  const std::string s = "A quite long string to ensure heap.";
   std_v.push_back(s);
   v.push_back(s);
   for (int i = 0; i < 20; ++i) {
@@ -808,7 +819,7 @@ TEST(StringVec, SelfRefPushBackWithMove) {
 }
 
 TEST(StringVec, SelfMove) {
-  const std::string s = "A quite long std::string to ensure heap.";
+  const std::string s = "A quite long string to ensure heap.";
   for (int len = 0; len < 20; len++) {
     SCOPED_TRACE(len);
     absl::InlinedVector<std::string, 8> v;
@@ -1689,7 +1700,11 @@ TEST(AllocatorSupportTest, ScopedAllocatorWorksInlined) {
   inlined_case.emplace_back();
 
   int64_t absl_responsible_for_count = total_allocated_byte_count;
+
+  // MSVC's allocator preemptively allocates in debug mode
+#if !defined(_MSC_VER)
   EXPECT_EQ(absl_responsible_for_count, 0);
+#endif  // !defined(_MSC_VER)
 
   inlined_case[0].emplace_back();
   EXPECT_GT(total_allocated_byte_count, absl_responsible_for_count);
@@ -1748,6 +1763,30 @@ TEST(AllocatorSupportTest, SizeAllocConstructor) {
     EXPECT_THAT(allocated, len * sizeof(int));
     EXPECT_THAT(v, AllOf(SizeIs(len), Each(0)));
   }
+}
+
+TEST(InlinedVectorTest, MinimumAllocatorCompilesUsingTraits) {
+  using T = int;
+  using A = std::allocator<T>;
+  using ATraits = absl::allocator_traits<A>;
+
+  struct MinimumAllocator {
+    using value_type = T;
+
+    value_type* allocate(size_t n) {
+      A a;
+      return ATraits::allocate(a, n);
+    }
+
+    void deallocate(value_type* p, size_t n) {
+      A a;
+      ATraits::deallocate(a, p, n);
+    }
+  };
+
+  absl::InlinedVector<T, 1, MinimumAllocator> vec;
+  vec.emplace_back();
+  vec.resize(0);
 }
 
 TEST(InlinedVectorTest, AbslHashValueWorks) {

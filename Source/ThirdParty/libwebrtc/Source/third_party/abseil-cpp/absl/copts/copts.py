@@ -56,7 +56,6 @@ LLVM_DISABLE_WARNINGS_FLAGS = [
     "-Wno-global-constructors",
     "-Wno-exit-time-destructors",
     ###
-    "-Wno-nested-anon-types",
     "-Wno-non-modular-include-in-module",
     "-Wno-old-style-cast",
     # Warns on preferred usage of non-POD types such as string_view
@@ -109,12 +108,6 @@ LLVM_TEST_DISABLE_WARNINGS_FLAGS = [
     "-Wno-gnu-zero-variadic-macro-arguments",
 ]
 
-MSVC_STYLE_EXCEPTIONS_FLAGS = [
-    "/U_HAS_EXCEPTIONS",
-    "/D_HAS_EXCEPTIONS=1",
-    "/EHsc"
-]
-
 MSVC_DEFINES = [
     "/DNOMINMAX",  # Don't define min and max macros (windows.h)
     # Don't bloat namespace with incompatible winsock versions.
@@ -135,6 +128,7 @@ COPT_VARS = {
         "-Wmissing-declarations",
         "-Woverlength-strings",
         "-Wpointer-arith",
+        "-Wundef",
         "-Wunused-local-typedefs",
         "-Wunused-result",
         "-Wvarargs",
@@ -147,6 +141,8 @@ COPT_VARS = {
         # Google style does not use unsigned integers, though STL containers
         # have unsigned types.
         "-Wno-sign-compare",
+        # Don't define min and max macros (Build on Windows using gcc)
+        "-DNOMINMAX",
     ],
     "ABSL_GCC_TEST_FLAGS": [
         "-Wno-conversion-null",
@@ -157,20 +153,21 @@ COPT_VARS = {
         "-Wno-unused-parameter",
         "-Wno-unused-private-field",
     ],
-    "ABSL_GCC_EXCEPTIONS_FLAGS": ["-fexceptions"],
     "ABSL_LLVM_FLAGS":
-        LLVM_BIG_WARNING_FLAGS + LLVM_DISABLE_WARNINGS_FLAGS,
+        LLVM_BIG_WARNING_FLAGS + LLVM_DISABLE_WARNINGS_FLAGS + [
+            # Don't define min and max macros (Build on Windows using clang)
+            "-DNOMINMAX",
+        ],
     "ABSL_LLVM_TEST_FLAGS":
         LLVM_TEST_DISABLE_WARNINGS_FLAGS,
-    "ABSL_LLVM_EXCEPTIONS_FLAGS": ["-fexceptions"],
     "ABSL_CLANG_CL_FLAGS":
         (MSVC_BIG_WARNING_FLAGS + LLVM_DISABLE_WARNINGS_FLAGS + MSVC_DEFINES),
     "ABSL_CLANG_CL_TEST_FLAGS":
         LLVM_TEST_DISABLE_WARNINGS_FLAGS,
-    "ABSL_CLANG_CL_EXCEPTIONS_FLAGS":
-        MSVC_STYLE_EXCEPTIONS_FLAGS,
     "ABSL_MSVC_FLAGS":
         MSVC_BIG_WARNING_FLAGS + MSVC_DEFINES + [
+            # Increase the number of sections available in object files
+            "/bigobj",
             "/wd4005",  # macro-redefinition
             "/wd4068",  # unknown pragma
             # qualifier applied to function type has no meaning; ignored
@@ -191,8 +188,6 @@ COPT_VARS = {
         "/wd4996",  # use of deprecated symbol
         "/DNOMINMAX",  # disable the min() and max() macros from <windows.h>
     ],
-    "ABSL_MSVC_EXCEPTIONS_FLAGS":
-        MSVC_STYLE_EXCEPTIONS_FLAGS,
     "ABSL_MSVC_LINKOPTS": [
         # Object file doesn't export any previously undefined symbols
         "-ignore:4221",
@@ -207,8 +202,5 @@ COPT_VARS = {
         "-maes",
         "-msse4.1",
     ],
-    "ABSL_RANDOM_HWAES_MSVC_X64_FLAGS": [
-        "/O2",  # Maximize speed
-        "/Ob2",  # Aggressive inlining
-    ],
+    "ABSL_RANDOM_HWAES_MSVC_X64_FLAGS": [],
 }

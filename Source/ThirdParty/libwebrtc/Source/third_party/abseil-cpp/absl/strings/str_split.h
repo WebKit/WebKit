@@ -44,11 +44,13 @@
 #include <vector>
 
 #include "absl/base/internal/raw_logging.h"
+#include "absl/base/macros.h"
 #include "absl/strings/internal/str_split_internal.h"
 #include "absl/strings/string_view.h"
 #include "absl/strings/strip.h"
 
 namespace absl {
+ABSL_NAMESPACE_BEGIN
 
 //------------------------------------------------------------------------------
 // Delimiters
@@ -506,6 +508,7 @@ StrSplit(strings_internal::ConvertibleToStringView text, Delimiter d,
       std::move(text), DelimiterType(d), std::move(p));
 }
 
+ABSL_NAMESPACE_END
 }  // namespace absl
 
 #endif  // ABSL_STRINGS_STR_SPLIT_H_

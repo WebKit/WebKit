@@ -34,6 +34,7 @@
 #include "absl/base/thread_annotations.h"
 
 namespace absl {
+ABSL_NAMESPACE_BEGIN
 Time Now() {
   // TODO(bww): Get a timespec instead so we don't have to divide.
   int64_t n = absl::GetCurrentTimeNanos();
@@ -43,6 +44,7 @@ Time Now() {
   }
   return time_internal::FromUnixDuration(absl::Nanoseconds(n));
 }
+ABSL_NAMESPACE_END
 }  // namespace absl
 
 // Decide if we should use the fast GetCurrentTimeNanos() algorithm
@@ -71,9 +73,11 @@ Time Now() {
 
 #if !ABSL_USE_CYCLECLOCK_FOR_GET_CURRENT_TIME_NANOS
 namespace absl {
+ABSL_NAMESPACE_BEGIN
 int64_t GetCurrentTimeNanos() {
   return GET_CURRENT_TIME_NANOS_FROM_SYSTEM();
 }
+ABSL_NAMESPACE_END
 }  // namespace absl
 #else  // Use the cyclecounter-based implementation below.
 
@@ -91,6 +95,7 @@ static int64_t stats_slow_paths;
 static int64_t stats_fast_slow_paths;
 
 namespace absl {
+ABSL_NAMESPACE_BEGIN
 namespace time_internal {
 // This is a friend wrapper around UnscaledCycleClock::Now()
 // (needed to access UnscaledCycleClock).
@@ -221,9 +226,9 @@ static_assert(((kMinNSBetweenSamples << (kScale + 1)) >> (kScale + 1)) ==
 
 // A reader-writer lock protecting the static locations below.
 // See SeqAcquire() and SeqRelease() above.
-static absl::base_internal::SpinLock lock(
-    absl::base_internal::kLinkerInitialized);
-static std::atomic<uint64_t> seq(0);
+ABSL_CONST_INIT static absl::base_internal::SpinLock lock(
+    absl::kConstInit, base_internal::SCHEDULE_KERNEL_ONLY);
+ABSL_CONST_INIT static std::atomic<uint64_t> seq(0);
 
 // data from a sample of the kernel's time value
 struct TimeSampleAtomic {
@@ -449,7 +454,7 @@ static uint64_t UpdateLastSample(uint64_t now_cycles, uint64_t now_ns,
     last_sample.min_cycles_per_sample.store(0, std::memory_order_relaxed);
     stats_initializations++;
   } else if (sample->raw_ns + 500 * 1000 * 1000 < now_ns &&
-             sample->base_cycles + 100 < now_cycles) {
+             sample->base_cycles + 50 < now_cycles) {
     // Enough time has passed to compute the cycle time.
     if (sample->nsscaled_per_cycle != 0) {  // Have a cycle time estimate.
       // Compute time from counter reading, but avoiding overflow
@@ -515,10 +520,12 @@ static uint64_t UpdateLastSample(uint64_t now_cycles, uint64_t now_ns,
 
   return estimated_base_ns;
 }
+ABSL_NAMESPACE_END
 }  // namespace absl
 #endif  // ABSL_USE_CYCLECLOCK_FOR_GET_CURRENT_TIME_NANOS
 
 namespace absl {
+ABSL_NAMESPACE_BEGIN
 namespace {
 
 // Returns the maximum duration that SleepOnce() can sleep for.
@@ -546,6 +553,7 @@ void SleepOnce(absl::Duration to_sleep) {
 }
 
 }  // namespace
+ABSL_NAMESPACE_END
 }  // namespace absl
 
 extern "C" {

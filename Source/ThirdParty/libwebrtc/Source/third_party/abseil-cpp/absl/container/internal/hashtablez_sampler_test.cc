@@ -29,14 +29,16 @@
 #include "absl/time/clock.h"
 #include "absl/time/time.h"
 
-#if SWISSTABLE_HAVE_SSE2
+#if ABSL_INTERNAL_RAW_HASH_SET_HAVE_SSE2
 constexpr int kProbeLength = 16;
 #else
 constexpr int kProbeLength = 8;
 #endif
 
 namespace absl {
+ABSL_NAMESPACE_BEGIN
 namespace container_internal {
+#if defined(ABSL_INTERNAL_HASHTABLEZ_SAMPLE)
 class HashtablezInfoHandlePeer {
  public:
   static bool IsSampled(const HashtablezInfoHandle& h) {
@@ -45,6 +47,13 @@ class HashtablezInfoHandlePeer {
 
   static HashtablezInfo* GetInfo(HashtablezInfoHandle* h) { return h->info_; }
 };
+#else
+class HashtablezInfoHandlePeer {
+ public:
+  static bool IsSampled(const HashtablezInfoHandle&) { return false; }
+  static HashtablezInfo* GetInfo(HashtablezInfoHandle*) { return nullptr; }
+};
+#endif  // defined(ABSL_INTERNAL_HASHTABLEZ_SAMPLE)
 
 namespace {
 using ::absl::synchronization_internal::ThreadPool;
@@ -75,6 +84,7 @@ TEST(HashtablezInfoTest, PrepareForSampling) {
   EXPECT_EQ(info.capacity.load(), 0);
   EXPECT_EQ(info.size.load(), 0);
   EXPECT_EQ(info.num_erases.load(), 0);
+  EXPECT_EQ(info.num_rehashes.load(), 0);
   EXPECT_EQ(info.max_probe_length.load(), 0);
   EXPECT_EQ(info.total_probe_length.load(), 0);
   EXPECT_EQ(info.hashes_bitwise_or.load(), 0);
@@ -94,6 +104,7 @@ TEST(HashtablezInfoTest, PrepareForSampling) {
   EXPECT_EQ(info.capacity.load(), 0);
   EXPECT_EQ(info.size.load(), 0);
   EXPECT_EQ(info.num_erases.load(), 0);
+  EXPECT_EQ(info.num_rehashes.load(), 0);
   EXPECT_EQ(info.max_probe_length.load(), 0);
   EXPECT_EQ(info.total_probe_length.load(), 0);
   EXPECT_EQ(info.hashes_bitwise_or.load(), 0);
@@ -166,8 +177,10 @@ TEST(HashtablezInfoTest, RecordRehash) {
   EXPECT_EQ(info.size.load(), 2);
   EXPECT_EQ(info.total_probe_length.load(), 3);
   EXPECT_EQ(info.num_erases.load(), 0);
+  EXPECT_EQ(info.num_rehashes.load(), 1);
 }
 
+#if defined(ABSL_INTERNAL_HASHTABLEZ_SAMPLE)
 TEST(HashtablezSamplerTest, SmallSampleParameter) {
   SetHashtablezEnabled(true);
   SetHashtablezSampleParameter(100);
@@ -240,6 +253,8 @@ TEST(HashtablezSamplerTest, Handle) {
   });
   EXPECT_FALSE(found);
 }
+#endif
+
 
 TEST(HashtablezSamplerTest, Registration) {
   HashtablezSampler sampler;
@@ -352,4 +367,5 @@ TEST(HashtablezSamplerTest, Callback) {
 
 }  // namespace
 }  // namespace container_internal
+ABSL_NAMESPACE_END
 }  // namespace absl

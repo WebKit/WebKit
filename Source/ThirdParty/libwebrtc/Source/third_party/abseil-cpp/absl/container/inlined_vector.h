@@ -48,12 +48,14 @@
 
 #include "absl/algorithm/algorithm.h"
 #include "absl/base/internal/throw_delegate.h"
+#include "absl/base/macros.h"
 #include "absl/base/optimization.h"
 #include "absl/base/port.h"
 #include "absl/container/internal/inlined_vector.h"
 #include "absl/memory/memory.h"
 
 namespace absl {
+ABSL_NAMESPACE_BEGIN
 // -----------------------------------------------------------------------------
 // InlinedVector
 // -----------------------------------------------------------------------------
@@ -62,16 +64,17 @@ namespace absl {
 // `std::vector` for use cases where the vector's size is sufficiently small
 // that it can be inlined. If the inlined vector does grow beyond its estimated
 // capacity, it will trigger an initial allocation on the heap, and will behave
-// as a `std:vector`. The API of the `absl::InlinedVector` within this file is
+// as a `std::vector`. The API of the `absl::InlinedVector` within this file is
 // designed to cover the same API footprint as covered by `std::vector`.
 template <typename T, size_t N, typename A = std::allocator<T>>
 class InlinedVector {
   static_assert(N > 0, "`absl::InlinedVector` requires an inlined capacity.");
 
   using Storage = inlined_vector_internal::Storage<T, N, A>;
-  using rvalue_reference = typename Storage::rvalue_reference;
-  using MoveIterator = typename Storage::MoveIterator;
+
   using AllocatorTraits = typename Storage::AllocatorTraits;
+  using RValueReference = typename Storage::RValueReference;
+  using MoveIterator = typename Storage::MoveIterator;
   using IsMemcpyOk = typename Storage::IsMemcpyOk;
 
   template <typename Iterator>
@@ -92,10 +95,10 @@ class InlinedVector {
   using value_type = typename Storage::value_type;
   using pointer = typename Storage::pointer;
   using const_pointer = typename Storage::const_pointer;
-  using reference = typename Storage::reference;
-  using const_reference = typename Storage::const_reference;
   using size_type = typename Storage::size_type;
   using difference_type = typename Storage::difference_type;
+  using reference = typename Storage::reference;
+  using const_reference = typename Storage::const_reference;
   using iterator = typename Storage::iterator;
   using const_iterator = typename Storage::const_iterator;
   using reverse_iterator = typename Storage::reverse_iterator;
@@ -305,16 +308,14 @@ class InlinedVector {
   //
   // Returns a `reference` to the `i`th element of the inlined vector.
   reference operator[](size_type i) {
-    assert(i < size());
-
+    ABSL_HARDENING_ASSERT(i < size());
     return data()[i];
   }
 
   // Overload of `InlinedVector::operator[](...)` that returns a
   // `const_reference` to the `i`th element of the inlined vector.
   const_reference operator[](size_type i) const {
-    assert(i < size());
-
+    ABSL_HARDENING_ASSERT(i < size());
     return data()[i];
   }
 
@@ -329,7 +330,6 @@ class InlinedVector {
       base_internal::ThrowStdOutOfRange(
           "`InlinedVector::at(size_type)` failed bounds check");
     }
-
     return data()[i];
   }
 
@@ -343,7 +343,6 @@ class InlinedVector {
       base_internal::ThrowStdOutOfRange(
           "`InlinedVector::at(size_type) const` failed bounds check");
     }
-
     return data()[i];
   }
 
@@ -351,34 +350,30 @@ class InlinedVector {
   //
   // Returns a `reference` to the first element of the inlined vector.
   reference front() {
-    assert(!empty());
-
-    return at(0);
+    ABSL_HARDENING_ASSERT(!empty());
+    return data()[0];
   }
 
   // Overload of `InlinedVector::front()` that returns a `const_reference` to
   // the first element of the inlined vector.
   const_reference front() const {
-    assert(!empty());
-
-    return at(0);
+    ABSL_HARDENING_ASSERT(!empty());
+    return data()[0];
   }
 
   // `InlinedVector::back()`
   //
   // Returns a `reference` to the last element of the inlined vector.
   reference back() {
-    assert(!empty());
-
-    return at(size() - 1);
+    ABSL_HARDENING_ASSERT(!empty());
+    return data()[size() - 1];
   }
 
   // Overload of `InlinedVector::back()` that returns a `const_reference` to the
   // last element of the inlined vector.
   const_reference back() const {
-    assert(!empty());
-
-    return at(size() - 1);
+    ABSL_HARDENING_ASSERT(!empty());
+    return data()[size() - 1];
   }
 
   // `InlinedVector::begin()`
@@ -529,11 +524,10 @@ class InlinedVector {
   void assign(InputIterator first, InputIterator last) {
     size_type i = 0;
     for (; i < size() && first != last; ++i, static_cast<void>(++first)) {
-      at(i) = *first;
+      data()[i] = *first;
     }
 
     erase(data() + i, data() + size());
-
     std::copy(first, last, std::back_inserter(*this));
   }
 
@@ -541,9 +535,12 @@ class InlinedVector {
   //
   // Resizes the inlined vector to contain `n` elements.
   //
-  // NOTE: if `n` is smaller than `size()`, extra elements are destroyed. If `n`
+  // NOTE: If `n` is smaller than `size()`, extra elements are destroyed. If `n`
   // is larger than `size()`, new elements are value-initialized.
-  void resize(size_type n) { storage_.Resize(DefaultValueAdapter(), n); }
+  void resize(size_type n) {
+    ABSL_HARDENING_ASSERT(n <= max_size());
+    storage_.Resize(DefaultValueAdapter(), n);
+  }
 
   // Overload of `InlinedVector::resize(...)` that resizes the inlined vector to
   // contain `n` elements.
@@ -551,6 +548,7 @@ class InlinedVector {
   // NOTE: if `n` is smaller than `size()`, extra elements are destroyed. If `n`
   // is larger than `size()`, new elements are copied-constructed from `v`.
   void resize(size_type n, const_reference v) {
+    ABSL_HARDENING_ASSERT(n <= max_size());
     storage_.Resize(CopyValueAdapter(v), n);
   }
 
@@ -564,7 +562,7 @@ class InlinedVector {
 
   // Overload of `InlinedVector::insert(...)` that inserts `v` at `pos` using
   // move semantics, returning an `iterator` to the newly inserted element.
-  iterator insert(const_iterator pos, rvalue_reference v) {
+  iterator insert(const_iterator pos, RValueReference v) {
     return emplace(pos, std::move(v));
   }
 
@@ -572,8 +570,8 @@ class InlinedVector {
   // of `v` starting at `pos`, returning an `iterator` pointing to the first of
   // the newly inserted elements.
   iterator insert(const_iterator pos, size_type n, const_reference v) {
-    assert(pos >= begin());
-    assert(pos <= end());
+    ABSL_HARDENING_ASSERT(pos >= begin());
+    ABSL_HARDENING_ASSERT(pos <= end());
 
     if (ABSL_PREDICT_TRUE(n != 0)) {
       value_type dealias = v;
@@ -599,8 +597,8 @@ class InlinedVector {
             EnableIfAtLeastForwardIterator<ForwardIterator>* = nullptr>
   iterator insert(const_iterator pos, ForwardIterator first,
                   ForwardIterator last) {
-    assert(pos >= begin());
-    assert(pos <= end());
+    ABSL_HARDENING_ASSERT(pos >= begin());
+    ABSL_HARDENING_ASSERT(pos <= end());
 
     if (ABSL_PREDICT_TRUE(first != last)) {
       return storage_.Insert(pos, IteratorValueAdapter<ForwardIterator>(first),
@@ -618,8 +616,8 @@ class InlinedVector {
   template <typename InputIterator,
             DisableIfAtLeastForwardIterator<InputIterator>* = nullptr>
   iterator insert(const_iterator pos, InputIterator first, InputIterator last) {
-    assert(pos >= begin());
-    assert(pos <= end());
+    ABSL_HARDENING_ASSERT(pos >= begin());
+    ABSL_HARDENING_ASSERT(pos <= end());
 
     size_type index = std::distance(cbegin(), pos);
     for (size_type i = index; first != last; ++i, static_cast<void>(++first)) {
@@ -635,8 +633,8 @@ class InlinedVector {
   // `pos`, returning an `iterator` pointing to the newly emplaced element.
   template <typename... Args>
   iterator emplace(const_iterator pos, Args&&... args) {
-    assert(pos >= begin());
-    assert(pos <= end());
+    ABSL_HARDENING_ASSERT(pos >= begin());
+    ABSL_HARDENING_ASSERT(pos <= end());
 
     value_type dealias(std::forward<Args>(args)...);
     return storage_.Insert(pos,
@@ -661,7 +659,7 @@ class InlinedVector {
 
   // Overload of `InlinedVector::push_back(...)` for inserting `v` at `end()`
   // using move semantics.
-  void push_back(rvalue_reference v) {
+  void push_back(RValueReference v) {
     static_cast<void>(emplace_back(std::move(v)));
   }
 
@@ -669,7 +667,7 @@ class InlinedVector {
   //
   // Destroys the element at `back()`, reducing the size by `1`.
   void pop_back() noexcept {
-    assert(!empty());
+    ABSL_HARDENING_ASSERT(!empty());
 
     AllocatorTraits::destroy(*storage_.GetAllocPtr(), data() + (size() - 1));
     storage_.SubtractSize(1);
@@ -682,8 +680,8 @@ class InlinedVector {
   //
   // NOTE: may return `end()`, which is not dereferencable.
   iterator erase(const_iterator pos) {
-    assert(pos >= begin());
-    assert(pos < end());
+    ABSL_HARDENING_ASSERT(pos >= begin());
+    ABSL_HARDENING_ASSERT(pos < end());
 
     return storage_.Erase(pos, pos + 1);
   }
@@ -694,9 +692,9 @@ class InlinedVector {
   //
   // NOTE: may return `end()`, which is not dereferencable.
   iterator erase(const_iterator from, const_iterator to) {
-    assert(from >= begin());
-    assert(from <= to);
-    assert(to <= end());
+    ABSL_HARDENING_ASSERT(from >= begin());
+    ABSL_HARDENING_ASSERT(from <= to);
+    ABSL_HARDENING_ASSERT(to <= end());
 
     if (ABSL_PREDICT_TRUE(from != to)) {
       return storage_.Erase(from, to);
@@ -713,6 +711,7 @@ class InlinedVector {
     inlined_vector_internal::DestroyElements(storage_.GetAllocPtr(), data(),
                                              size());
     storage_.DeallocateIfAllocated();
+
     storage_.SetInlinedSize(0);
   }
 
@@ -840,6 +839,7 @@ H AbslHashValue(H h, const absl::InlinedVector<T, N, A>& a) {
   return H::combine(H::combine_contiguous(std::move(h), a.data(), size), size);
 }
 
+ABSL_NAMESPACE_END
 }  // namespace absl
 
 #endif  // ABSL_CONTAINER_INLINED_VECTOR_H_

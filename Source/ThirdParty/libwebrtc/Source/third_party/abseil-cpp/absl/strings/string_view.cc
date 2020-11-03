@@ -14,7 +14,7 @@
 
 #include "absl/strings/string_view.h"
 
-#ifndef ABSL_HAVE_STD_STRING_VIEW
+#ifndef ABSL_USES_STD_STRING_VIEW
 
 #include <algorithm>
 #include <climits>
@@ -24,6 +24,7 @@
 #include "absl/strings/internal/memutil.h"
 
 namespace absl {
+ABSL_NAMESPACE_BEGIN
 
 namespace {
 void WritePadding(std::ostream& o, size_t pad) {
@@ -228,6 +229,7 @@ constexpr string_view::size_type string_view::npos;
 ABSL_STRING_VIEW_SELECTANY
 constexpr string_view::size_type string_view::kMaxSize;
 
+ABSL_NAMESPACE_END
 }  // namespace absl
 
-#endif  // ABSL_HAVE_STD_STRING_VIEW
+#endif  // ABSL_USES_STD_STRING_VIEW

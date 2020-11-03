@@ -23,6 +23,7 @@
 #include <thread>              // NOLINT(build/c++11)
 
 #include "gtest/gtest.h"
+#include "absl/base/config.h"
 #include "absl/base/internal/cycleclock.h"
 #include "absl/base/internal/thread_identity.h"
 #include "absl/strings/str_cat.h"
@@ -33,6 +34,7 @@
 // primitives which might use PerThreadSem, most notably absl::Mutex.
 
 namespace absl {
+ABSL_NAMESPACE_BEGIN
 namespace synchronization_internal {
 
 class SimpleSemaphore {
@@ -175,4 +177,5 @@ TEST_F(PerThreadSemTest, Timeouts) {
 }  // namespace
 
 }  // namespace synchronization_internal
+ABSL_NAMESPACE_END
 }  // namespace absl

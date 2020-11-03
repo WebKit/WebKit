@@ -3,12 +3,6 @@
 # (1) Edit absl/copts/copts.py.
 # (2) Run `python <path_to_absl>/copts/generate_copts.py`.
 
-list(APPEND ABSL_CLANG_CL_EXCEPTIONS_FLAGS
-    "/U_HAS_EXCEPTIONS"
-    "/D_HAS_EXCEPTIONS=1"
-    "/EHsc"
-)
-
 list(APPEND ABSL_CLANG_CL_FLAGS
     "/W3"
     "-Wno-c++98-compat-pedantic"
@@ -29,7 +23,6 @@ list(APPEND ABSL_CLANG_CL_FLAGS
     "-Wno-gcc-compat"
     "-Wno-global-constructors"
     "-Wno-exit-time-destructors"
-    "-Wno-nested-anon-types"
     "-Wno-non-modular-include-in-module"
     "-Wno-old-style-cast"
     "-Wno-range-loop-analysis"
@@ -80,10 +73,6 @@ list(APPEND ABSL_CLANG_CL_TEST_FLAGS
     "-Wno-gnu-zero-variadic-macro-arguments"
 )
 
-list(APPEND ABSL_GCC_EXCEPTIONS_FLAGS
-    "-fexceptions"
-)
-
 list(APPEND ABSL_GCC_FLAGS
     "-Wall"
     "-Wextra"
@@ -92,6 +81,7 @@ list(APPEND ABSL_GCC_FLAGS
     "-Wmissing-declarations"
     "-Woverlength-strings"
     "-Wpointer-arith"
+    "-Wundef"
     "-Wunused-local-typedefs"
     "-Wunused-result"
     "-Wvarargs"
@@ -99,6 +89,7 @@ list(APPEND ABSL_GCC_FLAGS
     "-Wwrite-strings"
     "-Wno-missing-field-initializers"
     "-Wno-sign-compare"
+    "-DNOMINMAX"
 )
 
 list(APPEND ABSL_GCC_TEST_FLAGS
@@ -109,10 +100,6 @@ list(APPEND ABSL_GCC_TEST_FLAGS
     "-Wno-unused-function"
     "-Wno-unused-parameter"
     "-Wno-unused-private-field"
-)
-
-list(APPEND ABSL_LLVM_EXCEPTIONS_FLAGS
-    "-fexceptions"
 )
 
 list(APPEND ABSL_LLVM_FLAGS
@@ -137,7 +124,6 @@ list(APPEND ABSL_LLVM_FLAGS
     "-Wno-gcc-compat"
     "-Wno-global-constructors"
     "-Wno-exit-time-destructors"
-    "-Wno-nested-anon-types"
     "-Wno-non-modular-include-in-module"
     "-Wno-old-style-cast"
     "-Wno-range-loop-analysis"
@@ -161,6 +147,7 @@ list(APPEND ABSL_LLVM_FLAGS
     "-Wobjc-literal-conversion"
     "-Wno-sign-conversion"
     "-Wstring-conversion"
+    "-DNOMINMAX"
 )
 
 list(APPEND ABSL_LLVM_TEST_FLAGS
@@ -183,12 +170,6 @@ list(APPEND ABSL_LLVM_TEST_FLAGS
     "-Wno-gnu-zero-variadic-macro-arguments"
 )
 
-list(APPEND ABSL_MSVC_EXCEPTIONS_FLAGS
-    "/U_HAS_EXCEPTIONS"
-    "/D_HAS_EXCEPTIONS=1"
-    "/EHsc"
-)
-
 list(APPEND ABSL_MSVC_FLAGS
     "/W3"
     "/DNOMINMAX"
@@ -196,6 +177,7 @@ list(APPEND ABSL_MSVC_FLAGS
     "/D_CRT_SECURE_NO_WARNINGS"
     "/D_SCL_SECURE_NO_WARNINGS"
     "/D_ENABLE_EXTENDED_ALIGNED_STORAGE"
+    "/bigobj"
     "/wd4005"
     "/wd4068"
     "/wd4180"
@@ -226,8 +208,6 @@ list(APPEND ABSL_RANDOM_HWAES_ARM64_FLAGS
 )
 
 list(APPEND ABSL_RANDOM_HWAES_MSVC_X64_FLAGS
-    "/O2"
-    "/Ob2"
 )
 
 list(APPEND ABSL_RANDOM_HWAES_X64_FLAGS

@@ -15,17 +15,21 @@
 
 #include "absl/flags/internal/usage.h"
 
+#include <stdint.h>
+
 #include <sstream>
+#include <string>
 
 #include "gtest/gtest.h"
 #include "absl/flags/flag.h"
+#include "absl/flags/internal/parse.h"
 #include "absl/flags/internal/path_util.h"
 #include "absl/flags/internal/program_name.h"
-#include "absl/flags/parse.h"
+#include "absl/flags/reflection.h"
 #include "absl/flags/usage.h"
 #include "absl/flags/usage_config.h"
-#include "absl/memory/memory.h"
 #include "absl/strings/match.h"
+#include "absl/strings/string_view.h"
 
 ABSL_FLAG(int, usage_reporting_test_flag_01, 101,
           "usage_reporting_test_flag_01 help message");
@@ -67,9 +71,9 @@ static std::string NormalizeFileName(absl::string_view fname) {
   fname = normalized;
 #endif
 
-  auto absl_pos = fname.find("/absl/");
+  auto absl_pos = fname.rfind("absl/");
   if (absl_pos != absl::string_view::npos) {
-    fname = fname.substr(absl_pos + 1);
+    fname = fname.substr(absl_pos);
   }
   return std::string(fname);
 }
@@ -85,7 +89,7 @@ class UsageReportingTest : public testing::Test {
   }
 
  private:
-  flags::FlagSaver flag_saver_;
+  absl::FlagSaver flag_saver_;
 };
 
 // --------------------------------------------------------------------
@@ -97,69 +101,70 @@ TEST_F(UsageReportingDeathTest, TestSetProgramUsageMessage) {
 
 #ifndef _WIN32
   // TODO(rogeeff): figure out why this does not work on Windows.
-  EXPECT_DEATH(absl::SetProgramUsageMessage("custom usage message"),
-               ".*SetProgramUsageMessage\\(\\) called twice.*");
+  EXPECT_DEATH_IF_SUPPORTED(
+      absl::SetProgramUsageMessage("custom usage message"),
+      ".*SetProgramUsageMessage\\(\\) called twice.*");
 #endif
 }
 
 // --------------------------------------------------------------------
 
 TEST_F(UsageReportingTest, TestFlagHelpHRF_on_flag_01) {
-  const auto* flag = flags::FindCommandLineFlag("usage_reporting_test_flag_01");
+  const auto* flag = absl::FindCommandLineFlag("usage_reporting_test_flag_01");
   std::stringstream test_buf;
 
   flags::FlagHelp(test_buf, *flag, flags::HelpFormat::kHumanReadable);
   EXPECT_EQ(
       test_buf.str(),
-      R"(    -usage_reporting_test_flag_01 (usage_reporting_test_flag_01 help message);
+      R"(    --usage_reporting_test_flag_01 (usage_reporting_test_flag_01 help message);
       default: 101;
 )");
 }
 
 TEST_F(UsageReportingTest, TestFlagHelpHRF_on_flag_02) {
-  const auto* flag = flags::FindCommandLineFlag("usage_reporting_test_flag_02");
+  const auto* flag = absl::FindCommandLineFlag("usage_reporting_test_flag_02");
   std::stringstream test_buf;
 
   flags::FlagHelp(test_buf, *flag, flags::HelpFormat::kHumanReadable);
   EXPECT_EQ(
       test_buf.str(),
-      R"(    -usage_reporting_test_flag_02 (usage_reporting_test_flag_02 help message);
+      R"(    --usage_reporting_test_flag_02 (usage_reporting_test_flag_02 help message);
       default: false;
 )");
 }
 
 TEST_F(UsageReportingTest, TestFlagHelpHRF_on_flag_03) {
-  const auto* flag = flags::FindCommandLineFlag("usage_reporting_test_flag_03");
+  const auto* flag = absl::FindCommandLineFlag("usage_reporting_test_flag_03");
   std::stringstream test_buf;
 
   flags::FlagHelp(test_buf, *flag, flags::HelpFormat::kHumanReadable);
   EXPECT_EQ(
       test_buf.str(),
-      R"(    -usage_reporting_test_flag_03 (usage_reporting_test_flag_03 help message);
+      R"(    --usage_reporting_test_flag_03 (usage_reporting_test_flag_03 help message);
       default: 1.03;
 )");
 }
 
 TEST_F(UsageReportingTest, TestFlagHelpHRF_on_flag_04) {
-  const auto* flag = flags::FindCommandLineFlag("usage_reporting_test_flag_04");
+  const auto* flag = absl::FindCommandLineFlag("usage_reporting_test_flag_04");
   std::stringstream test_buf;
 
   flags::FlagHelp(test_buf, *flag, flags::HelpFormat::kHumanReadable);
   EXPECT_EQ(
       test_buf.str(),
-      R"(    -usage_reporting_test_flag_04 (usage_reporting_test_flag_04 help message);
+      R"(    --usage_reporting_test_flag_04 (usage_reporting_test_flag_04 help message);
       default: 1000000000000004;
 )");
 }
 
 TEST_F(UsageReportingTest, TestFlagHelpHRF_on_flag_05) {
-  const auto* flag = flags::FindCommandLineFlag("usage_reporting_test_flag_05");
+  const auto* flag = absl::FindCommandLineFlag("usage_reporting_test_flag_05");
   std::stringstream test_buf;
 
   flags::FlagHelp(test_buf, *flag, flags::HelpFormat::kHumanReadable);
   EXPECT_EQ(
       test_buf.str(),
-      R"(    -usage_reporting_test_flag_05 (usage_reporting_test_flag_05 help message);
+      R"(    --usage_reporting_test_flag_05 (usage_reporting_test_flag_05 help message);
       default: UDT{};
 )");
 }
@@ -171,17 +176,17 @@ TEST_F(UsageReportingTest, TestFlagsHelpHRF) {
       R"(usage_test: Custom usage message
 
   Flags from absl/flags/internal/usage_test.cc:
-    -usage_reporting_test_flag_01 (usage_reporting_test_flag_01 help message);
+    --usage_reporting_test_flag_01 (usage_reporting_test_flag_01 help message);
       default: 101;
-    -usage_reporting_test_flag_02 (usage_reporting_test_flag_02 help message);
+    --usage_reporting_test_flag_02 (usage_reporting_test_flag_02 help message);
       default: false;
-    -usage_reporting_test_flag_03 (usage_reporting_test_flag_03 help message);
+    --usage_reporting_test_flag_03 (usage_reporting_test_flag_03 help message);
       default: 1.03;
-    -usage_reporting_test_flag_04 (usage_reporting_test_flag_04 help message);
+    --usage_reporting_test_flag_04 (usage_reporting_test_flag_04 help message);
       default: 1000000000000004;
-    -usage_reporting_test_flag_05 (usage_reporting_test_flag_05 help message);
+    --usage_reporting_test_flag_05 (usage_reporting_test_flag_05 help message);
       default: UDT{};
-    -usage_reporting_test_flag_06 (usage_reporting_test_flag_06 help message.
+    --usage_reporting_test_flag_06 (usage_reporting_test_flag_06 help message.
 
       Some more help.
       Even more long long long long long long long long long long long long help
@@ -247,17 +252,17 @@ TEST_F(UsageReportingTest, TestUsageFlag_helpshort) {
             R"(usage_test: Custom usage message
 
   Flags from absl/flags/internal/usage_test.cc:
-    -usage_reporting_test_flag_01 (usage_reporting_test_flag_01 help message);
+    --usage_reporting_test_flag_01 (usage_reporting_test_flag_01 help message);
       default: 101;
-    -usage_reporting_test_flag_02 (usage_reporting_test_flag_02 help message);
+    --usage_reporting_test_flag_02 (usage_reporting_test_flag_02 help message);
       default: false;
-    -usage_reporting_test_flag_03 (usage_reporting_test_flag_03 help message);
+    --usage_reporting_test_flag_03 (usage_reporting_test_flag_03 help message);
       default: 1.03;
-    -usage_reporting_test_flag_04 (usage_reporting_test_flag_04 help message);
+    --usage_reporting_test_flag_04 (usage_reporting_test_flag_04 help message);
       default: 1000000000000004;
-    -usage_reporting_test_flag_05 (usage_reporting_test_flag_05 help message);
+    --usage_reporting_test_flag_05 (usage_reporting_test_flag_05 help message);
       default: UDT{};
-    -usage_reporting_test_flag_06 (usage_reporting_test_flag_06 help message.
+    --usage_reporting_test_flag_06 (usage_reporting_test_flag_06 help message.
 
       Some more help.
       Even more long long long long long long long long long long long long help
@@ -276,17 +281,17 @@ TEST_F(UsageReportingTest, TestUsageFlag_help) {
             R"(usage_test: Custom usage message
 
   Flags from absl/flags/internal/usage_test.cc:
-    -usage_reporting_test_flag_01 (usage_reporting_test_flag_01 help message);
+    --usage_reporting_test_flag_01 (usage_reporting_test_flag_01 help message);
       default: 101;
-    -usage_reporting_test_flag_02 (usage_reporting_test_flag_02 help message);
+    --usage_reporting_test_flag_02 (usage_reporting_test_flag_02 help message);
       default: false;
-    -usage_reporting_test_flag_03 (usage_reporting_test_flag_03 help message);
+    --usage_reporting_test_flag_03 (usage_reporting_test_flag_03 help message);
       default: 1.03;
-    -usage_reporting_test_flag_04 (usage_reporting_test_flag_04 help message);
+    --usage_reporting_test_flag_04 (usage_reporting_test_flag_04 help message);
       default: 1000000000000004;
-    -usage_reporting_test_flag_05 (usage_reporting_test_flag_05 help message);
+    --usage_reporting_test_flag_05 (usage_reporting_test_flag_05 help message);
       default: UDT{};
-    -usage_reporting_test_flag_06 (usage_reporting_test_flag_06 help message.
+    --usage_reporting_test_flag_06 (usage_reporting_test_flag_06 help message.
 
       Some more help.
       Even more long long long long long long long long long long long long help
@@ -307,17 +312,17 @@ TEST_F(UsageReportingTest, TestUsageFlag_helppackage) {
             R"(usage_test: Custom usage message
 
   Flags from absl/flags/internal/usage_test.cc:
-    -usage_reporting_test_flag_01 (usage_reporting_test_flag_01 help message);
+    --usage_reporting_test_flag_01 (usage_reporting_test_flag_01 help message);
       default: 101;
-    -usage_reporting_test_flag_02 (usage_reporting_test_flag_02 help message);
+    --usage_reporting_test_flag_02 (usage_reporting_test_flag_02 help message);
       default: false;
-    -usage_reporting_test_flag_03 (usage_reporting_test_flag_03 help message);
+    --usage_reporting_test_flag_03 (usage_reporting_test_flag_03 help message);
       default: 1.03;
-    -usage_reporting_test_flag_04 (usage_reporting_test_flag_04 help message);
+    --usage_reporting_test_flag_04 (usage_reporting_test_flag_04 help message);
       default: 1000000000000004;
-    -usage_reporting_test_flag_05 (usage_reporting_test_flag_05 help message);
+    --usage_reporting_test_flag_05 (usage_reporting_test_flag_05 help message);
       default: UDT{};
-    -usage_reporting_test_flag_06 (usage_reporting_test_flag_06 help message.
+    --usage_reporting_test_flag_06 (usage_reporting_test_flag_06 help message.
 
       Some more help.
       Even more long long long long long long long long long long long long help
@@ -372,17 +377,17 @@ TEST_F(UsageReportingTest, TestUsageFlag_helpon) {
             R"(usage_test: Custom usage message
 
   Flags from absl/flags/internal/usage_test.cc:
-    -usage_reporting_test_flag_01 (usage_reporting_test_flag_01 help message);
+    --usage_reporting_test_flag_01 (usage_reporting_test_flag_01 help message);
       default: 101;
-    -usage_reporting_test_flag_02 (usage_reporting_test_flag_02 help message);
+    --usage_reporting_test_flag_02 (usage_reporting_test_flag_02 help message);
       default: false;
-    -usage_reporting_test_flag_03 (usage_reporting_test_flag_03 help message);
+    --usage_reporting_test_flag_03 (usage_reporting_test_flag_03 help message);
       default: 1.03;
-    -usage_reporting_test_flag_04 (usage_reporting_test_flag_04 help message);
+    --usage_reporting_test_flag_04 (usage_reporting_test_flag_04 help message);
       default: 1000000000000004;
-    -usage_reporting_test_flag_05 (usage_reporting_test_flag_05 help message);
+    --usage_reporting_test_flag_05 (usage_reporting_test_flag_05 help message);
       default: UDT{};
-    -usage_reporting_test_flag_06 (usage_reporting_test_flag_06 help message.
+    --usage_reporting_test_flag_06 (usage_reporting_test_flag_06 help message.
 
       Some more help.
       Even more long long long long long long long long long long long long help
@@ -395,7 +400,7 @@ TEST_F(UsageReportingTest, TestUsageFlag_helpon) {
 }  // namespace
 
 int main(int argc, char* argv[]) {
-  absl::GetFlag(FLAGS_undefok);  // Force linking of parse.cc
+  (void)absl::GetFlag(FLAGS_undefok);  // Force linking of parse.cc
   flags::SetProgramInvocationName("usage_test");
   absl::SetProgramUsageMessage(kTestUsageMessage);
   ::testing::InitGoogleTest(&argc, argv);

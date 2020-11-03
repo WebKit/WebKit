@@ -22,7 +22,6 @@ if (NOT LIBOPUS_FOUND)
 endif ()
 
 set(webrtc_SOURCES
-    Source/third_party/abseil-cpp/absl/base/dynamic_annotations.cc
     Source/third_party/abseil-cpp/absl/base/internal/raw_logging.cc
     Source/third_party/abseil-cpp/absl/base/internal/throw_delegate.cc
     Source/third_party/abseil-cpp/absl/strings/ascii.cc

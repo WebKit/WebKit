@@ -32,6 +32,7 @@
 #include "absl/base/macros.h"
 #include "absl/random/internal/chi_square.h"
 #include "absl/random/internal/distribution_test_util.h"
+#include "absl/random/internal/pcg_engine.h"
 #include "absl/random/internal/sequence_urbg.h"
 #include "absl/random/random.h"
 #include "absl/strings/str_cat.h"
@@ -46,7 +47,11 @@ using absl::random_internal::kChiSquared;
 template <typename RealType>
 class ExponentialDistributionTypedTest : public ::testing::Test {};
 
+#if defined(__EMSCRIPTEN__)
+using RealTypes = ::testing::Types<float, double>;
+#else
 using RealTypes = ::testing::Types<float, double, long double>;
+#endif  // defined(__EMSCRIPTEN__)
 TYPED_TEST_CASE(ExponentialDistributionTypedTest, RealTypes);
 
 TYPED_TEST(ExponentialDistributionTypedTest, SerializeTest) {
@@ -201,7 +206,10 @@ class ExponentialDistributionTests : public testing::TestWithParam<Param>,
   template <typename D>
   double SingleChiSquaredTest();
 
-  absl::InsecureBitGen rng_;
+  // We use a fixed bit generator for distribution accuracy tests.  This allows
+  // these tests to be deterministic, while still testing the qualify of the
+  // implementation.
+  absl::random_internal::pcg64_2018_engine rng_{0x2B7E151628AED2A6};
 };
 
 template <typename D>
@@ -346,7 +354,7 @@ std::string ParamName(const ::testing::TestParamInfo<Param>& info) {
   return absl::StrReplaceAll(name, {{"+", "_"}, {"-", "_"}, {".", "_"}});
 }
 
-INSTANTIATE_TEST_CASE_P(, ExponentialDistributionTests,
+INSTANTIATE_TEST_CASE_P(All, ExponentialDistributionTests,
                         ::testing::ValuesIn(GenParams()), ParamName);
 
 // NOTE: absl::exponential_distribution is not guaranteed to be stable.

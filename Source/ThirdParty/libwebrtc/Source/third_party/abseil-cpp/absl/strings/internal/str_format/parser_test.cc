@@ -7,6 +7,7 @@
 #include "absl/base/macros.h"
 
 namespace absl {
+ABSL_NAMESPACE_BEGIN
 namespace str_format_internal {
 
 namespace {
@@ -16,7 +17,7 @@ using testing::Pair;
 TEST(LengthModTest, Names) {
   struct Expectation {
     int line;
-    LengthMod::Id id;
+    LengthMod mod;
     const char *name;
   };
   const Expectation kExpect[] = {
@@ -31,37 +32,33 @@ TEST(LengthModTest, Names) {
     {__LINE__, LengthMod::t,    "t" },
     {__LINE__, LengthMod::q,    "q" },
   };
-  EXPECT_EQ(ABSL_ARRAYSIZE(kExpect), LengthMod::kNumValues);
+  EXPECT_EQ(ABSL_ARRAYSIZE(kExpect), 10);
   for (auto e : kExpect) {
     SCOPED_TRACE(e.line);
-    LengthMod mod = LengthMod::FromId(e.id);
-    EXPECT_EQ(e.id, mod.id());
-    EXPECT_EQ(e.name, mod.name());
+    EXPECT_EQ(e.name, LengthModToString(e.mod));
   }
 }
 
 TEST(ConversionCharTest, Names) {
   struct Expectation {
-    ConversionChar::Id id;
+    FormatConversionChar id;
     char name;
   };
   // clang-format off
   const Expectation kExpect[] = {
-#define X(c) {ConversionChar::c, #c[0]}
-    X(c), X(C), X(s), X(S),                          // text
+#define X(c) {FormatConversionCharInternal::c, #c[0]}
+    X(c), X(s),                                      // text
     X(d), X(i), X(o), X(u), X(x), X(X),              // int
     X(f), X(F), X(e), X(E), X(g), X(G), X(a), X(A),  // float
     X(n), X(p),                                      // misc
 #undef X
-    {ConversionChar::none, '\0'},
+    {FormatConversionCharInternal::kNone, '\0'},
   };
   // clang-format on
-  EXPECT_EQ(ABSL_ARRAYSIZE(kExpect), ConversionChar::kNumValues);
   for (auto e : kExpect) {
     SCOPED_TRACE(e.name);
-    ConversionChar v = ConversionChar::FromId(e.id);
-    EXPECT_EQ(e.id, v.id());
-    EXPECT_EQ(e.name, v.Char());
+    FormatConversionChar v = e.id;
+    EXPECT_EQ(e.name, FormatConversionCharToChar(v));
   }
 }
 
@@ -120,13 +117,12 @@ TEST_F(ConsumeUnboundConversionTest, BasicConversion) {
   EXPECT_FALSE(Run("dd"));  // no excess allowed
 
   EXPECT_TRUE(Run("d"));
-  EXPECT_EQ('d', o.conv.Char());
+  EXPECT_EQ('d', FormatConversionCharToChar(o.conv));
   EXPECT_FALSE(o.width.is_from_arg());
   EXPECT_LT(o.width.value(), 0);
   EXPECT_FALSE(o.precision.is_from_arg());
   EXPECT_LT(o.precision.value(), 0);
   EXPECT_EQ(1, o.arg_position);
-  EXPECT_EQ(LengthMod::none, o.length_mod.id());
 }
 
 TEST_F(ConsumeUnboundConversionTest, ArgPosition) {
@@ -162,7 +158,7 @@ TEST_F(ConsumeUnboundConversionTest, ArgPosition) {
 
 TEST_F(ConsumeUnboundConversionTest, WidthAndPrecision) {
   EXPECT_TRUE(Run("14d"));
-  EXPECT_EQ('d', o.conv.Char());
+  EXPECT_EQ('d', FormatConversionCharToChar(o.conv));
   EXPECT_FALSE(o.width.is_from_arg());
   EXPECT_EQ(14, o.width.value());
   EXPECT_FALSE(o.precision.is_from_arg());
@@ -289,6 +285,29 @@ TEST_F(ConsumeUnboundConversionTest, BasicFlag) {
   }
 }
 
+TEST_F(ConsumeUnboundConversionTest, LengthMod) {
+  EXPECT_TRUE(Run("d"));
+  EXPECT_EQ(LengthMod::none, o.length_mod);
+  EXPECT_TRUE(Run("hd"));
+  EXPECT_EQ(LengthMod::h, o.length_mod);
+  EXPECT_TRUE(Run("hhd"));
+  EXPECT_EQ(LengthMod::hh, o.length_mod);
+  EXPECT_TRUE(Run("ld"));
+  EXPECT_EQ(LengthMod::l, o.length_mod);
+  EXPECT_TRUE(Run("lld"));
+  EXPECT_EQ(LengthMod::ll, o.length_mod);
+  EXPECT_TRUE(Run("Lf"));
+  EXPECT_EQ(LengthMod::L, o.length_mod);
+  EXPECT_TRUE(Run("qf"));
+  EXPECT_EQ(LengthMod::q, o.length_mod);
+  EXPECT_TRUE(Run("jd"));
+  EXPECT_EQ(LengthMod::j, o.length_mod);
+  EXPECT_TRUE(Run("zd"));
+  EXPECT_EQ(LengthMod::z, o.length_mod);
+  EXPECT_TRUE(Run("td"));
+  EXPECT_EQ(LengthMod::t, o.length_mod);
+}
+
 struct SummarizeConsumer {
   std::string* out;
   explicit SummarizeConsumer(std::string* out) : out(out) {}
@@ -309,7 +328,7 @@ struct SummarizeConsumer {
     if (conv.precision.is_from_arg()) {
       *out += "." + std::to_string(conv.precision.get_from_arg()) + "$*";
     }
-    *out += conv.conv.Char();
+    *out += FormatConversionCharToChar(conv.conv);
     *out += "}";
     return true;
   }
@@ -330,7 +349,8 @@ TEST_F(ParsedFormatTest, ValueSemantics) {
   ParsedFormatBase p2 = p1;  // copy construct (empty)
   EXPECT_EQ(SummarizeParsedFormat(p1), SummarizeParsedFormat(p2));
 
-  p1 = ParsedFormatBase("hello%s", true, {Conv::s});  // move assign
+  p1 = ParsedFormatBase("hello%s", true,
+                        {FormatConversionCharSetInternal::s});  // move assign
   EXPECT_EQ("[hello]{s:1$s}", SummarizeParsedFormat(p1));
 
   ParsedFormatBase p3 = p1;  // copy construct (nonempty)
@@ -348,7 +368,7 @@ TEST_F(ParsedFormatTest, ValueSemantics) {
 
 struct ExpectParse {
   const char* in;
-  std::initializer_list<Conv> conv_set;
+  std::initializer_list<FormatConversionCharSet> conv_set;
   const char* out;
 };
 
@@ -358,9 +378,9 @@ TEST_F(ParsedFormatTest, Parsing) {
   const ExpectParse kExpect[] = {
       {"", {}, ""},
       {"ab", {}, "[ab]"},
-      {"a%d", {Conv::d}, "[a]{d:1$d}"},
-      {"a%+d", {Conv::d}, "[a]{+d:1$d}"},
-      {"a% d", {Conv::d}, "[a]{ d:1$d}"},
+      {"a%d", {FormatConversionCharSetInternal::d}, "[a]{d:1$d}"},
+      {"a%+d", {FormatConversionCharSetInternal::d}, "[a]{+d:1$d}"},
+      {"a% d", {FormatConversionCharSetInternal::d}, "[a]{ d:1$d}"},
       {"a%b %d", {}, "[a]!"},  // stop after error
   };
   for (const auto& e : kExpect) {
@@ -372,13 +392,13 @@ TEST_F(ParsedFormatTest, Parsing) {
 
 TEST_F(ParsedFormatTest, ParsingFlagOrder) {
   const ExpectParse kExpect[] = {
-      {"a%+ 0d", {Conv::d}, "[a]{+ 0d:1$d}"},
-      {"a%+0 d", {Conv::d}, "[a]{+0 d:1$d}"},
-      {"a%0+ d", {Conv::d}, "[a]{0+ d:1$d}"},
-      {"a% +0d", {Conv::d}, "[a]{ +0d:1$d}"},
-      {"a%0 +d", {Conv::d}, "[a]{0 +d:1$d}"},
-      {"a% 0+d", {Conv::d}, "[a]{ 0+d:1$d}"},
-      {"a%+   0+d", {Conv::d}, "[a]{+   0+d:1$d}"},
+      {"a%+ 0d", {FormatConversionCharSetInternal::d}, "[a]{+ 0d:1$d}"},
+      {"a%+0 d", {FormatConversionCharSetInternal::d}, "[a]{+0 d:1$d}"},
+      {"a%0+ d", {FormatConversionCharSetInternal::d}, "[a]{0+ d:1$d}"},
+      {"a% +0d", {FormatConversionCharSetInternal::d}, "[a]{ +0d:1$d}"},
+      {"a%0 +d", {FormatConversionCharSetInternal::d}, "[a]{0 +d:1$d}"},
+      {"a% 0+d", {FormatConversionCharSetInternal::d}, "[a]{ 0+d:1$d}"},
+      {"a%+   0+d", {FormatConversionCharSetInternal::d}, "[a]{+   0+d:1$d}"},
   };
   for (const auto& e : kExpect) {
     SCOPED_TRACE(e.in);
@@ -389,4 +409,5 @@ TEST_F(ParsedFormatTest, ParsingFlagOrder) {
 
 }  // namespace
 }  // namespace str_format_internal
+ABSL_NAMESPACE_END
 }  // namespace absl

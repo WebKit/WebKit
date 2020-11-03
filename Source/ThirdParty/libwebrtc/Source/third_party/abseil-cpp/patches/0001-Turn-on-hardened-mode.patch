@@ -1,0 +1,24 @@
+From a2df3397d72987acaf6687a55e5ed58cd68b0158 Mon Sep 17 00:00:00 2001
+From: Mirko Bonadei <mbonadei@chromium.org>
+Date: Fri, 17 Apr 2020 14:21:07 +0200
+Subject: [PATCH] Turn on hardened mode.
+
+---
+ third_party/abseil-cpp/absl/base/options.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/third_party/abseil-cpp/absl/base/options.h b/third_party/abseil-cpp/absl/base/options.h
+index 230bf1eecc4a..df506f0fae64 100644
+--- a/third_party/abseil-cpp/absl/base/options.h
++++ b/third_party/abseil-cpp/absl/base/options.h
+@@ -233,6 +233,6 @@
+ // checks enabled by this option may abort the program in a different way and
+ // log additional information when `NDEBUG` is not defined.
+ 
+-#define ABSL_OPTION_HARDENED 0
++#define ABSL_OPTION_HARDENED 1
+ 
+ #endif  // ABSL_BASE_OPTIONS_H_
+-- 
+2.26.0.110.g2183baf09c-goog
+
