@@ -29,6 +29,10 @@
 #import "Framework/Headers/WebRTC/RTCVideoFrameBuffer.h"
 #import "Framework/Native/api/video_decoder_factory.h"
 #import "WebKitUtilities.h"
+#import "api/video_codecs/video_decoder.h"
+#import "api/video_codecs/video_decoder_factory.h"
+#import "modules/video_coding/codecs/h264/include/h264.h"
+#import "modules/video_coding/include/video_error_codes.h"
 #import "sdk/objc/components/video_codec/RTCVideoDecoderH264.h"
 #import "sdk/objc/components/video_codec/RTCVideoDecoderH265.h"
 
@@ -83,6 +87,33 @@
 
 namespace webrtc {
 
+class RemoteVideoDecoderFactory final : public VideoDecoderFactory {
+public:
+    explicit RemoteVideoDecoderFactory(std::unique_ptr<VideoDecoderFactory>&&);
+    ~RemoteVideoDecoderFactory() = default;
+
+private:
+    std::vector<SdpVideoFormat> GetSupportedFormats() const final;
+    std::unique_ptr<VideoDecoder> CreateVideoDecoder(const SdpVideoFormat& format) final;
+
+    std::unique_ptr<VideoDecoderFactory> m_internalFactory;
+};
+
+class RemoteVideoDecoder final : public webrtc::VideoDecoder {
+public:
+    explicit RemoteVideoDecoder(WebKitVideoDecoder);
+    ~RemoteVideoDecoder() = default;
+
+private:
+    int32_t InitDecode(const VideoCodec*, int32_t number_of_cores) final;
+    int32_t Decode(const EncodedImage&, bool missing_frames, int64_t render_time_ms) final;
+    int32_t RegisterDecodeCompleteCallback(DecodedImageCallback*) final;
+    int32_t Release() final;
+    const char* ImplementationName() const final { return "RemoteVideoToolBox"; }
+
+    WebKitVideoDecoder m_internalDecoder;
+};
+
 struct VideoDecoderCallbacks {
     VideoDecoderCreateCallback createCallback;
     VideoDecoderReleaseCallback releaseCallback;
@@ -109,7 +140,7 @@ RemoteVideoDecoder::RemoteVideoDecoder(WebKitVideoDecoder internalDecoder)
 {
 }
 
-void RemoteVideoDecoder::decodeComplete(void* callback, uint32_t timeStamp, CVPixelBufferRef pixelBuffer, uint32_t timeStampRTP)
+void videoDecoderTaskComplete(void* callback, uint32_t timeStamp, CVPixelBufferRef pixelBuffer, uint32_t timeStampRTP)
 {
     auto videoFrame = VideoFrame::Builder().set_video_frame_buffer(pixelBufferToFrame(pixelBuffer))
         .set_timestamp_rtp(timeStampRTP)

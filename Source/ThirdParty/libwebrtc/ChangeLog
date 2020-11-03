@@ -1,5 +1,41 @@
 2020-11-03  Youenn Fablet  <youenn@apple.com>
 
+        Allow low latency H264 encoder in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=218442
+
+        Reviewed by Eric Carlson.
+
+        Add a useLowLatency boolean in RTCVideoEncoderH264 and in encoder factory.
+        Encoder is set by the factory at creation time.
+        useLowLatency factory value is set at creation of the factory.
+
+        Clean up WebKitXX.h headers to do less include and move declarations in specific headers.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/sdk/WebKit/WebKitDecoder.h:
+        * Source/webrtc/sdk/WebKit/WebKitDecoder.mm:
+        (webrtc::videoDecoderTaskComplete):
+        * Source/webrtc/sdk/WebKit/WebKitEncoder.h:
+        * Source/webrtc/sdk/WebKit/WebKitEncoder.mm:
+        (-[WK_RTCLocalVideoH264H265Encoder setLowLatency:]):
+        (webrtc::createWebKitEncoderFactory):
+        (webrtc::setLocalEncoderLowLatency):
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.h:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+        * Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoEncoderFactory.h:
+        * Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoEncoderFactory.m:
+        (-[RTCDefaultVideoEncoderFactory initWithH265:vp9:lowLatencyH264:]):
+        (-[RTCDefaultVideoEncoderFactory createEncoder:]):
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.h:
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+        (-[RTCVideoEncoderH264 initWithCodecInfo:]):
+        (-[RTCVideoEncoderH264 setH264LowLatencyEncoderEnabled:]):
+        (-[RTCVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+
+2020-11-03  Youenn Fablet  <youenn@apple.com>
+
         Update WebRTC libyuv to M87
         https://bugs.webkit.org/show_bug.cgi?id=218434
 

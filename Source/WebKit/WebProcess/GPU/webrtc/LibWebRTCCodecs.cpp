@@ -36,9 +36,9 @@
 #include <WebCore/LibWebRTCMacros.h>
 #include <WebCore/RealtimeVideoUtilities.h>
 #include <WebCore/RemoteVideoSample.h>
+#include <WebCore/RuntimeEnabledFeatures.h>
 #include <webrtc/sdk/WebKit/WebKitDecoder.h>
 #include <webrtc/sdk/WebKit/WebKitEncoder.h>
-#include <webrtc/sdk/WebKit/WebKitUtilities.h>
 #include <wtf/MainThread.h>
 
 #include <pal/cf/CoreMediaSoftLink.h>
@@ -259,7 +259,7 @@ void LibWebRTCCodecs::completedDecoding(RTCDecoderIdentifier decoderIdentifier, 
         return;
     }
 
-    webrtc::RemoteVideoDecoder::decodeComplete(decoder->decodedImageCallback, timeStamp, pixelBuffer.get(), remoteSample.time().toDouble());
+    webrtc::videoDecoderTaskComplete(decoder->decodedImageCallback, timeStamp, pixelBuffer.get(), remoteSample.time().toDouble());
 }
 
 static inline String formatNameFromCodecType(LibWebRTCCodecs::Type type)
@@ -286,7 +286,7 @@ LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoder(Type type, const std::m
         auto encoderIdentifier = encoder->identifier;
         ASSERT(!m_encoders.contains(encoderIdentifier));
 
-        WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoderIdentifier, formatNameFromCodecType(type), parameters }, 0);
+        WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoderIdentifier, formatNameFromCodecType(type), parameters, RuntimeEnabledFeatures::sharedFeatures().webRTCH264LowLatencyEncoderEnabled() }, 0);
         m_encoders.add(encoderIdentifier, WTFMove(encoder));
     });
     return result;

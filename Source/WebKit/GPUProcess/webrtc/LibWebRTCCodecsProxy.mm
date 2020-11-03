@@ -106,18 +106,20 @@ void LibWebRTCCodecsProxy::decodeFrame(RTCDecoderIdentifier identifier, uint32_t
         m_gpuConnectionToWebProcess.connection().send(Messages::LibWebRTCCodecs::FailedDecoding { identifier }, 0);
 }
 
-void LibWebRTCCodecsProxy::createEncoder(RTCEncoderIdentifier identifier, const String& formatName, const Vector<std::pair<String, String>>& parameters)
+void LibWebRTCCodecsProxy::createEncoder(RTCEncoderIdentifier identifier, const String& formatName, const Vector<std::pair<String, String>>& parameters, bool useLowLatency)
 {
     ASSERT(!m_encoders.contains(identifier));
 
     std::map<std::string, std::string> rtcParameters;
     for (auto& parameter : parameters)
         rtcParameters.emplace(parameter.first.utf8().data(), parameter.second.utf8().data());
-    
-    m_encoders.add(identifier, webrtc::createLocalEncoder(webrtc::SdpVideoFormat { formatName.utf8().data(), rtcParameters }, ^(const uint8_t* buffer, size_t size, const webrtc::WebKitEncodedFrameInfo& info, webrtc::RTPFragmentationHeader* header) {
+
+    auto* encoder = webrtc::createLocalEncoder(webrtc::SdpVideoFormat { formatName.utf8().data(), rtcParameters }, ^(const uint8_t* buffer, size_t size, const webrtc::WebKitEncodedFrameInfo& info, webrtc::RTPFragmentationHeader* header) {
         
         m_gpuConnectionToWebProcess.connection().send(Messages::LibWebRTCCodecs::CompletedEncoding { identifier, IPC::DataReference { buffer, size }, info, webrtc::WebKitRTPFragmentationHeader { header } }, 0);
-    }));
+    });
+    webrtc::setLocalEncoderLowLatency(encoder, useLowLatency);
+    m_encoders.add(identifier, encoder);
 }
 
 void LibWebRTCCodecsProxy::releaseEncoder(RTCEncoderIdentifier identifier)

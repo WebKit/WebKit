@@ -26,14 +26,16 @@
 @implementation RTCDefaultVideoEncoderFactory {
   bool _supportsH265;
   bool _supportsVP9;
+  bool _useLowLatencyH264;
 }
 
-- (id)initWithH265:(bool)supportsH265 vp9:(bool)supportsVP9
+- (id)initWithH265:(bool)supportsH265 vp9:(bool)supportsVP9 lowLatencyH264:(bool)useLowLatencyH264
 {
   self = [super init];
   if (self) {
       _supportsH265 = supportsH265;
       _supportsVP9 = supportsVP9;
+      _useLowLatencyH264 = useLowLatencyH264;
   }
   return self;
 }
@@ -92,7 +94,9 @@
 
 - (id<RTCVideoEncoder>)createEncoder:(RTCVideoCodecInfo *)info {
   if ([info.name isEqualToString:kRTCVideoCodecH264Name]) {
-    return [[RTCVideoEncoderH264 alloc] initWithCodecInfo:info];
+    RTCVideoEncoderH264* encoder = [[RTCVideoEncoderH264 alloc] initWithCodecInfo:info];
+    [encoder setH264LowLatencyEncoderEnabled:_useLowLatencyH264];
+    return encoder;
   } else if ([info.name isEqualToString:kRTCVideoCodecVp8Name]) {
     return [RTCVideoEncoderVP8 vp8Encoder];
 #if defined(RTC_ENABLE_VP9)

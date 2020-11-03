@@ -25,10 +25,12 @@
 
 #pragma once
 
+#include "WebKitUtilities.h"
 #include "api/video_codecs/video_encoder.h"
 #include "api/video_codecs/video_encoder_factory.h"
 #include "api/video/encoded_image.h"
 #include "modules/include/module_common_types.h"
+#include "modules/video_coding/include/video_error_codes.h"
 
 using CVPixelBufferRef = struct __CVBuffer*;
 
@@ -40,22 +42,7 @@ class VideoFrame;
 struct SdpVideoFormat;
 class Settings;
 
-class VideoEncoderFactoryWithSimulcast final : public VideoEncoderFactory {
-public:
-    explicit VideoEncoderFactoryWithSimulcast(std::unique_ptr<VideoEncoderFactory>&& factory)
-        : m_internalEncoderFactory(std::move(factory))
-    {
-    }
-
-    VideoEncoderFactory::CodecInfo QueryVideoEncoder(const SdpVideoFormat& format) const final { return m_internalEncoderFactory->QueryVideoEncoder(format); }
-
-    std::unique_ptr<VideoEncoder> CreateVideoEncoder(const SdpVideoFormat& format) final;
- 
-    std::vector<SdpVideoFormat> GetSupportedFormats() const final { return m_internalEncoderFactory->GetSupportedFormats(); }
-
-private:
-    const std::unique_ptr<VideoEncoderFactory> m_internalEncoderFactory;
-};
+std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory(WebKitH265, WebKitVP9, WebKitH264LowLatency);
 
 using WebKitVideoEncoder = void*;
 using VideoEncoderCreateCallback = WebKitVideoEncoder(*)(const SdpVideoFormat& format);
@@ -124,6 +111,7 @@ void releaseLocalEncoder(LocalEncoder);
 void initializeLocalEncoder(LocalEncoder, uint16_t width, uint16_t height, unsigned int startBitrate, unsigned int maxBitrate, unsigned int minBitrate, uint32_t maxFramerate);
 void encodeLocalEncoderFrame(LocalEncoder, CVPixelBufferRef, int64_t timeStamp, webrtc::VideoRotation, bool isKeyframeRequired);
 void setLocalEncoderRates(LocalEncoder, uint32_t bitRate, uint32_t frameRate);
+void setLocalEncoderLowLatency(LocalEncoder, bool isLowLatencyEnabled);
 
 template<class Decoder>
 bool WebKitEncodedFrameInfo::decode(Decoder& decoder, WebKitEncodedFrameInfo& info)

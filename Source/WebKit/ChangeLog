@@ -1,3 +1,20 @@
+2020-11-03  Youenn Fablet  <youenn@apple.com>
+
+        Allow low latency H264 encoder in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=218442
+
+        Reviewed by Eric Carlson.
+
+        Pass useLowLatency boolean from WebProcess to GPUProcess.
+
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.messages.in:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        (WebKit::LibWebRTCCodecsProxy::createEncoder):
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::LibWebRTCCodecs::completedDecoding):
+        (WebKit::LibWebRTCCodecs::createEncoder):
+
 2020-11-03  Chris Lord  <clord@igalia.com>
 
         [GTK] Zooming causes page to scroll to top

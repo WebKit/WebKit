@@ -28,6 +28,7 @@
 #include "WebKitUtilities.h"
 #include "api/video/video_frame.h"
 #include "components/video_codec/RTCCodecSpecificInfoH264+Private.h"
+#include "media/engine/encoder_simulcast_proxy.h"
 #include "modules/video_coding/utility/simulcast_utility.h"
 #include "sdk/objc/api/peerconnection/RTCEncodedImage+Private.h"
 #include "sdk/objc/api/peerconnection/RTCRtpFragmentationHeader+Private.h"
@@ -46,6 +47,7 @@
 - (NSInteger)startEncodeWithSettings:(RTCVideoEncoderSettings *)settings numberOfCores:(int)numberOfCores;
 - (NSInteger)encode:(RTCVideoFrame *)frame codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)info frameTypes:(NSArray<NSNumber *> *)frameTypes;
 - (int)setBitrate:(uint32_t)bitrateKbit framerate:(uint32_t)framerate;
+- (void)setLowLatency:(bool)lowLatencyEnabled;
 @end
 
 @implementation WK_RTCLocalVideoH264H265Encoder {
@@ -92,10 +94,30 @@
         return [m_h264Encoder setBitrate:bitrateKbit framerate:framerate];
     return [m_h265Encoder setBitrate:bitrateKbit framerate:framerate];
 }
+- (void)setLowLatency:(bool)lowLatencyEnabled {
+    if (m_h264Encoder)
+        [m_h264Encoder setH264LowLatencyEncoderEnabled:lowLatencyEnabled];
+}
 @end
+
 namespace webrtc {
 
-std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory(WebKitH265 supportsH265, WebKitVP9 supportsVP9)
+class VideoEncoderFactoryWithSimulcast final : public VideoEncoderFactory {
+public:
+    explicit VideoEncoderFactoryWithSimulcast(std::unique_ptr<VideoEncoderFactory>&& factory)
+        : m_internalEncoderFactory(std::move(factory))
+    {
+    }
+
+    VideoEncoderFactory::CodecInfo QueryVideoEncoder(const SdpVideoFormat& format) const final { return m_internalEncoderFactory->QueryVideoEncoder(format); }
+    std::unique_ptr<VideoEncoder> CreateVideoEncoder(const SdpVideoFormat& format) final;
+    std::vector<SdpVideoFormat> GetSupportedFormats() const final { return m_internalEncoderFactory->GetSupportedFormats(); }
+
+private:
+    const std::unique_ptr<VideoEncoderFactory> m_internalEncoderFactory;
+};
+
+std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory(WebKitH265 supportsH265, WebKitVP9 supportsVP9, WebKitH264LowLatency useH264LowLatency)
 {
 #if ENABLE_VCP_ENCODER || ENABLE_VCP_VTB_ENCODER
     static std::once_flag onceFlag;
@@ -104,7 +126,7 @@ std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory(WebKitH2
     });
 #endif
 
-    auto internalFactory = ObjCToNativeVideoEncoderFactory([[RTCDefaultVideoEncoderFactory alloc] initWithH265: supportsH265 == WebKitH265::On vp9:supportsVP9 == WebKitVP9::On]);
+    auto internalFactory = ObjCToNativeVideoEncoderFactory([[RTCDefaultVideoEncoderFactory alloc] initWithH265: supportsH265 == WebKitH265::On vp9:supportsVP9 == WebKitVP9::On lowLatencyH264:useH264LowLatency == WebKitH264LowLatency::On]);
     return std::make_unique<VideoEncoderFactoryWithSimulcast>(std::move(internalFactory));
 }
 
@@ -117,17 +139,6 @@ void setH264HardwareEncoderAllowed(bool allowed)
 bool isH264HardwareEncoderAllowed()
 {
     return h264HardwareEncoderAllowed;
-}
-
-static bool h264LowLatencyEncoderEnabled = false;
-void setH264LowLatencyEncoderEnabled(bool enabled)
-{
-    h264LowLatencyEncoderEnabled = enabled;
-}
-
-bool isH264LowLatencyEncoderEnabled()
-{
-    return h264LowLatencyEncoderEnabled;
 }
 
 std::unique_ptr<VideoEncoder> VideoEncoderFactoryWithSimulcast::CreateVideoEncoder(const SdpVideoFormat& format)
@@ -303,6 +314,12 @@ void setLocalEncoderRates(LocalEncoder localEncoder, uint32_t bitRate, uint32_t 
 {
     auto *encoder = (__bridge WK_RTCLocalVideoH264H265Encoder *)(localEncoder);
     [encoder setBitrate:bitRate framerate:frameRate];
+}
+
+void setLocalEncoderLowLatency(LocalEncoder localEncoder, bool isLowLatencyEnabled)
+{
+    auto *encoder = (__bridge WK_RTCLocalVideoH264H265Encoder *)(localEncoder);
+    [encoder setLowLatency:isLowLatencyEnabled];
 }
 
 }

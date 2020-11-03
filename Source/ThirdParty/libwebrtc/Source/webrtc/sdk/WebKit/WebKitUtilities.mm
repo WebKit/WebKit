@@ -25,6 +25,7 @@
 
 #include "WebKitUtilities.h"
 
+#include "api/video/video_frame.h"
 #include "native/src/objc_frame_buffer.h"
 #include "rtc_base/logging.h"
 #include "third_party/libyuv/include/libyuv/convert_from.h"

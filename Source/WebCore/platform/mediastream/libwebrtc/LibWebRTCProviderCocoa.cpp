@@ -31,7 +31,8 @@
 #include "RuntimeEnabledFeatures.h"
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
-#include <webrtc/sdk/WebKit/WebKitUtilities.h>
+#include <webrtc/sdk/WebKit/WebKitDecoder.h>
+#include <webrtc/sdk/WebKit/WebKitEncoder.h>
 ALLOW_UNUSED_PARAMETERS_END
 #include <webrtc/sdk/WebKit/WebKitVP9Decoder.h>
 #include <wtf/MainThread.h>
@@ -73,8 +74,7 @@ std::unique_ptr<webrtc::VideoEncoderFactory> LibWebRTCProviderCocoa::createEncod
     if (!webRTCAvailable())
         return nullptr;
 
-    webrtc::setH264LowLatencyEncoderEnabled(RuntimeEnabledFeatures::sharedFeatures().webRTCH264LowLatencyEncoderEnabled());
-    return webrtc::createWebKitEncoderFactory(isSupportingH265() ? webrtc::WebKitH265::On : webrtc::WebKitH265::Off, isSupportingVP9() ? webrtc::WebKitVP9::On : webrtc::WebKitVP9::Off);
+    return webrtc::createWebKitEncoderFactory(isSupportingH265() ? webrtc::WebKitH265::On : webrtc::WebKitH265::Off, isSupportingVP9() ? webrtc::WebKitVP9::On : webrtc::WebKitVP9::Off, RuntimeEnabledFeatures::sharedFeatures().webRTCH264LowLatencyEncoderEnabled() ? webrtc::WebKitH264LowLatency::On : webrtc::WebKitH264LowLatency::Off);
 }
 
 void LibWebRTCProviderCocoa::setActive(bool value)

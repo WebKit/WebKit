@@ -348,6 +348,7 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
   std::vector<uint8_t> _frameScaleBuffer;
   bool _disableEncoding;
   bool _isKeyFrameRequired;
+  bool _isH264LowLatencyEncoderEnabled;
 }
 
 // .5 is set as a mininum to prevent overcompensating for large temporary
@@ -375,8 +376,14 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
     RTC_CHECK([codecInfo.name isEqualToString:kRTCVideoCodecH264Name]);
   }
   _isKeyFrameRequired = false;
+  _isH264LowLatencyEncoderEnabled = true;
 
   return self;
+}
+
+- (void)setH264LowLatencyEncoderEnabled:(bool)enabled
+{
+    _isH264LowLatencyEncoderEnabled = enabled;
 }
 
 - (void)dealloc {
@@ -696,7 +703,7 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
 #endif
   }
 #elif HAVE_VTB_REQUIREDLOWLATENCY
-  if (webrtc::isH264LowLatencyEncoderEnabled() && _useVCP)
+  if (_isH264LowLatencyEncoderEnabled && _useVCP)
     CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_RequiredLowLatency, kCFBooleanTrue);
 #endif
 
