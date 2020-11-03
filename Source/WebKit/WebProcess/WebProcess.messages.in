@@ -24,7 +24,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     InitializeWebProcess(struct WebKit::WebProcessCreationParameters processCreationParameters)
     SetWebsiteDataStoreParameters(struct WebKit::WebProcessDataStoreParameters parameters)
 
-    # Create a new page.
     CreateWebPage(WebCore::PageIdentifier newPageID, struct WebKit::WebPageCreationParameters pageCreationParameters)
 
     PrewarmGlobally();
@@ -58,7 +57,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 
     SetHasStylusDevice(bool hasStylusDevice)
 
-    # Plug-ins.
     DidAddPlugInAutoStartOriginHash(uint32_t hash, WallTime expirationTime)
     ResetPlugInAutoStartOriginHashes(HashMap<uint32_t,WallTime> hashes)
     SetPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy policy, String host, String bundleIdentifier, String versionString)

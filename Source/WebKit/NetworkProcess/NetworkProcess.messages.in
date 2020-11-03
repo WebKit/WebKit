@@ -21,10 +21,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> NetworkProcess LegacyReceiver {
-    # Initializes the network process.
     InitializeNetworkProcess(struct WebKit::NetworkProcessCreationParameters processCreationParameters)
 
-    # Creates a connection for communication with a WebProcess
     CreateNetworkConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID) -> (Optional<IPC::Attachment> connectionIdentifier, enum:uint8_t WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy) Async
 
 #if USE(SOUP)
