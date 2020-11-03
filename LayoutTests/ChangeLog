@@ -1,3 +1,19 @@
+2020-11-03  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Layout Test webaudio/codec-tests/mp3/128kbps-44khz.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=132056
+
+        Unreviewed test gardening.
+
+        This tests has been stable for a long time. Checking the actual
+        audio file with Audacity, the gstreamer one, the baseline, the mac one,
+        and the mp3 source differs only in the delay before the sound starts
+        playing, likely due to platform-specific loading time or something
+        similar. So a rebaseline should be enough.
+
+        * platform/glib/webaudio/codec-tests/mp3/128kbps-44khz-expected.wav: Added.
+        * platform/gtk/TestExpectations:
+
 2020-11-03  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [TextureMapper] Crashed in TextureMapperLayer::paintUsingOverlapRegions

@@ -2792,8 +2792,6 @@ webkit.org/b/131498 fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-or
 webkit.org/b/206589 fast/box-shadow/inset-box-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/206589 fast/box-shadow/box-shadow-huge-area-crash.html [ ImageOnlyFailure ]
 
-webkit.org/b/132056 webaudio/codec-tests/mp3/128kbps-44khz.html  [ Failure ]
-
 webkit.org/b/132910 editing/pasteboard/drag-drop-paragraph-crasher.html [ Failure ]
 
 webkit.org/b/132914 http/tests/security/drag-drop-local-file.html [ Failure ]
