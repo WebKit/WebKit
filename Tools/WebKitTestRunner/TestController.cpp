@@ -472,10 +472,10 @@ void TestController::initialize(int argc, const char* argv[])
     m_globalFeatures = TestOptions::defaults();
     m_globalFeatures.internalDebugFeatures = options.internalFeatures;
     m_globalFeatures.experimentalFeatures = options.experimentalFeatures;
-    m_globalFeatures.boolWebPreferenceFeatures.insert({ "AcceleratedDrawingEnabled", options.shouldUseAcceleratedDrawing });
-    m_globalFeatures.boolTestRunnerFeatures.insert({ "useRemoteLayerTree", options.shouldUseRemoteLayerTree });
-    m_globalFeatures.boolTestRunnerFeatures.insert({ "shouldShowWebView", options.shouldShowWebView });
-    m_globalFeatures.boolTestRunnerFeatures.insert({ "shouldShowTouches", options.shouldShowTouches });
+    m_globalFeatures.boolWebPreferenceFeatures.insert_or_assign("AcceleratedDrawingEnabled", options.shouldUseAcceleratedDrawing);
+    m_globalFeatures.boolTestRunnerFeatures.insert_or_assign("useRemoteLayerTree", options.shouldUseRemoteLayerTree);
+    m_globalFeatures.boolTestRunnerFeatures.insert_or_assign("shouldShowWebView", options.shouldShowWebView);
+    m_globalFeatures.boolTestRunnerFeatures.insert_or_assign("shouldShowTouches", options.shouldShowTouches);
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     m_accessibilityIsolatedTreeMode = options.accessibilityIsolatedTreeMode;
