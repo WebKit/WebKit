@@ -37,16 +37,16 @@ options = {
   :outputDirectory => nil
 }
 optparse = OptionParser.new do |opts|
-    opts.banner = "Usage: #{File.basename($0)} --input file"
+  opts.banner = "Usage: #{File.basename($0)} --input file"
 
-    opts.separator ""
+  opts.separator ""
 
-    opts.on("--additionalSettings input", "file to generate settings from") { |additionalSettings| options[:additionalSettings] = additionalSettings }
-    opts.on("--base input", "file to generate settings from") { |basePreferences| options[:basePreferences] = basePreferences }
-    opts.on("--debug input", "file to generate debug settings from") { |debugPreferences| options[:debugPreferences] = debugPreferences }
-    opts.on("--experimental input", "file to generate experimental settings from") { |experimentalPreferences| options[:experimentalPreferences] = experimentalPreferences }
-    opts.on("--internal input", "file to generate internal settings from") { |internalPreferences| options[:internalPreferences] = internalPreferences }
-    opts.on("--outputDir output", "directory to generate file in") { |output| options[:outputDirectory] = output }
+  opts.on("--base input", "file to generate settings from") { |basePreferences| options[:basePreferences] = basePreferences }
+  opts.on("--debug input", "file to generate debug settings from") { |debugPreferences| options[:debugPreferences] = debugPreferences }
+  opts.on("--experimental input", "file to generate experimental settings from") { |experimentalPreferences| options[:experimentalPreferences] = experimentalPreferences }
+  opts.on("--internal input", "file to generate internal settings from") { |internalPreferences| options[:internalPreferences] = internalPreferences }
+  opts.on("--additionalSettings input", "file to generate settings from") { |additionalSettings| options[:additionalSettings] = additionalSettings }
+  opts.on("--outputDir output", "directory to generate file in") { |output| options[:outputDirectory] = output }
 end
 
 optparse.parse!
@@ -96,13 +96,13 @@ parsedPreferences.merge!(load(options[:experimentalPreferences]))
 parsedPreferences.merge!(load(options[:internalPreferences]))
 
 
-class SettingFromWebPreferences
+class Setting
   attr_accessor :name
   attr_accessor :options
   attr_accessor :type
-  attr_accessor :initial
+  attr_accessor :defaultValues
   attr_accessor :excludeFromInternalSettings
-  attr_accessor :conditional
+  attr_accessor :condition
   attr_accessor :onChange
   attr_accessor :getter
   attr_accessor :inspectorOverride
@@ -111,10 +111,10 @@ class SettingFromWebPreferences
   def initialize(name, options)
     @name = normalizeNameForWebCore(name, options)
     @options = options
-    @type = options["type"]
-    @initial = options["defaultValue"]["WebCore"]["default"]
+    @type = options["refinedType"] || options["type"]
+    @defaultValues = options["defaultValue"]["WebCore"]
     @excludeFromInternalSettings = options["webcoreExcludeFromInternalSettings"] || false
-    @conditional = options["condition"]
+    @condition = options["condition"]
     @onChange = options["webcoreOnChange"]
     @getter = options["webcoreGetter"]
     @inspectorOverride = options["inspectorOverride"]
@@ -152,84 +152,7 @@ class SettingFromWebPreferences
     elsif @type == "bool"
       "boolean"
     else
-      nil
-    end
-  end
-
-  def parameterType
-    if valueType?
-      @type
-    else
-      "const #{@type}&"
-    end
-  end
-
-  def hasComplexSetter?
-    @onChange != nil
-  end
-
-  def hasComplexGetter?
-    hasInspectorOverride?
-  end
-
-  def setterFunctionName
-    if @name.start_with?("css", "xss", "ftp", "dom", "dns", "ice", "hdr")
-      "set" + @name[0..2].upcase + @name[3..@name.length]
-    else
-      "set" + @name[0].upcase + @name[1..@name.length]
-    end
-  end
-
-  def getterFunctionName
-    @getter || @name
-  end
-
-  def hasInspectorOverride?
-    @inspectorOverride == true
-  end
-end
-
-
-class SettingFromWebCore
-  attr_accessor :name
-  attr_accessor :options
-  attr_accessor :type
-  attr_accessor :initial
-  attr_accessor :excludeFromInternalSettings
-  attr_accessor :conditional
-  attr_accessor :onChange
-  attr_accessor :getter
-  attr_accessor :inspectorOverride
-  attr_accessor :customImplementation
-  
-  def initialize(name, options)
-    @name = name
-    @options = options
-    @type = options["type"] || "bool"
-    @initial = options["initial"]
-    @excludeFromInternalSettings = options["excludeFromInternalSettings"] || false
-    @conditional = options["conditional"]
-    @onChange = options["onChange"]
-    @getter = options["getter"]
-    @inspectorOverride = options["inspectorOverride"]
-  end
-
-  def valueType?
-    @type != "String" && @type != "URL"
-  end
-
-  def idlType
-    # FIXME: Add support for more types including enum types.
-    if @type == "uint32_t"
-      "unsigned long"
-    elsif @type == "double"
-      "double"
-    elsif @type == "String"
-      "DOMString"
-    elsif @type == "bool"
-      "boolean"
-    else
-      nil
+      return nil
     end
   end
 
@@ -302,7 +225,7 @@ end
 class SettingSet
   attr_accessor :settings
   attr_accessor :inspectorOverrideSettings
-  attr_accessor :conditionals
+  attr_accessor :conditions
 
   def initialize(settings)
     @settings = settings
@@ -310,22 +233,22 @@ class SettingSet
 
     @inspectorOverrideSettings = @settings.select { |setting| setting.hasInspectorOverride? }
 
-    @conditionals = []
-    conditionalsMap = {}
-    @settings.select { |setting| setting.conditional }.each do |setting|
-      if !conditionalsMap[setting.conditional]
-        conditionalsMap[setting.conditional] = []
+    @conditions = []
+    conditionsMap = {}
+    @settings.select { |setting| setting.condition }.each do |setting|
+      if !conditionsMap[setting.condition]
+        conditionsMap[setting.condition] = []
       end
 
-      conditionalsMap[setting.conditional] << setting
+      conditionsMap[setting.condition] << setting
     end
-    conditionalsMap.each do |key, value|
-      @conditionals << Conditional.new(key, value)
+    conditionsMap.each do |key, value|
+      @conditions << Conditional.new(key, value)
     end
-    @conditionals.sort! { |x, y| x.condition <=> y.condition }
+    @conditions.sort! { |x, y| x.condition <=> y.condition }
 
-    # We also add the unconditional settings as the first element in the conditional array.
-    @conditionals.unshift(Conditional.new(nil, @settings.reject { |setting| setting.conditional }))
+    # We also add the unconditional settings as the first element in the conditions array.
+    @conditions.unshift(Conditional.new(nil, @settings.reject { |setting| setting.condition }))
   end
 end
 
@@ -333,20 +256,19 @@ class Settings
   attr_accessor :allSettingsSet
   
   def initialize(parsedSettingsFromWebCore, parsedSettingsFromWebPreferences)
-    settingsFromWebPreferences = []
+    settings = []
     parsedSettingsFromWebPreferences.each do |name, options|
       # An empty "webcoreBinding" entry indicates this preference uses the default, which is bound to Settings.
       if !options["webcoreBinding"]
-        settingsFromWebPreferences << SettingFromWebPreferences.new(name, options)
+        settings << Setting.new(name, options)
       end
     end
 
-    settingsFromWebCore = []
     parsedSettingsFromWebCore.each do |name, options|
-      settingsFromWebCore << SettingFromWebCore.new(name, options)
+      settings << Setting.new(name, options)
     end
 
-    @allSettingsSet = SettingSet.new(settingsFromWebPreferences + settingsFromWebCore)
+    @allSettingsSet = SettingSet.new(settings)
   end
 
   def renderToFile(template, file)

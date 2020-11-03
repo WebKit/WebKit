@@ -52,11 +52,11 @@ private:
 
 <%- for @setting in @allSettingsSet.settings do -%>
 <%- if @setting.excludeFromInternalSettings == false and @setting.idlType -%>
-<%- if @setting.conditional -%>
-#if <%= @setting.conditional %>
+<%- if @setting.condition -%>
+#if <%= @setting.condition %>
 <%- end -%>
     <%= @setting.type %> m_<%= @setting.name %>;
-<%- if @setting.conditional -%>
+<%- if @setting.condition -%>
 #endif
 <%- end -%>
 <%- end -%>

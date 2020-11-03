@@ -37,11 +37,11 @@ InternalSettingsGenerated::InternalSettingsGenerated(Page* page)
     : m_page(page)
 <%- for @setting in @allSettingsSet.settings do -%>
 <%- if @setting.excludeFromInternalSettings == false and @setting.idlType -%>
-<%- if @setting.conditional -%>
-#if <%= @setting.conditional %>
+<%- if @setting.condition -%>
+#if <%= @setting.condition %>
 <%- end -%>
     , m_<%= @setting.name %>(page->settings().<%= @setting.getterFunctionName %>())
-<%- if @setting.conditional -%>
+<%- if @setting.condition -%>
 #endif
 <%- end -%>
 <%- end -%>
@@ -57,11 +57,11 @@ void InternalSettingsGenerated::resetToConsistentState()
 {
 <%- for @setting in @allSettingsSet.settings do -%>
 <%- if @setting.excludeFromInternalSettings == false and @setting.idlType -%>
-<%- if @setting.conditional -%>
-#if <%= @setting.conditional %>
+<%- if @setting.condition -%>
+#if <%= @setting.condition %>
 <%- end -%>
     m_page->settings().<%= @setting.setterFunctionName %>(m_<%= @setting.name %>);
-<%- if @setting.conditional -%>
+<%- if @setting.condition -%>
 #endif
 <%- end -%>
 <%- end -%>
@@ -72,8 +72,8 @@ void InternalSettingsGenerated::resetToConsistentState()
 <%- if @setting.excludeFromInternalSettings == false and @setting.idlType -%>
 void InternalSettingsGenerated::<%= @setting.setterFunctionName %>(<%= @setting.parameterType %> <%= @setting.name %>)
 {
-<%- if @setting.conditional -%>
-#if <%= @setting.conditional %>
+<%- if @setting.condition -%>
+#if <%= @setting.condition %>
     m_page->settings().<%= @setting.setterFunctionName %>(<%= @setting.name %>);
 #else
     UNUSED_PARAM(<%= @setting.name %>);

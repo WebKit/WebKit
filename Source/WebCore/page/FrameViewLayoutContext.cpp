@@ -513,7 +513,7 @@ void FrameViewLayoutContext::applyTextSizingIfNeeded(RenderElement& layoutRoot)
     if (!idempotentMode && !minimumZoomFontSize)
         return;
     auto textAutosizingWidth = layoutRoot.page().textAutosizingWidth();
-    if (auto overrideWidth = settings.textAutosizingWindowSizeOverride().width())
+    if (auto overrideWidth = settings.textAutosizingWindowSizeOverrideWidth())
         textAutosizingWidth = overrideWidth;
     if (!idempotentMode && !textAutosizingWidth)
         return;

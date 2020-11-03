@@ -57,7 +57,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     : m_originalEditingBehavior(settings.editingBehaviorType())
 #if ENABLE(TEXT_AUTOSIZING)
     , m_originalTextAutosizingEnabled(settings.textAutosizingEnabled())
-    , m_originalTextAutosizingWindowSizeOverride(settings.textAutosizingWindowSizeOverride())
+    , m_originalTextAutosizingWindowSizeOverride(IntSize { static_cast<int>(settings.textAutosizingWindowSizeOverrideWidth()), static_cast<int>(settings.textAutosizingWindowSizeOverrideHeight()) })
     , m_originalTextAutosizingUsesIdempotentMode(settings.textAutosizingUsesIdempotentMode())
 #endif
     , m_originalMediaTypeOverride(settings.mediaTypeOverride())
@@ -156,7 +156,8 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 
 #if ENABLE(TEXT_AUTOSIZING)
     settings.setTextAutosizingEnabled(m_originalTextAutosizingEnabled);
-    settings.setTextAutosizingWindowSizeOverride(m_originalTextAutosizingWindowSizeOverride);
+    settings.setTextAutosizingWindowSizeOverrideWidth(m_originalTextAutosizingWindowSizeOverride.width());
+    settings.setTextAutosizingWindowSizeOverrideHeight(m_originalTextAutosizingWindowSizeOverride.height());
     settings.setTextAutosizingUsesIdempotentMode(m_originalTextAutosizingUsesIdempotentMode);
 #endif
     settings.setMediaTypeOverride(m_originalMediaTypeOverride);
@@ -412,7 +413,8 @@ ExceptionOr<void> InternalSettings::setTextAutosizingWindowSizeOverride(int widt
     if (!m_page)
         return Exception { InvalidAccessError };
 #if ENABLE(TEXT_AUTOSIZING)
-    settings().setTextAutosizingWindowSizeOverride(IntSize(width, height));
+    settings().setTextAutosizingWindowSizeOverrideWidth(width);
+    settings().setTextAutosizingWindowSizeOverrideHeight(height);
 #else
     UNUSED_PARAM(width);
     UNUSED_PARAM(height);

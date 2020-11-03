@@ -40,11 +40,11 @@ public:
     WEBCORE_EXPORT static Ref<Settings> create(Page*);
     WEBCORE_EXPORT ~Settings();
 
-<%- for @conditional in @allSettingsSet.conditionals do -%>
-<%- if @conditional.condition -%>
-#if <%= @conditional.condition %>
+<%- for @condition in @allSettingsSet.conditions do -%>
+<%- if @condition.condition -%>
+#if <%= @condition.condition %>
 <%- end -%>
-<%- for @setting in @conditional.settingsNeedingImplementation do -%>
+<%- for @setting in @condition.settingsNeedingImplementation do -%>
     <%- if @setting.hasComplexGetter? -%>
     WEBCORE_EXPORT <%= @setting.parameterType %> <%= @setting.getterFunctionName %>() const;
     <%- else -%>
@@ -56,7 +56,7 @@ public:
     void <%= @setting.setterFunctionName %>(<%= @setting.parameterType %> <%= @setting.name %>) { m_<%= @setting.name %> = <%= @setting.name %>; }
     <%- end -%>
 <%- end -%>
-<%- if @conditional.condition -%>
+<%- if @condition.condition -%>
 #endif
 <%- end -%>
 <%- end -%>
@@ -76,29 +76,29 @@ private:
     Optional<<%= @setting.type %>> m_<%= @setting.name %>InspectorOverride;
 <%- end -%>
 
-<%- for @conditional in @allSettingsSet.conditionals do -%>
-<%- if @conditional.nonBoolSettingsNeedingImplementation.length != 0 -%>
-<%- if @conditional.condition -%>
-#if <%= @conditional.condition %>
+<%- for @condition in @allSettingsSet.conditions do -%>
+<%- if @condition.nonBoolSettingsNeedingImplementation.length != 0 -%>
+<%- if @condition.condition -%>
+#if <%= @condition.condition %>
 <%- end -%>
-<%- for @setting in @conditional.nonBoolSettingsNeedingImplementation -%>
+<%- for @setting in @condition.nonBoolSettingsNeedingImplementation -%>
     <%= @setting.type %> m_<%= @setting.name %>;
 <%- end -%>
-<%- if @conditional.condition -%>
+<%- if @condition.condition -%>
 #endif
 <%- end -%>
 <%- end -%>
 <%- end -%>
 
-<%- for @conditional in @allSettingsSet.conditionals do -%>
-<%- if @conditional.boolSettingsNeedingImplementation.length != 0 -%>
-<%- if @conditional.condition -%>
-#if <%= @conditional.condition %>
+<%- for @condition in @allSettingsSet.conditions do -%>
+<%- if @condition.boolSettingsNeedingImplementation.length != 0 -%>
+<%- if @condition.condition -%>
+#if <%= @condition.condition %>
 <%- end -%>
-<%- for @setting in @conditional.boolSettingsNeedingImplementation -%>
+<%- for @setting in @condition.boolSettingsNeedingImplementation -%>
     <%= @setting.type %> m_<%= @setting.name %> : 1;
 <%- end -%>
-<%- if @conditional.condition -%>
+<%- if @condition.condition -%>
 #endif
 <%- end -%>
 <%- end -%>

@@ -32,6 +32,32 @@
 #include "Page.h"
 #include "SettingsDefaultValues.h"
 
+// Default values.
+
+<%- for @setting in @allSettingsSet.settings do -%>
+<%-   if @setting.condition -%>
+#if <%= @setting.condition %>
+<%-   end -%>
+<%-   if @setting.defaultValues.size() == 1 -%>
+#define SETTING_DEFAULT_VALUE_FOR_<%= @setting.name %> <%= @setting.defaultValues['default'] %>
+<%-   else -%>
+<%-     @setting.defaultValues.each_with_index do |(key, value), index| -%>
+<%-       if index == 0 -%>
+#if <%= key %>
+<%-       elsif index != @setting.defaultValues.size() - 1 -%>
+#elif <%= key %>
+<%-       else -%>
+#else
+<%-       end -%>
+#define SETTING_DEFAULT_VALUE_FOR_<%= @setting.name %> <%= value %>
+<%-     end -%>
+#endif
+<%-   end -%>
+<%-   if @setting.condition -%>
+#endif
+<%-   end -%>
+<%- end -%>
+
 namespace WebCore {
 
 Ref<Settings> Settings::create(Page* page)
@@ -41,28 +67,28 @@ Ref<Settings> Settings::create(Page* page)
 
 Settings::Settings(Page* page)
     : SettingsBase(page)
-<%- for @conditional in @allSettingsSet.conditionals do -%>
-<%- if @conditional.nonBoolSettingsNeedingImplementation.length != 0 -%>
-<%- if @conditional.condition -%>
-#if <%= @conditional.condition %>
+<%- for @condition in @allSettingsSet.conditions do -%>
+<%- if @condition.nonBoolSettingsNeedingImplementation.length != 0 -%>
+<%- if @condition.condition -%>
+#if <%= @condition.condition %>
 <%- end -%>
-<%- for @setting in @conditional.nonBoolSettingsNeedingImplementation -%>
-    , m_<%= @setting.name %>(<%= @setting.initial %>)
+<%- for @setting in @condition.nonBoolSettingsNeedingImplementation -%>
+    , m_<%= @setting.name %>(SETTING_DEFAULT_VALUE_FOR_<%= @setting.name %>)
 <%- end -%>
-<%- if @conditional.condition -%>
+<%- if @condition.condition -%>
 #endif
 <%- end -%>
 <%- end -%>
 <%- end -%>
-<%- for @conditional in @allSettingsSet.conditionals do -%>
-<%- if @conditional.boolSettingsNeedingImplementation.length != 0 -%>
-<%- if @conditional.condition -%>
-#if <%= @conditional.condition %>
+<%- for @condition in @allSettingsSet.conditions do -%>
+<%- if @condition.boolSettingsNeedingImplementation.length != 0 -%>
+<%- if @condition.condition -%>
+#if <%= @condition.condition %>
 <%- end -%>
-<%- for @setting in @conditional.boolSettingsNeedingImplementation -%>
-    , m_<%= @setting.name %>(<%= @setting.initial %>)
+<%- for @setting in @condition.boolSettingsNeedingImplementation -%>
+    , m_<%= @setting.name %>(SETTING_DEFAULT_VALUE_FOR_<%= @setting.name %>)
 <%- end -%>
-<%- if @conditional.condition -%>
+<%- if @condition.condition -%>
 #endif
 <%- end -%>
 <%- end -%>
@@ -75,12 +101,12 @@ Settings::~Settings()
 {
 }
 
-<%- for @conditional in @allSettingsSet.conditionals do -%>
-<%- if @conditional.settingsWithComplexGettersNeedingImplementation.length != 0 or @conditional.settingsWithComplexSettersNeedingImplementation.length != 0 -%>
-<%- if @conditional.condition -%>
-#if <%= @conditional.condition %>
+<%- for @condition in @allSettingsSet.conditions do -%>
+<%- if @condition.settingsWithComplexGettersNeedingImplementation.length != 0 or @condition.settingsWithComplexSettersNeedingImplementation.length != 0 -%>
+<%- if @condition.condition -%>
+#if <%= @condition.condition %>
 <%- end -%>
-<%- for @setting in @conditional.settingsWithComplexGettersNeedingImplementation do -%>
+<%- for @setting in @condition.settingsWithComplexGettersNeedingImplementation do -%>
 <%= @setting.parameterType %> Settings::<%= @setting.getterFunctionName %>() const
 {
 <%- if @setting.hasInspectorOverride? -%>
@@ -93,7 +119,7 @@ Settings::~Settings()
 }
 <%- end -%>
 
-<%- for @setting in @conditional.settingsWithComplexSettersNeedingImplementation -%>
+<%- for @setting in @condition.settingsWithComplexSettersNeedingImplementation -%>
 void Settings::<%= @setting.setterFunctionName %>(<%= @setting.parameterType %> <%= @setting.name %>)
 {
     if (m_<%= @setting.name %> == <%= @setting.name %>)
@@ -102,7 +128,7 @@ void Settings::<%= @setting.setterFunctionName %>(<%= @setting.parameterType %> 
     <%= @setting.onChange %>();
 }
 <%- end -%>
-<%- if @conditional.condition -%>
+<%- if @condition.condition -%>
 #endif
 <%- end -%>
 <%- end -%>
@@ -115,12 +141,12 @@ void Settings::<%= @setting.setterFunctionName %>InspectorOverride(Optional<<%= 
     if (m_<%= @setting.name %>InspectorOverride == <%= @setting.name %>InspectorOverride)
         return;
     m_<%= @setting.name %>InspectorOverride = <%= @setting.name %>InspectorOverride;
-<%- if @setting.conditional -%>
-#if <%= @setting.conditional %>
+<%- if @setting.condition -%>
+#if <%= @setting.condition %>
 <%- end -%>
     <%= @setting.onChange %>();
-<%- if @setting.conditional -%>
-<%- if @conditional.condition -%>
+<%- if @setting.condition -%>
+<%- if @condition.condition -%>
 #endif
 <%- end -%>
 <%- end -%>
