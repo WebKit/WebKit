@@ -56,7 +56,6 @@
     TimeInYear(2002)+TimeInYear(2003)+TimeInYear(2004);
 
     addTestCase( now );
-    addTestCase( TIME_YEAR_0 );
     addTestCase( TIME_1970 );
     addTestCase( TIME_1900 );
     addTestCase( TIME_2000 );

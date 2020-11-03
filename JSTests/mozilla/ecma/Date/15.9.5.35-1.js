@@ -58,9 +58,9 @@ function getTestCases() {
                     UTCDateFromTime(SetUTCMonth(0,11)),
                     LocalDateFromTime(SetUTCMonth(0,11)) );
 
-    addNewTestCase( "TDATE = new Date(0);(TDATE).setUTCMonth(3,4);TDATE",
-                    UTCDateFromTime(SetUTCMonth(0,3,4)),
-                    LocalDateFromTime(SetUTCMonth(0,3,4)) );
+    addNewTestCase( "TDATE = new Date(0);(TDATE).setUTCMonth(3,27);TDATE",
+                    UTCDateFromTime(SetUTCMonth(0,3,27)),
+                    LocalDateFromTime(SetUTCMonth(0,3,27)) );
 
 }
 

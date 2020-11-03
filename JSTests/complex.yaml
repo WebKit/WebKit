@@ -31,3 +31,6 @@
 
 - path: complex/timezone-offset-apia.js
   cmd: runComplexTest [], [], "TZ=Pacific/Apia", "--useDollarVM=1"
+
+- path: complex/timezone-offset-before-america-los-angeles-is-defined.js
+  cmd: runComplexTest [], [], "TZ=America/Los_Angeles", "--useDollarVM=1"

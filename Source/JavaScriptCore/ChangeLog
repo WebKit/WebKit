@@ -1,3 +1,56 @@
+2020-11-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        REGRESSION (r254038): Simple.com money transfer UI is very laggy (multiple seconds per keypress)
+        https://bugs.webkit.org/show_bug.cgi?id=218348
+
+        Reviewed by Darin Adler.
+
+        We have depth-1 LocalTimeOffset cache to avoid repeatedly calling `localtime_r`. But this depth-1 cache can be easily missed if
+        we parse Dates of multiple years. Instead of increasing depth as a work-around, this patch starts using ICU TimeZone cache.
+        This is used in SpiderMonkey and V8 too, and it is the right direction since ICU knows tzdata and can do more sophisticated caching.
+
+        Microbenchmark shows 24x improvement.
+
+                                           ToT                     Patched
+
+        local-date-constructor     2026.8715+-11.2909    ^     85.0022+-1.0548        ^ definitely 23.8449x faster
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/DateConstructor.cpp:
+        (JSC::millisecondsFromComponents):
+        (JSC::constructDate):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::calculateGregorianDateTime const):
+        (JSC::DateInstance::calculateGregorianDateTimeUTC const):
+        * runtime/DateInstance.h:
+        * runtime/DatePrototype.cpp:
+        (JSC::setNewValueFromTimeArgs):
+        (JSC::setNewValueFromDateArgs):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSDateMath.cpp:
+        (JSC::OpaqueICUTimeZoneDeleter::operator()):
+        (JSC::localTimeOffset):
+        (JSC::DateCache::gregorianDateTimeToMS):
+        (JSC::DateCache::msToGregorianDateTime):
+        (JSC::DateCache::parseDate):
+        (JSC::DateCache::cachedDateInstanceData):
+        (JSC::DateCache::timeZoneCacheSlow):
+        (JSC::DateCache::reset):
+        (JSC::gregorianDateTimeToMS): Deleted.
+        (JSC::msToGregorianDateTime): Deleted.
+        (JSC::parseDate): Deleted.
+        * runtime/JSDateMath.h:
+        (JSC::DateCache::timeZoneCache):
+        * runtime/VM.cpp:
+        (JSC::VM::resetDateCache): Deleted.
+        * runtime/VM.h:
+        (JSC::VM::resetDateCache):
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::VMEntryScope):
+
 2020-11-03  Keith Rollin  <krollin@apple.com>
 
         Extend check-for-inappropriate-files-in-framework to WebKitLegacy and JavaScriptCore

@@ -7,35 +7,35 @@ description(
 );
 
 var object = new Object;
-object.valueOf = function() { return 1111; }
+object.valueOf = function() { return 1995; }
 object.toString = function() { return "2222"; }
 
 shouldBe('isNaN(new Date(""))', 'true');
 
 var timeZoneOffset = Date.parse("Dec 25 1995") - Date.parse("Dec 25 1995 GMT");
 
-shouldBe('new Date(1111).getTime()', '1111');
-shouldBe('new Date(object).getTime()', '1111');
-shouldBe('new Date(new Date(1111)).getTime()', '1111');
-shouldBe('new Date(new Date(1111).toString()).getTime()', '1000');
+shouldBe('new Date(1995).getTime()', '1995');
+shouldBe('new Date(object).getTime()', '1995');
+shouldBe('new Date(new Date(1995)).getTime()', '1995');
+shouldBe('new Date(new Date(1995).toString()).getTime()', '1000');
 
-shouldBe('new Date(1111, 1).getTime() - timeZoneOffset', '-27104803200000');
-shouldBe('new Date(1111, 1, 1).getTime() - timeZoneOffset', '-27104803200000');
-shouldBe('new Date(1111, 1, 1, 1).getTime() - timeZoneOffset', '-27104799600000');
-shouldBe('new Date(1111, 1, 1, 1, 1).getTime() - timeZoneOffset', '-27104799540000');
-shouldBe('new Date(1111, 1, 1, 1, 1, 1).getTime() - timeZoneOffset', '-27104799539000');
-shouldBe('new Date(1111, 1, 1, 1, 1, 1, 1).getTime() - timeZoneOffset', '-27104799538999');
-shouldBe('new Date(1111, 1, 1, 1, 1, 1, 1, 1).getTime() - timeZoneOffset', '-27104799538999');
-shouldBe('new Date(1111, 1, 1, 1, 1, 1, 1, 1, 1).getTime() - timeZoneOffset', '-27104799538999');
-shouldBe('new Date(1111, 1, 1, 1, 1, 1, 1, 1, 1).getTime() - timeZoneOffset', '-27104799538999');
+shouldBe('new Date(1995, 1).getTime() - timeZoneOffset', '791596800000');
+shouldBe('new Date(1995, 1, 1).getTime() - timeZoneOffset', '791596800000');
+shouldBe('new Date(1995, 1, 1, 1).getTime() - timeZoneOffset', '791600400000');
+shouldBe('new Date(1995, 1, 1, 1, 1).getTime() - timeZoneOffset', '791600460000');
+shouldBe('new Date(1995, 1, 1, 1, 1, 1).getTime() - timeZoneOffset', '791600461000');
+shouldBe('new Date(1995, 1, 1, 1, 1, 1, 1).getTime() - timeZoneOffset', '791600461001');
+shouldBe('new Date(1995, 1, 1, 1, 1, 1, 1, 1).getTime() - timeZoneOffset', '791600461001');
+shouldBe('new Date(1995, 1, 1, 1, 1, 1, 1, 1, 1).getTime() - timeZoneOffset', '791600461001');
+shouldBe('new Date(1995, 1, 1, 1, 1, 1, 1, 1, 1).getTime() - timeZoneOffset', '791600461001');
 
-shouldBe('new Date(new Date(1111, 1)).getTime() - timeZoneOffset', '-27104803200000');
-shouldBe('new Date(new Date(1111, 1, 1)).getTime() - timeZoneOffset', '-27104803200000');
-shouldBe('new Date(new Date(1111, 1, 1, 1)).getTime() - timeZoneOffset', '-27104799600000');
-shouldBe('new Date(new Date(1111, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset', '-27104799539000');
-shouldBe('new Date(new Date(1111, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset', '-27104799538999');
-shouldBe('new Date(new Date(1111, 1, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset', '-27104799538999');
-shouldBe('new Date(new Date(1111, 1, 1, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset', '-27104799538999');
+shouldBe('new Date(new Date(1995, 1)).getTime() - timeZoneOffset', '791596800000');
+shouldBe('new Date(new Date(1995, 1, 1)).getTime() - timeZoneOffset', '791596800000');
+shouldBe('new Date(new Date(1995, 1, 1, 1)).getTime() - timeZoneOffset', '791600400000');
+shouldBe('new Date(new Date(1995, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset', '791600461000');
+shouldBe('new Date(new Date(1995, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset', '791600461001');
+shouldBe('new Date(new Date(1995, 1, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset', '791600461001');
+shouldBe('new Date(new Date(1995, 1, 1, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset', '791600461001');
 
 shouldBe("Number(new Date(new Date(Infinity, 1, 1, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset)", 'Number.NaN');
 shouldBe("Number(new Date(new Date(1, Infinity, 1, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset)", 'Number.NaN');
@@ -53,9 +53,9 @@ shouldBe("new Date(Date.parse('1 Dec 988 GMT')).toGMTString()", "\"Mon, 01 Dec 0
 shouldBe("new Date(Date.parse('1 Mar 1000 GMT')).toGMTString()", "\"Sat, 01 Mar 1000 00:00:00 GMT\"");
 
 // In Firefox, the results of the following tests are timezone-dependent, which likely implies that the implementation is not quite correct.
-// Our results are even worse, though, as the dates are clipped: (new Date(1111, 1201).getTime()) == (new Date(1111, 601).getTime())
-// shouldBe('new Date(1111, 1111, 1111, 1111, 1111, 1111, 1111, 1111).getTime() - timeZoneOffset', '-24085894227889');
-// shouldBe('new Date(new Date(1111, 1111, 1111, 1111, 1111, 1111, 1111, 1111)).getTime() - timeZoneOffset', '-24085894227889');
+// Our results are even worse, though, as the dates are clipped: (new Date(1995, 1201).getTime()) == (new Date(1995, 601).getTime())
+// shouldBe('new Date(1995, 1995, 1995, 1995, 1995, 1995, 1995, 1995).getTime() - timeZoneOffset', '-24085894227889');
+// shouldBe('new Date(new Date(1995, 1995, 1995, 1995, 1995, 1995, 1995, 1995)).getTime() - timeZoneOffset', '-24085894227889');
 
 // Regression test for Bug 26978 (https://bugs.webkit.org/show_bug.cgi?id=26978)
 var testStr = "";

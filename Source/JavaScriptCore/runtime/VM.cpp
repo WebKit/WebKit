@@ -889,15 +889,6 @@ VM::ClientData::~ClientData()
 {
 }
 
-void VM::resetDateCache()
-{
-    dateCache.utcTimeOffsetCache.reset();
-    dateCache.localTimeOffsetCache.reset();
-    dateCache.cachedDateString = String();
-    dateCache.cachedDateStringValue = std::numeric_limits<double>::quiet_NaN();
-    dateCache.dateInstanceCache.reset();
-}
-
 void VM::whenIdle(Function<void()>&& callback)
 {
     if (!entryScope) {

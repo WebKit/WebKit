@@ -1,3 +1,25 @@
+2020-11-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        REGRESSION (r254038): Simple.com money transfer UI is very laggy (multiple seconds per keypress)
+        https://bugs.webkit.org/show_bug.cgi?id=218348
+
+        Reviewed by Darin Adler.
+
+        * js/date-constructor-expected.txt: The time before America/Los_Angeles timezone is effective should be handled as UTC-0752. Use 1995 to test the intent correctly.
+        * js/date-timeClip-large-values-expected.txt: Ditto about old timezone.
+        * js/dom/script-tests/date-DST-time-cusps.js: Our timezone database was broken. Nov 02 2014 01:00:00 is not PDT.
+        (1.toString.match):
+        * js/dom/script-tests/date-big-setdate.js: Fix and adjust for right DST periods.
+        (1.toString.match):
+        * js/script-tests/date-constructor.js:
+        (object.valueOf):
+        * platform/mac/fast/AppleScript/date-expected.txt: Ditto, 1800 does not have America/Los_Angeles.
+        * platform/mac/fast/AppleScript/date.html:
+        * storage/indexeddb/modern/date-basic-expected.txt: Nov 04 1955 is PST, not PDT.
+        * storage/indexeddb/modern/date-basic-private-expected.txt: Ditto.
+        * storage/indexeddb/modern/get-keyrange-expected.txt: Ditto.
+        * storage/indexeddb/modern/get-keyrange-private-expected.txt: Ditto.
+
 2020-11-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r268564, r268957, and r268962.

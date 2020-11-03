@@ -32,7 +32,6 @@
 #include "CodeSpecializationKind.h"
 #include "CompleteSubspace.h"
 #include "ConcurrentJSLock.h"
-#include "DateInstanceCache.h"
 #include "DeleteAllCodeEffort.h"
 #include "DisallowVMEntry.h"
 #include "ExceptionEventLocation.h"
@@ -44,6 +43,7 @@
 #include "IsoCellSet.h"
 #include "IsoSubspace.h"
 #include "JSCJSValue.h"
+#include "JSDateMath.h"
 #include "JSLock.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Microtask.h"
@@ -981,14 +981,6 @@ public:
     JSObject* stringRecursionCheckFirstObject { nullptr };
     HashSet<JSObject*> stringRecursionCheckVisitedObjects;
 
-    struct DateCache {
-        DateInstanceCache dateInstanceCache;
-        LocalTimeOffsetCache utcTimeOffsetCache;
-        LocalTimeOffsetCache localTimeOffsetCache;
-
-        String cachedDateString;
-        double cachedDateStringValue;
-    };
     DateCache dateCache;
 
     std::unique_ptr<Profiler::Database> m_perBytecodeProfiler;
@@ -1018,7 +1010,7 @@ public:
     RTTraceList* m_rtTraceList;
 #endif
 
-    JS_EXPORT_PRIVATE void resetDateCache();
+    void resetDateCache() { dateCache.reset(); }
 
     RegExpCache* regExpCache() { return m_regExpCache; }
 #if ENABLE(REGEXP_TRACING)

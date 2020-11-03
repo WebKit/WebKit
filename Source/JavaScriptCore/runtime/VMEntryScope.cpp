@@ -43,6 +43,8 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
 
         // Reset the date cache between JS invocations to force the VM to
         // observe time zone changes.
+        // FIXME: We should clear it only when we know the timezone has been changed.
+        // https://bugs.webkit.org/show_bug.cgi?id=218365
         vm.resetDateCache();
 
         if (vm.watchdog())

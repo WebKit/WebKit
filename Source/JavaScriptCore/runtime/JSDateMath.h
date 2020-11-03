@@ -42,18 +42,51 @@
 
 #pragma once
 
-#include "VMInlines.h"
+#include "DateInstanceCache.h"
 #include <wtf/DateMath.h>
 #include <wtf/GregorianDateTime.h>
 
 namespace JSC {
 
 class JSGlobalObject;
+class OpaqueICUTimeZone;
 class VM;
 
-JS_EXPORT_PRIVATE void msToGregorianDateTime(VM::DateCache&, double, WTF::TimeType outputTimeType, GregorianDateTime&);
-JS_EXPORT_PRIVATE double gregorianDateTimeToMS(VM::DateCache&, const GregorianDateTime&, double, WTF::TimeType inputTimeType);
-JS_EXPORT_PRIVATE double getUTCOffset(VM::DateCache&);
-JS_EXPORT_PRIVATE double parseDate(JSGlobalObject*, VM&, const WTF::String&);
+// We do not expose icu::TimeZone in this header file. And we cannot use icu::TimeZone forward declaration
+// because icu namespace can be an alias to icu$verNum namespace.
+struct OpaqueICUTimeZoneDeleter {
+    JS_EXPORT_PRIVATE void operator()(OpaqueICUTimeZone*);
+};
+
+class DateCache {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(DateCache);
+public:
+    DateCache();
+    ~DateCache();
+
+    JS_EXPORT_PRIVATE void reset();
+
+    OpaqueICUTimeZone* timeZoneCache()
+    {
+        if (!m_timeZoneCache)
+            timeZoneCacheSlow();
+        return m_timeZoneCache.get();
+    }
+
+    Ref<DateInstanceData> cachedDateInstanceData(double millisecondsFromEpoch);
+
+    void msToGregorianDateTime(double millisecondsFromEpoch, WTF::TimeType outputTimeType, GregorianDateTime&);
+    double gregorianDateTimeToMS(const GregorianDateTime&, double milliseconds, WTF::TimeType inputTimeType);
+    double parseDate(JSGlobalObject*, VM&, const WTF::String&);
+
+private:
+    void timeZoneCacheSlow();
+
+    std::unique_ptr<OpaqueICUTimeZone, OpaqueICUTimeZoneDeleter> m_timeZoneCache;
+    String m_cachedDateString;
+    double m_cachedDateStringValue;
+    DateInstanceCache m_dateInstanceCache;
+};
 
 } // namespace JSC

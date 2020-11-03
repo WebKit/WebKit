@@ -37,7 +37,7 @@
             // 0x00000000 == Fri Jan 01 1904 00:00:00
             log(appleScriptController.doJavaScript("new Date(1904,0,1)"));
             
-            // 0xffffffff3c637000 == Wed Jan 01 1800 00:00:00
+            // 0xffffffff3c636e5a == Wed Jan 01 1800 00:00:00, this is because America/Los_Angeles timzeone is not effective at 1800.
             log(appleScriptController.doJavaScript("new Date(1800,0,1)"));
 
             // invalid date 
