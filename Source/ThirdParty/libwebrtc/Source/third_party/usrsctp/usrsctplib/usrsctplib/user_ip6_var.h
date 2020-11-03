@@ -60,16 +60,16 @@
 #ifndef _USER_IP6_VAR_H_
 #define _USER_IP6_VAR_H_
 
-#if defined(__Userspace_os_Windows)
+#if defined(_WIN32)
 struct ip6_hdr {
 	union {
 		struct ip6_hdrctl {
-			u_int32_t ip6_un1_flow;	/* 20 bits of flow-ID */
-			u_int16_t ip6_un1_plen;	/* payload length */
-			u_int8_t  ip6_un1_nxt;	/* next header */
-			u_int8_t  ip6_un1_hlim;	/* hop limit */
+			uint32_t ip6_un1_flow;	/* 20 bits of flow-ID */
+			uint16_t ip6_un1_plen;	/* payload length */
+			uint8_t  ip6_un1_nxt;	/* next header */
+			uint8_t  ip6_un1_hlim;	/* hop limit */
 		} ip6_un1;
-		u_int8_t ip6_un2_vfc;	/* 4 bits version, top 4 bits class */
+		uint8_t ip6_un2_vfc;	/* 4 bits version, top 4 bits class */
 	} ip6_ctlun;
 	struct in6_addr ip6_src;	/* source address */
 	struct in6_addr ip6_dst;	/* destination address */
@@ -84,18 +84,18 @@ struct ip6_hdr {
 #define IPV6_VERSION		0x60
 #endif
 
-#if defined(__Userspace_os_Windows)
+#if defined(_WIN32)
 #define s6_addr16 u.Word
 #endif
-#if !defined(__Userspace_os_Windows)
-#if !defined(__Userspace_os_Linux)
+#if !defined(_WIN32)
+#if !defined(__linux__)
 #define s6_addr8  __u6_addr.__u6_addr8
 #define s6_addr16 __u6_addr.__u6_addr16
 #define s6_addr32 __u6_addr.__u6_addr32
 #endif
 #endif
 
-#if !defined(__Userspace_os_FreeBSD) && !defined(__Userspace_os_OpenBSD) && !defined(__Userspace_os_DragonFly)
+#if !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__DragonFly__)
 struct route_in6 {
 	struct	rtentry *ro_rt;
 	struct	llentry *ro_lle;

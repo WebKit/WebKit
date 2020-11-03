@@ -32,9 +32,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctp_peeloff.c 279859 2015-03-10 19:49:25Z tuexen $");
+__FBSDID("$FreeBSD: head/sys/netinet/sctp_peeloff.c 362054 2020-06-11 13:34:09Z tuexen $");
 #endif
 
 #include <netinet/sctp_os.h>
@@ -48,10 +48,6 @@ __FBSDID("$FreeBSD: head/sys/netinet/sctp_peeloff.c 279859 2015-03-10 19:49:25Z 
 #include <netinet/sctp_peeloff.h>
 #include <netinet/sctputil.h>
 #include <netinet/sctp_auth.h>
-
-#if defined(__APPLE__)
-#define APPLE_FILE_NO 5
-#endif
 
 int
 sctp_can_peel_off(struct socket *head, sctp_assoc_t assoc_id)
@@ -79,7 +75,7 @@ sctp_can_peel_off(struct socket *head, sctp_assoc_t assoc_id)
 		SCTP_LTRACE_ERR_RET(inp, stcb, NULL, SCTP_FROM_SCTP_PEELOFF, ENOENT);
 		return (ENOENT);
 	}
-	state = SCTP_GET_STATE((&stcb->asoc));
+	state = SCTP_GET_STATE(stcb);
 	if ((state == SCTP_STATE_EMPTY) ||
 	    (state == SCTP_STATE_INUSE)) {
 		SCTP_TCB_UNLOCK(stcb);
@@ -109,7 +105,7 @@ sctp_do_peeloff(struct socket *head, struct socket *so, sctp_assoc_t assoc_id)
 		return (ENOTCONN);
 	}
 
-	state = SCTP_GET_STATE((&stcb->asoc));
+	state = SCTP_GET_STATE(stcb);
 	if ((state == SCTP_STATE_EMPTY) ||
 	    (state == SCTP_STATE_INUSE)) {
 		SCTP_TCB_UNLOCK(stcb);
@@ -164,7 +160,7 @@ sctp_do_peeloff(struct socket *head, struct socket *so, sctp_assoc_t assoc_id)
 	atomic_add_int(&stcb->asoc.refcnt, 1);
 	SCTP_TCB_UNLOCK(stcb);
 
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) && !defined(__Userspace__)
 	sctp_pull_off_control_to_new_inp(inp, n_inp, stcb, SBL_WAIT);
 #else
 	sctp_pull_off_control_to_new_inp(inp, n_inp, stcb, M_WAITOK);
@@ -178,14 +174,6 @@ sctp_do_peeloff(struct socket *head, struct socket *so, sctp_assoc_t assoc_id)
 struct socket *
 sctp_get_peeloff(struct socket *head, sctp_assoc_t assoc_id, int *error)
 {
-#if defined(__Userspace__)
-    /* if __Userspace__ chooses to originally not support peeloff, put it here... */
-#endif
-#if defined(__Panda__)
-	SCTP_LTRACE_ERR_RET(NULL, NULL, NULL, SCTP_FROM_SCTP_PEELOFF, EINVAL);
-	*error = EINVAL;
-	return (NULL);
-#else
 	struct socket *newso;
 	struct sctp_inpcb *inp, *n_inp;
 	struct sctp_tcb *stcb;
@@ -205,18 +193,15 @@ sctp_get_peeloff(struct socket *head, sctp_assoc_t assoc_id, int *error)
 	}
 	atomic_add_int(&stcb->asoc.refcnt, 1);
 	SCTP_TCB_UNLOCK(stcb);
-#if defined(__FreeBSD__) && __FreeBSD_version >= 801000
+#if defined(__FreeBSD__) && !defined(__Userspace__)
 	CURVNET_SET(head->so_vnet);
 #endif
 	newso = sonewconn(head, SS_ISCONNECTED
-#if defined(__APPLE__)
+#if defined(__APPLE__) && !defined(__Userspace__)
 	    , NULL
-#elif defined(__Panda__)
-	    /* place this socket in the assoc's vrf id */
-	    , NULL, stcb->asoc.vrf_id
 #endif
 		);
-#if defined(__FreeBSD__) && __FreeBSD_version >= 801000
+#if defined(__FreeBSD__) && !defined(__Userspace__)
 	CURVNET_RESTORE();
 #endif
 	if (newso == NULL) {
@@ -227,7 +212,7 @@ sctp_get_peeloff(struct socket *head, sctp_assoc_t assoc_id, int *error)
 		return (NULL);
 
 	}
-#if defined(__APPLE__)
+#if defined(__APPLE__) && !defined(__Userspace__)
 	  else {
 		SCTP_SOCKET_LOCK(newso, 1);
 	}
@@ -288,7 +273,6 @@ sctp_get_peeloff(struct socket *head, sctp_assoc_t assoc_id, int *error)
 	SOCK_UNLOCK(newso);
 	/* We remove it right away */
 
-#if defined(__FreeBSD__) || defined(__APPLE__) || defined(__Windows__) || defined(__Userspace__)
 #ifdef SCTP_LOCK_LOGGING
 	if (SCTP_BASE_SYSCTL(sctp_logging_level) & SCTP_LOCK_LOGGING_ENABLE) {
 		sctp_log_lock(inp, (struct sctp_tcb *)NULL, SCTP_LOG_LOCK_SOCK);
@@ -297,16 +281,6 @@ sctp_get_peeloff(struct socket *head, sctp_assoc_t assoc_id, int *error)
 	TAILQ_REMOVE(&head->so_comp, newso, so_list);
 	head->so_qlen--;
 	SOCK_UNLOCK(head);
-#else
-	newso = TAILQ_FIRST(&head->so_q);
-	if (soqremque(newso, 1) == 0) {
-		SCTP_PRINTF("soremque failed, peeloff-fails (invarients would panic)\n");
-		SCTP_LTRACE_ERR_RET(inp, NULL, NULL, SCTP_FROM_SCTP_PEELOFF, ENOTCONN);
-		*error = ENOTCONN;
-		return (NULL);
-
-	}
-#endif
 	/*
 	 * Now we must move it from one hash table to another and get the
 	 * stcb in the right place.
@@ -318,13 +292,12 @@ sctp_get_peeloff(struct socket *head, sctp_assoc_t assoc_id, int *error)
 	 * And now the final hack. We move data in the pending side i.e.
 	 * head to the new socket buffer. Let the GRUBBING begin :-0
 	 */
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) && !defined(__Userspace__)
 	sctp_pull_off_control_to_new_inp(inp, n_inp, stcb, SBL_WAIT);
 #else
 	sctp_pull_off_control_to_new_inp(inp, n_inp, stcb, M_WAITOK);
 #endif
 	atomic_subtract_int(&stcb->asoc.refcnt, 1);
 	return (newso);
-#endif
 }
 #endif

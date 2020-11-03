@@ -28,9 +28,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctp_ss_functions.c 326180 2017-11-24 19:38:59Z tuexen $");
+__FBSDID("$FreeBSD: head/sys/netinet/sctp_ss_functions.c 362173 2020-06-14 09:50:00Z tuexen $");
 #endif
 
 #include <netinet/sctp_pcb.h>
@@ -59,6 +59,9 @@ sctp_ss_default_init(struct sctp_tcb *stcb, struct sctp_association *asoc,
 {
 	uint16_t i;
 
+	if (holds_lock == 0) {
+		SCTP_TCB_SEND_LOCK(stcb);
+	}
 	asoc->ss_data.locked_on_sending = NULL;
 	asoc->ss_data.last_out_stream = NULL;
 	TAILQ_INIT(&asoc->ss_data.out.wheel);
@@ -71,7 +74,10 @@ sctp_ss_default_init(struct sctp_tcb *stcb, struct sctp_association *asoc,
 	for (i = 0; i < stcb->asoc.streamoutcnt; i++) {
 		stcb->asoc.ss_functions.sctp_ss_add_to_stream(stcb, &stcb->asoc,
 		                                              &stcb->asoc.strmout[i],
-		                                              NULL, holds_lock);
+		                                              NULL, 1);
+	}
+	if (holds_lock == 0) {
+		SCTP_TCB_SEND_UNLOCK(stcb);
 	}
 	return;
 }
@@ -84,8 +90,10 @@ sctp_ss_default_clear(struct sctp_tcb *stcb, struct sctp_association *asoc,
 		SCTP_TCB_SEND_LOCK(stcb);
 	}
 	while (!TAILQ_EMPTY(&asoc->ss_data.out.wheel)) {
-		struct sctp_stream_out *strq = TAILQ_FIRST(&asoc->ss_data.out.wheel);
-		TAILQ_REMOVE(&asoc->ss_data.out.wheel, TAILQ_FIRST(&asoc->ss_data.out.wheel), ss_params.rr.next_spoke);
+		struct sctp_stream_out *strq;
+
+		strq = TAILQ_FIRST(&asoc->ss_data.out.wheel);
+		TAILQ_REMOVE(&asoc->ss_data.out.wheel, strq, ss_params.rr.next_spoke);
 		strq->ss_params.rr.next_spoke.tqe_next = NULL;
 		strq->ss_params.rr.next_spoke.tqe_prev = NULL;
 	}
@@ -401,11 +409,13 @@ sctp_ss_prio_clear(struct sctp_tcb *stcb, struct sctp_association *asoc,
 		SCTP_TCB_SEND_LOCK(stcb);
 	}
 	while (!TAILQ_EMPTY(&asoc->ss_data.out.wheel)) {
-		struct sctp_stream_out *strq = TAILQ_FIRST(&asoc->ss_data.out.wheel);
+		struct sctp_stream_out *strq;
+
+		strq = TAILQ_FIRST(&asoc->ss_data.out.wheel);
 		if (clear_values) {
 			strq->ss_params.prio.priority = 0;
 		}
-		TAILQ_REMOVE(&asoc->ss_data.out.wheel, TAILQ_FIRST(&asoc->ss_data.out.wheel), ss_params.prio.next_spoke);
+		TAILQ_REMOVE(&asoc->ss_data.out.wheel, strq, ss_params.prio.next_spoke);
 		strq->ss_params.prio.next_spoke.tqe_next = NULL;
 		strq->ss_params.prio.next_spoke.tqe_prev = NULL;
 
@@ -511,6 +521,9 @@ sctp_ss_prio_select(struct sctp_tcb *stcb SCTP_UNUSED, struct sctp_nets *net,
 {
 	struct sctp_stream_out *strq, *strqt, *strqn;
 
+	if (asoc->ss_data.locked_on_sending) {
+		return (asoc->ss_data.locked_on_sending);
+	}
 	strqt = asoc->ss_data.last_out_stream;
 prio_again:
 	/* Find the next stream to use */
@@ -589,11 +602,13 @@ sctp_ss_fb_clear(struct sctp_tcb *stcb, struct sctp_association *asoc,
 		SCTP_TCB_SEND_LOCK(stcb);
 	}
 	while (!TAILQ_EMPTY(&asoc->ss_data.out.wheel)) {
-		struct sctp_stream_out *strq = TAILQ_FIRST(&asoc->ss_data.out.wheel);
+		struct sctp_stream_out *strq;
+
+		strq = TAILQ_FIRST(&asoc->ss_data.out.wheel);
 		if (clear_values) {
 			strq->ss_params.fb.rounds = -1;
 		}
-		TAILQ_REMOVE(&asoc->ss_data.out.wheel, TAILQ_FIRST(&asoc->ss_data.out.wheel), ss_params.fb.next_spoke);
+		TAILQ_REMOVE(&asoc->ss_data.out.wheel, strq, ss_params.fb.next_spoke);
 		strq->ss_params.fb.next_spoke.tqe_next = NULL;
 		strq->ss_params.fb.next_spoke.tqe_prev = NULL;
 	}
@@ -685,6 +700,9 @@ sctp_ss_fb_select(struct sctp_tcb *stcb SCTP_UNUSED, struct sctp_nets *net,
 {
 	struct sctp_stream_out *strq = NULL, *strqt;
 
+	if (asoc->ss_data.locked_on_sending) {
+		return (asoc->ss_data.locked_on_sending);
+	}
 	if (asoc->ss_data.last_out_stream == NULL ||
 	    TAILQ_FIRST(&asoc->ss_data.out.wheel) == TAILQ_LAST(&asoc->ss_data.out.wheel, sctpwheel_listhead)) {
 		strqt = TAILQ_FIRST(&asoc->ss_data.out.wheel);
@@ -752,8 +770,8 @@ sctp_ss_fb_scheduled(struct sctp_tcb *stcb, struct sctp_nets *net SCTP_UNUSED,
  */
 static void
 sctp_ss_fcfs_add(struct sctp_tcb *stcb, struct sctp_association *asoc,
-                 struct sctp_stream_out *strq, struct sctp_stream_queue_pending *sp,
-                 int holds_lock);
+                 struct sctp_stream_out *strq SCTP_UNUSED,
+                 struct sctp_stream_queue_pending *sp, int holds_lock);
 
 static void
 sctp_ss_fcfs_init(struct sctp_tcb *stcb, struct sctp_association *asoc,
@@ -763,6 +781,9 @@ sctp_ss_fcfs_init(struct sctp_tcb *stcb, struct sctp_association *asoc,
 	struct sctp_stream_queue_pending *sp;
 	uint16_t i;
 
+	if (holds_lock == 0) {
+		SCTP_TCB_SEND_LOCK(stcb);
+	}
 	TAILQ_INIT(&asoc->ss_data.out.list);
 	/*
 	 * If there is data in the stream queues already,
@@ -782,11 +803,14 @@ sctp_ss_fcfs_init(struct sctp_tcb *stcb, struct sctp_association *asoc,
 				x++;
 			}
 			if (sp != NULL) {
-				sctp_ss_fcfs_add(stcb, &stcb->asoc, &stcb->asoc.strmout[i], sp, holds_lock);
+				sctp_ss_fcfs_add(stcb, &stcb->asoc, &stcb->asoc.strmout[i], sp, 1);
 				add_more = 1;
 			}
 		}
 		n++;
+	}
+	if (holds_lock == 0) {
+		SCTP_TCB_SEND_UNLOCK(stcb);
 	}
 	return;
 }
@@ -795,12 +819,17 @@ static void
 sctp_ss_fcfs_clear(struct sctp_tcb *stcb, struct sctp_association *asoc,
                    int clear_values, int holds_lock)
 {
+	struct sctp_stream_queue_pending *sp;
+
 	if (clear_values) {
 		if (holds_lock == 0) {
 			SCTP_TCB_SEND_LOCK(stcb);
 		}
 		while (!TAILQ_EMPTY(&asoc->ss_data.out.list)) {
-			TAILQ_REMOVE(&asoc->ss_data.out.list, TAILQ_FIRST(&asoc->ss_data.out.list), ss_next);
+			sp = TAILQ_FIRST(&asoc->ss_data.out.list);
+			TAILQ_REMOVE(&asoc->ss_data.out.list, sp, ss_next);
+			sp->ss_next.tqe_next = NULL;
+			sp->ss_next.tqe_prev = NULL;
 		}
 		if (holds_lock == 0) {
 			SCTP_TCB_SEND_UNLOCK(stcb);
@@ -820,6 +849,8 @@ sctp_ss_fcfs_init_stream(struct sctp_tcb *stcb, struct sctp_stream_out *strq, st
 			stcb->asoc.ss_data.last_out_stream = strq;
 		}
 	}
+	strq->ss_params.fb.next_spoke.tqe_next = NULL;
+	strq->ss_params.fb.next_spoke.tqe_prev = NULL;
 	return;
 }
 
@@ -863,6 +894,8 @@ sctp_ss_fcfs_remove(struct sctp_tcb *stcb, struct sctp_association *asoc,
 	    ((sp->ss_next.tqe_next != NULL) ||
 	     (sp->ss_next.tqe_prev != NULL))) {
 		TAILQ_REMOVE(&asoc->ss_data.out.list, sp, ss_next);
+		sp->ss_next.tqe_next = NULL;
+		sp->ss_next.tqe_prev = NULL;
 	}
 	if (holds_lock == 0) {
 		SCTP_TCB_SEND_UNLOCK(stcb);
@@ -878,6 +911,9 @@ sctp_ss_fcfs_select(struct sctp_tcb *stcb SCTP_UNUSED, struct sctp_nets *net,
 	struct sctp_stream_out *strq;
 	struct sctp_stream_queue_pending *sp;
 
+	if (asoc->ss_data.locked_on_sending) {
+		return (asoc->ss_data.locked_on_sending);
+	}
 	sp = TAILQ_FIRST(&asoc->ss_data.out.list);
 default_again:
 	if (sp != NULL) {
@@ -913,7 +949,7 @@ default_again:
 const struct sctp_ss_functions sctp_ss_functions[] = {
 /* SCTP_SS_DEFAULT */
 {
-#if defined(__Windows__) || defined(__Userspace_os_Windows)
+#if defined(_WIN32)
 	sctp_ss_default_init,
 	sctp_ss_default_clear,
 	sctp_ss_default_init_stream,
@@ -943,7 +979,7 @@ const struct sctp_ss_functions sctp_ss_functions[] = {
 },
 /* SCTP_SS_ROUND_ROBIN */
 {
-#if defined(__Windows__) || defined(__Userspace_os_Windows)
+#if defined(_WIN32)
 	sctp_ss_default_init,
 	sctp_ss_default_clear,
 	sctp_ss_default_init_stream,
@@ -973,7 +1009,7 @@ const struct sctp_ss_functions sctp_ss_functions[] = {
 },
 /* SCTP_SS_ROUND_ROBIN_PACKET */
 {
-#if defined(__Windows__) || defined(__Userspace_os_Windows)
+#if defined(_WIN32)
 	sctp_ss_default_init,
 	sctp_ss_default_clear,
 	sctp_ss_default_init_stream,
@@ -1003,7 +1039,7 @@ const struct sctp_ss_functions sctp_ss_functions[] = {
 },
 /* SCTP_SS_PRIORITY */
 {
-#if defined(__Windows__) || defined(__Userspace_os_Windows)
+#if defined(_WIN32)
 	sctp_ss_default_init,
 	sctp_ss_prio_clear,
 	sctp_ss_prio_init_stream,
@@ -1033,7 +1069,7 @@ const struct sctp_ss_functions sctp_ss_functions[] = {
 },
 /* SCTP_SS_FAIR_BANDWITH */
 {
-#if defined(__Windows__) || defined(__Userspace_os_Windows)
+#if defined(_WIN32)
 	sctp_ss_default_init,
 	sctp_ss_fb_clear,
 	sctp_ss_fb_init_stream,
@@ -1063,7 +1099,7 @@ const struct sctp_ss_functions sctp_ss_functions[] = {
 },
 /* SCTP_SS_FIRST_COME */
 {
-#if defined(__Windows__) || defined(__Userspace_os_Windows)
+#if defined(_WIN32)
 	sctp_ss_fcfs_init,
 	sctp_ss_fcfs_clear,
 	sctp_ss_fcfs_init_stream,

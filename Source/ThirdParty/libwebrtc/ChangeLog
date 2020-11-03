@@ -1,5 +1,14 @@
 2020-11-03  Youenn Fablet  <youenn@apple.com>
 
+        Update WebRTC usrsctp to M87
+        https://bugs.webkit.org/show_bug.cgi?id=218433
+
+        Reviewed by Eric Carlson.
+
+        * Source/third_party/usrsctp: Resynced.
+
+2020-11-03  Youenn Fablet  <youenn@apple.com>
+
         Allow low latency H264 encoder in GPUProcess
         https://bugs.webkit.org/show_bug.cgi?id=218442
 

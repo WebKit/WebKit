@@ -32,22 +32,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctp.h 323657 2017-09-16 21:26:06Z tuexen $");
+__FBSDID("$FreeBSD: head/sys/netinet/sctp.h 356357 2020-01-04 20:33:12Z tuexen $");
 #endif
 
 #ifndef _NETINET_SCTP_H_
 #define _NETINET_SCTP_H_
 
-#if (defined(__APPLE__) || defined(__Userspace_os_Linux) || defined(__Userspace_os_Darwin))
+#if defined(__APPLE__) || defined(__linux__)
 #include <stdint.h>
 #endif
 
 #include <sys/types.h>
 
 
-#if !defined(__Userspace_os_Windows)
+#if !defined(_WIN32)
 #define SCTP_PACKED __attribute__((packed))
 #else
 #pragma pack (push, 1)
@@ -286,11 +286,11 @@ struct sctp_paramhdr {
 #define SCTP_PEELOFF                    0x0000800a
 /* the real worker for sctp_getaddrlen() */
 #define SCTP_GET_ADDR_LEN               0x0000800b
-#if defined(__APPLE__)
+#if defined(__APPLE__) && !defined(__Userspace__)
 /* temporary workaround for Apple listen() issue, no args used */
 #define SCTP_LISTEN_FIX			0x0000800c
 #endif
-#if defined(__Windows__)
+#if defined(_WIN32) && !defined(__Userspace__)
 /* workaround for Cygwin on Windows: returns the SOCKET handle */
 #define SCTP_GET_HANDLE			0x0000800d
 #endif
@@ -530,6 +530,7 @@ struct sctp_error_auth_invalid_hmac {
 #define SCTP_PCB_FLAGS_BOUNDALL		0x00000004
 #define SCTP_PCB_FLAGS_ACCEPTING	0x00000008
 #define SCTP_PCB_FLAGS_UNBOUND		0x00000010
+#define SCTP_PCB_FLAGS_SND_ITERATOR_UP  0x00000020
 #define SCTP_PCB_FLAGS_CLOSE_IP         0x00040000
 #define SCTP_PCB_FLAGS_WAS_CONNECTED    0x00080000
 #define SCTP_PCB_FLAGS_WAS_ABORTED      0x00100000
@@ -607,9 +608,12 @@ struct sctp_error_auth_invalid_hmac {
 #define SCTP_MOBILITY_PRIM_DELETED       0x00000004
 
 
-#define SCTP_SMALLEST_PMTU 512	 /* smallest pmtu allowed when disabling PMTU discovery */
+/* Smallest PMTU allowed when disabling PMTU discovery */
+#define SCTP_SMALLEST_PMTU 512
+/* Largest PMTU allowed when disabling PMTU discovery */
+#define SCTP_LARGEST_PMTU  65536
 
-#if defined(__Userspace_os_Windows)
+#if defined(_WIN32)
 #pragma pack(pop)
 #endif
 #undef SCTP_PACKED

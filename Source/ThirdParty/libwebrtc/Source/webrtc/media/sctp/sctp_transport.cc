@@ -470,7 +470,7 @@ class SctpTransport::UsrSctpWrapper {
     return transport;
   }
 
-  static int SendThresholdCallback(struct socket* sock, uint32_t sb_free) {
+  static int SendThresholdCallback(struct socket* sock, uint32_t sb_free, void*) {
     // Fired on our I/O thread. SctpTransport::OnPacketReceived() gets
     // a packet containing acknowledgments, which goes into usrsctp_conninput,
     // and then back here.

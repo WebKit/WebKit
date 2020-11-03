@@ -35,8 +35,6 @@
 
 #include <user_route.h> /* was <net/route.h> */
 
-#define	in6pcb		inpcb	/* for KAME src sync over BSD*'s */
-#define	in6p_sp		inp_sp	/* for KAME src sync over BSD*'s */
 struct inpcbpolicy;
 
 /*
@@ -56,7 +54,7 @@ LIST_HEAD(inpcbporthead, inpcbport);
  * the following structure.
  */
 struct in_addr_4in6 {
-	u_int32_t	ia46_pad32[3];
+	uint32_t	ia46_pad32[3];
 	struct	in_addr	ia46_addr4;
 };
 
@@ -65,8 +63,8 @@ struct in_addr_4in6 {
  * some extra padding to accomplish this.
  */
 struct in_endpoints {
-	u_int16_t	ie_fport;		/* foreign port */
-	u_int16_t	ie_lport;		/* local port */
+	uint16_t	ie_fport;		/* foreign port */
+	uint16_t	ie_lport;		/* local port */
 	/* protocol dependent part, local and foreign addr */
 	union {
 		/* foreign host table entry */
@@ -89,9 +87,9 @@ struct in_endpoints {
  * references.
  */
 struct in_conninfo {
-	u_int8_t	inc_flags;
-	u_int8_t	inc_len;
-	u_int16_t	inc_pad;	/* XXX alignment for in_endpoints */
+	uint8_t	inc_flags;
+	uint8_t	inc_len;
+	uint16_t	inc_pad;	/* XXX alignment for in_endpoints */
 	/* protocol dependent part */
 	struct	in_endpoints inc_ie;
 };
@@ -112,7 +110,7 @@ struct inpcb {
 	struct	inpcbinfo *inp_pcbinfo;	/* PCB list info */
 	struct	socket *inp_socket;	/* back pointer to socket */
 
-	u_int32_t	inp_flow;
+	uint32_t	inp_flow;
 	int	inp_flags;		/* generic IP/datagram flags */
 
 	u_char	inp_vflag;		/* IP version flag (v4/v6) */
@@ -326,13 +324,11 @@ struct inpcbinfo {
 
 #define	INPLOOKUP_WILDCARD	1
 #define	sotoinpcb(so)	((struct inpcb *)(so)->so_pcb)
-#define	sotoin6pcb(so)	sotoinpcb(so) /* for KAME src sync over BSD*'s */
 
 #define	INP_SOCKAF(so) so->so_proto->pr_domain->dom_family
 
 #define	INP_CHECK_SOCKAF(so, af)	(INP_SOCKAF(so) == af)
 
-/* #ifdef _KERNEL */
 extern int	ipport_reservedhigh;
 extern int	ipport_reservedlow;
 extern int	ipport_lowfirstauto;
@@ -373,6 +369,5 @@ void	ipport_tick(void *xtp);
  */
 void	db_print_inpcb(struct inpcb *inp, const char *name, int indent);
 
-/* #endif  _KERNEL */
 
 #endif /* !_NETINET_IN_PCB_H_ */

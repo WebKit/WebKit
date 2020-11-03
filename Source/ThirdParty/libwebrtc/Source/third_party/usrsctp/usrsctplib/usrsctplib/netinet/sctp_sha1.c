@@ -84,9 +84,9 @@ sctp_sha1_final(unsigned char *digest, struct sctp_sha1_context *ctx)
 #else
 
 #include <string.h>
-#if defined(__Userspace_os_Windows)
+#if defined(_WIN32) && defined(__Userspace__)
 #include <winsock2.h>
-#elif !defined(__Windows__)
+#elif !(defined(_WIN32) && !defined(__Userspace__))
 #include <arpa/inet.h>
 #endif
 

@@ -9,6 +9,12 @@ config("usrsctp_config") {
     "usrsctplib/usrsctplib",
     "usrsctplib/usrsctplib/netinet",
   ]
+
+  # This is part of the public config because it's used both by usrsctp and
+  # the client (WebRTC), to determine if the length field needs populating.
+  if (is_mac || is_ios || target_os == "freebsd") {
+    defines = [ "HAVE_SCONN_LEN" ]
+  }
 }
 
 config("usrsctp_warnings") {
@@ -21,6 +27,11 @@ config("usrsctp_warnings") {
       # what they did in configure.ac. We can remove this once
       # https://github.com/sctplab/usrsctp/issues/177 is fixed.
       "-Wno-deprecated-declarations",
+
+      # usrsctp uses timingsafe_bcmp which is not available in all
+      # versions of OS X, however this isn't actually an issue since
+      # usrsctp provides its own implementation.
+      "-Wno-unguarded-availability",
     ]
   }
 }
@@ -116,19 +127,17 @@ static_library("usrsctp") {
     "-UINET6",
   ]
 
-  if (is_linux || is_android) {
+  if (is_linux || is_chromeos || is_android) {
     defines += [
       "__Userspace_os_Linux",
       "_GNU_SOURCE",
     ]
-  } else if (is_mac || is_ios) {
+  } else if (is_apple) {
     defines += [
       "HAVE_SA_LEN",
-      "HAVE_SCONN_LEN",
       "__APPLE_USE_RFC_2292",
       "__Userspace_os_Darwin",
     ]
-    cflags += [ "-U__APPLE__" ]
   }
 
   if (is_win) {
@@ -140,7 +149,5 @@ static_library("usrsctp") {
   if (is_fuchsia) {
     defines += [ "__Userspace_os_Fuchsia" ]
   }
-  deps = [
-    "//third_party/boringssl",
-  ]
+  deps = [ "//third_party/boringssl" ]
 }

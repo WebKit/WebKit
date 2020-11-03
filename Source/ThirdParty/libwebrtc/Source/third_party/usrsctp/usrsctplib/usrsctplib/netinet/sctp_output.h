@@ -32,9 +32,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctp_output.h 323861 2017-09-21 11:56:31Z tuexen $");
+__FBSDID("$FreeBSD: head/sys/netinet/sctp_output.h 362054 2020-06-11 13:34:09Z tuexen $");
 #endif
 
 #ifndef _NETINET_SCTP_OUTPUT_H_
@@ -78,11 +78,7 @@ int
 sctp_v4src_match_nexthop(struct sctp_ifa *sifa, sctp_route_t *ro);
 #endif
 
-void sctp_send_initiate(struct sctp_inpcb *, struct sctp_tcb *, int
-#if !defined(__APPLE__) && !defined(SCTP_SO_LOCK_TESTING)
-    SCTP_UNUSED
-#endif
-    );
+void sctp_send_initiate(struct sctp_inpcb *, struct sctp_tcb *, int);
 
 void
 sctp_send_initiate_ack(struct sctp_inpcb *, struct sctp_tcb *,
@@ -90,18 +86,18 @@ sctp_send_initiate_ack(struct sctp_inpcb *, struct sctp_tcb *,
                        int, int,
                        struct sockaddr *, struct sockaddr *,
                        struct sctphdr *, struct sctp_init_chunk *,
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) && !defined(__Userspace__)
                        uint8_t, uint32_t,
 #endif
                        uint32_t, uint16_t);
 
 struct mbuf *
 sctp_arethere_unrecognized_parameters(struct mbuf *, int, int *,
-				      struct sctp_chunkhdr *, int *);
+				      struct sctp_chunkhdr *, int *, int *);
 void sctp_queue_op_err(struct sctp_tcb *, struct mbuf *);
 
 int
-sctp_send_cookie_echo(struct mbuf *, int, struct sctp_tcb *,
+sctp_send_cookie_echo(struct mbuf *, int, int, struct sctp_tcb *,
     struct sctp_nets *);
 
 void sctp_send_cookie_ack(struct sctp_tcb *);
@@ -124,7 +120,7 @@ void sctp_send_shutdown_complete(struct sctp_tcb *, struct sctp_nets *, int);
 
 void sctp_send_shutdown_complete2(struct sockaddr *, struct sockaddr *,
                                   struct sctphdr *,
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) && !defined(__Userspace__)
                                   uint8_t, uint32_t, uint16_t,
 #endif
                                   uint32_t, uint16_t);
@@ -148,11 +144,11 @@ void sctp_move_chunks_from_net(struct sctp_tcb *stcb, struct sctp_nets *net);
 					sizeof(struct sctp_idata_chunk) : \
 					sizeof(struct sctp_data_chunk))
 
-#if defined(__FreeBSD__) && __FreeBSD_version >= 500000
+#if defined(__FreeBSD__) && !defined(__Userspace__)
 int
 sctp_output(struct sctp_inpcb *, struct mbuf *, struct sockaddr *,
     struct mbuf *, struct thread *, int);
-#elif defined(__Windows__)
+#elif defined(_WIN32) && !defined(__Userspace__)
 sctp_output(struct sctp_inpcb *, struct mbuf *, struct sockaddr *,
     struct mbuf *, PKTHREAD, int);
 #else
@@ -161,30 +157,15 @@ sctp_output(struct sctp_inpcb *, struct mbuf *, struct sockaddr *,
 #endif
 int
 sctp_output(struct sctp_inpcb *,
-#if defined(__Panda__)
-    pakhandle_type,
-#else
     struct mbuf *,
-#endif
     struct sockaddr *,
-#if defined(__Panda__)
-    pakhandle_type,
-#else
     struct mbuf *,
-#endif
     struct proc *, int);
 #endif
 
-void sctp_chunk_output(struct sctp_inpcb *, struct sctp_tcb *, int, int
-#if !defined(__APPLE__) && !defined(SCTP_SO_LOCK_TESTING)
-    SCTP_UNUSED
-#endif
-    );
-void sctp_send_abort_tcb(struct sctp_tcb *, struct mbuf *, int
-#if !defined(__APPLE__) && !defined(SCTP_SO_LOCK_TESTING)
-    SCTP_UNUSED
-#endif
-    );
+void sctp_chunk_output(struct sctp_inpcb *, struct sctp_tcb *, int, int);
+
+void sctp_send_abort_tcb(struct sctp_tcb *, struct mbuf *, int);
 
 void send_forward_tsn(struct sctp_tcb *, struct sctp_association *);
 
@@ -193,7 +174,6 @@ void sctp_send_sack(struct sctp_tcb *, int);
 void sctp_send_hb(struct sctp_tcb *, struct sctp_nets *, int);
 
 void sctp_send_ecn_echo(struct sctp_tcb *, struct sctp_nets *, uint32_t);
-
 
 void
 sctp_send_packet_dropped(struct sctp_tcb *, struct sctp_nets *, struct mbuf *,
@@ -225,14 +205,14 @@ sctp_send_str_reset_req(struct sctp_tcb *, uint16_t , uint16_t *,
 void
 sctp_send_abort(struct mbuf *, int, struct sockaddr *, struct sockaddr *,
                 struct sctphdr *, uint32_t, struct mbuf *,
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) && !defined(__Userspace__)
                 uint8_t, uint32_t, uint16_t,
 #endif
                 uint32_t, uint16_t);
 
 void sctp_send_operr_to(struct sockaddr *, struct sockaddr *,
                         struct sctphdr *, uint32_t, struct mbuf *,
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) && !defined(__Userspace__)
                         uint8_t, uint32_t, uint16_t,
 #endif
                         uint32_t, uint16_t);
@@ -244,20 +224,15 @@ int
 sctp_sosend(struct socket *so,
     struct sockaddr *addr,
     struct uio *uio,
-#ifdef __Panda__
-    pakhandle_type top,
-    pakhandle_type control,
-#else
     struct mbuf *top,
     struct mbuf *control,
-#endif
-#if defined(__APPLE__) || defined(__Panda__)
+#if defined(__APPLE__) && !defined(__Userspace__)
     int flags
 #else
     int flags,
-#if defined(__FreeBSD__) && __FreeBSD_version >= 500000
+#if defined(__FreeBSD__) && !defined(__Userspace__)
     struct thread *p
-#elif defined(__Windows__)
+#elif defined(_WIN32) && !defined(__Userspace__)
     PKTHREAD p
 #else
 #if defined(__Userspace__)

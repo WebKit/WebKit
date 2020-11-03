@@ -31,21 +31,27 @@
 #include <netinet/sctp_pcb.h>
 #include <sys/timeb.h>
 #include <iphlpapi.h>
+#if !defined(__MINGW32__)
 #pragma comment(lib, "IPHLPAPI.lib")
 #endif
+#endif
 #include <netinet/sctp_os_userspace.h>
-#if defined(__Userspace_os_FreeBSD)
+#if defined(__FreeBSD__)
 #include <pthread_np.h>
 #endif
 
-#if defined(__Userspace_os_Linux)
+#if defined(__linux__)
 #include <sys/prctl.h>
 #endif
 
-#if defined(__Userspace_os_Windows)
+#if defined(_WIN32)
 /* Adapter to translate Unix thread start routines to Windows thread start
  * routines.
  */
+#if defined(__MINGW32__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#endif
 static DWORD WINAPI
 sctp_create_thread_adapter(void *arg) {
 	start_routine_t start_routine = (start_routine_t)arg;
@@ -61,6 +67,11 @@ sctp_userspace_thread_create(userland_thread_t *thread, start_routine_t start_ro
 		return GetLastError();
 	return 0;
 }
+
+#if defined(__MINGW32__)
+#pragma GCC diagnostic pop
+#endif
+
 #else
 int
 sctp_userspace_thread_create(userland_thread_t *thread, start_routine_t start_routine)
@@ -72,18 +83,18 @@ sctp_userspace_thread_create(userland_thread_t *thread, start_routine_t start_ro
 void
 sctp_userspace_set_threadname(const char *name)
 {
-#if defined(__Userspace_os_Darwin)
+#if defined(__APPLE__)
 	pthread_setname_np(name);
 #endif
-#if defined(__Userspace_os_Linux)
+#if defined(__linux__)
 	prctl(PR_SET_NAME, name);
 #endif
-#if defined(__Userspace_os_FreeBSD)
+#if defined(__FreeBSD__)
 	pthread_set_name_np(pthread_self(), name);
 #endif
 }
 
-#if !defined(_WIN32) && !defined(__Userspace_os_NaCl)
+#if !defined(_WIN32) && !defined(__native_client__)
 int
 sctp_userspace_get_mtu_from_ifn(uint32_t if_index, int af)
 {
@@ -107,11 +118,24 @@ sctp_userspace_get_mtu_from_ifn(uint32_t if_index, int af)
 }
 #endif
 
-#if defined(__Userspace_os_NaCl)
+#if defined(__native_client__)
 int
 sctp_userspace_get_mtu_from_ifn(uint32_t if_index, int af)
 {
 	return 1280;
+}
+#endif
+
+#if defined(__APPLE__) || defined(__DragonFly__) || defined(__linux__) || defined(__native_client__) || defined(__NetBSD__) || defined(_WIN32) || defined(__Fuchsia__)
+int
+timingsafe_bcmp(const void *b1, const void *b2, size_t n)
+{
+	const unsigned char *p1 = b1, *p2 = b2;
+	int ret = 0;
+
+	for (; n > 0; n--)
+		ret |= *p1++ ^ *p2++;
+	return (ret != 0);
 }
 #endif
 
@@ -159,11 +183,29 @@ cleanup:
 void
 getwintimeofday(struct timeval *tv)
 {
-	struct timeb tb;
+	FILETIME filetime;
+	ULARGE_INTEGER ularge;
 
-	ftime(&tb);
-	tv->tv_sec = (long)tb.time;
-	tv->tv_usec = (long)(tb.millitm) * 1000L;
+	GetSystemTimeAsFileTime(&filetime);
+	ularge.LowPart = filetime.dwLowDateTime;
+	ularge.HighPart = filetime.dwHighDateTime;
+	/* Change base from Jan 1 1601 00:00:00 to Jan 1 1970 00:00:00 */
+#if defined(__MINGW32__)
+	ularge.QuadPart -= 116444736000000000ULL;
+#else
+	ularge.QuadPart -= 116444736000000000UI64;
+#endif
+	/*
+	 * ularge.QuadPart is now the number of 100-nanosecond intervals
+	 * since Jan 1 1970 00:00:00.
+	 */
+#if defined(__MINGW32__)
+	tv->tv_sec = (long)(ularge.QuadPart / 10000000ULL);
+	tv->tv_usec = (long)((ularge.QuadPart % 10000000ULL) / 10ULL);
+#else
+	tv->tv_sec = (long)(ularge.QuadPart / 10000000UI64);
+	tv->tv_usec = (long)((ularge.QuadPart % 10000000UI64) / 10UI64);
+#endif
 }
 
 int

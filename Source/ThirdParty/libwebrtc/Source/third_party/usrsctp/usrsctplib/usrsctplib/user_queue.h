@@ -144,8 +144,8 @@ struct name {								\
 #define	SLIST_HEAD_INITIALIZER(head)					\
 	{ NULL }
 
-#if defined (__Userspace_os_Windows)
-#if defined (SLIST_ENTRY)
+#if defined(_WIN32)
+#if defined(SLIST_ENTRY)
 #undef SLIST_ENTRY
 #endif
 #endif

@@ -32,9 +32,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctp_auth.h 310590 2016-12-26 11:06:41Z tuexen $");
+__FBSDID("$FreeBSD: head/sys/netinet/sctp_auth.h 338749 2018-09-18 10:53:07Z tuexen $");
 #endif
 
 #ifndef _NETINET_SCTP_AUTH_H_
@@ -170,8 +170,6 @@ extern uint32_t sctp_get_auth_chunk_len(uint16_t hmac_algo);
 extern uint32_t sctp_get_hmac_digest_len(uint16_t hmac_algo);
 extern uint32_t sctp_hmac(uint16_t hmac_algo, uint8_t *key, uint32_t keylen,
     uint8_t *text, uint32_t textlen, uint8_t *digest);
-extern int sctp_verify_hmac(uint16_t hmac_algo, uint8_t *key, uint32_t keylen,
-    uint8_t *text, uint32_t textlen, uint8_t *digest, uint32_t digestlen);
 extern uint32_t sctp_compute_hmac(uint16_t hmac_algo, sctp_key_t *key,
     uint8_t *text, uint32_t textlen, uint8_t *digest);
 extern int sctp_auth_is_supported_hmac(sctp_hmaclist_t *list, uint16_t id);

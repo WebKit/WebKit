@@ -32,7 +32,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
 __FBSDID("$FreeBSD: head/sys/netinet/sctp_header.h 309682 2016-12-07 19:30:59Z tuexen $");
 #endif
@@ -40,16 +40,16 @@ __FBSDID("$FreeBSD: head/sys/netinet/sctp_header.h 309682 2016-12-07 19:30:59Z t
 #ifndef _NETINET_SCTP_HEADER_H_
 #define _NETINET_SCTP_HEADER_H_
 
-#if defined(__Windows__) && !defined(__Userspace_os_Windows)
+#if defined(_WIN32) && !defined(__Userspace__)
 #include <packon.h>
 #endif
-#if !defined(__Userspace_os_Windows)
+#if !defined(_WIN32)
 #include <sys/time.h>
 #endif
 #include <netinet/sctp.h>
 #include <netinet/sctp_constants.h>
 
-#if !defined(__Userspace_os_Windows)
+#if !defined(_WIN32)
 #define SCTP_PACKED __attribute__((packed))
 #else
 #pragma pack (push, 1)
@@ -601,10 +601,10 @@ struct sctp_auth_chunk {
 #define SCTP_MIN_V4_OVERHEAD (sizeof(struct ip) + \
 			      sizeof(struct sctphdr))
 
-#if defined(__Windows__)
+#if defined(_WIN32) && !defined(__Userspace__)
 #include <packoff.h>
 #endif
-#if defined(__Userspace_os_Windows)
+#if defined(_WIN32) && defined(__Userspace__)
 #pragma pack(pop)
 #endif
 #undef SCTP_PACKED

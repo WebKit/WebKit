@@ -1,6 +1,6 @@
 #
 # Copyright (C) 2015-2015 Oleg Alexeenkov
-# Copyright (C) 2015-2017 Felix Weinrank
+# Copyright (C) 2015-2019 Felix Weinrank
 #
 # All rights reserved.
 #
@@ -43,8 +43,9 @@ set(includedir 				${prefix}/include/usrsctp)
 set(CMAKE_REQUIRED_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR})
 set(CMAKE_MACOSX_RPATH 		1)
 
+include(CheckCCompilerFlag)
+
 add_definitions(-D__Userspace__)
-add_definitions(-D__Userspace_os_${CMAKE_SYSTEM_NAME})
 add_definitions(-DSCTP_SIMPLE_ALLOCATOR)
 add_definitions(-DSCTP_PROCESS_LEVEL_LOCKS)
 
@@ -53,34 +54,28 @@ add_definitions(-DSCTP_PROCESS_LEVEL_LOCKS)
 # OS DEPENDENT
 #################################################
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+check_c_compiler_flag(-Wno-address-of-packed-member has_wno_address_of_packed_member)
+if (has_wno_address_of_packed_member)
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-address-of-packed-member")
+endif ()
+
+check_c_compiler_flag(-Wno-deprecated-declarations has_wno_deprecated_declarations)
+if (has_wno_deprecated_declarations)
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-deprecated-declarations")
+endif ()
+
+if (CMAKE_SYSTEM_NAME MATCHES "Linux")
 	add_definitions(-D_GNU_SOURCE)
 endif ()
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
-	add_definitions(-U__FreeBSD__)
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}     -Wno-address-of-packed-member")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-address-of-packed-member")
-endif ()
-
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-	add_definitions(-U__APPLE__)
+if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
 	add_definitions(-D__APPLE_USE_RFC_2292)
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}     -Wno-address-of-packed-member -Wno-deprecated-declarations")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-address-of-packed-member -Wno-deprecated-declarations")
 endif ()
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "DragonFly")
-	add_definitions(-U__DragonFly__)
-endif ()
+#################################################
+# MISC
+#################################################
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "NetBSD")
-	add_definitions(-U__NetBSD__)
-endif ()
-
-if (${CMAKE_SYSTEM_NAME} MATCHES "OpenBSD")
-	add_definitions(-U__OpenBSD__)
-endif ()
 
 
 #################################################
@@ -171,10 +166,13 @@ list(APPEND usrsctp_sources
 add_library(usrsctp SHARED ${usrsctp_sources} ${usrsctp_headers})
 add_library(usrsctp-static STATIC ${usrsctp_sources} ${usrsctp_headers})
 
+target_include_directories(usrsctp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(usrsctp-static PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
 if (WIN32)
 	message(STATUS "link library: ws2_32")
-	target_link_libraries(usrsctp ws2_32)
-	target_link_libraries(usrsctp-static ws2_32)
+	target_link_libraries(usrsctp ws2_32 iphlpapi.lib)
+	target_link_libraries(usrsctp-static ws2_32 iphlpapi.lib)
 endif ()
 
 set_target_properties(usrsctp-static PROPERTIES OUTPUT_NAME "usrsctp")

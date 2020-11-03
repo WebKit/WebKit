@@ -31,7 +31,7 @@
 /* __Userspace__ */
 
 #include <stdlib.h>
-#if !defined (__Userspace_os_Windows)
+#if !defined(_WIN32)
 #include <stdint.h>
 #include <netinet/sctp_os_userspace.h>
 #endif
@@ -64,9 +64,28 @@ userland_mutex_t atomic_mtx;
  * provide _some_ kind of randomness. This should only be used
  * inside other RNG's, like arc4random(9).
  */
-#if defined(__Userspace_os_FreeBSD) || defined(__Userspace_os_Darwin)
-static int
-read_random_phony(void *buf, int count)
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+void
+init_random(void)
+{
+	return;
+}
+
+int
+read_random(void *buf, int count)
+{
+	memset(buf, 'A', count);
+	return (count);
+}
+#elif defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__) || defined(__OpenBSD__) || defined(__APPLE__)
+void
+init_random(void)
+{
+	return;
+}
+
+int
+read_random(void *buf, int count)
 {
 	if (count >= 0) {
 		arc4random_buf(buf, count);
@@ -74,13 +93,32 @@ read_random_phony(void *buf, int count)
 	return (count);
 }
 #else
-static int
-read_random_phony(void *buf, int count)
+void
+init_random(void)
+{
+	struct timeval now;
+	unsigned int seed;
+
+	(void)SCTP_GETTIME_TIMEVAL(&now);
+	seed = 0;
+	seed |= (unsigned int)now.tv_sec;
+	seed |= (unsigned int)now.tv_usec;
+#if !defined(_WIN32) &&! defined(__native_client__)
+	seed |= getpid();
+#endif
+#if defined(_WIN32) || defined(__native_client__)
+	srand(seed);
+#else
+	srandom(seed);
+#endif
+	return;
+}
+
+int
+read_random(void *buf, int count)
 {
 	uint32_t randval;
 	int size, i;
-
-	/* srandom() is called in kern/init_main.c:proc0_post() */
 
 	/* Fill buf[] with random(9) output */
 	for (i = 0; i < count; i+= (int)sizeof(uint32_t)) {
@@ -92,13 +130,3 @@ read_random_phony(void *buf, int count)
 	return (count);
 }
 #endif
-
-static int (*read_func)(void *, int) = read_random_phony;
-
-/* Userland-visible version of read_random */
-int
-read_random(void *buf, int count)
-{
-	return ((*read_func)(buf, count));
-}
-

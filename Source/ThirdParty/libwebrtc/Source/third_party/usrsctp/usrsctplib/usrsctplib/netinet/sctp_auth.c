@@ -32,9 +32,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctp_auth.c 355931 2019-12-20 15:25:08Z tuexen $");
+__FBSDID("$FreeBSD: head/sys/netinet/sctp_auth.c 362054 2020-06-11 13:34:09Z tuexen $");
 #endif
 
 #include <netinet/sctp_os.h>
@@ -525,7 +525,7 @@ sctp_insert_sharedkey(struct sctp_keyhead *shared_keys,
 		} else if (new_skey->keyid == skey->keyid) {
 			/* replace the existing key */
 			/* verify this key *can* be replaced */
-			if ((skey->deactivated) && (skey->refcount > 1)) {
+			if ((skey->deactivated) || (skey->refcount > 1)) {
 				SCTPDBG(SCTP_DEBUG_AUTH1,
 					"can't replace shared key id %u\n",
 					new_skey->keyid);
@@ -567,11 +567,7 @@ sctp_auth_key_acquire(struct sctp_tcb *stcb, uint16_t key_id)
 }
 
 void
-sctp_auth_key_release(struct sctp_tcb *stcb, uint16_t key_id, int so_locked
-#if !defined(__APPLE__) && !defined(SCTP_SO_LOCK_TESTING)
-	SCTP_UNUSED
-#endif
-)
+sctp_auth_key_release(struct sctp_tcb *stcb, uint16_t key_id, int so_locked)
 {
 	sctp_sharedkey_t *skey;
 
@@ -660,7 +656,6 @@ sctp_free_hmaclist(sctp_hmaclist_t *list)
 {
 	if (list != NULL) {
 		SCTP_FREE(list,SCTP_M_AUTH_HL);
-		list = NULL;
 	}
 }
 
@@ -1083,40 +1078,6 @@ sctp_hmac_m(uint16_t hmac_algo, uint8_t *key, uint32_t keylen,
 
 	return (digestlen);
 }
-
-/*-
- * verify the HMAC digest using the desired hash key, text, and HMAC
- * algorithm.
- * Returns -1 on error, 0 on success.
- */
-int
-sctp_verify_hmac(uint16_t hmac_algo, uint8_t *key, uint32_t keylen,
-    uint8_t *text, uint32_t textlen,
-    uint8_t *digest, uint32_t digestlen)
-{
-	uint32_t len;
-	uint8_t temp[SCTP_AUTH_DIGEST_LEN_MAX];
-
-	/* sanity check the material and length */
-	if ((key == NULL) || (keylen == 0) ||
-	    (text == NULL) || (textlen == 0) || (digest == NULL)) {
-		/* can't do HMAC with empty key or text or digest */
-		return (-1);
-	}
-	len = sctp_get_hmac_digest_len(hmac_algo);
-	if ((len == 0) || (digestlen != len))
-		return (-1);
-
-	/* compute the expected hash */
-	if (sctp_hmac(hmac_algo, key, keylen, text, textlen, temp) != len)
-		return (-1);
-
-	if (memcmp(digest, temp, digestlen) != 0)
-		return (-1);
-	else
-		return (0);
-}
-
 
 /*
  * computes the requested HMAC using a key struct (which may be modified if
@@ -1684,6 +1645,11 @@ sctp_handle_auth(struct sctp_tcb *stcb, struct sctp_auth_chunk *auth,
 		"SCTP AUTH Chunk: shared key %u, HMAC id %u\n",
 		shared_key_id, hmac_id);
 
+#if defined(__Userspace__)
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+	return (0);
+#endif
+#endif
 	/* is the indicated HMAC supported? */
 	if (!sctp_auth_is_supported_hmac(stcb->asoc.local_hmacs, hmac_id)) {
 		struct mbuf *op_err;
@@ -1765,7 +1731,7 @@ sctp_handle_auth(struct sctp_tcb *stcb, struct sctp_auth_chunk *auth,
 	    m, offset, computed_digest);
 
 	/* compare the computed digest with the one in the AUTH chunk */
-	if (memcmp(digest, computed_digest, digestlen) != 0) {
+	if (timingsafe_bcmp(digest, computed_digest, digestlen) != 0) {
 		SCTP_STAT_INCR(sctps_recvauthfailed);
 		SCTPDBG(SCTP_DEBUG_AUTH1,
 			"SCTP Auth: HMAC digest check failed\n");
@@ -1779,11 +1745,7 @@ sctp_handle_auth(struct sctp_tcb *stcb, struct sctp_auth_chunk *auth,
  */
 void
 sctp_notify_authentication(struct sctp_tcb *stcb, uint32_t indication,
-			   uint16_t keyid, uint16_t alt_keyid, int so_locked
-#if !defined(__APPLE__) && !defined(SCTP_SO_LOCK_TESTING)
-	SCTP_UNUSED
-#endif
-)
+			   uint16_t keyid, uint16_t alt_keyid, int so_locked)
 {
 	struct mbuf *m_notify;
 	struct sctp_authkey_event *auth;

@@ -32,9 +32,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctp_indata.h 310590 2016-12-26 11:06:41Z tuexen $");
+__FBSDID("$FreeBSD: head/sys/netinet/sctp_indata.h 361116 2020-05-16 19:26:39Z tuexen $");
 #endif
 
 #ifndef _NETINET_SCTP_INDATA_H_
@@ -63,7 +63,6 @@ sctp_build_readq_entry(struct sctp_tcb *stcb,
 		(_ctl)->sinfo_ppid = ppid; \
 		(_ctl)->sinfo_context = context; \
 		(_ctl)->fsn_included = 0xffffffff; \
-		(_ctl)->top_fsn = 0xffffffff; \
 		(_ctl)->sinfo_tsn = tsn; \
 		(_ctl)->sinfo_cumtsn = tsn; \
 		(_ctl)->sinfo_assoc_id = sctp_get_associd((in_it)); \
@@ -71,6 +70,9 @@ sctp_build_readq_entry(struct sctp_tcb *stcb,
 		(_ctl)->data = dm; \
 		(_ctl)->stcb = (in_it); \
 		(_ctl)->port_from = (in_it)->rport; \
+		if ((in_it)->asoc.state & SCTP_STATE_ABOUT_TO_BE_FREED) { \
+			(_ctl)->do_not_ref_stcb = 1; \
+		}\
 	} \
 } while (0)
 

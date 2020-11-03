@@ -1,6 +1,6 @@
 #
 # Copyright (C) 2015-2015 Oleg Alexeenkov
-# Copyright (C) 2015-2017 Felix Weinrank
+# Copyright (C) 2015-2019 Felix Weinrank
 #
 # All rights reserved.
 #
@@ -29,7 +29,7 @@
 # SUCH DAMAGE.
 #
 
-project(usrsctplib)
+project(usrsctplib C)
 cmake_minimum_required(VERSION 3.0)
 
 # Debug build type as default
@@ -77,6 +77,8 @@ option(sctp_sanitizer_address "Compile with address sanitizer" 0)
 
 option(sctp_sanitizer_memory "Compile with memory sanitizer" 0)
 
+option(sctp_build_fuzzer "Compile in clang fuzzing mode" 0)
+
 if (sctp_sanitizer_address AND sctp_sanitizer_memory)
 	message(FATAL_ERROR "Can not compile with both sanitizer options")
 endif ()
@@ -122,7 +124,7 @@ endif ()
 # CHECK STRUCT MEMBERS
 #################################################
 
-set(CMAKE_REQUIRED_INCLUDES "${CMAKE_SOURCE_DIR}/usrsctplib")
+set(CMAKE_REQUIRED_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/usrsctplib")
 
 check_include_file(usrsctp.h have_usrsctp_h)
 if (NOT have_usrsctp_h)
@@ -158,93 +160,112 @@ endif ()
 # COMPILER SETTINGS
 #################################################
 
+# Determine if compiler is Visual Studio compiler or Clang in MSVC compatible mode
+if (CMAKE_C_COMPILER_ID MATCHES "MSVC" OR CMAKE_C_SIMULATE_ID MATCHES "MSVC")
+  set(C_COMPILER_IS_MSVC_LIKE TRUE)
+endif()
+
+# SETTINGS FOR VISUAL STUDIO COMPILER
+if (C_COMPILER_IS_MSVC_LIKE)
+	if (CMAKE_C_FLAGS MATCHES "/W[0-4]")
+		string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+	else ()
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W4")
+	endif ()
+
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4100") # 'identifier' : unreferenced formal parameter
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4127") # conditional expression is constant
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4200") # nonstandard extension used : zero-sized array in struct/union
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4214") # bit field types other than int
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4706") # assignment within conditional expression
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4245") # 'conversion' : conversion from 'type1' to 'type2', signed/unsigned mismatch
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4389") # 'operator' : signed/unsigned mismatch
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4702") # unreachable code
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4701") # Potentially uninitialized local variable 'name' used
+
+	# ToDo
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4244") # 'conversion' conversion from 'type1' to 'type2', possible loss of data
+
+	if (sctp_werror)
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /WX")
+
+		if (CMAKE_C_COMPILER_ID MATCHES "Clang")
+			# temporary disable exta clang warnings preventing compilation
+			set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /clang:-Wno-unused-function")
+			set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /clang:-Wno-missing-field-initializers")
+			set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /clang:-Wno-sign-compare")
+			set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /clang:-Wno-format")
+		endif()
+	endif ()
 # SETTINGS FOR UNIX COMPILER
-if ("${CMAKE_C_COMPILER_ID}" MATCHES "Clang" OR "${CMAKE_C_COMPILER_ID}" MATCHES "AppleClang" OR "${CMAKE_C_COMPILER_ID}" MATCHES "GNU")
-	set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -std=c99 -pedantic -Wall -Wextra")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c99 -pedantic -Wall -Wextra")
+elseif (CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_C_COMPILER_ID MATCHES "AppleClang" OR CMAKE_C_COMPILER_ID MATCHES "GNU")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -pedantic -Wall -Wextra")
 
 	check_c_compiler_flag(-Wfloat-equal has_wfloat_equal)
 	if (has_wfloat_equal)
-		set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -Wfloat-equal")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wfloat-equal")
+		set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wfloat-equal")
 	endif ()
 
 	check_c_compiler_flag(-Wshadow has_wshadow)
 	if (has_wshadow)
-		set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -Wshadow")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wshadow")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wshadow")
 	endif ()
 
 	check_c_compiler_flag(-Wpointer-arith has_wpointer_aritih)
 	if (has_wpointer_aritih)
-		set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -Wpointer-arith")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpointer-arith")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wpointer-arith")
 	endif ()
 
 	check_c_compiler_flag(-Wunreachable-code has_wunreachable_code)
 	if (has_wunreachable_code)
-		set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -Wunreachable-code")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wunreachable-code")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wunreachable-code")
 	endif ()
 
 	check_c_compiler_flag(-Winit-self has_winit_self)
 	if (has_winit_self)
-		set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -Winit-self")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Winit-self")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Winit-self")
 	endif ()
 
 	check_c_compiler_flag(-Wno-unused-function has_wno_unused_function)
 	if (has_wno_unused_function)
-		set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -Wno-unused-function")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-function")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-function")
 	endif ()
 
 	check_c_compiler_flag(-Wno-unused-parameter has_wno_unused_parameter)
 	if (has_wno_unused_parameter)
-		set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -Wno-unused-parameter")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-parameter")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-parameter")
 	endif ()
 
 	check_c_compiler_flag(-Wno-unreachable-code has_wno_unreachable_code)
 	if (has_wno_unreachable_code)
-		set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -Wno-unreachable-code")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unreachable-code")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unreachable-code")
 	endif ()
 
 	check_c_compiler_flag(-Wstrict-prototypes has_wstrict_prototypes)
 	if (has_wstrict_prototypes)
-		set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -Wstrict-prototypes")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wstrict-prototypes")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wstrict-prototypes")
 	endif ()
 
 	if (sctp_werror)
-		set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -Werror")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
 	endif ()
 
 	if (sctp_sanitizer_address)
-		set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -fsanitize=address -fno-omit-frame-pointer -g")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer -g")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address,undefined,signed-integer-overflow -fno-omit-frame-pointer -fno-sanitize-recover=all -fsanitize-address-use-after-scope ")
 	endif ()
 
 	if (sctp_sanitizer_memory)
-		set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -fsanitize=memory -fno-omit-frame-pointer -g -fsanitize-memory-track-origins")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=memory -fno-omit-frame-pointer -g -fsanitize-memory-track-origins")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=memory -fno-omit-frame-pointer -fsanitize-memory-track-origins -fPIE")
+	endif ()
+
+	if (sctp_build_fuzzer)
+		set(CMAKE_BUILD_TYPE "DEBUG")
+		add_definitions(-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O1 -fsanitize=fuzzer-no-link")
 	endif ()
 endif ()
 
-# SETTINGS FOR VISUAL STUDIO COMPILER
-if ("x${CMAKE_C_COMPILER_ID}" STREQUAL "xMSVC")
-	if (CMAKE_C_FLAGS MATCHES "/W[0-4]")
-		string(REGEX REPLACE "/W[0-4]" "/W3" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-	else ()
-		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W3")
-	endif ()
-
-	if (WERROR)
-		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /WX")
-	endif ()
-endif ()
+message(STATUS "Compiler flags (CMAKE_C_FLAGS): ${CMAKE_C_FLAGS}")
 
 
 #################################################
@@ -255,4 +276,8 @@ add_subdirectory(usrsctplib)
 
 if (sctp_build_programs)
 	add_subdirectory(programs)
+endif ()
+
+if (sctp_build_fuzzer)
+	add_subdirectory(fuzzer)
 endif ()

@@ -205,7 +205,8 @@ usrsctp_socket(int domain,
                                  int flags,
                                  void *ulp_info),
                int (*send_cb)(struct socket *sock, 
-                              uint32_t sb_free),
+                              uint32_t sb_free, 
+                              void *ulp_info), 
                uint32_t sb_threshold,
                void *ulp_info).
 \end{verbatim}
@@ -970,7 +971,7 @@ SCTP\_DEBUG has to be set as a compile flag.
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
-#if !defined(__Userspace_os_Windows)
+#if !defined(_WIN32)
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -1098,7 +1099,7 @@ main(int argc, char *argv[])
     }
     while (1) {
         if (use_cb) {
-#if defined (__Userspace_os_Windows)
+#if defined(_WIN32)
             Sleep(1*1000);
 #else
             sleep(1);
@@ -1133,7 +1134,7 @@ main(int argc, char *argv[])
     }
     usrsctp_close(sock);
     while (usrsctp_finish() != 0) {
-#if defined (__Userspace_os_Windows)
+#if defined(_WIN32)
         Sleep(1000);
 #else
         sleep(1);
@@ -1183,11 +1184,11 @@ main(int argc, char *argv[])
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#if !defined(__Userspace_os_Windows)
+#if !defined(_WIN32)
 #include <unistd.h>
 #endif
 #include <sys/types.h>
-#if !defined(__Userspace_os_Windows)
+#if !defined(_WIN32)
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -1242,7 +1243,7 @@ main(int argc, char *argv[])
     }
     memset((void *)&addr4, 0, sizeof(struct sockaddr_in));
     memset((void *)&addr6, 0, sizeof(struct sockaddr_in6));
-#if !defined(__Userspace_os_Linux) && !defined(__Userspace_os_Windows)
+#if !defined(__linux__) && !defined(_WIN32)
     addr4.sin_len = sizeof(struct sockaddr_in);
     addr6.sin6_len = sizeof(struct sockaddr_in6);
 #endif
@@ -1271,14 +1272,14 @@ main(int argc, char *argv[])
         usrsctp_shutdown(sock, SHUT_WR);
     }
     while (!done) {
-#if defined (__Userspace_os_Windows)
+#if defined(_WIN32)
         Sleep(1*1000);
 #else
         sleep(1);
 #endif
     }
     while (usrsctp_finish() != 0) {
-#if defined (__Userspace_os_Windows)
+#if defined(_WIN32)
         Sleep(1000);
 #else
         sleep(1);

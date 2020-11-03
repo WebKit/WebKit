@@ -55,17 +55,24 @@ Makefile.in
 .dirstamp
 
 # binaries
+programs/chargen_server_upcall
 programs/client
+programs/client_upcall
 programs/daytime_server
+programs/daytime_server_upcall
 programs/discard_server
+programs/discard_server_upcall
 programs/echo_server
+programs/echo_server_upcall
 programs/ekr_client
 programs/ekr_loop
-programs/ekr_loop_offload
+programs/ekr_loop_upcall
 programs/ekr_peer
 programs/ekr_server
 programs/http_client
+programs/http_client_upcall
 programs/rtcweb
+programs/st_client
 programs/tsctp
 programs/test_libmgmt
 programs/test_timer
