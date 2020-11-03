@@ -816,38 +816,11 @@ static void resetWebPreferencesToConsistentValues(WebPreferences *preferences)
 
     // FIXME: These experimental features are currently the only ones not enabled for WebKitLegacy, we
     // should either enable them or stop exposing them (as we do with with preferences like HTTP3Enabled).
-    [preferences _setBoolPreferenceForTestingWithValue:NO forKey:@"WebKitWebAuthenticationEnabled"];
-    [preferences _setBoolPreferenceForTestingWithValue:NO forKey:@"WebKitIsLoggedInAPIEnabled"];
     [preferences _setBoolPreferenceForTestingWithValue:NO forKey:@"WebKitGenericCueAPIEnabled"];
-    [preferences _setBoolPreferenceForTestingWithValue:NO forKey:@"WebKitLazyImageLoadingEnabled"];
+    [preferences _setBoolPreferenceForTestingWithValue:NO forKey:@"WebKitIsLoggedInAPIEnabled"];
     [preferences _setBoolPreferenceForTestingWithValue:NO forKey:@"WebKitLazyIframeLoadingEnabled"];
-
-    [preferences setStandardFontFamily:@"Times"];
-    [preferences setFixedFontFamily:@"Courier"];
-    [preferences setSerifFontFamily:@"Times"];
-    [preferences setSansSerifFontFamily:@"Helvetica"];
-    [preferences setCursiveFontFamily:@"Apple Chancery"];
-    [preferences setFantasyFontFamily:@"Papyrus"];
-    [preferences setPictographFontFamily:@"Apple Color Emoji"];
-    [preferences setDefaultFontSize:16];
-    [preferences setDefaultFixedFontSize:13];
-    [preferences setDefaultTextEncodingName:@"ISO-8859-1"];
-    [preferences setJavaEnabled:NO];
-    [preferences setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
-#if !PLATFORM(IOS_FAMILY)
-    [preferences setShouldPrintBackgrounds:YES];
-#endif
-    [preferences setCacheModel:WebCacheModelDocumentBrowser];
-    [preferences setExperimentalNotificationsEnabled:NO];
-#if !PLATFORM(IOS_FAMILY)
-    [preferences setTextAreasAreResizable:YES];
-#endif
-    [preferences setShrinksStandaloneImagesToFit:YES];
-    [preferences setOfflineWebApplicationCacheEnabled:YES];
-    [preferences setJavaScriptRuntimeFlags:WebKitJavaScriptRuntimeFlagsAllEnabled];
-    [preferences setLoadsSiteIconsIgnoringImageLoadingPreference:NO];
-    [preferences setFrameFlattening:WebKitFrameFlatteningDisabled];
-    [preferences setMetaRefreshEnabled:YES];
+    [preferences _setBoolPreferenceForTestingWithValue:NO forKey:@"WebKitLazyImageLoadingEnabled"];
+    [preferences _setBoolPreferenceForTestingWithValue:NO forKey:@"WebKitWebAuthenticationEnabled"];
 
     if (persistentUserStyleSheetLocation) {
         [preferences setUserStyleSheetLocation:[NSURL URLWithString:(__bridge NSString *)persistentUserStyleSheetLocation.get()]];
@@ -855,50 +828,69 @@ static void resetWebPreferencesToConsistentValues(WebPreferences *preferences)
     } else
         [preferences setUserStyleSheetEnabled:NO];
 
-    [preferences setMediaPlaybackAllowsInline:YES];
-    [preferences setMediaPlaybackRequiresUserGesture:NO];
-    [preferences setVideoPlaybackRequiresUserGesture:NO];
-    [preferences setAudioPlaybackRequiresUserGesture:NO];
-    [preferences setMediaDataLoadsAutomatically:YES];
-    [preferences setInvisibleAutoplayNotPermitted:NO];
-    [preferences setSubpixelAntialiasedLayerTextEnabled:NO];
-
 #if PLATFORM(IOS_FAMILY)
     // Enable the tracker before creating the first WebView will
     // cause initialization to use the correct database paths.
     [preferences setStorageTrackerEnabled:YES];
+#else
+    [preferences setMockScrollbarsEnabled:YES];
+    [preferences setShouldPrintBackgrounds:YES];
+    [preferences setTextAreasAreResizable:YES];
 #endif
+
     [preferences _setTextAutosizingEnabled:NO];
     [preferences setAcceleratedCompositingEnabled:YES];
-#if USE(CA)
-    [preferences setCanvasUsesAcceleratedDrawing:YES];
     [preferences setAcceleratedDrawingEnabled:useAcceleratedDrawing];
-#endif
-    [preferences setUsePreHTML5ParserQuirks:NO];
     [preferences setAsynchronousSpellCheckingEnabled:NO];
-#if !PLATFORM(IOS_FAMILY)
-    [preferences setMockScrollbarsEnabled:YES];
-#endif
-    [preferences setWebAudioEnabled:YES];
-    [preferences setMediaSourceEnabled:YES];
-    [preferences setSourceBufferChangeTypeEnabled:YES];
-    [preferences setDataTransferItemsEnabled:YES];
-    [preferences setCustomPasteboardDataEnabled:YES];
-    [preferences setDownloadAttributeEnabled:YES];
-    [preferences setDirectoryUploadEnabled:YES];
-    [preferences setHiddenPageDOMTimerThrottlingEnabled:NO];
-    [preferences setHiddenPageCSSAnimationSuspensionEnabled:NO];
-    [preferences setMediaDevicesEnabled:YES];
-    [preferences setLargeImageAsyncDecodingEnabled:NO];
-    [preferences setModernMediaControlsEnabled:YES];
-    [preferences setMediaCapabilitiesEnabled:YES];
-    [preferences setSelectionAcrossShadowBoundariesEnabled:YES];
-    [preferences setWebSQLEnabled:YES];
-    [preferences setEncryptedMediaAPIEnabled:YES];
-    [preferences setGamepadsEnabled:YES];
-    [preferences setLinkPreloadEnabled:YES];
-    [preferences setMediaPreloadingEnabled:YES];
+    [preferences setAudioPlaybackRequiresUserGesture:NO];
+    [preferences setCacheModel:WebCacheModelDocumentBrowser];
+    [preferences setCanvasUsesAcceleratedDrawing:YES];
     [preferences setColorFilterEnabled:YES];
+    [preferences setCursiveFontFamily:@"Apple Chancery"];
+    [preferences setCustomPasteboardDataEnabled:YES];
+    [preferences setDataTransferItemsEnabled:YES];
+    [preferences setDefaultFixedFontSize:13];
+    [preferences setDefaultFontSize:16];
+    [preferences setDefaultTextEncodingName:@"ISO-8859-1"];
+    [preferences setDirectoryUploadEnabled:YES];
+    [preferences setDownloadAttributeEnabled:YES];
+    [preferences setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
+    [preferences setEncryptedMediaAPIEnabled:YES];
+    [preferences setExperimentalNotificationsEnabled:NO];
+    [preferences setFantasyFontFamily:@"Papyrus"];
+    [preferences setFixedFontFamily:@"Courier"];
+    [preferences setFrameFlattening:WebKitFrameFlatteningDisabled];
+    [preferences setGamepadsEnabled:YES];
+    [preferences setHiddenPageCSSAnimationSuspensionEnabled:NO];
+    [preferences setHiddenPageDOMTimerThrottlingEnabled:NO];
+    [preferences setInvisibleAutoplayNotPermitted:NO];
+    [preferences setJavaEnabled:NO];
+    [preferences setJavaScriptRuntimeFlags:WebKitJavaScriptRuntimeFlagsAllEnabled];
+    [preferences setLargeImageAsyncDecodingEnabled:NO];
+    [preferences setLinkPreloadEnabled:YES];
+    [preferences setLoadsSiteIconsIgnoringImageLoadingPreference:NO];
+    [preferences setMediaCapabilitiesEnabled:YES];
+    [preferences setMediaDataLoadsAutomatically:YES];
+    [preferences setMediaDevicesEnabled:YES];
+    [preferences setMediaPlaybackAllowsInline:YES];
+    [preferences setMediaPlaybackRequiresUserGesture:NO];
+    [preferences setMediaPreloadingEnabled:YES];
+    [preferences setMediaSourceEnabled:YES];
+    [preferences setMetaRefreshEnabled:YES];
+    [preferences setModernMediaControlsEnabled:YES];
+    [preferences setOfflineWebApplicationCacheEnabled:YES];
+    [preferences setPictographFontFamily:@"Apple Color Emoji"];
+    [preferences setSansSerifFontFamily:@"Helvetica"];
+    [preferences setSelectionAcrossShadowBoundariesEnabled:YES];
+    [preferences setSerifFontFamily:@"Times"];
+    [preferences setShrinksStandaloneImagesToFit:YES];
+    [preferences setSourceBufferChangeTypeEnabled:YES];
+    [preferences setStandardFontFamily:@"Times"];
+    [preferences setSubpixelAntialiasedLayerTextEnabled:NO];
+    [preferences setUsePreHTML5ParserQuirks:NO];
+    [preferences setVideoPlaybackRequiresUserGesture:NO];
+    [preferences setWebAudioEnabled:YES];
+    [preferences setWebSQLEnabled:YES];
 
     [WebPreferences _clearNetworkLoaderSession];
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
