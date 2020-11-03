@@ -65,6 +65,9 @@
 #include "WebKitWebSourceGStreamer.h"
 #endif
 
+GST_DEBUG_CATEGORY_EXTERN(webkit_media_player_debug);
+#define GST_CAT_DEFAULT webkit_media_player_debug
+
 namespace WebCore {
 
 GstPad* webkitGstGhostPadFromStaticTemplate(GstStaticPadTemplate* staticPadTemplate, const gchar* name, GstPad* target)
