@@ -50,7 +50,7 @@ try {
     die('An error occurred parsing the given data in JSON format: ' . $e->getMessage());
 }
 
-$validationURL = isset($postedData['validationURL']) ? $postedData['validationURL'] : '';
+$validationURL = isset($postedData['validationURL']) ? filter_var($postedData['validationURL'], FILTER_SANITIZE_URL) : '';
 $URLcomponents = parse_url($validationURL);
 if (!isset($URLcomponents['scheme']) || !isset($URLcomponents['host']))
     die('The validation URL is not valid.');
@@ -91,7 +91,7 @@ $curlOptions = array(
 $curlConnection = curl_init();
 curl_setopt_array($curlConnection, $curlOptions);
 if (!$result = curl_exec($curlConnection))
-    die('An error occurred when connecting to the validation URL: ' . curl_error($curlConnection));
+    die('An error occurred when connecting to the validation URL.'));
 
 curl_close($curlConnection);
 

@@ -1,3 +1,12 @@
+2020-11-02  Jon Davis  <jond@apple.com>
+
+        Input sanitization improvements for Payment Request demo
+        https://bugs.webkit.org/show_bug.cgi?id=218470
+
+        Reviewed by Andy Estes.
+
+        * demos/payment-request/merchant-validation.php:
+
 2020-09-02  Jon Davis  <jond@apple.com>
 
         Add an STP callout to Web Inspector documentation
