@@ -1090,6 +1090,8 @@ localizedStrings["Return type for function: %s"] = "Return type for function: %s
 localizedStrings["Return value is not an object, string, or boolean"] = "Return value is not an object, string, or boolean";
 localizedStrings["Reveal"] = "Reveal";
 localizedStrings["Reveal Blackbox Pattern"] = "Reveal Blackbox Pattern";
+localizedStrings["Reveal Breakpoint in Sources Tab"] = "Reveal Breakpoint in Sources Tab";
+localizedStrings["Reveal Breakpoints in Sources Tab"] = "Reveal Breakpoints in Sources Tab";
 localizedStrings["Reveal Descendant Breakpoints"] = "Reveal Descendant Breakpoints";
 localizedStrings["Reveal Local Override"] = "Reveal Local Override";
 /* Open Elements tab and select this node in DOM tree */

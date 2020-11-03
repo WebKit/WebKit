@@ -1277,7 +1277,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
                 contextMenu.appendSeparator();
                 contextMenu.appendItem(WI.UIString("Reveal in Sources Tab"), () => {
                     WI.showSourcesTab({
-                        breakpointToSelect: breakpoints[0],
+                        representedObjectToSelect: breakpoints[0],
                         initiatorHint: WI.TabBrowser.TabNavigationInitiator.ContextMenu,
                     });
                 });

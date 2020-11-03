@@ -405,16 +405,26 @@ WI.appendContextMenuItemsForDOMNodeBreakpoints = function(contextMenu, domNode, 
         }, !!breakpoint);
     }
 
+    if (breakpoints.length && !WI.isShowingSourcesTab()) {
+        contextMenu.appendItem(breakpoints.length === 1 ? WI.UIString("Reveal Breakpoint in Sources Tab") : WI.UIString("Reveal Breakpoints in Sources Tab"), () => {
+            WI.showSourcesTab({
+                representedObjectToSelect: breakpoints.length === 1 ? breakpoints[0] : domNode,
+            });
+        });
+    }
+
     contextMenu.appendSeparator();
 
-    if (breakpoints.length) {
+    if (breakpoints.length === 1)
+        WI.BreakpointPopover.appendContextMenuItems(contextMenu, breakpoints[0], options.popoverTargetElement);
+    else if (breakpoints.length) {
         let shouldEnable = breakpoints.some((breakpoint) => breakpoint.disabled);
-        contextMenu.appendItem(shouldEnable ? WI.UIString("Enable Breakpoint") : WI.UIString("Disable Breakpoint"), () => {
+        contextMenu.appendItem(shouldEnable ? WI.UIString("Enable Breakpoints") : WI.UIString("Disable Breakpoints"), () => {
             for (let breakpoint of breakpoints)
                 breakpoint.disabled = !shouldEnable;
         });
 
-        contextMenu.appendItem(WI.UIString("Delete Breakpoint"), () => {
+        contextMenu.appendItem(WI.UIString("Delete Breakpoints"), () => {
             for (let breakpoint of breakpoints)
                 WI.domDebuggerManager.removeDOMBreakpoint(breakpoint);
         });

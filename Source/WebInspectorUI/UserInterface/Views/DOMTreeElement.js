@@ -74,6 +74,8 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
     // Public
 
+    get statusImageElement() { return this._statusImageElement; }
+
     get hasBreakpoint()
     {
         return this._breakpointStatus !== WI.DOMTreeElement.BreakpointStatus.None || (this._subtreeBreakpointTreeElements && this._subtreeBreakpointTreeElements.size);
@@ -1972,6 +1974,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         let contextMenu = WI.ContextMenu.createFromEvent(event);
 
         WI.appendContextMenuItemsForDOMNodeBreakpoints(contextMenu, this.representedObject, {
+            popoverTargetElement: event.target,
             revealDescendantBreakpointsMenuItemHandler: this.bindRevealDescendantBreakpointsMenuItemHandler(),
         });
     }

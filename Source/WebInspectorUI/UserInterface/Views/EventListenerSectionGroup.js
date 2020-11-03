@@ -87,11 +87,9 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
                     revealBreakpointGoToArrow.title = WI.UIString("Reveal in Sources Tab");
                     revealBreakpointGoToArrow.addEventListener("click", (event) => {
                         console.assert(this.hasEventListenerBreakpoint);
-
-                        let breakpointToSelect = WI.domManager.breakpointForEventListenerId(this._eventListener.eventListenerId);
-                        console.assert(breakpointToSelect);
-
-                        WI.showSourcesTab({breakpointToSelect});
+                        WI.showSourcesTab({
+                            representedObjectToSelect: WI.domManager.breakpointForEventListenerId(this._eventListener.eventListenerId),
+                        });
                     });
                 }
 

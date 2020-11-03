@@ -1200,8 +1200,8 @@ WI.showSourcesTab = function(options = {})
     if (!tabContentView)
         tabContentView = new WI.SourcesTabContentView;
 
-    if (options.breakpointToSelect instanceof WI.Breakpoint)
-        tabContentView.revealAndSelectBreakpoint(options.breakpointToSelect);
+    if (options.representedObjectToSelect)
+        tabContentView.revealAndSelectRepresentedObject(options.representedObjectToSelect);
 
     if (options.showScopeChainSidebar)
         tabContentView.showScopeChainDetailsSidebarPanel();

@@ -52,7 +52,7 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
 
     static appendContextMenuItems(contextMenu, breakpoint, targetElement)
     {
-        if (breakpoint.editable) {
+        if (breakpoint.editable && targetElement) {
             contextMenu.appendItem(WI.UIString("Edit Breakpoint\u2026"), () => {
                 const delegate = null;
                 let popover;

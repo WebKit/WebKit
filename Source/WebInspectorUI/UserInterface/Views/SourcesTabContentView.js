@@ -99,13 +99,14 @@ WI.SourcesTabContentView = class SourcesTabContentView extends WI.ContentBrowser
         this._showScopeChainDetailsSidebarPanel = true;
     }
 
-    revealAndSelectBreakpoint(breakpoint)
+    revealAndSelectRepresentedObject(representedObject)
     {
-        console.assert(breakpoint instanceof WI.Breakpoint);
-
-        let treeElement = this.navigationSidebarPanel.treeElementForRepresentedObject(breakpoint);
-        if (treeElement)
-            treeElement.revealAndSelect();
+        let treeElement = this.navigationSidebarPanel.treeElementForRepresentedObject(representedObject);
+        if (treeElement) {
+            const omitFocus = false;
+            const selectedByUser = true;
+            treeElement.revealAndSelect(omitFocus, selectedByUser);
+        }
     }
 
     handleCopyEvent(event)
