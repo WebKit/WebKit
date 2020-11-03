@@ -1,3 +1,12 @@
+2020-11-03  Lauro Moura  <lmoura@igalia.com>
+
+        [WebDriver] Update config.json after tools update in r269235
+        https://bugs.webkit.org/show_bug.cgi?id=218512
+
+        Reviewed by Carlos Garcia Campos.
+
+        * imported/w3c/config.json: Add missing value to https list.
+
 2020-10-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: sequence of char key press is not supported
