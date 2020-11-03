@@ -7952,12 +7952,6 @@ void Document::mediaStreamCaptureStateChanged()
     });
 }
 
-void Document::setDeviceIDHashSalt(const String& salt)
-{
-    ASSERT(m_idHashSalt.isEmpty() || m_idHashSalt == salt);
-    m_idHashSalt = salt;
-}
-
 #endif
 
 const AtomString& Document::bgColor() const

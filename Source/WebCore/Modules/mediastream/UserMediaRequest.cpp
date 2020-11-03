@@ -257,8 +257,6 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
         };
 
         auto& document = downcast<Document>(*scriptExecutionContext());
-        document.setDeviceIDHashSalt(deviceIdentifierHashSalt);
-
         RealtimeMediaSourceCenter::singleton().createMediaStream(document.logger(), WTFMove(callback), WTFMove(deviceIdentifierHashSalt), WTFMove(audioDevice), WTFMove(videoDevice), m_request);
 
         if (!m_scriptExecutionContext)
