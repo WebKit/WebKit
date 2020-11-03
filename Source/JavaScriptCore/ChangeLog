@@ -1,3 +1,27 @@
+2020-11-03  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add remote inspector platforms
+        https://bugs.webkit.org/show_bug.cgi?id=218451
+
+        Reviewed by Michael Catanzaro.
+
+        Add a CMake definition for each of the three remote inspector server backends to
+        remove duplication between the ports. Modify the port's CMake files to use the
+        shared definitions.
+
+        * PlatformFTW.cmake:
+        * PlatformGTK.cmake:
+        * PlatformJSCOnly.cmake:
+        * PlatformPlayStation.cmake:
+        * PlatformWPE.cmake:
+        * PlatformWin.cmake:
+        * inspector/remote/Cocoa.cmake: Added.
+        * inspector/remote/GLib.cmake: Added.
+        * inspector/remote/Socket.cmake: Added.
+        * inspector/remote/SourcesCocoa.txt: Copied from Source/JavaScriptCore/SourcesWPE.txt.
+        * inspector/remote/SourcesGLib.txt: Renamed from Source/JavaScriptCore/SourcesGTK.txt.
+        * inspector/remote/SourcesSocket.txt: Renamed from Source/JavaScriptCore/SourcesWPE.txt.
+
 2020-11-02  Xan Lopez  <xan@igalia.com>
 
         [JSC] Remove compiler warning in LLIntData.cpp

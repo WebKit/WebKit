@@ -1,19 +1,10 @@
 include(GLib.cmake)
+include(inspector/remote/GLib.cmake)
 
 set(JavaScriptCore_OUTPUT_NAME javascriptcoregtk-${WEBKITGTK_API_VERSION})
 
-list(APPEND JavaScriptCore_UNIFIED_SOURCE_LIST_FILES
-    "SourcesGTK.txt"
-)
-
 list(APPEND JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_JAVASCRIPCOREGTK_DIR}"
-    "${JAVASCRIPTCORE_DIR}/inspector/remote/glib"
-)
-
-list(APPEND JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
-    inspector/remote/glib/RemoteInspectorServer.h
-    inspector/remote/glib/RemoteInspectorUtils.h
 )
 
 configure_file(javascriptcoregtk.pc.in ${JavaScriptCore_PKGCONFIG_FILE} @ONLY)

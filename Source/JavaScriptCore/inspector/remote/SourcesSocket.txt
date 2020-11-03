@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Apple Inc. All rights reserved.
+// Copyright (C) 2020 Sony Interactive Entertainment Inc.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -22,6 +22,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 API/JSRemoteInspector.cpp
+API/JSRemoteInspectorServer.cpp
 
 inspector/remote/RemoteAutomationTarget.cpp
 inspector/remote/RemoteConnectionToTarget.cpp
@@ -29,6 +30,8 @@ inspector/remote/RemoteControllableTarget.cpp
 inspector/remote/RemoteInspectionTarget.cpp
 inspector/remote/RemoteInspector.cpp
 
-inspector/remote/glib/RemoteInspectorGlib.cpp
-inspector/remote/glib/RemoteInspectorServer.cpp
-inspector/remote/glib/RemoteInspectorUtils.cpp
+inspector/remote/socket/RemoteInspectorConnectionClient.cpp
+inspector/remote/socket/RemoteInspectorMessageParser.cpp
+inspector/remote/socket/RemoteInspectorServer.cpp
+inspector/remote/socket/RemoteInspectorSocket.cpp
+inspector/remote/socket/RemoteInspectorSocketEndpoint.cpp

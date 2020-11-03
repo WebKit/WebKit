@@ -1,43 +1,4 @@
-list(APPEND JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS
-    API/JSRemoteInspectorServer.h
-)
-
-list(APPEND JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
-    "${JAVASCRIPTCORE_DIR}/inspector/remote/socket"
-)
-
-list(APPEND JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
-    inspector/remote/RemoteAutomationTarget.h
-    inspector/remote/RemoteConnectionToTarget.h
-    inspector/remote/RemoteControllableTarget.h
-    inspector/remote/RemoteInspectionTarget.h
-    inspector/remote/RemoteInspector.h
-
-    inspector/remote/socket/RemoteInspectorConnectionClient.h
-    inspector/remote/socket/RemoteInspectorMessageParser.h
-    inspector/remote/socket/RemoteInspectorServer.h
-    inspector/remote/socket/RemoteInspectorSocket.h
-    inspector/remote/socket/RemoteInspectorSocketEndpoint.h
-)
-
-list(APPEND JavaScriptCore_SOURCES
-    API/JSRemoteInspector.cpp
-    API/JSRemoteInspectorServer.cpp
-
-    inspector/remote/RemoteAutomationTarget.cpp
-    inspector/remote/RemoteConnectionToTarget.cpp
-    inspector/remote/RemoteControllableTarget.cpp
-    inspector/remote/RemoteInspectionTarget.cpp
-    inspector/remote/RemoteInspector.cpp
-
-    inspector/remote/socket/RemoteInspectorConnectionClient.cpp
-    inspector/remote/socket/RemoteInspectorMessageParser.cpp
-    inspector/remote/socket/RemoteInspectorServer.cpp
-    inspector/remote/socket/RemoteInspectorSocket.cpp
-    inspector/remote/socket/RemoteInspectorSocketEndpoint.cpp
-
-    inspector/remote/socket/posix/RemoteInspectorSocketPOSIX.cpp
-)
+include(inspector/remote/Socket.cmake)
 
 if (${CMAKE_GENERATOR} MATCHES "Visual Studio")
     # With the VisualStudio generator, the compiler complains about -std=c++* for C sources.
