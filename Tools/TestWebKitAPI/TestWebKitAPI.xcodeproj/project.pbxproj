@@ -240,6 +240,7 @@
 		41882F0321010C0D002FF288 /* ProcessPreWarming.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41882F0221010A70002FF288 /* ProcessPreWarming.mm */; };
 		44077BB123144B5000179E2D /* DataDetectorsTestIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44077BB0231449D200179E2D /* DataDetectorsTestIOS.mm */; };
 		4433A396208044140091ED57 /* SynchronousTimeoutTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4433A395208044130091ED57 /* SynchronousTimeoutTests.mm */; };
+		448110C2253F40300097FC33 /* WebPreferencesTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 448110C1253F40240097FC33 /* WebPreferencesTest.mm */; };
 		44817A2F1F0486BF00003810 /* WKRequestActivatedElementInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44817A2E1F0486BF00003810 /* WKRequestActivatedElementInfo.mm */; };
 		448D7E471EA6C55500ECC756 /* EnvironmentUtilitiesTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448D7E451EA6C55500ECC756 /* EnvironmentUtilitiesTest.cpp */; };
 		44AC8BC621D0245A00CAFB34 /* RetainPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC029B161486AD6400817DA9 /* RetainPtr.cpp */; };
@@ -1957,6 +1958,7 @@
 		44077BB0231449D200179E2D /* DataDetectorsTestIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectorsTestIOS.mm; sourceTree = "<group>"; };
 		442BBF681C91CAD90017087F /* RefLogger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RefLogger.cpp; sourceTree = "<group>"; };
 		4433A395208044130091ED57 /* SynchronousTimeoutTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SynchronousTimeoutTests.mm; sourceTree = "<group>"; };
+		448110C1253F40240097FC33 /* WebPreferencesTest.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WebPreferencesTest.mm; path = WebPreferencesTest.mm; sourceTree = "<group>"; };
 		44817A2E1F0486BF00003810 /* WKRequestActivatedElementInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKRequestActivatedElementInfo.mm; sourceTree = "<group>"; };
 		448D7E451EA6C55500ECC756 /* EnvironmentUtilitiesTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnvironmentUtilitiesTest.cpp; sourceTree = "<group>"; };
 		44A622C114A0E2B60048515B /* WTFStringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WTFStringUtilities.h; sourceTree = "<group>"; };
@@ -3525,6 +3527,14 @@
 			path = WebCore;
 			sourceTree = "<group>";
 		};
+		448110BF253F3F8D0097FC33 /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				448110C1253F40240097FC33 /* WebPreferencesTest.mm */,
+			);
+			path = cocoa;
+			sourceTree = "<group>";
+		};
 		51EB125D24CA6B3E000CB030 /* GamepadMappings */ = {
 			isa = PBXGroup;
 			children = (
@@ -4602,6 +4612,7 @@
 		CDC8E4981BC728AE00594FEC /* WebKitLegacy */ = {
 			isa = PBXGroup;
 			children = (
+				448110BF253F3F8D0097FC33 /* cocoa */,
 				CDC8E4991BC728C000594FEC /* ios */,
 				9BD5111A1FE8E10200D2B630 /* mac */,
 			);
@@ -5502,6 +5513,7 @@
 				5C973F5C1F58EF8B00359C27 /* WebGLPolicy.mm in Sources */,
 				31E9BDA1247F4C62002E51A2 /* WebGLPrepareDisplayOnWebThread.mm in Sources */,
 				7CCE7EAB1A411A2400447C4C /* WebKitAgnosticTest.mm in Sources */,
+				448110C2253F40300097FC33 /* WebPreferencesTest.mm in Sources */,
 				51714EB81CF8CA17004723C4 /* WebProcessKillIDBCleanup.mm in Sources */,
 				536770341CC8022800D425B1 /* WebScriptObjectDescription.mm in Sources */,
 				5120C83D1E6751290025B250 /* WebsiteDataStoreCustomPaths.mm in Sources */,

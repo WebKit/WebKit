@@ -30,6 +30,7 @@
 #import "WebPreferencesInternal.h"
 
 #import "NetworkStorageSessionMap.h"
+#import "TestingFunctions.h"
 #import "WebApplicationCache.h"
 #import "WebFeature.h"
 #import "WebFrameNetworkingContext.h"
@@ -50,6 +51,7 @@
 #import <WebCore/TextEncodingRegistry.h>
 #import <WebCore/WebCoreJITOperations.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <wtf/Compiler.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
@@ -88,7 +90,7 @@ template<unsigned size> static bool contains(const char* const (&array)[size], c
     return false;
 }
 
-static WebCacheModel cacheModelForMainBundle(void)
+static WebCacheModel cacheModelForMainBundle(NSString *bundleIdentifier)
 {
     @autoreleasepool {
         // Apps that probably need the small setting
@@ -139,7 +141,7 @@ static WebCacheModel cacheModelForMainBundle(void)
             "net.hmdt-web.Shiira",
         };
 
-        const char* bundleID = [[[NSBundle mainBundle] bundleIdentifier] UTF8String];
+        const char* bundleID = [bundleIdentifier UTF8String];
         if (contains(documentViewerIDs, bundleID))
             return WebCacheModelDocumentViewer;
         if (contains(documentBrowserIDs, bundleID))
@@ -162,6 +164,13 @@ static WebCacheModel cacheModelForMainBundle(void)
         return WebCacheModelDocumentViewer; // To save memory.
     }
 }
+
+#if ENABLE(BUILD_FOR_TESTING)
+WebCacheModel TestWebPreferencesCacheModelForMainBundle(NSString *bundleIdentifier)
+{
+    return cacheModelForMainBundle(bundleIdentifier);
+}
+#endif // ENABLE(BUILD_FOR_TESTING)
 
 @interface WebPreferences ()
 - (void)_postCacheModelChangedNotification;
@@ -391,7 +400,7 @@ public:
         @YES, WebKitAllowAnimatedImageLoopingPreferenceKey,
         @"1800", WebKitBackForwardCacheExpirationIntervalKey,
         @NO, WebKitPrivateBrowsingEnabledPreferenceKey,
-        @(cacheModelForMainBundle()), WebKitCacheModelPreferenceKey,
+        @(cacheModelForMainBundle([[NSBundle mainBundle] bundleIdentifier])), WebKitCacheModelPreferenceKey,
         @YES, WebKitZoomsTextOnlyPreferenceKey,
         @YES, WebKitForceWebGLUsesLowPowerPreferenceKey,
         @NO, WebKitUsePreHTML5ParserQuirksKey,

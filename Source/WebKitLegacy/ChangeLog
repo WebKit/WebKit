@@ -1,3 +1,16 @@
+2020-11-03  David Kilzer  <ddkilzer@apple.com>
+
+        Add test for cacheModelForMainBundle() in WebKitLegacy
+        <https://webkit.org/b/217960>
+
+        Reviewed by Darin Adler.
+
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+        - Add TestingFunctions.h to the project.
+        (Generate Export Files):
+        - Append WebKit.Testing.exp to the generated export file if
+          WK_BUILD_FOR_TESTING is set to YES.
+
 2020-11-03  Keith Rollin  <krollin@apple.com>
 
         Extend check-for-inappropriate-files-in-framework to WebKitLegacy and JavaScriptCore

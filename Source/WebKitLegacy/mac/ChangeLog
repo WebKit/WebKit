@@ -1,3 +1,46 @@
+2020-11-03  David Kilzer  <ddkilzer@apple.com>
+
+        Add test for cacheModelForMainBundle() in WebKitLegacy
+        <https://webkit.org/b/217960>
+
+        Reviewed by Darin Adler.
+
+        * Configurations/DebugRelease.xcconfig:
+        (WK_BUILD_FOR_TESTING): Add.
+        - This single setting controls whether test code is built and
+          test functions are exported.  Currently only Debug and Release
+          configurations are supported.
+
+        * Configurations/WebKitLegacy.xcconfig:
+        (OTHER_CFLAGS):
+        - Include necessary macro definition when WK_BUILD_FOR_TESTING
+          is YES.
+        (WK_CFLAGS_BUILD_FOR_TESTING_YES):
+        - Define macro set when WK_BUILD_FOR_TESTING is YES.  Used by
+          both OTHER_CFLAGS and OTHER_TAPI_FLAGS to enable test code.
+        (OTHER_TAPI_FLAGS[sdk=iphone*]):
+        - Include necessary macro definition when WK_BUILD_FOR_TESTING
+          is YES.
+        - Add -extra-private-header argument to declare exported
+          functions in TestingFunctions.h when WK_BUILD_FOR_TESTING is
+          YES.
+
+        * TestingFunctions.h: Add.
+        - Declare functions exported when WK_BUILD_FOR_TESTING is YES.
+
+        * WebKit.Testing.exp: Add.
+        - This contains a list of test functions that are only exported
+          when WK_BUILD_FOR_TESTING is YES.
+
+        * WebView/WebPreferences.mm:
+        (cacheModelForMainBundle):
+        - Add NSString *bundleIdentifier argument to make testable.
+        (TestWebPreferencesCacheModelForMainBundle): Add.
+        - Add function only used for testing, and only compiled when
+          WK_BUILD_FOR_TESTING is YES.
+        (+[WebPreferences initialize]):
+        - Change to pass main bundle identifier as argument.
+
 2020-11-02  Sam Weinig  <weinig@apple.com>
 
         [Testing] Match WebKitTestRunner and enable all "experimental" features in DumpRenderTree (cocoa)

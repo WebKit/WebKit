@@ -136,6 +136,7 @@
 		3ABB3C7B1309C3B500E93D94 /* WebStorageTrackerClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3ABB3C791309C3B500E93D94 /* WebStorageTrackerClient.mm */; };
 		3AE15D5012DBDED4009323C8 /* WebStorageManagerInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE15D4F12DBDED4009323C8 /* WebStorageManagerInternal.h */; };
 		44BB8B141241A022001E3A22 /* WebArchiveInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 44BB8B131241A022001E3A22 /* WebArchiveInternal.h */; };
+		44DDD0822540F97F00836F81 /* TestingFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 44DDD0812540F8C800836F81 /* TestingFunctions.h */; };
 		4618DFF81DEF760A0033C3AA /* WebValidationMessageClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 4618DFF61DEF760A0033C3AA /* WebValidationMessageClient.h */; };
 		4618DFF91DEF760A0033C3AA /* WebValidationMessageClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4618DFF71DEF760A0033C3AA /* WebValidationMessageClient.mm */; };
 		4BF99F900AE050BC00815C2B /* WebEditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BF99F8E0AE050BC00815C2B /* WebEditorClient.h */; settings = {ATTRIBUTES = (); }; };
@@ -872,6 +873,7 @@
 		3ABB3C791309C3B500E93D94 /* WebStorageTrackerClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebStorageTrackerClient.mm; sourceTree = "<group>"; };
 		3AE15D4F12DBDED4009323C8 /* WebStorageManagerInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebStorageManagerInternal.h; sourceTree = "<group>"; };
 		44BB8B131241A022001E3A22 /* WebArchiveInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebArchiveInternal.h; sourceTree = "<group>"; };
+		44DDD0812540F8C800836F81 /* TestingFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TestingFunctions.h; path = mac/TestingFunctions.h; sourceTree = "<group>"; };
 		4618DFF61DEF760A0033C3AA /* WebValidationMessageClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebValidationMessageClient.h; sourceTree = "<group>"; };
 		4618DFF71DEF760A0033C3AA /* WebValidationMessageClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebValidationMessageClient.mm; sourceTree = "<group>"; };
 		4BF99F8E0AE050BC00815C2B /* WebEditorClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebEditorClient.h; sourceTree = "<group>"; };
@@ -1610,9 +1612,10 @@
 		0867D691FE84028FC02AAC07 /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
+				1C6CB03E0AA6391D00D23BFD /* MigrateHeaders.make */,
 				5C9D925822D7E8AD008E9266 /* Sources.txt */,
 				5C9D925922D7E8AD008E9266 /* SourcesCocoa.txt */,
-				1C6CB03E0AA6391D00D23BFD /* MigrateHeaders.make */,
+				44DDD0812540F8C800836F81 /* TestingFunctions.h */,
 				F5F732D202FF4D4F01A80180 /* WebKit.exp */,
 				319A3F4D1885E5FB00E0C900 /* WebKit.mac.exp */,
 				A10C1D8F1820307D0036883A /* WebKit.iOS.exp */,
@@ -2957,6 +2960,7 @@
 				1A6B313A1A51F3A900422975 /* StorageThread.h in Headers */,
 				1A6B313C1A51F3A900422975 /* StorageTracker.h in Headers */,
 				1A6B313D1A51F3A900422975 /* StorageTrackerClient.h in Headers */,
+				44DDD0822540F97F00836F81 /* TestingFunctions.h in Headers */,
 				7C1FB3C21846E8E1001A03D8 /* WebAllowDenyPolicyListener.h in Headers */,
 				CEDA12DC152CBE6800D9E08D /* WebAlternativeTextClient.h in Headers */,
 				B6CE5C25100BC5F500219936 /* WebApplicationCache.h in Headers */,
@@ -3316,7 +3320,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy\"\n\nEXP_GENERATED=\"${EXPORTED_SYMBOLS_FILE}\"\n\n[[ -z \"${EXP_GENERATED}\" ]] && exit 1\n\nif [[ \"${WK_PLATFORM_NAME}\" != \"macosx\" ]]; then\n    EXP_WEBKIT_PLATFORM=\"${PROJECT_DIR}/ios/WebKit.iOS.exp\"\nelse\n    EXP_WEBKIT_PLATFORM=\"${PROJECT_DIR}/mac/WebKit.mac.exp\"\nfi\n\ncat \"${PROJECT_DIR}/mac/WebKit.exp\" > \"${EXP_GENERATED}\"\ncat \"${EXP_WEBKIT_PLATFORM}\" >> \"${EXP_GENERATED}\"\n\nfor WK_CURRENT_ARCH in ${ARCHS}; do\n    EXP_REEXPORTED=\"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/ReexportedWebCoreSymbols_${WK_CURRENT_ARCH}.exp\"\n    if [[ -f \"${EXP_REEXPORTED}\" ]]; then\n        cat \"${EXP_REEXPORTED}\" >> \"${EXP_GENERATED}\"\n    fi\ndone\n";
+			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy\"\n\nEXP_GENERATED=\"${EXPORTED_SYMBOLS_FILE}\"\n\n[[ -z \"${EXP_GENERATED}\" ]] && exit 1\n\nif [[ \"${WK_PLATFORM_NAME}\" != \"macosx\" ]]; then\n    EXP_WEBKIT_PLATFORM=\"${PROJECT_DIR}/ios/WebKit.iOS.exp\"\nelse\n    EXP_WEBKIT_PLATFORM=\"${PROJECT_DIR}/mac/WebKit.mac.exp\"\nfi\n\ncat \"${PROJECT_DIR}/mac/WebKit.exp\" > \"${EXP_GENERATED}\"\ncat \"${EXP_WEBKIT_PLATFORM}\" >> \"${EXP_GENERATED}\"\n\nfor WK_CURRENT_ARCH in ${ARCHS}; do\n    EXP_REEXPORTED=\"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/ReexportedWebCoreSymbols_${WK_CURRENT_ARCH}.exp\"\n    if [[ -f \"${EXP_REEXPORTED}\" ]]; then\n        cat \"${EXP_REEXPORTED}\" >> \"${EXP_GENERATED}\"\n    fi\ndone\n\nif [[ \"${WK_BUILD_FOR_TESTING}\" == \"YES\" ]]; then\n    cat \"${PROJECT_DIR}/mac/WebKit.Testing.exp\" >> \"${EXP_GENERATED}\"\nfi\n";
 		};
 		1C6CB0510AA63EB000D23BFD /* Migrate Headers */ = {
 			isa = PBXShellScriptBuildPhase;

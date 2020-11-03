@@ -1,3 +1,16 @@
+2020-11-03  David Kilzer  <ddkilzer@apple.com>
+
+        Add test for cacheModelForMainBundle() in WebKitLegacy
+        <https://webkit.org/b/217960>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        - Add WebPreferencesTest.mm to project.
+        * TestWebKitAPI/Tests/WebKitLegacy/cocoa/WebPreferencesTest.mm: Add.
+        (TestWebKitAPI::TEST):
+        - Add test for TestWebPreferencesCacheModelForMainBundle().
+
 2020-11-03  Adam Roben  <aroben@apple.com>
 
         Add SwiftUI MiniBrowser
