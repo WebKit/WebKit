@@ -1,3 +1,19 @@
+2020-11-03  Keith Rollin  <krollin@apple.com>
+
+        Extend check-for-inappropriate-files-in-framework to WebKitLegacy and JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=218272
+        <rdar://problem/70748116>
+
+        Reviewed by Simon Fraser.
+
+        Bug 218268 reports that some *.txt files got included in WebKitLegacy.
+        To help protect against this happening in the future, extend
+        check-for-inappropriate-files-in-framework to check for *.txt files,
+        and apply the script to WebKitLegacy and JavaScriptCore in addition to
+        WebCore and WebKit.
+
+        * Scripts/check-for-inappropriate-files-in-framework:
+
 2020-11-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] MiniBrowser: increase default window size

@@ -3207,6 +3207,7 @@
 				939811270824BF01008DF038 /* Frameworks */,
 				5D0D54210E98631D0029E223 /* Check For Weak VTables and Externals */,
 				3713F018142905B70036387F /* Check For Inappropriate Objective-C Class Names */,
+				532424B1254905FE00A6975B /* Check For Inappropriate Files In Framework */,
 				1A3193D5191856E500E1CF89 /* Symlink WebKitPluginHost */,
 				537CF83A22EFBFB100C6EBB3 /* Check .xcfilelists */,
 			);
@@ -3348,6 +3349,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names DOM Web _Web || exit $?\nfi";
+		};
+		532424B1254905FE00A6975B /* Check For Inappropriate Files In Framework */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Check For Inappropriate Files In Framework";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\n# For a while, these files were incorrectly included in the builds (see\n# https://bugs.webkit.org/show_bug.cgi?id=218268). Manually delete them\n# from anyone's build directory so that the check performed by\n# check-for-inappropriate-files-in-framework won't fail. This step can be\n# removed after a reasonable amount of time has passed and we can assume\n# everyone's performed a clean build by now.\n\nFRAMEWORK_DIR=\"${TARGET_BUILD_DIR}/${PRODUCT_NAME}.framework\"\nRESOURCES_DIR=\"${FRAMEWORK_DIR}/Resources\"\n\nrm -f \"${RESOURCES_DIR}/Sources.txt\"\nrm -f \"${RESOURCES_DIR}/SourcesCocoa.txt\"\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    ../../Tools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n\nexit 0\n";
 		};
 		537CF83A22EFBFB100C6EBB3 /* Check .xcfilelists */ = {
 			isa = PBXShellScriptBuildPhase;

@@ -27,9 +27,12 @@ base_directory = ENV['TARGET_BUILD_DIR'] or throw "Unable to find TARGET_BUILD_D
 project_name = ENV['PRODUCT_NAME'] or throw "Unable to find PRODUCT_NAME in the environment!"
 is_shallow_bundle = (ENV['SHALLOW_BUNDLE'] || "NO").upcase == "YES"
 
-$INAPPROPRIATE_FILES = { "WebCore" => { "Resources" => ["*.in", "*.idl", "*.h"] },
-                         "WebKit" => { "Resources" => ["*.in", "*.h"] },
-                       }
+$INAPPROPRIATE_FILES = {
+  "JavaScriptCore"  => { "Resources" => ["*.txt", "*.in", "*.idl", "*.h"] },
+  "WebCore"         => { "Resources" => ["*.txt", "*.in", "*.idl", "*.h"] },
+  "WebKitLegacy"    => { "Resources" => ["*.txt", "*.in", "*.idl", "*.h"] },
+  "WebKit"          => { "Resources" => ["*.txt", "*.in", "*.idl", "*.h"] },
+}
 
 Dir.chdir base_directory
 
