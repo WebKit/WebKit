@@ -1,3 +1,32 @@
+2020-11-02  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r266362. rdar://problem/70970398
+
+    WebGL goes in a bad state where glContext.createProgram() returns null
+    https://bugs.webkit.org/show_bug.cgi?id=215844
+    
+    Patch by James Darpinian <jdarpinian@chromium.org> on 2020-08-31
+    Reviewed by Kenneth Russell.
+    
+    Added test webgl/2.0.0/conformance/canvas/render-after-resize-test.html
+    
+    * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+    (WebCore::GraphicsContextGLOpenGL::reshape):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266362 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-31  James Darpinian  <jdarpinian@chromium.org>
+
+            WebGL goes in a bad state where glContext.createProgram() returns null
+            https://bugs.webkit.org/show_bug.cgi?id=215844
+
+            Reviewed by Kenneth Russell.
+
+            Added test webgl/2.0.0/conformance/canvas/render-after-resize-test.html
+
+            * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+            (WebCore::GraphicsContextGLOpenGL::reshape):
+
 2020-10-29  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r269118. rdar://problem/70795320

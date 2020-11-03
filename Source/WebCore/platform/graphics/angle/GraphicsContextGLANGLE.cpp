@@ -644,6 +644,7 @@ void GraphicsContextGLOpenGL::reshape(int width, int height)
     m_currentHeight = height;
 
     makeContextCurrent();
+    moveErrorsToSyntheticErrorList();
     validateAttributes();
 
     TemporaryANGLESetting scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
