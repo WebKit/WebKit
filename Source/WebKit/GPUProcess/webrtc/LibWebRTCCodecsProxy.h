@@ -69,8 +69,10 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void createH264Decoder(RTCDecoderIdentifier);
     void createH265Decoder(RTCDecoderIdentifier);
+    void createVP9Decoder(RTCDecoderIdentifier);
     void releaseDecoder(RTCDecoderIdentifier);
     void decodeFrame(RTCDecoderIdentifier, uint32_t timeStamp, const IPC::DataReference&);
+    void setFrameSize(RTCDecoderIdentifier, uint16_t width, uint16_t height);
 
     void createEncoder(RTCEncoderIdentifier, const String&, const Vector<std::pair<String, String>>&, bool useLowLatency);
     void releaseEncoder(RTCEncoderIdentifier);

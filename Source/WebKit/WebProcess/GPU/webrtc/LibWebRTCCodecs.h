@@ -62,20 +62,21 @@ public:
 
     static void setCallbacks(bool useGPUProcess);
 
+    enum class Type { H264, H265, VP9 };
     struct Decoder {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         RTCDecoderIdentifier identifier;
+        Type type;
         void* decodedImageCallback { nullptr };
         Lock decodedImageCallbackLock;
         bool hasError { false };
         RefPtr<IPC::Connection> connection;
     };
 
-    enum class Type { H264, H265 };
     Decoder* createDecoder(Type);
     int32_t releaseDecoder(Decoder&);
-    int32_t decodeFrame(Decoder&, uint32_t timeStamp, const uint8_t*, size_t);
+    int32_t decodeFrame(Decoder&, uint32_t timeStamp, const uint8_t*, size_t, uint16_t width, uint16_t height);
     void registerDecodeFrameCallback(Decoder&, void* decodedImageCallback);
 
     struct Encoder {
@@ -98,6 +99,9 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
+    void setVP9VTBSupport(bool supportVP9VTB) { m_supportVP9VTB = supportVP9VTB; }
+    bool supportVP9VTB() const { return m_supportVP9VTB; }
+
 private:
     void failedDecoding(RTCDecoderIdentifier);
     void completedDecoding(RTCDecoderIdentifier, uint32_t timeStamp, WebCore::RemoteVideoSample&&);
@@ -113,6 +117,7 @@ private:
     RetainPtr<CVPixelBufferPoolRef> m_pixelBufferPool;
     size_t m_pixelBufferPoolWidth { 0 };
     size_t m_pixelBufferPoolHeight { 0 };
+    bool m_supportVP9VTB { false };
 };
 
 } // namespace WebKit

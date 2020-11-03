@@ -1,5 +1,37 @@
 2020-11-03  Youenn Fablet  <youenn@apple.com>
 
+        Add support for WebRTC VP9 decoder in GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=218445
+
+        Reviewed by Eric Carlson.
+
+        Add support for VP9 decoder, send key frame size as IPC message specifically for VP9 hardware decoder.
+        If GPU process does not enable either SW or HW VP9 decoder, we fall back to in process VP9 decoder.
+
+        Manually tested by enabling WebRTC codec in GPU process.
+        Will be covered by existing VP9 tests in GPU process mode once canvas in GPUProcess is fully supported.
+
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.messages.in:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        (WebKit::LibWebRTCCodecsProxy::createVP9Decoder):
+        (WebKit::LibWebRTCCodecsProxy::setFrameSize):
+        * WebProcess/GPU/GPUProcessConnection.h:
+        (WebKit::GPUProcessConnection::isVP9DecoderEnabled const):
+        (WebKit::GPUProcessConnection::isVPSWDecoderEnabled const):
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::createVideoDecoder):
+        (WebKit::decodeVideoFrame):
+        (WebKit::LibWebRTCCodecs::setCallbacks):
+        (WebKit::LibWebRTCCodecs::createDecoder):
+        (WebKit::LibWebRTCCodecs::decodeFrame):
+        (WebKit::formatNameFromCodecType):
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+        (WebKit::LibWebRTCCodecs::setVP9VTBSupport):
+        (WebKit::LibWebRTCCodecs::supportVP9VTB const):
+
+2020-11-03  Youenn Fablet  <youenn@apple.com>
+
         Allow low latency H264 encoder in GPUProcess
         https://bugs.webkit.org/show_bug.cgi?id=218442
 

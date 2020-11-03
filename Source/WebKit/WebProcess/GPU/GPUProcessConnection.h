@@ -81,6 +81,11 @@ public:
 
     void updateParameters(const WebPageCreationParameters&);
 
+#if ENABLE(VP9)
+    bool isVP9DecoderEnabled() const { return m_enableVP9Decoder; }
+    bool isVPSWDecoderEnabled() const { return m_enableVP9SWDecoder; }
+#endif
+
 private:
     GPUProcessConnection(IPC::Connection::Identifier);
 

@@ -134,10 +134,14 @@ void vp9DecompressionOutputCallback(void *decoderRef,
          renderTimeMs:(int64_t)renderTimeMs {
   RTC_DCHECK(inputImage.buffer);
   if (inputImage.frameType == RTCFrameTypeVideoFrameKey) {
-      _width = inputImage.encodedWidth;
-      _height = inputImage.encodedHeight;
+    [self setWidth:inputImage.encodedWidth height: inputImage.encodedHeight];
   }
   return [self decodeData: (uint8_t *)inputImage.buffer.bytes size: inputImage.buffer.length timeStamp: inputImage.timeStamp];
+}
+
+- (void)setWidth:(uint16_t)width height:(uint16_t)height {
+  _width = width;
+  _height = height;
 }
 
 - (NSInteger)decodeData:(const uint8_t *)data

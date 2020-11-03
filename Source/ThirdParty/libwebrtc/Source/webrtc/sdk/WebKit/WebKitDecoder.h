@@ -38,7 +38,7 @@ class VideoDecoderFactory;
 using WebKitVideoDecoder = void*;
 using VideoDecoderCreateCallback = WebKitVideoDecoder(*)(const SdpVideoFormat& format);
 using VideoDecoderReleaseCallback = int32_t(*)(WebKitVideoDecoder);
-using VideoDecoderDecodeCallback = int32_t(*)(WebKitVideoDecoder, uint32_t timeStamp, const uint8_t*, size_t length);
+using VideoDecoderDecodeCallback = int32_t(*)(WebKitVideoDecoder, uint32_t timeStamp, const uint8_t*, size_t length, uint16_t width, uint16_t height);
 using VideoDecoderRegisterDecodeCompleteCallback = int32_t(*)(WebKitVideoDecoder, void* decodedImageCallback);
 
 void setVideoDecoderCallbacks(VideoDecoderCreateCallback, VideoDecoderReleaseCallback, VideoDecoderDecodeCallback, VideoDecoderRegisterDecodeCompleteCallback);
@@ -51,7 +51,9 @@ using LocalDecoder = void*;
 using LocalDecoderCallback = void (^)(CVPixelBufferRef, uint32_t timeStamp, uint32_t timeStampNs);
 void* createLocalH264Decoder(LocalDecoderCallback);
 void* createLocalH265Decoder(LocalDecoderCallback);
+void* createLocalVP9Decoder(LocalDecoderCallback);
 void releaseLocalDecoder(LocalDecoder);
 int32_t decodeFrame(LocalDecoder, uint32_t timeStamp, const uint8_t*, size_t);
+void setDecoderFrameSize(LocalDecoder, uint16_t width, uint16_t height);
 
 }

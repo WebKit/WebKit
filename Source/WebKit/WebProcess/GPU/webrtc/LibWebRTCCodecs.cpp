@@ -37,6 +37,7 @@
 #include <WebCore/RealtimeVideoUtilities.h>
 #include <WebCore/RemoteVideoSample.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
+#include <WebCore/VP9UtilitiesCocoa.h>
 #include <webrtc/sdk/WebKit/WebKitDecoder.h>
 #include <webrtc/sdk/WebKit/WebKitEncoder.h>
 #include <wtf/MainThread.h>
@@ -54,6 +55,9 @@ static webrtc::WebKitVideoDecoder createVideoDecoder(const webrtc::SdpVideoForma
     if (format.name == "H265")
         return WebProcess::singleton().libWebRTCCodecs().createDecoder(LibWebRTCCodecs::Type::H265);
 
+    if (format.name == "VP9" && WebProcess::singleton().libWebRTCCodecs().supportVP9VTB())
+        return WebProcess::singleton().libWebRTCCodecs().createDecoder(LibWebRTCCodecs::Type::VP9);
+
     return nullptr;
 }
 
@@ -62,9 +66,9 @@ static int32_t releaseVideoDecoder(webrtc::WebKitVideoDecoder decoder)
     return WebProcess::singleton().libWebRTCCodecs().releaseDecoder(*static_cast<LibWebRTCCodecs::Decoder*>(decoder));
 }
 
-static int32_t decodeVideoFrame(webrtc::WebKitVideoDecoder decoder, uint32_t timeStamp, const uint8_t* data, size_t size)
+static int32_t decodeVideoFrame(webrtc::WebKitVideoDecoder decoder, uint32_t timeStamp, const uint8_t* data, size_t size, uint16_t width,  uint16_t height)
 {
-    return WebProcess::singleton().libWebRTCCodecs().decodeFrame(*static_cast<LibWebRTCCodecs::Decoder*>(decoder), timeStamp, data, size);
+    return WebProcess::singleton().libWebRTCCodecs().decodeFrame(*static_cast<LibWebRTCCodecs::Decoder*>(decoder), timeStamp, data, size, width, height);
 }
 
 static int32_t registerDecodeCompleteCallback(webrtc::WebKitVideoDecoder decoder, void* decodedImageCallback)
@@ -159,8 +163,16 @@ void LibWebRTCCodecs::setCallbacks(bool useGPUProcess)
         webrtc::setVideoEncoderCallbacks(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
         return;
     }
+
+#if ENABLE(VP9)
     // Let's create WebProcess libWebRTCCodecs since it may be called from various threads.
-    WebProcess::singleton().libWebRTCCodecs();
+    auto& codecs = WebProcess::singleton().libWebRTCCodecs();
+    auto& gpuConnection = WebProcess::singleton().ensureGPUProcessConnection();
+
+    // FIMXE: We should disable VP9VTB if VP9 hardware decoding is enabled but there is no support for it.
+    codecs.setVP9VTBSupport(gpuConnection.isVP9DecoderEnabled() || gpuConnection.isVPSWDecoderEnabled());
+#endif
+
     webrtc::setVideoDecoderCallbacks(createVideoDecoder, releaseVideoDecoder, decodeVideoFrame, registerDecodeCompleteCallback);
     webrtc::setVideoEncoderCallbacks(createVideoEncoder, releaseVideoEncoder, initializeVideoEncoder, encodeVideoFrame, registerEncodeCompleteCallback, setEncodeRatesCallback);
 }
@@ -170,6 +182,7 @@ LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoder(Type type)
     auto decoder = makeUnique<Decoder>();
     auto* result = decoder.get();
     decoder->identifier = RTCDecoderIdentifier::generateThreadSafe();
+    decoder->type = type;
 
     callOnMainRunLoop([this, decoder = WTFMove(decoder), type]() mutable {
         decoder->connection = &WebProcess::singleton().ensureGPUProcessConnection().connection();
@@ -181,6 +194,9 @@ LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoder(Type type)
             break;
         case Type::H265:
             decoder->connection->send(Messages::LibWebRTCCodecsProxy::CreateH265Decoder { decoderIdentifier }, 0);
+            break;
+        case Type::VP9:
+            decoder->connection->send(Messages::LibWebRTCCodecsProxy::CreateVP9Decoder { decoderIdentifier }, 0);
             break;
         }
 
@@ -204,12 +220,15 @@ int32_t LibWebRTCCodecs::releaseDecoder(Decoder& decoder)
     return 0;
 }
 
-int32_t LibWebRTCCodecs::decodeFrame(Decoder& decoder, uint32_t timeStamp, const uint8_t* data, size_t size)
+int32_t LibWebRTCCodecs::decodeFrame(Decoder& decoder, uint32_t timeStamp, const uint8_t* data, size_t size, uint16_t width, uint16_t height)
 {
     if (!decoder.connection || decoder.hasError) {
         decoder.hasError = false;
         return WEBRTC_VIDEO_CODEC_ERROR;
     }
+
+    if (decoder.type == Type::VP9 && (width || height))
+        decoder.connection->send(Messages::LibWebRTCCodecsProxy::SetFrameSize { decoder.identifier, width, height }, 0);
 
     decoder.connection->send(Messages::LibWebRTCCodecsProxy::DecodeFrame { decoder.identifier, timeStamp, IPC::DataReference { data, size } }, 0);
     return WEBRTC_VIDEO_CODEC_OK;
@@ -269,6 +288,8 @@ static inline String formatNameFromCodecType(LibWebRTCCodecs::Type type)
         return "H264"_s;
     case LibWebRTCCodecs::Type::H265:
         return "H265"_s;
+    case LibWebRTCCodecs::Type::VP9:
+        return "VP9"_s;
     }
 }
 

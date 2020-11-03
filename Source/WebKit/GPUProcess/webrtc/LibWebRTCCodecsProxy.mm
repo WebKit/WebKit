@@ -88,6 +88,15 @@ void LibWebRTCCodecsProxy::createH265Decoder(RTCDecoderIdentifier identifier)
     }));
 }
 
+void LibWebRTCCodecsProxy::createVP9Decoder(RTCDecoderIdentifier identifier)
+{
+    ASSERT(!m_decoders.contains(identifier));
+    m_decoders.add(identifier, webrtc::createLocalVP9Decoder(^(CVPixelBufferRef pixelBuffer, uint32_t timeStampNs, uint32_t timeStamp) {
+        if (auto sample = WebCore::RemoteVideoSample::create(pixelBuffer, MediaTime(timeStampNs, 1)))
+            m_gpuConnectionToWebProcess.connection().send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, *sample }, 0);
+    }));
+}
+
 void LibWebRTCCodecsProxy::releaseDecoder(RTCDecoderIdentifier identifier)
 {
     ASSERT(m_decoders.contains(identifier));
@@ -104,6 +113,16 @@ void LibWebRTCCodecsProxy::decodeFrame(RTCDecoderIdentifier identifier, uint32_t
 
     if (webrtc::decodeFrame(decoder, timeStamp, data.data(), data.size()))
         m_gpuConnectionToWebProcess.connection().send(Messages::LibWebRTCCodecs::FailedDecoding { identifier }, 0);
+}
+
+void LibWebRTCCodecsProxy::setFrameSize(RTCDecoderIdentifier identifier, uint16_t width, uint16_t height)
+{
+    ASSERT(m_decoders.contains(identifier));
+    auto decoder = m_decoders.get(identifier);
+    if (!decoder)
+        return;
+
+    webrtc::setDecoderFrameSize(decoder, width, height);
 }
 
 void LibWebRTCCodecsProxy::createEncoder(RTCEncoderIdentifier identifier, const String& formatName, const Vector<std::pair<String, String>>& parameters, bool useLowLatency)
