@@ -41,7 +41,7 @@ using namespace WebKit;
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
-        [[WebFeature alloc] initWithKey:@"<%= @pref.name %>" name:@<%= @pref.humanReadableName %> details:@<%= @pref.humanReadableDescription %> defaultValue:DEFAULT_VALUE_FOR_<%= @pref.name %> hidden:<%= @pref.hidden %>],
+        [[WebFeature alloc] initWithKey:@"<%= @pref.name %>" preferenceKey:@"<%= @pref.preferenceKey %>" name:@<%= @pref.humanReadableName %> details:@<%= @pref.humanReadableDescription %> defaultValue:DEFAULT_VALUE_FOR_<%= @pref.name %> hidden:<%= @pref.hidden %>],
 <%- if @pref.condition -%>
 #endif
 <%- end -%>

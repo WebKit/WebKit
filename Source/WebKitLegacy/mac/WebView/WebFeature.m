@@ -27,13 +27,13 @@
 
 @implementation WebFeature
 
-- (instancetype)initWithKey:(NSString *)key name:(NSString *)name details:(NSString *)details defaultValue:(BOOL)defaultValue hidden:(BOOL)hidden
+- (instancetype)initWithKey:(NSString *)key preferenceKey:(NSString *)preferenceKey name:(NSString *)name details:(NSString *)details defaultValue:(BOOL)defaultValue hidden:(BOOL)hidden
 {
     if (!(self = [super init]))
         return nil;
 
     _key = key;
-    _preferencesKey = [@"WebKit" stringByAppendingString:_key];
+    _preferenceKey = preferenceKey;
     _name = name;
     _details = details;
     _defaultValue = defaultValue;

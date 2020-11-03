@@ -337,6 +337,7 @@
 		7C44698525377E520024290A /* TestOptionsGeneratedKeys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestOptionsGeneratedKeys.h; sourceTree = "<group>"; };
 		7C9893DE25433C8700354EBC /* TestOptionsGeneratedWebKitLegacyKeyMapping.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestOptionsGeneratedWebKitLegacyKeyMapping.cpp; sourceTree = "<group>"; };
 		7CBBC3221DDFCF9A00786B9D /* TestOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestOptions.h; sourceTree = "<group>"; };
+		7CD4A69525507EF8007A5382 /* TestOptionsGeneratedWebKitLegacyKeyMapping.cpp.erb */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestOptionsGeneratedWebKitLegacyKeyMapping.cpp.erb; sourceTree = "<group>"; };
 		7CFF9BBD2533BB240008009F /* TestFeatures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestFeatures.h; sourceTree = "<group>"; };
 		7CFF9BBE2533BB240008009F /* TestFeatures.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestFeatures.cpp; sourceTree = "<group>"; };
 		7CFF9BC02533BC160008009F /* TestCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestCommand.h; sourceTree = "<group>"; };
@@ -771,6 +772,7 @@
 		7C44697E25377A020024290A /* PreferencesTemplates */ = {
 			isa = PBXGroup;
 			children = (
+				7CD4A69525507EF8007A5382 /* TestOptionsGeneratedWebKitLegacyKeyMapping.cpp.erb */,
 				7C44697F25377A020024290A /* TestOptionsGeneratedKeys.h.erb */,
 			);
 			path = PreferencesTemplates;

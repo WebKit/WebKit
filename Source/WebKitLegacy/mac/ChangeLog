@@ -1,3 +1,19 @@
+2020-11-02  Sam Weinig  <weinig@apple.com>
+
+        [Testing] Match WebKitTestRunner and enable all "experimental" features in DumpRenderTree (cocoa)
+        https://bugs.webkit.org/show_bug.cgi?id=218447
+
+        Reviewed by Darin Adler.
+
+        * Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.mm.erb:
+        * Scripts/PreferencesTemplates/WebPreferencesInternalFeatures.mm.erb:
+        * WebView/WebFeature.m:
+        (-[WebFeature initWithKey:preferencesKey:name:details:defaultValue:hidden:]):
+        (-[WebFeature initWithKey:name:details:defaultValue:hidden:]): Deleted.
+        * WebView/WebFeatureInternal.h:
+        Handle non-standard preference keys by ensure we initialize WebFeatures with the generated 
+        preferenceKey accessor rather than trying to derive it from the key directly.
+
 2020-10-28  Sam Weinig  <weinig@apple.com>
 
         [Testing] Remove requirement of adding new SPI for each preference that needs testing

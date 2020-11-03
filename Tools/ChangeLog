@@ -1,3 +1,21 @@
+2020-11-02  Sam Weinig  <weinig@apple.com>
+
+        [Testing] Match WebKitTestRunner and enable all "experimental" features in DumpRenderTree (cocoa)
+        https://bugs.webkit.org/show_bug.cgi?id=218447
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        Add missing file, TestOptionsGeneratedWebKitLegacyKeyMapping.cpp.erb.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        (enableExperimentalFeatures): Deleted.
+        Match WebKitTestRunner and enable all experimental features by default. Disable a few of them to 
+        keep the current behavior, but added FIXME to figure out why they are exposed but not enabled. Also 
+        ensure a few preferences that are not experimental features, but were in the enableExperimentalFeatures
+        function remain set.
+
 2020-11-02  David Kilzer  <ddkilzer@apple.com>
 
         Sort Xcode project file

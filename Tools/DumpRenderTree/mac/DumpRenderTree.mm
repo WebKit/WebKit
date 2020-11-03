@@ -808,50 +808,19 @@ static NSString *libraryPathForDumpRenderTree()
         return [@"~/Library/Application Support/DumpRenderTree" stringByExpandingTildeInPath];
 }
 
-static void enableExperimentalFeatures(WebPreferences* preferences)
-{
-    // FIXME: SpringTimingFunction
-    [preferences setGamepadsEnabled:YES];
-    [preferences setHighlightAPIEnabled:YES];
-    [preferences setLinkPreloadEnabled:YES];
-    [preferences setMediaPreloadingEnabled:YES];
-    // FIXME: InputEvents
-    [preferences setFetchAPIKeepAliveEnabled:YES];
-    [preferences setWebAnimationsCompositeOperationsEnabled:YES];
-    [preferences setWebAnimationsMutableTimelinesEnabled:YES];
-    [preferences setCSSCustomPropertiesAndValuesEnabled:YES];
-    [preferences setWebGL2Enabled:YES];
-    [preferences setCacheAPIEnabled:NO];
-    [preferences setReadableByteStreamAPIEnabled:YES];
-    [preferences setWritableStreamAPIEnabled:YES];
-    [preferences setTransformStreamAPIEnabled:YES];
-    [preferences setEncryptedMediaAPIEnabled:YES];
-    [preferences setAccessibilityObjectModelEnabled:YES];
-    [preferences setAriaReflectionEnabled:YES];
-    [preferences setVisualViewportAPIEnabled:YES];
-    [preferences setColorFilterEnabled:YES];
-    [preferences setServerTimingEnabled:YES];
-    [preferences setIntersectionObserverEnabled:YES];
-    [preferences setSourceBufferChangeTypeEnabled:YES];
-    [preferences setCSSOMViewScrollingAPIEnabled:YES];
-    [preferences setMediaRecorderEnabled:YES];
-    [preferences setReferrerPolicyAttributeEnabled:YES];
-    [preferences setLinkPreloadResponsiveImagesEnabled:YES];
-    [preferences setAspectRatioOfImgFromWidthAndHeightEnabled:YES];
-    [preferences setCSSOMViewSmoothScrollingEnabled:YES];
-    [preferences setAudioWorkletEnabled:YES];
-    [preferences _setSpeechRecognitionEnabled:YES];
-
-    for (WebFeature* feature in [WebPreferences _experimentalFeatures]) {
-        if ([feature.key isEqual:@"MediaSessionEnabled"])
-            [preferences _setEnabled:YES forFeature:feature];
-    }
-}
-
 // Called before each test.
 static void resetWebPreferencesToConsistentValues(WebPreferences *preferences)
 {
-    enableExperimentalFeatures(preferences);
+    for (WebFeature *feature in [WebPreferences _experimentalFeatures])
+        [preferences _setEnabled:YES forFeature:feature];
+
+    // FIXME: These experimental features are currently the only ones not enabled for WebKitLegacy, we
+    // should either enable them or stop exposing them (as we do with with preferences like HTTP3Enabled).
+    [preferences _setBoolPreferenceForTestingWithValue:NO forKey:@"WebKitWebAuthenticationEnabled"];
+    [preferences _setBoolPreferenceForTestingWithValue:NO forKey:@"WebKitIsLoggedInAPIEnabled"];
+    [preferences _setBoolPreferenceForTestingWithValue:NO forKey:@"WebKitGenericCueAPIEnabled"];
+    [preferences _setBoolPreferenceForTestingWithValue:NO forKey:@"WebKitLazyImageLoadingEnabled"];
+    [preferences _setBoolPreferenceForTestingWithValue:NO forKey:@"WebKitLazyIframeLoadingEnabled"];
 
     [preferences setStandardFontFamily:@"Times"];
     [preferences setFixedFontFamily:@"Courier"];
@@ -911,26 +880,25 @@ static void resetWebPreferencesToConsistentValues(WebPreferences *preferences)
     [preferences setMockScrollbarsEnabled:YES];
 #endif
     [preferences setWebAudioEnabled:YES];
-    [preferences setModernUnprefixedWebAudioEnabled:YES];
     [preferences setMediaSourceEnabled:YES];
     [preferences setSourceBufferChangeTypeEnabled:YES];
     [preferences setDataTransferItemsEnabled:YES];
     [preferences setCustomPasteboardDataEnabled:YES];
-    [preferences setDialogElementEnabled:YES];
-    [preferences setWebGL2Enabled:YES];
     [preferences setDownloadAttributeEnabled:YES];
     [preferences setDirectoryUploadEnabled:YES];
     [preferences setHiddenPageDOMTimerThrottlingEnabled:NO];
     [preferences setHiddenPageCSSAnimationSuspensionEnabled:NO];
-    [preferences setRemotePlaybackEnabled:YES];
     [preferences setMediaDevicesEnabled:YES];
     [preferences setLargeImageAsyncDecodingEnabled:NO];
     [preferences setModernMediaControlsEnabled:YES];
     [preferences setMediaCapabilitiesEnabled:YES];
     [preferences setSelectionAcrossShadowBoundariesEnabled:YES];
-
     [preferences setWebSQLEnabled:YES];
-    [preferences _setMediaRecorderEnabled:YES];
+    [preferences setEncryptedMediaAPIEnabled:YES];
+    [preferences setGamepadsEnabled:YES];
+    [preferences setLinkPreloadEnabled:YES];
+    [preferences setMediaPreloadingEnabled:YES];
+    [preferences setColorFilterEnabled:YES];
 
     [WebPreferences _clearNetworkLoaderSession];
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];

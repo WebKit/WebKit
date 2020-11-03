@@ -2968,12 +2968,12 @@ static NSString *classIBCreatorID = nil;
 
 - (BOOL)_isEnabledForFeature:(WebFeature *)feature
 {
-    return [self _boolValueForKey:feature.preferencesKey];
+    return [self _boolValueForKey:feature.preferenceKey];
 }
 
 - (void)_setEnabled:(BOOL)value forFeature:(WebFeature *)feature
 {
-    [self _setBoolValue:value forKey:feature.preferencesKey];
+    [self _setBoolValue:value forKey:feature.preferenceKey];
 }
 
 @end

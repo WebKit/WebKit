@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface WebFeature : NSObject
 
 @property (nonatomic, readonly, copy) NSString *key;
-@property (nonatomic, readonly, copy) NSString *preferencesKey;
+@property (nonatomic, readonly, copy) NSString *preferenceKey;
 @property (nonatomic, readonly, copy) NSString *name;
 @property (nonatomic, readonly, copy) NSString *details;
 @property (nonatomic, readonly) BOOL defaultValue;
