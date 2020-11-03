@@ -1,3 +1,15 @@
+2020-11-03  Antoine Quint  <graouts@webkit.org>
+
+        align-content should be a discrete animatable property
+        https://bugs.webkit.org/show_bug.cgi?id=218530
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-iteration-composite-operation-expected.txt:
+
 2020-11-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r268564, r268957, and r268962.

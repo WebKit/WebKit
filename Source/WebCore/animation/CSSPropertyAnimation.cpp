@@ -631,6 +631,31 @@ protected:
 };
 
 template <typename T>
+class DiscretePropertyWrapper : public PropertyWrapperGetter<T> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    DiscretePropertyWrapper(CSSPropertyID prop, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T))
+        : PropertyWrapperGetter<T>(prop, getter)
+        , m_setter(setter)
+    {
+    }
+
+    void blend(const CSSPropertyBlendingClient*, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
+    {
+        // https://drafts.csswg.org/web-animations-1/#discrete
+        // The property’s values cannot be meaningfully combined, thus it is not additive and
+        // interpolation swaps from Va to Vb at 50% (p=0.5).
+        if (progress < 0.5)
+            (dst->*m_setter)((a->*PropertyWrapperGetter<T>::m_getter)());
+        else
+            (dst->*m_setter)((b->*PropertyWrapperGetter<T>::m_getter)());
+    }
+
+protected:
+    void (RenderStyle::*m_setter)(T);
+};
+
+template <typename T>
 class RefCountedPropertyWrapper : public PropertyWrapperGetter<T*> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -1874,6 +1899,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapper<float>(CSSPropertyFlexGrow, &RenderStyle::flexGrow, &RenderStyle::setFlexGrow),
         new PropertyWrapper<float>(CSSPropertyFlexShrink, &RenderStyle::flexShrink, &RenderStyle::setFlexShrink),
         new PropertyWrapper<int>(CSSPropertyOrder, &RenderStyle::order, &RenderStyle::setOrder),
+
+        new DiscretePropertyWrapper<const StyleContentAlignmentData&>(CSSPropertyAlignContent, &RenderStyle::alignContent, &RenderStyle::setAlignContent),
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 
