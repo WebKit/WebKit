@@ -1,3 +1,24 @@
+2020-11-03  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Cannot remove individual scripts/stylesheets using WebKitUserContentManager
+        https://bugs.webkit.org/show_bug.cgi?id=218403
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add the missing WebKitUserContentManager functions which allow
+        removing a single script and style sheet from the manager. Given
+        that it is possible to remove a single content filter and message
+        handlers already, this make the API orthogonal for scripts and style
+        sheets as well.
+
+        * UIProcess/API/glib/WebKitUserContentManager.cpp:
+        (webkit_user_content_manager_remove_style_sheet): Added.
+        (webkit_user_content_manager_remove_script): Added.
+        * UIProcess/API/gtk/WebKitUserContentManager.h: Add declarations for the new functions.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: Ditto.
+        * UIProcess/API/wpe/WebKitUserContentManager.h: Ditto.
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt: Ditto.
+
 2020-11-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove some useless comments from .messages.in files

@@ -186,6 +186,16 @@ static void testUserContentManagerInjectedStyleSheet(WebViewTest* test, gconstpo
     g_assert_false(isStyleSheetInjectedForURLAtPath(test, inTheAllowListAndBlockList));
     g_assert_false(isStyleSheetInjectedForURLAtPath(test, notInAllowList));
 
+    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), allowList, blockList);
+
+    g_assert_false(isStyleSheetInjectedForURLAtPath(test, randomPath));
+    styleSheet = webkit_user_style_sheet_new(kInjectedStyleSheet, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, WEBKIT_USER_STYLE_LEVEL_USER, nullptr, nullptr);
+    webkit_user_content_manager_add_style_sheet(test->m_userContentManager.get(), styleSheet);
+    g_assert_true(isStyleSheetInjectedForURLAtPath(test, randomPath));
+    webkit_user_content_manager_remove_style_sheet(test->m_userContentManager.get(), styleSheet);
+    g_assert_false(isStyleSheetInjectedForURLAtPath(test, randomPath));
+    webkit_user_style_sheet_unref(styleSheet);
+
     // It's important to clean up the environment before other tests.
     removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), allowList, blockList);
 }
@@ -236,6 +246,16 @@ static void testUserContentManagerInjectedScript(WebViewTest* test, gconstpointe
     g_assert_true(isScriptInjectedForURLAtPath(test, inTheAllowList));
     g_assert_false(isScriptInjectedForURLAtPath(test, inTheAllowListAndBlockList));
     g_assert_false(isScriptInjectedForURLAtPath(test, notInAllowList));
+
+    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), allowList, blockList);
+
+    g_assert_false(isScriptInjectedForURLAtPath(test, randomPath));
+    script = webkit_user_script_new(kInjectedScript, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_END, nullptr, nullptr);
+    webkit_user_content_manager_add_script(test->m_userContentManager.get(), script);
+    g_assert_true(isScriptInjectedForURLAtPath(test, randomPath));
+    webkit_user_content_manager_remove_script(test->m_userContentManager.get(), script);
+    g_assert_false(isScriptInjectedForURLAtPath(test, randomPath));
+    webkit_user_script_unref(script);
 
     // It's important to clean up the environment before other tests.
     removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), allowList, blockList);

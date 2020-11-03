@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2014, 2020 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -139,6 +139,24 @@ void webkit_user_content_manager_add_style_sheet(WebKitUserContentManager* manag
 }
 
 /**
+ * webkit_user_content_manager_remove_style_sheet:
+ * @manager: A #WebKitUserContentManager
+ * @stylesheet: A #WebKitUserStyleSheet
+ *
+ * Removes a #WebKitUserStyleSheet from the given #WebKitUserContentManager.
+ *
+ * See also webkit_user_content_manager_remove_all_style_sheets().
+ *
+ * Since: 2.32
+ */
+void webkit_user_content_manager_remove_style_sheet(WebKitUserContentManager* manager, WebKitUserStyleSheet* styleSheet)
+{
+    g_return_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager));
+    g_return_if_fail(styleSheet);
+    manager->priv->userContentController->removeUserStyleSheet(webkitUserStyleSheetGetUserStyleSheet(styleSheet));
+}
+
+/**
  * webkit_user_content_manager_remove_all_style_sheets:
  * @manager: A #WebKitUserContentManager
  *
@@ -171,10 +189,30 @@ void webkit_user_content_manager_add_script(WebKitUserContentManager* manager, W
 }
 
 /**
+ * webkit_user_content_manager_remove_script:
+ * @manager: A #WebKitUserContentManager
+ * @script: A #WebKitUserScript
+ *
+ * Removes a #WebKitUserScript from the given #WebKitUserContentManager.
+ *
+ * See also webkit_user_content_manager_remove_all_scripts().
+ *
+ * Since: 2.32
+ */
+void webkit_user_content_manager_remove_script(WebKitUserContentManager* manager, WebKitUserScript* script)
+{
+    g_return_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager));
+    g_return_if_fail(script);
+    manager->priv->userContentController->removeUserScript(webkitUserScriptGetUserScript(script));
+}
+
+/**
  * webkit_user_content_manager_remove_all_scripts:
  * @manager: A #WebKitUserContentManager
  *
  * Removes all user scripts from the given #WebKitUserContentManager
+ *
+ * See also webkit_user_content_manager_remove_script().
  *
  * Since: 2.6
  */

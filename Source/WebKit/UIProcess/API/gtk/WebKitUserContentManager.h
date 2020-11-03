@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2014, 2020 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -67,6 +67,11 @@ webkit_user_content_manager_new                                        (void);
 WEBKIT_API void
 webkit_user_content_manager_add_style_sheet                            (WebKitUserContentManager *manager,
                                                                         WebKitUserStyleSheet     *stylesheet);
+
+WEBKIT_API void
+webkit_user_content_manager_remove_style_sheet                         (WebKitUserContentManager *manager,
+                                                                        WebKitUserStyleSheet     *stylesheet);
+
 WEBKIT_API void
 webkit_user_content_manager_remove_all_style_sheets                    (WebKitUserContentManager *manager);
 
@@ -88,6 +93,10 @@ webkit_user_content_manager_unregister_script_message_handler_in_world (WebKitUs
 
 WEBKIT_API void
 webkit_user_content_manager_add_script                                 (WebKitUserContentManager *manager,
+                                                                        WebKitUserScript         *script);
+
+WEBKIT_API void
+webkit_user_content_manager_remove_script                              (WebKitUserContentManager *manager,
                                                                         WebKitUserScript         *script);
 
 WEBKIT_API void
