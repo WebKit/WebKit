@@ -6019,7 +6019,8 @@ void HTMLMediaElement::exitFullscreen()
         }
 
         setFullscreenMode(VideoFullscreenModeNone);
-        document().page()->chrome().client().exitVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this));
+        if (auto* page = document().page())
+            page->chrome().client().exitVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this));
     }
 }
 
