@@ -37,6 +37,7 @@
 #include "InlineTextBox.h"
 #include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationLineLayout.h"
+#include "LayoutIntegrationRunIterator.h"
 #include "LayoutRepainter.h"
 #include "Logging.h"
 #include "RenderCombineText.h"

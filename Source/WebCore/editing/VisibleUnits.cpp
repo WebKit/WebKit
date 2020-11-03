@@ -31,6 +31,7 @@
 #include "HTMLBRElement.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "InlineRunAndOffset.h"
 #include "InlineTextBox.h"
 #include "NodeTraversal.h"
 #include "Range.h"

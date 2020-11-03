@@ -27,12 +27,14 @@
 #include "InspectorFrontendAPIDispatcher.h"
 
 #include "Frame.h"
+#include "InspectorController.h"
 #include "Page.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
 #include "ScriptSourceCode.h"
 #include "ScriptState.h"
 #include <JavaScriptCore/FrameTracers.h>
+#include <wtf/RunLoop.h>
 
 
 namespace WebCore {
@@ -96,7 +98,7 @@ void InspectorFrontendAPIDispatcher::unsuspend()
     evaluateQueuedExpressions();
 }
 
-JSGlobalObject* InspectorFrontendAPIDispatcher::frontendGlobalObject()
+JSC::JSGlobalObject* InspectorFrontendAPIDispatcher::frontendGlobalObject()
 {
     if (!m_frontendPage)
         return nullptr;

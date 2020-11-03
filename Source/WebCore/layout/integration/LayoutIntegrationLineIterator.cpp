@@ -28,6 +28,7 @@
 
 #include "LayoutIntegrationLineLayout.h"
 #include "LayoutIntegrationRunIterator.h"
+#include "RenderBlockFlow.h"
 
 namespace WebCore {
 namespace LayoutIntegration {
