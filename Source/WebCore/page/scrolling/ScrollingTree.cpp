@@ -402,7 +402,7 @@ void ScrollingTree::applyLayerPositionsInternal()
     if (!m_rootNode)
         return;
 
-    LOG(Scrolling, "\nScrollingTree %p applyLayerPositions (main thread %d)", this, isMainThread());
+//    LOG(Scrolling, "\nScrollingTree %p applyLayerPositions (main thread %d)", this, isMainThread());
     applyLayerPositionsRecursive(*m_rootNode);
 }
 
@@ -575,6 +575,25 @@ bool ScrollingTree::mainFrameCanRubberBandInDirection(ScrollDirection direction)
     };
 
     return false;
+}
+
+void ScrollingTree::addPendingScrollUpdate(ScrollUpdate&& update)
+{
+    LockHolder locker(m_pendingScrollUpdatesLock);
+    for (auto& existingUpdate : m_pendingScrollUpdates) {
+        if (existingUpdate.canMerge(update)) {
+            existingUpdate.merge(WTFMove(update));
+            return;
+        }
+    }
+
+    m_pendingScrollUpdates.append(WTFMove(update));
+}
+
+Vector<ScrollingTree::ScrollUpdate> ScrollingTree::takePendingScrollUpdates()
+{
+    LockHolder locker(m_pendingScrollUpdatesLock);
+    return std::exchange(m_pendingScrollUpdates, { });
 }
 
 // Can be called from the main thread.

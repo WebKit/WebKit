@@ -211,6 +211,27 @@ public:
     bool hasProcessedWheelEventsRecently();
     WEBCORE_EXPORT void willProcessWheelEvent();
 
+    struct ScrollUpdate {
+        ScrollingNodeID nodeID { 0 };
+        FloatPoint scrollPosition;
+        Optional<FloatPoint> layoutViewportOrigin;
+        ScrollingLayerPositionAction updateLayerPositionAction { ScrollingLayerPositionAction::Sync };
+        
+        bool canMerge(const ScrollUpdate& other) const
+        {
+            return nodeID == other.nodeID && updateLayerPositionAction == other.updateLayerPositionAction;
+        }
+        
+        void merge(ScrollUpdate&& other)
+        {
+            scrollPosition = other.scrollPosition;
+            layoutViewportOrigin = other.layoutViewportOrigin;
+        }
+    };
+
+    void addPendingScrollUpdate(ScrollUpdate&&);
+    Vector<ScrollUpdate> takePendingScrollUpdates();
+
 protected:
     WheelEventHandlingResult handleWheelEventWithNode(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, ScrollingTreeNode*);
 
@@ -278,6 +299,9 @@ private:
 
     Lock m_swipeStateMutex;
     SwipeState m_swipeState;
+
+    Lock m_pendingScrollUpdatesLock;
+    Vector<ScrollUpdate> m_pendingScrollUpdates;
 
     Lock m_lastWheelEventTimeMutex;
     MonotonicTime m_lastWheelEventTime;

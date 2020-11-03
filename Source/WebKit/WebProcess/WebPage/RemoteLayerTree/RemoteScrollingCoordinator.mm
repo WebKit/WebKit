@@ -107,7 +107,7 @@ void RemoteScrollingCoordinator::buildTransaction(RemoteScrollingCoordinatorTran
 // Notification from the UI process that we scrolled.
 void RemoteScrollingCoordinator::scrollPositionChangedForNode(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, bool syncLayerPosition)
 {
-    scheduleUpdateScrollPositionAfterAsyncScroll(nodeID, scrollPosition, WTF::nullopt, syncLayerPosition ? ScrollingLayerPositionAction::Sync : ScrollingLayerPositionAction::Set);
+    applyScrollUpdate(nodeID, scrollPosition, WTF::nullopt, ScrollType::User, syncLayerPosition ? ScrollingLayerPositionAction::Sync : ScrollingLayerPositionAction::Set);
 }
 
 void RemoteScrollingCoordinator::currentSnapPointIndicesChangedForNode(ScrollingNodeID nodeID, unsigned horizontal, unsigned vertical)

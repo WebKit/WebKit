@@ -58,7 +58,6 @@ namespace WebCore {
 
 AsyncScrollingCoordinator::AsyncScrollingCoordinator(Page* page)
     : ScrollingCoordinator(page)
-    , m_updateNodeScrollPositionTimer(*this, &AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScrollTimerFired)
     , m_scrollingStateTree(makeUnique<ScrollingStateTree>(this))
 {
 }
@@ -255,7 +254,6 @@ bool AsyncScrollingCoordinator::requestScrollPositionUpdate(ScrollableArea& scro
 {
     ASSERT(isMainThread());
     ASSERT(m_page);
-
     auto scrollingNodeID = scrollableArea.scrollingNodeID();
     if (!scrollingNodeID)
         return false;
@@ -270,7 +268,7 @@ bool AsyncScrollingCoordinator::requestScrollPositionUpdate(ScrollableArea& scro
     bool inBackForwardCache = frameView->frame().document()->backForwardCacheState() != Document::NotInBackForwardCache;
     bool inProgrammaticScroll = scrollableArea.currentScrollType() == ScrollType::Programmatic;
     if (inProgrammaticScroll || inBackForwardCache)
-        updateScrollPositionAfterAsyncScroll(scrollingNodeID, scrollPosition, { }, ScrollType::Programmatic, ScrollingLayerPositionAction::Set, InformWheelEventMonitor::No);
+        applyScrollUpdate(scrollingNodeID, scrollPosition, { }, ScrollType::Programmatic, ScrollingLayerPositionAction::Set, InformWheelEventMonitor::No);
 
     ASSERT(inProgrammaticScroll == (scrollType == ScrollType::Programmatic));
 
@@ -301,6 +299,7 @@ void AsyncScrollingCoordinator::applyScrollingTreeLayerPositions()
 void AsyncScrollingCoordinator::synchronizeStateFromScrollingTree()
 {
     ASSERT(isMainThread());
+    applyPendingScrollUpdates();
 
     m_scrollingTree->traverseScrollingTree([&](ScrollingNodeID nodeID, ScrollingNodeType, Optional<FloatPoint> scrollPosition, Optional<FloatPoint> layoutViewportOrigin, bool scrolledSinceLastCommit) {
         if (scrollPosition && scrolledSinceLastCommit) {
@@ -314,7 +313,7 @@ void AsyncScrollingCoordinator::noteScrollingThreadSyncCompleteForNode(Scrolling
 {
 #if PLATFORM(MAC)
     if (m_page && m_page->isMonitoringWheelEvents()) {
-        LOG_WITH_STREAM(WheelEventTestMonitor, stream << "    (!) AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll: Removing deferral on " << nodeID << " for reason " << WheelEventTestMonitor::ScrollingThreadSyncNeeded);
+        LOG_WITH_STREAM(WheelEventTestMonitor, stream << "    (!) AsyncScrollingCoordinator::noteScrollingThreadSyncCompleteForNode: Removing deferral on " << nodeID << " for reason " << WheelEventTestMonitor::ScrollingThreadSyncNeeded);
         m_page->wheelEventTestMonitor()->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID), WheelEventTestMonitor::ScrollingThreadSyncNeeded);
     }
 #else
@@ -322,31 +321,16 @@ void AsyncScrollingCoordinator::noteScrollingThreadSyncCompleteForNode(Scrolling
 #endif
 }
 
-void AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, const Optional<FloatPoint>& layoutViewportOrigin, ScrollingLayerPositionAction scrollingLayerPositionAction)
+void AsyncScrollingCoordinator::applyPendingScrollUpdates()
 {
-    ScheduledScrollUpdate scrollUpdate(nodeID, scrollPosition, layoutViewportOrigin, scrollingLayerPositionAction);
-    
-    if (m_updateNodeScrollPositionTimer.isActive()) {
-        if (m_scheduledScrollUpdate.matchesUpdateType(scrollUpdate)) {
-            m_scheduledScrollUpdate.scrollPosition = scrollPosition;
-            m_scheduledScrollUpdate.layoutViewportOrigin = layoutViewportOrigin;
-            return;
-        }
-    
-        // If the parameters don't match what was previously scheduled, dispatch immediately.
-        m_updateNodeScrollPositionTimer.stop();
-        updateScrollPositionAfterAsyncScroll(m_scheduledScrollUpdate.nodeID, m_scheduledScrollUpdate.scrollPosition, m_scheduledScrollUpdate.layoutViewportOrigin, ScrollType::User, m_scheduledScrollUpdate.updateLayerPositionAction);
-        updateScrollPositionAfterAsyncScroll(nodeID, scrollPosition, layoutViewportOrigin, ScrollType::User, scrollingLayerPositionAction);
+    if (!m_scrollingTree)
         return;
+
+    auto scrollUpdates = m_scrollingTree->takePendingScrollUpdates();
+    for (auto& update : scrollUpdates) {
+        LOG_WITH_STREAM(Scrolling, stream << "AsyncScrollingCoordinator::applyPendingScrollUpdates - node " << update.nodeID << " scroll position " << update.scrollPosition);
+        updateScrollPositionAfterAsyncScroll(update.nodeID, update.scrollPosition, update.layoutViewportOrigin, ScrollType::User, update.updateLayerPositionAction, InformWheelEventMonitor::Yes);
     }
-
-    m_scheduledScrollUpdate = scrollUpdate;
-    m_updateNodeScrollPositionTimer.startOneShot(0_s);
-}
-
-void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScrollTimerFired()
-{
-    updateScrollPositionAfterAsyncScroll(m_scheduledScrollUpdate.nodeID, m_scheduledScrollUpdate.scrollPosition, m_scheduledScrollUpdate.layoutViewportOrigin, ScrollType::User, m_scheduledScrollUpdate.updateLayerPositionAction);
 }
 
 FrameView* AsyncScrollingCoordinator::frameViewForScrollingNode(ScrollingNodeID scrollingNodeID) const
@@ -381,6 +365,12 @@ FrameView* AsyncScrollingCoordinator::frameViewForScrollingNode(ScrollingNodeID 
     return nullptr;
 }
 
+void AsyncScrollingCoordinator::applyScrollUpdate(ScrollingNodeID scrollingNodeID, const FloatPoint& scrollPosition, Optional<FloatPoint> layoutViewportOrigin, ScrollType scrollType, ScrollingLayerPositionAction scrollingLayerPositionAction, InformWheelEventMonitor informWheelEventMonitor)
+{
+    applyPendingScrollUpdates();
+    updateScrollPositionAfterAsyncScroll(scrollingNodeID, scrollPosition, layoutViewportOrigin, scrollType, scrollingLayerPositionAction, informWheelEventMonitor);
+}
+
 void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNodeID scrollingNodeID, const FloatPoint& scrollPosition, Optional<FloatPoint> layoutViewportOrigin, ScrollType scrollType, ScrollingLayerPositionAction scrollingLayerPositionAction, InformWheelEventMonitor informWheelEventMonitor)
 {
     ASSERT(isMainThread());
@@ -395,7 +385,7 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
     if (!frameViewPtr)
         return;
 
-    LOG_WITH_STREAM(Scrolling, stream << "AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll node " << scrollingNodeID << " scrollPosition " << scrollPosition << " action " << scrollingLayerPositionAction);
+    LOG_WITH_STREAM(Scrolling, stream << "AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll node " << scrollingNodeID << " " << scrollType << " scrollPosition " << scrollPosition << " action " << scrollingLayerPositionAction);
 
     auto& frameView = *frameViewPtr;
     

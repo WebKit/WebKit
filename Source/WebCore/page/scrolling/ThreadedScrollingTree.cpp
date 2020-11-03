@@ -146,16 +146,19 @@ void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNod
         deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(node.scrollingNodeID()), WheelEventTestMonitor::ScrollingThreadSyncNeeded);
 #endif
 
-    LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::scrollingTreeNodeDidScroll " << node.scrollingNodeID() << " to " << scrollPosition << " bouncing to main thread");
-
     if (RunLoop::isMain()) {
-        m_scrollingCoordinator->updateScrollPositionAfterAsyncScroll(node.scrollingNodeID(), scrollPosition, layoutViewportOrigin, ScrollType::User, scrollingLayerPositionAction);
+        m_scrollingCoordinator->applyScrollUpdate(node.scrollingNodeID(), scrollPosition, layoutViewportOrigin, ScrollType::User, scrollingLayerPositionAction);
         return;
     }
 
-    RunLoop::main().dispatch([strongThis = makeRef(*this), nodeID = node.scrollingNodeID(), scrollPosition, layoutViewportOrigin, scrollingLayerPositionAction] {
+    LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::scrollingTreeNodeDidScroll " << node.scrollingNodeID() << " to " << scrollPosition << " bouncing to main thread");
+
+    auto scrollUpdate = ScrollUpdate { node.scrollingNodeID(), scrollPosition, layoutViewportOrigin, scrollingLayerPositionAction };
+    addPendingScrollUpdate(WTFMove(scrollUpdate));
+
+    RunLoop::main().dispatch([strongThis = makeRef(*this)] {
         if (auto* scrollingCoordinator = strongThis->m_scrollingCoordinator.get())
-            scrollingCoordinator->scheduleUpdateScrollPositionAfterAsyncScroll(nodeID, scrollPosition, layoutViewportOrigin, scrollingLayerPositionAction);
+            scrollingCoordinator->applyPendingScrollUpdates();
     });
 }
 
