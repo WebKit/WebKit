@@ -67,6 +67,7 @@ public:
     //     on this extension)
     //   GL_EXT_texture_compression_dxt1
     //   GL_EXT_texture_compression_s3tc
+    //   GL_EXT_texture_compression_s3tc_srgb
     //   GL_OES_compressed_ETC1_RGB8_texture
     //   GL_IMG_texture_compression_pvrtc
     //   GL_KHR_texture_compression_astc_hdr
@@ -154,6 +155,12 @@ public:
         COMPRESSED_RGBA_S3TC_DXT1_EXT = 0x83F1,
         COMPRESSED_RGBA_S3TC_DXT3_EXT = 0x83F2,
         COMPRESSED_RGBA_S3TC_DXT5_EXT = 0x83F3,
+
+        // GL_EXT_texture_compression_s3tc_srgb
+        COMPRESSED_SRGB_S3TC_DXT1_EXT = 0x8C4C,
+        COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT = 0x8C4D,
+        COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT = 0x8C4E,
+        COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT = 0x8C4F,
 
         // GL_OES_compressed_ETC1_RGB8_texture
         ETC1_RGB8_OES = 0x8D64,
