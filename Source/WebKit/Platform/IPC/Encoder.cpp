@@ -72,6 +72,16 @@ Encoder::Encoder(MessageName messageName, uint64_t destinationID)
     encodeHeader();
 }
 
+Encoder::Encoder(ConstructWithoutHeaderTag)
+    : m_messageName()
+    , m_destinationID(0)
+    , m_buffer(m_inlineBuffer)
+    , m_bufferPointer(m_inlineBuffer)
+    , m_bufferSize(0)
+    , m_bufferCapacity(sizeof(m_inlineBuffer))
+{
+}
+
 Encoder::~Encoder()
 {
     if (m_buffer != m_inlineBuffer)
@@ -219,7 +229,12 @@ void Encoder::addAttachment(Attachment&& attachment)
 
 Vector<Attachment> Encoder::releaseAttachments()
 {
-    return WTFMove(m_attachments);
+    return std::exchange(m_attachments, { });
+}
+
+bool Encoder::hasAttachments() const
+{
+    return !m_attachments.isEmpty();
 }
 
 } // namespace IPC

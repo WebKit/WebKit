@@ -1,3 +1,31 @@
+2020-11-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add helper methods to encode and decode IPC arguments as raw data
+        https://bugs.webkit.org/show_bug.cgi?id=218516
+
+        Reviewed by Geoff Garen.
+
+        Add new helper methods to `IPC::Encoder` and `IPC::Decoder` that can be used to convert anything that can be
+        sent as an IPC argument into raw bytes (i.e. using `WebCore::SharedBuffer`), as long as there are no IPC
+        attachments in the encoded data.
+
+        For more details, see <webkit.org/b/218406>.
+
+        * Platform/IPC/Decoder.cpp:
+        (IPC::Decoder::Decoder):
+
+        Add private versions of the Encoder and Decoder constructors that avoid IPC header data. These constructors are
+        called only from within `encodeSingleObject` and `decodeSingleObject`, respectively.
+
+        (IPC::m_bufferDeallocator):
+        * Platform/IPC/Decoder.h:
+        (IPC::Decoder::decodeSingleObject):
+        * Platform/IPC/Encoder.cpp:
+        (IPC::Encoder::Encoder):
+        (IPC::Encoder::releaseAttachments):
+        (IPC::Encoder::hasAttachments const):
+        * Platform/IPC/Encoder.h:
+
 2020-11-03  Stephan Szabo  <stephan.szabo@sony.com>
 
         [WinCairo/PlayStation] ICU 68.1 no longer exposes FALSE and TRUE macros by default

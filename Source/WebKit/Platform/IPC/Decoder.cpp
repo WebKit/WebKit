@@ -74,6 +74,16 @@ Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, void (*bufferDealloca
         return;
 }
 
+Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, ConstructWithoutHeaderTag)
+    : m_buffer { buffer }
+    , m_bufferPos { m_buffer }
+    , m_bufferEnd { m_buffer + bufferSize }
+    , m_bufferDeallocator([] (const uint8_t*, size_t) { })
+{
+    if (reinterpret_cast<uintptr_t>(m_buffer) % alignof(uint64_t))
+        markInvalid();
+}
+
 Decoder::~Decoder()
 {
     ASSERT(m_buffer);

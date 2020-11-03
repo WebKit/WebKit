@@ -30,6 +30,7 @@
 #include "MessageNames.h"
 #include "StringReference.h"
 #include <WebCore/ContextMenuItem.h>
+#include <WebCore/SharedBuffer.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 
@@ -99,7 +100,24 @@ public:
 
     static const bool isIPCEncoder = true;
 
+    template<typename T>
+    static RefPtr<WebCore::SharedBuffer> encodeSingleObject(const T& object)
+    {
+        Encoder encoder(ConstructWithoutHeader);
+        encoder << object;
+
+        if (encoder.hasAttachments()) {
+            ASSERT_NOT_REACHED();
+            return nullptr;
+        }
+
+        return WebCore::SharedBuffer::create(encoder.buffer(), encoder.bufferSize());
+    }
+
 private:
+    enum ConstructWithoutHeaderTag { ConstructWithoutHeader };
+    Encoder(ConstructWithoutHeaderTag);
+
     uint8_t* grow(size_t alignment, size_t);
 
     template<typename E, std::enable_if_t<std::is_enum<E>::value>* = nullptr>
@@ -108,6 +126,8 @@ private:
         ASSERT(WTF::isValidEnum<E>(WTF::enumToUnderlyingType<E>(enumValue)));
         encode(WTF::enumToUnderlyingType<E>(enumValue));
     }
+
+    bool hasAttachments() const;
 
     void encodeHeader();
     const OptionSet<MessageFlags>& messageFlags() const;
