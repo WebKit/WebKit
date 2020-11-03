@@ -48,9 +48,6 @@
 #include <wtf/URL.h>
 #include <wtf/text/TextStream.h>
 
-// FIXME: This should probably be HAVE(CG_CONTEXT_DRAW_PATH_DIRECT) and be in PlatformHave.h.
-#define USE_DRAW_PATH_DIRECT PLATFORM(COCOA)
-
 // FIXME: The following using declaration should be in <wtf/HashFunctions.h>.
 using WTF::pairIntHash;
 
@@ -746,7 +743,7 @@ void GraphicsContext::drawPath(const Path& path)
 
     CGPathDrawingMode drawingMode;
     if (calculateDrawingMode(state, drawingMode)) {
-#if USE_DRAW_PATH_DIRECT
+#if HAVE(CG_CONTEXT_DRAW_PATH_DIRECT)
         CGContextDrawPathDirect(context, drawingMode, path.platformPath(), nullptr);
 #else
         CGContextBeginPath(context);
@@ -809,7 +806,7 @@ void GraphicsContext::fillPath(const Path& path)
 
     if (m_state.fillPattern)
         applyFillPattern();
-#if USE_DRAW_PATH_DIRECT
+#if HAVE(CG_CONTEXT_DRAW_PATH_DIRECT)
     CGContextDrawPathDirect(context, fillRule() == WindRule::EvenOdd ? kCGPathEOFill : kCGPathFill, path.platformPath(), nullptr);
 #else
     CGContextBeginPath(context);
@@ -880,14 +877,16 @@ void GraphicsContext::strokePath(const Path& path)
     if (m_state.strokePattern)
         applyStrokePattern();
 
+#if USE(CG_CONTEXT_STROKE_LINE_SEGMENTS_WHEN_STROKING_PATH)
     if (path.hasInlineData<LineData>()) {
         auto& lineData = path.inlineData<LineData>();
         CGPoint points[2] { lineData.start, lineData.end };
         CGContextStrokeLineSegments(context, points, 2);
         return;
     }
+#endif
 
-#if USE_DRAW_PATH_DIRECT
+#if HAVE(CG_CONTEXT_DRAW_PATH_DIRECT)
     CGContextDrawPathDirect(context, kCGPathStroke, path.platformPath(), nullptr);
 #else
     CGContextBeginPath(context);
