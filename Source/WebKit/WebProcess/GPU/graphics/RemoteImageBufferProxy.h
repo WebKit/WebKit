@@ -104,9 +104,11 @@ protected:
         if (!m_remoteRenderingBackendProxy)
             return nullptr;
 
-        auto& displayList = const_cast<RemoteImageBufferProxy*>(this)->m_drawingContext.displayList();
-        if (displayList.itemCount()) {
-            const_cast<RemoteImageBufferProxy&>(*this).flushDisplayList(displayList);
+        auto& mutableThis = const_cast<RemoteImageBufferProxy&>(*this);
+        auto& displayList = mutableThis.m_drawingContext.displayList();
+        if (!displayList.isEmpty()) {
+            mutableThis.flushDisplayList(displayList);
+            mutableThis.m_itemCountInCurrentDisplayList = 0;
             displayList.clear();
         }
 
@@ -141,18 +143,19 @@ protected:
             return;
 
         auto& displayList = m_drawingContext.displayList();
-        if (!displayList.itemCount())
+        if (displayList.isEmpty())
             return;
 
         TraceScope tracingScope(FlushRemoteImageBufferStart, FlushRemoteImageBufferEnd, 1);
         m_sentFlushIdentifier = m_remoteRenderingBackendProxy->flushDisplayListAndCommit(displayList, m_renderingResourceIdentifier);
         m_remoteRenderingBackendProxy->remoteResourceCacheProxy().unlockRemoteResourcesForRemoteClient(m_renderingResourceIdentifier);
+        m_itemCountInCurrentDisplayList = 0;
         displayList.clear();
     }
 
     void flushDisplayList(const WebCore::DisplayList::DisplayList& displayList) override
     {
-        if (!m_remoteRenderingBackendProxy || !displayList.itemCount())
+        if (!m_remoteRenderingBackendProxy || displayList.isEmpty())
             return;
 
         TraceScope tracingScope(FlushRemoteImageBufferStart, FlushRemoteImageBufferEnd);
@@ -174,9 +177,10 @@ protected:
     {
         constexpr size_t DisplayListBatchSize = 512;
         auto& displayList = m_drawingContext.displayList();
-        if (displayList.itemCount() < DisplayListBatchSize)
+        if (++m_itemCountInCurrentDisplayList < DisplayListBatchSize)
             return;
 
+        m_itemCountInCurrentDisplayList = 0;
         flushDisplayList(displayList);
         displayList.clear();
     }
@@ -191,6 +195,7 @@ protected:
     DisplayListFlushIdentifier m_receivedFlushIdentifier;
     WebCore::RenderingResourceIdentifier m_renderingResourceIdentifier { WebCore::RenderingResourceIdentifier::generate() };
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
+    size_t m_itemCountInCurrentDisplayList { 0 };
 };
 
 } // namespace WebKit

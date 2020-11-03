@@ -162,7 +162,7 @@ public:
 
     WEBCORE_EXPORT void clear();
 
-    size_t itemCount() const { return m_list.size(); }
+    bool isEmpty() const { return m_list.isEmpty(); }
     size_t sizeInBytes() const;
     
     String asText(AsTextFlags) const;

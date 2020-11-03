@@ -673,7 +673,6 @@ static TextStream& operator<<(TextStream& ts, const ClipToDrawingCommands& item)
 {
     ts.dumpProperty("destination", item.destination());
     ts.dumpProperty("color-space", item.colorSpace());
-    ts.dumpProperty("drawing-commands-count", item.drawingCommands().itemCount());
     return ts;
 }
 

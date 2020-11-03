@@ -52,9 +52,9 @@ std::unique_ptr<DisplayList> Replayer::replay(const FloatRect& initialClip, bool
     if (UNLIKELY(trackReplayList))
         replayList = makeUnique<DisplayList>();
 
-    size_t numItems = m_displayList.itemCount();
-    for (size_t i = 0; i < numItems; ++i) {
-        auto& item = m_displayList.list()[i].get();
+    auto& items = m_displayList.list();
+    for (size_t i = 0; i < items.size(); ++i) {
+        auto& item = items[i].get();
 
         if (!initialClip.isZero() && is<DrawingItem>(item)) {
             const DrawingItem& drawingItem = downcast<DrawingItem>(item);

@@ -60,7 +60,7 @@ public:
 
     WEBCORE_EXPORT void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat);
 
-    size_t itemCount() const { return m_displayList.itemCount(); }
+    bool isEmpty() const { return m_displayList.isEmpty(); }
 
     class Delegate {
     public:

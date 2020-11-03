@@ -71,7 +71,7 @@ public:
 
     void flushDrawingContext() override
     {
-        if (m_drawingContext.displayList().itemCount())
+        if (!m_drawingContext.displayList().isEmpty())
             m_drawingContext.replayDisplayList(BaseConcreteImageBuffer::context());
     }
 

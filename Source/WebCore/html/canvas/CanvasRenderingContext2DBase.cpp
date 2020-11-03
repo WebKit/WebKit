@@ -2021,7 +2021,7 @@ void CanvasRenderingContext2DBase::paintRenderingResultsToCanvas()
     ASSERT(m_usesDisplayListDrawing);
 
     auto& displayList = m_recordingContext->displayList();
-    if (displayList.itemCount()) {
+    if (!displayList.isEmpty()) {
         DisplayList::Replayer replayer(*canvasBase().drawingContext(), displayList);
         replayer.replay({ FloatPoint::zero(), canvasBase().size() });
         displayList.clear();

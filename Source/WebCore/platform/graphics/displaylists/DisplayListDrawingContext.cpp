@@ -55,7 +55,7 @@ Recorder& DrawingContext::recorder()
 
 void DrawingContext::replayDisplayList(GraphicsContext& destContext)
 {
-    if (!m_displayList.itemCount())
+    if (m_displayList.isEmpty())
         return;
 
     Replayer replayer(destContext, m_displayList);

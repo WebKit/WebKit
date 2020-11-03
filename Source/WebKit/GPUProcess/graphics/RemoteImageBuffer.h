@@ -64,7 +64,7 @@ public:
 private:
     void flushDisplayList(const WebCore::DisplayList::DisplayList& displayList) override
     {
-        if (displayList.itemCount()) {
+        if (!displayList.isEmpty()) {
             WebCore::DisplayList::Replayer replayer(BaseConcreteImageBuffer::context(), displayList, this);
             replayer.replay();
         }
