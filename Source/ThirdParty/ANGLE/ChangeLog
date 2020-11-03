@@ -1,3 +1,25 @@
+2020-11-03  David Kilzer  <ddkilzer@apple.com>
+
+        Stop building ANGLE source files twice
+        <https://webkit.org/b/218469>
+
+        Reviewed by Dean Jackson.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        (ANGLE (dynamic)):
+        - Replace sources with empty.cpp. Xcode requires a single source
+          file to be compiled to create a dylib, even if the static
+          library contains all necessary symbols.
+        - Add dependency on "ANGLE (static)" target.
+        * Configurations/ANGLE-dynamic.xcconfig:
+        (ANGLE_OTHER_LDFLAGS):
+        - Add $(ANGLE_STATIC_LIB_OTHER_LDFLAGS).
+        (ANGLE_STATIC_LIB_OTHER_LDFLAGS): Add.
+        - Special linker command-line switch to load all symbols from
+          libANGLE.a when linking libANGLE-shared.dylib.
+        * src/empty.cpp: Add.
+        - See above why this is needed by Xcode.
+
 2020-10-12  Dean Jackson  <dino@apple.com>
 
         Add schemes for ANGLE to Xcode project

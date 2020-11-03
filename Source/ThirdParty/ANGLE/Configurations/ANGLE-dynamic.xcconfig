@@ -4,7 +4,7 @@
 PRODUCT_NAME = ANGLE-shared;
 EXECUTABLE_PREFIX = lib;
 
-ANGLE_OTHER_LDFLAGS = -allowable_client WebCore -allowable_client WebCoreTestSupport -framework QuartzCore -framework CoreGraphics -framework Foundation -framework IOSurface $(ANGLE_OTHER_LDFLAGS_$(WK_PLATFORM_NAME));
+ANGLE_OTHER_LDFLAGS = -allowable_client WebCore -allowable_client WebCoreTestSupport -framework QuartzCore -framework CoreGraphics -framework Foundation -framework IOSurface $(ANGLE_OTHER_LDFLAGS_$(WK_PLATFORM_NAME)) $(ANGLE_STATIC_LIB_OTHER_LDFLAGS);
 ANGLE_OTHER_LDFLAGS_iphoneos = -lz;
 ANGLE_OTHER_LDFLAGS_iphonesimulator = $(ANGLE_OTHER_LDFLAGS_iphoneos);
 ANGLE_OTHER_LDFLAGS_watchos = $(ANGLE_OTHER_LDFLAGS_iphoneos);
@@ -13,6 +13,8 @@ ANGLE_OTHER_LDFLAGS_appletvos = $(ANGLE_OTHER_LDFLAGS_iphoneos);
 ANGLE_OTHER_LDFLAGS_appletvsimulator = $(ANGLE_OTHER_LDFLAGS_iphonesimulator);
 ANGLE_OTHER_LDFLAGS_maccatalyst = -framework IOKit -lz;
 ANGLE_OTHER_LDFLAGS_macosx = -framework IOKit -lz;
+
+ANGLE_STATIC_LIB_OTHER_LDFLAGS = -Wl,-force_load,"$(BUILT_PRODUCTS_DIR)/libANGLE.a";
 
 INSTALL_PATH = $(NORMAL_WEBCORE_FRAMEWORKS_DIR)/WebCore.framework/Frameworks;
 INSTALL_PATH[sdk=macosx*] = $(INSTALL_PATH_USE_ALTERNATE_FRAMEWORKS_DIR_$(WK_USE_ALTERNATE_FRAMEWORKS_DIR));
