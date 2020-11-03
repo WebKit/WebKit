@@ -1,3 +1,16 @@
+2020-11-03  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo/PlayStation] ICU 68.1 no longer exposes FALSE and TRUE macros by default
+        https://bugs.webkit.org/show_bug.cgi?id=218522
+
+        Reviewed by Don Olmstead.
+
+        Replace uses of FALSE and TRUE with false and true.
+
+        * wtf/text/icu/UTextProvider.h:
+        * wtf/text/icu/UTextProviderLatin1.cpp:
+        * wtf/text/icu/UTextProviderUTF16.cpp:
+
 2020-10-30  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r267689): Rise of the Tomb Raider gets stuck while launching
