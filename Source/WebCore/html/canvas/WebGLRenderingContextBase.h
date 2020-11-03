@@ -96,6 +96,7 @@ class WebGLCompressedTextureETC;
 class WebGLCompressedTextureETC1;
 class WebGLCompressedTexturePVRTC;
 class WebGLCompressedTextureS3TC;
+class WebGLCompressedTextureS3TCsRGB;
 class WebGLContextGroup;
 class WebGLContextObject;
 class WebGLDebugRendererInfo;
@@ -436,6 +437,7 @@ protected:
     friend class WebGLCompressedTextureETC1;
     friend class WebGLCompressedTexturePVRTC;
     friend class WebGLCompressedTextureS3TC;
+    friend class WebGLCompressedTextureS3TCsRGB;
     friend class WebGLRenderingContextErrorMessageCallback;
     friend class WebGLVertexArrayObjectOES;
     friend class WebGLVertexArrayObject;
@@ -683,6 +685,7 @@ protected:
     RefPtr<WebGLCompressedTextureETC1> m_webglCompressedTextureETC1;
     RefPtr<WebGLCompressedTexturePVRTC> m_webglCompressedTexturePVRTC;
     RefPtr<WebGLCompressedTextureS3TC> m_webglCompressedTextureS3TC;
+    RefPtr<WebGLCompressedTextureS3TCsRGB> m_webglCompressedTextureS3TCsRGB;
     RefPtr<WebGLDepthTexture> m_webglDepthTexture;
     RefPtr<WebGLDrawBuffers> m_webglDrawBuffers;
     RefPtr<ANGLEInstancedArrays> m_angleInstancedArrays;

@@ -52,6 +52,7 @@ public:
         WebGLDebugRendererInfoName,
         WebGLDebugShadersName,
         WebGLCompressedTextureS3TCName,
+        WebGLCompressedTextureS3TCsRGBName,
         WebGLDepthTextureName,
         WebGLDrawBuffersName,
         OESElementIndexUintName,
