@@ -146,6 +146,10 @@ public:
     auto inlineLevelBoxList() const { return m_inlineLevelBoxRectMap.values(); }
     bool containsInlineLevelBox(const Box& layoutBox) const { return m_inlineLevelBoxRectMap.contains(&layoutBox); }
 
+    const InlineLevelBox& rootInlineBox() const { return *m_rootInlineBox; }
+    using InlineLevelBoxList = Vector<std::unique_ptr<InlineLevelBox>>;
+    const InlineLevelBoxList& nonRootInlineLevelBoxes() const { return m_nonRootInlineLevelBoxList; }
+
     InlineLayoutUnit alignmentBaseline() const { return m_rootInlineBox->logicalTop() + m_rootInlineBox->baseline(); }
 
 private:
@@ -158,8 +162,6 @@ private:
     void addInlineLevelBox(std::unique_ptr<InlineLevelBox>&&);
 
     InlineLevelBox& rootInlineBox() { return *m_rootInlineBox; }
-    using InlineLevelBoxList = Vector<std::unique_ptr<InlineLevelBox>>;
-    const InlineLevelBoxList& nonRootInlineLevelBoxes() const { return m_nonRootInlineLevelBoxList; }
 
     InlineLevelBox& inlineLevelBoxForLayoutBox(const Box& layoutBox) { return *m_inlineLevelBoxRectMap.get(&layoutBox); }
 

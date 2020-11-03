@@ -400,29 +400,33 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
         addSpacing();
         stream << "  Inline level boxes:";
         stream.nextLine();
+
         auto& lineBox = lineBoxes[lineIndex];
-        for (auto& inlineLevelBox : lineBox.inlineLevelBoxList()) {
+        auto outputInlineLevelBox = [&](const auto& inlineLevelBox) {
             addSpacing();
             stream << "    ";
-            if (inlineLevelBox->isRootInlineBox())
+            if (inlineLevelBox.isRootInlineBox())
                 stream << "Root inline box";
-            else if (inlineLevelBox->isAtomicInlineLevelBox())
+            else if (inlineLevelBox.isAtomicInlineLevelBox())
                 stream << "Atomic inline level box";
-            else if (inlineLevelBox->isLineBreakBox())
+            else if (inlineLevelBox.isLineBreakBox())
                 stream << "Line break box";
-            else if (inlineLevelBox->isInlineBox())
+            else if (inlineLevelBox.isInlineBox())
                 stream << "Generic inline box";
             else
                 stream << "Generic inline level box";
-            auto logicalRect = lineBox.logicalRectForInlineLevelBox(inlineLevelBox->layoutBox());
+            auto logicalRect = lineBox.logicalRectForInlineLevelBox(inlineLevelBox.layoutBox());
             stream
                 << " at (" << logicalRect.left() << "," << logicalRect.top() << ")"
                 << " size (" << logicalRect.width() << "x" << logicalRect.height() << ")"
-                << " baseline (" << logicalRect.top() + inlineLevelBox->baseline() << ")"
-                << " ascent (" << inlineLevelBox->baseline() << "/" << inlineLevelBox->layoutBounds().ascent << ")"
-                << " descent (" << inlineLevelBox->descent().valueOr(0.0f) << "/" << inlineLevelBox->layoutBounds().descent << ")";
+                << " baseline (" << logicalRect.top() + inlineLevelBox.baseline() << ")"
+                << " ascent (" << inlineLevelBox.baseline() << "/" << inlineLevelBox.layoutBounds().ascent << ")"
+                << " descent (" << inlineLevelBox.descent().valueOr(0.0f) << "/" << inlineLevelBox.layoutBounds().descent << ")";
             stream.nextLine();
-        }
+        };
+        outputInlineLevelBox(lineBox.rootInlineBox());
+        for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes())
+            outputInlineLevelBox(*inlineLevelBox);
 
         addSpacing();
         stream << "  Runs:";
