@@ -1,5 +1,14 @@
 2020-11-03  Youenn Fablet  <youenn@apple.com>
 
+        Update WebRTC libyuv to M87
+        https://bugs.webkit.org/show_bug.cgi?id=218434
+
+        Reviewed by Eric Carlson.
+
+        * Source/third_party/usrsctp: Resynced.
+
+2020-11-03  Youenn Fablet  <youenn@apple.com>
+
         Update WebRTC abseil to M87
         https://bugs.webkit.org/show_bug.cgi?id=218432
 
