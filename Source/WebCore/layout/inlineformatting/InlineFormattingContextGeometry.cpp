@@ -156,8 +156,8 @@ LineBox LineBoxBuilder::build(const LineBuilder::LineContent& lineContent)
     auto& runs = lineContent.runs;
     auto lineLogicalWidth = lineContent.lineLogicalWidth;
     auto contentLogicalWidth = lineContent.lineContentLogicalWidth;
-    auto isLineVisuallyEmpty = lineContent.isLineVisuallyEmpty ? LineBox::IsLineVisuallyEmpty::Yes : LineBox::IsLineVisuallyEmpty::No;
-    auto lineBox = LineBox { contentLogicalWidth, isLineVisuallyEmpty };
+    auto isLineConsideredEmpty = lineContent.isLineConsideredEmpty ? LineBox::IsLineConsideredEmpty::Yes : LineBox::IsLineConsideredEmpty::No;
+    auto lineBox = LineBox { contentLogicalWidth, isLineConsideredEmpty };
 
     if (auto horizontalAlignmentOffset = Layout::horizontalAlignmentOffset(runs, rootBox().style().textAlign(), lineLogicalWidth, contentLogicalWidth, lineContent.isLastLineWithInlineContent))
         lineBox.setHorizontalAlignmentOffset(*horizontalAlignmentOffset);
@@ -208,7 +208,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         auto rootInlineBox = LineBox::InlineLevelBox::createRootInlineBox(rootBox(), horizontalAligmentOffset, lineBox.logicalWidth());
 
         auto lineHasImaginaryStrut = layoutState().inNoQuirksMode();
-        auto isInitiallyConsideredNonEmpty = !lineBox.isLineVisuallyEmpty() && lineHasImaginaryStrut;
+        auto isInitiallyConsideredNonEmpty = !lineBox.isConsideredEmpty() && lineHasImaginaryStrut;
         if (isInitiallyConsideredNonEmpty)
             rootInlineBox->setIsNonEmpty();
         setVerticalGeometryForInlineBox(*rootInlineBox);

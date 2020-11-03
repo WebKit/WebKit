@@ -50,7 +50,7 @@ bool InlineFormattingContext::Quirks::shouldInlineLevelBoxStretchLineBox(const L
         return true;
     // <br> in non-standard mode stretches the line box only when the line is empty.
     // e.g. <div><span><br></span></div> will stretch but <div>this will not stretch to 200px<span style="font-size: 200px;"><br></span></div>
-    return lineBox.isLineVisuallyEmpty();
+    return lineBox.isConsideredEmpty();
 }
 
 bool InlineFormattingContext::Quirks::hasSoftWrapOpportunityAtImage() const

@@ -60,7 +60,7 @@ public:
         InlineLayoutPoint logicalTopLeft;
         InlineLayoutUnit lineLogicalWidth;
         InlineLayoutUnit lineContentLogicalWidth;
-        bool isLineVisuallyEmpty { true };
+        bool isLineConsideredEmpty { true };
         bool isLastLineWithInlineContent { true };
         const Line::RunList& runs;
     };

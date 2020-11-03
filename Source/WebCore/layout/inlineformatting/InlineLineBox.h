@@ -128,15 +128,15 @@ public:
         Type m_type { Type::InlineBox };
     };
 
-    enum class IsLineVisuallyEmpty { No, Yes };
-    LineBox(InlineLayoutUnit logicalWidth, IsLineVisuallyEmpty);
+    enum class IsLineConsideredEmpty { No, Yes };
+    LineBox(InlineLayoutUnit logicalWidth, IsLineConsideredEmpty);
 
     InlineLayoutUnit logicalWidth() const { return m_logicalSize.width(); }
     InlineLayoutUnit logicalHeight() const { return m_logicalSize.height(); }
     InlineLayoutSize logicalSize() const { return m_logicalSize; }
 
     Optional<InlineLayoutUnit> horizontalAlignmentOffset() const { return m_horizontalAlignmentOffset; }
-    bool isLineVisuallyEmpty() const { return m_isLineVisuallyEmpty; }
+    bool isConsideredEmpty() const { return m_isConsideredEmpty; }
 
     const InlineLevelBox& inlineLevelBoxForLayoutBox(const Box& layoutBox) const { return *m_inlineLevelBoxRectMap.get(&layoutBox); }
 
@@ -168,7 +168,7 @@ private:
 private:
     InlineLayoutSize m_logicalSize;
     Optional<InlineLayoutUnit> m_horizontalAlignmentOffset;
-    bool m_isLineVisuallyEmpty { true };
+    bool m_isConsideredEmpty { true };
 
     std::unique_ptr<InlineLevelBox> m_rootInlineBox;
     InlineLevelBoxList m_nonRootInlineLevelBoxList;

@@ -276,7 +276,7 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
         , lineLogicalTopLeft
         , m_line.horizontalConstraint()
         , m_line.contentLogicalWidth()
-        , m_line.isVisuallyEmpty()
+        , m_line.isConsideredEmpty()
         , isLastLine
         , m_line.runs()};
 }
@@ -360,7 +360,7 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
     if (runsExpandHorizontally)
         m_line.applyRunExpansion();
     auto lineEndsWithHyphen = false;
-    if (!m_line.isVisuallyEmpty()) {
+    if (!m_line.isConsideredEmpty()) {
         ASSERT(!m_line.runs().isEmpty());
         auto& lastTextContent = m_line.runs().last().textContent();
         lineEndsWithHyphen = lastTextContent && lastTextContent->needsHyphen();
@@ -597,7 +597,7 @@ LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(InlineContentBreak
     auto& floatContent = lineCandidate.floatContent;
     // Check if this new content fits.
     auto availableWidth = m_line.availableWidth() - floatContent.intrusiveWidth();
-    auto isLineConsideredEmpty = m_line.isVisuallyEmpty() && !m_contentIsConstrainedByFloat;
+    auto isLineConsideredEmpty = m_line.isConsideredEmpty() && !m_contentIsConstrainedByFloat;
     auto lineStatus = InlineContentBreaker::LineStatus { availableWidth, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), isLineConsideredEmpty };
     auto result = inlineContentBreaker.processInlineContent(continuousInlineContent, lineStatus);
     if (result.lastWrapOpportunityItem)
