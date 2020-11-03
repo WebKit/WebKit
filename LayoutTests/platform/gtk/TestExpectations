@@ -52,6 +52,9 @@ webkit.org/b/216161 imported/w3c/web-platform-tests/css/css-pseudo/text-selectio
 # GStreamer - GTK-Only. Most GStreamer issues probably will go in the glib expectations
 webkit.org/b/210528 media/video-supports-fullscreen.html [ Crash Pass ]
 
+# Layout
+webkit.org/b/218510 fast/dom/Range/getBoundingClientRect.html [ Failure ]
+
 # Media - GTK-X11 flaky crash
 webkit.org/b/215499 [ Release ] media/video-load-networkState.html [ Crash Pass ]
 

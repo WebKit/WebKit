@@ -1,3 +1,11 @@
+2020-11-03  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Gardening fast/dom/Range/getBoundingClientRect.html failure
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-11-02  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed test gardening. Update test expectations.
