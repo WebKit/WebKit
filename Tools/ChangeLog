@@ -1,3 +1,248 @@
+2020-11-03  Adam Roben  <aroben@apple.com>
+
+        Add SwiftUI MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=218393
+
+        Rubber-stamped by Tim Horton.
+
+        Using WKWebView in SwiftUI is pretty cumbersome today. At a minimum,
+        you need to wrap the WKWebView in a NS/UIViewRepresentable SwiftUI
+        view, but to react to any state changes in the WKWebView (e.g.,
+        -canGoBack changing from NO to YES) you need to bridge between
+        WKWebView's KVO and SwiftUI's use of Combine publishers or
+        ObservableObjects. Setting up WKWebView's various delegates has to
+        happen down inside the NS/UIViewRepresentable's Coordinator object.
+        And so on.
+
+        There have been some attempts at this in the past, e.g.:
+
+        https://medium.com/macoclock/how-to-use-webkit-webview-in-swiftui-4b944d04190a
+        https://medium.com/@mdyamin/swiftui-mastering-webview-5790e686833e
+        https://github.com/kylehickinson/SwiftUI-WebView
+
+        Someday it would be nice to provide an idiomatic SwiftUI API for
+        WebKit out of the box, like the new VideoPlayer API that wraps
+        AVPlayer.
+
+        This change provides a SwiftUI MiniBrowser implementation as well as a
+        very preliminary SwiftUI wrapper for WKWebView, originally authored by
+        James Savage. This only exposes a subset of the WKWebView API, and is
+        definitely not production ready yet, but will give us a place to
+        experiment with ways to make WebKit and SwiftUI work together better.
+
+        Here's James's description of the API:
+
+        > The initial version of this API is composed of two primary
+        > components: `WebView` and `WebViewState`. `WebView` conforms to
+        > `View`, and its usage is straight-forward. `WebViewState` is novel,
+        > and may not survive to the final API. It exists as a read-write
+        > handle on the rather large amount of state that a web view offers.
+        > This includes read-only access to properties about the current
+        > page (`title`, `url`, `hasOnlySecureContent`), navigations
+        > (`estimatedProgress`, `isLoading`), and back/forward history
+        > (`canGoBack`, `canGoForward`). It also offers imperative methods
+        > for navigation which map 1:1 with our existing Objective-C API.
+        >
+        > struct BrowserView : View {
+        >     @StateObject var state = WebViewState(initialURL: URL(string: "https://apple.com")!)
+        >     var body: some View {
+        >         HStack {
+        >             Text(verbatim: state.title ?? "Nothing Loaded")
+        >             Text(verbatim: state.url ?? "--")
+        >             WebView(state: state)
+        >         }
+        >     }
+        > }
+        >
+        > JavaScript dialogs are supported with both built-in behavior for all
+        > clients, and a customization point if desired. Clients can pass a
+        > `Binding<Dialog?>` to their `WebView` to disable the built-in
+        > display, and provide custom handling.
+        >
+        > Navigation policies can be customized using
+        > `webViewNavigationPolicy(onAction:onResponse:)` to provide custom
+        > decider for the action and response phases. These propagate via the
+        > environment, allowing them to be defined at an app, window, or
+        > individual view level.
+        >
+        > Future Directions
+        >
+        > To make `WebView` as declarative as possible, we're investigating
+        > how to make broader use of `Binding` for navigation. As a simple
+        > example, you could imagine if the `WebView`'s initializer took a
+        > `Binding<URL?>` for the current page. However, this design alone is
+        > too simplistic to model all states that the web view could be, so we
+        > will likely need to introduce a more complex type for the binding.
+        >
+        > Currently navigation policies are attached via `View` modifiers.
+        > This has the benefit that they can be installed at the root of an
+        > application, which is useful for a web browser where all tabs want
+        > to have uniform policies. Given the number of customization points
+        > in existing `WKWebView` delegates, this may fail to scale and lead
+        > to undesirable ergonomics. Another approach would to be just use a
+        > delegate protocol (a la DropDelegate:
+        > https://developer.apple.com/documentation/swiftui/dropdelegate).
+        >
+        > As a practical matter, we want to minimize the amount of work that
+        > adding new functionality to WebKit API incurs for engineers. While
+        > we could redefine every Objective-C type for SwiftUI, but this could
+        > lead to SwiftUI falling behind as our Objective-C API gets updated.
+        > We could use tools like `@dynamicMemberLookup` to automatically pull
+        > our Objective-C APIs over to Swift, however this could have
+        > undesirable impact our our ABI. There may be a better compromise we
+        > haven’t yet reached.
+
+        * MiniBrowserSwiftUI/Configurations/Base.xcconfig:
+        * MiniBrowserSwiftUI/Configurations/Debug.xcconfig:
+        * MiniBrowserSwiftUI/Configurations/MiniBrowserSwiftUI.xcconfig:
+        * MiniBrowserSwiftUI/Configurations/Release.xcconfig:
+        * MiniBrowserSwiftUI/Configurations/WebKit_SwiftUI.xcconfig:
+        * MiniBrowserSwiftUI/MiniBrowserSwiftUI.xcodeproj/project.pbxproj:
+        * MiniBrowserSwiftUI/MiniBrowserSwiftUI.xcodeproj/xcshareddata/xcschemes/MiniBrowserSwiftUI.xcscheme:
+        * MiniBrowserSwiftUI/MiniBrowserSwiftUI.xcodeproj/xcshareddata/xcschemes/_WebKit_SwiftUI.xcscheme:
+        Added the new project and its configuration. The project was generated
+        from Xcode's "Multiplatform App" template. There are two targets: the
+        MiniBrowserSwiftUI app, and the _WebKit_SwiftUI framework. Both are
+        cross-platform. The build settings were extracted out of the .pbxproj
+        into the .xcconfig files.
+
+        * MiniBrowserSwiftUI/Shared/Assets.xcassets/AccentColor.colorset/Contents.json:
+        * MiniBrowserSwiftUI/Shared/Assets.xcassets/AppIcon.appiconset/Contents.json:
+        * MiniBrowserSwiftUI/Shared/Assets.xcassets/Contents.json:
+        * MiniBrowserSwiftUI/Shared/Assets.xcassets/URLFieldBackground.colorset/Contents.json:
+        Defines a couple of colors and an empty icon for the app.
+
+        * MiniBrowserSwiftUI/iOS/Info.plist:
+        * MiniBrowserSwiftUI/macOS/Info.plist:
+        * MiniBrowserSwiftUI/macOS/macOS.entitlements:
+        * MiniBrowserSwiftUI/WebKit_SwiftUI/WebKit_SwiftUI-Info.plist: Added.
+        Added these files generated by Xcode. The only change was adding
+        com.apple.security.network.client to the entitlements so the browser
+        can connect to servers.
+
+        * MiniBrowserSwiftUI/Shared/BrowserApp.swift: Added. This is the entry
+        point of the app, and just sets up a BrowserScene.
+
+        * MiniBrowserSwiftUI/Shared/BrowserScene.swift: Added. This sets up
+        the browser's windows, each of which just contain a single BrowserTab.
+        On iOS we wrap the BrowserTab in a NavigationView so there will be
+        somewhere to show our toolbar buttons.
+
+        * MiniBrowserSwiftUI/Shared/BrowserTab.swift: Added. This is the heart
+        of the browser.
+        (BrowserTab.body): Sets up the WebView itself plus some toolbar items:
+        the back/forward buttons and URL field.
+        (BrowserTab.onNavigate(to:)): Callback called when the user presses
+        Return in the URL field.
+        (BrowserTab.decidePolicy(for:state:)): Callback called when the
+        WebView is about to navigate, similar to WKNavigationDelegate's
+        -webView:decidePolicyForNavigationAction:decisionHandler:.
+        (BrowserTab.makeExternalNavigationAlert(_:)): Displays an alert to let
+        the user decide whether to follow a URL that will open in some other
+        application.
+        (UserInput): Represents text typed in the URL field after determining
+        whether it is a URL or a search query.
+        (ExternalURLNavigation): Provides the data for the external navigation
+        alert.
+        (BrowserTab_Previews): Shows a canned BrowserTab in Xcode's preview
+        canvas.
+
+        * MiniBrowserSwiftUI/Shared/FoundationExtras.swift: Added. Provides a
+        few utility functions for URLs.
+
+        * MiniBrowserSwiftUI/Shared/URLField.swift: Added.
+        (URLField): The SwiftUI view you use directly. It contains a leading
+        glyph (e.g., a lock icon when viewing a secure page), a text field,
+        a trailing accessory view provided by the caller, and a progress bar.
+        It also supports callbacks to notify the caller when the text field
+        gains/loses focus and when the user has committed the text in the
+        field (e.g., by pressing Return).
+        (Background): The background view for the URLField, which defines both
+        the rounded rectangle shape for the field and the progress bar.
+        (URLField_Previews): Shows some canned URLFields in Xcode's preview
+        canvas.
+
+        * MiniBrowserSwiftUI/WebKit_SwiftUI/Dialog.swift: Added.
+        (Dialog): Represents a single JavaScript dialog (alert, confirm, or
+        prompt).
+        (DialogContainer): Provides the default UI shared by all JavaScript
+        dialog types.
+
+        * MiniBrowserSwiftUI/WebKit_SwiftUI/JavaScriptDialogs.swift: Added.
+        (JavaScriptAlert): Default UI for a JavaScript alert dialog.
+        (JavaScriptConfirm): Default UI for a JavaScript confirm dialog.
+        (JavaScriptPrompt): Default UI for a JavaScript prompt dialog.
+
+        * MiniBrowserSwiftUI/WebKit_SwiftUI/Navigation.swift: Added.
+        (View.webViewNavigationPolicy(onAction:)):
+        (View.webViewNavigationPolicy(onResponse:)):
+        (View.webViewNavigationPolicy(onAction:onResponse:)):
+        These let the application specify navigation policy logic for any
+        descendant WebViews in the view hierarchy, using SwiftUI's Environment
+        facility.
+        (NavigationAction): Idiomatic SwiftUI wrapper around
+        WKNavigationAction and its decision handler callback.
+        (NavigationResponse): Idiomatic SwiftUI wrapper around
+        WKNavigationResponse and its decision handler callback.
+
+        * MiniBrowserSwiftUI/WebKit_SwiftUI/SwiftUIExtras.swift: Added.
+        (Color.platformSeparator):
+        (Color.platformBackground):
+        Cross-platform wrappers around platform-specific colors.
+
+        * MiniBrowserSwiftUI/WebKit_SwiftUI/WebView.swift: Added.
+        (WebView): The heart of the SwiftUI API. You provide it a WebViewState
+        struct to represent and control its state (similar to AVFoundation's
+        VideoPlayer view controlled by AVPlayer). You can optionally provide a
+        Binding to be notified of the current JavaScript dialog that the web
+        content wishes to display. If you don't provide this binding, WebView
+        will present the dialog using default UI.
+        (WebView.dialogView): Configures the default dialog UI if the caller
+        doesn't want to handle dialogs on its own.
+        (_WebView): Internal view that bridges SwiftUI to WKWebView.
+        (Coordinator): Internal class that functions as the WKWebView's
+        WKNavigationDelegate and WKUIDelegate.
+        (Coordinator.webView(_:decidePolicyFor:preferences:decisionHandler:)):
+        Looks for a navigation decider in the view's environment and delegates
+        to it if found, otherwise allows all navigations.
+
+        (Coordinator.webView(_:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:)):
+        (Coordinator.webView(_:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:)):
+        (Coordinator.webView(_:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:)):
+        Passes the dialog information up to the WebView, which then decides
+        whether to present default UI itself or let the caller handle it.
+
+        * MiniBrowserSwiftUI/WebKit_SwiftUI/WebViewModifiers.swift: Added.
+        (View.webViewAllowsBackForwardNavigationGestures(_:)): Specifies
+        whether WebViews below this point in the view hierarchy should support
+        swipe gestures to navigate back/forward.
+
+        * MiniBrowserSwiftUI/WebKit_SwiftUI/WebViewState.swift: Added.
+        (WebViewState): Represents the state and actions of a WebView.
+        Conforms to ObservableObject so SwiftUI views can react to changes in
+        the WebViewState.
+        (WebViewState.webView(_:didChangeKeyPath:)): Detects when the
+        WKWebView's state has changed via KVO and reflects those through the
+        ObservableObject.objectWillChange mechanism so SwiftUI views will be
+        updated.
+
+        (WebViewState.canGoBack):
+        (WebViewState.canGoForward):
+        (WebViewState.title):
+        (WebViewState.url):
+        (WebViewState.isLoading):
+        (WebViewState.estimatedProgress):
+        (WebViewState.hasOnlySecureContent):
+        Wrappers around WKWebView properties.
+
+        (WebViewState.load(_:)):
+        (WebViewState.goBack):
+        (WebViewState.goForward):
+        (WebViewState.reload):
+        (WebViewState.stopLoading):
+        (WebViewState.createPDF(configuration:completion:)):
+        Wrappers around WKWebView methods.
+
 2020-11-03  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         WebKitTestRunner --show-webview doesn't work since r268238
