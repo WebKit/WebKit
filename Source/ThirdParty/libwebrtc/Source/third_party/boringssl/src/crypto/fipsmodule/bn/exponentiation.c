@@ -732,7 +732,7 @@ void bn_mod_exp_mont_small(BN_ULONG *r, const BN_ULONG *a, size_t num,
     num_p--;
   }
   if (num_p == 0) {
-    bn_from_montgomery_small(r, mont->RR.d, num, mont);
+    bn_from_montgomery_small(r, num, mont->RR.d, num, mont);
     return;
   }
   unsigned bits = BN_num_bits_word(p[num_p - 1]) + (num_p - 1) * BN_BITS2;
@@ -809,8 +809,8 @@ void bn_mod_exp_mont_small(BN_ULONG *r, const BN_ULONG *a, size_t num,
   OPENSSL_cleanse(val, sizeof(val));
 }
 
-void bn_mod_inverse_prime_mont_small(BN_ULONG *r, const BN_ULONG *a, size_t num,
-                                     const BN_MONT_CTX *mont) {
+void bn_mod_inverse0_prime_mont_small(BN_ULONG *r, const BN_ULONG *a,
+                                      size_t num, const BN_MONT_CTX *mont) {
   if (num != (size_t)mont->N.width || num > BN_SMALL_MAX_WORDS) {
     abort();
   }

@@ -123,7 +123,9 @@ static uint64_t OPENSSL_xgetbv(uint32_t xcr) {
 // and |out[1]|. See the comment in |OPENSSL_cpuid_setup| about this.
 static void handle_cpu_env(uint32_t *out, const char *in) {
   const int invert = in[0] == '~';
-  const int hex = in[invert] == '0' && in[invert+1] == 'x';
+  const int or = in[0] == '|';
+  const int skip_first_byte = invert || or;
+  const int hex = in[skip_first_byte] == '0' && in[skip_first_byte+1] == 'x';
 
   int sscanf_result;
   uint64_t v;
@@ -140,6 +142,9 @@ static void handle_cpu_env(uint32_t *out, const char *in) {
   if (invert) {
     out[0] &= ~v;
     out[1] &= ~(v >> 32);
+  } else if (or) {
+    out[0] |= v;
+    out[1] |= (v >> 32);
   } else {
     out[0] = v;
     out[1] = v >> 32;
@@ -264,10 +269,14 @@ void OPENSSL_cpuid_setup(void) {
 
   // OPENSSL_ia32cap can contain zero, one or two values, separated with a ':'.
   // Each value is a 64-bit, unsigned value which may start with "0x" to
-  // indicate a hex value. Prior to the 64-bit value, a '~' may be given.
+  // indicate a hex value. Prior to the 64-bit value, a '~' or '|' may be given.
   //
-  // If '~' isn't present, then the value is taken as the result of the CPUID.
-  // Otherwise the value is inverted and ANDed with the probed CPUID result.
+  // If the '~' prefix is present:
+  //   the value is inverted and ANDed with the probed CPUID result
+  // If the '|' prefix is present:
+  //   the value is ORed with the probed CPUID result
+  // Otherwise:
+  //   the value is taken as the result of the CPUID
   //
   // The first value determines OPENSSL_ia32cap_P[0] and [1]. The second [2]
   // and [3].

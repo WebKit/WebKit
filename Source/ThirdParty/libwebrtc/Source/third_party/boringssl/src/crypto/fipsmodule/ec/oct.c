@@ -73,18 +73,12 @@
 #include "internal.h"
 
 
-static size_t ec_GFp_simple_point2oct(const EC_GROUP *group,
-                                      const EC_RAW_POINT *point,
-                                      point_conversion_form_t form,
-                                      uint8_t *buf, size_t len) {
+size_t ec_point_to_bytes(const EC_GROUP *group, const EC_AFFINE *point,
+                         point_conversion_form_t form, uint8_t *buf,
+                         size_t len) {
   if (form != POINT_CONVERSION_COMPRESSED &&
       form != POINT_CONVERSION_UNCOMPRESSED) {
     OPENSSL_PUT_ERROR(EC, EC_R_INVALID_FORM);
-    return 0;
-  }
-
-  if (ec_GFp_simple_is_at_infinity(group, point)) {
-    OPENSSL_PUT_ERROR(EC, EC_R_POINT_AT_INFINITY);
     return 0;
   }
 
@@ -102,79 +96,89 @@ static size_t ec_GFp_simple_point2oct(const EC_GROUP *group,
       return 0;
     }
 
-    uint8_t y_buf[EC_MAX_BYTES];
     size_t field_len_out;
-    if (!ec_point_get_affine_coordinate_bytes(
-            group, buf + 1 /* x */,
-            form == POINT_CONVERSION_COMPRESSED ? y_buf : buf + 1 + field_len,
-            &field_len_out, field_len, point)) {
-      return 0;
-    }
+    ec_felem_to_bytes(group, buf + 1, &field_len_out, &point->X);
+    assert(field_len_out == field_len);
 
-    if (field_len_out != field_len) {
-      OPENSSL_PUT_ERROR(EC, ERR_R_INTERNAL_ERROR);
-      return 0;
-    }
-
-    if (form == POINT_CONVERSION_COMPRESSED) {
-      buf[0] = form + (y_buf[field_len - 1] & 1);
-    } else {
+    if (form == POINT_CONVERSION_UNCOMPRESSED) {
+      ec_felem_to_bytes(group, buf + 1 + field_len, &field_len_out, &point->Y);
+      assert(field_len_out == field_len);
       buf[0] = form;
+    } else {
+      uint8_t y_buf[EC_MAX_BYTES];
+      ec_felem_to_bytes(group, y_buf, &field_len_out, &point->Y);
+      buf[0] = form + (y_buf[field_len_out - 1] & 1);
     }
   }
 
   return output_len;
 }
 
+int ec_point_from_uncompressed(const EC_GROUP *group, EC_AFFINE *out,
+                               const uint8_t *in, size_t len) {
+  const size_t field_len = BN_num_bytes(&group->field);
+  if (len != 1 + 2 * field_len || in[0] != POINT_CONVERSION_UNCOMPRESSED) {
+    OPENSSL_PUT_ERROR(EC, EC_R_INVALID_ENCODING);
+    return 0;
+  }
+
+  EC_FELEM x, y;
+  if (!ec_felem_from_bytes(group, &x, in + 1, field_len) ||
+      !ec_felem_from_bytes(group, &y, in + 1 + field_len, field_len) ||
+      !ec_point_set_affine_coordinates(group, out, &x, &y)) {
+    return 0;
+  }
+
+  return 1;
+}
+
 static int ec_GFp_simple_oct2point(const EC_GROUP *group, EC_POINT *point,
                                    const uint8_t *buf, size_t len,
                                    BN_CTX *ctx) {
-  BN_CTX *new_ctx = NULL;
-  int ret = 0, used_ctx = 0;
-
   if (len == 0) {
     OPENSSL_PUT_ERROR(EC, EC_R_BUFFER_TOO_SMALL);
-    goto err;
+    return 0;
   }
 
   point_conversion_form_t form = buf[0];
-  const int y_bit = form & 1;
-  form = form & ~1U;
-  if ((form != POINT_CONVERSION_COMPRESSED &&
-       form != POINT_CONVERSION_UNCOMPRESSED) ||
-      (form == POINT_CONVERSION_UNCOMPRESSED && y_bit)) {
-    OPENSSL_PUT_ERROR(EC, EC_R_INVALID_ENCODING);
-    goto err;
-  }
-
-  const size_t field_len = BN_num_bytes(&group->field);
-  size_t enc_len = 1 /* type byte */ + field_len;
   if (form == POINT_CONVERSION_UNCOMPRESSED) {
-    // Uncompressed points have a second coordinate.
-    enc_len += field_len;
+    EC_AFFINE affine;
+    if (!ec_point_from_uncompressed(group, &affine, buf, len)) {
+      // In the event of an error, defend against the caller not checking the
+      // return value by setting a known safe value.
+      ec_set_to_safe_point(group, &point->raw);
+      return 0;
+    }
+    ec_affine_to_jacobian(group, &point->raw, &affine);
+    return 1;
   }
 
-  if (len != enc_len) {
+  const int y_bit = form & 1;
+  const size_t field_len = BN_num_bytes(&group->field);
+  form = form & ~1u;
+  if (form != POINT_CONVERSION_COMPRESSED ||
+      len != 1 /* type byte */ + field_len) {
     OPENSSL_PUT_ERROR(EC, EC_R_INVALID_ENCODING);
-    goto err;
+    return 0;
   }
 
+  // TODO(davidben): Integrate compressed coordinates with the lower-level EC
+  // abstractions. This requires a way to compute square roots, which is tricky
+  // for primes which are not 3 (mod 4), namely P-224 and custom curves. P-224's
+  // prime is particularly inconvenient for compressed coordinates. See
+  // https://cr.yp.to/papers/sqroot.pdf
+  BN_CTX *new_ctx = NULL;
   if (ctx == NULL) {
     ctx = new_ctx = BN_CTX_new();
     if (ctx == NULL) {
-      goto err;
+      return 0;
     }
   }
 
+  int ret = 0;
   BN_CTX_start(ctx);
-  used_ctx = 1;
   BIGNUM *x = BN_CTX_get(ctx);
-  BIGNUM *y = BN_CTX_get(ctx);
-  if (x == NULL || y == NULL) {
-    goto err;
-  }
-
-  if (!BN_bin2bn(buf + 1, field_len, x)) {
+  if (x == NULL || !BN_bin2bn(buf + 1, field_len, x)) {
     goto err;
   }
   if (BN_ucmp(x, &group->field) >= 0) {
@@ -182,30 +186,14 @@ static int ec_GFp_simple_oct2point(const EC_GROUP *group, EC_POINT *point,
     goto err;
   }
 
-  if (form == POINT_CONVERSION_COMPRESSED) {
-    if (!EC_POINT_set_compressed_coordinates_GFp(group, point, x, y_bit, ctx)) {
-      goto err;
-    }
-  } else {
-    if (!BN_bin2bn(buf + 1 + field_len, field_len, y)) {
-      goto err;
-    }
-    if (BN_ucmp(y, &group->field) >= 0) {
-      OPENSSL_PUT_ERROR(EC, EC_R_INVALID_ENCODING);
-      goto err;
-    }
-
-    if (!EC_POINT_set_affine_coordinates_GFp(group, point, x, y, ctx)) {
-      goto err;
-    }
+  if (!EC_POINT_set_compressed_coordinates_GFp(group, point, x, y_bit, ctx)) {
+    goto err;
   }
 
   ret = 1;
 
 err:
-  if (used_ctx) {
-    BN_CTX_end(ctx);
-  }
+  BN_CTX_end(ctx);
   BN_CTX_free(new_ctx);
   return ret;
 }
@@ -226,7 +214,11 @@ size_t EC_POINT_point2oct(const EC_GROUP *group, const EC_POINT *point,
     OPENSSL_PUT_ERROR(EC, EC_R_INCOMPATIBLE_OBJECTS);
     return 0;
   }
-  return ec_GFp_simple_point2oct(group, &point->raw, form, buf, len);
+  EC_AFFINE affine;
+  if (!ec_jacobian_to_affine(group, &affine, &point->raw)) {
+    return 0;
+  }
+  return ec_point_to_bytes(group, &affine, form, buf, len);
 }
 
 int EC_POINT_set_compressed_coordinates_GFp(const EC_GROUP *group,

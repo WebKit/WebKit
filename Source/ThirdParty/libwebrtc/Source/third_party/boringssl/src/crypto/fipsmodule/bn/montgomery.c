@@ -455,18 +455,18 @@ void bn_to_montgomery_small(BN_ULONG *r, const BN_ULONG *a, size_t num,
   bn_mod_mul_montgomery_small(r, a, mont->RR.d, num, mont);
 }
 
-void bn_from_montgomery_small(BN_ULONG *r, const BN_ULONG *a, size_t num,
-                              const BN_MONT_CTX *mont) {
-  if (num != (size_t)mont->N.width || num > BN_SMALL_MAX_WORDS) {
+void bn_from_montgomery_small(BN_ULONG *r, size_t num_r, const BN_ULONG *a,
+                              size_t num_a, const BN_MONT_CTX *mont) {
+  if (num_r != (size_t)mont->N.width || num_r > BN_SMALL_MAX_WORDS ||
+      num_a > 2 * num_r) {
     abort();
   }
-  BN_ULONG tmp[BN_SMALL_MAX_WORDS * 2];
-  OPENSSL_memcpy(tmp, a, num * sizeof(BN_ULONG));
-  OPENSSL_memset(tmp + num, 0, num * sizeof(BN_ULONG));
-  if (!bn_from_montgomery_in_place(r, num, tmp, 2 * num, mont)) {
+  BN_ULONG tmp[BN_SMALL_MAX_WORDS * 2] = {0};
+  OPENSSL_memcpy(tmp, a, num_a * sizeof(BN_ULONG));
+  if (!bn_from_montgomery_in_place(r, num_r, tmp, 2 * num_r, mont)) {
     abort();
   }
-  OPENSSL_cleanse(tmp, 2 * num * sizeof(BN_ULONG));
+  OPENSSL_cleanse(tmp, 2 * num_r * sizeof(BN_ULONG));
 }
 
 void bn_mod_mul_montgomery_small(BN_ULONG *r, const BN_ULONG *a,

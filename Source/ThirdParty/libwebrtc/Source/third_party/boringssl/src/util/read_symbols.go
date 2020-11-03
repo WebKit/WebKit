@@ -119,8 +119,8 @@ func main() {
 			// should not be prefixed. It is a limitation of this
 			// symbol-prefixing strategy that we cannot distinguish
 			// our own inline symbols (which should be prefixed)
-			// from the system's (which should not), so we blacklist
-			// known system symbols.
+			// from the system's (which should not), so we skip known
+			// system symbols.
 			"__local_stdio_printf_options",
 			"__local_stdio_scanf_options",
 			"_vscprintf",

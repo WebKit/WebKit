@@ -15,6 +15,7 @@
 #include "internal.h"
 
 #include <chrono>
+#include <vector>
 #include <thread>
 
 #include <gtest/gtest.h>
@@ -128,6 +129,34 @@ TEST(ThreadTest, RandState) {
     RAND_bytes(buf2, sizeof(buf2));
   });
   thread.join();
+}
+
+TEST(ThreadTest, InitThreads) {
+  constexpr size_t kNumThreads = 10;
+
+  // |CRYPTO_library_init| is safe to call across threads.
+  std::vector<std::thread> threads;
+  threads.reserve(kNumThreads);
+  for (size_t i = 0; i < kNumThreads; i++) {
+    threads.emplace_back(&CRYPTO_library_init);
+  }
+  for (auto &thread : threads) {
+    thread.join();
+  }
+}
+
+TEST(ThreadTest, PreSandboxInitThreads) {
+  constexpr size_t kNumThreads = 10;
+
+  // |CRYPTO_pre_sandbox_init| is safe to call across threads.
+  std::vector<std::thread> threads;
+  threads.reserve(kNumThreads);
+  for (size_t i = 0; i < kNumThreads; i++) {
+    threads.emplace_back(&CRYPTO_pre_sandbox_init);
+  }
+  for (auto &thread : threads) {
+    thread.join();
+  }
 }
 
 #endif  // OPENSSL_THREADS

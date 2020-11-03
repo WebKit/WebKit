@@ -48,6 +48,11 @@ int x509v3_name_cmp(const char *name, const char *cmp);
 OPENSSL_EXPORT int x509v3_looks_like_dns_name(const unsigned char *in,
                                               size_t len);
 
+// x509v3_cache_extensions fills in a number of fields relating to X.509
+// extensions in |x|. It returns one on success and zero if some extensions were
+// invalid.
+int x509v3_cache_extensions(X509 *x);
+
 
 #if defined(__cplusplus)
 }  /* extern C */

@@ -60,6 +60,16 @@
 #include <openssl/obj.h>
 #include <openssl/x509.h>
 
+long X509_get_version(const X509 *x509)
+{
+    return ASN1_INTEGER_get(x509->cert_info->version);
+}
+
+X509_CINF *X509_get_cert_info(const X509 *x509)
+{
+    return x509->cert_info;
+}
+
 int X509_set_version(X509 *x, long version)
 {
     if (x == NULL)
@@ -107,7 +117,7 @@ int X509_set_subject_name(X509 *x, X509_NAME *name)
     return (X509_NAME_set(&x->cert_info->subject, name));
 }
 
-int X509_set_notBefore(X509 *x, const ASN1_TIME *tm)
+int X509_set1_notBefore(X509 *x, const ASN1_TIME *tm)
 {
     ASN1_TIME *in;
 
@@ -124,6 +134,11 @@ int X509_set_notBefore(X509 *x, const ASN1_TIME *tm)
     return (in != NULL);
 }
 
+int X509_set_notBefore(X509 *x, const ASN1_TIME *tm)
+{
+    return X509_set1_notBefore(x, tm);
+}
+
 const ASN1_TIME *X509_get0_notBefore(const X509 *x)
 {
     return x->cert_info->validity->notBefore;
@@ -137,7 +152,15 @@ ASN1_TIME *X509_getm_notBefore(X509 *x)
     return x->cert_info->validity->notBefore;
 }
 
-int X509_set_notAfter(X509 *x, const ASN1_TIME *tm)
+ASN1_TIME *X509_get_notBefore(const X509 *x509)
+{
+    // In OpenSSL, this function is an alias for |X509_getm_notBefore|, but our
+    // |X509_getm_notBefore| is const-correct. |X509_get_notBefore| was
+    // originally a macro, so it needs to capture both get0 and getm use cases.
+    return x509->cert_info->validity->notBefore;
+}
+
+int X509_set1_notAfter(X509 *x, const ASN1_TIME *tm)
 {
     ASN1_TIME *in;
 
@@ -154,6 +177,11 @@ int X509_set_notAfter(X509 *x, const ASN1_TIME *tm)
     return (in != NULL);
 }
 
+int X509_set_notAfter(X509 *x, const ASN1_TIME *tm)
+{
+    return X509_set1_notAfter(x, tm);
+}
+
 const ASN1_TIME *X509_get0_notAfter(const X509 *x)
 {
     return x->cert_info->validity->notAfter;
@@ -165,6 +193,25 @@ ASN1_TIME *X509_getm_notAfter(X509 *x)
     // non-const as this allows mutating |x|. If it comes up for compatibility,
     // we can relax this.
     return x->cert_info->validity->notAfter;
+}
+
+ASN1_TIME *X509_get_notAfter(const X509 *x509)
+{
+    // In OpenSSL, this function is an alias for |X509_getm_notAfter|, but our
+    // |X509_getm_notAfter| is const-correct. |X509_get_notAfter| was
+    // originally a macro, so it needs to capture both get0 and getm use cases.
+    return x509->cert_info->validity->notAfter;
+}
+
+void X509_get0_uids(const X509 *x509, const ASN1_BIT_STRING **out_issuer_uid,
+                    const ASN1_BIT_STRING **out_subject_uid)
+{
+    if (out_issuer_uid != NULL) {
+        *out_issuer_uid = x509->cert_info->issuerUID;
+    }
+    if (out_subject_uid != NULL) {
+        *out_subject_uid = x509->cert_info->subjectUID;
+    }
 }
 
 int X509_set_pubkey(X509 *x, EVP_PKEY *pkey)
@@ -182,4 +229,19 @@ STACK_OF(X509_EXTENSION) *X509_get0_extensions(const X509 *x)
 const X509_ALGOR *X509_get0_tbs_sigalg(const X509 *x)
 {
     return x->cert_info->signature;
+}
+
+void X509_CINF_set_modified(X509_CINF *cinf)
+{
+    cinf->enc.modified = 1;
+}
+
+const X509_ALGOR *X509_CINF_get_signature(const X509_CINF *cinf)
+{
+    return cinf->signature;
+}
+
+X509_PUBKEY *X509_get_X509_PUBKEY(const X509 *x509)
+{
+    return x509->cert_info->key;
 }

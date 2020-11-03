@@ -177,6 +177,7 @@ struct TestConfig {
   std::string expect_early_data_reason;
   bool expect_hrr = false;
   bool expect_no_hrr = false;
+  bool wait_for_debugger = false;
 
   int argc;
   char **argv;

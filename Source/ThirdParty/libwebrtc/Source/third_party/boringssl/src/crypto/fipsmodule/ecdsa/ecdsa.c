@@ -169,8 +169,11 @@ int ECDSA_do_verify(const uint8_t *digest, size_t digest_len,
     return 0;
   }
 
-  // s_inv_mont = s^-1 in the Montgomery domain. This is
-  ec_scalar_inv_montgomery_vartime(group, &s_inv_mont, &s);
+  // s_inv_mont = s^-1 in the Montgomery domain.
+  if (!ec_scalar_to_montgomery_inv_vartime(group, &s_inv_mont, &s)) {
+    OPENSSL_PUT_ERROR(ECDSA, ERR_R_INTERNAL_ERROR);
+    return 0;
+  }
 
   // u1 = m * s^-1 mod order
   // u2 = r * s^-1 mod order
@@ -216,6 +219,10 @@ static int ecdsa_sign_setup(const EC_KEY *eckey, EC_SCALAR *out_kinv_mont,
       if (!ec_bignum_to_scalar(group, &k, eckey->fixed_k)) {
         goto err;
       }
+      if (ec_scalar_is_zero(group, &k)) {
+        OPENSSL_PUT_ERROR(ECDSA, ERR_R_INTERNAL_ERROR);
+        goto err;
+      }
     } else {
       // Pass a SHA512 hash of the private key and digest as additional data
       // into the RBG. This is a hardening measure against entropy failure.
@@ -233,10 +240,10 @@ static int ecdsa_sign_setup(const EC_KEY *eckey, EC_SCALAR *out_kinv_mont,
     }
 
     // Compute k^-1 in the Montgomery domain. This is |ec_scalar_to_montgomery|
-    // followed by |ec_scalar_inv_montgomery|, but |ec_scalar_inv_montgomery|
+    // followed by |ec_scalar_inv0_montgomery|, but |ec_scalar_inv0_montgomery|
     // followed by |ec_scalar_from_montgomery| is equivalent and slightly more
-    // efficient.
-    ec_scalar_inv_montgomery(group, out_kinv_mont, &k);
+    // efficient. Note k is non-zero, so the inverse must exist.
+    ec_scalar_inv0_montgomery(group, out_kinv_mont, &k);
     ec_scalar_from_montgomery(group, out_kinv_mont, out_kinv_mont);
 
     // Compute r, the x-coordinate of generator * k.

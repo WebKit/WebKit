@@ -12,6 +12,8 @@
 // OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 // CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+// Package subprocess contains functionality to talk to a modulewrapper for
+// testing of various algorithm implementations.
 package subprocess
 
 import (
@@ -23,6 +25,12 @@ import (
 	"os"
 	"os/exec"
 )
+
+// Transactable provides an interface to allow test injection of transactions
+// that don't call a server.
+type Transactable interface {
+	Transact(cmd string, expectedResults int, args ...[]byte) ([][]byte, error)
+}
 
 // Subprocess is a "middle" layer that interacts with a FIPS module via running
 // a command and speaking a simple protocol over stdin/stdout.
@@ -63,22 +71,24 @@ func NewWithIO(cmd *exec.Cmd, in io.WriteCloser, out io.ReadCloser) *Subprocess 
 	}
 
 	m.primitives = map[string]primitive{
-		"SHA-1":         &hashPrimitive{"SHA-1", 20, m},
-		"SHA2-224":      &hashPrimitive{"SHA2-224", 28, m},
-		"SHA2-256":      &hashPrimitive{"SHA2-256", 32, m},
-		"SHA2-384":      &hashPrimitive{"SHA2-384", 48, m},
-		"SHA2-512":      &hashPrimitive{"SHA2-512", 64, m},
-		"ACVP-AES-ECB":  &blockCipher{"AES", 16, false, m},
-		"ACVP-AES-CBC":  &blockCipher{"AES-CBC", 16, true, m},
-		"HMAC-SHA-1":    &hmacPrimitive{"HMAC-SHA-1", 20, m},
-		"HMAC-SHA2-224": &hmacPrimitive{"HMAC-SHA2-224", 28, m},
-		"HMAC-SHA2-256": &hmacPrimitive{"HMAC-SHA2-256", 32, m},
-		"HMAC-SHA2-384": &hmacPrimitive{"HMAC-SHA2-384", 48, m},
-		"HMAC-SHA2-512": &hmacPrimitive{"HMAC-SHA2-512", 64, m},
-		"ctrDRBG":       &drbg{"ctrDRBG", map[string]bool{"AES-128": true, "AES-192": true, "AES-256": true}, m},
-		"hmacDRBG":      &drbg{"hmacDRBG", map[string]bool{"SHA-1": true, "SHA2-224": true, "SHA2-256": true, "SHA2-384": true, "SHA2-512": true}, m},
-		"ECDSA":         &ecdsa{"ECDSA", map[string]bool{"P-224": true, "P-256": true, "P-384": true, "P-521": true}, m},
+		"SHA-1":         &hashPrimitive{"SHA-1", 20},
+		"SHA2-224":      &hashPrimitive{"SHA2-224", 28},
+		"SHA2-256":      &hashPrimitive{"SHA2-256", 32},
+		"SHA2-384":      &hashPrimitive{"SHA2-384", 48},
+		"SHA2-512":      &hashPrimitive{"SHA2-512", 64},
+		"ACVP-AES-ECB":  &blockCipher{"AES", 16, false},
+		"ACVP-AES-CBC":  &blockCipher{"AES-CBC", 16, true},
+		"HMAC-SHA-1":    &hmacPrimitive{"HMAC-SHA-1", 20},
+		"HMAC-SHA2-224": &hmacPrimitive{"HMAC-SHA2-224", 28},
+		"HMAC-SHA2-256": &hmacPrimitive{"HMAC-SHA2-256", 32},
+		"HMAC-SHA2-384": &hmacPrimitive{"HMAC-SHA2-384", 48},
+		"HMAC-SHA2-512": &hmacPrimitive{"HMAC-SHA2-512", 64},
+		"ctrDRBG":       &drbg{"ctrDRBG", map[string]bool{"AES-128": true, "AES-192": true, "AES-256": true}},
+		"hmacDRBG":      &drbg{"hmacDRBG", map[string]bool{"SHA-1": true, "SHA2-224": true, "SHA2-256": true, "SHA2-384": true, "SHA2-512": true}},
+		"KDF":           &kdfPrimitive{},
+		"CMAC-AES":      &keyedMACPrimitive{"CMAC-AES"},
 	}
+	m.primitives["ECDSA"] = &ecdsa{"ECDSA", map[string]bool{"P-224": true, "P-256": true, "P-384": true, "P-521": true}, m.primitives}
 
 	return m
 }
@@ -90,8 +100,8 @@ func (m *Subprocess) Close() {
 	m.cmd.Wait()
 }
 
-// transact performs a single request--response pair with the subprocess.
-func (m *Subprocess) transact(cmd string, expectedResults int, args ...[]byte) ([][]byte, error) {
+// Transact performs a single request--response pair with the subprocess.
+func (m *Subprocess) Transact(cmd string, expectedResults int, args ...[]byte) ([][]byte, error) {
 	argLength := len(cmd)
 	for _, arg := range args {
 		argLength += len(arg)
@@ -156,7 +166,7 @@ func (m *Subprocess) transact(cmd string, expectedResults int, args ...[]byte) (
 // format of the blob is defined by ACVP. See
 // http://usnistgov.github.io/ACVP/artifacts/draft-fussell-acvp-spec-00.html#rfc.section.11.15.2.1
 func (m *Subprocess) Config() ([]byte, error) {
-	results, err := m.transact("getConfig", 1)
+	results, err := m.Transact("getConfig", 1)
 	if err != nil {
 		return nil, err
 	}
@@ -175,18 +185,24 @@ func (m *Subprocess) Config() ([]byte, error) {
 }
 
 // Process runs a set of test vectors and returns the result.
-func (m *Subprocess) Process(algorithm string, vectorSet []byte) ([]byte, error) {
+func (m *Subprocess) Process(algorithm string, vectorSet []byte) (interface{}, error) {
 	prim, ok := m.primitives[algorithm]
 	if !ok {
 		return nil, fmt.Errorf("unknown algorithm %q", algorithm)
 	}
-	ret, err := prim.Process(vectorSet)
+	ret, err := prim.Process(vectorSet, m)
 	if err != nil {
 		return nil, err
 	}
-	return json.Marshal(ret)
+	return ret, nil
 }
 
 type primitive interface {
-	Process(vectorSet []byte) (interface{}, error)
+	Process(vectorSet []byte, t Transactable) (interface{}, error)
+}
+
+func uint32le(n uint32) []byte {
+	var ret [4]byte
+	binary.LittleEndian.PutUint32(ret[:], n)
+	return ret[:]
 }

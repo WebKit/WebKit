@@ -146,14 +146,16 @@ static int null_callback(int ok, X509_STORE_CTX *e)
     return ok;
 }
 
-/* Return 1 is a certificate is self signed */
-static int cert_self_signed(X509 *x)
+/* cert_self_signed checks if |x| is self-signed. If |x| is valid, it returns
+ * one and sets |*out_is_self_signed| to the result. If |x| is invalid, it
+ * returns zero. */
+static int cert_self_signed(X509 *x, int *out_is_self_signed)
 {
-    X509_check_purpose(x, -1, 0);
-    if (x->ex_flags & EXFLAG_SS)
-        return 1;
-    else
+    if (!x509v3_cache_extensions(x)) {
         return 0;
+    }
+    *out_is_self_signed = (x->ex_flags & EXFLAG_SS) != 0;
+    return 1;
 }
 
 /* Given a certificate try and find an exact match in the store */
@@ -263,8 +265,14 @@ int X509_verify_cert(X509_STORE_CTX *ctx)
                                  * X509_V_ERR_CERT_CHAIN_TOO_LONG error code
                                  * later. */
 
+        int is_self_signed;
+        if (!cert_self_signed(x, &is_self_signed)) {
+            ctx->error = X509_V_ERR_INVALID_EXTENSION;
+            goto end;
+        }
+
         /* If we are self signed, we break */
-        if (cert_self_signed(x))
+        if (is_self_signed)
             break;
         /*
          * If asked see if we can find issuer in trusted store first
@@ -323,7 +331,14 @@ int X509_verify_cert(X509_STORE_CTX *ctx)
          */
         i = sk_X509_num(ctx->chain);
         x = sk_X509_value(ctx->chain, i - 1);
-        if (cert_self_signed(x)) {
+
+        int is_self_signed;
+        if (!cert_self_signed(x, &is_self_signed)) {
+            ctx->error = X509_V_ERR_INVALID_EXTENSION;
+            goto end;
+        }
+
+        if (is_self_signed) {
             /* we have a self signed certificate */
             if (sk_X509_num(ctx->chain) == 1) {
                 /*
@@ -368,8 +383,12 @@ int X509_verify_cert(X509_STORE_CTX *ctx)
             /* If we have enough, we break */
             if (depth < num)
                 break;
+            if (!cert_self_signed(x, &is_self_signed)) {
+                ctx->error = X509_V_ERR_INVALID_EXTENSION;
+                goto end;
+            }
             /* If we are self signed, we break */
-            if (cert_self_signed(x))
+            if (is_self_signed)
                 break;
             ok = ctx->get_issuer(&xtmp, ctx, x);
 
@@ -1018,7 +1037,7 @@ static int check_crl_time(X509_STORE_CTX *ctx, X509_CRL *crl, int notify)
     else
         ptime = NULL;
 
-    i = X509_cmp_time(X509_CRL_get_lastUpdate(crl), ptime);
+    i = X509_cmp_time(X509_CRL_get0_lastUpdate(crl), ptime);
     if (i == 0) {
         if (!notify)
             return 0;
@@ -1035,8 +1054,8 @@ static int check_crl_time(X509_STORE_CTX *ctx, X509_CRL *crl, int notify)
             return 0;
     }
 
-    if (X509_CRL_get_nextUpdate(crl)) {
-        i = X509_cmp_time(X509_CRL_get_nextUpdate(crl), ptime);
+    if (X509_CRL_get0_nextUpdate(crl)) {
+        i = X509_cmp_time(X509_CRL_get0_nextUpdate(crl), ptime);
 
         if (i == 0) {
             if (!notify)
@@ -1081,8 +1100,8 @@ static int get_crl_sk(X509_STORE_CTX *ctx, X509_CRL **pcrl, X509_CRL **pdcrl,
         /* If current CRL is equivalent use it if it is newer */
         if (crl_score == best_score && best_crl != NULL) {
             int day, sec;
-            if (ASN1_TIME_diff(&day, &sec, X509_CRL_get_lastUpdate(best_crl),
-                               X509_CRL_get_lastUpdate(crl)) == 0)
+            if (ASN1_TIME_diff(&day, &sec, X509_CRL_get0_lastUpdate(best_crl),
+                               X509_CRL_get0_lastUpdate(crl)) == 0)
                 continue;
             /*
              * ASN1_TIME_diff never returns inconsistent signs for |day|
@@ -2039,9 +2058,9 @@ X509_CRL *X509_CRL_diff(X509_CRL *base, X509_CRL *newer,
     if (!X509_CRL_set_issuer_name(crl, X509_CRL_get_issuer(newer)))
         goto memerr;
 
-    if (!X509_CRL_set_lastUpdate(crl, X509_CRL_get_lastUpdate(newer)))
+    if (!X509_CRL_set1_lastUpdate(crl, X509_CRL_get0_lastUpdate(newer)))
         goto memerr;
-    if (!X509_CRL_set_nextUpdate(crl, X509_CRL_get_nextUpdate(newer)))
+    if (!X509_CRL_set1_nextUpdate(crl, X509_CRL_get0_nextUpdate(newer)))
         goto memerr;
 
     /* Set base CRL number: must be critical */
@@ -2144,6 +2163,11 @@ X509 *X509_STORE_CTX_get_current_cert(X509_STORE_CTX *ctx)
 }
 
 STACK_OF(X509) *X509_STORE_CTX_get_chain(X509_STORE_CTX *ctx)
+{
+    return ctx->chain;
+}
+
+STACK_OF(X509) *X509_STORE_CTX_get0_chain(X509_STORE_CTX *ctx)
 {
     return ctx->chain;
 }
@@ -2283,8 +2307,6 @@ void X509_STORE_CTX_free(X509_STORE_CTX *ctx)
 int X509_STORE_CTX_init(X509_STORE_CTX *ctx, X509_STORE *store, X509 *x509,
                         STACK_OF(X509) *chain)
 {
-    int ret = 1;
-
     X509_STORE_CTX_zero(ctx);
     ctx->ctx = store;
     ctx->cert = x509;
@@ -2292,78 +2314,74 @@ int X509_STORE_CTX_init(X509_STORE_CTX *ctx, X509_STORE *store, X509 *x509,
 
     CRYPTO_new_ex_data(&ctx->ex_data);
 
+    if (store == NULL) {
+        OPENSSL_PUT_ERROR(X509, ERR_R_PASSED_NULL_PARAMETER);
+        goto err;
+    }
+
     ctx->param = X509_VERIFY_PARAM_new();
     if (!ctx->param)
         goto err;
 
     /*
-     * Inherit callbacks and flags from X509_STORE if not set use defaults.
+     * Inherit callbacks and flags from X509_STORE.
      */
 
-    if (store)
-        ret = X509_VERIFY_PARAM_inherit(ctx->param, store->param);
-    else
-        ctx->param->inh_flags |= X509_VP_FLAG_DEFAULT | X509_VP_FLAG_ONCE;
+    ctx->verify_cb = store->verify_cb;
+    ctx->cleanup = store->cleanup;
 
-    if (store) {
-        ctx->verify_cb = store->verify_cb;
-        ctx->cleanup = store->cleanup;
-    } else
-        ctx->cleanup = 0;
-
-    if (ret)
-        ret = X509_VERIFY_PARAM_inherit(ctx->param,
-                                        X509_VERIFY_PARAM_lookup("default"));
-
-    if (ret == 0)
+    if (!X509_VERIFY_PARAM_inherit(ctx->param, store->param) ||
+        !X509_VERIFY_PARAM_inherit(ctx->param,
+                                   X509_VERIFY_PARAM_lookup("default"))) {
         goto err;
+    }
 
-    if (store && store->check_issued)
+    if (store->check_issued)
         ctx->check_issued = store->check_issued;
     else
         ctx->check_issued = check_issued;
 
-    if (store && store->get_issuer)
+    if (store->get_issuer)
         ctx->get_issuer = store->get_issuer;
     else
         ctx->get_issuer = X509_STORE_CTX_get1_issuer;
 
-    if (store && store->verify_cb)
+    if (store->verify_cb)
         ctx->verify_cb = store->verify_cb;
     else
         ctx->verify_cb = null_callback;
 
-    if (store && store->verify)
+    if (store->verify)
         ctx->verify = store->verify;
     else
         ctx->verify = internal_verify;
 
-    if (store && store->check_revocation)
+    if (store->check_revocation)
         ctx->check_revocation = store->check_revocation;
     else
         ctx->check_revocation = check_revocation;
 
-    if (store && store->get_crl)
+    if (store->get_crl)
         ctx->get_crl = store->get_crl;
     else
         ctx->get_crl = NULL;
 
-    if (store && store->check_crl)
+    if (store->check_crl)
         ctx->check_crl = store->check_crl;
     else
         ctx->check_crl = check_crl;
 
-    if (store && store->cert_crl)
+    if (store->cert_crl)
         ctx->cert_crl = store->cert_crl;
     else
         ctx->cert_crl = cert_crl;
 
-    if (store && store->lookup_certs)
+    if (store->lookup_certs)
         ctx->lookup_certs = store->lookup_certs;
     else
         ctx->lookup_certs = X509_STORE_get1_certs;
 
-    if (store && store->lookup_crls)
+    if (store->lookup_crls)
         ctx->lookup_crls = store->lookup_crls;
     else
         ctx->lookup_crls = X509_STORE_get1_crls;

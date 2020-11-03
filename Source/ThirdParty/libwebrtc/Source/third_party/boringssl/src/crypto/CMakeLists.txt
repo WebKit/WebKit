@@ -184,6 +184,7 @@ add_custom_command(
   err/pkcs8.errordata
   err/rsa.errordata
   err/ssl.errordata
+  err/trust_token.errordata
   err/x509.errordata
   err/x509v3.errordata
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/err
@@ -262,6 +263,7 @@ add_library(
   cpu-intel.c
   cpu-ppc64le.c
   crypto.c
+  curve25519/curve25519.c
   curve25519/spake25519.c
   dh/dh.c
   dh/params.c
@@ -274,6 +276,7 @@ add_library(
   ecdsa_extra/ecdsa_asn1.c
   ec_extra/ec_asn1.c
   ec_extra/ec_derive.c
+  ec_extra/hash_to_curve.c
   err/err.c
   err_data.c
   engine/engine.c
@@ -296,6 +299,7 @@ add_library(
   evp/sign.c
   ex_data.c
   hkdf/hkdf.c
+  hpke/hpke.c
   hrss/hrss.c
   lhash/lhash.c
   mem.c
@@ -334,6 +338,8 @@ add_library(
   thread_none.c
   thread_pthread.c
   thread_win.c
+  trust_token/pmbtoken.c
+  trust_token/trust_token.c
   x509/a_digest.c
   x509/a_sign.c
   x509/a_strex.c
@@ -409,14 +415,11 @@ add_library(
   x509v3/v3_pci.c
   x509v3/v3_pcia.c
   x509v3/v3_pcons.c
-  x509v3/v3_pku.c
   x509v3/v3_pmaps.c
   x509v3/v3_prn.c
   x509v3/v3_purp.c
   x509v3/v3_skey.c
-  x509v3/v3_sxnet.c
   x509v3/v3_utl.c
-  ../third_party/fiat/curve25519.c
 
   $<TARGET_OBJECTS:fipsmodule>
 
@@ -452,7 +455,7 @@ endif()
 
 SET_TARGET_PROPERTIES(crypto PROPERTIES LINKER_LANGUAGE C)
 
-if(NOT MSVC AND NOT ANDROID)
+if(NOT WIN32 AND NOT ANDROID)
   target_link_libraries(crypto pthread)
 endif()
 
@@ -492,6 +495,7 @@ add_executable(
   compiler_test.cc
   constant_time_test.cc
   cpu-arm-linux_test.cc
+  crypto_test.cc
   curve25519/ed25519_test.cc
   curve25519/spake25519_test.cc
   curve25519/x25519_test.cc
@@ -512,8 +516,10 @@ add_executable(
   fipsmodule/md5/md5_test.cc
   fipsmodule/modes/gcm_test.cc
   fipsmodule/rand/ctrdrbg_test.cc
+  fipsmodule/rand/fork_detect_test.cc
   fipsmodule/sha/sha_test.cc
   hkdf/hkdf_test.cc
+  hpke/hpke_test.cc
   hmac_extra/hmac_test.cc
   hrss/hrss_test.cc
   impl_dispatch_test.cc
@@ -533,6 +539,7 @@ add_executable(
   siphash/siphash_test.cc
   test/file_test_gtest.cc
   thread_test.cc
+  trust_token/trust_token_test.cc
   x509/x509_test.cc
   x509/x509_time_test.cc
   x509v3/tab_test.cc

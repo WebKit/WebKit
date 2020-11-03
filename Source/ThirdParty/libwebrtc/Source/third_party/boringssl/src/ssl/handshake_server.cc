@@ -908,7 +908,7 @@ static enum ssl_hs_wait_t do_send_server_hello(SSL_HANDSHAKE *hs) {
       !CBB_add_u8_length_prefixed(&body, &session_id) ||
       !CBB_add_bytes(&session_id, session->session_id,
                      session->session_id_length) ||
-      !CBB_add_u16(&body, ssl_cipher_get_value(hs->new_cipher)) ||
+      !CBB_add_u16(&body, SSL_CIPHER_get_protocol_id(hs->new_cipher)) ||
       !CBB_add_u8(&body, 0 /* no compression */) ||
       !ssl_add_serverhello_tlsext(hs, &body) ||
       !ssl_add_message_cbb(ssl, cbb.get())) {
@@ -1433,6 +1433,15 @@ static enum ssl_hs_wait_t do_read_client_certificate_verify(SSL_HANDSHAKE *hs) {
   }
 
   if (!ssl_check_message_type(ssl, msg, SSL3_MT_CERTIFICATE_VERIFY)) {
+    return ssl_hs_error;
+  }
+
+  // The peer certificate must be valid for signing.
+  const CRYPTO_BUFFER *leaf =
+      sk_CRYPTO_BUFFER_value(hs->new_session->certs.get(), 0);
+  CBS leaf_cbs;
+  CRYPTO_BUFFER_init_CBS(leaf, &leaf_cbs);
+  if (!ssl_cert_check_key_usage(&leaf_cbs, key_usage_digital_signature)) {
     return ssl_hs_error;
   }
 

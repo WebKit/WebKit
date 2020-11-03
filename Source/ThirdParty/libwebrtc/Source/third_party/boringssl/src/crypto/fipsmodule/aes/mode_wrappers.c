@@ -57,7 +57,23 @@
 void AES_ctr128_encrypt(const uint8_t *in, uint8_t *out, size_t len,
                         const AES_KEY *key, uint8_t ivec[AES_BLOCK_SIZE],
                         uint8_t ecount_buf[AES_BLOCK_SIZE], unsigned int *num) {
-  CRYPTO_ctr128_encrypt(in, out, len, key, ivec, ecount_buf, num, AES_encrypt);
+  if (hwaes_capable()) {
+    CRYPTO_ctr128_encrypt_ctr32(in, out, len, key, ivec, ecount_buf, num,
+                                aes_hw_ctr32_encrypt_blocks);
+  } else if (vpaes_capable()) {
+#if defined(VPAES_CTR32)
+    // TODO(davidben): On ARM, where |BSAES| is additionally defined, this could
+    // use |vpaes_ctr32_encrypt_blocks_with_bsaes|.
+    CRYPTO_ctr128_encrypt_ctr32(in, out, len, key, ivec, ecount_buf, num,
+                                vpaes_ctr32_encrypt_blocks);
+#else
+    CRYPTO_ctr128_encrypt(in, out, len, key, ivec, ecount_buf, num,
+                          vpaes_encrypt);
+#endif
+  } else {
+    CRYPTO_ctr128_encrypt_ctr32(in, out, len, key, ivec, ecount_buf, num,
+                                aes_nohw_ctr32_encrypt_blocks);
+  }
 }
 
 void AES_ecb_encrypt(const uint8_t *in, uint8_t *out, const AES_KEY *key,

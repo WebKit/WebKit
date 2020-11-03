@@ -741,6 +741,7 @@ struct rsa_st {
   // |blindings_inuse| from 0 to 1.
   BN_BLINDING **blindings;
   unsigned char *blindings_inuse;
+  uint64_t blinding_fork_generation;
 
   // private_key_frozen is one if the key has been used for a private key
   // operation and may no longer be mutated.

@@ -123,7 +123,7 @@ typedef struct {
     int exp_count;
 } tag_exp_arg;
 
-static ASN1_TYPE *generate_v3(char *str, X509V3_CTX *cnf, int depth,
+static ASN1_TYPE *generate_v3(const char *str, X509V3_CTX *cnf, int depth,
                               int *perr);
 static int bitstr_cb(const char *elem, int len, void *bitstr);
 static int asn1_cb(const char *elem, int len, void *bitstr);
@@ -136,7 +136,7 @@ static ASN1_TYPE *asn1_multi(int utype, const char *section, X509V3_CTX *cnf,
 static ASN1_TYPE *asn1_str2type(const char *str, int format, int utype);
 static int asn1_str2tag(const char *tagstr, int len);
 
-ASN1_TYPE *ASN1_generate_nconf(char *str, CONF *nconf)
+ASN1_TYPE *ASN1_generate_nconf(const char *str, CONF *nconf)
 {
     X509V3_CTX cnf;
 
@@ -147,7 +147,7 @@ ASN1_TYPE *ASN1_generate_nconf(char *str, CONF *nconf)
     return ASN1_generate_v3(str, &cnf);
 }
 
-ASN1_TYPE *ASN1_generate_v3(char *str, X509V3_CTX *cnf)
+ASN1_TYPE *ASN1_generate_v3(const char *str, X509V3_CTX *cnf)
 {
     int err = 0;
     ASN1_TYPE *ret = generate_v3(str, cnf, 0, &err);
@@ -156,7 +156,7 @@ ASN1_TYPE *ASN1_generate_v3(char *str, X509V3_CTX *cnf)
     return ret;
 }
 
-static ASN1_TYPE *generate_v3(char *str, X509V3_CTX *cnf, int depth,
+static ASN1_TYPE *generate_v3(const char *str, X509V3_CTX *cnf, int depth,
                               int *perr)
 {
     ASN1_TYPE *ret;

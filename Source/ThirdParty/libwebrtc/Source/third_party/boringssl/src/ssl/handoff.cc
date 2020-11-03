@@ -632,7 +632,7 @@ bool SSL_apply_handback(SSL *ssl, Span<const uint8_t> handback) {
     case handback_after_session_resumption:
       // The write keys are installed after server Finished, but the client
       // keys must wait for ChangeCipherSpec.
-      if (!tls1_configure_aead(ssl, evp_aead_seal, &key_block, session->cipher,
+      if (!tls1_configure_aead(ssl, evp_aead_seal, &key_block, session,
                                write_iv)) {
         return false;
       }
@@ -642,9 +642,9 @@ bool SSL_apply_handback(SSL *ssl, Span<const uint8_t> handback) {
       break;
     case handback_after_handshake:
       // The handshake is complete, so both keys are installed.
-      if (!tls1_configure_aead(ssl, evp_aead_seal, &key_block, session->cipher,
+      if (!tls1_configure_aead(ssl, evp_aead_seal, &key_block, session,
                                write_iv) ||
-          !tls1_configure_aead(ssl, evp_aead_open, &key_block, session->cipher,
+          !tls1_configure_aead(ssl, evp_aead_open, &key_block, session,
                                read_iv)) {
         return false;
       }

@@ -133,6 +133,7 @@ void EVP_tls_cbc_copy_mac(uint8_t *out, size_t md_size, const uint8_t *in,
   assert(orig_len >= in_len);
   assert(in_len >= md_size);
   assert(md_size <= EVP_MAX_MD_SIZE);
+  assert(md_size > 0);
 
   // scan_start contains the number of bytes that we can ignore because
   // the MAC's position can only vary by 255 bytes.

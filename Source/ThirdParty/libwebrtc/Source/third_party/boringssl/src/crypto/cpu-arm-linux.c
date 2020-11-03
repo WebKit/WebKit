@@ -146,11 +146,13 @@ extern uint32_t OPENSSL_armcap_P;
 static int g_has_broken_neon, g_needs_hwcap2_workaround;
 
 void OPENSSL_cpuid_setup(void) {
-  char *cpuinfo_data;
-  size_t cpuinfo_len;
-  if (!read_file(&cpuinfo_data, &cpuinfo_len, "/proc/cpuinfo")) {
-    return;
-  }
+  // We ignore the return value of |read_file| and proceed with an empty
+  // /proc/cpuinfo on error. If |getauxval| works, we will still detect
+  // capabilities. There may be a false positive due to
+  // |crypto_cpuinfo_has_broken_neon|, but this is now rare.
+  char *cpuinfo_data = NULL;
+  size_t cpuinfo_len = 0;
+  read_file(&cpuinfo_data, &cpuinfo_len, "/proc/cpuinfo");
   STRING_PIECE cpuinfo;
   cpuinfo.data = cpuinfo_data;
   cpuinfo.len = cpuinfo_len;

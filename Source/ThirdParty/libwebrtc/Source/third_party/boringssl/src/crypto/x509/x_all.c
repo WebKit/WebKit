@@ -66,20 +66,20 @@
 #include <openssl/rsa.h>
 #include <openssl/stack.h>
 
-int X509_verify(X509 *a, EVP_PKEY *r)
+int X509_verify(X509 *x509, EVP_PKEY *pkey)
 {
-    if (X509_ALGOR_cmp(a->sig_alg, a->cert_info->signature)) {
+    if (X509_ALGOR_cmp(x509->sig_alg, x509->cert_info->signature)) {
         OPENSSL_PUT_ERROR(X509, X509_R_SIGNATURE_ALGORITHM_MISMATCH);
         return 0;
     }
-    return (ASN1_item_verify(ASN1_ITEM_rptr(X509_CINF), a->sig_alg,
-                             a->signature, a->cert_info, r));
+    return ASN1_item_verify(ASN1_ITEM_rptr(X509_CINF), x509->sig_alg,
+                            x509->signature, x509->cert_info, pkey);
 }
 
-int X509_REQ_verify(X509_REQ *a, EVP_PKEY *r)
+int X509_REQ_verify(X509_REQ *req, EVP_PKEY *pkey)
 {
-    return (ASN1_item_verify(ASN1_ITEM_rptr(X509_REQ_INFO),
-                             a->sig_alg, a->signature, a->req_info, r));
+    return ASN1_item_verify(ASN1_ITEM_rptr(X509_REQ_INFO),
+                            req->sig_alg, req->signature, req->req_info, pkey);
 }
 
 int X509_sign(X509 *x, EVP_PKEY *pkey, const EVP_MD *md)
@@ -131,10 +131,10 @@ int NETSCAPE_SPKI_sign(NETSCAPE_SPKI *x, EVP_PKEY *pkey, const EVP_MD *md)
                            x->signature, x->spkac, pkey, md));
 }
 
-int NETSCAPE_SPKI_verify(NETSCAPE_SPKI *x, EVP_PKEY *pkey)
+int NETSCAPE_SPKI_verify(NETSCAPE_SPKI *spki, EVP_PKEY *pkey)
 {
-    return (ASN1_item_verify(ASN1_ITEM_rptr(NETSCAPE_SPKAC), x->sig_algor,
-                             x->signature, x->spkac, pkey));
+    return (ASN1_item_verify(ASN1_ITEM_rptr(NETSCAPE_SPKAC), spki->sig_algor,
+                             spki->signature, spki->spkac, pkey));
 }
 
 #ifndef OPENSSL_NO_FP_API

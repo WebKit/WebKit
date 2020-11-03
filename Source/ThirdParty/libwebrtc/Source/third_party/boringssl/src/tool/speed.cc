@@ -35,9 +35,11 @@
 #include <openssl/ec_key.h>
 #include <openssl/evp.h>
 #include <openssl/hrss.h>
+#include <openssl/mem.h>
 #include <openssl/nid.h>
 #include <openssl/rand.h>
 #include <openssl/rsa.h>
+#include <openssl/trust_token.h>
 
 #if defined(OPENSSL_WINDOWS)
 OPENSSL_MSVC_PRAGMA(warning(push, 3))
@@ -49,7 +51,10 @@ OPENSSL_MSVC_PRAGMA(warning(pop))
 #include <time.h>
 #endif
 
+#include "../crypto/ec_extra/internal.h"
+#include "../crypto/fipsmodule/ec/internal.h"
 #include "../crypto/internal.h"
+#include "../crypto/trust_token/internal.h"
 #include "internal.h"
 
 // g_print_json is true if printed output is JSON formatted.
@@ -657,17 +662,14 @@ static bool SpeedECDHCurve(const std::string &name, int nid,
         bssl::UniquePtr<EC_POINT> point(EC_POINT_new(group));
         bssl::UniquePtr<EC_POINT> peer_point(EC_POINT_new(group));
         bssl::UniquePtr<BN_CTX> ctx(BN_CTX_new());
-
         bssl::UniquePtr<BIGNUM> x(BN_new());
-        bssl::UniquePtr<BIGNUM> y(BN_new());
-
-        if (!point || !peer_point || !ctx || !x || !y ||
+        if (!point || !peer_point || !ctx || !x ||
             !EC_POINT_oct2point(group, peer_point.get(), peer_value.get(),
                                 peer_value_len, ctx.get()) ||
-            !EC_POINT_mul(group, point.get(), NULL, peer_point.get(),
+            !EC_POINT_mul(group, point.get(), nullptr, peer_point.get(),
                           EC_KEY_get0_private_key(key.get()), ctx.get()) ||
             !EC_POINT_get_affine_coordinates_GFp(group, point.get(), x.get(),
-                                                 y.get(), ctx.get())) {
+                                                 nullptr, ctx.get())) {
           return false;
         }
 
@@ -942,6 +944,280 @@ static bool SpeedHRSS(const std::string &selected) {
   return true;
 }
 
+static bool SpeedHashToCurve(const std::string &selected) {
+  if (!selected.empty() && selected.find("hashtocurve") == std::string::npos) {
+    return true;
+  }
+
+  uint8_t input[64];
+  RAND_bytes(input, sizeof(input));
+
+  static const uint8_t kLabel[] = "label";
+
+  TimeResults results;
+  {
+    EC_GROUP *group = EC_GROUP_new_by_curve_name(NID_secp384r1);
+    if (group == NULL) {
+      return false;
+    }
+    if (!TimeFunction(&results, [&]() -> bool {
+          EC_RAW_POINT out;
+          return ec_hash_to_curve_p384_xmd_sha512_sswu_draft07(
+              group, &out, kLabel, sizeof(kLabel), input, sizeof(input));
+        })) {
+      fprintf(stderr, "hash-to-curve failed.\n");
+      return false;
+    }
+    results.Print("hash-to-curve P384_XMD:SHA-512_SSWU_RO_");
+
+    if (!TimeFunction(&results, [&]() -> bool {
+          EC_SCALAR out;
+          return ec_hash_to_scalar_p384_xmd_sha512_draft07(
+              group, &out, kLabel, sizeof(kLabel), input, sizeof(input));
+        })) {
+      fprintf(stderr, "hash-to-scalar failed.\n");
+      return false;
+    }
+    results.Print("hash-to-scalar P384_XMD:SHA-512");
+  }
+
+  return true;
+}
+
+static PMBTOKEN_PRETOKEN *pmbtoken_pretoken_dup(PMBTOKEN_PRETOKEN *in) {
+  PMBTOKEN_PRETOKEN *out =
+      (PMBTOKEN_PRETOKEN *)OPENSSL_malloc(sizeof(PMBTOKEN_PRETOKEN));
+  if (out) {
+    OPENSSL_memcpy(out, in, sizeof(PMBTOKEN_PRETOKEN));
+  }
+  return out;
+}
+
+static bool SpeedTrustToken(std::string name, const TRUST_TOKEN_METHOD *method,
+                            size_t batchsize, const std::string &selected) {
+  if (!selected.empty() && selected.find("trusttoken") == std::string::npos) {
+    return true;
+  }
+
+  TimeResults results;
+  if (!TimeFunction(&results, [&]() -> bool {
+        uint8_t priv_key[TRUST_TOKEN_MAX_PRIVATE_KEY_SIZE];
+        uint8_t pub_key[TRUST_TOKEN_MAX_PUBLIC_KEY_SIZE];
+        size_t priv_key_len, pub_key_len;
+        return TRUST_TOKEN_generate_key(
+            method, priv_key, &priv_key_len, TRUST_TOKEN_MAX_PRIVATE_KEY_SIZE,
+            pub_key, &pub_key_len, TRUST_TOKEN_MAX_PUBLIC_KEY_SIZE, 0);
+      })) {
+    fprintf(stderr, "TRUST_TOKEN_generate_key failed.\n");
+    return false;
+  }
+  results.Print(name + " generate_key");
+
+  bssl::UniquePtr<TRUST_TOKEN_CLIENT> client(
+      TRUST_TOKEN_CLIENT_new(method, batchsize));
+  bssl::UniquePtr<TRUST_TOKEN_ISSUER> issuer(
+      TRUST_TOKEN_ISSUER_new(method, batchsize));
+  uint8_t priv_key[TRUST_TOKEN_MAX_PRIVATE_KEY_SIZE];
+  uint8_t pub_key[TRUST_TOKEN_MAX_PUBLIC_KEY_SIZE];
+  size_t priv_key_len, pub_key_len, key_index;
+  if (!client || !issuer ||
+      !TRUST_TOKEN_generate_key(
+          method, priv_key, &priv_key_len, TRUST_TOKEN_MAX_PRIVATE_KEY_SIZE,
+          pub_key, &pub_key_len, TRUST_TOKEN_MAX_PUBLIC_KEY_SIZE, 0) ||
+      !TRUST_TOKEN_CLIENT_add_key(client.get(), &key_index, pub_key,
+                                  pub_key_len) ||
+      !TRUST_TOKEN_ISSUER_add_key(issuer.get(), priv_key, priv_key_len)) {
+    fprintf(stderr, "failed to generate trust token key.\n");
+    return false;
+  }
+
+  uint8_t public_key[32], private_key[64];
+  ED25519_keypair(public_key, private_key);
+  bssl::UniquePtr<EVP_PKEY> priv(
+      EVP_PKEY_new_raw_private_key(EVP_PKEY_ED25519, nullptr, private_key, 32));
+  bssl::UniquePtr<EVP_PKEY> pub(
+      EVP_PKEY_new_raw_public_key(EVP_PKEY_ED25519, nullptr, public_key, 32));
+  if (!priv || !pub) {
+    fprintf(stderr, "failed to generate trust token SRR key.\n");
+    return false;
+  }
+
+  TRUST_TOKEN_CLIENT_set_srr_key(client.get(), pub.get());
+  TRUST_TOKEN_ISSUER_set_srr_key(issuer.get(), priv.get());
+  uint8_t metadata_key[32];
+  RAND_bytes(metadata_key, sizeof(metadata_key));
+  if (!TRUST_TOKEN_ISSUER_set_metadata_key(issuer.get(), metadata_key,
+                                           sizeof(metadata_key))) {
+    fprintf(stderr, "failed to generate trust token metadata key.\n");
+    return false;
+  }
+
+  if (!TimeFunction(&results, [&]() -> bool {
+        uint8_t *issue_msg = NULL;
+        size_t msg_len;
+        int ok = TRUST_TOKEN_CLIENT_begin_issuance(client.get(), &issue_msg,
+                                                   &msg_len, batchsize);
+        OPENSSL_free(issue_msg);
+        // Clear pretokens.
+        sk_PMBTOKEN_PRETOKEN_pop_free(client->pretokens,
+                                      PMBTOKEN_PRETOKEN_free);
+        client->pretokens = sk_PMBTOKEN_PRETOKEN_new_null();
+        return ok;
+      })) {
+    fprintf(stderr, "TRUST_TOKEN_CLIENT_begin_issuance failed.\n");
+    return false;
+  }
+  results.Print(name + " begin_issuance");
+
+  uint8_t *issue_msg = NULL;
+  size_t msg_len;
+  if (!TRUST_TOKEN_CLIENT_begin_issuance(client.get(), &issue_msg, &msg_len,
+                                         batchsize)) {
+    fprintf(stderr, "TRUST_TOKEN_CLIENT_begin_issuance failed.\n");
+    return false;
+  }
+  bssl::UniquePtr<uint8_t> free_issue_msg(issue_msg);
+
+  bssl::UniquePtr<STACK_OF(PMBTOKEN_PRETOKEN)> pretokens(
+      sk_PMBTOKEN_PRETOKEN_deep_copy(client->pretokens, pmbtoken_pretoken_dup,
+                                     PMBTOKEN_PRETOKEN_free));
+
+  if (!TimeFunction(&results, [&]() -> bool {
+        uint8_t *issue_resp = NULL;
+        size_t resp_len, tokens_issued;
+        int ok = TRUST_TOKEN_ISSUER_issue(issuer.get(), &issue_resp, &resp_len,
+                                          &tokens_issued, issue_msg, msg_len,
+                                          /*public_metadata=*/0,
+                                          /*private_metadata=*/0,
+                                          /*max_issuance=*/batchsize);
+        OPENSSL_free(issue_resp);
+        return ok;
+      })) {
+    fprintf(stderr, "TRUST_TOKEN_ISSUER_issue failed.\n");
+    return false;
+  }
+  results.Print(name + " issue");
+
+  uint8_t *issue_resp = NULL;
+  size_t resp_len, tokens_issued;
+  if (!TRUST_TOKEN_ISSUER_issue(issuer.get(), &issue_resp, &resp_len,
+                                &tokens_issued, issue_msg, msg_len,
+                                /*public_metadata=*/0, /*private_metadata=*/0,
+                                /*max_issuance=*/batchsize)) {
+    fprintf(stderr, "TRUST_TOKEN_ISSUER_issue failed.\n");
+    return false;
+  }
+  bssl::UniquePtr<uint8_t> free_issue_resp(issue_resp);
+
+  if (!TimeFunction(&results, [&]() -> bool {
+        size_t key_index2;
+        bssl::UniquePtr<STACK_OF(TRUST_TOKEN)> tokens(
+            TRUST_TOKEN_CLIENT_finish_issuance(client.get(), &key_index2,
+                                               issue_resp, resp_len));
+
+        // Reset pretokens.
+        client->pretokens = sk_PMBTOKEN_PRETOKEN_deep_copy(
+            pretokens.get(), pmbtoken_pretoken_dup, PMBTOKEN_PRETOKEN_free);
+        return !!tokens;
+      })) {
+    fprintf(stderr, "TRUST_TOKEN_CLIENT_finish_issuance failed.\n");
+    return false;
+  }
+  results.Print(name + " finish_issuance");
+
+  bssl::UniquePtr<STACK_OF(TRUST_TOKEN)> tokens(
+      TRUST_TOKEN_CLIENT_finish_issuance(client.get(), &key_index, issue_resp,
+                                         resp_len));
+  if (!tokens || sk_TRUST_TOKEN_num(tokens.get()) < 1) {
+    fprintf(stderr, "TRUST_TOKEN_CLIENT_finish_issuance failed.\n");
+    return false;
+  }
+
+  const TRUST_TOKEN *token = sk_TRUST_TOKEN_value(tokens.get(), 0);
+
+  const uint8_t kClientData[] = "\x70TEST CLIENT DATA";
+  uint64_t kRedemptionTime = 13374242;
+
+  if (!TimeFunction(&results, [&]() -> bool {
+        uint8_t *redeem_msg = NULL;
+        size_t redeem_msg_len;
+        int ok = TRUST_TOKEN_CLIENT_begin_redemption(
+            client.get(), &redeem_msg, &redeem_msg_len, token, kClientData,
+            sizeof(kClientData) - 1, kRedemptionTime);
+        OPENSSL_free(redeem_msg);
+        return ok;
+      })) {
+    fprintf(stderr, "TRUST_TOKEN_CLIENT_begin_redemption failed.\n");
+    return false;
+  }
+  results.Print(name + " begin_redemption");
+
+  uint8_t *redeem_msg = NULL;
+  size_t redeem_msg_len;
+  if (!TRUST_TOKEN_CLIENT_begin_redemption(
+          client.get(), &redeem_msg, &redeem_msg_len, token, kClientData,
+          sizeof(kClientData) - 1, kRedemptionTime)) {
+    fprintf(stderr, "TRUST_TOKEN_CLIENT_begin_redemption failed.\n");
+    return false;
+  }
+  bssl::UniquePtr<uint8_t> free_redeem_msg(redeem_msg);
+
+  if (!TimeFunction(&results, [&]() -> bool {
+        uint8_t *redeem_resp = NULL;
+        size_t redeem_resp_len;
+        TRUST_TOKEN *rtoken = NULL;
+        uint8_t *client_data = NULL;
+        size_t client_data_len;
+        uint64_t redemption_time;
+        int ok = TRUST_TOKEN_ISSUER_redeem(
+            issuer.get(), &redeem_resp, &redeem_resp_len, &rtoken, &client_data,
+            &client_data_len, &redemption_time, redeem_msg, redeem_msg_len,
+            /*lifetime=*/600);
+        OPENSSL_free(redeem_resp);
+        OPENSSL_free(client_data);
+        TRUST_TOKEN_free(rtoken);
+        return ok;
+      })) {
+    fprintf(stderr, "TRUST_TOKEN_ISSUER_redeem failed.\n");
+    return false;
+  }
+  results.Print(name + " redeem");
+
+  uint8_t *redeem_resp = NULL;
+  size_t redeem_resp_len;
+  TRUST_TOKEN *rtoken = NULL;
+  uint8_t *client_data = NULL;
+  size_t client_data_len;
+  uint64_t redemption_time;
+  if (!TRUST_TOKEN_ISSUER_redeem(issuer.get(), &redeem_resp, &redeem_resp_len,
+                                 &rtoken, &client_data, &client_data_len,
+                                 &redemption_time, redeem_msg, redeem_msg_len,
+                                 /*lifetime=*/600)) {
+    fprintf(stderr, "TRUST_TOKEN_ISSUER_redeem failed.\n");
+    return false;
+  }
+  bssl::UniquePtr<uint8_t> free_redeem_resp(redeem_resp);
+  bssl::UniquePtr<uint8_t> free_client_data(client_data);
+  bssl::UniquePtr<TRUST_TOKEN> free_rtoken(rtoken);
+
+  if (!TimeFunction(&results, [&]() -> bool {
+        uint8_t *srr = NULL, *sig = NULL;
+        size_t srr_len, sig_len;
+        int ok = TRUST_TOKEN_CLIENT_finish_redemption(client.get(), &srr,
+                                                      &srr_len, &sig, &sig_len,
+                                                      redeem_resp, resp_len);
+        OPENSSL_free(srr);
+        OPENSSL_free(sig);
+        return ok;
+      })) {
+    fprintf(stderr, "TRUST_TOKEN_CLIENT_finish_redemption failed.\n");
+    return false;
+  }
+  results.Print(name + " finish_redemption");
+
+  return true;
+}
+
 static const struct argument kArguments[] = {
     {
         "-filter",
@@ -1071,7 +1347,12 @@ bool Speed(const std::vector<std::string> &args) {
       !SpeedSPAKE2(selected) ||
       !SpeedScrypt(selected) ||
       !SpeedRSAKeyGen(selected) ||
-      !SpeedHRSS(selected)) {
+      !SpeedHRSS(selected) ||
+      !SpeedHashToCurve(selected) ||
+      !SpeedTrustToken("TrustToken-Exp1-Batch1", TRUST_TOKEN_experiment_v1(), 1,
+                       selected) ||
+      !SpeedTrustToken("TrustToken-Exp1-Batch10", TRUST_TOKEN_experiment_v1(),
+                       10, selected)) {
     return false;
   }
   if (g_print_json) {

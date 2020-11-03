@@ -389,6 +389,9 @@ NextCipherSuite:
 			return errors.New("tls: short read from Rand: " + err.Error())
 		}
 	}
+	if c.config.Bugs.MockQUICTransport != nil && !c.config.Bugs.CompatModeWithQUIC {
+		hello.sessionId = []byte{}
+	}
 
 	if c.config.Bugs.SendCipherSuites != nil {
 		hello.cipherSuites = c.config.Bugs.SendCipherSuites

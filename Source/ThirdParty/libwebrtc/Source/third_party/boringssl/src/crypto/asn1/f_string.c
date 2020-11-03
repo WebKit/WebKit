@@ -58,7 +58,7 @@
 
 #include <openssl/bio.h>
 
-int i2a_ASN1_STRING(BIO *bp, ASN1_STRING *a, int type)
+int i2a_ASN1_STRING(BIO *bp, const ASN1_STRING *a, int type)
 {
     int i, n = 0;
     static const char *h = "0123456789ABCDEF";

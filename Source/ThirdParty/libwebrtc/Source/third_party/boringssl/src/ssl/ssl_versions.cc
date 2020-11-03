@@ -193,11 +193,11 @@ bool ssl_get_version_range(const SSL_HANDSHAKE *hs, uint16_t *out_min_version,
     min_version = TLS1_3_VERSION;
   }
 
-  // OpenSSL's API for controlling versions entails blacklisting individual
-  // protocols. This has two problems. First, on the client, the protocol can
-  // only express a contiguous range of versions. Second, a library consumer
-  // trying to set a maximum version cannot disable protocol versions that get
-  // added in a future version of the library.
+  // The |SSL_OP_NO_*| flags disable individual protocols. This has two
+  // problems. First, prior to TLS 1.3, the protocol can only express a
+  // contiguous range of versions. Second, a library consumer trying to set a
+  // maximum version cannot disable protocol versions that get added in a future
+  // version of the library.
   //
   // To account for both of these, OpenSSL interprets the client-side bitmask
   // as a min/max range by picking the lowest contiguous non-empty range of

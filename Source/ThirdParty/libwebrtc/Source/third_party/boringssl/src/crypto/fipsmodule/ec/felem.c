@@ -14,6 +14,7 @@
 
 #include <openssl/ec.h>
 #include <openssl/err.h>
+#include <openssl/mem.h>
 
 #include <assert.h>
 
@@ -23,15 +24,34 @@
 
 
 int ec_bignum_to_felem(const EC_GROUP *group, EC_FELEM *out, const BIGNUM *in) {
-  if (BN_is_negative(in) || BN_cmp(in, &group->field) >= 0) {
+  uint8_t bytes[EC_MAX_BYTES];
+  size_t len = BN_num_bytes(&group->field);
+  assert(sizeof(bytes) >= len);
+  if (BN_is_negative(in) ||
+      BN_cmp(in, &group->field) >= 0 ||
+      !BN_bn2bin_padded(bytes, len, in)) {
     OPENSSL_PUT_ERROR(EC, EC_R_COORDINATES_OUT_OF_RANGE);
     return 0;
   }
-  return group->meth->bignum_to_felem(group, out, in);
+
+  return ec_felem_from_bytes(group, out, bytes, len);
 }
 
 int ec_felem_to_bignum(const EC_GROUP *group, BIGNUM *out, const EC_FELEM *in) {
-  return group->meth->felem_to_bignum(group, out, in);
+  uint8_t bytes[EC_MAX_BYTES];
+  size_t len;
+  ec_felem_to_bytes(group, bytes, &len, in);
+  return BN_bin2bn(bytes, len, out) != NULL;
+}
+
+void ec_felem_to_bytes(const EC_GROUP *group, uint8_t *out, size_t *out_len,
+                       const EC_FELEM *in) {
+  group->meth->felem_to_bytes(group, out, out_len, in);
+}
+
+int ec_felem_from_bytes(const EC_GROUP *group, EC_FELEM *out, const uint8_t *in,
+                        size_t len) {
+  return group->meth->felem_from_bytes(group, out, in, len);
 }
 
 void ec_felem_neg(const EC_GROUP *group, EC_FELEM *out, const EC_FELEM *a) {
@@ -75,8 +95,6 @@ void ec_felem_select(const EC_GROUP *group, EC_FELEM *out, BN_ULONG mask,
 
 int ec_felem_equal(const EC_GROUP *group, const EC_FELEM *a,
                    const EC_FELEM *b) {
-  // Note this function is variable-time. Constant-time operations should use
-  // |ec_felem_non_zero_mask|.
-  return OPENSSL_memcmp(a->words, b->words,
-                        group->field.width * sizeof(BN_ULONG)) == 0;
+  return CRYPTO_memcmp(a->words, b->words,
+                       group->field.width * sizeof(BN_ULONG)) == 0;
 }

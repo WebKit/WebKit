@@ -821,16 +821,13 @@ static bool ssl_can_serve_dc(const SSL_HANDSHAKE *hs) {
   }
 
   // Check that the DC signature algorithm is supported by the peer.
-  Span<const uint16_t> peer_sigalgs = tls1_get_peer_verify_algorithms(hs);
-  bool sigalg_found = false;
+  Span<const uint16_t> peer_sigalgs = hs->peer_delegated_credential_sigalgs;
   for (uint16_t peer_sigalg : peer_sigalgs) {
     if (dc->expected_cert_verify_algorithm == peer_sigalg) {
-      sigalg_found = true;
-      break;
+      return true;
     }
   }
-
-  return sigalg_found;
+  return false;
 }
 
 bool ssl_signing_with_dc(const SSL_HANDSHAKE *hs) {
@@ -894,6 +891,10 @@ int SSL_CTX_set_chain_and_key(SSL_CTX *ctx, CRYPTO_BUFFER *const *certs,
                               const SSL_PRIVATE_KEY_METHOD *privkey_method) {
   return cert_set_chain_and_key(ctx->cert.get(), certs, num_certs, privkey,
                                 privkey_method);
+}
+
+const STACK_OF(CRYPTO_BUFFER)* SSL_CTX_get0_chain(const SSL_CTX *ctx) {
+  return ctx->cert->chain.get();
 }
 
 int SSL_CTX_use_certificate_ASN1(SSL_CTX *ctx, size_t der_len,

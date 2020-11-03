@@ -24,6 +24,7 @@
 
 #include <openssl/aes.h>
 #include <openssl/bn.h>
+#include <openssl/cmac.h>
 #include <openssl/digest.h>
 #include <openssl/ec.h>
 #include <openssl/ec_key.h>
@@ -299,6 +300,24 @@ static bool GetConfig(const Span<const uint8_t> args[]) {
             "SHA2-512"
           ]
         }]
+      },
+      {
+        "algorithm": "CMAC-AES",
+        "revision": "1.0",
+        "capabilities": [{
+          "direction": ["gen", "ver"],
+          "msgLen": [{
+            "min": 0,
+            "max": 65536,
+            "increment": 8
+          }],
+          "keyLen": [128, 256],
+          "macLen": [{
+            "min": 32,
+            "max": 128,
+            "increment": 8
+          }]
+        }]
       }
     ])";
   return WriteReply(
@@ -566,6 +585,25 @@ static bool ECDSASigVer(const Span<const uint8_t> args[]) {
   return WriteReply(STDOUT_FILENO, Span<const uint8_t>(reply));
 }
 
+static bool CMAC_AES(const Span<const uint8_t> args[]) {
+  uint8_t mac[16];
+  if (!AES_CMAC(mac, args[1].data(), args[1].size(), args[2].data(),
+                args[2].size())) {
+    return false;
+  }
+
+  uint32_t mac_len;
+  if (args[0].size() != sizeof(mac_len)) {
+    return false;
+  }
+  memcpy(&mac_len, args[0].data(), sizeof(mac_len));
+  if (mac_len > sizeof(mac)) {
+    return false;
+  }
+
+  return WriteReply(STDOUT_FILENO, Span<const uint8_t>(mac, mac_len));
+}
+
 static constexpr struct {
   const char name[kMaxNameLength + 1];
   uint8_t expected_args;
@@ -591,6 +629,7 @@ static constexpr struct {
     {"ECDSA/keyVer", 3, ECDSAKeyVer},
     {"ECDSA/sigGen", 4, ECDSASigGen},
     {"ECDSA/sigVer", 7, ECDSASigVer},
+    {"CMAC-AES", 3, CMAC_AES},
 };
 
 int main() {

@@ -18,31 +18,16 @@
 #include <openssl/base.h>
 
 #include <string>
+#include <utility>
 #include <vector>
 
-OPENSSL_MSVC_PRAGMA(warning(push))
 // MSVC issues warning C4702 for unreachable code in its xtree header when
 // compiling with -D_HAS_EXCEPTIONS=0. See
 // https://connect.microsoft.com/VisualStudio/feedback/details/809962
+OPENSSL_MSVC_PRAGMA(warning(push))
 OPENSSL_MSVC_PRAGMA(warning(disable: 4702))
-
 #include <map>
-
 OPENSSL_MSVC_PRAGMA(warning(pop))
-
-#if defined(OPENSSL_WINDOWS)
-  #define BORINGSSL_OPEN _open
-  #define BORINGSSL_FDOPEN _fdopen
-  #define BORINGSSL_CLOSE _close
-  #define BORINGSSL_READ _read
-  #define BORINGSSL_WRITE _write
-#else
-  #define BORINGSSL_OPEN open
-  #define BORINGSSL_FDOPEN fdopen
-  #define BORINGSSL_CLOSE close
-  #define BORINGSSL_READ read
-  #define BORINGSSL_WRITE write
-#endif
 
 struct FileCloser {
   void operator()(FILE *file) {
@@ -51,6 +36,67 @@ struct FileCloser {
 };
 
 using ScopedFILE = std::unique_ptr<FILE, FileCloser>;
+
+// The following functions abstract between POSIX and Windows differences in
+// file descriptor I/O functions.
+
+// CloseFD behaves like |close|.
+void CloseFD(int fd);
+
+class ScopedFD {
+ public:
+  ScopedFD() {}
+  explicit ScopedFD(int fd) : fd_(fd) {}
+  ScopedFD(ScopedFD &&other) { *this = std::move(other); }
+  ScopedFD(const ScopedFD &) = delete;
+  ~ScopedFD() { reset(); }
+
+  ScopedFD &operator=(const ScopedFD &) = delete;
+  ScopedFD &operator=(ScopedFD &&other) {
+    reset();
+    fd_ = other.fd_;
+    other.fd_ = -1;
+    return *this;
+  }
+
+  explicit operator bool() const { return fd_ >= 0; }
+
+  int get() const { return fd_; }
+
+  void reset() {
+    if (fd_ >= 0) {
+      CloseFD(fd_);
+    }
+    fd_ = -1;
+  }
+
+  int release() {
+    int fd = fd_;
+    fd_ = -1;
+    return fd;
+  }
+
+ private:
+  int fd_ = -1;
+};
+
+// OpenFD behaves like |open| but handles |EINTR| and works on Windows.
+ScopedFD OpenFD(const char *path, int flags);
+
+// ReadFromFD reads up to |num| bytes from |fd| and writes the result to |out|.
+// On success, it returns true and sets |*out_bytes_read| to the number of bytes
+// read. Otherwise, it returns false and leaves an error in |errno|. On POSIX,
+// it handles |EINTR| internally.
+bool ReadFromFD(int fd, size_t *out_bytes_read, void *out, size_t num);
+
+// WriteToFD writes up to |num| bytes from |in| to |fd|. On success, it returns
+// true and sets |*out_bytes_written| to the number of bytes written. Otherwise,
+// it returns false and leaves an error in |errno|. On POSIX, it handles |EINTR|
+// internally.
+bool WriteToFD(int fd, size_t *out_bytes_written, const void *in, size_t num);
+
+// FDToFILE behaves like |fdopen|.
+ScopedFILE FDToFILE(ScopedFD fd, const char *mode);
 
 enum ArgumentType {
   kRequiredArgument,
@@ -87,6 +133,7 @@ bool SHA224Sum(const std::vector<std::string> &args);
 bool SHA256Sum(const std::vector<std::string> &args);
 bool SHA384Sum(const std::vector<std::string> &args);
 bool SHA512Sum(const std::vector<std::string> &args);
+bool SHA512256Sum(const std::vector<std::string> &args);
 bool Server(const std::vector<std::string> &args);
 bool Sign(const std::vector<std::string> &args);
 bool Speed(const std::vector<std::string> &args);

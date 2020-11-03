@@ -115,7 +115,7 @@ int ASN1_INTEGER_cmp(const ASN1_INTEGER *x, const ASN1_INTEGER *y)
  * followed by optional zeros isn't padded.
  */
 
-int i2c_ASN1_INTEGER(ASN1_INTEGER *a, unsigned char **pp)
+int i2c_ASN1_INTEGER(const ASN1_INTEGER *a, unsigned char **pp)
 {
     int pad = 0, ret, i, neg;
     unsigned char *p, *n, pb = 0;

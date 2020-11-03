@@ -60,7 +60,7 @@
 
 /* Based on a_int.c: equivalent ENUMERATED functions */
 
-int i2a_ASN1_ENUMERATED(BIO *bp, ASN1_ENUMERATED *a)
+int i2a_ASN1_ENUMERATED(BIO *bp, const ASN1_ENUMERATED *a)
 {
     int i, n = 0;
     static const char *h = "0123456789ABCDEF";

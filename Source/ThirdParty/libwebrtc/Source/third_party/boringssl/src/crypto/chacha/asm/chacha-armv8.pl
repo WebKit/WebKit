@@ -139,6 +139,7 @@ $code.=<<___;
 .type	ChaCha20_ctr32,%function
 .align	5
 ChaCha20_ctr32:
+	AARCH64_VALID_CALL_TARGET
 	cbz	$len,.Labort
 #if __has_feature(hwaddress_sanitizer) && __clang_major__ >= 10
 	adrp	@x[0],:pg_hi21_nc:OPENSSL_armcap_P
@@ -152,6 +153,7 @@ ChaCha20_ctr32:
 	b.ne	ChaCha20_neon
 
 .Lshort:
+	AARCH64_SIGN_LINK_REGISTER
 	stp	x29,x30,[sp,#-96]!
 	add	x29,sp,#0
 
@@ -272,6 +274,7 @@ $code.=<<___;
 	ldp	x25,x26,[x29,#64]
 	ldp	x27,x28,[x29,#80]
 	ldp	x29,x30,[sp],#96
+	AARCH64_VALIDATE_LINK_REGISTER
 .Labort:
 	ret
 
@@ -328,6 +331,7 @@ $code.=<<___;
 	ldp	x25,x26,[x29,#64]
 	ldp	x27,x28,[x29,#80]
 	ldp	x29,x30,[sp],#96
+	AARCH64_VALIDATE_LINK_REGISTER
 	ret
 .size	ChaCha20_ctr32,.-ChaCha20_ctr32
 ___
@@ -373,6 +377,7 @@ $code.=<<___;
 .type	ChaCha20_neon,%function
 .align	5
 ChaCha20_neon:
+	AARCH64_SIGN_LINK_REGISTER
 	stp	x29,x30,[sp,#-96]!
 	add	x29,sp,#0
 
@@ -572,6 +577,7 @@ $code.=<<___;
 	ldp	x25,x26,[x29,#64]
 	ldp	x27,x28,[x29,#80]
 	ldp	x29,x30,[sp],#96
+	AARCH64_VALIDATE_LINK_REGISTER
 	ret
 
 .Ltail_neon:
@@ -681,6 +687,7 @@ $code.=<<___;
 	ldp	x25,x26,[x29,#64]
 	ldp	x27,x28,[x29,#80]
 	ldp	x29,x30,[sp],#96
+	AARCH64_VALIDATE_LINK_REGISTER
 	ret
 .size	ChaCha20_neon,.-ChaCha20_neon
 ___
@@ -693,6 +700,7 @@ $code.=<<___;
 .type	ChaCha20_512_neon,%function
 .align	5
 ChaCha20_512_neon:
+	AARCH64_SIGN_LINK_REGISTER
 	stp	x29,x30,[sp,#-96]!
 	add	x29,sp,#0
 
@@ -1112,6 +1120,7 @@ $code.=<<___;
 	ldp	x25,x26,[x29,#64]
 	ldp	x27,x28,[x29,#80]
 	ldp	x29,x30,[sp],#96
+	AARCH64_VALIDATE_LINK_REGISTER
 	ret
 .size	ChaCha20_512_neon,.-ChaCha20_512_neon
 ___

@@ -83,6 +83,7 @@ OPENSSL_EXPORT const EVP_MD *EVP_sha224(void);
 OPENSSL_EXPORT const EVP_MD *EVP_sha256(void);
 OPENSSL_EXPORT const EVP_MD *EVP_sha384(void);
 OPENSSL_EXPORT const EVP_MD *EVP_sha512(void);
+OPENSSL_EXPORT const EVP_MD *EVP_sha512_256(void);
 
 // EVP_md5_sha1 is a TLS-specific |EVP_MD| which computes the concatenation of
 // MD5 and SHA-1, as used in TLS 1.1 and below.
@@ -281,6 +282,15 @@ OPENSSL_EXPORT int EVP_DigestFinalXOF(EVP_MD_CTX *ctx, uint8_t *out,
 
 // EVP_MD_meth_get_flags calls |EVP_MD_flags|.
 OPENSSL_EXPORT uint32_t EVP_MD_meth_get_flags(const EVP_MD *md);
+
+// EVP_MD_CTX_set_flags does nothing.
+OPENSSL_EXPORT void EVP_MD_CTX_set_flags(EVP_MD_CTX *ctx, int flags);
+
+// EVP_MD_CTX_FLAG_NON_FIPS_ALLOW is meaningless. In OpenSSL it permits non-FIPS
+// algorithms in FIPS mode. But BoringSSL FIPS mode doesn't prohibit algorithms
+// (it's up the the caller to use the FIPS module in a fashion compliant with
+// their needs). Thus this exists only to allow code to compile.
+#define EVP_MD_CTX_FLAG_NON_FIPS_ALLOW 0
 
 
 struct evp_md_pctx_ops;

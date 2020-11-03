@@ -36,27 +36,15 @@ OPENSSL_MSVC_PRAGMA(warning(push, 3))
 #include <windows.h>
 OPENSSL_MSVC_PRAGMA(warning(pop))
 #include <io.h>
+#if !defined(PATH_MAX)
 #define PATH_MAX MAX_PATH
-typedef int ssize_t;
+#endif
 #endif
 
 #include <openssl/digest.h>
 
 #include "internal.h"
 
-
-struct close_delete {
-  void operator()(int *fd) {
-    BORINGSSL_CLOSE(*fd);
-  }
-};
-
-template<typename T, typename R, R (*func) (T*)>
-struct func_delete {
-  void operator()(T* obj) {
-    func(obj);
-  }
-};
 
 // Source is an awkward expression of a union type in C++: Stdin | File filename.
 struct Source {
@@ -79,37 +67,31 @@ struct Source {
 
 static const char kStdinName[] = "standard input";
 
-// OpenFile opens the regular file named |filename| and sets |*out_fd| to be a
-// file descriptor to it. Returns true on sucess or prints an error to stderr
-// and returns false on error.
-static bool OpenFile(int *out_fd, const std::string &filename) {
-  *out_fd = -1;
-
-  int fd = BORINGSSL_OPEN(filename.c_str(), O_RDONLY | O_BINARY);
-  if (fd < 0) {
+// OpenFile opens the regular file named |filename| and returns a file
+// descriptor to it.
+static ScopedFD OpenFile(const std::string &filename) {
+  ScopedFD fd = OpenFD(filename.c_str(), O_RDONLY | O_BINARY);
+  if (!fd) {
     fprintf(stderr, "Failed to open input file '%s': %s\n", filename.c_str(),
             strerror(errno));
-    return false;
+    return ScopedFD();
   }
-  std::unique_ptr<int, close_delete> scoped_fd(&fd);
 
 #if !defined(OPENSSL_WINDOWS)
   struct stat st;
-  if (fstat(fd, &st)) {
+  if (fstat(fd.get(), &st)) {
     fprintf(stderr, "Failed to stat input file '%s': %s\n", filename.c_str(),
             strerror(errno));
-    return false;
+    return ScopedFD();
   }
 
   if (!S_ISREG(st.st_mode)) {
     fprintf(stderr, "%s: not a regular file\n", filename.c_str());
-    return false;
+    return ScopedFD();
   }
 #endif
 
-  *out_fd = fd;
-  scoped_fd.release();
-  return true;
+  return fd;
 }
 
 // SumFile hashes the contents of |source| with |md| and sets |*out_hex| to the
@@ -119,16 +101,17 @@ static bool OpenFile(int *out_fd, const std::string &filename) {
 // error.
 static bool SumFile(std::string *out_hex, const EVP_MD *md,
                     const Source &source) {
-  std::unique_ptr<int, close_delete> scoped_fd;
+  ScopedFD scoped_fd;
   int fd;
 
   if (source.is_stdin()) {
     fd = 0;
   } else {
-    if (!OpenFile(&fd, source.filename())) {
+    scoped_fd = OpenFile(source.filename());
+    if (!scoped_fd) {
       return false;
     }
-    scoped_fd.reset(&fd);
+    fd = scoped_fd.get();
   }
 
   static const size_t kBufSize = 8192;
@@ -141,19 +124,16 @@ static bool SumFile(std::string *out_hex, const EVP_MD *md,
   }
 
   for (;;) {
-    ssize_t n;
-
-    do {
-      n = BORINGSSL_READ(fd, buf.get(), kBufSize);
-    } while (n == -1 && errno == EINTR);
-
-    if (n == 0) {
-      break;
-    } else if (n < 0) {
+    size_t n;
+    if (!ReadFromFD(fd, &n, buf.get(), kBufSize)) {
       fprintf(stderr, "Failed to read from %s: %s\n",
               source.is_stdin() ? kStdinName : source.filename().c_str(),
               strerror(errno));
       return false;
+    }
+
+    if (n == 0) {
+      break;
     }
 
     if (!EVP_DigestUpdate(ctx.get(), buf.get(), n)) {
@@ -221,25 +201,23 @@ struct CheckModeArguments {
 // returns false.
 static bool Check(const CheckModeArguments &args, const EVP_MD *md,
                   const Source &source) {
-  std::unique_ptr<FILE, func_delete<FILE, int, fclose>> scoped_file;
   FILE *file;
+  ScopedFILE scoped_file;
 
   if (source.is_stdin()) {
     file = stdin;
   } else {
-    int fd;
-    if (!OpenFile(&fd, source.filename())) {
+    ScopedFD fd = OpenFile(source.filename());
+    if (!fd) {
       return false;
     }
 
-    file = BORINGSSL_FDOPEN(fd, "rb");
-    if (!file) {
+    scoped_file = FDToFILE(std::move(fd), "rb");
+    if (!scoped_file) {
       perror("fdopen");
-      BORINGSSL_CLOSE(fd);
       return false;
     }
-
-    scoped_file = std::unique_ptr<FILE, func_delete<FILE, int, fclose>>(file);
+    file = scoped_file.get();
   }
 
   const size_t hex_size = EVP_MD_size(md) * 2;
@@ -473,4 +451,8 @@ bool SHA384Sum(const std::vector<std::string> &args) {
 
 bool SHA512Sum(const std::vector<std::string> &args) {
   return DigestSum(EVP_sha512(), args);
+}
+
+bool SHA512256Sum(const std::vector<std::string> &args) {
+  return DigestSum(EVP_sha512_256(), args);
 }

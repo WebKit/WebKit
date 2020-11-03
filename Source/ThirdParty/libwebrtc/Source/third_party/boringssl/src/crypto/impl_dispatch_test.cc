@@ -57,7 +57,7 @@ class ImplDispatchTest : public ::testing::Test {
 
     f();
 
-    for (const auto flag : flags) {
+    for (const auto& flag : flags) {
       SCOPED_TRACE(flag.first);
 
       ASSERT_LT(flag.first, sizeof(BORINGSSL_function_hit));

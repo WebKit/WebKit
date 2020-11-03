@@ -167,6 +167,10 @@ void BN_BLINDING_free(BN_BLINDING *r) {
   OPENSSL_free(r);
 }
 
+void BN_BLINDING_invalidate(BN_BLINDING *b) {
+  b->counter = BN_BLINDING_COUNTER - 1;
+}
+
 static int bn_blinding_update(BN_BLINDING *b, const BIGNUM *e,
                               const BN_MONT_CTX *mont, BN_CTX *ctx) {
   if (++b->counter == BN_BLINDING_COUNTER) {

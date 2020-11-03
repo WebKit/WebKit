@@ -447,13 +447,15 @@ static bool tls_seal_scatter_suffix_len(const SSL *ssl, size_t *out_suffix_len,
     // TLS 1.3 adds an extra byte for encrypted record type.
     extra_in_len = 1;
   }
-  if (type == SSL3_RT_APPLICATION_DATA &&  // clang-format off
+  // clang-format off
+  if (type == SSL3_RT_APPLICATION_DATA &&
       in_len > 1 &&
       ssl_needs_record_splitting(ssl)) {
     // With record splitting enabled, the first byte gets sealed into a separate
     // record which is written into the prefix.
     in_len -= 1;
   }
+  // clang-format on
   return ssl->s3->aead_write_ctx->SuffixLen(out_suffix_len, in_len, extra_in_len);
 }
 
@@ -465,8 +467,8 @@ static bool tls_seal_scatter_suffix_len(const SSL *ssl, size_t *out_suffix_len,
 // |tls_seal_scatter_record| implements TLS 1.0 CBC 1/n-1 record splitting and
 // may write two records concatenated.
 static bool tls_seal_scatter_record(SSL *ssl, uint8_t *out_prefix, uint8_t *out,
-                                   uint8_t *out_suffix, uint8_t type,
-                                   const uint8_t *in, size_t in_len) {
+                                    uint8_t *out_suffix, uint8_t type,
+                                    const uint8_t *in, size_t in_len) {
   if (type == SSL3_RT_APPLICATION_DATA && in_len > 1 &&
       ssl_needs_record_splitting(ssl)) {
     assert(ssl->s3->aead_write_ctx->ExplicitNonceLen() == 0);

@@ -428,13 +428,17 @@ void X509V3_section_free(X509V3_CTX *ctx, STACK_OF(CONF_VALUE) *section)
         ctx->db_meth->free_section(ctx->db, section);
 }
 
-static char *nconf_get_string(void *db, char *section, char *value)
+static char *nconf_get_string(void *db, const char *section, const char *value)
 {
-    /* TODO(fork): this should return a const value. */
+    /* TODO(fork): This returns a non-const pointer because |X509V3_CONF_METHOD|
+     * allows |get_string| to return caller-owned pointers, provided they're
+     * freed by |free_string|. |nconf_method| leaves |free_string| NULL, and
+     * there are no other implementations of |X509V3_CONF_METHOD|, so this can
+     * be simplified if we make it private. */
     return (char *)NCONF_get_string(db, section, value);
 }
 
-static STACK_OF(CONF_VALUE) *nconf_get_section(void *db, char *section)
+static STACK_OF(CONF_VALUE) *nconf_get_section(void *db, const char *section)
 {
     return NCONF_get_section(db, section);
 }

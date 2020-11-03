@@ -55,15 +55,46 @@ set(
   crypto/fipsmodule/modes/gcm_tests.txt
   crypto/fipsmodule/rand/ctrdrbg_vectors.txt
   crypto/hmac_extra/hmac_tests.txt
+  crypto/hpke/hpke_test_vectors.txt
   crypto/poly1305/poly1305_tests.txt
   crypto/siphash/siphash_tests.txt
-  crypto/x509/many_constraints.pem
-  crypto/x509/many_names1.pem
-  crypto/x509/many_names2.pem
-  crypto/x509/many_names3.pem
-  crypto/x509/some_names1.pem
-  crypto/x509/some_names2.pem
-  crypto/x509/some_names3.pem
+  crypto/x509/test/basic_constraints_ca.pem
+  crypto/x509/test/basic_constraints_ca_pathlen_0.pem
+  crypto/x509/test/basic_constraints_ca_pathlen_1.pem
+  crypto/x509/test/basic_constraints_ca_pathlen_10.pem
+  crypto/x509/test/basic_constraints_leaf.pem
+  crypto/x509/test/basic_constraints_none.pem
+  crypto/x509/test/invalid_extension_intermediate.pem
+  crypto/x509/test/invalid_extension_intermediate_authority_key_identifier.pem
+  crypto/x509/test/invalid_extension_intermediate_basic_constraints.pem
+  crypto/x509/test/invalid_extension_intermediate_ext_key_usage.pem
+  crypto/x509/test/invalid_extension_intermediate_key_usage.pem
+  crypto/x509/test/invalid_extension_intermediate_name_constraints.pem
+  crypto/x509/test/invalid_extension_intermediate_subject_alt_name.pem
+  crypto/x509/test/invalid_extension_intermediate_subject_key_identifier.pem
+  crypto/x509/test/invalid_extension_leaf.pem
+  crypto/x509/test/invalid_extension_leaf_authority_key_identifier.pem
+  crypto/x509/test/invalid_extension_leaf_basic_constraints.pem
+  crypto/x509/test/invalid_extension_leaf_ext_key_usage.pem
+  crypto/x509/test/invalid_extension_leaf_key_usage.pem
+  crypto/x509/test/invalid_extension_leaf_name_constraints.pem
+  crypto/x509/test/invalid_extension_leaf_subject_alt_name.pem
+  crypto/x509/test/invalid_extension_leaf_subject_key_identifier.pem
+  crypto/x509/test/invalid_extension_root.pem
+  crypto/x509/test/invalid_extension_root_authority_key_identifier.pem
+  crypto/x509/test/invalid_extension_root_basic_constraints.pem
+  crypto/x509/test/invalid_extension_root_ext_key_usage.pem
+  crypto/x509/test/invalid_extension_root_key_usage.pem
+  crypto/x509/test/invalid_extension_root_name_constraints.pem
+  crypto/x509/test/invalid_extension_root_subject_alt_name.pem
+  crypto/x509/test/invalid_extension_root_subject_key_identifier.pem
+  crypto/x509/test/many_constraints.pem
+  crypto/x509/test/many_names1.pem
+  crypto/x509/test/many_names2.pem
+  crypto/x509/test/many_names3.pem
+  crypto/x509/test/some_names1.pem
+  crypto/x509/test/some_names2.pem
+  crypto/x509/test/some_names3.pem
   third_party/wycheproof_testvectors/aes_cbc_pkcs5_test.txt
   third_party/wycheproof_testvectors/aes_cmac_test.txt
   third_party/wycheproof_testvectors/aes_gcm_siv_test.txt

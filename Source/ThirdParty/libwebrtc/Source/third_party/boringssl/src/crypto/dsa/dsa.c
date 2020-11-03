@@ -72,11 +72,10 @@
 #include <openssl/sha.h>
 #include <openssl/thread.h>
 
+#include "internal.h"
 #include "../fipsmodule/bn/internal.h"
 #include "../internal.h"
 
-
-#define OPENSSL_DSA_MAX_MODULUS_BITS 10000
 
 // Primality test according to FIPS PUB 186[-1], Appendix 2.1: 50 rounds of
 // Miller-Rabin.
@@ -130,6 +129,16 @@ int DSA_up_ref(DSA *dsa) {
   CRYPTO_refcount_inc(&dsa->references);
   return 1;
 }
+
+const BIGNUM *DSA_get0_pub_key(const DSA *dsa) { return dsa->pub_key; }
+
+const BIGNUM *DSA_get0_priv_key(const DSA *dsa) { return dsa->priv_key; }
+
+const BIGNUM *DSA_get0_p(const DSA *dsa) { return dsa->p; }
+
+const BIGNUM *DSA_get0_q(const DSA *dsa) { return dsa->q; }
+
+const BIGNUM *DSA_get0_g(const DSA *dsa) { return dsa->g; }
 
 void DSA_get0_key(const DSA *dsa, const BIGNUM **out_pub_key,
                   const BIGNUM **out_priv_key) {
@@ -558,23 +567,7 @@ static int mod_mul_consttime(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
 }
 
 DSA_SIG *DSA_do_sign(const uint8_t *digest, size_t digest_len, const DSA *dsa) {
-  if (!dsa->p || !dsa->q || !dsa->g) {
-    OPENSSL_PUT_ERROR(DSA, DSA_R_MISSING_PARAMETERS);
-    return NULL;
-  }
-
-  // Reject invalid parameters. In particular, the algorithm will infinite loop
-  // if |g| is zero.
-  if (BN_is_zero(dsa->p) || BN_is_zero(dsa->q) || BN_is_zero(dsa->g)) {
-    OPENSSL_PUT_ERROR(DSA, DSA_R_INVALID_PARAMETERS);
-    return NULL;
-  }
-
-  // We only support DSA keys that are a multiple of 8 bits. (This is a weaker
-  // check than the one in |DSA_do_check_signature|, which only allows 160-,
-  // 224-, and 256-bit keys.
-  if (BN_num_bits(dsa->q) % 8 != 0) {
-    OPENSSL_PUT_ERROR(DSA, DSA_R_BAD_Q_VALUE);
+  if (!dsa_check_parameters(dsa)) {
     return NULL;
   }
 
@@ -668,35 +661,17 @@ int DSA_do_verify(const uint8_t *digest, size_t digest_len, DSA_SIG *sig,
 
 int DSA_do_check_signature(int *out_valid, const uint8_t *digest,
                            size_t digest_len, DSA_SIG *sig, const DSA *dsa) {
-  BN_CTX *ctx;
-  BIGNUM u1, u2, t1;
-  int ret = 0;
-  unsigned i;
-
   *out_valid = 0;
-
-  if (!dsa->p || !dsa->q || !dsa->g) {
-    OPENSSL_PUT_ERROR(DSA, DSA_R_MISSING_PARAMETERS);
+  if (!dsa_check_parameters(dsa)) {
     return 0;
   }
 
-  i = BN_num_bits(dsa->q);
-  // FIPS 186-3 allows only different sizes for q.
-  if (i != 160 && i != 224 && i != 256) {
-    OPENSSL_PUT_ERROR(DSA, DSA_R_BAD_Q_VALUE);
-    return 0;
-  }
-
-  if (BN_num_bits(dsa->p) > OPENSSL_DSA_MAX_MODULUS_BITS) {
-    OPENSSL_PUT_ERROR(DSA, DSA_R_MODULUS_TOO_LARGE);
-    return 0;
-  }
-
+  int ret = 0;
+  BIGNUM u1, u2, t1;
   BN_init(&u1);
   BN_init(&u2);
   BN_init(&t1);
-
-  ctx = BN_CTX_new();
+  BN_CTX *ctx = BN_CTX_new();
   if (ctx == NULL) {
     goto err;
   }
@@ -719,11 +694,12 @@ int DSA_do_check_signature(int *out_valid, const uint8_t *digest,
   }
 
   // save M in u1
-  if (digest_len > (i >> 3)) {
+  unsigned q_bits = BN_num_bits(dsa->q);
+  if (digest_len > (q_bits >> 3)) {
     // if the digest length is greater than the size of q use the
     // BN_num_bits(dsa->q) leftmost bits of the digest, see
     // fips 186-3, 4.2
-    digest_len = (i >> 3);
+    digest_len = (q_bits >> 3);
   }
 
   if (BN_bin2bn(digest, digest_len, &u1) == NULL) {

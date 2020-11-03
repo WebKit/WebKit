@@ -117,37 +117,11 @@ open OUT,"| \"$^X\" \"$xlate\" $flavour \"$output\"";
 
 $do4xaggr=1;
 
-# common register layout
-$nlo="%rax";
-$nhi="%rbx";
-$Zlo="%r8";
-$Zhi="%r9";
-$tmp="%r10";
-$rem_4bit = "%r11";
-
-$Xi="%rdi";
-$Htbl="%rsi";
-
-sub LB() { my $r=shift; $r =~ s/%[er]([a-d])x/%\1l/	or
-			$r =~ s/%[er]([sd]i)/%\1l/	or
-			$r =~ s/%[er](bp)/%\1l/		or
-			$r =~ s/%(r[0-9]+)[d]?/%\1b/;   $r; }
-
-sub AUTOLOAD()		# thunk [simplified] 32-bit style perlasm
-{ my $opcode = $AUTOLOAD; $opcode =~ s/.*:://;
-  my $arg = pop;
-    $arg = "\$$arg" if ($arg*1 eq $arg);
-    $code .= "\t$opcode\t".join(',',$arg,reverse @_)."\n";
-}
 
 $code=<<___;
 .text
 .extern	OPENSSL_ia32cap_P
 ___
-
-# per-function register layout
-$inp="%rdx";
-$len="%rcx";
 
 
 ######################################################################
@@ -1308,8 +1282,6 @@ $code.=<<___;
 	.byte	1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0xc2
 .L7_mask:
 	.long	7,0,7,0
-.L7_mask_poly:
-	.long	7,0,`0xE1<<1`,0
 .align	64
 
 .asciz	"GHASH for x86_64, CRYPTOGAMS by <appro\@openssl.org>"

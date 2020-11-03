@@ -86,7 +86,7 @@ int EVP_BytesToKey(const EVP_CIPHER *type, const EVP_MD *md,
   EVP_MD_CTX_init(&c);
   for (;;) {
     if (!EVP_DigestInit_ex(&c, md, NULL)) {
-      return 0;
+      goto err;
     }
     if (addmd++) {
       if (!EVP_DigestUpdate(&c, md_buf, mds)) {

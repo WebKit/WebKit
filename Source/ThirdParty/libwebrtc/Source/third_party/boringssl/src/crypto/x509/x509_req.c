@@ -107,6 +107,16 @@ X509_REQ *X509_to_X509_REQ(X509 *x, EVP_PKEY *pkey, const EVP_MD *md)
     return (NULL);
 }
 
+long X509_REQ_get_version(const X509_REQ *req)
+{
+    return ASN1_INTEGER_get(req->req_info->version);
+}
+
+X509_NAME *X509_REQ_get_subject_name(const X509_REQ *req)
+{
+    return req->req_info->subject;
+}
+
 EVP_PKEY *X509_REQ_get_pubkey(X509_REQ *req)
 {
     if ((req == NULL) || (req->req_info == NULL))

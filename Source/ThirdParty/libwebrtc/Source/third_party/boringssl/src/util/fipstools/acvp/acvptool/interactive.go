@@ -12,6 +12,8 @@
 // OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 // CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+// +build interactive
+
 package main
 
 import (
@@ -34,6 +36,8 @@ import (
 	"boringssl.googlesource.com/boringssl/util/fipstools/acvp/acvptool/acvp"
 	"golang.org/x/crypto/ssh/terminal"
 )
+
+const interactiveModeSupported = true
 
 func updateTerminalSize(term *terminal.Terminal) {
 	width, height, err := terminal.GetSize(0)

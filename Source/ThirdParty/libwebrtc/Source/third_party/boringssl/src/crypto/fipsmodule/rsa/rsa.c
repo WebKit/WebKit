@@ -655,7 +655,15 @@ err:
 }
 
 static int check_mod_inverse(int *out_ok, const BIGNUM *a, const BIGNUM *ainv,
-                             const BIGNUM *m, int check_reduced, BN_CTX *ctx) {
+                             const BIGNUM *m, BN_CTX *ctx) {
+  if (BN_is_negative(ainv) || BN_cmp(ainv, m) >= 0) {
+    *out_ok = 0;
+    return 1;
+  }
+
+  // Note |bn_mul_consttime| and |bn_div_consttime| do not scale linearly, but
+  // checking |ainv| is in range bounds the running time, assuming |m|'s bounds
+  // were checked by the caller.
   BN_CTX_start(ctx);
   BIGNUM *tmp = BN_CTX_get(ctx);
   int ret = tmp != NULL &&
@@ -663,22 +671,25 @@ static int check_mod_inverse(int *out_ok, const BIGNUM *a, const BIGNUM *ainv,
             bn_div_consttime(NULL, tmp, tmp, m, ctx);
   if (ret) {
     *out_ok = BN_is_one(tmp);
-    if (check_reduced && (BN_is_negative(ainv) || BN_cmp(ainv, m) >= 0)) {
-      *out_ok = 0;
-    }
   }
   BN_CTX_end(ctx);
   return ret;
 }
 
 int RSA_check_key(const RSA *key) {
-  BIGNUM n, pm1, qm1, lcm, dmp1, dmq1, iqmp_times_q;
-  BN_CTX *ctx;
-  int ok = 0, has_crt_values;
+  // TODO(davidben): RSA key initialization is spread across
+  // |rsa_check_public_key|, |RSA_check_key|, |freeze_private_key|, and
+  // |BN_MONT_CTX_set_locked| as a result of API issues. See
+  // https://crbug.com/boringssl/316. As a result, we inconsistently check RSA
+  // invariants. We should fix this and integrate that logic.
 
   if (RSA_is_opaque(key)) {
     // Opaque keys can't be checked.
     return 1;
+  }
+
+  if (!rsa_check_public_key(key)) {
+    return 0;
   }
 
   if ((key->p != NULL) != (key->q != NULL)) {
@@ -686,61 +697,71 @@ int RSA_check_key(const RSA *key) {
     return 0;
   }
 
-  if (!key->n || !key->e) {
-    OPENSSL_PUT_ERROR(RSA, RSA_R_VALUE_MISSING);
+  // |key->d| must be bounded by |key->n|. This ensures bounds on |RSA_bits|
+  // translate to bounds on the running time of private key operations.
+  if (key->d != NULL &&
+      (BN_is_negative(key->d) || BN_cmp(key->d, key->n) >= 0)) {
+    OPENSSL_PUT_ERROR(RSA, RSA_R_D_OUT_OF_RANGE);
     return 0;
   }
 
-  if (!key->d || !key->p) {
+  if (key->d == NULL || key->p == NULL) {
     // For a public key, or without p and q, there's nothing that can be
     // checked.
     return 1;
   }
 
-  ctx = BN_CTX_new();
+  BN_CTX *ctx = BN_CTX_new();
   if (ctx == NULL) {
     OPENSSL_PUT_ERROR(RSA, ERR_R_MALLOC_FAILURE);
     return 0;
   }
 
-  BN_init(&n);
+  BIGNUM tmp, de, pm1, qm1, dmp1, dmq1;
+  int ok = 0;
+  BN_init(&tmp);
+  BN_init(&de);
   BN_init(&pm1);
   BN_init(&qm1);
-  BN_init(&lcm);
   BN_init(&dmp1);
   BN_init(&dmq1);
-  BN_init(&iqmp_times_q);
 
-  int d_ok;
-  if (!bn_mul_consttime(&n, key->p, key->q, ctx) ||
-      // lcm = lcm(p, q)
-      !bn_usub_consttime(&pm1, key->p, BN_value_one()) ||
-      !bn_usub_consttime(&qm1, key->q, BN_value_one()) ||
-      !bn_lcm_consttime(&lcm, &pm1, &qm1, ctx) ||
-      // Other implementations use the Euler totient rather than the Carmichael
-      // totient, so allow unreduced |key->d|.
-      !check_mod_inverse(&d_ok, key->e, key->d, &lcm,
-                         0 /* don't require reduced */, ctx)) {
+  // Check that p * q == n. Before we multiply, we check that p and q are in
+  // bounds, to avoid a DoS vector in |bn_mul_consttime| below. Note that
+  // n was bound by |rsa_check_public_key|.
+  if (BN_is_negative(key->p) || BN_cmp(key->p, key->n) >= 0 ||
+      BN_is_negative(key->q) || BN_cmp(key->q, key->n) >= 0) {
+    OPENSSL_PUT_ERROR(RSA, RSA_R_N_NOT_EQUAL_P_Q);
+    goto out;
+  }
+  if (!bn_mul_consttime(&tmp, key->p, key->q, ctx)) {
     OPENSSL_PUT_ERROR(RSA, ERR_LIB_BN);
     goto out;
   }
-
-  if (BN_cmp(&n, key->n) != 0) {
+  if (BN_cmp(&tmp, key->n) != 0) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_N_NOT_EQUAL_P_Q);
     goto out;
   }
 
-  if (!d_ok) {
+  // d must be an inverse of e mod the Carmichael totient, lcm(p-1, q-1), but it
+  // may be unreduced because other implementations use the Euler totient. We
+  // simply check that d * e is one mod p-1 and mod q-1. Note d and e were bound
+  // by earlier checks in this function.
+  if (!bn_usub_consttime(&pm1, key->p, BN_value_one()) ||
+      !bn_usub_consttime(&qm1, key->q, BN_value_one()) ||
+      !bn_mul_consttime(&de, key->d, key->e, ctx) ||
+      !bn_div_consttime(NULL, &tmp, &de, &pm1, ctx) ||
+      !bn_div_consttime(NULL, &de, &de, &qm1, ctx)) {
+    OPENSSL_PUT_ERROR(RSA, ERR_LIB_BN);
+    goto out;
+  }
+
+  if (!BN_is_one(&tmp) || !BN_is_one(&de)) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_D_E_NOT_CONGRUENT_TO_1);
     goto out;
   }
 
-  if (BN_is_negative(key->d) || BN_cmp(key->d, key->n) >= 0) {
-    OPENSSL_PUT_ERROR(RSA, RSA_R_D_OUT_OF_RANGE);
-    goto out;
-  }
-
-  has_crt_values = key->dmp1 != NULL;
+  int has_crt_values = key->dmp1 != NULL;
   if (has_crt_values != (key->dmq1 != NULL) ||
       has_crt_values != (key->iqmp != NULL)) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_INCONSISTENT_SET_OF_CRT_VALUES);
@@ -749,12 +770,9 @@ int RSA_check_key(const RSA *key) {
 
   if (has_crt_values) {
     int dmp1_ok, dmq1_ok, iqmp_ok;
-    if (!check_mod_inverse(&dmp1_ok, key->e, key->dmp1, &pm1,
-                           1 /* check reduced */, ctx) ||
-        !check_mod_inverse(&dmq1_ok, key->e, key->dmq1, &qm1,
-                           1 /* check reduced */, ctx) ||
-        !check_mod_inverse(&iqmp_ok, key->q, key->iqmp, key->p,
-                           1 /* check reduced */, ctx)) {
+    if (!check_mod_inverse(&dmp1_ok, key->e, key->dmp1, &pm1, ctx) ||
+        !check_mod_inverse(&dmq1_ok, key->e, key->dmq1, &qm1, ctx) ||
+        !check_mod_inverse(&iqmp_ok, key->q, key->iqmp, key->p, ctx)) {
       OPENSSL_PUT_ERROR(RSA, ERR_LIB_BN);
       goto out;
     }
@@ -768,13 +786,12 @@ int RSA_check_key(const RSA *key) {
   ok = 1;
 
 out:
-  BN_free(&n);
+  BN_free(&tmp);
+  BN_free(&de);
   BN_free(&pm1);
   BN_free(&qm1);
-  BN_free(&lcm);
   BN_free(&dmp1);
   BN_free(&dmq1);
-  BN_free(&iqmp_times_q);
   BN_CTX_free(ctx);
 
   return ok;

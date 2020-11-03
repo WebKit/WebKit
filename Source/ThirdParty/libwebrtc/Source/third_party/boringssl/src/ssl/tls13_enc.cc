@@ -143,33 +143,13 @@ bool tls13_set_traffic_key(SSL *ssl, enum ssl_encryption_level_t level,
                            Span<const uint8_t> traffic_secret) {
   uint16_t version = ssl_session_protocol_version(session);
   UniquePtr<SSLAEADContext> traffic_aead;
+  Span<const uint8_t> secret_for_quic;
   if (ssl->quic_method != nullptr) {
-    // Pass the traffic secrets to QUIC.
-    if (direction == evp_aead_open) {
-      if (!ssl->quic_method->set_read_secret(ssl, level, session->cipher,
-                                             traffic_secret.data(),
-                                             traffic_secret.size())) {
-        return false;
-      }
-    } else {
-      if (!ssl->quic_method->set_write_secret(ssl, level, session->cipher,
-                                              traffic_secret.data(),
-                                              traffic_secret.size())) {
-        return false;
-      }
-    }
-
-    // QUIC only uses |ssl| for handshake messages, which never use early data
-    // keys, so we return installing anything. This avoids needing to have two
-    // secrets active at once in 0-RTT.
-    if (level == ssl_encryption_early_data) {
-      return true;
-    }
-
     // Install a placeholder SSLAEADContext so that SSL accessors work. The
     // encryption itself will be handled by the SSL_QUIC_METHOD.
     traffic_aead =
         SSLAEADContext::CreatePlaceholderForQUIC(version, session->cipher);
+    secret_for_quic = traffic_secret;
   } else {
     // Look up cipher suite properties.
     const EVP_AEAD *aead;
@@ -217,14 +197,16 @@ bool tls13_set_traffic_key(SSL *ssl, enum ssl_encryption_level_t level,
   }
 
   if (direction == evp_aead_open) {
-    if (!ssl->method->set_read_state(ssl, level, std::move(traffic_aead))) {
+    if (!ssl->method->set_read_state(ssl, level, std::move(traffic_aead),
+                                     secret_for_quic)) {
       return false;
     }
     OPENSSL_memmove(ssl->s3->read_traffic_secret, traffic_secret.data(),
                     traffic_secret.size());
     ssl->s3->read_traffic_secret_len = traffic_secret.size();
   } else {
-    if (!ssl->method->set_write_state(ssl, level, std::move(traffic_aead))) {
+    if (!ssl->method->set_write_state(ssl, level, std::move(traffic_aead),
+                                      secret_for_quic)) {
       return false;
     }
     OPENSSL_memmove(ssl->s3->write_traffic_secret, traffic_secret.data(),

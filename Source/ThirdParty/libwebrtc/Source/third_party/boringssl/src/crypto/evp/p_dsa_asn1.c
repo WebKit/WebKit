@@ -141,9 +141,13 @@ static int dsa_priv_decode(EVP_PKEY *out, CBS *params, CBS *key) {
     goto err;
   }
 
-  // Decode the key.
+  // Decode the key. To avoid DoS attacks when importing private keys, we bound
+  // |dsa->priv_key| against |dsa->q|, which itself bound by
+  // |DSA_parse_parameters|. (We cannot call |BN_num_bits| on |dsa->priv_key|.
+  // That would leak a secret bit width.)
   if (!BN_parse_asn1_unsigned(key, dsa->priv_key) ||
-      CBS_len(key) != 0) {
+      CBS_len(key) != 0 ||
+      BN_cmp(dsa->priv_key, dsa->q) >= 0) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);
     goto err;
   }

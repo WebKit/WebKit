@@ -50,8 +50,8 @@ static const BN_ULONG ONE[P256_LIMBS] = {
 
 // Recode window to a signed digit, see |ec_GFp_nistp_recode_scalar_bits| in
 // util.c for details
-static unsigned booth_recode_w5(unsigned in) {
-  unsigned s, d;
+static crypto_word_t booth_recode_w5(crypto_word_t in) {
+  crypto_word_t s, d;
 
   s = ~((in >> 5) - 1);
   d = (1 << 6) - in - 1;
@@ -61,8 +61,8 @@ static unsigned booth_recode_w5(unsigned in) {
   return (d << 1) + (s & 1);
 }
 
-static unsigned booth_recode_w7(unsigned in) {
-  unsigned s, d;
+static crypto_word_t booth_recode_w7(crypto_word_t in) {
+  crypto_word_t s, d;
 
   s = ~((in >> 7) - 1);
   d = (1 << 8) - in - 1;
@@ -117,86 +117,73 @@ static BN_ULONG is_not_zero(BN_ULONG in) {
   return in;
 }
 
-// ecp_nistz256_mod_inverse_mont sets |r| to (|in| * 2^-256)^-1 * 2^256 mod p.
-// That is, |r| is the modular inverse of |in| for input and output in the
-// Montgomery domain.
-static void ecp_nistz256_mod_inverse_mont(BN_ULONG r[P256_LIMBS],
-                                          const BN_ULONG in[P256_LIMBS]) {
-  /* The poly is ffffffff 00000001 00000000 00000000 00000000 ffffffff ffffffff
-     ffffffff
-     We use FLT and used poly-2 as exponent */
-  BN_ULONG p2[P256_LIMBS];
-  BN_ULONG p4[P256_LIMBS];
-  BN_ULONG p8[P256_LIMBS];
-  BN_ULONG p16[P256_LIMBS];
-  BN_ULONG p32[P256_LIMBS];
-  BN_ULONG res[P256_LIMBS];
-  int i;
+// ecp_nistz256_mod_inverse_sqr_mont sets |r| to (|in| * 2^-256)^-2 * 2^256 mod
+// p. That is, |r| is the modular inverse square of |in| for input and output in
+// the Montgomery domain.
+static void ecp_nistz256_mod_inverse_sqr_mont(BN_ULONG r[P256_LIMBS],
+                                              const BN_ULONG in[P256_LIMBS]) {
+  // This implements the addition chain described in
+  // https://briansmith.org/ecc-inversion-addition-chains-01#p256_field_inversion
+  BN_ULONG x2[P256_LIMBS], x3[P256_LIMBS], x6[P256_LIMBS], x12[P256_LIMBS],
+      x15[P256_LIMBS], x30[P256_LIMBS], x32[P256_LIMBS];
+  ecp_nistz256_sqr_mont(x2, in);      // 2^2 - 2^1
+  ecp_nistz256_mul_mont(x2, x2, in);  // 2^2 - 2^0
 
-  ecp_nistz256_sqr_mont(res, in);
-  ecp_nistz256_mul_mont(p2, res, in);  // 3*p
+  ecp_nistz256_sqr_mont(x3, x2);      // 2^3 - 2^1
+  ecp_nistz256_mul_mont(x3, x3, in);  // 2^3 - 2^0
 
-  ecp_nistz256_sqr_mont(res, p2);
-  ecp_nistz256_sqr_mont(res, res);
-  ecp_nistz256_mul_mont(p4, res, p2);  // f*p
+  ecp_nistz256_sqr_mont(x6, x3);
+  for (int i = 1; i < 3; i++) {
+    ecp_nistz256_sqr_mont(x6, x6);
+  }                                   // 2^6 - 2^3
+  ecp_nistz256_mul_mont(x6, x6, x3);  // 2^6 - 2^0
 
-  ecp_nistz256_sqr_mont(res, p4);
-  ecp_nistz256_sqr_mont(res, res);
-  ecp_nistz256_sqr_mont(res, res);
-  ecp_nistz256_sqr_mont(res, res);
-  ecp_nistz256_mul_mont(p8, res, p4);  // ff*p
+  ecp_nistz256_sqr_mont(x12, x6);
+  for (int i = 1; i < 6; i++) {
+    ecp_nistz256_sqr_mont(x12, x12);
+  }                                     // 2^12 - 2^6
+  ecp_nistz256_mul_mont(x12, x12, x6);  // 2^12 - 2^0
 
-  ecp_nistz256_sqr_mont(res, p8);
-  for (i = 0; i < 7; i++) {
-    ecp_nistz256_sqr_mont(res, res);
-  }
-  ecp_nistz256_mul_mont(p16, res, p8);  // ffff*p
+  ecp_nistz256_sqr_mont(x15, x12);
+  for (int i = 1; i < 3; i++) {
+    ecp_nistz256_sqr_mont(x15, x15);
+  }                                     // 2^15 - 2^3
+  ecp_nistz256_mul_mont(x15, x15, x3);  // 2^15 - 2^0
 
-  ecp_nistz256_sqr_mont(res, p16);
-  for (i = 0; i < 15; i++) {
-    ecp_nistz256_sqr_mont(res, res);
-  }
-  ecp_nistz256_mul_mont(p32, res, p16);  // ffffffff*p
+  ecp_nistz256_sqr_mont(x30, x15);
+  for (int i = 1; i < 15; i++) {
+    ecp_nistz256_sqr_mont(x30, x30);
+  }                                      // 2^30 - 2^15
+  ecp_nistz256_mul_mont(x30, x30, x15);  // 2^30 - 2^0
 
-  ecp_nistz256_sqr_mont(res, p32);
-  for (i = 0; i < 31; i++) {
-    ecp_nistz256_sqr_mont(res, res);
-  }
-  ecp_nistz256_mul_mont(res, res, in);
+  ecp_nistz256_sqr_mont(x32, x30);
+  ecp_nistz256_sqr_mont(x32, x32);      // 2^32 - 2^2
+  ecp_nistz256_mul_mont(x32, x32, x2);  // 2^32 - 2^0
 
-  for (i = 0; i < 32 * 4; i++) {
-    ecp_nistz256_sqr_mont(res, res);
-  }
-  ecp_nistz256_mul_mont(res, res, p32);
+  BN_ULONG ret[P256_LIMBS];
+  ecp_nistz256_sqr_mont(ret, x32);
+  for (int i = 1; i < 31 + 1; i++) {
+    ecp_nistz256_sqr_mont(ret, ret);
+  }                                     // 2^64 - 2^32
+  ecp_nistz256_mul_mont(ret, ret, in);  // 2^64 - 2^32 + 2^0
 
-  for (i = 0; i < 32; i++) {
-    ecp_nistz256_sqr_mont(res, res);
-  }
-  ecp_nistz256_mul_mont(res, res, p32);
+  for (int i = 0; i < 96 + 32; i++) {
+    ecp_nistz256_sqr_mont(ret, ret);
+  }                                      // 2^192 - 2^160 + 2^128
+  ecp_nistz256_mul_mont(ret, ret, x32);  // 2^192 - 2^160 + 2^128 + 2^32 - 2^0
 
-  for (i = 0; i < 16; i++) {
-    ecp_nistz256_sqr_mont(res, res);
-  }
-  ecp_nistz256_mul_mont(res, res, p16);
+  for (int i = 0; i < 32; i++) {
+    ecp_nistz256_sqr_mont(ret, ret);
+  }                                      // 2^224 - 2^192 + 2^160 + 2^64 - 2^32
+  ecp_nistz256_mul_mont(ret, ret, x32);  // 2^224 - 2^192 + 2^160 + 2^64 - 2^0
 
-  for (i = 0; i < 8; i++) {
-    ecp_nistz256_sqr_mont(res, res);
-  }
-  ecp_nistz256_mul_mont(res, res, p8);
+  for (int i = 0; i < 30; i++) {
+    ecp_nistz256_sqr_mont(ret, ret);
+  }                                      // 2^254 - 2^222 + 2^190 + 2^94 - 2^30
+  ecp_nistz256_mul_mont(ret, ret, x30);  // 2^254 - 2^222 + 2^190 + 2^94 - 2^0
 
-  ecp_nistz256_sqr_mont(res, res);
-  ecp_nistz256_sqr_mont(res, res);
-  ecp_nistz256_sqr_mont(res, res);
-  ecp_nistz256_sqr_mont(res, res);
-  ecp_nistz256_mul_mont(res, res, p4);
-
-  ecp_nistz256_sqr_mont(res, res);
-  ecp_nistz256_sqr_mont(res, res);
-  ecp_nistz256_mul_mont(res, res, p2);
-
-  ecp_nistz256_sqr_mont(res, res);
-  ecp_nistz256_sqr_mont(res, res);
-  ecp_nistz256_mul_mont(r, res, in);
+  ecp_nistz256_sqr_mont(ret, ret);
+  ecp_nistz256_sqr_mont(r, ret);  // 2^256 - 2^224 + 2^192 + 2^96 - 2^2
 }
 
 // r = p * p_scalar
@@ -207,8 +194,8 @@ static void ecp_nistz256_windowed_mul(const EC_GROUP *group, P256_POINT *r,
   assert(p_scalar != NULL);
   assert(group->field.width == P256_LIMBS);
 
-  static const unsigned kWindowSize = 5;
-  static const unsigned kMask = (1 << (5 /* kWindowSize */ + 1)) - 1;
+  static const size_t kWindowSize = 5;
+  static const crypto_word_t kMask = (1 << (5 /* kWindowSize */ + 1)) - 1;
 
   // A |P256_POINT| is (3 * 32) = 96 bytes, and the 64-byte alignment should
   // add no more than 63 bytes of overhead. Thus, |table| should require
@@ -245,17 +232,17 @@ static void ecp_nistz256_windowed_mul(const EC_GROUP *group, P256_POINT *r,
 
   BN_ULONG tmp[P256_LIMBS];
   alignas(32) P256_POINT h;
-  unsigned index = 255;
-  unsigned wvalue = p_str[(index - 1) / 8];
+  size_t index = 255;
+  crypto_word_t wvalue = p_str[(index - 1) / 8];
   wvalue = (wvalue >> ((index - 1) % 8)) & kMask;
 
   ecp_nistz256_select_w5(r, table, booth_recode_w5(wvalue) >> 1);
 
   while (index >= 5) {
     if (index != 255) {
-      unsigned off = (index - 1) / 8;
+      size_t off = (index - 1) / 8;
 
-      wvalue = p_str[off] | p_str[off + 1] << 8;
+      wvalue = (crypto_word_t)p_str[off] | (crypto_word_t)p_str[off + 1] << 8;
       wvalue = (wvalue >> ((index - 1) % 8)) & kMask;
 
       wvalue = booth_recode_w5(wvalue);
@@ -296,21 +283,22 @@ typedef union {
   P256_POINT_AFFINE a;
 } p256_point_union_t;
 
-static unsigned calc_first_wvalue(unsigned *index, const uint8_t p_str[33]) {
-  static const unsigned kWindowSize = 7;
-  static const unsigned kMask = (1 << (7 /* kWindowSize */ + 1)) - 1;
+static crypto_word_t calc_first_wvalue(size_t *index, const uint8_t p_str[33]) {
+  static const size_t kWindowSize = 7;
+  static const crypto_word_t kMask = (1 << (7 /* kWindowSize */ + 1)) - 1;
   *index = kWindowSize;
 
-  unsigned wvalue = (p_str[0] << 1) & kMask;
+  crypto_word_t wvalue = (p_str[0] << 1) & kMask;
   return booth_recode_w7(wvalue);
 }
 
-static unsigned calc_wvalue(unsigned *index, const uint8_t p_str[33]) {
-  static const unsigned kWindowSize = 7;
-  static const unsigned kMask = (1 << (7 /* kWindowSize */ + 1)) - 1;
+static crypto_word_t calc_wvalue(size_t *index, const uint8_t p_str[33]) {
+  static const size_t kWindowSize = 7;
+  static const crypto_word_t kMask = (1 << (7 /* kWindowSize */ + 1)) - 1;
 
-  const unsigned off = (*index - 1) / 8;
-  unsigned wvalue = p_str[off] | p_str[off + 1] << 8;
+  const size_t off = (*index - 1) / 8;
+  crypto_word_t wvalue =
+      (crypto_word_t)p_str[off] | (crypto_word_t)p_str[off + 1] << 8;
   wvalue = (wvalue >> ((*index - 1) % 8)) & kMask;
   *index += kWindowSize;
 
@@ -338,8 +326,8 @@ static void ecp_nistz256_point_mul_base(const EC_GROUP *group, EC_RAW_POINT *r,
   p_str[32] = 0;
 
   // First window
-  unsigned index = 0;
-  unsigned wvalue = calc_first_wvalue(&index, p_str);
+  size_t index = 0;
+  crypto_word_t wvalue = calc_first_wvalue(&index, p_str);
 
   ecp_nistz256_select_w7(&p.a, ecp_nistz256_precomputed[0], wvalue >> 1);
   ecp_nistz256_neg(p.p.Z, p.p.Y);
@@ -383,8 +371,8 @@ static void ecp_nistz256_points_mul_public(const EC_GROUP *group,
   p_str[32] = 0;
 
   // First window
-  unsigned index = 0;
-  unsigned wvalue = calc_first_wvalue(&index, p_str);
+  size_t index = 0;
+  size_t wvalue = calc_first_wvalue(&index, p_str);
 
   // Convert |p| from affine to Jacobian coordinates. We set Z to zero if |p|
   // is infinity and |ONE| otherwise. |p| was computed from the table, so it
@@ -440,24 +428,17 @@ static int ecp_nistz256_get_affine(const EC_GROUP *group,
   }
 
   BN_ULONG z_inv2[P256_LIMBS];
-  BN_ULONG z_inv3[P256_LIMBS];
   assert(group->field.width == P256_LIMBS);
-  ecp_nistz256_mod_inverse_mont(z_inv3, point->Z.words);
-  ecp_nistz256_sqr_mont(z_inv2, z_inv3);
-
-  // Instead of using |ecp_nistz256_from_mont| to convert the |x| coordinate
-  // and then calling |ecp_nistz256_from_mont| again to convert the |y|
-  // coordinate below, convert the common factor |z_inv2| once now, saving one
-  // reduction.
-  ecp_nistz256_from_mont(z_inv2, z_inv2);
+  ecp_nistz256_mod_inverse_sqr_mont(z_inv2, point->Z.words);
 
   if (x != NULL) {
     ecp_nistz256_mul_mont(x->words, z_inv2, point->X.words);
   }
 
   if (y != NULL) {
-    ecp_nistz256_mul_mont(z_inv3, z_inv3, z_inv2);
-    ecp_nistz256_mul_mont(y->words, z_inv3, point->Y.words);
+    ecp_nistz256_sqr_mont(z_inv2, z_inv2);                            // z^-4
+    ecp_nistz256_mul_mont(y->words, point->Y.words, point->Z.words);  // y * z
+    ecp_nistz256_mul_mont(y->words, y->words, z_inv2);  // y * z^-3
   }
 
   return 1;
@@ -490,8 +471,8 @@ static void ecp_nistz256_dbl(const EC_GROUP *group, EC_RAW_POINT *r,
   OPENSSL_memcpy(r->Z.words, a.Z, P256_LIMBS * sizeof(BN_ULONG));
 }
 
-static void ecp_nistz256_inv_mod_ord(const EC_GROUP *group, EC_SCALAR *out,
-                                     const EC_SCALAR *in) {
+static void ecp_nistz256_inv0_mod_ord(const EC_GROUP *group, EC_SCALAR *out,
+                                      const EC_SCALAR *in) {
   // table[i] stores a power of |in| corresponding to the matching enum value.
   enum {
     // The following indices specify the power in binary.
@@ -571,12 +552,12 @@ static void ecp_nistz256_inv_mod_ord(const EC_GROUP *group, EC_SCALAR *out,
   }
 }
 
-static int ecp_nistz256_mont_inv_mod_ord_vartime(const EC_GROUP *group,
+static int ecp_nistz256_scalar_to_montgomery_inv_vartime(const EC_GROUP *group,
                                                  EC_SCALAR *out,
                                                  const EC_SCALAR *in) {
   if ((OPENSSL_ia32cap_get()[1] & (1 << 28)) == 0) {
     // No AVX support; fallback to generic code.
-    return ec_GFp_simple_mont_inv_mod_ord_vartime(group, out, in);
+    return ec_simple_scalar_to_montgomery_inv_vartime(group, out, in);
   }
 
   assert(group->order.width == P256_LIMBS);
@@ -640,10 +621,11 @@ DEFINE_METHOD_FUNCTION(EC_METHOD, EC_GFp_nistz256_method) {
   out->mul_public = ecp_nistz256_points_mul_public;
   out->felem_mul = ec_GFp_mont_felem_mul;
   out->felem_sqr = ec_GFp_mont_felem_sqr;
-  out->bignum_to_felem = ec_GFp_mont_bignum_to_felem;
-  out->felem_to_bignum = ec_GFp_mont_felem_to_bignum;
-  out->scalar_inv_montgomery = ecp_nistz256_inv_mod_ord;
-  out->scalar_inv_montgomery_vartime = ecp_nistz256_mont_inv_mod_ord_vartime;
+  out->felem_to_bytes = ec_GFp_mont_felem_to_bytes;
+  out->felem_from_bytes = ec_GFp_mont_felem_from_bytes;
+  out->scalar_inv0_montgomery = ecp_nistz256_inv0_mod_ord;
+  out->scalar_to_montgomery_inv_vartime =
+      ecp_nistz256_scalar_to_montgomery_inv_vartime;
   out->cmp_x_coordinate = ecp_nistz256_cmp_x_coordinate;
 }
 

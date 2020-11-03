@@ -65,6 +65,7 @@
 #include <openssl/rsa.h>
 
 #include "internal.h"
+#include "../bytestring/internal.h"
 #include "../internal.h"
 
 
@@ -385,4 +386,162 @@ EVP_PKEY *d2i_PublicKey(int type, EVP_PKEY **out, const uint8_t **inp,
 err:
   EVP_PKEY_free(ret);
   return NULL;
+}
+
+EVP_PKEY *d2i_PUBKEY(EVP_PKEY **out, const uint8_t **inp, long len) {
+  if (len < 0) {
+    return NULL;
+  }
+  CBS cbs;
+  CBS_init(&cbs, *inp, (size_t)len);
+  EVP_PKEY *ret = EVP_parse_public_key(&cbs);
+  if (ret == NULL) {
+    return NULL;
+  }
+  if (out != NULL) {
+    EVP_PKEY_free(*out);
+    *out = ret;
+  }
+  *inp = CBS_data(&cbs);
+  return ret;
+}
+
+int i2d_PUBKEY(const EVP_PKEY *pkey, uint8_t **outp) {
+  if (pkey == NULL) {
+    return 0;
+  }
+
+  CBB cbb;
+  if (!CBB_init(&cbb, 128) ||
+      !EVP_marshal_public_key(&cbb, pkey)) {
+    CBB_cleanup(&cbb);
+    return -1;
+  }
+  return CBB_finish_i2d(&cbb, outp);
+}
+
+RSA *d2i_RSA_PUBKEY(RSA **out, const uint8_t **inp, long len) {
+  if (len < 0) {
+    return NULL;
+  }
+  CBS cbs;
+  CBS_init(&cbs, *inp, (size_t)len);
+  EVP_PKEY *pkey = EVP_parse_public_key(&cbs);
+  if (pkey == NULL) {
+    return NULL;
+  }
+  RSA *rsa = EVP_PKEY_get1_RSA(pkey);
+  EVP_PKEY_free(pkey);
+  if (rsa == NULL) {
+    return NULL;
+  }
+  if (out != NULL) {
+    RSA_free(*out);
+    *out = rsa;
+  }
+  *inp = CBS_data(&cbs);
+  return rsa;
+}
+
+int i2d_RSA_PUBKEY(const RSA *rsa, uint8_t **outp) {
+  if (rsa == NULL) {
+    return 0;
+  }
+
+  int ret = -1;
+  EVP_PKEY *pkey = EVP_PKEY_new();
+  if (pkey == NULL ||
+      !EVP_PKEY_set1_RSA(pkey, (RSA *)rsa)) {
+    goto err;
+  }
+
+  ret = i2d_PUBKEY(pkey, outp);
+
+err:
+  EVP_PKEY_free(pkey);
+  return ret;
+}
+
+DSA *d2i_DSA_PUBKEY(DSA **out, const uint8_t **inp, long len) {
+  if (len < 0) {
+    return NULL;
+  }
+  CBS cbs;
+  CBS_init(&cbs, *inp, (size_t)len);
+  EVP_PKEY *pkey = EVP_parse_public_key(&cbs);
+  if (pkey == NULL) {
+    return NULL;
+  }
+  DSA *dsa = EVP_PKEY_get1_DSA(pkey);
+  EVP_PKEY_free(pkey);
+  if (dsa == NULL) {
+    return NULL;
+  }
+  if (out != NULL) {
+    DSA_free(*out);
+    *out = dsa;
+  }
+  *inp = CBS_data(&cbs);
+  return dsa;
+}
+
+int i2d_DSA_PUBKEY(const DSA *dsa, uint8_t **outp) {
+  if (dsa == NULL) {
+    return 0;
+  }
+
+  int ret = -1;
+  EVP_PKEY *pkey = EVP_PKEY_new();
+  if (pkey == NULL ||
+      !EVP_PKEY_set1_DSA(pkey, (DSA *)dsa)) {
+    goto err;
+  }
+
+  ret = i2d_PUBKEY(pkey, outp);
+
+err:
+  EVP_PKEY_free(pkey);
+  return ret;
+}
+
+EC_KEY *d2i_EC_PUBKEY(EC_KEY **out, const uint8_t **inp, long len) {
+  if (len < 0) {
+    return NULL;
+  }
+  CBS cbs;
+  CBS_init(&cbs, *inp, (size_t)len);
+  EVP_PKEY *pkey = EVP_parse_public_key(&cbs);
+  if (pkey == NULL) {
+    return NULL;
+  }
+  EC_KEY *ec_key = EVP_PKEY_get1_EC_KEY(pkey);
+  EVP_PKEY_free(pkey);
+  if (ec_key == NULL) {
+    return NULL;
+  }
+  if (out != NULL) {
+    EC_KEY_free(*out);
+    *out = ec_key;
+  }
+  *inp = CBS_data(&cbs);
+  return ec_key;
+}
+
+int i2d_EC_PUBKEY(const EC_KEY *ec_key, uint8_t **outp) {
+  if (ec_key == NULL) {
+    return 0;
+  }
+
+  int ret = -1;
+  EVP_PKEY *pkey = EVP_PKEY_new();
+  if (pkey == NULL ||
+      !EVP_PKEY_set1_EC_KEY(pkey, (EC_KEY *)ec_key)) {
+    goto err;
+  }
+
+  ret = i2d_PUBKEY(pkey, outp);
+
+err:
+  EVP_PKEY_free(pkey);
+  return ret;
 }

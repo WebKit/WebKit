@@ -92,6 +92,12 @@
 		412FF9342539B764001DF036 /* RTCVideoDecoderVTBVP9.mm in Sources */ = {isa = PBXBuildFile; fileRef = 412FF9322539B3C9001DF036 /* RTCVideoDecoderVTBVP9.mm */; };
 		412FF937253D8F0A001DF036 /* VTVideoDecoderSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 412FF935253D8F0A001DF036 /* VTVideoDecoderSPI.h */; };
 		412FF938253D8F0A001DF036 /* CMBaseObjectSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 412FF936253D8F0A001DF036 /* CMBaseObjectSPI.h */; };
+		412FF945254B10A5001DF036 /* curve25519.c in Sources */ = {isa = PBXBuildFile; fileRef = 412FF942254B10A5001DF036 /* curve25519.c */; };
+		412FF946254B10A5001DF036 /* internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 412FF943254B10A5001DF036 /* internal.h */; };
+		412FF947254B10A5001DF036 /* curve25519_tables.h in Headers */ = {isa = PBXBuildFile; fileRef = 412FF944254B10A5001DF036 /* curve25519_tables.h */; };
+		412FF94A254B10EF001DF036 /* fork_detect.c in Sources */ = {isa = PBXBuildFile; fileRef = 412FF948254B10EE001DF036 /* fork_detect.c */; };
+		412FF94B254B10EF001DF036 /* fork_detect.h in Headers */ = {isa = PBXBuildFile; fileRef = 412FF949254B10EF001DF036 /* fork_detect.h */; };
+		412FF94D254B1109001DF036 /* p256.c in Sources */ = {isa = PBXBuildFile; fileRef = 412FF94C254B1109001DF036 /* p256.c */; };
 		413091F31EF8CF9200757C55 /* rtp_video_stream_receiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 413091F11EF8CF9100757C55 /* rtp_video_stream_receiver.h */; };
 		413091F41EF8CF9200757C55 /* rtp_video_stream_receiver.cc in Sources */ = {isa = PBXBuildFile; fileRef = 413091F21EF8CF9100757C55 /* rtp_video_stream_receiver.cc */; };
 		413091FB1EF8CFF800757C55 /* builtin_audio_encoder_factory.cc in Sources */ = {isa = PBXBuildFile; fileRef = 413091F91EF8CFF300757C55 /* builtin_audio_encoder_factory.cc */; };
@@ -1313,7 +1319,6 @@
 		415449B021CAC3F5001C0A55 /* simple_mul.c in Sources */ = {isa = PBXBuildFile; fileRef = 415449AD21CAC3F5001C0A55 /* simple_mul.c */; };
 		415449B121CAC3F5001C0A55 /* scalar.c in Sources */ = {isa = PBXBuildFile; fileRef = 415449AE21CAC3F5001C0A55 /* scalar.c */; };
 		415449B621CAC4CE001C0A55 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 415449B521CAC4CE001C0A55 /* util.c */; };
-		415449B821CAC4EC001C0A55 /* p256.c in Sources */ = {isa = PBXBuildFile; fileRef = 415449B721CAC4EC001C0A55 /* p256.c */; };
 		415449BB21CAC5B4001C0A55 /* ecdh_extra.c in Sources */ = {isa = PBXBuildFile; fileRef = 415449BA21CAC5B3001C0A55 /* ecdh_extra.c */; };
 		4158649823BE05E900A0A61E /* WebKitEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 4158649623BE05E800A0A61E /* WebKitEncoder.h */; };
 		4158649923BE05E900A0A61E /* WebKitEncoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4158649723BE05E900A0A61E /* WebKitEncoder.mm */; };
@@ -1860,7 +1865,6 @@
 		419C84BE1FE319440040C30F /* audio_decoder_ilbc.h in Headers */ = {isa = PBXBuildFile; fileRef = 419C84B91FE319440040C30F /* audio_decoder_ilbc.h */; };
 		419C84BF1FE319440040C30F /* audio_decoder_ilbc.cc in Sources */ = {isa = PBXBuildFile; fileRef = 419C84BA1FE319440040C30F /* audio_decoder_ilbc.cc */; };
 		419C84C01FE319440040C30F /* audio_encoder_ilbc.h in Headers */ = {isa = PBXBuildFile; fileRef = 419C84BB1FE319440040C30F /* audio_encoder_ilbc.h */; };
-		419C84CB1FE3252E0040C30F /* curve25519.c in Sources */ = {isa = PBXBuildFile; fileRef = 419C847C1FE256B90040C30F /* curve25519.c */; };
 		419EA1F3215C48C70082BFD2 /* macho-objfmt.c in Sources */ = {isa = PBXBuildFile; fileRef = 419EA1F2215C48C70082BFD2 /* macho-objfmt.c */; };
 		419EA1F9215C4A9E0082BFD2 /* module.c in Sources */ = {isa = PBXBuildFile; fileRef = 419EA1F8215C4A9E0082BFD2 /* module.c */; };
 		419EA201215C4B270082BFD2 /* x86expr.c in Sources */ = {isa = PBXBuildFile; fileRef = 419EA1FD215C4B260082BFD2 /* x86expr.c */; };
@@ -2512,12 +2516,10 @@
 		5C4B46621E42AA34002651C8 /* v3_pci.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B447D1E42A6E2002651C8 /* v3_pci.c */; };
 		5C4B46631E42AA34002651C8 /* v3_pcia.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B447E1E42A6E2002651C8 /* v3_pcia.c */; };
 		5C4B46641E42AA34002651C8 /* v3_pcons.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B447F1E42A6E2002651C8 /* v3_pcons.c */; };
-		5C4B46651E42AA34002651C8 /* v3_pku.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B44801E42A6E2002651C8 /* v3_pku.c */; };
 		5C4B46661E42AA34002651C8 /* v3_pmaps.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B44811E42A6E2002651C8 /* v3_pmaps.c */; };
 		5C4B46671E42AA34002651C8 /* v3_prn.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B44821E42A6E2002651C8 /* v3_prn.c */; };
 		5C4B46681E42AA34002651C8 /* v3_purp.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B44831E42A6E2002651C8 /* v3_purp.c */; };
 		5C4B46691E42AA34002651C8 /* v3_skey.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B44841E42A6E2002651C8 /* v3_skey.c */; };
-		5C4B466A1E42AA34002651C8 /* v3_sxnet.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B44851E42A6E2002651C8 /* v3_sxnet.c */; };
 		5C4B466B1E42AA34002651C8 /* v3_utl.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B44861E42A6E2002651C8 /* v3_utl.c */; };
 		5C4B466D1E42AA3C002651C8 /* a_digest.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B44AC1E42A6F7002651C8 /* a_digest.c */; };
 		5C4B466E1E42AA3C002651C8 /* a_sign.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B44AD1E42A6F7002651C8 /* a_sign.c */; };
@@ -4350,6 +4352,12 @@
 		412FF9332539B3C9001DF036 /* RTCVideoDecoderVTBVP9.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTCVideoDecoderVTBVP9.h; sourceTree = "<group>"; };
 		412FF935253D8F0A001DF036 /* VTVideoDecoderSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VTVideoDecoderSPI.h; sourceTree = "<group>"; };
 		412FF936253D8F0A001DF036 /* CMBaseObjectSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMBaseObjectSPI.h; sourceTree = "<group>"; };
+		412FF942254B10A5001DF036 /* curve25519.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = curve25519.c; path = curve25519/curve25519.c; sourceTree = "<group>"; };
+		412FF943254B10A5001DF036 /* internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = internal.h; path = curve25519/internal.h; sourceTree = "<group>"; };
+		412FF944254B10A5001DF036 /* curve25519_tables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = curve25519_tables.h; path = curve25519/curve25519_tables.h; sourceTree = "<group>"; };
+		412FF948254B10EE001DF036 /* fork_detect.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fork_detect.c; sourceTree = "<group>"; };
+		412FF949254B10EF001DF036 /* fork_detect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fork_detect.h; sourceTree = "<group>"; };
+		412FF94C254B1109001DF036 /* p256.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = p256.c; sourceTree = "<group>"; };
 		413091F11EF8CF9100757C55 /* rtp_video_stream_receiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rtp_video_stream_receiver.h; sourceTree = "<group>"; };
 		413091F21EF8CF9100757C55 /* rtp_video_stream_receiver.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rtp_video_stream_receiver.cc; sourceTree = "<group>"; };
 		413091F91EF8CFF300757C55 /* builtin_audio_encoder_factory.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = builtin_audio_encoder_factory.cc; path = audio_codecs/builtin_audio_encoder_factory.cc; sourceTree = "<group>"; };
@@ -5633,7 +5641,6 @@
 		415449AD21CAC3F5001C0A55 /* simple_mul.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = simple_mul.c; sourceTree = "<group>"; };
 		415449AE21CAC3F5001C0A55 /* scalar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scalar.c; sourceTree = "<group>"; };
 		415449B521CAC4CE001C0A55 /* util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = util.c; sourceTree = "<group>"; };
-		415449B721CAC4EC001C0A55 /* p256.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = p256.c; sourceTree = "<group>"; };
 		415449BA21CAC5B3001C0A55 /* ecdh_extra.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ecdh_extra.c; path = ecdh_extra/ecdh_extra.c; sourceTree = "<group>"; };
 		41566796215BE7730032296A /* compat-queue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "compat-queue.h"; sourceTree = "<group>"; };
 		41566797215BE7730032296A /* floatnum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = floatnum.h; sourceTree = "<group>"; };
@@ -6258,7 +6265,6 @@
 		419C845A1FE255F80040C30F /* s3_lib.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = s3_lib.cc; sourceTree = "<group>"; };
 		419C845B1FE255F90040C30F /* ssl_key_share.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ssl_key_share.cc; sourceTree = "<group>"; };
 		419C845C1FE255F90040C30F /* t1_lib.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = t1_lib.cc; sourceTree = "<group>"; };
-		419C847C1FE256B90040C30F /* curve25519.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = curve25519.c; sourceTree = "<group>"; };
 		419C847E1FE257490040C30F /* d1_srtp.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = d1_srtp.cc; sourceTree = "<group>"; };
 		419C847F1FE257490040C30F /* dtls_method.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dtls_method.cc; sourceTree = "<group>"; };
 		419C84801FE2574A0040C30F /* handshake_client.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = handshake_client.cc; sourceTree = "<group>"; };
@@ -6976,12 +6982,10 @@
 		5C4B447D1E42A6E2002651C8 /* v3_pci.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = v3_pci.c; path = x509v3/v3_pci.c; sourceTree = "<group>"; };
 		5C4B447E1E42A6E2002651C8 /* v3_pcia.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = v3_pcia.c; path = x509v3/v3_pcia.c; sourceTree = "<group>"; };
 		5C4B447F1E42A6E2002651C8 /* v3_pcons.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = v3_pcons.c; path = x509v3/v3_pcons.c; sourceTree = "<group>"; };
-		5C4B44801E42A6E2002651C8 /* v3_pku.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = v3_pku.c; path = x509v3/v3_pku.c; sourceTree = "<group>"; };
 		5C4B44811E42A6E2002651C8 /* v3_pmaps.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = v3_pmaps.c; path = x509v3/v3_pmaps.c; sourceTree = "<group>"; };
 		5C4B44821E42A6E2002651C8 /* v3_prn.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = v3_prn.c; path = x509v3/v3_prn.c; sourceTree = "<group>"; };
 		5C4B44831E42A6E2002651C8 /* v3_purp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = v3_purp.c; path = x509v3/v3_purp.c; sourceTree = "<group>"; };
 		5C4B44841E42A6E2002651C8 /* v3_skey.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = v3_skey.c; path = x509v3/v3_skey.c; sourceTree = "<group>"; };
-		5C4B44851E42A6E2002651C8 /* v3_sxnet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = v3_sxnet.c; path = x509v3/v3_sxnet.c; sourceTree = "<group>"; };
 		5C4B44861E42A6E2002651C8 /* v3_utl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = v3_utl.c; path = x509v3/v3_utl.c; sourceTree = "<group>"; };
 		5C4B44AC1E42A6F7002651C8 /* a_digest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = a_digest.c; path = x509/a_digest.c; sourceTree = "<group>"; };
 		5C4B44AD1E42A6F7002651C8 /* a_sign.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = a_sign.c; path = x509/a_sign.c; sourceTree = "<group>"; };
@@ -10748,8 +10752,6 @@
 		419C847B1FE256A80040C30F /* fiat */ = {
 			isa = PBXGroup;
 			children = (
-				419C847C1FE256B90040C30F /* curve25519.c */,
-				415449B721CAC4EC001C0A55 /* p256.c */,
 			);
 			path = fiat;
 			sourceTree = "<group>";
@@ -10992,6 +10994,8 @@
 			children = (
 				41A391651EFC447900C4516A /* asm */,
 				41A391671EFC447900C4516A /* ctrdrbg.c */,
+				412FF948254B10EE001DF036 /* fork_detect.c */,
+				412FF949254B10EF001DF036 /* fork_detect.h */,
 				41A3916A1EFC447900C4516A /* internal.h */,
 				41A3916B1EFC447900C4516A /* rand.c */,
 				41A3916C1EFC447900C4516A /* urandom.c */,
@@ -11475,6 +11479,7 @@
 				41EA53B71EFC2C8B002FF04C /* internal.h */,
 				41EA53B81EFC2C8B002FF04C /* oct.c */,
 				41EA53B91EFC2C8B002FF04C /* p224-64.c */,
+				412FF94C254B1109001DF036 /* p256.c */,
 				41EA53BB1EFC2C8B002FF04C /* p256-x86_64-table.h */,
 				41EA53BC1EFC2C8B002FF04C /* p256-x86_64.c */,
 				41EA53BD1EFC2C8B002FF04C /* p256-x86_64.h */,
@@ -12314,12 +12319,10 @@
 				5C4B447D1E42A6E2002651C8 /* v3_pci.c */,
 				5C4B447E1E42A6E2002651C8 /* v3_pcia.c */,
 				5C4B447F1E42A6E2002651C8 /* v3_pcons.c */,
-				5C4B44801E42A6E2002651C8 /* v3_pku.c */,
 				5C4B44811E42A6E2002651C8 /* v3_pmaps.c */,
 				5C4B44821E42A6E2002651C8 /* v3_prn.c */,
 				5C4B44831E42A6E2002651C8 /* v3_purp.c */,
 				5C4B44841E42A6E2002651C8 /* v3_skey.c */,
-				5C4B44851E42A6E2002651C8 /* v3_sxnet.c */,
 				5C4B44861E42A6E2002651C8 /* v3_utl.c */,
 			);
 			name = x509v3;
@@ -12732,6 +12735,9 @@
 		5C4B4CF01E432156002651C8 /* curve25519 */ = {
 			isa = PBXGroup;
 			children = (
+				412FF944254B10A5001DF036 /* curve25519_tables.h */,
+				412FF942254B10A5001DF036 /* curve25519.c */,
+				412FF943254B10A5001DF036 /* internal.h */,
 				41A392171EFC5AB800C4516A /* asm */,
 				5C4B4CF61E432168002651C8 /* spake25519.c */,
 			);
@@ -15754,8 +15760,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				5C4B475A1E42AAF5002651C8 /* asn1_locl.h in Headers */,
+				412FF94B254B10EF001DF036 /* fork_detect.h in Headers */,
 				5C4B46751E42AA3C002651C8 /* charmap.h in Headers */,
 				5C4B47DD1E42C029002651C8 /* conf_def.h in Headers */,
+				412FF946254B10A5001DF036 /* internal.h in Headers */,
 				5C4B46491E42AA34002651C8 /* ext_dat.h in Headers */,
 				410091CF242CFD6500C5EDA2 /* internal.h in Headers */,
 				41A391B31EFC454F00C4516A /* internal.h in Headers */,
@@ -15766,6 +15774,7 @@
 				5C4B46BA1E42AA66002651C8 /* internal.h in Headers */,
 				5C4B47DC1E42C026002651C8 /* internal.h in Headers */,
 				5C4B482C1E42C06A002651C8 /* internal.h in Headers */,
+				412FF947254B10A5001DF036 /* curve25519_tables.h in Headers */,
 				5C4B47221E42AAD6002651C8 /* internal.h in Headers */,
 				41A391E91EFC490400C4516A /* internal.h in Headers */,
 				41EA54071EFC2D1B002FF04C /* internal.h in Headers */,
@@ -18296,7 +18305,6 @@
 				41A391791EFC447C00C4516A /* ctr.c in Sources */,
 				41A3917F1EFC447C00C4516A /* ctrdrbg.c in Sources */,
 				41EA54021EFC2D1B002FF04C /* ctx.c in Sources */,
-				419C84CB1FE3252E0040C30F /* curve25519.c in Sources */,
 				5CFACF36226E96F20056C7D0 /* d1_both.cc in Sources */,
 				5CFACF37226E96F70056C7D0 /* d1_lib.cc in Sources */,
 				5CFACF38226E96FB0056C7D0 /* d1_pkt.cc in Sources */,
@@ -18332,6 +18340,7 @@
 				415449BB21CAC5B4001C0A55 /* ecdh_extra.c in Sources */,
 				41EA53D81EFC2CDC002FF04C /* ecdsa.c in Sources */,
 				41A391E31EFC48AE00C4516A /* ecdsa_asn1.c in Sources */,
+				412FF94D254B1109001DF036 /* p256.c in Sources */,
 				5C4B46F21E42AAA1002651C8 /* engine.c in Sources */,
 				5C4B46F11E42AA9C002651C8 /* err.c in Sources */,
 				5CFACF58226E97CD0056C7D0 /* err_data.c in Sources */,
@@ -18377,7 +18386,6 @@
 				41A3917D1EFC447C00C4516A /* ofb.c in Sources */,
 				41EA53CA1EFC2C8B002FF04C /* p224-64.c in Sources */,
 				41EA53CD1EFC2C8B002FF04C /* p256-x86_64.c in Sources */,
-				415449B821CAC4EC001C0A55 /* p256.c in Sources */,
 				5C4B46BC1E42AA66002651C8 /* p5_pbev2.c in Sources */,
 				5C4B46E81E42AA97002651C8 /* p_dsa_asn1.c in Sources */,
 				5C4B46EA1E42AA97002651C8 /* p_ec.c in Sources */,
@@ -18391,6 +18399,7 @@
 				41A391861EFC447C00C4516A /* padding.c in Sources */,
 				5C4B47421E42AAEA002651C8 /* pair.c in Sources */,
 				5C4B470C1E42AABE002651C8 /* params.c in Sources */,
+				412FF94A254B10EF001DF036 /* fork_detect.c in Sources */,
 				5C4B46EE1E42AA97002651C8 /* pbkdf.c in Sources */,
 				5C4B464A1E42AA34002651C8 /* pcy_cache.c in Sources */,
 				5C4B464B1E42AA34002651C8 /* pcy_data.c in Sources */,
@@ -18445,6 +18454,7 @@
 				41EA54111EFC2D1B002FF04C /* sqrt.c in Sources */,
 				5CFACF43226E97350056C7D0 /* ssl_aead_ctx.cc in Sources */,
 				5CFACF44226E97390056C7D0 /* ssl_asn1.cc in Sources */,
+				412FF945254B10A5001DF036 /* curve25519.c in Sources */,
 				5CFACF45226E973C0056C7D0 /* ssl_buffer.cc in Sources */,
 				5CFACF46226E97400056C7D0 /* ssl_cert.cc in Sources */,
 				5CFACF47226E975D0056C7D0 /* ssl_cipher.cc in Sources */,
@@ -18505,12 +18515,10 @@
 				5C4B46621E42AA34002651C8 /* v3_pci.c in Sources */,
 				5C4B46631E42AA34002651C8 /* v3_pcia.c in Sources */,
 				5C4B46641E42AA34002651C8 /* v3_pcons.c in Sources */,
-				5C4B46651E42AA34002651C8 /* v3_pku.c in Sources */,
 				5C4B46661E42AA34002651C8 /* v3_pmaps.c in Sources */,
 				5C4B46671E42AA34002651C8 /* v3_prn.c in Sources */,
 				5C4B46681E42AA34002651C8 /* v3_purp.c in Sources */,
 				5C4B46691E42AA34002651C8 /* v3_skey.c in Sources */,
-				5C4B466A1E42AA34002651C8 /* v3_sxnet.c in Sources */,
 				5C4B466B1E42AA34002651C8 /* v3_utl.c in Sources */,
 				41EA53D21EFC2C8B002FF04C /* wnaf.c in Sources */,
 				41A3921A1EFC5AB800C4516A /* x25519-asm-arm.S in Sources */,

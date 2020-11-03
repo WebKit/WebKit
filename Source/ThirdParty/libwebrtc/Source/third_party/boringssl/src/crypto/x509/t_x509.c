@@ -494,7 +494,7 @@ err:
   return 0;
 }
 
-int X509_NAME_print(BIO *bp, X509_NAME *name, int obase)
+int X509_NAME_print(BIO *bp, const X509_NAME *name, int obase)
 {
     char *s, *c, *b;
     int ret = 0, l, i;

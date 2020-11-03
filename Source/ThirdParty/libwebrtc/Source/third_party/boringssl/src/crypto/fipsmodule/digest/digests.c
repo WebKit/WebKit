@@ -243,6 +243,22 @@ DEFINE_METHOD_FUNCTION(EVP_MD, EVP_sha512) {
 }
 
 
+static void sha512_256_init(EVP_MD_CTX *ctx) {
+  CHECK(SHA512_256_Init(ctx->md_data));
+}
+
+DEFINE_METHOD_FUNCTION(EVP_MD, EVP_sha512_256) {
+  out->type = NID_sha512_256;
+  out->md_size = SHA512_256_DIGEST_LENGTH;
+  out->flags = 0;
+  out->init = sha512_256_init;
+  out->update = sha512_update;
+  out->final = sha512_final;
+  out->block_size = 128;
+  out->ctx_size = sizeof(SHA512_CTX);
+}
+
+
 typedef struct {
   MD5_CTX md5;
   SHA_CTX sha1;

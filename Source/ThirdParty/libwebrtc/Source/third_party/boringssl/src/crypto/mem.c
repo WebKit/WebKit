@@ -72,6 +72,8 @@ OPENSSL_MSVC_PRAGMA(warning(pop))
 
 
 #define OPENSSL_MALLOC_PREFIX 8
+OPENSSL_STATIC_ASSERT(OPENSSL_MALLOC_PREFIX >= sizeof(size_t),
+                      "size_t too large");
 
 #if defined(OPENSSL_ASAN)
 void __asan_poison_memory_region(const volatile void *addr, size_t size);
@@ -84,27 +86,38 @@ static void __asan_unpoison_memory_region(const void *addr, size_t size) {}
 // Windows doesn't really support weak symbols as of May 2019, and Clang on
 // Windows will emit strong symbols instead. See
 // https://bugs.llvm.org/show_bug.cgi?id=37598
-#if defined(__GNUC__) || (defined(__clang__) && !defined(_MSC_VER))
+#if defined(__ELF__) && defined(__GNUC__)
+#define WEAK_SYMBOL_FUNC(rettype, name, args) \
+  rettype name args __attribute__((weak));
+#else
+#define WEAK_SYMBOL_FUNC(rettype, name, args) static rettype(*name) args = NULL;
+#endif
+
 // sdallocx is a sized |free| function. By passing the size (which we happen to
 // always know in BoringSSL), the malloc implementation can save work. We cannot
-// depend on |sdallocx| being available so we declare a wrapper that falls back
-// to |free| as a weak symbol.
+// depend on |sdallocx| being available, however, so it's a weak symbol.
 //
 // This will always be safe, but will only be overridden if the malloc
 // implementation is statically linked with BoringSSL. So, if |sdallocx| is
 // provided in, say, libc.so, we still won't use it because that's dynamically
 // linked. This isn't an ideal result, but its helps in some cases.
-void sdallocx(void *ptr, size_t size, int flags);
+WEAK_SYMBOL_FUNC(void, sdallocx, (void *ptr, size_t size, int flags));
 
-__attribute((weak, noinline))
-#else
-static
-#endif
-void sdallocx(void *ptr, size_t size, int flags) {
-  free(ptr);
-}
+// The following three functions can be defined to override default heap
+// allocation and freeing. If defined, it is the responsibility of
+// |OPENSSL_memory_free| to zero out the memory before returning it to the
+// system. |OPENSSL_memory_free| will not be passed NULL pointers.
+WEAK_SYMBOL_FUNC(void*, OPENSSL_memory_alloc, (size_t size));
+WEAK_SYMBOL_FUNC(void, OPENSSL_memory_free, (void *ptr));
+WEAK_SYMBOL_FUNC(size_t, OPENSSL_memory_get_size, (void *ptr));
 
 void *OPENSSL_malloc(size_t size) {
+  if (OPENSSL_memory_alloc != NULL) {
+    assert(OPENSSL_memory_free != NULL);
+    assert(OPENSSL_memory_get_size != NULL);
+    return OPENSSL_memory_alloc(size);
+  }
+
   if (size + OPENSSL_MALLOC_PREFIX < size) {
     return NULL;
   }
@@ -125,12 +138,21 @@ void OPENSSL_free(void *orig_ptr) {
     return;
   }
 
+  if (OPENSSL_memory_free != NULL) {
+    OPENSSL_memory_free(orig_ptr);
+    return;
+  }
+
   void *ptr = ((uint8_t *)orig_ptr) - OPENSSL_MALLOC_PREFIX;
   __asan_unpoison_memory_region(ptr, OPENSSL_MALLOC_PREFIX);
 
   size_t size = *(size_t *)ptr;
   OPENSSL_cleanse(ptr, size + OPENSSL_MALLOC_PREFIX);
-  sdallocx(ptr, size + OPENSSL_MALLOC_PREFIX, 0 /* flags */);
+  if (sdallocx) {
+    sdallocx(ptr, size + OPENSSL_MALLOC_PREFIX, 0 /* flags */);
+  } else {
+    free(ptr);
+  }
 }
 
 void *OPENSSL_realloc(void *orig_ptr, size_t new_size) {
@@ -138,10 +160,15 @@ void *OPENSSL_realloc(void *orig_ptr, size_t new_size) {
     return OPENSSL_malloc(new_size);
   }
 
-  void *ptr = ((uint8_t *)orig_ptr) - OPENSSL_MALLOC_PREFIX;
-  __asan_unpoison_memory_region(ptr, OPENSSL_MALLOC_PREFIX);
-  size_t old_size = *(size_t *)ptr;
-  __asan_poison_memory_region(ptr, OPENSSL_MALLOC_PREFIX);
+  size_t old_size;
+  if (OPENSSL_memory_get_size != NULL) {
+    old_size = OPENSSL_memory_get_size(orig_ptr);
+  } else {
+    void *ptr = ((uint8_t *)orig_ptr) - OPENSSL_MALLOC_PREFIX;
+    __asan_unpoison_memory_region(ptr, OPENSSL_MALLOC_PREFIX);
+    old_size = *(size_t *)ptr;
+    __asan_poison_memory_region(ptr, OPENSSL_MALLOC_PREFIX);
+  }
 
   void *ret = OPENSSL_malloc(new_size);
   if (ret == NULL) {

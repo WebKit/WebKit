@@ -67,6 +67,7 @@
 #include <openssl/x509v3.h>
 
 #include "../internal.h"
+#include "../x509v3/internal.h"
 
 
 int X509_issuer_and_serial_cmp(const X509 *a, const X509 *b)
@@ -130,7 +131,7 @@ int X509_CRL_match(const X509_CRL *a, const X509_CRL *b)
     return OPENSSL_memcmp(a->sha1_hash, b->sha1_hash, 20);
 }
 
-X509_NAME *X509_get_issuer_name(X509 *a)
+X509_NAME *X509_get_issuer_name(const X509 *a)
 {
     return (a->cert_info->issuer);
 }
@@ -145,7 +146,7 @@ unsigned long X509_issuer_name_hash_old(X509 *x)
     return (X509_NAME_hash_old(x->cert_info->issuer));
 }
 
-X509_NAME *X509_get_subject_name(X509 *a)
+X509_NAME *X509_get_subject_name(const X509 *a)
 {
     return (a->cert_info->subject);
 }
@@ -153,6 +154,11 @@ X509_NAME *X509_get_subject_name(X509 *a)
 ASN1_INTEGER *X509_get_serialNumber(X509 *a)
 {
     return (a->cert_info->serialNumber);
+}
+
+const ASN1_INTEGER *X509_get0_serialNumber(const X509 *x509)
+{
+    return x509->cert_info->serialNumber;
 }
 
 unsigned long X509_subject_name_hash(X509 *x)
@@ -175,12 +181,18 @@ unsigned long X509_subject_name_hash_old(X509 *x)
  */
 int X509_cmp(const X509 *a, const X509 *b)
 {
-    int rv;
-    /* ensure hash is valid */
-    X509_check_purpose((X509 *)a, -1, 0);
-    X509_check_purpose((X509 *)b, -1, 0);
+    /* Fill in the |sha1_hash| fields.
+     *
+     * TODO(davidben): This may fail, in which case the the hash will be all
+     * zeros. This produces a consistent comparison (failures are sticky), but
+     * not a good one. OpenSSL now returns -2, but this is not a consistent
+     * comparison and may cause misbehaving sorts by transitivity. For now, we
+     * retain the old OpenSSL behavior, which was to ignore the error. See
+     * https://crbug.com/boringssl/355. */
+    x509v3_cache_extensions((X509 *)a);
+    x509v3_cache_extensions((X509 *)b);
 
-    rv = OPENSSL_memcmp(a->sha1_hash, b->sha1_hash, SHA_DIGEST_LENGTH);
+    int rv = OPENSSL_memcmp(a->sha1_hash, b->sha1_hash, SHA_DIGEST_LENGTH);
     if (rv)
         return rv;
     /* Check for match against stored encoding too */

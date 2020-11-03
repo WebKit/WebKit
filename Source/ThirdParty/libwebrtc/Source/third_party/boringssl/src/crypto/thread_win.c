@@ -29,6 +29,10 @@ OPENSSL_MSVC_PRAGMA(warning(pop))
 
 OPENSSL_STATIC_ASSERT(sizeof(CRYPTO_MUTEX) >= sizeof(SRWLOCK),
                       "CRYPTO_MUTEX is too small");
+#if defined(__GNUC__) || defined(__clang__)
+OPENSSL_STATIC_ASSERT(alignof(CRYPTO_MUTEX) >= alignof(SRWLOCK),
+                      "CRYPTO_MUTEX has insufficient alignment");
+#endif
 
 static BOOL CALLBACK call_once_init(INIT_ONCE *once, void *arg, void **out) {
   void (**init)(void) = (void (**)(void))arg;

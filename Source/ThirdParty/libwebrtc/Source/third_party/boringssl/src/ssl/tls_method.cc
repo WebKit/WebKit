@@ -83,12 +83,28 @@ static void tls_on_handshake_complete(SSL *ssl) {
 }
 
 static bool tls_set_read_state(SSL *ssl, ssl_encryption_level_t level,
-                               UniquePtr<SSLAEADContext> aead_ctx) {
+                               UniquePtr<SSLAEADContext> aead_ctx,
+                               Span<const uint8_t> secret_for_quic) {
   // Cipher changes are forbidden if the current epoch has leftover data.
   if (tls_has_unprocessed_handshake_data(ssl)) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_EXCESS_HANDSHAKE_DATA);
     ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_UNEXPECTED_MESSAGE);
     return false;
+  }
+
+  if (ssl->quic_method != nullptr) {
+    if (!ssl->quic_method->set_read_secret(ssl, level, aead_ctx->cipher(),
+                                           secret_for_quic.data(),
+                                           secret_for_quic.size())) {
+      return false;
+    }
+
+    // QUIC only uses |ssl| for handshake messages, which never use early data
+    // keys, so we return without installing anything. This avoids needing to
+    // have two secrets active at once in 0-RTT.
+    if (level == ssl_encryption_early_data) {
+      return true;
+    }
   }
 
   OPENSSL_memset(ssl->s3->read_sequence, 0, sizeof(ssl->s3->read_sequence));
@@ -98,9 +114,25 @@ static bool tls_set_read_state(SSL *ssl, ssl_encryption_level_t level,
 }
 
 static bool tls_set_write_state(SSL *ssl, ssl_encryption_level_t level,
-                                UniquePtr<SSLAEADContext> aead_ctx) {
+                                UniquePtr<SSLAEADContext> aead_ctx,
+                                Span<const uint8_t> secret_for_quic) {
   if (!tls_flush_pending_hs_data(ssl)) {
     return false;
+  }
+
+  if (ssl->quic_method != nullptr) {
+    if (!ssl->quic_method->set_write_secret(ssl, level, aead_ctx->cipher(),
+                                            secret_for_quic.data(),
+                                            secret_for_quic.size())) {
+      return false;
+    }
+
+    // QUIC only uses |ssl| for handshake messages, which never use early data
+    // keys, so we return without installing anything. This avoids needing to
+    // have two secrets active at once in 0-RTT.
+    if (level == ssl_encryption_early_data) {
+      return true;
+    }
   }
 
   OPENSSL_memset(ssl->s3->write_sequence, 0, sizeof(ssl->s3->write_sequence));

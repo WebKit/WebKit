@@ -78,7 +78,9 @@ static void dtls1_on_handshake_complete(SSL *ssl) {
 }
 
 static bool dtls1_set_read_state(SSL *ssl, ssl_encryption_level_t level,
-                                 UniquePtr<SSLAEADContext> aead_ctx) {
+                                 UniquePtr<SSLAEADContext> aead_ctx,
+                                 Span<const uint8_t> secret_for_quic) {
+  assert(secret_for_quic.empty());  // QUIC does not use DTLS.
   // Cipher changes are forbidden if the current epoch has leftover data.
   if (dtls_has_unprocessed_handshake_data(ssl)) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_EXCESS_HANDSHAKE_DATA);
@@ -97,7 +99,9 @@ static bool dtls1_set_read_state(SSL *ssl, ssl_encryption_level_t level,
 }
 
 static bool dtls1_set_write_state(SSL *ssl, ssl_encryption_level_t level,
-                                  UniquePtr<SSLAEADContext> aead_ctx) {
+                                  UniquePtr<SSLAEADContext> aead_ctx,
+                                  Span<const uint8_t> secret_for_quic) {
+  assert(secret_for_quic.empty());  // QUIC does not use DTLS.
   ssl->d1->w_epoch++;
   OPENSSL_memcpy(ssl->d1->last_write_sequence, ssl->s3->write_sequence,
                  sizeof(ssl->s3->write_sequence));

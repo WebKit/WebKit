@@ -77,7 +77,7 @@ const X509V3_EXT_METHOD v3_skey_id = {
     NULL
 };
 
-char *i2s_ASN1_OCTET_STRING(X509V3_EXT_METHOD *method, ASN1_OCTET_STRING *oct)
+char *i2s_ASN1_OCTET_STRING(X509V3_EXT_METHOD *method, const ASN1_OCTET_STRING *oct)
 {
     return x509v3_bytes_to_hex(oct->data, oct->length);
 }

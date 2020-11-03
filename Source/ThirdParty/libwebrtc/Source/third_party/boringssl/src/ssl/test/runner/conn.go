@@ -761,6 +761,7 @@ func (c *Conn) useInTrafficSecret(version uint16, suite *cipherSuite, secret []b
 	}
 	if c.config.Bugs.MockQUICTransport != nil {
 		c.config.Bugs.MockQUICTransport.readSecret = secret
+		c.config.Bugs.MockQUICTransport.readCipherSuite = suite.id
 	}
 	c.in.useTrafficSecret(version, suite, secret, side)
 	c.seenHandshakePackEnd = false
@@ -774,8 +775,24 @@ func (c *Conn) useOutTrafficSecret(version uint16, suite *cipherSuite, secret []
 	}
 	if c.config.Bugs.MockQUICTransport != nil {
 		c.config.Bugs.MockQUICTransport.writeSecret = secret
+		c.config.Bugs.MockQUICTransport.writeCipherSuite = suite.id
 	}
 	c.out.useTrafficSecret(version, suite, secret, side)
+}
+
+func (c *Conn) setSkipEarlyData() {
+	if c.config.Bugs.MockQUICTransport != nil {
+		c.config.Bugs.MockQUICTransport.skipEarlyData = true
+	} else {
+		c.skipEarlyData = true
+	}
+}
+
+func (c *Conn) shouldSkipEarlyData() bool {
+	if c.config.Bugs.MockQUICTransport != nil {
+		return c.config.Bugs.MockQUICTransport.skipEarlyData
+	}
+	return c.skipEarlyData
 }
 
 func (c *Conn) doReadRecord(want recordType) (recordType, *block, error) {
@@ -904,6 +921,9 @@ RestartReadRecord:
 }
 
 func (c *Conn) readTLS13ChangeCipherSpec() error {
+	if c.config.Bugs.MockQUICTransport != nil {
+		return nil
+	}
 	if !c.expectTLS13ChangeCipherSpec {
 		panic("c.expectTLS13ChangeCipherSpec not set")
 	}
@@ -964,7 +984,7 @@ func (c *Conn) readRecord(want recordType) error {
 		break
 	}
 
-	if c.expectTLS13ChangeCipherSpec && c.config.Bugs.MockQUICTransport == nil {
+	if c.expectTLS13ChangeCipherSpec {
 		if err := c.readTLS13ChangeCipherSpec(); err != nil {
 			return err
 		}
@@ -1985,6 +2005,9 @@ func (c *Conn) SendNewSessionTicket(nonce []byte) error {
 		ticketAgeAdd:                ticketAgeAdd,
 		ticketNonce:                 nonce,
 		maxEarlyDataSize:            c.config.MaxEarlyDataSize,
+	}
+	if c.config.Bugs.MockQUICTransport != nil && m.maxEarlyDataSize > 0 {
+		m.maxEarlyDataSize = 0xffffffff
 	}
 
 	if c.config.Bugs.SendTicketLifetime != 0 {

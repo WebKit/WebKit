@@ -17,8 +17,8 @@ import (
 	"io"
 	"math/big"
 
-	"boringssl.googlesource.com/boringssl/ssl/test/runner/curve25519"
 	"boringssl.googlesource.com/boringssl/ssl/test/runner/hrss"
+	"golang.org/x/crypto/curve25519"
 )
 
 type keyType int

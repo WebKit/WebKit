@@ -99,6 +99,7 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/crypto/cpu-intel.c
     Source/third_party/boringssl/src/crypto/cpu-ppc64le.c
     Source/third_party/boringssl/src/crypto/crypto.c
+    Source/third_party/boringssl/src/crypto/curve25519/curve25519.c
     Source/third_party/boringssl/src/crypto/curve25519/spake25519.c
     Source/third_party/boringssl/src/crypto/dh/check.c
     Source/third_party/boringssl/src/crypto/dh/dh.c
@@ -133,6 +134,8 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/crypto/fipsmodule/bcm.c
     Source/third_party/boringssl/src/crypto/fipsmodule/is_fips.c
     Source/third_party/boringssl/src/crypto/fipsmodule/ecdh/ecdh.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/ec/p256.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/rand/fork_detect.c
     Source/third_party/boringssl/src/crypto/hkdf/hkdf.c
     Source/third_party/boringssl/src/crypto/hrss/hrss.c
     Source/third_party/boringssl/src/crypto/lhash/lhash.c
@@ -245,12 +248,10 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/crypto/x509v3/v3_pci.c
     Source/third_party/boringssl/src/crypto/x509v3/v3_pcia.c
     Source/third_party/boringssl/src/crypto/x509v3/v3_pcons.c
-    Source/third_party/boringssl/src/crypto/x509v3/v3_pku.c
     Source/third_party/boringssl/src/crypto/x509v3/v3_pmaps.c
     Source/third_party/boringssl/src/crypto/x509v3/v3_prn.c
     Source/third_party/boringssl/src/crypto/x509v3/v3_purp.c
     Source/third_party/boringssl/src/crypto/x509v3/v3_skey.c
-    Source/third_party/boringssl/src/crypto/x509v3/v3_sxnet.c
     Source/third_party/boringssl/src/crypto/x509v3/v3_utl.c
     Source/third_party/boringssl/src/ssl/bio_ssl.cc
     Source/third_party/boringssl/src/ssl/d1_both.cc
@@ -287,7 +288,6 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/ssl/tls13_server.cc
     Source/third_party/boringssl/src/ssl/tls_method.cc
     Source/third_party/boringssl/src/ssl/tls_record.cc
-    Source/third_party/boringssl/src/third_party/fiat/curve25519.c
     Source/third_party/jsoncpp/source/src/lib_json/json_reader.cpp
     Source/third_party/jsoncpp/source/src/lib_json/json_value.cpp
     Source/third_party/jsoncpp/source/src/lib_json/json_writer.cpp

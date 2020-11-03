@@ -380,6 +380,12 @@ OPENSSL_EXPORT int EVP_BytesToKey(const EVP_CIPHER *type, const EVP_MD *md,
 // processing.
 #define EVP_CIPH_CUSTOM_COPY 0x1000
 
+// EVP_CIPH_FLAG_NON_FIPS_ALLOW is meaningless. In OpenSSL it permits non-FIPS
+// algorithms in FIPS mode. But BoringSSL FIPS mode doesn't prohibit algorithms
+// (it's up the the caller to use the FIPS module in a fashion compliant with
+// their needs). Thus this exists only to allow code to compile.
+#define EVP_CIPH_FLAG_NON_FIPS_ALLOW 0
+
 
 // Deprecated functions
 

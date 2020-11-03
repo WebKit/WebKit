@@ -113,6 +113,16 @@ void DH_free(DH *dh) {
   OPENSSL_free(dh);
 }
 
+const BIGNUM *DH_get0_pub_key(const DH *dh) { return dh->pub_key; }
+
+const BIGNUM *DH_get0_priv_key(const DH *dh) { return dh->priv_key; }
+
+const BIGNUM *DH_get0_p(const DH *dh) { return dh->p; }
+
+const BIGNUM *DH_get0_q(const DH *dh) { return dh->q; }
+
+const BIGNUM *DH_get0_g(const DH *dh) { return dh->g; }
+
 void DH_get0_key(const DH *dh, const BIGNUM **out_pub_key,
                  const BIGNUM **out_priv_key) {
   if (out_pub_key != NULL) {
@@ -171,6 +181,11 @@ int DH_set0_pqg(DH *dh, BIGNUM *p, BIGNUM *q, BIGNUM *g) {
     dh->g = g;
   }
 
+  return 1;
+}
+
+int DH_set_length(DH *dh, unsigned priv_length) {
+  dh->priv_length = priv_length;
   return 1;
 }
 

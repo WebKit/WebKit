@@ -66,7 +66,7 @@
 #include "../internal.h"
 
 
-int i2d_ASN1_OBJECT(ASN1_OBJECT *a, unsigned char **pp)
+int i2d_ASN1_OBJECT(const ASN1_OBJECT *a, unsigned char **pp)
 {
     unsigned char *p, *allocated = NULL;
     int objsize;
@@ -98,12 +98,12 @@ int i2d_ASN1_OBJECT(ASN1_OBJECT *a, unsigned char **pp)
     return objsize;
 }
 
-int i2t_ASN1_OBJECT(char *buf, int buf_len, ASN1_OBJECT *a)
+int i2t_ASN1_OBJECT(char *buf, int buf_len, const ASN1_OBJECT *a)
 {
     return OBJ_obj2txt(buf, buf_len, a, 0);
 }
 
-int i2a_ASN1_OBJECT(BIO *bp, ASN1_OBJECT *a)
+int i2a_ASN1_OBJECT(BIO *bp, const ASN1_OBJECT *a)
 {
     char buf[80], *p = buf;
     int i;

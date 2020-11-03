@@ -489,7 +489,7 @@ elseif(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "amd64")
   set(ARCH "x86_64")
 elseif(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "AMD64")
   # cmake reports AMD64 on Windows, but we might be building for 32-bit.
-  if(CMAKE_CL_64)
+  if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(ARCH "x86_64")
   else()
     set(ARCH "x86")
@@ -608,11 +608,23 @@ endif()
       self.PrintExe(cmake, 'bssl', files['tool'], ['ssl', 'crypto'])
 
       cmake.write(
-R'''if(NOT MSVC AND NOT ANDROID)
+R'''if(NOT WIN32 AND NOT ANDROID)
   target_link_libraries(crypto pthread)
 endif()
 
+if(WIN32)
+  target_link_libraries(bssl ws2_32)
+endif()
+
 ''')
+
+class JSON(object):
+  def WriteFiles(self, files, asm_outputs):
+    sources = dict(files)
+    for ((osname, arch), asm_files) in asm_outputs:
+      sources['crypto_%s_%s' % (osname, arch)] = asm_files
+    with open('sources.json', 'w+') as f:
+      json.dump(sources, f, sort_keys=True, indent=2)
 
 def FindCMakeFiles(directory):
   """Returns list of all CMakeLists.txt files recursively in directory."""
@@ -689,6 +701,7 @@ def FindCFiles(directory, filter_func):
       if not filter_func(path, dirname, True):
         del dirnames[i]
 
+  cfiles.sort()
   return cfiles
 
 
@@ -708,6 +721,7 @@ def FindHeaderFiles(directory, filter_func):
         if not filter_func(path, dirname, True):
           del dirnames[i]
 
+  hfiles.sort()
   return hfiles
 
 
@@ -805,6 +819,9 @@ def WriteAsmFiles(perlasms):
   for (key, non_perl_asm_files) in NON_PERL_FILES.iteritems():
     asmfiles.setdefault(key, []).extend(non_perl_asm_files)
 
+  for files in asmfiles.itervalues():
+    files.sort()
+
   return asmfiles
 
 
@@ -846,12 +863,6 @@ def main(platforms):
   tool_c_files = FindCFiles(os.path.join('src', 'tool'), NoTests)
   tool_h_files = FindHeaderFiles(os.path.join('src', 'tool'), AllFiles)
 
-  # third_party/fiat/p256.c lives in third_party/fiat, but it is a FIPS
-  # fragment, not a normal source file.
-  p256 = os.path.join('src', 'third_party', 'fiat', 'p256.c')
-  fips_fragments.append(p256)
-  crypto_c_files.remove(p256)
-
   # BCM shared library C files
   bcm_crypto_c_files = [
       os.path.join('src', 'crypto', 'fipsmodule', 'bcm.c')
@@ -863,6 +874,7 @@ def main(platforms):
                           cwd=os.path.join('src', 'crypto', 'err'),
                           stdout=err_data)
   crypto_c_files.append('err_data.c')
+  crypto_c_files.sort()
 
   test_support_c_files = FindCFiles(os.path.join('src', 'crypto', 'test'),
                                     NotGTestSupport)
@@ -892,12 +904,14 @@ def main(platforms):
       file for file in crypto_test_files
       if not file.endswith('/urandom_test.cc')
   ]
+  crypto_test_files.sort()
 
   ssl_test_files = FindCFiles(os.path.join('src', 'ssl'), OnlyTests)
   ssl_test_files += [
       'src/crypto/test/abi_test.cc',
       'src/crypto/test/gtest_main.cc',
   ]
+  ssl_test_files.sort()
 
   urandom_test_files = [
       'src/crypto/fipsmodule/rand/urandom_test.cc',
@@ -905,17 +919,13 @@ def main(platforms):
 
   fuzz_c_files = FindCFiles(os.path.join('src', 'fuzz'), NoTests)
 
-  ssl_h_files = (
-      FindHeaderFiles(
-          os.path.join('src', 'include', 'openssl'),
-          SSLHeaderFiles))
+  ssl_h_files = FindHeaderFiles(os.path.join('src', 'include', 'openssl'),
+                                SSLHeaderFiles)
 
   def NotSSLHeaderFiles(path, filename, is_dir):
     return not SSLHeaderFiles(path, filename, is_dir)
-  crypto_h_files = (
-      FindHeaderFiles(
-          os.path.join('src', 'include', 'openssl'),
-          NotSSLHeaderFiles))
+  crypto_h_files = FindHeaderFiles(os.path.join('src', 'include', 'openssl'),
+                                   NotSSLHeaderFiles)
 
   ssl_internal_h_files = FindHeaderFiles(os.path.join('src', 'ssl'), NoTests)
   crypto_internal_h_files = (
@@ -927,19 +937,19 @@ def main(platforms):
       'crypto': crypto_c_files,
       'crypto_headers': crypto_h_files,
       'crypto_internal_headers': crypto_internal_h_files,
-      'crypto_test': sorted(crypto_test_files),
+      'crypto_test': crypto_test_files,
       'crypto_test_data': sorted('src/' + x for x in cmake['CRYPTO_TEST_DATA']),
       'fips_fragments': fips_fragments,
       'fuzz': fuzz_c_files,
       'ssl': ssl_source_files,
       'ssl_headers': ssl_h_files,
       'ssl_internal_headers': ssl_internal_h_files,
-      'ssl_test': sorted(ssl_test_files),
+      'ssl_test': ssl_test_files,
       'tool': tool_c_files,
       'tool_headers': tool_h_files,
       'test_support': test_support_c_files,
       'test_support_headers': test_support_h_files,
-      'urandom_test': sorted(urandom_test_files),
+      'urandom_test': urandom_test_files,
   }
 
   asm_outputs = sorted(WriteAsmFiles(ReadPerlAsmOperations()).iteritems())
@@ -949,10 +959,20 @@ def main(platforms):
 
   return 0
 
+ALL_PLATFORMS = {
+    'android': Android,
+    'android-cmake': AndroidCMake,
+    'bazel': Bazel,
+    'cmake': CMake,
+    'eureka': Eureka,
+    'gn': GN,
+    'gyp': GYP,
+    'json': JSON,
+}
 
 if __name__ == '__main__':
-  parser = optparse.OptionParser(usage='Usage: %prog [--prefix=<path>]'
-      ' [android|android-cmake|bazel|eureka|gn|gyp]')
+  parser = optparse.OptionParser(usage='Usage: %%prog [--prefix=<path>] [%s]' %
+                                 '|'.join(sorted(ALL_PLATFORMS.keys())))
   parser.add_option('--prefix', dest='prefix',
       help='For Bazel, prepend argument to all source files')
   parser.add_option(
@@ -969,22 +989,10 @@ if __name__ == '__main__':
 
   platforms = []
   for s in args:
-    if s == 'android':
-      platforms.append(Android())
-    elif s == 'android-cmake':
-      platforms.append(AndroidCMake())
-    elif s == 'bazel':
-      platforms.append(Bazel())
-    elif s == 'eureka':
-      platforms.append(Eureka())
-    elif s == 'gn':
-      platforms.append(GN())
-    elif s == 'gyp':
-      platforms.append(GYP())
-    elif s == 'cmake':
-      platforms.append(CMake())
-    else:
+    platform = ALL_PLATFORMS.get(s)
+    if platform is None:
       parser.print_help()
       sys.exit(1)
+    platforms.append(platform())
 
   sys.exit(main(platforms))

@@ -596,7 +596,11 @@ func (m *clientHelloMsg) marshal() []byte {
 	}
 	if m.delegatedCredentials {
 		extensions.addU16(extensionDelegatedCredentials)
-		extensions.addU16(0) // Length is always 0
+		body := extensions.addU16LengthPrefixed()
+		signatureSchemeList := body.addU16LengthPrefixed()
+		for _, sigAlg := range m.signatureAlgorithms {
+			signatureSchemeList.addU16(uint16(sigAlg))
+		}
 	}
 
 	// The PSK extension must be last. See https://tools.ietf.org/html/rfc8446#section-4.2.11

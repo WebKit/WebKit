@@ -94,6 +94,22 @@ OPENSSL_EXPORT int DSA_up_ref(DSA *dsa);
 
 // Properties.
 
+// DSA_get0_pub_key returns |dsa|'s public key.
+OPENSSL_EXPORT const BIGNUM *DSA_get0_pub_key(const DSA *dsa);
+
+// DSA_get0_priv_key returns |dsa|'s private key, or NULL if |dsa| is a public
+// key.
+OPENSSL_EXPORT const BIGNUM *DSA_get0_priv_key(const DSA *dsa);
+
+// DSA_get0_p returns |dsa|'s group modulus.
+OPENSSL_EXPORT const BIGNUM *DSA_get0_p(const DSA *dsa);
+
+// DSA_get0_q returns the size of |dsa|'s subgroup.
+OPENSSL_EXPORT const BIGNUM *DSA_get0_q(const DSA *dsa);
+
+// DSA_get0_g returns |dsa|'s group generator.
+OPENSSL_EXPORT const BIGNUM *DSA_get0_g(const DSA *dsa);
+
 // DSA_get0_key sets |*out_pub_key| and |*out_priv_key|, if non-NULL, to |dsa|'s
 // public and private key, respectively. If |dsa| is a public key, the private
 // key will be set to NULL.

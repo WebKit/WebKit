@@ -424,6 +424,8 @@ static const char *EarlyDataReasonToString(ssl_early_data_reason_t reason) {
       return "token_binding";
     case ssl_early_data_ticket_age_skew:
       return "ticket_age_skew";
+    case ssl_early_data_quic_parameter_mismatch:
+      return "quic_parameter_mismatch";
   }
 
   abort();
@@ -534,7 +536,7 @@ static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
     }
   }
 
-  if (!config->expect_quic_transport_params.empty()) {
+  if (!config->expect_quic_transport_params.empty() && expect_handshake_done) {
     const uint8_t *peer_params;
     size_t peer_params_len;
     SSL_get_peer_quic_transport_params(ssl, &peer_params, &peer_params_len);
@@ -1194,6 +1196,16 @@ int main(int argc, char **argv) {
     printf("No\n");
 #endif
     return 0;
+  }
+
+  if (initial_config.wait_for_debugger) {
+#if defined(OPENSSL_WINDOWS)
+    fprintf(stderr, "-wait-for-debugger is not supported on Windows.\n");
+    return 1;
+#else
+    // The debugger will resume the process.
+    raise(SIGSTOP);
+#endif
   }
 
   bssl::UniquePtr<SSL_CTX> ssl_ctx;

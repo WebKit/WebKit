@@ -79,17 +79,5 @@ int main(int argc, char **argv) {
     abi_test::EnableUnwindTests();
   }
 
-  // Run the entire test suite under an ABI check. This is less effective than
-  // testing the individual assembly functions, but will catch issues with
-  // rarely-used registers.
-  abi_test::Result abi;
-  int ret = abi_test::Check(&abi, RUN_ALL_TESTS);
-  if (!abi.ok()) {
-    fprintf(stderr, "ABI failure in test suite:\n");
-    for (const auto &error : abi.errors) {
-      fprintf(stderr, "    %s\n", error.c_str());
-    }
-    exit(1);
-  }
-  return ret;
+  return RUN_ALL_TESTS();
 }

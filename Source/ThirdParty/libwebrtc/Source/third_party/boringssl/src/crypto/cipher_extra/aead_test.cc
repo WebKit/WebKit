@@ -25,6 +25,7 @@
 
 #include "../fipsmodule/cipher/internal.h"
 #include "../internal.h"
+#include "../test/abi_test.h"
 #include "../test/file_test.h"
 #include "../test/test_util.h"
 #include "../test/wycheproof_util.h"
@@ -663,6 +664,91 @@ TEST_P(PerAEADTest, InvalidNonceLength) {
     }
   }
 }
+
+#if defined(SUPPORTS_ABI_TEST)
+// CHECK_ABI can't pass enums, i.e. |evp_aead_seal| and |evp_aead_open|. Thus
+// these two wrappers.
+static int aead_ctx_init_for_seal(EVP_AEAD_CTX *ctx, const EVP_AEAD *aead,
+                                  const uint8_t *key, size_t key_len) {
+  return EVP_AEAD_CTX_init_with_direction(ctx, aead, key, key_len, 0,
+                                          evp_aead_seal);
+}
+
+static int aead_ctx_init_for_open(EVP_AEAD_CTX *ctx, const EVP_AEAD *aead,
+                                  const uint8_t *key, size_t key_len) {
+  return EVP_AEAD_CTX_init_with_direction(ctx, aead, key, key_len, 0,
+                                          evp_aead_open);
+}
+
+// CHECK_ABI can pass, at most, eight arguments. Thus these wrappers that
+// figure out the output length from the input length, and take the nonce length
+// from the configuration of the AEAD.
+static int aead_ctx_seal(EVP_AEAD_CTX *ctx, uint8_t *out_ciphertext,
+                         size_t *out_ciphertext_len, const uint8_t *nonce,
+                         const uint8_t *plaintext, size_t plaintext_len,
+                         const uint8_t *ad, size_t ad_len) {
+  const size_t nonce_len = EVP_AEAD_nonce_length(EVP_AEAD_CTX_aead(ctx));
+  return EVP_AEAD_CTX_seal(ctx, out_ciphertext, out_ciphertext_len,
+                           plaintext_len + EVP_AEAD_MAX_OVERHEAD, nonce,
+                           nonce_len, plaintext, plaintext_len, ad, ad_len);
+}
+
+static int aead_ctx_open(EVP_AEAD_CTX *ctx, uint8_t *out_plaintext,
+                         size_t *out_plaintext_len, const uint8_t *nonce,
+                         const uint8_t *ciphertext, size_t ciphertext_len,
+                         const uint8_t *ad, size_t ad_len) {
+  const size_t nonce_len = EVP_AEAD_nonce_length(EVP_AEAD_CTX_aead(ctx));
+  return EVP_AEAD_CTX_open(ctx, out_plaintext, out_plaintext_len,
+                           ciphertext_len, nonce, nonce_len, ciphertext,
+                           ciphertext_len, ad, ad_len);
+}
+
+TEST_P(PerAEADTest, ABI) {
+  uint8_t key[EVP_AEAD_MAX_KEY_LENGTH];
+  OPENSSL_memset(key, 'K', sizeof(key));
+  const size_t key_len = EVP_AEAD_key_length(aead());
+  ASSERT_LE(key_len, sizeof(key));
+
+  bssl::ScopedEVP_AEAD_CTX ctx_seal;
+  ASSERT_TRUE(
+      CHECK_ABI(aead_ctx_init_for_seal, ctx_seal.get(), aead(), key, key_len));
+
+  bssl::ScopedEVP_AEAD_CTX ctx_open;
+  ASSERT_TRUE(
+      CHECK_ABI(aead_ctx_init_for_open, ctx_open.get(), aead(), key, key_len));
+
+  alignas(2) uint8_t plaintext[512];
+  OPENSSL_memset(plaintext, 'P', sizeof(plaintext));
+
+  alignas(2) uint8_t ad_buf[512];
+  OPENSSL_memset(ad_buf, 'A', sizeof(ad_buf));
+  const uint8_t *const ad = ad_buf + 1;
+  ASSERT_LE(GetParam().ad_len, sizeof(ad_buf) - 1);
+  const size_t ad_len =
+      GetParam().ad_len != 0 ? GetParam().ad_len : sizeof(ad_buf) - 1;
+
+  uint8_t nonce[EVP_AEAD_MAX_NONCE_LENGTH];
+  const size_t nonce_len = EVP_AEAD_nonce_length(aead());
+  ASSERT_LE(nonce_len, sizeof(nonce));
+
+  alignas(2) uint8_t ciphertext[sizeof(plaintext) + EVP_AEAD_MAX_OVERHEAD + 1];
+  size_t ciphertext_len;
+  // Knock plaintext, ciphertext, and AD off alignment and give odd lengths for
+  // plaintext and AD. This hopefully triggers any edge-cases in the assembly.
+  ASSERT_TRUE(CHECK_ABI(aead_ctx_seal, ctx_seal.get(), ciphertext + 1,
+                        &ciphertext_len, nonce, plaintext + 1,
+                        sizeof(plaintext) - 1, ad, ad_len));
+
+  alignas(2) uint8_t plaintext2[sizeof(ciphertext) + 1];
+  size_t plaintext2_len;
+  ASSERT_TRUE(CHECK_ABI(aead_ctx_open, ctx_open.get(), plaintext2 + 1,
+                        &plaintext2_len, nonce, ciphertext + 1, ciphertext_len,
+                        ad, ad_len));
+
+  EXPECT_EQ(Bytes(plaintext + 1, sizeof(plaintext) - 1),
+            Bytes(plaintext2 + 1, plaintext2_len));
+}
+#endif  // SUPPORTS_ABI_TEST
 
 TEST(AEADTest, AESCCMLargeAD) {
   static const std::vector<uint8_t> kKey(16, 'A');

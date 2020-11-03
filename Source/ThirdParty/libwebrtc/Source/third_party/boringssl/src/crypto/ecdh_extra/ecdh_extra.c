@@ -96,8 +96,8 @@ int ECDH_compute_key(void *out, size_t out_len, const EC_POINT *pub_key,
   uint8_t buf[EC_MAX_BYTES];
   size_t buf_len;
   if (!ec_point_mul_scalar(group, &shared_point, &pub_key->raw, priv) ||
-      !ec_point_get_affine_coordinate_bytes(group, buf, NULL, &buf_len,
-                                            sizeof(buf), &shared_point)) {
+      !ec_get_x_coordinate_as_bytes(group, buf, &buf_len, sizeof(buf),
+                                    &shared_point)) {
     OPENSSL_PUT_ERROR(ECDH, ECDH_R_POINT_ARITHMETIC_FAILURE);
     return -1;
   }

@@ -96,10 +96,8 @@ static int pkey_cb(int operation, ASN1_VALUE **pval, const ASN1_ITEM *it,
   // Since the structure must still be valid use ASN1_OP_FREE_PRE
   if (operation == ASN1_OP_FREE_PRE) {
     PKCS8_PRIV_KEY_INFO *key = (PKCS8_PRIV_KEY_INFO *)*pval;
-    if (key->pkey && key->pkey->type == V_ASN1_OCTET_STRING &&
-        key->pkey->value.octet_string) {
-      OPENSSL_cleanse(key->pkey->value.octet_string->data,
-                      key->pkey->value.octet_string->length);
+    if (key->pkey) {
+      OPENSSL_cleanse(key->pkey->data, key->pkey->length);
     }
   }
   return 1;
@@ -108,11 +106,44 @@ static int pkey_cb(int operation, ASN1_VALUE **pval, const ASN1_ITEM *it,
 ASN1_SEQUENCE_cb(PKCS8_PRIV_KEY_INFO, pkey_cb) = {
   ASN1_SIMPLE(PKCS8_PRIV_KEY_INFO, version, ASN1_INTEGER),
   ASN1_SIMPLE(PKCS8_PRIV_KEY_INFO, pkeyalg, X509_ALGOR),
-  ASN1_SIMPLE(PKCS8_PRIV_KEY_INFO, pkey, ASN1_ANY),
+  ASN1_SIMPLE(PKCS8_PRIV_KEY_INFO, pkey, ASN1_OCTET_STRING),
   ASN1_IMP_SET_OF_OPT(PKCS8_PRIV_KEY_INFO, attributes, X509_ATTRIBUTE, 0)
 } ASN1_SEQUENCE_END_cb(PKCS8_PRIV_KEY_INFO, PKCS8_PRIV_KEY_INFO)
 
 IMPLEMENT_ASN1_FUNCTIONS(PKCS8_PRIV_KEY_INFO)
+
+int PKCS8_pkey_set0(PKCS8_PRIV_KEY_INFO *priv, ASN1_OBJECT *aobj, int version,
+                    int ptype, void *pval, uint8_t *penc, int penclen) {
+  if (version >= 0 &&
+      !ASN1_INTEGER_set(priv->version, version)) {
+    return 0;
+  }
+
+  if (!X509_ALGOR_set0(priv->pkeyalg, aobj, ptype, pval)) {
+    return 0;
+  }
+
+  if (penc != NULL) {
+    ASN1_STRING_set0(priv->pkey, penc, penclen);
+  }
+
+  return 1;
+}
+
+int PKCS8_pkey_get0(ASN1_OBJECT **ppkalg, const uint8_t **pk, int *ppklen,
+                    X509_ALGOR **pa, PKCS8_PRIV_KEY_INFO *p8) {
+  if (ppkalg) {
+    *ppkalg = p8->pkeyalg->algorithm;
+  }
+  if (pk) {
+    *pk = ASN1_STRING_data(p8->pkey);
+    *ppklen = ASN1_STRING_length(p8->pkey);
+  }
+  if (pa) {
+    *pa = p8->pkeyalg;
+  }
+  return 1;
+}
 
 EVP_PKEY *EVP_PKCS82PKEY(PKCS8_PRIV_KEY_INFO *p8) {
   uint8_t *der = NULL;

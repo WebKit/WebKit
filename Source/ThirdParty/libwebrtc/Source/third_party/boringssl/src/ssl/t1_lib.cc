@@ -1245,6 +1245,12 @@ static bool ext_sct_add_serverhello(SSL_HANDSHAKE *hs, CBB *out) {
 
 static bool ext_alpn_add_clienthello(SSL_HANDSHAKE *hs, CBB *out) {
   SSL *const ssl = hs->ssl;
+  if (hs->config->alpn_client_proto_list.empty() && ssl->quic_method) {
+    // ALPN MUST be used with QUIC.
+    OPENSSL_PUT_ERROR(SSL, SSL_R_MISSING_ALPN);
+    return false;
+  }
+
   if (hs->config->alpn_client_proto_list.empty() ||
       ssl->s3->initial_handshake_complete) {
     return true;
@@ -1267,6 +1273,12 @@ static bool ext_alpn_parse_serverhello(SSL_HANDSHAKE *hs, uint8_t *out_alert,
                                        CBS *contents) {
   SSL *const ssl = hs->ssl;
   if (contents == NULL) {
+    if (ssl->quic_method) {
+      // ALPN is required when QUIC is used.
+      OPENSSL_PUT_ERROR(SSL, SSL_R_MISSING_ALPN);
+      *out_alert = SSL_AD_NO_APPLICATION_PROTOCOL;
+      return false;
+    }
     return true;
   }
 
@@ -1342,6 +1354,12 @@ bool ssl_negotiate_alpn(SSL_HANDSHAKE *hs, uint8_t *out_alert,
       !ssl_client_hello_get_extension(
           client_hello, &contents,
           TLSEXT_TYPE_application_layer_protocol_negotiation)) {
+    if (ssl->quic_method) {
+      // ALPN is required when QUIC is used.
+      OPENSSL_PUT_ERROR(SSL, SSL_R_MISSING_ALPN);
+      *out_alert = SSL_AD_NO_APPLICATION_PROTOCOL;
+      return false;
+    }
     // Ignore ALPN if not configured or no extension was supplied.
     return true;
   }
@@ -1388,6 +1406,11 @@ bool ssl_negotiate_alpn(SSL_HANDSHAKE *hs, uint8_t *out_alert,
       *out_alert = SSL_AD_INTERNAL_ERROR;
       return false;
     }
+  } else if (ssl->quic_method) {
+    // ALPN is required when QUIC is used.
+    OPENSSL_PUT_ERROR(SSL, SSL_R_MISSING_ALPN);
+    *out_alert = SSL_AD_NO_APPLICATION_PROTOCOL;
+    return false;
   }
 
   return true;
@@ -2547,10 +2570,17 @@ static bool ext_token_binding_add_serverhello(SSL_HANDSHAKE *hs, CBB *out) {
 
 static bool ext_quic_transport_params_add_clienthello(SSL_HANDSHAKE *hs,
                                                       CBB *out) {
-  if (hs->config->quic_transport_params.empty() ||
-      hs->max_version <= TLS1_2_VERSION) {
+  if (hs->config->quic_transport_params.empty() && !hs->ssl->quic_method) {
     return true;
   }
+  if (hs->config->quic_transport_params.empty() || !hs->ssl->quic_method) {
+    // QUIC Transport Parameters must be sent over QUIC, and they must not be
+    // sent over non-QUIC transports. If transport params are set, then
+    // SSL(_CTX)_set_quic_method must also be called.
+    OPENSSL_PUT_ERROR(SSL, SSL_R_QUIC_TRANSPORT_PARAMETERS_MISCONFIGURED);
+    return false;
+  }
+  assert(hs->min_version > TLS1_2_VERSION);
 
   CBB contents;
   if (!CBB_add_u16(out, TLSEXT_TYPE_quic_transport_parameters) ||
@@ -2568,13 +2598,19 @@ static bool ext_quic_transport_params_parse_serverhello(SSL_HANDSHAKE *hs,
                                                         CBS *contents) {
   SSL *const ssl = hs->ssl;
   if (contents == nullptr) {
-    return true;
+    if (!ssl->quic_method) {
+      return true;
+    }
+    assert(ssl->quic_method);
+    *out_alert = SSL_AD_MISSING_EXTENSION;
+    return false;
   }
-  // QUIC requires TLS 1.3.
-  if (ssl_protocol_version(ssl) < TLS1_3_VERSION) {
+  if (!ssl->quic_method) {
     *out_alert = SSL_AD_UNSUPPORTED_EXTENSION;
     return false;
   }
+  // QUIC requires TLS 1.3.
+  assert(ssl_protocol_version(ssl) == TLS1_3_VERSION);
 
   return ssl->s3->peer_quic_transport_params.CopyFrom(*contents);
 }
@@ -2583,21 +2619,34 @@ static bool ext_quic_transport_params_parse_clienthello(SSL_HANDSHAKE *hs,
                                                         uint8_t *out_alert,
                                                         CBS *contents) {
   SSL *const ssl = hs->ssl;
-  if (!contents || hs->config->quic_transport_params.empty()) {
-    return true;
+  if (!contents) {
+    if (!ssl->quic_method) {
+      if (hs->config->quic_transport_params.empty()) {
+        return true;
+      }
+      // QUIC transport parameters must not be set if |ssl| is not configured
+      // for QUIC.
+      OPENSSL_PUT_ERROR(SSL, SSL_R_QUIC_TRANSPORT_PARAMETERS_MISCONFIGURED);
+      *out_alert = SSL_AD_INTERNAL_ERROR;
+    }
+    *out_alert = SSL_AD_MISSING_EXTENSION;
+    return false;
   }
-  // Ignore the extension before TLS 1.3.
-  if (ssl_protocol_version(ssl) < TLS1_3_VERSION) {
-    return true;
+  if (!ssl->quic_method) {
+    *out_alert = SSL_AD_UNSUPPORTED_EXTENSION;
+    return false;
   }
-
+  assert(ssl_protocol_version(ssl) == TLS1_3_VERSION);
   return ssl->s3->peer_quic_transport_params.CopyFrom(*contents);
 }
 
 static bool ext_quic_transport_params_add_serverhello(SSL_HANDSHAKE *hs,
                                                       CBB *out) {
+  assert(hs->ssl->quic_method != nullptr);
   if (hs->config->quic_transport_params.empty()) {
-    return true;
+    // Transport parameters must be set when using QUIC.
+    OPENSSL_PUT_ERROR(SSL, SSL_R_QUIC_TRANSPORT_PARAMETERS_MISCONFIGURED);
+    return false;
   }
 
   CBB contents;
@@ -2624,18 +2673,20 @@ static bool ext_delegated_credential_add_clienthello(SSL_HANDSHAKE *hs,
 static bool ext_delegated_credential_parse_clienthello(SSL_HANDSHAKE *hs,
                                                        uint8_t *out_alert,
                                                        CBS *contents) {
-  assert(TLSEXT_TYPE_delegated_credential == 0xff02);
-  // TODO: Check that the extension is empty.
-  //
-  // As of draft-03, the client sends an empty extension in order indicate
-  // support for delegated credentials. This could change, however, since the
-  // spec is not yet finalized. This assertion is here to remind us to enforce
-  // this check once the extension ID is assigned.
-
   if (contents == nullptr || ssl_protocol_version(hs->ssl) < TLS1_3_VERSION) {
     // Don't use delegated credentials unless we're negotiating TLS 1.3 or
     // higher.
     return true;
+  }
+
+  // The contents of the extension are the signature algorithms the client will
+  // accept for a delegated credential.
+  CBS sigalg_list;
+  if (!CBS_get_u16_length_prefixed(contents, &sigalg_list) ||
+      CBS_len(&sigalg_list) == 0 ||
+      CBS_len(contents) != 0 ||
+      !parse_u16_array(&sigalg_list, &hs->peer_delegated_credential_sigalgs)) {
+    return false;
   }
 
   hs->delegated_credential_requested = true;
@@ -3021,7 +3072,7 @@ bool ssl_add_clienthello_tlsext(SSL_HANDSHAKE *hs, CBB *out,
     last_was_empty = false;
   }
 
-  if (!SSL_is_dtls(ssl)) {
+  if (!SSL_is_dtls(ssl) && !ssl->quic_method) {
     size_t psk_extension_len = ext_pre_shared_key_clienthello_length(hs);
     header_len += 2 + CBB_len(&extensions) + psk_extension_len;
     size_t padding_len = 0;

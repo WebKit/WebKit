@@ -126,8 +126,8 @@ void *usr_data;	/* Any extension specific data */
 };
 
 typedef struct X509V3_CONF_METHOD_st {
-char * (*get_string)(void *db, char *section, char *value);
-STACK_OF(CONF_VALUE) * (*get_section)(void *db, char *section);
+char * (*get_string)(void *db, const char *section, const char *value);
+STACK_OF(CONF_VALUE) * (*get_section)(void *db, const char *section);
 void (*free_string)(void *db, char * string);
 void (*free_section)(void *db, STACK_OF(CONF_VALUE) *section);
 } X509V3_CONF_METHOD;
@@ -161,11 +161,6 @@ int ca;
 ASN1_INTEGER *pathlen;
 };
 
-
-typedef struct PKEY_USAGE_PERIOD_st {
-ASN1_GENERALIZEDTIME *notBefore;
-ASN1_GENERALIZEDTIME *notAfter;
-} PKEY_USAGE_PERIOD;
 
 typedef struct otherName_st {
 ASN1_OBJECT *type_id;
@@ -271,21 +266,6 @@ ASN1_OCTET_STRING *keyid;
 GENERAL_NAMES *issuer;
 ASN1_INTEGER *serial;
 };
-
-/* Strong extranet structures */
-
-typedef struct SXNET_ID_st {
-	ASN1_INTEGER *zone;
-	ASN1_OCTET_STRING *user;
-} SXNETID;
-
-DEFINE_STACK_OF(SXNETID)
-DECLARE_ASN1_SET_OF(SXNETID)
-
-typedef struct SXNET_st {
-	ASN1_INTEGER *version;
-	STACK_OF(SXNETID) *ids;
-} SXNET;
 
 typedef struct NOTICEREF_st {
 	ASN1_STRING *organization;
@@ -517,20 +497,7 @@ DEFINE_STACK_OF(X509_PURPOSE)
 
 DECLARE_ASN1_FUNCTIONS(BASIC_CONSTRAINTS)
 
-DECLARE_ASN1_FUNCTIONS(SXNET)
-DECLARE_ASN1_FUNCTIONS(SXNETID)
-
-int SXNET_add_id_asc(SXNET **psx, char *zone, char *user, int userlen); 
-int SXNET_add_id_ulong(SXNET **psx, unsigned long lzone, char *user, int userlen); 
-int SXNET_add_id_INTEGER(SXNET **psx, ASN1_INTEGER *izone, char *user, int userlen); 
-
-ASN1_OCTET_STRING *SXNET_get_id_asc(SXNET *sx, char *zone);
-ASN1_OCTET_STRING *SXNET_get_id_ulong(SXNET *sx, unsigned long lzone);
-ASN1_OCTET_STRING *SXNET_get_id_INTEGER(SXNET *sx, ASN1_INTEGER *zone);
-
 DECLARE_ASN1_FUNCTIONS(AUTHORITY_KEYID)
-
-DECLARE_ASN1_FUNCTIONS(PKEY_USAGE_PERIOD)
 
 DECLARE_ASN1_FUNCTIONS(GENERAL_NAME)
 OPENSSL_EXPORT GENERAL_NAME *GENERAL_NAME_dup(GENERAL_NAME *a);
@@ -558,17 +525,17 @@ DECLARE_ASN1_FUNCTIONS(OTHERNAME)
 DECLARE_ASN1_FUNCTIONS(EDIPARTYNAME)
 OPENSSL_EXPORT int OTHERNAME_cmp(OTHERNAME *a, OTHERNAME *b);
 OPENSSL_EXPORT void GENERAL_NAME_set0_value(GENERAL_NAME *a, int type, void *value);
-OPENSSL_EXPORT void *GENERAL_NAME_get0_value(GENERAL_NAME *a, int *ptype);
+OPENSSL_EXPORT void *GENERAL_NAME_get0_value(const GENERAL_NAME *a, int *ptype);
 OPENSSL_EXPORT int GENERAL_NAME_set0_othername(GENERAL_NAME *gen,
 				ASN1_OBJECT *oid, ASN1_TYPE *value);
-OPENSSL_EXPORT int GENERAL_NAME_get0_otherName(GENERAL_NAME *gen, 
+OPENSSL_EXPORT int GENERAL_NAME_get0_otherName(const GENERAL_NAME *gen, 
 				ASN1_OBJECT **poid, ASN1_TYPE **pvalue);
 
-OPENSSL_EXPORT char *i2s_ASN1_OCTET_STRING(X509V3_EXT_METHOD *method, ASN1_OCTET_STRING *ia5);
+OPENSSL_EXPORT char *i2s_ASN1_OCTET_STRING(X509V3_EXT_METHOD *method, const ASN1_OCTET_STRING *ia5);
 OPENSSL_EXPORT ASN1_OCTET_STRING *s2i_ASN1_OCTET_STRING(X509V3_EXT_METHOD *method, X509V3_CTX *ctx, char *str);
 
 DECLARE_ASN1_FUNCTIONS(EXTENDED_KEY_USAGE)
-OPENSSL_EXPORT int i2a_ACCESS_DESCRIPTION(BIO *bp, ACCESS_DESCRIPTION* a);
+OPENSSL_EXPORT int i2a_ACCESS_DESCRIPTION(BIO *bp, const ACCESS_DESCRIPTION* a);
 
 DECLARE_ASN1_FUNCTIONS(CERTIFICATEPOLICIES)
 DECLARE_ASN1_FUNCTIONS(POLICYINFO)
@@ -684,6 +651,48 @@ OPENSSL_EXPORT uint32_t X509_get_extension_flags(X509 *x);
 OPENSSL_EXPORT uint32_t X509_get_key_usage(X509 *x);
 OPENSSL_EXPORT uint32_t X509_get_extended_key_usage(X509 *x);
 
+// X509_get0_subject_key_id returns |x509|'s subject key identifier, if present.
+// (See RFC5280, section 4.2.1.2.) It returns NULL if the extension is not
+// present or if some extension in |x509| was invalid.
+//
+// Note that decoding an |X509| object will not check for invalid extensions. To
+// detect the error case, call |X509_get_extensions_flags| and check the
+// |EXFLAG_INVALID| bit.
+OPENSSL_EXPORT const ASN1_OCTET_STRING *X509_get0_subject_key_id(X509 *x509);
+
+// X509_get0_authority_key_id returns keyIdentifier of |x509|'s authority key
+// identifier, if the extension and field are present. (See RFC5280,
+// section 4.2.1.1.) It returns NULL if the extension is not present, if it is
+// present but lacks a keyIdentifier field, or if some extension in |x509| was
+// invalid.
+//
+// Note that decoding an |X509| object will not check for invalid extensions. To
+// detect the error case, call |X509_get_extensions_flags| and check the
+// |EXFLAG_INVALID| bit.
+OPENSSL_EXPORT const ASN1_OCTET_STRING *X509_get0_authority_key_id(X509 *x509);
+
+// X509_get0_authority_issuer returns the authorityCertIssuer of |x509|'s
+// authority key identifier, if the extension and field are present. (See
+// RFC5280, section 4.2.1.1.) It returns NULL if the extension is not present,
+// if it is present but lacks a authorityCertIssuer field, or if some extension
+// in |x509| was invalid.
+//
+// Note that decoding an |X509| object will not check for invalid extensions. To
+// detect the error case, call |X509_get_extensions_flags| and check the
+// |EXFLAG_INVALID| bit.
+OPENSSL_EXPORT const GENERAL_NAMES *X509_get0_authority_issuer(X509 *x509);
+
+// X509_get0_authority_serial returns the authorityCertSerialNumber of |x509|'s
+// authority key identifier, if the extension and field are present. (See
+// RFC5280, section 4.2.1.1.) It returns NULL if the extension is not present,
+// if it is present but lacks a authorityCertSerialNumber field, or if some
+// extension in |x509| was invalid.
+//
+// Note that decoding an |X509| object will not check for invalid extensions. To
+// detect the error case, call |X509_get_extensions_flags| and check the
+// |EXFLAG_INVALID| bit.
+OPENSSL_EXPORT const ASN1_INTEGER *X509_get0_authority_serial(X509 *x509);
+
 OPENSSL_EXPORT int X509_PURPOSE_get_count(void);
 OPENSSL_EXPORT X509_PURPOSE * X509_PURPOSE_get0(int idx);
 OPENSSL_EXPORT int X509_PURPOSE_get_by_sname(char *sname);
@@ -691,11 +700,11 @@ OPENSSL_EXPORT int X509_PURPOSE_get_by_id(int id);
 OPENSSL_EXPORT int X509_PURPOSE_add(int id, int trust, int flags,
 			int (*ck)(const X509_PURPOSE *, const X509 *, int),
 				char *name, char *sname, void *arg);
-OPENSSL_EXPORT char *X509_PURPOSE_get0_name(X509_PURPOSE *xp);
-OPENSSL_EXPORT char *X509_PURPOSE_get0_sname(X509_PURPOSE *xp);
-OPENSSL_EXPORT int X509_PURPOSE_get_trust(X509_PURPOSE *xp);
+OPENSSL_EXPORT char *X509_PURPOSE_get0_name(const X509_PURPOSE *xp);
+OPENSSL_EXPORT char *X509_PURPOSE_get0_sname(const X509_PURPOSE *xp);
+OPENSSL_EXPORT int X509_PURPOSE_get_trust(const X509_PURPOSE *xp);
 OPENSSL_EXPORT void X509_PURPOSE_cleanup(void);
-OPENSSL_EXPORT int X509_PURPOSE_get_id(X509_PURPOSE *);
+OPENSSL_EXPORT int X509_PURPOSE_get_id(const X509_PURPOSE *);
 
 OPENSSL_EXPORT STACK_OF(OPENSSL_STRING) *X509_get1_email(X509 *x);
 OPENSSL_EXPORT STACK_OF(OPENSSL_STRING) *X509_REQ_get1_email(X509_REQ *x);

@@ -174,7 +174,7 @@ TEST(ASN1Test, SerializeObject) {
   static const uint8_t kDER[] = {0x06, 0x09, 0x2a, 0x86, 0x48, 0x86,
                                  0xf7, 0x0d, 0x01, 0x01, 0x01};
   const ASN1_OBJECT *obj = OBJ_nid2obj(NID_rsaEncryption);
-  TestSerialize(const_cast<ASN1_OBJECT *>(obj), i2d_ASN1_OBJECT, kDER);
+  TestSerialize(obj, i2d_ASN1_OBJECT, kDER);
 }
 
 TEST(ASN1Test, SerializeBoolean) {

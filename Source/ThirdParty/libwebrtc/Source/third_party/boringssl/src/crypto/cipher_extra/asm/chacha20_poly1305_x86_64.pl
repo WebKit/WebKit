@@ -1273,7 +1273,7 @@ do_length_block:\n";
     pop %rbp
 .cfi_adjust_cfa_offset -8
     ret
-.cfi_adjust_cfa_offset (8 * 6) + 288 + 32
+.cfi_adjust_cfa_offset (8 * 7) + 288 + 32
 ################################################################################
 seal_sse_128:
     movdqu .chacha20_consts(%rip), $A0\nmovdqa $A0, $A1\nmovdqa $A0, $A2

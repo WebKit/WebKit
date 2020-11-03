@@ -63,6 +63,13 @@ extern "C" {
 #endif
 
 
+struct pkcs8_priv_key_info_st {
+  ASN1_INTEGER *version;
+  X509_ALGOR *pkeyalg;
+  ASN1_OCTET_STRING *pkey;
+  STACK_OF(X509_ATTRIBUTE) *attributes;
+};
+
 // pkcs8_pbe_decrypt decrypts |in| using the PBE scheme described by
 // |algorithm|, which should be a serialized AlgorithmIdentifier structure. On
 // success, it sets |*out| to a newly-allocated buffer containing the decrypted

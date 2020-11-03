@@ -12,9 +12,9 @@
 // OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 // CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-// check_imported_libraries.go checks that each of its arguments only imports a
-// whitelist of allowed libraries. This is used to avoid accidental dependencies
-// on libstdc++.so.
+// check_imported_libraries.go checks that each of its arguments only imports
+// allowed libraries. This is used to avoid accidental dependencies on
+// libstdc++.so.
 package main
 
 import (

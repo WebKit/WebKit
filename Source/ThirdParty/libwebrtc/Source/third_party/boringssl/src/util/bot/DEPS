@@ -20,12 +20,12 @@ vars = {
   'checkout_nasm': False,
   'checkout_libcxx': False,
 
-  'android_sdk_platform-tools_version': 'MSnxgXN7IurL-MQs1RrTkSFSb8Xd1UtZjLArI8Ty1FgC',
+  'android_sdk_platform-tools_version': 'Jxtur3_L9RzY4q79K-AwIahwFW4oi5uYVD5URx9h62wC',
 }
 
 deps = {
   'boringssl/util/bot/android_ndk': {
-    'url': Var('chromium_git') + '/android_ndk.git' + '@' + '89e8db0cdf323af8bc24de875d7d2a43a66bf10e',
+    'url': Var('chromium_git') + '/android_ndk.git' + '@' + '27c0a8d090c666a50e40fceb4ee5b40b1a2d3f87',
     'condition': 'checkout_android',
   },
 
@@ -44,18 +44,18 @@ deps = {
     Var('chromium_git') + '/external/gyp.git' + '@' + 'd61a9397e668fa9843c4aa7da9e79460fe590bfb',
 
   'boringssl/util/bot/libFuzzer': {
-    'url': Var('chromium_git') + '/chromium/llvm-project/compiler-rt/lib/fuzzer.git' +'@' + 'b9f51dc8c98065df0c8da13c051046f5bab833db',
+    'url': Var('chromium_git') + '/chromium/llvm-project/compiler-rt/lib/fuzzer.git' +'@' + 'debe7d2d1982e540fbd6bd78604bf001753f9e74',
     'condition': 'checkout_fuzzer',
   },
 
   # Update the following revisions from
   # https://chromium.googlesource.com/chromium/src/+/master/buildtools/DEPS
   'boringssl/util/bot/libcxx': {
-    'url': Var('chromium_git') + '/chromium/llvm-project/libcxx.git' + '@' + '5938e0582bac570a41edb3d6a2217c299adc1bc6',
+    'url': Var('chromium_git') + '/external/github.com/llvm/llvm-project/libcxx.git' + '@' + 'd9040c75cfea5928c804ab7c235fed06a63f743a',
     'condition': 'checkout_libcxx',
   },
   'boringssl/util/bot/libcxxabi': {
-    'url': Var('chromium_git') + '/chromium/llvm-project/libcxxabi.git' + '@' + '0d529660e32d77d9111912d73f2c74fc5fa2a858',
+    'url': Var('chromium_git') + '/external/github.com/llvm/llvm-project/libcxxabi.git' + '@' + '196ba1aaa8ac285d94f4ea8d9836390a45360533',
     'condition': 'checkout_libcxx',
   },
 }

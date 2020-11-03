@@ -39,3 +39,4 @@ There are other files in this directory which might be helpful:
   * [FUZZING.md](/FUZZING.md): information about fuzzing BoringSSL.
   * [CONTRIBUTING.md](/CONTRIBUTING.md): how to contribute to BoringSSL.
   * [BREAKING-CHANGES.md](/BREAKING-CHANGES.md): notes on potentially-breaking changes.
+  * [SANDBOXING.md](/SANDBOXING.md): notes on using BoringSSL in a sandboxed environment.

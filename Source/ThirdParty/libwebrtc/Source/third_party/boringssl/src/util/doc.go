@@ -410,7 +410,7 @@ func (config *Config) parseHeader(path string) (*HeaderFile, error) {
 				break
 			}
 			if line == cppGuard {
-				return nil, errors.New("hit ending C++ guard while in section")
+				return nil, fmt.Errorf("hit ending C++ guard while in section on line %d", lineNo)
 			}
 
 			var comment []string
@@ -422,7 +422,7 @@ func (config *Config) parseHeader(path string) (*HeaderFile, error) {
 				}
 			}
 			if len(lines) == 0 {
-				return nil, errors.New("expected decl at EOF")
+				return nil, fmt.Errorf("expected decl at EOF on line %d", lineNo)
 			}
 			declLineNo := lineNo
 			decl, lines, lineNo, err = extractDecl(lines, lineNo)

@@ -319,6 +319,7 @@ enum {
   ERR_LIB_DIGEST,
   ERR_LIB_CIPHER,
   ERR_LIB_HKDF,
+  ERR_LIB_TRUST_TOKEN,
   ERR_LIB_USER,
   ERR_NUM_LIBS
 };
@@ -362,6 +363,7 @@ enum {
 #define ERR_R_DIGEST_LIB ERR_LIB_DIGEST
 #define ERR_R_CIPHER_LIB ERR_LIB_CIPHER
 #define ERR_R_HKDF_LIB ERR_LIB_HKDF
+#define ERR_R_TRUST_TOKEN_LIB ERR_LIB_TRUST_TOKEN
 
 // The following values are global reason codes. They may occur in any library.
 #define ERR_R_FATAL 64

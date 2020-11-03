@@ -61,8 +61,10 @@
 
 #include <gtest/gtest.h>
 
+#include <openssl/aes.h>
 #include <openssl/cipher.h>
 #include <openssl/err.h>
+#include <openssl/nid.h>
 #include <openssl/span.h>
 
 #include "../test/file_test.h"
@@ -220,6 +222,91 @@ static void TestOperation(FileTest *t, const EVP_CIPHER *cipher, bool encrypt,
     ASSERT_TRUE(
         EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_GET_TAG, tag.size(), rtag));
     EXPECT_EQ(Bytes(tag), Bytes(rtag, tag.size()));
+  }
+
+  // Additionally test low-level AES mode APIs. Skip runs where |copy| because
+  // it does not apply.
+  if (!copy) {
+    int nid = EVP_CIPHER_nid(cipher);
+    bool is_ctr = nid == NID_aes_128_ctr || nid == NID_aes_192_ctr ||
+                  nid == NID_aes_256_ctr;
+    bool is_cbc = nid == NID_aes_128_cbc || nid == NID_aes_192_cbc ||
+                  nid == NID_aes_256_cbc;
+    bool is_ofb = nid == NID_aes_128_ofb128 || nid == NID_aes_192_ofb128 ||
+                  nid == NID_aes_256_ofb128;
+    if (is_ctr || is_cbc || is_ofb) {
+      AES_KEY aes;
+      if (encrypt || !is_cbc) {
+        ASSERT_EQ(0, AES_set_encrypt_key(key.data(), key.size() * 8, &aes));
+      } else {
+        ASSERT_EQ(0, AES_set_decrypt_key(key.data(), key.size() * 8, &aes));
+      }
+
+      // The low-level APIs all work in-place.
+      bssl::Span<const uint8_t> input = *in;
+      result.clear();
+      if (in_place) {
+        result = *in;
+        input = result;
+      } else {
+        result.resize(out->size());
+      }
+      bssl::Span<uint8_t> output = bssl::MakeSpan(result);
+      ASSERT_EQ(input.size(), output.size());
+
+      // The low-level APIs all use block-size IVs.
+      ASSERT_EQ(iv.size(), size_t{AES_BLOCK_SIZE});
+      uint8_t ivec[AES_BLOCK_SIZE];
+      OPENSSL_memcpy(ivec, iv.data(), iv.size());
+
+      if (is_ctr) {
+        unsigned num = 0;
+        uint8_t ecount_buf[AES_BLOCK_SIZE];
+        if (chunk_size == 0) {
+          AES_ctr128_encrypt(input.data(), output.data(), input.size(), &aes,
+                             ivec, ecount_buf, &num);
+        } else {
+          do {
+            size_t todo = std::min(input.size(), chunk_size);
+            AES_ctr128_encrypt(input.data(), output.data(), todo, &aes, ivec,
+                               ecount_buf, &num);
+            input = input.subspan(todo);
+            output = output.subspan(todo);
+          } while (!input.empty());
+        }
+        EXPECT_EQ(Bytes(*out), Bytes(result));
+      } else if (is_cbc && chunk_size % AES_BLOCK_SIZE == 0) {
+        // Note |AES_cbc_encrypt| requires block-aligned chunks.
+        if (chunk_size == 0) {
+          AES_cbc_encrypt(input.data(), output.data(), input.size(), &aes, ivec,
+                          encrypt);
+        } else {
+          do {
+            size_t todo = std::min(input.size(), chunk_size);
+            AES_cbc_encrypt(input.data(), output.data(), todo, &aes, ivec,
+                            encrypt);
+            input = input.subspan(todo);
+            output = output.subspan(todo);
+          } while (!input.empty());
+        }
+        EXPECT_EQ(Bytes(*out), Bytes(result));
+      } else if (is_ofb) {
+        int num = 0;
+        if (chunk_size == 0) {
+          AES_ofb128_encrypt(input.data(), output.data(), input.size(), &aes,
+                             ivec, &num);
+        } else {
+          do {
+            size_t todo = std::min(input.size(), chunk_size);
+            AES_ofb128_encrypt(input.data(), output.data(), todo, &aes, ivec,
+                               &num);
+            input = input.subspan(todo);
+            output = output.subspan(todo);
+          } while (!input.empty());
+        }
+        EXPECT_EQ(Bytes(*out), Bytes(result));
+      }
+    }
   }
 }
 

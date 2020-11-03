@@ -1279,14 +1279,6 @@ bool ssl_create_cipher_list(UniquePtr<SSLCipherPreferenceList> *out_cipher_list,
   return true;
 }
 
-uint16_t ssl_cipher_get_value(const SSL_CIPHER *cipher) {
-  uint32_t id = cipher->id;
-  // All OpenSSL cipher IDs are prefaced with 0x03. Historically this referred
-  // to SSLv2 vs SSLv3.
-  assert((id & 0xff000000) == 0x03000000);
-  return id & 0xffff;
-}
-
 uint32_t ssl_cipher_auth_mask_for_key(const EVP_PKEY *key) {
   switch (EVP_PKEY_id(key)) {
     case EVP_PKEY_RSA:
@@ -1376,8 +1368,15 @@ const SSL_CIPHER *SSL_get_cipher_by_value(uint16_t value) {
 
 uint32_t SSL_CIPHER_get_id(const SSL_CIPHER *cipher) { return cipher->id; }
 
-uint16_t SSL_CIPHER_get_value(const SSL_CIPHER *cipher) {
+uint16_t SSL_CIPHER_get_protocol_id(const SSL_CIPHER *cipher) {
+  // All OpenSSL cipher IDs are prefaced with 0x03. Historically this referred
+  // to SSLv2 vs SSLv3.
+  assert((cipher->id & 0xff000000) == 0x03000000);
   return static_cast<uint16_t>(cipher->id);
+}
+
+uint16_t SSL_CIPHER_get_value(const SSL_CIPHER *cipher) {
+  return SSL_CIPHER_get_protocol_id(cipher);
 }
 
 int SSL_CIPHER_is_aead(const SSL_CIPHER *cipher) {

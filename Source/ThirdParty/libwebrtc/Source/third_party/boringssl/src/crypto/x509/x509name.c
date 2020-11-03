@@ -66,7 +66,8 @@
 #include "../internal.h"
 
 
-int X509_NAME_get_text_by_NID(X509_NAME *name, int nid, char *buf, int len)
+int X509_NAME_get_text_by_NID(const X509_NAME *name, int nid, char *buf,
+                              int len)
 {
     const ASN1_OBJECT *obj;
 
@@ -76,7 +77,7 @@ int X509_NAME_get_text_by_NID(X509_NAME *name, int nid, char *buf, int len)
     return (X509_NAME_get_text_by_OBJ(name, obj, buf, len));
 }
 
-int X509_NAME_get_text_by_OBJ(X509_NAME *name, const ASN1_OBJECT *obj,
+int X509_NAME_get_text_by_OBJ(const X509_NAME *name, const ASN1_OBJECT *obj,
                               char *buf, int len)
 {
     int i;
@@ -94,14 +95,14 @@ int X509_NAME_get_text_by_OBJ(X509_NAME *name, const ASN1_OBJECT *obj,
     return (i);
 }
 
-int X509_NAME_entry_count(X509_NAME *name)
+int X509_NAME_entry_count(const X509_NAME *name)
 {
     if (name == NULL)
         return (0);
     return (sk_X509_NAME_ENTRY_num(name->entries));
 }
 
-int X509_NAME_get_index_by_NID(X509_NAME *name, int nid, int lastpos)
+int X509_NAME_get_index_by_NID(const X509_NAME *name, int nid, int lastpos)
 {
     const ASN1_OBJECT *obj;
 
@@ -112,7 +113,7 @@ int X509_NAME_get_index_by_NID(X509_NAME *name, int nid, int lastpos)
 }
 
 /* NOTE: you should be passsing -1, not 0 as lastpos */
-int X509_NAME_get_index_by_OBJ(X509_NAME *name, const ASN1_OBJECT *obj,
+int X509_NAME_get_index_by_OBJ(const X509_NAME *name, const ASN1_OBJECT *obj,
                                int lastpos)
 {
     int n;
@@ -133,7 +134,7 @@ int X509_NAME_get_index_by_OBJ(X509_NAME *name, const ASN1_OBJECT *obj,
     return (-1);
 }
 
-X509_NAME_ENTRY *X509_NAME_get_entry(X509_NAME *name, int loc)
+X509_NAME_ENTRY *X509_NAME_get_entry(const X509_NAME *name, int loc)
 {
     if (name == NULL || loc < 0
         || sk_X509_NAME_ENTRY_num(name->entries) <= (size_t)loc)
@@ -374,14 +375,14 @@ int X509_NAME_ENTRY_set_data(X509_NAME_ENTRY *ne, int type,
     return (1);
 }
 
-ASN1_OBJECT *X509_NAME_ENTRY_get_object(X509_NAME_ENTRY *ne)
+ASN1_OBJECT *X509_NAME_ENTRY_get_object(const X509_NAME_ENTRY *ne)
 {
     if (ne == NULL)
         return (NULL);
     return (ne->object);
 }
 
-ASN1_STRING *X509_NAME_ENTRY_get_data(X509_NAME_ENTRY *ne)
+ASN1_STRING *X509_NAME_ENTRY_get_data(const X509_NAME_ENTRY *ne)
 {
     if (ne == NULL)
         return (NULL);

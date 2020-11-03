@@ -152,6 +152,7 @@ const Flag<bool> kBoolFlags[] = {
      &TestConfig::expect_delegated_credential_used},
     {"-expect-hrr", &TestConfig::expect_hrr},
     {"-expect-no-hrr", &TestConfig::expect_no_hrr},
+    {"-wait-for-debugger", &TestConfig::wait_for_debugger},
 };
 
 const Flag<std::string> kStringFlags[] = {
@@ -304,12 +305,6 @@ bool ParseFlag(char *flag, int argc, char **argv, int *i,
     if (!skip) {
       int_vector_field->push_back(atoi(argv[*i]));
     }
-    return true;
-  }
-
-  if (strcmp(flag, "-enable-ed25519") == 0) {
-    // Old argument; ignored for split-handshake compat testing.
-    // Remove after 2020-06-01.
     return true;
   }
 
@@ -1162,8 +1157,7 @@ static int FlushQuicFlight(SSL *ssl) {
 
 static int SendQuicAlert(SSL *ssl, enum ssl_encryption_level_t level,
                          uint8_t alert) {
-  // TODO(nharper): Support processing alerts.
-  return 0;
+  return GetTestState(ssl)->quic_transport->SendAlert(level, alert);
 }
 
 static const SSL_QUIC_METHOD g_quic_method = {

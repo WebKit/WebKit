@@ -71,8 +71,8 @@
 #include <openssl/base.h>
 
 #include <openssl/bn.h>
+#include <openssl/ec.h>
 #include <openssl/ex_data.h>
-#include <openssl/thread.h>
 #include <openssl/type_check.h>
 
 #include "../bn/internal.h"
@@ -80,6 +80,9 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif
+
+
+// EC internals.
 
 
 // Cap the size of all field elements and scalars, including custom curves, to
@@ -91,6 +94,9 @@ extern "C" {
 OPENSSL_STATIC_ASSERT(EC_MAX_WORDS <= BN_SMALL_MAX_WORDS,
                       "bn_*_small functions not usable");
 
+
+// Scalars.
+
 // An EC_SCALAR is an integer fully reduced modulo the order. Only the first
 // |order->width| words are used. An |EC_SCALAR| is specific to an |EC_GROUP|
 // and must not be mixed between groups.
@@ -99,6 +105,88 @@ typedef union {
   uint8_t bytes[EC_MAX_BYTES];
   BN_ULONG words[EC_MAX_WORDS];
 } EC_SCALAR;
+
+// ec_bignum_to_scalar converts |in| to an |EC_SCALAR| and writes it to
+// |*out|. It returns one on success and zero if |in| is out of range.
+OPENSSL_EXPORT int ec_bignum_to_scalar(const EC_GROUP *group, EC_SCALAR *out,
+                                       const BIGNUM *in);
+
+// ec_scalar_to_bytes serializes |in| as a big-endian bytestring to |out| and
+// sets |*out_len| to the number of bytes written. The number of bytes written
+// is |BN_num_bytes(&group->order)|, which is at most |EC_MAX_BYTES|.
+OPENSSL_EXPORT void ec_scalar_to_bytes(const EC_GROUP *group, uint8_t *out,
+                                       size_t *out_len, const EC_SCALAR *in);
+
+// ec_scalar_from_bytes deserializes |in| and stores the resulting scalar over
+// group |group| to |out|. It returns one on success and zero if |in| is
+// invalid.
+int ec_scalar_from_bytes(const EC_GROUP *group, EC_SCALAR *out,
+                         const uint8_t *in, size_t len);
+
+// ec_scalar_reduce sets |out| to |words|, reduced modulo the group order.
+// |words| must be less than order^2. |num| must be at most twice the width of
+// group order. This function treats |words| as secret.
+void ec_scalar_reduce(const EC_GROUP *group, EC_SCALAR *out,
+                      const BN_ULONG *words, size_t num);
+
+// ec_random_nonzero_scalar sets |out| to a uniformly selected random value from
+// 1 to |group->order| - 1. It returns one on success and zero on error.
+int ec_random_nonzero_scalar(const EC_GROUP *group, EC_SCALAR *out,
+                             const uint8_t additional_data[32]);
+
+// ec_scalar_equal_vartime returns one if |a| and |b| are equal and zero
+// otherwise. Both values are treated as public.
+int ec_scalar_equal_vartime(const EC_GROUP *group, const EC_SCALAR *a,
+                            const EC_SCALAR *b);
+
+// ec_scalar_is_zero returns one if |a| is zero and zero otherwise.
+int ec_scalar_is_zero(const EC_GROUP *group, const EC_SCALAR *a);
+
+// ec_scalar_add sets |r| to |a| + |b|.
+void ec_scalar_add(const EC_GROUP *group, EC_SCALAR *r, const EC_SCALAR *a,
+                   const EC_SCALAR *b);
+
+// ec_scalar_sub sets |r| to |a| - |b|.
+void ec_scalar_sub(const EC_GROUP *group, EC_SCALAR *r, const EC_SCALAR *a,
+                   const EC_SCALAR *b);
+
+// ec_scalar_neg sets |r| to -|a|.
+void ec_scalar_neg(const EC_GROUP *group, EC_SCALAR *r, const EC_SCALAR *a);
+
+// ec_scalar_to_montgomery sets |r| to |a| in Montgomery form.
+void ec_scalar_to_montgomery(const EC_GROUP *group, EC_SCALAR *r,
+                             const EC_SCALAR *a);
+
+// ec_scalar_to_montgomery sets |r| to |a| converted from Montgomery form.
+void ec_scalar_from_montgomery(const EC_GROUP *group, EC_SCALAR *r,
+                               const EC_SCALAR *a);
+
+// ec_scalar_mul_montgomery sets |r| to |a| * |b| where inputs and outputs are
+// in Montgomery form.
+void ec_scalar_mul_montgomery(const EC_GROUP *group, EC_SCALAR *r,
+                              const EC_SCALAR *a, const EC_SCALAR *b);
+
+// ec_scalar_inv0_montgomery sets |r| to |a|^-1 where inputs and outputs are in
+// Montgomery form. If |a| is zero, |r| is set to zero.
+void ec_scalar_inv0_montgomery(const EC_GROUP *group, EC_SCALAR *r,
+                               const EC_SCALAR *a);
+
+// ec_scalar_to_montgomery_inv_vartime sets |r| to |a|^-1 R. That is, it takes
+// in |a| not in Montgomery form and computes the inverse in Montgomery form. It
+// returns one on success and zero if |a| has no inverse. This function assumes
+// |a| is public and may leak information about it via timing.
+//
+// Note this is not the same operation as |ec_scalar_inv0_montgomery|.
+int ec_scalar_to_montgomery_inv_vartime(const EC_GROUP *group, EC_SCALAR *r,
+                                        const EC_SCALAR *a);
+
+// ec_scalar_select, in constant time, sets |out| to |a| if |mask| is all ones
+// and |b| if |mask| is all zeros.
+void ec_scalar_select(const EC_GROUP *group, EC_SCALAR *out, BN_ULONG mask,
+                      const EC_SCALAR *a, const EC_SCALAR *b);
+
+
+// Field elements.
 
 // An EC_FELEM represents a field element. Only the first |field->width| words
 // are used. An |EC_FELEM| is specific to an |EC_GROUP| and must not be mixed
@@ -110,14 +198,267 @@ typedef union {
   BN_ULONG words[EC_MAX_WORDS];
 } EC_FELEM;
 
-// An EC_RAW_POINT represents an elliptic curve point. Unlike |EC_POINT|, it is
-// a plain struct which can be stack-allocated and needs no cleanup. It is
-// specific to an |EC_GROUP| and must not be mixed between groups.
+// ec_bignum_to_felem converts |in| to an |EC_FELEM|. It returns one on success
+// and zero if |in| is out of range.
+int ec_bignum_to_felem(const EC_GROUP *group, EC_FELEM *out, const BIGNUM *in);
+
+// ec_felem_to_bignum converts |in| to a |BIGNUM|. It returns one on success and
+// zero on allocation failure.
+int ec_felem_to_bignum(const EC_GROUP *group, BIGNUM *out, const EC_FELEM *in);
+
+// ec_felem_to_bytes serializes |in| as a big-endian bytestring to |out| and
+// sets |*out_len| to the number of bytes written. The number of bytes written
+// is |BN_num_bytes(&group->order)|, which is at most |EC_MAX_BYTES|.
+void ec_felem_to_bytes(const EC_GROUP *group, uint8_t *out, size_t *out_len,
+                       const EC_FELEM *in);
+
+// ec_felem_from_bytes deserializes |in| and stores the resulting field element
+// to |out|. It returns one on success and zero if |in| is invalid.
+int ec_felem_from_bytes(const EC_GROUP *group, EC_FELEM *out, const uint8_t *in,
+                        size_t len);
+
+// ec_felem_neg sets |out| to -|a|.
+void ec_felem_neg(const EC_GROUP *group, EC_FELEM *out, const EC_FELEM *a);
+
+// ec_felem_add sets |out| to |a| + |b|.
+void ec_felem_add(const EC_GROUP *group, EC_FELEM *out, const EC_FELEM *a,
+                  const EC_FELEM *b);
+
+// ec_felem_add sets |out| to |a| - |b|.
+void ec_felem_sub(const EC_GROUP *group, EC_FELEM *out, const EC_FELEM *a,
+                  const EC_FELEM *b);
+
+// ec_felem_non_zero_mask returns all ones if |a| is non-zero and all zeros
+// otherwise.
+BN_ULONG ec_felem_non_zero_mask(const EC_GROUP *group, const EC_FELEM *a);
+
+// ec_felem_select, in constant time, sets |out| to |a| if |mask| is all ones
+// and |b| if |mask| is all zeros.
+void ec_felem_select(const EC_GROUP *group, EC_FELEM *out, BN_ULONG mask,
+                     const EC_FELEM *a, const EC_FELEM *b);
+
+// ec_felem_equal returns one if |a| and |b| are equal and zero otherwise.
+int ec_felem_equal(const EC_GROUP *group, const EC_FELEM *a, const EC_FELEM *b);
+
+
+// Points.
+//
+// Points may represented in affine coordinates as |EC_AFFINE| or Jacobian
+// coordinates as |EC_RAW_POINT|. Affine coordinates directly represent a
+// point on the curve, but point addition over affine coordinates requires
+// costly field inversions, so arithmetic is done in Jacobian coordinates.
+// Converting from affine to Jacobian is cheap, while converting from Jacobian
+// to affine costs a field inversion. (Jacobian coordinates amortize the field
+// inversions needed in a sequence of point operations.)
+//
+// TODO(davidben): Rename |EC_RAW_POINT| to |EC_JACOBIAN|.
+
+// An EC_RAW_POINT represents an elliptic curve point in Jacobian coordinates.
+// Unlike |EC_POINT|, it is a plain struct which can be stack-allocated and
+// needs no cleanup. It is specific to an |EC_GROUP| and must not be mixed
+// between groups.
 typedef struct {
-  EC_FELEM X, Y, Z;
   // X, Y, and Z are Jacobian projective coordinates. They represent
   // (X/Z^2, Y/Z^3) if Z != 0 and the point at infinity otherwise.
+  EC_FELEM X, Y, Z;
 } EC_RAW_POINT;
+
+// An EC_AFFINE represents an elliptic curve point in affine coordinates.
+// coordinates. Note the point at infinity cannot be represented in affine
+// coordinates.
+typedef struct {
+  EC_FELEM X, Y;
+} EC_AFFINE;
+
+// ec_affine_to_jacobian converts |p| to Jacobian form and writes the result to
+// |*out|. This operation is very cheap and only costs a few copies.
+void ec_affine_to_jacobian(const EC_GROUP *group, EC_RAW_POINT *out,
+                           const EC_AFFINE *p);
+
+// ec_jacobian_to_affine converts |p| to affine form and writes the result to
+// |*out|. It returns one on success and zero if |p| was the point at infinity.
+// This operation performs a field inversion and should only be done once per
+// point.
+//
+// If only extracting the x-coordinate, use |ec_get_x_coordinate_*| which is
+// slightly faster.
+int ec_jacobian_to_affine(const EC_GROUP *group, EC_AFFINE *out,
+                          const EC_RAW_POINT *p);
+
+// ec_jacobian_to_affine_batch converts |num| points in |in| from Jacobian
+// coordinates to affine coordinates and writes the results to |out|. It returns
+// one on success and zero if any of the input points were infinity.
+//
+// This function is not implemented for all curves. Add implementations as
+// needed.
+int ec_jacobian_to_affine_batch(const EC_GROUP *group, EC_AFFINE *out,
+                                const EC_RAW_POINT *in, size_t num);
+
+// ec_point_set_affine_coordinates sets |out|'s to a point with affine
+// coordinates |x| and |y|. It returns one if the point is on the curve and
+// zero otherwise. If the point is not on the curve, the value of |out| is
+// undefined.
+int ec_point_set_affine_coordinates(const EC_GROUP *group, EC_AFFINE *out,
+                                    const EC_FELEM *x, const EC_FELEM *y);
+
+// ec_point_mul_scalar sets |r| to |p| * |scalar|. Both inputs are considered
+// secret.
+int ec_point_mul_scalar(const EC_GROUP *group, EC_RAW_POINT *r,
+                        const EC_RAW_POINT *p, const EC_SCALAR *scalar);
+
+// ec_point_mul_scalar_base sets |r| to generator * |scalar|. |scalar| is
+// treated as secret.
+int ec_point_mul_scalar_base(const EC_GROUP *group, EC_RAW_POINT *r,
+                             const EC_SCALAR *scalar);
+
+// ec_point_mul_scalar_batch sets |r| to |p0| * |scalar0| + |p1| * |scalar1| +
+// |p2| * |scalar2|. |p2| may be NULL to skip that term.
+//
+// The inputs are treated as secret, however, this function leaks information
+// about whether intermediate computations add a point to itself. Callers must
+// ensure that discrete logs between |p0|, |p1|, and |p2| are uniformly
+// distributed and independent of the scalars, which should be uniformly
+// selected and not under the attackers control. This ensures the doubling case
+// will occur with negligible probability.
+//
+// This function is not implemented for all curves. Add implementations as
+// needed.
+//
+// TODO(davidben): This function does not use base point tables. For now, it is
+// only used with the generic |EC_GFp_mont_method| implementation which has
+// none. If generalizing to tuned curves, this may be useful. However, we still
+// must double up to the least efficient input, so precomputed tables can only
+// save table setup and allow a wider window size.
+int ec_point_mul_scalar_batch(const EC_GROUP *group, EC_RAW_POINT *r,
+                              const EC_RAW_POINT *p0, const EC_SCALAR *scalar0,
+                              const EC_RAW_POINT *p1, const EC_SCALAR *scalar1,
+                              const EC_RAW_POINT *p2, const EC_SCALAR *scalar2);
+
+#define EC_MONT_PRECOMP_COMB_SIZE 5
+
+// An |EC_PRECOMP| stores precomputed information about a point, to optimize
+// repeated multiplications involving it. It is a union so different
+// |EC_METHOD|s can store different information in it.
+typedef union {
+  EC_AFFINE comb[(1 << EC_MONT_PRECOMP_COMB_SIZE) - 1];
+} EC_PRECOMP;
+
+// ec_init_precomp precomputes multiples of |p| and writes the result to |out|.
+// It returns one on success and zero on error. The resulting table may be used
+// with |ec_point_mul_scalar_precomp|. This function will fail if |p| is the
+// point at infinity.
+//
+// This function is not implemented for all curves. Add implementations as
+// needed.
+int ec_init_precomp(const EC_GROUP *group, EC_PRECOMP *out,
+                    const EC_RAW_POINT *p);
+
+// ec_point_mul_scalar_precomp sets |r| to |p0| * |scalar0| + |p1| * |scalar1| +
+// |p2| * |scalar2|. |p1| or |p2| may be NULL to skip the corresponding term.
+// The points are represented as |EC_PRECOMP| and must be initialized with
+// |ec_init_precomp|. This function runs faster than |ec_point_mul_scalar_batch|
+// but requires setup work per input point, so it is only appropriate for points
+// which are used frequently.
+//
+// The inputs are treated as secret, however, this function leaks information
+// about whether intermediate computations add a point to itself. Callers must
+// ensure that discrete logs between |p0|, |p1|, and |p2| are uniformly
+// distributed and independent of the scalars, which should be uniformly
+// selected and not under the attackers control. This ensures the doubling case
+// will occur with negligible probability.
+//
+// This function is not implemented for all curves. Add implementations as
+// needed.
+//
+// TODO(davidben): This function does not use base point tables. For now, it is
+// only used with the generic |EC_GFp_mont_method| implementation which has
+// none. If generalizing to tuned curves, we should add a parameter for the base
+// point and arrange for the generic implementation to have base point tables
+// available.
+int ec_point_mul_scalar_precomp(const EC_GROUP *group, EC_RAW_POINT *r,
+                                const EC_PRECOMP *p0, const EC_SCALAR *scalar0,
+                                const EC_PRECOMP *p1, const EC_SCALAR *scalar1,
+                                const EC_PRECOMP *p2, const EC_SCALAR *scalar2);
+
+// ec_point_mul_scalar_public sets |r| to
+// generator * |g_scalar| + |p| * |p_scalar|. It assumes that the inputs are
+// public so there is no concern about leaking their values through timing.
+OPENSSL_EXPORT int ec_point_mul_scalar_public(const EC_GROUP *group,
+                                              EC_RAW_POINT *r,
+                                              const EC_SCALAR *g_scalar,
+                                              const EC_RAW_POINT *p,
+                                              const EC_SCALAR *p_scalar);
+
+// ec_point_mul_scalar_public_batch sets |r| to the sum of generator *
+// |g_scalar| and |points[i]| * |scalars[i]| where |points| and |scalars| have
+// |num| elements. It assumes that the inputs are public so there is no concern
+// about leaking their values through timing. |g_scalar| may be NULL to skip
+// that term.
+//
+// This function is not implemented for all curves. Add implementations as
+// needed.
+int ec_point_mul_scalar_public_batch(const EC_GROUP *group, EC_RAW_POINT *r,
+                                     const EC_SCALAR *g_scalar,
+                                     const EC_RAW_POINT *points,
+                                     const EC_SCALAR *scalars, size_t num);
+
+// ec_point_select, in constant time, sets |out| to |a| if |mask| is all ones
+// and |b| if |mask| is all zeros.
+void ec_point_select(const EC_GROUP *group, EC_RAW_POINT *out, BN_ULONG mask,
+                     const EC_RAW_POINT *a, const EC_RAW_POINT *b);
+
+// ec_affine_select behaves like |ec_point_select| but acts on affine points.
+void ec_affine_select(const EC_GROUP *group, EC_AFFINE *out, BN_ULONG mask,
+                      const EC_AFFINE *a, const EC_AFFINE *b);
+
+// ec_precomp_select behaves like |ec_point_select| but acts on |EC_PRECOMP|.
+void ec_precomp_select(const EC_GROUP *group, EC_PRECOMP *out, BN_ULONG mask,
+                       const EC_PRECOMP *a, const EC_PRECOMP *b);
+
+// ec_cmp_x_coordinate compares the x (affine) coordinate of |p|, mod the group
+// order, with |r|. It returns one if the values match and zero if |p| is the
+// point at infinity of the values do not match.
+int ec_cmp_x_coordinate(const EC_GROUP *group, const EC_RAW_POINT *p,
+                        const EC_SCALAR *r);
+
+// ec_get_x_coordinate_as_scalar sets |*out| to |p|'s x-coordinate, modulo
+// |group->order|. It returns one on success and zero if |p| is the point at
+// infinity.
+int ec_get_x_coordinate_as_scalar(const EC_GROUP *group, EC_SCALAR *out,
+                                  const EC_RAW_POINT *p);
+
+// ec_get_x_coordinate_as_bytes writes |p|'s affine x-coordinate to |out|, which
+// must have at must |max_out| bytes. It sets |*out_len| to the number of bytes
+// written. The value is written big-endian and zero-padded to the size of the
+// field. This function returns one on success and zero on failure.
+int ec_get_x_coordinate_as_bytes(const EC_GROUP *group, uint8_t *out,
+                                 size_t *out_len, size_t max_out,
+                                 const EC_RAW_POINT *p);
+
+// ec_point_to_bytes behaves like |EC_POINT_point2oct| but takes an
+// |EC_AFFINE|.
+size_t ec_point_to_bytes(const EC_GROUP *group, const EC_AFFINE *point,
+                         point_conversion_form_t form, uint8_t *buf,
+                         size_t len);
+
+// ec_point_from_uncompressed parses |in| as a point in uncompressed form and
+// sets the result to |out|. It returns one on success and zero if the input was
+// invalid.
+int ec_point_from_uncompressed(const EC_GROUP *group, EC_AFFINE *out,
+                               const uint8_t *in, size_t len);
+
+// ec_set_to_safe_point sets |out| to an arbitrary point on |group|, either the
+// generator or the point at infinity. This is used to guard against callers of
+// external APIs not checking the return value.
+void ec_set_to_safe_point(const EC_GROUP *group, EC_RAW_POINT *out);
+
+// ec_affine_jacobian_equal returns one if |a| and |b| represent the same point
+// and zero otherwise. It treats both inputs as secret.
+int ec_affine_jacobian_equal(const EC_GROUP *group, const EC_AFFINE *a,
+                             const EC_RAW_POINT *b);
+
+
+// Implementation details.
 
 struct ec_method_st {
   int (*group_init)(EC_GROUP *);
@@ -128,11 +469,12 @@ struct ec_method_st {
   // point_get_affine_coordinates sets |*x| and |*y| to the affine coordinates
   // of |p|. Either |x| or |y| may be NULL to omit it. It returns one on success
   // and zero if |p| is the point at infinity.
-  //
-  // Note: unlike |EC_FELEM|s used as intermediate values internal to the
-  // |EC_METHOD|, |*x| and |*y| are not encoded in Montgomery form.
   int (*point_get_affine_coordinates)(const EC_GROUP *, const EC_RAW_POINT *p,
                                       EC_FELEM *x, EC_FELEM *y);
+
+  // jacobian_to_affine_batch implements |ec_jacobian_to_affine_batch|.
+  int (*jacobian_to_affine_batch)(const EC_GROUP *group, EC_AFFINE *out,
+                                  const EC_RAW_POINT *in, size_t num);
 
   // add sets |r| to |a| + |b|.
   void (*add)(const EC_GROUP *group, EC_RAW_POINT *r, const EC_RAW_POINT *a,
@@ -146,12 +488,32 @@ struct ec_method_st {
   // mul_base sets |r| to |scalar|*generator.
   void (*mul_base)(const EC_GROUP *group, EC_RAW_POINT *r,
                    const EC_SCALAR *scalar);
+  // mul_batch implements |ec_mul_scalar_batch|.
+  void (*mul_batch)(const EC_GROUP *group, EC_RAW_POINT *r,
+                    const EC_RAW_POINT *p0, const EC_SCALAR *scalar0,
+                    const EC_RAW_POINT *p1, const EC_SCALAR *scalar1,
+                    const EC_RAW_POINT *p2, const EC_SCALAR *scalar2);
   // mul_public sets |r| to |g_scalar|*generator + |p_scalar|*|p|. It assumes
   // that the inputs are public so there is no concern about leaking their
   // values through timing.
+  //
+  // This function may be omitted if |mul_public_batch| is provided.
   void (*mul_public)(const EC_GROUP *group, EC_RAW_POINT *r,
                      const EC_SCALAR *g_scalar, const EC_RAW_POINT *p,
                      const EC_SCALAR *p_scalar);
+  // mul_public_batch implements |ec_point_mul_scalar_public_batch|.
+  int (*mul_public_batch)(const EC_GROUP *group, EC_RAW_POINT *r,
+                          const EC_SCALAR *g_scalar, const EC_RAW_POINT *points,
+                          const EC_SCALAR *scalars, size_t num);
+
+  // init_precomp implements |ec_init_precomp|.
+  int (*init_precomp)(const EC_GROUP *group, EC_PRECOMP *out,
+                      const EC_RAW_POINT *p);
+  // mul_precomp implements |ec_point_mul_scalar_precomp|.
+  void (*mul_precomp)(const EC_GROUP *group, EC_RAW_POINT *r,
+                      const EC_PRECOMP *p0, const EC_SCALAR *scalar0,
+                      const EC_PRECOMP *p1, const EC_SCALAR *scalar1,
+                      const EC_PRECOMP *p2, const EC_SCALAR *scalar2);
 
   // felem_mul and felem_sqr implement multiplication and squaring,
   // respectively, so that the generic |EC_POINT_add| and |EC_POINT_dbl|
@@ -168,21 +530,36 @@ struct ec_method_st {
                     const EC_FELEM *b);
   void (*felem_sqr)(const EC_GROUP *, EC_FELEM *r, const EC_FELEM *a);
 
-  int (*bignum_to_felem)(const EC_GROUP *group, EC_FELEM *out,
-                         const BIGNUM *in);
-  int (*felem_to_bignum)(const EC_GROUP *group, BIGNUM *out,
+  void (*felem_to_bytes)(const EC_GROUP *group, uint8_t *out, size_t *out_len,
                          const EC_FELEM *in);
+  int (*felem_from_bytes)(const EC_GROUP *group, EC_FELEM *out,
+                          const uint8_t *in, size_t len);
 
-  // scalar_inv_montgomery sets |out| to |in|^-1, where both input and output
-  // are in Montgomery form.
-  void (*scalar_inv_montgomery)(const EC_GROUP *group, EC_SCALAR *out,
-                                const EC_SCALAR *in);
+  // felem_reduce sets |out| to |words|, reduced modulo the field size, p.
+  // |words| must be less than p^2. |num| must be at most twice the width of p.
+  // This function treats |words| as secret.
+  //
+  // This function is only used in hash-to-curve and may be omitted in curves
+  // that do not support it.
+  void (*felem_reduce)(const EC_GROUP *group, EC_FELEM *out,
+                       const BN_ULONG *words, size_t num);
 
-  // scalar_inv_montgomery_vartime performs the same computation as
-  // |scalar_inv_montgomery|. It further assumes that the inputs are public so
-  // there is no concern about leaking their values through timing.
-  int (*scalar_inv_montgomery_vartime)(const EC_GROUP *group, EC_SCALAR *out,
-                                       const EC_SCALAR *in);
+  // felem_exp sets |out| to |a|^|exp|. It treats |a| is secret but |exp| as
+  // public.
+  //
+  // This function is used in hash-to-curve and may be NULL in curves not used
+  // with hash-to-curve.
+  void (*felem_exp)(const EC_GROUP *group, EC_FELEM *out, const EC_FELEM *a,
+                    const BN_ULONG *exp, size_t num_exp);
+
+  // scalar_inv0_montgomery implements |ec_scalar_inv0_montgomery|.
+  void (*scalar_inv0_montgomery)(const EC_GROUP *group, EC_SCALAR *out,
+                                 const EC_SCALAR *in);
+
+  // scalar_to_montgomery_inv_vartime implements
+  // |ec_scalar_to_montgomery_inv_vartime|.
+  int (*scalar_to_montgomery_inv_vartime)(const EC_GROUP *group, EC_SCALAR *out,
+                                          const EC_SCALAR *in);
 
   // cmp_x_coordinate compares the x (affine) coordinate of |p|, mod the group
   // order, with |r|. It returns one if the values match and zero if |p| is the
@@ -197,7 +574,8 @@ struct ec_group_st {
   const EC_METHOD *meth;
 
   // Unlike all other |EC_POINT|s, |generator| does not own |generator->group|
-  // to avoid a reference cycle.
+  // to avoid a reference cycle. Additionally, Z is guaranteed to be one, so X
+  // and Y are suitable for use as an |EC_AFFINE|.
   EC_POINT *generator;
   BIGNUM order;
 
@@ -247,133 +625,20 @@ struct ec_point_st {
 
 EC_GROUP *ec_group_new(const EC_METHOD *meth);
 
-// ec_bignum_to_felem converts |in| to an |EC_FELEM|. It returns one on success
-// and zero if |in| is out of range.
-int ec_bignum_to_felem(const EC_GROUP *group, EC_FELEM *out, const BIGNUM *in);
-
-// ec_felem_to_bignum converts |in| to a |BIGNUM|. It returns one on success and
-// zero on allocation failure.
-int ec_felem_to_bignum(const EC_GROUP *group, BIGNUM *out, const EC_FELEM *in);
-
-// ec_felem_neg sets |out| to -|a|.
-void ec_felem_neg(const EC_GROUP *group, EC_FELEM *out, const EC_FELEM *a);
-
-// ec_felem_add sets |out| to |a| + |b|.
-void ec_felem_add(const EC_GROUP *group, EC_FELEM *out, const EC_FELEM *a,
-                  const EC_FELEM *b);
-
-// ec_felem_add sets |out| to |a| - |b|.
-void ec_felem_sub(const EC_GROUP *group, EC_FELEM *out, const EC_FELEM *a,
-                  const EC_FELEM *b);
-
-// ec_felem_non_zero_mask returns all ones if |a| is non-zero and all zeros
-// otherwise.
-BN_ULONG ec_felem_non_zero_mask(const EC_GROUP *group, const EC_FELEM *a);
-
-// ec_felem_select, in constant time, sets |out| to |a| if |mask| is all ones
-// and |b| if |mask| is all zeros.
-void ec_felem_select(const EC_GROUP *group, EC_FELEM *out, BN_ULONG mask,
-                     const EC_FELEM *a, const EC_FELEM *b);
-
-// ec_felem_equal returns one if |a| and |b| are equal and zero otherwise. It
-// treats |a| and |b| as public and does *not* run in constant time.
-int ec_felem_equal(const EC_GROUP *group, const EC_FELEM *a, const EC_FELEM *b);
-
-// ec_bignum_to_scalar converts |in| to an |EC_SCALAR| and writes it to
-// |*out|. It returns one on success and zero if |in| is out of range.
-OPENSSL_EXPORT int ec_bignum_to_scalar(const EC_GROUP *group, EC_SCALAR *out,
-                                       const BIGNUM *in);
-
-// ec_random_nonzero_scalar sets |out| to a uniformly selected random value from
-// 1 to |group->order| - 1. It returns one on success and zero on error.
-int ec_random_nonzero_scalar(const EC_GROUP *group, EC_SCALAR *out,
-                             const uint8_t additional_data[32]);
-
-// ec_scalar_equal_vartime returns one if |a| and |b| are equal and zero
-// otherwise. Both values are treated as public.
-int ec_scalar_equal_vartime(const EC_GROUP *group, const EC_SCALAR *a,
-                            const EC_SCALAR *b);
-
-// ec_scalar_is_zero returns one if |a| is zero and zero otherwise.
-int ec_scalar_is_zero(const EC_GROUP *group, const EC_SCALAR *a);
-
-// ec_scalar_add sets |r| to |a| + |b|.
-void ec_scalar_add(const EC_GROUP *group, EC_SCALAR *r, const EC_SCALAR *a,
-                   const EC_SCALAR *b);
-
-// ec_scalar_to_montgomery sets |r| to |a| in Montgomery form.
-void ec_scalar_to_montgomery(const EC_GROUP *group, EC_SCALAR *r,
-                             const EC_SCALAR *a);
-
-// ec_scalar_to_montgomery sets |r| to |a| converted from Montgomery form.
-void ec_scalar_from_montgomery(const EC_GROUP *group, EC_SCALAR *r,
-                               const EC_SCALAR *a);
-
-// ec_scalar_mul_montgomery sets |r| to |a| * |b| where inputs and outputs are
-// in Montgomery form.
-void ec_scalar_mul_montgomery(const EC_GROUP *group, EC_SCALAR *r,
-                              const EC_SCALAR *a, const EC_SCALAR *b);
-
-// ec_scalar_mul_montgomery sets |r| to |a|^-1 where inputs and outputs are in
-// Montgomery form.
-void ec_scalar_inv_montgomery(const EC_GROUP *group, EC_SCALAR *r,
-                              const EC_SCALAR *a);
-
-// ec_scalar_inv_montgomery_vartime performs the same actions as
-// |ec_scalar_inv_montgomery|, but in variable time.
-int ec_scalar_inv_montgomery_vartime(const EC_GROUP *group, EC_SCALAR *r,
-                                     const EC_SCALAR *a);
-
-// ec_point_mul_scalar sets |r| to |p| * |scalar|. Both inputs are considered
-// secret.
-int ec_point_mul_scalar(const EC_GROUP *group, EC_RAW_POINT *r,
-                        const EC_RAW_POINT *p, const EC_SCALAR *scalar);
-
-// ec_point_mul_scalar_base sets |r| to generator * |scalar|. |scalar| is
-// treated as secret.
-int ec_point_mul_scalar_base(const EC_GROUP *group, EC_RAW_POINT *r,
-                             const EC_SCALAR *scalar);
-
-// ec_point_mul_scalar_public sets |r| to
-// generator * |g_scalar| + |p| * |p_scalar|. It assumes that the inputs are
-// public so there is no concern about leaking their values through timing.
-OPENSSL_EXPORT int ec_point_mul_scalar_public(const EC_GROUP *group,
-                                              EC_RAW_POINT *r,
-                                              const EC_SCALAR *g_scalar,
-                                              const EC_RAW_POINT *p,
-                                              const EC_SCALAR *p_scalar);
-
-// ec_cmp_x_coordinate compares the x (affine) coordinate of |p|, mod the group
-// order, with |r|. It returns one if the values match and zero if |p| is the
-// point at infinity of the values do not match.
-int ec_cmp_x_coordinate(const EC_GROUP *group, const EC_RAW_POINT *p,
-                        const EC_SCALAR *r);
-
-// ec_get_x_coordinate_as_scalar sets |*out| to |p|'s x-coordinate, modulo
-// |group->order|. It returns one on success and zero if |p| is the point at
-// infinity.
-int ec_get_x_coordinate_as_scalar(const EC_GROUP *group, EC_SCALAR *out,
-                                  const EC_RAW_POINT *p);
-
-// ec_point_get_affine_coordinate_bytes writes |p|'s affine coordinates to
-// |out_x| and |out_y|, each of which must have at must |max_out| bytes. It sets
-// |*out_len| to the number of bytes written in each buffer. Coordinates are
-// written big-endian and zero-padded to the size of the field.
-//
-// Either of |out_x| or |out_y| may be NULL to omit that coordinate. This
-// function returns one on success and zero on failure.
-int ec_point_get_affine_coordinate_bytes(const EC_GROUP *group, uint8_t *out_x,
-                                         uint8_t *out_y, size_t *out_len,
-                                         size_t max_out, const EC_RAW_POINT *p);
-
-// ec_field_element_to_scalar reduces |r| modulo |group->order|. |r| must
-// previously have been reduced modulo |group->field|.
-int ec_field_element_to_scalar(const EC_GROUP *group, BIGNUM *r);
-
 void ec_GFp_mont_mul(const EC_GROUP *group, EC_RAW_POINT *r,
                      const EC_RAW_POINT *p, const EC_SCALAR *scalar);
 void ec_GFp_mont_mul_base(const EC_GROUP *group, EC_RAW_POINT *r,
                           const EC_SCALAR *scalar);
+void ec_GFp_mont_mul_batch(const EC_GROUP *group, EC_RAW_POINT *r,
+                           const EC_RAW_POINT *p0, const EC_SCALAR *scalar0,
+                           const EC_RAW_POINT *p1, const EC_SCALAR *scalar1,
+                           const EC_RAW_POINT *p2, const EC_SCALAR *scalar2);
+int ec_GFp_mont_init_precomp(const EC_GROUP *group, EC_PRECOMP *out,
+                             const EC_RAW_POINT *p);
+void ec_GFp_mont_mul_precomp(const EC_GROUP *group, EC_RAW_POINT *r,
+                             const EC_PRECOMP *p0, const EC_SCALAR *scalar0,
+                             const EC_PRECOMP *p1, const EC_SCALAR *scalar1,
+                             const EC_PRECOMP *p2, const EC_SCALAR *scalar2);
 
 // ec_compute_wNAF writes the modified width-(w+1) Non-Adjacent Form (wNAF) of
 // |scalar| to |out|. |out| must have room for |bits| + 1 elements, each of
@@ -386,9 +651,10 @@ void ec_GFp_mont_mul_base(const EC_GROUP *group, EC_RAW_POINT *r,
 void ec_compute_wNAF(const EC_GROUP *group, int8_t *out,
                      const EC_SCALAR *scalar, size_t bits, int w);
 
-void ec_GFp_mont_mul_public(const EC_GROUP *group, EC_RAW_POINT *r,
-                            const EC_SCALAR *g_scalar, const EC_RAW_POINT *p,
-                            const EC_SCALAR *p_scalar);
+int ec_GFp_mont_mul_public_batch(const EC_GROUP *group, EC_RAW_POINT *r,
+                                 const EC_SCALAR *g_scalar,
+                                 const EC_RAW_POINT *points,
+                                 const EC_SCALAR *scalars, size_t num);
 
 // method functions in simple.c
 int ec_GFp_simple_group_init(EC_GROUP *);
@@ -400,25 +666,28 @@ int ec_GFp_simple_group_get_curve(const EC_GROUP *, BIGNUM *p, BIGNUM *a,
 void ec_GFp_simple_point_init(EC_RAW_POINT *);
 void ec_GFp_simple_point_copy(EC_RAW_POINT *, const EC_RAW_POINT *);
 void ec_GFp_simple_point_set_to_infinity(const EC_GROUP *, EC_RAW_POINT *);
-int ec_GFp_simple_point_set_affine_coordinates(const EC_GROUP *, EC_RAW_POINT *,
-                                               const BIGNUM *x,
-                                               const BIGNUM *y);
 void ec_GFp_mont_add(const EC_GROUP *, EC_RAW_POINT *r, const EC_RAW_POINT *a,
                      const EC_RAW_POINT *b);
 void ec_GFp_mont_dbl(const EC_GROUP *, EC_RAW_POINT *r, const EC_RAW_POINT *a);
 void ec_GFp_simple_invert(const EC_GROUP *, EC_RAW_POINT *);
 int ec_GFp_simple_is_at_infinity(const EC_GROUP *, const EC_RAW_POINT *);
 int ec_GFp_simple_is_on_curve(const EC_GROUP *, const EC_RAW_POINT *);
-int ec_GFp_simple_cmp(const EC_GROUP *, const EC_RAW_POINT *a,
-                      const EC_RAW_POINT *b);
-void ec_simple_scalar_inv_montgomery(const EC_GROUP *group, EC_SCALAR *r,
-                                     const EC_SCALAR *a);
+int ec_GFp_simple_points_equal(const EC_GROUP *, const EC_RAW_POINT *a,
+                               const EC_RAW_POINT *b);
+void ec_simple_scalar_inv0_montgomery(const EC_GROUP *group, EC_SCALAR *r,
+                                      const EC_SCALAR *a);
 
-int ec_GFp_simple_mont_inv_mod_ord_vartime(const EC_GROUP *group, EC_SCALAR *r,
-                                           const EC_SCALAR *a);
+int ec_simple_scalar_to_montgomery_inv_vartime(const EC_GROUP *group,
+                                               EC_SCALAR *r,
+                                               const EC_SCALAR *a);
 
 int ec_GFp_simple_cmp_x_coordinate(const EC_GROUP *group, const EC_RAW_POINT *p,
                                    const EC_SCALAR *r);
+
+void ec_GFp_simple_felem_to_bytes(const EC_GROUP *group, uint8_t *out,
+                                  size_t *out_len, const EC_FELEM *in);
+int ec_GFp_simple_felem_from_bytes(const EC_GROUP *group, EC_FELEM *out,
+                                   const uint8_t *in, size_t len);
 
 // method functions in montgomery.c
 int ec_GFp_mont_group_init(EC_GROUP *);
@@ -429,12 +698,13 @@ void ec_GFp_mont_felem_mul(const EC_GROUP *, EC_FELEM *r, const EC_FELEM *a,
                            const EC_FELEM *b);
 void ec_GFp_mont_felem_sqr(const EC_GROUP *, EC_FELEM *r, const EC_FELEM *a);
 
-int ec_GFp_mont_bignum_to_felem(const EC_GROUP *group, EC_FELEM *out,
-                                const BIGNUM *in);
-int ec_GFp_mont_felem_to_bignum(const EC_GROUP *group, BIGNUM *out,
-                                const EC_FELEM *in);
+void ec_GFp_mont_felem_to_bytes(const EC_GROUP *group, uint8_t *out,
+                                size_t *out_len, const EC_FELEM *in);
+int ec_GFp_mont_felem_from_bytes(const EC_GROUP *group, EC_FELEM *out,
+                                 const uint8_t *in, size_t len);
 
-void ec_GFp_nistp_recode_scalar_bits(uint8_t *sign, uint8_t *digit, uint8_t in);
+void ec_GFp_nistp_recode_scalar_bits(crypto_word_t *sign, crypto_word_t *digit,
+                                     crypto_word_t in);
 
 const EC_METHOD *EC_GFp_nistp224_method(void);
 const EC_METHOD *EC_GFp_nistp256_method(void);
@@ -453,6 +723,9 @@ typedef struct {
 struct ec_key_st {
   EC_GROUP *group;
 
+  // Ideally |pub_key| would be an |EC_AFFINE| so serializing it does not pay an
+  // inversion each time, but the |EC_KEY_get0_public_key| API implies public
+  // keys are stored in an |EC_POINT|-compatible form.
   EC_POINT *pub_key;
   EC_WRAPPED_SCALAR *priv_key;
 

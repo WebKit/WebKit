@@ -127,7 +127,10 @@ static bool add_new_session_tickets(SSL_HANDSHAKE *hs, bool *out_sent_tickets) {
       return false;
     }
     session->ticket_age_add_valid = true;
-    if (ssl->enable_early_data) {
+    bool enable_early_data =
+        ssl->enable_early_data &&
+        (!ssl->quic_method || !ssl->config->quic_early_data_context.empty());
+    if (enable_early_data) {
       // QUIC does not use the max_early_data_size parameter and always sets it
       // to a fixed value. See draft-ietf-quic-tls-22, section 4.5.
       session->ticket_max_early_data =
@@ -152,7 +155,7 @@ static bool add_new_session_tickets(SSL_HANDSHAKE *hs, bool *out_sent_tickets) {
       return false;
     }
 
-    if (ssl->enable_early_data) {
+    if (enable_early_data) {
       CBB early_data;
       if (!CBB_add_u16(&extensions, TLSEXT_TYPE_early_data) ||
           !CBB_add_u16_length_prefixed(&extensions, &early_data) ||
@@ -193,6 +196,11 @@ static enum ssl_hs_wait_t do_select_parameters(SSL_HANDSHAKE *hs) {
     return ssl_hs_error;
   }
 
+  if (ssl->quic_method != nullptr && client_hello.session_id_len > 0) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_UNEXPECTED_COMPATIBILITY_MODE);
+    ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_ILLEGAL_PARAMETER);
+    return ssl_hs_error;
+  }
   OPENSSL_memcpy(hs->session_id, client_hello.session_id,
                  client_hello.session_id_len);
   hs->session_id_len = client_hello.session_id_len;
@@ -309,6 +317,23 @@ static enum ssl_ticket_aead_result_t select_session(
   return ssl_ticket_aead_success;
 }
 
+static bool quic_ticket_compatible(const SSL_SESSION *session,
+                                   const SSL_CONFIG *config) {
+  if (!session->is_quic) {
+    return true;
+  }
+
+  if (session->quic_early_data_context.empty() ||
+      config->quic_early_data_context.size() !=
+          session->quic_early_data_context.size() ||
+      CRYPTO_memcmp(config->quic_early_data_context.data(),
+                    session->quic_early_data_context.data(),
+                    session->quic_early_data_context.size()) != 0) {
+    return false;
+  }
+  return true;
+}
+
 static enum ssl_hs_wait_t do_select_session(SSL_HANDSHAKE *hs) {
   SSL *const ssl = hs->ssl;
   SSLMessage msg;
@@ -374,6 +399,8 @@ static enum ssl_hs_wait_t do_select_session(SSL_HANDSHAKE *hs) {
       } else if (ssl->s3->ticket_age_skew < -kMaxTicketAgeSkewSeconds ||
                  kMaxTicketAgeSkewSeconds < ssl->s3->ticket_age_skew) {
         ssl->s3->early_data_reason = ssl_early_data_ticket_age_skew;
+      } else if (!quic_ticket_compatible(session.get(), hs->config)) {
+        ssl->s3->early_data_reason = ssl_early_data_quic_parameter_mismatch;
       } else {
         ssl->s3->early_data_reason = ssl_early_data_accepted;
         ssl->s3->early_data_accepted = true;
@@ -474,7 +501,7 @@ static enum ssl_hs_wait_t do_send_hello_retry_request(SSL_HANDSHAKE *hs) {
       !CBB_add_bytes(&body, kHelloRetryRequest, SSL3_RANDOM_SIZE) ||
       !CBB_add_u8_length_prefixed(&body, &session_id) ||
       !CBB_add_bytes(&session_id, hs->session_id, hs->session_id_len) ||
-      !CBB_add_u16(&body, ssl_cipher_get_value(hs->new_cipher)) ||
+      !CBB_add_u16(&body, SSL_CIPHER_get_protocol_id(hs->new_cipher)) ||
       !CBB_add_u8(&body, 0 /* no compression */) ||
       !tls1_get_shared_group(hs, &group_id) ||
       !CBB_add_u16_length_prefixed(&body, &extensions) ||
@@ -586,7 +613,7 @@ static enum ssl_hs_wait_t do_send_server_hello(SSL_HANDSHAKE *hs) {
       !CBB_add_bytes(&body, ssl->s3->server_random, SSL3_RANDOM_SIZE) ||
       !CBB_add_u8_length_prefixed(&body, &session_id) ||
       !CBB_add_bytes(&session_id, hs->session_id, hs->session_id_len) ||
-      !CBB_add_u16(&body, ssl_cipher_get_value(hs->new_cipher)) ||
+      !CBB_add_u16(&body, SSL_CIPHER_get_protocol_id(hs->new_cipher)) ||
       !CBB_add_u8(&body, 0) ||
       !CBB_add_u16_length_prefixed(&body, &extensions) ||
       !ssl_ext_pre_shared_key_add_serverhello(hs, &extensions) ||

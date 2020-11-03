@@ -4,4 +4,8 @@ AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
 DerivePointerAlignment: false
 PointerAlignment: Right
+# TODO(davidben): The default for Google style is now Regroup, but the default
+# IncludeCategories does not recognize <openssl/header.h>. We should
+# reconfigure IncludeCategories to match. For now, keep it at Preserve.
+IncludeBlocks: Preserve
 

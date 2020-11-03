@@ -23,7 +23,7 @@
 #include <gtest/gtest.h>
 
 #include "../internal.h"
-#include "../../third_party/fiat/internal.h"
+#include "./internal.h"
 
 
 // TODO(agl): add tests with fixed vectors once SPAKE2 is nailed down.

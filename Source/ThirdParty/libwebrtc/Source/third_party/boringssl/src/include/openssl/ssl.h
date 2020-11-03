@@ -953,6 +953,18 @@ OPENSSL_EXPORT size_t SSL_get0_certificate_types(const SSL *ssl,
 OPENSSL_EXPORT size_t
 SSL_get0_peer_verify_algorithms(const SSL *ssl, const uint16_t **out_sigalgs);
 
+// SSL_get0_peer_delegation_algorithms sets |*out_sigalgs| to an array
+// containing the signature algorithms the peer is willing to use with delegated
+// credentials.  It returns the length of the array. If not sent, the empty
+// array is returned.
+//
+// The behavior of this function is undefined except during the callbacks set by
+// by |SSL_CTX_set_cert_cb| and |SSL_CTX_set_client_cert_cb| or when the
+// handshake is paused because of them.
+OPENSSL_EXPORT size_t
+SSL_get0_peer_delegation_algorithms(const SSL *ssl,
+                                    const uint16_t **out_sigalgs);
+
 // SSL_certs_clear resets the private key, leaf certificate, and certificate
 // chain of |ssl|.
 OPENSSL_EXPORT void SSL_certs_clear(SSL *ssl);
@@ -1097,6 +1109,20 @@ OPENSSL_EXPORT int SSL_CTX_set_chain_and_key(
 OPENSSL_EXPORT int SSL_set_chain_and_key(
     SSL *ssl, CRYPTO_BUFFER *const *certs, size_t num_certs, EVP_PKEY *privkey,
     const SSL_PRIVATE_KEY_METHOD *privkey_method);
+
+// SSL_CTX_get0_chain returns the list of |CRYPTO_BUFFER|s that were set by
+// |SSL_CTX_set_chain_and_key|. Reference counts are not incremented by this
+// call. The return value may be |NULL| if no chain has been set.
+//
+// (Note: if a chain was configured by non-|CRYPTO_BUFFER|-based functions then
+// the return value is undefined and, even if not NULL, the stack itself may
+// contain nullptrs. Thus you shouldn't mix this function with
+// non-|CRYPTO_BUFFER| functions for manipulating the chain.)
+//
+// There is no |SSL*| version of this function because connections discard
+// configuration after handshaking, thus making it of questionable utility.
+OPENSSL_EXPORT const STACK_OF(CRYPTO_BUFFER)*
+    SSL_CTX_get0_chain(const SSL_CTX *ctx);
 
 // SSL_CTX_use_RSAPrivateKey sets |ctx|'s private key to |rsa|. It returns one
 // on success and zero on failure.
@@ -1267,8 +1293,8 @@ OPENSSL_EXPORT const SSL_CIPHER *SSL_get_cipher_by_value(uint16_t value);
 // cast to a |uint16_t| to get it.
 OPENSSL_EXPORT uint32_t SSL_CIPHER_get_id(const SSL_CIPHER *cipher);
 
-// SSL_CIPHER_get_value returns |cipher|'s IANA-assigned number.
-OPENSSL_EXPORT uint16_t SSL_CIPHER_get_value(const SSL_CIPHER *cipher);
+// SSL_CIPHER_get_protocol_id returns |cipher|'s IANA-assigned number.
+OPENSSL_EXPORT uint16_t SSL_CIPHER_get_protocol_id(const SSL_CIPHER *cipher);
 
 // SSL_CIPHER_is_aead returns one if |cipher| uses an AEAD cipher.
 OPENSSL_EXPORT int SSL_CIPHER_is_aead(const SSL_CIPHER *cipher);
@@ -2183,6 +2209,20 @@ struct ssl_ticket_aead_method_st {
 OPENSSL_EXPORT void SSL_CTX_set_ticket_aead_method(
     SSL_CTX *ctx, const SSL_TICKET_AEAD_METHOD *aead_method);
 
+// SSL_process_tls13_new_session_ticket processes an unencrypted TLS 1.3
+// NewSessionTicket message from |buf| and returns a resumable |SSL_SESSION|,
+// or NULL on error. The caller takes ownership of the returned session and
+// must call |SSL_SESSION_free| to free it.
+//
+// |buf| contains |buf_len| bytes that represents a complete NewSessionTicket
+// message including its header, i.e., one byte for the type (0x04) and three
+// bytes for the length. |buf| must contain only one such message.
+//
+// This function may be used to process NewSessionTicket messages in TLS 1.3
+// clients that are handling the record layer externally.
+OPENSSL_EXPORT SSL_SESSION *SSL_process_tls13_new_session_ticket(
+    SSL *ssl, const uint8_t *buf, size_t buf_len);
+
 
 // Elliptic curve Diffie-Hellman.
 //
@@ -2436,7 +2476,7 @@ OPENSSL_EXPORT int SSL_CTX_set_default_verify_paths(SSL_CTX *ctx);
 // one on success and zero on failure.
 //
 // See
-// https://www.openssl.org/docs/manmaster/ssl/SSL_CTX_load_verify_locations.html
+// https://www.openssl.org/docs/man1.1.0/man3/SSL_CTX_load_verify_locations.html
 // for documentation on the directory format.
 OPENSSL_EXPORT int SSL_CTX_load_verify_locations(SSL_CTX *ctx,
                                                  const char *ca_file,
@@ -3053,38 +3093,6 @@ OPENSSL_EXPORT const char *SSL_get_psk_identity_hint(const SSL *ssl);
 OPENSSL_EXPORT const char *SSL_get_psk_identity(const SSL *ssl);
 
 
-// QUIC transport parameters.
-//
-// draft-ietf-quic-tls defines a new TLS extension quic_transport_parameters
-// used by QUIC for each endpoint to unilaterally declare its supported
-// transport parameters. draft-ietf-quic-transport (section 7.4) defines the
-// contents of that extension (a TransportParameters struct) and describes how
-// to handle it and its semantic meaning.
-//
-// BoringSSL handles this extension as an opaque byte string. The caller is
-// responsible for serializing and parsing it.
-
-// SSL_set_quic_transport_params configures |ssl| to send |params| (of length
-// |params_len|) in the quic_transport_parameters extension in either the
-// ClientHello or EncryptedExtensions handshake message. This extension will
-// only be sent if the TLS version is at least 1.3, and for a server, only if
-// the client sent the extension. The buffer pointed to by |params| only need be
-// valid for the duration of the call to this function. This function returns 1
-// on success and 0 on failure.
-OPENSSL_EXPORT int SSL_set_quic_transport_params(SSL *ssl,
-                                                 const uint8_t *params,
-                                                 size_t params_len);
-
-// SSL_get_peer_quic_transport_params provides the caller with the value of the
-// quic_transport_parameters extension sent by the peer. A pointer to the buffer
-// containing the TransportParameters will be put in |*out_params|, and its
-// length in |*params_len|. This buffer will be valid for the lifetime of the
-// |SSL|. If no params were received from the peer, |*out_params_len| will be 0.
-OPENSSL_EXPORT void SSL_get_peer_quic_transport_params(const SSL *ssl,
-                                                       const uint8_t **out_params,
-                                                       size_t *out_params_len);
-
-
 // Delegated credentials.
 //
 // *** EXPERIMENTAL — PRONE TO CHANGE ***
@@ -3156,8 +3164,37 @@ OPENSSL_EXPORT int SSL_delegated_credential_used(const SSL *ssl);
 // |SSL_quic_max_handshake_flight_len| to get the maximum buffer length at each
 // encryption level.
 //
-// Note: 0-RTT support is incomplete and does not currently handle QUIC
-// transport parameters and server SETTINGS frame.
+// QUIC implementations must additionally configure transport parameters with
+// |SSL_set_quic_transport_params|. |SSL_get_peer_quic_transport_params| may be
+// used to query the value received from the peer. BoringSSL handles this
+// extension as an opaque byte string. The caller is responsible for serializing
+// and parsing them. See draft-ietf-quic-transport (section 7.3) for details.
+//
+// QUIC additionally imposes restrictions on 0-RTT. In particular, the QUIC
+// transport layer requires that if a server accepts 0-RTT data, then the
+// transport parameters sent on the resumed connection must not lower any limits
+// compared to the transport parameters that the server sent on the connection
+// where the ticket for 0-RTT was issued. In effect, the server must remember
+// the transport parameters with the ticket. Application protocols running on
+// QUIC may impose similar restrictions, for example HTTP/3's restrictions on
+// SETTINGS frames.
+//
+// BoringSSL implements this check by doing a byte-for-byte comparison of an
+// opaque context passed in by the server. This context must be the same on the
+// connection where the ticket was issued and the connection where that ticket
+// is used for 0-RTT. If there is a mismatch, or the context was not set,
+// BoringSSL will reject early data (but not reject the resumption attempt).
+// This context is set via |SSL_set_quic_early_data_context| and should cover
+// both transport parameters and any application state.
+// |SSL_set_quic_early_data_context| must be called on the server with a
+// non-empty context if the server is to support 0-RTT in QUIC.
+//
+// BoringSSL does not perform any client-side checks on the transport
+// parameters received from a server that also accepted early data. It is up to
+// the caller to verify that the received transport parameters do not lower any
+// limits, and to close the QUIC connection if that is not the case. The same
+// holds for any application protocol state remembered for 0-RTT, e.g. HTTP/3
+// SETTINGS.
 
 // ssl_encryption_level_t represents a specific QUIC encryption level used to
 // transmit handshake messages.
@@ -3286,6 +3323,40 @@ OPENSSL_EXPORT int SSL_CTX_set_quic_method(SSL_CTX *ctx,
 OPENSSL_EXPORT int SSL_set_quic_method(SSL *ssl,
                                        const SSL_QUIC_METHOD *quic_method);
 
+// SSL_set_quic_transport_params configures |ssl| to send |params| (of length
+// |params_len|) in the quic_transport_parameters extension in either the
+// ClientHello or EncryptedExtensions handshake message. It is an error to set
+// transport parameters if |ssl| is not configured for QUIC. The buffer pointed
+// to by |params| only need be valid for the duration of the call to this
+// function. This function returns 1 on success and 0 on failure.
+OPENSSL_EXPORT int SSL_set_quic_transport_params(SSL *ssl,
+                                                 const uint8_t *params,
+                                                 size_t params_len);
+
+// SSL_get_peer_quic_transport_params provides the caller with the value of the
+// quic_transport_parameters extension sent by the peer. A pointer to the buffer
+// containing the TransportParameters will be put in |*out_params|, and its
+// length in |*params_len|. This buffer will be valid for the lifetime of the
+// |SSL|. If no params were received from the peer, |*out_params_len| will be 0.
+OPENSSL_EXPORT void SSL_get_peer_quic_transport_params(
+    const SSL *ssl, const uint8_t **out_params, size_t *out_params_len);
+
+// SSL_set_quic_early_data_context configures a context string in QUIC servers
+// for accepting early data. If a resumption connection offers early data, the
+// server will check if the value matches that of the connection which minted
+// the ticket. If not, resumption still succeeds but early data is rejected.
+// This should include all QUIC Transport Parameters except ones specified that
+// the client MUST NOT remember. This should also include any application
+// protocol-specific state. For HTTP/3, this should be the serialized server
+// SETTINGS frame and the QUIC Transport Parameters (except the stateless reset
+// token).
+//
+// This function may be called before |SSL_do_handshake| or during server
+// certificate selection. It returns 1 on success and 0 on failure.
+OPENSSL_EXPORT int SSL_set_quic_early_data_context(SSL *ssl,
+                                                   const uint8_t *context,
+                                                   size_t context_len);
+
 
 // Early data.
 //
@@ -3359,6 +3430,18 @@ OPENSSL_EXPORT int SSL_in_early_data(const SSL *ssl);
 // attempted with |session| if enabled.
 OPENSSL_EXPORT int SSL_SESSION_early_data_capable(const SSL_SESSION *session);
 
+// SSL_SESSION_copy_without_early_data returns a copy of |session| with early
+// data disabled. If |session| already does not support early data, it returns
+// |session| with the reference count increased. The caller takes ownership of
+// the result and must release it with |SSL_SESSION_free|.
+//
+// This function may be used on the client to clear early data support from
+// existing sessions when the server rejects early data. In particular,
+// |SSL_R_WRONG_VERSION_ON_EARLY_DATA| requires a fresh connection to retry, and
+// the client would not want 0-RTT enabled for the next connection attempt.
+OPENSSL_EXPORT SSL_SESSION *SSL_SESSION_copy_without_early_data(
+    SSL_SESSION *session);
+
 // SSL_early_data_accepted returns whether early data was accepted on the
 // handshake performed by |ssl|.
 OPENSSL_EXPORT int SSL_early_data_accepted(const SSL *ssl);
@@ -3408,8 +3491,10 @@ enum ssl_early_data_reason_t BORINGSSL_ENUM_INT {
   ssl_early_data_token_binding = 11,
   // The client and server ticket age were too far apart.
   ssl_early_data_ticket_age_skew = 12,
+  // QUIC parameters differ between this connection and the original.
+  ssl_early_data_quic_parameter_mismatch = 13,
   // The value of the largest entry.
-  ssl_early_data_reason_max_value = ssl_early_data_ticket_age_skew,
+  ssl_early_data_reason_max_value = ssl_early_data_quic_parameter_mismatch,
 };
 
 // SSL_get_early_data_reason returns details why 0-RTT was accepted or rejected
@@ -3531,11 +3616,13 @@ OPENSSL_EXPORT int SSL_get_ivs(const SSL *ssl, const uint8_t **out_read_iv,
                                const uint8_t **out_write_iv,
                                size_t *out_iv_len);
 
-// SSL_get_key_block_len returns the length of |ssl|'s key block.
+// SSL_get_key_block_len returns the length of |ssl|'s key block. It is an error
+// to call this function during a handshake.
 OPENSSL_EXPORT size_t SSL_get_key_block_len(const SSL *ssl);
 
 // SSL_generate_key_block generates |out_len| bytes of key material for |ssl|'s
-// current connection state.
+// current connection state. It is an error to call this function during a
+// handshake.
 OPENSSL_EXPORT int SSL_generate_key_block(const SSL *ssl, uint8_t *out,
                                           size_t out_len);
 
@@ -4246,7 +4333,7 @@ OPENSSL_EXPORT int SSL_set1_sigalgs(SSL *ssl, const int *values,
 // SSL_CTX_set1_sigalgs_list takes a textual specification of a set of signature
 // algorithms and configures them on |ctx|. It returns one on success and zero
 // on error. See
-// https://www.openssl.org/docs/man1.1.0/ssl/SSL_CTX_set1_sigalgs_list.html for
+// https://www.openssl.org/docs/man1.1.0/man3/SSL_CTX_set1_sigalgs_list.html for
 // a description of the text format. Also note that TLS 1.3 names (e.g.
 // "rsa_pkcs1_md5_sha1") can also be used (as in OpenSSL, although OpenSSL
 // doesn't document that).
@@ -4259,7 +4346,7 @@ OPENSSL_EXPORT int SSL_CTX_set1_sigalgs_list(SSL_CTX *ctx, const char *str);
 // SSL_set1_sigalgs_list takes a textual specification of a set of signature
 // algorithms and configures them on |ssl|. It returns one on success and zero
 // on error. See
-// https://www.openssl.org/docs/man1.1.0/ssl/SSL_CTX_set1_sigalgs_list.html for
+// https://www.openssl.org/docs/man1.1.0/man3/SSL_CTX_set1_sigalgs_list.html for
 // a description of the text format. Also note that TLS 1.3 names (e.g.
 // "rsa_pkcs1_md5_sha1") can also be used (as in OpenSSL, although OpenSSL
 // doesn't document that).
@@ -4612,6 +4699,30 @@ OPENSSL_EXPORT int SSL_CTX_set_tlsext_status_cb(SSL_CTX *ctx,
 // SSL_CTX_set_tlsext_status_arg sets additional data for
 // |SSL_CTX_set_tlsext_status_cb|'s callback and returns one.
 OPENSSL_EXPORT int SSL_CTX_set_tlsext_status_arg(SSL_CTX *ctx, void *arg);
+
+// The following symbols are compatibility aliases for reason codes used when
+// receiving an alert from the peer. Use the other names instead, which fit the
+// naming convention.
+//
+// TODO(davidben): Fix references to |SSL_R_TLSV1_CERTIFICATE_REQUIRED| and
+// remove the compatibility value. The others come from OpenSSL.
+#define SSL_R_TLSV1_UNSUPPORTED_EXTENSION \
+  SSL_R_TLSV1_ALERT_UNSUPPORTED_EXTENSION
+#define SSL_R_TLSV1_CERTIFICATE_UNOBTAINABLE \
+  SSL_R_TLSV1_ALERT_CERTIFICATE_UNOBTAINABLE
+#define SSL_R_TLSV1_UNRECOGNIZED_NAME SSL_R_TLSV1_ALERT_UNRECOGNIZED_NAME
+#define SSL_R_TLSV1_BAD_CERTIFICATE_STATUS_RESPONSE \
+  SSL_R_TLSV1_ALERT_BAD_CERTIFICATE_STATUS_RESPONSE
+#define SSL_R_TLSV1_BAD_CERTIFICATE_HASH_VALUE \
+  SSL_R_TLSV1_ALERT_BAD_CERTIFICATE_HASH_VALUE
+#define SSL_R_TLSV1_CERTIFICATE_REQUIRED SSL_R_TLSV1_ALERT_CERTIFICATE_REQUIRED
+
+// SSL_CIPHER_get_value calls |SSL_CIPHER_get_protocol_id|.
+//
+// TODO(davidben): |SSL_CIPHER_get_value| was our name for this function, but
+// upstream added it as |SSL_CIPHER_get_protocol_id|. Switch callers to the new
+// name and remove this one.
+OPENSSL_EXPORT uint16_t SSL_CIPHER_get_value(const SSL_CIPHER *cipher);
 
 
 // Nodejs compatibility section (hidden).
@@ -5103,6 +5214,9 @@ BSSL_NAMESPACE_END
 #define SSL_R_KEY_USAGE_BIT_INCORRECT 302
 #define SSL_R_INCONSISTENT_CLIENT_HELLO 303
 #define SSL_R_CIPHER_MISMATCH_ON_EARLY_DATA 304
+#define SSL_R_QUIC_TRANSPORT_PARAMETERS_MISCONFIGURED 305
+#define SSL_R_UNEXPECTED_COMPATIBILITY_MODE 306
+#define SSL_R_MISSING_ALPN 307
 #define SSL_R_SSLV3_ALERT_CLOSE_NOTIFY 1000
 #define SSL_R_SSLV3_ALERT_UNEXPECTED_MESSAGE 1010
 #define SSL_R_SSLV3_ALERT_BAD_RECORD_MAC 1020
@@ -5128,12 +5242,13 @@ BSSL_NAMESPACE_END
 #define SSL_R_TLSV1_ALERT_INAPPROPRIATE_FALLBACK 1086
 #define SSL_R_TLSV1_ALERT_USER_CANCELLED 1090
 #define SSL_R_TLSV1_ALERT_NO_RENEGOTIATION 1100
-#define SSL_R_TLSV1_UNSUPPORTED_EXTENSION 1110
-#define SSL_R_TLSV1_CERTIFICATE_UNOBTAINABLE 1111
-#define SSL_R_TLSV1_UNRECOGNIZED_NAME 1112
-#define SSL_R_TLSV1_BAD_CERTIFICATE_STATUS_RESPONSE 1113
-#define SSL_R_TLSV1_BAD_CERTIFICATE_HASH_VALUE 1114
-#define SSL_R_TLSV1_UNKNOWN_PSK_IDENTITY 1115
-#define SSL_R_TLSV1_CERTIFICATE_REQUIRED 1116
+#define SSL_R_TLSV1_ALERT_UNSUPPORTED_EXTENSION 1110
+#define SSL_R_TLSV1_ALERT_CERTIFICATE_UNOBTAINABLE 1111
+#define SSL_R_TLSV1_ALERT_UNRECOGNIZED_NAME 1112
+#define SSL_R_TLSV1_ALERT_BAD_CERTIFICATE_STATUS_RESPONSE 1113
+#define SSL_R_TLSV1_ALERT_BAD_CERTIFICATE_HASH_VALUE 1114
+#define SSL_R_TLSV1_ALERT_UNKNOWN_PSK_IDENTITY 1115
+#define SSL_R_TLSV1_ALERT_CERTIFICATE_REQUIRED 1116
+#define SSL_R_TLSV1_ALERT_NO_APPLICATION_PROTOCOL 1120
 
 #endif  // OPENSSL_HEADER_SSL_H

@@ -10,6 +10,7 @@ BoringCrypto has undergone the following validations:
 
 1. 2017-06-15: certificate [#2964](https://csrc.nist.gov/Projects/Cryptographic-Module-Validation-Program/Certificate/2964), [security policy](/crypto/fipsmodule/policydocs/BoringCrypto-Security-Policy-20170615.docx) (in docx format).
 1. 2018-07-30: certificate [#3318](https://csrc.nist.gov/Projects/Cryptographic-Module-Validation-Program/Certificate/3318), [security policy](/crypto/fipsmodule/policydocs/BoringCrypto-Security-Policy-20180730.docx) (in docx format).
+1. 2019-08-08: certificate [#3678](https://csrc.nist.gov/Projects/Cryptographic-Module-Validation-Program/Certificate/3678), [security policy](/crypto/fipsmodule/policydocs/BoringCrypto-Security-Policy-20190808.docx) (in docx format).
 
 ## Running CAVP tests
 

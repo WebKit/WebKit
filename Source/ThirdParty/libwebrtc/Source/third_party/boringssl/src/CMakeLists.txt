@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.3)
 
 # Defer enabling C and CXX languages.
 project(BoringSSL NONE)
@@ -471,7 +471,7 @@ elseif(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "amd64")
   set(ARCH "x86_64")
 elseif(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "AMD64")
   # cmake reports AMD64 on Windows, but we might be building for 32-bit.
-  if(CMAKE_CL_64)
+  if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(ARCH "x86_64")
   else()
     set(ARCH "x86")
@@ -573,10 +573,21 @@ include_directories(third_party/googletest/include)
 # themselves as dependencies next to the target definition.
 add_custom_target(all_tests)
 
+# On Windows, CRYPTO_TEST_DATA is too long to fit in command-line limits.
+# TODO(davidben): CMake 3.12 has a list(JOIN) command. Use that when we've
+# updated the minimum version.
+set(EMBED_TEST_DATA_ARGS "")
+foreach(arg ${CRYPTO_TEST_DATA})
+  set(EMBED_TEST_DATA_ARGS "${EMBED_TEST_DATA_ARGS}${arg}\n")
+endforeach()
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/embed_test_data_args.txt"
+     "${EMBED_TEST_DATA_ARGS}")
+
 add_custom_command(
   OUTPUT crypto_test_data.cc
-  COMMAND ${GO_EXECUTABLE} run util/embed_test_data.go ${CRYPTO_TEST_DATA} >
-  ${CMAKE_CURRENT_BINARY_DIR}/crypto_test_data.cc
+  COMMAND ${GO_EXECUTABLE} run util/embed_test_data.go -file-list
+          "${CMAKE_CURRENT_BINARY_DIR}/embed_test_data_args.txt" >
+          "${CMAKE_CURRENT_BINARY_DIR}/crypto_test_data.cc"
   DEPENDS util/embed_test_data.go ${CRYPTO_TEST_DATA}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -602,11 +613,6 @@ if(FUZZ)
   add_subdirectory(fuzz)
 endif()
 
-if(NOT ${CMAKE_VERSION} VERSION_LESS "3.2")
-  # USES_TERMINAL is only available in CMake 3.2 or later.
-  set(MAYBE_USES_TERMINAL USES_TERMINAL)
-endif()
-
 if(UNIX AND NOT APPLE AND NOT ANDROID)
   set(HANDSHAKER_ARGS "-handshaker-path" $<TARGET_FILE:handshaker>)
 endif()
@@ -620,4 +626,4 @@ add_custom_target(
               ${HANDSHAKER_ARGS} ${RUNNER_ARGS}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     DEPENDS all_tests bssl_shim handshaker
-    ${MAYBE_USES_TERMINAL})
+    USES_TERMINAL)

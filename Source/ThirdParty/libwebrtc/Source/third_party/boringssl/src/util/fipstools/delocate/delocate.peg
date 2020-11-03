@@ -52,12 +52,14 @@ WS <- [ \t]+
 Comment <- '#' [^\n]*
 Label <- (LocalSymbol / LocalLabel / SymbolName) ':'
 SymbolName <- [[A-Z._]][[A-Z.0-9$_]]*
-LocalSymbol <- '.L' [[A-Z.0-9$_]]+
+LocalSymbol <- '.L' [[A-Za-z.0-9$_]]+
 LocalLabel <- [0-9][0-9$]*
 LocalLabelRef <- [0-9][0-9$]*[bf]
 Instruction <- InstructionName (WS InstructionArg ((WS? ',' WS?) InstructionArg)*)?
 InstructionName <- [[A-Z]][[A-Z0-9]]* [.+\-]?
-InstructionArg <- IndirectionIndicator? (RegisterOrConstant / LocalLabelRef / TOCRefHigh / TOCRefLow / MemoryRef) AVX512Token*
+InstructionArg <- IndirectionIndicator? (RegisterOrConstant / LocalLabelRef / TOCRefHigh / TOCRefLow / GOTLocation / GOTSymbolOffset / MemoryRef) AVX512Token*
+GOTLocation <- '$_GLOBAL_OFFSET_TABLE_-' LocalSymbol
+GOTSymbolOffset <- '$' SymbolName '@GOT' 'OFF'?
 AVX512Token <- WS? '{' '%'? [0-9a-z]* '}'
 TOCRefHigh <- '.TOC.-' ('0b' / ('.L' [a-zA-Z_0-9]+)) "@ha"
 TOCRefLow <- '.TOC.-' ('0b' / ('.L' [a-zA-Z_0-9]+)) "@l"

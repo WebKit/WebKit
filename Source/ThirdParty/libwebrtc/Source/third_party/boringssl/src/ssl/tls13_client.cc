@@ -79,8 +79,10 @@ static bool close_early_data(SSL_HANDSHAKE *hs, ssl_encryption_level_t level) {
     if (level == ssl_encryption_initial) {
       bssl::UniquePtr<SSLAEADContext> null_ctx =
           SSLAEADContext::CreateNullCipher(SSL_is_dtls(ssl));
-      if (!null_ctx || !ssl->method->set_write_state(ssl, ssl_encryption_initial,
-                                                     std::move(null_ctx))) {
+      if (!null_ctx ||
+          !ssl->method->set_write_state(ssl, ssl_encryption_initial,
+                                        std::move(null_ctx),
+                                        /*secret_for_quic=*/{})) {
         return false;
       }
       ssl->s3->aead_write_ctx->SetVersionIfNullCipher(ssl->version);
@@ -929,26 +931,43 @@ bool tls13_process_new_session_ticket(SSL *ssl, const SSLMessage &msg) {
     return true;
   }
 
+  CBS body = msg.body;
+  UniquePtr<SSL_SESSION> session = tls13_create_session_with_ticket(ssl, &body);
+  if (!session) {
+    return false;
+  }
+
+  if ((ssl->session_ctx->session_cache_mode & SSL_SESS_CACHE_CLIENT) &&
+      ssl->session_ctx->new_session_cb != NULL &&
+      ssl->session_ctx->new_session_cb(ssl, session.get())) {
+    // |new_session_cb|'s return value signals that it took ownership.
+    session.release();
+  }
+
+  return true;
+}
+
+UniquePtr<SSL_SESSION> tls13_create_session_with_ticket(SSL *ssl, CBS *body) {
   UniquePtr<SSL_SESSION> session = SSL_SESSION_dup(
       ssl->s3->established_session.get(), SSL_SESSION_INCLUDE_NONAUTH);
   if (!session) {
-    return false;
+    return nullptr;
   }
 
   ssl_session_rebase_time(ssl, session.get());
 
   uint32_t server_timeout;
-  CBS body = msg.body, ticket_nonce, ticket, extensions;
-  if (!CBS_get_u32(&body, &server_timeout) ||
-      !CBS_get_u32(&body, &session->ticket_age_add) ||
-      !CBS_get_u8_length_prefixed(&body, &ticket_nonce) ||
-      !CBS_get_u16_length_prefixed(&body, &ticket) ||
+  CBS ticket_nonce, ticket, extensions;
+  if (!CBS_get_u32(body, &server_timeout) ||
+      !CBS_get_u32(body, &session->ticket_age_add) ||
+      !CBS_get_u8_length_prefixed(body, &ticket_nonce) ||
+      !CBS_get_u16_length_prefixed(body, &ticket) ||
       !session->ticket.CopyFrom(ticket) ||
-      !CBS_get_u16_length_prefixed(&body, &extensions) ||
-      CBS_len(&body) != 0) {
+      !CBS_get_u16_length_prefixed(body, &extensions) ||
+      CBS_len(body) != 0) {
     ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_DECODE_ERROR);
     OPENSSL_PUT_ERROR(SSL, SSL_R_DECODE_ERROR);
-    return false;
+    return nullptr;
   }
 
   // Cap the renewable lifetime by the server advertised value. This avoids
@@ -958,7 +977,7 @@ bool tls13_process_new_session_ticket(SSL *ssl, const SSLMessage &msg) {
   }
 
   if (!tls13_derive_session_psk(session.get(), ticket_nonce)) {
-    return false;
+    return nullptr;
   }
 
   // Parse out the extensions.
@@ -973,7 +992,7 @@ bool tls13_process_new_session_ticket(SSL *ssl, const SSLMessage &msg) {
                             OPENSSL_ARRAY_SIZE(ext_types),
                             1 /* ignore unknown */)) {
     ssl_send_alert(ssl, SSL3_AL_FATAL, alert);
-    return false;
+    return nullptr;
   }
 
   if (have_early_data) {
@@ -981,7 +1000,7 @@ bool tls13_process_new_session_ticket(SSL *ssl, const SSLMessage &msg) {
         CBS_len(&early_data) != 0) {
       ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_DECODE_ERROR);
       OPENSSL_PUT_ERROR(SSL, SSL_R_DECODE_ERROR);
-      return false;
+      return nullptr;
     }
 
     // QUIC does not use the max_early_data_size parameter and always sets it to
@@ -990,7 +1009,7 @@ bool tls13_process_new_session_ticket(SSL *ssl, const SSLMessage &msg) {
         session->ticket_max_early_data != 0xffffffff) {
       ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_ILLEGAL_PARAMETER);
       OPENSSL_PUT_ERROR(SSL, SSL_R_DECODE_ERROR);
-      return false;
+      return nullptr;
     }
   }
 
@@ -1002,14 +1021,7 @@ bool tls13_process_new_session_ticket(SSL *ssl, const SSLMessage &msg) {
   session->ticket_age_add_valid = true;
   session->not_resumable = false;
 
-  if ((ssl->session_ctx->session_cache_mode & SSL_SESS_CACHE_CLIENT) &&
-      ssl->session_ctx->new_session_cb != NULL &&
-      ssl->session_ctx->new_session_cb(ssl, session.get())) {
-    // |new_session_cb|'s return value signals that it took ownership.
-    session.release();
-  }
-
-  return true;
+  return session;
 }
 
 BSSL_NAMESPACE_END
