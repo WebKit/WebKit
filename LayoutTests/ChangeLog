@@ -1,3 +1,12 @@
+2020-11-03  Hector Lopez  <hector_i_lopez@apple.com>
+
+        Test expectation adjustment to cover internal testers
+        <rdar://68947198> 
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-11-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Move passing tests to the top of the TestExpectation files.

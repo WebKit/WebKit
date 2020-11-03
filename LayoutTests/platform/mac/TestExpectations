@@ -2205,9 +2205,9 @@ webkit.org/b/216492 imported/w3c/web-platform-tests/selection/extend-00.html [ S
 # This test requires API only availble on BigSur and later
 [ BigSur+ ] http/tests/media/hls/hls-hdr-switch.html [ Pass ]
 
-# <rdar://68947198> The test is actually passing but with slightly different values on mac-arm64. Because there is no way to
-# land a mac-arm64 baseline yet, we need to mark this test as expected to fail on this platform.
-[ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections.html [ Failure ]
+# <rdar://68947198> The test is actually passing but with slightly different values on some Internal testers. Because there is no way to
+# land a baseline yet for those testers, we need to mark this test as expected to fail on this platform.
+[ BigSur+ ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections.html [ Pass Failure ]
 
 # rdar://69347249
 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad-connection.html [ Failure ]
