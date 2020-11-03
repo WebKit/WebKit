@@ -1961,6 +1961,7 @@ platform/graphics/cpu/arm/filters/FELightingNEON.cpp
 platform/graphics/displaylists/DisplayList.cpp
 platform/graphics/displaylists/DisplayListDrawingContext.cpp
 platform/graphics/displaylists/DisplayListItems.cpp
+platform/graphics/displaylists/DisplayListItemType.cpp
 platform/graphics/displaylists/DisplayListRecorder.cpp
 platform/graphics/displaylists/DisplayListReplayer.cpp
 platform/graphics/filters/DistantLightSource.cpp

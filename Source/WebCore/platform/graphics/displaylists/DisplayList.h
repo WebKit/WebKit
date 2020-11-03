@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DisplayListItemType.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include <wtf/FastMalloc.h>
@@ -38,73 +39,6 @@ class TextStream;
 namespace WebCore {
 
 namespace DisplayList {
-
-enum class ItemType : uint8_t {
-    Save,
-    Restore,
-    Translate,
-    Rotate,
-    Scale,
-    ConcatenateCTM,
-    SetCTM,
-    SetInlineFillGradient,
-    SetInlineFillColor,
-    SetInlineStrokeColor,
-    SetStrokeThickness,
-    SetState,
-    SetLineCap,
-    SetLineDash,
-    SetLineJoin,
-    SetMiterLimit,
-    ClearShadow,
-    Clip,
-    ClipOut,
-    ClipOutToPath,
-    ClipPath,
-    ClipToDrawingCommands,
-    DrawGlyphs,
-    DrawImage,
-    DrawTiledImage,
-    DrawTiledScaledImage,
-    DrawImageBuffer,
-    DrawNativeImage,
-    DrawPattern,
-    DrawRect,
-    DrawLine,
-    DrawLinesForText,
-    DrawDotsForDocumentMarker,
-    DrawEllipse,
-    DrawPath,
-    DrawFocusRingPath,
-    DrawFocusRingRects,
-    FillRect,
-    FillRectWithColor,
-    FillRectWithGradient,
-    FillCompositedRect,
-    FillRoundedRect,
-    FillRectWithRoundedHole,
-#if ENABLE(INLINE_PATH_DATA)
-    FillInlinePath,
-#endif
-    FillPath,
-    FillEllipse,
-    PutImageData,
-    PaintFrameForMedia,
-    StrokeRect,
-#if ENABLE(INLINE_PATH_DATA)
-    StrokeInlinePath,
-#endif
-    StrokePath,
-    StrokeEllipse,
-    ClearRect,
-    BeginTransparencyLayer,
-    EndTransparencyLayer,
-#if USE(CG)
-    ApplyStrokePattern, // FIXME: should not be a recorded item.
-    ApplyFillPattern, // FIXME: should not be a recorded item.
-#endif
-    ApplyDeviceScaleFactor,
-};
 
 class Item : public RefCounted<Item> {
 public:

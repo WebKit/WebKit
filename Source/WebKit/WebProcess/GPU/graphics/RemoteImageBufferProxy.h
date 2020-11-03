@@ -173,7 +173,7 @@ protected:
         return true;
     }
 
-    void willAppendItem(const WebCore::DisplayList::Item&) override
+    void willAppendItemOfType(WebCore::DisplayList::ItemType) override
     {
         constexpr size_t DisplayListBatchSize = 512;
         auto& displayList = m_drawingContext.displayList();
@@ -185,9 +185,9 @@ protected:
         displayList.clear();
     }
 
-    void didAppendItem(const WebCore::DisplayList::Item& item) override
+    void didAppendItemOfType(WebCore::DisplayList::ItemType type) override
     {
-        if (item.type() == WebCore::DisplayList::ItemType::DrawImageBuffer)
+        if (type == WebCore::DisplayList::ItemType::DrawImageBuffer)
             flushDrawingContext();
     }
 

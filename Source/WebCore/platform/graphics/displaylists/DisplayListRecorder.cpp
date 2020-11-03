@@ -104,14 +104,14 @@ void Recorder::appendStateChangeItem(const GraphicsContextStateChange& changes, 
         m_displayList.appendItem(SetInlineFillGradient::create(*changes.m_state.fillGradient));
 }
 
-void Recorder::willAppendItem(const Item& item)
+void Recorder::willAppendItemOfType(ItemType type)
 {
     if (m_delegate)
-        m_delegate->willAppendItem(item);
+        m_delegate->willAppendItemOfType(type);
 
-    if (item.isDrawingItem()
+    if (isDrawingItem(type)
 #if USE(CG)
-        || item.type() == ItemType::ApplyStrokePattern || item.type() == ItemType::ApplyStrokePattern
+        || type == ItemType::ApplyStrokePattern || type == ItemType::ApplyStrokePattern
 #endif
     ) {
         GraphicsContextStateChange& stateChanges = currentState().stateChange;
@@ -126,10 +126,10 @@ void Recorder::willAppendItem(const Item& item)
     }
 }
 
-void Recorder::didAppendItem(const Item& item)
+void Recorder::didAppendItemOfType(ItemType type)
 {
     if (m_delegate)
-        m_delegate->didAppendItem(item);
+        m_delegate->didAppendItemOfType(type);
 }
 
 void Recorder::updateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
@@ -475,9 +475,10 @@ void Recorder::appendItemAndUpdateExtent(Ref<DrawingItem>&& item)
 void Recorder::appendItem(Ref<Item>&& item)
 {
     Item& newItem = item.get();
-    willAppendItem(item.get());
+    auto type = newItem.type();
+    willAppendItemOfType(type);
     m_displayList.append(WTFMove(item));
-    didAppendItem(newItem);
+    didAppendItemOfType(type);
 }
 
 void Recorder::updateItemExtent(DrawingItem& item) const
