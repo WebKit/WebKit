@@ -11,6 +11,7 @@ PASS 'WebkitTransform' in document.body.style is true
 PASS 'bogus-random-String' in document.body.style is false
 PASS 'cssText' in document.body.style is true
 PASS 'getPropertyCSSValue' in document.body.style is true
+PASS The CSS property order is correct
 PASS successfullyParsed is true
 
 TEST COMPLETE

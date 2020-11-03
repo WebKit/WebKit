@@ -72,10 +72,12 @@ public:
 
     virtual CSSStyleSheet* parentStyleSheet() const { return nullptr; }
 
-    ExceptionOr<void> setPropertyValueInternal(CSSPropertyID, String);
+    // Bindings support.
+    Optional<Variant<String, double>> namedItem(const AtomString&);
+    ExceptionOr<void> setNamedItem(const AtomString& name, String value, bool& propertySupported);
+    Vector<AtomString> supportedPropertyNames() const;
 
     static CSSPropertyID getCSSPropertyIDFromJavaScriptPropertyName(const AtomString&);
-
 protected:
     CSSStyleDeclaration() = default;
 };

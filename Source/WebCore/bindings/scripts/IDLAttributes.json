@@ -39,10 +39,6 @@
                 "url": "https://html.spec.whatwg.org/multipage/custom-elements.html#cereactions"
             }
         },
-        "CSSProperty": {
-            "contextsAllowed": ["attribute"],
-            "values": ["*"]
-        },
         "CachedAttribute": {
             "contextsAllowed": ["attribute"]
         },
@@ -52,6 +48,9 @@
         },
         "CallbackThisObject": {
             "contextsAllowed": ["callback-function", "operation"]
+        },
+        "CallNamedSetterOnlyForSupportedProperties": {
+            "contextsAllowed": ["operation"]
         },
         "CallWith": {
             "contextsAllowed": ["attribute", "operation"],
@@ -157,6 +156,9 @@
         },
         "Default": {
             "contextsAllowed": ["operation"]
+        },
+        "DefaultDefineOwnProperty": {
+            "contextsAllowed": ["interface"]
         },
         "DisabledByQuirk": {
             "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "dictionary-member", "includes"],

@@ -5,9 +5,8 @@
     <script>
         description("This tests the descriptor of CSSStyleDeclaration properties.");
 
-        var descriptor = Object.getOwnPropertyDescriptor(document.body.style.__proto__, 'color');
-        shouldBeType("descriptor['get']", "Function");
-        shouldBeType("descriptor['set']", "Function");
+        var descriptor = Object.getOwnPropertyDescriptor(document.body.style, 'color');
+        shouldBeTrue("descriptor['writable']");
         shouldBeTrue("descriptor['enumerable']");
         shouldBeTrue("descriptor['configurable']");
     </script>

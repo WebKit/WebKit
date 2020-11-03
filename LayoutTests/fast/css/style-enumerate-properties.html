@@ -23,6 +23,33 @@
         shouldBeFalse("'bogus-random-String' in document.body.style");
         shouldBeTrue("'cssText' in document.body.style");
         shouldBeTrue("'getPropertyCSSValue' in document.body.style");
+
+        // Test CSS property order.
+        var started;
+        var cssPropertyCount = 0;
+        var previous;
+        var seenFilter;
+        for (var p in document.body.style) {
+            if (p === "alignmentBaseline")
+                started = true;
+            if (!started)
+                continue;
+            if (p === "filter")
+                seenFilter = true;
+            if (previous && previous >= p) {
+                testFailed("Invalid CSS-mapped property order: '" + p + "' after '" + previous + "'");
+                break;
+            }
+            if (++cssPropertyCount <= 400)
+                previous = p;
+            else {
+                if (seenFilter)
+                    testPassed("The CSS property order is correct");
+                else
+                    testFailed("The 'filter' property was not enumerated");
+                break;
+            }
+        }
     </script>
     <script src="../../resources/js-test-post.js"></script>
 </body>
