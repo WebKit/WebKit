@@ -176,10 +176,6 @@ void WorkerThreadableLoader::MainThreadBridge::cancel()
         m_mainThreadLoader = nullptr;
     });
 
-    if (m_workerClientWrapper->done()) {
-        clearClientWrapper();
-        return;
-    }
     // Taking a ref of client wrapper as call to didFail may take out the last reference of it.
     Ref<ThreadableLoaderClientWrapper> protectedWorkerClientWrapper(*m_workerClientWrapper);
     // If the client hasn't reached a termination state, then transition it by sending a cancellation error.
