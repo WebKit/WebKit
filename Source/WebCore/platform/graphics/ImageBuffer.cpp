@@ -38,9 +38,9 @@ namespace WebCore {
 static const float MaxClampedLength = 4096;
 static const float MaxClampedArea = MaxClampedLength * MaxClampedLength;
 
-std::unique_ptr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode renderingMode, ShouldUseDisplayList shouldUseDisplayList, RenderingPurpose purpose, float resolutionScale, ColorSpace colorSpace, const HostWindow* hostWindow)
+RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode renderingMode, ShouldUseDisplayList shouldUseDisplayList, RenderingPurpose purpose, float resolutionScale, ColorSpace colorSpace, const HostWindow* hostWindow)
 {
-    std::unique_ptr<ImageBuffer> imageBuffer;
+    RefPtr<ImageBuffer> imageBuffer;
     if (hostWindow)
         imageBuffer = hostWindow->createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace);
 
@@ -58,9 +58,9 @@ std::unique_ptr<ImageBuffer> ImageBuffer::create(const FloatSize& size, Renderin
     return imageBuffer;
 }
 
-std::unique_ptr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace, const HostWindow* hostWindow)
+RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace, const HostWindow* hostWindow)
 {
-    std::unique_ptr<ImageBuffer> imageBuffer;
+    RefPtr<ImageBuffer> imageBuffer;
     
     if (renderingMode == RenderingMode::Accelerated)
         imageBuffer = AcceleratedImageBuffer::create(size, resolutionScale, colorSpace, hostWindow);
@@ -71,9 +71,9 @@ std::unique_ptr<ImageBuffer> ImageBuffer::create(const FloatSize& size, Renderin
     return imageBuffer;
 }
 
-std::unique_ptr<ImageBuffer> ImageBuffer::create(const FloatSize& size, const GraphicsContext& context)
+RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, const GraphicsContext& context)
 {
-    std::unique_ptr<ImageBuffer> imageBuffer;
+    RefPtr<ImageBuffer> imageBuffer;
     
     if (context.renderingMode() == RenderingMode::Accelerated)
         imageBuffer = AcceleratedImageBuffer::create(size, context);
@@ -84,7 +84,7 @@ std::unique_ptr<ImageBuffer> ImageBuffer::create(const FloatSize& size, const Gr
     return imageBuffer;
 }
 
-std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, const GraphicsContext& context)
+RefPtr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, const GraphicsContext& context)
 {
     if (size.isEmpty())
         return nullptr;
@@ -101,7 +101,7 @@ std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize
 
 }
 
-std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, ColorSpace colorSpace, const GraphicsContext& context)
+RefPtr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, ColorSpace colorSpace, const GraphicsContext& context)
 {
     if (size.isEmpty())
         return nullptr;
@@ -117,7 +117,7 @@ std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize
     return imageBuffer;
 }
 
-std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, const GraphicsContext& context)
+RefPtr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, const GraphicsContext& context)
 {
     return ImageBuffer::create(size, context.renderingMode(), resolutionScale, colorSpace);
 }
@@ -173,7 +173,7 @@ IntSize ImageBuffer::compatibleBufferSize(const FloatSize& size, const GraphicsC
     return expandedIntSize(size * context.scaleFactor());
 }
 
-std::unique_ptr<ImageBuffer> ImageBuffer::copyRectToBuffer(const FloatRect& rect, ColorSpace colorSpace, const GraphicsContext& context)
+RefPtr<ImageBuffer> ImageBuffer::copyRectToBuffer(const FloatRect& rect, ColorSpace colorSpace, const GraphicsContext& context)
 {
     if (rect.isEmpty())
         return nullptr;
@@ -188,17 +188,17 @@ std::unique_ptr<ImageBuffer> ImageBuffer::copyRectToBuffer(const FloatRect& rect
     return buffer;
 }
 
-NativeImagePtr ImageBuffer::sinkIntoNativeImage(std::unique_ptr<ImageBuffer> imageBuffer)
+NativeImagePtr ImageBuffer::sinkIntoNativeImage(RefPtr<ImageBuffer> imageBuffer)
 {
     return imageBuffer->sinkIntoNativeImage();
 }
 
-RefPtr<Image> ImageBuffer::sinkIntoImage(std::unique_ptr<ImageBuffer> imageBuffer, PreserveResolution preserveResolution)
+RefPtr<Image> ImageBuffer::sinkIntoImage(RefPtr<ImageBuffer> imageBuffer, PreserveResolution preserveResolution)
 {
     return imageBuffer->sinkIntoImage(preserveResolution);
 }
 
-void ImageBuffer::drawConsuming(std::unique_ptr<ImageBuffer> imageBuffer, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void ImageBuffer::drawConsuming(RefPtr<ImageBuffer> imageBuffer, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     imageBuffer->drawConsuming(context, destRect, srcRect, options);
 }

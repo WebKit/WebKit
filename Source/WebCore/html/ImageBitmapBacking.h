@@ -38,10 +38,10 @@ enum class SerializationState : uint8_t {
 
 class ImageBitmapBacking {
 public:
-    ImageBitmapBacking(std::unique_ptr<ImageBuffer>&&, OptionSet<SerializationState> = SerializationState::OriginClean);
+    ImageBitmapBacking(RefPtr<ImageBuffer>&&, OptionSet<SerializationState> = SerializationState::OriginClean);
 
     ImageBuffer* buffer() const;
-    std::unique_ptr<ImageBuffer> takeImageBuffer();
+    RefPtr<ImageBuffer> takeImageBuffer();
 
     unsigned width() const;
     unsigned height() const;
@@ -58,7 +58,7 @@ public:
     OptionSet<SerializationState> serializationState() const { return m_serializationState; }
 
 private:
-    std::unique_ptr<ImageBuffer> m_bitmapData;
+    RefPtr<ImageBuffer> m_bitmapData;
     OptionSet<SerializationState> m_serializationState;
 };
 

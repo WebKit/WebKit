@@ -94,7 +94,7 @@ void GCGLLayer::swapBuffersIfNeeded()
     IntSize textureSize(m_context.m_currentWidth, m_context.m_currentHeight);
     TextureMapperGL::Flags flags = m_context.contextAttributes().alpha ? TextureMapperGL::ShouldBlend : 0;
 #if USE(ANGLE)
-    std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(textureSize, RenderingMode::Unaccelerated);
+    auto imageBuffer = ImageBuffer::create(textureSize, RenderingMode::Unaccelerated);
     if (!imageBuffer)
         return;
 

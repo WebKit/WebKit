@@ -84,7 +84,7 @@ public:
     void setCursor(const Cursor&) override;
     void setCursorHiddenUntilMouseMoves(bool) override;
 
-    std::unique_ptr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, ColorSpace) const override;
+    RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, ColorSpace) const override;
 
     PlatformDisplayID displayID() const override;
     void windowScreenDidChange(PlatformDisplayID, Optional<unsigned>) override;

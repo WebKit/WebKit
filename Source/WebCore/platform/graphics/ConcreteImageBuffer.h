@@ -34,21 +34,21 @@ template<typename BackendType>
 class ConcreteImageBuffer : public ImageBuffer {
 public:
     template<typename ImageBufferType = ConcreteImageBuffer, typename... Arguments>
-    static std::unique_ptr<ImageBufferType> create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, const HostWindow* hostWindow, Arguments&&... arguments)
+    static RefPtr<ImageBufferType> create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, const HostWindow* hostWindow, Arguments&&... arguments)
     {
         auto backend = BackendType::create(size, resolutionScale, colorSpace, hostWindow);
         if (!backend)
             return nullptr;
-        return std::unique_ptr<ImageBufferType>(new ImageBufferType(WTFMove(backend), std::forward<Arguments>(arguments)...));
+        return adoptRef(new ImageBufferType(WTFMove(backend), std::forward<Arguments>(arguments)...));
     }
 
     template<typename ImageBufferType = ConcreteImageBuffer, typename... Arguments>
-    static std::unique_ptr<ImageBufferType> create(const FloatSize& size, const GraphicsContext& context, Arguments&&... arguments)
+    static RefPtr<ImageBufferType> create(const FloatSize& size, const GraphicsContext& context, Arguments&&... arguments)
     {
         auto backend = BackendType::create(size, context);
         if (!backend)
             return nullptr;
-        return std::unique_ptr<ImageBufferType>(new ImageBufferType(WTFMove(backend), std::forward<Arguments>(arguments)...));
+        return adoptRef(new ImageBufferType(WTFMove(backend), std::forward<Arguments>(arguments)...));
     }
 
     bool isAccelerated() const override { return BackendType::isAccelerated; }

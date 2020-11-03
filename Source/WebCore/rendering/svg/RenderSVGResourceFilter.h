@@ -44,7 +44,7 @@ public:
 
     RefPtr<SVGFilter> filter;
     std::unique_ptr<SVGFilterBuilder> builder;
-    std::unique_ptr<ImageBuffer> sourceGraphicBuffer;
+    RefPtr<ImageBuffer> sourceGraphicBuffer;
     GraphicsContext* savedContext { nullptr };
     AffineTransform shearFreeAbsoluteTransform;
     FloatRect boundaries;

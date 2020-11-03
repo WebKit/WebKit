@@ -31,7 +31,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-void RemoteResourceCache::cacheImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier, std::unique_ptr<ImageBuffer>&& image)
+void RemoteResourceCache::cacheImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier, RefPtr<ImageBuffer>&& image)
 {
     auto addResult = m_imageBuffers.add(renderingResourceIdentifier, WTFMove(image));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);

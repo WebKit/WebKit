@@ -910,7 +910,7 @@ RemoteRenderingBackendProxy& WebChromeClient::ensureRemoteRenderingBackendProxy(
     return *m_remoteRenderingBackendProxy;
 }
 
-std::unique_ptr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, ColorSpace colorSpace) const
+RefPtr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, ColorSpace colorSpace) const
 {
     if (!m_page.shouldUseRemoteRenderingFor(purpose))
         return nullptr;

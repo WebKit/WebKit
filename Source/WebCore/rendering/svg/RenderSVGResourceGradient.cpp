@@ -52,7 +52,7 @@ void RenderSVGResourceGradient::removeClientFromCache(RenderElement& client, boo
 }
 
 #if USE(CG)
-static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& context, GraphicsContext*& savedContext, std::unique_ptr<ImageBuffer>& imageBuffer, RenderObject* object)
+static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& context, GraphicsContext*& savedContext, RefPtr<ImageBuffer>& imageBuffer, RenderObject* object)
 {
     auto* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(*object);
     ASSERT(textRootBlock);
@@ -72,7 +72,7 @@ static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& con
     return true;
 }
 
-static inline AffineTransform clipToTextMask(GraphicsContext& context, std::unique_ptr<ImageBuffer>& imageBuffer, FloatRect& targetRect, RenderObject* object, bool boundingBoxMode, const AffineTransform& gradientTransform)
+static inline AffineTransform clipToTextMask(GraphicsContext& context, RefPtr<ImageBuffer>& imageBuffer, FloatRect& targetRect, RenderObject* object, bool boundingBoxMode, const AffineTransform& gradientTransform)
 {
     auto* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(*object);
     ASSERT(textRootBlock);
@@ -202,7 +202,7 @@ void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, Graph
                 context->setFillGradient(gradient);
                 context->fillRect(targetRect);
 
-                m_imageBuffer.reset();
+                m_imageBuffer = nullptr;
             }
         }
 #else

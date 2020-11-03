@@ -87,9 +87,9 @@ bool RemoteRenderingBackendProxy::waitForFlushDisplayListWasCommitted()
     return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::FlushDisplayListWasCommitted>(m_renderingBackendIdentifier, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
 }
 
-std::unique_ptr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace)
+RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace)
 {
-    std::unique_ptr<WebCore::ImageBuffer> imageBuffer;
+    RefPtr<ImageBuffer> imageBuffer;
 
     if (renderingMode == RenderingMode::Accelerated)
         imageBuffer = AcceleratedRemoteImageBufferProxy::create(size, resolutionScale, *this);

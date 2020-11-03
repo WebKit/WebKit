@@ -324,7 +324,7 @@ void PageConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Ref
         if (auto* node = JSNode::toWrapped(vm, possibleTarget)) {
             target = possibleTarget;
             if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
-                std::unique_ptr<ImageBuffer> snapshot;
+                RefPtr<ImageBuffer> snapshot;
 
                 // Only try to do something special for subclasses of Node if they're detached from the DOM tree.
                 if (!node->document().contains(node)) {

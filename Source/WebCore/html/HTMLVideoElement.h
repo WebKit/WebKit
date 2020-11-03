@@ -70,7 +70,7 @@ public:
     void webkitRequestFullscreen() override;
 #endif
 
-    std::unique_ptr<ImageBuffer> createBufferForPainting(const FloatSize&, RenderingMode) const;
+    RefPtr<ImageBuffer> createBufferForPainting(const FloatSize&, RenderingMode) const;
 
     // Used by canvas to gain raw pixel access
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);

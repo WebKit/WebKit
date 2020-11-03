@@ -38,7 +38,7 @@ public:
     { }
     virtual ~Filter() = default;
 
-    void setSourceImage(std::unique_ptr<ImageBuffer>&& sourceImage) { m_sourceImage = WTFMove(sourceImage); }
+    void setSourceImage(RefPtr<ImageBuffer>&& sourceImage) { m_sourceImage = WTFMove(sourceImage); }
     ImageBuffer* sourceImage() { return m_sourceImage.get(); }
 
     FloatSize filterResolution() const { return m_filterResolution; }
@@ -68,7 +68,7 @@ protected:
     }
 
 private:
-    std::unique_ptr<ImageBuffer> m_sourceImage;
+    RefPtr<ImageBuffer> m_sourceImage;
     FloatSize m_filterResolution;
     AffineTransform m_absoluteTransform;
     RenderingMode m_renderingMode { RenderingMode::Unaccelerated };

@@ -211,7 +211,7 @@ private:
     Filter& m_filter;
     FilterEffectVector m_inputEffects;
 
-    std::unique_ptr<ImageBuffer> m_imageBufferResult;
+    RefPtr<ImageBuffer> m_imageBufferResult;
     RefPtr<ImageData> m_unmultipliedImageResult;
     RefPtr<ImageData> m_premultipliedImageResult;
 

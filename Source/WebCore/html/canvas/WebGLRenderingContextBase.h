@@ -607,7 +607,7 @@ protected:
         ImageBuffer* imageBuffer(const IntSize& size);
     private:
         void bubbleToFront(size_t idx);
-        Vector<std::unique_ptr<ImageBuffer>> m_buffers;
+        Vector<RefPtr<ImageBuffer>> m_buffers;
     };
     LRUImageBufferCache m_generatedImageCache { 0 };
 

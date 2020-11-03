@@ -209,7 +209,7 @@ void RenderSVGImage::paintForeground(PaintInfo& paintInfo)
 
 void RenderSVGImage::invalidateBufferedForeground()
 {
-    m_bufferedForeground.reset();
+    m_bufferedForeground = nullptr;
 }
 
 bool RenderSVGImage::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)

@@ -7534,7 +7534,7 @@ ImageBuffer* WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer(const I
     }
 
     // FIXME (149423): Should this ImageBuffer be unconditionally unaccelerated?
-    std::unique_ptr<ImageBuffer> temp = ImageBuffer::create(size, RenderingMode::Unaccelerated);
+    auto temp = ImageBuffer::create(size, RenderingMode::Unaccelerated);
     if (!temp)
         return nullptr;
     ASSERT(m_buffers.size() > 0);

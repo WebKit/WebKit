@@ -49,7 +49,7 @@ public:
     NicosiaImageBufferPipeSource();
     virtual ~NicosiaImageBufferPipeSource();
 
-    void handle(std::unique_ptr<ImageBuffer>&&) final;
+    void handle(RefPtr<ImageBuffer>&&) final;
 
     PlatformLayer* platformLayer() const;
 
@@ -59,7 +59,7 @@ private:
     RefPtr<ContentLayer> m_nicosiaLayer;
 
     mutable Lock m_imageBufferLock;
-    std::unique_ptr<ImageBuffer> m_imageBuffer;
+    RefPtr<ImageBuffer> m_imageBuffer;
 };
 
 class NicosiaImageBufferPipe final : public ImageBufferPipe {
@@ -84,7 +84,7 @@ NicosiaImageBufferPipeSource::~NicosiaImageBufferPipeSource()
     downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).invalidateClient();
 }
 
-void NicosiaImageBufferPipeSource::handle(std::unique_ptr<ImageBuffer>&& buffer)
+void NicosiaImageBufferPipeSource::handle(RefPtr<ImageBuffer>&& buffer)
 {
     if (!buffer)
         return;

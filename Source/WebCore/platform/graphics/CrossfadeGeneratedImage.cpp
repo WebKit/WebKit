@@ -103,7 +103,7 @@ ImageDrawResult CrossfadeGeneratedImage::draw(GraphicsContext& context, const Fl
 
 void CrossfadeGeneratedImage::drawPattern(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
-    std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(size(), context.renderingMode());
+    auto imageBuffer = ImageBuffer::create(size(), context.renderingMode());
     if (!imageBuffer)
         return;
 

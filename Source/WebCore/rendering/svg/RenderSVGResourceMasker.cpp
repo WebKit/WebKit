@@ -76,7 +76,7 @@ bool RenderSVGResourceMasker::applyResource(RenderElement& renderer, const Rende
             return false;
 
         if (!drawContentIntoMaskImage(maskerData, colorSpace, &renderer))
-            maskerData->maskImage.reset();
+            maskerData->maskImage = nullptr;
     }
 
     if (!maskerData->maskImage)

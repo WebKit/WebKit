@@ -65,7 +65,7 @@ private:
 
 #if USE(CG)
     GraphicsContext* m_savedContext { nullptr };
-    std::unique_ptr<ImageBuffer> m_imageBuffer;
+    RefPtr<ImageBuffer> m_imageBuffer;
 #endif
 
     bool m_shouldCollectGradientAttributes { true };

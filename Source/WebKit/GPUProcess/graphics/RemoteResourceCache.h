@@ -42,12 +42,12 @@ class RemoteResourceCache {
 public:
     RemoteResourceCache() = default;
 
-    void cacheImageBuffer(WebCore::RenderingResourceIdentifier, std::unique_ptr<WebCore::ImageBuffer>&&);
+    void cacheImageBuffer(WebCore::RenderingResourceIdentifier, RefPtr<WebCore::ImageBuffer>&&);
     WebCore::ImageBuffer* cachedImageBuffer(WebCore::RenderingResourceIdentifier);
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
 
 private:
-    using RemoteImageBufferHashMap = HashMap<WebCore::RenderingResourceIdentifier, std::unique_ptr<WebCore::ImageBuffer>>;
+    using RemoteImageBufferHashMap = HashMap<WebCore::RenderingResourceIdentifier, RefPtr<WebCore::ImageBuffer>>;
 
     RemoteImageBufferHashMap m_imageBuffers;
 };

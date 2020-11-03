@@ -835,7 +835,7 @@ Optional<ImageBitmapBacking> ImageBitmap::takeImageBitmapBacking()
     return std::exchange(m_backingStore, WTF::nullopt);
 }
 
-std::unique_ptr<ImageBuffer> ImageBitmap::takeImageBuffer()
+RefPtr<ImageBuffer> ImageBitmap::takeImageBuffer()
 {
     if (auto backingStore = takeImageBitmapBacking())
         return backingStore->takeImageBuffer();

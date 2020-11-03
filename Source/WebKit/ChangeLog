@@ -1,3 +1,39 @@
+2020-11-03  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Make ImageBuffer RefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=218472
+
+        Reviewed by Simon Fraser.
+
+        Currently after a remote ImageBuffer is deleted, its identifier is locked
+        in the RemoteResourceCacheProxy till no remote client is referencing it.
+        Then an IPC message is sent to GPU Process to release it.
+
+        The plan is to decode the DisplayList::DrawImageBuffer by replacing the
+        ImageBuffer identifier with a RefPtr to the ImageBuffer itself. Once the 
+        ImageBuffer is removed from the RemoteResourceCache, it is going to be
+        deleted after the last DrawImageBuffer is replayed back. So no locking 
+        is needed to guarantee the existence of the ImageBuffer when it is drawn.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::createImageBuffer):
+        (WebKit::RemoteRenderingBackend::flushDisplayList):
+        (WebKit::RemoteRenderingBackend::flushDisplayListAndCommit):
+        (WebKit::RemoteRenderingBackend::getImageData):
+        * GPUProcess/graphics/RemoteResourceCache.cpp:
+        (WebKit::RemoteResourceCache::cacheImageBuffer):
+        * GPUProcess/graphics/RemoteResourceCache.h:
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::create):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::createImageBuffer):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createImageBuffer const):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::createSelectionSnapshot const):
+
 2020-11-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Replace DisplayList::itemCount with DisplayList::isEmpty

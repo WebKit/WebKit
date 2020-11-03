@@ -246,9 +246,7 @@ void FilterEffect::forceValidPreMultipliedPixels()
 
 void FilterEffect::clearResult()
 {
-    if (m_imageBufferResult)
-        m_imageBufferResult.reset();
-
+    m_imageBufferResult = nullptr;
     m_unmultipliedImageResult = nullptr;
     m_premultipliedImageResult = nullptr;
 }

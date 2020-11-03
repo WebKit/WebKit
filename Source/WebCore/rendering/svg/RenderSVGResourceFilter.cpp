@@ -286,7 +286,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, Graphic
             context->concatCTM(filterData.shearFreeAbsoluteTransform);
         }
     }
-    filterData.sourceGraphicBuffer.reset();
+    filterData.sourceGraphicBuffer = nullptr;
 
     LOG_WITH_STREAM(Filters, stream << "RenderSVGResourceFilter " << this << " postApplyResource done\n");
 }

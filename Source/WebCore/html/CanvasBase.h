@@ -112,7 +112,7 @@ protected:
 
     virtual void setSize(const IntSize& size) { m_size = size; }
 
-    std::unique_ptr<ImageBuffer> setImageBuffer(std::unique_ptr<ImageBuffer>&&) const;
+    RefPtr<ImageBuffer> setImageBuffer(RefPtr<ImageBuffer>&&) const;
     virtual bool hasCreatedImageBuffer() const { return false; }
     static size_t activePixelMemory();
 
@@ -123,7 +123,7 @@ private:
 
     mutable IntSize m_size;
     mutable Lock m_imageBufferAssignmentLock;
-    mutable std::unique_ptr<ImageBuffer> m_imageBuffer;
+    mutable RefPtr<ImageBuffer> m_imageBuffer;
     mutable size_t m_imageBufferCost { 0 };
     mutable std::unique_ptr<GraphicsContextStateSaver> m_contextStateSaver;
 

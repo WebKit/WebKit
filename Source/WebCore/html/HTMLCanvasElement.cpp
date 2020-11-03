@@ -952,7 +952,7 @@ void HTMLCanvasElement::createImageBuffer() const
 #endif
 }
 
-void HTMLCanvasElement::setImageBufferAndMarkDirty(std::unique_ptr<ImageBuffer>&& buffer)
+void HTMLCanvasElement::setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&& buffer)
 {
     IntSize oldSize = size();
     m_hasCreatedImageBuffer = true;

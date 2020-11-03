@@ -244,7 +244,7 @@ private:
 
 #if ENABLE(GPU_PROCESS)
     RemoteRenderingBackendProxy& ensureRemoteRenderingBackendProxy() const;
-    std::unique_ptr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, WebCore::ColorSpace) const final;
+    RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, WebCore::ColorSpace) const final;
 #endif
 
     CompositingTriggerFlags allowedCompositingTriggers() const final

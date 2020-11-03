@@ -301,7 +301,7 @@ FloatRect FilterEffectRendererCoreImage::destRect(const FilterEffect& lastEffect
 
 void FilterEffectRendererCoreImage::clearResult()
 {
-    m_outputImageBuffer.reset();
+    m_outputImageBuffer = nullptr;
     m_outputImage = nullptr;
 }
 

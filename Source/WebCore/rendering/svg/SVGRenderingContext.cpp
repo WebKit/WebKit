@@ -236,7 +236,7 @@ AffineTransform SVGRenderingContext::calculateTransformationToOutermostCoordinat
     return absoluteTransform;
 }
 
-std::unique_ptr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const AffineTransform& absoluteTransform, ColorSpace colorSpace, RenderingMode renderingMode, const GraphicsContext* context)
+RefPtr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const AffineTransform& absoluteTransform, ColorSpace colorSpace, RenderingMode renderingMode, const GraphicsContext* context)
 {
     IntRect paintRect = calculateImageBufferRect(targetRect, absoluteTransform);
     // Don't create empty ImageBuffers.
@@ -264,7 +264,7 @@ std::unique_ptr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatR
     return imageBuffer;
 }
 
-std::unique_ptr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const FloatRect& clampedRect, ColorSpace colorSpace, RenderingMode renderingMode, const GraphicsContext* context)
+RefPtr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const FloatRect& clampedRect, ColorSpace colorSpace, RenderingMode renderingMode, const GraphicsContext* context)
 {
     IntSize clampedSize = roundedIntSize(clampedRect.size());
     FloatSize unclampedSize = roundedIntSize(targetRect.size());
@@ -306,7 +306,7 @@ void SVGRenderingContext::renderSubtreeToContext(GraphicsContext& context, Rende
     contentTransformation = savedContentTransformation;
 }
 
-void SVGRenderingContext::clipToImageBuffer(GraphicsContext& context, const AffineTransform& absoluteTransform, const FloatRect& targetRect, std::unique_ptr<ImageBuffer>& imageBuffer, bool safeToClear)
+void SVGRenderingContext::clipToImageBuffer(GraphicsContext& context, const AffineTransform& absoluteTransform, const FloatRect& targetRect, RefPtr<ImageBuffer>& imageBuffer, bool safeToClear)
 {
     if (!imageBuffer)
         return;
@@ -322,7 +322,7 @@ void SVGRenderingContext::clipToImageBuffer(GraphicsContext& context, const Affi
     // When nesting resources, with objectBoundingBox as content unit types, there's no use in caching the
     // resulting image buffer as the parent resource already caches the result.
     if (safeToClear && !currentContentTransformation().isIdentity())
-        imageBuffer.reset();
+        imageBuffer = nullptr;
 }
 
 void SVGRenderingContext::clear2DRotation(AffineTransform& transform)
@@ -333,7 +333,7 @@ void SVGRenderingContext::clear2DRotation(AffineTransform& transform)
     transform.recompose(decomposition);
 }
 
-bool SVGRenderingContext::bufferForeground(std::unique_ptr<ImageBuffer>& imageBuffer)
+bool SVGRenderingContext::bufferForeground(RefPtr<ImageBuffer>& imageBuffer)
 {
     ASSERT(m_paintInfo);
     ASSERT(is<RenderSVGImage>(*m_renderer));
@@ -345,20 +345,21 @@ bool SVGRenderingContext::bufferForeground(std::unique_ptr<ImageBuffer>& imageBu
         IntSize expandedBoundingBox = expandedIntSize(boundingBox.size());
         IntSize bufferSize(static_cast<int>(ceil(expandedBoundingBox.width() * transform.xScale())), static_cast<int>(ceil(expandedBoundingBox.height() * transform.yScale())));
         if (bufferSize != imageBuffer->backendSize())
-            imageBuffer.reset();
+            imageBuffer = nullptr;
     }
 
     // Create a new buffer and paint the foreground into it.
     if (!imageBuffer) {
-        if ((imageBuffer = ImageBuffer::createCompatibleBuffer(expandedIntSize(boundingBox.size()), ColorSpace::SRGB, m_paintInfo->context()))) {
-            GraphicsContext& bufferedRenderingContext = imageBuffer->context();
-            bufferedRenderingContext.translate(-boundingBox.location());
-            PaintInfo bufferedInfo(*m_paintInfo);
-            bufferedInfo.setContext(bufferedRenderingContext);
-            downcast<RenderSVGImage>(*m_renderer).paintForeground(bufferedInfo);
-        } else
+        imageBuffer = ImageBuffer::createCompatibleBuffer(expandedIntSize(boundingBox.size()), ColorSpace::SRGB, m_paintInfo->context());
+        if (!imageBuffer)
             return false;
     }
+
+    GraphicsContext& bufferedRenderingContext = imageBuffer->context();
+    bufferedRenderingContext.translate(-boundingBox.location());
+    PaintInfo bufferedInfo(*m_paintInfo);
+    bufferedInfo.setContext(bufferedRenderingContext);
+    downcast<RenderSVGImage>(*m_renderer).paintForeground(bufferedInfo);
 
     m_paintInfo->context().drawImageBuffer(*imageBuffer, boundingBox);
     return true;

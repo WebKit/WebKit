@@ -79,7 +79,7 @@ private:
 
     std::unique_ptr<CanvasRenderingContext> m_context;
     mutable GraphicsContext* m_destinationGraphicsContext = nullptr;
-    mutable std::unique_ptr<ImageBuffer> m_copiedBuffer;
+    mutable RefPtr<ImageBuffer> m_copiedBuffer;
     mutable RefPtr<Image> m_copiedImage;
 };
 

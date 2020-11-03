@@ -90,7 +90,7 @@ public:
     ImageBuffer* buffer() const { return m_backingStore ? m_backingStore->buffer() : nullptr; }
     // This function has the implicit side-effect of detaching the backing store.
     // It returns nullptr if the ImageBitmap's already detached.
-    std::unique_ptr<ImageBuffer> takeImageBuffer();
+    RefPtr<ImageBuffer> takeImageBuffer();
     OptionSet<SerializationState> serializationState() const { return m_backingStore ? m_backingStore->serializationState() : SerializationState(); }
 
     unsigned width() const { return m_backingStore ? m_backingStore->width() : 0; }

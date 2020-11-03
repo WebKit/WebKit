@@ -42,7 +42,7 @@ public:
     public:
         virtual ~Source() = default;
 
-        virtual void handle(std::unique_ptr<ImageBuffer>&&) = 0;
+        virtual void handle(RefPtr<ImageBuffer>&&) = 0;
     };
 
     static RefPtr<ImageBufferPipe> create();

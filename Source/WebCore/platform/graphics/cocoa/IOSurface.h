@@ -101,7 +101,7 @@ public:
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromImage(CGImageRef);
     
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-    static std::unique_ptr<IOSurface> createFromImageBuffer(std::unique_ptr<ImageBuffer>);
+    static std::unique_ptr<IOSurface> createFromImageBuffer(RefPtr<ImageBuffer>);
 #endif
 
     WEBCORE_EXPORT ~IOSurface();

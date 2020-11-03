@@ -42,12 +42,12 @@ class RemoteImageBufferProxy : public WebCore::DisplayList::ImageBuffer<BackendT
     using BaseDisplayListImageBuffer::m_drawingContext;
 
 public:
-    static std::unique_ptr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, float resolutionScale, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
+    static RefPtr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, float resolutionScale, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
     {
         if (BackendType::calculateBackendSize(size, resolutionScale).isEmpty())
             return nullptr;
 
-        return std::unique_ptr<RemoteImageBufferProxy>(new RemoteImageBufferProxy(size, remoteRenderingBackendProxy));
+        return adoptRef(new RemoteImageBufferProxy(size, remoteRenderingBackendProxy));
     }
 
     ~RemoteImageBufferProxy()

@@ -64,7 +64,7 @@ private:
     RetainPtr<CIImage> imageForFEColorMatrix(const FEColorMatrix&, const Vector<RetainPtr<CIImage>>&);
     RetainPtr<CIImage> imageForFEComponentTransfer(const FEComponentTransfer&, Vector<RetainPtr<CIImage>>&);
     
-    std::unique_ptr<ImageBuffer> m_outputImageBuffer;
+    RefPtr<ImageBuffer> m_outputImageBuffer;
     RetainPtr<CIImage> m_outputImage;
 };
 

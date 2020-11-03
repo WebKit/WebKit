@@ -55,14 +55,14 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(OffscreenCanvas);
 
-DetachedOffscreenCanvas::DetachedOffscreenCanvas(std::unique_ptr<ImageBuffer>&& buffer, const IntSize& size, bool originClean)
+DetachedOffscreenCanvas::DetachedOffscreenCanvas(RefPtr<ImageBuffer>&& buffer, const IntSize& size, bool originClean)
     : m_buffer(WTFMove(buffer))
     , m_size(size)
     , m_originClean(originClean)
 {
 }
 
-std::unique_ptr<ImageBuffer> DetachedOffscreenCanvas::takeImageBuffer()
+RefPtr<ImageBuffer> DetachedOffscreenCanvas::takeImageBuffer()
 {
     return WTFMove(m_buffer);
 }
@@ -469,7 +469,7 @@ void OffscreenCanvas::createImageBuffer() const
     setImageBuffer(ImageBuffer::create(size(), RenderingMode::Unaccelerated));
 }
 
-std::unique_ptr<ImageBuffer> OffscreenCanvas::takeImageBuffer() const
+RefPtr<ImageBuffer> OffscreenCanvas::takeImageBuffer() const
 {
     if (!m_detached)
         m_hasCreatedImageBuffer = true;

@@ -124,7 +124,7 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
 {
     ASSERT(renderingMode == RenderingMode::Accelerated || renderingMode == RenderingMode::Unaccelerated);
 
-    std::unique_ptr<WebCore::ImageBuffer> image;
+    RefPtr<ImageBuffer> image;
 
     if (renderingMode == RenderingMode::Accelerated)
         image = AcceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, *this, renderingResourceIdentifier);
@@ -140,13 +140,13 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
     ASSERT_NOT_REACHED();
 }
 
-void RemoteRenderingBackend::flushDisplayList(const WebCore::DisplayList::DisplayList& displayList, RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackend::flushDisplayList(const DisplayList::DisplayList& displayList, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier))
         imageBuffer->flushDisplayList(displayList);
 }
 
-void RemoteRenderingBackend::flushDisplayListAndCommit(const WebCore::DisplayList::DisplayList& displayList, DisplayListFlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackend::flushDisplayListAndCommit(const DisplayList::DisplayList& displayList, DisplayListFlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier)) {
         imageBuffer->flushDisplayList(displayList);
@@ -155,7 +155,7 @@ void RemoteRenderingBackend::flushDisplayListAndCommit(const WebCore::DisplayLis
     }
 }
 
-void RemoteRenderingBackend::getImageData(WebCore::AlphaPremultiplication outputFormat, WebCore::IntRect srcRect, RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&& completionHandler)
+void RemoteRenderingBackend::getImageData(AlphaPremultiplication outputFormat, IntRect srcRect, RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&& completionHandler)
 {
     RefPtr<ImageData> imageData;
     if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier))

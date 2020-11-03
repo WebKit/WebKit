@@ -96,7 +96,7 @@ struct ScopedNodeDragEnabler {
     RefPtr<Element> element;
 };
 
-static DragImageRef createDragImageFromSnapshot(std::unique_ptr<ImageBuffer> snapshot, Node* node)
+static DragImageRef createDragImageFromSnapshot(RefPtr<ImageBuffer> snapshot, Node* node)
 {
     if (!snapshot)
         return nullptr;

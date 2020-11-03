@@ -101,7 +101,7 @@ private:
     float m_bipBopFontSize { 0 };
     float m_statsFontSize { 0 };
 
-    mutable std::unique_ptr<ImageBuffer> m_imageBuffer;
+    mutable RefPtr<ImageBuffer> m_imageBuffer;
 
     Path m_path;
     DashArray m_dashWidths;

@@ -182,9 +182,9 @@ bool CanvasBase::callTracingActive() const
     return context && context->callTracingActive();
 }
 
-std::unique_ptr<ImageBuffer> CanvasBase::setImageBuffer(std::unique_ptr<ImageBuffer>&& buffer) const
+RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) const
 {
-    std::unique_ptr<ImageBuffer> returnBuffer;
+    RefPtr<ImageBuffer> returnBuffer;
     {
         auto locker = holdLock(m_imageBufferAssignmentLock);
         m_contextStateSaver = nullptr;

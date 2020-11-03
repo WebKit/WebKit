@@ -88,7 +88,7 @@ private:
     FloatRect m_repaintBoundingBox;
     FloatRect m_repaintBoundingBoxExcludingShadow;
     std::unique_ptr<RenderImageResource> m_imageResource;
-    std::unique_ptr<ImageBuffer> m_bufferedForeground;
+    RefPtr<ImageBuffer> m_bufferedForeground;
 };
 
 } // namespace WebCore

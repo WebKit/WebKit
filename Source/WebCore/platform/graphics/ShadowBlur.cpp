@@ -141,7 +141,7 @@ private:
         m_lastLayerSize = FloatSize();
     }
 
-    std::unique_ptr<ImageBuffer> m_imageBuffer;
+    RefPtr<ImageBuffer> m_imageBuffer;
     Timer m_purgeTimer;
 
     FloatRect m_lastInsetBounds;

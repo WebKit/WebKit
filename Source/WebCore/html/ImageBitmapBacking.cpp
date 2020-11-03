@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-ImageBitmapBacking::ImageBitmapBacking(std::unique_ptr<ImageBuffer>&& bitmapData, OptionSet<SerializationState> serializationState)
+ImageBitmapBacking::ImageBitmapBacking(RefPtr<ImageBuffer>&& bitmapData, OptionSet<SerializationState> serializationState)
     : m_bitmapData(WTFMove(bitmapData))
     , m_serializationState(serializationState)
 {
@@ -40,7 +40,7 @@ ImageBuffer* ImageBitmapBacking::buffer() const
     return m_bitmapData.get();
 }
 
-std::unique_ptr<ImageBuffer> ImageBitmapBacking::takeImageBuffer()
+RefPtr<ImageBuffer> ImageBitmapBacking::takeImageBuffer()
 {
     return WTFMove(m_bitmapData);
 }

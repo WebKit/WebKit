@@ -1072,7 +1072,7 @@ Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotNode(Protocol::DOM::
     if (!node)
         return makeUnexpected(errorString);
 
-    std::unique_ptr<ImageBuffer> snapshot = WebCore::snapshotNode(m_inspectedPage.mainFrame(), *node);
+    auto snapshot = WebCore::snapshotNode(m_inspectedPage.mainFrame(), *node);
     if (!snapshot)
         return makeUnexpected("Could not capture snapshot"_s);
 
@@ -1086,7 +1086,7 @@ Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotRect(int x, int y, i
         options |= SnapshotOptionsInViewCoordinates;
 
     IntRect rectangle(x, y, width, height);
-    std::unique_ptr<ImageBuffer> snapshot = snapshotFrameRect(m_inspectedPage.mainFrame(), rectangle, options);
+    auto snapshot = snapshotFrameRect(m_inspectedPage.mainFrame(), rectangle, options);
 
     if (!snapshot)
         return makeUnexpected("Could not capture snapshot"_s);

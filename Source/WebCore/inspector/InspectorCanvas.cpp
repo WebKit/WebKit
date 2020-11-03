@@ -691,7 +691,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
             if (CachedImage* cachedImage = imageElement->cachedImage()) {
                 Image* image = cachedImage->image();
                 if (image && image != &Image::nullImage()) {
-                    std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(image->size(), RenderingMode::Unaccelerated);
+                    auto imageBuffer = ImageBuffer::create(image->size(), RenderingMode::Unaccelerated);
                     imageBuffer->context().drawImage(*image, FloatPoint(0, 0));
                     dataURL = imageBuffer->toDataURL("image/png");
                 }
@@ -705,7 +705,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
 
             unsigned videoWidth = videoElement->videoWidth();
             unsigned videoHeight = videoElement->videoHeight();
-            std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(FloatSize(videoWidth, videoHeight), RenderingMode::Unaccelerated);
+            auto imageBuffer = ImageBuffer::create(FloatSize(videoWidth, videoHeight), RenderingMode::Unaccelerated);
             if (imageBuffer) {
                 videoElement->paintCurrentFrameInContext(imageBuffer->context(), FloatRect(0, 0, videoWidth, videoHeight));
                 dataURL = imageBuffer->toDataURL("image/png");
