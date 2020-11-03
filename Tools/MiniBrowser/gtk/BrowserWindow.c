@@ -1225,7 +1225,7 @@ static void browser_window_init(BrowserWindow *window)
     window->backgroundColor.alpha = 1;
 
     gtk_window_set_title(GTK_WINDOW(window), defaultWindowTitle);
-    gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
+    gtk_window_set_default_size(GTK_WINDOW(window), 1024, 768);
 
     g_action_map_add_action_entries(G_ACTION_MAP(window), actions, G_N_ELEMENTS(actions), window);
 
