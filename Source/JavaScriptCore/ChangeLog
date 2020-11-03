@@ -1,3 +1,18 @@
+2020-11-03  Saam Barati  <sbarati@apple.com>
+
+        Don't assert there is no checkpoint side state when dropping the JSLock
+        https://bugs.webkit.org/show_bug.cgi?id=218537
+
+        Reviewed by Filip Pizlo.
+
+        You may have multiple OSR exit sidestate data on the stack, and then call into
+        API code, which might DropAllLocks. Hence, this assert is wrong.
+        
+        Working on a test. Will land in a followup.
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::willReleaseLock):
+
 2020-11-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         REGRESSION (r254038): Simple.com money transfer UI is very laggy (multiple seconds per keypress)
