@@ -451,7 +451,7 @@ static OPUS_INLINE void silk_noise_shape_quantizer_del_dec(
 
             /* Input minus prediction plus noise feedback                       */
             /* r = x[ i ] - LTP_pred - LPC_pred + n_AR + n_Tilt + n_LF + n_LTP  */
-            tmp1 = silk_ADD32( n_AR_Q14, n_LF_Q14 );                                    /* Q14 */
+            tmp1 = silk_ADD_SAT32( n_AR_Q14, n_LF_Q14 );                                /* Q14 */
             tmp2 = silk_ADD32( n_LTP_Q14, LPC_pred_Q14 );                               /* Q13 */
             tmp1 = silk_SUB_SAT32( tmp2, tmp1 );                                        /* Q13 */
             tmp1 = silk_RSHIFT_ROUND( tmp1, 4 );                                        /* Q10 */

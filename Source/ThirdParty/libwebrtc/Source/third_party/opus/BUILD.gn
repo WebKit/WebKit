@@ -21,7 +21,7 @@ use_opus_x86_optimization =
 # If OPUS Run Time CPU Detections (RTCD) shall be used.
 # Based on the conditions in celt/arm/armcpu.c:
 # defined(_MSC_VER) || defined(__linux__).
-use_opus_arm_rtcd = current_cpu == "arm" && (is_win || is_android || is_linux)
+use_opus_arm_rtcd = current_cpu == "arm" && (is_win || is_android || is_linux || is_chromeos)
 
 config("opus_config") {
   include_dirs = [ "src/include" ]
@@ -612,7 +612,7 @@ test("test_opus_padding") {
 # Compilation fails on windows due to wstring/string mistmatch.
 # This is not worth looking at it since the benchmark is tailored for android.
 # It is ok to run it on linux though, for experimentation purpose.
-if (!is_win) {
+if (is_android || is_linux || is_chromeos) {
   test("opus_tests") {
     sources = [ "tests/opus_benchmark.cc" ]
 
