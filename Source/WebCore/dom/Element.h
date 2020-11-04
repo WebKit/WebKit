@@ -489,6 +489,7 @@ public:
     KeyframeEffectStack* keyframeEffectStack(PseudoId) const;
     KeyframeEffectStack& ensureKeyframeEffectStack(PseudoId);
     bool hasKeyframeEffects(PseudoId) const;
+    OptionSet<AnimationImpact> applyKeyframeEffects(PseudoId, RenderStyle&);
 
     const AnimationCollection* animations(PseudoId) const;
     bool hasCompletedTransitionsForProperty(PseudoId, CSSPropertyID) const;

@@ -1275,17 +1275,6 @@ bool KeyframeEffect::isRunningAcceleratedAnimationForProperty(CSSPropertyID prop
     return isRunningAccelerated() && CSSPropertyAnimation::animationOfPropertyIsAccelerated(property) && m_blendingKeyframes.properties().contains(property);
 }
 
-bool KeyframeEffect::isRunningAcceleratedTransformRelatedAnimation() const
-{
-    if (!isRunningAccelerated())
-        return false;
-
-    return m_blendingKeyframes.properties().contains(CSSPropertyTranslate)
-        || m_blendingKeyframes.properties().contains(CSSPropertyScale)
-        || m_blendingKeyframes.properties().contains(CSSPropertyRotate)
-        || m_blendingKeyframes.properties().contains(CSSPropertyTransform);
-}
-
 void KeyframeEffect::invalidate()
 {
     LOG_WITH_STREAM(Animations, stream << "KeyframeEffect::invalidate on element " << ValueOrNull(targetElementOrPseudoElement()));
@@ -1593,7 +1582,7 @@ void KeyframeEffect::addPendingAcceleratedAction(AcceleratedAction action)
     if (action == AcceleratedAction::Stop)
         m_pendingAcceleratedActions.clear();
     m_pendingAcceleratedActions.append(action);
-    if (action != AcceleratedAction::UpdateTiming && action != AcceleratedAction::TransformChange)
+    if (action != AcceleratedAction::UpdateTiming)
         m_lastRecordedAcceleratedAction = action;
     animation()->acceleratedStateDidChange();
 }
@@ -1618,12 +1607,6 @@ void KeyframeEffect::animationDidChangeTimingProperties()
         addPendingAcceleratedAction(canBeAccelerated() ? AcceleratedAction::UpdateTiming : AcceleratedAction::Stop);
     else if (canBeAccelerated())
         m_runningAccelerated = RunningAccelerated::NotStarted;
-}
-
-void KeyframeEffect::transformRelatedPropertyDidChange()
-{
-    ASSERT(isRunningAcceleratedTransformRelatedAnimation());
-    addPendingAcceleratedAction(AcceleratedAction::TransformChange);
 }
 
 void KeyframeEffect::animationWasCanceled()
@@ -1714,9 +1697,6 @@ void KeyframeEffect::applyPendingAcceleratedActions()
             if (!document()->renderTreeBeingDestroyed())
                 m_target->invalidateStyleAndLayerComposition();
             m_runningAccelerated = RunningAccelerated::NotStarted;
-            break;
-        case AcceleratedAction::TransformChange:
-            renderer->transformRelatedPropertyDidChange();
             break;
         }
     }

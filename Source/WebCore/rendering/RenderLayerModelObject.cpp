@@ -271,13 +271,6 @@ void RenderLayerModelObject::animationFinished(const String& name)
     layer()->backing()->animationFinished(name);
 }
 
-void RenderLayerModelObject::transformRelatedPropertyDidChange()
-{
-    if (!layer() || !layer()->backing())
-        return;
-    layer()->backing()->transformRelatedPropertyDidChange();
-}
-
 void RenderLayerModelObject::suspendAnimations(MonotonicTime time)
 {
     if (!layer() || !layer()->backing())

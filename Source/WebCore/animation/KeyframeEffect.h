@@ -132,7 +132,6 @@ public:
     void animationSuspensionStateDidChange(bool) final;
     void animationTimelineDidChange(AnimationTimeline*) final;
     void animationTimingDidChange();
-    void transformRelatedPropertyDidChange();
     void applyPendingAcceleratedActions();
 
     void willChangeRenderer();
@@ -168,14 +167,13 @@ public:
     enum class Accelerated : uint8_t { Yes, No };
     bool isCurrentlyAffectingProperty(CSSPropertyID, Accelerated = Accelerated::No) const;
     bool isRunningAcceleratedAnimationForProperty(CSSPropertyID) const;
-    bool isRunningAcceleratedTransformRelatedAnimation() const;
 
     bool requiresPseudoElement() const;
 
 private:
     KeyframeEffect(Element*, PseudoId);
 
-    enum class AcceleratedAction : uint8_t { Play, Pause, UpdateTiming, TransformChange, Stop };
+    enum class AcceleratedAction : uint8_t { Play, Pause, UpdateTiming, Stop };
     enum class BlendingKeyframesSource : uint8_t { CSSAnimation, CSSTransition, WebAnimation };
     enum class AcceleratedProperties : uint8_t { None, Some, All };
     enum class RunningAccelerated : uint8_t { NotStarted, Yes, No };

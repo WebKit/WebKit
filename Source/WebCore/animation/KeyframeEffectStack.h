@@ -27,7 +27,6 @@
 
 #include "AnimationList.h"
 #include "CSSPropertyNames.h"
-#include "WebAnimationTypes.h"
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -49,7 +48,6 @@ public:
     void setCSSAnimationList(RefPtr<const AnimationList>&&);
     bool isCurrentlyAffectingProperty(CSSPropertyID) const;
     bool requiresPseudoElement() const;
-    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, const RenderStyle& previousLastStyleChangeEventStyle);
 
 private:
     void ensureEffectsAreSorted();

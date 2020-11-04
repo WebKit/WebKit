@@ -662,6 +662,12 @@ void GraphicsLayerCA::setTransform(const TransformationMatrix& t)
 
     GraphicsLayer::setTransform(t);
     noteLayerPropertyChanged(TransformChanged);
+
+    // If we are currently running a transform-related animation, a change in underlying
+    // transform value means we must re-evaluate all transform-related animations to ensure
+    // that the base value transform animations are current.
+    if (isRunningTransformAnimation())
+        noteLayerPropertyChanged(AnimationChanged | CoverageRectChanged);
 }
 
 void GraphicsLayerCA::setChildrenTransform(const TransformationMatrix& t)
@@ -1106,15 +1112,6 @@ void GraphicsLayerCA::removeAnimation(const String& animationName)
 
     addProcessingActionForAnimation(animationName, AnimationProcessingAction(Remove));
     noteLayerPropertyChanged(AnimationChanged | CoverageRectChanged);
-}
-
-void GraphicsLayerCA::transformRelatedPropertyDidChange()
-{
-    // If we are currently running a transform-related animation, a change in underlying
-    // transform value means we must re-evaluate all transform-related animations to ensure
-    // that the base value transform animations are current.
-    if (isRunningTransformAnimation())
-        noteLayerPropertyChanged(AnimationChanged | CoverageRectChanged);
 }
 
 void GraphicsLayerCA::platformCALayerAnimationStarted(const String& animationKey, MonotonicTime startTime)
