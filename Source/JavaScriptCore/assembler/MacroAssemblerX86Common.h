@@ -2750,6 +2750,12 @@ public:
         m_assembler.jmp_r(target);
     }
 
+    void farJump(TrustedImmPtr target, PtrTag)
+    {
+        move(target, scratchRegister());
+        m_assembler.jmp_r(scratchRegister());
+    }
+
     // Address is a memory location containing the address to jump to
     void farJump(Address address, PtrTag)
     {

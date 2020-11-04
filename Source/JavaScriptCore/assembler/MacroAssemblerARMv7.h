@@ -1719,6 +1719,12 @@ public:
         m_assembler.bx(target);
     }
 
+    void farJump(TrustedImmPtr target, PtrTag)
+    {
+        move(target, dataTempRegister);
+        m_assembler.bx(dataTempRegister);
+    }
+
     // Address is a memory location containing the address to jump to
     void farJump(Address address, PtrTag)
     {

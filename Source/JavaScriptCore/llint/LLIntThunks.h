@@ -40,6 +40,19 @@ extern "C" {
     EncodedJSValue vmEntryToNative(void*, VM*, ProtoCallFrame*);
 }
 
+#if ENABLE(JIT_CAGE)
+extern "C" {
+    void jitCagePtrGateAfter(void);
+    void vmEntryToJavaScriptGateAfter(void);
+    void vmEntryToNativeGateAfter(void);
+
+    void llint_function_for_call_arity_checkUntagGateAfter(void);
+    void llint_function_for_call_arity_checkTagGateAfter(void);
+    void llint_function_for_construct_arity_checkUntagGateAfter(void);
+    void llint_function_for_construct_arity_checkTagGateAfter(void);
+}
+#endif
+
 inline EncodedJSValue vmEntryToWasm(void* code, VM* vm, ProtoCallFrame* frame)
 {
     auto clobberizeValidator = makeScopeExit([&] {
@@ -59,10 +72,31 @@ MacroAssemblerCodeRef<JSEntryPtrTag> evalEntryThunk();
 MacroAssemblerCodeRef<JSEntryPtrTag> programEntryThunk();
 MacroAssemblerCodeRef<JSEntryPtrTag> moduleProgramEntryThunk();
 MacroAssemblerCodeRef<JSEntryPtrTag> getHostCallReturnValueThunk();
+MacroAssemblerCodeRef<JSEntryPtrTag> genericReturnPointThunk(OpcodeSize);
+MacroAssemblerCodeRef<JSEntryPtrTag> fuzzerReturnEarlyFromLoopHintThunk();
 
 MacroAssemblerCodeRef<ExceptionHandlerPtrTag> callToThrowThunk();
 MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleUncaughtExceptionThunk();
 MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleCatchThunk(OpcodeSize);
+
+MacroAssemblerCodeRef<NativeToJITGatePtrTag> jitCagePtrThunk();
+MacroAssemblerCodeRef<NativeToJITGatePtrTag> createJSGateThunk(void*, PtrTag, const char*);
+MacroAssemblerCodeRef<NativeToJITGatePtrTag> createWasmGateThunk(void*, PtrTag, const char*);
+MacroAssemblerCodeRef<NativeToJITGatePtrTag> createTailCallGate(PtrTag);
+MacroAssemblerCodeRef<NativeToJITGatePtrTag> loopOSREntryGateThunk();
+MacroAssemblerCodeRef<NativeToJITGatePtrTag> entryOSREntryGateThunk();
+MacroAssemblerCodeRef<NativeToJITGatePtrTag> wasmOSREntryGateThunk();
+MacroAssemblerCodeRef<NativeToJITGatePtrTag> exceptionHandlerGateThunk();
+MacroAssemblerCodeRef<NativeToJITGatePtrTag> returnFromLLIntGateThunk();
+MacroAssemblerCodeRef<NativeToJITGatePtrTag> untagGateThunk(void*);
+MacroAssemblerCodeRef<NativeToJITGatePtrTag> tagGateThunk(void*);
+
+MacroAssemblerCodeRef<JSEntryPtrTag> normalOSRExitTrampolineThunk();
+#if ENABLE(DFG_JIT)
+MacroAssemblerCodeRef<JSEntryPtrTag> checkpointOSRExitTrampolineThunk();
+MacroAssemblerCodeRef<JSEntryPtrTag> checkpointOSRExitFromInlinedCallTrampolineThunk();
+MacroAssemblerCodeRef<JSEntryPtrTag> returnLocationThunk(OpcodeID, OpcodeSize);
+#endif
 
 #if ENABLE(WEBASSEMBLY)
 MacroAssemblerCodeRef<JITThunkPtrTag> wasmFunctionEntryThunk();

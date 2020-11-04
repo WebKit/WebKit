@@ -43,6 +43,8 @@ constexpr bool enableWebAssemblyStreamingApi = true;
 constexpr bool enableWebAssemblyStreamingApi = false;
 #endif
 
+JS_EXPORT_PRIVATE bool canUseJITCage();
+
 // How do JSC VM options work?
 // ===========================
 // The FOR_EACH_JSC_OPTION() macro below defines a list of all JSC options in use,
@@ -520,6 +522,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(Unsigned, seedForLICMFuzzer, 424242, Normal, nullptr) \
     v(Double, allowHoistingLICMProbability, 0.5, Normal, nullptr) \
     v(Bool, exposeCustomSettersOnGlobalObjectForTesting, false, Normal, nullptr) \
+    v(Bool, useJITCage, canUseJITCage(), Normal, nullptr) \
 
 enum OptionEquivalence {
     SameOption,

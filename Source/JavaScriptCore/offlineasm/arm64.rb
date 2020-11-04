@@ -37,38 +37,45 @@ require "risc"
 #
 # GPR conventions, to match the baseline JIT:
 #
-#  x0  => t0, a0, r0
-#  x1  => t1, a1, r1
-#  x2  => t2, a2
-#  x3  => t3, a3
-#  x4  => t4
-#  x5  => t5
+#  x0  => t0, a0, wa0, r0
+#  x1  => t1, a1, wa1, r1
+#  x2  => t2, a2, wa2
+#  x3  => t3, a3, wa3
+#  x4  => t4, a4, wa4
+#  x5  => t5, a5, wa5
+#  x6  => t6, a6, wa6
+#  x7  => t7, a7, wa7
+#  x8  => ws0
+#  x9  => ws1
 # x13  =>                  (scratch)
 # x16  =>                  (scratch)
 # x17  =>                  (scratch)
-# x26  =>             csr0 (PB)
-# x27  =>             csr1 (numberTag)
-# x28  =>             csr2 (notCellMask)
+# x25  =>             csr6 (metadataTable)
+# x26  =>             csr7 (PB)
+# x27  =>             csr8 (numberTag)
+# x28  =>             csr9 (notCellMask)
 # x29  => cfr
 #  sp  => sp
 #  lr  => lr
 #
 # FPR conventions, to match the baseline JIT:
 #
-#  q0  => ft0, fa0, fr
-#  q1  => ft1, fa1
-#  q2  => ft2, fa2
-#  q3  => ft3, fa3
-#  q4  => ft4          (unused in baseline)
-#  q5  => ft5          (unused in baseline)
-#  q8  => csfr0        (Only the lower 64 bits)
-#  q9  => csfr1        (Only the lower 64 bits)
-# q10  => csfr2        (Only the lower 64 bits)
-# q11  => csfr3        (Only the lower 64 bits)
-# q12  => csfr4        (Only the lower 64 bits)
-# q13  => csfr5        (Only the lower 64 bits)
-# q14  => csfr6        (Only the lower 64 bits)
-# q15  => csfr7        (Only the lower 64 bits)
+#  q0  => ft0, fa0, wfa0, fr
+#  q1  => ft1, fa1, wfa1
+#  q2  => ft2, fa2, wfa2
+#  q3  => ft3, fa3, wfa3
+#  q4  => ft4,      wfa4          (unused in baseline)
+#  q5  => ft5,      wfa5          (unused in baseline)
+#  q6  =>           wfa6          (unused in baseline)
+#  q7  =>           wfa7          (unused in baseline)
+#  q8  => csfr0                   (Only the lower 64 bits)
+#  q9  => csfr1                   (Only the lower 64 bits)
+# q10  => csfr2                   (Only the lower 64 bits)
+# q11  => csfr3                   (Only the lower 64 bits)
+# q12  => csfr4                   (Only the lower 64 bits)
+# q13  => csfr5                   (Only the lower 64 bits)
+# q14  => csfr6                   (Only the lower 64 bits)
+# q15  => csfr7                   (Only the lower 64 bits)
 # q31  => scratch
 
 def arm64GPRName(name, kind)

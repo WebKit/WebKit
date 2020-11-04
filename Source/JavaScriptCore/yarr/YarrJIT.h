@@ -76,6 +76,9 @@ private:
 #endif
 };
 
+extern "C" EncodedMatchResult vmEntryToYarrJIT(const void* input, unsigned start, unsigned length, int* output, MatchingContextHolder* matchingContext, const void* codePtr);
+extern "C" void vmEntryToYarrJITAfter(void);
+
 class YarrCodeBlock {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(YarrCodeBlock);
@@ -109,25 +112,41 @@ public:
     MatchResult execute(const LChar* input, unsigned start, unsigned length, int* output, MatchingContextHolder& matchingContext)
     {
         ASSERT(has8BitCode());
+#if CPU(ARM64)
+        return MatchResult(vmEntryToYarrJIT(input, start, length, output, &matchingContext, retagCodePtr<Yarr8BitPtrTag, YarrEntryPtrTag>(m_ref8.code().executableAddress())));
+#else
         return MatchResult(untagCFunctionPtr<YarrJITCode8, Yarr8BitPtrTag>(m_ref8.code().executableAddress())(input, start, length, output, matchingContext));
+#endif
     }
 
     MatchResult execute(const UChar* input, unsigned start, unsigned length, int* output, MatchingContextHolder& matchingContext)
     {
         ASSERT(has16BitCode());
+#if CPU(ARM64)
+        return MatchResult(vmEntryToYarrJIT(input, start, length, output, &matchingContext, retagCodePtr<Yarr16BitPtrTag, YarrEntryPtrTag>(m_ref16.code().executableAddress())));
+#else
         return MatchResult(untagCFunctionPtr<YarrJITCode16, Yarr16BitPtrTag>(m_ref16.code().executableAddress())(input, start, length, output, matchingContext));
+#endif
     }
 
     MatchResult execute(const LChar* input, unsigned start, unsigned length, MatchingContextHolder& matchingContext)
     {
         ASSERT(has8BitCodeMatchOnly());
+#if CPU(ARM64)
+        return MatchResult(vmEntryToYarrJIT(input, start, length, nullptr, &matchingContext, retagCodePtr<YarrMatchOnly8BitPtrTag, YarrEntryPtrTag>(m_matchOnly8.code().executableAddress())));
+#else
         return MatchResult(untagCFunctionPtr<YarrJITCodeMatchOnly8, YarrMatchOnly8BitPtrTag>(m_matchOnly8.code().executableAddress())(input, start, length, nullptr, matchingContext));
+#endif
     }
 
     MatchResult execute(const UChar* input, unsigned start, unsigned length, MatchingContextHolder& matchingContext)
     {
         ASSERT(has16BitCodeMatchOnly());
+#if CPU(ARM64E)
+        return MatchResult(vmEntryToYarrJIT(input, start, length, nullptr, &matchingContext, retagCodePtr<YarrMatchOnly16BitPtrTag, YarrEntryPtrTag>(m_matchOnly16.code().executableAddress())));
+#else
         return MatchResult(untagCFunctionPtr<YarrJITCodeMatchOnly16, YarrMatchOnly16BitPtrTag>(m_matchOnly16.code().executableAddress())(input, start, length, nullptr, matchingContext));
+#endif
     }
 
 #if ENABLE(REGEXP_TRACING)

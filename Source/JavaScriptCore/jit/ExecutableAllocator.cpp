@@ -48,6 +48,18 @@
 #include <mach/mach.h>
 #include <mach/mach_time.h>
 
+#if ENABLE(JIT_CAGE)
+#include <WebKitAdditions/JITCageAdditions.h>
+#else // ENABLE(JIT_CAGE)
+#if OS(DARWIN)
+#define MAP_EXECUTABLE_FOR_JIT MAP_JIT
+#define MAP_EXECUTABLE_FOR_JIT_WITH_JIT_CAGE MAP_JIT
+#else // OS(DARWIN)
+#define MAP_EXECUTABLE_FOR_JIT 0
+#define MAP_EXECUTABLE_FOR_JIT_WITH_JIT_CAGE 0
+#endif // OS(DARWIN)
+#endif // ENABLE(JIT_CAGE)
+
 extern "C" {
     /* Routine mach_vm_remap */
 #ifdef mig_external
@@ -139,8 +151,8 @@ void ExecutableAllocator::setJITEnabled(bool enabled)
 
         constexpr size_t size = 1;
         constexpr int protection = PROT_READ | PROT_WRITE | PROT_EXEC;
-        constexpr int flags = MAP_PRIVATE | MAP_ANON | MAP_JIT;
         constexpr int fd = OSAllocator::JSJITCodePages;
+        int flags = MAP_PRIVATE | MAP_ANON | (Options::useJITCage() ? MAP_EXECUTABLE_FOR_JIT_WITH_JIT_CAGE : MAP_EXECUTABLE_FOR_JIT);
         void* allocation = mmap(nullptr, size, protection, flags, fd, 0);
         const void* executableMemoryAllocationFailure = reinterpret_cast<void*>(-1);
         RELEASE_ASSERT_WITH_MESSAGE(allocation && allocation != executableMemoryAllocationFailure, "We should not have allocated executable memory before disabling the JIT.");
@@ -324,9 +336,9 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
         // This makes the following JIT code logging broken and some of JIT code is not recorded correctly.
         // To avoid this problem, we use committed reservation if we need perf JITDump logging.
         if (Options::logJITCodeForPerf())
-            return PageReservation::reserveAndCommitWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
+            return PageReservation::reserveAndCommitWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, false);
 #endif
-        return PageReservation::reserveWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
+        return PageReservation::reserveWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, Options::useJITCage());
     };
 
     reservation.pageReservation = tryCreatePageReservation(reservation.size);

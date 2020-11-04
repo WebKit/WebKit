@@ -138,21 +138,21 @@ void handleExitCounts(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
     doneAdjusting.link(&jit);
 }
 
-MacroAssemblerCodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCodeBlockForCaller, BytecodeIndex callBytecodeIndex, InlineCallFrame::Kind trueCallerCallKind, bool& callerIsLLInt)
+static MacroAssemblerCodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCodeBlockForCaller, BytecodeIndex callBytecodeIndex, InlineCallFrame::Kind trueCallerCallKind, bool& callerIsLLInt)
 {
     callerIsLLInt = Options::forceOSRExitToLLInt() || baselineCodeBlockForCaller->jitType() == JITType::InterpreterThunk;
 
     if (callBytecodeIndex.checkpoint()) {
         if (!callerIsLLInt)
             baselineCodeBlockForCaller->m_hasLinkedOSRExit = true;
-        return LLInt::getCodePtr<JSEntryPtrTag>(checkpoint_osr_exit_from_inlined_call_trampoline);
+        return LLInt::checkpointOSRExitFromInlinedCallTrampolineThunk().code();
     }
 
     MacroAssemblerCodePtr<JSEntryPtrTag> jumpTarget;
 
     const Instruction& callInstruction = *baselineCodeBlockForCaller->instructions().at(callBytecodeIndex).ptr();
     if (callerIsLLInt) {
-#define LLINT_RETURN_LOCATION(name) (callInstruction.isWide16() ? LLInt::getWide16CodePtr<JSEntryPtrTag>(name##_return_location) : (callInstruction.isWide32() ? LLInt::getWide32CodePtr<JSEntryPtrTag>(name##_return_location) : LLInt::getCodePtr<JSEntryPtrTag>(name##_return_location)))
+#define LLINT_RETURN_LOCATION(name) LLInt::returnLocationThunk(name##_return_location, callInstruction.width()).code()
 
         switch (trueCallerCallKind) {
         case InlineCallFrame::Call: {
@@ -404,9 +404,9 @@ void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
         const Instruction& currentInstruction = *codeBlockForExit->instructions().at(bytecodeIndex).ptr();
         MacroAssemblerCodePtr<JSEntryPtrTag> destination;
         if (bytecodeIndex.checkpoint())
-            destination = LLInt::getCodePtr<JSEntryPtrTag>(checkpoint_osr_exit_trampoline);
+            destination = LLInt::checkpointOSRExitTrampolineThunk().code();
         else 
-            destination = LLInt::getCodePtr<JSEntryPtrTag>(currentInstruction);
+            destination = LLInt::normalOSRExitTrampolineThunk().code();
 
         if (exit.isExceptionHandler()) {
             jit.move(CCallHelpers::TrustedImmPtr(&currentInstruction), GPRInfo::regT2);
@@ -423,7 +423,7 @@ void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
         BytecodeIndex exitIndex = exit.m_codeOrigin.bytecodeIndex();
         MacroAssemblerCodePtr<JSEntryPtrTag> destination;
         if (exitIndex.checkpoint())
-            destination = LLInt::getCodePtr<JSEntryPtrTag>(checkpoint_osr_exit_trampoline);
+            destination = LLInt::checkpointOSRExitTrampolineThunk().code();
         else {
             ASSERT(codeBlockForExit->bytecodeIndexForExit(exitIndex) == exitIndex);
             destination = codeBlockForExit->jitCodeMap().find(exitIndex);

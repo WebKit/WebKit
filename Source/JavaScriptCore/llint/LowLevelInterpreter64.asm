@@ -300,14 +300,24 @@ macro doVMEntry(makeCall)
     ret
 end
 
-
 # a0, a2, t3, t4
 macro makeJavaScriptCall(entry, protoCallFrame, temp1, temp2)
     addp 16, sp
     if C_LOOP or C_LOOP_WIN
         cloopCallJSFunction entry
+    elsif ARM64E
+        move entry, t3
+        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::vmEntryToJavaScript) * PtrSize, a2
+        jmp [a2], NativeToJITGatePtrTag # JSEntryPtrTag
+        global _vmEntryToJavaScriptTrampoline
+        _vmEntryToJavaScriptTrampoline:
+        call t3, JSEntryPtrTag
     else
         call entry, JSEntryPtrTag
+    end
+    if ARM64E
+        global _vmEntryToJavaScriptGateAfter
+        _vmEntryToJavaScriptGateAfter:
     end
     subp 16, sp
 end
@@ -326,8 +336,19 @@ macro makeHostFunctionCall(entry, protoCallFrame, temp1, temp2)
         subp 32, sp
         call temp1, HostFunctionPtrTag
         addp 32, sp
+    elsif ARM64E
+        move temp1, t3
+        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::vmEntryToNative) * PtrSize, a2
+        jmp [a2], NativeToJITGatePtrTag # HostFunctionPtrTag
+        global _vmEntryToNativeTrampoline
+        _vmEntryToNativeTrampoline:
+        call t3, HostFunctionPtrTag
     else
         call temp1, HostFunctionPtrTag
+    end
+    if ARM64E
+        global _vmEntryToNativeGateAfter
+        _vmEntryToNativeGateAfter:
     end
 end
 
@@ -431,8 +452,14 @@ macro checkSwitchToJITForLoop()
             move PC, a1
             cCall2(_llint_loop_osr)
             btpz r0, .recover
+
             move r1, sp
-            jmp r0, JSEntryPtrTag
+            if ARM64E
+                leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::loopOSREntry) * PtrSize, a2
+                jmp [a2], NativeToJITGatePtrTag # JSEntryPtrTag
+            else
+                jmp r0, JSEntryPtrTag
+            end
         .recover:
             loadPC()
         end)
@@ -645,7 +672,7 @@ end
 # Entrypoints into the interpreter.
 
 # Expects that CodeBlock is in t1, which is what prologue() leaves behind.
-macro functionArityCheck(doneLabel, slowPath)
+macro functionArityCheck(opcodeName, doneLabel, slowPath)
     loadi PayloadOffset + ArgumentCountIncludingThis[cfr], t0
     biaeq t0, CodeBlock::m_numParameters[t1], doneLabel
     prepareStateForCCall()
@@ -682,9 +709,15 @@ macro functionArityCheck(doneLabel, slowPath)
 
 .noExtraSlot:
     if ARM64E
+        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::%opcodeName%Untag) * PtrSize, t3
+        jmp [t3], NativeToJITGatePtrTag
+        _js_trampoline_%opcodeName%_untag:
         loadp 8[cfr], lr
         addp 16, cfr, t3
         untagReturnAddress t3
+        _%opcodeName%UntagGateAfter:
+    else
+        _js_trampoline_%opcodeName%_untag:
     end
 
     // Move frame up t1 slots
@@ -712,9 +745,15 @@ macro functionArityCheck(doneLabel, slowPath)
     baddinz 1, t2, .fillLoop
 
     if ARM64E
+        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::%opcodeName%Tag) * PtrSize, t3
+        jmp [t3], NativeToJITGatePtrTag
+        _js_trampoline_%opcodeName%_tag:
         addp 16, cfr, t1
         tagReturnAddress t1
         storep lr, 8[cfr]
+        _%opcodeName%TagGateAfter:
+    else
+        _js_trampoline_%opcodeName%_tag:
     end
 
 .continue:
@@ -2175,9 +2214,15 @@ macro callHelper(opcodeName, slowPath, opcodeStruct, valueProfileName, dstVirtua
     storePC()
     storei t2, ArgumentCountIncludingThis + PayloadOffset[t3]
     move t3, sp
-    prepareCall(%opcodeStruct%::Metadata::m_callLinkInfo.m_machineCodeTarget[t5], t2, t3, t4, JSEntryPtrTag)
-    callTargetFunction(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, %opcodeStruct%::Metadata::m_callLinkInfo.m_machineCodeTarget[t5], JSEntryPtrTag)
-
+    if ARM64E
+        loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_machineCodeTarget[t5], t0
+        prepareCall(t0, t2, t3, t4, t1, JSEntryPtrTag)
+        loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_machineCodeTarget[t5], t0
+        callTargetFunction(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, t0, JSEntryPtrTag)
+    else
+        prepareCall(%opcodeStruct%::Metadata::m_callLinkInfo.m_machineCodeTarget[t5], t2, t3, t4, t1, JSEntryPtrTag)
+        callTargetFunction(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, %opcodeStruct%::Metadata::m_callLinkInfo.m_machineCodeTarget[t5], JSEntryPtrTag)
+    end
 .opCallSlow:
     slowPathForCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, slowPath, prepareCall)
 end
@@ -2245,7 +2290,7 @@ llintOpWithReturn(op_to_property_key, OpToPropertyKey, macro (size, get, dispatc
 end)
 
 
-commonOp(llint_op_catch, macro() end, macro (size)
+commonOp(llint_op_catch, macro () end, macro (size)
     # This is where we end up from the JIT's throw trampoline (because the
     # machine code return address will be set to _llint_op_catch), and from
     # the interpreter's throw trampoline (see _llint_throw_trampoline).
@@ -2310,7 +2355,13 @@ op(llint_throw_from_slow_path_trampoline, macro ()
     # This essentially emulates the JIT's throwing protocol.
     loadp Callee[cfr], t1
     convertCalleeToVM(t1)
-    jmp VM::targetMachinePCForThrow[t1], ExceptionHandlerPtrTag
+    if ARM64E
+        loadp VM::targetMachinePCForThrow[t1], a0
+        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::exceptionHandler) * PtrSize, a1
+        jmp [a1], NativeToJITGatePtrTag # ExceptionHandlerPtrTag
+    else
+        jmp VM::targetMachinePCForThrow[t1], ExceptionHandlerPtrTag
+    end
 end)
 
 
@@ -3018,4 +3069,3 @@ op(fuzzer_return_early_from_loop_hint, macro ()
     loadp CodeBlock::m_globalObject[t0], t0
     doReturn()
 end)
-

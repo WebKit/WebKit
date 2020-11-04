@@ -64,7 +64,7 @@ namespace JSC { namespace LLInt {
     } while (false)
 
 #define WASM_CALL_RETURN(targetInstance, callTarget, callTargetTag) do { \
-        WASM_RETURN_TWO((retagCodePtr<callTargetTag, SlowPathPtrTag>(callTarget)), targetInstance); \
+        WASM_RETURN_TWO((retagCodePtr<callTargetTag, JSEntrySlowPathPtrTag>(callTarget)), targetInstance); \
     } while (false)
 
 #define CODE_BLOCK() \

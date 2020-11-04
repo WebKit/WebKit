@@ -344,6 +344,7 @@ bool isTaggedWith(PtrType value)
 template<PtrTag tag, typename PtrType>
 void assertIsTaggedWith(PtrType value)
 {
+    UNUSED_PARAM(value);
     WTF_PTRTAG_ASSERT(PtrTagAction::DebugAssert, value, tag, isTaggedWith<tag>(value));
 }
 
@@ -449,20 +450,6 @@ inline T* retagArrayPtr(T* ptr, size_t oldLength, size_t newLength)
     return ptrauth_auth_and_resign(ptr, ptrauth_key_process_dependent_data, oldLength, ptrauth_key_process_dependent_data, newLength);
 }
 
-template<typename PtrType>
-inline PtrType tagCodePtrWithStackPointerForJITCall(PtrType ptr, const void* stackPointer)
-{
-    ASSERT(ptr);
-    return ptrauth_sign_unauthenticated(ptr, ptrauth_key_process_dependent_code, bitwise_cast<PtrTag>(stackPointer));
-}
-
-template<typename PtrType>
-inline PtrType untagCodePtrWithStackPointerForJITCall(PtrType ptr, const void* stackPointer)
-{
-    ASSERT(ptr);
-    return __builtin_ptrauth_auth(ptr, ptrauth_key_process_dependent_code, bitwise_cast<PtrTag>(stackPointer));
-}
-
 template <PtrTag tag, typename IntType>
 inline IntType tagInt(IntType ptrInt)
 {
@@ -520,12 +507,6 @@ inline T* retagArrayPtr(T* ptr, size_t, size_t)
     return ptr;
 }
 
-template<typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value>>
-inline PtrType tagCodePtrWithStackPointerForJITCall(PtrType ptr, const void*) { return ptr; }
-
-template<typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value>>
-inline PtrType untagCodePtrWithStackPointerForJITCall(PtrType ptr, const void*) { return ptr; }
-
 template <PtrTag, typename IntType>
 inline IntType tagInt(IntType ptrInt)
 {
@@ -572,9 +553,7 @@ using WTF::retagArrayPtr;
 using WTF::removeArrayPtrTag;
 
 using WTF::tagCodePtr;
-using WTF::tagCodePtrWithStackPointerForJITCall;
 using WTF::untagCodePtr;
-using WTF::untagCodePtrWithStackPointerForJITCall;
 using WTF::retagCodePtr;
 using WTF::removeCodePtrTag;
 using WTF::tagCFunction;

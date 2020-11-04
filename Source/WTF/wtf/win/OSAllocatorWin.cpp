@@ -38,7 +38,7 @@ static inline DWORD protection(bool writable, bool executable)
         (writable ? PAGE_READWRITE : PAGE_READONLY);
 }
 
-void* OSAllocator::reserveUncommitted(size_t bytes, Usage, bool writable, bool executable, bool)
+void* OSAllocator::reserveUncommitted(size_t bytes, Usage, bool writable, bool executable, bool, bool)
 {
     void* result = VirtualAlloc(nullptr, bytes, MEM_RESERVE, protection(writable, executable));
     if (!result)
@@ -46,7 +46,7 @@ void* OSAllocator::reserveUncommitted(size_t bytes, Usage, bool writable, bool e
     return result;
 }
 
-void* OSAllocator::reserveAndCommit(size_t bytes, Usage, bool writable, bool executable, bool)
+void* OSAllocator::reserveAndCommit(size_t bytes, Usage, bool writable, bool executable, bool, bool)
 {
     void* result = VirtualAlloc(nullptr, bytes, MEM_RESERVE | MEM_COMMIT, protection(writable, executable));
     if (!result)

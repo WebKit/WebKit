@@ -1,3 +1,140 @@
+2020-11-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add JITCage support
+        https://bugs.webkit.org/show_bug.cgi?id=218143
+
+        Reviewed by Saam Barati.
+
+        Towards software verified JIT, this patch adds partial JIT-Caging support which cages JIT call / jumps in a certain format.
+        This is currently only enabled when internal SDK is enabled. And it is only enabled in ARM64E for now.
+        Currently, this patch does not have CSS JIT support. Subsequent patch will add it.
+        We ensured that JS2 and RAMification are neutral.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/JITOperationList.cpp:
+        (JSC::addPointers):
+        (JSC::JITOperationList::populatePointersInJavaScriptCoreForLLInt):
+        * assembler/JITOperationList.h:
+        (JSC::JITOperationList::map const):
+        (JSC::JITOperationList::assertIsHostFunction):
+        (JSC::JITOperationList::assertIsJITOperation):
+        (JSC::JITOperationList::contains const): Deleted.
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::farJump):
+        * assembler/MacroAssemblerARM64E.h:
+        (JSC::MacroAssemblerARM64E::callTrustedPtr):
+        (JSC::MacroAssemblerARM64E::call):
+        (JSC::MacroAssemblerARM64E::callRegister):
+        (JSC::MacroAssemblerARM64E::farJumpRegister):
+        (JSC::MacroAssemblerARM64E::farJump):
+        (JSC::MacroAssemblerARM64E::ret):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::farJump):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::farJump):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::farJump):
+        * bytecode/BytecodeList.rb:
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::callerReturnPC):
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGOSRExitCompilerCommon.h:
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::setJITEnabled):
+        (JSC::initializeJITPageReservation):
+        * jit/GPRInfo.h:
+        * jit/PolymorphicCallStubRoutine.cpp:
+        (JSC::PolymorphicCallNode::unlink):
+        * jit/ThunkGenerators.cpp:
+        (JSC::emitPointerValidation):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        * llint/LLIntData.h:
+        (JSC::LLInt::getOpcode):
+        (JSC::LLInt::getOpcodeWide16):
+        (JSC::LLInt::getOpcodeWide32):
+        (JSC::LLInt::getCodePtr):
+        (JSC::LLInt::getWide16CodePtr):
+        (JSC::LLInt::getWide32CodePtr):
+        (JSC::LLInt::getCodeFunctionPtr):
+        (JSC::LLInt::getWide16CodeFunctionPtr):
+        (JSC::LLInt::getWide32CodeFunctionPtr):
+        * llint/LLIntEntrypoint.cpp:
+        (JSC::LLInt::entrypointTrampoline):
+        (JSC::LLInt::setFunctionEntrypoint):
+        (JSC::LLInt::setEvalEntrypoint):
+        (JSC::LLInt::setProgramEntrypoint):
+        (JSC::LLInt::setModuleProgramEntrypoint):
+        (JSC::LLInt::getHostCallReturnValueEntrypoint):
+        (JSC::LLInt::fuzzerReturnEarlyFromLoopHintEntrypoint):
+        (JSC::LLInt::genericReturnPointEntrypoint):
+        * llint/LLIntEntrypoint.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::commonCallEval):
+        (JSC::LLInt::dispatchToNextInstruction):
+        * llint/LLIntThunks.cpp:
+        (JSC::LLInt::generateThunkWithJumpTo):
+        (JSC::LLInt::generateThunkWithJumpToPrologue):
+        (JSC::LLInt::generateThunkWithJumpToLLIntReturnPoint):
+        (JSC::LLInt::functionForCallEntryThunk):
+        (JSC::LLInt::functionForConstructEntryThunk):
+        (JSC::LLInt::functionForCallArityCheckThunk):
+        (JSC::LLInt::functionForConstructArityCheckThunk):
+        (JSC::LLInt::evalEntryThunk):
+        (JSC::LLInt::programEntryThunk):
+        (JSC::LLInt::moduleProgramEntryThunk):
+        (JSC::LLInt::wasmFunctionEntryThunk):
+        (JSC::LLInt::handleCatchThunk):
+        (JSC::LLInt::genericReturnPointThunk):
+        (JSC::LLInt::fuzzerReturnEarlyFromLoopHintThunk):
+        (JSC::LLInt::createJSGateThunk):
+        (JSC::LLInt::createWasmGateThunk):
+        (JSC::LLInt::createTailCallGate):
+        (JSC::LLInt::loopOSREntryGateThunk):
+        (JSC::LLInt::entryOSREntryGateThunk):
+        (JSC::LLInt::wasmOSREntryGateThunk):
+        (JSC::LLInt::exceptionHandlerGateThunk):
+        (JSC::LLInt::returnFromLLIntGateThunk):
+        (JSC::LLInt::tagGateThunk):
+        (JSC::LLInt::untagGateThunk):
+        (JSC::LLInt::jitCagePtrThunk):
+        (JSC::LLInt::normalOSRExitTrampolineThunk):
+        (JSC::LLInt::checkpointOSRExitTrampolineThunk):
+        (JSC::LLInt::checkpointOSRExitFromInlinedCallTrampolineThunk):
+        (JSC::LLInt::returnLocationThunk):
+        * llint/LLIntThunks.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * llint/WebAssembly.asm:
+        * offlineasm/arm64.rb:
+        * offlineasm/mips.rb:
+        * runtime/Gate.h: Added.
+        * runtime/JSCConfig.h:
+        * runtime/JSCPtrTag.cpp:
+        (JSC::tagForPtr):
+        (JSC::callerType):
+        (JSC::calleeType):
+        * runtime/JSCPtrTag.h:
+        (JSC::tagJSCCodePtrImpl):
+        (JSC::untagJSCCodePtrImpl):
+        (JSC::tagCodePtrWithStackPointerForJITCall):
+        (JSC::untagCodePtrWithStackPointerForJITCall):
+        * runtime/MatchResult.h:
+        (JSC::MatchResult::MatchResult):
+        * runtime/Options.cpp:
+        (JSC::disableAllJITOptions):
+        (JSC::canUseJITCage):
+        * runtime/OptionsList.h:
+        * wasm/WasmSlowPaths.cpp:
+        * yarr/YarrJIT.cpp:
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::YarrCodeBlock::execute):
+
 2020-11-03  Geoffrey Garen  <ggaren@apple.com>
 
         Drop most uses of the phrase 'neuter' from the tree

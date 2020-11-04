@@ -3392,6 +3392,12 @@ public:
         m_assembler.br(target);
     }
 
+    void farJump(TrustedImmPtr target, PtrTag)
+    {
+        move(target, getCachedDataTempRegisterIDAndInvalidate());
+        m_assembler.br(dataTempRegister);
+    }
+
     void farJump(Address address, PtrTag)
     {
         loadPtr(address, getCachedDataTempRegisterIDAndInvalidate());

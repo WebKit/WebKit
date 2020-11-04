@@ -40,6 +40,10 @@
 
 namespace JSC { namespace Yarr {
 
+#if CPU(ARM64)
+JSC_ANNOTATE_JIT_OPERATION(_JITTarget_vmEntryToYarrJITAfter, vmEntryToYarrJITAfter);
+#endif
+
 MatchingContextHolder::MatchingContextHolder(VM& vm, YarrCodeBlock* yarrCodeBlock, MatchFrom matchFrom)
     : m_vm(vm)
 {
@@ -3746,9 +3750,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
         push(X86Registers::ecx);
 #endif
 #elif CPU(ARM64)
-        tagReturnAddress();
         if (m_decodeSurrogatePairs) {
-            pushPair(framePointerRegister, linkRegister);
             move(TrustedImm32(0x10000), supplementaryPlanesBase);
             move(TrustedImm32(0xd800), leadingSurrogateTag);
             move(TrustedImm32(0xdc00), trailingSurrogateTag);
@@ -3803,8 +3805,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
             pop(X86Registers::ebx);
         pop(X86Registers::ebp);
 #elif CPU(ARM64)
-        if (m_decodeSurrogatePairs)
-            popPair(framePointerRegister, linkRegister);
+        // Do nothing
 #elif CPU(ARM_THUMB2)
         pop(ARMRegisters::r8);
         pop(ARMRegisters::r6);
@@ -3813,7 +3814,13 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
 #elif CPU(MIPS)
         // Do nothing
 #endif
+
+#if CPU(ARM64)
+        move(TrustedImmPtr(retagCodePtr<void*, CFunctionPtrTag, OperationPtrTag>(&vmEntryToYarrJITAfter)), regT0);
+        farJump(regT0, OperationPtrTag);
+#else
         ret();
+#endif
     }
 
 public:

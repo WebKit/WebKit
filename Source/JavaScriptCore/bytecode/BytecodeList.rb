@@ -1403,6 +1403,7 @@ op :llint_internal_function_call_trampoline
 op :llint_internal_function_construct_trampoline
 op :checkpoint_osr_exit_from_inlined_call_trampoline
 op :checkpoint_osr_exit_trampoline
+op :normal_osr_exit_trampoline
 op :fuzzer_return_early_from_loop_hint
 op :llint_get_host_call_return_value
 op :llint_handle_uncaught_exception
@@ -1419,6 +1420,40 @@ op :op_iterator_next_return_location
 op :wasm_function_prologue
 op :wasm_function_prologue_no_tls
 
+op :op_call_slow_return_location
+op :op_construct_slow_return_location
+op :op_iterator_open_slow_return_location
+op :op_iterator_next_slow_return_location
+op :op_tail_call_return_location
+op :op_tail_call_slow_return_location
+op :op_tail_call_forward_arguments_slow_return_location
+op :op_tail_call_varargs_slow_return_location
+op :op_call_eval_slow_return_location
+
+op :js_trampoline_op_call
+op :js_trampoline_op_tail_call
+op :js_trampoline_op_construct
+op :js_trampoline_op_iterator_next
+op :js_trampoline_op_iterator_open
+op :js_trampoline_op_call_slow
+op :js_trampoline_op_tail_call_slow
+op :js_trampoline_op_construct_slow
+op :js_trampoline_op_call_varargs_slow
+op :js_trampoline_op_tail_call_varargs_slow
+op :js_trampoline_op_tail_call_forward_arguments_slow
+op :js_trampoline_op_construct_varargs_slow
+op :js_trampoline_op_call_eval_slow
+op :js_trampoline_op_iterator_next_slow
+op :js_trampoline_op_iterator_open_slow
+op :js_trampoline_llint_function_for_call_arity_check_untag
+op :js_trampoline_llint_function_for_call_arity_check_tag
+op :js_trampoline_llint_function_for_construct_arity_check_untag
+op :js_trampoline_llint_function_for_construct_arity_check_tag
+op :wasm_trampoline_wasm_call
+op :wasm_trampoline_wasm_call_no_tls
+op :wasm_trampoline_wasm_call_indirect
+op :wasm_trampoline_wasm_call_indirect_no_tls
+
 end_section :NativeHelpers
 
 begin_section :Wasm,
@@ -1432,6 +1467,11 @@ autogenerate_wasm_opcodes
 # Helpers
 
 op :throw_from_slow_path_trampoline
+
+op :call_return_location
+op :call_no_tls_return_location
+op :call_indirect_return_location
+op :call_indirect_no_tls_return_location
 
 # FIXME: Wasm and JS LLInt should share common opcodes
 # https://bugs.webkit.org/show_bug.cgi?id=203656

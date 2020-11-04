@@ -26,6 +26,14 @@
 #include "config.h"
 #include "JITOperationList.h"
 
+#include "Gate.h"
+#include "LLIntData.h"
+#include "Opcode.h"
+
+#if ENABLE(JIT_CAGE)
+#include <WebKitAdditions/JITCageAdditions.h>
+#endif
+
 namespace JSC {
 
 LazyNeverDestroyed<JITOperationList> jitOperationList;
@@ -45,18 +53,22 @@ void JITOperationList::initialize()
 #if ENABLE(JIT_OPERATION_VALIDATION)
 static SUPPRESS_ASAN ALWAYS_INLINE void addPointers(HashMap<void*, void*>& map, const uintptr_t* beginHost, const uintptr_t* endHost, const uintptr_t* beginOperations, const uintptr_t* endOperations)
 {
-    for (const uintptr_t* current = beginHost; current != endHost; ++current) {
-        void* codePtr = removeCodePtrTag(bitwise_cast<void*>(*current));
-        if (codePtr) {
-            auto result = map.add(codePtr, WTF::tagNativeCodePtrImpl<HostFunctionPtrTag>(codePtr));
-            ASSERT(result.isNewEntry);
-        }
+#if ENABLE(JIT_CAGE)
+    if (Options::useJITCage()) {
+        JSC_JIT_CAGED_POINTER_REGISTRATION();
+        return;
     }
-    for (const uintptr_t* current = beginOperations; current != endOperations; ++current) {
-        void* codePtr = removeCodePtrTag(bitwise_cast<void*>(*current));
-        if (codePtr) {
-            auto result = map.add(codePtr, WTF::tagNativeCodePtrImpl<OperationPtrTag>(codePtr));
-            ASSERT(result.isNewEntry);
+#endif
+    if constexpr (ASSERT_ENABLED) {
+        for (const uintptr_t* current = beginHost; current != endHost; ++current) {
+            void* codePtr = removeCodePtrTag(bitwise_cast<void*>(*current));
+            if (codePtr)
+                map.add(codePtr, WTF::tagNativeCodePtrImpl<HostFunctionPtrTag>(codePtr));
+        }
+        for (const uintptr_t* current = beginOperations; current != endOperations; ++current) {
+            void* codePtr = removeCodePtrTag(bitwise_cast<void*>(*current));
+            if (codePtr)
+                map.add(codePtr, WTF::tagNativeCodePtrImpl<OperationPtrTag>(codePtr));
         }
     }
 }
@@ -72,6 +84,56 @@ void JITOperationList::populatePointersInJavaScriptCore()
     });
 #endif
 }
+
+void JITOperationList::populatePointersInJavaScriptCoreForLLInt()
+{
+#if ENABLE(JIT_OPERATION_VALIDATION)
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
+
+#define LLINT_OP(name) \
+    bitwise_cast<uintptr_t>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(name)), \
+    bitwise_cast<uintptr_t>(LLInt::getWide16CodeFunctionPtr<CFunctionPtrTag>(name)), \
+    bitwise_cast<uintptr_t>(LLInt::getWide32CodeFunctionPtr<CFunctionPtrTag>(name)),
+
+#define LLINT_RETURN_LOCATION(name, ...) \
+    LLINT_OP(name##_return_location)
+
+        const uintptr_t operations[] = {
+            bitwise_cast<uintptr_t>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(llint_function_for_call_prologue)),
+            bitwise_cast<uintptr_t>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(llint_function_for_construct_prologue)),
+            bitwise_cast<uintptr_t>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(llint_function_for_call_arity_check)),
+            bitwise_cast<uintptr_t>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(llint_function_for_construct_arity_check)),
+            bitwise_cast<uintptr_t>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(llint_eval_prologue)),
+            bitwise_cast<uintptr_t>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(llint_program_prologue)),
+            bitwise_cast<uintptr_t>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(llint_module_program_prologue)),
+            bitwise_cast<uintptr_t>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue)),
+            bitwise_cast<uintptr_t>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_no_tls)),
+            bitwise_cast<uintptr_t>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(llint_throw_during_call_trampoline)),
+            bitwise_cast<uintptr_t>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(llint_handle_uncaught_exception)),
+            bitwise_cast<uintptr_t>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(checkpoint_osr_exit_trampoline)),
+            bitwise_cast<uintptr_t>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(checkpoint_osr_exit_from_inlined_call_trampoline)),
+            bitwise_cast<uintptr_t>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(normal_osr_exit_trampoline)),
+            bitwise_cast<uintptr_t>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(fuzzer_return_early_from_loop_hint)),
+
+            LLINT_OP(op_catch)
+            LLINT_OP(llint_generic_return_point)
+
+            LLINT_RETURN_LOCATION(op_get_by_id)
+            LLINT_RETURN_LOCATION(op_get_by_val)
+            LLINT_RETURN_LOCATION(op_put_by_id)
+            LLINT_RETURN_LOCATION(op_put_by_val)
+
+            JSC_JS_GATE_OPCODES(LLINT_RETURN_LOCATION)
+            JSC_WASM_GATE_OPCODES(LLINT_RETURN_LOCATION)
+        };
+        if (Options::useJIT())
+            addPointers(jitOperationList->m_validatedOperations, nullptr, nullptr, operations, operations + WTF_ARRAY_LENGTH(operations));
+#undef LLINT_RETURN_LOCATION
+    });
+#endif
+}
+
 
 void JITOperationList::populatePointersInEmbedder(const uintptr_t* beginHost, const uintptr_t* endHost, const uintptr_t* beginOperations, const uintptr_t* endOperations)
 {

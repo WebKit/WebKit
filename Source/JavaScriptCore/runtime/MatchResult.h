@@ -34,7 +34,10 @@ struct MatchResult;
 #if CPU(ADDRESS32)
 using EncodedMatchResult = uint64_t;
 #else
-using EncodedMatchResult = MatchResult;
+struct EncodedMatchResult {
+    size_t start;
+    size_t end;
+};
 #endif
 
 struct MatchResult {
@@ -54,6 +57,12 @@ struct MatchResult {
     ALWAYS_INLINE MatchResult(EncodedMatchResult match)
         : start(bitwise_cast<MatchResult>(match).start)
         , end(bitwise_cast<MatchResult>(match).end)
+    {
+    }
+#else
+    ALWAYS_INLINE MatchResult(EncodedMatchResult match)
+        : start(match.start)
+        , end(match.end)
     {
     }
 #endif

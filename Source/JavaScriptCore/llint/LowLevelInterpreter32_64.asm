@@ -686,7 +686,7 @@ end
 # Entrypoints into the interpreter
 
 # Expects that CodeBlock is in t1, which is what prologue() leaves behind.
-macro functionArityCheck(doneLabel, slowPath)
+macro functionArityCheck(opcodeName, doneLabel, slowPath)
     loadi PayloadOffset + ArgumentCountIncludingThis[cfr], t0
     biaeq t0, CodeBlock::m_numParameters[t1], doneLabel
     prepareStateForCCall()
@@ -757,6 +757,14 @@ macro functionArityCheck(doneLabel, slowPath)
     loadp CodeBlock::m_instructionsRawPointer[t1], PB
     move 0, PC
     jmp doneLabel
+
+    # It is required in ARMv7 and MIPs because global label definitions
+    # for those architectures generates a set of instructions
+    # that can clobber LLInt execution, resulting in unexpected
+    # crashes.
+    _js_trampoline_%opcodeName%_untag:
+    _js_trampoline_%opcodeName%_tag:
+    crash()
 end
 
 # Instruction implementations
@@ -2115,7 +2123,7 @@ macro callHelper(opcodeName, slowPath, opcodeStruct, valueProfileName, dstVirtua
     storei t2, ArgumentCountIncludingThis + PayloadOffset[t3]
     storei CellTag, Callee + TagOffset[t3]
     move t3, sp
-    prepareCall(%opcodeStruct%::Metadata::m_callLinkInfo.m_machineCodeTarget[t5], t2, t3, t4, JSEntryPtrTag)
+    prepareCall(%opcodeStruct%::Metadata::m_callLinkInfo.m_machineCodeTarget[t5], t2, t3, t4, t1, JSEntryPtrTag)
     callTargetFunction(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, %opcodeStruct%::Metadata::m_callLinkInfo.m_machineCodeTarget[t5], JSEntryPtrTag)
 
 .opCallSlow:

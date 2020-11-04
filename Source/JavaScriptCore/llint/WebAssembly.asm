@@ -139,8 +139,12 @@ macro checkSwitchToJITForPrologue(codeBlockRegister)
 
             restoreCalleeSavesUsedByWasm()
             restoreCallerPCAndCFR()
-            untagReturnAddress sp
-            jmp ws0, WasmEntryPtrTag
+            if ARM64E
+                leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::wasmOSREntry) * PtrSize, ws1
+                jmp [ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
+            else
+                jmp ws0, WasmEntryPtrTag
+            end
         .recover:
             notFunctionCodeBlockGetter(codeBlockRegister)
         end)
@@ -159,9 +163,14 @@ macro checkSwitchToJITForLoop()
             btpz r1, .recover
             restoreCalleeSavesUsedByWasm()
             restoreCallerPCAndCFR()
-            untagReturnAddress sp
             move r0, a0
-            jmp r1, WasmEntryPtrTag
+            if ARM64E
+                move r1, ws0
+                leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::wasmOSREntry) * PtrSize, ws1
+                jmp [ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
+            else
+                jmp r1, WasmEntryPtrTag
+            end
         .recover:
             loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
         end)
@@ -253,7 +262,6 @@ end
 
 macro wasmPrologue(codeBlockGetter, codeBlockSetter, loadWasmInstance)
     # Set up the call frame and check if we should OSR.
-    tagReturnAddress sp
     preserveCallerPCAndCFR()
     preserveCalleeSavesUsedByWasm()
     loadWasmInstance()
@@ -456,7 +464,12 @@ end
 macro doReturn()
     restoreCalleeSavesUsedByWasm()
     restoreCallerPCAndCFR()
-    ret
+    if ARM64E
+        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::returnFromLLInt) * PtrSize, ws0
+        jmp [ws0], NativeToJITGatePtrTag
+    else
+        ret
+    end
 end
 
 # Entry point
@@ -497,7 +510,13 @@ op(wasm_throw_from_slow_path_trampoline, macro ()
     loadi ArgumentCountIncludingThis + PayloadOffset[cfr], a3
     cCall4(_slow_path_wasm_throw_exception)
 
-    jmp r0, ExceptionHandlerPtrTag
+    if ARM64E
+        move r0, a0
+        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::exceptionHandler) * PtrSize, a1
+        jmp [a1], NativeToJITGatePtrTag # ExceptionHandlerPtrTag
+    else
+        jmp r0, ExceptionHandlerPtrTag
+    end
 end)
 
 # Disable wide version of narrow-only opcodes
@@ -705,7 +724,38 @@ macro slowPathForWasmCall(ctx, slowPath, storeWasmInstance)
             end)
 
             addp CallerFrameAndPCSize, sp
-            call ws0, SlowPathPtrTag
+
+            ctx(macro(opcodeName, opcodeStruct, size)
+                macro callNarrow()
+                    if ARM64E
+                        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::%opcodeName%) * PtrSize, ws1
+                        jmp [ws1], NativeToJITGatePtrTag # JSEntrySlowPathPtrTag
+                    end
+                    _wasm_trampoline_%opcodeName%:
+                    call ws0, JSEntrySlowPathPtrTag
+                end
+
+                macro callWide16()
+                    if ARM64E
+                        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::%opcodeName%_wide16) * PtrSize, ws1
+                        jmp [ws1], NativeToJITGatePtrTag # JSEntrySlowPathPtrTag
+                    end
+                    _wasm_trampoline_%opcodeName%_wide16:
+                    call ws0, JSEntrySlowPathPtrTag
+                end
+
+                macro callWide32()
+                    if ARM64E
+                        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::%opcodeName%_wide32) * PtrSize, ws1
+                        jmp [ws1], NativeToJITGatePtrTag # JSEntrySlowPathPtrTag
+                    end
+                    _wasm_trampoline_%opcodeName%_wide32:
+                    call ws0, JSEntrySlowPathPtrTag
+                end
+
+                size(callNarrow, callWide16, callWide32, macro (gen) gen() end)
+                defineReturnLabel(opcodeName, size)
+            end)
 
             loadp CodeBlock[cfr], ws1
             loadi Wasm::FunctionCodeBlock::m_numCalleeLocals[ws1], ws1

@@ -465,6 +465,10 @@ public:
     static constexpr GPRReg nonPreservedNonReturnGPR = X86Registers::r10; // regT5 (regT4 on Windows)
     static constexpr GPRReg nonPreservedNonArgumentGPR0 = X86Registers::r10; // regT5 (regT4 on Windows)
     static constexpr GPRReg nonPreservedNonArgumentGPR1 = X86Registers::eax;
+    static constexpr GPRReg wasmScratchGPR0 = X86Registers::eax;
+#if !OS(WINDOWS)
+    static constexpr GPRReg wasmScratchGPR1 = X86Registers::r10;
+#endif
 
     // FIXME: I believe that all uses of this are dead in the sense that it just causes the scratch
     // register allocator to select a different register and potentially spill things. It would be better
@@ -634,7 +638,7 @@ public:
     static constexpr GPRReg regCS3 = ARM64Registers::x22; // Used by FTL only
     static constexpr GPRReg regCS4 = ARM64Registers::x23; // Used by FTL only
     static constexpr GPRReg regCS5 = ARM64Registers::x24; // Used by FTL only
-    static constexpr GPRReg regCS6 = ARM64Registers::x25; // Used by FTL only
+    static constexpr GPRReg regCS6 = ARM64Registers::x25;
     static constexpr GPRReg regCS7 = ARM64Registers::x26;
     static constexpr GPRReg regCS8 = ARM64Registers::x27; // numberTag
     static constexpr GPRReg regCS9 = ARM64Registers::x28; // notCellMask
@@ -654,6 +658,8 @@ public:
     static constexpr GPRReg nonPreservedNonArgumentGPR0 = ARM64Registers::x8;
     static constexpr GPRReg nonPreservedNonArgumentGPR1 = ARM64Registers::x9;
     static constexpr GPRReg patchpointScratchRegister = ARM64Registers::ip0;
+    static constexpr GPRReg wasmScratchGPR0 = ARM64Registers::x9;
+    static constexpr GPRReg wasmScratchGPR1 = ARM64Registers::x10;
 
     // GPRReg mapping is direct, the machine register numbers can
     // be used directly as indices into the GPR RegisterBank.

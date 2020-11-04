@@ -28,6 +28,12 @@
 
 #include "JSCConfig.h"
 
+#if ENABLE(JIT_CAGE)
+#include <machine/cpu_capabilities.h>
+#include <sys/mman.h>
+#include <sys/types.h>
+#endif
+
 namespace JSC {
 
 #if CPU(ARM64E) && ENABLE(PTRTAG_DEBUGGING)
@@ -35,8 +41,10 @@ namespace JSC {
 static const char* tagForPtr(const void* ptr)
 {
 #define RETURN_NAME_IF_TAG_MATCHES(tag, calleeType, callerType) \
-    if (ptr == WTF::tagCodePtrImpl<WTF::PtrTagAction::NoAssert, JSC::tag>(removeCodePtrTag(ptr))) \
-        return #tag;
+    if (callerType != PtrTagCallerType::JIT || calleeType != PtrTagCallerType::Native) { \
+        if (ptr == WTF::tagCodePtrImpl<WTF::PtrTagAction::NoAssert, JSC::tag>(removeCodePtrTag(ptr))) \
+            return #tag; \
+    }
     FOR_EACH_JSC_PTRTAG(RETURN_NAME_IF_TAG_MATCHES)
 #undef RETURN_NAME_IF_TAG_MATCHES
     return nullptr; // Matching tag not found.
@@ -60,5 +68,33 @@ void initializePtrTagLookup()
 }
 
 #endif // CPU(ARM64E) && ENABLE(PTRTAG_DEBUGGING)
+
+#if CPU(ARM64E)
+
+PtrTagCallerType callerType(PtrTag tag)
+{
+#define RETURN_PTRTAG_TYPE(_tagName, calleeType, callerType) case _tagName: return callerType;
+    switch (tag) {
+        FOR_EACH_JSC_PTRTAG(RETURN_PTRTAG_TYPE)
+    default:
+        return PtrTagCallerType::Native;
+    }
+#undef RETURN_PTRTAG_TYPE
+    return PtrTagCallerType::Native;
+}
+
+PtrTagCalleeType calleeType(PtrTag tag)
+{
+#define RETURN_PTRTAG_TYPE(_tagName, calleeType, callerType) case _tagName: return calleeType;
+    switch (tag) {
+        FOR_EACH_JSC_PTRTAG(RETURN_PTRTAG_TYPE)
+    default:
+        return PtrTagCalleeType::Native;
+    }
+#undef RETURN_PTRTAG_TYPE
+    return PtrTagCalleeType::Native;
+}
+
+#endif
 
 } // namespace JSC

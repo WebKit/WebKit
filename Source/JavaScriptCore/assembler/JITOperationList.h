@@ -37,14 +37,17 @@ public:
     static JITOperationList& instance();
     static void initialize();
 
-    void* contains(void* pointer) const
+    void* map(void* pointer) const
     {
-        if constexpr(ASSERT_ENABLED)
-            return m_validatedOperations.get(removeCodePtrTag(pointer));
+#if ENABLE(JIT_OPERATION_VALIDATION)
+        return m_validatedOperations.get(removeCodePtrTag(pointer));
+#else
         return pointer;
+#endif
     }
 
     static void populatePointersInJavaScriptCore();
+    static void populatePointersInJavaScriptCoreForLLInt();
 
     JS_EXPORT_PRIVATE static void populatePointersInEmbedder(const uintptr_t* beginHost, const uintptr_t* endHost, const uintptr_t* beginOperations, const uintptr_t* endOperations);
 
@@ -54,7 +57,7 @@ public:
     {
         UNUSED_PARAM(function);
 #if ENABLE(JIT_OPERATION_VALIDATION)
-        ASSERT(function, !Options::useJIT() || JITOperationList::instance().contains(bitwise_cast<void*>(function)));
+        ASSERT(function, !Options::useJIT() || JITOperationList::instance().map(bitwise_cast<void*>(function)));
 #endif
     }
 
@@ -62,7 +65,7 @@ public:
     {
         UNUSED_PARAM(function);
 #if ENABLE(JIT_OPERATION_VALIDATION)
-        ASSERT(!Options::useJIT() || JITOperationList::instance().contains(bitwise_cast<void*>(function)));
+        ASSERT(!Options::useJIT() || JITOperationList::instance().map(bitwise_cast<void*>(function)));
 #endif
     }
 

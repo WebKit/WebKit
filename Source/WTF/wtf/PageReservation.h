@@ -55,12 +55,7 @@ namespace WTF {
 
 class PageReservation : private PageBlock {
 public:
-    PageReservation()
-        : m_committed(0)
-        , m_writable(false)
-        , m_executable(false)
-    {
-    }
+    PageReservation() = default;
 
     using PageBlock::base;
     using PageBlock::size;
@@ -93,22 +88,22 @@ public:
         return m_committed;
     }
 
-    static PageReservation reserve(size_t size, OSAllocator::Usage usage = OSAllocator::UnknownUsage, bool writable = true, bool executable = false)
+    static PageReservation reserve(size_t size, OSAllocator::Usage usage = OSAllocator::UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false)
     {
         ASSERT(isPageAligned(size));
-        return PageReservation(OSAllocator::reserveUncommitted(size, usage, writable, executable), size, writable, executable, false);
+        return PageReservation(OSAllocator::reserveUncommitted(size, usage, writable, executable, jitCageEnabled, false), size, writable, executable, jitCageEnabled, false);
     }
     
-    static PageReservation reserveWithGuardPages(size_t size, OSAllocator::Usage usage = OSAllocator::UnknownUsage, bool writable = true, bool executable = false)
+    static PageReservation reserveWithGuardPages(size_t size, OSAllocator::Usage usage = OSAllocator::UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false)
     {
         ASSERT(isPageAligned(size));
-        return PageReservation(OSAllocator::reserveUncommitted(size + pageSize() * 2, usage, writable, executable, true), size, writable, executable, true);
+        return PageReservation(OSAllocator::reserveUncommitted(size + pageSize() * 2, usage, writable, executable, jitCageEnabled, true), size, writable, executable, jitCageEnabled, true);
     }
 
-    static PageReservation reserveAndCommitWithGuardPages(size_t size, OSAllocator::Usage usage = OSAllocator::UnknownUsage, bool writable = true, bool executable = false)
+    static PageReservation reserveAndCommitWithGuardPages(size_t size, OSAllocator::Usage usage = OSAllocator::UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false)
     {
         ASSERT(isPageAligned(size));
-        return PageReservation(OSAllocator::reserveAndCommit(size + pageSize() * 2, usage, writable, executable, true), size, writable, executable, true);
+        return PageReservation(OSAllocator::reserveAndCommit(size + pageSize() * 2, usage, writable, executable, jitCageEnabled, true), size, writable, executable, jitCageEnabled, true);
     }
 
     void deallocate()
@@ -127,7 +122,7 @@ public:
     }
 
 private:
-    PageReservation(void* base, size_t size, bool writable, bool executable, bool hasGuardPages)
+    PageReservation(void* base, size_t size, bool writable, bool executable, bool, bool hasGuardPages)
         : PageBlock(base, size, hasGuardPages)
         , m_committed(0)
         , m_writable(writable)
@@ -135,9 +130,9 @@ private:
     {
     }
 
-    size_t m_committed;
-    bool m_writable;
-    bool m_executable;
+    size_t m_committed { 0 };
+    bool m_writable { false };
+    bool m_executable { false };
 };
 
 }

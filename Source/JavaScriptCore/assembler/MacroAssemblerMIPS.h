@@ -2004,6 +2004,13 @@ public:
         m_assembler.nop();
     }
 
+    void farJump(TrustedImmPtr target, PtrTag)
+    {
+        move(target, MIPSRegisters::t9);
+        m_assembler.jr(MIPSRegisters::t9);
+        m_assembler.nop();
+    }
+
     void farJump(Address address, PtrTag)
     {
         m_fixedWidth = true;
