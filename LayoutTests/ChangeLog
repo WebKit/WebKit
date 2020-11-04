@@ -1,3 +1,26 @@
+2020-11-04  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (Big Sur): fast/forms/hidpi-textfield-background-bleeding.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=218540
+        <rdar://problem/66295552>
+
+        Reviewed by Wenson Hsieh.
+
+        The purpose of the failing test is to verify that textfield backgrounds
+        (which are drawn completely by WebKit) do not bleed outside of the
+        textfield border (which is drawn using AppKit).
+
+        The test is currently failing as there is a 0.5px shadow that appears
+        outside the border on Big Sur. This is a result of changes made to the
+        appearance of system controls in Big Sur. The failure is benign, as the
+        test still confirms that the background does not bleed.
+
+        In order to ensure that we can still run this test on Big Sur, update
+        the expectation to account for the shadow.
+
+        * platform/mac-bigsur/fast/forms/hidpi-textfield-background-bleeding-expected.html: Added.
+        * platform/mac/TestExpectations:
+
 2020-11-04  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r257839): Miscomputed style due to computed 'rem' value in matched declaration cache
