@@ -31,8 +31,6 @@
 
 namespace bmalloc {
 
-BEXPORT void logVMFailure(size_t vmSize);
-
 #if !BUSE(OS_LOG)
 void reportAssertionFailureWithMessage(const char* file, int line, const char* function, const char* format, ...) BATTRIBUTE_PRINTF(4, 5);
 #endif

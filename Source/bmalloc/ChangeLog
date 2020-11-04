@@ -1,5 +1,23 @@
 2020-11-04  David Kilzer  <ddkilzer@apple.com>
 
+        Remove bmalloc::logVMFailure() and BSoftLinking.h
+        <https://webkit.org/b/218571>
+        <rdar://problem/69813381>
+
+        Reviewed by Geoffrey Garen.
+
+        * PlatformMac.cmake:
+        * bmalloc.xcodeproj/project.pbxproj:
+        - Remove BSoftLinking.h from project files.
+
+        * bmalloc/Logging.cpp:
+        * bmalloc/Logging.h:
+        (bmalloc::logVMFailure): Delete.
+
+        * bmalloc/darwin/BSoftLinking.h: Remove.
+
+2020-11-04  David Kilzer  <ddkilzer@apple.com>
+
         WebKit should remove unused debug variant support
         <https://webkit.org/b/218315>
         <rdar://problem/70785369>

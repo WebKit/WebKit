@@ -5,6 +5,5 @@ list(APPEND bmalloc_SOURCES
 )
 
 list(APPEND bmalloc_PUBLIC_HEADERS
-    bmalloc/darwin/BSoftLinking.h
     bmalloc/darwin/MemoryStatusSPI.h
 )
