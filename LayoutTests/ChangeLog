@@ -1,5 +1,32 @@
 2020-11-04  Aditya Keerthi  <akeerthi@apple.com>
 
+        [Contact Picker API] Add support for picker UI on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=218189
+        <rdar://problem/69862277>
+
+        Reviewed by Devin Rousso.
+
+        Added tests to verify the presentation and dismissal of a contact
+        picker on iOS. The new tests are only run on iOS WK2, since that is the
+        only platform which currently supports the presentation of a contact
+        picker. Note that these tests will be enabled on macOS WK2 once support
+        is added in a forthcoming patch.
+
+        * TestExpectations:
+        * contact-picker/contacts-select-after-dismissing-picker-expected.txt: Added.
+        * contact-picker/contacts-select-after-dismissing-picker.html: Added.
+        * contact-picker/contacts-select-expected.txt: Added.
+        * contact-picker/contacts-select-while-presenting-picker-expected.txt: Added.
+        * contact-picker/contacts-select-while-presenting-picker.html: Added.
+        * contact-picker/contacts-select.html: Added.
+        * platform/ios-wk2/TestExpectations:
+        * resources/ui-helper.js:
+        (window.UIHelper.waitForContactPickerToShow):
+        (window.UIHelper.waitForContactPickerToHide):
+        (window.UIHelper.dismissContactPickerWithContacts):
+
+2020-11-04  Aditya Keerthi  <akeerthi@apple.com>
+
         REGRESSION (Big Sur): fast/forms/hidpi-textfield-background-bleeding.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=218540
         <rdar://problem/66295552>

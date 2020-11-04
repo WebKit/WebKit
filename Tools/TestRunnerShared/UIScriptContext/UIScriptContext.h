@@ -65,6 +65,8 @@ typedef enum  {
     CallbackTypeDidDismissContextMenu,
     CallbackTypeWillCreateNewPage,
     CallbackTypeWindowTapRecognized,
+    CallbackTypeDidShowContactPicker,
+    CallbackTypeDidHideContactPicker,
     CallbackTypeNonPersistent = firstNonPersistentCallbackID
 } CallbackType;
 

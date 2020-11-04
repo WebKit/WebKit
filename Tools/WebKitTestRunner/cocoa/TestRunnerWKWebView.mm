@@ -78,6 +78,7 @@ struct CustomMenuActionInfo {
 @property (nonatomic, getter=isDismissingMenu, setter=setIsDismissingMenu:) BOOL dismissingMenu;
 @property (nonatomic, getter=isShowingPopover, setter=setIsShowingPopover:) BOOL showingPopover;
 @property (nonatomic, getter=isShowingContextMenu, setter=setIsShowingContextMenu:) BOOL showingContextMenu;
+@property (nonatomic, getter=isShowingContactPicker, setter=setIsShowingContactPicker:) BOOL showingContactPicker;
 
 @end
 
@@ -171,6 +172,8 @@ IGNORE_WARNINGS_END
 {
     self.didShowMenuCallback = nil;
     self.didHideMenuCallback = nil;
+    self.didShowContactPickerCallback = nil;
+    self.didHideContactPickerCallback = nil;
 #if PLATFORM(IOS_FAMILY)
     self.didStartFormControlInteractionCallback = nil;
     self.didEndFormControlInteractionCallback = nil;
@@ -544,5 +547,25 @@ IGNORE_WARNINGS_END
 }
 
 #endif // PLATFORM(IOS_FAMILY)
+
+- (void)_didPresentContactPicker
+{
+    if (self.showingContactPicker)
+        return;
+
+    self.showingContactPicker = YES;
+    if (self.didShowContactPickerCallback)
+        self.didShowContactPickerCallback();
+}
+
+- (void)_didDismissContactPicker
+{
+    if (!self.showingContactPicker)
+        return;
+
+    self.showingContactPicker = NO;
+    if (self.didHideContactPickerCallback)
+        self.didHideContactPickerCallback();
+}
 
 @end

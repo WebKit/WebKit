@@ -296,4 +296,21 @@
     return @(_page->suspendMediaPlaybackCounter());
 }
 
+- (void)_didPresentContactPicker
+{
+    // For subclasses to override.
+}
+
+- (void)_didDismissContactPicker
+{
+    // For subclasses to override.
+}
+
+- (void)_dismissContactPickerWithContacts:(NSArray *)contacts
+{
+#if PLATFORM(IOS_FAMILY)
+    [_contentView _dismissContactPickerWithContacts:contacts];
+#endif
+}
+
 @end

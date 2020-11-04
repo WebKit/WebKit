@@ -64,6 +64,11 @@ private:
 
     void insertAttachmentForFilePath(JSStringRef filePath, JSStringRef contentType, JSValueRef callback) override;
 
+    void setDidShowContactPickerCallback(JSValueRef) override;
+    void setDidHideContactPickerCallback(JSValueRef) override;
+    bool isShowingContactPicker() const override;
+    void dismissContactPickerWithContacts(JSValueRef) override;
+
     void completeTaskAsynchronouslyAfterActivityStateUpdate(unsigned callbackID);
 };
 

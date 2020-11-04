@@ -1,0 +1,19 @@
+This test verifies that navigator.contacts.select presents a contact picker and returns the selected contacts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS contacts.length is 3
+PASS areArraysEqual(contact1.name, addressBook[0].name) is true
+PASS areArraysEqual(contact1.email, addressBook[0].email) is true
+PASS contact1.tel.length is 0
+PASS areArraysEqual(contact2.name, addressBook[1].name) is true
+PASS areArraysEqual(contact2.email, addressBook[1].email) is true
+PASS contact2.tel.length is 0
+PASS areArraysEqual(contact3.name, addressBook[2].name) is true
+PASS contact3.email.length is 0
+PASS contact3.tel.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Show contacts

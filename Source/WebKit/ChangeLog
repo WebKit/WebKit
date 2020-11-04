@@ -1,3 +1,71 @@
+2020-11-04  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Contact Picker API] Add support for picker UI on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=218189
+        <rdar://problem/69862277>
+
+        Reviewed by Devin Rousso.
+
+        ContactsManager.select() should present a contact picker on platforms
+        which support one. This patch enables the end-to-end functionality on
+        iOS, presenting a contact picker upon a call to the API and returning
+        the selected contacts upon dismissal.
+
+        Tests: contact-picker/contacts-select-after-dismissing-picker.html
+               contact-picker/contacts-select-while-presenting-picker.html
+               contact-picker/contacts-select.html
+
+        * Platform/spi/Cocoa/ContactsUISPI.h: Added.
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _didPresentContactPicker]):
+        (-[WKWebView _didDismissContactPicker]):
+        (-[WKWebView _dismissContactPickerWithContacts:]):
+        * UIProcess/Cocoa/WKContactPicker.h: Added.
+        * UIProcess/Cocoa/WKContactPicker.mm: Added.
+
+        WKContactPicker is a WebKit wrapper around CNContactPickerViewController.
+
+        (-[WKCNContactPickerDelegate initWithContactPickerDelegate:]):
+
+        WKCNContactPickerDelegate is wrapper around CNContactPickerDelegate.
+        This is necessary as single/multiple selection in a
+        CNContactPickerViewController is determined by which delegate methods
+        are implemented. The two specializations of this class include the
+        methods necessary to present a single-select and multi-select picker
+        respectively.
+
+        (-[WKCNContactPickerDelegate contactPickerDidCancel:]):
+        (-[WKCNContactPickerSingleSelectDelegate contactPicker:didSelectContact:]):
+        (-[WKCNContactPickerMultiSelectDelegate contactPicker:didSelectContacts:]):
+        (-[WKContactPicker delegate]):
+        (-[WKContactPicker setDelegate:]):
+        (-[WKContactPicker initWithView:]):
+        (-[WKContactPicker presentWithRequestData:completionHandler:]):
+        (-[WKContactPicker contactPickerDidCancel:]):
+
+        This delegate method is called when the picker is dismissed by
+        tapping the done button or when the picker is dismissed by swiping
+        down.
+
+        (-[WKContactPicker contactPicker:didSelectContact:]):
+        (-[WKContactPicker contactPicker:didSelectContacts:]):
+        (-[WKContactPicker _contactPickerDidDismissWithContactInfo:]):
+        (-[WKContactPicker _contactInfoFromCNContact:]):
+        (-[WKContactPicker dismissWithContacts:]):
+        (-[WKContactPicker _contactsFromJSContacts:]):
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::showContactPicker):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _showContactPicker:completionHandler:]):
+        (-[WKContentView contactPickerDidPresent:]):
+        (-[WKContentView contactPickerDidDismiss:]):
+        (-[WKContentView _dismissContactPickerWithContacts:]):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-11-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix build with very recent SDK by silencing a deprecation warning.

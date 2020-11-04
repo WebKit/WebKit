@@ -90,6 +90,11 @@ fast/forms/enterkeyhint-attribute-values.html [ Skip ]
 # Highlighting marked text ranges from layout tests is only supported in WebKit2.
 editing/input/composition-highlights.html [ Skip ]
 
+# Cocoa WK2 only. Other platforms do not present a contact picker UI.
+contact-picker/contacts-select-after-dismissing-picker.html [ Skip ]
+contact-picker/contacts-select-while-presenting-picker.html [ Skip ]
+contact-picker/contacts-select.html [ Skip ]
+
 http/tests/security/xss-DENIED-xsl-external-entity-no-logging.xml [ Skip ]
 
 # window.showModalDialog is only tested in DumpRenderTree on Mac.

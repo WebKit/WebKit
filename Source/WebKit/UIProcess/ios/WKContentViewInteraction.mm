@@ -73,7 +73,7 @@
 #import "WKWebViewConfigurationPrivate.h"
 #import "WKWebViewIOS.h"
 #import "WKWebViewPrivate.h"
-#import "WKWebViewPrivateForTestingIOS.h"
+#import "WKWebViewPrivateForTesting.h"
 #import "WebAutocorrectionContext.h"
 #import "WebAutocorrectionData.h"
 #import "WebDataListSuggestionsDropdownIOS.h"
@@ -6855,6 +6855,36 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
 #endif
 
+- (void)_showContactPicker:(const WebCore::ContactsRequestData&)requestData completionHandler:(WTF::CompletionHandler<void(Optional<Vector<WebCore::ContactInfo>>&&)>&&)completionHandler
+{
+#if HAVE(CONTACTSUI)
+    _contactPicker = adoptNS([[WKContactPicker alloc] initWithView:self.webView]);
+    [_contactPicker setDelegate:self];
+    [_contactPicker presentWithRequestData:requestData completionHandler:WTFMove(completionHandler)];
+#else
+    completionHandler(WTF::nullopt);
+#endif
+}
+
+#if HAVE(CONTACTSUI)
+- (void)contactPickerDidPresent:(WKContactPicker *)contactPicker
+{
+    ASSERT(_contactPicker == contactPicker);
+
+    [_webView _didPresentContactPicker];
+}
+
+- (void)contactPickerDidDismiss:(WKContactPicker *)contactPicker
+{
+    ASSERT(_contactPicker == contactPicker);
+
+    [_contactPicker setDelegate:nil];
+    _contactPicker = nil;
+
+    [_webView _didDismissContactPicker];
+}
+#endif
+
 - (NSString *)inputLabelText
 {
     if (!_focusedElementInformation.label.isEmpty())
@@ -9099,6 +9129,13 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     }
     
     return nil;
+}
+
+- (void)_dismissContactPickerWithContacts:(NSArray *)contacts
+{
+#if HAVE(CONTACTSUI)
+    [_contactPicker dismissWithContacts:contacts];
+#endif
 }
 
 @end

@@ -58,6 +58,10 @@ typedef enum {
 
 - (void)_setShareSheetCompletesImmediatelyWithResolutionForTesting:(BOOL)resolved;
 
+- (void)_didPresentContactPicker;
+- (void)_didDismissContactPicker;
+- (void)_dismissContactPickerWithContacts:(NSArray *)contacts;
+
 @property (nonatomic, setter=_setScrollingUpdatesDisabledForTesting:) BOOL _scrollingUpdatesDisabledForTesting;
 
 - (void)_processWillSuspendForTesting:(void (^)(void))completionHandler;

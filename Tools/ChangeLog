@@ -1,3 +1,38 @@
+2020-11-04  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Contact Picker API] Add support for picker UI on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=218189
+        <rdar://problem/69862277>
+
+        Reviewed by Devin Rousso.
+
+        Added UIScriptController hooks to observe the presentation and
+        dismissal of a contact picker. Furthermore, the
+        dismissContactPickerWithContacts method was added to allow tests to
+        dismiss the presented contact picker with a set of selected contacts.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptContext.h:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::isShowingContactPicker const):
+        (WTR::UIScriptController::dismissContactPickerWithContacts):
+        * TestRunnerShared/UIScriptContext/UIScriptControllerShared.cpp:
+        (WTR::UIScriptController::setDidShowContactPickerCallback):
+        (WTR::UIScriptController::didShowContactPickerCallback const):
+        (WTR::UIScriptController::setDidHideContactPickerCallback):
+        (WTR::UIScriptController::didHideContactPickerCallback const):
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView resetInteractionCallbacks]):
+        (-[TestRunnerWKWebView _didPresentContactPicker]):
+        (-[TestRunnerWKWebView _didDismissContactPicker]):
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.h:
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptControllerCocoa::setDidShowContactPickerCallback):
+        (WTR::UIScriptControllerCocoa::setDidHideContactPickerCallback):
+        (WTR::UIScriptControllerCocoa::isShowingContactPicker const):
+        (WTR::UIScriptControllerCocoa::dismissContactPickerWithContacts):
+
 2020-11-04  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Conditionally disable the patch validation step

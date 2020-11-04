@@ -1406,6 +1406,44 @@ window.UIHelper = class UIHelper {
             `, resolve);
         });
     }
+
+    static waitForContactPickerToShow()
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                (function() {
+                    if (!uiController.isShowingContactPicker)
+                        uiController.didShowContactPickerCallback = () => uiController.uiScriptComplete();
+                    else
+                        uiController.uiScriptComplete();
+                })()`, resolve);
+        });
+    }
+
+    static waitForContactPickerToHide()
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                (function() {
+                    if (uiController.isShowingContactPicker)
+                        uiController.didHideContactPickerCallback = () => uiController.uiScriptComplete();
+                    else
+                        uiController.uiScriptComplete();
+                })()`, resolve);
+        });
+    }
+
+    static dismissContactPickerWithContacts(contacts)
+    {
+       const script = `(() => uiController.dismissContactPickerWithContacts(${JSON.stringify(contacts)}))()`;
+       return new Promise(resolve => testRunner.runUIScript(script, resolve));
+    }
 }
 
 UIHelper.EventStreamBuilder = class {

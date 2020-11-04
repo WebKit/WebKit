@@ -277,6 +277,17 @@ public:
     virtual JSObjectRef attachmentInfo(JSStringRef) { notImplemented(); return nullptr; }
     virtual void insertAttachmentForFilePath(JSStringRef, JSStringRef, JSValueRef) { notImplemented(); }
 
+    // Contact Picker
+
+    virtual void setDidShowContactPickerCallback(JSValueRef);
+    JSValueRef didShowContactPickerCallback() const;
+    virtual bool isShowingContactPicker() const { notImplemented(); return false; }
+
+    virtual void setDidHideContactPickerCallback(JSValueRef);
+    JSValueRef didHideContactPickerCallback() const;
+
+    virtual void dismissContactPickerWithContacts(JSValueRef) { notImplemented(); }
+
     // Callbacks
     
     virtual void setDidStartFormControlInteractionCallback(JSValueRef);

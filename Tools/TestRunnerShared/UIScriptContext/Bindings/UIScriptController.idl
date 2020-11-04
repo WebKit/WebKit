@@ -349,6 +349,11 @@ interface UIScriptController {
     object attachmentInfo(DOMString attachmentIdentifier);
     undefined insertAttachmentForFilePath(DOMString filePath, DOMString contentType, object callback);
 
+    attribute object didShowContactPickerCallback;
+    attribute object didHideContactPickerCallback;
+    undefined dismissContactPickerWithContacts(object contacts);
+    readonly attribute boolean isShowingContactPicker;
+
     readonly attribute DOMString lastUndoLabel;
     readonly attribute DOMString firstRedoLabel;
 };

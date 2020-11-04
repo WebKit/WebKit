@@ -213,6 +213,26 @@ JSValueRef UIScriptController::didDismissPopoverCallback() const
     return m_context->callbackWithID(CallbackTypeDidDismissPopover);
 }
 
+void UIScriptController::setDidShowContactPickerCallback(JSValueRef callback)
+{
+    m_context->registerCallback(callback, CallbackTypeDidShowContactPicker);
+}
+
+JSValueRef UIScriptController::didShowContactPickerCallback() const
+{
+    return m_context->callbackWithID(CallbackTypeDidShowContactPicker);
+}
+
+void UIScriptController::setDidHideContactPickerCallback(JSValueRef callback)
+{
+    m_context->registerCallback(callback, CallbackTypeDidHideContactPicker);
+}
+
+JSValueRef UIScriptController::didHideContactPickerCallback() const
+{
+    return m_context->callbackWithID(CallbackTypeDidHideContactPicker);
+}
+
 void UIScriptController::uiScriptComplete(JSStringRef result)
 {
     m_context->requestUIScriptCompletion(result);

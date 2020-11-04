@@ -225,4 +225,36 @@ void UIScriptControllerCocoa::insertAttachmentForFilePath(JSStringRef filePath, 
     }];
 }
 
+void UIScriptControllerCocoa::setDidShowContactPickerCallback(JSValueRef callback)
+{
+    UIScriptController::setDidShowContactPickerCallback(callback);
+    webView().didShowContactPickerCallback = ^{
+        if (!m_context)
+            return;
+        m_context->fireCallback(CallbackTypeDidShowContactPicker);
+    };
+}
+
+void UIScriptControllerCocoa::setDidHideContactPickerCallback(JSValueRef callback)
+{
+    UIScriptController::setDidHideContactPickerCallback(callback);
+    webView().didHideContactPickerCallback = ^{
+        if (!m_context)
+            return;
+        m_context->fireCallback(CallbackTypeDidHideContactPicker);
+    };
+}
+
+bool UIScriptControllerCocoa::isShowingContactPicker() const
+{
+    return webView().showingContactPicker;
+}
+
+void UIScriptControllerCocoa::dismissContactPickerWithContacts(JSValueRef contacts)
+{
+    JSContext *context = [JSContext contextWithJSGlobalContextRef:m_context->jsContext()];
+    JSValue *value = [JSValue valueWithJSValueRef:contacts inContext:context];
+    [webView() _dismissContactPickerWithContacts:[value toArray]];
+}
+
 } // namespace WTR

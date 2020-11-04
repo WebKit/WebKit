@@ -73,6 +73,9 @@
 @property (nonatomic, readonly, getter=isShowingMenu) BOOL showingMenu;
 @property (nonatomic, copy) void (^didShowMenuCallback)(void);
 @property (nonatomic, copy) void (^didHideMenuCallback)(void);
+@property (nonatomic, readonly, getter=isShowingContactPicker) BOOL showingContactPicker;
+@property (nonatomic, copy) void (^didShowContactPickerCallback)(void);
+@property (nonatomic, copy) void (^didHideContactPickerCallback)(void);
 @property (nonatomic, retain, setter=_setStableStateOverride:) NSNumber *_stableStateOverride;
 @property (nonatomic, setter=_setScrollingUpdatesDisabledForTesting:) BOOL _scrollingUpdatesDisabledForTesting;
 
