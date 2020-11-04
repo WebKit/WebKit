@@ -185,6 +185,8 @@ static NSString * const editablePointerRegionIdentifier = @"WKEditablePointerReg
 @end
 #endif
 
+static void *WKContentViewKVOTransformContext = &WKContentViewKVOTransformContext;
+
 namespace WebKit {
 using namespace WebCore;
 using namespace WebKit;
@@ -734,7 +736,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _keyboardScrollingAnimator = adoptNS([[WKKeyboardScrollViewAnimator alloc] initWithScrollView:self.webView.scrollView]);
     [_keyboardScrollingAnimator setDelegate:self];
 
-    [self.layer addObserver:self forKeyPath:@"transform" options:NSKeyValueObservingOptionInitial context:nil];
+    [self.layer addObserver:self forKeyPath:@"transform" options:NSKeyValueObservingOptionInitial context:WKContentViewKVOTransformContext];
 
     _touchActionLeftSwipeGestureRecognizer = adoptNS([[UISwipeGestureRecognizer alloc] initWithTarget:nil action:nil]);
     [_touchActionLeftSwipeGestureRecognizer setDirection:UISwipeGestureRecognizerDirectionLeft];
@@ -927,7 +929,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _treatAsContentEditableUntilNextEditorStateUpdate = NO;
 
     if (_interactionViewsContainerView) {
-        [self.layer removeObserver:self forKeyPath:@"transform"];
+        [self.layer removeObserver:self forKeyPath:@"transform" context:WKContentViewKVOTransformContext];
         [_interactionViewsContainerView removeFromSuperview];
         _interactionViewsContainerView = nil;
     }
@@ -1173,6 +1175,11 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
+    if (context != WKContentViewKVOTransformContext) {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+        return;
+    }
+
     ASSERT([keyPath isEqualToString:@"transform"]);
     ASSERT(object == self.layer);
 
