@@ -504,7 +504,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         auto expansion = run.expansion();
 
         String textWithHyphen;
-        if (textContent.needsHyphen())
+        if (textContent.hasHyphen())
             textWithHyphen = makeString(textContent.content(), style.hyphenString());
         // TextRun expects the xPos to be adjusted with the aligment offset (e.g. when the line is center aligned
         // and the run starts at 100px, due to the horizontal aligment, the xpos is supposed to be at 0px).

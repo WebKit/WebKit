@@ -60,7 +60,7 @@ public:
 
     unsigned char bidiLevel() const { return 0; }
 
-    bool hasHyphen() const { return run().textContent()->needsHyphen(); }
+    bool hasHyphen() const { return run().textContent()->hasHyphen(); }
     StringView text() const { return run().textContent()->content(); }
     unsigned start() const { return run().textContent()->start(); }
     unsigned end() const { return run().textContent()->end(); }

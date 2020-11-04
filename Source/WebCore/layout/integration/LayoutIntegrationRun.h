@@ -43,18 +43,18 @@ struct Run {
     struct TextContent {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
     public:
-        TextContent(size_t position, size_t length, const String&, bool needsHyphen);
+        TextContent(size_t position, size_t length, const String&, bool hasHyphen);
 
         size_t start() const { return m_start; }
         size_t end() const { return start() + length(); }
         size_t length() const { return m_length; }
         StringView content() const { return StringView(m_contentString).substring(m_start, m_length); }
-        bool needsHyphen() const { return m_needsHyphen; }
+        bool hasHyphen() const { return m_hasHyphen; }
 
     private:
         size_t m_start { 0 };
         size_t m_length { 0 };
-        bool m_needsHyphen { false };
+        bool m_hasHyphen { false };
         String m_contentString;
     };
 
@@ -105,10 +105,10 @@ inline Run::Run(size_t lineIndex, const Layout::Box& layoutBox, const FloatRect&
 {
 }
 
-inline Run::TextContent::TextContent(size_t start, size_t length, const String& contentString, bool needsHyphen)
+inline Run::TextContent::TextContent(size_t start, size_t length, const String& contentString, bool hasHyphen)
     : m_start(start)
     , m_length(length)
-    , m_needsHyphen(needsHyphen)
+    , m_hasHyphen(hasHyphen)
     , m_contentString(contentString)
 {
 }
