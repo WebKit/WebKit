@@ -1,3 +1,11 @@
+2020-11-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, build fix for ARM64E debug build
+        https://bugs.webkit.org/show_bug.cgi?id=218143
+
+        * runtime/JSCPtrTag.cpp:
+        (JSC::tagForPtr):
+
 2020-11-03  Saam Barati  <sbarati@apple.com>
 
         Add back the removed assertion from r269338 and add a test

@@ -41,7 +41,7 @@ namespace JSC {
 static const char* tagForPtr(const void* ptr)
 {
 #define RETURN_NAME_IF_TAG_MATCHES(tag, calleeType, callerType) \
-    if (callerType != PtrTagCallerType::JIT || calleeType != PtrTagCallerType::Native) { \
+    if (callerType != PtrTagCallerType::JIT || calleeType != PtrTagCalleeType::Native) { \
         if (ptr == WTF::tagCodePtrImpl<WTF::PtrTagAction::NoAssert, JSC::tag>(removeCodePtrTag(ptr))) \
             return #tag; \
     }
