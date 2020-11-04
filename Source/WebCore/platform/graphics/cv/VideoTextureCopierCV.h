@@ -35,22 +35,13 @@ typedef CVImageBufferRef CVOpenGLESTextureRef;
 
 namespace WebCore {
 
-class TextureCacheCV;
-
 class VideoTextureCopierCV {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     VideoTextureCopierCV(GraphicsContextGLOpenGL&);
     ~VideoTextureCopierCV();
 
-#if PLATFORM(IOS_FAMILY)
-    typedef CVOpenGLESTextureRef TextureType;
-#else
-    typedef CVOpenGLTextureRef TextureType;
-#endif
-
     bool copyImageToPlatformTexture(CVPixelBufferRef, size_t width, size_t height, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY);
-    bool copyVideoTextureToPlatformTexture(TextureType, size_t width, size_t height, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY, bool swapColorChannels = false);
 
     GraphicsContextGLOpenGL& context() { return m_context; }
 
@@ -65,18 +56,14 @@ private:
         return m_lastTextureSeed.get(texture);
     }
 
-#if USE(ANGLE)
     // Returns a handle which, if non-null, must be released via the
     // detach call below.
     void* attachIOSurfaceToTexture(GCGLenum target, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef, GCGLuint plane);
     void detachIOSurfaceFromTexture(void* handle);
-#endif
 
     Ref<GraphicsContextGLOpenGL> m_sharedContext;
     Ref<GraphicsContextGLOpenGL> m_context;
-#if !USE(ANGLE)
-    std::unique_ptr<TextureCacheCV> m_textureCache;
-#endif
+
     PlatformGLObject m_framebuffer { 0 };
     PlatformGLObject m_program { 0 };
     PlatformGLObject m_vertexBuffer { 0 };

@@ -323,7 +323,6 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/cv/ImageRotationSessionVT.mm
     platform/graphics/cv/PixelBufferConformerCV.cpp
-    platform/graphics/cv/TextureCacheCV.mm
     platform/graphics/cv/VideoTextureCopierCV.cpp
 
     platform/graphics/gpu/Texture.cpp
@@ -345,11 +344,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/mac/SimpleFontDataCoreText.cpp
     platform/graphics/mac/WebLayer.mm
 
-    platform/graphics/opengl/ExtensionsGLOpenGL.cpp
-    platform/graphics/opengl/ExtensionsGLOpenGLCommon.cpp
     platform/graphics/opengl/GraphicsContextGLOpenGLBase.cpp
-    platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp
-    platform/graphics/opengl/TemporaryOpenGLSetting.cpp
 
     platform/graphics/opentype/OpenTypeCG.cpp
     platform/graphics/opentype/OpenTypeMathData.cpp

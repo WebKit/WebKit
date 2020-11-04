@@ -35,15 +35,7 @@ class GraphicsContextGLOpenGL;
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
-#if USE(OPENGL)
 @interface WebGLLayer : CALayer
-#elif USE(OPENGL_ES)
-@interface WebGLLayer : CAEAGLLayer
-#elif USE(ANGLE)
-@interface WebGLLayer : CALayer
-#else
-#error Unsupported platform
-#endif
 
 @property (nonatomic) NakedPtr<WebCore::GraphicsContextGLOpenGL> context;
 
@@ -53,15 +45,10 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 - (void)prepareForDisplay;
 
-#if USE(OPENGL) || USE(ANGLE)
 - (bool)allocateIOSurfaceBackingStoreWithSize:(WebCore::IntSize)size usingAlpha:(BOOL)usingAlpha;
 - (void)bindFramebufferToNextAvailableSurface;
-#endif
-
-#if USE(ANGLE)
 - (void)setEGLDisplay:(void*)eglDisplay config:(void*)eglConfig;
 - (void)releaseGLResources;
-#endif
 
 @end
 

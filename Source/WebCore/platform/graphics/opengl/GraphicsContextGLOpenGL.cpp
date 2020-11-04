@@ -808,13 +808,11 @@ bool GraphicsContextGLOpenGL::packPixels(const uint8_t* sourceData, DataFormat s
     return true;
 }
 
-#if !(PLATFORM(COCOA) && (USE(OPENGL) || USE(ANGLE)))
+#if !PLATFORM(COCOA)
 void GraphicsContextGLOpenGL::setContextVisibility(bool)
 {
 }
-#endif
 
-#if !PLATFORM(COCOA)
 void GraphicsContextGLOpenGL::simulateContextChanged()
 {
 }

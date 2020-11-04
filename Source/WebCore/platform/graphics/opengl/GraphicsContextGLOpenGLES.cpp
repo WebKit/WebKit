@@ -29,7 +29,7 @@
 #include "config.h"
 #include "GraphicsContextGLOpenGL.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL) && USE(OPENGL_ES) && !PLATFORM(IOS_FAMILY)
+#if ENABLE(GRAPHICS_CONTEXT_GL) && USE(OPENGL_ES)
 
 #include "ExtensionsGLOpenGLES.h"
 #include "IntRect.h"
@@ -406,4 +406,4 @@ PlatformLayer* GraphicsContextGLOpenGL::platformLayer() const
 
 }
 
-#endif // ENABLE(GRAPHICS_CONTEXT_GL) && USE(OPENGL_ES) && !PLATFORM(IOS_FAMILY)
+#endif // ENABLE(GRAPHICS_CONTEXT_GL) && USE(OPENGL_ES)
