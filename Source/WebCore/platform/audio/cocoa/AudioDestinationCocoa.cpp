@@ -116,13 +116,22 @@ void AudioDestinationCocoa::stop(CompletionHandler<void(bool)>&& completionHandl
 {
     LOG(Media, "AudioDestinationCocoa::stop");
     auto success = m_audioOutputUnitAdaptor.stop() == noErr;
-    m_dispatchToRenderThread = nullptr;
+    auto dispatchToRenderThread = std::exchange(m_dispatchToRenderThread, nullptr);
     if (success)
         setIsPlaying(false);
 
-    callOnMainThread([completionHandler = WTFMove(completionHandler), success]() mutable {
-        completionHandler(success);
-    });
+    auto callCompletionHandlerOnMainThread = [completionHandler = WTFMove(completionHandler), success]() mutable {
+        callOnMainThread([completionHandler = WTFMove(completionHandler), success]() mutable {
+            completionHandler(success);
+        });
+    };
+
+    if (dispatchToRenderThread) {
+        // Do a round-trip to the worklet thread to make sure we call the completion handler after
+        // the last rendering quantum has been processed by the worklet thread.
+        dispatchToRenderThread(WTFMove(callCompletionHandlerOnMainThread));
+    } else
+        callCompletionHandlerOnMainThread();
 }
 
 void AudioDestinationCocoa::setIsPlaying(bool isPlaying)

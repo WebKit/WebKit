@@ -115,8 +115,19 @@ void RemoteAudioDestinationProxy::stop(CompletionHandler<void(bool)>&& completio
 {
     WebProcess::singleton().ensureGPUProcessConnection().connection().sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StopAudioDestination(m_destinationID), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
         setIsPlaying(isPlaying);
-        m_dispatchToRenderThread = nullptr;
-        completionHandler(!isPlaying);
+        auto dispatchToRenderThread = std::exchange(m_dispatchToRenderThread, nullptr);
+        auto callCompletionHandler = [completionHandler = WTFMove(completionHandler), isPlaying]() mutable {
+            completionHandler(!isPlaying);
+        };
+
+        if (dispatchToRenderThread) {
+            // Do a round-trip to the worklet thread to make sure we call the completion handler after
+            // the last rendering quantum has been processed by the worklet thread.
+            dispatchToRenderThread([callCompletionHandler = WTFMove(callCompletionHandler)]() mutable {
+                callOnMainThread(WTFMove(callCompletionHandler));
+            });
+        } else
+            callCompletionHandler();
     });
 }
 

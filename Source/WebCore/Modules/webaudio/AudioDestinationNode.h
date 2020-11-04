@@ -71,7 +71,7 @@ protected:
     void updateIsEffectivelyPlayingAudio();
 
     // Counts the number of sample-frames processed by the destination.
-    size_t m_currentSampleFrame { 0 };
+    std::atomic<size_t> m_currentSampleFrame { 0 };
 
     bool m_isSilent { true };
     bool m_isEffectivelyPlayingAudio { false };

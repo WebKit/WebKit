@@ -1,3 +1,22 @@
+2020-11-04  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r268161?): [ macOS ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=217542
+        <rdar://problem/70159546>
+
+        Reviewed by Youenn Fablet.
+
+        When the script calls suspend(), we call AudioDestinationCocoa::stop() to stop rendering and then resolve the suspend promise.
+        At this point, the script saves the AudioContext's current sample frame and expects this value to not change until the
+        AudioContext is resumed. The issue was that we previously were potentially resolving the promise on the main thread while
+        the last rendering quantum was still being processed on the AudioWorklet thread. This meant that the sample frame could
+        still increase a bit, a short while after the suspend promise has been resolved. To address the issue, we now to a round
+        trip to the AudioWorklet thread after stopping rendering, to make sure we only resolve the promise after the last rendering
+        quantum has been processed on the AudioWorklet thread.
+
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::stop):
+
 2020-11-04  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Enable Document based ImageBitmap and OffscreenCanvas drawing to use GPU Process rendering
