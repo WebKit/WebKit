@@ -1,5 +1,14 @@
 2020-11-04  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed test gardening, fix pre-existing failures for EWS.
+
+        * platform/mac-catalina/fast/forms/search-size-with-decorations-expected.txt: Copied from LayoutTests/platform/mac-catalina/fast/forms/search/search-size-with-decorations-expected.txt.
+        * platform/mac-mojave/fast/forms/listbox-width-change-expected.txt: Added.
+        * platform/mac-mojave/fast/forms/search-rtl-expected.txt: Added.
+        * platform/mac-mojave/fast/forms/search/search-size-with-decorations-expected.txt: Renamed from LayoutTests/platform/mac-catalina/fast/forms/search/search-size-with-decorations-expected.txt.
+
+2020-11-04  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed test gardening, fix the test baselines for pre-Big Sur bots that I broke with r269345.
 
         * platform/mac-catalina/fast/forms/search/search-size-with-decorations-expected.txt: Renamed from LayoutTests/platform/mac-catalina/fast/forms/search-size-with-decorations-expected.txt.
