@@ -66,25 +66,25 @@ static bool handleOptionComplexText(Options& options, const char*, const char*)
 
 static bool handleOptionAcceleratedDrawing(Options& options, const char*, const char*)
 {
-    options.shouldUseAcceleratedDrawing = true;
+    options.features.boolWebPreferenceFeatures.insert_or_assign("AcceleratedDrawingEnabled", true);
     return true;
 }
 
 static bool handleOptionRemoteLayerTree(Options& options, const char*, const char*)
 {
-    options.shouldUseRemoteLayerTree = true;
+    options.features.boolTestRunnerFeatures.insert_or_assign("useRemoteLayerTree", true);
     return true;
 }
 
 static bool handleOptionShowWebView(Options& options, const char*, const char*)
 {
-    options.shouldShowWebView = true;
+    options.features.boolTestRunnerFeatures.insert_or_assign("shouldShowWebView", true);
     return true;
 }
 
 static bool handleOptionShowTouches(Options& options, const char*, const char*)
 {
-    options.shouldShowTouches = true;
+    options.features.boolTestRunnerFeatures.insert_or_assign("shouldShowTouches", true);
     return true;
 }
 
@@ -114,7 +114,7 @@ static bool handleOptionAllowedHost(Options& options, const char*, const char* h
     return true;
 }
 
-static bool parseFeature(std::string_view featureString, std::unordered_map<std::string, bool>& features)
+static bool parseFeature(std::string_view featureString, TestFeatures& features)
 {
     auto strings = split(featureString, '=');
     if (strings.empty() || strings.size() > 2)
@@ -123,18 +123,19 @@ static bool parseFeature(std::string_view featureString, std::unordered_map<std:
     auto featureName = strings[0];
     bool enabled = strings.size() == 1 || strings[1] == "true";
 
-    features.insert({ std::string { featureName }, enabled });
+    // FIXME: Generalize this to work for any type of web preference using test header logic in TestFeatures.cpp
+    features.boolWebPreferenceFeatures.insert({ std::string { featureName }, enabled });
     return true;
 }
 
 static bool handleOptionExperimentalFeature(Options& options, const char*, const char* feature)
 {
-    return parseFeature(feature, options.experimentalFeatures);
+    return parseFeature(feature, options.features);
 }
 
 static bool handleOptionInternalFeature(Options& options, const char*, const char* feature)
 {
-    return parseFeature(feature, options.internalFeatures);
+    return parseFeature(feature, options.features);
 }
 
 static bool handleOptionUnmatched(Options& options, const char* option, const char*)

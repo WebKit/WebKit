@@ -35,9 +35,6 @@ namespace WTR {
 struct TestCommand;
 
 struct TestFeatures {
-    std::unordered_map<std::string, bool> experimentalFeatures;
-    std::unordered_map<std::string, bool> internalDebugFeatures;
-
     std::unordered_map<std::string, bool> boolWebPreferenceFeatures;
     std::unordered_map<std::string, double> doubleWebPreferenceFeatures;
     std::unordered_map<std::string, uint32_t> uint32WebPreferenceFeatures;
@@ -48,6 +45,9 @@ struct TestFeatures {
     std::unordered_map<std::string, std::string> stringTestRunnerFeatures;
     std::unordered_map<std::string, std::vector<std::string>> stringVectorTestRunnerFeatures;
 };
+
+bool operator==(const TestFeatures&, const TestFeatures&);
+bool operator!=(const TestFeatures&, const TestFeatures&);
 
 void merge(TestFeatures& base, TestFeatures additional);
 

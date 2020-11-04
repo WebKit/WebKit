@@ -86,9 +86,6 @@ public:
         return enableProcessSwapOnNavigation() || enableProcessSwapOnWindowOpen();
     }
 
-    const std::unordered_map<std::string, bool>& experimentalFeatures() const { return m_features.experimentalFeatures; }
-    const std::unordered_map<std::string, bool>& internalDebugFeatures() const { return m_features.internalDebugFeatures; }
-
     const std::unordered_map<std::string, bool>& boolWebPreferenceFeatures() const { return m_features.boolWebPreferenceFeatures; }
     const std::unordered_map<std::string, double>& doubleWebPreferenceFeatures() const { return m_features.doubleWebPreferenceFeatures; }
     const std::unordered_map<std::string, uint32_t>& uint32WebPreferenceFeatures() const { return m_features.uint32WebPreferenceFeatures; }

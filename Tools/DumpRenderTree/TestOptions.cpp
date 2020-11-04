@@ -130,29 +130,9 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
     return map;
 }
 
-bool TestOptions::webViewIsCompatibleWithOptions(const TestOptions& options) const
+bool TestOptions::webViewIsCompatibleWithOptions(const TestOptions& other) const
 {
-    if (m_features.experimentalFeatures != options.m_features.experimentalFeatures)
-        return false;
-    if (m_features.internalDebugFeatures != options.m_features.internalDebugFeatures)
-        return false;
-    if (m_features.boolWebPreferenceFeatures != options.m_features.boolWebPreferenceFeatures)
-        return false;
-    if (m_features.doubleWebPreferenceFeatures != options.m_features.doubleWebPreferenceFeatures)
-        return false;
-    if (m_features.uint32WebPreferenceFeatures != options.m_features.uint32WebPreferenceFeatures)
-        return false;
-    if (m_features.stringWebPreferenceFeatures != options.m_features.stringWebPreferenceFeatures)
-        return false;
-    if (m_features.boolTestRunnerFeatures != options.m_features.boolTestRunnerFeatures)
-        return false;
-    if (m_features.doubleTestRunnerFeatures != options.m_features.doubleTestRunnerFeatures)
-        return false;
-    if (m_features.stringTestRunnerFeatures != options.m_features.stringTestRunnerFeatures)
-        return false;
-    if (m_features.stringVectorTestRunnerFeatures != options.m_features.stringVectorTestRunnerFeatures)
-        return false;
-    return true;
+    return m_features == other.m_features;
 }
 
 template<typename T> T featureValue(std::string key, T defaultValue, const std::unordered_map<std::string, T>& map)

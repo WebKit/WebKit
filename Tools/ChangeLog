@@ -1,3 +1,67 @@
+2020-11-04  Sam Weinig  <weinig@apple.com>
+
+        Remove support for experimental: and internal: prefixes from WebKitTestRunner and DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=218569
+
+        Reviewed by Tim Horton.
+
+        The prefixes were removed from use in tests in r269360.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (WTR::TestOptions::webViewIsCompatibleWithOptions const):
+        Replace duplicated comparison code with call to operator==.
+
+        * TestRunnerShared/TestFeatures.cpp:
+        (WTR::merge):
+        Remove special maps for internal and experimental features.
+
+        (WTR::operator==):
+        (WTR::operator!=):
+        Add operator== support for use by TestOptions in determining compatibility.
+
+        (WTR::parseTestHeaderFeature):
+        (WTR::parseTestHeader):
+        Split out feature parsing for future use in command line parsing.
+
+        * TestRunnerShared/TestFeatures.h:
+        Remove special maps for internal and experimental features.
+
+        * WebKitTestRunner/Options.cpp:
+        (WTR::handleOptionAcceleratedDrawing):
+        (WTR::handleOptionRemoteLayerTree):
+        (WTR::handleOptionShowWebView):
+        (WTR::handleOptionShowTouches):
+        (WTR::parseFeature):
+        (WTR::handleOptionExperimentalFeature):
+        (WTR::handleOptionInternalFeature):
+        * WebKitTestRunner/Options.h:
+        Rather than parsing into bools / extra maps, parse the command line options
+        directly into a TestFeatures.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        Initialize global features from the new Options' TestFeatures. 
+
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        Remove special casing for experimental and internal features, they are now just
+        generic bool WebPreferences. Move special cases for internal features into TestOptions.
+
+        (WTR::TestController::testOptionsForTest const):
+        Now that global features is not seeded with the default features, construct the
+        full merge chain starting with the default features instead.
+
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+        Add some additional defaults moved from TestController::resetPreferencesToConsistentValues.
+
+        (WTR::TestOptions::hasSameInitializationOptions const):
+        Use operator== to reduce duplicated code.
+
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::experimentalFeatures const): Deleted.
+        (WTR::TestOptions::internalDebugFeatures const): Deleted.
+        Remove now unused extra maps for external and internal features.
+
 2020-11-04  David Kilzer  <ddkilzer@apple.com>
 
         WebKit should remove unused debug variant support

@@ -468,14 +468,7 @@ void TestController::initialize(int argc, const char* argv[])
     m_allowedHosts = options.allowedHosts;
     m_checkForWorldLeaks = options.checkForWorldLeaks;
     m_allowAnyHTTPSCertificateForAllowedHosts = options.allowAnyHTTPSCertificateForAllowedHosts;
-
-    m_globalFeatures = TestOptions::defaults();
-    m_globalFeatures.internalDebugFeatures = options.internalFeatures;
-    m_globalFeatures.experimentalFeatures = options.experimentalFeatures;
-    m_globalFeatures.boolWebPreferenceFeatures.insert_or_assign("AcceleratedDrawingEnabled", options.shouldUseAcceleratedDrawing);
-    m_globalFeatures.boolTestRunnerFeatures.insert_or_assign("useRemoteLayerTree", options.shouldUseRemoteLayerTree);
-    m_globalFeatures.boolTestRunnerFeatures.insert_or_assign("shouldShowWebView", options.shouldShowWebView);
-    m_globalFeatures.boolTestRunnerFeatures.insert_or_assign("shouldShowTouches", options.shouldShowTouches);
+    m_globalFeatures = std::move(options.features);
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     m_accessibilityIsolatedTreeMode = options.accessibilityIsolatedTreeMode;
@@ -836,23 +829,6 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesResetTestRunnerOverrides(preferences);
 
     WKPreferencesEnableAllExperimentalFeatures(preferences);
-    for (const auto& [key, value] : options.experimentalFeatures())
-        WKPreferencesSetExperimentalFeatureForKey(preferences, value, toWK(key).get());
-
-    WKPreferencesResetAllInternalDebugFeatures(preferences);
-
-    // Set internal features that have different default values for testing.
-    WKPreferencesSetInternalDebugFeatureForKey(preferences, false, toWK("AsyncOverflowScrollingEnabled").get());
-    WKPreferencesSetInternalDebugFeatureForKey(preferences, false, toWK("AsyncFrameScrollingEnabled").get());
-    WKPreferencesSetInternalDebugFeatureForKey(preferences, true, toWK("InputTypeDateEnabled").get());
-    WKPreferencesSetInternalDebugFeatureForKey(preferences, true, toWK("InputTypeDateTimeLocalEnabled").get());
-    WKPreferencesSetInternalDebugFeatureForKey(preferences, true, toWK("InputTypeMonthEnabled").get());
-    WKPreferencesSetInternalDebugFeatureForKey(preferences, true, toWK("InputTypeTimeEnabled").get());
-    WKPreferencesSetInternalDebugFeatureForKey(preferences, true, toWK("InputTypeWeekEnabled").get());
-    WKPreferencesSetInternalDebugFeatureForKey(preferences, false, toWK("SpeakerSelectionRequiresUserGesture").get());
-
-    for (const auto& [key, value]  : options.internalDebugFeatures())
-        WKPreferencesSetInternalDebugFeatureForKey(preferences, value, toWK(key).get());
 
     // FIXME: Convert these to default values for TestOptions.
     WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.shouldEnableProcessSwapOnNavigation());
@@ -1279,7 +1255,8 @@ WKURLRef TestController::createTestURL(const char* pathOrURL)
 
 TestOptions TestController::testOptionsForTest(const TestCommand& command) const
 {
-    TestFeatures features = m_globalFeatures;
+    TestFeatures features = TestOptions::defaults();
+    merge(features, m_globalFeatures);
     merge(features, hardcodedFeaturesBasedOnPathForTest(command));
     merge(features, platformSpecificFeatureDefaultsForTest(command));
     merge(features, featureDefaultsFromTestHeaderForTest(command, TestOptions::keyTypeMapping()));

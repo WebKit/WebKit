@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include "TestFeatures.h"
 #include <functional>
 #include <set>
 #include <stdio.h>
@@ -46,10 +47,6 @@ struct Options {
     bool gcBetweenTests { false };
     bool shouldDumpPixelsForAllTests { false };
     bool forceComplexText { false };
-    bool shouldUseAcceleratedDrawing { false };
-    bool shouldUseRemoteLayerTree { false };
-    bool shouldShowWebView { false };
-    bool shouldShowTouches { false };
     bool checkForWorldLeaks { false };
     bool allowAnyHTTPSCertificateForAllowedHosts { false };
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -57,8 +54,7 @@ struct Options {
 #endif
     std::vector<std::string> paths;
     std::set<std::string> allowedHosts;
-    std::unordered_map<std::string, bool> internalFeatures;
-    std::unordered_map<std::string, bool> experimentalFeatures;
+    TestFeatures features;
 };
 
 class Option {
