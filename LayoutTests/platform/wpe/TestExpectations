@@ -243,6 +243,19 @@ webkit.org/b/213829 css3/calc/background-position-parsing.html [ ImageOnlyFailur
 # Flexbox layout
 webkit.org/b/215502 fast/flexbox/image-percent-max-height.html [ Failure Pass ImageOnlyFailure ]
 
+# Link target
+webkit.org/b/218553 http/tests/adClickAttribution/attribution-conversion-through-image-redirect-in-new-window.html [ Timeout ]
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag-from-subframe.html
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag.html
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag-from-subframe.html
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag.html
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag-from-subframe.html
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag.html
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag-from-subframe.html
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag.html
+webkit.org/b/212145 http/tests/navigation/no-referrer-reset.html [ Timeout ]
+webkit.org/b/212145 http/tests/navigation/no-referrer-target-blank.html [ Timeout ]
+
 # Paint Timing
 webkit.org/b/211221 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-num-chars.html [ Pass Failure ]
 
@@ -1219,9 +1232,6 @@ webkit.org/b/212078 webaudio/silent-audio-interrupted-in-background.html [ Timeo
 
 webkit.org/b/212144 http/tests/xmlhttprequest/on-network-timeout-error-during-preflight.html [ Timeout ]
 
-webkit.org/b/212145 http/tests/navigation/no-referrer-reset.html [ Timeout ]
-webkit.org/b/212145 http/tests/navigation/no-referrer-target-blank.html [ Timeout ]
-
 webkit.org/b/201272 http/tests/websocket/tests/hybi/bad-handshake-crash.html [ Timeout ]
 
 webkit.org/b/212202 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Timeout ]
@@ -1288,15 +1298,6 @@ Bug(WPE) canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]
 
 Bug(WPE) ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]
 Bug(WPE) ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
-
-webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag-from-subframe.html
-webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag.html
-webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag-from-subframe.html
-webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag.html
-webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag-from-subframe.html
-webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag.html
-webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag-from-subframe.html
-webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag.html
 
 # webgl/1.0.3:
 #  Failing:

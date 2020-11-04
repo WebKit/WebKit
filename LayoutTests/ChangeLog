@@ -1,3 +1,13 @@
+2020-11-03  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Gardening adClickAttribution failure
+
+        Unreviewed test gardening.
+
+        Also grouped some target-related entries together
+
+        * platform/wpe/TestExpectations:
+
 2020-11-03  Tyler Wilcock  <twilco.o@protonmail.com>
 
         Ignore order when parsing inset and color for box-shadow
