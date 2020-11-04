@@ -2219,6 +2219,8 @@
 		7AF9B20618CFB2DF00C64BEF /* VTTRegionList.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AF9B20018CFB2DF00C64BEF /* VTTRegionList.h */; };
 		7AF9B20D18CFB5F400C64BEF /* JSVTTRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AF9B20918CFB5F200C64BEF /* JSVTTRegion.h */; };
 		7AF9B20F18CFB5F400C64BEF /* JSVTTRegionList.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AF9B20B18CFB5F300C64BEF /* JSVTTRegionList.h */; };
+		7BB34A152534579100029D08 /* WebGLLayerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BB34A132534579100029D08 /* WebGLLayerClient.h */; };
+		7BB34A1725345CB200029D08 /* GraphicsContextGLANGLEUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BB34A1625345CB200029D08 /* GraphicsContextGLANGLEUtilities.h */; };
 		7BE7427381FA906FBB4F0F2C /* JSSVGGraphicsElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 950C4C02BED8936F818E2F99 /* JSSVGGraphicsElement.h */; };
 		7C029C6E2493C8F800268204 /* ColorTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C029C6D2493C8F800268204 /* ColorTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C1843FE1C8B7283002EB973 /* Autofill.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C1843FC1C8B7283002EB973 /* Autofill.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9993,6 +9995,8 @@
 		7AF9B20918CFB5F200C64BEF /* JSVTTRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVTTRegion.h; sourceTree = "<group>"; };
 		7AF9B20A18CFB5F300C64BEF /* JSVTTRegionList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVTTRegionList.cpp; sourceTree = "<group>"; };
 		7AF9B20B18CFB5F300C64BEF /* JSVTTRegionList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVTTRegionList.h; sourceTree = "<group>"; };
+		7BB34A132534579100029D08 /* WebGLLayerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLLayerClient.h; sourceTree = "<group>"; };
+		7BB34A1625345CB200029D08 /* GraphicsContextGLANGLEUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContextGLANGLEUtilities.h; sourceTree = "<group>"; };
 		7C017C3D24969F1300DC0C02 /* NavigatorPlugins.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NavigatorPlugins.idl; sourceTree = "<group>"; };
 		7C029C6D2493C8F800268204 /* ColorTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorTypes.h; sourceTree = "<group>"; };
 		7C0CEF281E4A542C008DEB80 /* JSDOMConstructorBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConstructorBase.h; sourceTree = "<group>"; };
@@ -21600,6 +21604,7 @@
 				6E27F243229C9F8400F1F632 /* ExtensionsGLANGLE.cpp */,
 				6E27F244229C9F8D00F1F632 /* ExtensionsGLANGLE.h */,
 				6E27F2422298CE4B00F1F632 /* GraphicsContextGLANGLE.cpp */,
+				7BB34A1625345CB200029D08 /* GraphicsContextGLANGLEUtilities.h */,
 				6E290861229DB950000986E2 /* TemporaryANGLESetting.cpp */,
 				6E290863229DB970000986E2 /* TemporaryANGLESetting.h */,
 			);
@@ -26099,6 +26104,7 @@
 				CD5D27751E8318E000D80A3D /* WebCoreDecompressionSession.mm */,
 				49FFBF3D11C93EE3006A7118 /* WebGLLayer.h */,
 				49FFBF3E11C93EE3006A7118 /* WebGLLayer.mm */,
+				7BB34A132534579100029D08 /* WebGLLayerClient.h */,
 				318436DB21B9DAA000ED383E /* WebGPULayer.h */,
 				318436DD21B9DAA000ED383E /* WebGPULayer.mm */,
 			);
@@ -31185,6 +31191,7 @@
 				B2A015A90AF6CD53006BCE0E /* GraphicsContext.h in Headers */,
 				934907E4125BBBC8007F23A0 /* GraphicsContextCG.h in Headers */,
 				313DE87023A96973008FC47B /* GraphicsContextGL.h in Headers */,
+				7BB34A1725345CB200029D08 /* GraphicsContextGLANGLEUtilities.h in Headers */,
 				7C330A021DF8FAC600D3395C /* GraphicsContextGLAttributes.h in Headers */,
 				49C7B9FC1042D3650009D447 /* GraphicsContextGLOpenGL.h in Headers */,
 				319A728823C267FE0085353C /* GraphicsContextGLOpenGLManager.h in Headers */,
@@ -34171,6 +34178,7 @@
 				6EBF0E5512A8929800DB1709 /* WebGLExtension.h in Headers */,
 				49C7B9CF1042D32F0009D447 /* WebGLFramebuffer.h in Headers */,
 				49FFBF3F11C93EE3006A7118 /* WebGLLayer.h in Headers */,
+				7BB34A152534579100029D08 /* WebGLLayerClient.h in Headers */,
 				93F1D5BB12D532C400832BEC /* WebGLLoseContext.h in Headers */,
 				49C7B9D51042D32F0009D447 /* WebGLObject.h in Headers */,
 				49C7B9D71042D32F0009D447 /* WebGLProgram.h in Headers */,
