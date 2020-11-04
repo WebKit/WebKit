@@ -1,5 +1,17 @@
 2020-11-04  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/dom tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=218570
+
+        Reviewed by David Kilzer.
+
+        Resync web-platform-tests/dom tests from upstream 7a287c9e26fbc12c91.
+
+        * resources/resource-files.json:
+        * web-platform-tests/dom/*: Updated
+
+2020-11-04  Chris Dumez  <cdumez@apple.com>
+
         imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections.html fails on some platforms
         https://bugs.webkit.org/show_bug.cgi?id=218527
         <rdar://problem/68947198>

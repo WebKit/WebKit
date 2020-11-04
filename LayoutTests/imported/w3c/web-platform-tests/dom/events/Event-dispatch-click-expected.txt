@@ -1,4 +1,6 @@
 
+Harness Error (TIMEOUT), message = null
+
 PASS basic with click()
 PASS basic with dispatchEvent()
 PASS basic with wrong event class
@@ -14,5 +16,16 @@ PASS disconnected checkbox should be checked
 PASS disconnected radio should be checked
 PASS disconnected checkbox should be checked from dispatchEvent(new MouseEvent('click'))
 PASS disconnected radio should be checked from dispatchEvent(new MouseEvent('click'))
+PASS disabled checkbox should be checked from dispatchEvent(new MouseEvent("click"))
+PASS disabled radio should be checked from dispatchEvent(new MouseEvent("click"))
+TIMEOUT disabled checkbox should fire onclick Test timed out
+TIMEOUT disabled radio should fire onclick Test timed out
+TIMEOUT disabled checkbox should get legacy-canceled-activation behavior Test timed out
+TIMEOUT disabled radio should get legacy-canceled-activation behavior Test timed out
+PASS disabled checkbox should get legacy-canceled-activation behavior 2
+FAIL disabled radio should get legacy-canceled-activation behavior 2 assert_false: expected false got true
 PASS disconnected form should not submit
+PASS disabled submit button should not activate
+PASS submit button should not activate if the event listener disables it
+PASS submit button that morphed from checkbox should not activate
 

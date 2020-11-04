@@ -29,8 +29,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ChildNode-replaceWith.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Comment-Text-constructor.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Comment-constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/DOMImplementation-createDocument-with-null-browsing-context-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/DOMImplementation-createDocument.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/DOMImplementation-createDocumentType.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/DOMImplementation-createHTMLDocument-with-null-browsing-context-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/DOMImplementation-createHTMLDocument-with-saved-implementation.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/DOMImplementation-createHTMLDocument.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/DOMImplementation-createHTMLDocument.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/DOMImplementation-hasFeature.html
@@ -123,6 +126,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-remove.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-removeAttribute.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-removeAttributeNS.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-setAttribute-crbug-1138487.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-setAttribute.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-siblingElement-null-svg.svg
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-siblingElement-null-xhtml.xhtml
@@ -130,6 +134,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-tagName.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-webkitMatchesSelector.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-attributes.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-callback-arguments.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-characterData.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-childList.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-disconnect.html
@@ -144,6 +149,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-cloneNode-XMLDocument.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-cloneNode-document-with-doctype.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-cloneNode-external-stylesheet-no-bc.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-cloneNode-on-inactive-document-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-cloneNode-svg.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-cloneNode.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-compareDocumentPosition.html

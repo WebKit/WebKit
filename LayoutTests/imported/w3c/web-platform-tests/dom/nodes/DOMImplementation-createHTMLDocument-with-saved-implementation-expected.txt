@@ -1,0 +1,3 @@
+
+PASS createHTMLDocument(): from a saved and detached implementation does not return null
+
