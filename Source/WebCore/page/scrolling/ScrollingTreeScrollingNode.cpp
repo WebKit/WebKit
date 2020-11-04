@@ -258,18 +258,20 @@ void ScrollingTreeScrollingNode::scrollTo(const FloatPoint& position, ScrollType
         return;
 
     scrollingTree().setIsHandlingProgrammaticScroll(scrollType == ScrollType::Programmatic);
-    
+
     m_currentScrollPosition = adjustedScrollPosition(position, clamp);
     
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " scrollTo " << position << " (" << scrollType << ") (delta from last committed position " << (m_lastCommittedScrollPosition - m_currentScrollPosition) << ")");
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " scrollTo " << position << " adjusted to "
+        << m_currentScrollPosition << " (" << scrollType << ") (delta from last committed position " << (m_lastCommittedScrollPosition - m_currentScrollPosition) << ")"
+        << " rubberbanding " << scrollingTree().isRubberBandInProgressForNode(scrollingNodeID()));
 
     updateViewportForCurrentScrollPosition();
-    currentScrollPositionChanged();
+    currentScrollPositionChanged(scrollType);
 
     scrollingTree().setIsHandlingProgrammaticScroll(false);
 }
 
-void ScrollingTreeScrollingNode::currentScrollPositionChanged(ScrollingLayerPositionAction action)
+void ScrollingTreeScrollingNode::currentScrollPositionChanged(ScrollType, ScrollingLayerPositionAction action)
 {
     m_scrolledSinceLastCommit = true;
     scrollingTree().scrollingTreeNodeDidScroll(*this, action);

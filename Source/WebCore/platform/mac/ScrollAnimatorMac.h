@@ -147,6 +147,7 @@ private:
     bool allowsHorizontalStretching(const PlatformWheelEvent&) const final;
     bool allowsVerticalStretching(const PlatformWheelEvent&) const final;
     bool pinnedInDirection(const FloatSize&) const final;
+    RectEdges<bool> edgePinnedState() const final;
     bool canScrollHorizontally() const final;
     bool canScrollVertically() const final;
     bool shouldRubberBandInDirection(ScrollDirection) const final;

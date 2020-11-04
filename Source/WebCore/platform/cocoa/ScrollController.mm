@@ -407,20 +407,15 @@ void ScrollController::snapRubberBandTimerFired()
     if (isScrollSnapInProgress())
         return;
     
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollController::snapRubberBandTimerFired() - main thread " << isMainThread());
+
     if (!m_momentumScrollInProgress || m_ignoreMomentumScrolls) {
         auto timeDelta = MonotonicTime::now() - m_startTime;
 
         if (m_startStretch.isZero()) {
             m_startStretch = m_client.stretchAmount();
             if (m_startStretch == FloatSize()) {
-                stopSnapRubberbandTimer();
-
-                m_stretchScrollForce = { };
-                m_startTime = { };
-                m_startStretch = { };
-                m_origVelocity = { };
-
-                updateRubberBandingState();
+                stopRubberbanding();
                 return;
             }
 
@@ -451,12 +446,7 @@ void ScrollController::snapRubberBandTimerFired()
             m_stretchScrollForce.setHeight(reboundDeltaForElasticDelta(newStretch.height()));
         } else {
             m_client.adjustScrollPositionToBoundsIfNecessary();
-
-            stopSnapRubberbandTimer();
-            m_stretchScrollForce = { };
-            m_startTime = { };
-            m_startStretch = { };
-            m_origVelocity = { };
+            stopRubberbanding();
         }
     } else {
         m_startTime = MonotonicTime::now();
@@ -469,10 +459,15 @@ void ScrollController::snapRubberBandTimerFired()
 }
 #endif
 
-void ScrollController::scrollPositionChanged()
+void ScrollController::scrollPositionChanged(ScrollType scrollType)
 {
 #if ENABLE(RUBBER_BANDING)
+    if (scrollType == ScrollType::Programmatic && !scrolledToRubberbandingEdge())
+        stopRubberbanding();
+
     updateRubberBandingState();
+#else
+    UNUSED_PARAM(scrollType);
 #endif
 }
 
@@ -516,6 +511,16 @@ bool ScrollController::isScrollSnapInProgress() const
 }
 
 #if ENABLE(RUBBER_BANDING)
+void ScrollController::stopRubberbanding()
+{
+    stopSnapRubberbandTimer();
+    m_stretchScrollForce = { };
+    m_startTime = { };
+    m_startStretch = { };
+    m_origVelocity = { };
+    updateRubberBandingState();
+}
+
 void ScrollController::startSnapRubberbandTimer()
 {
     m_client.willStartRubberBandSnapAnimation();
@@ -584,9 +589,35 @@ void ScrollController::updateRubberBandingState()
     bool isRubberBanding = isRubberBandInProgressInternal();
     if (isRubberBanding == m_isRubberBanding)
         return;
-    
+
     m_isRubberBanding = isRubberBanding;
+    if (m_isRubberBanding)
+        updateRubberBandingEdges(m_client.stretchAmount());
+    else
+        m_rubberBandingEdges = { };
+
     m_client.rubberBandingStateChanged(m_isRubberBanding);
+}
+
+void ScrollController::updateRubberBandingEdges(IntSize clientStretch)
+{
+    m_rubberBandingEdges.setLeft(clientStretch.width() < 0);
+    m_rubberBandingEdges.setRight(clientStretch.width() > 0);
+
+    m_rubberBandingEdges.setTop(clientStretch.height() < 0);
+    m_rubberBandingEdges.setBottom(clientStretch.height() > 0);
+}
+
+bool ScrollController::scrolledToRubberbandingEdge() const
+{
+    auto pinnedEdges = m_client.edgePinnedState();
+    
+    for (auto side : allBoxSides) {
+        if (m_rubberBandingEdges[side] && !pinnedEdges[side])
+            return false;
+    }
+    
+    return true;
 }
 
 #endif // ENABLE(RUBBER_BANDING)

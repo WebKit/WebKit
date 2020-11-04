@@ -626,6 +626,21 @@ bool ScrollableArea::isPinnedVerticallyInDirection(int verticalScrollDelta) cons
     return false;
 }
 
+RectEdges<bool> ScrollableArea::edgePinnedState() const
+{
+    auto scrollPosition = this->scrollPosition();
+    auto minScrollPosition = minimumScrollPosition();
+    auto maxScrollPosition = maximumScrollPosition();
+
+    // Top, right, bottom, left.
+    return {
+        scrollPosition.y() <= minScrollPosition.y(),
+        scrollPosition.x() >= maxScrollPosition.x(),
+        scrollPosition.y() >= maxScrollPosition.y(),
+        scrollPosition.x() <= minScrollPosition.x()
+    };
+}
+
 int ScrollableArea::horizontalScrollbarIntrusion() const
 {
     return verticalScrollbar() ? verticalScrollbar()->occupiedWidth() : 0;

@@ -160,9 +160,9 @@ bool ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent(const PlatformWheel
     return handled;
 }
 
-void ScrollingTreeScrollingNodeDelegateMac::currentScrollPositionChanged()
+void ScrollingTreeScrollingNodeDelegateMac::currentScrollPositionChanged(ScrollType scrollType)
 {
-    m_scrollController.scrollPositionChanged();
+    m_scrollController.scrollPositionChanged(scrollType);
 }
 
 bool ScrollingTreeScrollingNodeDelegateMac::isRubberBandInProgress() const
@@ -289,6 +289,11 @@ bool ScrollingTreeScrollingNodeDelegateMac::pinnedInDirection(const FloatSize& d
         return true;
 
     return false;
+}
+
+RectEdges<bool> ScrollingTreeScrollingNodeDelegateMac::edgePinnedState() const
+{
+    return scrollingNode().edgePinnedState();
 }
 
 bool ScrollingTreeScrollingNodeDelegateMac::canScrollHorizontally() const

@@ -29,6 +29,7 @@
 
 #include "FloatPoint.h"
 #include "FloatSize.h"
+#include "RectEdges.h"
 #include "ScrollTypes.h"
 #include "WheelEventTestMonitor.h"
 #include <wtf/Noncopyable.h>
@@ -75,7 +76,11 @@ public:
     virtual bool allowsHorizontalStretching(const PlatformWheelEvent&) const = 0;
     virtual bool allowsVerticalStretching(const PlatformWheelEvent&) const = 0;
     virtual IntSize stretchAmount() const = 0;
+
     virtual bool pinnedInDirection(const FloatSize&) const = 0;
+
+    virtual RectEdges<bool> edgePinnedState() const = 0;
+
     virtual bool canScrollHorizontally() const = 0;
     virtual bool canScrollVertically() const = 0;
     virtual bool shouldRubberBandInDirection(ScrollDirection) const = 0;
@@ -146,7 +151,7 @@ public:
     bool isRubberBandInProgress() const;
     bool isScrollSnapInProgress() const;
     
-    void scrollPositionChanged();
+    void scrollPositionChanged(ScrollType);
 
 #if ENABLE(CSS_SCROLL_SNAP)
     void updateScrollSnapPoints(ScrollEventAxis, const Vector<LayoutUnit>&, const Vector<ScrollOffsetRange<LayoutUnit>>&);
@@ -173,6 +178,8 @@ public:
 
 private:
 #if ENABLE(RUBBER_BANDING)
+    void stopRubberbanding();
+
     void startSnapRubberbandTimer();
     void stopSnapRubberbandTimer();
     void snapRubberBand();
@@ -183,6 +190,9 @@ private:
 
     bool isRubberBandInProgressInternal() const;
     void updateRubberBandingState();
+    void updateRubberBandingEdges(IntSize clientStretch);
+    
+    bool scrolledToRubberbandingEdge() const;
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
@@ -215,6 +225,7 @@ private:
     MonotonicTime m_startTime;
     FloatSize m_startStretch;
     FloatSize m_origVelocity;
+    RectEdges<bool> m_rubberBandingEdges;
     std::unique_ptr<ScrollControllerTimer> m_snapRubberbandTimer;
 #endif
 

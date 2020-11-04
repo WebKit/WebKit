@@ -51,7 +51,7 @@ public:
 
     bool handleWheelEvent(const PlatformWheelEvent&);
     
-    void currentScrollPositionChanged();
+    void currentScrollPositionChanged(ScrollType);
 
 #if ENABLE(CSS_SCROLL_SNAP)
     void updateScrollSnapPoints(ScrollEventAxis, const Vector<LayoutUnit>&, const Vector<ScrollOffsetRange<LayoutUnit>>&);
@@ -78,6 +78,7 @@ private:
     bool allowsVerticalStretching(const PlatformWheelEvent&) const final;
     IntSize stretchAmount() const final;
     bool pinnedInDirection(const FloatSize&) const final;
+    RectEdges<bool> edgePinnedState() const final;
     bool canScrollHorizontally() const final;
     bool canScrollVertically() const final;
     bool shouldRubberBandInDirection(ScrollDirection) const final;

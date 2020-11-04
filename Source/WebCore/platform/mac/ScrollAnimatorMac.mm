@@ -1319,6 +1319,11 @@ bool ScrollAnimatorMac::pinnedInDirection(const FloatSize& direction) const
     return false;
 }
 
+RectEdges<bool> ScrollAnimatorMac::edgePinnedState() const
+{
+    return m_scrollableArea.edgePinnedState();
+}
+
 // FIXME: We should find a way to share some of the code from newGestureIsStarting(), isAlreadyPinnedInDirectionOfGesture(),
 // allowsVerticalStretching(), and allowsHorizontalStretching() with the implementation in ScrollingTreeFrameScrollingNodeMac.
 static bool newGestureIsStarting(const PlatformWheelEvent& wheelEvent)

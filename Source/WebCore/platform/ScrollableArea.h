@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "RectEdges.h"
 #include "ScrollSnapOffsetsInfo.h"
 #include "ScrollTypes.h"
 #include "Scrollbar.h"
@@ -326,6 +327,8 @@ public:
     bool isPinnedInBothDirections(const IntSize&) const; 
     bool isPinnedHorizontallyInDirection(int horizontalScrollDelta) const; 
     bool isPinnedVerticallyInDirection(int verticalScrollDelta) const;
+
+    RectEdges<bool> edgePinnedState() const;
 
     // True if scrolling happens by moving compositing layers.
     virtual bool usesCompositedScrolling() const { return false; }

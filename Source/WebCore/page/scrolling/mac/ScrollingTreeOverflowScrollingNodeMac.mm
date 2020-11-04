@@ -86,10 +86,10 @@ WheelEventHandlingResult ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent
     return WheelEventHandlingResult::result(m_delegate.handleWheelEvent(wheelEvent));
 }
 
-void ScrollingTreeOverflowScrollingNodeMac::currentScrollPositionChanged(ScrollingLayerPositionAction action)
+void ScrollingTreeOverflowScrollingNodeMac::currentScrollPositionChanged(ScrollType scrollType, ScrollingLayerPositionAction action)
 {
-    ScrollingTreeOverflowScrollingNode::currentScrollPositionChanged(action);
-    m_delegate.currentScrollPositionChanged();
+    ScrollingTreeOverflowScrollingNode::currentScrollPositionChanged(scrollType, action);
+    m_delegate.currentScrollPositionChanged(scrollType);
 }
 
 FloatPoint ScrollingTreeOverflowScrollingNodeMac::adjustedScrollPosition(const FloatPoint& position, ScrollClamping clamp) const
