@@ -2114,7 +2114,7 @@ private:
             break;
         }
 
-        case CheckNeutered:
+        case CheckDetached:
         case CheckArray: {
             fixEdge<CellUse>(node->child1());
             break;

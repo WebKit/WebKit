@@ -2600,8 +2600,8 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case CheckNeutered: {
-        compileCheckNeutered(node);
+    case CheckDetached: {
+        compileCheckDetached(node);
         break;
     }
 

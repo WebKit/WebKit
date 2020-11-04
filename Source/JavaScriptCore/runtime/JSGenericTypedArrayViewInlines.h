@@ -163,7 +163,7 @@ bool JSGenericTypedArrayView<Adaptor>::setWithSpecificType(
     unsigned otherOffset, unsigned length, CopyType type)
 {
     // Handle the hilarious case: the act of getting the length could have resulted
-    // in neutering. Well, no. That'll never happen because there cannot be
+    // in detaching. Well, no. That'll never happen because there cannot be
     // side-effects on getting the length of a typed array. But predicting where there
     // are, or aren't, side-effects is a fool's game so we resort to this cheap
     // check. Worst case, if we're wrong, people start seeing less things get copied
@@ -303,7 +303,7 @@ bool JSGenericTypedArrayView<Adaptor>::set(
             bool success = setIndex(globalObject, offset + i, value);
             EXCEPTION_ASSERT(!scope.exception() || !success);
             if (!success) {
-                if (isNeutered())
+                if (isDetached())
                     throwTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
                 return false;
             }
@@ -437,7 +437,7 @@ bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex(
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
 
-    if (thisObject->isNeutered() || !thisObject->canGetIndexQuickly(propertyName))
+    if (thisObject->isDetached() || !thisObject->canGetIndexQuickly(propertyName))
         return false;
 
     slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::None), thisObject->getIndexQuickly(propertyName));
@@ -458,7 +458,7 @@ bool JSGenericTypedArrayView<Adaptor>::deletePropertyByIndex(
 {
     // Integer-indexed elements can't be deleted, so we must return false when the index is valid.
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
-    return thisObject->isNeutered() || propertyName >= thisObject->m_length;
+    return thisObject->isDetached() || propertyName >= thisObject->m_length;
 }
 
 template<typename Adaptor>

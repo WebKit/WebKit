@@ -48,7 +48,7 @@ JSDataView* JSDataView::create(
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     ASSERT(buffer);
-    if (buffer->isNeutered()) {
+    if (buffer->isDetached()) {
         throwTypeError(globalObject, scope, "Buffer is already detached"_s);
         return nullptr;
     }

@@ -51,7 +51,7 @@ void ArrayBufferViewWatchpointAdaptor::add(
 
     // FIXME: We don't need to set this watchpoint at all for shared buffers.
     // https://bugs.webkit.org/show_bug.cgi?id=164108
-    arrayBuffer->neuteringWatchpointSet().add(WTFMove(watchpoint));
+    arrayBuffer->detachingWatchpointSet().add(WTFMove(watchpoint));
 }
 
 void SymbolTableAdaptor::add(

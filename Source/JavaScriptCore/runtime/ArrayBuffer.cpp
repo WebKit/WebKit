@@ -122,7 +122,7 @@ void ArrayBufferContents::tryAllocate(unsigned numElements, unsigned elementByte
     size_t sizeInBytes = static_cast<size_t>(numElements) * static_cast<size_t>(elementByteSize);
     size_t allocationSize = sizeInBytes;
     if (!allocationSize)
-        allocationSize = 1; // Make sure malloc actually allocates something, but not too much. We use null to mean that the buffer is neutered.
+        allocationSize = 1; // Make sure malloc actually allocates something, but not too much. We use null to mean that the buffer is detached.
 
     void* data = Gigacage::tryMalloc(Gigacage::Primitive, allocationSize);
     m_data = DataType(data, sizeInBytes);
@@ -374,9 +374,9 @@ bool ArrayBuffer::transferTo(VM& vm, ArrayBufferContents& result)
         return true;
     }
 
-    bool isNeuterable = !m_pinCount && !m_locked;
+    bool isDetachable = !m_pinCount && !m_locked;
 
-    if (!isNeuterable) {
+    if (!isDetachable) {
         m_contents.copyTo(result);
         if (!result.m_data)
             return false;
@@ -384,27 +384,27 @@ bool ArrayBuffer::transferTo(VM& vm, ArrayBufferContents& result)
     }
 
     m_contents.transferTo(result);
-    notifyNeutering(vm);
+    notifyDetaching(vm);
     return true;
 }
 
-// We allow neutering wasm memory ArrayBuffers even though they are locked.
-void ArrayBuffer::neuter(VM& vm)
+// We allow detaching wasm memory ArrayBuffers even though they are locked.
+void ArrayBuffer::detach(VM& vm)
 {
     ASSERT(isWasmMemory());
     ArrayBufferContents unused;
     m_contents.transferTo(unused);
-    notifyNeutering(vm);
+    notifyDetaching(vm);
 }
 
-void ArrayBuffer::notifyNeutering(VM& vm)
+void ArrayBuffer::notifyDetaching(VM& vm)
 {
     for (size_t i = numberOfIncomingReferences(); i--;) {
         JSCell* cell = incomingReferenceAt(i);
         if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(vm, cell))
-            view->neuter();
+            view->detach();
     }
-    m_neuteringWatchpointSet.fireAll(vm, "Array buffer was neutered");
+    m_detachingWatchpointSet.fireAll(vm, "Array buffer was detached");
 }
 
 ASCIILiteral errorMesasgeForTransfer(ArrayBuffer* buffer)

@@ -2423,7 +2423,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
                 return false;
 
             addToGraph(CheckArray, OpInfo(mode.asWord()), get(virtualRegisterForArgumentIncludingThis(0, registerOffset)));
-            addToGraph(CheckNeutered, get(virtualRegisterForArgumentIncludingThis(0, registerOffset)));
+            addToGraph(CheckDetached, get(virtualRegisterForArgumentIncludingThis(0, registerOffset)));
             FALLTHROUGH;
         }
 

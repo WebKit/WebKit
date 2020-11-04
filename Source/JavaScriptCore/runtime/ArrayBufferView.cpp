@@ -32,7 +32,7 @@ namespace JSC {
 ArrayBufferView::ArrayBufferView(
     RefPtr<ArrayBuffer>&& buffer, unsigned byteOffset, unsigned byteLength)
         : m_byteOffset(byteOffset)
-        , m_isNeuterable(true)
+        , m_isDetachable(true)
         , m_byteLength(byteLength)
         , m_buffer(WTFMove(buffer))
 {
@@ -45,16 +45,16 @@ ArrayBufferView::ArrayBufferView(
 
 ArrayBufferView::~ArrayBufferView()
 {
-    if (!m_isNeuterable)
+    if (!m_isDetachable)
         m_buffer->unpin();
 }
 
-void ArrayBufferView::setNeuterable(bool flag)
+void ArrayBufferView::setDetachable(bool flag)
 {
-    if (flag == m_isNeuterable)
+    if (flag == m_isDetachable)
         return;
     
-    m_isNeuterable = flag;
+    m_isDetachable = flag;
     
     if (!m_buffer)
         return;

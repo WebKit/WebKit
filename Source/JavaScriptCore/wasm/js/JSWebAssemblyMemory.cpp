@@ -116,9 +116,8 @@ Wasm::PageCount JSWebAssemblyMemory::grow(VM& vm, JSGlobalObject* globalObject, 
 void JSWebAssemblyMemory::growSuccessCallback(VM& vm, Wasm::PageCount oldPageCount, Wasm::PageCount newPageCount)
 {
     // We need to clear out the old array buffer because it might now be pointing to stale memory.
-    // Neuter the old array.
     if (m_buffer) {
-        m_buffer->neuter(vm);
+        m_buffer->detach(vm);
         m_buffer = nullptr;
         m_bufferWrapper.clear();
     }

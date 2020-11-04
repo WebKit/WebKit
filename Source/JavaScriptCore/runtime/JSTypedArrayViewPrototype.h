@@ -52,7 +52,7 @@ private:
 };
 
 JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncIsTypedArrayView);
-JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncIsNeutered);
+JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncIsDetached);
 JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncSort);
 JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncLength);
 JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncGetOriginalConstructor);

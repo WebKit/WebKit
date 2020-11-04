@@ -244,8 +244,8 @@ namespace JSC { namespace DFG {
     macro(CheckArrayOrEmpty, NodeMustGenerate) \
     macro(GetPrivateName, NodeResultJS | NodeMustGenerate) \
     macro(GetPrivateNameById, NodeResultJS | NodeMustGenerate) \
-    /* This checks if the edge is a typed array and if it is neutered. */ \
-    macro(CheckNeutered, NodeMustGenerate) \
+    /* This checks if the edge is a typed array and if it is detached. */ \
+    macro(CheckDetached, NodeMustGenerate) \
     macro(Arrayify, NodeMustGenerate) \
     macro(ArrayifyToStructure, NodeMustGenerate) \
     macro(GetIndexedPropertyStorage, NodeResultStorage) \

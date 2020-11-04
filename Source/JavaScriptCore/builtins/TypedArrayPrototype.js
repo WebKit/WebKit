@@ -96,7 +96,7 @@ function fill(value /* [, start [, end]] */)
     var start = @typedArrayClampArgumentToStartOrEnd(@argument(1), length, 0);
     var end = @typedArrayClampArgumentToStartOrEnd(@argument(2), length, length);
 
-    if (@isNeutered(this))
+    if (@isDetached(this))
         @throwTypeError("Underlying ArrayBuffer has been detached from the view");
 
     for (var i = start; i < end; i++)
@@ -175,7 +175,7 @@ function typedArrayElementCompare(array, a, b, comparator)
 
     var result = @toNumber(comparator(a, b));
 
-    if (@isNeutered(array))
+    if (@isDetached(array))
         @throwTypeError("Underlying ArrayBuffer has been detached from the view");
 
     return result;

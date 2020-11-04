@@ -67,7 +67,7 @@ public:
     
     unsigned length() const
     {
-        if (isNeutered())
+        if (isDetached())
             return 0;
         return byteLength() / sizeof(typename Adaptor::Type);
     }

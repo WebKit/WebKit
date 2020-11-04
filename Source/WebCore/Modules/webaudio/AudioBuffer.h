@@ -42,8 +42,8 @@ class AudioBus;
 
 class AudioBuffer : public RefCounted<AudioBuffer> {
 public:
-    enum class LegacyPreventNeutering : bool { No, Yes };
-    static RefPtr<AudioBuffer> create(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, LegacyPreventNeutering = LegacyPreventNeutering::No);
+    enum class LegacyPreventDetaching : bool { No, Yes };
+    static RefPtr<AudioBuffer> create(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, LegacyPreventDetaching = LegacyPreventDetaching::No);
     static ExceptionOr<Ref<AudioBuffer>> create(const AudioBufferOptions&);
     // Returns nullptr if data is not a valid audio file.
     static RefPtr<AudioBuffer> createFromAudioFileData(const void* data, size_t dataSize, bool mixToMono, float sampleRate);
@@ -77,7 +77,7 @@ public:
     void visitChannelWrappers(JSC::SlotVisitor&);
     
 private:
-    AudioBuffer(unsigned numberOfChannels, size_t length, float sampleRate, LegacyPreventNeutering = LegacyPreventNeutering::No);
+    AudioBuffer(unsigned numberOfChannels, size_t length, float sampleRate, LegacyPreventDetaching = LegacyPreventDetaching::No);
     explicit AudioBuffer(AudioBus&);
 
     void invalidate();

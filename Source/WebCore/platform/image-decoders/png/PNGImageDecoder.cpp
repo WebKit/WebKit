@@ -284,7 +284,7 @@ void PNGImageDecoder::headerAvailable()
     }
 
     // We can fill in the size now that the header is available.  Avoid memory
-    // corruption issues by neutering setFailed() during this call; if we don't
+    // corruption issues by returning early from setFailed() during this call; if we don't
     // do this, failures will cause |m_reader| to be deleted, and our jmpbuf
     // will cease to exist.  Note that we'll still properly set the failure flag
     // in this case as soon as we longjmp().

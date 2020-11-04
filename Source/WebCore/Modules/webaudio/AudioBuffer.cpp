@@ -40,12 +40,12 @@
 
 namespace WebCore {
 
-RefPtr<AudioBuffer> AudioBuffer::create(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, LegacyPreventNeutering preventNeutering)
+RefPtr<AudioBuffer> AudioBuffer::create(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, LegacyPreventDetaching preventDetaching)
 {
     if (!BaseAudioContext::isSupportedSampleRate(sampleRate) || !numberOfChannels || numberOfChannels > AudioContext::maxNumberOfChannels() || !numberOfFrames)
         return nullptr;
 
-    auto buffer = adoptRef(*new AudioBuffer(numberOfChannels, numberOfFrames, sampleRate, preventNeutering));
+    auto buffer = adoptRef(*new AudioBuffer(numberOfChannels, numberOfFrames, sampleRate, preventDetaching));
     if (!buffer->originalLength())
         return nullptr;
 
@@ -81,7 +81,7 @@ RefPtr<AudioBuffer> AudioBuffer::createFromAudioFileData(const void* data, size_
     return adoptRef(*new AudioBuffer(*bus));
 }
 
-AudioBuffer::AudioBuffer(unsigned numberOfChannels, size_t length, float sampleRate, LegacyPreventNeutering preventNeutering)
+AudioBuffer::AudioBuffer(unsigned numberOfChannels, size_t length, float sampleRate, LegacyPreventDetaching preventDetaching)
     : m_sampleRate(sampleRate)
     , m_originalLength(length)
 {
@@ -94,8 +94,8 @@ AudioBuffer::AudioBuffer(unsigned numberOfChannels, size_t length, float sampleR
             break;
         }
 
-        if (preventNeutering == LegacyPreventNeutering::Yes)
-            channelDataArray->setNeuterable(false);
+        if (preventDetaching == LegacyPreventDetaching::Yes)
+            channelDataArray->setDetachable(false);
 
         m_channels.append(WTFMove(channelDataArray));
     }
@@ -248,7 +248,7 @@ size_t AudioBuffer::memoryCost() const
 bool AudioBuffer::hasDetachedChannelBuffer() const
 {
     for (auto& channel : m_channels) {
-        if (channel->isNeutered())
+        if (channel->isDetached())
             return true;
     }
     return false;

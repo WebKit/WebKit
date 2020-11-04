@@ -1158,7 +1158,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         read(JSCell_structureID);
         return;
 
-    case CheckNeutered:
+    case CheckDetached:
         read(MiscFields);
         return; 
         

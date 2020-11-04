@@ -1003,8 +1003,8 @@ private:
         case CheckArrayOrEmpty:
             compileCheckArrayOrEmpty();
             break;
-        case CheckNeutered:
-            compileCheckNeutered();
+        case CheckDetached:
+            compileCheckDetached();
             break;
         case GetArrayLength:
             compileGetArrayLength();
@@ -4537,7 +4537,7 @@ private:
         }
     }
 
-    void compileCheckNeutered()
+    void compileCheckDetached()
     {
         Edge edge = m_node->child1();
         LValue cell = lowCell(edge);
@@ -5620,7 +5620,7 @@ private:
                     m_out.jump(continuation);
 
                     m_out.appendTo(isOutOfBounds, continuation);
-                    speculateTypedArrayIsNotNeutered(base);
+                    speculateTypedArrayIsNotDetached(base);
                     m_out.jump(continuation);
                     
                     m_out.appendTo(continuation, lastNext);
@@ -18953,7 +18953,7 @@ private:
         typeCheck(jsValueValue(value), edge, SpecMisc, isNotMisc(value));
     }
 
-    void speculateTypedArrayIsNotNeutered(LValue base)
+    void speculateTypedArrayIsNotDetached(LValue base)
     {
         LBasicBlock isWasteful = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();

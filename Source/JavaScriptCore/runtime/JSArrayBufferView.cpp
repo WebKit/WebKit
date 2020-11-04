@@ -220,7 +220,7 @@ JSArrayBuffer* JSArrayBufferView::possiblySharedJSBuffer(JSGlobalObject* globalO
     return nullptr;
 }
 
-void JSArrayBufferView::neuter()
+void JSArrayBufferView::detach()
 {
     auto locker = holdLock(cellLock());
     RELEASE_ASSERT(hasArrayBuffer());

@@ -85,11 +85,11 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsTypedArrayView, (JSGlobalObj
     return JSValue::encode(jsBoolean(value.isCell() && isTypedView(value.asCell()->classInfo(globalObject->vm())->typedArrayStorageType)));
 }
 
-JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsNeutered, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsDetached, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSValue argument = callFrame->uncheckedArgument(0);
     ASSERT_UNUSED(globalObject, argument.isCell() && isTypedView(argument.asCell()->classInfo(globalObject->vm())->typedArrayStorageType));
-    return JSValue::encode(jsBoolean(jsCast<JSArrayBufferView*>(argument)->isNeutered()));
+    return JSValue::encode(jsBoolean(jsCast<JSArrayBufferView*>(argument)->isDetached()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncLength, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -102,7 +102,7 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncLength, (JSGlobalObject* globa
 
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(argument);
 
-    if (thisObject->isNeutered())
+    if (thisObject->isDetached())
         return throwVMTypeError(globalObject, scope, "Underlying ArrayBuffer has been detached from the view"_s);
 
     return JSValue::encode(jsNumber(thisObject->length()));
@@ -126,7 +126,7 @@ inline EncodedJSValue createTypedArrayIteratorObject(JSGlobalObject* globalObjec
 
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(callFrame->thisValue());
 
-    if (thisObject->isNeutered())
+    if (thisObject->isDetached())
         return throwVMTypeError(globalObject, scope, "Underlying ArrayBuffer has been detached from the view"_s);
 
     return JSValue::encode(JSArrayIterator::create(vm, globalObject->arrayIteratorStructure(), thisObject, jsNumber(static_cast<unsigned>(kind))));

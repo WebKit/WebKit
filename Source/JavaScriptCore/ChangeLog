@@ -1,3 +1,130 @@
+2020-11-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Drop most uses of the phrase 'neuter' from the tree
+        https://bugs.webkit.org/show_bug.cgi?id=218536
+
+        Reviewed by Tim Horton.
+
+        In ArrayBuffer use cases, the spec has gone with "detached".
+
+        In other cases, I picked something.
+
+        * JavaScriptCore.order:
+        * builtins/ArrayIteratorPrototype.js:
+        (next):
+        * builtins/BuiltinNames.h:
+        * builtins/TypedArrayPrototype.js:
+        (fill):
+        (globalPrivate.typedArrayElementCompare):
+        * bytecode/LinkTimeConstant.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDesiredWatchpoints.cpp:
+        (JSC::DFG::ArrayBufferViewWatchpointAdaptor::add):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCheckDetached):
+        (JSC::DFG::SpeculativeJIT::jumpForTypedArrayIsDetachedIfOutOfBounds):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileCheckNeutered): Deleted.
+        (JSC::DFG::SpeculativeJIT::jumpForTypedArrayIsNeuteredIfOutOfBounds): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantStructureChecks):
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantArrayChecks):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckDetached):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateTypedArrayIsNotDetached):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckNeutered): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::speculateTypedArrayIsNotNeutered): Deleted.
+        * runtime/ArrayBuffer.cpp:
+        (JSC::ArrayBufferContents::tryAllocate):
+        (JSC::ArrayBuffer::transferTo):
+        (JSC::ArrayBuffer::detach):
+        (JSC::ArrayBuffer::notifyDetaching):
+        (JSC::ArrayBuffer::neuter): Deleted.
+        (JSC::ArrayBuffer::notifyNeutering): Deleted.
+        * runtime/ArrayBuffer.h:
+        (JSC::ArrayBuffer::isDetached):
+        (JSC::ArrayBuffer::detachingWatchpointSet):
+        (JSC::ArrayBuffer::isNeutered): Deleted.
+        (JSC::ArrayBuffer::neuteringWatchpointSet): Deleted.
+        * runtime/ArrayBufferView.cpp:
+        (JSC::ArrayBufferView::ArrayBufferView):
+        (JSC::ArrayBufferView::~ArrayBufferView):
+        (JSC::ArrayBufferView::setDetachable):
+        (JSC::ArrayBufferView::setNeuterable): Deleted.
+        * runtime/ArrayBufferView.h:
+        (JSC::ArrayBufferView::isDetached const):
+        (JSC::ArrayBufferView::possiblySharedBuffer const):
+        (JSC::ArrayBufferView::isShared const):
+        (JSC::ArrayBufferView::baseAddress const):
+        (JSC::ArrayBufferView::byteOffset const):
+        (JSC::ArrayBufferView::isDetachable const):
+        (JSC::ArrayBufferView::isNeutered const): Deleted.
+        (JSC::ArrayBufferView::isNeuterable const): Deleted.
+        * runtime/GenericTypedArrayView.h:
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::detach):
+        (JSC::JSArrayBufferView::neuter): Deleted.
+        * runtime/JSArrayBufferView.h:
+        (JSC::JSArrayBufferView::isDetached):
+        (JSC::JSArrayBufferView::isNeutered): Deleted.
+        * runtime/JSDataView.cpp:
+        (JSC::JSDataView::create):
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::getData):
+        (JSC::setData):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::setWithSpecificType):
+        (JSC::JSGenericTypedArrayView<Adaptor>::set):
+        (JSC::JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex):
+        (JSC::JSGenericTypedArrayView<Adaptor>::deletePropertyByIndex):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::speciesConstruct):
+        (JSC::genericTypedArrayViewProtoFuncSet):
+        (JSC::genericTypedArrayViewProtoFuncCopyWithin):
+        (JSC::genericTypedArrayViewProtoFuncIncludes):
+        (JSC::genericTypedArrayViewProtoFuncIndexOf):
+        (JSC::genericTypedArrayViewProtoFuncJoin):
+        (JSC::genericTypedArrayViewProtoFuncLastIndexOf):
+        (JSC::genericTypedArrayViewProtoFuncReverse):
+        (JSC::genericTypedArrayViewPrivateFuncSort):
+        (JSC::genericTypedArrayViewProtoFuncSlice):
+        (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::createTypedArrayIteratorObject):
+        * runtime/JSTypedArrayViewPrototype.h:
+        * wasm/js/JSWebAssemblyHelpers.h:
+        (JSC::getWasmBufferFromValue):
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        (JSC::JSWebAssemblyMemory::growSuccessCallback):
+
 2020-11-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Obtain default timezone ID from cached icu::TimeZone

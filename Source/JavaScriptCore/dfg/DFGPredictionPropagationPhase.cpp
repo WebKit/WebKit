@@ -1424,7 +1424,7 @@ private:
         case Phantom:
         case Check:
         case CheckArray:
-        case CheckNeutered:
+        case CheckDetached:
         case CheckVarargs:
         case PutGlobalVariable:
         case CheckTraps:

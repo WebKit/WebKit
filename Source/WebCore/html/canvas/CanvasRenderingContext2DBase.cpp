@@ -2145,7 +2145,7 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, float dx, float
     if (!buffer)
         return;
 
-    if (!data.data() || data.data()->isNeutered())
+    if (!data.data() || data.data()->isDetached())
         return;
 
     if (dirtyWidth < 0) {

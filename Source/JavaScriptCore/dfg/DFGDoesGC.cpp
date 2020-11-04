@@ -117,7 +117,7 @@ bool doesGC(Graph& graph, Node* node)
     case CheckNotJSCast:
     case CheckArray:
     case CheckArrayOrEmpty:
-    case CheckNeutered:
+    case CheckDetached:
     case GetScope:
     case SkipScope:
     case GetGlobalObject:
