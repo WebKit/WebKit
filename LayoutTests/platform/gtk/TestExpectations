@@ -471,7 +471,7 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-seq
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-trackdefaultlist.html [ Failure ]
 webkit.org/b/210341 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode-timestamps.html [ Failure ]
 webkit.org/b/210342 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-trackdefaults.html [ Failure ]
-webkit.org/b/210498 imported/w3c/web-platform-tests/media-source/mediasource-trackdefault.html [ Failure ]
+webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-trackdefault.html [ Failure ]
 webkit.org/b/175876 imported/w3c/web-platform-tests/media-source/mediasource-endofstream-invaliderror.html [ Pass Crash ]
 webkit.org/b/210486 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames-after-reappend.html [ Failure Crash Pass ]
 
@@ -731,9 +731,7 @@ webkit.org/b/79203 fast/mediastream/MediaStream-video-element-displays-buffer.ht
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html [ Timeout Failure ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element.html [ Pass Crash Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-ice.html [ Failure Timeout Crash ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-answer.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only.html [ Failure Crash ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-offer.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout Crash ]
 webkit.org/b/79203 fast/mediastream/get-display-media-muted.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/mock-media-source-webaudio.html [ Timeout Pass ]
