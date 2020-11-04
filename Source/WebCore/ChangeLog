@@ -1,5 +1,54 @@
 2020-11-04  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r268446. rdar://problem/70970178
+
+    REGRESSION: fast/canvas/webgl/context-attributes-alpha.html fails
+    https://bugs.webkit.org/show_bug.cgi?id=217697
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2020-10-14
+    Reviewed by Antti Koivisto.
+    
+    The original work in "Cocoa: Make WebGLLayer not dependent on
+    GraphicsContextGLOpenGL" was missing the hunk to initialize
+    WebGLLayer contentsOpaque. Neither the EWS nor the local testing
+    used the test case.
+    
+    No new tests, tested by
+    fast/canvas/webgl/context-attributes-alpha.html.
+    
+    * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+    (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+    * platform/graphics/cocoa/WebGLLayer.h:
+    * platform/graphics/cocoa/WebGLLayer.mm:
+    (-[WebGLLayer initWithClient:devicePixelRatio:contentsOpaque:]):
+    (-[WebGLLayer initWithClient:devicePixelRatio:]): Deleted.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268446 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-14  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            REGRESSION: fast/canvas/webgl/context-attributes-alpha.html fails
+            https://bugs.webkit.org/show_bug.cgi?id=217697
+
+            Reviewed by Antti Koivisto.
+
+            The original work in "Cocoa: Make WebGLLayer not dependent on
+            GraphicsContextGLOpenGL" was missing the hunk to initialize
+            WebGLLayer contentsOpaque. Neither the EWS nor the local testing
+            used the test case.
+
+            No new tests, tested by
+            fast/canvas/webgl/context-attributes-alpha.html.
+
+            * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+            (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+            * platform/graphics/cocoa/WebGLLayer.h:
+            * platform/graphics/cocoa/WebGLLayer.mm:
+            (-[WebGLLayer initWithClient:devicePixelRatio:contentsOpaque:]):
+            (-[WebGLLayer initWithClient:devicePixelRatio:]): Deleted.
+
+2020-11-04  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r268386. rdar://problem/70970067
 
     Cocoa: Make WebGLLayer not dependent on  GraphicsContextGLOpenGL

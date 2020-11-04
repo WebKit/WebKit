@@ -43,11 +43,12 @@
     BOOL _preparedForDisplay;
 }
 
-- (id)initWithClient:(NakedPtr<WebCore::WebGLLayerClient>)client devicePixelRatio:(float)devicePixelRatio
+- (id)initWithClient:(NakedPtr<WebCore::WebGLLayerClient>)client devicePixelRatio:(float)devicePixelRatio contentsOpaque:(bool)contentsOpaque
 {
     _client = client;
     self = [super init];
     self.transform = CATransform3DIdentity;
+    self.contentsOpaque = contentsOpaque;
     self.contentsScale = devicePixelRatio;
     return self;
 }
