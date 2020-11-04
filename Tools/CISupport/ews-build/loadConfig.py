@@ -79,10 +79,6 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
     for scheduler in config['schedulers']:
         schedulerClassName = scheduler.pop('type')
         schedulerClass = globals()[schedulerClassName]
-        # Python 2.6 can't handle unicode keys as keyword arguments:
-        # http://bugs.python.org/issue2646.  Modern versions of json return
-        # unicode strings from json.load, so we map all keys to str objects.
-        scheduler = dict(map(lambda key_value_pair: (str(key_value_pair[0]), key_value_pair[1]), scheduler.items()))
         if (schedulerClassName == 'Try_Userpass'):
             # FIXME: Read the credentials from local file on disk.
             scheduler['userpass'] = [(os.getenv('BUILDBOT_TRY_USERNAME', 'sampleuser'), os.getenv('BUILDBOT_TRY_PASSWORD', 'samplepass'))]

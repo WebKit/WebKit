@@ -73,13 +73,9 @@ def loadBuilderConfig(c, is_test_mode_enabled=False):
     for scheduler in config['schedulers']:
         if "change_filter" in scheduler:
             scheduler["change_filter"] = globals()[scheduler["change_filter"]]
-        schedulerType = globals()[scheduler.pop('type')]
-        # Python 2.6 can't handle unicode keys as keyword arguments:
-        # http://bugs.python.org/issue2646.  Modern versions of json return
-        # unicode strings from json.load, so we map all keys to str objects.
-        scheduler = dict(map(lambda key_value_pair: (str(key_value_pair[0]), key_value_pair[1]), scheduler.items()))
-
-        c['schedulers'].append(schedulerType(**scheduler))
+        schedulerClassName = scheduler.pop('type')
+        schedulerClass = globals()[schedulerClassName]
+        c['schedulers'].append(schedulerClass(**scheduler))
 
     forceScheduler = ForceScheduler(
         name="force",
