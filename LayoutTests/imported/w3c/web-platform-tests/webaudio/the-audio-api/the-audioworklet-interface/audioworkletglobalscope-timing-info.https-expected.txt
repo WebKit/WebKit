@@ -6,9 +6,9 @@ PASS > [Check the timing information from AudioWorkletProcessor]
 PASS   currentFrame from the processor at 0 is equal to 0.
 PASS   currentTime from the processor at 0 is equal to 0.
 PASS   currentFrame from the processor at 128 is equal to 128.
-PASS   currentTime from the processor at 0.0026666666666666666 is equal to 0.0026666666666666666.
+PASS   currentTime from the processor at 0.002667 is equal to 0.002667.
 PASS   currentFrame from the processor at 256 is equal to 256.
-PASS   currentTime from the processor at 0.005333333333333333 is equal to 0.005333333333333333.
+PASS   currentTime from the processor at 0.005333 is equal to 0.005333.
 PASS   currentFrame from the processor at 384 is equal to 384.
 PASS   currentTime from the processor at 0.008 is equal to 0.008.
 PASS < [Check the timing information from AudioWorkletProcessor] All assertions passed. (total 8 assertions)

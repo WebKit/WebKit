@@ -16,7 +16,7 @@ PASS   context.createScriptProcessor(2048, 1, 1) did not throw an exception.
 PASS   context.createScriptProcessor(4096, 1, 1) did not throw an exception.
 PASS   context.createScriptProcessor(8192, 1, 1) did not throw an exception.
 PASS   context.createScriptProcessor(16384, 1, 1) did not throw an exception.
-PASS   playbackTime is 0.020317460317460317 within an error of 1e-7.
+PASS   playbackTime is 0.020317 within an error of 1e-7.
 PASS   Number of output channels is equal to 6.
 PASS   Length of buffer is equal to 512.
 PASS   Left channel contains only the constant -1.

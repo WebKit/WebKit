@@ -23,7 +23,7 @@ PASS   DelayNode.delayTime ramp final value is not equal to 0.
 PASS   DelayNode.delayTime.value is equal to 0.5.
 PASS < [DelayNode] All assertions passed. (total 2 assertions)
 PASS > [DynamicsCompressorNode]
-PASS   DynamicsCompressorNode.attack ramp final value is not equal to 0.003000000026077032.
+PASS   DynamicsCompressorNode.attack ramp final value is not equal to 0.003000.
 PASS   DynamicsCompressorNode.attack.value is equal to 0.5.
 PASS   DynamicsCompressorNode.knee ramp final value is not equal to 30.
 PASS   DynamicsCompressorNode.knee.value is equal to 25.

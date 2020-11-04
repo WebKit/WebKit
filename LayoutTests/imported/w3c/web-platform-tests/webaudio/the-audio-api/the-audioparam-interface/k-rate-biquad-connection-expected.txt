@@ -45,10 +45,10 @@ PASS > [Detune AudioParam] k-rate input works
 PASS   detune: new OscillatorNode(context, {frequency: 440}) did not throw an exception.
 PASS   Reference BiquadFilterNode(c, {"type":"lowpass","frequency":2200,"detune":0,"gain":0}) did not throw an exception.
 PASS   refNode.detune.setValueAtTime(0,0) did not throw an exception.
-PASS   refNode.detune.linearRampToValueAtTime.(-13323.945370094427,0.125) did not throw an exception.
+PASS   refNode.detune.linearRampToValueAtTime.(-13323.945370,0.125) did not throw an exception.
 PASS   Test BiquadFilterNode(context, {"type":"lowpass","frequency":2200,"detune":0,"gain":0}) did not throw an exception.
 PASS   detune: mod.offset.setValueAtTime(0,0) did not throw an exception.
-PASS   detune: mod.offset.linearRampToValueAtTime(-13323.945370094427,0.125) did not throw an exception.
+PASS   detune: mod.offset.linearRampToValueAtTime(-13323.945370,0.125) did not throw an exception.
 PASS   k-rate detune with input: output[0,2048] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
 PASS   k-rate detune with input: output[2048:] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
 PASS < [Detune AudioParam] All assertions passed. (total 9 assertions)

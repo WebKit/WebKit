@@ -10,15 +10,15 @@ PASS Audit report
 PASS > [Test 0] No dezippering for frequency
 PASS   At time 0, frequency is equal to 350.
 PASS   At time 0.015625, frequency is equal to 800.
-PASS   At time 0.0546875, frequency is equal to 200.
-PASS   Output from frequency setter equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000030399,"relativeThreshold":0}.
+PASS   At time 0.054688, frequency is equal to 200.
+PASS   Output from frequency setter equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000003,"relativeThreshold":0}.
 PASS   Output from frequency setter matches setValueAtTime output is true.
 PASS < [Test 0] All assertions passed. (total 5 assertions)
 PASS > [Test 1] No dezippering for detune
 PASS   At time 0, detune is equal to 33.
 PASS   At time 0.015625, detune is equal to 1000.
-PASS   At time 0.0390625, detune is equal to -400.
-PASS   Output from detune setter equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000040532,"relativeThreshold":0}.
+PASS   At time 0.039063, detune is equal to -400.
+PASS   Output from detune setter equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000004,"relativeThreshold":0}.
 PASS   Output from detune setter matches setValueAtTime output is true.
 PASS < [Test 1] All assertions passed. (total 5 assertions)
 PASS > [Test 2] No dezippering for Q
@@ -32,7 +32,7 @@ PASS > [Test 3] No dezippering for gain
 PASS   At time 0, gain is equal to 1.
 PASS   At time 0.015625, gain is equal to 5.
 PASS   At time 0.046875, gain is equal to -0.3.
-PASS   Output from gain setter equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000019074,"relativeThreshold":0}.
+PASS   Output from gain setter equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000002,"relativeThreshold":0}.
 PASS   Output from gain setter matches setValueAtTime output is true.
 PASS < [Test 3] All assertions passed. (total 5 assertions)
 PASS > [Test 4] No dezippering of frequency vs JS filter

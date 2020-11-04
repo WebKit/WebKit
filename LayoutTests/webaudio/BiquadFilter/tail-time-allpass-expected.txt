@@ -67,7 +67,7 @@ PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): ou
 PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[4480:4607] is not constantly 0 (contains 128 different values).
 PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[4608:4735] is not constantly 0 (contains 128 different values).
 PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[4736:4863] is not constantly 0 (contains 128 different values).
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[5120:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}.
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[5120:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.000031,"relativeThreshold":0}.
 PASS < [allpass-real-distinct-roots] All assertions passed. (total 40 assertions)
 PASS > [allpass-repeated-roots] repeated real root
 PASS   Repeated roots: Biquad({"type":"allpass","Q":0.5,"frequency":2048}): Actual Tail Frame 106 is greater than or equal to 17.

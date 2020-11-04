@@ -5,7 +5,7 @@ PASS Executing "playbackrate+detune"
 PASS Executing "panner-k-rate"
 PASS Audit report
 PASS > [validate] Validate test parameters
-PASS   eventTime is less than 0.042666666666666665.
+PASS   eventTime is less than 0.042667.
 PASS < [validate] All assertions passed. (total 1 assertions)
 PASS > [playbackrate+detune] Test k-rate AudioBufferSourceNode AudioParams
 PASS   Final node.detune.value is equal to 0.75.

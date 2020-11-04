@@ -13,7 +13,7 @@ PASS   buffer.getChannelData(1) instanceof window.Float32Array is true.
 PASS   buffer.getChannelData(2) instanceof window.Float32Array is true.
 PASS   buffer.getChannelData(3) instanceof window.Float32Array is true.
 PASS   buffer.getChannelData(4) threw IndexSizeError: "Index must be less than number of channels.".
-PASS   context.createBuffer(1, 1000, 24576).duration is equal to 0.040690104166666664.
+PASS   context.createBuffer(1, 1000, 24576).duration is equal to 0.040690.
 PASS < [Basic tests for AudioBuffer] All assertions passed. (total 11 assertions)
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

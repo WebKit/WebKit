@@ -45,9 +45,9 @@ PASS < [sub-sample-grain] All assertions passed. (total 16 assertions)
 PASS > [sub-sample accurate start with playbackRate]
 PASS   Source start frame is equal to 17.8.
 PASS   With playbackRate 0.25: output0[17] is equal to 0.
-PASS   With playbackRate 0.25: output0[18] is 1.0499999999999998 within an error of 4.542e-8.
+PASS   With playbackRate 0.25: output0[18] is 1.050000 within an error of 4.542e-8.
 PASS   With playbackRate 4: output1[17] is equal to 0.
-PASS   With playbackRate 4: output1[18] is 1.7999999999999972 within an error of 4.542e-8.
+PASS   With playbackRate 4: output1[18] is 1.800000 within an error of 4.542e-8.
 PASS < [sub-sample accurate start with playbackRate] All assertions passed. (total 5 assertions)
 PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully.
 

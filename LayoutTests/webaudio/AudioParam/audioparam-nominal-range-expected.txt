@@ -30,8 +30,8 @@ PASS   Create offline context for tests did not throw an exception.
 PASS   Create online context for tests did not throw an exception.
 PASS < [initialize] All assertions passed. (total 2 assertions)
 PASS > [Offline createGain]
-PASS   GainNode.gain.minValue is equal to -3.4028234663852886e+38.
-PASS   GainNode.gain.maxValue is equal to 3.4028234663852886e+38.
+PASS   GainNode.gain.minValue is equal to -3.402823e+38.
+PASS   GainNode.gain.maxValue is equal to 3.402823e+38.
 PASS   GainNode.gain.minValue = 42 is not equal to 42.
 PASS   GainNode.gain.minValue is read-only is equal to true.
 PASS   GainNode.gain.maxValue = 42 is not equal to 42.
@@ -51,14 +51,14 @@ PASS   DelayNode.delayTime was clipped to lie within the nominal range is equal 
 PASS   Nominal ranges for AudioParam(s) of DelayNode are correct
 PASS < [Offline createDelay] All assertions passed. (total 10 assertions)
 PASS > [Offline createBufferSource]
-PASS   AudioBufferSourceNode.playbackRate.minValue is equal to -3.4028234663852886e+38.
-PASS   AudioBufferSourceNode.playbackRate.maxValue is equal to 3.4028234663852886e+38.
+PASS   AudioBufferSourceNode.playbackRate.minValue is equal to -3.402823e+38.
+PASS   AudioBufferSourceNode.playbackRate.maxValue is equal to 3.402823e+38.
 PASS   AudioBufferSourceNode.playbackRate.minValue = 42 is not equal to 42.
 PASS   AudioBufferSourceNode.playbackRate.minValue is read-only is equal to true.
 PASS   AudioBufferSourceNode.playbackRate.maxValue = 42 is not equal to 42.
 PASS   AudioBufferSourceNode.playbackRate.maxValue is read-only is equal to true.
-PASS   AudioBufferSourceNode.detune.minValue is equal to -3.4028234663852886e+38.
-PASS   AudioBufferSourceNode.detune.maxValue is equal to 3.4028234663852886e+38.
+PASS   AudioBufferSourceNode.detune.minValue is equal to -3.402823e+38.
+PASS   AudioBufferSourceNode.detune.maxValue is equal to 3.402823e+38.
 PASS   AudioBufferSourceNode.detune.minValue = 42 is not equal to 42.
 PASS   AudioBufferSourceNode.detune.minValue is read-only is equal to true.
 PASS   AudioBufferSourceNode.detune.maxValue = 42 is not equal to 42.
@@ -144,19 +144,19 @@ PASS   BiquadFilterNode.detune.maxValue is read-only is equal to true.
 PASS   Set BiquadFilterNode.detune.value = -307201 is equal to -153600.
 PASS   Set BiquadFilterNode.detune.value = 307201 is equal to 153600.
 PASS   BiquadFilterNode.detune was clipped to lie within the nominal range is equal to true.
-PASS   BiquadFilterNode.Q.minValue is equal to -3.4028234663852886e+38.
-PASS   BiquadFilterNode.Q.maxValue is equal to 3.4028234663852886e+38.
+PASS   BiquadFilterNode.Q.minValue is equal to -3.402823e+38.
+PASS   BiquadFilterNode.Q.maxValue is equal to 3.402823e+38.
 PASS   BiquadFilterNode.Q.minValue = 42 is not equal to 42.
 PASS   BiquadFilterNode.Q.minValue is read-only is equal to true.
 PASS   BiquadFilterNode.Q.maxValue = 42 is not equal to 42.
 PASS   BiquadFilterNode.Q.maxValue is read-only is equal to true.
-PASS   BiquadFilterNode.gain.minValue is equal to -3.4028234663852886e+38.
-PASS   BiquadFilterNode.gain.maxValue is equal to 1541.273681640625.
+PASS   BiquadFilterNode.gain.minValue is equal to -3.402823e+38.
+PASS   BiquadFilterNode.gain.maxValue is equal to 1541.273682.
 PASS   BiquadFilterNode.gain.minValue = 42 is not equal to 42.
 PASS   BiquadFilterNode.gain.minValue is read-only is equal to true.
 PASS   BiquadFilterNode.gain.maxValue = 42 is not equal to 42.
 PASS   BiquadFilterNode.gain.maxValue is read-only is equal to true.
-PASS   Set BiquadFilterNode.gain.value = 3083.54736328125 is equal to 1541.273681640625.
+PASS   Set BiquadFilterNode.gain.value = 3083.547363 is equal to 1541.273682.
 PASS   BiquadFilterNode.gain was clipped to lie within the nominal range is equal to true.
 PASS   Nominal ranges for AudioParam(s) of BiquadFilterNode are correct
 PASS < [Offline createBiquadFilter] All assertions passed. (total 33 assertions)
@@ -182,38 +182,38 @@ PASS   OscillatorNode.detune was clipped to lie within the nominal range is equa
 PASS   Nominal ranges for AudioParam(s) of OscillatorNode are correct
 PASS < [Offline createOscillator] All assertions passed. (total 19 assertions)
 PASS > [Offline createPanner]
-PASS   PannerNode.positionX.minValue is equal to -3.4028234663852886e+38.
-PASS   PannerNode.positionX.maxValue is equal to 3.4028234663852886e+38.
+PASS   PannerNode.positionX.minValue is equal to -3.402823e+38.
+PASS   PannerNode.positionX.maxValue is equal to 3.402823e+38.
 PASS   PannerNode.positionX.minValue = 42 is not equal to 42.
 PASS   PannerNode.positionX.minValue is read-only is equal to true.
 PASS   PannerNode.positionX.maxValue = 42 is not equal to 42.
 PASS   PannerNode.positionX.maxValue is read-only is equal to true.
-PASS   PannerNode.positionY.minValue is equal to -3.4028234663852886e+38.
-PASS   PannerNode.positionY.maxValue is equal to 3.4028234663852886e+38.
+PASS   PannerNode.positionY.minValue is equal to -3.402823e+38.
+PASS   PannerNode.positionY.maxValue is equal to 3.402823e+38.
 PASS   PannerNode.positionY.minValue = 42 is not equal to 42.
 PASS   PannerNode.positionY.minValue is read-only is equal to true.
 PASS   PannerNode.positionY.maxValue = 42 is not equal to 42.
 PASS   PannerNode.positionY.maxValue is read-only is equal to true.
-PASS   PannerNode.positionZ.minValue is equal to -3.4028234663852886e+38.
-PASS   PannerNode.positionZ.maxValue is equal to 3.4028234663852886e+38.
+PASS   PannerNode.positionZ.minValue is equal to -3.402823e+38.
+PASS   PannerNode.positionZ.maxValue is equal to 3.402823e+38.
 PASS   PannerNode.positionZ.minValue = 42 is not equal to 42.
 PASS   PannerNode.positionZ.minValue is read-only is equal to true.
 PASS   PannerNode.positionZ.maxValue = 42 is not equal to 42.
 PASS   PannerNode.positionZ.maxValue is read-only is equal to true.
-PASS   PannerNode.orientationX.minValue is equal to -3.4028234663852886e+38.
-PASS   PannerNode.orientationX.maxValue is equal to 3.4028234663852886e+38.
+PASS   PannerNode.orientationX.minValue is equal to -3.402823e+38.
+PASS   PannerNode.orientationX.maxValue is equal to 3.402823e+38.
 PASS   PannerNode.orientationX.minValue = 42 is not equal to 42.
 PASS   PannerNode.orientationX.minValue is read-only is equal to true.
 PASS   PannerNode.orientationX.maxValue = 42 is not equal to 42.
 PASS   PannerNode.orientationX.maxValue is read-only is equal to true.
-PASS   PannerNode.orientationY.minValue is equal to -3.4028234663852886e+38.
-PASS   PannerNode.orientationY.maxValue is equal to 3.4028234663852886e+38.
+PASS   PannerNode.orientationY.minValue is equal to -3.402823e+38.
+PASS   PannerNode.orientationY.maxValue is equal to 3.402823e+38.
 PASS   PannerNode.orientationY.minValue = 42 is not equal to 42.
 PASS   PannerNode.orientationY.minValue is read-only is equal to true.
 PASS   PannerNode.orientationY.maxValue = 42 is not equal to 42.
 PASS   PannerNode.orientationY.maxValue is read-only is equal to true.
-PASS   PannerNode.orientationZ.minValue is equal to -3.4028234663852886e+38.
-PASS   PannerNode.orientationZ.maxValue is equal to 3.4028234663852886e+38.
+PASS   PannerNode.orientationZ.minValue is equal to -3.402823e+38.
+PASS   PannerNode.orientationZ.maxValue is equal to 3.402823e+38.
 PASS   PannerNode.orientationZ.minValue = 42 is not equal to 42.
 PASS   PannerNode.orientationZ.minValue is read-only is equal to true.
 PASS   PannerNode.orientationZ.maxValue = 42 is not equal to 42.
@@ -221,8 +221,8 @@ PASS   PannerNode.orientationZ.maxValue is read-only is equal to true.
 PASS   Nominal ranges for AudioParam(s) of PannerNode are correct
 PASS < [Offline createPanner] All assertions passed. (total 37 assertions)
 PASS > [Offline createConstantSource]
-PASS   ConstantSourceNode.offset.minValue is equal to -3.4028234663852886e+38.
-PASS   ConstantSourceNode.offset.maxValue is equal to 3.4028234663852886e+38.
+PASS   ConstantSourceNode.offset.minValue is equal to -3.402823e+38.
+PASS   ConstantSourceNode.offset.maxValue is equal to 3.402823e+38.
 PASS   ConstantSourceNode.offset.minValue = 42 is not equal to 42.
 PASS   ConstantSourceNode.offset.minValue is read-only is equal to true.
 PASS   ConstantSourceNode.offset.maxValue = 42 is not equal to 42.
@@ -263,56 +263,56 @@ PASS > [Online createMediaStreamDestination]
 PASS   MediaStreamAudioDestinationNode has no AudioParams as expected
 PASS < [Online createMediaStreamDestination] All assertions passed. (total 1 assertions)
 PASS > [AudioListener]
-PASS   AudioListener.positionX.minValue is equal to -3.4028234663852886e+38.
-PASS   AudioListener.positionX.maxValue is equal to 3.4028234663852886e+38.
+PASS   AudioListener.positionX.minValue is equal to -3.402823e+38.
+PASS   AudioListener.positionX.maxValue is equal to 3.402823e+38.
 PASS   AudioListener.positionX.minValue = 42 is not equal to 42.
 PASS   AudioListener.positionX.minValue is read-only is equal to true.
 PASS   AudioListener.positionX.maxValue = 42 is not equal to 42.
 PASS   AudioListener.positionX.maxValue is read-only is equal to true.
-PASS   AudioListener.positionY.minValue is equal to -3.4028234663852886e+38.
-PASS   AudioListener.positionY.maxValue is equal to 3.4028234663852886e+38.
+PASS   AudioListener.positionY.minValue is equal to -3.402823e+38.
+PASS   AudioListener.positionY.maxValue is equal to 3.402823e+38.
 PASS   AudioListener.positionY.minValue = 42 is not equal to 42.
 PASS   AudioListener.positionY.minValue is read-only is equal to true.
 PASS   AudioListener.positionY.maxValue = 42 is not equal to 42.
 PASS   AudioListener.positionY.maxValue is read-only is equal to true.
-PASS   AudioListener.positionZ.minValue is equal to -3.4028234663852886e+38.
-PASS   AudioListener.positionZ.maxValue is equal to 3.4028234663852886e+38.
+PASS   AudioListener.positionZ.minValue is equal to -3.402823e+38.
+PASS   AudioListener.positionZ.maxValue is equal to 3.402823e+38.
 PASS   AudioListener.positionZ.minValue = 42 is not equal to 42.
 PASS   AudioListener.positionZ.minValue is read-only is equal to true.
 PASS   AudioListener.positionZ.maxValue = 42 is not equal to 42.
 PASS   AudioListener.positionZ.maxValue is read-only is equal to true.
-PASS   AudioListener.forwardX.minValue is equal to -3.4028234663852886e+38.
-PASS   AudioListener.forwardX.maxValue is equal to 3.4028234663852886e+38.
+PASS   AudioListener.forwardX.minValue is equal to -3.402823e+38.
+PASS   AudioListener.forwardX.maxValue is equal to 3.402823e+38.
 PASS   AudioListener.forwardX.minValue = 42 is not equal to 42.
 PASS   AudioListener.forwardX.minValue is read-only is equal to true.
 PASS   AudioListener.forwardX.maxValue = 42 is not equal to 42.
 PASS   AudioListener.forwardX.maxValue is read-only is equal to true.
-PASS   AudioListener.forwardY.minValue is equal to -3.4028234663852886e+38.
-PASS   AudioListener.forwardY.maxValue is equal to 3.4028234663852886e+38.
+PASS   AudioListener.forwardY.minValue is equal to -3.402823e+38.
+PASS   AudioListener.forwardY.maxValue is equal to 3.402823e+38.
 PASS   AudioListener.forwardY.minValue = 42 is not equal to 42.
 PASS   AudioListener.forwardY.minValue is read-only is equal to true.
 PASS   AudioListener.forwardY.maxValue = 42 is not equal to 42.
 PASS   AudioListener.forwardY.maxValue is read-only is equal to true.
-PASS   AudioListener.forwardZ.minValue is equal to -3.4028234663852886e+38.
-PASS   AudioListener.forwardZ.maxValue is equal to 3.4028234663852886e+38.
+PASS   AudioListener.forwardZ.minValue is equal to -3.402823e+38.
+PASS   AudioListener.forwardZ.maxValue is equal to 3.402823e+38.
 PASS   AudioListener.forwardZ.minValue = 42 is not equal to 42.
 PASS   AudioListener.forwardZ.minValue is read-only is equal to true.
 PASS   AudioListener.forwardZ.maxValue = 42 is not equal to 42.
 PASS   AudioListener.forwardZ.maxValue is read-only is equal to true.
-PASS   AudioListener.upX.minValue is equal to -3.4028234663852886e+38.
-PASS   AudioListener.upX.maxValue is equal to 3.4028234663852886e+38.
+PASS   AudioListener.upX.minValue is equal to -3.402823e+38.
+PASS   AudioListener.upX.maxValue is equal to 3.402823e+38.
 PASS   AudioListener.upX.minValue = 42 is not equal to 42.
 PASS   AudioListener.upX.minValue is read-only is equal to true.
 PASS   AudioListener.upX.maxValue = 42 is not equal to 42.
 PASS   AudioListener.upX.maxValue is read-only is equal to true.
-PASS   AudioListener.upY.minValue is equal to -3.4028234663852886e+38.
-PASS   AudioListener.upY.maxValue is equal to 3.4028234663852886e+38.
+PASS   AudioListener.upY.minValue is equal to -3.402823e+38.
+PASS   AudioListener.upY.maxValue is equal to 3.402823e+38.
 PASS   AudioListener.upY.minValue = 42 is not equal to 42.
 PASS   AudioListener.upY.minValue is read-only is equal to true.
 PASS   AudioListener.upY.maxValue = 42 is not equal to 42.
 PASS   AudioListener.upY.maxValue is read-only is equal to true.
-PASS   AudioListener.upZ.minValue is equal to -3.4028234663852886e+38.
-PASS   AudioListener.upZ.maxValue is equal to 3.4028234663852886e+38.
+PASS   AudioListener.upZ.minValue is equal to -3.402823e+38.
+PASS   AudioListener.upZ.maxValue is equal to 3.402823e+38.
 PASS   AudioListener.upZ.minValue = 42 is not equal to 42.
 PASS   AudioListener.upZ.minValue is read-only is equal to true.
 PASS   AudioListener.upZ.maxValue = 42 is not equal to 42.

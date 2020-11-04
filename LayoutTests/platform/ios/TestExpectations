@@ -3495,9 +3495,6 @@ imported/w3c/web-platform-tests/xhr/access-control-basic-post-success-no-content
 
 webkit.org/b/215515 imported/w3c/web-platform-tests/user-timing/measure_navigation_timing.html [ Pass Failure ]
 
-# <rdar://68947198> [ macOS iOS ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections.html
-imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections.html [ Pass Failure ]
-
 #<rdar://68952824> [ macOS iOS wk2 ] media/media-continues-playing-after-replace-source.html is a flaky failure
 media/media-continues-playing-after-replace-source.html [ Pass Failure ]
 

@@ -103,22 +103,22 @@ PASS   node9 = new PannerNode(c, {"coneOuterGain":1}) did not throw an exception
 PASS   node9.coneOuterGain is equal to 1.
 PASS < [test AudioNodeOptions] All assertions passed. (total 54 assertions)
 PASS > [constructor with options]
-PASS   node = new PannerNode(c, {"panningModel":"HRTF","positionX":1.4142135623730951,"positionY":2.8284271247461903,"positionZ":4.242640687119286,"orientationX":-1.4142135623730951,"orientationY":-2.8284271247461903,"orientationZ":-4.242640687119286,"distanceModel":"linear","refDistance":3.141592653589793,"maxDistance":6.283185307179586,"rolloffFactor":9.42477796076938,"coneInnerAngle":12.566370614359172,"coneOuterAngle":15.707963267948966,"coneOuterGain":0.3141592653589793}) did not throw an exception.
+PASS   node = new PannerNode(c, {"panningModel":"HRTF","positionX":1.414214,"positionY":2.828427,"positionZ":4.242641,"orientationX":-1.414214,"orientationY":-2.828427,"orientationZ":-4.242641,"distanceModel":"linear","refDistance":3.141593,"maxDistance":6.283185,"rolloffFactor":9.424778,"coneInnerAngle":12.566371,"coneOuterAngle":15.707963,"coneOuterGain":0.314159}) did not throw an exception.
 PASS   node instanceof PannerNode is equal to true.
 PASS   node.panningModel is equal to HRTF.
-PASS   node.positionX.value is equal to 1.4142135381698608.
-PASS   node.positionY.value is equal to 2.8284270763397217.
-PASS   node.positionZ.value is equal to 4.242640495300293.
-PASS   node.orientationX.value is equal to -1.4142135381698608.
-PASS   node.orientationY.value is equal to -2.8284270763397217.
-PASS   node.orientationZ.value is equal to -4.242640495300293.
+PASS   node.positionX.value is equal to 1.414214.
+PASS   node.positionY.value is equal to 2.828427.
+PASS   node.positionZ.value is equal to 4.242640.
+PASS   node.orientationX.value is equal to -1.414214.
+PASS   node.orientationY.value is equal to -2.828427.
+PASS   node.orientationZ.value is equal to -4.242640.
 PASS   node.distanceModel is equal to linear.
-PASS   node.refDistance is equal to 3.141592653589793.
-PASS   node.maxDistance is equal to 6.283185307179586.
-PASS   node.rolloffFactor is equal to 9.42477796076938.
-PASS   node.coneInnerAngle is equal to 12.566370614359172.
-PASS   node.coneOuterAngle is equal to 15.707963267948966.
-PASS   node.coneOuterGain is equal to 0.3141592653589793.
+PASS   node.refDistance is equal to 3.141593.
+PASS   node.maxDistance is equal to 6.283185.
+PASS   node.rolloffFactor is equal to 9.424778.
+PASS   node.coneInnerAngle is equal to 12.566371.
+PASS   node.coneOuterAngle is equal to 15.707963.
+PASS   node.coneOuterGain is equal to 0.314159.
 PASS   node.channelCount is equal to 2.
 PASS   node.channelCountMode is equal to clamped-max.
 PASS   node.channelInterpretation is equal to speakers.

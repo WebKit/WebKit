@@ -9,26 +9,26 @@ PASS Executing "curve lengths"
 PASS Audit report
 PASS > [setValueCurve]
 PASS   setValueCurveAtTime(curve, 0.0125, 0.0125) did not throw an exception.
-PASS   setValueAtTime(1, 0.018750000000000003) threw NotSupportedError: "Events are overlapping".
-PASS   linearRampToValueAtTime(1, 0.018750000000000003) threw NotSupportedError: "Events are overlapping".
-PASS   exponentialRampToValueAtTime(1, 0.018750000000000003) threw NotSupportedError: "Events are overlapping".
-PASS   setTargetAtTime(1, 0.018750000000000003, 1) threw NotSupportedError: "Events are overlapping".
-PASS   setValueAtTime(1, 0.026250000000000002) did not throw an exception.
+PASS   setValueAtTime(1, 0.018750) threw NotSupportedError: "Events are overlapping".
+PASS   linearRampToValueAtTime(1, 0.018750) threw NotSupportedError: "Events are overlapping".
+PASS   exponentialRampToValueAtTime(1, 0.018750) threw NotSupportedError: "Events are overlapping".
+PASS   setTargetAtTime(1, 0.018750, 1) threw NotSupportedError: "Events are overlapping".
+PASS   setValueAtTime(1, 0.026250) did not throw an exception.
 PASS < [setValueCurve] All assertions passed. (total 6 assertions)
 PASS > [automations]
 PASS   linearRampToValueAtTime(1, 0.0125) did not throw an exception.
 PASS   exponentialRampToValueAtTime(1, 0.025) did not throw an exception.
-PASS   setTargetAtTime(1, 0.037500000000000006, 0.1) did not throw an exception.
+PASS   setTargetAtTime(1, 0.037500, 0.1) did not throw an exception.
 PASS   setValueCurveAtTime(curve, 0.05, 0.1) did not throw an exception.
 PASS   setValueCurveAtTime(curve, 0.00625, 0.01) threw NotSupportedError: "Events are overlapping".
-PASS   setValueCurveAtTime(curve, 0.018750000000000003, 0.01) threw NotSupportedError: "Events are overlapping".
+PASS   setValueCurveAtTime(curve, 0.018750, 0.01) threw NotSupportedError: "Events are overlapping".
 PASS   setValueCurveAtTime(curve, 0.03125, 0.01) threw NotSupportedError: "Events are overlapping".
-PASS   setValueCurveAtTime(curve, 0.043750000000000004, 0.01) threw NotSupportedError: "Events are overlapping".
-PASS   setValueCurveAtTime([NaN, NaN], 0.043750000000000004, 0.01) threw TypeError: "The provided value is non-finite".
-PASS   setValueCurveAtTime([1, Infinity], 0.043750000000000004, 0.01) threw TypeError: "The provided value is non-finite".
-PASS   delayTime.setValueCurveAtTime([1, 5], 0.043750000000000004, 0.01) did not throw an exception.
-PASS   delayTime.setValueCurveAtTime([1, 5, Infinity], 0.043750000000000004, 0.01) threw TypeError: "The provided value is non-finite".
-PASS   setValueCurveAtTime(curve, 0.031415926535897934, 0.01) threw NotSupportedError: "Events are overlapping".
+PASS   setValueCurveAtTime(curve, 0.043750, 0.01) threw NotSupportedError: "Events are overlapping".
+PASS   setValueCurveAtTime([NaN, NaN], 0.043750, 0.01) threw TypeError: "The provided value is non-finite".
+PASS   setValueCurveAtTime([1, Infinity], 0.043750, 0.01) threw TypeError: "The provided value is non-finite".
+PASS   delayTime.setValueCurveAtTime([1, 5], 0.043750, 0.01) did not throw an exception.
+PASS   delayTime.setValueCurveAtTime([1, 5, Infinity], 0.043750, 0.01) threw TypeError: "The provided value is non-finite".
+PASS   setValueCurveAtTime(curve, 0.031416, 0.01) threw NotSupportedError: "Events are overlapping".
 PASS < [automations] All assertions passed. (total 13 assertions)
 PASS > [catch-exception]
 PASS   Handled setValueCurve exception so output contains only the constant 1.
@@ -42,7 +42,7 @@ PASS   setValueCurveAtTime(..., 0.0075, 0.0025) did not throw an exception.
 PASS   setValueCurveAtTime(..., 0.01, 0.0025) did not throw an exception.
 PASS   setValueAtTime(0, 0.0125) did not throw an exception.
 PASS   setValueCurveAtTime(..., 0.0125, 0.0025) did not throw an exception.
-PASS   setTargetAtTime(1, 0.015000000000000001, 1) did not throw an exception.
+PASS   setTargetAtTime(1, 0.015000, 1) did not throw an exception.
 PASS < [start-end] All assertions passed. (total 9 assertions)
 PASS > [curve overlap]
 PASS   g.gain.setValueCurveAtTime([1,2,3], 5, 10) did not throw an exception.

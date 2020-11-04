@@ -34,12 +34,12 @@ PASS   node1 = new AudioBufferSourceNode(c, {"buffer":null} did not throw an exc
 PASS   node1.buffer is equal to null.
 PASS < [nullable buffer] All assertions passed. (total 2 assertions)
 PASS > [constructor options]
-PASS   node = new AudioBufferSourceNode(c, {"buffer":{},"detune":0.5,"loop":true,"loopEnd":0.010416666666666666,"loopStart":0.00010416666666666667,"playbackRate":0.75}) did not throw an exception.
+PASS   node = new AudioBufferSourceNode(c, {"buffer":{},"detune":0.5,"loop":true,"loopEnd":0.010417,"loopStart":0.000104,"playbackRate":0.75}) did not throw an exception.
 PASS   node2.buffer === buffer is equal to true.
 PASS   node2.detune.value is equal to 0.5.
 PASS   node2.loop is equal to true.
-PASS   node2.loopEnd is equal to 0.010416666666666666.
-PASS   node2.loopStart is equal to 0.00010416666666666667.
+PASS   node2.loopEnd is equal to 0.010417.
+PASS   node2.loopStart is equal to 0.000104.
 PASS   node2.playbackRate.value is equal to 0.75.
 PASS < [constructor options] All assertions passed. (total 7 assertions)
 PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully.

@@ -14,8 +14,8 @@ PASS   Factory method: node.channelCountMode is equal to max.
 PASS   Factory method: node.channelInterpretation is equal to speakers.
 PASS   Factory method: node.offset.value is equal to 1.
 PASS   Factory method: node.offset.defaultValue is equal to 1.
-PASS   Factory method: node.offset.minValue is equal to -3.4028234663852886e+38.
-PASS   Factory method: node.offset.maxValue is equal to 3.4028234663852886e+38.
+PASS   Factory method: node.offset.minValue is equal to -3.402823e+38.
+PASS   Factory method: node.offset.maxValue is equal to 3.402823e+38.
 PASS < [createConstantSource()] All assertions passed. (total 11 assertions)
 PASS > [new ConstantSourceNode()]
 PASS   Constructor: node = new ConstantSourceNode() did not throw an exception.
@@ -27,8 +27,8 @@ PASS   Constructor: node.channelCountMode is equal to max.
 PASS   Constructor: node.channelInterpretation is equal to speakers.
 PASS   Constructor: node.offset.value is equal to 1.
 PASS   Constructor: node.offset.defaultValue is equal to 1.
-PASS   Constructor: node.offset.minValue is equal to -3.4028234663852886e+38.
-PASS   Constructor: node.offset.maxValue is equal to 3.4028234663852886e+38.
+PASS   Constructor: node.offset.minValue is equal to -3.402823e+38.
+PASS   Constructor: node.offset.maxValue is equal to 3.402823e+38.
 PASS < [new ConstantSourceNode()] All assertions passed. (total 11 assertions)
 PASS > [start/stop exceptions]
 PASS   start(NaN) threw TypeError: "The provided value is non-finite".

@@ -76,8 +76,8 @@ if (self.testRunner) {
         if(harness_status.status != 0)
             resultStr += "Harness Error (" + convertResult(harness_status.status) + "), message = " + harness_status.message + "\n\n";
 
-        // Strip arrays from output in webaudio tests to avoid test flakiness due to floating point precision issues.
-        const shouldStripArraysFromPassLines = document.URL.indexOf('/webaudio') >= 0;
+        // Truncate decimal values from output in webaudio tests to avoid test flakiness due to floating point precision issues.
+        const shouldTruncateDecimalValues = document.URL.indexOf('/webaudio') >= 0;
 
         for (var i = 0; i < tests.length; i++) {
             var message = sanitize(tests[i].message);
@@ -90,8 +90,12 @@ if (self.testRunner) {
             }
  
             let testName = tests[i].name;
-            if (tests[i].status == 0 && shouldStripArraysFromPassLines)
+            if (shouldTruncateDecimalValues) {
                   testName = testName.replace(/\[[0-9.,\-e]*[0-9]\.[0-9]{7,}[0-9.,\-e]*\]/, "[expected array]");
+                  testName = testName.replace(/[0-9]\.[0-9]{7,}/g, (match, offset, string) => {
+                      return parseFloat(match).toFixed(6);
+                  });
+            }
 
             resultStr += convertResult(tests[i].status) + " " + sanitize(testName) + " " + message + "\n";
         }

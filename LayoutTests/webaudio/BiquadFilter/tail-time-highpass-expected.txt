@@ -32,12 +32,12 @@ PASS   HPF real distinct roots: Biquad({"type":"highpass","Q":-50,"frequency":20
 PASS   HPF real distinct roots: Biquad({"type":"highpass","Q":-50,"frequency":2048}): output[128:255] is not constantly 0 (contains 128 different values).
 PASS   HPF real distinct roots: Biquad({"type":"highpass","Q":-50,"frequency":2048}): output[256:383] is not constantly 0 (contains 128 different values).
 PASS   HPF real distinct roots: Biquad({"type":"highpass","Q":-50,"frequency":2048}): output[384:511] is not constantly 0 (contains 128 different values).
-PASS   HPF real distinct roots: Biquad({"type":"highpass","Q":-50,"frequency":2048}): output[768:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}.
+PASS   HPF real distinct roots: Biquad({"type":"highpass","Q":-50,"frequency":2048}): output[768:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.000031,"relativeThreshold":0}.
 PASS < [hpf-real-distinct-roots] All assertions passed. (total 6 assertions)
 PASS > [hpf-repeated-root] repeated real root
-PASS   HPF repeated roots (approximately): Biquad({"type":"highpass","Q":-6.020599913279624,"frequency":4096}): Actual Tail Frame 11 is greater than or equal to 3.
-PASS   HPF repeated roots (approximately): Biquad({"type":"highpass","Q":-6.020599913279624,"frequency":4096}): output[0:127] is not constantly 0 (contains 11 different values).
-PASS   HPF repeated roots (approximately): Biquad({"type":"highpass","Q":-6.020599913279624,"frequency":4096}): output[384:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS   HPF repeated roots (approximately): Biquad({"type":"highpass","Q":-6.020600,"frequency":4096}): Actual Tail Frame 11 is greater than or equal to 3.
+PASS   HPF repeated roots (approximately): Biquad({"type":"highpass","Q":-6.020600,"frequency":4096}): output[0:127] is not constantly 0 (contains 11 different values).
+PASS   HPF repeated roots (approximately): Biquad({"type":"highpass","Q":-6.020600,"frequency":4096}): output[384:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
 PASS < [hpf-repeated-root] All assertions passed. (total 3 assertions)
 PASS > [hpf-real-roots-2] complex roots
 PASS   HPF repeated roots 2: Biquad({"type":"highpass","Q":-100,"frequency":4096}): Actual Tail Frame 256 is greater than or equal to 0.

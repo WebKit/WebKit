@@ -1,3 +1,23 @@
+2020-11-04  Chris Dumez  <cdumez@apple.com>
+
+        imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections.html fails on some platforms
+        https://bugs.webkit.org/show_bug.cgi?id=218527
+        <rdar://problem/68947198>
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        Unskip test that should no longer be flaky.
+
+        * resources/testharnessreport.js:
+        (self.testRunner.add_completion_callback):
+        In addition to stripping arrays of floating point values from webaudio tests' output,
+        we now also truncate all floating point values to 6 decimals in those tests too.
+        This allows tests like k-rate-panner-connections.html to consistently pass on all
+        platforms because the floating point values that were causing failures are not in an
+        array.
+
 2020-11-04  Sam Weinig  <weinig@apple.com>
 
         Remove experimental: and internal: prefixes from test header commands
