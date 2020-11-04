@@ -27,11 +27,8 @@
 #include "config.h"
 #include "GraphicsContextGLOpenGL.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL) && (USE(OPENGL) || (PLATFORM(COCOA) && USE(OPENGL_ES)))
+#if ENABLE(GRAPHICS_CONTEXT_GL) && USE(OPENGL)
 
-#if PLATFORM(IOS_FAMILY)
-#include "GraphicsContextGLOpenGLESIOS.h"
-#endif
 #include "ExtensionsGLOpenGL.h"
 #include "IntRect.h"
 #include "IntSize.h"
@@ -63,16 +60,6 @@
 
 namespace WebCore {
 
-#if PLATFORM(MAC)
-static void wipeAlphaChannelFromPixels(int width, int height, unsigned char* pixels)
-{
-    // We can assume this doesn't overflow because the calling functions
-    // use checked arithmetic.
-    int totalBytes = width * height * 4;
-    for (int i = 0; i < totalBytes; i += 4)
-        pixels[i + 3] = 255;
-}
-#endif
 
 void GraphicsContextGLOpenGL::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels)
 {
@@ -105,10 +92,6 @@ void GraphicsContextGLOpenGL::readPixelsAndConvertToBGRAIfNecessary(int x, int y
     } else
         ::glReadPixels(x, y, width, height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, pixels);
 
-#if PLATFORM(MAC)
-    if (!attrs.alpha)
-        wipeAlphaChannelFromPixels(width, height, pixels);
-#endif
 }
 
 void GraphicsContextGLOpenGL::validateAttributes()
@@ -138,11 +121,7 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
         if (extensions.supports("GL_EXT_packed_depth_stencil"))
             internalDepthStencilFormat = GL_DEPTH24_STENCIL8_EXT;
         else
-#if PLATFORM(COCOA) && USE(OPENGL_ES)
-            internalDepthStencilFormat = GL_DEPTH_COMPONENT16;
-#else
             internalDepthStencilFormat = GL_DEPTH_COMPONENT;
-#endif
     }
 
     // Resize multisample FBO.
@@ -154,11 +133,7 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
         GLint sampleCount = std::min(4, maxSampleCount);
         ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
         ::glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_multisampleColorBuffer);
-#if PLATFORM(COCOA) && USE(OPENGL_ES)
-        ::glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, sampleCount, GL_RGBA8_OES, width, height);
-#else
         ::glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, sampleCount, m_internalColorFormat, width, height);
-#endif
         ::glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, m_multisampleColorBuffer);
         if (attrs.stencil || attrs.depth) {
             ::glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_multisampleDepthStencilBuffer);
@@ -252,27 +227,13 @@ void GraphicsContextGLOpenGL::resolveMultisamplingIfNecessary(const IntRect& rec
     TemporaryOpenGLSetting scopedDepth(GL_DEPTH_TEST, GL_FALSE);
     TemporaryOpenGLSetting scopedStencil(GL_STENCIL_TEST, GL_FALSE);
 
-#if PLATFORM(COCOA) && USE(OPENGL_ES)
-    GLint boundFrameBuffer;
-    ::glGetIntegerv(GL_FRAMEBUFFER_BINDING, &boundFrameBuffer);
-#endif
-
     ::glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
     ::glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
-#if PLATFORM(COCOA) && USE(OPENGL_ES)
-    UNUSED_PARAM(rect);
-    ::glFlush();
-    ::glResolveMultisampleFramebufferAPPLE();
-    const GLenum discards[] = { GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT };
-    ::glDiscardFramebufferEXT(GL_READ_FRAMEBUFFER_APPLE, 2, discards);
-    ::glBindFramebuffer(GL_FRAMEBUFFER, boundFrameBuffer);
-#else
     IntRect resolveRect = rect;
     if (rect.isEmpty())
         resolveRect = IntRect(0, 0, m_currentWidth, m_currentHeight);
 
     ::glBlitFramebufferEXT(resolveRect.x(), resolveRect.y(), resolveRect.maxX(), resolveRect.maxY(), resolveRect.x(), resolveRect.y(), resolveRect.maxX(), resolveRect.maxY(), GL_COLOR_BUFFER_BIT, GL_LINEAR);
-#endif
 }
 
 void GraphicsContextGLOpenGL::renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
@@ -339,20 +300,6 @@ void GraphicsContextGLOpenGL::getIntegerv(GCGLenum pname, GCGLint* value)
         if (getExtensions().requiresRestrictedMaximumTextureSize())
             *value = std::min(1024, *value);
         break;
-#if PLATFORM(MAC)
-    // Some older hardware advertises a larger maximum than they
-    // can actually handle. Rather than detecting such devices, simply
-    // clamp the maximum to 8192, which is big enough for a 5K display.
-    case MAX_RENDERBUFFER_SIZE:
-        ::glGetIntegerv(MAX_RENDERBUFFER_SIZE, value);
-        *value = std::min(8192, *value);
-        break;
-    case MAX_VIEWPORT_DIMS:
-        ::glGetIntegerv(MAX_VIEWPORT_DIMS, value);
-        value[0] = std::min(8192, value[0]);
-        value[1] = std::min(8192, value[1]);
-        break;
-#endif
     default:
         ::glGetIntegerv(pname, value);
     }
@@ -458,32 +405,20 @@ bool GraphicsContextGLOpenGL::texImage2D(GCGLenum target, GCGLint level, GCGLenu
 void GraphicsContextGLOpenGL::depthRange(GCGLclampf zNear, GCGLclampf zFar)
 {
     makeContextCurrent();
-#if PLATFORM(COCOA) && USE(OPENGL_ES)
-    ::glDepthRangef(static_cast<float>(zNear), static_cast<float>(zFar));
-#else
     ::glDepthRange(zNear, zFar);
-#endif
 }
 
 void GraphicsContextGLOpenGL::clearDepth(GCGLclampf depth)
 {
     makeContextCurrent();
-#if PLATFORM(COCOA) && USE(OPENGL_ES)
-    ::glClearDepthf(static_cast<float>(depth));
-#else
     ::glClearDepth(depth);
-#endif
 }
 
 #if !PLATFORM(GTK)
 ExtensionsGL& GraphicsContextGLOpenGL::getExtensions()
 {
     if (!m_extensions)
-#if PLATFORM(COCOA) && USE(OPENGL_ES)
-        m_extensions = makeUnique<ExtensionsGLOpenGL>(this, false);
-#else
         m_extensions = makeUnique<ExtensionsGLOpenGL>(this, isGLES2Compliant());
-#endif
     return *m_extensions;
 }
 #endif
@@ -505,13 +440,8 @@ void GraphicsContextGLOpenGL::readPixels(GCGLint x, GCGLint y, GCGLsizei width, 
     ::glReadPixels(x, y, width, height, format, type, data);
     if (attrs.antialias && m_state.boundDrawFBO == m_multisampleFBO)
         ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_multisampleFBO);
-
-#if PLATFORM(MAC)
-    if (!attrs.alpha && (format == GraphicsContextGL::RGBA || format == GraphicsContextGL::BGRA) && (m_state.boundDrawFBO == m_fbo || (attrs.antialias && m_state.boundDrawFBO == m_multisampleFBO)))
-        wipeAlphaChannelFromPixels(width, height, static_cast<unsigned char*>(data));
-#endif
 }
 
 }
 
-#endif // ENABLE(GRAPHICS_CONTEXT_GL) && (USE(OPENGL) || (PLATFORM(COCOA) && USE(OPENGL_ES)))
+#endif // ENABLE(GRAPHICS_CONTEXT_GL) && USE(OPENGL)

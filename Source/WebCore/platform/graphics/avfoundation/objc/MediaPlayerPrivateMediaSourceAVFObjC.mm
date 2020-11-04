@@ -38,7 +38,6 @@
 #import "MediaSourcePrivateClient.h"
 #import "PixelBufferConformerCV.h"
 #import "TextTrackRepresentation.h"
-#import "TextureCacheCV.h"
 #import "VideoLayerManagerObjC.h"
 #import "VideoTextureCopierCV.h"
 #import "WebCoreDecompressionSession.h"

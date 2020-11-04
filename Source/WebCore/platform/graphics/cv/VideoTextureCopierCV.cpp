@@ -28,17 +28,12 @@
 
 #include "FourCC.h"
 #include "Logging.h"
-#include "TextureCacheCV.h"
 #include <pal/spi/cocoa/IOSurfaceSPI.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdMap.h>
 #include <wtf/text/StringBuilder.h>
 
-#if USE(OPENGL_ES)
-#include <OpenGLES/ES3/glext.h>
-#endif
 
-#if USE(ANGLE)
 #define EGL_EGL_PROTOTYPES 0
 #include <ANGLE/egl.h>
 #include <ANGLE/eglext.h>
@@ -49,11 +44,133 @@
 #define GL_ANGLE_explicit_context
 #include <ANGLE/gl2ext.h>
 #include <ANGLE/gl2ext_angle.h>
-#endif
 
 #include "CoreVideoSoftLink.h"
 
 namespace WebCore {
+
+static constexpr auto s_rgbVertexShader {
+    "attribute vec4 a_position;"
+    "uniform int u_flipY;"
+    "varying vec2 v_texturePosition;"
+    "void main()"
+    "{"
+    "    v_texturePosition = vec2((a_position.x + 1.0) / 2.0, (a_position.y + 1.0) / 2.0);"
+    "    if (u_flipY == 1)"
+    "        v_texturePosition.y = 1.0 - v_texturePosition.y;"
+    "    gl_Position = a_position;"
+    "}"_s
+};
+
+static constexpr auto s_rgbFragmentShaderTexture2D {
+    "precision mediump float;"
+    "uniform sampler2D u_texture;"
+    "varying vec2 v_texturePosition;"
+    "uniform int u_premultiply;"
+    "uniform vec2 u_textureDimensions;"
+    "uniform int u_swapColorChannels;"
+    "void main()"
+    "{"
+    "    vec2 texPos = vec2(v_texturePosition.x * u_textureDimensions.x, v_texturePosition.y * u_textureDimensions.y);"
+    "    vec4 color = texture2D(u_texture, texPos);"
+    "    if (u_swapColorChannels == 1)"
+    "        color.rgba = color.bgra;"
+    "    if (u_premultiply == 1)"
+    "        gl_FragColor = vec4(color.r * color.a, color.g * color.a, color.b * color.a, color.a);"
+    "    else"
+    "        gl_FragColor = color;"
+    "}"_s
+};
+
+static constexpr auto s_rgbFragmentShaderTextureRectangle {
+    "precision mediump float;"
+    "uniform sampler2DRect u_texture;"
+    "varying vec2 v_texturePosition;"
+    "uniform int u_premultiply;"
+    "uniform vec2 u_textureDimensions;"
+    "uniform int u_swapColorChannels;"
+    "void main()"
+    "{"
+    "    vec2 texPos = vec2(v_texturePosition.x * u_textureDimensions.x, v_texturePosition.y * u_textureDimensions.y);"
+    "    vec4 color = texture2DRect(u_texture, texPos);"
+    "    if (u_swapColorChannels == 1)"
+    "        color.rgba = color.bgra;"
+    "    if (u_premultiply == 1)"
+    "        gl_FragColor = vec4(color.r * color.a, color.g * color.a, color.b * color.a, color.a);"
+    "    else"
+    "        gl_FragColor = color;"
+    "}"_s
+};
+
+static constexpr auto s_yuvVertexShaderTexture2D {
+    "attribute vec2 a_position;"
+    "uniform vec2 u_yTextureSize;"
+    "uniform vec2 u_uvTextureSize;"
+    "uniform int u_flipY;"
+    "varying vec2 v_yTextureCoordinate;"
+    "varying vec2 v_uvTextureCoordinate;"
+    "void main()"
+    "{"
+    "    gl_Position = vec4(a_position, 0, 1.0);"
+    "    vec2 normalizedPosition = a_position * .5 + .5;"
+    "    if (u_flipY == 1)"
+    "        normalizedPosition.y = 1.0 - normalizedPosition.y;"
+    "    v_yTextureCoordinate = normalizedPosition;"
+    "    v_uvTextureCoordinate = normalizedPosition;"
+    "}"_s
+};
+
+static constexpr auto s_yuvVertexShaderTextureRectangle {
+    "attribute vec2 a_position;"
+    "uniform vec2 u_yTextureSize;"
+    "uniform vec2 u_uvTextureSize;"
+    "uniform int u_flipY;"
+    "varying vec2 v_yTextureCoordinate;"
+    "varying vec2 v_uvTextureCoordinate;"
+    "void main()"
+    "{"
+    "    gl_Position = vec4(a_position, 0, 1.0);"
+    "    vec2 normalizedPosition = a_position * .5 + .5;"
+    "    if (u_flipY == 1)"
+    "        normalizedPosition.y = 1.0 - normalizedPosition.y;"
+    "    v_yTextureCoordinate = normalizedPosition * u_yTextureSize;"
+    "    v_uvTextureCoordinate = normalizedPosition * u_uvTextureSize;"
+    "}"_s
+};
+
+constexpr auto s_yuvFragmentShaderTexture2D {
+    "precision mediump float;"
+    "uniform sampler2D u_yTexture;"
+    "uniform sampler2D u_uvTexture;"
+    "uniform mat4 u_colorMatrix;"
+    "varying vec2 v_yTextureCoordinate;"
+    "varying vec2 v_uvTextureCoordinate;"
+    "void main()"
+    "{"
+    "    vec4 yuv;"
+    "    yuv.r = texture2D(u_yTexture, v_yTextureCoordinate).r;"
+    "    yuv.gb = texture2D(u_uvTexture, v_uvTextureCoordinate).rg;"
+    "    yuv.a = 1.0;"
+    "    gl_FragColor = yuv * u_colorMatrix;"
+    "}"_s
+};
+
+static constexpr auto s_yuvFragmentShaderTextureRectangle {
+    "precision mediump float;"
+    "uniform sampler2DRect u_yTexture;"
+    "uniform sampler2DRect u_uvTexture;"
+    "uniform mat4 u_colorMatrix;"
+    "varying vec2 v_yTextureCoordinate;"
+    "varying vec2 v_uvTextureCoordinate;"
+    "void main()"
+    "{"
+    "    vec4 yuv;"
+    "    yuv.r = texture2DRect(u_yTexture, v_yTextureCoordinate).r;"
+    "    yuv.gb = texture2DRect(u_uvTexture, v_uvTextureCoordinate).rg;"
+    "    yuv.a = 1.0;"
+    "    gl_FragColor = yuv * u_colorMatrix;"
+    "}"_s
+};
 
 enum class PixelRange {
     Unknown,
@@ -498,20 +615,8 @@ static StringMap& enumToStringMap()
 
 bool VideoTextureCopierCV::initializeContextObjects()
 {
-    StringBuilder vertexShaderSource;
-    vertexShaderSource.appendLiteral("attribute vec4 a_position;\n");
-    vertexShaderSource.appendLiteral("uniform int u_flipY;\n");
-    vertexShaderSource.appendLiteral("varying vec2 v_texturePosition;\n");
-    vertexShaderSource.appendLiteral("void main() {\n");
-    vertexShaderSource.appendLiteral("    v_texturePosition = vec2((a_position.x + 1.0) / 2.0, (a_position.y + 1.0) / 2.0);\n");
-    vertexShaderSource.appendLiteral("    if (u_flipY == 1) {\n");
-    vertexShaderSource.appendLiteral("        v_texturePosition.y = 1.0 - v_texturePosition.y;\n");
-    vertexShaderSource.appendLiteral("    }\n");
-    vertexShaderSource.appendLiteral("    gl_Position = a_position;\n");
-    vertexShaderSource.appendLiteral("}\n");
-
     PlatformGLObject vertexShader = m_context->createShader(GraphicsContextGL::VERTEX_SHADER);
-    m_context->shaderSource(vertexShader, vertexShaderSource.toString());
+    m_context->shaderSource(vertexShader, s_rgbVertexShader);
     m_context->compileShaderDirect(vertexShader);
 
     GCGLint value = 0;
@@ -522,43 +627,12 @@ bool VideoTextureCopierCV::initializeContextObjects()
         return false;
     }
 
-    StringBuilder fragmentShaderSource;
-
-#if USE(OPENGL_ES) || USE(ANGLE)
-    fragmentShaderSource.appendLiteral("precision mediump float;\n");
-#endif
-#if USE(OPENGL_ES) || (USE(ANGLE) && PLATFORM(IOS_FAMILY))
-    fragmentShaderSource.appendLiteral("uniform sampler2D u_texture;\n");
-#elif USE(OPENGL) || (USE(ANGLE) && !PLATFORM(IOS_FAMILY))
-    fragmentShaderSource.appendLiteral("uniform sampler2DRect u_texture;\n");
-#else
-#error Unsupported configuration
-#endif
-    fragmentShaderSource.appendLiteral("varying vec2 v_texturePosition;\n");
-    fragmentShaderSource.appendLiteral("uniform int u_premultiply;\n");
-    fragmentShaderSource.appendLiteral("uniform vec2 u_textureDimensions;\n");
-    fragmentShaderSource.appendLiteral("uniform int u_swapColorChannels;\n");
-    fragmentShaderSource.appendLiteral("void main() {\n");
-    fragmentShaderSource.appendLiteral("    vec2 texPos = vec2(v_texturePosition.x * u_textureDimensions.x, v_texturePosition.y * u_textureDimensions.y);\n");
-#if USE(OPENGL_ES) || (USE(ANGLE) && PLATFORM(IOS_FAMILY))
-    fragmentShaderSource.appendLiteral("    vec4 color = texture2D(u_texture, texPos);\n");
-#elif USE(OPENGL) || (USE(ANGLE) && !PLATFORM(IOS_FAMILY))
-    fragmentShaderSource.appendLiteral("    vec4 color = texture2DRect(u_texture, texPos);\n");
-#else
-#error Unsupported configuration
-#endif
-    fragmentShaderSource.appendLiteral("    if (u_swapColorChannels == 1) {\n");
-    fragmentShaderSource.appendLiteral("        color.rgba = color.bgra;\n");
-    fragmentShaderSource.appendLiteral("    }\n");
-    fragmentShaderSource.appendLiteral("    if (u_premultiply == 1) {\n");
-    fragmentShaderSource.appendLiteral("        gl_FragColor = vec4(color.r * color.a, color.g * color.a, color.b * color.a, color.a);\n");
-    fragmentShaderSource.appendLiteral("    } else {\n");
-    fragmentShaderSource.appendLiteral("        gl_FragColor = color;\n");
-    fragmentShaderSource.appendLiteral("    }\n");
-    fragmentShaderSource.appendLiteral("}\n");
-
+    const bool useTexture2D = GraphicsContextGLOpenGL::IOSurfaceTextureTarget() == GraphicsContextGL::TEXTURE_2D;
     PlatformGLObject fragmentShader = m_context->createShader(GraphicsContextGL::FRAGMENT_SHADER);
-    m_context->shaderSource(fragmentShader, fragmentShaderSource.toString());
+    if (useTexture2D)
+        m_context->shaderSource(fragmentShader, s_rgbFragmentShaderTexture2D);
+    else
+        m_context->shaderSource(fragmentShader, s_rgbFragmentShaderTextureRectangle);
     m_context->compileShaderDirect(fragmentShader);
 
     m_context->getShaderiv(fragmentShader, GraphicsContextGL::COMPILE_STATUS, &value);
@@ -610,33 +684,14 @@ bool VideoTextureCopierCV::initializeContextObjects()
 
 bool VideoTextureCopierCV::initializeUVContextObjects()
 {
-    String vertexShaderSource {
-        "attribute vec2 a_position;\n"
-        "uniform vec2 u_yTextureSize;\n"
-        "uniform vec2 u_uvTextureSize;\n"
-        "uniform int u_flipY;\n"
-        "varying vec2 v_yTextureCoordinate;\n"
-        "varying vec2 v_uvTextureCoordinate;\n"
-        "void main() {\n"
-        "   gl_Position = vec4(a_position, 0, 1.0);\n"
-        "   vec2 normalizedPosition = a_position * .5 + .5;\n"
-        "   if (u_flipY == 1) {\n"
-        "       normalizedPosition.y = 1.0 - normalizedPosition.y;\n"
-        "   }\n"
-#if USE(OPENGL_ES) || (USE(ANGLE) && PLATFORM(IOS_FAMILY))
-        "   v_yTextureCoordinate = normalizedPosition;\n"
-        "   v_uvTextureCoordinate = normalizedPosition;\n"
-#elif USE(OPENGL) || (USE(ANGLE) && !PLATFORM(IOS_FAMILY))
-        "   v_yTextureCoordinate = normalizedPosition * u_yTextureSize;\n"
-        "   v_uvTextureCoordinate = normalizedPosition * u_uvTextureSize;\n"
-#else
-#error Unsupported configuration
-#endif
-        "}\n"_s
-    };
+    const bool useTexture2D = GraphicsContextGLOpenGL::IOSurfaceTextureTarget() == GraphicsContextGL::TEXTURE_2D;
 
     PlatformGLObject vertexShader = m_context->createShader(GraphicsContextGL::VERTEX_SHADER);
-    m_context->shaderSource(vertexShader, vertexShaderSource);
+    if (useTexture2D)
+        m_context->shaderSource(vertexShader, s_yuvVertexShaderTexture2D);
+    else
+        m_context->shaderSource(vertexShader, s_yuvVertexShaderTextureRectangle);
+
     m_context->compileShaderDirect(vertexShader);
 
     GCGLint status = 0;
@@ -647,35 +702,12 @@ bool VideoTextureCopierCV::initializeUVContextObjects()
         return false;
     }
 
-    String fragmentShaderSource {
-#if USE(OPENGL_ES) || USE(ANGLE)
-        "precision mediump float;\n"
-#endif
-#if USE(OPENGL_ES) || (USE(ANGLE) && PLATFORM(IOS_FAMILY))
-        "#define SAMPLERTYPE sampler2D\n"
-        "#define TEXTUREFUNC texture2D\n"
-#elif USE(OPENGL) || (USE(ANGLE) && !PLATFORM(IOS_FAMILY))
-        "#define SAMPLERTYPE sampler2DRect\n"
-        "#define TEXTUREFUNC texture2DRect\n"
-#else
-#error Unsupported configuration
-#endif
-        "uniform SAMPLERTYPE u_yTexture;\n"
-        "uniform SAMPLERTYPE u_uvTexture;\n"
-        "uniform mat4 u_colorMatrix;\n"
-        "varying vec2 v_yTextureCoordinate;\n"
-        "varying vec2 v_uvTextureCoordinate;\n"
-        "void main() {\n"
-        "    vec4 yuv;\n"
-        "    yuv.r = TEXTUREFUNC(u_yTexture, v_yTextureCoordinate).r;\n"
-        "    yuv.gb = TEXTUREFUNC(u_uvTexture, v_uvTextureCoordinate).rg;\n"
-        "    yuv.a = 1.0;\n"
-        "    gl_FragColor = yuv * u_colorMatrix;\n"
-        "}\n"_s
-    };
-
     PlatformGLObject fragmentShader = m_context->createShader(GraphicsContextGL::FRAGMENT_SHADER);
-    m_context->shaderSource(fragmentShader, fragmentShaderSource);
+    if (useTexture2D)
+        m_context->shaderSource(fragmentShader, s_yuvFragmentShaderTexture2D);
+    else
+        m_context->shaderSource(fragmentShader, s_yuvFragmentShaderTextureRectangle);
+
     m_context->compileShaderDirect(fragmentShader);
 
     m_context->getShaderiv(fragmentShader, GraphicsContextGL::COMPILE_STATUS, &status);
@@ -725,7 +757,6 @@ bool VideoTextureCopierCV::initializeUVContextObjects()
     return true;
 }
 
-#if USE(ANGLE)
 void* VideoTextureCopierCV::attachIOSurfaceToTexture(GCGLenum target, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef surface, GCGLuint plane)
 {
     auto display = m_context->platformDisplay();
@@ -739,7 +770,7 @@ void* VideoTextureCopierCV::attachIOSurfaceToTexture(GCGLenum target, GCGLenum i
         LOG(WebGL, "Unknown texture target %d.", static_cast<int>(target));
         return nullptr;
     }
-    if (eglTextureTarget != GraphicsContextGL::EGLIOSurfaceTextureTarget()) {
+    if (eglTextureTarget != GraphicsContextGLOpenGL::EGLIOSurfaceTextureTarget()) {
         LOG(WebGL, "Mismatch in EGL texture target %d.", static_cast<int>(target));
         return nullptr;
     }
@@ -772,31 +803,11 @@ void VideoTextureCopierCV::detachIOSurfaceFromTexture(void* handle)
     EGL_ReleaseTexImage(display, handle, EGL_BACK_BUFFER);
     EGL_DestroySurface(display, handle);
 }
-#endif
 
 bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, size_t width, size_t height, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
 {
-    // CVOpenGLTextureCache seems to be disabled since the deprecation of
-    // OpenGL. To avoid porting unused code to the ANGLE code paths, remove it.
-#if USE(ANGLE)
     UNUSED_PARAM(outputTarget);
     UNUSED_PARAM(premultiplyAlpha);
-#else
-    if (!m_textureCache) {
-        m_textureCache = TextureCacheCV::create(m_context);
-        if (!m_textureCache)
-            return false;
-    }
-
-    if (auto texture = m_textureCache->textureFromImage(image, outputTarget, level, internalFormat, format, type)) {
-        bool swapColorChannels = false;
-#if USE(OPENGL_ES)
-        // FIXME: Remove this workaround once rdar://problem/35834388 is fixed.
-        swapColorChannels = CVPixelBufferGetPixelFormatType(image) == kCVPixelFormatType_32BGRA;
-#endif
-        return copyVideoTextureToPlatformTexture(texture.get(), width, height, outputTexture, outputTarget, level, internalFormat, format, type, premultiplyAlpha, flipY, swapColorChannels);
-    }
-#endif // USE(ANGLE)
 
     // FIXME: This currently only supports '420v' and '420f' pixel formats. Investigate supporting more pixel formats.
     OSType pixelFormat = CVPixelBufferGetPixelFormatType(image);
@@ -804,7 +815,6 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
         LOG(WebGL, "VideoTextureCopierCV::copyVideoTextureToPlatformTexture(%p) - Asked to copy an unsupported pixel format ('%s').", this, FourCC(pixelFormat).toString().utf8().data());
         return false;
     }
-
     IOSurfaceRef surface = CVPixelBufferGetIOSurface(image);
     if (!surface)
         return false;
@@ -853,15 +863,8 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
     auto uvPlaneWidth = IOSurfaceGetWidthOfPlane(surface, 1);
     auto uvPlaneHeight = IOSurfaceGetHeightOfPlane(surface, 1);
 
-#if USE(OPENGL_ES)
-    GCGLenum videoTextureTarget = GraphicsContextGL::TEXTURE_2D;
-#elif USE(OPENGL)
-    GCGLenum videoTextureTarget = GraphicsContextGL::TEXTURE_RECTANGLE_ARB;
-#elif USE(ANGLE)
-    GCGLenum videoTextureTarget = GraphicsContextGL::IOSurfaceTextureTarget();
-#else
-#error Unsupported configuration
-#endif
+    GCGLenum videoTextureTarget = GraphicsContextGLOpenGL::IOSurfaceTextureTarget();
+
     auto uvTexture = m_context->createTexture();
     m_context->activeTexture(GraphicsContextGL::TEXTURE1);
     m_context->bindTexture(videoTextureTarget, uvTexture);
@@ -869,18 +872,11 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
     m_context->texParameteri(videoTextureTarget, GraphicsContextGL::TEXTURE_MIN_FILTER, GraphicsContextGL::LINEAR);
     m_context->texParameteri(videoTextureTarget, GraphicsContextGL::TEXTURE_WRAP_S, GraphicsContextGL::CLAMP_TO_EDGE);
     m_context->texParameteri(videoTextureTarget, GraphicsContextGL::TEXTURE_WRAP_T, GraphicsContextGL::CLAMP_TO_EDGE);
-#if USE(ANGLE)
     auto uvHandle = attachIOSurfaceToTexture(videoTextureTarget, GraphicsContextGL::RG, uvPlaneWidth, uvPlaneHeight, GraphicsContextGL::UNSIGNED_BYTE, surface, 1);
     if (!uvHandle) {
         m_context->deleteTexture(uvTexture);
         return false;
     }
-#else
-    if (!m_context->texImageIOSurface2D(videoTextureTarget, GraphicsContextGL::RG, uvPlaneWidth, uvPlaneHeight, GraphicsContextGL::RG, GraphicsContextGL::UNSIGNED_BYTE, surface, 1)) {
-        m_context->deleteTexture(uvTexture);
-        return false;
-    }
-#endif // USE(ANGLE)
 
     auto yTexture = m_context->createTexture();
     m_context->activeTexture(GraphicsContextGL::TEXTURE0);
@@ -889,20 +885,12 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
     m_context->texParameteri(videoTextureTarget, GraphicsContextGL::TEXTURE_MIN_FILTER, GraphicsContextGL::LINEAR);
     m_context->texParameteri(videoTextureTarget, GraphicsContextGL::TEXTURE_WRAP_S, GraphicsContextGL::CLAMP_TO_EDGE);
     m_context->texParameteri(videoTextureTarget, GraphicsContextGL::TEXTURE_WRAP_T, GraphicsContextGL::CLAMP_TO_EDGE);
-#if USE(ANGLE)
     auto yHandle = attachIOSurfaceToTexture(videoTextureTarget, GraphicsContextGL::RED, yPlaneWidth, yPlaneHeight, GraphicsContextGL::UNSIGNED_BYTE, surface, 0);
     if (!yHandle) {
         m_context->deleteTexture(yTexture);
         m_context->deleteTexture(uvTexture);
         return false;
     }
-#else
-    if (!m_context->texImageIOSurface2D(videoTextureTarget, GraphicsContextGL::LUMINANCE, yPlaneWidth, yPlaneHeight, GraphicsContextGL::LUMINANCE, GraphicsContextGL::UNSIGNED_BYTE, surface, 0)) {
-        m_context->deleteTexture(yTexture);
-        m_context->deleteTexture(uvTexture);
-        return false;
-    }
-#endif // USE(ANGLE)
 
     // Configure the drawing parameters.
     m_context->uniform1i(m_yTextureUniformLocation, 0);
@@ -919,19 +907,11 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
     // Do the actual drawing.
     m_context->drawArrays(GraphicsContextGL::TRIANGLES, 0, 6);
 
-#if USE(OPENGL_ES) || (USE(ANGLE) && PLATFORM(IOS_FAMILY))
-    // flush() must be called here in order to re-synchronize the output texture's contents across the
-    // two EAGL contexts.
-    m_context->flush();
-#endif
-
     // Clean-up.
     m_context->deleteTexture(yTexture);
     m_context->deleteTexture(uvTexture);
-#if USE(ANGLE)
     detachIOSurfaceFromTexture(yHandle);
     detachIOSurfaceFromTexture(uvHandle);
-#endif
 
     m_lastSurface = surface;
     m_lastSurfaceSeed = newSurfaceSeed;
@@ -939,57 +919,6 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
     m_lastFlipY = flipY;
 
     return true;
-}
-
-bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(TextureType inputVideoTexture, size_t width, size_t height, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY, bool swapColorChannels)
-{
-    if (!inputVideoTexture)
-        return false;
-
-    GLfloat lowerLeft[2] = { 0, 0 };
-    GLfloat lowerRight[2] = { 0, 0 };
-    GLfloat upperRight[2] = { 0, 0 };
-    GLfloat upperLeft[2] = { 0, 0 };
-    PlatformGLObject videoTextureName;
-    GCGLenum videoTextureTarget;
-
-#if USE(OPENGL_ES)
-    videoTextureName = CVOpenGLESTextureGetName(inputVideoTexture);
-    videoTextureTarget = CVOpenGLESTextureGetTarget(inputVideoTexture);
-    CVOpenGLESTextureGetCleanTexCoords(inputVideoTexture, lowerLeft, lowerRight, upperRight, upperLeft);
-#elif USE(OPENGL)
-    videoTextureName = CVOpenGLTextureGetName(inputVideoTexture);
-    videoTextureTarget = CVOpenGLTextureGetTarget(inputVideoTexture);
-    CVOpenGLTextureGetCleanTexCoords(inputVideoTexture, lowerLeft, lowerRight, upperRight, upperLeft);
-#elif USE(ANGLE)
-    // CVOpenGLTextureCacheCreateTextureFromImage seems to always return
-    // kCVReturnPixelBufferNotOpenGLCompatible on desktop macOS now, so this
-    // entire code path seems to be unused. Assume the IOSurface path will be
-    // taken when using ANGLE.
-    UNUSED_PARAM(lowerLeft);
-    UNUSED_PARAM(lowerRight);
-    UNUSED_PARAM(upperLeft);
-    UNUSED_PARAM(upperRight);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
-    UNUSED_PARAM(outputTexture);
-    UNUSED_PARAM(outputTarget);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(internalFormat);
-    UNUSED_PARAM(format);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(premultiplyAlpha);
-    UNUSED_PARAM(flipY);
-    UNUSED_PARAM(swapColorChannels);
-    // FIXME: determine how to access rectangular textures via ANGLE.
-    UNIMPLEMENTED();
-    return false;
-#endif
-
-    if (lowerLeft[1] < upperRight[1])
-        flipY = !flipY;
-
-    return copyVideoTextureToPlatformTexture(videoTextureName, videoTextureTarget, width, height, outputTexture, outputTarget, level, internalFormat, format, type, premultiplyAlpha, flipY, swapColorChannels);
 }
 
 bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(PlatformGLObject videoTextureName, GCGLenum videoTextureTarget, size_t width, size_t height, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY, bool swapColorChannels)
@@ -1034,11 +963,7 @@ bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(PlatformGLObject vi
 
     // Configure the drawing parameters.
     m_context->uniform1i(m_textureUniformLocation, 0);
-#if USE(OPENGL_ES)
-    m_context->uniform2f(m_textureDimensionsUniformLocation, 1, 1);
-#else
     m_context->uniform2f(m_textureDimensionsUniformLocation, width, height);
-#endif
 
     m_context->uniform1i(m_flipYUniformLocation, flipY);
     m_context->uniform1i(m_swapColorChannelsUniformLocation, swapColorChannels);
@@ -1049,12 +974,6 @@ bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(PlatformGLObject vi
     m_context->bindBuffer(GraphicsContextGL::ARRAY_BUFFER, m_vertexBuffer);
     m_context->vertexAttribPointer(m_positionAttributeLocation, 2, GraphicsContextGL::FLOAT, false, 0, 0);
     m_context->drawArrays(GraphicsContextGL::TRIANGLES, 0, 6);
-
-#if USE(OPENGL_ES)
-    // flush() must be called here in order to re-synchronize the output texture's contents across the
-    // two EAGL contexts.
-    m_context->flush();
-#endif
 
     // Clean-up.
     m_context->bindTexture(videoTextureTarget, 0);

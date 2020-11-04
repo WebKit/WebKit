@@ -777,15 +777,6 @@ public:
         DOMSourceNone,
     };
 
-#if USE(ANGLE)
-    // These constants are redefined here from ANGLE's OpenGL ES headers to
-    // provide a single place where multiple portions of platform code can
-    // reference them.
-    static GCGLenum IOSurfaceTextureTarget();
-    static GCGLenum IOSurfaceTextureTargetQuery();
-    static GCGLint EGLIOSurfaceTextureTarget();
-#endif // USE(ANGLE)
-
     virtual PlatformGraphicsContextGL platformGraphicsContextGL() const = 0;
     virtual PlatformGLObject platformTexture() const = 0;
     virtual PlatformLayer* platformLayer() const = 0;
