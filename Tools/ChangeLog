@@ -1,3 +1,20 @@
+2020-11-04  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Conditionally disable the patch validation step
+        https://bugs.webkit.org/show_bug.cgi?id=218441
+
+        Reviewed by Aakash Jain.
+
+        This makes it easy to submit an arbitrary patch (i.e. one that doesn't
+        appear on bugzilla) for an EWS run. Useful for non-interactive testing.
+
+        Note that the skip_validation parameter can only be supplied by
+        ews-app, so patches cannot skip the validation step in the
+        production EWS deployment.
+
+        * CISupport/ews-build/steps.py:
+        (ValidatePatch.doStepIf):
+
 2020-11-04  Sam Weinig  <weinig@apple.com>
 
         Remove support for experimental: and internal: prefixes from WebKitTestRunner and DumpRenderTree

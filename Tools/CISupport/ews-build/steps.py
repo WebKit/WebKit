@@ -660,6 +660,9 @@ class ValidatePatch(buildstep.BuildStep, BugzillaMixin):
             return {u'step': unicode(self.descriptionDone)}
         return super(ValidatePatch, self).getResultSummary()
 
+    def doStepIf(self, step):
+        return not self.getProperty('skip_validation', False)
+
     def skip_build(self, reason):
         self._addToLog('stdio', reason)
         self.finished(FAILURE)
