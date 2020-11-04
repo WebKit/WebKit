@@ -28,7 +28,6 @@
 #import <wtf/NakedPtr.h>
 
 namespace WebCore {
-class WebGLLayerClient;
 struct WebGLLayerBuffer {
     std::unique_ptr<WebCore::IOSurface> surface; // The actual contents.
     void* handle { nullptr }; // Client specific metadata handle (such as EGLSurface).
@@ -48,7 +47,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 // the existing binding obtained through the buffer recycle logic.
 @interface WebGLLayer : CALayer
 
-- (id)initWithClient:(NakedPtr<WebCore::WebGLLayerClient>)client devicePixelRatio:(float)devicePixelRatio contentsOpaque:(bool)contentsOpaque;
+- (id)initWithDevicePixelRatio:(float)devicePixelRatio contentsOpaque:(bool)contentsOpaque;
 
 - (CGImageRef)copyImageSnapshotWithColorSpace:(CGColorSpaceRef)colorSpace;
 
@@ -69,7 +68,6 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 // Detaches the client and returns the current contents buffer metadata handle.
 // The if multiple buffers have been submitted, recycleBuffer must have been called before calling
 // this.
-// The client will not receive `WebGLLayerClient` notifications after calling this.
 - (void*)detachClient;
 
 @end

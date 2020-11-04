@@ -1,0 +1,116 @@
+
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test.js"> </script>
+<script src="resources/webgl-test-utils.js"></script>
+<style type="text/css">
+#cases {
+    width: 300px;
+    height: 50px;
+}
+#cases canvas {
+    width: 20px;
+    height: 20px;
+    background: purple;
+}
+#cases > span {
+   display: block;
+   margin: 1px;
+   float: left;
+}
+#cases > span.clipped {
+    position: relative;
+    overflow: hidden;
+    height: 0px;
+    width: 0px;
+}
+#cases canvas.notOnScreen {
+    position: relative;
+    top: -1000px;
+}
+</style>
+</head>
+<body>
+<div id="cases"></div>
+<div id="description">
+    Test that test that WebGL canvas preserveDrawingBuffer = false clear behavior on
+    cases where compositor does not neccessarily display the element.
+    You should see no failures and some of the canvases as green on screen.
+</div>
+<div id="console"></div>
+
+<script type="text/javascript">
+
+var wtu = WebGLTestUtils;
+window.jsTestIsAsync = true;
+
+if (window.testRunner) {
+    testRunner.dumpAsText(true);
+    testRunner.waitUntilDone();
+}
+
+var gls = [];
+var cases = [
+    "ref", // Normal canvas for reference.
+    "clipped", // Case where canvas is clipped by its parent.
+    "notOnScreen", // Case where canvas is not on screen.
+    "displayToNone" // Case where canvas is drawn to and then made not visible
+                    // by display:none, then drawn to, then made visible again, ...
+];
+for (let c of cases)
+{
+    for (let i = 0; i < 4; ++i)
+    {
+        let attrs = {
+            'alpha': (i & 1) == 1,
+            'antialias': (i & 2) == 1
+        };
+
+        let s = document.createElement("span");
+        s.className = c;
+        let canvas = document.createElement("canvas");
+        canvas.className = c;
+        s.appendChild(canvas);
+        document.getElementById("cases").appendChild(s);
+        gl = canvas.getContext("webgl", attrs);
+        gl.attrs = attrs;
+        gls.push(gl);
+    }
+}
+
+// All cases are currently expected to prepare a new drawing buffer on each composite that is preceeded with a
+// drawing command. This is not the only allowed behavior especially for elements that are not on screen, but
+// it's the mode of operation.
+async function composite(gl)
+{
+    return new Promise(resolve => wtu.waitForComposite(gl, resolve ));
+}
+
+async function runTests()
+{
+    let iterations = 10;
+    for (let i = 0; i < iterations; ++i)
+    {
+        for (let gl of gls)
+        {
+            let alpha = gl.getContextAttributes().alpha == true ? 0 : 255;
+            wtu.checkCanvasRect(gl, 0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, [0, 0, 0, alpha],
+                `canvas: ${gl.canvas.className} attrs: ${JSON.stringify(gl.attrs)} is initialized to zero on iteration: ${i}`);
+            // Clear marker is selected so that uninitialized IOSurface contents of 1,0,0,1 is also seen.
+            gl.clearColor(1.0, 0.7, 0.5, 1.0);
+            if (i == (iterations - 1))
+                gl.clearColor(0.0, 1.0, 0.0, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            if (gl.canvas.className == "displayToNone")
+                gl.canvas.style = "display:" + ((i % 2) == 0 ? "none" : "");
+        }
+        await composite(gls[0]);
+    }
+    finishTest();
+}
+runTests();
+
+var successfullyParsed = true;
+</script>
+</body>

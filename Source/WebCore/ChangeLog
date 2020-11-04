@@ -1,5 +1,118 @@
 2020-11-04  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r269025. rdar://problem/70970161
+
+    REGRESSION (r268386): Flashes of inverted color when zooming the map on windy.com
+    https://bugs.webkit.org/show_bug.cgi?id=218177
+    <rdar://problem/70676037>
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2020-10-27
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    Refactoring r268386 changed the behavior so that a new WebGL drawing
+    buffer would be created when CA would be using the oldest IOSurface
+    display buffer of the WebGL layer. Before r268386 the WebGL would just
+    draw on top of the IOSurface even if CA was using it.
+    
+    This change made the existing bug of using uninitialized IOSurfaces
+    visible, since IOSurfaces seem to be initialized with red. The existing
+    bug was probably in r262366.
+    
+    The fix in this commit fixes the case where WebGL context is drawn to
+    but the CA does not display the contents. Draw would cause preparation
+    of the drawing buffer for display, along with the contract that drawing
+    buffer might be uninitialized. However, the clear of the drawing buffer
+    was marked needed only during display.
+    
+    Case that failed at the time of writing was the case where after draw,
+    the element would be removed by setting display:none. This would return
+    red contents, e.g. uninitialized IOSurface contents. Before r268386 this
+    would first return red until 3 buffers had passed and then it would
+    start recycling old display buffer contents.
+    
+    The naming is not fixed in this commit due to just fixing the
+    regression. Other ports contain code that makes renaming or
+    restructuring the callbacks more confusing for the other ports.
+    
+    Test: fast/canvas/webgl/webgl-clear-composited-notshowing.html
+    
+    * WebCore.xcodeproj/project.pbxproj:
+    * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+    (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+    (WebCore::GraphicsContextGLOpenGL::prepareForDisplay):
+    * platform/graphics/cocoa/WebGLLayer.h:
+    * platform/graphics/cocoa/WebGLLayer.mm:
+    (-[WebGLLayer initWithDevicePixelRatio:contentsOpaque:]):
+    (-[WebGLLayer display]):
+    (-[WebGLLayer detachClient]):
+    * platform/graphics/cocoa/WebGLLayerClient.h: Removed.
+    * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+    
+    LayoutTests:
+    
+    Test case for WebGL which is drawn to a canvas that is not visible. This should still
+    adhere to preserveDrawingBuffer == false contract of clearing the drawing buffer
+    correctly.
+    
+    Case that failed at the time of writing was the case where after draw, the element
+    would be removed by setting display:none.
+    
+    * fast/canvas/webgl/webgl-clear-composited-notshowing-expected.txt: Added.
+    * fast/canvas/webgl/webgl-clear-composited-notshowing.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@269025 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-27  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            REGRESSION (r268386): Flashes of inverted color when zooming the map on windy.com
+            https://bugs.webkit.org/show_bug.cgi?id=218177
+            <rdar://problem/70676037>
+
+            Reviewed by Dean Jackson.
+
+            Refactoring r268386 changed the behavior so that a new WebGL drawing
+            buffer would be created when CA would be using the oldest IOSurface
+            display buffer of the WebGL layer. Before r268386 the WebGL would just
+            draw on top of the IOSurface even if CA was using it.
+
+            This change made the existing bug of using uninitialized IOSurfaces
+            visible, since IOSurfaces seem to be initialized with red. The existing
+            bug was probably in r262366.
+
+            The fix in this commit fixes the case where WebGL context is drawn to
+            but the CA does not display the contents. Draw would cause preparation
+            of the drawing buffer for display, along with the contract that drawing
+            buffer might be uninitialized. However, the clear of the drawing buffer
+            was marked needed only during display.
+
+            Case that failed at the time of writing was the case where after draw,
+            the element would be removed by setting display:none. This would return
+            red contents, e.g. uninitialized IOSurface contents. Before r268386 this
+            would first return red until 3 buffers had passed and then it would
+            start recycling old display buffer contents.
+
+            The naming is not fixed in this commit due to just fixing the
+            regression. Other ports contain code that makes renaming or
+            restructuring the callbacks more confusing for the other ports.
+
+            Test: fast/canvas/webgl/webgl-clear-composited-notshowing.html
+
+            * WebCore.xcodeproj/project.pbxproj:
+            * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+            (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+            (WebCore::GraphicsContextGLOpenGL::prepareForDisplay):
+            * platform/graphics/cocoa/WebGLLayer.h:
+            * platform/graphics/cocoa/WebGLLayer.mm:
+            (-[WebGLLayer initWithDevicePixelRatio:contentsOpaque:]):
+            (-[WebGLLayer display]):
+            (-[WebGLLayer detachClient]):
+            * platform/graphics/cocoa/WebGLLayerClient.h: Removed.
+            * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+
+2020-11-04  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r268446. rdar://problem/70970178
 
     REGRESSION: fast/canvas/webgl/context-attributes-alpha.html fails

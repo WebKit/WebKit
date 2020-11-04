@@ -31,21 +31,18 @@
 #import "GraphicsLayer.h"
 #import "GraphicsLayerCA.h"
 #import "PlatformCALayer.h"
-#import "WebGLLayerClient.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/RetainPtr.h>
 
 @implementation WebGLLayer {
-    NakedPtr<WebCore::WebGLLayerClient> _client;
     WebCore::WebGLLayerBuffer _contentsBuffer;
     WebCore::WebGLLayerBuffer _spareBuffer;
 
     BOOL _preparedForDisplay;
 }
 
-- (id)initWithClient:(NakedPtr<WebCore::WebGLLayerClient>)client devicePixelRatio:(float)devicePixelRatio contentsOpaque:(bool)contentsOpaque
+- (id)initWithDevicePixelRatio:(float)devicePixelRatio contentsOpaque:(bool)contentsOpaque
 {
-    _client = client;
     self = [super init];
     self.transform = CATransform3DIdentity;
     self.contentsOpaque = contentsOpaque;
@@ -102,8 +99,6 @@
         self.contents = _contentsBuffer.surface->asLayerContents();
         [self reloadValueForKeyPath:@"contents"];
     }
-    if (_client)
-        _client->didDisplay();
     auto layer = WebCore::PlatformCALayer::platformCALayerForLayer((__bridge void*)self);
     if (layer && layer->owner())
         layer->owner()->platformCALayerLayerDidDisplay(layer.get());
@@ -114,7 +109,6 @@
 - (void*) detachClient
 {
     ASSERT(!_spareBuffer.surface);
-    _client = nil;
     void* result = _contentsBuffer.handle;
     _contentsBuffer.handle = nullptr;
     return result;
