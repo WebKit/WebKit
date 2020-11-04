@@ -48,7 +48,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 // the existing binding obtained through the buffer recycle logic.
 @interface WebGLLayer : CALayer
 
-- (id)initWithClient:(NakedPtr<WebCore::WebGLLayerClient>)client devicePixelRatio:(float)devicePixelRatio;
+- (id)initWithClient:(NakedPtr<WebCore::WebGLLayerClient>)client devicePixelRatio:(float)devicePixelRatio contentsOpaque:(bool)contentsOpaque;
 
 - (CGImageRef)copyImageSnapshotWithColorSpace:(CGColorSpaceRef)colorSpace;
 
