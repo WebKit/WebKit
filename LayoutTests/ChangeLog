@@ -1,3 +1,17 @@
+2020-11-03  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Update state of flaky crash tests that are actually failing.
+
+        Some tests were actually passing after removing or updating their baseline.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/mediastream/RTCPeerConnection-addIceCandidate-expected.txt: Removed.
+        * platform/gtk/fast/mediastream/RTCPeerConnection-icecandidate-event-expected.txt: Removed.
+        * platform/gtk/media/controls-styling-strict-expected.txt:
+        * platform/gtk/media/track/track-cue-rendering-horizontal-expected.txt:
+        * platform/gtk/media/track/track-cue-rendering-vertical-expected.txt:
+        * platform/gtk/media/video-aspect-ratio-expected.txt:
+
 2020-11-03  Sihui Liu  <sihui_liu@apple.com>
 
         Set up basic infrastructure for SpeechRecognition
