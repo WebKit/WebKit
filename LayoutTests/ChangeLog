@@ -1,3 +1,18 @@
+2020-11-03  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Ignore order when parsing inset and color for box-shadow
+        https://bugs.webkit.org/show_bug.cgi?id=182677
+
+        Reviewed by Simon Fraser.
+
+        Add additional test coverage around rejecting invalid box-shadow
+        values (e.g. multiple colors, multiple insets, multiple lengths-components).
+
+        https://drafts.csswg.org/css-backgrounds/#typedef-shadow
+
+        * LayoutTests/fast/box-shadow/box-shadow-invalid-values.html: Added.
+        * LayoutTests/fast/box-shadow/box-shadow-invalid-values-expected.txt: Added.
+
 2020-11-03  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Update state of flaky crash tests that are actually failing.

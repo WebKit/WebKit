@@ -1729,48 +1729,63 @@ RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, CSSParser
 {
     RefPtr<CSSPrimitiveValue> style;
     RefPtr<CSSPrimitiveValue> color;
-
-    if (range.atEnd())
-        return nullptr;
-    if (range.peek().id() == CSSValueInset) {
-        if (!allowInset)
-            return nullptr;
-        style = consumeIdent(range);
-    }
-    color = consumeColor(range, cssParserMode);
-
-    auto horizontalOffset = consumeLength(range, cssParserMode, ValueRangeAll);
-    if (!horizontalOffset)
-        return nullptr;
-
-    auto verticalOffset = consumeLength(range, cssParserMode, ValueRangeAll);
-    if (!verticalOffset)
-        return nullptr;
-
+    RefPtr<CSSPrimitiveValue> horizontalOffset;
+    RefPtr<CSSPrimitiveValue> verticalOffset;
     RefPtr<CSSPrimitiveValue> blurRadius;
     RefPtr<CSSPrimitiveValue> spreadDistance;
-
-    const CSSParserToken& token = range.peek();
-    // The explicit check for calc() is unfortunate. This is ensuring that we only fail parsing if there is a length, but it fails the range check.
-    if (token.type() == DimensionToken || token.type() == NumberToken || (token.type() == FunctionToken && CSSCalcValue::isCalcFunction(token.functionId()))) {
-        blurRadius = consumeLength(range, cssParserMode, ValueRangeNonNegative);
-        if (!blurRadius)
-            return nullptr;
-    }
-
-    if (blurRadius && allowSpread)
-        spreadDistance = consumeLength(range, cssParserMode, ValueRangeAll);
-
-    if (!range.atEnd()) {
-        if (!color)
-            color = consumeColor(range, cssParserMode);
-        if (range.peek().id() == CSSValueInset) {
+    
+    for (size_t i = 0; i < 3; i++) {
+        if (range.atEnd())
+            break;
+        
+        const CSSParserToken& nextToken = range.peek();
+        // If we have come to a comma (e.g. if this range represents a comma-separated list of <shadow>s), we are done parsing this <shadow>.
+        if (nextToken.type() == CommaToken)
+            break;
+        
+        if (nextToken.id() == CSSValueInset) {
             if (!allowInset || style)
                 return nullptr;
             style = consumeIdent(range);
+            continue;
         }
-    }
+        
+        auto maybeColor = consumeColor(range, cssParserMode);
+        if (maybeColor) {
+            // If we just parsed a color but already had one, the given token range is not a valid <shadow>.
+            if (color)
+                return nullptr;
+            color = maybeColor;
+            continue;
+        }
+        
+        // If the current token is neither a color nor the `inset` keyword, it must be the lengths component of this value.
+        if (horizontalOffset || verticalOffset || blurRadius || spreadDistance) {
+            // If we've already parsed these lengths, the given value is invalid as there cannot be two lengths components in a single <shadow> value.
+            return nullptr;
+        }
+        horizontalOffset = consumeLength(range, cssParserMode, ValueRangeAll);
+        if (!horizontalOffset)
+            return nullptr;
+        verticalOffset = consumeLength(range, cssParserMode, ValueRangeAll);
+        if (!verticalOffset)
+            return nullptr;
 
+        const CSSParserToken& token = range.peek();
+        // The explicit check for calc() is unfortunate. This is ensuring that we only fail parsing if there is a length, but it fails the range check.
+        if (token.type() == DimensionToken || token.type() == NumberToken || (token.type() == FunctionToken && CSSCalcValue::isCalcFunction(token.functionId()))) {
+            blurRadius = consumeLength(range, cssParserMode, ValueRangeNonNegative);
+            if (!blurRadius)
+                return nullptr;
+        }
+
+        if (blurRadius && allowSpread)
+            spreadDistance = consumeLength(range, cssParserMode, ValueRangeAll);
+    }
+    
+    // In order for this to be a valid <shadow>, at least these lengths must be present.
+    if (!horizontalOffset || !verticalOffset)
+        return nullptr;
     return CSSShadowValue::create(WTFMove(horizontalOffset), WTFMove(verticalOffset), WTFMove(blurRadius), WTFMove(spreadDistance), WTFMove(style), WTFMove(color));
 }
 
