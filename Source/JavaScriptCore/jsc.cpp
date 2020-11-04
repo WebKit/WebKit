@@ -363,6 +363,8 @@ static JSC_DECLARE_HOST_FUNCTION(functionTotalCompileTime);
 static JSC_DECLARE_HOST_FUNCTION(functionSetUnhandledRejectionCallback);
 static JSC_DECLARE_HOST_FUNCTION(functionAsDoubleNumber);
 
+static JSC_DECLARE_HOST_FUNCTION(functionDropAllLocks);
+
 struct Script {
     enum class StrictMode {
         Strict,
@@ -652,6 +654,8 @@ private:
         addFunction(vm, "setUnhandledRejectionCallback", functionSetUnhandledRejectionCallback, 1);
 
         addFunction(vm, "asDoubleNumber", functionAsDoubleNumber, 1);
+
+        addFunction(vm, "dropAllLocks", functionDropAllLocks, 1);
 
         if (Options::exposeCustomSettersOnGlobalObjectForTesting()) {
             {
@@ -2603,6 +2607,12 @@ JSC_DEFINE_HOST_FUNCTION(functionAsDoubleNumber, (JSGlobalObject* globalObject, 
     double num = callFrame->argument(0).toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(jsDoubleNumber(num));
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionDropAllLocks, (JSGlobalObject* globalObject, CallFrame*))
+{
+    JSLock::DropAllLocks dropAllLocks(globalObject);
+    return JSValue::encode(jsUndefined());
 }
 
 // Use SEH for Release builds only to get rid of the crash report dialog

@@ -1,3 +1,14 @@
+2020-11-03  Saam Barati  <sbarati@apple.com>
+
+        Add back the removed assertion from r269338 and add a test
+        https://bugs.webkit.org/show_bug.cgi?id=218543
+
+        Reviewed by Filip Pizlo.
+
+        * stress/bad-osr-exit-checkpoint-state-assertion-during-js-lock-destruction.js: Added.
+        (foo):
+        (let.a.get length):
+
 2020-11-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         REGRESSION (r254038): Simple.com money transfer UI is very laggy (multiple seconds per keypress)

@@ -71,6 +71,8 @@ VMEntryScope::~VMEntryScope()
     if (m_vm.entryScope != this)
         return;
 
+    ASSERT_WITH_MESSAGE(!m_vm.hasCheckpointOSRSideState(), "Exitting the VM but pending checkpoint side state still available");
+
     if (Options::useTracePoints())
         tracePoint(VMEntryScopeEnd);
     

@@ -1,3 +1,18 @@
+2020-11-03  Saam Barati  <sbarati@apple.com>
+
+        Add back the removed assertion from r269338 and add a test
+        https://bugs.webkit.org/show_bug.cgi?id=218543
+
+        Reviewed by Filip Pizlo.
+
+        The assertion from r269338 was wrong in JSLock::willReleaseLock because
+        of our use of DropAllLocks. However, it is correct inside the topmost ~VMEntryScope.
+
+        * jsc.cpp:
+        (JSC_DEFINE_HOST_FUNCTION):
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::~VMEntryScope):
+
 2020-11-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add JITCage support
