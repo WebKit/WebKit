@@ -68,7 +68,7 @@ private:
     void storageChanged(SharedMemory*);
 
     MediaRecorderIdentifier m_identifier;
-    Ref<MediaStreamPrivate> m_stream;
+    Ref<WebCore::MediaStreamPrivate> m_stream;
     Ref<IPC::Connection> m_connection;
 
     std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;

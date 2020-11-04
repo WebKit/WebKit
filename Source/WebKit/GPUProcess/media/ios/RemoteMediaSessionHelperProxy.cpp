@@ -31,6 +31,7 @@
 #include "Connection.h"
 #include "GPUConnectionToWebProcess.h"
 #include "RemoteMediaSessionHelperMessages.h"
+#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
 using namespace WebCore;
