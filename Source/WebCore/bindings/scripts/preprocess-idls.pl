@@ -295,12 +295,33 @@ foreach my $idlFilePath (sort keys %supplementals) {
 }
 WriteFileIfChanged($supplementalDependencyFile, $dependencies);
 
+sub RemoveWellKnownPrefix
+{
+    my $path = shift;
+
+    chomp(my $pwd = `pwd`);
+    my $srcroot = $ENV{'SRCROOT'};
+    my $sdkroot = $ENV{'SDKROOT'};
+    my $built_products_dir = $ENV{'BUILT_PRODUCTS_DIR'};
+
+    if ($srcroot and $sdkroot and $built_products_dir) {
+        $path =~ s/^${pwd}/./;
+        $path =~ s/^${srcroot}/WebCore/;
+        $path =~ s/^${sdkroot}/\$(SDKROOT)/;
+        $path =~ s/^${built_products_dir}/\$(BUILT_PRODUCTS_DIR)/;
+    } else {
+        $path = basename($path);
+    }
+
+    return $path;
+}
+
 if ($supplementalMakefileDeps) {
     my $makefileDeps = "# Supplemental dependencies\n";
     foreach my $idlFilePath (sort keys %supplementals) {
         my $basename = $idlFilePathToInterfaceName{$idlFilePath};
 
-        my @dependencyList = map { basename($_) } @{$supplementals{$idlFilePath}};
+        my @dependencyList = map { RemoveWellKnownPrefix($_) } @{$supplementals{$idlFilePath}};
         my @dependencies = sort(keys %{{ map{$_=>1}@dependencyList}});
 
         $makefileDeps .= "JS${basename}.h: @{dependencies}\n";
