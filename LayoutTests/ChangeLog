@@ -1,3 +1,12 @@
+2020-11-04  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Remove text flaky failures of tests that are actually passing.
+
+        The test failures removed have been consistently passing for the last 4000
+        revisions.
+        
+        * platform/gtk/TestExpectations:
+
 2020-11-03  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Remove stale baselines of two mediastream tests.
