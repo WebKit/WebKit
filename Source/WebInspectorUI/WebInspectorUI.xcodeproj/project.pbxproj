@@ -176,7 +176,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C60FE2F14E5F3CD006CD77D /* Base.xcconfig */;
 			buildSettings = {
-				DEBUG_DEFINES = NDEBUG;
 			};
 			name = Production;
 		};
@@ -191,7 +190,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C60FE3114E5F3CD006CD77D /* DebugRelease.xcconfig */;
 			buildSettings = {
-				DEBUG_DEFINES = "";
 			};
 			name = Debug;
 		};
@@ -199,7 +197,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C60FE3114E5F3CD006CD77D /* DebugRelease.xcconfig */;
 			buildSettings = {
-				DEBUG_DEFINES = NDEBUG;
 			};
 			name = Release;
 		};

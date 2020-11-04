@@ -177,7 +177,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 31DF42C61EBBBBB90096ED44 /* ImageDiff.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -185,7 +184,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 31DF42C61EBBBBB90096ED44 /* ImageDiff.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -193,7 +191,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 31DF42C61EBBBBB90096ED44 /* ImageDiff.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -218,6 +215,7 @@
 				31DF42D41EBBBBFE0096ED44 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

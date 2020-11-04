@@ -68,7 +68,8 @@ END
     $tempDir = $ENV{'TARGET_TEMP_DIR'};
 
     my $arch = $ENV{'CURRENT_ARCH'};
-    my $variant = $ENV{'CURRENT_VARIANT'};
+    my @variants = split(" ", $ENV{'BUILD_VARIANTS'});
+    my $variant = $variants[0];  # FIXME: Multi-variant builds only check first variant.
     my $list = $ENV{"LINK_FILE_LIST_${variant}_${arch}"};
     open LIST, $list || die "ERROR: Could not open $list\n";
     @files = <LIST>;

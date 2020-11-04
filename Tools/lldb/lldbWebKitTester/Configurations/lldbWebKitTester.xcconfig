@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+// Copyright (C) 2015-2020 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -23,9 +23,8 @@
 
 PRODUCT_NAME = $(TARGET_NAME);
 
-RELEASE_DEFINES_debug = ;
-RELEASE_DEFINES_normal = RELEASE_WITHOUT_OPTIMIZATIONS;
-RELEASE_DEFINES = $(RELEASE_DEFINES_$(CURRENT_VARIANT));
+RELEASE_DEFINES = RELEASE_WITHOUT_OPTIMIZATIONS;
+RELEASE_DEFINES[config=Debug] = ;
 
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) $(RELEASE_DEFINES);
 GCC_OPTIMIZATION_LEVEL = 0;

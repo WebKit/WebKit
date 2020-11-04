@@ -1,4 +1,4 @@
-// Copyright (C) 2009-2019 Apple Inc. All rights reserved.
+// Copyright (C) 2009-2020 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -141,23 +141,17 @@ JAVASCRIPTCORE_CONTENTS_DIR[sdk=macosx*] = JavaScriptCore.framework/Versions/A;
 JAVASCRIPTCORE_HELPERS_DIR = $(JAVASCRIPTCORE_CONTENTS_DIR)/Helpers;
 JAVASCRIPTCORE_LIBRARIES_DIR = $(JAVASCRIPTCORE_CONTENTS_DIR)/Libraries;
 
-// DEBUG_DEFINES, GCC_OPTIMIZATION_LEVEL, STRIP_INSTALLED_PRODUCT and DEAD_CODE_STRIPPING vary between the debug and normal variants.
-// We set up the values for each variant here, and have the Debug configuration in the Xcode project use the _debug variant.
-DEBUG_DEFINES_debug = ;
-DEBUG_DEFINES_normal = NDEBUG;
-DEBUG_DEFINES = $(DEBUG_DEFINES_$(CURRENT_VARIANT));
+DEAD_CODE_STRIPPING = YES;
+DEAD_CODE_STRIPPING[config=Debug] = NO;
 
-GCC_OPTIMIZATION_LEVEL = $(GCC_OPTIMIZATION_LEVEL_$(CURRENT_VARIANT));
-GCC_OPTIMIZATION_LEVEL_normal = 3;
-GCC_OPTIMIZATION_LEVEL_debug = 0;
+DEBUG_DEFINES = NDEBUG;
+DEBUG_DEFINES[config=Debug] = ;
 
-STRIP_INSTALLED_PRODUCT = $(STRIP_INSTALLED_PRODUCT_$(CURRENT_VARIANT));
-STRIP_INSTALLED_PRODUCT_normal = YES;
-STRIP_INSTALLED_PRODUCT_debug = NO;
+GCC_OPTIMIZATION_LEVEL = 3;
+GCC_OPTIMIZATION_LEVEL[config=Debug] = 0;
 
-DEAD_CODE_STRIPPING_debug = NO;
-DEAD_CODE_STRIPPING_normal = YES;
-DEAD_CODE_STRIPPING = $(DEAD_CODE_STRIPPING_$(CURRENT_VARIANT));
+STRIP_INSTALLED_PRODUCT = YES;
+STRIP_INSTALLED_PRODUCT[config=Debug] = NO;
 
 SDKROOT = macosx.internal;
 

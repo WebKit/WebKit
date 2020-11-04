@@ -45,7 +45,6 @@ die "No allowed prefixes passed on the command line" if !@allowedPrefixes;
 
 my $arch = $ENV{'CURRENT_ARCH'};
 my $target = $ENV{'TARGET_NAME'};
-my $variant = $ENV{'CURRENT_VARIANT'};
 my $coverageBuild = $ENV{'WEBKIT_COVERAGE_BUILD'};
 
 my $executablePath = "$ENV{'TARGET_BUILD_DIR'}/$ENV{'EXECUTABLE_PATH'}";

@@ -1,3 +1,63 @@
+2020-11-04  David Kilzer  <ddkilzer@apple.com>
+
+        WebKit should remove unused debug variant support
+        <https://webkit.org/b/218315>
+        <rdar://problem/70785369>
+
+        Reviewed by Darin Adler.
+
+        Remove support for building the debug variant since it is
+        currently unused. We now set default values for the
+        DEAD_CODE_STRIPPING, DEBUG_DEFINES, GCC_OPTIMIZATION_LEVEL and
+        STRIP_INSTALLED_PRODUCT variables.
+
+        Also move these values out of the Xcode project into
+        Base.xcconfig files using the [config=Debug] specifier so that
+        these overrides are next to the definitions.
+
+        Additional changes in behavior are noted below.
+
+        * ContentExtensionTester/Configurations/Base.xcconfig:
+        * ContentExtensionTester/ContentExtensionTester.xcodeproj/project.pbxproj:
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        - Remove unneeded Xcode variables that have no effect or are
+          already set in xcconfig files.
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+
+        * ImageDiff/ImageDiff.xcodeproj/project.pbxproj:
+        - Remove redundant PRODUCT_NAME which is defined in
+          ImageDiff.xcconfig.
+        - Let Xcode have its way with the project file.
+        * ImageDiff/cg/Configurations/Base.xcconfig:
+
+        * Scripts/check-for-exit-time-destructors:
+        * Scripts/check-for-global-initializers:
+        - Switch to use BUILD_VARIANTS instead of CURRENT_VARIANT. Xcode
+          only invokes build phase scripts once (even when multiple
+          variants are defined for a build), and it always sets
+          CURRENT_VARIANT=normal, so using BUILD_VARIANTS is more
+          accurate.
+        - Add FIXME about building with multiple variants. These scripts
+          are only used in engineering builds, which are only ever built
+          with BUILD_VARIANTS=normal, so there is no urgency to handle
+          multiple variants here.
+
+        * Scripts/check-for-inappropriate-objc-class-names:
+        * Scripts/check-for-weak-vtables-and-externals:
+        - Remove unused $variants variable.
+
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
+        * lldb/lldbWebKitTester/Configurations/Base.xcconfig:
+        * lldb/lldbWebKitTester/Configurations/lldbWebKitTester.xcconfig:
+        * lldb/lldbWebKitTester/lldbWebKitTester.xcodeproj/project.pbxproj:
+        - Correctly define DEAD_CODE_STRIPPING, GCC_OPTIMIZATION_LEVEL
+          and STRIP_INSTALLED_PRODUCT when buliding Debug configuration.
+
 2020-11-03  Sihui Liu  <sihui_liu@apple.com>
 
         Set up basic infrastructure for SpeechRecognition

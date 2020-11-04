@@ -1,4 +1,4 @@
-// Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+// Copyright (C) 2010-2020 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -101,24 +101,19 @@ WK_TARGET_IOS_VERSION_MAJOR = $(IPHONEOS_DEPLOYMENT_TARGET:base); // e.g. iOS 9.
 WK_TARGET_TVOS_VERSION_MAJOR = $(TVOS_DEPLOYMENT_TARGET:base);
 WK_TARGET_WATCHOS_VERSION_MAJOR = $(WATCHOS_DEPLOYMENT_TARGET:base);
 
-// DEBUG_DEFINES, GCC_OPTIMIZATION_LEVEL, STRIP_INSTALLED_PRODUCT and DEAD_CODE_STRIPPING vary between the debug and normal variants.
-// We set up the values for each variant here, and have the Debug configuration in the Xcode project use the _debug variant.
-DEBUG_DEFINES_debug = ;
-DEBUG_DEFINES_normal = NDEBUG;
-DEBUG_DEFINES = $(DEBUG_DEFINES_$(CURRENT_VARIANT));
-
-GCC_OPTIMIZATION_LEVEL = $(GCC_OPTIMIZATION_LEVEL_$(CURRENT_VARIANT));
-GCC_OPTIMIZATION_LEVEL_normal = s;
-GCC_OPTIMIZATION_LEVEL_debug = 0;
-
-STRIP_INSTALLED_PRODUCT = $(STRIP_INSTALLED_PRODUCT_$(CURRENT_VARIANT));
-STRIP_INSTALLED_PRODUCT_normal = YES;
-STRIP_INSTALLED_PRODUCT_debug = NO;
-
 COPY_PHASE_STRIP = NO;
 // Dead code stripping needs to be on in the debug variant to avoid link errors.  This is due to unconditionally
 // building the MiG bindings for WebKitPluginClient even when the functions that the bindings wrap are not built.
 DEAD_CODE_STRIPPING = YES;
+
+DEBUG_DEFINES = NDEBUG;
+DEBUG_DEFINES[config=Debug] = ;
+
+GCC_OPTIMIZATION_LEVEL = s;
+GCC_OPTIMIZATION_LEVEL[config=Debug] = 0;
+
+STRIP_INSTALLED_PRODUCT = YES;
+STRIP_INSTALLED_PRODUCT[config=Debug] = NO;
 
 SDKROOT = macosx.internal;
 

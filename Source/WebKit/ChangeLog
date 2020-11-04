@@ -1,3 +1,27 @@
+2020-11-04  David Kilzer  <ddkilzer@apple.com>
+
+        WebKit should remove unused debug variant support
+        <https://webkit.org/b/218315>
+        <rdar://problem/70785369>
+
+        Reviewed by Darin Adler.
+
+        Remove support for building the debug variant since it is
+        currently unused. We now set default values for the
+        DEAD_CODE_STRIPPING, DEBUG_DEFINES, GCC_OPTIMIZATION_LEVEL and
+        STRIP_INSTALLED_PRODUCT variables.
+
+        Also move these values out of the Xcode project into
+        Base.xcconfig files using the [config=Debug] specifier so that
+        these overrides are next to the definitions.
+
+        Additional changes in behavior are noted below.
+
+        * Configurations/Base.xcconfig:
+        * WebKit.xcodeproj/project.pbxproj:
+        - STRIP_INSTALLED_PRODUCT is now set to NO for Debug builds.
+          Previously symbols were always stripped in Debug builds.
+
 2020-11-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add some missing header includes in media sources

@@ -1,4 +1,4 @@
-// Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+// Copyright (C) 2009-2020 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -65,9 +65,8 @@ GCC_WARN_64_TO_32_BIT_CONVERSION[arch=arm64*] = NO;
 GCC_WARN_64_TO_32_BIT_CONVERSION[arch=x86_64] = NO;
 WARNING_CFLAGS = -Wall -W -Wno-unused-parameter -Wundef
 
-DEBUG_DEFINES_debug = ;
-DEBUG_DEFINES_normal = NDEBUG;
-DEBUG_DEFINES = $(DEBUG_DEFINES_$(CURRENT_VARIANT));
+DEBUG_DEFINES = NDEBUG;
+DEBUG_DEFINES[config=Debug] = ;
 
 TARGET_MACOS_LEGACY_VERSION_IDENTIFIER = $(TARGET_MACOS_LEGACY_VERSION_IDENTIFIER_$(MACOSX_DEPLOYMENT_TARGET:base))
 TARGET_MACOS_LEGACY_VERSION_IDENTIFIER_10 = 10$(MACOSX_DEPLOYMENT_TARGET:suffix:identifier)
