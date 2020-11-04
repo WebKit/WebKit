@@ -209,11 +209,12 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
     ASSERT(m_texture);
 
 #if PLATFORM(COCOA)
-    if (!reshapeDisplayBufferBacking()) {
+    if (!allocateIOSurfaceBackingStore(size)) {
         RELEASE_LOG(WebGL, "Fatal: Unable to allocate backing store of size %d x %d", width, height);
         forceContextLost();
         return true;
     }
+    updateFramebufferTextureBackingStoreFromLayer();
     if (m_preserveDrawingBufferTexture) {
         // The context requires the use of an intermediate texture in order to implement
         // preserveDrawingBuffer:true without antialiasing.
@@ -519,12 +520,6 @@ void GraphicsContextGLOpenGL::prepareTexture()
         return;
 
     makeContextCurrent();
-    prepareTextureImpl();
-}
-
-void GraphicsContextGLOpenGL::prepareTextureImpl()
-{
-    ASSERT(!m_layerComposited);
 
     if (contextAttributes().antialias)
         resolveMultisamplingIfNecessary();
@@ -560,6 +555,7 @@ void GraphicsContextGLOpenGL::prepareTextureImpl()
         } else
             gl::BindFramebuffer(GL_FRAMEBUFFER, m_state.boundDrawFBO);
     }
+    gl::Flush();
 #endif
 }
 

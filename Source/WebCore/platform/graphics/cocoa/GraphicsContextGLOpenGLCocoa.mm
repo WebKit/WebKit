@@ -29,7 +29,6 @@
 #import "GraphicsContextGLOpenGL.h"
 
 #import "ExtensionsGLANGLE.h"
-#import "GraphicsContextGLANGLEUtilities.h"
 #import "GraphicsContextGLOpenGLManager.h"
 #import "HostWindow.h"
 #import "Logging.h"
@@ -40,6 +39,21 @@
 #import <CoreGraphics/CGBitmapContext.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/text/CString.h>
+
+#define EGL_EGL_PROTOTYPES 0
+// Skip the inclusion of ANGLE's explicit context entry points for now.
+#define GL_ANGLE_explicit_context
+#define GL_ANGLE_explicit_context_gles1
+typedef void* GLeglContext;
+#import <ANGLE/egl.h>
+#import <ANGLE/eglext.h>
+#import <ANGLE/eglext_angle.h>
+#import <ANGLE/entry_points_egl.h>
+#import <ANGLE/entry_points_egl_ext.h>
+#import <ANGLE/entry_points_gles_2_0_autogen.h>
+#import <ANGLE/entry_points_gles_ext_autogen.h>
+#import <ANGLE/gl2ext.h>
+#import <ANGLE/gl2ext_angle.h>
 
 #if PLATFORM(MAC)
 #import "ScreenProperties.h"
@@ -334,10 +348,11 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
 
     // Create the WebGLLayer
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-        m_webGLLayer = adoptNS([[WebGLLayer alloc] initWithClient:this devicePixelRatio:attrs.devicePixelRatio]);
+        m_webGLLayer = adoptNS([[WebGLLayer alloc] initWithGraphicsContextGL:this]);
 #ifndef NDEBUG
         [m_webGLLayer setName:@"WebGL Layer"];
 #endif
+        [m_webGLLayer setEGLDisplay:m_displayObj config:m_configObj];
     END_BLOCK_OBJC_EXCEPTIONS
 
     // Create the texture that will be used for the framebuffer.
@@ -409,19 +424,10 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
         if (m_preserveDrawingBufferFBO)
             gl::DeleteFramebuffers(1, &m_preserveDrawingBufferFBO);
 
-        if (m_displayBufferPbuffer) {
-            EGL_ReleaseTexImage(m_displayObj, m_displayBufferPbuffer, EGL_BACK_BUFFER);
-            EGL_DestroySurface(m_displayObj, m_displayBufferPbuffer);
-        }
-        auto recycledBuffer = [m_webGLLayer recycleBuffer];
-        if (recycledBuffer.handle)
-            EGL_DestroySurface(m_displayObj, recycledBuffer.handle);
-        auto contentsHandle = [m_webGLLayer detachClient];
-        if (contentsHandle)
-            EGL_DestroySurface(m_displayObj, contentsHandle);
-
+        [m_webGLLayer releaseGLResources];
         EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         EGL_DestroyContext(m_displayObj, m_contextObj);
+        [m_webGLLayer setContext:nullptr];
     }
 
     LOG(WebGL, "Destroyed a GraphicsContextGLOpenGL (%p).", this);
@@ -469,10 +475,6 @@ GCGLint GraphicsContextGLOpenGL::EGLIOSurfaceTextureTarget()
 bool GraphicsContextGLOpenGL::makeContextCurrent()
 {
     if (!m_contextObj)
-        return false;
-    // If there is no drawing buffer, we failed to allocate one during preparing for display.
-    // The exception is the case when the context is used before reshaping.
-    if (!m_displayBufferBacking && !getInternalFramebufferSize().isEmpty())
         return false;
     // ANGLE has an early out for case where nothing changes. Calling MakeCurrent
     // is important to set volatile platform context. See InitializeEGLDisplay().
@@ -569,60 +571,16 @@ void GraphicsContextGLOpenGL::updateCGLContext()
 }
 #endif
 
-bool GraphicsContextGLOpenGL::reshapeDisplayBufferBacking()
+bool GraphicsContextGLOpenGL::allocateIOSurfaceBackingStore(IntSize size)
 {
-    ASSERT(!getInternalFramebufferSize().isEmpty());
-    // Reset the current backbuffer now before allocating a new one in order to slightly reduce memory pressure.
-    if (m_displayBufferBacking) {
-        m_displayBufferBacking.reset();
-        EGL_ReleaseTexImage(m_displayObj, m_displayBufferPbuffer, EGL_BACK_BUFFER);
-        EGL_DestroySurface(m_displayObj, m_displayBufferPbuffer);
-        m_displayBufferPbuffer = EGL_NO_SURFACE;
-    }
-    // Reset the future recycled buffer now, because it most likely will not be reusable at the time it will be reused.
-    auto recycledBuffer = [m_webGLLayer recycleBuffer];
-    if (recycledBuffer.handle)
-        EGL_DestroySurface(m_displayObj, recycledBuffer.handle);
-    recycledBuffer.surface.reset();
-
-    auto backing = WebCore::IOSurface::create(getInternalFramebufferSize(), WebCore::sRGBColorSpaceRef());
-    if (!backing)
-        return false;
-
-    backing->migrateColorSpaceToProperties();
-
-    const bool usingAlpha = contextAttributes().alpha;
-    const auto size = getInternalFramebufferSize();
-    const EGLint surfaceAttributes[] = {
-        EGL_WIDTH, size.width(),
-        EGL_HEIGHT, size.height(),
-        EGL_IOSURFACE_PLANE_ANGLE, 0,
-        EGL_TEXTURE_TARGET, WebCore::GraphicsContextGLOpenGL::EGLIOSurfaceTextureTarget(),
-        EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, usingAlpha ? GL_BGRA_EXT : GL_RGB,
-        EGL_TEXTURE_FORMAT, EGL_TEXTURE_RGBA,
-        EGL_TEXTURE_TYPE_ANGLE, GL_UNSIGNED_BYTE,
-        // Only has an effect on the iOS Simulator.
-        EGL_IOSURFACE_USAGE_HINT_ANGLE, EGL_IOSURFACE_WRITE_HINT_ANGLE,
-        EGL_NONE, EGL_NONE
-    };
-    EGLSurface pbuffer = EGL_CreatePbufferFromClientBuffer(m_displayObj, EGL_IOSURFACE_ANGLE, backing->surface(), m_configObj, surfaceAttributes);
-    if (!pbuffer)
-        return false;
-    return bindDisplayBufferBacking(WTFMove(backing), pbuffer);
+    LOG(WebGL, "GraphicsContextGLOpenGL::allocateIOSurfaceBackingStore at %d x %d. (%p)", size.width(), size.height(), this);
+    return [m_webGLLayer allocateIOSurfaceBackingStoreWithSize:size usingAlpha:contextAttributes().alpha];
 }
 
-bool GraphicsContextGLOpenGL::bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer)
+void GraphicsContextGLOpenGL::updateFramebufferTextureBackingStoreFromLayer()
 {
-    GCGLenum textureTarget = IOSurfaceTextureTarget();
-    ScopedRestoreTextureBinding restoreBinding(IOSurfaceTextureTargetQuery(), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
-    gl::BindTexture(textureTarget, m_texture);
-    if (!EGL_BindTexImage(m_displayObj, pbuffer, EGL_BACK_BUFFER)) {
-        EGL_DestroySurface(m_displayObj, pbuffer);
-        return false;
-    }
-    m_displayBufferPbuffer = pbuffer;
-    m_displayBufferBacking = WTFMove(backing);
-    return true;
+    LOG(WebGL, "GraphicsContextGLOpenGL::updateFramebufferTextureBackingStoreFromLayer(). (%p)", this);
+    [m_webGLLayer bindFramebufferToNextAvailableSurface];
 }
 
 bool GraphicsContextGLOpenGL::isGLES2Compliant() const
@@ -679,35 +637,7 @@ void GraphicsContextGLOpenGL::screenDidChange(PlatformDisplayID displayID)
 
 void GraphicsContextGLOpenGL::prepareForDisplay()
 {
-    if (m_layerComposited)
-        return;
-    if (!makeContextCurrent())
-        return;
-    prepareTextureImpl();
-
-    // The IOSurface will be used from other graphics subsystem, so flush GL commands.
-    gl::Flush();
-
-    auto recycledBuffer = [m_webGLLayer recycleBuffer];
-
-    EGL_ReleaseTexImage(m_displayObj, m_displayBufferPbuffer, EGL_BACK_BUFFER);
-    [m_webGLLayer prepareForDisplayWithContents: {WTFMove(m_displayBufferBacking), m_displayBufferPbuffer}];
-    m_displayBufferPbuffer = EGL_NO_SURFACE;
-
-    if (recycledBuffer.surface && recycledBuffer.surface->size() == getInternalFramebufferSize()) {
-        if (bindDisplayBufferBacking(WTFMove(recycledBuffer.surface), recycledBuffer.handle))
-            return;
-    }
-    recycledBuffer.surface.reset();
-    if (recycledBuffer.handle)
-        EGL_DestroySurface(m_displayObj, recycledBuffer.handle);
-    // Error will be handled by next call to makeContextCurrent() which will notice lack of display buffer.
-    reshapeDisplayBufferBacking();
-}
-
-void GraphicsContextGLOpenGL::didDisplay()
-{
-    markLayerComposited();
+    [m_webGLLayer prepareForDisplay];
 }
 
 }
