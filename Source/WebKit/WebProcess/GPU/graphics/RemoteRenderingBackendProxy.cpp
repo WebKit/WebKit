@@ -103,7 +103,6 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
         return imageBuffer;
     }
 
-    ASSERT_NOT_REACHED();
     return nullptr;
 }
 

@@ -1,3 +1,20 @@
+2020-11-04  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Enable Document based ImageBitmap and OffscreenCanvas drawing to use GPU Process rendering
+        https://bugs.webkit.org/show_bug.cgi?id=217735
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        putImageData() might be called immediately after creating the ImageBuffer
+        and before receiving the RemoteRenderingBackend.CreateImageBufferBackend
+        message. We need to handle for this case and avoid asserting.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::createImageBuffer):
+        If the size of the ImageBuffer is very big, no remote ImageBuffer can be
+        created. So we have to be bail out quietly in this case.
+
 2020-11-04  David Kilzer  <ddkilzer@apple.com>
 
         WebKit should remove unused debug variant support

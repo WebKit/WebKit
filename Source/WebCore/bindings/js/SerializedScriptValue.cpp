@@ -2988,7 +2988,7 @@ private:
             return JSValue();
         }
 
-        auto buffer = ImageBuffer::create(FloatSize(logicalSize), RenderingMode::Unaccelerated, resolutionScale);
+        auto buffer = ImageBitmap::createImageBuffer(*scriptExecutionContextFromExecState(m_lexicalGlobalObject), logicalSize, RenderingMode::Unaccelerated, resolutionScale);
         if (!buffer) {
             fail();
             return JSValue();

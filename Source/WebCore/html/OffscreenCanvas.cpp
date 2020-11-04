@@ -73,14 +73,14 @@ WeakPtr<HTMLCanvasElement> DetachedOffscreenCanvas::takePlaceholderCanvas()
     return std::exchange(m_placeholderCanvas, nullptr);
 }
 
-Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& context, unsigned width, unsigned height)
+Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, unsigned width, unsigned height)
 {
-    return adoptRef(*new OffscreenCanvas(context, width, height));
+    return adoptRef(*new OffscreenCanvas(scriptExecutionContext, width, height));
 }
 
-Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& context, std::unique_ptr<DetachedOffscreenCanvas>&& detachedCanvas)
+Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, std::unique_ptr<DetachedOffscreenCanvas>&& detachedCanvas)
 {
-    Ref<OffscreenCanvas> clone = adoptRef(*new OffscreenCanvas(context, detachedCanvas->size().width(), detachedCanvas->size().height()));
+    Ref<OffscreenCanvas> clone = adoptRef(*new OffscreenCanvas(scriptExecutionContext, detachedCanvas->size().width(), detachedCanvas->size().height()));
     clone->setImageBuffer(detachedCanvas->takeImageBuffer());
     if (!detachedCanvas->originClean())
         clone->setOriginTainted();
@@ -98,16 +98,16 @@ Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& context, st
     return clone;
 }
 
-Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& context, HTMLCanvasElement& canvas)
+Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, HTMLCanvasElement& canvas)
 {
-    auto offscreen = adoptRef(*new OffscreenCanvas(context, canvas.width(), canvas.height()));
+    auto offscreen = adoptRef(*new OffscreenCanvas(scriptExecutionContext, canvas.width(), canvas.height()));
     offscreen->setPlaceholderCanvas(canvas);
     return offscreen;
 }
 
-OffscreenCanvas::OffscreenCanvas(ScriptExecutionContext& context, unsigned width, unsigned height)
+OffscreenCanvas::OffscreenCanvas(ScriptExecutionContext& scriptExecutionContext, unsigned width, unsigned height)
     : CanvasBase(IntSize(width, height))
-    , ContextDestructionObserver(&context)
+    , ContextDestructionObserver(&scriptExecutionContext)
     , m_placeholderData(PlaceholderData::create())
 {
 }
@@ -179,13 +179,13 @@ void OffscreenCanvas::createContextWebGL(RenderingContextType contextType, WebGL
 {
     ASSERT(!m_context);
 
-    auto context = scriptExecutionContext();
-    if (context->isWorkerGlobalScope()) {
-        WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(*context);
+    auto scriptExecutionContext = this->scriptExecutionContext();
+    if (scriptExecutionContext->isWorkerGlobalScope()) {
+        WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(*scriptExecutionContext);
         if (!shouldEnableWebGL(workerGlobalScope.webGLEnabled(), workerGlobalScope.acceleratedCompositingEnabled()))
             return;
-    } else if (context->isDocument()) {
-        auto& settings = downcast<Document>(*context).settings();
+    } else if (scriptExecutionContext->isDocument()) {
+        auto& settings = downcast<Document>(*scriptExecutionContext).settings();
         if (!shouldEnableWebGL(settings.webGLEnabled(), settings.acceleratedCompositingEnabled()))
             return;
     } else
@@ -254,8 +254,10 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
         if (!width() || !height())
             return { RefPtr<ImageBitmap> { nullptr } };
 
-        if (!m_hasCreatedImageBuffer)
-            return { ImageBitmap::create(ImageBitmapBacking(ImageBuffer::create(size(), RenderingMode::Unaccelerated))) };
+        if (!m_hasCreatedImageBuffer) {
+            auto buffer = ImageBitmap::createImageBuffer(*canvasBaseScriptExecutionContext(), size(), RenderingMode::Unaccelerated);
+            return { ImageBitmap::create(ImageBitmapBacking(WTFMove(buffer))) };
+        }
 
         auto buffer = takeImageBuffer();
         if (!buffer)
@@ -272,7 +274,7 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
         // store from this canvas (or its context), but for now we'll just
         // create a new bitmap and paint into it.
 
-        auto imageBitmap = ImageBitmap::create(size());
+        auto imageBitmap = ImageBitmap::create(*canvasBaseScriptExecutionContext(), size());
         if (!imageBitmap->buffer())
             return { RefPtr<ImageBitmap> { nullptr } };
 
@@ -368,11 +370,11 @@ void OffscreenCanvas::clearCopiedImage() const
 
 SecurityOrigin* OffscreenCanvas::securityOrigin() const
 {
-    auto& context = *canvasBaseScriptExecutionContext();
-    if (is<WorkerGlobalScope>(context))
-        return &downcast<WorkerGlobalScope>(context).topOrigin();
+    auto& scriptExecutionContext = *canvasBaseScriptExecutionContext();
+    if (is<WorkerGlobalScope>(scriptExecutionContext))
+        return &downcast<WorkerGlobalScope>(scriptExecutionContext).topOrigin();
 
-    return &downcast<Document>(context).securityOrigin();
+    return &downcast<Document>(scriptExecutionContext).securityOrigin();
 }
 
 bool OffscreenCanvas::canDetach() const
@@ -451,11 +453,11 @@ void OffscreenCanvas::scheduleCommitToPlaceholderCanvas()
 
 CSSValuePool& OffscreenCanvas::cssValuePool()
 {
-    auto* context = canvasBaseScriptExecutionContext();
-    if (context->isWorkerGlobalScope())
-        return downcast<WorkerGlobalScope>(*context).cssValuePool();
+    auto* scriptExecutionContext = canvasBaseScriptExecutionContext();
+    if (scriptExecutionContext->isWorkerGlobalScope())
+        return downcast<WorkerGlobalScope>(*scriptExecutionContext).cssValuePool();
 
-    ASSERT(context->isDocument());
+    ASSERT(scriptExecutionContext->isDocument());
     return CSSValuePool::singleton();
 }
 
@@ -466,7 +468,7 @@ void OffscreenCanvas::createImageBuffer() const
     if (!width() || !height())
         return;
 
-    setImageBuffer(ImageBuffer::create(size(), RenderingMode::Unaccelerated));
+    setImageBuffer(ImageBitmap::createImageBuffer(*canvasBaseScriptExecutionContext(), size(), RenderingMode::Unaccelerated));
 }
 
 RefPtr<ImageBuffer> OffscreenCanvas::takeImageBuffer() const
@@ -482,7 +484,7 @@ RefPtr<ImageBuffer> OffscreenCanvas::takeImageBuffer() const
         return nullptr;
 
     clearCopiedImage();
-    return setImageBuffer(m_detached ? nullptr : ImageBuffer::create(size(), RenderingMode::Unaccelerated));
+    return setImageBuffer(m_detached ? nullptr : ImageBitmap::createImageBuffer(*canvasBaseScriptExecutionContext(), size(), RenderingMode::Unaccelerated));
 }
 
 void OffscreenCanvas::reset()

@@ -120,7 +120,7 @@ protected:
     {
         // The math inside ImageData::create() doesn't agree with the math inside ImageBufferBackend::putImageData() about how m_resolutionScale interacts with the data in the ImageBuffer.
         // This means that putImageData() is only called when m_resolutionScale == 1.
-        ASSERT(m_backend->resolutionScale() == 1);
+        ASSERT_IMPLIES(m_backend, m_backend->resolutionScale() == 1);
         m_drawingContext.recorder().putImageData(inputFormat, imageData, srcRect, destPoint, destFormat);
     }
 

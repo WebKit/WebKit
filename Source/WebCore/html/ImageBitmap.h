@@ -82,7 +82,9 @@ public:
     static void createPromise(ScriptExecutionContext&, Source&&, ImageBitmapOptions&&, Promise&&);
     static void createPromise(ScriptExecutionContext&, Source&&, ImageBitmapOptions&&, int sx, int sy, int sw, int sh, Promise&&);
 
-    static Ref<ImageBitmap> create(IntSize);
+    static RefPtr<ImageBuffer> createImageBuffer(ScriptExecutionContext&, const FloatSize&, RenderingMode, float resolutionScale = 1);
+
+    static Ref<ImageBitmap> create(ScriptExecutionContext&, const IntSize&);
     static Ref<ImageBitmap> create(Optional<ImageBitmapBacking>&&);
 
     ~ImageBitmap();
@@ -112,7 +114,7 @@ private:
 
     ImageBitmap(Optional<ImageBitmapBacking>&&);
 
-    static void resolveWithBlankImageBuffer(bool originClean, Promise&&);
+    static void resolveWithBlankImageBuffer(ScriptExecutionContext&, bool originClean, Promise&&);
 
     static void createPromise(ScriptExecutionContext&, RefPtr<HTMLImageElement>&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
 #if ENABLE(VIDEO)
@@ -127,7 +129,7 @@ private:
     static void createPromise(ScriptExecutionContext&, RefPtr<Blob>&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
     static void createPromise(ScriptExecutionContext&, RefPtr<ImageData>&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
     static void createPromise(ScriptExecutionContext&, RefPtr<TypedOMCSSImageValue>&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
-    static void createFromBuffer(Ref<ArrayBuffer>&&, String mimeType, long long expectedContentLength, const URL&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
+    static void createFromBuffer(ScriptExecutionContext&, Ref<ArrayBuffer>&&, String mimeType, long long expectedContentLength, const URL&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
 
     Optional<ImageBitmapBacking> m_backingStore;
 };
