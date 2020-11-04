@@ -1,5 +1,240 @@
 2020-11-04  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r268198. rdar://problem/70970161
+
+    Mac: Remove OpenGL and OpenGL ES backends
+    https://bugs.webkit.org/show_bug.cgi?id=217374
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2020-10-08
+    Reviewed by Darin Adler.
+    
+    Remove macOS OpenGL (CGL) and iOS OpenGL ES (EAGL)
+    implementations of GraphicsContextGLOpenGL. These
+    are not used anymore and cannot be used for conformant
+    WebGL. The two removed backends would just create
+    maintainance burden.
+    
+    Removes TextureCacheCV, this was not implemented for
+    ANGLE and in comments it was said to be disabled in
+    the platform.
+    
+    Fixes a bug where iOS apps on Mac Apple Silicon would
+    not use correct texture target to convert the video
+    frames in VideoTextureCopierCV.
+    
+    Fixes few instances of using GL types in WebGL implementation
+    instead of WebCore defined GCGL types. This is needed
+    now that the includes are (a bit) more correct.
+    
+    No new tests, a refactoring.
+    
+    * PlatformMac.cmake:
+    * SourcesCocoa.txt:
+    * WebCore.xcodeproj/project.pbxproj:
+    * html/canvas/ANGLEInstancedArrays.cpp:
+    (WebCore::ANGLEInstancedArrays::supported):
+    * html/canvas/WebGL2RenderingContext.h:
+    * html/canvas/WebGLRenderingContextBase.cpp:
+    (WebCore::WebGLRenderingContextBase::create):
+    (WebCore::WebGLRenderingContextBase::readPixels):
+    * platform/graphics/GraphicsContextGL.cpp:
+    * platform/graphics/GraphicsContextGL.h:
+    * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+    (WebCore::GraphicsContextGLOpenGL::reshapeFBOs):
+    (WebCore::GraphicsContextGLOpenGL::paintRenderingResultsToCanvas):
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+    * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+    (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+    (WebCore::GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL):
+    (WebCore::GraphicsContextGLOpenGL::IOSurfaceTextureTarget):
+    (WebCore::GraphicsContextGLOpenGL::IOSurfaceTextureTargetQuery):
+    (WebCore::GraphicsContextGLOpenGL::EGLIOSurfaceTextureTarget):
+    (WebCore::GraphicsContextGLOpenGL::makeContextCurrent):
+    (WebCore::GraphicsContextGLOpenGL::checkGPUStatus):
+    (WebCore::GraphicsContextGLOpenGL::setContextVisibility):
+    (WebCore::GraphicsContextGLOpenGL::screenDidChange):
+    * platform/graphics/cocoa/WebGLLayer.h:
+    * platform/graphics/cocoa/WebGLLayer.mm:
+    (-[WebGLLayer initWithGraphicsContextGL:]):
+    (-[WebGLLayer setAnchorPoint:]):
+    (-[WebGLLayer copyImageSnapshotWithColorSpace:]):
+    (-[WebGLLayer prepareForDisplay]):
+    (-[WebGLLayer display]):
+    (-[WebGLLayer releaseGLResources]):
+    (-[WebGLLayer allocateIOSurfaceBackingStoreWithSize:usingAlpha:]):
+    (-[WebGLLayer bindFramebufferToNextAvailableSurface]):
+    * platform/graphics/cv/TextureCacheCV.h: Removed.
+    * platform/graphics/cv/TextureCacheCV.mm: Removed.
+    * platform/graphics/cv/VideoTextureCopierCV.cpp:
+    (WebCore::VideoTextureCopierCV::initializeContextObjects):
+    (WebCore::VideoTextureCopierCV::initializeUVContextObjects):
+    (WebCore::VideoTextureCopierCV::attachIOSurfaceToTexture):
+    (WebCore::VideoTextureCopierCV::detachIOSurfaceFromTexture):
+    (WebCore::VideoTextureCopierCV::copyImageToPlatformTexture):
+    (WebCore::VideoTextureCopierCV::copyVideoTextureToPlatformTexture):
+    * platform/graphics/cv/VideoTextureCopierCV.h:
+    * platform/graphics/ios/GraphicsContextGLOpenGLESIOS.h: Removed.
+    * platform/graphics/opengl/ExtensionsGLOpenGL.cpp:
+    (WebCore::ExtensionsGLOpenGL::blitFramebuffer):
+    (WebCore::ExtensionsGLOpenGL::createVertexArrayOES):
+    (WebCore::ExtensionsGLOpenGL::deleteVertexArrayOES):
+    (WebCore::ExtensionsGLOpenGL::isVertexArrayOES):
+    (WebCore::ExtensionsGLOpenGL::bindVertexArrayOES):
+    (WebCore::ExtensionsGLOpenGL::supportsExtension):
+    (WebCore::ExtensionsGLOpenGL::drawBuffersEXT):
+    (WebCore::ExtensionsGLOpenGL::drawArraysInstanced):
+    (WebCore::ExtensionsGLOpenGL::drawElementsInstanced):
+    (WebCore::ExtensionsGLOpenGL::vertexAttribDivisor):
+    * platform/graphics/opengl/ExtensionsGLOpenGL.h:
+    * platform/graphics/opengl/ExtensionsGLOpenGLCommon.cpp:
+    (WebCore::ExtensionsGLOpenGLCommon::initializeAvailableExtensions):
+    * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp:
+    (WebCore::GraphicsContextGLOpenGL::setContextVisibility):
+    * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+    * platform/graphics/opengl/GraphicsContextGLOpenGLBase.cpp:
+    (WebCore::GraphicsContextGLOpenGL::readPixelsAndConvertToBGRAIfNecessary):
+    (WebCore::GraphicsContextGLOpenGL::reshapeFBOs):
+    (WebCore::GraphicsContextGLOpenGL::resolveMultisamplingIfNecessary):
+    (WebCore::GraphicsContextGLOpenGL::getIntegerv):
+    (WebCore::GraphicsContextGLOpenGL::depthRange):
+    (WebCore::GraphicsContextGLOpenGL::clearDepth):
+    (WebCore::GraphicsContextGLOpenGL::getExtensions):
+    (WebCore::GraphicsContextGLOpenGL::readPixels):
+    * platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp:
+    (WebCore::GraphicsContextGLOpenGL::paintRenderingResultsToCanvas):
+    (WebCore::GraphicsContextGLOpenGL::copyTexImage2D):
+    (WebCore::GraphicsContextGLOpenGL::copyTexSubImage2D):
+    (WebCore::GraphicsContextGLOpenGL::finish):
+    (WebCore::GraphicsContextGLOpenGL::flush):
+    (WebCore::GraphicsContextGLOpenGL::deleteTexture):
+    * platform/graphics/opengl/GraphicsContextGLOpenGLES.cpp:
+    * platform/graphics/opengl/GraphicsContextGLOpenGLManager.cpp:
+    (WebCore::GraphicsContextGLOpenGLManager::updateAllContexts):
+    (WebCore::GraphicsContextGLOpenGLManager::updateHighPerformanceState):
+    (WebCore::GraphicsContextGLOpenGLManager::disableHighPerformanceGPUTimerFired):
+    * platform/graphics/opengl/GraphicsContextGLOpenGLManager.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268198 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-08  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            Mac: Remove OpenGL and OpenGL ES backends
+            https://bugs.webkit.org/show_bug.cgi?id=217374
+
+            Reviewed by Darin Adler.
+
+            Remove macOS OpenGL (CGL) and iOS OpenGL ES (EAGL)
+            implementations of GraphicsContextGLOpenGL. These
+            are not used anymore and cannot be used for conformant
+            WebGL. The two removed backends would just create
+            maintainance burden.
+
+            Removes TextureCacheCV, this was not implemented for
+            ANGLE and in comments it was said to be disabled in
+            the platform.
+
+            Fixes a bug where iOS apps on Mac Apple Silicon would
+            not use correct texture target to convert the video
+            frames in VideoTextureCopierCV.
+
+            Fixes few instances of using GL types in WebGL implementation
+            instead of WebCore defined GCGL types. This is needed
+            now that the includes are (a bit) more correct.
+
+            No new tests, a refactoring.
+
+            * PlatformMac.cmake:
+            * SourcesCocoa.txt:
+            * WebCore.xcodeproj/project.pbxproj:
+            * html/canvas/ANGLEInstancedArrays.cpp:
+            (WebCore::ANGLEInstancedArrays::supported):
+            * html/canvas/WebGL2RenderingContext.h:
+            * html/canvas/WebGLRenderingContextBase.cpp:
+            (WebCore::WebGLRenderingContextBase::create):
+            (WebCore::WebGLRenderingContextBase::readPixels):
+            * platform/graphics/GraphicsContextGL.cpp:
+            * platform/graphics/GraphicsContextGL.h:
+            * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+            (WebCore::GraphicsContextGLOpenGL::reshapeFBOs):
+            (WebCore::GraphicsContextGLOpenGL::paintRenderingResultsToCanvas):
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+            * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+            (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+            (WebCore::GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL):
+            (WebCore::GraphicsContextGLOpenGL::IOSurfaceTextureTarget):
+            (WebCore::GraphicsContextGLOpenGL::IOSurfaceTextureTargetQuery):
+            (WebCore::GraphicsContextGLOpenGL::EGLIOSurfaceTextureTarget):
+            (WebCore::GraphicsContextGLOpenGL::makeContextCurrent):
+            (WebCore::GraphicsContextGLOpenGL::checkGPUStatus):
+            (WebCore::GraphicsContextGLOpenGL::setContextVisibility):
+            (WebCore::GraphicsContextGLOpenGL::screenDidChange):
+            * platform/graphics/cocoa/WebGLLayer.h:
+            * platform/graphics/cocoa/WebGLLayer.mm:
+            (-[WebGLLayer initWithGraphicsContextGL:]):
+            (-[WebGLLayer setAnchorPoint:]):
+            (-[WebGLLayer copyImageSnapshotWithColorSpace:]):
+            (-[WebGLLayer prepareForDisplay]):
+            (-[WebGLLayer display]):
+            (-[WebGLLayer releaseGLResources]):
+            (-[WebGLLayer allocateIOSurfaceBackingStoreWithSize:usingAlpha:]):
+            (-[WebGLLayer bindFramebufferToNextAvailableSurface]):
+            * platform/graphics/cv/TextureCacheCV.h: Removed.
+            * platform/graphics/cv/TextureCacheCV.mm: Removed.
+            * platform/graphics/cv/VideoTextureCopierCV.cpp:
+            (WebCore::VideoTextureCopierCV::initializeContextObjects):
+            (WebCore::VideoTextureCopierCV::initializeUVContextObjects):
+            (WebCore::VideoTextureCopierCV::attachIOSurfaceToTexture):
+            (WebCore::VideoTextureCopierCV::detachIOSurfaceFromTexture):
+            (WebCore::VideoTextureCopierCV::copyImageToPlatformTexture):
+            (WebCore::VideoTextureCopierCV::copyVideoTextureToPlatformTexture):
+            * platform/graphics/cv/VideoTextureCopierCV.h:
+            * platform/graphics/ios/GraphicsContextGLOpenGLESIOS.h: Removed.
+            * platform/graphics/opengl/ExtensionsGLOpenGL.cpp:
+            (WebCore::ExtensionsGLOpenGL::blitFramebuffer):
+            (WebCore::ExtensionsGLOpenGL::createVertexArrayOES):
+            (WebCore::ExtensionsGLOpenGL::deleteVertexArrayOES):
+            (WebCore::ExtensionsGLOpenGL::isVertexArrayOES):
+            (WebCore::ExtensionsGLOpenGL::bindVertexArrayOES):
+            (WebCore::ExtensionsGLOpenGL::supportsExtension):
+            (WebCore::ExtensionsGLOpenGL::drawBuffersEXT):
+            (WebCore::ExtensionsGLOpenGL::drawArraysInstanced):
+            (WebCore::ExtensionsGLOpenGL::drawElementsInstanced):
+            (WebCore::ExtensionsGLOpenGL::vertexAttribDivisor):
+            * platform/graphics/opengl/ExtensionsGLOpenGL.h:
+            * platform/graphics/opengl/ExtensionsGLOpenGLCommon.cpp:
+            (WebCore::ExtensionsGLOpenGLCommon::initializeAvailableExtensions):
+            * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp:
+            (WebCore::GraphicsContextGLOpenGL::setContextVisibility):
+            * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+            * platform/graphics/opengl/GraphicsContextGLOpenGLBase.cpp:
+            (WebCore::GraphicsContextGLOpenGL::readPixelsAndConvertToBGRAIfNecessary):
+            (WebCore::GraphicsContextGLOpenGL::reshapeFBOs):
+            (WebCore::GraphicsContextGLOpenGL::resolveMultisamplingIfNecessary):
+            (WebCore::GraphicsContextGLOpenGL::getIntegerv):
+            (WebCore::GraphicsContextGLOpenGL::depthRange):
+            (WebCore::GraphicsContextGLOpenGL::clearDepth):
+            (WebCore::GraphicsContextGLOpenGL::getExtensions):
+            (WebCore::GraphicsContextGLOpenGL::readPixels):
+            * platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp:
+            (WebCore::GraphicsContextGLOpenGL::paintRenderingResultsToCanvas):
+            (WebCore::GraphicsContextGLOpenGL::copyTexImage2D):
+            (WebCore::GraphicsContextGLOpenGL::copyTexSubImage2D):
+            (WebCore::GraphicsContextGLOpenGL::finish):
+            (WebCore::GraphicsContextGLOpenGL::flush):
+            (WebCore::GraphicsContextGLOpenGL::deleteTexture):
+            * platform/graphics/opengl/GraphicsContextGLOpenGLES.cpp:
+            * platform/graphics/opengl/GraphicsContextGLOpenGLManager.cpp:
+            (WebCore::GraphicsContextGLOpenGLManager::updateAllContexts):
+            (WebCore::GraphicsContextGLOpenGLManager::updateHighPerformanceState):
+            (WebCore::GraphicsContextGLOpenGLManager::disableHighPerformanceGPUTimerFired):
+            * platform/graphics/opengl/GraphicsContextGLOpenGLManager.h:
+
+2020-11-04  Alan Coon  <alancoon@apple.com>
+
 Cherry-pick r266840. rdar://70970161
 
         * html/canvas/WebGL2RenderingContext.cpp:

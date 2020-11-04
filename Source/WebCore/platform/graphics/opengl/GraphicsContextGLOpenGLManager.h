@@ -31,7 +31,6 @@
 
 #if PLATFORM(MAC)
 #include <CoreGraphics/CGDisplayConfiguration.h>
-#include <OpenGL/CGLTypes.h>
 #endif
 
 namespace WebCore {

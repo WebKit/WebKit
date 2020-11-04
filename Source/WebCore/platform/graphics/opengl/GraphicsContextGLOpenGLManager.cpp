@@ -35,9 +35,8 @@
 #include <sys/sysctl.h>
 #endif
 
-#if PLATFORM(MAC) && (USE(OPENGL) || USE(ANGLE))
+#if PLATFORM(MAC)
 #include "SwitchingGPUClient.h"
-#include <OpenGL/OpenGL.h>
 #endif
 
 namespace WebCore {
@@ -134,7 +133,7 @@ void GraphicsContextGLOpenGLManager::displayWasReconfigured(CGDirectDisplayID, C
 
 void GraphicsContextGLOpenGLManager::updateAllContexts()
 {
-#if PLATFORM(MAC) && (USE(OPENGL) || USE(ANGLE))
+#if PLATFORM(MAC)
     for (const auto& context : m_contexts) {
         context->updateCGLContext();
         context->dispatchContextChangedNotification();
@@ -221,7 +220,7 @@ void GraphicsContextGLOpenGLManager::removeContextRequiringHighPerformance(Graph
 
 void GraphicsContextGLOpenGLManager::updateHighPerformanceState()
 {
-#if PLATFORM(MAC) && (USE(OPENGL) || USE(ANGLE))
+#if PLATFORM(MAC)
     if (!hasLowAndHighPowerGPUs())
         return;
     
@@ -235,10 +234,8 @@ void GraphicsContextGLOpenGLManager::updateHighPerformanceState()
         if (!m_requestingHighPerformance) {
             LOG(WebGL, "Request the high-performance GPU.");
             m_requestingHighPerformance = true;
-#if PLATFORM(MAC)
             if (auto* singleton = SwitchingGPUClient::singletonIfExists())
                 singleton->requestHighPerformanceGPU();
-#endif
         }
 
     } else {
@@ -262,7 +259,7 @@ void GraphicsContextGLOpenGLManager::disableHighPerformanceGPUTimerFired()
         return;
 
     m_requestingHighPerformance = false;
-#if PLATFORM(MAC) && (USE(OPENGL) || USE(ANGLE))
+#if PLATFORM(MAC)
     if (auto* singleton = SwitchingGPUClient::singletonIfExists())
         singleton->releaseHighPerformanceGPU();
 #endif

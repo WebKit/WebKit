@@ -31,11 +31,7 @@
 
 #if ENABLE(GRAPHICS_CONTEXT_GL) && (USE(OPENGL) || USE(OPENGL_ES))
 
-#if PLATFORM(IOS_FAMILY)
-#include "GraphicsContextGLOpenGLESIOS.h"
-#endif
-
-#if !PLATFORM(COCOA) && USE(OPENGL_ES)
+#if USE(OPENGL_ES)
 #include "ExtensionsGLOpenGLES.h"
 #else
 #include "ExtensionsGLOpenGL.h"
@@ -59,24 +55,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
-#if PLATFORM(COCOA)
-
-#if USE(OPENGL_ES)
-#import <OpenGLES/ES2/glext.h>
-#import <OpenGLES/ES3/gl.h>
-// From <OpenGLES/glext.h>
-#define GL_RGBA32F_ARB                      0x8814
-#define GL_RGB32F_ARB                       0x8815
-#else
-#define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
-#include <OpenGL/gl.h>
-#include <OpenGL/gl3.h>
-#include <OpenGL/gl3ext.h>
-#undef GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
-#endif
-
-#else
-
 #if USE(LIBEPOXY)
 #include "EpoxyShims.h"
 #elif USE(OPENGL_ES)
@@ -84,9 +62,6 @@
 #elif PLATFORM(GTK) || PLATFORM(WIN)
 #include "OpenGLShims.h"
 #endif
-
-#endif
-
 
 namespace WebCore {
 
@@ -189,10 +164,6 @@ void GraphicsContextGLOpenGL::paintRenderingResultsToCanvas(ImageBuffer* imageBu
     }
 
     paintToCanvas(pixels.get(), IntSize(m_currentWidth, m_currentHeight), imageBuffer->backendSize(), imageBuffer->context());
-
-#if PLATFORM(COCOA) && USE(OPENGL_ES)
-    presentRenderbuffer();
-#endif
 }
 
 bool GraphicsContextGLOpenGL::paintCompositedResultsToCanvas(ImageBuffer*)
@@ -711,11 +682,6 @@ void GraphicsContextGLOpenGL::copyTexImage2D(GCGLenum target, GCGLint level, GCG
     ::glCopyTexImage2D(target, level, internalformat, x, y, width, height, border);
     if (attrs.antialias && m_state.boundDrawFBO == m_multisampleFBO)
         ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_multisampleFBO);
-
-#if PLATFORM(MAC) && USE(OPENGL)
-    if (getExtensions().isIntel())
-        m_needsFlushBeforeDeleteTextures = true;
-#endif
 }
 
 void GraphicsContextGLOpenGL::copyTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height)
@@ -731,11 +697,6 @@ void GraphicsContextGLOpenGL::copyTexSubImage2D(GCGLenum target, GCGLint level, 
     ::glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
     if (attrs.antialias && m_state.boundDrawFBO == m_multisampleFBO)
         ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_multisampleFBO);
-
-#if PLATFORM(MAC) && USE(OPENGL)
-    if (getExtensions().isIntel())
-        m_needsFlushBeforeDeleteTextures = true;
-#endif
 }
 
 void GraphicsContextGLOpenGL::cullFace(GCGLenum mode)
@@ -807,18 +768,12 @@ void GraphicsContextGLOpenGL::finish()
 {
     makeContextCurrent();
     ::glFinish();
-#if PLATFORM(MAC) && USE(OPENGL)
-    m_needsFlushBeforeDeleteTextures = false;
-#endif
 }
 
 void GraphicsContextGLOpenGL::flush()
 {
     makeContextCurrent();
     ::glFlush();
-#if PLATFORM(MAC) && USE(OPENGL)
-    m_needsFlushBeforeDeleteTextures = false;
-#endif
 }
 
 void GraphicsContextGLOpenGL::framebufferRenderbuffer(GCGLenum target, GCGLenum attachment, GCGLenum renderbuffertarget, PlatformGLObject buffer)
@@ -1991,10 +1946,6 @@ void GraphicsContextGLOpenGL::deleteShader(PlatformGLObject shader)
 void GraphicsContextGLOpenGL::deleteTexture(PlatformGLObject texture)
 {
     makeContextCurrent();
-#if PLATFORM(MAC) && USE(OPENGL)
-    if (m_needsFlushBeforeDeleteTextures)
-        flush();
-#endif
     m_state.boundTextureMap.removeIf([texture] (auto& keyValue) {
         return keyValue.value.first == texture;
     });
@@ -2104,7 +2055,7 @@ void GraphicsContextGLOpenGL::copyBufferSubData(GCGLenum readTarget, GCGLenum wr
     makeContextCurrent();
     ::glCopyBufferSubData(readTarget, writeTarget, readOffset, writeOffset, size);
 }
-#elif !USE(ANGLE)
+#else
 void GraphicsContextGLOpenGL::copyBufferSubData(GCGLenum, GCGLenum, GCGLintptr, GCGLintptr, GCGLsizeiptr)
 {
 }
@@ -2131,7 +2082,7 @@ GCGLboolean GraphicsContextGLOpenGL::unmapBuffer(GCGLenum target)
     makeContextCurrent();
     return ::glUnmapBuffer(target);
 }
-#elif !USE(ANGLE)
+#else
 void* GraphicsContextGLOpenGL::mapBufferRange(GCGLenum, GCGLintptr, GCGLsizeiptr, GCGLbitfield)
 {
     return nullptr;
@@ -2223,7 +2174,7 @@ void GraphicsContextGLOpenGL::texStorage3D(GCGLenum target, GCGLsizei levels, GC
     ::glTexStorage3D(target, levels, internalformat, width, height, depth);
     m_state.textureSeedCount.add(m_state.currentBoundTexture());
 }
-#elif !USE(ANGLE)
+#else
 void GraphicsContextGLOpenGL::getInternalformativ(GCGLenum, GCGLenum, GCGLenum, GCGLsizei, GCGLint*)
 {
 }
@@ -2719,7 +2670,7 @@ void GraphicsContextGLOpenGL::uniformBlockBinding(PlatformGLObject program, GCGL
     UNUSED_PARAM(uniformBlockIndex);
     UNUSED_PARAM(uniformBlockBinding);
 }
-#elif !USE(ANGLE)
+#else
 void GraphicsContextGLOpenGL::getActiveUniforms(PlatformGLObject, const Vector<GCGLuint>&, GCGLenum, Vector<GCGLint>&)
 {
 }

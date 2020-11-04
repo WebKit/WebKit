@@ -55,14 +55,7 @@ WebGLExtension::ExtensionName ANGLEInstancedArrays::getName() const
 
 bool ANGLEInstancedArrays::supported(WebGLRenderingContextBase& context)
 {
-#if PLATFORM(COCOA)
-#if USE(ANGLE)
-    return context.graphicsContextGL()->getExtensions().supports("GL_ANGLE_instanced_arrays");
-#else
-    UNUSED_PARAM(context);
-    return true;
-#endif
-#elif PLATFORM(GTK)
+#if USE(ANGLE) || PLATFORM(GTK)
     return context.graphicsContextGL()->getExtensions().supports("GL_ANGLE_instanced_arrays");
 #else
     UNUSED_PARAM(context);
