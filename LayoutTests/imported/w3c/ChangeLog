@@ -1,3 +1,15 @@
+2020-11-03  Antoine Quint  <graouts@webkit.org>
+
+        align-items should be a discrete animatable property
+        https://bugs.webkit.org/show_bug.cgi?id=218535
+        <rdar://problem/71012428>
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+
 2020-11-03  Tyler Wilcock  <twilco.o@protonmail.com>
 
         Ignore order when parsing inset and color for box-shadow

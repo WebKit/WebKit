@@ -64,4 +64,6 @@ private:
     unsigned m_overflow : 2; // OverflowAlignment
 };
 
+WTF::TextStream& operator<<(WTF::TextStream&, const StyleSelfAlignmentData&);
+
 } // namespace WebCore
