@@ -164,7 +164,6 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
         forceContextLost();
         return true;
     }
-    updateFramebufferTextureBackingStoreFromLayer();
     ::glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_RECTANGLE_ARB, m_texture, 0);
 #endif // !USE(OPENGL_ES))
 #else
