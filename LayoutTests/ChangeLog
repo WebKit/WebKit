@@ -1,3 +1,14 @@
+2020-11-04  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r257839): Miscomputed style due to computed 'rem' value in matched declaration cache
+        https://bugs.webkit.org/show_bug.cgi?id=218561
+        <rdar://problem/70074191>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/dom/focus-rem-style-update-expected.html: Added.
+        * fast/dom/focus-rem-style-update.html: Added.
+
 2020-11-04  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r268161?): [ macOS ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https.html is a flaky failure
