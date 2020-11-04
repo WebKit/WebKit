@@ -95,7 +95,10 @@ private:
     
     void watchdogTimerFired()
     {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        // FIXME: This was deprecated in favor of terminate_with_reason().
         xpc_connection_kill(m_xpcConnection.get(), SIGKILL);
+ALLOW_DEPRECATED_DECLARATIONS_END
         delete this;
     }
 
