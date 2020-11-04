@@ -37,6 +37,7 @@
 #include "RegistrableDomain.h"
 #include "ScrollTypes.h"
 #include "ShouldRelaxThirdPartyCookieBlocking.h"
+#include "SpeechRecognitionConnection.h"
 #include "Supplementable.h"
 #include "Timer.h"
 #include "UserInterfaceLayoutDirection.h"
@@ -139,6 +140,7 @@ class SocketProvider;
 class SpeechSynthesisClient;
 class StorageNamespace;
 class StorageNamespaceProvider;
+class SpeechRecognitionProvider;
 class UserContentProvider;
 class UserContentURLPattern;
 class UserInputBridge;
@@ -774,6 +776,8 @@ public:
     SpeechSynthesisClient* speechSynthesisClient() const { return m_speechSynthesisClient.get(); }
 #endif
 
+    WEBCORE_EXPORT SpeechRecognitionConnection& speechRecognitionConnection();
+
     bool isOnlyNonUtilityPage() const;
     bool isUtilityPage() const { return m_isUtilityPage; }
 
@@ -908,6 +912,8 @@ private:
 #if ENABLE(SPEECH_SYNTHESIS)
     std::unique_ptr<SpeechSynthesisClient> m_speechSynthesisClient;
 #endif
+
+    UniqueRef<SpeechRecognitionProvider> m_speechRecognitionProvider;
 
     UniqueRef<MediaRecorderProvider> m_mediaRecorderProvider;
     UniqueRef<LibWebRTCProvider> m_libWebRTCProvider;

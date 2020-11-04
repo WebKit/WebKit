@@ -96,6 +96,7 @@
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
+#include <WebCore/DummySpeechRecognitionProvider.h>
 #include <WebCore/Editor.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/EventNames.h>
@@ -3131,6 +3132,7 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
         CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<WebProgressTrackerClient>(),
         makeUniqueRef<WebFrameLoaderClient>(webFrame),
+        makeUniqueRef<DummySpeechRecognitionProvider>(),
         makeUniqueRef<MediaRecorderProvider>()
     );
     configuration.chromeClient = new WebChromeClient(this);
@@ -5655,6 +5657,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     if (FAILED(hr))
         return hr;
     settings.setAspectRatioOfImgFromWidthAndHeightEnabled(!!enabled);
+
+    hr = prefsPrivate->speechRecognitionEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings.setSpeechRecognitionEnabled(!!enabled);
 
     return S_OK;
 }

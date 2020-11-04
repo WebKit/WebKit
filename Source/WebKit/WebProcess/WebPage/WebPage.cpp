@@ -127,6 +127,7 @@
 #include "WebProgressTrackerClient.h"
 #include "WebServiceWorkerProvider.h"
 #include "WebSocketProvider.h"
+#include "WebSpeechRecognitionProvider.h"
 #include "WebSpeechSynthesisClient.h"
 #include "WebStorageNamespaceProvider.h"
 #include "WebTouchEvent.h"
@@ -503,6 +504,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebProcess::singleton().cookieJar(),
         makeUniqueRef<WebProgressTrackerClient>(*this),
         makeUniqueRef<WebFrameLoaderClient>(m_mainFrame.copyRef()),
+        makeUniqueRef<WebSpeechRecognitionProvider>(m_identifier),
         makeUniqueRef<MediaRecorderProvider>()
     );
     pageConfiguration.chromeClient = new WebChromeClient(*this);

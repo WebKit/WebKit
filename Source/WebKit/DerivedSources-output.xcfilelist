@@ -251,6 +251,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/ServiceWorkerFetchTaskMessagesRepli
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SmartMagnificationControllerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SmartMagnificationControllerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SmartMagnificationControllerMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SpeechRecognitionServerMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SpeechRecognitionServerMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SpeechRecognitionServerMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/StorageAreaMapMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/StorageAreaMapMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/StorageAreaMapMessagesReplies.h
@@ -429,6 +432,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebSocketChannelMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebSocketStreamMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebSocketStreamMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebSocketStreamMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebSpeechRecognitionConnectionMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebSpeechRecognitionConnectionMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebSpeechRecognitionConnectionMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebUserContentControllerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebUserContentControllerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebUserContentControllerMessagesReplies.h

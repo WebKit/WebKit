@@ -1,3 +1,57 @@
+2020-11-03  Sihui Liu  <sihui_liu@apple.com>
+
+        Set up basic infrastructure for SpeechRecognition
+        https://bugs.webkit.org/show_bug.cgi?id=218216
+        <rdar://problem/70703788>
+
+        Reviewed by Youenn Fablet.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Scripts/webkit/messages.py:
+        * Sources.txt:
+        * UIProcess/SpeechRecognitionServer.cpp: Added.
+        (WebKit::SpeechRecognitionServer::SpeechRecognitionServer):
+        (WebKit::SpeechRecognitionServer::start):
+        (WebKit::SpeechRecognitionServer::processNextPendingRequestIfNeeded):
+        (WebKit::SpeechRecognitionServer::stop):
+        (WebKit::SpeechRecognitionServer::abort):
+        (WebKit::SpeechRecognitionServer::removePendingRequest):
+        (WebKit::SpeechRecognitionServer::invalidate):
+        (WebKit::SpeechRecognitionServer::startPocessingRequest):
+        (WebKit::SpeechRecognitionServer::stopProcessingRequest):
+        (WebKit::SpeechRecognitionServer::messageSenderConnection const):
+        (WebKit::SpeechRecognitionServer::messageSenderDestinationID const):
+        * UIProcess/SpeechRecognitionServer.h: Added.
+        * UIProcess/SpeechRecognitionServer.messages.in: Added.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createSpeechRecognitionServer):
+        (WebKit::WebProcessProxy::destroySpeechRecognitionServer):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.cpp: Added.
+        (WebKit::WebSpeechRecognitionConnection::create):
+        (WebKit::WebSpeechRecognitionConnection::WebSpeechRecognitionConnection):
+        (WebKit::WebSpeechRecognitionConnection::~WebSpeechRecognitionConnection):
+        (WebKit::WebSpeechRecognitionConnection::registerClient):
+        (WebKit::WebSpeechRecognitionConnection::start):
+        (WebKit::WebSpeechRecognitionConnection::stop):
+        (WebKit::WebSpeechRecognitionConnection::abort):
+        (WebKit::WebSpeechRecognitionConnection::invalidate):
+        (WebKit::WebSpeechRecognitionConnection::didReceiveUpdate):
+        (WebKit::WebSpeechRecognitionConnection::messageSenderConnection const):
+        (WebKit::WebSpeechRecognitionConnection::messageSenderDestinationID const):
+        * WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.h: Added.
+        * WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.messages.in: Added.
+        * WebProcess/WebCoreSupport/WebSpeechRecognitionProvider.h: Added.
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::encodeArgument):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+
 2020-11-03  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] remove sysctl.oidfmt. access

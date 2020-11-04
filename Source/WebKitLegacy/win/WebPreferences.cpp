@@ -350,6 +350,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitCSSIndividualTransformPropertiesEnabledPreferenceKey), kCFBooleanTrue);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitSpeechRecognitionEnabledPreferenceKey), kCFBooleanFalse);
+
     defaultSettings = defaults;
 #endif
 }
@@ -2560,5 +2562,19 @@ HRESULT WebPreferences::CSSIndividualTransformPropertiesEnabled(_Out_ BOOL* enab
 HRESULT WebPreferences::setCSSIndividualTransformPropertiesEnabled(BOOL enabled)
 {
     setBoolValue(WebKitCSSIndividualTransformPropertiesEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::speechRecognitionEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitSpeechRecognitionEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setSpeechRecognitionEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitSpeechRecognitionEnabledPreferenceKey, enabled);
     return S_OK;
 }

@@ -286,6 +286,7 @@ UIProcess/ProcessAssertion.cpp
 UIProcess/ProcessThrottler.cpp
 UIProcess/ProvisionalPageProxy.cpp
 UIProcess/ResponsivenessTimer.cpp
+UIProcess/SpeechRecognitionServer.cpp
 UIProcess/SuspendedPageProxy.cpp
 UIProcess/SystemPreviewController.cpp
 UIProcess/TextChecker.cpp
@@ -655,6 +656,7 @@ WebProcess/WebCoreSupport/WebProgressTrackerClient.cpp
 WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp
 WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp
 WebProcess/WebCoreSupport/WebUserMediaClient.cpp
+WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.cpp
 WebProcess/WebCoreSupport/WebSpeechSynthesisClient.cpp
 
 WebProcess/WebPage/DrawingArea.cpp

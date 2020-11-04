@@ -1399,6 +1399,14 @@
 		93B2614E227D14B100B97A76 /* LocalStorageDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B26145227D147000B97A76 /* LocalStorageDatabase.h */; };
 		93B2614F227D14B100B97A76 /* LocalStorageDatabaseTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B26146227D147100B97A76 /* LocalStorageDatabaseTracker.h */; };
 		93BDEB01171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 93BDEB00171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93D6B772254BB5190058DD3A /* SpeechRecognitionServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D6B76C254B89580058DD3A /* SpeechRecognitionServer.h */; };
+		93D6B773254BB8C70058DD3A /* WebSpeechRecognitionConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D6B768254B7BC60058DD3A /* WebSpeechRecognitionConnection.h */; };
+		93D6B782254CCCF40058DD3A /* SpeechRecognitionServerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93D6B781254CCABC0058DD3A /* SpeechRecognitionServerMessageReceiver.cpp */; };
+		93D6B784254CCD0E0058DD3A /* SpeechRecognitionServerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D6B780254CCABC0058DD3A /* SpeechRecognitionServerMessages.h */; };
+		93D6B785254CCD430058DD3A /* SpeechRecognitionServerMessagesReplies.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D6B77F254CCABB0058DD3A /* SpeechRecognitionServerMessagesReplies.h */; };
+		93D6B787254CCD8C0058DD3A /* WebSpeechRecognitionConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D6B786254CCD8B0058DD3A /* WebSpeechRecognitionConnectionMessages.h */; };
+		93D6B788254CCD940058DD3A /* WebSpeechRecognitionConnectionMessagesReplies.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D6B77E254CCABB0058DD3A /* WebSpeechRecognitionConnectionMessagesReplies.h */; };
+		93D6B78A254CD43E0058DD3A /* WebSpeechRecognitionConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93D6B77D254CCABB0058DD3A /* WebSpeechRecognitionConnectionMessageReceiver.cpp */; };
 		93E6A4EE1BC5DD3900F8A0E7 /* _WKHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E6A4ED1BC5DD3900F8A0E7 /* _WKHitTestResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F549B41E3174B7000E7239 /* WKSnapshotConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F549B31E3174B7000E7239 /* WKSnapshotConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		950F2880252414EA00B74F1C /* WKMouseDeviceObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 950F287E252414E900B74F1C /* WKMouseDeviceObserver.h */; };
@@ -4501,6 +4509,19 @@
 		93BA04E02151ADF4007F455F /* WebSWServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWServerConnection.h; sourceTree = "<group>"; };
 		93BA04E12151ADF4007F455F /* WebSWServerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWServerConnection.cpp; sourceTree = "<group>"; };
 		93BDEB00171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageLoadTypesPrivate.h; sourceTree = "<group>"; };
+		93D6B767254B7BC60058DD3A /* WebSpeechRecognitionConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSpeechRecognitionConnection.cpp; sourceTree = "<group>"; };
+		93D6B768254B7BC60058DD3A /* WebSpeechRecognitionConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSpeechRecognitionConnection.h; sourceTree = "<group>"; };
+		93D6B769254B7BC60058DD3A /* WebSpeechRecognitionProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSpeechRecognitionProvider.h; sourceTree = "<group>"; };
+		93D6B76B254B89580058DD3A /* SpeechRecognitionServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeechRecognitionServer.cpp; sourceTree = "<group>"; };
+		93D6B76C254B89580058DD3A /* SpeechRecognitionServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechRecognitionServer.h; sourceTree = "<group>"; };
+		93D6B77A254C984D0058DD3A /* SpeechRecognitionServer.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SpeechRecognitionServer.messages.in; sourceTree = "<group>"; };
+		93D6B77B254C9BC30058DD3A /* WebSpeechRecognitionConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebSpeechRecognitionConnection.messages.in; sourceTree = "<group>"; };
+		93D6B77D254CCABB0058DD3A /* WebSpeechRecognitionConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSpeechRecognitionConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
+		93D6B77E254CCABB0058DD3A /* WebSpeechRecognitionConnectionMessagesReplies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSpeechRecognitionConnectionMessagesReplies.h; sourceTree = "<group>"; };
+		93D6B77F254CCABB0058DD3A /* SpeechRecognitionServerMessagesReplies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechRecognitionServerMessagesReplies.h; sourceTree = "<group>"; };
+		93D6B780254CCABC0058DD3A /* SpeechRecognitionServerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechRecognitionServerMessages.h; sourceTree = "<group>"; };
+		93D6B781254CCABC0058DD3A /* SpeechRecognitionServerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeechRecognitionServerMessageReceiver.cpp; sourceTree = "<group>"; };
+		93D6B786254CCD8B0058DD3A /* WebSpeechRecognitionConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSpeechRecognitionConnectionMessages.h; sourceTree = "<group>"; };
 		93E6A4ED1BC5DD3900F8A0E7 /* _WKHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKHitTestResult.h; sourceTree = "<group>"; };
 		93F549B31E3174B7000E7239 /* WKSnapshotConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSnapshotConfiguration.h; sourceTree = "<group>"; };
 		93F549B51E3174DA000E7239 /* WKSnapshotConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKSnapshotConfiguration.mm; sourceTree = "<group>"; };
@@ -9025,6 +9046,10 @@
 				4671FF1D23217EFF001B64C7 /* WebResourceLoadObserver.h */,
 				D3B9484411FF4B6500032B39 /* WebSearchPopupMenu.cpp */,
 				D3B9484511FF4B6500032B39 /* WebSearchPopupMenu.h */,
+				93D6B767254B7BC60058DD3A /* WebSpeechRecognitionConnection.cpp */,
+				93D6B768254B7BC60058DD3A /* WebSpeechRecognitionConnection.h */,
+				93D6B77B254C9BC30058DD3A /* WebSpeechRecognitionConnection.messages.in */,
+				93D6B769254B7BC60058DD3A /* WebSpeechRecognitionProvider.h */,
 				C149380322341DF7000CD707 /* WebSpeechSynthesisClient.cpp */,
 				C149380222341C60000CD707 /* WebSpeechSynthesisClient.h */,
 				C149380A223853BE000CD707 /* WebSpeechSynthesisVoice.h */,
@@ -9161,6 +9186,9 @@
 				BC111B08112F5E3C00337BAB /* ResponsivenessTimer.cpp */,
 				1A30066C1110F4F70031937C /* ResponsivenessTimer.h */,
 				5CA98549210BEB5A0057EB6B /* SafeBrowsingWarning.h */,
+				93D6B76B254B89580058DD3A /* SpeechRecognitionServer.cpp */,
+				93D6B76C254B89580058DD3A /* SpeechRecognitionServer.h */,
+				93D6B77A254C984D0058DD3A /* SpeechRecognitionServer.messages.in */,
 				515C415A207D74E000726E02 /* SuspendedPageProxy.cpp */,
 				515C415B207D74E100726E02 /* SuspendedPageProxy.h */,
 				318A1F04204F4764003480BC /* SystemPreviewController.cpp */,
@@ -10292,6 +10320,9 @@
 				E18E6914169B667B009B6670 /* SecItemShimProxyMessages.h */,
 				2DE6943B18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp */,
 				2DE6943C18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h */,
+				93D6B781254CCABC0058DD3A /* SpeechRecognitionServerMessageReceiver.cpp */,
+				93D6B780254CCABC0058DD3A /* SpeechRecognitionServerMessages.h */,
+				93D6B77F254CCABB0058DD3A /* SpeechRecognitionServerMessagesReplies.h */,
 				1A334DEB16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp */,
 				1A334DEC16DE8F88006A8E38 /* StorageAreaMapMessages.h */,
 				9368EEDC2303A8D800BDB11A /* StorageManagerSetMessageReceiver.cpp */,
@@ -10393,6 +10424,9 @@
 				41F060DD1654317500F3281C /* WebSocketChannelMessageReceiver.cpp */,
 				5C0B17761E7C879C00E9123C /* WebSocketStreamMessageReceiver.cpp */,
 				5C0B17771E7C879C00E9123C /* WebSocketStreamMessages.h */,
+				93D6B77D254CCABB0058DD3A /* WebSpeechRecognitionConnectionMessageReceiver.cpp */,
+				93D6B786254CCD8B0058DD3A /* WebSpeechRecognitionConnectionMessages.h */,
+				93D6B77E254CCABB0058DD3A /* WebSpeechRecognitionConnectionMessagesReplies.h */,
 				517A530E1F47A84300DCDC0A /* WebSWClientConnectionMessageReceiver.cpp */,
 				517A530D1F47A84300DCDC0A /* WebSWClientConnectionMessages.h */,
 				460F488D1F996F6C00CF4B87 /* WebSWContextManagerConnectionMessageReceiver.cpp */,
@@ -11328,6 +11362,9 @@
 				57BBEA6D22BC0BFE00273995 /* SOAuthorizationLoadPolicy.h in Headers */,
 				576CA9D722B862180030143C /* SOAuthorizationNSURLExtras.h in Headers */,
 				57FD318522B35169008D0E8B /* SOAuthorizationSession.h in Headers */,
+				93D6B772254BB5190058DD3A /* SpeechRecognitionServer.h in Headers */,
+				93D6B784254CCD0E0058DD3A /* SpeechRecognitionServerMessages.h in Headers */,
+				93D6B785254CCD430058DD3A /* SpeechRecognitionServerMessagesReplies.h in Headers */,
 				7A3FECA221F7C09700F267CD /* StorageAccessStatus.h in Headers */,
 				46BEB6D722FB9BD700269867 /* StorageArea.h in Headers */,
 				1AD3306F16B1D991004F60E7 /* StorageAreaImpl.h in Headers */,
@@ -11596,6 +11633,9 @@
 				71FB810B2260627E00323677 /* WebsiteSimulatedMouseEventsDispatchPolicy.h in Headers */,
 				417915AF2256BB7500D6F97E /* WebSocketChannel.h in Headers */,
 				417915B12256C0D600D6F97E /* WebSocketChannelManager.h in Headers */,
+				93D6B773254BB8C70058DD3A /* WebSpeechRecognitionConnection.h in Headers */,
+				93D6B787254CCD8C0058DD3A /* WebSpeechRecognitionConnectionMessages.h in Headers */,
+				93D6B788254CCD940058DD3A /* WebSpeechRecognitionConnectionMessagesReplies.h in Headers */,
 				C149380922347104000CD707 /* WebSpeechSynthesisClient.h in Headers */,
 				836034A01ACB34D600626549 /* WebSQLiteDatabaseTracker.h in Headers */,
 				1A52C0F81A38CDC70016160A /* WebStorageNamespaceProvider.h in Headers */,
@@ -13095,6 +13135,7 @@
 				A1ADAFB62368E6A8009CB776 /* SharedMemory.cpp in Sources */,
 				575B1BB923CE9C0B0020639A /* SimulatedInputDispatcher.cpp in Sources */,
 				2DE6943D18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp in Sources */,
+				93D6B782254CCCF40058DD3A /* SpeechRecognitionServerMessageReceiver.cpp in Sources */,
 				1A334DED16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp in Sources */,
 				9368EEDE2303A90200BDB11A /* StorageManagerSetMessageReceiver.cpp in Sources */,
 				2D92A783212B6A7100F493FD /* StringReference.cpp in Sources */,
@@ -13349,6 +13390,7 @@
 				41F060E11654318500F3281C /* WebSocketChannelMessageReceiver.cpp in Sources */,
 				5C0B17791E7C882100E9123C /* WebSocketStreamMessageReceiver.cpp in Sources */,
 				41287D4E225D1ECB009A3E26 /* WebSocketTaskCocoa.mm in Sources */,
+				93D6B78A254CD43E0058DD3A /* WebSpeechRecognitionConnectionMessageReceiver.cpp in Sources */,
 				517A530F1F47A86200DCDC0A /* WebSWClientConnectionMessageReceiver.cpp in Sources */,
 				460F488F1F996F7100CF4B87 /* WebSWContextManagerConnectionMessageReceiver.cpp in Sources */,
 				9356F2DF2152B72300E6D5DF /* WebSWOriginStore.cpp in Sources */,

@@ -48,6 +48,7 @@
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/Frame.h>
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/ScriptController.h>
 
 namespace WebKit {
@@ -524,13 +525,13 @@ static bool encodeArgument(IPC::Encoder& encoder, JSIPC& jsIPC, JSContextRef con
 
     if (type == "RegistrableDomain") {
         if (jsValue.isUndefinedOrNull()) {
-            encoder << RegistrableDomain { };
+            encoder << WebCore::RegistrableDomain { };
             return true;
         }
         auto string = jsValue.toWTFString(globalObject);
         if (scope.exception())
             return false;
-        encoder << RegistrableDomain { URL { URL { }, string } };
+        encoder << WebCore::RegistrableDomain { URL { URL { }, string } };
         return true;
     }
 

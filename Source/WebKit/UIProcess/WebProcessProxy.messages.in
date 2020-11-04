@@ -87,4 +87,7 @@ messages -> WebProcessProxy LegacyReceiver {
 
     DidCreateSleepDisabler(WebCore::SleepDisablerIdentifier identifier, String reason, bool display)
     DidDestroySleepDisabler(WebCore::SleepDisablerIdentifier identifier)
+
+    CreateSpeechRecognitionServer(WebCore::PageIdentifier identifier)
+    DestroySpeechRecognitionServer(WebCore::PageIdentifier identifier)
 }

@@ -115,6 +115,15 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/plugins/PluginReplacement.h
     Modules/plugins/YouTubePluginReplacement.h
 
+    Modules/speech/SpeechRecognitionConnection.h
+    Modules/speech/SpeechRecognitionConnectionClient.h
+    Modules/speech/SpeechRecognitionConnectionClientIdentifier.h
+    Modules/speech/SpeechRecognitionError.h
+    Modules/speech/SpeechRecognitionRequest.h
+    Modules/speech/SpeechRecognitionRequestInfo.h
+    Modules/speech/SpeechRecognitionResultData.h
+    Modules/speech/SpeechRecognitionUpdate.h
+
     Modules/streams/ReadableStreamChunk.h
     Modules/streams/ReadableStreamSink.h
     Modules/streams/ReadableStreamSource.h
@@ -834,6 +843,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/DragActions.h
     page/DragClient.h
     page/DragController.h
+    page/DummySpeechRecognitionProvider.h
     page/EditorClient.h
     page/EventHandler.h
     page/FocusController.h
@@ -887,6 +897,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/SettingsBase.h
     page/ShareData.h
     page/SocketProvider.h
+    page/SpeechRecognitionProvider.h
     page/SpeechSynthesisClient.h
     page/SuspendableTimer.h
     page/TextIndicator.h

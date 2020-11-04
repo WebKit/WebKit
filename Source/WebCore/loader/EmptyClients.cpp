@@ -41,6 +41,7 @@
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "DragClient.h"
+#include "DummySpeechRecognitionProvider.h"
 #include "EditorClient.h"
 #include "EmptyFrameLoaderClient.h"
 #include "FileChooser.h"
@@ -613,6 +614,7 @@ PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
         CookieJar::create(adoptRef(*new EmptyStorageSessionProvider)),
         makeUniqueRef<EmptyProgressTrackerClient>(),
         makeUniqueRef<EmptyFrameLoaderClient>(),
+        makeUniqueRef<DummySpeechRecognitionProvider>(),
         makeUniqueRef<EmptyMediaRecorderProvider>()
     };
 

@@ -232,6 +232,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::ServiceWorkerRegistrationIdentifier',
         'WebCore::SharedStringHash',
         'WebCore::SleepDisablerIdentifier',
+        'WebCore::SpeechRecognitionConnectionClientIdentifier',
         'WebCore::SWServerConnectionIdentifier',
         'WebCore::UserMediaRequestIdentifier',
         'WebCore::WebSocketIdentifier',

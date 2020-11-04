@@ -1,3 +1,14 @@
+2020-11-03  Sihui Liu  <sihui_liu@apple.com>
+
+        Set up basic infrastructure for SpeechRecognition
+        https://bugs.webkit.org/show_bug.cgi?id=218216
+        <rdar://problem/70703788>
+
+        Reviewed by Youenn Fablet.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebPreferencesToConsistentValues):
+
 2020-11-03  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Populate parent branch for tags

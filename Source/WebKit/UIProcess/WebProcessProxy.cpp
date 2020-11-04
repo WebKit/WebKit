@@ -37,6 +37,7 @@
 #include "PluginInfoStore.h"
 #include "PluginProcessManager.h"
 #include "ProvisionalPageProxy.h"
+#include "SpeechRecognitionServerMessages.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
 #include "UserData.h"
@@ -1705,6 +1706,21 @@ void WebProcessProxy::plugInDidReceiveUserInteraction(uint32_t hash)
 {
     MESSAGE_CHECK(PlugInAutoStartProvider::HashToOriginMap::isValidKey(hash));
     processPool().plugInAutoStartProvider().didReceiveUserInteraction(hash, sessionID());
+}
+
+void WebProcessProxy::createSpeechRecognitionServer(SpeechRecognitionServerIdentifier identifier)
+{
+    auto speechRecognitionServer = m_speechRecognitionServerMap.add(identifier, nullptr);
+    ASSERT(speechRecognitionServer.isNewEntry);
+    speechRecognitionServer.iterator->value = makeUnique<SpeechRecognitionServer>(makeRef(*connection()), identifier);
+    addMessageReceiver(Messages::SpeechRecognitionServer::messageReceiverName(), identifier, *speechRecognitionServer.iterator->value);
+}
+
+void WebProcessProxy::destroySpeechRecognitionServer(SpeechRecognitionServerIdentifier identifier)
+{
+    ASSERT(m_speechRecognitionServerMap.contains(identifier));
+    removeMessageReceiver(Messages::SpeechRecognitionServer::messageReceiverName(), identifier);
+    m_speechRecognitionServerMap.remove(identifier);
 }
 
 #if PLATFORM(WATCHOS)

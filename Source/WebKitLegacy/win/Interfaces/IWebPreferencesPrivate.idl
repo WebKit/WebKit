@@ -273,4 +273,6 @@ interface IWebPreferencesPrivate8 : IWebPreferencesPrivate7
     HRESULT setUInt32PreferenceForTesting([in] BSTR key, [in] unsigned value);
     HRESULT setDoublePreferenceForTesting([in] BSTR key, [in] double value);
     HRESULT setStringPreferenceForTesting([in] BSTR key, [in] BSTR value);
+    HRESULT speechRecognitionEnabled([out, retval] BOOL* enabled);
+    HRESULT setSpeechRecognitionEnabled([in] BOOL enabled);
 }

@@ -38,6 +38,7 @@
 #include "ProcessThrottlerClient.h"
 #include "ResponsivenessTimer.h"
 #include "ServiceWorkerInitializationData.h"
+#include "SpeechRecognitionServer.h"
 #include "UserContentControllerIdentifier.h"
 #include "VisibleWebPageCounter.h"
 #include "WebConnectionToWebProcess.h"
@@ -504,6 +505,9 @@ private:
     void didCreateSleepDisabler(WebCore::SleepDisablerIdentifier, const String& reason, bool display);
     void didDestroySleepDisabler(WebCore::SleepDisablerIdentifier);
 
+    void createSpeechRecognitionServer(SpeechRecognitionServerIdentifier);
+    void destroySpeechRecognitionServer(SpeechRecognitionServerIdentifier);
+
     enum class IsWeak { No, Yes };
     template<typename T> class WeakOrStrongPtr {
     public:
@@ -632,6 +636,9 @@ private:
 #if ENABLE(IPC_TESTING_API)
     bool m_ignoreInvalidMessageForTesting { false };
 #endif
+
+    using SpeechRecognitionServerMap = HashMap<SpeechRecognitionServerIdentifier, std::unique_ptr<SpeechRecognitionServer>>;
+    SpeechRecognitionServerMap m_speechRecognitionServerMap;
 };
 
 } // namespace WebKit

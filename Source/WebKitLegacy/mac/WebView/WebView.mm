@@ -146,6 +146,7 @@
 #import <WebCore/DragController.h>
 #import <WebCore/DragData.h>
 #import <WebCore/DragItem.h>
+#import <WebCore/DummySpeechRecognitionProvider.h>
 #import <WebCore/Editing.h>
 #import <WebCore/Editor.h>
 #import <WebCore/Event.h>
@@ -1583,6 +1584,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         WebCore::CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<WebProgressTrackerClient>(self),
         makeUniqueRef<WebFrameLoaderClient>(),
+        makeUniqueRef<WebCore::DummySpeechRecognitionProvider>(),
         makeUniqueRef<WebCore::MediaRecorderProvider>()
     );
 #if !PLATFORM(IOS_FAMILY)
@@ -1865,6 +1867,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         WebCore::CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<WebProgressTrackerClient>(self),
         makeUniqueRef<WebFrameLoaderClient>(),
+        makeUniqueRef<WebCore::DummySpeechRecognitionProvider>(),
         makeUniqueRef<WebCore::MediaRecorderProvider>()
     );
     pageConfiguration.chromeClient = new WebChromeClientIOS(self);

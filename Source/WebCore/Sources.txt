@@ -188,8 +188,10 @@ Modules/speech/SpeechRecognition.cpp
 Modules/speech/SpeechRecognitionAlternative.cpp
 Modules/speech/SpeechRecognitionErrorEvent.cpp
 Modules/speech/SpeechRecognitionEvent.cpp
+Modules/speech/SpeechRecognitionRequest.cpp
 Modules/speech/SpeechRecognitionResult.cpp
 Modules/speech/SpeechRecognitionResultList.cpp
+Modules/speech/SpeechRecognitionUpdate.cpp
 Modules/speech/DOMWindowSpeechSynthesis.cpp
 Modules/speech/SpeechSynthesis.cpp
 Modules/speech/SpeechSynthesisEvent.cpp

@@ -37,7 +37,7 @@ public:
     static Ref<SpeechRecognitionResultList> create();
     static Ref<SpeechRecognitionResultList> create(Vector<Ref<SpeechRecognitionResult>>&&);
 
-    unsigned long length() const { return m_list.size(); }
+    size_t length() const { return m_list.size(); }
     SpeechRecognitionResult* item(uint64_t index) const;
 
     void add(SpeechRecognitionResult&);

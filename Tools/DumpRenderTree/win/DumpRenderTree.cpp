@@ -921,6 +921,8 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     prefsPrivate->setDataTransferItemsEnabled(TRUE);
     prefsPrivate->clearNetworkLoaderSession();
 
+    prefsPrivate->setSpeechRecognitionEnabled(TRUE);
+
     setAlwaysAcceptCookies(false);
 }
 

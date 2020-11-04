@@ -27,13 +27,16 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
+#include "SpeechRecognitionConnection.h"
+#include "SpeechRecognitionConnectionClient.h"
 #include "SpeechRecognitionResult.h"
 
 namespace WebCore {
 
 class Document;
+class SpeechRecognitionResult;
 
-class SpeechRecognition : public ActiveDOMObject, public RefCounted<SpeechRecognition>, public EventTargetWithInlineData  {
+class SpeechRecognition : public SpeechRecognitionConnectionClient, public ActiveDOMObject, public RefCounted<SpeechRecognition>, public EventTargetWithInlineData  {
     WTF_MAKE_ISO_ALLOCATED(SpeechRecognition);
 public:
     static Ref<SpeechRecognition> create(Document&);
@@ -58,7 +61,28 @@ public:
     using RefCounted::deref;
 
 private:
+    enum class State {
+        Inactive,
+        Starting,
+        Running,
+        Stopping,
+        Aborting,
+    };
+
     explicit SpeechRecognition(Document&);
+
+    // SpeechRecognitionConnectionClient
+    void didStart() final;
+    void didStartCapturingAudio() final;
+    void didStartCapturingSound() final;
+    void didStartCapturingSpeech() final;
+    void didStopCapturingSpeech() final;
+    void didStopCapturingSound() final;
+    void didStopCapturingAudio() final;
+    void didFindNoMatch() final;
+    void didReceiveResult(Vector<SpeechRecognitionResultData>&& resultDatas) final;
+    void didError(const SpeechRecognitionError&) final;
+    void didEnd() final;
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const;
@@ -74,6 +98,10 @@ private:
     bool m_continuous { false };
     bool m_interimResults { false };
     uint64_t m_maxAlternatives { 1 };
+
+    State m_state { State::Inactive };
+    Vector<Ref<SpeechRecognitionResult>> m_finalResults;
+    RefPtr<SpeechRecognitionConnection> m_connection;
 };
 
 } // namespace WebCore

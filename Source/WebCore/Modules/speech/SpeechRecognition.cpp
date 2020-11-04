@@ -27,6 +27,13 @@
 #include "SpeechRecognition.h"
 
 #include "Document.h"
+#include "EventNames.h"
+#include "Page.h"
+#include "SpeechRecognitionError.h"
+#include "SpeechRecognitionErrorEvent.h"
+#include "SpeechRecognitionEvent.h"
+#include "SpeechRecognitionResultData.h"
+#include "SpeechRecognitionResultList.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -35,13 +42,18 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SpeechRecognition);
 
 Ref<SpeechRecognition> SpeechRecognition::create(Document& document)
 {
-    return adoptRef(*new SpeechRecognition(document));
+    auto recognition = adoptRef(*new SpeechRecognition(document));
+    recognition->suspendIfNeeded();
+    return recognition;
 }
 
 SpeechRecognition::SpeechRecognition(Document& document)
     : ActiveDOMObject(document)
 {
-    suspendIfNeeded();
+    if (auto* page = document.page()) {
+        m_connection = makeRefPtr(page->speechRecognitionConnection());
+        m_connection->registerClient(*this);
+    }
 }
 
 void SpeechRecognition::suspend(ReasonForSuspension)
@@ -51,20 +63,121 @@ void SpeechRecognition::suspend(ReasonForSuspension)
 
 ExceptionOr<void> SpeechRecognition::startRecognition()
 {
+    if (m_state != State::Inactive)
+        return Exception { InvalidStateError, "Recognition is being started or already started"_s };
+
+    if (!m_connection)
+        return Exception { UnknownError, "Recognition does not have a valid connection"_s };
+
+    m_connection->start(identifier(), m_lang, m_continuous, m_interimResults, m_maxAlternatives);
+    m_state = State::Starting;
     return { };
 }
 
 void SpeechRecognition::stopRecognition()
 {
+    if (m_state == State::Inactive || m_state == State::Stopping || m_state == State::Aborting)
+        return;
+
+    m_connection->stop(identifier());
+    m_state = State::Stopping;
 }
 
 void SpeechRecognition::abortRecognition()
 {
+    if (m_state == State::Inactive || m_state == State::Aborting)
+        return;
+
+    m_connection->abort(identifier());
+    m_state = State::Aborting;
 }
 
 const char* SpeechRecognition::activeDOMObjectName() const
 {
     return "SpeechRecognition";
+}
+
+void SpeechRecognition::didStart()
+{
+    if (m_state == State::Starting)
+        m_state = State::Running;
+
+    queueTaskToDispatchEvent(*this, TaskSource::Speech, Event::create(eventNames().startEvent, Event::CanBubble::No, Event::IsCancelable::No));
+}
+
+void SpeechRecognition::didStartCapturingAudio()
+{
+    queueTaskToDispatchEvent(*this, TaskSource::Speech, Event::create(eventNames().audiostartEvent, Event::CanBubble::No, Event::IsCancelable::No));
+}
+
+void SpeechRecognition::didStartCapturingSound()
+{
+    queueTaskToDispatchEvent(*this, TaskSource::Speech, Event::create(eventNames().soundstartEvent, Event::CanBubble::No, Event::IsCancelable::No));
+}
+
+void SpeechRecognition::didStartCapturingSpeech()
+{
+    queueTaskToDispatchEvent(*this, TaskSource::Speech, Event::create(eventNames().speechstartEvent, Event::CanBubble::No, Event::IsCancelable::No));
+}
+
+void SpeechRecognition::didStopCapturingSpeech()
+{
+    queueTaskToDispatchEvent(*this, TaskSource::Speech, Event::create(eventNames().speechendEvent, Event::CanBubble::No, Event::IsCancelable::No));
+}
+
+void SpeechRecognition::didStopCapturingSound()
+{
+    queueTaskToDispatchEvent(*this, TaskSource::Speech, Event::create(eventNames().soundendEvent, Event::CanBubble::No, Event::IsCancelable::No));
+}
+
+void SpeechRecognition::didStopCapturingAudio()
+{
+    queueTaskToDispatchEvent(*this, TaskSource::Speech, Event::create(eventNames().audioendEvent, Event::CanBubble::No, Event::IsCancelable::No));
+}
+
+void SpeechRecognition::didFindNoMatch()
+{
+    queueTaskToDispatchEvent(*this, TaskSource::Speech, SpeechRecognitionEvent::create(eventNames().nomatchEvent, 0, nullptr));
+}
+
+void SpeechRecognition::didReceiveResult(Vector<SpeechRecognitionResultData>&& resultDatas)
+{
+    Vector<Ref<SpeechRecognitionResult>> allResults;
+    allResults.reserveCapacity(m_finalResults.size() + resultDatas.size());
+    allResults.appendVector(m_finalResults);
+
+    auto nonFinalResultIndex = allResults.size();
+    for (auto resultData : resultDatas) {
+        auto alternatives = WTF::map(resultData.alternatives, [](auto& alternativeData) {
+            return SpeechRecognitionAlternative::create(WTFMove(alternativeData.transcript), alternativeData.confidence);
+        });
+
+        auto newResult = SpeechRecognitionResult::create(WTFMove(alternatives), resultData.isFinal);
+        if (resultData.isFinal) {
+            m_finalResults.append(newResult);
+            ++nonFinalResultIndex;
+        }
+        allResults.append(WTFMove(newResult));
+    }
+
+    auto resultList = SpeechRecognitionResultList::create(WTFMove(allResults));
+    queueTaskToDispatchEvent(*this, TaskSource::Speech, SpeechRecognitionEvent::create(eventNames().resultEvent, nonFinalResultIndex, WTFMove(resultList)));
+}
+
+void SpeechRecognition::didError(const SpeechRecognitionError& error)
+{
+    m_finalResults.clear();
+    m_state = State::Inactive;
+
+    queueTaskToDispatchEvent(*this, TaskSource::Speech, SpeechRecognitionErrorEvent::create(eventNames().errorEvent, error.type, error.message));
+}
+
+void SpeechRecognition::didEnd()
+{
+    m_finalResults.clear();
+    m_state = State::Inactive;
+
+    queueTaskToDispatchEvent(*this, TaskSource::Speech, Event::create(eventNames().endEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 } // namespace WebCore

@@ -25,17 +25,10 @@
 
 #pragma once
 
+#include "SpeechRecognitionError.h"
+
 namespace WebCore {
 
-enum class SpeechRecognitionErrorCode {
-    NoSpeech,
-    Aborted,
-    AudioCapture,
-    Network,
-    NotAllowed,
-    ServiceNotAllowed,
-    BadGrammar,
-    LanguageNotSupported
-};
+using SpeechRecognitionErrorCode = SpeechRecognitionErrorType;
 
 } // namespace WebCore

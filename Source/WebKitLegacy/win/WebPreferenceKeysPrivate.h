@@ -231,3 +231,5 @@
 #define WebKitWebSQLEnabledPreferenceKey "WebKitWebSQLEnabled"
 
 #define WebKitCSSIndividualTransformPropertiesEnabledPreferenceKey "WebKitCSSIndividualTransformPropertiesEnabled"
+
+#define WebKitSpeechRecognitionEnabledPreferenceKey "WebKitSpeechRecognitionEnabled"

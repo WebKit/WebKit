@@ -62,6 +62,7 @@ class PlugInClient;
 class PluginInfoProvider;
 class ProgressTrackerClient;
 class SocketProvider;
+class SpeechRecognitionProvider;
 class StorageNamespaceProvider;
 class UserContentProvider;
 class UserContentURLPattern;
@@ -73,7 +74,7 @@ class SpeechSynthesisClient;
 class PageConfiguration {
     WTF_MAKE_NONCOPYABLE(PageConfiguration); WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT PageConfiguration(PAL::SessionID, UniqueRef<EditorClient>&&, Ref<SocketProvider>&&, UniqueRef<LibWebRTCProvider>&&, Ref<CacheStorageProvider>&&, Ref<BackForwardClient>&&, Ref<CookieJar>&&, UniqueRef<ProgressTrackerClient>&&, UniqueRef<FrameLoaderClient>&&, UniqueRef<MediaRecorderProvider>&&);
+    WEBCORE_EXPORT PageConfiguration(PAL::SessionID, UniqueRef<EditorClient>&&, Ref<SocketProvider>&&, UniqueRef<LibWebRTCProvider>&&, Ref<CacheStorageProvider>&&, Ref<BackForwardClient>&&, Ref<CookieJar>&&, UniqueRef<ProgressTrackerClient>&&, UniqueRef<FrameLoaderClient>&&, UniqueRef<SpeechRecognitionProvider>&&, UniqueRef<MediaRecorderProvider>&&);
     WEBCORE_EXPORT ~PageConfiguration();
     PageConfiguration(PageConfiguration&&);
 
@@ -128,6 +129,7 @@ public:
     RefPtr<DeviceOrientationUpdateProvider> deviceOrientationUpdateProvider;
 #endif
     Vector<UserContentURLPattern> corsDisablingPatterns;
+    UniqueRef<SpeechRecognitionProvider> speechRecognitionProvider;
     UniqueRef<MediaRecorderProvider> mediaRecorderProvider;
     bool loadsSubresources { true };
     bool loadsFromNetwork { true };

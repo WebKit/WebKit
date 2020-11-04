@@ -311,6 +311,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setUInt32PreferenceForTesting(_In_ BSTR key, _In_ unsigned);
     virtual HRESULT STDMETHODCALLTYPE setDoublePreferenceForTesting(_In_ BSTR key, _In_ double);
     virtual HRESULT STDMETHODCALLTYPE setStringPreferenceForTesting(_In_ BSTR key, _In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE speechRecognitionEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setSpeechRecognitionEnabled(BOOL);
 
     // WebPreferences
 

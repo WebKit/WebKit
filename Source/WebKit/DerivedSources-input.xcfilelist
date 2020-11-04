@@ -101,6 +101,7 @@ $(PROJECT_DIR)/UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProx
 $(PROJECT_DIR)/UIProcess/Network/NetworkProcessProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Plugins/PluginProcessProxy.messages.in
 $(PROJECT_DIR)/UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.messages.in
+$(PROJECT_DIR)/UIProcess/SpeechRecognitionServer.messages.in
 $(PROJECT_DIR)/UIProcess/UserContent/WebUserContentControllerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/ViewGestureController.messages.in
 $(PROJECT_DIR)/UIProcess/VisitedLinkStore.messages.in
@@ -161,6 +162,7 @@ $(PROJECT_DIR)/WebProcess/UserContent/WebUserContentController.messages.in
 $(PROJECT_DIR)/WebProcess/WebAuthentication/WebAuthenticatorCoordinator.messages.in
 $(PROJECT_DIR)/WebProcess/WebAuthentication/WebAuthnProcessConnection.messages.in
 $(PROJECT_DIR)/WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider.messages.in
+$(PROJECT_DIR)/WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/DrawingArea.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/EventDispatcher.messages.in

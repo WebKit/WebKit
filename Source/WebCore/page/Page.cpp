@@ -118,6 +118,7 @@
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "SocketProvider.h"
+#include "SpeechRecognitionProvider.h"
 #include "StorageArea.h"
 #include "StorageNamespace.h"
 #include "StorageNamespaceProvider.h"
@@ -252,6 +253,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #if ENABLE(SPEECH_SYNTHESIS)
     , m_speechSynthesisClient(WTFMove(pageConfiguration.speechSynthesisClient))
 #endif
+    , m_speechRecognitionProvider((WTFMove(pageConfiguration.speechRecognitionProvider)))
     , m_mediaRecorderProvider((WTFMove(pageConfiguration.mediaRecorderProvider)))
     , m_libWebRTCProvider(WTFMove(pageConfiguration.libWebRTCProvider))
     , m_verticalScrollElasticity(ScrollElasticityAllowed)
@@ -3371,6 +3373,11 @@ void Page::mainFrameDidChangeToNonInitialEmptyDocument()
     for (auto& userStyleSheet : m_userStyleSheetsPendingInjection)
         injectUserStyleSheet(userStyleSheet);
     m_userStyleSheetsPendingInjection.clear();
+}
+
+SpeechRecognitionConnection& Page::speechRecognitionConnection()
+{
+    return m_speechRecognitionProvider->speechRecognitionConnection();
 }
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
