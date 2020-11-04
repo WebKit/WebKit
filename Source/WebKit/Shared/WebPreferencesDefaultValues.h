@@ -51,7 +51,7 @@ bool defaultTextAutosizingUsesIdempotentMode();
 bool defaultDisallowSyncXHRDuringPageDismissalEnabled();
 #endif
 
-#if !PLATFORM(MACCATALYST)
+#if !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
 bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload();
 #endif
 

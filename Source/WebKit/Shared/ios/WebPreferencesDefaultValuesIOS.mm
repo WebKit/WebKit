@@ -43,7 +43,7 @@ bool defaultTextAutosizingUsesIdempotentMode()
 
 #endif
 
-#if !PLATFORM(MACCATALYST)
+#if !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
 bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload()
 {
     return [[PAL::getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:@"allowDeprecatedWebKitSynchronousXHRLoads"] == MCRestrictedBoolExplicitYes;

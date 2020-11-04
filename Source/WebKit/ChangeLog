@@ -1,3 +1,22 @@
+2020-11-04  Luming Yin  <luming_yin@apple.com>
+
+        [watchOS] Don't allow managed preference to enable legacy sync XHRs on watchOS
+        https://bugs.webkit.org/show_bug.cgi?id=218548
+        <rdar://problem/68417252>
+
+        Reviewed by Geoffrey Garen.
+
+        The managed preference to allow legacy sync XHRs during page dismissal is not applicable to watchOS, but we 
+        still attempt to dlopen ManagedConfiguration to get the managed configuration value. This redundant check 
+        blocks the main thread and leads to hangs. 
+
+        We now compile out this code for the watchOS platforms.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultDisallowSyncXHRDuringPageDismissalEnabled):
+        * Shared/WebPreferencesDefaultValues.h:
+        * Shared/ios/WebPreferencesDefaultValuesIOS.mm:
+
 2020-11-04  Dean Jackson  <dino@apple.com>
 
         WKContentView might get KVO notifications it doesn't expect
