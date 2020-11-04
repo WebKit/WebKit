@@ -37,7 +37,6 @@
 
 #if PLATFORM(COCOA)
 #include "IOSurface.h"
-#include "WebGLLayerClient.h"
 #endif
 
 #if USE(CA)
@@ -88,9 +87,6 @@ typedef WTF::HashMap<CString, uint64_t> ShaderNameHash;
 class GraphicsContextGLOpenGLPrivate;
 
 class GraphicsContextGLOpenGL : public GraphicsContextGL
-#if PLATFORM(COCOA)
-    , private WebGLLayerClient
-#endif
 {
 public:
     class Client {
@@ -695,8 +691,6 @@ private:
 
 #if PLATFORM(COCOA)
     bool allowOfflineRenderers() const;
-    // WebGLLayerClient overrides.
-    void didDisplay() override;
 #endif
 
     int m_currentWidth { 0 };
