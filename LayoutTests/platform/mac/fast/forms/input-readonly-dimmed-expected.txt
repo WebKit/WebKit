@@ -10,5 +10,5 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 0x0
 layer at (13,31) size 140x13 scrollWidth 160
   RenderBlock {DIV} at (3,3) size 140x13
-    RenderText {#text} at (0,0) size 161x13
-      text run at (0,0) width 161: "This border should be dimmed"
+    RenderText {#text} at (0,0) size 160x13
+      text run at (0,0) width 160: "This border should be dimmed"

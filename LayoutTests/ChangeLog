@@ -1,3 +1,17 @@
+2020-11-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, rebaseline tests for Big Sur after r268958 and r268520.
+
+        * platform/mac/fast/forms/input-appearance-spinbutton-expected.txt:
+        * platform/mac/fast/forms/input-readonly-dimmed-expected.txt:
+        * platform/mac/fast/forms/listbox-width-change-expected.txt:
+        * platform/mac/fast/forms/option-text-clip-expected.txt:
+        * platform/mac/fast/forms/search-rtl-expected.txt:
+        * platform/mac/fast/forms/search/search-size-with-decorations-expected.txt:
+        * platform/mac/fast/forms/select-change-popup-to-listbox-expected.txt:
+        * platform/mac/fast/text/indic-expected.txt:
+        * platform/mac/tables/mozilla/other/wa_table_tr_align-expected.txt:
+
 2020-11-03  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Layout Test webaudio/codec-tests/mp3/128kbps-44khz.html is flaky
