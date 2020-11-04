@@ -50,7 +50,8 @@ WI.LocalResourceOverrideWarningView = class LocalResourceOverrideWarningView ext
 
     detached()
     {
-        WI.networkManager.removeEventListener(null, null, this);
+        WI.networkManager.removeEventListener(WI.NetworkManager.Event.LocalResourceOverrideAdded, this._handleLocalResourceOverrideAddedOrRemoved, this);
+        WI.networkManager.removeEventListener(WI.NetworkManager.Event.LocalResourceOverrideRemoved, this._handleLocalResourceOverrideAddedOrRemoved, this);
 
         super.detached();
     }

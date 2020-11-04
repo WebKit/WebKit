@@ -445,12 +445,17 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (this._capturingState === TimelineManager.CapturingState.Inactive)
             return;
 
-        WI.DOMNode.removeEventListener(null, null, this);
-        WI.memoryManager.removeEventListener(null, null, this);
-        WI.heapManager.removeEventListener(null, null, this);
+        WI.DOMNode.removeEventListener(WI.DOMNode.Event.DidFireEvent, this._handleDOMNodeDidFireEvent, this);
+        WI.DOMNode.removeEventListener(WI.DOMNode.Event.PowerEfficientPlaybackStateChanged, this._handleDOMNodePowerEfficientPlaybackStateChanged, this);
+
+        WI.heapManager.removeEventListener(WI.HeapManager.Event.GarbageCollected, this._garbageCollected, this);
+
+        WI.memoryManager.removeEventListener(WI.MemoryManager.Event.MemoryPressure, this._memoryPressure, this);
+
         WI.Target.removeEventListener(WI.Target.Event.ResourceAdded, this._resourceWasAdded, this);
         WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
-        WI.settings.timelinesAutoStop.removeEventListener(null, null, this);
+
+        WI.settings.timelinesAutoStop.removeEventListener(WI.Setting.Event.Changed, this._handleTimelinesAutoStopSettingChanged, this);
 
         this._activeRecording.capturingStopped(this._capturingEndTime);
 

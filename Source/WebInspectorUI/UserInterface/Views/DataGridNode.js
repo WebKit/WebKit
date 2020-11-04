@@ -461,8 +461,6 @@ WI.DataGridNode = class DataGridNode extends WI.Object
         for (var i = 0; i < this.children.length; ++i)
             this.children[i].revealed = false;
 
-        this.dispatchEventToListeners("collapsed");
-
         if (this.dataGrid) {
             this.dataGrid.dispatchEventToListeners(WI.DataGrid.Event.CollapsedNode, {dataGridNode: this});
             this.dataGrid._noteRowsChanged();
@@ -492,7 +490,7 @@ WI.DataGridNode = class DataGridNode extends WI.Object
             for (var i = 0; i < this.children.length; ++i)
                 this.children[i]._detach();
 
-            this.dispatchEventToListeners("populate");
+            this.dispatchEventToListeners(DataGridNode.Event.Populate);
 
             if (this._attached) {
                 for (var i = 0; i < this.children.length; ++i) {
@@ -510,8 +508,6 @@ WI.DataGridNode = class DataGridNode extends WI.Object
             this._element.classList.add("expanded");
 
         this._expanded = true;
-
-        this.dispatchEventToListeners("expanded");
 
         if (this.dataGrid) {
             this.dataGrid.dispatchEventToListeners(WI.DataGrid.Event.ExpandedNode, {dataGridNode: this});
@@ -564,8 +560,6 @@ WI.DataGridNode = class DataGridNode extends WI.Object
         }
 
         this.dataGrid.updateVisibleRows(this);
-
-        this.dispatchEventToListeners("revealed");
     }
 
     select(suppressSelectedEvent)
@@ -599,7 +593,7 @@ WI.DataGridNode = class DataGridNode extends WI.Object
     traverseNextNode(skipHidden, stayWithin, dontPopulate, info)
     {
         if (!dontPopulate && this.hasChildren)
-            this.dispatchEventToListeners("populate");
+            this.dispatchEventToListeners(DataGridNode.Event.Populate);
 
         if (info)
             info.depthChange = 0;
@@ -635,11 +629,11 @@ WI.DataGridNode = class DataGridNode extends WI.Object
     {
         var node = (!skipHidden || this.revealed) ? this.previousSibling : null;
         if (!dontPopulate && node && node.hasChildren)
-            node.dispatchEventToListeners("populate");
+            node.dispatchEventToListeners(DataGridNode.Event.Populate);
 
         while (node && ((!skipHidden || (node.revealed && node.expanded)) ? node.children.lastValue : null)) {
             if (!dontPopulate && node.hasChildren)
-                node.dispatchEventToListeners("populate");
+                node.dispatchEventToListeners(DataGridNode.Event.Populate);
             node = (!skipHidden || (node.revealed && node.expanded)) ? node.children.lastValue : null;
         }
 
@@ -759,6 +753,10 @@ WI.DataGridNode = class DataGridNode extends WI.Object
     {
         // Override by subclasses.
     }
+};
+
+WI.DataGridNode.Event = {
+    Populate: "data-grid-node-populate",
 };
 
 // Used to create a new table row when entering new data by editing cells.

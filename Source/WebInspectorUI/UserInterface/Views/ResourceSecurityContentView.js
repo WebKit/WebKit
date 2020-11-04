@@ -87,7 +87,10 @@ WI.ResourceSecurityContentView = class ResourceSecurityContentView extends WI.Co
 
     closed()
     {
-        this._resource.removeEventListener(null, null, this);
+        if (this.didInitialLayout) {
+            this._resource.removeEventListener(WI.Resource.Event.ResponseReceived, this._handleResourceResponseReceived, this);
+            this._resource.removeEventListener(WI.Resource.Event.MetricsDidChange, this._handleResourceMetricsDidChange, this);
+        }
 
         super.closed();
     }

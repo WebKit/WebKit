@@ -1,3 +1,322 @@
+2020-11-04  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: use weak collections for holding event listeners
+        https://bugs.webkit.org/show_bug.cgi?id=196956
+
+        Reviewed by Brian Burg.
+
+        Replace the `ListMultimap`/`LinkedList` with a `Multimap` for holding listener data:
+        ```
+            Map<String eventType, Set<{Function listener, WeakRef thisObject}>> _listeners;
+        ```
+        This preserves addition order while also not strongly holding any `thisObject` so they can
+        be GCed (and remove the `listener` along with it).
+
+        * UserInterface/Base/Object.js:
+        (WI.Object.addEventListener):
+        (WI.Object.singleFireEventListener):
+        (WI.Object.awaitEvent):
+        (WI.Object.removeEventListener):
+        (WI.Object.prototype.singleFireEventListener):
+        (WI.Object.prototype.removeEventListener):
+        (WI.Object.prototype.dispatchEventToListeners.dispatch):
+        (WI.Object.hasEventListeners):
+        (WI.Object.activelyListeningObjectsWithPrototype): Added.
+        (WI.Object.prototype.activelyListeningObjectsWithPrototype): Added.
+
+        * UserInterface/Base/SearchUtilities.js:
+        (WI.SearchUtilities.createSettings):
+        (WI.SearchUtilities.createSettingsButton):
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        (WI.contentLoaded):
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.prototype.requestContent):
+        * UserInterface/Controllers/RuntimeManager.js:
+        (WI.RuntimeManager):
+        * UserInterface/Views/AuditTestCaseContentView.js:
+        (WI.AuditTestCaseContentView.prototype.showRunningPlaceholder):
+        * UserInterface/Views/AuditTestContentView.js:
+        (WI.AuditTestContentView.prototype.showNoResultPlaceholder):
+        * UserInterface/Views/AuditTestGroupContentView.js:
+        (WI.AuditTestGroupContentView.prototype.showRunningPlaceholder):
+        * UserInterface/Views/CodeMirrorEditor.js:
+        (WI.CodeMirrorEditor.create):
+        * UserInterface/Debug/Bootstrap.js:
+        (WI.runBootstrapOperations):
+        * UserInterface/Views/ConsoleDrawer.js:
+        (WI.ConsoleDrawer):
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WI.ConsoleMessageView.prototype.clearSessionState):
+        (WI.ConsoleMessageView.prototype._appendSavedResultIndex):
+        (WI.ConsoleMessageView.prototype._rootPropertyPathForObject):
+        * UserInterface/Views/ContentBrowser.js:
+        (WI.ContentBrowser):
+        (WI.ContentBrowser.prototype.async handleFindNextShortcut):
+        (WI.ContentBrowser.prototype.async handleFindPreviousShortcut):
+        * UserInterface/Views/HeapSnapshotContentView.js:
+        (WI.HeapSnapshotContentView):
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView):
+        * UserInterface/Views/MediaTimelineOverviewGraph.js:
+        (WI.MediaTimelineOverviewGraph.prototype._processRecord):
+        * UserInterface/Views/NetworkDetailView.js:
+        (WI.NetworkDetailView.prototype.initialLayout):
+        * UserInterface/Views/ObjectTreeView.js:
+        (WI.ObjectTreeView.prototype.addShowMoreIfNeeded):
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WI.SearchSidebarPanel):
+        (WI.SearchSidebarPanel.prototype.closed):
+        (WI.SearchSidebarPanel.prototype.performSearch):
+        * UserInterface/Views/SettingEditor.js:
+        (WI.SettingEditor.createForSetting):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createGeneralSettingsView):
+        (WI.SettingsTabContentView.prototype._createConsoleSettingsView):
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView.listenForChange):
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+        (WI.SettingsTabContentView.prototype._createDebugSettingsView):
+        * UserInterface/Views/ShaderProgramContentView.js:
+        (WI.ShaderProgramContentView):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype.closed):
+        (WI.SourcesNavigationSidebarPanel.prototype.createContentTreeOutline):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.initialLayout):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._createInlineSwatch):
+        * UserInterface/Views/ThreadTreeElement.js:
+        (WI.ThreadTreeElement.prototype._updateStatus):
+        * UserInterface/Views/TimelineTreeElement.js:
+        (WI.TimelineTreeElement.prototype._showCloseButton):
+        Update callers of `WI.Object.prototype.addEventListener` to always pass a `thisObject`. This
+        is especially important for inlined `listener`, as there needs to be a strong reference to
+        some "longer lived" `thisObject` (which is held by a `WeakRef`) in order for the `listener`
+        to not be GCed.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles):
+        (WI.DOMNodeStyles.prototype._parseStyleDeclarationPayload):
+        (WI.DOMNodeStyles.prototype._parseRulePayload):
+        (WI.DOMNodeStyles.prototype._handleCSSStyleSheetContentDidChange): Added.
+        (WI.DOMNodeStyles.prototype._styleSheetContentDidChange): Deleted.
+        * UserInterface/Views/TimelineRecordingProgressView.js:
+        (WI.TimelineRecordingProgressView):
+        (WI.TimelineRecordingProgressView.prototype.set visible):
+        (WI.TimelineRecordingProgressView.prototype._updateState):
+        Use a global event listener instead of adding event listeners to specific objects as it's
+        already likely that all the objects would be listened to anyways.
+
+        * UserInterface/Models/DOMTree.js:
+        (WI.DOMTree.prototype.disconnect):
+        * UserInterface/Controllers/ApplicationCacheManager.js:
+        (WI.ApplicationCacheManager.prototype.disable):
+        * UserInterface/Controllers/CallFrameTreeController.js:
+        (WI.CallFrameTreeController.prototype.disconnect):
+        * UserInterface/Controllers/DOMStorageManager.js:
+        (WI.DOMStorageManager.prototype.disable):
+        * UserInterface/Controllers/DatabaseManager.js:
+        (WI.DatabaseManager.prototype.disable):
+        * UserInterface/Controllers/IndexedDBManager.js:
+        (WI.IndexedDBManager.prototype.disable):
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.prototype.capturingStopped):
+        * UserInterface/Views/ApplicationCacheDetailsSidebarPanel.js:
+        (WI.ApplicationCacheDetailsSidebarPanel.prototype.closed):
+        * UserInterface/Views/ApplicationCacheFrameContentView.js:
+        (WI.ApplicationCacheFrameContentView.prototype.closed):
+        * UserInterface/Views/AuditNavigationSidebarPanel.js:
+        (WI.AuditNavigationSidebarPanel.prototype.closed):
+        * UserInterface/Views/AuditTreeElement.js:
+        (WI.AuditTreeElement.prototype.ondetach):
+        * UserInterface/Views/CPUTimelineView.js:
+        (WI.CPUTimelineView.prototype.closed):
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView.prototype.detached):
+        * UserInterface/Views/CanvasOverviewContentView.js:
+        (WI.CanvasOverviewContentView.prototype.detached):
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel.prototype.set canvas):
+        (WI.CanvasSidebarPanel.prototype.set recording):
+        (WI.CanvasSidebarPanel.prototype.hidden):
+        * UserInterface/Views/ClusterContentView.js:
+        (WI.ClusterContentView.prototype.closed):
+        * UserInterface/Views/CollectionContentView.js:
+        (WI.CollectionContentView.prototype.removeContentViewForItem):
+        (WI.CollectionContentView.prototype.detached):
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        (WI.ContentBrowserTabContentView.prototype.hidden):
+        (WI.ContentBrowserTabContentView.prototype.closed):
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WI.DOMNodeDetailsSidebarPanel.prototype.closed):
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView.prototype.closed):
+        * UserInterface/Views/DOMTreeUpdater.js:
+        (WI.DOMTreeUpdater.prototype.close):
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WI.ElementsTabContentView.prototype.closed):
+        * UserInterface/Views/FrameDOMTreeContentView.js:
+        (WI.FrameDOMTreeContentView.prototype.closed):
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.js:
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.removeEventListeners):
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WI.HeapAllocationsTimelineView):
+        (WI.HeapAllocationsTimelineView.prototype.closed):
+        * UserInterface/Views/ImageResourceContentView.js:
+        (WI.ImageResourceContentView.prototype.closed): Deleted.
+        * UserInterface/Views/InlineSwatch.js:
+        (WI.InlineSwatch.prototype.didDismissPopover):
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WI.LayoutTimelineView.prototype.closed):
+        * UserInterface/Views/LocalResourceOverrideWarningView.js:
+        (WI.LocalResourceOverrideWarningView.prototype.detached):
+        * UserInterface/Views/MemoryTimelineView.js:
+        (WI.MemoryTimelineView.prototype.closed):
+        * UserInterface/Views/MultipleScopeBarItem.js:
+        (WI.MultipleScopeBarItem.prototype.set scopeBarItems):
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WI.NavigationSidebarPanel.prototype.closed):
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WI.NetworkTimelineView.prototype.closed):
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WI.OverviewTimelineView.prototype.closed):
+        * UserInterface/Views/ProbeDetailsSidebarPanel.js:
+        (WI.ProbeDetailsSidebarPanel.prototype.closed):
+        * UserInterface/Views/QuickConsole.js:
+        (WI.QuickConsole.prototype.closed):
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView.prototype._handleRecordingProcessedAction):
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WI.RenderingFrameTimelineView.prototype.closed):
+        * UserInterface/Views/ResourceCollectionContentView.js:
+        (WI.ResourceCollectionContentView.prototype.detached):
+        (WI.ResourceCollectionContentView.prototype.contentViewRemoved):
+        * UserInterface/Views/ResourceContentView.js:
+        (WI.ResourceContentView.prototype.closed):
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WI.ResourceDetailsSidebarPanel.prototype.set resource):
+        (WI.ResourceDetailsSidebarPanel.prototype._applyResourceEventListeners):
+        (WI.ResourceDetailsSidebarPanel.prototype._handleResourceInitiatedResourcesDidChange): Added.
+        * UserInterface/Views/ResourceHeadersContentView.js:
+        (WI.ResourceHeadersContentView.prototype.closed):
+        * UserInterface/Views/ResourceSecurityContentView.js:
+        (WI.ResourceSecurityContentView.prototype.closed):
+        * UserInterface/Views/ResourceSizesContentView.js:
+        (WI.ResourceSizesContentView.prototype.closed):
+        * UserInterface/Views/ResourceTimingContentView.js:
+        (WI.ResourceTimingContentView.prototype.closed):
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WI.ScopeChainDetailsSidebarPanel.prototype._generateCallFramesSection):
+        (WI.ScopeChainDetailsSidebarPanel.prototype._generateWatchExpressionsSection):
+        (WI.ScopeChainDetailsSidebarPanel.prototype.closed):
+        * UserInterface/Views/ScriptContentView.js:
+        (WI.ScriptContentView.prototype.closed):
+        * UserInterface/Views/ScriptDetailsTimelineView.js:
+        (WI.ScriptDetailsTimelineView.prototype.closed):
+        * UserInterface/Views/ScriptProfileTimelineView.js:
+        (WI.ScriptProfileTimelineView.prototype.closed):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.close):
+        (WI.SourceCodeTextEditor.prototype._showPopover):
+        (WI.SourceCodeTextEditor.prototype._showPopoverForObject):
+        (WI.SourceCodeTextEditor.prototype._dismissPopover):
+        (WI.SourceCodeTextEditor.prototype._trackPopoverEvents): Deleted.
+        * UserInterface/Views/StorageSidebarPanel.js:
+        (WI.StorageSidebarPanel.prototype.closed):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WI.TextResourceContentView.prototype.closed):
+        * UserInterface/Views/TimelineOverview.js:
+        (WI.TimelineOverview.prototype.closed):
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView):
+        (WI.TimelineRecordingContentView.prototype.closed):
+        (WI.TimelineRecordingContentView.prototype._recordingUnloaded):
+        * UserInterface/Views/TimelineRuler.js:
+        (WI.TimelineRuler.prototype.clearMarkers):
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WI.TimelineTabContentView.prototype.closed):
+        * UserInterface/Views/TreeOutlineGroup.js:
+        (WI.TreeOutlineGroup.prototype.itemRemoved):
+        Replace the `removeEventListener(null, null, this)` pattern by instead having callers remove
+        each event listener explicitly. This is a safer design as it can avoid situations where
+        parent classes inadvertently remove event listeners added by subclasses. For objects with
+        lots of event listeners this is also more efficient as it doesn't require as much iteration.
+
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement):
+        (WI.RecordingActionTreeElement.prototype._handleValidityChanged):
+        Use `singleFireEventListener` where possible.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.prototype.pause):
+        (WI.DebuggerManager.prototype.resume):
+        (WI.DebuggerManager.prototype.stepNext):
+        (WI.DebuggerManager.prototype.stepOver):
+        (WI.DebuggerManager.prototype.stepInto):
+        (WI.DebuggerManager.prototype.stepOut):
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WI.BreakpointTreeElement.prototype.onattach):
+        (WI.BreakpointTreeElement.prototype.ondetach):
+        (WI.BreakpointTreeElement.prototype.get listenerSet): Deleted.
+        * UserInterface/Views/DataGrid.js:
+        (WI.DataGrid.prototype.insertColumn):
+        (WI.DataGrid.prototype.removeColumn):
+        * UserInterface/Views/JavaScriptBreakpointTreeElement.js:
+        (WI.JavaScriptBreakpointTreeElement):
+        (WI.JavaScriptBreakpointTreeElement.prototype.onattach):
+        (WI.JavaScriptBreakpointTreeElement.prototype.ondetach):
+        * UserInterface/Views/ProbeSetDataGrid.js:
+        (WI.ProbeSetDataGrid):
+        (WI.ProbeSetDataGrid.prototype.closed):
+        (WI.ProbeSetDataGrid.prototype._setupData):
+        (WI.ProbeSetDataGrid.prototype._teardownData):
+        * UserInterface/Views/ProbeSetDetailsSection.js:
+        (WI.ProbeSetDetailsSection):
+        (WI.ProbeSetDetailsSection.prototype.closed):
+        Remove the legacy `WI.EventListener` and `WI.EventListenerSet` as they basically do the same
+        thing as `WI.Object` with extra steps.
+
+        * UserInterface/Models/WebSocketResource.js:
+        * UserInterface/Proxies/HeapSnapshotWorkerProxy.js:
+        * UserInterface/Controllers/TargetManager.js:
+        * UserInterface/Views/DataGridNode.js:
+        (WI.DataGridNode.prototype.collapse):
+        (WI.DataGridNode.prototype.expand):
+        (WI.DataGridNode.prototype.reveal):
+        (WI.DataGridNode.prototype.traverseNextNode):
+        (WI.DataGridNode.prototype.traversePreviousNode):
+        * UserInterface/Views/HeapSnapshotClassDataGridNode.js:
+        (WI.HeapSnapshotClassDataGridNode):
+        (WI.HeapSnapshotClassDataGridNode.prototype._populate):
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        (WI.HeapSnapshotInstanceDataGridNode):
+        * UserInterface/Views/ProfileDataGridNode.js:
+        (WI.ProfileDataGridNode):
+        (WI.ProfileDataGridNode.prototype._populate):
+        * UserInterface/Views/ProfileNodeDataGridNode.js:
+        (WI.ProfileNodeDataGridNode):
+        (WI.ProfileNodeDataGridNode.prototype._populate):
+        * UserInterface/Views/TreeOutline.js:
+        * UserInterface/Workers/HeapSnapshot/HeapSnapshotWorker.js:
+        (HeapSnapshotWorker.prototype.createSnapshot):
+        Ensure that all event names are strings defined on the class `Event` object.
+
+        * UserInterface/Views/Sidebar.js:
+        (WI.Sidebar.prototype.set selectedSidebarPanel):
+        Drive-by: fix an issue where `hidden` is called twice, once from the selected sidebar panel
+        being changed and then again when that sidebar panel is removed.
+
+        * .eslintrc:
+        * UserInterface/Base/EventListener.js: Removed.
+        * UserInterface/Base/EventListenerSet.js: Removed.
+        * UserInterface/Base/LinkedList.js: Removed.
+        * UserInterface/Base/ListMultimap.js: Removed.
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        * UserInterface/TestStub.html:
+        * Tools/SourceMaps/index.html:
+
 2020-11-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Elements: should have the option to Edit Breakpoint... or at least Reveal Breakpoint in Sources Tab

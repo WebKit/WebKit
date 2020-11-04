@@ -130,10 +130,10 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
     {
         WI.domManager.hideDOMNodeHighlight();
 
-        WI.canvasManager.removeEventListener(null, null, this);
+        WI.canvasManager.removeEventListener(WI.CanvasManager.Event.RecordingSaved, this._handleRecordingSaved, this);
 
-        WI.settings.canvasRecordingAutoCaptureFrameCount.removeEventListener(null, null, this);
-        WI.settings.canvasRecordingAutoCaptureEnabled.removeEventListener(null, null, this);
+        WI.settings.canvasRecordingAutoCaptureFrameCount.removeEventListener(WI.Setting.Event.Changed, this._handleCanvasRecordingAutoCaptureFrameCountChanged, this);
+        WI.settings.canvasRecordingAutoCaptureEnabled.removeEventListener(WI.Setting.Event.Changed, this._handleCanvasRecordingAutoCaptureEnabledChanged, this);
 
         super.detached();
     }

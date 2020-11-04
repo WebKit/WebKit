@@ -61,7 +61,7 @@ HeapSnapshotWorker = class HeapSnapshotWorker
                     let collectionData = snapshot.updateDeadNodesAndGatherCollectionData(this._snapshots);
                     if (!collectionData || !collectionData.affectedSnapshots.length)
                         return;
-                    this.sendEvent("HeapSnapshot.CollectionEvent", collectionData);
+                    this.sendEvent(HeapSnapshotWorker.Event.Collection, collectionData);
                 }, 0);
             }
         }
@@ -118,6 +118,10 @@ HeapSnapshotWorker = class HeapSnapshotWorker
 
         console.error("Unexpected HeapSnapshotWorker message", data);
     }
+};
+
+HeapSnapshotWorker.Event = {
+    Collection: "heap-snapshot-collection",
 };
 
 self.heapSnapshotWorker = new HeapSnapshotWorker;

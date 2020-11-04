@@ -359,7 +359,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         if (WI.SourcesNavigationSidebarPanel.shouldPlaceResourcesAtTopLevel()) {
             this._resourcesTreeOutline.disclosureButtons = false;
-            WI.SourceCode.addEventListener(WI.SourceCode.Event.SourceMapAdded, () => {
+            WI.SourceCode.addEventListener(WI.SourceCode.Event.SourceMapAdded, function(event) {
                 this._resourcesTreeOutline.disclosureButtons = true;
             }, this);
         }
@@ -457,22 +457,66 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     closed()
     {
-        WI.settings.resourceGroupingMode.removeEventListener(null, null, this);
-        WI.Frame.removeEventListener(null, null, this);
-        WI.Target.removeEventListener(null, null, this);
-        WI.networkManager.removeEventListener(null, null, this);
-        WI.debuggerManager.removeEventListener(null, null, this);
-        WI.domDebuggerManager.removeEventListener(null, null, this);
-        WI.JavaScriptBreakpoint.removeEventListener(null, null, this);
-        WI.IssueMessage.removeEventListener(null, null, this);
-        WI.DOMBreakpoint.removeEventListener(null, null, this);
-        WI.consoleManager.removeEventListener(null, null, this);
-        WI.timelineManager.removeEventListener(null, null, this);
-        WI.auditManager.removeEventListener(null, null, this);
-        WI.cssManager.removeEventListener(null, null, this);
-        WI.targetManager.removeEventListener(null, null, this);
-        WI.notifications.removeEventListener(null, null, this);
-        WI.SourceCode.removeEventListener(null, null, this);
+        WI.settings.resourceGroupingMode.removeEventListener(WI.Setting.Event.Changed, this._handleResourceGroupingModeChanged, this);
+
+        WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._handleFrameMainResourceDidChange, this);
+        WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, this._handleResourceAdded, this);
+        WI.Target.removeEventListener(WI.Target.Event.ResourceAdded, this._handleResourceAdded, this);
+
+        WI.networkManager.removeEventListener(WI.NetworkManager.Event.FrameWasAdded, this._handleFrameWasAdded, this);
+
+        if (WI.NetworkManager.supportsBootstrapScript()) {
+            WI.networkManager.removeEventListener(WI.NetworkManager.Event.BootstrapScriptCreated, this._handleBootstrapScriptCreated, this);
+            WI.networkManager.removeEventListener(WI.NetworkManager.Event.BootstrapScriptDestroyed, this._handleBootstrapScriptDestroyed, this);
+        }
+
+        if (WI.NetworkManager.supportsOverridingResponses()) {
+            WI.networkManager.removeEventListener(WI.NetworkManager.Event.LocalResourceOverrideAdded, this._handleLocalResourceOverrideAdded, this);
+            WI.networkManager.removeEventListener(WI.NetworkManager.Event.LocalResourceOverrideRemoved, this._handleLocalResourceOverrideRemoved, this);
+        }
+
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.BreakpointAdded, this._handleDebuggerBreakpointAdded, this);
+        WI.domDebuggerManager.removeEventListener(WI.DOMDebuggerManager.Event.DOMBreakpointAdded, this._handleDebuggerBreakpointAdded, this);
+        WI.domDebuggerManager.removeEventListener(WI.DOMDebuggerManager.Event.EventBreakpointAdded, this._handleDebuggerBreakpointAdded, this);
+        WI.domDebuggerManager.removeEventListener(WI.DOMDebuggerManager.Event.URLBreakpointAdded, this._handleDebuggerBreakpointAdded, this);
+
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.BreakpointRemoved, this._handleDebuggerBreakpointRemoved, this);
+        WI.domDebuggerManager.removeEventListener(WI.DOMDebuggerManager.Event.DOMBreakpointRemoved, this._handleDebuggerBreakpointRemoved, this);
+        WI.domDebuggerManager.removeEventListener(WI.DOMDebuggerManager.Event.EventBreakpointRemoved, this._handleDebuggerBreakpointRemoved, this);
+        WI.domDebuggerManager.removeEventListener(WI.DOMDebuggerManager.Event.URLBreakpointRemoved, this._handleDebuggerBreakpointRemoved, this);
+
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.BreakpointsEnabledDidChange, this._handleDebuggerBreakpointsEnabledDidChange, this);
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ScriptAdded, this._handleDebuggerScriptAdded, this);
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ScriptRemoved, this._handleDebuggerScriptRemoved, this);
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ScriptsCleared, this._handleDebuggerScriptsCleared, this);
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, this._handleDebuggerPaused, this);
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Resumed, this._handleDebuggerResumed, this);
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.CallFramesDidChange, this._handleDebuggerCallFramesDidChange, this);
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ActiveCallFrameDidChange, this._handleDebuggerActiveCallFrameDidChange, this);
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.WaitingToPause, this._handleDebuggerWaitingToPause, this);
+
+        WI.JavaScriptBreakpoint.removeEventListener(WI.JavaScriptBreakpoint.Event.DisplayLocationDidChange, this._handleDebuggerObjectDisplayLocationDidChange, this);
+        WI.IssueMessage.removeEventListener(WI.IssueMessage.Event.DisplayLocationDidChange, this._handleDebuggerObjectDisplayLocationDidChange, this);
+
+        WI.DOMBreakpoint.removeEventListener(WI.DOMBreakpoint.Event.DOMNodeWillChange, this._handleDOMBreakpointDOMNodeWillChange, this);
+        WI.DOMBreakpoint.removeEventListener(WI.DOMBreakpoint.Event.DOMNodeDidChange, this._handleDOMBreakpointDOMNodeDidChange, this);
+
+        WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.IssueAdded, this._handleConsoleIssueAdded, this);
+        WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.Cleared, this._handleConsoleCleared, this);
+
+        WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, this._handleTimelineCapturingStateChanged, this);
+
+        WI.auditManager.removeEventListener(WI.AuditManager.Event.TestScheduled, this._handleAuditManagerTestScheduled, this);
+        WI.auditManager.removeEventListener(WI.AuditManager.Event.TestCompleted, this._handleAuditManagerTestCompleted, this);
+
+        WI.cssManager.removeEventListener(WI.CSSManager.Event.StyleSheetAdded, this._handleCSSStyleSheetAdded, this);
+        WI.cssManager.removeEventListener(WI.CSSManager.Event.StyleSheetRemoved, this._handleCSSStyleSheetRemoved, this);
+
+        WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetAdded, this._handleTargetAdded, this);
+        WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetRemoved, this._handleTargetRemoved, this);
+
+        // COMPATIBILITY (iOS 14.0): Inspector.activateExtraDomains was removed in favor of a declared debuggable type
+        WI.notifications.removeEventListener(WI.Notification.ExtraDomainsActivated, this._handleExtraDomainsActivated, this);
 
         super.closed();
     }
@@ -695,7 +739,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
     {
         let treeOutline = super.createContentTreeOutline(options);
 
-        treeOutline.addEventListener(WI.TreeOutline.Event.ElementRevealed, (event) => {
+        treeOutline.addEventListener(WI.TreeOutline.Event.ElementRevealed, function(event) {
             let treeElement = event.data.element;
             let detailsSections = [this._pauseReasonSection, this._callStackSection, this._breakpointsSection, this._localOverridesSection];
             let detailsSection = detailsSections.find((detailsSection) => detailsSection.element.contains(treeElement.listItemElement));
@@ -709,7 +753,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             let offset = detailsSection.headerElement.totalOffsetBottom - treeElement.listItemElement.totalOffsetTop;
             if (offset > 0)
                 this.scrollElement.scrollBy(0, -offset);
-        });
+        }, this);
 
         return treeOutline;
     }

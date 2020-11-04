@@ -132,8 +132,8 @@ WI.ScriptContentView = class ScriptContentView extends WI.ContentView
     {
         super.closed();
 
-        WI.settings.showJavaScriptTypeInformation.removeEventListener(null, null, this);
-        WI.settings.enableControlFlowProfiler.removeEventListener(null, null, this);
+        WI.settings.showJavaScriptTypeInformation.removeEventListener(WI.Setting.Event.Changed, this._showJavaScriptTypeInformationSettingChanged, this);
+        WI.settings.enableControlFlowProfiler.removeEventListener(WI.Setting.Event.Changed, this._enableControlFlowProfilerSettingChanged, this);
 
         this._textEditor.close();
     }

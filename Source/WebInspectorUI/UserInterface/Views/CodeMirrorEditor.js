@@ -47,9 +47,9 @@ WI.CodeMirrorEditor = class CodeMirrorEditor
             if (options[codeMirrorOption] !== undefined)
                 return;
 
-            setting.addEventListener(WI.Setting.Event.Changed, (event) => {
-                codeMirror.setOption(codeMirrorOption, setting.value);
-            });
+            setting.addEventListener(WI.Setting.Event.Changed, function(event) {
+                this.setOption(codeMirrorOption, setting.value);
+            }, codeMirror);
         }
         listenForChange(WI.settings.indentWithTabs, "indentWithTabs");
         listenForChange(WI.settings.indentUnit, "indentUnit");

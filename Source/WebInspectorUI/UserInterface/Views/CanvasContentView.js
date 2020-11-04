@@ -252,15 +252,20 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
     detached()
     {
-        this.representedObject.removeEventListener(null, null, this);
-        this.representedObject.shaderProgramCollection.removeEventListener(null, null, this);
+        this.representedObject.removeEventListener(WI.Canvas.Event.MemoryChanged, this._updateMemoryCost, this);
+        this.representedObject.removeEventListener(WI.Canvas.Event.RecordingStarted, this.needsLayout, this);
+        this.representedObject.removeEventListener(WI.Canvas.Event.RecordingProgress, this.needsLayout, this);
+        this.representedObject.removeEventListener(WI.Canvas.Event.RecordingStopped, this.needsLayout, this);
+        this.representedObject.shaderProgramCollection.removeEventListener(WI.Collection.Event.ItemAdded, this.needsLayout, this);
+        this.representedObject.shaderProgramCollection.removeEventListener(WI.Collection.Event.ItemRemoved, this.needsLayout, this);
 
         if (this._canvasNode) {
-            this._canvasNode.removeEventListener(null, null, this);
+            this._canvasNode.removeEventListener(WI.DOMNode.Event.AttributeModified, this._refreshPixelSize, this);
+            this._canvasNode.removeEventListener(WI.DOMNode.Event.AttributeRemoved, this._refreshPixelSize, this);
             this._canvasNode = null;
         }
 
-        WI.settings.showImageGrid.removeEventListener(null, null, this);
+        WI.settings.showImageGrid.removeEventListener(WI.Setting.Event.Changed, this._updateImageGrid, this);
 
         super.detached();
     }

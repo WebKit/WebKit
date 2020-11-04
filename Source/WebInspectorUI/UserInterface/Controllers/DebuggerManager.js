@@ -563,17 +563,10 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         this.dispatchEventToListeners(WI.DebuggerManager.Event.WaitingToPause);
 
-        let listener = new WI.EventListener(this, true);
-
-        let managerResult = new Promise(function(resolve, reject) {
-            listener.connect(WI.debuggerManager, WI.DebuggerManager.Event.Paused, resolve);
-        });
-
-        let promises = [];
-        for (let [target, targetData] of this._targetDebuggerDataMap)
+        let promises = [this.awaitEvent(WI.DebuggerManager.Event.Paused, this)];
+        for (let targetData of this._targetDebuggerDataMap.values())
             promises.push(targetData.pauseIfNeeded());
-
-        return Promise.all([managerResult, ...promises]);
+        return Promise.all(promises);
     }
 
     resume()
@@ -581,17 +574,10 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         if (!this.paused)
             return Promise.resolve();
 
-        let listener = new WI.EventListener(this, true);
-
-        let managerResult = new Promise(function(resolve, reject) {
-            listener.connect(WI.debuggerManager, WI.DebuggerManager.Event.Resumed, resolve);
-        });
-
-        let promises = [];
-        for (let [target, targetData] of this._targetDebuggerDataMap)
+        let promises = [this.awaitEvent(WI.DebuggerManager.Event.Resumed, this)];
+        for (let targetData of this._targetDebuggerDataMap.values())
             promises.push(targetData.resumeIfNeeded());
-
-        return Promise.all([managerResult, ...promises]);
+        return Promise.all(promises);
     }
 
     stepNext()
@@ -599,20 +585,10 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         if (!this.paused)
             return Promise.reject(new Error("Cannot step next because debugger is not paused."));
 
-        let listener = new WI.EventListener(this, true);
-
-        let managerResult = new Promise(function(resolve, reject) {
-            listener.connect(WI.debuggerManager, WI.DebuggerManager.Event.ActiveCallFrameDidChange, resolve);
-        });
-
-        let protocolResult = this._activeCallFrame.target.DebuggerAgent.stepNext()
-            .catch(function(error) {
-                listener.disconnect();
-                console.error("DebuggerManager.stepNext failed: ", error);
-                throw error;
-            });
-
-        return Promise.all([managerResult, protocolResult]);
+        return Promise.all([
+            this.awaitEvent(WI.DebuggerManager.Event.ActiveCallFrameDidChange, this),
+            this._activeCallFrame.target.DebuggerAgent.stepNext(),
+        ]);
     }
 
     stepOver()
@@ -620,20 +596,10 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         if (!this.paused)
             return Promise.reject(new Error("Cannot step over because debugger is not paused."));
 
-        let listener = new WI.EventListener(this, true);
-
-        let managerResult = new Promise(function(resolve, reject) {
-            listener.connect(WI.debuggerManager, WI.DebuggerManager.Event.ActiveCallFrameDidChange, resolve);
-        });
-
-        let protocolResult = this._activeCallFrame.target.DebuggerAgent.stepOver()
-            .catch(function(error) {
-                listener.disconnect();
-                console.error("DebuggerManager.stepOver failed: ", error);
-                throw error;
-            });
-
-        return Promise.all([managerResult, protocolResult]);
+        return Promise.all([
+            this.awaitEvent(WI.DebuggerManager.Event.ActiveCallFrameDidChange, this),
+            this._activeCallFrame.target.DebuggerAgent.stepOver(),
+        ]);
     }
 
     stepInto()
@@ -641,20 +607,10 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         if (!this.paused)
             return Promise.reject(new Error("Cannot step into because debugger is not paused."));
 
-        let listener = new WI.EventListener(this, true);
-
-        let managerResult = new Promise(function(resolve, reject) {
-            listener.connect(WI.debuggerManager, WI.DebuggerManager.Event.ActiveCallFrameDidChange, resolve);
-        });
-
-        let protocolResult = this._activeCallFrame.target.DebuggerAgent.stepInto()
-            .catch(function(error) {
-                listener.disconnect();
-                console.error("DebuggerManager.stepInto failed: ", error);
-                throw error;
-            });
-
-        return Promise.all([managerResult, protocolResult]);
+        return Promise.all([
+            this.awaitEvent(WI.DebuggerManager.Event.ActiveCallFrameDidChange, this),
+            this._activeCallFrame.target.DebuggerAgent.stepInto(),
+        ]);
     }
 
     stepOut()
@@ -662,20 +618,10 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         if (!this.paused)
             return Promise.reject(new Error("Cannot step out because debugger is not paused."));
 
-        let listener = new WI.EventListener(this, true);
-
-        let managerResult = new Promise(function(resolve, reject) {
-            listener.connect(WI.debuggerManager, WI.DebuggerManager.Event.ActiveCallFrameDidChange, resolve);
-        });
-
-        let protocolResult = this._activeCallFrame.target.DebuggerAgent.stepOut()
-            .catch(function(error) {
-                listener.disconnect();
-                console.error("DebuggerManager.stepOut failed: ", error);
-                throw error;
-            });
-
-        return Promise.all([managerResult, protocolResult]);
+        return Promise.all([
+            this.awaitEvent(WI.DebuggerManager.Event.ActiveCallFrameDidChange, this),
+            this._activeCallFrame.target.DebuggerAgent.stepOut(),
+        ]);
     }
 
     continueUntilNextRunLoop(target)

@@ -56,7 +56,7 @@ WI.ApplicationCacheFrameContentView = class ApplicationCacheFrameContentView ext
 
     closed()
     {
-        WI.applicationCacheManager.removeEventListener(null, null, this);
+        WI.applicationCacheManager.removeEventListener(WI.ApplicationCacheManager.Event.FrameManifestStatusChanged, this._updateStatus, this);
 
         super.closed();
     }

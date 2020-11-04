@@ -108,8 +108,8 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
     {
         super.closed();
 
-        WI.networkManager.removeEventListener(null, null, this);
-        WI.Frame.removeEventListener(null, null, this);
+        WI.networkManager.removeEventListener(WI.NetworkManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
+        WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
     }
 
     get allowMultipleDetailSidebars()

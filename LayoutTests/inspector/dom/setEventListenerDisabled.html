@@ -26,14 +26,12 @@ function test() {
     suite.addTestCase({
         name: "DOM.setEventListenerDisabled.DisabledClickEvent",
         test(resolve, reject) {
-            let listener = InspectorTest.singleFireEventListener("TestPageDocumentClicked", () => {
+            InspectorTest.singleFireEventListener("TestPageDocumentClicked", () => {
                 reject("Click event listener should not be called");
             });
 
             InspectorTest.singleFireEventListener("TestPageAfterClick", () => {
                 InspectorTest.pass("Click event listener did not fire.");
-
-                InspectorTest.removeEventListener(listener);
 
                 logListener().then(resolve, reject);
             });

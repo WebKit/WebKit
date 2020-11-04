@@ -40,7 +40,12 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
 
     closed()
     {
-        WI.domManager.removeEventListener(null, null, this);
+        if (this.didInitialLayout) {
+            WI.domManager.removeEventListener(WI.DOMManager.Event.AttributeModified, this._attributesChanged, this);
+            WI.domManager.removeEventListener(WI.DOMManager.Event.AttributeRemoved, this._attributesChanged, this);
+            WI.domManager.removeEventListener(WI.DOMManager.Event.CharacterDataModified, this._characterDataModified, this);
+            WI.domManager.removeEventListener(WI.DOMManager.Event.CustomElementStateChanged, this._customElementStateChanged, this);
+        }
 
         super.closed();
     }

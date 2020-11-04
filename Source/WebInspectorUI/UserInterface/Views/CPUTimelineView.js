@@ -92,8 +92,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
     closed()
     {
-        console.assert(this.representedObject instanceof WI.Timeline);
-        this.representedObject.removeEventListener(null, null, this);
+        this.representedObject.removeEventListener(WI.Timeline.Event.RecordAdded, this._cpuTimelineRecordAdded, this);
     }
 
     reset()

@@ -93,7 +93,10 @@ WI.ProbeDetailsSidebarPanel = class ProbeDetailsSidebarPanel extends WI.DetailsS
 
     closed()
     {
-        WI.debuggerManager.removeEventListener(null, null, this);
+        if (this.didInitialLayout) {
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ProbeSetAdded, this._probeSetAdded, this);
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ProbeSetRemoved, this._probeSetRemoved, this);
+        }
 
         super.closed();
     }

@@ -90,7 +90,7 @@ WI.DatabaseManager = class DatabaseManager extends WI.Object
                 target.DatabaseAgent.disable();
         }
 
-        WI.Frame.removeEventListener(null, null, this);
+        WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
         this._reset();
     }

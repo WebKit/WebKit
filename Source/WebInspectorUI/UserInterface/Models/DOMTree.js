@@ -51,8 +51,14 @@ WI.DOMTree = class DOMTree extends WI.Object
 
     disconnect()
     {
-        WI.domManager.removeEventListener(null, null, this);
-        this._frame.removeEventListener(null, null, this);
+        this._frame.removeEventListener(WI.Frame.Event.PageExecutionContextChanged, this._framePageExecutionContextChanged, this);
+
+        WI.domManager.removeEventListener(WI.DOMManager.Event.DocumentUpdated, this._documentUpdated, this);
+
+        if (!this._frame.isMainFrame()) {
+            WI.domManager.removeEventListener(WI.DOMManager.Event.NodeRemoved, this._nodeRemoved, this);
+            this._frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._frameMainResourceDidChange, this);
+        }
     }
 
     invalidate()

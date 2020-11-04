@@ -49,8 +49,6 @@
         "InspectorFrontendHost": true,
         "InspectorProtocol": true,
         "InspectorTest": true,
-        "LinkedList": true,
-        "ListMultimap": true,
         "Multimap": true,
         "ProtocolTest": true,
         "ProtocolTestHarness": true,

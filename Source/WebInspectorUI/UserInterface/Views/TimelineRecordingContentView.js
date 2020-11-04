@@ -99,7 +99,7 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         this._recording.addEventListener(WI.TimelineRecording.Event.InstrumentAdded, this._instrumentAdded, this);
         this._recording.addEventListener(WI.TimelineRecording.Event.InstrumentRemoved, this._instrumentRemoved, this);
         this._recording.addEventListener(WI.TimelineRecording.Event.Reset, this._recordingReset, this);
-        this._recording.addEventListener(WI.TimelineRecording.Event.Unloaded, this._recordingUnloaded, this);
+        this._recording.singleFireEventListener(WI.TimelineRecording.Event.Unloaded, this._recordingUnloaded, this);
 
         WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, this._handleTimelineCapturingStateChanged, this);
 
@@ -245,11 +245,25 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
         this._timelineContentBrowser.contentViewContainer.closeAllContentViews();
 
-        this._recording.removeEventListener(null, null, this);
+        this._recording.removeEventListener(WI.TimelineRecording.Event.InstrumentAdded, this._instrumentAdded, this);
+        this._recording.removeEventListener(WI.TimelineRecording.Event.InstrumentRemoved, this._instrumentRemoved, this);
+        this._recording.removeEventListener(WI.TimelineRecording.Event.Reset, this._recordingReset, this);
+        if (!this._recording.readonly)
+            this._recording.removeEventListener(WI.TimelineRecording.Event.Unloaded, this._recordingUnloaded, this);
 
-        WI.timelineManager.removeEventListener(null, null, this);
-        WI.debuggerManager.removeEventListener(null, null, this);
-        WI.ContentView.removeEventListener(null, null, this);
+        WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, this._handleTimelineCapturingStateChanged, this);
+
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, this._debuggerPaused, this);
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Resumed, this._debuggerResumed, this);
+
+        WI.ContentView.removeEventListener(WI.ContentView.Event.SelectionPathComponentsDidChange, this._contentViewSelectionPathComponentDidChange, this);
+        WI.ContentView.removeEventListener(WI.ContentView.Event.SupplementalRepresentedObjectsDidChange, this._contentViewSupplementalRepresentedObjectsDidChange, this);
+
+        WI.TimelineView.removeEventListener(WI.TimelineView.Event.RecordWasFiltered, this._handleTimelineViewRecordFiltered, this);
+        WI.TimelineView.removeEventListener(WI.TimelineView.Event.RecordWasSelected, this._handleTimelineViewRecordSelected, this);
+        WI.TimelineView.removeEventListener(WI.TimelineView.Event.ScannerShow, this._handleTimelineViewScannerShow, this);
+        WI.TimelineView.removeEventListener(WI.TimelineView.Event.ScannerHide, this._handleTimelineViewScannerHide, this);
+        WI.TimelineView.removeEventListener(WI.TimelineView.Event.NeedsEntireSelectedRange, this._handleTimelineViewNeedsEntireSelectedRange, this);
     }
 
     canGoBack()
@@ -736,7 +750,7 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
     {
         console.assert(!this._updating);
 
-        WI.timelineManager.removeEventListener(null, null, this);
+        WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, this._handleTimelineCapturingStateChanged, this);
     }
 
     _timeRangeSelectionChanged(event)

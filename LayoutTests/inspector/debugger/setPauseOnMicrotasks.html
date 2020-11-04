@@ -46,7 +46,8 @@ function test()
 
                 InspectorTest.evaluateInPage(expression, () => {
                     InspectorTest.expectThat(!didPause, "Should not have paused.");
-                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+                    if (!didPause)
+                        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
 
                     WI.debuggerManager.allMicrotasksBreakpoint.remove();
                     InspectorTest.assert(!WI.debuggerManager.allMicrotasksBreakpoint, "Should have destroyed all microtasks breakpoint.");
@@ -71,7 +72,8 @@ function test()
 
                 InspectorTest.evaluateInPage(expression, () => {
                     InspectorTest.expectThat(didPause, "Should have paused.");
-                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+                    if (!didPause)
+                        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
 
                     WI.debuggerManager.allMicrotasksBreakpoint.remove();
                     InspectorTest.assert(!WI.debuggerManager.allMicrotasksBreakpoint, "Should have destroyed all microtasks breakpoint.");

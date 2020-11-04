@@ -26,13 +26,13 @@
 WI.isEngineeringBuild = true;
 
 // Disable Pause in Internal Scripts if Show Internal Scripts is dibbled.
-WI.settings.engineeringShowInternalScripts.addEventListener(WI.Setting.Event.Changed, (event) => {
+WI.settings.engineeringShowInternalScripts.addEventListener(WI.Setting.Event.Changed, function(event) {
     if (!WI.settings.engineeringShowInternalScripts.value)
         WI.settings.engineeringPauseForInternalScripts.value = false;
 }, WI.settings.engineeringPauseForInternalScripts);
 
 // Enable Show Internal Scripts if Pause in Internal Scripts is enabled.
-WI.settings.engineeringPauseForInternalScripts.addEventListener(WI.Setting.Event.Changed, (event) => {
+WI.settings.engineeringPauseForInternalScripts.addEventListener(WI.Setting.Event.Changed, function(event) {
     if (WI.settings.engineeringPauseForInternalScripts.value)
         WI.settings.engineeringShowInternalScripts.value = true;
 }, WI.settings.engineeringShowInternalScripts);
@@ -91,7 +91,7 @@ WI.runBootstrapOperations = function() {
         ignoreChangesToState = false;
     }
 
-    dumpMessagesTabBarNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => {
+    dumpMessagesTabBarNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, function(event) {
         let nextState;
         switch (dumpMessagesCurrentState()) {
         case DumpMessagesState.Off:
@@ -105,12 +105,12 @@ WI.runBootstrapOperations = function() {
             break;
         }
         applyDumpMessagesState(nextState);
-    });
-    WI.settings.protocolAutoLogMessages.addEventListener(WI.Setting.Event.Changed, () => {
+    }, dumpMessagesTabBarNavigationItem);
+    WI.settings.protocolAutoLogMessages.addEventListener(WI.Setting.Event.Changed, function(event) {
         if (ignoreChangesToState)
             return;
         applyDumpMessagesState(dumpMessagesCurrentState());
-    });
+    }, dumpMessagesTabBarNavigationItem);
     applyDumpMessagesState(dumpMessagesCurrentState());
 
     // Next Level Inspector.
@@ -118,9 +118,9 @@ WI.runBootstrapOperations = function() {
     const inspectInspectorToolTip = WI.unlocalizedString("Open Web Inspector [%d]").format(inspectionLevel + 1);
     let inspectInspectorTabBarNavigationItem = new WI.ButtonNavigationItem("inspect-inspector", inspectInspectorToolTip);
     inspectInspectorTabBarNavigationItem.element.textContent = inspectionLevel + 1;
-    inspectInspectorTabBarNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => {
+    inspectInspectorTabBarNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, function(event) {
         InspectorFrontendHost.inspectInspector();
-    });
+    }, inspectInspectorTabBarNavigationItem);
 
     let groupNavigationItem = new WI.GroupNavigationItem([
         dumpMessagesTabBarNavigationItem,
@@ -132,9 +132,7 @@ WI.runBootstrapOperations = function() {
     function setFocusDebugOutline() {
         document.body.classList.toggle("focus-debug", WI.settings.debugOutlineFocusedElement.value);
     }
-
-    WI.settings.debugOutlineFocusedElement.addEventListener(WI.Setting.Event.Changed, setFocusDebugOutline);
-
+    WI.settings.debugOutlineFocusedElement.addEventListener(WI.Setting.Event.Changed, setFocusDebugOutline, WI.settings.debugOutlineFocusedElement);
     setFocusDebugOutline();
 
     function updateDebugUI() {
@@ -142,9 +140,9 @@ WI.runBootstrapOperations = function() {
         WI.tabBar.needsLayout();
     }
 
-    WI.showDebugUISetting.addEventListener(WI.Setting.Event.Changed, () => {
+    WI.showDebugUISetting.addEventListener(WI.Setting.Event.Changed, function(event) {
         updateDebugUI();
-    });
+    }, groupNavigationItem);
 
     updateDebugUI();
 };

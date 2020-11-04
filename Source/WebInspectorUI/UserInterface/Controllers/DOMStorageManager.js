@@ -99,7 +99,8 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
                 target.DOMStorageAgent.disable();
         }
 
-        WI.Frame.removeEventListener(null, null, this);
+        WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WI.Frame.removeEventListener(WI.Frame.Event.SecurityOriginDidChange, this._securityOriginDidChange, this);
 
         this._reset();
     }

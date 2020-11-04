@@ -56,8 +56,12 @@ WI.SettingEditor = class SettingEditor extends WI.Object
 
         let editor = new WI.SettingEditor(type, label, options);
         editor.value = setting.value;
-        editor.addEventListener(WI.SettingEditor.Event.ValueDidChange, () => { setting.value = editor.value; });
-        setting.addEventListener(WI.Setting.Event.Changed, () => { editor.value = setting.value; });
+        editor.addEventListener(WI.SettingEditor.Event.ValueDidChange, function(event) {
+            this.value = editor.value;
+        }, setting);
+        setting.addEventListener(WI.Setting.Event.Changed, function(event) {
+            this.value = setting.value;
+        }, editor);
 
         return editor;
     }

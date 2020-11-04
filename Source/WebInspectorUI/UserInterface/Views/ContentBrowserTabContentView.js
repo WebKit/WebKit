@@ -52,7 +52,7 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
             let image = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "Images/ToggleRightSidebar.svg" : "Images/ToggleLeftSidebar.svg";
 
             this._showNavigationSidebarItem = new WI.ActivateButtonNavigationItem("toggle-navigation-sidebar", showToolTip, hideToolTip, image, 16, 16);
-            this._showNavigationSidebarItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.toggleNavigationSidebar, WI);
+            this._showNavigationSidebarItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.toggleNavigationSidebar, this);
             this._showNavigationSidebarItem.activated = !WI.navigationSidebar.collapsed;
             this._showNavigationSidebarItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
 
@@ -68,7 +68,7 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
             let image = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "Images/ToggleLeftSidebar.svg" : "Images/ToggleRightSidebar.svg";
 
             this._showDetailsSidebarItem = new WI.ActivateButtonNavigationItem("toggle-details-sidebar", showToolTip, hideToolTip, image, 16, 16);
-            this._showDetailsSidebarItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.toggleDetailsSidebar, WI);
+            this._showDetailsSidebarItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.toggleDetailsSidebar, this);
             this._showDetailsSidebarItem.activated = !WI.detailsSidebar.collapsed;
             this._showDetailsSidebarItem.enabled = false;
             this._showDetailsSidebarItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
@@ -120,8 +120,13 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
     {
         super.closed();
 
-        WI.navigationSidebar.removeEventListener(null, null, this);
-        WI.detailsSidebar.removeEventListener(null, null, this);
+        if (this._navigationSidebarPanelConstructor)
+            WI.navigationSidebar.removeEventListener(WI.Sidebar.Event.CollapsedStateDidChange, this._navigationSidebarCollapsedStateDidChange, this);
+
+        if (this._detailsSidebarPanelConstructors.length) {
+            WI.detailsSidebar.removeEventListener(WI.Sidebar.Event.CollapsedStateDidChange, this._detailsSidebarCollapsedStateDidChange, this);
+            WI.detailsSidebar.removeEventListener(WI.Sidebar.Event.SidebarPanelSelected, this._detailsSidebarPanelSelected, this);
+        }
 
         if (this.navigationSidebarPanel && typeof this.navigationSidebarPanel.closed === "function")
             this.navigationSidebarPanel.closed();

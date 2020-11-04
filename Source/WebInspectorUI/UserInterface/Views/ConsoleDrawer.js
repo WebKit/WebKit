@@ -41,7 +41,9 @@ WI.ConsoleDrawer = class ConsoleDrawer extends WI.ContentBrowser
         this._toggleDrawerButton = new WI.ToggleButtonNavigationItem("toggle-drawer", WI.UIString("Hide Console"), WI.UIString("Show Console"), "Images/HideConsoleDrawer.svg", "Images/ShowConsoleDrawer.svg");
 
         this._toggleDrawerButton.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
-        this._toggleDrawerButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => { WI.toggleSplitConsole(); });
+        this._toggleDrawerButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, function(event) {
+            WI.toggleSplitConsole();
+        }, this._toggleDrawerButton);
         this.navigationBar.insertNavigationItem(this._toggleDrawerButton, 0);
 
         this.collapsed = true;

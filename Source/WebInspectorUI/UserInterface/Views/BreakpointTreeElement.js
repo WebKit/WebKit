@@ -41,18 +41,10 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
         this._breakpoint = breakpoint;
         this._probeSet = null;
 
-        this._listenerSet = new WI.EventListenerSet(this, "BreakpointTreeElement listeners");
-        this._listenerSet.register(breakpoint, WI.Breakpoint.Event.DisabledStateDidChange, this.updateStatus);
-        this._listenerSet.register(breakpoint, WI.Breakpoint.Event.AutoContinueDidChange, this.updateStatus);
-        this._listenerSet.register(WI.debuggerManager, WI.DebuggerManager.Event.BreakpointsEnabledDidChange, this.updateStatus);
-        this._listenerSet.register(WI.debuggerManager, WI.DebuggerManager.Event.ProbeSetAdded, this._probeSetAdded);
-        this._listenerSet.register(WI.debuggerManager, WI.DebuggerManager.Event.ProbeSetRemoved, this._probeSetRemoved);
-
         this.status = WI.ImageUtilities.useSVGSymbol("Images/Breakpoint.svg");
         this.status.className = "status-image";
-
-        this._listenerSet.register(this.status, "mousedown", this._statusImageElementMouseDown);
-        this._listenerSet.register(this.status, "click", this._statusImageElementClicked);
+        this.status.addEventListener("mousedown", this._statusImageElementMouseDown.bind(this));
+        this.status.addEventListener("click", this._statusImageElementClicked.bind(this));
 
         this.updateStatus();
 
@@ -105,7 +97,12 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
     {
         super.onattach();
 
-        this._listenerSet.install();
+        this._breakpoint.addEventListener(WI.Breakpoint.Event.DisabledStateDidChange, this.updateStatus, this);
+        this._breakpoint.addEventListener(WI.Breakpoint.Event.AutoContinueDidChange, this.updateStatus, this);
+
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.BreakpointsEnabledDidChange, this.updateStatus, this);
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ProbeSetAdded, this._probeSetAdded, this);
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ProbeSetRemoved, this._probeSetRemoved, this);
 
         for (var probeSet of WI.debuggerManager.probeSets)
             if (probeSet.breakpoint === this._breakpoint)
@@ -116,7 +113,12 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
     {
         super.ondetach();
 
-        this._listenerSet.uninstall();
+        this._breakpoint.removeEventListener(WI.Breakpoint.Event.DisabledStateDidChange, this.updateStatus, this);
+        this._breakpoint.removeEventListener(WI.Breakpoint.Event.AutoContinueDidChange, this.updateStatus, this);
+
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.BreakpointsEnabledDidChange, this.updateStatus, this);
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ProbeSetAdded, this._probeSetAdded, this);
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ProbeSetRemoved, this._probeSetRemoved, this);
 
         if (this._probeSet)
             this._removeProbeSet(this._probeSet);
@@ -130,8 +132,6 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
     }
 
     // Protected
-
-    get listenerSet() { return this._listenerSet; }
 
     updateStatus()
     {

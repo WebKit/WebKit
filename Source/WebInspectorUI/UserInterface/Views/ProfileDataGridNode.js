@@ -36,7 +36,7 @@ WI.ProfileDataGridNode = class ProfileDataGridNode extends WI.DataGridNode
         this._childrenToChargeToSelf = new Set;
         this._extraSelfTimeFromChargedChildren = 0;
 
-        this.addEventListener("populate", this._populate, this);
+        this.addEventListener(WI.DataGridNode.Event.Populate, this._populate, this);
 
         this._updateChildrenForModifiers();
         this._recalculateData();
@@ -256,7 +256,7 @@ WI.ProfileDataGridNode = class ProfileDataGridNode extends WI.DataGridNode
         if (!this.shouldRefreshChildren)
             return;
 
-        this.removeEventListener("populate", this._populate, this);
+        this.removeEventListener(WI.DataGridNode.Event.Populate, this._populate, this);
 
         this._node.forEachChild((child) => {
             if (!this._childrenToChargeToSelf.has(child)) {

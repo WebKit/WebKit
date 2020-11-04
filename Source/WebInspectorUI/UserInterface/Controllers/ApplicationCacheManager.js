@@ -101,7 +101,8 @@ WI.ApplicationCacheManager = class ApplicationCacheManager extends WI.Object
                 target.ApplicationCacheAgent.disable();
         }
 
-        WI.Frame.removeEventListener(null, null, this);
+        WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WI.Frame.removeEventListener(WI.Frame.Event.ChildFrameWasRemoved, this._childFrameWasRemoved, this);
 
         this._reset();
     }

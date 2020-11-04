@@ -82,7 +82,7 @@ WI.NetworkDetailView = class NetworkDetailView extends WI.View
     initialLayout()
     {
         let closeNavigationItem = new WI.ButtonNavigationItem("close", WI.UIString("Close detail view"), "Images/CloseLarge.svg", 16, 16);
-        closeNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleCloseButton.bind(this));
+        closeNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleCloseButton, this);
         closeNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
 
         let contentViewNavigationItemsGroup = new WI.GroupNavigationItem;

@@ -1,3 +1,37 @@
+2020-11-04  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: use weak collections for holding event listeners
+        https://bugs.webkit.org/show_bug.cgi?id=196956
+
+        Reviewed by Brian Burg.
+
+        * http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html:
+        Use newly named `WI.Object.prototype.activelyListeningObjectsWithPrototype` instead of the
+        previously named `WI.Object.prototype.retainedObjectsWithPrototype` since `WI.Object`
+        doesn't retain any `thisObject` anymore.
+
+        * inspector/debugger/setPauseOnMicrotasks.html:
+        Only remove the event listener if it didn't fire.
+
+        * inspector/dom/setEventListenerDisabled.html:
+        No need to remove the event listener as calling `reject` after a `Promise` is already
+        settled won't have any effect.
+
+        * inspector/unit-tests/event-listener.html: Removed.
+        * inspector/unit-tests/event-listener-expected.txt: Removed.
+        * inspector/unit-tests/event-listener-set.html: Removed.
+        * inspector/unit-tests/event-listener-set-expected.txt: Removed.
+        Remove the legacy `WI.EventListener` and `WI.EventListenerSet` as they basically do the same
+        thing as `WI.Object` with extra steps.
+
+        * inspector/unit-tests/linked-list.html: Removed.
+        * inspector/unit-tests/linked-list-expected.txt: Removed.
+        * inspector/unit-tests/list-multimap.html: Removed.
+        * inspector/unit-tests/list-multimap-expected.txt: Removed.
+        Remove `LinkedList` and `ListMultimap` as they're no longer used.
+
+        * platform/gtk/TestExpectations:
+
 2020-11-04  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Remove text flaky failures of tests that are actually passing.

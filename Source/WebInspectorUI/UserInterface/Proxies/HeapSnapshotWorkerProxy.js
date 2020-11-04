@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Events dispatched on this class: "HeapSnapshot.CollectionEvent"
-
 WI.HeapSnapshotWorkerProxy = class HeapSnapshotWorkerProxy extends WI.Object
 {
     constructor()
@@ -145,4 +143,8 @@ WI.HeapSnapshotWorkerProxy = class HeapSnapshotWorkerProxy extends WI.Object
 
         console.error("Unexpected HeapSnapshotWorker message", data);
     }
+};
+
+WI.HeapSnapshotWorkerProxy.Event = {
+    Collection: "heap-snapshot-collection",
 };

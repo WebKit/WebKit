@@ -381,7 +381,8 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
 
     closed()
     {
-        WI.timelineManager.removeEventListener(null, null, this);
+        WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, this._handleTimelineCapturingStateChanged, this);
+        WI.timelineManager.removeEventListener(WI.TimelineManager.Event.RecordingImported, this._recordingImported, this);
 
         super.closed();
     }

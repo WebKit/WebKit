@@ -161,8 +161,6 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
             contentView.hidden();
         }
 
-        contentView.removeEventListener(null, null, this);
-
         if (!this.subviews.length)
             this.showContentPlaceholder();
     }
@@ -231,7 +229,8 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
 
     detached()
     {
-        this.representedObject.removeEventListener(null, null, this);
+        this.representedObject.removeEventListener(WI.Collection.Event.ItemAdded, this._handleItemAdded, this);
+        this.representedObject.removeEventListener(WI.Collection.Event.ItemRemoved, this._handleItemRemoved, this);
 
         super.detached();
     }

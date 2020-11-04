@@ -370,7 +370,7 @@ WI.TimelineRuler = class TimelineRuler extends WI.View
     clearMarkers()
     {
         for (let [marker, markerElement] of this._markerElementMap) {
-            marker.removeEventListener(null, null, this);
+            marker.removeEventListener(WI.TimelineMarker.Event.TimeChanged, this._timelineMarkerTimeChanged, this);
             markerElement.remove();
         }
 

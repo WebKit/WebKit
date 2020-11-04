@@ -54,7 +54,7 @@ WI.TreeOutlineGroup = class TreeOutlineGroup extends WI.Collection
 
     itemRemoved(treeOutline)
     {
-        treeOutline.removeEventListener(null, null, this);
+        treeOutline.removeEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeOutlineSelectionDidChange, this);
     }
 
     // Private

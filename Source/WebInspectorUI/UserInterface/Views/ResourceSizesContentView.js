@@ -154,7 +154,9 @@ WI.ResourceSizesContentView = class ResourceSizesContentView extends WI.ContentV
 
     closed()
     {
-        this._resource.removeEventListener(null, null, this);
+        this._resource.removeEventListener(WI.Resource.Event.SizeDidChange, this._resourceSizeDidChange, this);
+        this._resource.removeEventListener(WI.Resource.Event.TransferSizeDidChange, this._resourceTransferSizeDidChange, this);
+        this._resource.removeEventListener(WI.Resource.Event.MetricsDidChange, this._resourceMetricsDidChange, this);
 
         super.closed();
     }

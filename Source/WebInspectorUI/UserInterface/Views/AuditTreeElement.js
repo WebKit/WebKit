@@ -97,8 +97,27 @@ WI.AuditTreeElement = class AuditTreeElement extends WI.GeneralTreeElement
 
     ondetach()
     {
-        WI.auditManager.removeEventListener(null, null, this);
-        this.representedObject.removeEventListener(null, null, this);
+        if (this.representedObject instanceof WI.AuditTestBase) {
+            this.representedObject.removeEventListener(WI.AuditTestBase.Event.DisabledChanged, this._handleTestDisabledChanged, this);
+            this.representedObject.removeEventListener(WI.AuditTestBase.Event.ResultChanged, this._handleTestResultChanged, this);
+
+            if (this.representedObject instanceof WI.AuditTestCase)
+                this.representedObject.removeEventListener(WI.AuditTestBase.Event.Scheduled, this._handleTestCaseScheduled, this);
+            else if (this.representedObject instanceof WI.AuditTestGroup)
+                this.representedObject.removeEventListener(WI.AuditTestBase.Event.Scheduled, this._handleTestGroupScheduled, this);
+
+            if (this.representedObject.editable) {
+                this.representedObject.removeEventListener(WI.AuditTestBase.Event.NameChanged, this._handleTestNameChanged, this);
+                this.representedObject.removeEventListener(WI.AuditTestBase.Event.SupportedChanged, this._handleTestSupportedChanged, this);
+
+                if (this.representedObject instanceof WI.AuditTestGroup)
+                    this.representedObject.removeEventListener(WI.AuditTestGroup.Event.TestAdded, this._handleTestGroupTestAdded, this);
+            }
+
+            WI.auditManager.removeEventListener(WI.AuditManager.Event.EditingChanged, this._handleManagerEditingChanged, this);
+            WI.auditManager.removeEventListener(WI.AuditManager.Event.TestScheduled, this._handleAuditManagerTestScheduled, this);
+            WI.auditManager.removeEventListener(WI.AuditManager.Event.TestCompleted, this._handleAuditManagerTestCompleted, this);
+        }
 
         super.ondetach();
     }

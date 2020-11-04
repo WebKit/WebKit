@@ -34,108 +34,75 @@ WI.Object = class WebInspectorObject
 
     static addEventListener(eventType, listener, thisObject)
     {
-        thisObject = thisObject || null;
+        console.assert(typeof eventType === "string", this, eventType, listener, thisObject);
+        console.assert(typeof listener === "function", this, eventType, listener, thisObject);
+        console.assert(typeof thisObject === "object" || window.InspectorTest || window.ProtocolTest, this, eventType, listener, thisObject);
 
-        console.assert(eventType, "Object.addEventListener: invalid event type ", eventType, "(listener: ", listener, "thisObject: ", thisObject, ")");
-        if (!eventType)
-            return null;
+        thisObject ??= this;
 
-        console.assert(listener, "Object.addEventListener: invalid listener ", listener, "(event type: ", eventType, "thisObject: ", thisObject, ")");
-        if (!listener)
-            return null;
+        let data = {
+            listener,
+            thisObjectWeakRef: new WeakRef(thisObject),
+        };
 
-        if (!this._listeners)
-            this._listeners = new Map();
+        WI.Object._listenerThisObjectFinalizationRegistry.register(thisObject, {eventTarget: this, eventType, data}, data);
 
-        let listenersTable = this._listeners.get(eventType);
-        if (!listenersTable) {
-            listenersTable = new ListMultimap();
-            this._listeners.set(eventType, listenersTable);
-        }
+        this._listeners ??= new Multimap;
+        this._listeners.add(eventType, data);
 
-        listenersTable.add(thisObject, listener);
+        console.assert(Array.from(this._listeners.get(eventType)).filter((item) => item.listener === listener && item.thisObjectWeakRef.deref() === thisObject).length === 1, this, eventType, listener, thisObject);
+
         return listener;
     }
 
     static singleFireEventListener(eventType, listener, thisObject)
     {
-        let wrappedCallback = function() {
-            this.removeEventListener(eventType, wrappedCallback, null);
-            listener.apply(thisObject, arguments);
-        }.bind(this);
-
-        this.addEventListener(eventType, wrappedCallback, null);
+        let wrappedCallback = (...args) => {
+            this.removeEventListener(eventType, wrappedCallback, thisObject);
+            listener.apply(thisObject, args);
+        };
+        this.addEventListener(eventType, wrappedCallback, thisObject);
         return wrappedCallback;
+    }
+
+    static awaitEvent(eventType, thisObject)
+    {
+        return new Promise((resolve, reject) => {
+            this.singleFireEventListener(eventType, resolve, thisObject);
+        });
     }
 
     static removeEventListener(eventType, listener, thisObject)
     {
-        eventType = eventType || null;
-        listener = listener || null;
-        thisObject = thisObject || null;
+        console.assert(this._listeners, this, eventType, listener, thisObject);
+        console.assert(typeof eventType === "string", this, eventType, listener, thisObject);
+        console.assert(typeof listener === "function", this, eventType, listener, thisObject);
+        console.assert(typeof thisObject === "object" || window.InspectorTest || window.ProtocolTest, this, eventType, listener, thisObject);
 
-        if (!this._listeners)
-            return;
+        thisObject ??= this;
 
-        if (thisObject && !eventType) {
-            this._listeners.forEach(function(listenersTable) {
-                listenersTable.deleteAll(thisObject);
-            });
+        let listenersForEventType = this._listeners.get(eventType);
+        console.assert(listenersForEventType, this, eventType, listener, thisObject);
 
-            return;
+        let didDelete = false;
+        for (let data of listenersForEventType) {
+            let unwrapped = data.thisObjectWeakRef.deref();
+            if (!unwrapped || unwrapped !== thisObject || data.listener !== listener)
+                continue;
+
+            if (this._listeners.delete(eventType, data))
+                didDelete = true;
+            WI.Object._listenerThisObjectFinalizationRegistry.unregister(data);
         }
-
-        let listenersTable = this._listeners.get(eventType);
-        if (!listenersTable || listenersTable.size === 0)
-            return;
-
-        let didDelete = listenersTable.delete(thisObject, listener);
-        console.assert(didDelete, "removeEventListener cannot remove " + eventType.toString() + " because it doesn't exist.");
-    }
-
-    static awaitEvent(eventType)
-    {
-        let wrapper = new WI.WrappedPromise;
-        this.singleFireEventListener(eventType, (event) => wrapper.resolve(event));
-        return wrapper.promise;
-    }
-
-    // Only used by tests.
-    static hasEventListeners(eventType)
-    {
-        if (!this._listeners)
-            return false;
-
-        let listenersTable = this._listeners.get(eventType);
-        return listenersTable && listenersTable.size > 0;
-    }
-
-    // This should only be used within regression tests to detect leaks.
-    static retainedObjectsWithPrototype(proto)
-    {
-        let results = new Set;
-
-        if (this._listeners) {
-            this._listeners.forEach(function(listenersTable, eventType) {
-                listenersTable.forEach(function(pair) {
-                    let thisObject = pair[0];
-                    if (thisObject instanceof proto)
-                        results.add(thisObject);
-                });
-            });
-        }
-
-        return results;
+        console.assert(didDelete, this, eventType, listener, thisObject);
     }
 
     // Public
 
     addEventListener() { return WI.Object.addEventListener.apply(this, arguments); }
     singleFireEventListener() { return WI.Object.singleFireEventListener.apply(this, arguments); }
-    removeEventListener() { return WI.Object.removeEventListener.apply(this, arguments); }
     awaitEvent() { return WI.Object.awaitEvent.apply(this, arguments); }
-    hasEventListeners() { return WI.Object.hasEventListeners.apply(this, arguments); }
-    retainedObjectsWithPrototype() { return WI.Object.retainedObjectsWithPrototype.apply(this, arguments); }
+    removeEventListener() { return WI.Object.removeEventListener.apply(this, arguments); }
 
     dispatchEventToListeners(eventType, eventData)
     {
@@ -146,23 +113,22 @@ WI.Object = class WebInspectorObject
             if (!object || event._stoppedPropagation)
                 return;
 
-            let listenerTypesMap = object._listeners;
-            if (!listenerTypesMap || !object.hasOwnProperty("_listeners"))
+            let listeners = object._listeners;
+            if (!listeners || !object.hasOwnProperty("_listeners") || !listeners.size)
                 return;
 
-            console.assert(listenerTypesMap instanceof Map);
-
-            let listenersTable = listenerTypesMap.get(eventType);
-            if (!listenersTable)
+            let listenersForEventType = listeners.get(eventType);
+            if (!listenersForEventType)
                 return;
 
-            // Make a copy with slice so mutations during the loop doesn't affect us.
-            let listeners = listenersTable.toArray();
+            // Copy the set of listeners so we don't have to worry about mutating while iterating.
+            for (let data of Array.from(listenersForEventType)) {
+                let unwrapped = data.thisObjectWeakRef.deref();
+                if (!unwrapped)
+                    continue;
 
-            // Iterate over the listeners and call them. Stop if stopPropagation is called.
-            for (let i = 0, length = listeners.length; i < length; ++i) {
-                let [thisObject, listener] = listeners[i];
-                listener.call(thisObject, event);
+                data.listener.call(unwrapped, event);
+
                 if (event._stoppedPropagation)
                     break;
             }
@@ -187,7 +153,36 @@ WI.Object = class WebInspectorObject
 
         return event.defaultPrevented;
     }
+
+    // Test
+
+    static hasEventListeners(eventType)
+    {
+        console.assert(window.InspectorTest || window.ProtocolTest);
+        return this._listeners?.has(eventType);
+    }
+
+    static activelyListeningObjectsWithPrototype(proto)
+    {
+        console.assert(window.InspectorTest || window.ProtocolTest);
+        let results = new Set;
+        if (this._listeners) {
+            for (let data of this._listeners.values()) {
+                let unwrapped = data.thisObjectWeakRef.deref();
+                if (unwrapped instanceof proto)
+                    results.add(unwrapped);
+            }
+        }
+        return results;
+    }
+
+    hasEventListeners() { return WI.Object.hasEventListeners.apply(this, arguments); }
+    activelyListeningObjectsWithPrototype() { return WI.Object.activelyListeningObjectsWithPrototype.apply(this, arguments); }
 };
+
+WI.Object._listenerThisObjectFinalizationRegistry = new FinalizationRegistry((heldValue) => {
+    heldValue.eventTarget._listeners.delete(heldValue.eventType, heldValue.data);
+});
 
 WI.Event = class Event
 {

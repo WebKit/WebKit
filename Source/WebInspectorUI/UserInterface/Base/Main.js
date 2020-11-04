@@ -98,7 +98,7 @@ WI.loaded = function()
 
     // Listen for the ProvisionalLoadStarted event before registering for events so our code gets called before any managers or sidebars.
     // This lets us save a state cookie before any managers or sidebars do any resets that would affect state (namely TimelineManager).
-    WI.Frame.addEventListener(WI.Frame.Event.ProvisionalLoadStarted, WI._provisionalLoadStarted,);
+    WI.Frame.addEventListener(WI.Frame.Event.ProvisionalLoadStarted, WI._provisionalLoadStarted, WI);
 
     // Populate any UIStrings that must be done early after localized strings have loaded.
     WI.KeyboardShortcut.Key.Space._displayName = WI.UIString("Space");
@@ -130,16 +130,16 @@ WI.loaded = function()
     ];
 
     // Register for events.
-    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, WI._debuggerDidPause);
-    WI.domManager.addEventListener(WI.DOMManager.Event.InspectModeStateChanged, WI._inspectModeStateChanged);
-    WI.domManager.addEventListener(WI.DOMManager.Event.DOMNodeWasInspected, WI._domNodeWasInspected);
-    WI.domStorageManager.addEventListener(WI.DOMStorageManager.Event.DOMStorageObjectWasInspected, WI._domStorageWasInspected);
-    WI.databaseManager.addEventListener(WI.DatabaseManager.Event.DatabaseWasInspected, WI._databaseWasInspected);
-    WI.networkManager.addEventListener(WI.NetworkManager.Event.MainFrameDidChange, WI._mainFrameDidChange);
-    WI.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasAdded, WI._frameWasAdded);
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, WI._debuggerDidPause, WI);
+    WI.domManager.addEventListener(WI.DOMManager.Event.InspectModeStateChanged, WI._inspectModeStateChanged, WI);
+    WI.domManager.addEventListener(WI.DOMManager.Event.DOMNodeWasInspected, WI._domNodeWasInspected, WI);
+    WI.domStorageManager.addEventListener(WI.DOMStorageManager.Event.DOMStorageObjectWasInspected, WI._domStorageWasInspected, WI);
+    WI.databaseManager.addEventListener(WI.DatabaseManager.Event.DatabaseWasInspected, WI._databaseWasInspected, WI);
+    WI.networkManager.addEventListener(WI.NetworkManager.Event.MainFrameDidChange, WI._mainFrameDidChange, WI);
+    WI.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasAdded, WI._frameWasAdded, WI);
     WI.browserManager.enable();
 
-    WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, WI._mainResourceDidChange);
+    WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, WI._mainResourceDidChange, WI);
 
     document.addEventListener("DOMContentLoaded", WI.contentLoaded);
 
@@ -230,26 +230,26 @@ WI.contentLoaded = function()
     WI.layoutMeasurementContainer = document.body.appendChild(document.createElement("div"));
     WI.layoutMeasurementContainer.id = "layout-measurement-container";
 
-    WI.settings.showJavaScriptTypeInformation.addEventListener(WI.Setting.Event.Changed, WI._showJavaScriptTypeInformationSettingChanged);
-    WI.settings.enableControlFlowProfiler.addEventListener(WI.Setting.Event.Changed, WI._enableControlFlowProfilerSettingChanged);
-    WI.settings.resourceCachingDisabled.addEventListener(WI.Setting.Event.Changed, WI._resourceCachingDisabledSettingChanged);
+    WI.settings.showJavaScriptTypeInformation.addEventListener(WI.Setting.Event.Changed, WI._showJavaScriptTypeInformationSettingChanged, WI);
+    WI.settings.enableControlFlowProfiler.addEventListener(WI.Setting.Event.Changed, WI._enableControlFlowProfilerSettingChanged, WI);
+    WI.settings.resourceCachingDisabled.addEventListener(WI.Setting.Event.Changed, WI._resourceCachingDisabledSettingChanged, WI);
 
     function setTabSize() {
         document.body.style.tabSize = WI.settings.tabSize.value;
     }
-    WI.settings.tabSize.addEventListener(WI.Setting.Event.Changed, setTabSize);
+    WI.settings.tabSize.addEventListener(WI.Setting.Event.Changed, setTabSize, WI);
     setTabSize();
 
     function setInvisibleCharacterClassName() {
         document.body.classList.toggle("show-invisible-characters", WI.settings.showInvisibleCharacters.value);
     }
-    WI.settings.showInvisibleCharacters.addEventListener(WI.Setting.Event.Changed, setInvisibleCharacterClassName);
+    WI.settings.showInvisibleCharacters.addEventListener(WI.Setting.Event.Changed, setInvisibleCharacterClassName, WI);
     setInvisibleCharacterClassName();
 
     function setWhitespaceCharacterClassName() {
         document.body.classList.toggle("show-whitespace-characters", WI.settings.showWhitespaceCharacters.value);
     }
-    WI.settings.showWhitespaceCharacters.addEventListener(WI.Setting.Event.Changed, setWhitespaceCharacterClassName);
+    WI.settings.showWhitespaceCharacters.addEventListener(WI.Setting.Event.Changed, setWhitespaceCharacterClassName, WI);
     setWhitespaceCharacterClassName();
 
     // Create the user interface elements.
@@ -267,8 +267,8 @@ WI.contentLoaded = function()
     WI.findPreviousKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Shift | WI.KeyboardShortcut.Modifier.CommandOrControl, "G", WI._findPrevious);
 
     WI.consoleDrawer = new WI.ConsoleDrawer(document.getElementById("console-drawer"));
-    WI.consoleDrawer.addEventListener(WI.ConsoleDrawer.Event.CollapsedStateChanged, WI._consoleDrawerCollapsedStateDidChange);
-    WI.consoleDrawer.addEventListener(WI.ConsoleDrawer.Event.Resized, WI._consoleDrawerDidResize);
+    WI.consoleDrawer.addEventListener(WI.ConsoleDrawer.Event.CollapsedStateChanged, WI._consoleDrawerCollapsedStateDidChange, WI);
+    WI.consoleDrawer.addEventListener(WI.ConsoleDrawer.Event.Resized, WI._consoleDrawerDidResize, WI);
 
     WI.quickConsole = new WI.QuickConsole(document.getElementById("quick-console"));
 
@@ -277,13 +277,13 @@ WI.contentLoaded = function()
     WI.consoleLogViewController = WI.consoleContentView.logViewController;
 
     WI.navigationSidebar = new WI.SingleSidebar(document.getElementById("navigation-sidebar"), WI.Sidebar.Sides.Leading, WI.UIString("Navigation", "Navigation @ Sidebar", "Label for the navigation sidebar."));
-    WI.navigationSidebar.addEventListener(WI.Sidebar.Event.WidthDidChange, WI._sidebarWidthDidChange);
-    WI.navigationSidebar.addEventListener(WI.Sidebar.Event.CollapsedStateDidChange, WI._sidebarWidthDidChange);
+    WI.navigationSidebar.addEventListener(WI.Sidebar.Event.WidthDidChange, WI._sidebarWidthDidChange, WI);
+    WI.navigationSidebar.addEventListener(WI.Sidebar.Event.CollapsedStateDidChange, WI._sidebarWidthDidChange, WI);
 
     WI.detailsSidebar = new WI.MultiSidebar(document.getElementById("details-sidebar"), WI.Sidebar.Sides.Trailing, WI.UIString("Details", "Details @ Sidebar", "Label for the details sidebar."));
-    WI.detailsSidebar.addEventListener(WI.Sidebar.Event.WidthDidChange, WI._sidebarWidthDidChange);
-    WI.detailsSidebar.addEventListener(WI.Sidebar.Event.CollapsedStateDidChange, WI._sidebarWidthDidChange);
-    WI.detailsSidebar.addEventListener(WI.MultiSidebar.Event.MultipleSidebarsVisibleChanged, WI._sidebarWidthDidChange);
+    WI.detailsSidebar.addEventListener(WI.Sidebar.Event.WidthDidChange, WI._sidebarWidthDidChange, WI);
+    WI.detailsSidebar.addEventListener(WI.Sidebar.Event.CollapsedStateDidChange, WI._sidebarWidthDidChange, WI);
+    WI.detailsSidebar.addEventListener(WI.MultiSidebar.Event.MultipleSidebarsVisibleChanged, WI._sidebarWidthDidChange, WI);
 
     WI.searchKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Shift, "F", WI._focusSearchField);
     WI._findKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "F", WI._find);
@@ -307,7 +307,7 @@ WI.contentLoaded = function()
     WI._showTabAtIndexKeyboardShortcuts = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Option, `${i}`, (event) => { WI._showTabAtIndexFromShortcut(i); }));
 
     WI.tabBrowser = new WI.TabBrowser(document.getElementById("tab-browser"), WI.tabBar, WI.navigationSidebar, WI.detailsSidebar);
-    WI.tabBrowser.addEventListener(WI.TabBrowser.Event.SelectedTabContentViewDidChange, WI._tabBrowserSelectedTabContentViewDidChange);
+    WI.tabBrowser.addEventListener(WI.TabBrowser.Event.SelectedTabContentViewDidChange, WI._tabBrowserSelectedTabContentViewDidChange, WI);
 
     WI._reloadPageKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "R", WI._reloadPage);
     WI._reloadPageFromOriginKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Option, "R", WI._reloadPageFromOrigin);
@@ -352,28 +352,28 @@ WI.contentLoaded = function()
 
     if (supportsDockRight || supportsDockLeft || supportsDockBottom) {
         WI._closeTabBarButton = new WI.ButtonNavigationItem("dock-close", WI.UIString("Close"), "Images/CloseLarge.svg");
-        WI._closeTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.close);
+        WI._closeTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.close, WI);
         dockingConfigurationNavigationItems.push(WI._closeTabBarButton);
     }
 
     if ((supportsDockRight || supportsDockLeft) && (supportsDockBottom || supportsUndocked)) {
         WI._dockToSideTabBarButton = new WI.ButtonNavigationItem("dock-right", WI.UIString("Dock to side of window"), WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "Images/DockLeft.svg" : "Images/DockRight.svg", 16, 16);
         WI._dockToSideTabBarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
-        WI._dockToSideTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? WI._dockLeft : WI._dockRight);
+        WI._dockToSideTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? WI._dockLeft : WI._dockRight, WI);
         dockingConfigurationNavigationItems.push(WI._dockToSideTabBarButton);
     }
 
     if (supportsDockBottom && (supportsDockRight || supportsDockLeft || supportsUndocked)) {
         WI._dockBottomTabBarButton = new WI.ButtonNavigationItem("dock-bottom", WI.UIString("Dock to bottom of window"), "Images/DockBottom.svg", 16, 16);
         WI._dockBottomTabBarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
-        WI._dockBottomTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._dockBottom);
+        WI._dockBottomTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._dockBottom, WI);
         dockingConfigurationNavigationItems.push(WI._dockBottomTabBarButton);
     }
 
     if (supportsUndocked && (supportsDockRight || supportsDockLeft || supportsDockBottom)) {
         WI._undockTabBarButton = new WI.ButtonNavigationItem("undock", WI.UIString("Detach into separate window"), "Images/Undock.svg", 16, 16);
         WI._undockTabBarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
-        WI._undockTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._undock);
+        WI._undockTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._undock, WI);
         dockingConfigurationNavigationItems.push(WI._undockTabBarButton);
     }
 
@@ -382,7 +382,7 @@ WI.contentLoaded = function()
     let elementSelectionToolTip = WI.UIString("Start element selection (%s)").format(WI._inspectModeKeyboardShortcut.displayName);
     let activatedElementSelectionToolTip = WI.UIString("Stop element selection (%s)").format(WI._inspectModeKeyboardShortcut.displayName);
     WI._inspectModeTabBarButton = new WI.ActivateButtonNavigationItem("inspect", elementSelectionToolTip, activatedElementSelectionToolTip, "Images/Crosshair.svg");
-    WI._inspectModeTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._toggleInspectMode);
+    WI._inspectModeTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._toggleInspectMode, WI);
     inspectedPageControlNavigationItems.push(WI._inspectModeTabBarButton);
 
     if (InspectorFrontendHost.isRemote || WI.isDebugUIEnabled()) {
@@ -390,7 +390,7 @@ WI.contentLoaded = function()
         if (InspectorBackend.hasCommand("Page.overrideUserAgent") && InspectorBackend.hasCommand("Page.overrideSetting")) {
             const deviceSettingsTooltip = WI.UIString("Device Settings");
             WI._deviceSettingsTabBarButton = new WI.ActivateButtonNavigationItem("device-settings", deviceSettingsTooltip, deviceSettingsTooltip, "Images/Device.svg");
-            WI._deviceSettingsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._handleDeviceSettingsTabBarButtonClicked);
+            WI._deviceSettingsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._handleDeviceSettingsTabBarButtonClicked, WI);
             inspectedPageControlNavigationItems.push(WI._deviceSettingsTabBarButton);
 
             WI._deviceSettingsPopover = null;
@@ -402,11 +402,11 @@ WI.contentLoaded = function()
         else
             reloadToolTip = WI.UIString("Reload page (%s)\nReload page ignoring cache (%s)").format(WI._reloadPageKeyboardShortcut.displayName, WI._reloadPageFromOriginKeyboardShortcut.displayName);
         WI._reloadTabBarButton = new WI.ButtonNavigationItem("reload", reloadToolTip, "Images/ReloadToolbar.svg");
-        WI._reloadTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._reloadTabBarButtonClicked);
+        WI._reloadTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._reloadTabBarButtonClicked, WI);
         inspectedPageControlNavigationItems.push(WI._reloadTabBarButton);
 
         WI._downloadTabBarButton = new WI.ButtonNavigationItem("download", WI.UIString("Download Web Archive"), "Images/DownloadArrow.svg");
-        WI._downloadTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._downloadWebArchive);
+        WI._downloadTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._downloadWebArchive, WI);
         inspectedPageControlNavigationItems.push(WI._downloadTabBarButton);
     }
 
@@ -421,7 +421,7 @@ WI.contentLoaded = function()
     WI._consoleWarningsTabBarButton = new WI.ButtonNavigationItem("console-warnings", WI.UIString("0 Console warnings"), "Images/IssuesEnabled.svg");
     WI._consoleWarningsTabBarButton.imageType = WI.ButtonNavigationItem.ImageType.IMG;
     WI._consoleWarningsTabBarButton.hidden = true;
-    WI._consoleWarningsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => {
+    WI._consoleWarningsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, function(event) {
         WI.showConsoleTab(WI.LogContentView.Scopes.Warnings, {
             initiatorHint: WI.TabBrowser.TabNavigationInitiator.Dashboard,
         });
@@ -430,7 +430,7 @@ WI.contentLoaded = function()
     WI._consoleErrorsTabBarButton = new WI.ButtonNavigationItem("console-errors", WI.UIString("0 Console errors"), "Images/ErrorsEnabled.svg");
     WI._consoleErrorsTabBarButton.imageType = WI.ButtonNavigationItem.ImageType.IMG;
     WI._consoleErrorsTabBarButton.hidden = true;
-    WI._consoleErrorsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => {
+    WI._consoleErrorsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, function(event) {
         WI.showConsoleTab(WI.LogContentView.Scopes.Errors, {
             initiatorHint: WI.TabBrowser.TabNavigationInitiator.Dashboard,
         });
@@ -535,9 +535,9 @@ WI.contentLoaded = function()
     }
 
     // Listen to the events after restoring the saved tabs to avoid recursion.
-    WI.tabBar.addEventListener(WI.TabBar.Event.TabBarItemAdded, WI._rememberOpenTabs);
-    WI.tabBar.addEventListener(WI.TabBar.Event.TabBarItemRemoved, WI._rememberOpenTabs);
-    WI.tabBar.addEventListener(WI.TabBar.Event.TabBarItemsReordered, WI._rememberOpenTabs);
+    WI.tabBar.addEventListener(WI.TabBar.Event.TabBarItemAdded, WI._rememberOpenTabs, WI);
+    WI.tabBar.addEventListener(WI.TabBar.Event.TabBarItemRemoved, WI._rememberOpenTabs, WI);
+    WI.tabBar.addEventListener(WI.TabBar.Event.TabBarItemsReordered, WI._rememberOpenTabs, WI);
 
     function updateConsoleSavedResultPrefixCSSVariable() {
         document.body.style.setProperty("--console-saved-result-prefix", "\"" + WI.RuntimeManager.preferredSavedResultPrefix() + "\"");
@@ -555,7 +555,7 @@ WI.contentLoaded = function()
 
     updateZoomFactorCSSVariable();
 
-    WI.settings.frontendAppearance.addEventListener(WI.Setting.Event.Changed, (event) => {
+    WI.settings.frontendAppearance.addEventListener(WI.Setting.Event.Changed, function(event) {
         InspectorFrontendHost.setForcedAppearance(WI.settings.frontendAppearance.value);
     }, WI);
 

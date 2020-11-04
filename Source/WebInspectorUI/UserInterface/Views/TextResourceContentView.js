@@ -132,11 +132,11 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
     {
         super.closed();
 
-        this.resource.removeEventListener(null, null, this);
-        WI.debuggerManager.removeEventListener(null, null, this);
-        WI.networkManager.removeEventListener(null, null, this);
-        WI.settings.showJavaScriptTypeInformation.removeEventListener(null, null, this);
-        WI.settings.enableControlFlowProfiler.removeEventListener(null, null, this);
+        this.resource.removeEventListener(WI.SourceCode.Event.ContentDidChange, this._sourceCodeContentDidChange, this);
+        WI.settings.showJavaScriptTypeInformation.removeEventListener(WI.Setting.Event.Changed, this._showJavaScriptTypeInformationSettingChanged, this);
+        WI.settings.enableControlFlowProfiler.removeEventListener(WI.Setting.Event.Changed, this._enableControlFlowProfilerSettingChanged, this);
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ProbeSetAdded, this._probeSetsChanged, this);
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ProbeSetRemoved, this._probeSetsChanged, this);
     }
 
     contentAvailable(content, base64Encoded)

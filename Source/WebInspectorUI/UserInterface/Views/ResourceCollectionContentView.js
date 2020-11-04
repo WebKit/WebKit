@@ -95,7 +95,7 @@ WI.ResourceCollectionContentView = class ResourceCollectionContentView extends W
 
     detached()
     {
-        WI.settings.showImageGrid.removeEventListener(null, null, this);
+        WI.settings.showImageGrid.removeEventListener(WI.Setting.Event.Changed, this._handleShowImageGridSettingChanged, this);
 
         super.detached();
     }
@@ -124,6 +124,8 @@ WI.ResourceCollectionContentView = class ResourceCollectionContentView extends W
     contentViewRemoved(contentView)
     {
         this._updateImageTypeScopeBar();
+
+        contentView.removeEventListener(WI.ResourceContentView.Event.ContentError, this._handleContentError, this);
     }
 
     // Private

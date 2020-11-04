@@ -105,8 +105,8 @@ WI.WebSocketResource = class WebSocketResource extends WI.Resource
 };
 
 WI.WebSocketResource.Event = {
-    FrameAdded: Symbol("web-socket-frame-added"),
-    ReadyStateChanged: Symbol("web-socket-resource-ready-state-changed"),
+    FrameAdded: "web-socket-frame-added",
+    ReadyStateChanged: "web-socket-resource-ready-state-changed",
 };
 
 WI.WebSocketResource.ReadyState = {

@@ -84,7 +84,12 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
     closed()
     {
         window.removeEventListener("resize", this._boundUpdateContentOverflowShadowVisibilitySoon);
-        WI.Frame.removeEventListener(null, null, this);
+
+        if (this._shouldAutoPruneStaleTopLevelResourceTreeElements) {
+            WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._checkForStaleResources, this);
+            WI.Frame.removeEventListener(WI.Frame.Event.ChildFrameWasRemoved, this._checkForStaleResources, this);
+            WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasRemoved, this._checkForStaleResources, this);
+        }
     }
 
     get contentBrowser()

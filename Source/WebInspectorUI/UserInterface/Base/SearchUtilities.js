@@ -32,18 +32,15 @@ WI.SearchUtilities = class SearchUtilities {
         };
     }
 
-    static createSettings(namePrefix, options = {})
+    static createSettings(namePrefix)
     {
         let settings = {};
         for (let [key, defaultSetting] of Object.entries(WI.SearchUtilities.defaultSettings)) {
             let setting = new WI.Setting(namePrefix + "-" + defaultSetting.name, defaultSetting.value);
-            defaultSetting.addEventListener(WI.Setting.Event.Changed, (event) => {
-                setting.value = defaultSetting.value;
-            });
+            defaultSetting.addEventListener(WI.Setting.Event.Changed, function(event) {
+                this.value = defaultSetting.value;
+            }, setting);
             settings[key] = setting;
-
-            if (options.handleChanged)
-                setting.addEventListener(WI.Setting.Event.Changed, options.handleChanged);
         }
         return settings;
     }
@@ -84,8 +81,8 @@ WI.SearchUtilities = class SearchUtilities {
         function toggleActive() {
             button.classList.toggle("active", Object.values(settings).some((setting) => !!setting.value));
         }
-        settings.caseSensitive.addEventListener(WI.Setting.Event.Changed, toggleActive);
-        settings.regularExpression.addEventListener(WI.Setting.Event.Changed, toggleActive);
+        settings.caseSensitive.addEventListener(WI.Setting.Event.Changed, toggleActive, button);
+        settings.regularExpression.addEventListener(WI.Setting.Event.Changed, toggleActive, button);
         toggleActive();
 
         return button;

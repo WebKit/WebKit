@@ -31,13 +31,13 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
 
         this._activeExecutionContext = null;
 
-        WI.settings.consoleSavedResultAlias.addEventListener(WI.Setting.Event.Changed, (event) => {
+        WI.settings.consoleSavedResultAlias.addEventListener(WI.Setting.Event.Changed, function(event) {
             for (let target of WI.targets) {
                 // COMPATIBILITY (iOS 12.2): Runtime.setSavedResultAlias did not exist.
                 if (target.hasCommand("Runtime.setSavedResultAlias"))
                     target.RuntimeAgent.setSavedResultAlias(WI.settings.consoleSavedResultAlias.value);
             }
-        });
+        }, this);
     }
 
     // Static
@@ -285,7 +285,7 @@ WI.RuntimeManager.ConsoleObjectGroup = "console";
 WI.RuntimeManager.TopLevelExecutionContextIdentifier = undefined;
 
 WI.RuntimeManager.Event = {
-    DidEvaluate: Symbol("runtime-manager-did-evaluate"),
-    DefaultExecutionContextChanged: Symbol("runtime-manager-default-execution-context-changed"),
-    ActiveExecutionContextChanged: Symbol("runtime-manager-active-execution-context-changed"),
+    DidEvaluate: "runtime-manager-did-evaluate",
+    DefaultExecutionContextChanged: "runtime-manager-default-execution-context-changed",
+    ActiveExecutionContextChanged: "runtime-manager-active-execution-context-changed",
 };

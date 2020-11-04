@@ -43,7 +43,7 @@ WI.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode ext
         this._base = base || null;
 
         if (hasChildren)
-            this.addEventListener("populate", this._populate, this);
+            this.addEventListener(WI.DataGridNode.Event.Populate, this._populate, this);
     }
 
     // Static
@@ -216,7 +216,7 @@ WI.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode ext
 
     _populate()
     {
-        this.removeEventListener("populate", this._populate, this);
+        this.removeEventListener(WI.DataGridNode.Event.Populate, this._populate, this);
 
         function propertyName(edge) {
             return edge ? WI.HeapSnapshotRootPath.pathComponentForIndividualEdge(edge) : "";

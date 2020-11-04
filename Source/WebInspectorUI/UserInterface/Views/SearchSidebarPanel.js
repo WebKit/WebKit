@@ -29,11 +29,12 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
     {
         super("search", WI.UIString("Search"), true, true);
 
-        this._searchInputSettings = WI.SearchUtilities.createSettings("search-sidebar", {
-            handleChanged: (event) => {
+        this._searchInputSettings = WI.SearchUtilities.createSettings("search-sidebar");
+        for (let setting of Object.values(this._searchInputSettings)) {
+            setting.addEventListener(WI.Setting.Event.Changed, function(event) {
                 this.focusSearchField(true);
-            },
-        });
+            }, this);
+        }
 
         this._inputContainer = this.element.appendChild(document.createElement("div"));
         this._inputContainer.classList.add("search-bar");
@@ -79,7 +80,7 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
     {
         super.closed();
 
-        WI.Frame.removeEventListener(null, null, this);
+        WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
     }
 
     focusSearchField(performSearch)
@@ -234,8 +235,8 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
             }
 
             let promises = [
-                WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
-                WI.Target.awaitEvent(WI.Target.Event.ResourceAdded)
+                WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded, this),
+                WI.Target.awaitEvent(WI.Target.Event.ResourceAdded, this),
             ];
             Promise.race(promises).then(this._contentChanged.bind(this));
         };

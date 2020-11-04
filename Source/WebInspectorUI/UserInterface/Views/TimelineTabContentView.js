@@ -344,10 +344,14 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
         WI.memoryManager.disable();
         WI.heapManager.disable();
 
-        this.contentBrowser.navigationBar.removeEventListener(null, null, this);
+        if (WI.sharedApp.isWebDebuggable())
+            this.contentBrowser.navigationBar.removeEventListener(WI.NavigationBar.Event.NavigationItemSelected, this._viewModeSelected, this);
 
-        WI.timelineManager.removeEventListener(null, null, this);
-        WI.notifications.removeEventListener(null, null, this);
+        WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, this._handleTimelineCapturingStateChanged, this);
+        WI.timelineManager.removeEventListener(WI.TimelineManager.Event.RecordingCreated, this._recordingCreated, this);
+        WI.timelineManager.removeEventListener(WI.TimelineManager.Event.RecordingLoaded, this._recordingLoaded, this);
+        WI.notifications.removeEventListener(WI.Notification.VisibilityStateDidChange, this._inspectorVisibilityChanged, this);
+        WI.notifications.removeEventListener(WI.Notification.GlobalModifierKeysDidChange, this._globalModifierKeysDidChange, this);
 
         super.closed();
     }

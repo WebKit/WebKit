@@ -306,7 +306,7 @@ WI.TargetManager = class TargetManager extends WI.Object
 };
 
 WI.TargetManager.Event = {
-    TargetAdded: Symbol("target-manager-target-added"),
-    TargetRemoved: Symbol("target-manager-target-removed"),
+    TargetAdded: "target-manager-target-added",
+    TargetRemoved: "target-manager-target-removed",
     DidCommitProvisionalTarget: "target-manager-provisional-target-committed",
 };

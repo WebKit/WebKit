@@ -35,7 +35,7 @@ WI.ProfileNodeDataGridNode = class ProfileNodeDataGridNode extends WI.TimelineDa
 
         this._profileNode = profileNode;
 
-        this.addEventListener("populate", this._populate, this);
+        this.addEventListener(WI.DataGridNode.Event.Populate, this._populate, this);
     }
 
     // Public
@@ -140,7 +140,7 @@ WI.ProfileNodeDataGridNode = class ProfileNodeDataGridNode extends WI.TimelineDa
         if (!this.shouldRefreshChildren)
             return;
 
-        this.removeEventListener("populate", this._populate, this);
+        this.removeEventListener(WI.DataGridNode.Event.Populate, this._populate, this);
         this.removeChildren();
 
         for (let node of this._profileNode.childNodes)

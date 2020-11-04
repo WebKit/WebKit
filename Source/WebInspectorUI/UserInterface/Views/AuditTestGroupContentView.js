@@ -262,9 +262,9 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
 
             let stopAuditNavigationItem = new WI.ButtonNavigationItem("stop-audit", WI.UIString("Stop"), "Images/AuditStop.svg", 13, 13);
             stopAuditNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
-            stopAuditNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, (event) => {
+            stopAuditNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, function(event) {
                 WI.auditManager.stop();
-            }, WI.auditManager);
+            }, stopAuditNavigationItem);
 
             let stopAuditHelpElement = WI.createNavigationItemHelp(WI.UIString("Press %s to stop running."), stopAuditNavigationItem);
             this.placeholderElement.appendChild(stopAuditHelpElement);

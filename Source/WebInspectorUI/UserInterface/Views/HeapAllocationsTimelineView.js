@@ -105,7 +105,7 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
         timeline.addEventListener(WI.Timeline.Event.RecordAdded, this._heapAllocationsTimelineRecordAdded, this);
 
         WI.HeapSnapshotProxy.addEventListener(WI.HeapSnapshotProxy.Event.Invalidated, this._heapSnapshotInvalidated, this);
-        WI.HeapSnapshotWorkerProxy.singleton().addEventListener("HeapSnapshot.CollectionEvent", this._heapSnapshotCollectionEvent, this);
+        WI.HeapSnapshotWorkerProxy.singleton().addEventListener(WI.HeapSnapshotWorkerProxy.Event.Collection, this._heapSnapshotCollectionEvent, this);
     }
 
     // Public
@@ -252,16 +252,15 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
 
     closed()
     {
-        console.assert(this.representedObject instanceof WI.Timeline);
-        this.representedObject.removeEventListener(null, null, this);
+        this.representedObject.removeEventListener(WI.Timeline.Event.RecordAdded, this._heapAllocationsTimelineRecordAdded, this);
 
         this._dataGrid.closed();
 
         this._contentViewContainer.closeAllContentViews();
 
-        WI.ContentView.removeEventListener(null, null, this);
-        WI.HeapSnapshotProxy.removeEventListener(null, null, this);
-        WI.HeapSnapshotWorkerProxy.singleton().removeEventListener("HeapSnapshot.CollectionEvent", this._heapSnapshotCollectionEvent, this);
+        WI.ContentView.removeEventListener(WI.ContentView.Event.SelectionPathComponentsDidChange, this._contentViewSelectionPathComponentDidChange, this);
+        WI.HeapSnapshotProxy.removeEventListener(WI.HeapSnapshotProxy.Event.Invalidated, this._heapSnapshotInvalidated, this);
+        WI.HeapSnapshotWorkerProxy.singleton().removeEventListener(WI.HeapSnapshotWorkerProxy.Event.Collection, this._heapSnapshotCollectionEvent, this);
     }
 
     layout()

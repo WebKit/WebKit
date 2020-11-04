@@ -65,8 +65,10 @@ WI.MultipleScopeBarItem = class MultipleScopeBarItem extends WI.Object
     set scopeBarItems(scopeBarItems)
     {
         if (this._scopeBarItems) {
-            for (var scopeBarItem of this._scopeBarItems)
-                scopeBarItem.removeEventListener(null, null, this);
+            for (var scopeBarItem of this._scopeBarItems) {
+                scopeBarItem.removeEventListener(WI.ScopeBarItem.Event.SelectionChanged, this._itemSelectionDidChange, this);
+                scopeBarItem.removeEventListener(WI.ScopeBarItem.Event.HiddenChanged, this._handleItemHiddenChanged, this);
+            }
         }
 
         this._scopeBarItems = scopeBarItems || [];

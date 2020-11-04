@@ -132,7 +132,9 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
 
     closed()
     {
-        this._resource.removeEventListener(null, null, this);
+        this._resource.removeEventListener(WI.Resource.Event.MetricsDidChange, this._resourceMetricsDidChange, this);
+        this._resource.removeEventListener(WI.Resource.Event.RequestHeadersDidChange, this._resourceRequestHeadersDidChange, this);
+        this._resource.removeEventListener(WI.Resource.Event.ResponseReceived, this._resourceResponseReceived, this);
 
         super.closed();
     }

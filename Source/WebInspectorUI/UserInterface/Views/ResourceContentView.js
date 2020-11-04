@@ -187,11 +187,13 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
     {
         super.closed();
 
-        if (WI.NetworkManager.supportsOverridingResponses())
-            WI.networkManager.removeEventListener(null, null, this);
+        if (WI.NetworkManager.supportsOverridingResponses()) {
+            WI.networkManager.removeEventListener(WI.NetworkManager.Event.LocalResourceOverrideAdded, this._handleLocalResourceOverrideChanged, this);
+            WI.networkManager.removeEventListener(WI.NetworkManager.Event.LocalResourceOverrideRemoved, this._handleLocalResourceOverrideChanged, this);
+        }
 
         if (!this.managesOwnIssues)
-            WI.consoleManager.removeEventListener(null, null, this);
+            WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.IssueAdded, this._issueWasAdded, this);
     }
 
     // Protected

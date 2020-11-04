@@ -46,12 +46,11 @@ WI.ProbeSetDataGrid = class ProbeSetDataGrid extends WI.DataGrid
         this._lastUpdatedFrame = null;
         this._nodesSinceLastNavigation = [];
 
-        this._listenerSet = new WI.EventListenerSet(this, "ProbeSetDataGrid instance listeners");
-        this._listenerSet.register(probeSet, WI.ProbeSet.Event.ProbeAdded, this._setupProbe);
-        this._listenerSet.register(probeSet, WI.ProbeSet.Event.ProbeRemoved, this._teardownProbe);
-        this._listenerSet.register(probeSet, WI.ProbeSet.Event.SamplesCleared, this._setupData);
-        this._listenerSet.register(WI.Probe, WI.Probe.Event.ExpressionChanged, this._probeExpressionChanged);
-        this._listenerSet.install();
+        probeSet.addEventListener(WI.ProbeSet.Event.ProbeAdded, this._setupProbe, this);
+        probeSet.addEventListener(WI.ProbeSet.Event.ProbeRemoved, this._teardownProbe, this);
+        probeSet.addEventListener(WI.ProbeSet.Event.SamplesCleared, this._setupData, this);
+
+        WI.Probe.addEventListener(WI.Probe.Event.ExpressionChanged, this._probeExpressionChanged, this);
 
         this._setupData();
     }
@@ -70,7 +69,11 @@ WI.ProbeSetDataGrid = class ProbeSetDataGrid extends WI.DataGrid
         for (var probe of this.probeSet)
             this._teardownProbe(probe);
 
-        this._listenerSet.uninstall(true);
+        this.probeSet.removeEventListener(WI.ProbeSet.Event.ProbeAdded, this._setupProbe, this);
+        this.probeSet.removeEventListener(WI.ProbeSet.Event.ProbeRemoved, this._teardownProbe, this);
+        this.probeSet.removeEventListener(WI.ProbeSet.Event.SamplesCleared, this._setupData, this);
+
+        WI.Probe.removeEventListener(WI.Probe.Event.ExpressionChanged, this._probeExpressionChanged, this);
     }
 
     // Private
@@ -99,16 +102,17 @@ WI.ProbeSetDataGrid = class ProbeSetDataGrid extends WI.DataGrid
         for (var frame of this._data.frames)
             this._updateNodeForFrame(frame);
 
-        this._dataListeners = new WI.EventListenerSet(this, "ProbeSetDataGrid data table listeners");
-        this._dataListeners.register(this._data, WI.ProbeSetDataTable.Event.FrameInserted, this._dataFrameInserted);
-        this._dataListeners.register(this._data, WI.ProbeSetDataTable.Event.SeparatorInserted, this._dataSeparatorInserted);
-        this._dataListeners.register(this._data, WI.ProbeSetDataTable.Event.WillRemove, this._teardownData);
-        this._dataListeners.install();
+        this._data.addEventListener(WI.ProbeSetDataTable.Event.FrameInserted, this._dataFrameInserted, this);
+        this._data.addEventListener(WI.ProbeSetDataTable.Event.SeparatorInserted, this._dataSeparatorInserted, this);
+        this._data.addEventListener(WI.ProbeSetDataTable.Event.WillRemove, this._teardownData, this);
     }
 
     _teardownData()
     {
-        this._dataListeners.uninstall(true);
+        this._data.removeEventListener(WI.ProbeSetDataTable.Event.FrameInserted, this._dataFrameInserted, this);
+        this._data.removeEventListener(WI.ProbeSetDataTable.Event.SeparatorInserted, this._dataSeparatorInserted, this);
+        this._data.removeEventListener(WI.ProbeSetDataTable.Event.WillRemove, this._teardownData, this);
+
         this.removeChildren();
         this._frameNodes = new Map;
         this._lastUpdatedFrame = null;

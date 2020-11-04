@@ -531,7 +531,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         this._updateSliderValue();
 
         if (this.representedObject.ready)
-            this.representedObject.removeEventListener(null, null, this);
+            this.representedObject.removeEventListener(WI.Recording.Event.ProcessedAction, this._handleRecordingProcessedAction, this);
     }
 };
 

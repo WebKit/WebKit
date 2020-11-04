@@ -120,10 +120,18 @@ WI.StorageSidebarPanel = class StorageSidebarPanel extends WI.NavigationSidebarP
     {
         super.closed();
 
-        WI.domStorageManager.removeEventListener(null, null, this);
-        WI.databaseManager.removeEventListener(null, null, this);
-        WI.indexedDBManager.removeEventListener(null, null, this);
-        WI.applicationCacheManager.removeEventListener(null, null, this);
+        WI.domStorageManager.removeEventListener(WI.DOMStorageManager.Event.CookieStorageObjectWasAdded, this._cookieStorageObjectWasAdded, this);
+        WI.domStorageManager.removeEventListener(WI.DOMStorageManager.Event.DOMStorageObjectWasAdded, this._domStorageObjectWasAdded, this);
+        WI.domStorageManager.removeEventListener(WI.DOMStorageManager.Event.DOMStorageObjectWasInspected, this._domStorageObjectWasInspected, this);
+        WI.domStorageManager.removeEventListener(WI.DOMStorageManager.Event.Cleared, this._domStorageCleared, this);
+        WI.databaseManager.removeEventListener(WI.DatabaseManager.Event.DatabaseWasAdded, this._databaseWasAdded, this);
+        WI.databaseManager.removeEventListener(WI.DatabaseManager.Event.DatabaseWasInspected, this._databaseWasInspected, this);
+        WI.databaseManager.removeEventListener(WI.DatabaseManager.Event.Cleared, this._databaseCleared, this);
+        WI.indexedDBManager.removeEventListener(WI.IndexedDBManager.Event.IndexedDatabaseWasAdded, this._indexedDatabaseWasAdded, this);
+        WI.indexedDBManager.removeEventListener(WI.IndexedDBManager.Event.Cleared, this._indexedDatabaseCleared, this);
+        WI.applicationCacheManager.removeEventListener(WI.ApplicationCacheManager.Event.FrameManifestAdded, this._frameManifestAdded, this);
+        WI.applicationCacheManager.removeEventListener(WI.ApplicationCacheManager.Event.FrameManifestRemoved, this._frameManifestRemoved, this);
+        WI.applicationCacheManager.removeEventListener(WI.ApplicationCacheManager.Event.Cleared, this._applicationCacheCleared, this);
     }
 
     // Protected

@@ -43,6 +43,8 @@ WI.TimelineRecordingProgressView = class TimelineRecordingProgressView extends W
         this._stopRecordingButtonElement.textContent = WI.UIString("Stop Recording");
         this._stopRecordingButtonElement.addEventListener("click", () => WI.timelineManager.stopCapturing());
         this.element.appendChild(this._stopRecordingButtonElement);
+
+        WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, this._handleTimelineCapturingStateChanged, this);
     }
 
     // Public
@@ -61,16 +63,16 @@ WI.TimelineRecordingProgressView = class TimelineRecordingProgressView extends W
         this._visible = x;
         this.element.classList.toggle("hidden", !this._visible);
 
-        if (this._visible) {
-            WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, this._handleTimelineCapturingStateChanged, this);
+        if (this._visible)
             this._updateState();
-        } else
-            WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, this._handleTimelineCapturingStateChanged, this);
     }
 
     // Private
 
     _updateState() {
+        if (!this._visible)
+            return;
+
         switch (WI.timelineManager.capturingState) {
         case WI.TimelineManager.CapturingState.Starting:
         case WI.TimelineManager.CapturingState.Active:

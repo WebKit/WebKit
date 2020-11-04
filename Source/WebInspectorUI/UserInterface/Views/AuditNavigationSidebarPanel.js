@@ -185,7 +185,14 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
     {
         super.closed();
 
-        WI.auditManager.removeEventListener(null, null, this);
+        if (this.didInitialLayout) {
+            WI.auditManager.removeEventListener(WI.AuditManager.Event.EditingChanged, this._handleAuditManagerEditingChanged, this);
+            WI.auditManager.removeEventListener(WI.AuditManager.Event.RunningStateChanged, this._handleAuditManagerRunningStateChanged, this);
+            WI.auditManager.removeEventListener(WI.AuditManager.Event.TestAdded, this._handleAuditTestAdded, this);
+            WI.auditManager.removeEventListener(WI.AuditManager.Event.TestCompleted, this._handleAuditTestCompleted, this);
+            WI.auditManager.removeEventListener(WI.AuditManager.Event.TestRemoved, this._handleAuditTestRemoved, this);
+            WI.auditManager.removeEventListener(WI.AuditManager.Event.TestScheduled, this._handleAuditTestScheduled, this);
+        }
     }
 
     updateFilter()

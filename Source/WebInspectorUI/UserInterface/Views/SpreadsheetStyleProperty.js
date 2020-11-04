@@ -515,7 +515,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         let readOnly = !this._isEditable();
         let swatch = new WI.InlineSwatch(type, valueObject, readOnly);
 
-        swatch.addEventListener(WI.InlineSwatch.Event.ValueChanged, (event) => {
+        swatch.addEventListener(WI.InlineSwatch.Event.ValueChanged, function(event) {
             let value = event.data.value && event.data.value.toString();
             if (!value)
                 return;
@@ -534,15 +534,15 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         }
 
         if (this._delegate && typeof this._delegate.stylePropertyInlineSwatchActivated === "function") {
-            swatch.addEventListener(WI.InlineSwatch.Event.Activated, () => {
+            swatch.addEventListener(WI.InlineSwatch.Event.Activated, function(event) {
                 this._delegate.stylePropertyInlineSwatchActivated();
-            });
+            }, this);
         }
 
         if (this._delegate && typeof this._delegate.stylePropertyInlineSwatchDeactivated === "function") {
-            swatch.addEventListener(WI.InlineSwatch.Event.Deactivated, () => {
+            swatch.addEventListener(WI.InlineSwatch.Event.Deactivated, function(event) {
                 this._delegate.stylePropertyInlineSwatchDeactivated();
-            });
+            }, this);
         }
 
         tokenElement.append(swatch.element, innerElement);

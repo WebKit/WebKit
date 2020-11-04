@@ -63,7 +63,8 @@ WI.ResourceTimingContentView = class ResourceTimingContentView extends WI.Conten
 
     closed()
     {
-        this._resource.removeEventListener(null, null, this);
+        this._resource.removeEventListener(WI.Resource.Event.MetricsDidChange, this._resourceMetricsDidChange, this);
+        this._resource.removeEventListener(WI.Resource.Event.TimestampsDidChange, this._resourceTimestampsDidChange, this);
 
         super.closed();
     }

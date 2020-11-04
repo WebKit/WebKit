@@ -74,7 +74,10 @@ WI.ApplicationCacheDetailsSidebarPanel = class ApplicationCacheDetailsSidebarPan
 
     closed()
     {
-        WI.applicationCacheManager.removeEventListener(null, null, this);
+        if (this.didInitialLayout) {
+            WI.applicationCacheManager.removeEventListener(WI.ApplicationCacheManager.Event.NetworkStateUpdated, this._networkStateUpdated, this);
+            WI.applicationCacheManager.removeEventListener(WI.ApplicationCacheManager.Event.FrameManifestStatusChanged, this._frameManifestStatusChanged, this);
+        }
 
         super.closed();
     }

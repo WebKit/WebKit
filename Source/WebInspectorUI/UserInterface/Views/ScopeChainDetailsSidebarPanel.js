@@ -113,9 +113,12 @@ WI.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel extends W
 
     closed()
     {
-        WI.runtimeManager.removeEventListener(null, null, this);
-        WI.Frame.removeEventListener(null, null, this);
-        WI.debuggerManager.removeEventListener(null, null, this);
+        WI.runtimeManager.removeEventListener(WI.RuntimeManager.Event.DidEvaluate, this._didEvaluateExpression, this);
+        WI.runtimeManager.removeEventListener(WI.RuntimeManager.Event.ActiveExecutionContextChanged, this._activeExecutionContextChanged, this);
+
+        WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ActiveCallFrameDidChange, this._activeCallFrameDidChange, this);
 
         super.closed();
     }
@@ -267,8 +270,12 @@ WI.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel extends W
 
                 let treeOutline = objectTree.treeOutline;
                 treeOutline.registerScrollVirtualizer(this.contentView.element, 16);
-                treeOutline.addEventListener(WI.TreeOutline.Event.ElementAdded, this._treeElementAdded.bind(this, detailsSectionIdentifier), this);
-                treeOutline.addEventListener(WI.TreeOutline.Event.ElementDisclosureDidChanged, this._treeElementDisclosureDidChange.bind(this, detailsSectionIdentifier), this);
+                treeOutline.addEventListener(WI.TreeOutline.Event.ElementAdded, function(event) {
+                    this._treeElementAdded(detailsSectionIdentifier, event);
+                }, this);
+                treeOutline.addEventListener(WI.TreeOutline.Event.ElementDisclosureDidChanged, function(event) {
+                    this._treeElementDisclosureDidChange(detailsSectionIdentifier, event);
+                }, this);
 
                 rows.push(new WI.ObjectPropertiesDetailSectionRow(objectTree, detailsSection));
             }
@@ -303,8 +310,12 @@ WI.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel extends W
 
         let treeOutline = objectTree.treeOutline;
         const watchExpressionSectionIdentifier = "watch-expressions";
-        treeOutline.addEventListener(WI.TreeOutline.Event.ElementAdded, this._treeElementAdded.bind(this, watchExpressionSectionIdentifier), this);
-        treeOutline.addEventListener(WI.TreeOutline.Event.ElementDisclosureDidChanged, this._treeElementDisclosureDidChange.bind(this, watchExpressionSectionIdentifier), this);
+        treeOutline.addEventListener(WI.TreeOutline.Event.ElementAdded, function(event) {
+            this._treeElementAdded(watchExpressionSectionIdentifier, event);
+        }, this);
+        treeOutline.addEventListener(WI.TreeOutline.Event.ElementDisclosureDidChanged, function(event) {
+            this._treeElementDisclosureDidChange(watchExpressionSectionIdentifier, event);
+        }, this);
         treeOutline.objectTreeElementAddContextMenuItems = this._objectTreeElementAddContextMenuItems.bind(this);
 
         let promises = [];

@@ -37,12 +37,6 @@ WI.JavaScriptBreakpointTreeElement = class JavaScriptBreakpointTreeElement exten
             title = breakpoint.displayName;
 
         super(breakpoint, {classNames, title});
-
-        if (!breakpoint.special) {
-            this.listenerSet.register(breakpoint, WI.JavaScriptBreakpoint.Event.LocationDidChange, this._breakpointLocationDidChange);
-            this._updateTitles();
-        }
-        this.listenerSet.register(breakpoint, WI.JavaScriptBreakpoint.Event.ResolvedStateDidChange, this.updateStatus);
     }
 
     // Public
@@ -50,6 +44,26 @@ WI.JavaScriptBreakpointTreeElement = class JavaScriptBreakpointTreeElement exten
     get filterableData()
     {
         return {text: [this.breakpoint.contentIdentifier]};
+    }
+
+    onattach()
+    {
+        super.onattach();
+
+        if (!this.breakpoint.special) {
+            this.breakpoint.addEventListener(WI.JavaScriptBreakpoint.Event.LocationDidChange, this._breakpointLocationDidChange, this);
+            this._updateTitles();
+        }
+        this.breakpoint.addEventListener(WI.JavaScriptBreakpoint.Event.ResolvedStateDidChange, this.updateStatus, this);
+    }
+
+    ondetach()
+    {
+        if (!this.breakpoint.special)
+            this.breakpoint.removeEventListener(WI.JavaScriptBreakpoint.Event.LocationDidChange, this._breakpointLocationDidChange, this);
+        this.breakpoint.removeEventListener(WI.JavaScriptBreakpoint.Event.ResolvedStateDidChange, this.updateStatus, this);
+
+        super.ondetach();
     }
 
     // Private

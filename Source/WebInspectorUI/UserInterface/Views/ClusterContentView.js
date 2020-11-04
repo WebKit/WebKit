@@ -86,7 +86,9 @@ WI.ClusterContentView = class ClusterContentView extends WI.ContentView
 
         this._contentViewContainer.closeAllContentViews();
 
-        WI.ContentView.removeEventListener(null, null, this);
+        WI.ContentView.removeEventListener(WI.ContentView.Event.SelectionPathComponentsDidChange, this._contentViewSelectionPathComponentDidChange, this);
+        WI.ContentView.removeEventListener(WI.ContentView.Event.SupplementalRepresentedObjectsDidChange, this._contentViewSupplementalRepresentedObjectsDidChange, this);
+        WI.ContentView.removeEventListener(WI.ContentView.Event.NumberOfSearchResultsDidChange, this._contentViewNumberOfSearchResultsDidChange, this);
     }
 
     canGoBack()

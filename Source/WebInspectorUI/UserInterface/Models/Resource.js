@@ -1034,8 +1034,8 @@ WI.Resource = class Resource extends WI.SourceCode
 
         if (!this._finishThenRequestContentPromise) {
             this._finishThenRequestContentPromise = new Promise((resolve, reject) => {
-                this.addEventListener(WI.Resource.Event.LoadingDidFinish, resolve);
-                this.addEventListener(WI.Resource.Event.LoadingDidFail, reject);
+                this.singleFireEventListener(WI.Resource.Event.LoadingDidFinish, resolve, this);
+                this.singleFireEventListener(WI.Resource.Event.LoadingDidFail, reject, this);
             }).then(this.requestContent.bind(this));
         }
 

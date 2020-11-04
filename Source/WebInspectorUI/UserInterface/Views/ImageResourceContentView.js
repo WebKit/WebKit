@@ -115,13 +115,6 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
         super.hidden();
     }
 
-    closed()
-    {
-        WI.networkManager.removeEventListener(null, null, this);
-
-        super.closed();
-    }
-
     // DropZoneView delegate
 
     dropZoneShouldAppearForDragEvent(dropZone, event)

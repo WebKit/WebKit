@@ -35,7 +35,7 @@ WI.HeapSnapshotClassDataGridNode = class HeapSnapshotClassDataGridNode extends W
         this._batched = false;
         this._instances = null;
 
-        this.addEventListener("populate", this._populate, this);
+        this.addEventListener(WI.DataGridNode.Event.Populate, this._populate, this);
     }
 
     // Protected
@@ -134,7 +134,7 @@ WI.HeapSnapshotClassDataGridNode = class HeapSnapshotClassDataGridNode extends W
 
     _populate()
     {
-        this.removeEventListener("populate", this._populate, this);
+        this.removeEventListener(WI.DataGridNode.Event.Populate, this._populate, this);
 
         this._tree.heapSnapshot.instancesWithClassName(this._data.className, (instances) => {
             // FIXME: <https://webkit.org/b/157905> Web Inspector: Provide a way to toggle between showing only live objects and live+dead objects

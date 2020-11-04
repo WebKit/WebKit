@@ -64,7 +64,10 @@ WI.CallFrameTreeController = class CallFrameTreeController extends WI.Object
 
     disconnect()
     {
-        this._treeOutline.removeEventListener(null, null, this);
+        if (this._treeOutline.selectable)
+            this._treeOutline.removeEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
+        else
+            this._treeOutline.removeEventListener(WI.TreeOutline.Event.ElementClicked, this._treeElementClicked, this);
     }
 
     // Private

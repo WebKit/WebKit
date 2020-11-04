@@ -39,7 +39,7 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         this._copyText = copyText;
 
         if (this.representedObject.valid)
-            this.representedObject.addEventListener(WI.RecordingAction.Event.ValidityChanged, this._handleValidityChanged, this);
+            this.representedObject.singleFireEventListener(WI.RecordingAction.Event.ValidityChanged, this._handleValidityChanged, this);
     }
 
     // Static
@@ -449,7 +449,5 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
     _handleValidityChanged(event)
     {
         this.addClassName("invalid");
-
-        this.representedObject.removeEventListener(null, null, this);
     }
 };

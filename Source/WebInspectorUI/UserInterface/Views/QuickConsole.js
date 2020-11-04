@@ -98,13 +98,24 @@ WI.QuickConsole = class QuickConsole extends WI.View
 
     closed()
     {
-        WI.settings.consoleSavedResultAlias.removeEventListener(null, null, this);
-        WI.Frame.removeEventListener(null, null, this);
-        WI.debuggerManager.removeEventListener(null, null, this);
-        WI.runtimeManager.removeEventListener(null, null, this);
-        WI.targetManager.removeEventListener(null, null, this);
-        WI.consoleDrawer.removeEventListener(null, null, this);
-        WI.TabBrowser.removeEventListener(null, null, this);
+        WI.settings.consoleSavedResultAlias.removeEventListener(WI.Setting.Event.Changed, this._handleConsoleSavedResultAliasSettingChanged, this);
+        WI.settings.engineeringShowInternalExecutionContexts.removeEventListener(WI.Setting.Event.Changed, this._handleEngineeringShowInternalExecutionContextsSettingChanged, this);
+
+        WI.Frame.removeEventListener(WI.Frame.Event.PageExecutionContextChanged, this._handleFramePageExecutionContextChanged, this);
+        WI.Frame.removeEventListener(WI.Frame.Event.ExecutionContextsCleared, this._handleFrameExecutionContextsCleared, this);
+
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ActiveCallFrameDidChange, this._handleDebuggerActiveCallFrameDidChange, this);
+
+        WI.runtimeManager.removeEventListener(WI.RuntimeManager.Event.ActiveExecutionContextChanged, this._handleActiveExecutionContextChanged, this);
+
+        WI.notifications.removeEventListener(WI.Notification.TransitionPageTarget, this._handleTransitionPageTarget, this);
+
+        WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetRemoved, this._handleTargetRemoved, this);
+
+        WI.domManager.removeEventListener(WI.DOMManager.Event.InspectedNodeChanged, this._handleInspectedNodeChanged, this);
+
+        WI.consoleDrawer.removeEventListener(WI.ConsoleDrawer.Event.CollapsedStateChanged, this._updateStyles, this);
+        WI.TabBrowser.removeEventListener(WI.TabBrowser.Event.SelectedTabContentViewDidChange, this._updateStyles, this);
 
         super.closed();
     }

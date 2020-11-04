@@ -47,6 +47,9 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
         this._pendingRefreshTask = null;
         this.refresh();
+
+        this._trackedStyleSheets = new WeakSet;
+        WI.CSSStyleSheet.addEventListener(WI.CSSStyleSheet.Event.ContentDidChange, this._handleCSSStyleSheetContentDidChange, this);
     }
 
     // Static
@@ -607,7 +610,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         if (styleSheet) {
             if (type === WI.CSSStyleDeclaration.Type.Inline)
                 styleSheet.markAsInlineStyleAttributeStyleSheet();
-            styleSheet.addEventListener(WI.CSSStyleSheet.Event.ContentDidChange, this._styleSheetContentDidChange, this);
+            this._trackedStyleSheets.add(styleSheet);
         }
 
         if (inherited && !inheritedPropertyCount)
@@ -696,7 +699,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         }
 
         if (styleSheet)
-            styleSheet.addEventListener(WI.CSSStyleSheet.Event.ContentDidChange, this._styleSheetContentDidChange, this);
+            this._trackedStyleSheets.add(styleSheet);
 
         rule = new WI.CSSRule(this, styleSheet, id, type, sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, groupings);
 
@@ -712,11 +715,10 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         this.dispatchEventToListeners(WI.DOMNodeStyles.Event.NeedsRefresh);
     }
 
-    _styleSheetContentDidChange(event)
+    _handleCSSStyleSheetContentDidChange(event)
     {
-        var styleSheet = event.target;
-        console.assert(styleSheet);
-        if (!styleSheet)
+        let styleSheet = event.target;
+        if (!this._trackedStyleSheets.has(styleSheet))
             return;
 
         // Ignore the stylesheet we know we just changed and handled above.

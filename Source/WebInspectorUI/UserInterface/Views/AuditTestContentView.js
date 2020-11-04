@@ -344,9 +344,9 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
 
             let startNavigationItem = new WI.ButtonNavigationItem("run-audit", WI.UIString("Start"), "Images/AuditStart.svg", 15, 15);
             startNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
-            startNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => {
+            startNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, function(event) {
                 WI.auditManager.start([this.representedObject]);
-            });
+            }, startNavigationItem);
 
             let importHelpElement = WI.createNavigationItemHelp(WI.UIString("Press %s to start running the audit."), startNavigationItem);
             this.placeholderElement.appendChild(importHelpElement);

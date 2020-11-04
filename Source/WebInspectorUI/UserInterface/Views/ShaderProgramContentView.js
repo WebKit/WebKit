@@ -56,9 +56,9 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
             textEditor.readOnly = false;
             textEditor.addEventListener(WI.TextEditor.Event.Focused, this._editorFocused, this);
             textEditor.addEventListener(WI.TextEditor.Event.NumberOfSearchResultsDidChange, this._numberOfSearchResultsDidChange, this);
-            textEditor.addEventListener(WI.TextEditor.Event.ContentDidChange, (event) => {
+            textEditor.addEventListener(WI.TextEditor.Event.ContentDidChange, function(event) {
                 contentDidChangeDebouncer.delayForTime(250, event);
-            }, this);
+            }, textEditor);
 
             switch (shaderType) {
             case WI.ShaderProgram.ShaderType.Compute:

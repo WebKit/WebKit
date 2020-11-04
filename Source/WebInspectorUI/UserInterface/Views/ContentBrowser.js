@@ -55,11 +55,11 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
             let forwardButtonImage = isRTL ? leftArrow : rightArrow;
 
             this._backNavigationItem = new WI.ButtonNavigationItem("back", WI.UIString("Back (%s)").format(this._backKeyboardShortcut.displayName), backButtonImage, 8, 13);
-            this._backNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, goBack);
+            this._backNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, goBack, this);
             this._backNavigationItem.enabled = false;
 
             this._forwardNavigationItem = new WI.ButtonNavigationItem("forward", WI.UIString("Forward (%s)").format(this._forwardKeyboardShortcut.displayName), forwardButtonImage, 8, 13);
-            this._forwardNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, goForward);
+            this._forwardNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, goForward, this);
             this._forwardNavigationItem.enabled = false;
 
             let navigationButtonsGroup = new WI.GroupNavigationItem([this._backNavigationItem, this._forwardNavigationItem]);
@@ -269,7 +269,7 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
             let currentContentView = this.currentContentView;
             if (currentContentView?.supportsSearch) {
                 currentContentView.performSearch(this._findBanner.searchQuery);
-                await currentContentView.awaitEvent(WI.ContentView.Event.NumberOfSearchResultsDidChange);
+                await currentContentView.awaitEvent(WI.ContentView.Event.NumberOfSearchResultsDidChange, this);
                 if (this._findBanner.searchQuery !== searchQuery || this.currentContentView !== currentContentView)
                     return;
             }
@@ -287,7 +287,7 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
             let currentContentView = this.currentContentView;
             if (currentContentView?.supportsSearch) {
                 currentContentView.performSearch(this._findBanner.searchQuery);
-                await currentContentView.awaitEvent(WI.ContentView.Event.NumberOfSearchResultsDidChange);
+                await currentContentView.awaitEvent(WI.ContentView.Event.NumberOfSearchResultsDidChange, this);
                 if (this._findBanner.searchQuery !== searchQuery || this.currentContentView !== currentContentView)
                     return;
             }

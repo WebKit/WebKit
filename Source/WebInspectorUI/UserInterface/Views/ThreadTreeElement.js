@@ -141,7 +141,9 @@ WI.ThreadTreeElement = class ThreadTreeElement extends WI.GeneralTreeElement
         if (!this._statusButton) {
             let tooltip = WI.UIString("Resume Thread");
             this._statusButton = new WI.TreeElementStatusButton(WI.ImageUtilities.useSVGSymbol("Images/Resume.svg", "resume", tooltip));
-            this._statusButton.addEventListener(WI.TreeElementStatusButton.Event.Clicked, () => { WI.debuggerManager.continueUntilNextRunLoop(this._target); });
+            this._statusButton.addEventListener(WI.TreeElementStatusButton.Event.Clicked, function(event) {
+                WI.debuggerManager.continueUntilNextRunLoop(this._target);
+            }, this);
             this._statusButton.element.addEventListener("mousedown", (event) => {
                 // Prevent tree element from being selected.
                 event.stopPropagation();

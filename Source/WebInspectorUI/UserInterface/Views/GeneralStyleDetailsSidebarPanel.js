@@ -128,7 +128,9 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
         if (!effectiveDOMNode)
             return;
 
-        effectiveDOMNode.removeEventListener(null, null, this);
+        effectiveDOMNode.removeEventListener(WI.DOMNode.Event.EnabledPseudoClassesChanged, this._updatePseudoClassCheckboxes, this);
+        effectiveDOMNode.removeEventListener(WI.DOMNode.Event.AttributeModified, this._handleNodeAttributeModified, this);
+        effectiveDOMNode.removeEventListener(WI.DOMNode.Event.AttributeRemoved, this._handleNodeAttributeRemoved, this);
     }
 
     initialLayout()

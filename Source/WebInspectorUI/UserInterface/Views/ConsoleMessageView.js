@@ -256,9 +256,6 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
         if (this._objectTree instanceof WI.ObjectTreeView)
             this._objectTree.resetPropertyPath();
 
-        // FIXME: <https://webkit.org/b/196956> Web Inspector: use weak collections for holding event listeners
-        WI.settings.consoleSavedResultAlias.removeEventListener(null, null, this);
-
         WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.BlackboxChanged, this._handleDebuggerBlackboxChanged, this);
     }
 
@@ -405,7 +402,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
         function updateSavedVariableText() {
             savedVariableElement.textContent = " = " + WI.RuntimeManager.preferredSavedResultPrefix() + savedResultIndex;
         }
-        WI.settings.consoleSavedResultAlias.addEventListener(WI.Setting.Event.Changed, updateSavedVariableText, this);
+        WI.settings.consoleSavedResultAlias.addEventListener(WI.Setting.Event.Changed, updateSavedVariableText, savedVariableElement);
         updateSavedVariableText();
 
         if (this._objectTree)
@@ -754,10 +751,9 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
 
         let propertyPath = new WI.PropertyPath(object, prefixSavedResultIndex());
 
-        // FIXME: <https://webkit.org/b/196956> Web Inspector: use weak collections for holding event listeners
-        WI.settings.consoleSavedResultAlias.addEventListener(WI.Setting.Event.Changed, (event) => {
-            propertyPath.pathComponent = prefixSavedResultIndex();
-        }, this);
+        WI.settings.consoleSavedResultAlias.addEventListener(WI.Setting.Event.Changed, function(event) {
+            this.pathComponent = prefixSavedResultIndex();
+        }, propertyPath);
 
         return propertyPath;
     }

@@ -164,11 +164,24 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
     {
         super.closed();
 
-        WI.settings.showRulers.removeEventListener(null, null, this);
-        WI.debuggerManager.removeEventListener(null, null, this);
-        WI.domManager.removeEventListener(null, null, this);
-        WI.domDebuggerManager.removeEventListener(null, null, this);
-        WI.DOMBreakpoint.removeEventListener(null, null, this);
+        WI.settings.showRulers.removeEventListener(WI.Setting.Event.Changed, this._showRulersChanged, this);
+
+        WI.domManager.removeEventListener(WI.DOMManager.Event.AttributeModified, this._domNodeChanged, this);
+        WI.domManager.removeEventListener(WI.DOMManager.Event.AttributeRemoved, this._domNodeChanged, this);
+        WI.domManager.removeEventListener(WI.DOMManager.Event.CharacterDataModified, this._domNodeChanged, this);
+
+        WI.cssManager.removeEventListener(WI.CSSManager.Event.DefaultAppearanceDidChange, this._defaultAppearanceDidChange, this);
+
+        if (WI.domDebuggerManager.supported) {
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.BreakpointsEnabledDidChange, this._breakpointsEnabledDidChange, this);
+
+            WI.domDebuggerManager.removeEventListener(WI.DOMDebuggerManager.Event.DOMBreakpointAdded, this._domBreakpointAddedOrRemoved, this);
+            WI.domDebuggerManager.removeEventListener(WI.DOMDebuggerManager.Event.DOMBreakpointRemoved, this._domBreakpointAddedOrRemoved, this);
+
+            WI.DOMBreakpoint.removeEventListener(WI.Breakpoint.Event.DisabledStateDidChange, this._handleDOMBreakpointDisabledStateChanged, this);
+            WI.DOMBreakpoint.removeEventListener(WI.DOMBreakpoint.Event.DOMNodeWillChange, this._handleDOMBreakpointDOMNodeWillChange, this);
+            WI.DOMBreakpoint.removeEventListener(WI.DOMBreakpoint.Event.DOMNodeDidChange, this._handleDOMBreakpointDOMNodeDidChange, this);
+        }
 
         this._domTreeOutline.close();
         this._pendingBreakpointNodes.clear();

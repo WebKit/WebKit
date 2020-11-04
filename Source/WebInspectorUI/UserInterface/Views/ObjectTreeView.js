@@ -137,11 +137,11 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
             button.addEventListener("click", (event) => {
                 event.stop();
 
-                representation.singleFireEventListener(ObjectTreeView.Event.Updated, () => {
+                representation.singleFireEventListener(ObjectTreeView.Event.Updated, function(event) {
                     // The `treeElement` may have already been removed by some other means (e.g. `removeChildren`).
                     if (treeElement.parent === parentTreeElement)
                         parentTreeElement.removeChild(treeElement);
-                });
+                }, button);
 
                 for (let other of buttons)
                     other.disabled = true;

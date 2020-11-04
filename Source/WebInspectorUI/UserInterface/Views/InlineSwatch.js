@@ -134,8 +134,16 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         if (this._valueEditor.removeListeners)
             this._valueEditor.removeListeners();
 
-        if (this._valueEditor instanceof WI.Object)
-            this._valueEditor.removeEventListener(null, null, this);
+        if (this._valueEditor instanceof WI.BezierEditor)
+            this._valueEditor.removeEventListener(WI.BezierEditor.Event.BezierChanged, this._valueEditorValueDidChange, this);
+        else if (this._valueEditor instanceof WI.BoxShadowEditor)
+            this._valueEditor.removeEventListener(WI.BoxShadowEditor.Event.BoxShadowChanged, this._valueEditorValueDidChange, this);
+        else if (this._valueEditor instanceof WI.ColorPicker)
+            this._valueEditor.removeEventListener(WI.ColorPicker.Event.ColorChanged, this._valueEditorValueDidChange, this);
+        else if (this._valueEditor instanceof WI.GradientEditor)
+            this._valueEditor.removeEventListener(WI.GradientEditor.Event.GradientChanged, this._valueEditorValueDidChange, this);
+        else if (this._valueEditor instanceof WI.SpringEditor)
+            this._valueEditor.removeEventListener(WI.SpringEditor.Event.SpringChanged, this._valueEditorValueDidChange, this);
 
         this._valueEditor = null;
 
@@ -251,7 +259,9 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         case WI.InlineSwatch.Type.Gradient:
             this._valueEditor = new WI.GradientEditor;
             this._valueEditor.addEventListener(WI.GradientEditor.Event.GradientChanged, this._valueEditorValueDidChange, this);
-            this._valueEditor.addEventListener(WI.GradientEditor.Event.ColorPickerToggled, (event) => popover.update());
+            this._valueEditor.addEventListener(WI.GradientEditor.Event.ColorPickerToggled, function(event) {
+                this.update();
+            }, popover);
             break;
 
         case WI.InlineSwatch.Type.Image:
