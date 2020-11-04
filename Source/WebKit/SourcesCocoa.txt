@@ -576,6 +576,7 @@ WebProcess/GPU/media/RemoteAudioSourceProviderManager.cpp
 WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm
 WebProcess/GPU/media/cocoa/VideoLayerRemoteCocoa.mm
 WebProcess/GPU/media/ios/RemoteMediaSessionHelper.cpp
+WebProcess/GPU/webrtc/LibWebRTCCodecs.mm
 
 WebProcess/InjectedBundle/API/c/WKBundlePageBanner.cpp
 

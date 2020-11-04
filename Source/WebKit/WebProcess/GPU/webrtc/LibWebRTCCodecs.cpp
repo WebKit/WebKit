@@ -49,14 +49,15 @@ using namespace WebCore;
 
 static webrtc::WebKitVideoDecoder createVideoDecoder(const webrtc::SdpVideoFormat& format)
 {
+    auto& codecs = WebProcess::singleton().libWebRTCCodecs();
     if (format.name == "H264")
-        return WebProcess::singleton().libWebRTCCodecs().createDecoder(LibWebRTCCodecs::Type::H264);
+        return codecs.createDecoder(LibWebRTCCodecs::Type::H264);
 
     if (format.name == "H265")
-        return WebProcess::singleton().libWebRTCCodecs().createDecoder(LibWebRTCCodecs::Type::H265);
+        return codecs.createDecoder(LibWebRTCCodecs::Type::H265);
 
-    if (format.name == "VP9" && WebProcess::singleton().libWebRTCCodecs().supportVP9VTB())
-        return WebProcess::singleton().libWebRTCCodecs().createDecoder(LibWebRTCCodecs::Type::VP9);
+    if (format.name == "VP9" && codecs.supportVP9VTB())
+        return codecs.createDecoder(LibWebRTCCodecs::Type::VP9);
 
     return nullptr;
 }
@@ -116,29 +117,7 @@ static inline MediaSample::VideoRotation toMediaSampleVideoRotation(webrtc::Vide
 
 static int32_t encodeVideoFrame(webrtc::WebKitVideoEncoder encoder, const webrtc::VideoFrame& frame, bool shouldEncodeAsKeyFrame)
 {
-    RetainPtr<CVPixelBufferRef> newPixelBuffer;
-    auto pixelBuffer = webrtc::pixelBufferFromFrame(frame, [&newPixelBuffer](size_t width, size_t height, webrtc::BufferType bufferType) -> CVPixelBufferRef {
-        OSType poolBufferType;
-        switch (bufferType) {
-        case webrtc::BufferType::I420:
-            poolBufferType = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
-            break;
-        case webrtc::BufferType::I010:
-            poolBufferType = kCVPixelFormatType_420YpCbCr10BiPlanarFullRange;
-        }
-        auto pixelBufferPool = WebProcess::singleton().libWebRTCCodecs().pixelBufferPool(width, height, poolBufferType);
-        if (!pixelBufferPool)
-            return nullptr;
-
-        newPixelBuffer = WebCore::createPixelBufferFromPool(pixelBufferPool);
-        return newPixelBuffer.get();
-    });
-
-    if (!pixelBuffer)
-        return WEBRTC_VIDEO_CODEC_ERROR;
-
-    auto sample = RemoteVideoSample::create(pixelBuffer, MediaTime(frame.timestamp_us(), 1000000), toMediaSampleVideoRotation(frame.rotation()));
-    return WebProcess::singleton().libWebRTCCodecs().encodeFrame(*static_cast<LibWebRTCCodecs::Encoder*>(encoder), *sample, shouldEncodeAsKeyFrame);
+    return WebProcess::singleton().libWebRTCCodecs().encodeFrame(*static_cast<LibWebRTCCodecs::Encoder*>(encoder), frame, shouldEncodeAsKeyFrame);
 }
 
 static int32_t registerEncodeCompleteCallback(webrtc::WebKitVideoEncoder encoder, void* encodedImageCallback)
@@ -293,11 +272,24 @@ static inline String formatNameFromCodecType(LibWebRTCCodecs::Type type)
     }
 }
 
+static inline webrtc::VideoCodecType toWebRTCCodecType(LibWebRTCCodecs::Type type)
+{
+    switch (type) {
+    case LibWebRTCCodecs::Type::H264:
+        return webrtc::kVideoCodecH264;
+    case LibWebRTCCodecs::Type::H265:
+        return webrtc::kVideoCodecH265;
+    case LibWebRTCCodecs::Type::VP9:
+        return webrtc::kVideoCodecVP9;
+    }
+}
+
 LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoder(Type type, const std::map<std::string, std::string>& formatParameters)
 {
     auto encoder = makeUnique<Encoder>();
     auto* result = encoder.get();
     encoder->identifier = RTCEncoderIdentifier::generateThreadSafe();
+    encoder->codecType = toWebRTCCodecType(type);
 
     Vector<std::pair<String, String>> parameters;
     for (auto& keyValue : formatParameters)
@@ -340,12 +332,40 @@ int32_t LibWebRTCCodecs::initializeEncoder(Encoder& encoder, uint16_t width, uin
     return 0;
 }
 
-int32_t LibWebRTCCodecs::encodeFrame(Encoder& encoder, const WebCore::RemoteVideoSample& frame, bool shouldEncodeAsKeyFrame)
+int32_t LibWebRTCCodecs::encodeFrame(Encoder& encoder, const webrtc::VideoFrame& frame, bool shouldEncodeAsKeyFrame)
 {
     if (!encoder.connection)
         return WEBRTC_VIDEO_CODEC_ERROR;
 
-    encoder.connection->send(Messages::LibWebRTCCodecsProxy::EncodeFrame { encoder.identifier, frame, shouldEncodeAsKeyFrame }, 0);
+    RetainPtr<CVPixelBufferRef> newPixelBuffer;
+    auto pixelBuffer = webrtc::pixelBufferFromFrame(frame, [&newPixelBuffer](size_t width, size_t height, webrtc::BufferType bufferType) -> CVPixelBufferRef {
+        OSType poolBufferType;
+        switch (bufferType) {
+        case webrtc::BufferType::I420:
+            poolBufferType = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
+            break;
+        case webrtc::BufferType::I010:
+            poolBufferType = kCVPixelFormatType_420YpCbCr10BiPlanarFullRange;
+        }
+        auto pixelBufferPool = WebProcess::singleton().libWebRTCCodecs().pixelBufferPool(width, height, poolBufferType);
+        if (!pixelBufferPool)
+            return nullptr;
+
+        newPixelBuffer = WebCore::createPixelBufferFromPool(pixelBufferPool);
+        return newPixelBuffer.get();
+    });
+
+    if (!pixelBuffer)
+        return WEBRTC_VIDEO_CODEC_ERROR;
+
+    auto sample = RemoteVideoSample::create(pixelBuffer, MediaTime(frame.timestamp_us() * 1000, 1000000), toMediaSampleVideoRotation(frame.rotation()));
+    if (!sample) {
+        // FIXME: Optimize this code path, currently we have non BGRA for muted frames at least.
+        newPixelBuffer = convertToBGRA(pixelBuffer);
+        sample = RemoteVideoSample::create(newPixelBuffer.get(), MediaTime(frame.timestamp_us() * 1000, 1000000), toMediaSampleVideoRotation(frame.rotation()));
+    }
+
+    encoder.connection->send(Messages::LibWebRTCCodecsProxy::EncodeFrame { encoder.identifier, *sample, frame.timestamp(), shouldEncodeAsKeyFrame }, 0);
     return WEBRTC_VIDEO_CODEC_OK;
 }
 
@@ -385,7 +405,7 @@ void LibWebRTCCodecs::completedEncoding(RTCEncoderIdentifier identifier, IPC::Da
     if (!encoder->encodedImageCallback)
         return;
 
-    webrtc::RemoteVideoEncoder::encodeComplete(encoder->encodedImageCallback, const_cast<uint8_t*>(data.data()), data.size(), info, fragmentationHeader.value());
+    webrtc::encoderVideoTaskComplete(encoder->encodedImageCallback, encoder->codecType, const_cast<uint8_t*>(data.data()), data.size(), info, fragmentationHeader.value());
 }
 
 CVPixelBufferPoolRef LibWebRTCCodecs::pixelBufferPool(size_t width, size_t height, OSType type)

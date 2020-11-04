@@ -1,3 +1,37 @@
+2020-11-04  Youenn Fablet  <youenn@apple.com>
+
+        Make functional WebRTC encoders in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=218498
+
+        Reviewed by Eric Carlson.
+
+        Update code according libwebrtc changes.
+        Add missing support for timestamp.
+        Also, in case of samples that are non IO Surface and not BGRA, do a conversion to BGRA and then create an IO surface from it.
+        This allows supporting sending black frames generated in case of muted tracks.
+
+        Create a remote factory in LibWebRTCProvider based on whether using gpu process or not.
+
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.messages.in:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        (WebKit::LibWebRTCCodecsProxy::encodeFrame):
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::createVideoDecoder):
+        (WebKit::encodeVideoFrame):
+        (WebKit::toWebRTCCodecType):
+        (WebKit::LibWebRTCCodecs::createEncoder):
+        (WebKit::LibWebRTCCodecs::encodeFrame):
+        (WebKit::LibWebRTCCodecs::completedEncoding):
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.mm: Added.
+        (WebKit::LibWebRTCCodecs::convertToBGRA):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::LibWebRTCProvider::createEncoderFactory):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.h:
+
 2020-11-03  Sihui Liu  <sihui_liu@apple.com>
 
         Set up basic infrastructure for SpeechRecognition

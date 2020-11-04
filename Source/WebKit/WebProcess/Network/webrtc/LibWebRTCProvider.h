@@ -61,6 +61,7 @@ private:
 
 #if PLATFORM(COCOA)
     std::unique_ptr<webrtc::VideoDecoderFactory> createDecoderFactory() final;
+    std::unique_ptr<webrtc::VideoEncoderFactory> createEncoderFactory() final;
 #endif
 };
 #else

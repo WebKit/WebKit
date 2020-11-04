@@ -31,7 +31,9 @@
 #include "RTCDecoderIdentifier.h"
 #include "RTCEncoderIdentifier.h"
 #include <WebCore/ImageTransferSessionVT.h>
+#include <WebCore/PixelBufferConformerCV.h>
 #include <map>
+#include <webrtc/api/video/video_codec_type.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
@@ -49,6 +51,7 @@ class RemoteVideoSample;
 }
 
 namespace webrtc {
+class VideoFrame;
 class WebKitRTPFragmentationHeader;
 struct WebKitEncodedFrameInfo;
 }
@@ -83,6 +86,7 @@ public:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         RTCEncoderIdentifier identifier;
+        webrtc::VideoCodecType codecType { webrtc::kVideoCodecGeneric };
         void* encodedImageCallback { nullptr };
         Lock encodedImageCallbackLock;
         RefPtr<IPC::Connection> connection;
@@ -91,7 +95,7 @@ public:
     Encoder* createEncoder(Type, const std::map<std::string, std::string>&);
     int32_t releaseEncoder(Encoder&);
     int32_t initializeEncoder(Encoder&, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
-    int32_t encodeFrame(Encoder&, const WebCore::RemoteVideoSample&, bool shouldEncodeAsKeyFrame);
+    int32_t encodeFrame(Encoder&, const webrtc::VideoFrame&, bool shouldEncodeAsKeyFrame);
     void registerEncodeFrameCallback(Encoder&, void* encodedImageCallback);
     void setEncodeRates(Encoder&, uint32_t bitRate, uint32_t frameRate);
     
@@ -106,6 +110,7 @@ private:
     void failedDecoding(RTCDecoderIdentifier);
     void completedDecoding(RTCDecoderIdentifier, uint32_t timeStamp, WebCore::RemoteVideoSample&&);
     void completedEncoding(RTCEncoderIdentifier, IPC::DataReference&&, const webrtc::WebKitEncodedFrameInfo&, webrtc::WebKitRTPFragmentationHeader&&);
+    RetainPtr<CVPixelBufferRef> convertToBGRA(CVPixelBufferRef);
 
 private:
     HashMap<RTCDecoderIdentifier, std::unique_ptr<Decoder>> m_decoders;
@@ -114,6 +119,7 @@ private:
     HashMap<RTCEncoderIdentifier, std::unique_ptr<Encoder>> m_encoders;
 
     std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
+    std::unique_ptr<WebCore::PixelBufferConformerCV> m_pixelBufferConformer;
     RetainPtr<CVPixelBufferPoolRef> m_pixelBufferPool;
     size_t m_pixelBufferPoolWidth { 0 };
     size_t m_pixelBufferPoolHeight { 0 };

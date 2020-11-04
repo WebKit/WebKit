@@ -151,6 +151,14 @@ std::unique_ptr<webrtc::VideoDecoderFactory> LibWebRTCProvider::createDecoderFac
     return LibWebRTCProviderCocoa::createDecoderFactory();
 }
 
+std::unique_ptr<webrtc::VideoEncoderFactory> LibWebRTCProvider::createEncoderFactory()
+{
+#if ENABLE(GPU_PROCESS) && !PLATFORM(MACCATALYST)
+    LibWebRTCCodecs::setCallbacks(RuntimeEnabledFeatures::sharedFeatures().webRTCPlatformCodecsInGPUProcessEnabled());
+#endif
+    return LibWebRTCProviderCocoa::createEncoderFactory();
+}
+
 #endif
 
 } // namespace WebKit

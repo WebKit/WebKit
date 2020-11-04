@@ -36,8 +36,8 @@ namespace WebCore {
 class PixelBufferConformerCV {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PixelBufferConformerCV(CFDictionaryRef attributes);
-    RetainPtr<CVPixelBufferRef> convert(CVPixelBufferRef);
+    WEBCORE_EXPORT PixelBufferConformerCV(CFDictionaryRef attributes);
+    WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> convert(CVPixelBufferRef);
     RetainPtr<CGImageRef> createImageFromPixelBuffer(CVPixelBufferRef);
 
 private:

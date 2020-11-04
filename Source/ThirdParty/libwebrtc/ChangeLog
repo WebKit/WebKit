@@ -1,3 +1,33 @@
+2020-11-04  Youenn Fablet  <youenn@apple.com>
+
+        Make functional WebRTC encoders in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=218498
+
+        Reviewed by Eric Carlson.
+
+        Add support for a remote encoder and remote factory that will first try to create a  remote encoder and use an in process encoder otherwise.
+        This is similar to what was done for remote video decoders.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/sdk/WebKit/WebKitEncoder.h:
+        (webrtc::WebKitEncodedFrameInfo::decode):
+        (webrtc::WebKitRTPFragmentationHeader::encode const):
+        (webrtc::WebKitRTPFragmentationHeader::decode):
+        Fix issues in routines to encode/decode frame/fragmentation headers.
+        * Source/webrtc/sdk/WebKit/WebKitEncoder.mm:
+        (-[WK_RTCLocalVideoH264H265Encoder initWithCodecInfo:]):
+        (-[WK_RTCLocalVideoH264H265Encoder codecType]):
+        (webrtc::RemoteVideoEncoderFactory::RemoteVideoEncoderFactory):
+        (webrtc::RemoteVideoEncoderFactory::CreateVideoEncoder):
+        (webrtc::createWebKitEncoderFactory):
+        (webrtc::RemoteVideoEncoder::~RemoteVideoEncoder):
+        (webrtc::RemoteVideoEncoder::Release):
+        (webrtc::encoderVideoTaskComplete):
+        (webrtc::initializeLocalEncoder):
+        (webrtc::encodeLocalEncoderFrame):
+
 2020-11-03  Youenn Fablet  <youenn@apple.com>
 
         Add support for WebRTC VP9 decoder in GPU process

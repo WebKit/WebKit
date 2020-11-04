@@ -174,7 +174,7 @@ static inline webrtc::VideoRotation toWebRTCVideoRotation(MediaSample::VideoRota
     return webrtc::kVideoRotation_0;
 }
 
-void LibWebRTCCodecsProxy::encodeFrame(RTCEncoderIdentifier identifier, WebCore::RemoteVideoSample&& sample, bool shouldEncodeAsKeyFrame)
+void LibWebRTCCodecsProxy::encodeFrame(RTCEncoderIdentifier identifier, WebCore::RemoteVideoSample&& sample, uint32_t timeStamp, bool shouldEncodeAsKeyFrame)
 {
     ASSERT(m_encoders.contains(identifier));
     auto encoder = m_encoders.get(identifier);
@@ -186,7 +186,7 @@ void LibWebRTCCodecsProxy::encodeFrame(RTCEncoderIdentifier identifier, WebCore:
 
 #if !PLATFORM(MACCATALYST)
     auto pixelBuffer = m_imageTransferSession->createPixelBuffer(sample.surface());
-    webrtc::encodeLocalEncoderFrame(encoder, pixelBuffer.get(), sample.time().toTimeScale(1000000).timeValue(), toWebRTCVideoRotation(sample.rotation()), shouldEncodeAsKeyFrame);
+    webrtc::encodeLocalEncoderFrame(encoder, pixelBuffer.get(), sample.time().toTimeScale(1000000).timeValue(), timeStamp, toWebRTCVideoRotation(sample.rotation()), shouldEncodeAsKeyFrame);
 #endif
 }
 

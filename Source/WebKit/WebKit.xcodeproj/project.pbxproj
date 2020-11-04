@@ -3473,6 +3473,7 @@
 		4131F3E01F98712C0059995A /* WebServiceWorkerFetchTaskClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebServiceWorkerFetchTaskClient.cpp; sourceTree = "<group>"; };
 		4135FBCF1F4FB7F20074C47B /* CacheStorageEngineCaches.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheStorageEngineCaches.cpp; sourceTree = "<group>"; };
 		4135FBD01F4FB7F20074C47B /* CacheStorageEngineCaches.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheStorageEngineCaches.h; sourceTree = "<group>"; };
+		413C8B1325516BFA00E65055 /* LibWebRTCCodecs.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LibWebRTCCodecs.mm; sourceTree = "<group>"; };
 		413CCD4F20DEBC2F0065A21A /* com.google.googletalkbrowserplugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.google.googletalkbrowserplugin.sb; sourceTree = "<group>"; };
 		4143751B20EAEA1E00FAD06C /* cn.microdone.cmb.safari.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cn.microdone.cmb.safari.sb; sourceTree = "<group>"; };
 		414DD37820BF43EA006959FB /* com.cisco.webex.plugin.gpc64.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.cisco.webex.plugin.gpc64.sb; sourceTree = "<group>"; };
@@ -7763,6 +7764,7 @@
 				4172198A23B6128200AE5686 /* LibWebRTCCodecs.cpp */,
 				4172198923B6128200AE5686 /* LibWebRTCCodecs.h */,
 				4172198D23B62C7C00AE5686 /* LibWebRTCCodecs.messages.in */,
+				413C8B1325516BFA00E65055 /* LibWebRTCCodecs.mm */,
 				4176E89723C361BD003E83FE /* MediaRecorderIdentifier.h */,
 				4176E89423C34E26003E83FE /* MediaRecorderPrivate.cpp */,
 				4176E89523C34E27003E83FE /* MediaRecorderPrivate.h */,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "LibWebRTCCodecs.h"
 
-#include "LibWebRTCProvider.h"
+#if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
-#if USE(LIBWEBRTC)
+#include <WebCore/CoreVideoSoftLink.h>
 
-namespace webrtc {
-class VideoDecoderFactory;
-class VideoEncoderFactory;
+namespace WebKit {
+using namespace WebCore;
+
+RetainPtr<CVPixelBufferRef> LibWebRTCCodecs::convertToBGRA(CVPixelBufferRef pixelBuffer)
+{
+    if (!m_pixelBufferConformer)
+        m_pixelBufferConformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) });
+    return m_pixelBufferConformer->convert(pixelBuffer);
 }
 
-namespace WebCore {
-
-class WEBCORE_EXPORT LibWebRTCProviderCocoa : public LibWebRTCProvider {
-public:
-    LibWebRTCProviderCocoa() = default;
-    ~LibWebRTCProviderCocoa();
-
-    std::unique_ptr<webrtc::VideoDecoderFactory> createDecoderFactory() override;
-    std::unique_ptr<webrtc::VideoEncoderFactory> createEncoderFactory() override;
-
-private:
-    void setActive(bool) final;
-};
-
-} // namespace WebCore
+}
 
 #endif
