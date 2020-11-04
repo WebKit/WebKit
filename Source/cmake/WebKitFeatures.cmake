@@ -59,10 +59,33 @@ macro(WEBKIT_OPTION_DEPEND _name _depend)
     list(APPEND _WEBKIT_AVAILABLE_OPTIONS_${_name}_DEPENDENCIES ${_depend})
 endmacro()
 
+# We can't use WEBKIT_OPTION_DEFINE for USE_64KB_PAGE_BLOCK because it's needed to set the default
+# value of other options. Why do we need this option? Because JSC and bmalloc both want to know the
+# userspace page size at compile time, which is impossible on Linux because it's a runtime setting.
+# We cannot test the system page size at build time in hopes that it will be the same on the target
+# system, because (a) cross compiling wouldn't work, and (b) the build system could use a different
+# page size than the target system (which will be true for Fedora aarch64, because Fedora is built
+# using RHEL), so the best we can do is guess based on based on the target CPU architecture. In
+# practice, guessing works for all architectures except aarch64 (unless unusual page sizes are
+# used), but it fails for aarch64 because distros are split between using 4 KB and 64 KB pages
+# there. Most distros (including Fedora) use 4 KB, but RHEL uses 16 KB. SUSE actually supports both.
+# Since there is no way to guess correctly, the best we can do is provide an option for it. You
+# should probably only use this if building for aarch64. Otherwise, known CPUs except PowerPC
+# will use 4 KB, while PowerPC and unknown CPUs will use 64 KB (see wtf/PageBlock.h). aarch64 will
+# continue to default to 4 KB because this is a better default on systems where it doesn't crash.
+# (Linux aarch64 is different from Apple's ARM64, which uses 16 KB.)
+option(USE_64KB_PAGE_BLOCK "Force support 64 KB userspace page size (reduces security and performance)" OFF)
+
 macro(WEBKIT_OPTION_BEGIN)
     set(_SETTING_WEBKIT_OPTIONS TRUE)
 
-    if (WTF_CPU_ARM64 OR WTF_CPU_X86_64)
+    if (USE_64KB_PAGE_BLOCK)
+        set(ENABLE_JIT_DEFAULT OFF)
+        set(ENABLE_FTL_DEFAULT OFF)
+        set(USE_SYSTEM_MALLOC_DEFAULT ON)
+        set(ENABLE_C_LOOP_DEFAULT ON)
+        set(ENABLE_SAMPLING_PROFILER_DEFAULT OFF)
+    elseif (WTF_CPU_ARM64 OR WTF_CPU_X86_64)
         set(ENABLE_JIT_DEFAULT ON)
         set(ENABLE_FTL_DEFAULT ON)
         set(USE_SYSTEM_MALLOC_DEFAULT OFF)

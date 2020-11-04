@@ -1,3 +1,35 @@
+2020-11-04  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Add new build option USE(64KB_PAGE_BLOCK)
+        https://bugs.webkit.org/show_bug.cgi?id=217989
+
+        Reviewed by Yusuke Suzuki.
+
+        Why do we need this option? Because JSC and bmalloc both want to know the userspace page
+        size at compile time, which is impossible on Linux because it's a runtime setting. We
+        cannot test the system page size at build time in hopes that it will be the same on the
+        target system, because (a) cross compiling wouldn't work, and (b) the build system could
+        use a different page size than the target system (which will be true for Fedora aarch64,
+        because Fedora is built using RHEL), so the best we can do is guess based on the target CPU
+        architecture. In practice, guessing works for all architectures except aarch64 (unless
+        unusual page sizes are used), but it fails for aarch64 because distros are split between
+        using 4 KB and 64 KB pages there. Most distros (including Fedora) use 4 KB, but RHEL uses
+        64 KB. SUSE actually supports both. Since there is no way to guess correctly, the best we
+        can do is provide an option for it. You should probably only use this if building for
+        aarch64. Otherwise, known CPUs except PowerPC will use 4 KB, while PowerPC and unknown CPUs
+        will use 64 KB (see wtf/PageBlock.h). aarch64 will continue to default to 4 KB because this
+        is a much better default on systems where it doesn't crash.
+
+        Having one flag will help avoid mistakes. E.g. both RHEL and SUSE were manually passing
+        -DENABLE_JIT=OFF and -DUSE_SYSTEM_MALLOC=ON, but we missed -DENABLE_C_LOOP=ON and
+        -DENABLE_SAMPLING_PROFILER=OFF, so wound up running with both JIT and cloop disabled, a
+        configuration not otherwise used on Linux (and not supported by GTK or WPE ports). It will
+        be easier to not mess up if we only have to pass one special build option. This will also
+        allow us to stop patching PageBlock.h downstream, because I don't like downstream patches
+        that we have to keep forever.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2020-10-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add Introduction to WebKit
