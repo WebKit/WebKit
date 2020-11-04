@@ -853,6 +853,19 @@
         * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-async-overflow-stateless.html:
         * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-async-overflow.html:
 
+2020-11-04  Karl Rackler  <rackler@apple.com>
+
+        Rebaseline tests for after r269345, r268958, and r268520.
+
+        Unreviewed test gardening.
+
+        * platform/mac-catalina/fast/forms/listbox-width-change-expected.txt: Added.
+        * platform/mac-catalina/fast/forms/search-rtl-expected.txt: Added.
+        * platform/mac-catalina/fast/forms/search-size-with-decorations-expected.txt: Added.
+        * platform/mac-mojave/fast/forms/listbox-width-change-expected.txt: Added.
+        * platform/mac-mojave/fast/forms/search-rtl-expected.txt: Added.
+        * platform/mac-mojave/fast/forms/search-size-with-decorations-expected.txt: Added.
+
 2020-11-04  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: use weak collections for holding event listeners
