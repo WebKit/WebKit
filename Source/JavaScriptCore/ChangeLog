@@ -1,38 +1,3 @@
-2020-11-04  Alan Coon  <alancoon@apple.com>
-
-        Cherry-pick r269338. rdar://problem/71021911
-
-    Don't assert there is no checkpoint side state when dropping the JSLock
-    https://bugs.webkit.org/show_bug.cgi?id=218537
-    
-    Reviewed by Filip Pizlo.
-    
-    You may have multiple OSR exit sidestate data on the stack, and then call into
-    API code, which might DropAllLocks. Hence, this assert is wrong.
-    
-    Working on a test. Will land in a followup.
-    
-    * runtime/JSLock.cpp:
-    (JSC::JSLock::willReleaseLock):
-    
-    
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@269338 268f45cc-cd09-0410-ab3c-d52691b4dbfc
-
-    2020-11-03  Saam Barati  <sbarati@apple.com>
-
-            Don't assert there is no checkpoint side state when dropping the JSLock
-            https://bugs.webkit.org/show_bug.cgi?id=218537
-
-            Reviewed by Filip Pizlo.
-
-            You may have multiple OSR exit sidestate data on the stack, and then call into
-            API code, which might DropAllLocks. Hence, this assert is wrong.
-
-            Working on a test. Will land in a followup.
-
-            * runtime/JSLock.cpp:
-            (JSC::JSLock::willReleaseLock):
-
 2020-10-27  Russell Epstein  <repstein@apple.com>
 
         Apply patch. rdar://problem/70733375

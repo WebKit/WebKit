@@ -200,6 +200,7 @@ void JSLock::willReleaseLock()
 {   
     RefPtr<VM> vm = m_vm;
     if (vm) {
+        RELEASE_ASSERT_WITH_MESSAGE(!vm->hasCheckpointOSRSideState(), "Releasing JSLock but pending checkpoint side state still available");
         vm->drainMicrotasks();
 
         if (!vm->topCallFrame)
