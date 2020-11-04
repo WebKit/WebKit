@@ -142,7 +142,7 @@ public:
     MatchResult execute(const UChar* input, unsigned start, unsigned length, MatchingContextHolder& matchingContext)
     {
         ASSERT(has16BitCodeMatchOnly());
-#if CPU(ARM64E)
+#if CPU(ARM64)
         return MatchResult(vmEntryToYarrJIT(input, start, length, nullptr, &matchingContext, retagCodePtr<YarrMatchOnly16BitPtrTag, YarrEntryPtrTag>(m_matchOnly16.code().executableAddress())));
 #else
         return MatchResult(untagCFunctionPtr<YarrJITCodeMatchOnly16, YarrMatchOnly16BitPtrTag>(m_matchOnly16.code().executableAddress())(input, start, length, nullptr, matchingContext));

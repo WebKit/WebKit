@@ -1,3 +1,11 @@
+2020-11-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix ARM64 only crash (ARM64E works) after JIT Cage
+        https://bugs.webkit.org/show_bug.cgi?id=218143
+
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::YarrCodeBlock::execute):
+
 2020-11-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, build fix for ARM64E debug build
