@@ -1,3 +1,96 @@
+2020-11-04  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r268386. rdar://problem/70970067
+
+    Cocoa: Make WebGLLayer not dependent on  GraphicsContextGLOpenGL
+    https://bugs.webkit.org/show_bug.cgi?id=217212
+    <rdar://problem/69876022>
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2020-10-13
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    WebGLLayer was needlessly using GraphicsContextGLOpenGL.
+    This is problematic because WebGLLayer should work with
+    upcoming remote GraphicsContextGL implementation.
+    
+    The prepare callgraph was:
+        GCGLOpenGL -> WebGLLayer -> GCGLOpenGL
+    Refactor it to be:
+        GCGLOpenGL -> WebGLLayer
+    
+    Move the back buffer ownership to the GraphicsContextGLOpenGL.
+    Make the front buffer ownership explicit in WebGLLayer.
+    Move the EGL bindings ownerships of all buffers to
+    GraphicsContextGLOpenGL.
+    
+    Make the WebGLLayer not use EGL or OpenGL, it does not
+    need and cannot use it as not all of its clients use OpenGL
+    (i.e. the above mentioned remote use-case).
+    
+    Improves the memory usage by not allocating front buffers
+    unless needed. In case the canvas does not present, will
+    not allocate front buffers at all.
+    
+    Improves error handling of the allocations and EGL bindings.
+    
+    No new tests, a refactor.
+    
+    * WebCore.xcodeproj/project.pbxproj:
+    * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+    (WebCore::GraphicsContextGLOpenGL::reshapeFBOs):
+    (WebCore::GraphicsContextGLOpenGL::prepareTexture):
+    (WebCore::GraphicsContextGLOpenGL::prepareTextureImpl):
+    * platform/graphics/angle/GraphicsContextGLANGLEUtilities.h: Added.
+    (WebCore::ScopedRestoreTextureBinding::ScopedRestoreTextureBinding):
+    (WebCore::ScopedRestoreTextureBinding::~ScopedRestoreTextureBinding):
+    * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+    (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+    (WebCore::GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL):
+    (WebCore::GraphicsContextGLOpenGL::makeContextCurrent):
+    (WebCore::GraphicsContextGLOpenGL::reshapeDisplayBufferBacking):
+    (WebCore::GraphicsContextGLOpenGL::bindDisplayBufferBacking):
+    (WebCore::GraphicsContextGLOpenGL::prepareForDisplay):
+    (WebCore::GraphicsContextGLOpenGL::didDisplay):
+    * platform/graphics/cocoa/WebGLLayer.h:
+    * platform/graphics/cocoa/WebGLLayer.mm:
+    (-[WebGLLayer initWithClient:devicePixelRatio:]):
+    (-[WebGLLayer copyImageSnapshotWithColorSpace:]):
+    (-[WebGLLayer recycleBuffer]):
+    (-[WebGLLayer prepareForDisplayWithContents:]):
+    (-[WebGLLayer display]):
+    (-[WebGLLayer detachClient]):
+    * platform/graphics/cocoa/WebGLLayerClient.h: Copied from Source/WebCore/platform/graphics/cocoa/WebGLLayer.h.
+    (WebCore::WebGLLayerClient::~WebGLLayerClient):
+    * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+    * platform/graphics/opengl/GraphicsContextGLOpenGLBase.cpp:
+    (WebCore::GraphicsContextGLOpenGL::reshapeFBOs):
+    
+    Source/WebKit:
+    
+    Removed unneeded inclusions of GraphicsContextGLOpenGL.h. The
+    file is now using non-public headers.
+    
+    * WebProcess/WebPage/WebPage.cpp:
+    * WebProcess/WebPage/mac/WebPageMac.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268386 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-13  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            Cocoa: Make WebGLLayer not dependent on  GraphicsContextGLOpenGL
+            https://bugs.webkit.org/show_bug.cgi?id=217212
+            <rdar://problem/69876022>
+
+            Reviewed by Dean Jackson.
+
+            Removed unneeded inclusions of GraphicsContextGLOpenGL.h. The
+            file is now using non-public headers.
+
+            * WebProcess/WebPage/WebPage.cpp:
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+
 2020-11-02  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r268199. rdar://problem/70952726
