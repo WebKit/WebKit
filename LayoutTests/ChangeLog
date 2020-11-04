@@ -1,3 +1,15 @@
+2020-11-04  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening some failures and rebaseline panner tests
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-basic-expected.txt:
+        * platform/wpe/TestExpectations:
+
 2020-11-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, fix pre-existing failures for EWS.
