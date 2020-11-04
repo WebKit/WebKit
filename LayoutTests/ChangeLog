@@ -1,3 +1,42 @@
+2020-11-04  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Update baselines of failing tests that should be actually passing.
+
+        The tests removed were marked as text flaky failures. Inspecting the
+        last 4000 revisions for each test shows they have been actually passing
+        consistently. Each test had its corresponding baseline which was
+        outdated causing the test to fail.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/compositing/video/video-object-fit-expected.txt:
+        * platform/gtk/editing/input/option-page-up-down-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/drag-drop-dead-frame-expected.txt:
+        * platform/gtk/editing/selection/5057506-expected.txt:
+        * platform/gtk/fast/frames/flattening/frameset-flattening-grid-expected.txt:
+        * platform/gtk/fast/frames/flattening/iframe-flattening-fixed-width-expected.txt:
+        * platform/gtk/fast/frames/flattening/iframe-flattening-offscreen-expected.txt:
+        * platform/gtk/fast/frames/flattening/iframe-flattening-out-of-view-expected.txt:
+        * platform/gtk/fast/hidpi/image-set-background-dynamic-expected.txt:
+        * platform/gtk/fast/hidpi/image-set-border-image-dynamic-expected.txt:
+        * platform/gtk/fast/inline-block/14498-positionForCoordinates-expected.txt:
+        * platform/gtk/fast/lists/inlineBoxWrapperNullCheck-expected.txt:
+        * platform/gtk/fast/multicol/scrolling-overflow-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt:
+        * platform/gtk/fast/overflow/overflow-text-hit-testing-expected.txt:
+        * platform/gtk/fast/table/dynamic-caption-add-before-child-expected.txt:
+        * platform/gtk/fast/table/multiple-captions-display-expected.txt:
+        * platform/gtk/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt:
+        * platform/gtk/fast/writing-mode/japanese-ruby-horizontal-bt-expected.txt:
+        * platform/gtk/fast/writing-mode/japanese-ruby-vertical-lr-expected.txt:
+        * platform/gtk/fast/writing-mode/japanese-ruby-vertical-rl-expected.txt:
+        * platform/gtk/http/tests/misc/acid2-expected.txt:
+        * platform/gtk/http/tests/misc/acid2-pixel-expected.txt:
+        * platform/gtk/mathml/presentation/roots-expected.txt:
+        * platform/gtk/media/controls-without-preload-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody-expected.txt:
+        * platform/gtk/transitions/move-after-transition-expected.txt:
+
 2020-11-04  Chris Dumez  <cdumez@apple.com>
 
         imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections.html fails on some platforms
