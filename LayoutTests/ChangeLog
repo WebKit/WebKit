@@ -1,5 +1,18 @@
 2020-11-04  Antoine Quint  <graouts@webkit.org>
 
+        [iOS 14 wk2] animations/unprefixed-events-mixed-with-prefixed.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=218559
+        <rdar://problem/67034553>
+
+        Reviewed by Dean Jackson.
+
+        Increase this test's fidelity by using a longer animation-duration to reduce the likelihood that
+        the the animation would be run without an intermediary frame in the second iteration.
+
+        * animations/unprefixed-events-mixed-with-prefixed.html:
+
+2020-11-04  Antoine Quint  <graouts@webkit.org>
+
         REGRESSION (r266972): [ Mojave+ debug wk2 ] compositing/animation/repaint-after-clearing-shared-backing.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=217540
         <rdar://problem/70157935>
