@@ -1,3 +1,17 @@
+2020-11-04  Antoine Quint  <graouts@webkit.org>
+
+        [ macOS ] webanimations/accelerated-animation-easing-update-after-pause.html is a flaky ImageOnlyFailure
+        https://bugs.webkit.org/show_bug.cgi?id=216481
+        <rdar://problem/68858100>
+
+        Reviewed by Dean Jackson.
+
+        Improve this test's fidelity by making the animation much longer (1 day) and ensuring we always wait one presentation
+        and one rendering update before committing any changes to the animations.
+
+        * platform/mac/TestExpectations:
+        * webanimations/accelerated-animation-easing-update-after-pause.html:
+
 2020-11-04  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Update baselines of failing tests that should be actually passing.

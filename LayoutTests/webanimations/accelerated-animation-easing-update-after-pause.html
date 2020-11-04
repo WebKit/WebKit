@@ -36,7 +36,7 @@ div {
 
     const keyframes = { "transform": "translateX(700px)" };
     const easing = "cubic-bezier(0,1,0,1)";
-    const duration = 10000;
+    const duration = 24 * 60 * 60 * 1000;
 
     // Create two animations, a test which will change easing during playback and a reference which
     // will use the test animation's changed playback throughout its entire duration. The two animations
@@ -55,6 +55,7 @@ div {
     test.effect.updateTiming({ easing });
 
     // Wait a frame and resume the animations.
+    await UIHelper.ensurePresentationUpdate();
     await UIHelper.renderingUpdate();
     for (let animation of document.getAnimations())
         animation.play();
