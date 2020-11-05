@@ -2254,4 +2254,4 @@ webkit.org/b/217994 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 [ BigSur+ ] fast/text/international/complex-character-based-fallback.html [ Pass Failure ]
 
 # Mojave doesn't support COLR fonts.
-webkit.org/b/218346 [ Mojave ] fast/text/canvas-color-fonts [ WontFix ]
+webkit.org/b/218346 [ Mojave ] fast/text/canvas-color-fonts [ Skip ]
