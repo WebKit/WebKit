@@ -50,6 +50,7 @@ public:
     bool requiresImmediateCompositing() const;
 
     bool shouldDisplayVideo() const;
+    bool failedToLoadPosterImage() const;
 
     void updateFromElement() final;
 

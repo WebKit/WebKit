@@ -1,0 +1,7 @@
+
+EXPECTED (internals.elementShouldDisplayPosterImage(video) == 'true') OK
+EVENT(canplaythrough)
+EXPECTED (internals.elementShouldDisplayPosterImage(video) == 'true') OK
+EXPECTED (internals.elementShouldDisplayPosterImage(video) == 'false') OK
+END OF TEST
+

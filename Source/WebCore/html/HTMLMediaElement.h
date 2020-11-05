@@ -586,10 +586,6 @@ protected:
 
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 
-    enum DisplayMode { Unknown, None, Poster, PosterWaitingForVideo, Video };
-    DisplayMode displayMode() const { return m_displayMode; }
-    virtual void setDisplayMode(DisplayMode mode) { m_displayMode = mode; }
-    
     bool isMediaElement() const final { return true; }
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
@@ -605,6 +601,9 @@ protected:
 
     void scheduleEvent(const AtomString&);
 
+    bool showPosterFlag() const { return m_showPoster; }
+    void setShowPosterFlag(bool);
+    
     void setChangingVideoFullscreenMode(bool value) { m_changingVideoFullscreenMode = value; }
     bool isChangingVideoFullscreenMode() const { return m_changingVideoFullscreenMode; }
 
@@ -638,8 +637,6 @@ private:
     
     void visibilityStateChanged() final;
 
-    virtual void updateDisplayState() { }
-    
     void setReadyState(MediaPlayer::ReadyState);
     void setNetworkState(MediaPlayer::NetworkState);
 
@@ -665,7 +662,6 @@ private:
     void scheduleMediaEngineWasUpdated();
     void mediaEngineWasUpdated();
 
-    void mediaPlayerFirstVideoFrameAvailable() final;
     void mediaPlayerCharacteristicChanged() final;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -1023,8 +1019,6 @@ private:
 
     MediaPlayer::Preload m_preload { Preload::Auto };
 
-    DisplayMode m_displayMode { Unknown };
-
     // Counter incremented while processing a callback from the media player, so we can avoid
     // calling the media engine recursively.
     int m_processingMediaPlayerCallback { 0 };
@@ -1096,6 +1090,7 @@ private:
     bool m_waitingToEnterFullscreen : 1;
     bool m_changingVideoFullscreenMode : 1;
 
+    bool m_showPoster : 1;
     bool m_tracksAreReady : 1;
     bool m_haveVisibleTextTrack : 1;
     bool m_processingPreferenceChange : 1;

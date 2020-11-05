@@ -1,3 +1,22 @@
+2020-11-04  Eric Carlson  <eric.carlson@apple.com>
+
+        Transparent video poster image doesn't keep element transparent once first frame is preloaded
+        https://bugs.webkit.org/show_bug.cgi?id=218391
+        <rdar://problem/70916944>
+
+        Reviewed by Jer Noble.
+
+        * TestExpectations: Mark a test that expect video state changes to be visible on the
+        next rAF to be flaky. HTMLMediaElement uses taskQueues to change properties, and
+        taskQueue isn't synchronized to rAF, so sometimes the task runs before the next 
+        rAF and sometimes after, making the test flaky.
+
+        * compositing/video/video-poster.html: Don't expect the transition to having layers
+        to be instantaneous.
+
+        * media/video-poster-visible-after-first-video-frame-expected.txt: Added.
+        * media/video-poster-visible-after-first-video-frame.html: Added.
+
 2020-11-04  Truitt Savell  <tsavell@apple.com>
 
         [ Mac WK1 ] fast/text/canvas-color-fonts/COLR.html is failing

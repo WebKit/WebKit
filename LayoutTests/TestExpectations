@@ -3036,6 +3036,11 @@ imported/w3c/web-platform-tests/resize-observer/devicepixel.html [ ImageOnlyFail
 
 webkit.org/b/198103 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/offsets-into-the-media-resource/currentTime.html [ Pass Failure ]
 
+# This tests assumes that changes caused by removing 'video.src' will be visible immediately after the next rAF.
+# HTMLMediaElement uses a taskQueue to change video.src, but taskQueue isn't tied to rAF so the task sometimes
+# runs before rAF and the test passes, and sometimes run after and the test fails.
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/intrinsic_sizes.htm [ Pass Failure ]
+
 # Flaky WebSocket tests.
 imported/w3c/web-platform-tests/websockets/cookies/005.html [ Skip ]
 imported/w3c/web-platform-tests/websockets/constructor/014.html [ Skip ]
