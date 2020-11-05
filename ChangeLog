@@ -1,3 +1,12 @@
+2020-11-04  Sergey Rubanov  <chi187@gmail.com>
+
+        Fix JSC build on macOS Big Sur
+        https://bugs.webkit.org/show_bug.cgi?id=218566
+
+        Reviewed by David Kilzer.
+
+        * Source/cmake/WebKitFindPackage.cmake:
+
 2020-11-04  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Add new build option USE(64KB_PAGE_BLOCK)
