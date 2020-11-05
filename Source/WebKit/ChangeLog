@@ -1,5 +1,25 @@
 2020-11-05  Brent Fulgham  <bfulgham@apple.com>
 
+        [iOS] Remove redundant rule using never-granted extension
+        https://bugs.webkit.org/show_bug.cgi?id=218596
+        <rdar://problem/66581246>
+
+        Reviewed by Per Arne Vollan.
+
+        WebKit has long had a sandbox rule granting the ability to issue iokit-open
+        operations if a particular security extension was granted to the process. The
+        WebKit processes are known to never grant this extension, so this rule is not
+        needed.
+
+        We should remove the rule to reduce sandbox complexity and increase the speed
+        of sandbox compilation.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2020-11-05  Brent Fulgham  <bfulgham@apple.com>
+
         [iOS] Remove redundant rule for shared-preference.read-write
         https://bugs.webkit.org/show_bug.cgi?id=218594
         <rdar://problem/66581796>
