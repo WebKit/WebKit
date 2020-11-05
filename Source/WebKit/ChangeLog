@@ -1,3 +1,20 @@
+2020-11-05  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Determine an AAGUID for the platform authenticators
+        https://bugs.webkit.org/show_bug.cgi?id=217945
+        <rdar://problem/70811618>
+
+        Reviewed by Brent Fulgham.
+
+        Relying parties use the AAGUID to recognize supported authenticators. Using a NULL AAGUID blocks them from recognizing Apple products as valid WebAuthentication targets.
+        We need to assign ourselves a GUID representing Apple authenticators, then publish with our attestation certificate and with the FIDO Alliance.
+
+        Covered by existing tests.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticatorInternal::aaguidVector):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterUserVerification):
+
 2020-11-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: session can have more than one active input source of the same type

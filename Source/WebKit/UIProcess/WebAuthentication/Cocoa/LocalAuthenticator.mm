@@ -59,6 +59,7 @@ const uint8_t getAssertionFlags = 0b00000101; // UP and UV are set.
 // Credential ID is currently SHA-1 of the corresponding public key.
 const uint16_t credentialIdLength = 20;
 const uint64_t counter = 0;
+const uint8_t aaguid[] = { 0xF2, 0x4A, 0x8E, 0x70, 0xD0, 0xD3, 0xF8, 0x2C, 0x29, 0x37, 0x32, 0x52, 0x3C, 0xC4, 0xDE, 0x5A }; // Randomly generated.
 
 static inline bool emptyTransportsOrContain(const Vector<AuthenticatorTransport>& transports, AuthenticatorTransport target)
 {
@@ -82,6 +83,13 @@ static inline Vector<uint8_t> toVector(NSData *data)
 {
     Vector<uint8_t> result;
     result.append(reinterpret_cast<const uint8_t*>(data.bytes), data.length);
+    return result;
+}
+
+static inline Vector<uint8_t> aaguidVector()
+{
+    Vector<uint8_t> result;
+    result.append(aaguid, aaguidLength);
     return result;
 }
 
@@ -356,22 +364,20 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
         [nsPublicKeyData getBytes: y.data() range:NSMakeRange(1 + ES256FieldElementLength, ES256FieldElementLength)];
         cosePublicKey = encodeES256PublicKeyAsCBOR(WTFMove(x), WTFMove(y));
     }
-    // FIXME(rdar://problem/38320512): Define Apple AAGUID.
-    auto attestedCredentialData = buildAttestedCredentialData(Vector<uint8_t>(aaguidLength, 0), credentialId, cosePublicKey);
 
     // Step 12.
-    auto authData = buildAuthData(creationOptions.rp.id, makeCredentialFlags, counter, attestedCredentialData);
-
     // Skip Apple Attestation for none attestation.
     if (creationOptions.attestation == AttestationConveyancePreference::None) {
         deleteDuplicateCredential();
 
+        auto authData = buildAuthData(creationOptions.rp.id, makeCredentialFlags, counter, buildAttestedCredentialData(Vector<uint8_t>(aaguidLength, 0), credentialId, cosePublicKey));
         auto attestationObject = buildAttestationObject(WTFMove(authData), "", { }, AttestationConveyancePreference::None);
         receiveRespond(AuthenticatorAttestationResponse::create(credentialId, attestationObject));
         return;
     }
 
     // Step 13. Apple Attestation
+    auto authData = buildAuthData(creationOptions.rp.id, makeCredentialFlags, counter, buildAttestedCredentialData(aaguidVector(), credentialId, cosePublicKey));
     auto nsAuthData = toNSData(authData);
     auto callback = [credentialId = WTFMove(credentialId), authData = WTFMove(authData), weakThis = makeWeakPtr(*this)] (NSArray * _Nullable certificates, NSError * _Nullable error) mutable {
         ASSERT(RunLoop::isMain());
