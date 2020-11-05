@@ -257,16 +257,6 @@ void JSDOMGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     thisObject->m_builtinInternalFunctions.visit(visitor);
 }
 
-void JSDOMGlobalObject::setCurrentEvent(Event* currentEvent)
-{
-    m_currentEvent = currentEvent;
-}
-
-Event* JSDOMGlobalObject::currentEvent() const
-{
-    return m_currentEvent;
-}
-
 void JSDOMGlobalObject::promiseRejectionTracker(JSGlobalObject* jsGlobalObject, JSPromise* promise, JSPromiseRejectionOperation operation)
 {
     // https://html.spec.whatwg.org/multipage/webappapis.html#the-hostpromiserejectiontracker-implementation

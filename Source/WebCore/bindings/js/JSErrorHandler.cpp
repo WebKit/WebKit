@@ -37,6 +37,7 @@
 #include "Event.h"
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMConvertStrings.h"
+#include "JSDOMWindow.h"
 #include "JSEvent.h"
 #include "JSExecState.h"
 #include "JSExecStateInstrumentation.h"
@@ -79,8 +80,12 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
     if (callData.type != CallData::Type::None) {
         Ref<JSErrorHandler> protectedThis(*this);
 
-        Event* savedEvent = globalObject->currentEvent();
-        globalObject->setCurrentEvent(&event);
+        RefPtr<Event> savedEvent;
+        auto* jsFunctionWindow = jsDynamicCast<JSDOMWindow*>(vm, jsFunction->globalObject());
+        if (jsFunctionWindow) {
+            savedEvent = jsFunctionWindow->currentEvent();
+            jsFunctionWindow->setCurrentEvent(&event);
+        }
 
         auto& errorEvent = downcast<ErrorEvent>(event);
 
@@ -102,7 +107,8 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
 
         InspectorInstrumentation::didCallFunction(&scriptExecutionContext);
 
-        globalObject->setCurrentEvent(savedEvent);
+        if (jsFunctionWindow)
+            jsFunctionWindow->setCurrentEvent(savedEvent.get());
 
         if (exception)
             reportException(globalObject, exception);

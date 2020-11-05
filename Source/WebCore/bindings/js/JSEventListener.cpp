@@ -163,12 +163,16 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
     args.append(toJS(lexicalGlobalObject, globalObject, &event));
     ASSERT(!args.hasOverflowed());
 
-    Event* savedEvent = globalObject->currentEvent();
+    RefPtr<Event> savedEvent;
+    auto* jsFunctionWindow = jsDynamicCast<JSDOMWindow*>(vm, jsFunction->globalObject());
+    if (jsFunctionWindow) {
+        savedEvent = jsFunctionWindow->currentEvent();
 
-    // window.event should not be set when the target is inside a shadow tree, as per the DOM specification.
-    bool isTargetInsideShadowTree = is<Node>(event.currentTarget()) && downcast<Node>(*event.currentTarget()).isInShadowTree();
-    if (!isTargetInsideShadowTree)
-        globalObject->setCurrentEvent(&event);
+        // window.event should not be set when the target is inside a shadow tree, as per the DOM specification.
+        bool isTargetInsideShadowTree = is<Node>(event.currentTarget()) && downcast<Node>(*event.currentTarget()).isInShadowTree();
+        if (!isTargetInsideShadowTree)
+            jsFunctionWindow->setCurrentEvent(&event);
+    }
 
     VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : globalObject);
 
@@ -180,7 +184,8 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
 
     InspectorInstrumentation::didCallFunction(&scriptExecutionContext);
 
-    globalObject->setCurrentEvent(savedEvent);
+    if (jsFunctionWindow)
+        jsFunctionWindow->setCurrentEvent(savedEvent.get());
 
     auto handleExceptionIfNeeded = [&] () -> bool {
         if (is<WorkerGlobalScope>(scriptExecutionContext)) {

@@ -250,6 +250,16 @@ void JSDOMWindowBase::willRemoveFromWindowProxy()
     setCurrentEvent(0);
 }
 
+void JSDOMWindowBase::setCurrentEvent(Event* currentEvent)
+{
+    m_currentEvent = currentEvent;
+}
+
+Event* JSDOMWindowBase::currentEvent() const
+{
+    return m_currentEvent.get();
+}
+
 JSWindowProxy& JSDOMWindowBase::proxy() const
 {
     return *jsCast<JSWindowProxy*>(&JSDOMGlobalObject::proxy());

@@ -69,9 +69,6 @@ public:
     // Make binding code generation easier.
     JSDOMGlobalObject* globalObject() { return this; }
 
-    void setCurrentEvent(Event*);
-    Event* currentEvent() const;
-
     static void visitChildren(JSC::JSCell*, JSC::SlotVisitor&);
 
     DOMWrapperWorld& world() { return m_world.get(); }
@@ -115,8 +112,6 @@ protected:
 private:
     void addBuiltinGlobals(JSC::VM&);
     friend void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject&);
-
-    Event* m_currentEvent { nullptr };
 
     JSBuiltinInternalFunctions m_builtinInternalFunctions;
 };

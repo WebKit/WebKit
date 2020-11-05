@@ -87,6 +87,9 @@ public:
 
     static void fireFrameClearedWatchpointsForWindow(DOMWindow*);
 
+    void setCurrentEvent(Event*);
+    Event* currentEvent() const;
+
 protected:
     JSDOMWindowBase(JSC::VM&, JSC::Structure*, RefPtr<DOMWindow>&&, JSWindowProxy*);
     void finishCreation(JSC::VM&, JSWindowProxy*);
@@ -108,6 +111,7 @@ private:
 #endif
 
     RefPtr<DOMWindow> m_wrapped;
+    RefPtr<Event> m_currentEvent;
 };
 
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::JSGlobalObject*, DOMWindow&);
