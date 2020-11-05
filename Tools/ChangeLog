@@ -1,3 +1,11 @@
+2020-11-05  Patrick Angle  <pangle@apple.com>
+
+        Change my (Patrick Angle's) status to committer.
+
+        Unreviewed, updating contributors.json for myself.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2020-11-05  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Test /webkit/WebKitWebsiteData/configuration is flaky
