@@ -63,10 +63,13 @@ Ref<ScrollingStateNode> ScrollingStateStickyNode::clone(ScrollingStateTree& adop
     return adoptRef(*new ScrollingStateStickyNode(*this, adoptiveTree));
 }
 
-void ScrollingStateStickyNode::setPropertyChangesAfterReattach()
+OptionSet<ScrollingStateNode::Property> ScrollingStateStickyNode::applicableProperties() const
 {
-    setPropertyChangedInternal(Property::ViewportConstraints);
-    ScrollingStateNode::setPropertyChangesAfterReattach();
+    constexpr OptionSet<Property> nodeProperties = { Property::ViewportConstraints };
+
+    auto properties = ScrollingStateNode::applicableProperties();
+    properties.add(nodeProperties);
+    return properties;
 }
 
 void ScrollingStateStickyNode::updateConstraints(const StickyPositionViewportConstraints& constraints)

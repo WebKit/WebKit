@@ -57,12 +57,15 @@ Ref<ScrollingStateNode> ScrollingStateOverflowScrollProxyNode::clone(ScrollingSt
     return adoptRef(*new ScrollingStateOverflowScrollProxyNode(*this, adoptiveTree));
 }
 
-void ScrollingStateOverflowScrollProxyNode::setPropertyChangesAfterReattach()
+OptionSet<ScrollingStateNode::Property> ScrollingStateOverflowScrollProxyNode::applicableProperties() const
 {
-    setPropertyChangedInternal(Property::OverflowScrollingNode);
+    constexpr OptionSet<Property> nodeProperties = { Property::OverflowScrollingNode };
 
-    ScrollingStateNode::setPropertyChangesAfterReattach();
+    auto properties = ScrollingStateNode::applicableProperties();
+    properties.add(nodeProperties);
+    return properties;
 }
+
 
 void ScrollingStateOverflowScrollProxyNode::setOverflowScrollingNode(ScrollingNodeID nodeID)
 {

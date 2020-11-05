@@ -56,9 +56,8 @@ private:
     ScrollingStatePositionedNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStatePositionedNode(const ScrollingStatePositionedNode&, ScrollingStateTree&);
 
-    void setPropertyChangesAfterReattach() override;
-
-    void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
+    void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const final;
+    OptionSet<ScrollingStateNode::Property> applicableProperties() const final;
 
     Vector<ScrollingNodeID> m_relatedOverflowScrollingNodes;
     AbsolutePositionConstraints m_constraints;

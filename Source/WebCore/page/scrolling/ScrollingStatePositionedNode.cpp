@@ -59,11 +59,13 @@ Ref<ScrollingStateNode> ScrollingStatePositionedNode::clone(ScrollingStateTree& 
     return adoptRef(*new ScrollingStatePositionedNode(*this, adoptiveTree));
 }
 
-void ScrollingStatePositionedNode::setPropertyChangesAfterReattach()
+OptionSet<ScrollingStateNode::Property> ScrollingStatePositionedNode::applicableProperties() const
 {
-    setPropertyChangedInternal(Property::RelatedOverflowScrollingNodes);
-    setPropertyChangedInternal(Property::LayoutConstraintData);
-    ScrollingStateNode::setPropertyChangesAfterReattach();
+    constexpr OptionSet<Property> nodeProperties = { Property::RelatedOverflowScrollingNodes, Property::LayoutConstraintData };
+
+    auto properties = ScrollingStateNode::applicableProperties();
+    properties.add(nodeProperties);
+    return properties;
 }
 
 void ScrollingStatePositionedNode::setRelatedOverflowScrollingNodes(Vector<ScrollingNodeID>&& nodes)

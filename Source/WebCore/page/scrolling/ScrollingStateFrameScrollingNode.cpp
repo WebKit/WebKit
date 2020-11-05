@@ -86,30 +86,33 @@ Ref<ScrollingStateNode> ScrollingStateFrameScrollingNode::clone(ScrollingStateTr
     return adoptRef(*new ScrollingStateFrameScrollingNode(*this, adoptiveTree));
 }
 
-void ScrollingStateFrameScrollingNode::setPropertyChangesAfterReattach()
+OptionSet<ScrollingStateNode::Property> ScrollingStateFrameScrollingNode::applicableProperties() const
 {
-    setPropertyChangedInternal(Property::FrameScaleFactor);
-    setPropertyChangedInternal(Property::EventTrackingRegion);
-    setPropertyChangedInternal(Property::RootContentsLayer);
-    setPropertyChangedInternal(Property::ScrolledContentsLayer);
-    setPropertyChangedInternal(Property::CounterScrollingLayer);
-    setPropertyChangedInternal(Property::InsetClipLayer);
-    setPropertyChangedInternal(Property::ContentShadowLayer);
-    setPropertyChangedInternal(Property::HeaderHeight);
-    setPropertyChangedInternal(Property::FooterHeight);
-    setPropertyChangedInternal(Property::HeaderLayer);
-    setPropertyChangedInternal(Property::FooterLayer);
-    setPropertyChangedInternal(Property::BehaviorForFixedElements);
-    setPropertyChangedInternal(Property::TopContentInset);
-    setPropertyChangedInternal(Property::FixedElementsLayoutRelativeToFrame);
-    setPropertyChangedInternal(Property::VisualViewportIsSmallerThanLayoutViewport);
-    setPropertyChangedInternal(Property::AsyncFrameOrOverflowScrollingEnabled);
-    setPropertyChangedInternal(Property::LayoutViewport);
-    setPropertyChangedInternal(Property::MinLayoutViewportOrigin);
-    setPropertyChangedInternal(Property::MaxLayoutViewportOrigin);
-    setPropertyChangedInternal(Property::OverrideVisualViewportSize);
+    constexpr OptionSet<Property> nodeProperties = {
+        Property::FrameScaleFactor,
+        Property::EventTrackingRegion,
+        Property::RootContentsLayer,
+        Property::CounterScrollingLayer,
+        Property::InsetClipLayer,
+        Property::ContentShadowLayer,
+        Property::HeaderHeight,
+        Property::FooterHeight,
+        Property::HeaderLayer,
+        Property::FooterLayer,
+        Property::BehaviorForFixedElements,
+        Property::TopContentInset,
+        Property::FixedElementsLayoutRelativeToFrame,
+        Property::VisualViewportIsSmallerThanLayoutViewport,
+        Property::AsyncFrameOrOverflowScrollingEnabled,
+        Property::LayoutViewport,
+        Property::MinLayoutViewportOrigin,
+        Property::MaxLayoutViewportOrigin,
+        Property::OverrideVisualViewportSize,
+    };
 
-    ScrollingStateScrollingNode::setPropertyChangesAfterReattach();
+    auto properties = ScrollingStateScrollingNode::applicableProperties();
+    properties.add(nodeProperties);
+    return properties;
 }
 
 void ScrollingStateFrameScrollingNode::setFrameScaleFactor(float scaleFactor)

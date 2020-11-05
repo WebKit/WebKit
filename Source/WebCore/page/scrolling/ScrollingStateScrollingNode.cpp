@@ -80,33 +80,38 @@ ScrollingStateScrollingNode::~ScrollingStateScrollingNode()
     scrollingStateTree().scrollingNodeRemoved();
 }
 
-void ScrollingStateScrollingNode::setPropertyChangesAfterReattach()
+OptionSet<ScrollingStateNode::Property> ScrollingStateScrollingNode::applicableProperties() const
 {
-    setPropertyChangedInternal(Property::ScrollableAreaSize);
-    setPropertyChangedInternal(Property::TotalContentsSize);
-    setPropertyChangedInternal(Property::ReachableContentsSize);
-    setPropertyChangedInternal(Property::ScrollPosition);
-    setPropertyChangedInternal(Property::ScrollOrigin);
-    setPropertyChangedInternal(Property::ScrollableAreaParams);
+    // Note that this list does not include Property::RequestedScrollPosition, which is imperative, not stateful.
+    constexpr OptionSet<Property> nodeProperties = {
+        Property::ScrollableAreaSize,
+        Property::TotalContentsSize,
+        Property::ReachableContentsSize,
+        Property::ScrollPosition,
+        Property::ScrollOrigin,
+        Property::ScrollableAreaParams,
 #if ENABLE(SCROLLING_THREAD)
-    setPropertyChangedInternal(Property::ReasonsForSynchronousScrolling);
+        Property::ReasonsForSynchronousScrolling,
 #endif
 #if ENABLE(CSS_SCROLL_SNAP)
-    setPropertyChangedInternal(Property::HorizontalSnapOffsets);
-    setPropertyChangedInternal(Property::VerticalSnapOffsets);
-    setPropertyChangedInternal(Property::HorizontalSnapOffsetRanges);
-    setPropertyChangedInternal(Property::VerticalSnapOffsetRanges);
-    setPropertyChangedInternal(Property::CurrentHorizontalSnapOffsetIndex);
-    setPropertyChangedInternal(Property::CurrentVerticalSnapOffsetIndex);
+        Property::HorizontalSnapOffsets,
+        Property::VerticalSnapOffsets,
+        Property::HorizontalSnapOffsetRanges,
+        Property::VerticalSnapOffsetRanges,
+        Property::CurrentHorizontalSnapOffsetIndex,
+        Property::CurrentVerticalSnapOffsetIndex,
+        Property::IsMonitoringWheelEvents,
 #endif
-    setPropertyChangedInternal(Property::IsMonitoringWheelEvents);
-    setPropertyChangedInternal(Property::ScrollContainerLayer);
-    setPropertyChangedInternal(Property::ScrolledContentsLayer);
-    setPropertyChangedInternal(Property::HorizontalScrollbarLayer);
-    setPropertyChangedInternal(Property::VerticalScrollbarLayer);
-    setPropertyChangedInternal(Property::PainterForScrollbar);
+        Property::ScrollContainerLayer,
+        Property::ScrolledContentsLayer,
+        Property::HorizontalScrollbarLayer,
+        Property::VerticalScrollbarLayer,
+        Property::PainterForScrollbar
+    };
 
-    ScrollingStateNode::setPropertyChangesAfterReattach();
+    auto properties = ScrollingStateNode::applicableProperties();
+    properties.add(nodeProperties);
+    return properties;
 }
 
 void ScrollingStateScrollingNode::setScrollableAreaSize(const FloatSize& size)

@@ -68,10 +68,15 @@ void ScrollingStateNode::setPropertyChanged(Property property)
     m_scrollingStateTree.setHasChangedProperties();
 }
 
+OptionSet<ScrollingStateNode::Property> ScrollingStateNode::applicableProperties() const
+{
+    return { Property::Layer, Property::ChildNodes };
+}
+
 void ScrollingStateNode::setPropertyChangesAfterReattach()
 {
-    setPropertyChangedInternal(Property::Layer);
-    setPropertyChangedInternal(Property::ChildNodes);
+    auto allPropertiesForNodeType = applicableProperties();
+    setPropertiesChangedInternal(allPropertiesForNodeType);
     m_scrollingStateTree.setHasChangedProperties();
 }
 

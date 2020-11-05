@@ -58,10 +58,13 @@ Ref<ScrollingStateNode> ScrollingStateFixedNode::clone(ScrollingStateTree& adopt
     return adoptRef(*new ScrollingStateFixedNode(*this, adoptiveTree));
 }
 
-void ScrollingStateFixedNode::setPropertyChangesAfterReattach()
+OptionSet<ScrollingStateNode::Property> ScrollingStateFixedNode::applicableProperties() const
 {
-    setPropertyChangedInternal(Property::ViewportConstraints);
-    ScrollingStateNode::setPropertyChangesAfterReattach();
+    constexpr OptionSet<Property> nodeProperties = { Property::RelatedOverflowScrollingNodes, Property::LayoutConstraintData };
+
+    auto properties = ScrollingStateNode::applicableProperties();
+    properties.add(nodeProperties);
+    return properties;
 }
 
 void ScrollingStateFixedNode::updateConstraints(const FixedPositionViewportConstraints& constraints)

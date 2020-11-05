@@ -314,8 +314,10 @@ protected:
     ScrollingStateNode(ScrollingNodeType, ScrollingStateTree&, ScrollingNodeID);
 
     void setPropertyChangedInternal(Property property) { m_changedProperties.add(property); }
+    void setPropertiesChangedInternal(OptionSet<Property> properties) { m_changedProperties.add(properties); }
 
     virtual void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const;
+    virtual OptionSet<Property> applicableProperties() const;
 
 private:
     void dump(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const;

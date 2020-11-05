@@ -43,14 +43,13 @@ public:
     ScrollingNodeID overflowScrollingNode() const { return m_overflowScrollingNodeID; }
     WEBCORE_EXPORT void setOverflowScrollingNode(ScrollingNodeID);
 
-    void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
-
 private:
     ScrollingStateOverflowScrollProxyNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateOverflowScrollProxyNode(const ScrollingStateOverflowScrollProxyNode&, ScrollingStateTree&);
 
-    void setPropertyChangesAfterReattach() override;
-    
+    void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const final;
+    OptionSet<ScrollingStateNode::Property> applicableProperties() const final;
+
     ScrollingNodeID m_overflowScrollingNodeID { 0 };
 };
 

@@ -40,7 +40,7 @@ class ScrollingStateFixedNode final : public ScrollingStateNode {
 public:
     static Ref<ScrollingStateFixedNode> create(ScrollingStateTree&, ScrollingNodeID);
 
-    Ref<ScrollingStateNode> clone(ScrollingStateTree&) override;
+    Ref<ScrollingStateNode> clone(ScrollingStateTree&) final;
 
     virtual ~ScrollingStateFixedNode();
 
@@ -51,11 +51,10 @@ private:
     ScrollingStateFixedNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateFixedNode(const ScrollingStateFixedNode&, ScrollingStateTree&);
 
-    void setPropertyChangesAfterReattach() override;
+    void reconcileLayerPositionForViewportRect(const LayoutRect& viewportRect, ScrollingLayerPositionAction) final;
 
-    void reconcileLayerPositionForViewportRect(const LayoutRect& viewportRect, ScrollingLayerPositionAction) override;
-
-    void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
+    void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const final;
+    OptionSet<ScrollingStateNode::Property> applicableProperties() const final;
 
     FixedPositionViewportConstraints m_constraints;
 };
