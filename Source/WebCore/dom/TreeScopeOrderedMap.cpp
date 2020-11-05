@@ -216,4 +216,13 @@ const Vector<Element*>* TreeScopeOrderedMap::getAllElementsById(const AtomString
     return &entry.orderedList;
 }
 
+const Vector<AtomString> TreeScopeOrderedMap::keys() const
+{
+    Vector<AtomString> result;
+    result.reserveInitialCapacity(m_map.size());
+    for (auto* key : m_map.keys())
+        result.uncheckedAppend(const_cast<AtomStringImpl*>(key));
+    return result;
+}
+
 } // namespace WebCore

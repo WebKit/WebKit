@@ -140,22 +140,12 @@ Optional<Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>>> 
 
 Vector<AtomString> HTMLDocument::supportedPropertyNames() const
 {
-    // https://html.spec.whatwg.org/multipage/dom.html#dom-document-namedItem-which
-    //
-    // ... The supported property names of a Document object document at any moment consist of the following, in
-    // tree order according to the element that contributed them, ignoring later duplicates, and with values from
-    // id attributes coming before values from name attributes when the same element contributes both:
-    //
-    // - the value of the name content attribute for all applet, exposed embed, form, iframe, img, and exposed
-    //   object elements that have a non-empty name content attribute and are in a document tree with document
-    //   as their root;
-    // - the value of the id content attribute for all applet and exposed object elements that have a non-empty
-    //   id content attribute and are in a document tree with document as their root; and
-    // - the value of the id content attribute for all img elements that have both a non-empty id content attribute
-    //   and a non-empty name content attribute, and are in a document tree with document as their root.
-
-    // FIXME: Implement.
-    return { };
+    auto properties = m_documentNamedItem.keys();
+    // The specification says these should be sorted in document order but this would be expensive
+    // and other browser engines do not comply with this part of the specification. For now, just
+    // do an alphabetical sort to get consistent results.
+    std::sort(properties.begin(), properties.end(), WTF::codePointCompareLessThan);
+    return properties;
 }
 
 void HTMLDocument::addDocumentNamedItem(const AtomStringImpl& name, Element& item)

@@ -65,6 +65,8 @@ public:
 
     const Vector<Element*>* getAllElementsById(const AtomStringImpl&, const TreeScope&) const;
 
+    const Vector<AtomString> keys() const;
+
 private:
     template <typename KeyMatchingFunction>
     Element* get(const AtomStringImpl&, const TreeScope&, const KeyMatchingFunction&) const;
