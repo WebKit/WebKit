@@ -1,5 +1,14 @@
 2020-11-05  Aakash Jain  <aakash_jain@apple.com>
 
+        [build.webkit.org] Rename BUILD_WEBKIT_URL to CURRENT_HOSTNAME
+        https://bugs.webkit.org/show_bug.cgi?id=218629
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/steps.py:
+
+2020-11-05  Aakash Jain  <aakash_jain@apple.com>
+
         [ews] Patch which break layout-test shouldn't cause infinite RETRY loop
         https://bugs.webkit.org/show_bug.cgi?id=218618
 

@@ -34,11 +34,11 @@ import cStringIO
 import urllib
 
 APPLE_WEBKIT_AWS_PROXY = "http://proxy01.webkit.org:3128"
-S3URL = "https://s3-us-west-2.amazonaws.com/"
-WithProperties = properties.WithProperties
+CURRENT_HOSTNAME = socket.gethostname().strip()
 RESULTS_WEBKIT_URL = 'https://results.webkit.org'
 RESULTS_SERVER_API_KEY = 'RESULTS_SERVER_API_KEY'
-BUILD_WEBKIT_URL = socket.gethostname().strip()
+S3URL = "https://s3-us-west-2.amazonaws.com/"
+WithProperties = properties.WithProperties
 
 
 class TestWithFailureCount(shell.Test):
@@ -365,7 +365,7 @@ class RunJavaScriptCoreTests(TestWithFailureCount):
         "--builder-name", WithProperties("%(buildername)s"),
         "--build-number", WithProperties("%(buildnumber)s"),
         "--buildbot-worker", WithProperties("%(workername)s"),
-        "--buildbot-master", BUILD_WEBKIT_URL,
+        "--buildbot-master", CURRENT_HOSTNAME,
         "--report", RESULTS_WEBKIT_URL,
     ]
     failedTestsFormatString = "%d JSC test%s failed"
@@ -451,7 +451,7 @@ class RunWebKitTests(shell.Test):
                "--build-number", WithProperties("%(buildnumber)s"),
                "--buildbot-worker", WithProperties("%(workername)s"),
                "--master-name", "webkit.org",
-               "--buildbot-master", BUILD_WEBKIT_URL,
+               "--buildbot-master", CURRENT_HOSTNAME,
                "--report", RESULTS_WEBKIT_URL,
                "--exit-after-n-crashes-or-timeouts", "50",
                "--exit-after-n-failures", "500",
@@ -580,7 +580,7 @@ class RunAPITests(TestWithFailureCount):
         "--json-output={0}".format(jsonFileName),
         WithProperties("--%(configuration)s"),
         "--verbose",
-        "--buildbot-master", BUILD_WEBKIT_URL,
+        "--buildbot-master", CURRENT_HOSTNAME,
         "--builder-name", WithProperties("%(buildername)s"),
         "--build-number", WithProperties("%(buildnumber)s"),
         "--buildbot-worker", WithProperties("%(workername)s"),
@@ -640,7 +640,7 @@ class RunWebKitPyTests(RunPythonTests):
         "python",
         "./Tools/Scripts/test-webkitpy",
         "--verbose",
-        "--buildbot-master", BUILD_WEBKIT_URL,
+        "--buildbot-master", CURRENT_HOSTNAME,
         "--builder-name", WithProperties("%(buildername)s"),
         "--build-number", WithProperties("%(buildnumber)s"),
         "--buildbot-worker", WithProperties("%(workername)s"),
@@ -704,7 +704,7 @@ class RunLLINTCLoopTests(TestWithFailureCount):
         "--builder-name", WithProperties("%(buildername)s"),
         "--build-number", WithProperties("%(buildnumber)s"),
         "--buildbot-worker", WithProperties("%(workername)s"),
-        "--buildbot-master", BUILD_WEBKIT_URL,
+        "--buildbot-master", CURRENT_HOSTNAME,
         "--report", RESULTS_WEBKIT_URL,
     ]
     failedTestsFormatString = "%d regression%s found."
@@ -744,7 +744,7 @@ class Run32bitJSCTests(TestWithFailureCount):
         "--builder-name", WithProperties("%(buildername)s"),
         "--build-number", WithProperties("%(buildnumber)s"),
         "--buildbot-worker", WithProperties("%(workername)s"),
-        "--buildbot-master", BUILD_WEBKIT_URL,
+        "--buildbot-master", CURRENT_HOSTNAME,
         "--report", RESULTS_WEBKIT_URL,
     ]
     failedTestsFormatString = "%d regression%s found."
