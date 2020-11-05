@@ -198,11 +198,11 @@ void LineLayout::constructContent()
         auto initialContaingBlockSize = m_layoutState.viewportSize();
         for (auto& lineRun : m_inlineFormattingState.lineRuns()) {
             auto& layoutBox = lineRun.layoutBox();
+            auto& style = layoutBox.style();
             auto computedInkOverflow = [&] (auto runRect) {
                 // FIXME: Add support for non-text ink overflow.
                 if (!lineRun.text())
                     return runRect;
-                auto& style = layoutBox.style();
                 auto inkOverflow = runRect;
                 auto strokeOverflow = std::ceil(style.computedStrokeWidth(ceiledIntSize(initialContaingBlockSize)));
                 inkOverflow.inflate(strokeOverflow);
@@ -227,6 +227,8 @@ void LineLayout::constructContent()
             if (auto text = lineRun.text()) {
                 auto adjustedContentToRenderer = [&] {
                     // FIXME: This is where we create strings with trailing hyphens and truncate/replace content with ellipsis.
+                    if (text->needsHyphen())
+                        return makeString(StringView(text->content()).substring(text->start(), text->length()), style.hyphenString());
                     return String();
                 };
                 textContent = Run::TextContent { text->start(), text->length(), text->content(), adjustedContentToRenderer(), text->needsHyphen() };
@@ -523,14 +525,10 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         auto& line = inlineContent.lineForRun(run);
         auto baseline = paintOffset.y() + line.rect().y() + line.baseline();
         auto expansion = run.expansion();
-
-        String textWithHyphen;
-        if (textContent.hasHyphen())
-            textWithHyphen = makeString(textContent.renderedContent(), style.hyphenString());
         // TextRun expects the xPos to be adjusted with the aligment offset (e.g. when the line is center aligned
         // and the run starts at 100px, due to the horizontal aligment, the xpos is supposed to be at 0px).
         auto xPos = rect.x() - (line.rect().x() + line.horizontalAlignmentOffset());
-        WebCore::TextRun textRun { !textWithHyphen.isEmpty() ? textWithHyphen : textContent.renderedContent(), xPos, expansion.horizontalExpansion, expansion.behavior };
+        WebCore::TextRun textRun { textContent.renderedContent(), xPos, expansion.horizontalExpansion, expansion.behavior };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         FloatPoint textOrigin { rect.x() + paintOffset.x(), roundToDevicePixel(baseline, deviceScaleFactor) };
 
