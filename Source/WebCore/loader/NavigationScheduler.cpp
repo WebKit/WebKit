@@ -220,7 +220,7 @@ public:
         frameLoadRequest.disableNavigationToInvalidURL();
         frameLoadRequest.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLs());
 
-        auto completionHandler = WTFMove(m_completionHandler);
+        auto completionHandler = std::exchange(m_completionHandler, nullptr);
         frame.loader().changeLocation(WTFMove(frameLoadRequest));
         completionHandler();
     }
@@ -543,7 +543,7 @@ void NavigationScheduler::timerFired()
 
     Ref<Frame> protect(m_frame);
 
-    std::unique_ptr<ScheduledNavigation> redirect = WTFMove(m_redirect);
+    std::unique_ptr<ScheduledNavigation> redirect = std::exchange(m_redirect, nullptr);
     LOG(History, "NavigationScheduler %p timerFired - firing redirect %p", this, redirect.get());
 
     redirect->fire(m_frame);
@@ -602,7 +602,7 @@ void NavigationScheduler::cancel(NewLoadInProgress newLoadInProgress)
         InspectorInstrumentation::frameClearedScheduledNavigation(m_frame);
     m_timer.stop();
 
-    if (auto redirect = WTFMove(m_redirect))
+    if (auto redirect = std::exchange(m_redirect, nullptr))
         redirect->didStopTimer(m_frame, newLoadInProgress);
 }
 
