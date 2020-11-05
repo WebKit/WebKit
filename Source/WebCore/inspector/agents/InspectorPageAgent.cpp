@@ -828,7 +828,7 @@ void InspectorPageAgent::frameDetached(Frame& frame)
 
 Frame* InspectorPageAgent::frameForId(const Protocol::Network::FrameId& frameId)
 {
-    return frameId.isEmpty() ? nullptr : m_identifierToFrame.get(frameId);
+    return frameId.isEmpty() ? nullptr : m_identifierToFrame.get(frameId).get();
 }
 
 String InspectorPageAgent::frameId(Frame* frame)
@@ -837,7 +837,7 @@ String InspectorPageAgent::frameId(Frame* frame)
         return emptyString();
     return m_frameToIdentifier.ensure(frame, [this, frame] {
         auto identifier = IdentifiersFactory::createIdentifier();
-        m_identifierToFrame.set(identifier, frame);
+        m_identifierToFrame.set(identifier, makeWeakPtr(frame));
         return identifier;
     }).iterator->value;
 }

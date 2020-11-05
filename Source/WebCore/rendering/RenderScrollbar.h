@@ -85,7 +85,7 @@ private:
     // FrameView which this Element pointer can in no way keep alive. See webkit bug 80610.
     RefPtr<Element> m_ownerElement;
 
-    Frame* m_owningFrame;
+    WeakPtr<Frame> m_owningFrame;
     HashMap<unsigned, RenderPtr<RenderScrollbarPart>> m_parts;
 };
 

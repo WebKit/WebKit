@@ -148,8 +148,8 @@ public:
 
     WEBCORE_EXPORT DOMWindow* window() const;
 
-    void addDestructionObserver(FrameDestructionObserver*);
-    void removeDestructionObserver(FrameDestructionObserver*);
+    void addDestructionObserver(FrameDestructionObserver&);
+    void removeDestructionObserver(FrameDestructionObserver&);
 
     WEBCORE_EXPORT void willDetachPage();
     void detachFromPage();

@@ -50,7 +50,7 @@ public:
     void insertDataSynchronously(const String&); // For an internal use only to prevent the parser from yielding.
     WEBCORE_EXPORT void end();
 
-    void setFrame(Frame& frame) { m_frame = &frame; }
+    void setFrame(Frame&);
 
     WEBCORE_EXPORT void setEncoding(const String& encoding, bool userChosen);
 
@@ -67,7 +67,7 @@ private:
     Ref<Document> createDocument(const URL&);
     void clear();
 
-    Frame* m_frame { nullptr };
+    WeakPtr<Frame> m_frame;
 
     bool m_hasReceivedSomeData { false };
     String m_mimeType;

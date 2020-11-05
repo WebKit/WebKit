@@ -165,8 +165,9 @@ private:
     InspectorClient* m_client { nullptr };
     InspectorOverlay* m_overlay { nullptr };
 
+    // FIXME: Make a WeakHashMap and use it for m_frameToIdentifier and m_loaderToIdentifier.
     HashMap<Frame*, String> m_frameToIdentifier;
-    HashMap<String, Frame*> m_identifierToFrame;
+    HashMap<String, WeakPtr<Frame>> m_identifierToFrame;
     HashMap<DocumentLoader*, String> m_loaderToIdentifier;
     String m_userAgentOverride;
     String m_emulatedMedia;

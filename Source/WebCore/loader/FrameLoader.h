@@ -53,6 +53,7 @@
 #include <wtf/Optional.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WallTime.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -248,8 +249,8 @@ public:
 
     bool checkIfFormActionAllowedByCSP(const URL&, bool didReceiveRedirectResponse) const;
 
-    Frame* opener() { return m_opener; }
-    const Frame* opener() const { return m_opener; }
+    WEBCORE_EXPORT Frame* opener();
+    WEBCORE_EXPORT const Frame* opener() const;
     WEBCORE_EXPORT void setOpener(Frame*);
     WEBCORE_EXPORT void detachFromAllOpenedFrames();
 
@@ -426,7 +427,7 @@ private:
 
     // PolicyChecker specific.
     void clearProvisionalLoadForPolicyCheck();
-    bool hasOpenedFrames() const { return !m_openedFrames.isEmpty(); }
+    bool hasOpenedFrames() const;
 
     bool preventsParentFromBeingComplete(const Frame&) const;
 
@@ -482,8 +483,8 @@ private:
     bool m_shouldCallCheckCompleted;
     bool m_shouldCallCheckLoadComplete;
 
-    Frame* m_opener;
-    HashSet<Frame*> m_openedFrames;
+    WeakPtr<Frame> m_opener;
+    WeakHashSet<Frame> m_openedFrames;
 
     bool m_loadingFromCachedPage;
 

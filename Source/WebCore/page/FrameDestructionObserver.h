@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/WeakPtr.h>
+
 namespace WebCore {
 
 class Frame;
@@ -36,13 +38,13 @@ public:
     WEBCORE_EXPORT virtual void frameDestroyed();
     WEBCORE_EXPORT virtual void willDetachPage();
 
-    Frame* frame() const { return m_frame; }
+    WEBCORE_EXPORT Frame* frame() const;
 
 protected:
     WEBCORE_EXPORT virtual ~FrameDestructionObserver();
     WEBCORE_EXPORT void observeFrame(Frame*);
 
-    Frame* m_frame;
+    WeakPtr<Frame> m_frame;
 };
 
 } // namespace WebCore

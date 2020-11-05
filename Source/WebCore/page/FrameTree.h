@@ -34,14 +34,7 @@ class FrameTree {
 public:
     static constexpr unsigned invalidCount = static_cast<unsigned>(-1);
 
-    FrameTree(Frame& thisFrame, Frame* parentFrame)
-        : m_thisFrame(thisFrame)
-        , m_parent(parentFrame)
-        , m_previousSibling(nullptr)
-        , m_lastChild(nullptr)
-        , m_scopedChildCount(invalidCount)
-    {
-    }
+    FrameTree(Frame& thisFrame, Frame* parentFrame);
 
     ~FrameTree();
 
@@ -52,9 +45,9 @@ public:
     WEBCORE_EXPORT Frame* parent() const;
     
     Frame* nextSibling() const { return m_nextSibling.get(); }
-    Frame* previousSibling() const { return m_previousSibling; }
+    Frame* previousSibling() const { return m_previousSibling.get(); }
     Frame* firstChild() const { return m_firstChild.get(); }
-    Frame* lastChild() const { return m_lastChild; }
+    Frame* lastChild() const { return m_lastChild.get(); }
 
     Frame* firstRenderedChild() const;
     Frame* nextRenderedSibling() const;
@@ -100,15 +93,15 @@ private:
 
     Frame& m_thisFrame;
 
-    Frame* m_parent;
+    WeakPtr<Frame> m_parent;
     AtomString m_name; // The actual frame name (may be empty).
     AtomString m_uniqueName;
 
     RefPtr<Frame> m_nextSibling;
-    Frame* m_previousSibling;
+    WeakPtr<Frame> m_previousSibling;
     RefPtr<Frame> m_firstChild;
-    Frame* m_lastChild;
-    mutable unsigned m_scopedChildCount;
+    WeakPtr<Frame> m_lastChild;
+    mutable unsigned m_scopedChildCount { invalidCount };
     mutable uint64_t m_frameIDGenerator { 0 };
 };
 

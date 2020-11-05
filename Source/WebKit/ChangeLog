@@ -1,5 +1,22 @@
 2020-11-05  Alex Christensen  <achristensen@webkit.org>
 
+        Store WeakPtr<Frame> instead of Frame*
+        https://bugs.webkit.org/show_bug.cgi?id=218599
+
+        Reviewed by Youenn Fablet.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::initWithCoreMainFrame):
+        (WebKit::WebFrame::createSubframe):
+        (WebKit::WebFrame::coreFrame const):
+        (WebKit::WebFrame::info const):
+        (WebKit::WebFrame::handlesPageScaleGesture const):
+        (WebKit::WebFrame::requiresUnifiedScaleFactor const):
+        * WebProcess/WebPage/WebFrame.h:
+        (WebKit::WebFrame::coreFrame const): Deleted.
+
+2020-11-05  Alex Christensen  <achristensen@webkit.org>
+
         Use fewer raw pointers and more const correctness in Frame.h
         https://bugs.webkit.org/show_bug.cgi?id=218598
 

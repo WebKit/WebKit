@@ -27,6 +27,7 @@
 
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -34,7 +35,7 @@ class AbstractDOMWindow;
 class WindowProxy;
 
 // FIXME: Rename Frame to LocalFrame and AbstractFrame to Frame.
-class AbstractFrame : public ThreadSafeRefCounted<AbstractFrame> {
+class AbstractFrame : public ThreadSafeRefCounted<AbstractFrame>, public CanMakeWeakPtr<AbstractFrame> {
 public:
     virtual ~AbstractFrame();
 

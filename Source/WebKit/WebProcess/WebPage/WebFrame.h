@@ -78,7 +78,7 @@ public:
     WebPage* page() const;
 
     static WebFrame* fromCoreFrame(const WebCore::Frame&);
-    WebCore::Frame* coreFrame() const { return m_coreFrame; }
+    WebCore::Frame* coreFrame() const;
 
     FrameInfoData info() const;
     WebCore::FrameIdentifier frameID() const { return m_frameID; }
@@ -184,7 +184,7 @@ public:
 private:
     WebFrame();
 
-    WebCore::Frame* m_coreFrame { nullptr };
+    WeakPtr<WebCore::Frame> m_coreFrame;
 
     uint64_t m_policyListenerID { 0 };
     Optional<WebCore::PolicyCheckIdentifier> m_policyIdentifier;

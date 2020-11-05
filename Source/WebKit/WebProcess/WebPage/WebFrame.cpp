@@ -106,7 +106,7 @@ void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame)
 {
     page.send(Messages::WebPageProxy::DidCreateMainFrame(frameID()));
 
-    m_coreFrame = &coreFrame;
+    m_coreFrame = makeWeakPtr(coreFrame);
     m_coreFrame->tree().setName(String());
     m_coreFrame->init();
 }
@@ -117,7 +117,7 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage* page, const String& frameName, H
     page->send(Messages::WebPageProxy::DidCreateSubframe(frame->frameID()));
 
     auto coreFrame = Frame::create(page->corePage(), ownerElement, makeUniqueRef<WebFrameLoaderClient>(frame.get()));
-    frame->m_coreFrame = coreFrame.ptr();
+    frame->m_coreFrame = makeWeakPtr(coreFrame.get());
 
     coreFrame->tree().setName(frameName);
     if (ownerElement) {
@@ -177,6 +177,11 @@ WebFrame* WebFrame::fromCoreFrame(const Frame& frame)
     return &webFrameLoaderClient->webFrame();
 }
 
+WebCore::Frame* WebFrame::coreFrame() const
+{
+    return m_coreFrame.get();
+}
+
 FrameInfoData WebFrame::info() const
 {
     auto* parent = parentFrame();
@@ -185,7 +190,7 @@ FrameInfoData WebFrame::info() const
         isMainFrame(),
         // FIXME: This should use the full request.
         ResourceRequest(url()),
-        SecurityOriginData::fromFrame(m_coreFrame),
+        SecurityOriginData::fromFrame(m_coreFrame.get()),
         m_frameID,
         parent ? Optional<WebCore::FrameIdentifier> { parent->frameID() } : WTF::nullopt,
     };
@@ -533,13 +538,13 @@ JSGlobalContextRef WebFrame::jsContextForWorld(InjectedBundleScriptWorld* world)
 
 bool WebFrame::handlesPageScaleGesture() const
 {
-    auto* pluginView = WebPage::pluginViewForFrame(m_coreFrame);
+    auto* pluginView = WebPage::pluginViewForFrame(m_coreFrame.get());
     return pluginView && pluginView->handlesPageScaleFactor();
 }
 
 bool WebFrame::requiresUnifiedScaleFactor() const
 {
-    auto* pluginView = WebPage::pluginViewForFrame(m_coreFrame);
+    auto* pluginView = WebPage::pluginViewForFrame(m_coreFrame.get());
     return pluginView && pluginView->requiresUnifiedScaleFactor();
 }
 

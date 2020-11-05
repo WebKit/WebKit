@@ -170,7 +170,7 @@ private:
     void frameDestroyed() override
     {
         clear();
-        WebCore::Frame* frame = m_frame;
+        WebCore::Frame* frame = m_frame.get();
         FrameDestructionObserver::frameDestroyed();
         domObjectCacheFrameObservers().remove(frame);
     }

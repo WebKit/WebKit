@@ -24,6 +24,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakPtr.h>
 
 namespace JSC {
 class Debugger;
@@ -49,7 +50,7 @@ public:
 
     WEBCORE_EXPORT ~WindowProxy();
 
-    AbstractFrame* frame() const { return m_frame; }
+    WEBCORE_EXPORT AbstractFrame* frame() const;
     void detachFromFrame();
 
     void destroyJSWindowProxy(DOMWrapperWorld&);
@@ -94,7 +95,7 @@ private:
     JSWindowProxy& createJSWindowProxy(DOMWrapperWorld&);
     WEBCORE_EXPORT JSWindowProxy& createJSWindowProxyWithInitializedScript(DOMWrapperWorld&);
 
-    AbstractFrame* m_frame;
+    WeakPtr<AbstractFrame> m_frame;
     UniqueRef<ProxyMap> m_jsWindowProxies;
 };
 

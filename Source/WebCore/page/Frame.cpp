@@ -163,7 +163,7 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoa
 
     if (ownerElement) {
         m_mainFrame.selfOnlyRef();
-        ownerElement->setContentFrame(this);
+        ownerElement->setContentFrame(*this);
     }
 
 #ifndef NDEBUG
@@ -217,14 +217,14 @@ HTMLFrameOwnerElement* Frame::ownerElement() const
     return m_ownerElement.get();
 }
 
-void Frame::addDestructionObserver(FrameDestructionObserver* observer)
+void Frame::addDestructionObserver(FrameDestructionObserver& observer)
 {
-    m_destructionObservers.add(observer);
+    m_destructionObservers.add(&observer);
 }
 
-void Frame::removeDestructionObserver(FrameDestructionObserver* observer)
+void Frame::removeDestructionObserver(FrameDestructionObserver& observer)
 {
-    m_destructionObservers.remove(observer);
+    m_destructionObservers.remove(&observer);
 }
 
 void Frame::setView(RefPtr<FrameView>&& view)

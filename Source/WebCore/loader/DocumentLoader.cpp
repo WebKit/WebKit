@@ -283,7 +283,7 @@ void DocumentLoader::mainReceivedError(const ResourceError& error)
 // but not loads initiated by child frames' data sources -- that's the WebFrame's job.
 void DocumentLoader::stopLoading()
 {
-    RefPtr<Frame> protectedFrame(m_frame);
+    RefPtr<Frame> protectedFrame(m_frame.get());
     Ref<DocumentLoader> protectedThis(*this);
 
     // In some rare cases, calling FrameLoader::stopLoading could cause isLoading() to return false.
@@ -599,7 +599,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
         Ref<SecurityOrigin> redirectingOrigin(SecurityOrigin::create(redirectResponse.url()));
         if (!redirectingOrigin.get().canDisplay(newRequest.url())) {
             RELEASE_LOG_IF_ALLOWED("willSendRequest: canceling - redirecting URL not allowed to display content from target");
-            FrameLoader::reportLocalLoadFailed(m_frame, newRequest.url().string());
+            FrameLoader::reportLocalLoadFailed(m_frame.get(), newRequest.url().string());
             cancelMainResourceLoad(frameLoader()->cancelledError(newRequest));
             return completionHandler(WTFMove(newRequest));
         }
@@ -1048,7 +1048,7 @@ void DocumentLoader::commitLoad(const char* data, int length)
 {
     // Both unloading the old page and parsing the new page may execute JavaScript which destroys the datasource
     // by starting a new load, so retain temporarily.
-    RefPtr<Frame> protectedFrame(m_frame);
+    RefPtr<Frame> protectedFrame(m_frame.get());
     Ref<DocumentLoader> protectedThis(*this);
 
     commitIfReady();
@@ -1302,7 +1302,7 @@ void DocumentLoader::detachFromFrame()
     else
         ASSERT_WITH_MESSAGE(m_frame, "detachFromFrame() is being called on a DocumentLoader that has never attached to any Frame");
 #endif
-    RefPtr<Frame> protectedFrame(m_frame);
+    RefPtr<Frame> protectedFrame(m_frame.get());
     Ref<DocumentLoader> protectedThis(*this);
 
     // It never makes sense to have a document loader that is detached from its
@@ -1787,8 +1787,8 @@ void DocumentLoader::removeSubresourceLoader(LoadCompletionType type, ResourceLo
     if (!m_subresourceLoaders.remove(loader->identifier()))
         return;
     checkLoadComplete();
-    if (Frame* frame = m_frame)
-        frame->loader().subresourceLoadDone(type);
+    if (m_frame)
+        m_frame->loader().subresourceLoadDone(type);
 }
 
 void DocumentLoader::addPlugInStreamLoader(ResourceLoader& loader)
@@ -2073,8 +2073,8 @@ void DocumentLoader::subresourceLoaderFinishedLoadingOnePart(ResourceLoader* loa
     }
 
     checkLoadComplete();
-    if (Frame* frame = m_frame)
-        frame->loader().checkLoadComplete();    
+    if (m_frame)
+        m_frame->loader().checkLoadComplete();
 }
 
 void DocumentLoader::maybeFinishLoadingMultipartContent()

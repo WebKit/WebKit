@@ -50,14 +50,13 @@ RenderWidget* HTMLFrameOwnerElement::renderWidget() const
     return downcast<RenderWidget>(renderer());
 }
 
-void HTMLFrameOwnerElement::setContentFrame(Frame* frame)
+void HTMLFrameOwnerElement::setContentFrame(Frame& frame)
 {
     // Make sure we will not end up with two frames referencing the same owner element.
     ASSERT(!m_contentFrame || m_contentFrame->ownerElement() != this);
-    ASSERT(frame);
     // Disconnected frames should not be allowed to load.
     ASSERT(isConnected());
-    m_contentFrame = frame;
+    m_contentFrame = makeWeakPtr(frame);
 
     for (RefPtr<ContainerNode> node = this; node; node = node->parentOrShadowHostNode())
         node->incrementConnectedSubframeCount();
@@ -76,7 +75,7 @@ void HTMLFrameOwnerElement::clearContentFrame()
 
 void HTMLFrameOwnerElement::disconnectContentFrame()
 {
-    if (RefPtr<Frame> frame = m_contentFrame) {
+    if (RefPtr<Frame> frame = m_contentFrame.get()) {
         frame->loader().frameDetached();
         frame->disconnectOwnerElement();
     }

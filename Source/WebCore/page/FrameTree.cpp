@@ -36,6 +36,12 @@
 
 namespace WebCore {
 
+FrameTree::FrameTree(Frame& thisFrame, Frame* parentFrame)
+    : m_thisFrame(thisFrame)
+    , m_parent(makeWeakPtr(parentFrame))
+{
+}
+
 FrameTree::~FrameTree()
 {
     for (Frame* child = firstChild(); child; child = child->tree().nextSibling())
@@ -61,15 +67,15 @@ void FrameTree::clearName()
 
 Frame* FrameTree::parent() const 
 { 
-    return m_parent;
+    return m_parent.get();
 }
 
 void FrameTree::appendChild(Frame& child)
 {
     ASSERT(child.page() == m_thisFrame.page());
-    child.tree().m_parent = &m_thisFrame;
-    Frame* oldLast = m_lastChild;
-    m_lastChild = &child;
+    child.tree().m_parent = makeWeakPtr(m_thisFrame);
+    WeakPtr<Frame> oldLast = m_lastChild;
+    m_lastChild = makeWeakPtr(child);
 
     if (oldLast) {
         child.tree().m_previousSibling = oldLast;
@@ -84,7 +90,7 @@ void FrameTree::appendChild(Frame& child)
 
 void FrameTree::removeChild(Frame& child)
 {
-    Frame*& newLocationForPrevious = m_lastChild == &child ? m_lastChild : child.tree().m_nextSibling->tree().m_previousSibling;
+    WeakPtr<Frame>& newLocationForPrevious = m_lastChild == &child ? m_lastChild : child.tree().m_nextSibling->tree().m_previousSibling;
     RefPtr<Frame>& newLocationForNext = m_firstChild == &child ? m_firstChild : child.tree().m_previousSibling->tree().m_nextSibling;
 
     child.tree().m_parent = nullptr;
@@ -423,7 +429,7 @@ Frame* FrameTree::traverseNextInPostOrder(CanWrap canWrap) const
     if (m_nextSibling)
         return m_nextSibling->tree().deepFirstChild();
     if (m_parent)
-        return m_parent;
+        return m_parent.get();
     if (canWrap == CanWrap::Yes)
         return deepFirstChild();
     return nullptr;

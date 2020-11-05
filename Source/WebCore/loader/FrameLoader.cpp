@@ -330,7 +330,7 @@ FrameLoader::~FrameLoader()
 void FrameLoader::detachFromAllOpenedFrames()
 {
     for (auto& frame : m_openedFrames)
-        frame->loader().m_opener = nullptr;
+        frame.loader().m_opener = nullptr;
     m_openedFrames.clear();
 }
 
@@ -382,6 +382,16 @@ Optional<PageIdentifier> FrameLoader::pageID() const
 Optional<FrameIdentifier> FrameLoader::frameID() const
 {
     return client().frameID();
+}
+
+Frame* FrameLoader::opener()
+{
+    return m_opener;
+}
+
+const Frame* FrameLoader::opener() const
+{
+    return m_opener;
 }
 
 void FrameLoader::setDefersLoading(bool defers)
@@ -1050,14 +1060,14 @@ void FrameLoader::setOpener(Frame* opener)
     if (m_opener) {
         // When setOpener is called in ~FrameLoader, opener's m_frameLoader is already cleared.
         auto& openerFrameLoader = m_opener == &m_frame ? *this : m_opener->loader();
-        openerFrameLoader.m_openedFrames.remove(&m_frame);
+        openerFrameLoader.m_openedFrames.remove(m_frame);
     }
     if (opener) {
         opener->loader().m_openedFrames.add(&m_frame);
         if (auto* page = m_frame.page())
             page->setOpenedByDOMWithOpener();
     }
-    m_opener = opener;
+    m_opener = makeWeakPtr(opener);
 
     if (m_frame.document())
         m_frame.document()->initSecurityContext();
@@ -1637,6 +1647,11 @@ void FrameLoader::clearProvisionalLoadForPolicyCheck()
     m_provisionalDocumentLoader->stopLoading();
     FRAMELOADER_RELEASE_LOG_IF_ALLOWED(ResourceLoading, "clearProvisionalLoadForPolicyCheck: Clearing provisional document loader (m_provisionalDocumentLoader=%p)", m_provisionalDocumentLoader.get());
     setProvisionalDocumentLoader(nullptr);
+}
+
+bool FrameLoader::hasOpenedFrames() const
+{
+    return !m_openedFrames.computesEmpty();
 }
 
 void FrameLoader::reportLocalLoadFailed(Frame* frame, const String& url)
@@ -2891,7 +2906,7 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, IsMainResour
         if (isMainResource) {
             auto* ownerFrame = m_frame.tree().parent();
             if (!ownerFrame && m_stateMachine.isDisplayingInitialEmptyDocument())
-                ownerFrame = m_opener;
+                ownerFrame = m_opener.get();
             if (ownerFrame)
                 initiator = ownerFrame->document();
             ASSERT(ownerFrame || m_frame.isMainFrame());
