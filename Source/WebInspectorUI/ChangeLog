@@ -1,3 +1,18 @@
+2020-11-05  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: REGRESSION(?): Sources: override banner is squished for large images
+        https://bugs.webkit.org/show_bug.cgi?id=218196
+
+        Reviewed by Devin Rousso.
+
+        Progressions made in https://trac.webkit.org/changeset/266695/webkit caused the image container to occupy the
+        maximum amount of space possible, which caused the override banner to be squished and a scrollbar to appear.
+        This is resolved by making sure the minimum dimensions of the image containers are 0, so that the container can
+        be `flex-shrink`ed.
+
+        * UserInterface/Views/ImageResourceContentView.css:
+        (.content-view.resource.image > .img-container):
+
 2020-11-04  David Kilzer  <ddkilzer@apple.com>
 
         WebKit should remove unused debug variant support
