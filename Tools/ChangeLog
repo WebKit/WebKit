@@ -1,3 +1,18 @@
+2020-11-05  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Patch which break layout-test shouldn't cause infinite RETRY loop
+        https://bugs.webkit.org/show_bug.cgi?id=218618
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py:
+        (RunWebKitTests.evaluateResult): Do not retry when layout-tests fail with exit code 254. Instead fail the build-step, which
+        will trigger re-run and run-layout-tests-without-patch steps.
+        (RunWebKitTestsWithoutPatch.evaluateCommand): Set clean_tree_run_status build property.
+        (AnalyzeLayoutTestsResults.report_failure):
+        (AnalyzeLayoutTestsResults.start): If clean tree run passes, mark the build as failure.
+        * CISupport/ews-build/steps_unittest.py: Added/updated unit-tests.
+
 2020-11-05  Patrick Angle  <pangle@apple.com>
 
         Change my (Patrick Angle's) status to committer.

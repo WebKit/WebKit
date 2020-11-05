@@ -2011,11 +2011,6 @@ class RunWebKitTests(shell.Test):
                 else:
                     return FAILURE
 
-        # Return code from Tools/Scripts/layout_tests/run_webkit_tests.py.
-        # This means that an exception was raised when running run-webkit-tests and
-        # was never handled.
-        if cmd.rc == 254:
-            return RETRY
         if cmd.rc != 0:
             return FAILURE
 
@@ -2123,6 +2118,7 @@ class RunWebKitTestsWithoutPatch(RunWebKitTests):
     def evaluateCommand(self, cmd):
         rc = shell.Test.evaluateCommand(self, cmd)
         self.build.addStepsAfterCurrentStep([ArchiveTestResults(), UploadTestResults(identifier='clean-tree'), ExtractTestResults(identifier='clean-tree'), AnalyzeLayoutTestsResults()])
+        self.setProperty('clean_tree_run_status', rc)
         return rc
 
     def commandComplete(self, cmd):
@@ -2149,13 +2145,16 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
     def report_failure(self, new_failures):
         self.finished(FAILURE)
         self.build.results = FAILURE
-        pluralSuffix = 's' if len(new_failures) > 1 else ''
-        new_failures_string = ', '.join(sorted(new_failures)[:self.NUM_FAILURES_TO_DISPLAY])
-        message = 'Found {} new test failure{}: {}'.format(len(new_failures), pluralSuffix, new_failures_string)
-        if len(new_failures) > self.NUM_FAILURES_TO_DISPLAY:
-            message += ' ...'
+        if not new_failures:
+            message = 'Found unexpected failure with patch'
+        else:
+            pluralSuffix = 's' if len(new_failures) > 1 else ''
+            new_failures_string = ', '.join(sorted(new_failures)[:self.NUM_FAILURES_TO_DISPLAY])
+            message = 'Found {} new test failure{}: {}'.format(len(new_failures), pluralSuffix, new_failures_string)
+            if len(new_failures) > self.NUM_FAILURES_TO_DISPLAY:
+                message += ' ...'
+            self.send_email_for_new_test_failures(new_failures)
         self.descriptionDone = message
-        self.send_email_for_new_test_failures(new_failures)
         self.setProperty('build_finish_summary', message)
 
         if self.getProperty('buildername', '').lower() == 'commit-queue':
@@ -2282,6 +2281,9 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
         if (not first_results_failing_tests) and (not second_results_failing_tests):
             # If we've made it here, then layout-tests and re-run-layout-tests failed, which means
             # there should have been some test failures. Otherwise there is some unexpected issue.
+            clean_tree_run_status = self.getProperty('clean_tree_run_status', FAILURE)
+            if clean_tree_run_status == SUCCESS:
+                return self.report_failure(set())
             # TODO: email EWS admins
             return self.retry_build('Unexpected infrastructure issue, retrying build')
 
