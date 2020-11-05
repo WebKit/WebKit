@@ -4803,12 +4803,12 @@
    },
    "Rob Buis" : {
       "emails" : [
+         "rbuis@igalia.com",
          "rwlbuis@gmail.com",
          "rwlbuis@webkit.org",
          "rob.buis@samsung.com",
          "rbuis@blackberry.com",
-         "rbuis@rim.com",
-         "rbuis@igalia.com"
+         "rbuis@rim.com"
       ],
       "expertise" : "KDE contributor, The QtWebKit Port, SVG (Scalable Vector Graphics)",
       "nicks" : [
