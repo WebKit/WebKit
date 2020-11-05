@@ -2659,20 +2659,31 @@ class TestExtractBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
+class current_hostname(object):
+    def __init__(self, hostname):
+        self.hostname = hostname
+        self.saved_hostname = None
+
+    def __enter__(self):
+        import steps
+        self.saved_hostname = steps.CURRENT_HOSTNAME
+        steps.CURRENT_HOSTNAME = self.hostname
+
+    def __exit__(self, type, value, tb):
+        import steps
+        steps.CURRENT_HOSTNAME = self.saved_hostname
+
+
 class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
-        import steps
-        self.current_hostname = steps.CURRENT_HOSTNAME
-        steps.CURRENT_HOSTNAME = steps.EWS_BUILD_HOSTNAME
         return self.setUpBuildStep()
 
     def tearDown(self):
-        import steps
-        steps.CURRENT_HOSTNAME = self.current_hostname
         return self.tearDownBuildStep()
 
     def test_success(self):
+        import steps
         self.setupStep(TransferToS3())
         self.setProperty('fullPlatform', 'mac-highsierra')
         self.setProperty('configuration', 'release')
@@ -2688,9 +2699,11 @@ class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Transferred archive to S3')
-        return self.runStep()
+        with current_hostname(steps.EWS_BUILD_HOSTNAME):
+            return self.runStep()
 
     def test_failure(self):
+        import steps
         self.setupStep(TransferToS3())
         self.setProperty('fullPlatform', 'ios-simulator-12')
         self.setProperty('configuration', 'debug')
@@ -2706,8 +2719,18 @@ class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to transfer archive to S3')
-        return self.runStep()
+        with current_hostname(steps.EWS_BUILD_HOSTNAME):
+            return self.runStep()
 
+    def test_skipped(self):
+        self.setupStep(TransferToS3())
+        self.setProperty('fullPlatform', 'mac-highsierra')
+        self.setProperty('configuration', 'release')
+        self.setProperty('architecture', 'x86_64')
+        self.setProperty('patch_id', '1234')
+        self.expectOutcome(result=SKIPPED, state_string='Transferred archive to S3 (skipped)')
+        with current_hostname('something-other-than-steps.EWS_BUILD_HOSTNAME'):
+            return self.runStep()
 
 class TestRunAPITests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):

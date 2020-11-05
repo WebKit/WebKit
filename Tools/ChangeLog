@@ -1,5 +1,16 @@
 2020-11-05  Angelos Oikonomopoulos  <angelos@igalia.com>
 
+        Test that TransferToS3 is skipped properly
+        https://bugs.webkit.org/show_bug.cgi?id=218610
+
+        Reviewed by Aakash Jain.
+
+        I.e. when not running on steps.EWS_BUILD_HOSTNAME.
+
+        * CISupport/ews-build/steps_unittest.py:
+
+2020-11-05  Angelos Oikonomopoulos  <angelos@igalia.com>
+
         Don't mark TransferToS3 as failed if it was skipped
         https://bugs.webkit.org/show_bug.cgi?id=218606
 
