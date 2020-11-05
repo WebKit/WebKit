@@ -65,7 +65,7 @@ private:
     FloatRect m_scrollableOverflow;
     FloatRect m_inkOverflow;
     float m_baseline { 0 };
-    float m_horizontalAlignmentOffset;
+    float m_horizontalAlignmentOffset { 0 };
 };
 
 }

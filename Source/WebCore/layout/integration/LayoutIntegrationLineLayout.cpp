@@ -198,8 +198,13 @@ void LineLayout::constructContent()
                 runRect.setY(roundToInt(runRect.y()));
 
             WTF::Optional<Run::TextContent> textContent;
-            if (auto text = lineRun.text())
-                textContent = Run::TextContent { text->start(), text->length(), text->content(), text->needsHyphen() };
+            if (auto text = lineRun.text()) {
+                auto adjustedContentToRenderer = [&] {
+                    // FIXME: This is where we create strings with trailing hyphens and truncate/replace content with ellipsis.
+                    return String();
+                };
+                textContent = Run::TextContent { text->start(), text->length(), text->content(), adjustedContentToRenderer(), text->needsHyphen() };
+            }
             auto expansion = Run::Expansion { lineRun.expansion().behavior, lineRun.expansion().horizontalExpansion };
             auto displayRun = Run { lineIndex, layoutBox, runRect, computedInkOverflow(runRect), expansion, textContent };
             displayInlineContent.runs.append(displayRun);
@@ -214,7 +219,7 @@ void LineLayout::constructContent()
     };
     constructDisplayLineRuns();
 
-    auto constructDisplayLine = [&] {
+    auto constructDisplayLines = [&] {
         auto& lines = m_inlineFormattingState.lines();
         auto& lineBoxes = m_inlineFormattingState.lineBoxes();
         auto& runs = displayInlineContent.runs;
@@ -266,7 +271,8 @@ void LineLayout::constructContent()
             displayInlineContent.lines.append({ firstRunIndex, runCount, lineRect, enclosingLineRect, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.horizontalAlignmentOffset() });
         }
     };
-    constructDisplayLine();
+    constructDisplayLines();
+
     displayInlineContent.clearGapAfterLastLine = m_inlineFormattingState.clearGapAfterLastLine();
     displayInlineContent.shrinkToFit();
     m_inlineFormattingState.shrinkToFit();
@@ -505,11 +511,11 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
         String textWithHyphen;
         if (textContent.hasHyphen())
-            textWithHyphen = makeString(textContent.content(), style.hyphenString());
+            textWithHyphen = makeString(textContent.renderedContent(), style.hyphenString());
         // TextRun expects the xPos to be adjusted with the aligment offset (e.g. when the line is center aligned
         // and the run starts at 100px, due to the horizontal aligment, the xpos is supposed to be at 0px).
         auto xPos = rect.x() - (line.rect().x() + line.horizontalAlignmentOffset());
-        WebCore::TextRun textRun { !textWithHyphen.isEmpty() ? textWithHyphen : textContent.content(), xPos, expansion.horizontalExpansion, expansion.behavior };
+        WebCore::TextRun textRun { !textWithHyphen.isEmpty() ? textWithHyphen : textContent.renderedContent(), xPos, expansion.horizontalExpansion, expansion.behavior };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         FloatPoint textOrigin { rect.x() + paintOffset.x(), roundToDevicePixel(baseline, deviceScaleFactor) };
 

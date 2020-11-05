@@ -43,19 +43,21 @@ struct Run {
     struct TextContent {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
     public:
-        TextContent(size_t position, size_t length, const String&, bool hasHyphen);
+        TextContent(size_t position, size_t length, const String&, String adjustedContentToRender, bool hasHyphen);
 
         size_t start() const { return m_start; }
         size_t end() const { return start() + length(); }
         size_t length() const { return m_length; }
-        StringView content() const { return StringView(m_contentString).substring(m_start, m_length); }
+        StringView originalContent() const { return StringView(m_originalContent).substring(m_start, m_length); }
+        StringView renderedContent() const { return m_adjustedContentToRender.isNull() ? originalContent() : m_adjustedContentToRender; }
         bool hasHyphen() const { return m_hasHyphen; }
 
     private:
         size_t m_start { 0 };
         size_t m_length { 0 };
         bool m_hasHyphen { false };
-        String m_contentString;
+        String m_originalContent;
+        String m_adjustedContentToRender;
     };
 
     struct Expansion;
@@ -67,7 +69,7 @@ struct Run {
     Optional<TextContent>& textContent() { return m_textContent; }
     const Optional<TextContent>& textContent() const { return m_textContent; }
     // FIXME: This information should be preserved at Run construction time.
-    bool isLineBreak() const { return layoutBox().isLineBreakBox() || (textContent() && textContent()->content() == "\n" && style().preserveNewline()); }
+    bool isLineBreak() const { return layoutBox().isLineBreakBox() || (textContent() && textContent()->originalContent() == "\n" && style().preserveNewline()); }
 
     struct Expansion {
         ExpansionBehavior behavior { DefaultExpansion };
@@ -105,11 +107,12 @@ inline Run::Run(size_t lineIndex, const Layout::Box& layoutBox, const FloatRect&
 {
 }
 
-inline Run::TextContent::TextContent(size_t start, size_t length, const String& contentString, bool hasHyphen)
+inline Run::TextContent::TextContent(size_t start, size_t length, const String& originalContent, String adjustedContentToRender, bool hasHyphen)
     : m_start(start)
     , m_length(length)
     , m_hasHyphen(hasHyphen)
-    , m_contentString(contentString)
+    , m_originalContent(originalContent)
+    , m_adjustedContentToRender(adjustedContentToRender)
 {
 }
 
