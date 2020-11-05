@@ -35,7 +35,7 @@ public:
     ~WebKitOfflineAudioContext();
 
 private:
-    WebKitOfflineAudioContext(Document&, Ref<AudioBuffer>&& renderTarget);
+    WebKitOfflineAudioContext(Document&, float sampleRate, Ref<AudioBuffer>&& renderTarget);
 
     // ActiveDOMObject API.
     const char* activeDOMObjectName() const final;

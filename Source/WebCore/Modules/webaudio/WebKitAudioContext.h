@@ -74,7 +74,7 @@ public:
 
 protected:
     explicit WebKitAudioContext(Document&);
-    WebKitAudioContext(Document&, Ref<AudioBuffer>&& renderTarget);
+    WebKitAudioContext(Document&, float sampleRate, Ref<AudioBuffer>&& renderTarget);
 
 private:
     // ActiveDOMObject API.

@@ -43,8 +43,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(OfflineAudioDestinationNode);
 
-OfflineAudioDestinationNode::OfflineAudioDestinationNode(BaseAudioContext& context, unsigned numberOfChannels, RefPtr<AudioBuffer>&& renderTarget)
-    : AudioDestinationNode(context)
+OfflineAudioDestinationNode::OfflineAudioDestinationNode(BaseAudioContext& context, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
+    : AudioDestinationNode(context, sampleRate)
     , m_numberOfChannels(numberOfChannels)
     , m_renderTarget(WTFMove(renderTarget))
     , m_framesToProcess(m_renderTarget ? m_renderTarget->length() : 0)

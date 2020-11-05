@@ -37,9 +37,9 @@ class AudioContext;
 class OfflineAudioDestinationNode final : public AudioDestinationNode {
     WTF_MAKE_ISO_ALLOCATED(OfflineAudioDestinationNode);
 public:
-    static Ref<OfflineAudioDestinationNode> create(BaseAudioContext& context, unsigned numberOfChannels, RefPtr<AudioBuffer>&& renderTarget)
+    static Ref<OfflineAudioDestinationNode> create(BaseAudioContext& context, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
     {
-        return adoptRef(*new OfflineAudioDestinationNode(context, numberOfChannels, WTFMove(renderTarget)));
+        return adoptRef(*new OfflineAudioDestinationNode(context, numberOfChannels, sampleRate, WTFMove(renderTarget)));
     }
 
     virtual ~OfflineAudioDestinationNode();
@@ -52,10 +52,8 @@ public:
     void enableInput(const String&) override { }
     void startRendering(CompletionHandler<void(Optional<Exception>&&)>&&) final;
 
-    float sampleRate() const final { return m_renderTarget->sampleRate(); }
-
 private:
-    OfflineAudioDestinationNode(BaseAudioContext&, unsigned numberOfChannels, RefPtr<AudioBuffer>&& renderTarget);
+    OfflineAudioDestinationNode(BaseAudioContext&, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget);
 
     enum class OfflineRenderResult { Failure, Suspended, Complete };
     OfflineRenderResult offlineRender();

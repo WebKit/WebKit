@@ -293,7 +293,7 @@ public:
 
 protected:
     explicit BaseAudioContext(Document&, const AudioContextOptions& = { });
-    BaseAudioContext(Document&, unsigned numberOfChannels, RefPtr<AudioBuffer>&& renderTarget);
+    BaseAudioContext(Document&, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget);
     
     void clearPendingActivity();
     void makePendingActivity();

@@ -36,8 +36,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebKitOfflineAudioContext);
 
-WebKitOfflineAudioContext::WebKitOfflineAudioContext(Document& document, Ref<AudioBuffer>&& renderTarget)
-    : WebKitAudioContext(document, WTFMove(renderTarget))
+WebKitOfflineAudioContext::WebKitOfflineAudioContext(Document& document, float sampleRate, Ref<AudioBuffer>&& renderTarget)
+    : WebKitAudioContext(document, sampleRate, WTFMove(renderTarget))
 {
 }
 
@@ -54,7 +54,7 @@ ExceptionOr<Ref<WebKitOfflineAudioContext>> WebKitOfflineAudioContext::create(Sc
     if (!renderTarget)
         return Exception { SyntaxError };
 
-    auto audioContext = adoptRef(*new WebKitOfflineAudioContext(downcast<Document>(context), renderTarget.releaseNonNull()));
+    auto audioContext = adoptRef(*new WebKitOfflineAudioContext(downcast<Document>(context), sampleRate, renderTarget.releaseNonNull()));
     audioContext->suspendIfNeeded();
     return audioContext;
 }

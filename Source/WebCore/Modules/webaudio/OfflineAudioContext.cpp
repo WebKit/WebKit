@@ -38,8 +38,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(OfflineAudioContext);
 
-inline OfflineAudioContext::OfflineAudioContext(Document& document, unsigned numberOfChannels, RefPtr<AudioBuffer>&& renderTarget)
-    : BaseAudioContext(document, numberOfChannels, WTFMove(renderTarget))
+inline OfflineAudioContext::OfflineAudioContext(Document& document, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
+    : BaseAudioContext(document, numberOfChannels, sampleRate, WTFMove(renderTarget))
 {
 }
 
@@ -55,7 +55,7 @@ ExceptionOr<Ref<OfflineAudioContext>> OfflineAudioContext::create(ScriptExecutio
         return Exception { SyntaxError, "sampleRate is not in range"_s };
 
     auto renderTarget = AudioBuffer::create(numberOfChannels, length, sampleRate);
-    auto audioContext = adoptRef(*new OfflineAudioContext(downcast<Document>(context), numberOfChannels, WTFMove(renderTarget)));
+    auto audioContext = adoptRef(*new OfflineAudioContext(downcast<Document>(context), numberOfChannels, sampleRate, WTFMove(renderTarget)));
     audioContext->suspendIfNeeded();
     return audioContext;
 }

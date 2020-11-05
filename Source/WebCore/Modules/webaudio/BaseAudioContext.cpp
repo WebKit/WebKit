@@ -146,7 +146,7 @@ BaseAudioContext::BaseAudioContext(Document& document, const AudioContextOptions
 }
 
 // Constructor for offline (non-realtime) rendering.
-BaseAudioContext::BaseAudioContext(Document& document, unsigned numberOfChannels, RefPtr<AudioBuffer>&& renderTarget)
+BaseAudioContext::BaseAudioContext(Document& document, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
     : ActiveDOMObject(document)
 #if !RELEASE_LOG_DISABLED
     , m_logger(document.logger())
@@ -159,7 +159,7 @@ BaseAudioContext::BaseAudioContext(Document& document, unsigned numberOfChannels
     FFTFrame::initialize();
 
     // Create a new destination for offline rendering.
-    m_destinationNode = OfflineAudioDestinationNode::create(*this, numberOfChannels, m_renderTarget.copyRef());
+    m_destinationNode = OfflineAudioDestinationNode::create(*this, numberOfChannels, sampleRate, m_renderTarget.copyRef());
 }
 
 BaseAudioContext::~BaseAudioContext()

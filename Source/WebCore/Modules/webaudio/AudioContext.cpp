@@ -120,8 +120,8 @@ AudioContext::AudioContext(Document& document, const AudioContextOptions& contex
 }
 
 // Only needed for WebKitOfflineAudioContext.
-AudioContext::AudioContext(Document& document, unsigned numberOfChannels, RefPtr<AudioBuffer>&& renderTarget)
-    : BaseAudioContext(document, numberOfChannels, WTFMove(renderTarget))
+AudioContext::AudioContext(Document& document, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
+    : BaseAudioContext(document, numberOfChannels, sampleRate, WTFMove(renderTarget))
     , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::sharedManager(), *this))
 {
     constructCommon();

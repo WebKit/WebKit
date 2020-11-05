@@ -89,7 +89,7 @@ public:
 
 protected:
     explicit AudioContext(Document&, const AudioContextOptions& = { });
-    AudioContext(Document&, unsigned numberOfChannels, RefPtr<AudioBuffer>&& renderTarget);
+    AudioContext(Document&, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget);
 
     bool willBeginPlayback();
 

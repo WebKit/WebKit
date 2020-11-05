@@ -41,7 +41,6 @@ public:
     virtual ~DefaultAudioDestinationNode();
 
     unsigned framesPerBuffer() const;
-    float sampleRate() const final { return m_sampleRate; }
     
     void startRendering(CompletionHandler<void(Optional<Exception>&&)>&&) final;
 
@@ -67,7 +66,6 @@ private:
     RefPtr<AudioDestination> m_destination;
     String m_inputDeviceId;
     unsigned m_numberOfInputChannels { 0 };
-    float m_sampleRate { 0 };
 };
 
 } // namespace WebCore

@@ -35,7 +35,7 @@ namespace WebCore {
 class AudioDestinationNode : public AudioNode, public AudioIOCallback {
     WTF_MAKE_ISO_ALLOCATED(AudioDestinationNode);
 public:
-    explicit AudioDestinationNode(BaseAudioContext&);
+    AudioDestinationNode(BaseAudioContext&, float sampleRate);
     virtual ~AudioDestinationNode();
     
     // AudioNode   
@@ -44,6 +44,8 @@ public:
     // The audio hardware calls render() to get the next render quantum of audio into destinationBus.
     // It will optionally give us local/live audio input in sourceBus (if it's not 0).
     void render(AudioBus* sourceBus, AudioBus* destinationBus, size_t numberOfFrames, const AudioIOPosition& outputPosition) override;
+
+    float sampleRate() const final { return m_sampleRate; }
 
     size_t currentSampleFrame() const { return m_currentSampleFrame; }
     double currentTime() const { return currentSampleFrame() / static_cast<double>(sampleRate()); }
@@ -73,6 +75,7 @@ protected:
     // Counts the number of sample-frames processed by the destination.
     std::atomic<size_t> m_currentSampleFrame { 0 };
 
+    float m_sampleRate;
     bool m_isSilent { true };
     bool m_isEffectivelyPlayingAudio { false };
     bool m_muted { false };

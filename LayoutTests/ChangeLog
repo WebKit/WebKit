@@ -1,3 +1,15 @@
+2020-11-05  Chris Dumez  <cdumez@apple.com>
+
+        Crash in AudioBuffer::sampleRate()
+        https://bugs.webkit.org/show_bug.cgi?id=218603
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * webaudio/OfflineAudioContext-bad-buffer-crash-expected.txt: Added.
+        * webaudio/OfflineAudioContext-bad-buffer-crash.html: Added.
+
 2020-11-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         fast/forms/search/search-size-with-decorations.html is failing on Catalina.
