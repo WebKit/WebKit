@@ -58,6 +58,8 @@ Blocked access to external URL http://example.com:995/
 Blocked access to external URL http://example.com:2049/
 Blocked access to external URL http://example.com:3659/
 Blocked access to external URL http://example.com:4045/
+Blocked access to external URL http://example.com:5060/
+Blocked access to external URL http://example.com:5061/
 Blocked access to external URL http://example.com:6000/
 Blocked access to external URL http://example.com:6665/
 Blocked access to external URL http://example.com:6666/
@@ -126,6 +128,8 @@ PASS Request on bad port 995 should throw TypeError.
 PASS Request on bad port 2049 should throw TypeError.
 PASS Request on bad port 3659 should throw TypeError.
 PASS Request on bad port 4045 should throw TypeError.
+PASS Request on bad port 5060 should throw TypeError.
+PASS Request on bad port 5061 should throw TypeError.
 PASS Request on bad port 6000 should throw TypeError.
 PASS Request on bad port 6665 should throw TypeError.
 PASS Request on bad port 6666 should throw TypeError.

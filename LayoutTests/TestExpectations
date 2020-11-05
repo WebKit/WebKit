@@ -3056,8 +3056,6 @@ imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/readyState/007.h
 imported/w3c/web-platform-tests/websockets/cookies/001.html [ Pass Failure ]
 
 # Timing out WebSocket tests.
-imported/w3c/web-platform-tests/websockets/Create-blocked-port.any.worker.html [ Skip ]
-imported/w3c/web-platform-tests/websockets/Create-blocked-port.any.html [ Skip ]
 imported/w3c/web-platform-tests/websockets/binaryType-wrong-value.any.html [ Skip ]
 imported/w3c/web-platform-tests/websockets/binaryType-wrong-value.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/websockets/bufferedAmount-unchanged-by-sync-xhr.any.html [ Skip ]

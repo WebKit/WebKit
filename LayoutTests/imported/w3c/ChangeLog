@@ -1,3 +1,24 @@
+2020-11-05  Youenn Fablet  <youenn@apple.com>
+
+        Consider blocking ports 5060 and 5061
+        https://bugs.webkit.org/show_bug.cgi?id=218557
+        <rdar://problem/71031479>
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/fetch/api/request/request-bad-port.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/request/request-bad-port.any.html: Added.
+        * web-platform-tests/fetch/api/request/request-bad-port.any.js: Added.
+        (BLOCKED_PORTS_LIST.map):
+        * web-platform-tests/fetch/api/request/request-bad-port.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/request/request-bad-port.any.worker.html: Added.
+        * web-platform-tests/fetch/api/request/request-bad-port.html: Removed.
+        * web-platform-tests/tools/wptserve/wptserve/utils.py:
+        (is_bad_port):
+        * web-platform-tests/websockets/Create-blocked-port.any-expected.txt:
+        * web-platform-tests/websockets/Create-blocked-port.any.js:
+        * web-platform-tests/websockets/Create-blocked-port.any.worker-expected.txt:
+
 2020-11-05  Ziran Sun  <zsun@igalia.com>
 
         [css-grid] Move tests grid-columns-rows-get-set-multiple and grid-content-sized-columns-resolution to WPT folder
