@@ -1,3 +1,13 @@
+2020-11-05  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/html/browsers & web-platform-tests/html/dom tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=218590
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations:
+        * tests-options.json:
+
 2020-11-05  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r263179): CSS checkbox no longer visible in iOS 14

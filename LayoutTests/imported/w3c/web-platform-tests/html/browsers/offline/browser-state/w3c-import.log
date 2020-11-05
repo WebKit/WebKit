@@ -14,5 +14,4 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/offline/browser-state/navigator_online_event-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/offline/browser-state/navigator_online_online.https.html

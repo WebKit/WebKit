@@ -14,6 +14,5 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/offline/manifest_url_check.https.https.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/offline/no-appcache-in-shared-workers-historical.https.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/offline/no-appcache-in-shared-workers-historical.js
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/images/bypass-cache-revalidation.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/images/image.py

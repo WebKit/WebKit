@@ -2016,45 +2016,6 @@ FAIL iframe.allowUserMedia: IDL set to -Infinity assert_equals: IDL get expected
 FAIL iframe.allowUserMedia: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
 FAIL iframe.allowUserMedia: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
 FAIL iframe.allowUserMedia: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
-FAIL iframe.allowPaymentRequest: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
-FAIL iframe.allowPaymentRequest: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
-FAIL iframe.allowPaymentRequest: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowPaymentRequest: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowPaymentRequest: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowPaymentRequest: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowPaymentRequest: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowPaymentRequest: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowPaymentRequest: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowPaymentRequest: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowPaymentRequest: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowPaymentRequest: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowPaymentRequest: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowPaymentRequest: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowPaymentRequest: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowPaymentRequest: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowPaymentRequest: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowPaymentRequest: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowPaymentRequest: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowPaymentRequest: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowPaymentRequest: setAttribute() to "allowPaymentRequest" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowPaymentRequest: IDL set to "" assert_equals: hasAttribute() expected false but got true
-FAIL iframe.allowPaymentRequest: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
-FAIL iframe.allowPaymentRequest: IDL set to undefined assert_equals: hasAttribute() expected false but got true
-FAIL iframe.allowPaymentRequest: IDL set to null assert_equals: hasAttribute() expected false but got true
-FAIL iframe.allowPaymentRequest: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
-FAIL iframe.allowPaymentRequest: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
-FAIL iframe.allowPaymentRequest: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
-FAIL iframe.allowPaymentRequest: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
-FAIL iframe.allowPaymentRequest: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
-PASS iframe.allowPaymentRequest: IDL set to true
-FAIL iframe.allowPaymentRequest: IDL set to false assert_equals: hasAttribute() expected false but got true
-FAIL iframe.allowPaymentRequest: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
-FAIL iframe.allowPaymentRequest: IDL set to NaN assert_equals: hasAttribute() expected false but got true
-FAIL iframe.allowPaymentRequest: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
-FAIL iframe.allowPaymentRequest: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
-FAIL iframe.allowPaymentRequest: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
-FAIL iframe.allowPaymentRequest: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
-FAIL iframe.allowPaymentRequest: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS iframe.width: typeof IDL attribute
 PASS iframe.width: IDL get with DOM attribute unset
 PASS iframe.width: setAttribute() to ""

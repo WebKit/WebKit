@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-window.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/browsing-context.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/clear-window-name.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/document-domain-nested-navigate.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/document-domain-nested-set.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/document-domain-nested.window.js
@@ -23,11 +24,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/embedded-opener-a-form.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/embedded-opener-remove-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/embedded-opener.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-cross-origin-close-manual.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-cross-origin-window-name-manual.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/iframe-cross-origin-print.sub-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/iframe-cross-origin-print.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/iframe-nested-print-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/iframe-nested-print.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-null-opener.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-window-name.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/opener-cross-origin-manual.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/targeting-cross-origin-nested-browsing-contexts.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/targeting-multiple-cross-origin-manual.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/targeting-with-embedded-null-in-target.html

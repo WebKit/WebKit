@@ -1,4 +1,5 @@
 
-FAIL Link with onclick form submit to javascript url with delayed document.write and href navigation  assert_equals: expected "href" but got "write"
+Harness Error (TIMEOUT), message = null
 
-Test
+TIMEOUT Link with onclick form submit to javascript url with delayed document.write and href navigation  Test timed out
+

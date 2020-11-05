@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/browsing-context-window.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/document-domain-setter.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/echo-window-name.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/iframe-nested-cross-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/message-parent.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/nested-post-to-opener.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/noreferrer-window-name.html
@@ -24,6 +25,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/opener-cross-origin-end.txt
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/opener-cross-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/post-to-opener.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/restore-window-name-back.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/restore-window-name.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/target-cross-origin.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/window-close-button.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/window-name-stash.py
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/window-name.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/window-opener.html
