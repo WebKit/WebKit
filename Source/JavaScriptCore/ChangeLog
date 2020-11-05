@@ -1,3 +1,15 @@
+2020-11-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Apply JITCage to CSSJIT
+        https://bugs.webkit.org/show_bug.cgi?id=218587
+
+        Reviewed by Mark Lam.
+
+        * llint/LLIntData.cpp:
+        * llint/LowLevelInterpreter.asm:
+        * runtime/JSCPtrTag.h:
+        * yarr/YarrJIT.cpp:
+
 2020-11-04  David Kilzer  <ddkilzer@apple.com>
 
         WebKit should remove unused debug variant support

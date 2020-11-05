@@ -27,10 +27,10 @@
 
 #if ENABLE(CSS_SELECTOR_JIT)
 
-#include "CSSPtrTag.h"
 #include "RegisterAllocator.h"
 #include "StackAllocator.h"
 #include <JavaScriptCore/GPRInfo.h>
+#include <JavaScriptCore/JSCPtrTag.h>
 #include <JavaScriptCore/MacroAssembler.h>
 
 namespace WebCore {

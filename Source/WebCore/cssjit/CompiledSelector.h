@@ -27,8 +27,8 @@
 
 #if ENABLE(CSS_SELECTOR_JIT)
 
-#include "CSSPtrTag.h"
 #include "CSSSelector.h"
+#include <JavaScriptCore/JSCPtrTag.h>
 #include <JavaScriptCore/MacroAssemblerCodeRef.h>
 
 #define CSS_SELECTOR_JIT_PROFILING 0
@@ -45,7 +45,7 @@ enum class SelectorCompilationStatus : uint8_t {
 struct CompiledSelector {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     SelectorCompilationStatus status { SelectorCompilationStatus::NotCompiled };
-    JSC::MacroAssemblerCodeRef<CSSSelectorPtrTag> codeRef;
+    JSC::MacroAssemblerCodeRef<JSC::CSSSelectorPtrTag> codeRef;
 
 #if defined(CSS_SELECTOR_JIT_PROFILING) && CSS_SELECTOR_JIT_PROFILING
     unsigned useCount { 0 };

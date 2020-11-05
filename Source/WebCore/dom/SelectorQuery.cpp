@@ -396,8 +396,8 @@ ALWAYS_INLINE void SelectorDataList::executeSingleMultiSelectorData(const Contai
 }
 
 #if ENABLE(CSS_SELECTOR_JIT)
-template <typename SelectorQueryTrait>
-ALWAYS_INLINE void SelectorDataList::executeCompiledSimpleSelectorChecker(const ContainerNode& searchRootNode, SelectorCompiler::QuerySelectorSimpleSelectorChecker selectorChecker, typename SelectorQueryTrait::OutputType& output, const SelectorData& selectorData) const
+template <typename SelectorQueryTrait, typename Checker>
+ALWAYS_INLINE void SelectorDataList::executeCompiledSimpleSelectorChecker(const ContainerNode& searchRootNode, Checker selectorChecker, typename SelectorQueryTrait::OutputType& output, const SelectorData& selectorData) const
 {
     for (auto& element : descendantsOfType<Element>(const_cast<ContainerNode&>(searchRootNode))) {
         selectorData.compiledSelector.wasUsed();
@@ -410,8 +410,8 @@ ALWAYS_INLINE void SelectorDataList::executeCompiledSimpleSelectorChecker(const 
     }
 }
 
-template <typename SelectorQueryTrait>
-ALWAYS_INLINE void SelectorDataList::executeCompiledSelectorCheckerWithCheckingContext(const ContainerNode& rootNode, const ContainerNode& searchRootNode, SelectorCompiler::QuerySelectorSelectorCheckerWithCheckingContext selectorChecker, typename SelectorQueryTrait::OutputType& output, const SelectorData& selectorData) const
+template <typename SelectorQueryTrait, typename Checker>
+ALWAYS_INLINE void SelectorDataList::executeCompiledSelectorCheckerWithCheckingContext(const ContainerNode& rootNode, const ContainerNode& searchRootNode, Checker selectorChecker, typename SelectorQueryTrait::OutputType& output, const SelectorData& selectorData) const
 {
     SelectorChecker::CheckingContext checkingContext(SelectorChecker::Mode::QueryingRules);
     checkingContext.scope = rootNode.isDocumentNode() ? nullptr : &rootNode;
@@ -437,13 +437,11 @@ ALWAYS_INLINE void SelectorDataList::executeCompiledSingleMultiSelectorData(cons
             selector.compiledSelector.wasUsed();
 
             bool matched = false;
-            if (selector.compiledSelector.status == SelectorCompilationStatus::SimpleSelectorChecker) {
-                auto selectorChecker = SelectorCompiler::querySelectorSimpleSelectorCheckerFunction(selector.compiledSelector);
-                matched = selectorChecker(&element);
-            } else {
+            if (selector.compiledSelector.status == SelectorCompilationStatus::SimpleSelectorChecker)
+                matched = SelectorCompiler::querySelectorSimpleSelectorChecker(selector.compiledSelector, &element);
+            else {
                 ASSERT(selector.compiledSelector.status == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
-                auto selectorChecker = SelectorCompiler::querySelectorSelectorCheckerFunctionWithCheckingContext(selector.compiledSelector);
-                matched = selectorChecker(&element, &checkingContext);
+                matched = SelectorCompiler::querySelectorSelectorCheckerWithCheckingContext(selector.compiledSelector, &element, &checkingContext);
             }
             if (matched) {
                 SelectorQueryTrait::appendOutputForElement(output, &element);
@@ -524,12 +522,14 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, typename S
         CompiledSingleCase:
         const SelectorData& selectorData = m_selectors.first();
         if (selectorData.compiledSelector.status == SelectorCompilationStatus::SimpleSelectorChecker) {
-            auto selectorChecker = SelectorCompiler::querySelectorSimpleSelectorCheckerFunction(selectorData.compiledSelector);
-            executeCompiledSimpleSelectorChecker<SelectorQueryTrait>(*searchRootNode, selectorChecker, output, selectorData);
+            executeCompiledSimpleSelectorChecker<SelectorQueryTrait>(*searchRootNode, [&] (const Element* element) {
+                return SelectorCompiler::querySelectorSimpleSelectorChecker(selectorData.compiledSelector, element);
+            }, output, selectorData);
         } else {
             ASSERT(selectorData.compiledSelector.status == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
-            auto selectorChecker = SelectorCompiler::querySelectorSelectorCheckerFunctionWithCheckingContext(selectorData.compiledSelector);
-            executeCompiledSelectorCheckerWithCheckingContext<SelectorQueryTrait>(rootNode, *searchRootNode, selectorChecker, output, selectorData);
+            executeCompiledSelectorCheckerWithCheckingContext<SelectorQueryTrait>(rootNode, *searchRootNode, [&] (const Element* element, const SelectorChecker::CheckingContext* context) {
+                return SelectorCompiler::querySelectorSelectorCheckerWithCheckingContext(selectorData.compiledSelector, element, context);
+            }, output, selectorData);
         }
         break;
         }

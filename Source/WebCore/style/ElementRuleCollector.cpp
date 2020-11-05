@@ -457,12 +457,11 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
     if (compiledSelector.status == SelectorCompilationStatus::SimpleSelectorChecker) {
         compiledSelector.wasUsed();
 
-        auto selectorChecker = SelectorCompiler::ruleCollectorSimpleSelectorCheckerFunction(compiledSelector);
 #if !ASSERT_MSG_DISABLED
         unsigned ignoreSpecificity;
-        ASSERT_WITH_MESSAGE(!selectorChecker(&element(), &ignoreSpecificity) || m_pseudoElementRequest.pseudoId == PseudoId::None, "When matching pseudo elements, we should never compile a selector checker without context unless it cannot match anything.");
+        ASSERT_WITH_MESSAGE(!SelectorCompiler::ruleCollectorSimpleSelectorChecker(compiledSelector, &element(), &ignoreSpecificity) || m_pseudoElementRequest.pseudoId == PseudoId::None, "When matching pseudo elements, we should never compile a selector checker without context unless it cannot match anything.");
 #endif
-        bool selectorMatches = selectorChecker(&element(), &specificity);
+        bool selectorMatches = SelectorCompiler::ruleCollectorSimpleSelectorChecker(compiledSelector, &element(), &specificity);
 
         if (selectorMatches && ruleData.containsUncommonAttributeSelector())
             m_didMatchUncommonAttributeSelector = true;
@@ -482,9 +481,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
 #if ENABLE(CSS_SELECTOR_JIT)
     if (compiledSelector.status == SelectorCompilationStatus::SelectorCheckerWithCheckingContext) {
         compiledSelector.wasUsed();
-
-        auto selectorChecker = SelectorCompiler::ruleCollectorSelectorCheckerFunctionWithCheckingContext(compiledSelector);
-        selectorMatches = selectorChecker(&element(), &context, &specificity);
+        selectorMatches = SelectorCompiler::ruleCollectorSelectorCheckerWithCheckingContext(compiledSelector, &element(), &context, &specificity);
     } else
 #endif // ENABLE(CSS_SELECTOR_JIT)
     {

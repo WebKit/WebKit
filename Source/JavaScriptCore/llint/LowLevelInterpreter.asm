@@ -260,6 +260,7 @@ const JSEntrySlowPathPtrTag = constexpr JSEntrySlowPathPtrTag
 const NativeToJITGatePtrTag = constexpr NativeToJITGatePtrTag
 const ExceptionHandlerPtrTag = constexpr ExceptionHandlerPtrTag
 const YarrEntryPtrTag = constexpr YarrEntryPtrTag
+const CSSSelectorPtrTag = constexpr CSSSelectorPtrTag
 const NoPtrTag = constexpr NoPtrTag
  
 
@@ -1610,6 +1611,17 @@ end
     functionEpilogue()
     ret
 
+# unsigned vmEntryToCSSJIT(uintptr_t, uintptr_t, uintptr_t, const void* codePtr);
+if ARM64 or ARM64E
+emit ".globl _vmEntryToCSSJIT"
+emit "_vmEntryToCSSJIT:"
+    functionPrologue()
+    jmp t3, CSSSelectorPtrTag
+    emit ".globl _vmEntryToCSSJITAfter"
+    emit "_vmEntryToCSSJITAfter:"
+    functionEpilogue()
+    ret
+end
 
 if not (C_LOOP or C_LOOP_WIN)
     # void sanitizeStackForVMImpl(VM* vm)

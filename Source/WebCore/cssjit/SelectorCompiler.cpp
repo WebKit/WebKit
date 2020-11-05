@@ -317,13 +317,15 @@ struct BacktrackingLevel {
 class SelectorCodeGenerator {
 public:
     SelectorCodeGenerator(const CSSSelector*, SelectorContext);
-    SelectorCompilationStatus compile(JSC::MacroAssemblerCodeRef<CSSSelectorPtrTag>&);
+    SelectorCompilationStatus compile(JSC::MacroAssemblerCodeRef<JSC::CSSSelectorPtrTag>&);
 
 private:
     static const Assembler::RegisterID returnRegister;
     static const Assembler::RegisterID elementAddressRegister;
     static const Assembler::RegisterID checkingContextRegister;
     static const Assembler::RegisterID callFrameRegister;
+
+    void generateReturn();
 
     void generateSelectorChecker();
     void generateSelectorCheckerExcludingPseudoElements(Assembler::JumpList& failureCases, const SelectorFragmentList&);
@@ -1437,7 +1439,7 @@ void computeBacktrackingMemoryRequirements(SelectorFragmentList& selectorFragmen
     }
 }
 
-inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::MacroAssemblerCodeRef<CSSSelectorPtrTag>& codeRef)
+inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::MacroAssemblerCodeRef<JSC::CSSSelectorPtrTag>& codeRef)
 {
     switch (m_functionType) {
     case FunctionType::SimpleSelectorChecker:
@@ -1445,9 +1447,8 @@ inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::MacroAssemb
         generateSelectorChecker();
         break;
     case FunctionType::CannotMatchAnything:
-        m_assembler.tagReturnAddress();
         m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
-        m_assembler.ret();
+        generateReturn();
         break;
     case FunctionType::CannotCompile:
         return SelectorCompilationStatus::CannotCompile;
@@ -1466,9 +1467,9 @@ inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::MacroAssemb
         linkBuffer.link(m_functionCalls[i].first, m_functionCalls[i].second);
 
 #if CSS_SELECTOR_JIT_DEBUGGING
-    codeRef = linkBuffer.finalizeCodeWithDisassembly(CSSSelectorPtrTag, "CSS Selector JIT for \"%s\"", m_originalSelector->selectorText().utf8().data());
+    codeRef = linkBuffer.finalizeCodeWithDisassembly(JSC::CSSSelectorPtrTag, "CSS Selector JIT for \"%s\"", m_originalSelector->selectorText().utf8().data());
 #else
-    codeRef = FINALIZE_CODE(linkBuffer, CSSSelectorPtrTag, "CSS Selector JIT");
+    codeRef = FINALIZE_CODE(linkBuffer, JSC::CSSSelectorPtrTag, "CSS Selector JIT");
 #endif
 
     if (m_functionType == FunctionType::SimpleSelectorChecker || m_functionType == FunctionType::CannotMatchAnything)
@@ -1946,6 +1947,15 @@ inline void SelectorCodeGenerator::generateEpilogue(StackAllocator& stackAllocat
 #endif
 }
 
+inline void SelectorCodeGenerator::generateReturn()
+{
+#if CPU(ARM64)
+    m_assembler.farJump(Assembler::TrustedImmPtr(retagCodePtr<void*, CFunctionPtrTag, JSC::OperationPtrTag>(&vmEntryToCSSJITAfter)), JSC::OperationPtrTag);
+#else
+    m_assembler.ret();
+#endif
+}
+
 static bool isAdjacentRelation(FragmentRelation relation)
 {
     return relation == FragmentRelation::DirectAdjacent || relation == FragmentRelation::IndirectAdjacent;
@@ -1958,7 +1968,6 @@ static bool shouldMarkStyleIsAffectedByPreviousSibling(const SelectorFragment& f
 
 void SelectorCodeGenerator::generateSelectorChecker()
 {
-    m_assembler.tagReturnAddress();
     pushMacroAssemblerRegisters();
     StackAllocator earlyFailureStack = m_stackAllocator;
 
@@ -1989,7 +1998,7 @@ void SelectorCodeGenerator::generateSelectorChecker()
     if (m_selectorFragments.stackRequirements > maximumBacktrackingAllocations) {
         m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
         popMacroAssemblerRegisters(m_stackAllocator);
-        m_assembler.ret();
+        generateReturn();
         return;
     }
 
@@ -2054,7 +2063,7 @@ void SelectorCodeGenerator::generateSelectorChecker()
             // Success.
             m_assembler.move(Assembler::TrustedImm32(1), returnRegister);
             popMacroAssemblerRegisters(successStack);
-            m_assembler.ret();
+            generateReturn();
 
             // Failure.
             ASSERT_WITH_MESSAGE(failureOnFunctionEntry.empty(), "Early failure on function entry is used for pseudo element. When early failure is used, function type is SelectorCheckerWithCheckingContext.");
@@ -2062,7 +2071,7 @@ void SelectorCodeGenerator::generateSelectorChecker()
                 failureCases.link(&m_assembler);
                 m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
                 popMacroAssemblerRegisters(failureStack);
-                m_assembler.ret();
+                generateReturn();
             } else
                 failureStack = successStack;
 
@@ -2091,14 +2100,14 @@ void SelectorCodeGenerator::generateSelectorChecker()
     if (needsEpilogue)
         generateEpilogue(successStack);
     popMacroAssemblerRegisters(successStack);
-    m_assembler.ret();
+    generateReturn();
 
     // Early failure on function entry case.
     if (!failureOnFunctionEntry.empty()) {
         failureOnFunctionEntry.link(&m_assembler);
         m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
         popMacroAssemblerRegisters(earlyFailureStack);
-        m_assembler.ret();
+        generateReturn();
     } else
         earlyFailureStack = successStack;
     m_stackAllocator.merge(WTFMove(successStack), WTFMove(earlyFailureStack));

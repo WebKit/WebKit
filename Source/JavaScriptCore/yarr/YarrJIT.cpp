@@ -3816,8 +3816,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
 #endif
 
 #if CPU(ARM64)
-        move(TrustedImmPtr(retagCodePtr<void*, CFunctionPtrTag, OperationPtrTag>(&vmEntryToYarrJITAfter)), regT0);
-        farJump(regT0, OperationPtrTag);
+        farJump(TrustedImmPtr(retagCodePtr<void*, CFunctionPtrTag, OperationPtrTag>(&vmEntryToYarrJITAfter)), OperationPtrTag);
 #else
         ret();
 #endif
