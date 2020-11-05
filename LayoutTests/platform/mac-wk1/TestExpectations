@@ -1200,3 +1200,5 @@ webkit.org/b/217761 [ Mojave+ Debug ] webgl/2.0.0/conformance/extensions/webgl-c
 webkit.org/b/217934 inspector/debugger/breakpoint-resolve-when-script-added.html [ Skip ]
 
 webkit.org/b/218341 [ Debug ] inspector/dom-debugger/attribute-modified-style.html [ Pass Timeout ]
+
+webkit.org/b/218591 fast/text/canvas-color-fonts/COLR.html [ ImageOnlyFailure ]
