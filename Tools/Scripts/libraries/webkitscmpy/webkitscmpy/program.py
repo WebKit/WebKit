@@ -116,6 +116,40 @@ class Find(Command):
         return 0
 
 
+class Checkout(Command):
+    name = 'checkout'
+    help = 'Given an identifier, revision or hash, normalize and checkout that commit'
+
+    @classmethod
+    def parser(cls, parser, repository, loggers=None):
+        arguments.LoggingGroup(
+            parser,
+            loggers=loggers,
+            help='{} amount of logging and commit information displayed'
+        )
+
+        parser.add_argument(
+            'argument', nargs=1,
+            type=str, default=None,
+            help='String representation of a commit or branch to be normalized',
+        )
+
+    @classmethod
+    def main(cls, args, repository):
+        try:
+            commit = repository.checkout(args.argument[0])
+        except (local.Scm.Exception, ValueError) as exception:
+            # ValueErrors and Scm exceptions usually contain enough information to be displayed
+            # to the user as an error
+            sys.stderr.write(str(exception) + '\n')
+            return 1
+
+        if not commit:
+            sys.stderr.write("Failed to map '{}'\n".format(args.argument[0]))
+            return 1
+        return 0
+
+
 def main(args=None, path=None, loggers=None):
     logging.basicConfig(level=logging.WARNING)
 
@@ -130,7 +164,7 @@ def main(args=None, path=None, loggers=None):
     arguments.LoggingGroup(parser)
     subparsers = parser.add_subparsers(help='sub-command help')
 
-    for program in [Find]:
+    for program in [Find, Checkout]:
         subparser = subparsers.add_parser(program.name, help=program.help)
         subparser.set_defaults(main=program.main)
         program.parser(subparser, repository=repository, loggers=loggers)

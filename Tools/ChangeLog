@@ -1,3 +1,36 @@
+2020-11-04  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Add checkout command
+        https://bugs.webkit.org/show_bug.cgi?id=218360
+        <rdar://problem/70828312>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.checkout): Checkout repository to specified commit, branch or tag.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/scm.py:
+        (Scm.checkout): Checkout repository to specified commit, branch or tag.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn.checkout): Checkout repository to specified commit, branch or tag.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        (Git.__init__): Add concept of HEAD commit, mock `git checkout` command.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/svn.py:
+        (Svn.__init__): Add concept of HEAD commit, mock `svn up -r *`.
+        (Svn.branch): The HEAD's branch is the current branch.
+        (Svn.find): Use the HEAD of the repository as the default.
+        (Svn.up): Change the repository's HEAD.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program.py:
+        (Checkout): Checkout repository to specified commit.
+        (main): Add Checkout subcommand.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/checkout_unittest.py: Added.
+        (TestCheckout):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGit):
+        (TestGit.test_checkout):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/svn_unittest.py:
+        (TestSvn):
+        (TestSvn.test_checkout):
+
 2020-11-04  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] remove unnecessary code from loadConfig

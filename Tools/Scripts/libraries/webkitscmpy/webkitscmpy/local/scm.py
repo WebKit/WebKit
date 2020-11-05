@@ -143,6 +143,9 @@ class Scm(object):
             branch=result.branch,
         )
 
+    def checkout(self, argument):
+        raise NotImplementedError()
+
     def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None):
         raise NotImplementedError()
 

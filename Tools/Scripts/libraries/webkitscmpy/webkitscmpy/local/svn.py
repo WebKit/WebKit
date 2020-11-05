@@ -23,6 +23,7 @@
 import bisect
 import calendar
 import json
+import logging
 import os
 import re
 import subprocess
@@ -31,7 +32,7 @@ import sys
 from datetime import datetime, timedelta
 from dateutil import tz
 
-from webkitcorepy import run, decorators
+from webkitcorepy import log, run, decorators
 from webkitscmpy.local.scm import Scm
 from webkitscmpy import Commit, Contributor, Version
 
@@ -392,3 +393,14 @@ class Svn(Scm):
             author=author,
             message=message,
         )
+
+    def checkout(self, argument):
+        commit = self.find(argument)
+        if not commit:
+            return None
+
+        command = [self.executable(), 'up', '-r', str(commit.revision)]
+        if log.level > logging.WARNING:
+            command.append('-q')
+
+        return None if run(command, cwd=self.root_path).returncode else commit

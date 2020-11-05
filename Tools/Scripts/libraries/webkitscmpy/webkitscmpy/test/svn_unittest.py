@@ -189,7 +189,6 @@ class TestSvn(unittest.TestCase):
 
                 mock_repo.connected = False
                 commit = local.Svn(dirname).commit()
-                print(commit.revision)
                 self.assertEqual('4@trunk', str(commit))
 
                 with self.assertRaises(local.Svn.Exception):
@@ -204,3 +203,17 @@ class TestSvn(unittest.TestCase):
     def test_tag_previous(self):
         with mocks.local.Svn(self.path), OutputCapture():
             self.assertEqual(7, local.Svn(self.path).commit(identifier='2.2@tags/tag-1').revision)
+
+    def test_checkout(self):
+        with mocks.local.Svn(self.path), OutputCapture():
+            repository = local.Svn(self.path)
+
+            self.assertEqual(6, repository.commit().revision)
+            self.assertEqual(5, repository.checkout('r5').revision)
+            self.assertEqual(5, repository.commit().revision)
+
+            self.assertEqual(4, repository.checkout('3@trunk').revision)
+            self.assertEqual(4, repository.commit().revision)
+
+            self.assertEqual(9, repository.checkout('tag-1').revision)
+            self.assertEqual(9, repository.commit().revision)

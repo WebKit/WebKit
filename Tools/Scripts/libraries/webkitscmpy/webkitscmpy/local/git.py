@@ -20,13 +20,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
+import logging
 import re
 import six
 
 from webkitcorepy import run, decorators, TimeoutExpired
 from webkitscmpy.local import Scm
-from webkitscmpy import Commit, Contributor
+from webkitscmpy import Commit, Contributor, log
 
 
 class Git(Scm):
@@ -286,5 +286,34 @@ class Git(Scm):
             cwd=self.root_path, capture_output=True, encoding='utf-8',
         )
         if output.returncode:
-            raise ValueError("'{}' is not an arguement recognized by git".format(argument))
+            raise ValueError("'{}' is not an argument recognized by git".format(argument))
         return self.commit(hash=output.stdout.rstrip())
+
+    def checkout(self, argument):
+        if not isinstance(argument, six.string_types):
+            raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
+
+        if log.level > logging.WARNING:
+            log_arg = ['-q']
+        elif log.level < logging.WARNING:
+            log_arg = ['--progress']
+        else:
+            log_arg = []
+
+        parsed_commit = Commit.parse(argument, do_assert=False)
+        if parsed_commit:
+            commit = self.commit(
+                hash=parsed_commit.hash,
+                revision=parsed_commit.revision,
+                identifier=parsed_commit.identifier,
+                branch=parsed_commit.branch,
+            )
+            return None if run(
+                [self.executable(), 'checkout'] + [commit.hash] + log_arg,
+                cwd=self.root_path,
+            ).returncode else commit
+
+        return None if run(
+            [self.executable(), 'checkout'] + [argument] + log_arg,
+            cwd=self.root_path,
+        ).returncode else self.commit()

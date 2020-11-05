@@ -45,9 +45,8 @@ class Svn(mocks.Subprocess):
             date=datetime.fromtimestamp(commit.timestamp).strftime('%Y-%m-%d %H:%M:%S {} (%a, %d %b %Y)'.format(cls.UTC_OFFSET)),
         )
 
-    def __init__(self, path='/.invalid-svn', branch=None, remote=None, branches=None):
+    def __init__(self, path='/.invalid-svn', remote=None, branches=None):
         self.path = path
-        self.branch = branch or 'trunk'
         self.remote = remote or 'https://svn.mock.org/repository/{}'.format(os.path.basename(path))
 
         self.branches = branches or []
@@ -140,6 +139,7 @@ class Svn(mocks.Subprocess):
                 message='10th commit\n',
             ),
         ]
+        self.head = self.commits['trunk'][3]
 
         super(Svn, self).__init__(
             mocks.Subprocess.Route(
@@ -201,6 +201,11 @@ class Svn(mocks.Subprocess):
                     revision=args[5],
                 ) if self.connected else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
+                self.executable, 'up', '-r', re.compile(r'\d+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs:
+                    mocks.ProcessCompletion(returncode=0) if self.up(args[3]) else mocks.ProcessCompletion(returncode=1)
+            ), mocks.Subprocess.Route(
                 self.executable,
                 cwd=self.path,
                 completion=mocks.ProcessCompletion(
@@ -215,6 +220,10 @@ class Svn(mocks.Subprocess):
                 )
             ),
         )
+
+    @property
+    def branch(self):
+        return self.head.branch
 
     @property
     def tags(self):
@@ -275,11 +284,19 @@ class Svn(mocks.Subprocess):
 
     def find(self, branch=None, revision=None):
         if not branch and not revision:
-            return self.commits['trunk'][-1]
+            return self.head
         for candidate in [branch] if branch else sorted(self.commits.keys()):
             if not revision:
+                if self.head.branch == candidate:
+                    return self.head
                 return self.commits[candidate][-1]
             for commit in self.commits[candidate]:
                 if str(commit.revision) == str(revision):
                     return commit
         return None
+
+    def up(self, revision):
+        commit = self.find(revision=revision)
+        if commit:
+            self.head = commit
+        return True if commit else False
