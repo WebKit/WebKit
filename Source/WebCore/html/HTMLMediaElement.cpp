@@ -6023,6 +6023,9 @@ void HTMLMediaElement::exitFullscreen()
         }
     }
 
+    if (!document().page())
+        return;
+
     if (document().activeDOMObjectsAreSuspended() || document().activeDOMObjectsAreStopped()) {
         fullscreenModeChanged(VideoFullscreenModeNone);
         document().page()->chrome().client().exitVideoFullscreenToModeWithoutAnimation(downcast<HTMLVideoElement>(*this), VideoFullscreenModeNone);
