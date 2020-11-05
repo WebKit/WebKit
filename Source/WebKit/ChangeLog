@@ -1,3 +1,28 @@
+2020-11-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: session can have more than one active input source of the same type
+        https://bugs.webkit.org/show_bug.cgi?id=218382
+
+        Reviewed by Brian Burg.
+
+        We are failing in that case, and the dispatcher assumes it's not possible, but the spec doesn't say there's such
+        limitation and there's a WPT infrastructure test checking that (infrastructure/testdriver/actions/eventOrder.html).
+
+        * UIProcess/Automation/SimulatedInputDispatcher.cpp:
+        (WebKit::SimulatedInputKeyFrame::keyFrameFromStateOfInputSources): Input sources are now stored in a HashMap.
+        (WebKit::SimulatedInputKeyFrame::keyFrameToResetInputSources): Ditto.
+        (WebKit::SimulatedInputDispatcher::run): We don't need to copy the given input sources, since they are owned by
+        the session.
+        (WebKit::SimulatedInputDispatcher::finishDispatching): Ditto.
+        * UIProcess/Automation/SimulatedInputDispatcher.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::WebAutomationSession): Do not create initial input sources for each type.
+        (WebKit::WebAutomationSession::performInteractionSequence): Check there aren't multiple input sources with the
+        same ID, but don't fail if there are multiple input sources with the same type.
+        (WebKit::WebAutomationSession::cancelInteractionSequence): Clear the active input sources.
+        (WebKit::WebAutomationSession::inputSourceForType): Removed.
+        * UIProcess/Automation/WebAutomationSession.h:
+
 2020-11-04  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Move the internal GPU rendering flags from WebPage to WebProcess

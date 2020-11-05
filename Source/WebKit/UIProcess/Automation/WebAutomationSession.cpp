@@ -81,22 +81,6 @@ WebAutomationSession::WebAutomationSession()
     , m_domainNotifier(makeUnique<AutomationFrontendDispatcher>(m_frontendRouter))
     , m_loadTimer(RunLoop::main(), this, &WebAutomationSession::loadTimerFired)
 {
-#if ENABLE(WEBDRIVER_ACTIONS_API)
-    // Set up canonical input sources to be used for 'performInteractionSequence' and 'cancelInteractionSequence'.
-#if ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
-    m_inputSources.add(SimulatedInputSource::create(SimulatedInputSourceType::Touch));
-#endif
-#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
-    m_inputSources.add(SimulatedInputSource::create(SimulatedInputSourceType::Mouse));
-#endif
-#if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
-    m_inputSources.add(SimulatedInputSource::create(SimulatedInputSourceType::Keyboard));
-#endif
-#if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
-    m_inputSources.add(SimulatedInputSource::create(SimulatedInputSourceType::Wheel));
-#endif
-    m_inputSources.add(SimulatedInputSource::create(SimulatedInputSourceType::Null));
-#endif // ENABLE(WEBDRIVER_ACTIONS_API)
 }
 
 WebAutomationSession::~WebAutomationSession()
@@ -1577,17 +1561,6 @@ SimulatedInputDispatcher& WebAutomationSession::inputDispatcherForPage(WebPagePr
     }).iterator->value;
 }
 
-SimulatedInputSource* WebAutomationSession::inputSourceForType(SimulatedInputSourceType type) const
-{
-    // FIXME: this should use something like Vector's findMatching().
-    for (auto& inputSource : m_inputSources) {
-        if (inputSource->type == type)
-            return &inputSource.get();
-    }
-
-    return nullptr;
-}
-
 // MARK: SimulatedInputDispatcher::Client API
 void WebAutomationSession::viewportInViewCenterPointOfElement(WebPageProxy& page, Optional<FrameIdentifier> frameID, const Inspector::Protocol::Automation::NodeHandle& nodeHandle, Function<void(Optional<WebCore::IntPoint>, Optional<AutomationCommandError>)>&& completionHandler)
 {
@@ -1989,14 +1962,12 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
     if (frameNotFound)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
-    HashMap<String, Ref<SimulatedInputSource>> sourceIdToInputSourceMap;
-    HashMap<SimulatedInputSourceType, String, WTF::IntHash<SimulatedInputSourceType>, WTF::StrongEnumHashTraits<SimulatedInputSourceType>> typeToSourceIdMap;
-
     // Parse and validate Automation protocol arguments. By this point, the driver has
     // already performed the steps in §17.3 Processing Actions Requests.
     if (!inputSources->length())
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'inputSources' was not found or empty.");
 
+    HashSet<String> sourceIdSet;
     for (const auto& inputSourceValue : inputSources.get()) {
         auto inputSourceObject = inputSourceValue->asObject();
         if (!inputSourceObject)
@@ -2042,13 +2013,13 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
         if (inputSourceType == SimulatedInputSourceType::Wheel)
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Wheel input sources are not yet supported.");
 #endif
-        if (typeToSourceIdMap.contains(inputSourceType))
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Two input sources with the same type were specified.");
-        if (sourceIdToInputSourceMap.contains(sourceId))
+        if (sourceIdSet.contains(sourceId))
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Two input sources with the same sourceId were specified.");
 
-        typeToSourceIdMap.add(inputSourceType, sourceId);
-        sourceIdToInputSourceMap.add(sourceId, *inputSourceForType(inputSourceType));
+        sourceIdSet.add(sourceId);
+        m_inputSources.ensure(sourceId, [inputSourceType] {
+            return SimulatedInputSource::create(inputSourceType);
+        });
     }
 
     Vector<SimulatedInputKeyFrame> keyFrames;
@@ -2077,10 +2048,10 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
             if (!sourceId)
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Step state lacks required 'sourceId' property.");
 
-            if (!sourceIdToInputSourceMap.contains(sourceId))
+            if (!m_inputSources.contains(sourceId))
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Unknown 'sourceId' specified.");
 
-            SimulatedInputSource& inputSource = *sourceIdToInputSourceMap.get(sourceId);
+            SimulatedInputSource& inputSource = *m_inputSources.get(sourceId);
             SimulatedInputSourceState sourceState { };
 
             auto pressedCharKeyString = stateObject->getString("pressedCharKey"_s);
@@ -2181,11 +2152,12 @@ void WebAutomationSession::cancelInteractionSequence(const Inspector::Protocol::
     SimulatedInputDispatcher& inputDispatcher = inputDispatcherForPage(*page);
     inputDispatcher.cancel();
     
-    inputDispatcher.run(frameID, WTFMove(keyFrames), m_inputSources, [protectedThis = makeRef(*this), callback = WTFMove(callback)](Optional<AutomationCommandError> error) {
+    inputDispatcher.run(frameID, WTFMove(keyFrames), m_inputSources, [this, protectedThis = makeRef(*this), callback = WTFMove(callback)](Optional<AutomationCommandError> error) {
         if (error)
             callback->sendFailure(error.value().toProtocolString());
         else
             callback->sendSuccess();
+        m_inputSources.clear();
     });
 #endif // ENABLE(WEBDRIVER_ACTIONS_API)
 }

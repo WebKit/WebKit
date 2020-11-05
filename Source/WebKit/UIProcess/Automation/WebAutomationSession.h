@@ -212,7 +212,6 @@ public:
     bool isSimulatingUserInteraction() const;
 #if ENABLE(WEBDRIVER_ACTIONS_API)
     SimulatedInputDispatcher& inputDispatcherForPage(WebPageProxy&);
-    SimulatedInputSource* inputSourceForType(SimulatedInputSourceType) const;
 #endif
 
 #if PLATFORM(MAC)
@@ -337,7 +336,7 @@ private:
 #if ENABLE(WEBDRIVER_ACTIONS_API)
     // SimulatedInputDispatcher APIs take a set of input sources. We also intern these
     // so that previous input source state is used as initial state for later commands.
-    HashSet<Ref<SimulatedInputSource>> m_inputSources;
+    HashMap<String, Ref<SimulatedInputSource>> m_inputSources;
     HashMap<WebPageProxyIdentifier, Ref<SimulatedInputDispatcher>> m_inputDispatchersByPage;
 #endif
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)

@@ -70,7 +70,7 @@ Seconds SimulatedInputKeyFrame::maximumDuration() const
     return result;
 }
 
-SimulatedInputKeyFrame SimulatedInputKeyFrame::keyFrameFromStateOfInputSources(HashSet<Ref<SimulatedInputSource>>& inputSources)
+SimulatedInputKeyFrame SimulatedInputKeyFrame::keyFrameFromStateOfInputSources(const HashMap<String, Ref<SimulatedInputSource>>& inputSources)
 {
     // The client of this class is required to intern SimulatedInputSource instances if the last state
     // from the previous command should be used as the inital state for the next command. This is the
@@ -78,18 +78,18 @@ SimulatedInputKeyFrame SimulatedInputKeyFrame::keyFrameFromStateOfInputSources(H
     Vector<SimulatedInputKeyFrame::StateEntry> entries;
     entries.reserveCapacity(inputSources.size());
 
-    for (auto& inputSource : inputSources)
+    for (const auto& inputSource : inputSources.values())
         entries.uncheckedAppend(std::pair<SimulatedInputSource&, SimulatedInputSourceState> { inputSource.get(), inputSource->state });
 
     return SimulatedInputKeyFrame(WTFMove(entries));
 }
 
-SimulatedInputKeyFrame SimulatedInputKeyFrame::keyFrameToResetInputSources(HashSet<Ref<SimulatedInputSource>>& inputSources)
+SimulatedInputKeyFrame SimulatedInputKeyFrame::keyFrameToResetInputSources(const HashMap<String, Ref<SimulatedInputSource>>& inputSources)
 {
     Vector<SimulatedInputKeyFrame::StateEntry> entries;
     entries.reserveCapacity(inputSources.size());
 
-    for (auto& inputSource : inputSources)
+    for (const auto& inputSource : inputSources.values())
         entries.uncheckedAppend(std::pair<SimulatedInputSource&, SimulatedInputSourceState> { inputSource.get(), SimulatedInputSourceState::emptyStateForSourceType(inputSource->type) });
 
     return SimulatedInputKeyFrame(WTFMove(entries));
@@ -445,7 +445,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
     }
 }
 
-void SimulatedInputDispatcher::run(Optional<WebCore::FrameIdentifier> frameID, Vector<SimulatedInputKeyFrame>&& keyFrames, HashSet<Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&& completionHandler)
+void SimulatedInputDispatcher::run(Optional<WebCore::FrameIdentifier> frameID, Vector<SimulatedInputKeyFrame>&& keyFrames, const HashMap<String, Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&& completionHandler)
 {
     ASSERT(!isActive());
     if (isActive()) {
@@ -455,13 +455,10 @@ void SimulatedInputDispatcher::run(Optional<WebCore::FrameIdentifier> frameID, V
 
     m_frameID = frameID;
     m_runCompletionHandler = WTFMove(completionHandler);
-    for (const Ref<SimulatedInputSource>& inputSource : inputSources)
-        m_inputSources.add(inputSource.copyRef());
 
     // The "dispatch actions" algorithm (§17.4 Dispatching Actions).
-
     m_keyframes.reserveCapacity(keyFrames.size() + 1);
-    m_keyframes.append(SimulatedInputKeyFrame::keyFrameFromStateOfInputSources(m_inputSources));
+    m_keyframes.append(SimulatedInputKeyFrame::keyFrameFromStateOfInputSources(inputSources));
     m_keyframes.appendVector(WTFMove(keyFrames));
 
     LOG(Automation, "SimulatedInputDispatcher[%p]: starting input simulation using %zu keyframes", this, m_keyframes.size());
@@ -488,7 +485,6 @@ void SimulatedInputDispatcher::finishDispatching(Optional<AutomationCommandError
     auto finish = std::exchange(m_runCompletionHandler, nullptr);
     m_frameID = WTF::nullopt;
     m_keyframes.clear();
-    m_inputSources.clear();
     m_keyframeIndex = 0;
     m_inputSourceStateIndex = 0;
 

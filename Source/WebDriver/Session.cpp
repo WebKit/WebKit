@@ -2665,18 +2665,13 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
         parameters->setString("handle"_s, m_toplevelBrowsingContext.value());
         if (m_currentBrowsingContext)
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
-        auto inputSources = JSON::Array::create();
-        for (const auto& inputSource : m_activeInputSources) {
-            auto inputSourceObject = JSON::Object::create();
-            inputSourceObject->setString("sourceId"_s, inputSource.key);
-            inputSourceObject->setString("sourceType"_s, automationSourceType(inputSource.value.type));
-            inputSources->pushObject(WTFMove(inputSourceObject));
-        }
-        parameters->setArray("inputSources"_s, WTFMove(inputSources));
+
+        HashSet<String> inputSourcesSet;
         auto steps = JSON::Array::create();
         for (const auto& tick : actionsByTick) {
             auto states = JSON::Array::create();
             for (const auto& action : tick) {
+                inputSourcesSet.add(action.id);
                 auto state = JSON::Object::create();
                 auto& currentState = inputSourceState(action.id);
                 state->setString("sourceId"_s, action.id);
@@ -2799,6 +2794,17 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
         }
 
         parameters->setArray("steps"_s, WTFMove(steps));
+
+        auto inputSources = JSON::Array::create();
+        for (const auto& id : inputSourcesSet) {
+            const auto& inputSource = m_activeInputSources.get(id);
+            auto inputSourceObject = JSON::Object::create();
+            inputSourceObject->setString("sourceId"_s, id);
+            inputSourceObject->setString("sourceType"_s, automationSourceType(inputSource.type));
+            inputSources->pushObject(WTFMove(inputSourceObject));
+        }
+        parameters->setArray("inputSources"_s, WTFMove(inputSources));
+
         m_host->sendCommandToBackend("performInteractionSequence"_s, WTFMove(parameters), [protectedThis, completionHandler = WTFMove(completionHandler)] (SessionHost::CommandResponse&& response) {
             if (response.isError) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));

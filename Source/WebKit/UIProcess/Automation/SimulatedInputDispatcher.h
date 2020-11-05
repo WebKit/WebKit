@@ -118,8 +118,8 @@ public:
     explicit SimulatedInputKeyFrame(Vector<StateEntry>&&);
     Seconds maximumDuration() const;
 
-    static SimulatedInputKeyFrame keyFrameFromStateOfInputSources(HashSet<Ref<SimulatedInputSource>>&);
-    static SimulatedInputKeyFrame keyFrameToResetInputSources(HashSet<Ref<SimulatedInputSource>>&);
+    static SimulatedInputKeyFrame keyFrameFromStateOfInputSources(const HashMap<String, Ref<SimulatedInputSource>>&);
+    static SimulatedInputKeyFrame keyFrameToResetInputSources(const HashMap<String, Ref<SimulatedInputSource>>&);
 
     Vector<StateEntry> states;
 };
@@ -152,7 +152,7 @@ public:
 
     ~SimulatedInputDispatcher();
 
-    void run(Optional<WebCore::FrameIdentifier>, Vector<SimulatedInputKeyFrame>&& keyFrames, HashSet<Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&&);
+    void run(Optional<WebCore::FrameIdentifier>, Vector<SimulatedInputKeyFrame>&& keyFrames, const HashMap<String, Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&&);
     void cancel();
 
     bool isActive() const;
@@ -181,7 +181,6 @@ private:
     RunLoop::Timer<SimulatedInputDispatcher> m_keyFrameTransitionDurationTimer;
 
     Vector<SimulatedInputKeyFrame> m_keyframes;
-    HashSet<Ref<SimulatedInputSource>> m_inputSources;
 
     // The position within m_keyframes.
     unsigned m_keyframeIndex { 0 };

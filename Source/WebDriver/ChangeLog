@@ -1,3 +1,15 @@
+2020-11-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: session can have more than one active input source of the same type
+        https://bugs.webkit.org/show_bug.cgi?id=218382
+
+        Reviewed by Brian Burg.
+
+        Only send to the browser the list of input sources actually used by the action sequence.
+
+        * Session.cpp:
+        (WebDriver::Session::performActions):
+
 2020-10-28  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [WinCairo][PlayStation] Add handling for accept failure case
