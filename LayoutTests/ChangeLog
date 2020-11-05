@@ -1,5 +1,13 @@
 2020-11-05  Ryan Haddad  <ryanhaddad@apple.com>
 
+        fast/forms/search/search-size-with-decorations.html is failing on Catalina.
+
+        Unreviewed test gardening.
+
+        * platform/mac-catalina/fast/forms/search/search-size-with-decorations-expected.txt: Renamed from LayoutTests/platform/mac-catalina/fast/forms/search-size-with-decorations-expected.txt.
+
+2020-11-05  Ryan Haddad  <ryanhaddad@apple.com>
+
         [GPU Process] Add tests for sbix and COLR fonts in canvas
         https://bugs.webkit.org/show_bug.cgi?id=218346
 
