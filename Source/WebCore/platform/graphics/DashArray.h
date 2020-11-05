@@ -23,19 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DashArray_h
-#define DashArray_h
+#pragma once
 
 #include <wtf/Vector.h>
 
 #if USE(CG)
-typedef CGFloat DashArrayElement;
-#elif USE(CAIRO)
-typedef double DashArrayElement;
-#else
-typedef float DashArrayElement;
+#include <CoreGraphics/CoreGraphics.h>
 #endif
 
-typedef Vector<DashArrayElement> DashArray;
+namespace WebCore {
 
-#endif // DashArray_h
+#if USE(CG)
+using DashArrayElement = CGFloat;
+#elif USE(CAIRO)
+using DashArrayElement = double;
+#else
+using DashArrayElement = float;
+#endif
+
+using DashArray = Vector<DashArrayElement>;
+
+} // namespace WebCore

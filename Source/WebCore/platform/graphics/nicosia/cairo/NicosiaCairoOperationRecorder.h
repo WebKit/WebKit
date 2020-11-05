@@ -45,7 +45,7 @@ private:
     void clearShadow() override;
 
     void setLineCap(WebCore::LineCap) override;
-    void setLineDash(const DashArray&, float) override;
+    void setLineDash(const WebCore::DashArray&, float) override;
     void setLineJoin(WebCore::LineJoin) override;
     void setMiterLimit(float) override;
 
@@ -74,7 +74,7 @@ private:
 
     void drawRect(const WebCore::FloatRect&, float) override;
     void drawLine(const WebCore::FloatPoint&, const WebCore::FloatPoint&) override;
-    void drawLinesForText(const WebCore::FloatPoint&, float thickness, const DashArray&, bool, bool) override;
+    void drawLinesForText(const WebCore::FloatPoint&, float thickness, const WebCore::DashArray&, bool, bool) override;
     void drawDotsForDocumentMarker(const WebCore::FloatRect&, WebCore::DocumentMarkerLineStyle) override;
     void drawEllipse(const WebCore::FloatRect&) override;
     void drawPath(const WebCore::Path&) override;
