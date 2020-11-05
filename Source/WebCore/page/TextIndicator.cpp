@@ -210,7 +210,7 @@ static Color estimatedBackgroundColorForRange(const SimpleRange& range, const Fr
     auto estimatedBackgroundColor = frame.view() ? frame.view()->documentBackgroundColor() : Color::transparentBlack;
 
     RenderElement* renderer = nullptr;
-    auto commonAncestor = commonInclusiveAncestor(range);
+    auto commonAncestor = commonInclusiveAncestor<ComposedTree>(range);
     while (commonAncestor) {
         if (is<RenderElement>(commonAncestor->renderer())) {
             renderer = downcast<RenderElement>(commonAncestor->renderer());
@@ -295,7 +295,7 @@ static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Sim
 
     bool useBoundingRectAndPaintAllContentForComplexRanges = data.options.contains(TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges);
     if (useBoundingRectAndPaintAllContentForComplexRanges && containsOnlyWhiteSpaceText(range)) {
-        if (auto* containerRenderer = commonInclusiveAncestor(range)->renderer()) {
+        if (auto* containerRenderer = commonInclusiveAncestor<ComposedTree>(range)->renderer()) {
             data.options.add(TextIndicatorOption::PaintAllContent);
             textRects.append(containerRenderer->absoluteBoundingBoxRect());
         }

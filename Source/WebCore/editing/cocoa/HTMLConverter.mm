@@ -2304,7 +2304,7 @@ Node* HTMLConverterCaches::cacheAncestorsOfStartToBeConverted(const Position& st
         ancestor = ancestor->parentInComposedTree();
     }
 
-    return commonAncestor.get();
+    return commonAncestor;
 }
 
 #if !PLATFORM(IOS_FAMILY)

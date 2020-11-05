@@ -207,10 +207,12 @@ void IntersectingNodeIterator::enforceEndInvariant()
     }
 }
 
-RefPtr<Node> commonInclusiveAncestor(const SimpleRange& range)
+template<TreeType treeType> Node* commonInclusiveAncestor(const SimpleRange& range)
 {
-    return commonInclusiveAncestor(range.start.container, range.end.container);
+    return commonInclusiveAncestor<treeType>(range.start.container, range.end.container);
 }
+
+template Node* commonInclusiveAncestor<ComposedTree>(const SimpleRange&);
 
 template<TreeType treeType> bool contains(const SimpleRange& range, const BoundaryPoint& point)
 {

@@ -44,13 +44,13 @@ static Optional<std::pair<ChangeListTypeCommand::Type, Ref<HTMLElement>>> listCo
     auto endNode = selection.end().containerNode();
     if (!startNode || !endNode)
         return { };
-    auto commonAncestor = commonInclusiveAncestor(*startNode, *endNode);
+    auto commonAncestor = commonInclusiveAncestor<ComposedTree>(*startNode, *endNode);
 
     RefPtr<HTMLElement> listToReplace;
     if (is<HTMLUListElement>(commonAncestor) || is<HTMLOListElement>(commonAncestor))
-        listToReplace = downcast<HTMLElement>(commonAncestor.get());
+        listToReplace = downcast<HTMLElement>(commonAncestor);
     else
-        listToReplace = enclosingList(commonAncestor.get());
+        listToReplace = enclosingList(commonAncestor);
 
     if (is<HTMLUListElement>(listToReplace))
         return {{ ChangeListTypeCommand::Type::ConvertToOrderedList, listToReplace.releaseNonNull() }};

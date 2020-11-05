@@ -63,6 +63,8 @@ WEBCORE_EXPORT SimpleRange makeRangeSelectingNodeContents(Node&);
 
 bool operator==(const SimpleRange&, const SimpleRange&);
 
+template<TreeType = Tree> Node* commonInclusiveAncestor(const SimpleRange&);
+
 template<TreeType = Tree> bool contains(const SimpleRange&, const BoundaryPoint&);
 template<TreeType = Tree> bool contains(const SimpleRange&, const Optional<BoundaryPoint>&);
 template<TreeType> bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange);
@@ -86,7 +88,6 @@ OffsetRange characterDataOffsetRange(const SimpleRange&, const Node&);
 
 // FIXME: Start of functions that are deprecated since they silently default to ComposedTree.
 
-WEBCORE_EXPORT RefPtr<Node> commonInclusiveAncestor(const SimpleRange&);
 template<typename TreeType> bool intersects(const SimpleRange&, const SimpleRange&);
 WEBCORE_EXPORT bool intersects(const SimpleRange&, const SimpleRange&);
 WEBCORE_EXPORT bool intersects(const SimpleRange&, const Node&);

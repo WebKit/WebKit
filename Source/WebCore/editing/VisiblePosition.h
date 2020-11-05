@@ -126,6 +126,8 @@ bool isLastVisiblePositionInNode(const VisiblePosition&, const Node*);
 
 bool areVisiblePositionsInSameTreeScope(const VisiblePosition&, const VisiblePosition&);
 
+Node* commonInclusiveAncestor(const VisiblePosition&, const VisiblePosition&);
+
 WTF::TextStream& operator<<(WTF::TextStream&, Affinity);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const VisiblePosition&);
 
@@ -137,6 +139,13 @@ struct VisiblePositionRange {
 };
 
 WEBCORE_EXPORT Optional<SimpleRange> makeSimpleRange(const VisiblePositionRange&);
+
+Node* commonInclusiveAncestor(const VisiblePositionRange&);
+
+WEBCORE_EXPORT bool intersects(const VisiblePositionRange&, const VisiblePositionRange&);
+WEBCORE_EXPORT bool contains(const VisiblePositionRange&, const VisiblePosition&);
+WEBCORE_EXPORT VisiblePositionRange intersection(const VisiblePositionRange&, const VisiblePositionRange&);
+WEBCORE_EXPORT VisiblePosition midpoint(const VisiblePositionRange&);
 
 // inlines
 

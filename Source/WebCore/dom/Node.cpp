@@ -2682,11 +2682,13 @@ template<TreeType treeType> AncestorAndChildren commonInclusiveAncestorAndChildr
     return { x, distinctAncestorA, distinctAncestorB };
 }
 
-// FIXME: Change this to work within the normal tree instead of the composed tree. Or rename and/or split into multiple functions.
-RefPtr<Node> commonInclusiveAncestor(Node& a, Node& b)
+template<TreeType treeType> Node* commonInclusiveAncestor(const Node& a, const Node& b)
 {
-    return const_cast<Node*>(commonInclusiveAncestorAndChildren<ComposedTree>(a, b).commonAncestor);
+    return const_cast<Node*>(commonInclusiveAncestorAndChildren<treeType>(a, b).commonAncestor);
 }
+
+template Node* commonInclusiveAncestor<Tree>(const Node&, const Node&);
+template Node* commonInclusiveAncestor<ComposedTree>(const Node&, const Node&);
 
 static bool isSiblingSubsequent(const Node& siblingA, const Node& siblingB)
 {

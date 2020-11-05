@@ -4227,7 +4227,7 @@ Optional<SimpleRange> Editor::adjustedSelectionRange()
     // FIXME: Why do we need to adjust the selection to include the anchor tag it's in? Whoever wrote this code originally forgot to leave us a comment explaining the rationale.
     auto range = selectedRange();
     if (range) {
-        if (auto enclosingAnchor = enclosingElementWithTag(firstPositionInNode(commonInclusiveAncestor(*range).get()), HTMLNames::aTag)) {
+        if (auto enclosingAnchor = enclosingElementWithTag(firstPositionInNode(commonInclusiveAncestor<ComposedTree>(*range)), HTMLNames::aTag)) {
             if (firstPositionInOrBeforeNode(range->start.container.ptr()) >= makeDeprecatedLegacyPosition(range->start))
                 range->start = makeBoundaryPointBeforeNodeContents(*enclosingAnchor);
         }

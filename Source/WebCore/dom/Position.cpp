@@ -1584,13 +1584,13 @@ TextStream& operator<<(TextStream& stream, const Position& position)
     return stream;
 }
 
-RefPtr<Node> commonInclusiveAncestor(const Position& a, const Position& b)
+Node* commonInclusiveAncestor(const Position& a, const Position& b)
 {
     auto nodeA = a.containerNode();
     auto nodeB = b.containerNode();
     if (!nodeA || !nodeB)
         return nullptr;
-    return commonInclusiveAncestor(*nodeA, *nodeB);
+    return commonInclusiveAncestor<ComposedTree>(*nodeA, *nodeB);
 }
 
 Position positionInParentBeforeNode(Node* node)
@@ -1641,7 +1641,7 @@ PartialOrdering documentOrder(const Position& a, const Position& b)
     auto bContainer = b.containerNode();
 
     if (!aContainer || !bContainer) {
-        if (!commonInclusiveAncestor(*a.anchorNode(), *b.anchorNode()))
+        if (!commonInclusiveAncestor<ComposedTree>(*a.anchorNode(), *b.anchorNode()))
             return PartialOrdering::unordered;
         if (!aContainer && !bContainer && a.anchorType() == b.anchorType())
             return PartialOrdering::equivalent;

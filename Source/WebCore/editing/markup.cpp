@@ -852,7 +852,7 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
     VisiblePosition visibleStart { start };
     VisiblePosition visibleEnd { end };
 
-    auto body = makeRefPtr(enclosingElementWithTag(firstPositionInNode(commonAncestor.get()), bodyTag));
+    auto body = makeRefPtr(enclosingElementWithTag(firstPositionInNode(commonAncestor), bodyTag));
     RefPtr<Element> fullySelectedRoot;
     // FIXME: Do this for all fully selected blocks, not just the body.
     if (body && VisiblePosition(firstPositionInNode(body.get())) == visibleStart && VisiblePosition(lastPositionInNode(body.get())) == visibleEnd)

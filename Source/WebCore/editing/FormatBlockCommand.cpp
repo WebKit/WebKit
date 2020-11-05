@@ -103,8 +103,8 @@ Element* FormatBlockCommand::elementForFormatBlockCommand(const Optional<SimpleR
     if (!range)
         return nullptr;
 
-    auto commonAncestor = commonInclusiveAncestor(*range);
-    while (commonAncestor && !isElementForFormatBlock(commonAncestor.get()))
+    auto commonAncestor = commonInclusiveAncestor<ComposedTree>(*range);
+    while (commonAncestor && !isElementForFormatBlock(commonAncestor))
         commonAncestor = commonAncestor->parentNode();
     if (!is<Element>(commonAncestor))
         return nullptr;

@@ -42,6 +42,7 @@
 #include "RootInlineBox.h"
 #include "SimpleRange.h"
 #include "Text.h"
+#include "TextIterator.h"
 #include "VisibleUnits.h"
 #include <stdio.h>
 #include <wtf/text/CString.h>
@@ -752,6 +753,11 @@ Optional<BoundaryPoint> makeBoundaryPoint(const VisiblePosition& position)
     return makeBoundaryPoint(position.deepEquivalent());
 }
 
+Node* commonInclusiveAncestor(const VisiblePosition& a, const VisiblePosition& b)
+{
+    return commonInclusiveAncestor(a.deepEquivalent(), b.deepEquivalent());
+}
+
 TextStream& operator<<(TextStream& stream, Affinity affinity)
 {
     switch (affinity) {
@@ -785,6 +791,39 @@ PartialOrdering documentOrder(const VisiblePosition& a, const VisiblePosition& b
 {
     // FIXME: Should two positions with different affinity be considered equivalent or not?
     return documentOrder(a.deepEquivalent(), b.deepEquivalent());
+}
+
+bool intersects(const VisiblePositionRange& a, const VisiblePositionRange& b)
+{
+    return a.start <= b.end && b.start <= a.end;
+}
+
+bool contains(const VisiblePositionRange& range, const VisiblePosition& point)
+{
+    return point >= range.start && point <= range.end;
+}
+
+VisiblePositionRange intersection(const VisiblePositionRange& a, const VisiblePositionRange& b)
+{
+    return { std::max(a.start, b.start), std::min(a.end, b.end) };
+}
+
+Node* commonInclusiveAncestor(const VisiblePositionRange& range)
+{
+    return commonInclusiveAncestor(range.start, range.end);
+}
+
+VisiblePosition midpoint(const VisiblePositionRange& range)
+{
+    auto rootNode = commonInclusiveAncestor(range);
+    if (!rootNode)
+        return { };
+    auto rootContainerNode = rootNode->isContainerNode() ? downcast<ContainerNode>(rootNode) : rootNode->parentNode();
+    if (!rootContainerNode)
+        return { };
+    auto scope = makeRangeSelectingNodeContents(*rootContainerNode);
+    auto characterRange = WebCore::characterRange(scope, *makeSimpleRange(range.start, range.end));
+    return makeContainerOffsetPosition(resolveCharacterLocation(scope, characterRange.location + characterRange.length / 2));
 }
 
 }  // namespace WebCore

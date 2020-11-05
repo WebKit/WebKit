@@ -603,7 +603,7 @@ void TextManipulationController::scheduleObservationUpdate()
             if (!commonAncestor)
                 commonAncestor = is<ContainerNode>(node.get()) ? node.ptr() : node->parentNode();
             else if (!node->isDescendantOf(commonAncestor.get()))
-                commonAncestor = commonInclusiveAncestor(*commonAncestor, node.get());
+                commonAncestor = commonInclusiveAncestor<ComposedTree>(*commonAncestor, node.get());
         }
 
         auto start = firstPositionInOrBeforeNode(commonAncestor.get());
@@ -825,7 +825,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         if (!commonAncestor)
             commonAncestor = parentNode;
         else if (!parentNode->isDescendantOf(commonAncestor.get())) {
-            commonAncestor = commonInclusiveAncestor(*commonAncestor, *parentNode);
+            commonAncestor = commonInclusiveAncestor<ComposedTree>(*commonAncestor, *parentNode);
             ASSERT(commonAncestor);
         }
     }

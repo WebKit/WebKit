@@ -727,7 +727,6 @@ private:
 };
 
 bool connectedInSameTreeScope(const Node*, const Node*);
-WEBCORE_EXPORT RefPtr<Node> commonInclusiveAncestor(Node&, Node&);
 
 // Designed to be used the same way as C++20 std::partial_ordering class.
 // FIXME: Consider putting this in a separate header.
@@ -757,6 +756,7 @@ constexpr bool is_gteq(PartialOrdering);
 
 enum TreeType { Tree, ShadowIncludingTree, ComposedTree };
 template<TreeType = Tree> ContainerNode* parent(const Node&);
+template<TreeType = Tree> Node* commonInclusiveAncestor(const Node&, const Node&);
 template<TreeType = Tree> PartialOrdering treeOrder(const Node&, const Node&);
 
 WEBCORE_EXPORT PartialOrdering treeOrderForTesting(TreeType, const Node&, const Node&);

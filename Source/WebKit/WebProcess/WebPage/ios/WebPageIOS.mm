@@ -4129,6 +4129,20 @@ static VisiblePosition visiblePositionForPointInRootViewCoordinates(Frame& frame
     return frame.visiblePositionForPoint(pointInDocument);
 }
 
+static VisiblePositionRange constrainRangeToSelection(const VisiblePositionRange& selection, const VisiblePositionRange& range)
+{
+    if (intersects(selection, range))
+        return intersection(selection, range);
+    auto rangeMidpoint = midpoint(range);
+    auto position = startOfWord(rangeMidpoint);
+    if (!contains(range, position)) {
+        position = endOfWord(rangeMidpoint);
+        if (!contains(range, position))
+            position = rangeMidpoint;
+    }
+    return { position, position };
+}
+
 void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest request, CompletionHandler<void(DocumentEditingContext)>&& completionHandler)
 {
     if (!request.options.contains(DocumentEditingContextRequest::Options::Text) && !request.options.contains(DocumentEditingContextRequest::Options::AttributedText)) {
@@ -4192,45 +4206,11 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         return;
     }
 
-    DocumentEditingContext context;
-
     // The subset of the selection that is inside the range of interest.
-    VisiblePosition startOfRangeOfInterestInSelection;
-    VisiblePosition endOfRangeOfInterestInSelection;
-
-    auto selectionRange = selection.toNormalizedRange();
-    auto rangeOfInterest = *makeSimpleRange(rangeOfInterestStart, rangeOfInterestEnd);
-    if (selectionRange && intersects(rangeOfInterest, *selectionRange)) {
-        startOfRangeOfInterestInSelection = std::max(rangeOfInterestStart, selectionStart);
-        endOfRangeOfInterestInSelection = std::min(rangeOfInterestEnd, selectionEnd);
-    } else {
-        auto rootNode = commonInclusiveAncestor(rangeOfInterest);
-        if (!rootNode) {
-            completionHandler({ });
-            return;
-        }
-        auto rootContainerNode = rootNode->isContainerNode() ? downcast<ContainerNode>(rootNode.get()) : rootNode->parentNode();
-        if (!rootContainerNode) {
-            completionHandler({ });
-            return;
-        }
-        auto scope = makeRangeSelectingNodeContents(*rootContainerNode);
-
-        auto characterRangeOfInterest = characterRange(scope, rangeOfInterest);
-        auto midpointLocation = checkedSum<uint64_t>(characterRangeOfInterest.location, characterRangeOfInterest.length / 2);
-        if (midpointLocation.hasOverflowed()) {
-            completionHandler({ });
-            return;
-        }
-        auto midpoint = makeDeprecatedLegacyPosition(resolveCharacterLocation(scope, midpointLocation.unsafeGet()));
-
-        startOfRangeOfInterestInSelection = startOfWord(midpoint);
-        if (startOfRangeOfInterestInSelection < rangeOfInterestStart) {
-            startOfRangeOfInterestInSelection = endOfWord(midpoint);
-            if (startOfRangeOfInterestInSelection > rangeOfInterestEnd)
-                startOfRangeOfInterestInSelection = midpoint;
-        }
-        endOfRangeOfInterestInSelection = startOfRangeOfInterestInSelection;
+    auto rangeOfInterestInSelection = constrainRangeToSelection(selection, { rangeOfInterestStart, rangeOfInterestEnd });
+    if (rangeOfInterestInSelection.isNull()) {
+        completionHandler({ });
+        return;
     }
 
     VisiblePosition contextBeforeStart;
@@ -4262,14 +4242,15 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         return { adoptNS([[NSAttributedString alloc] initWithString:WebCore::plainTextReplacingNoBreakSpace(*range)]), nil };
     };
 
-    context.contextBefore = makeString(contextBeforeStart, startOfRangeOfInterestInSelection);
-    context.selectedText = makeString(startOfRangeOfInterestInSelection, endOfRangeOfInterestInSelection);
-    context.contextAfter = makeString(endOfRangeOfInterestInSelection, contextAfterEnd);
-    if (compositionRange && intersects(rangeOfInterest, *compositionRange)) {
+    DocumentEditingContext context;
+    context.contextBefore = makeString(contextBeforeStart, rangeOfInterestInSelection.start);
+    context.selectedText = makeString(rangeOfInterestInSelection.start, rangeOfInterestInSelection.end);
+    context.contextAfter = makeString(rangeOfInterestInSelection.end, contextAfterEnd);
+    if (compositionRange && intersects(*makeSimpleRange(rangeOfInterestStart, rangeOfInterestEnd), *compositionRange)) {
         VisiblePosition compositionStart(makeDeprecatedLegacyPosition(compositionRange->start));
         VisiblePosition compositionEnd(makeDeprecatedLegacyPosition(compositionRange->end));
         context.markedText = makeString(compositionStart, compositionEnd);
-        context.selectedRangeInMarkedText.location = distanceBetweenPositions(startOfRangeOfInterestInSelection, compositionStart);
+        context.selectedRangeInMarkedText.location = distanceBetweenPositions(rangeOfInterestInSelection.start, compositionStart);
         context.selectedRangeInMarkedText.length = [context.selectedText.string length];
     }
 

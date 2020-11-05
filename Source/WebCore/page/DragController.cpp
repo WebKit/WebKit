@@ -1460,7 +1460,7 @@ void DragController::insertDroppedImagePlaceholdersAtCaret(const Vector<IntSize>
         return;
     }
 
-    auto container = commonInclusiveAncestor(*insertedContentRange);
+    auto container = commonInclusiveAncestor<ComposedTree>(*insertedContentRange);
     if (!is<ContainerNode>(container)) {
         ASSERT_NOT_REACHED();
         return;

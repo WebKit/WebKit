@@ -92,6 +92,11 @@ Range::~Range()
 #endif
 }
 
+Node* Range::commonAncestorContainer() const
+{
+    return commonInclusiveAncestor(startContainer(), endContainer());
+}
+
 void Range::updateAssociatedSelection()
 {
     if (m_isAssociatedWithSelection)

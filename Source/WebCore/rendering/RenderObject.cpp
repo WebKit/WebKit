@@ -2136,7 +2136,7 @@ auto RenderObject::collectSelectionRectsInternal(const SimpleRange& range) -> Se
     // The range could span nodes with different writing modes.
     // If this is the case, we use the writing mode of the common ancestor.
     if (containsDifferentWritingModes) {
-        if (auto ancestor = commonInclusiveAncestor(range))
+        if (auto ancestor = commonInclusiveAncestor<ComposedTree>(range))
             hasFlippedWritingMode = ancestor->renderer()->style().isFlippedBlocksWritingMode();
     }
 

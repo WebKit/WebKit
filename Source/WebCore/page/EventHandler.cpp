@@ -2096,7 +2096,7 @@ static RefPtr<Node> targetNodeForClickEvent(Node* mousePressNode, Node* mouseRel
 
     // If mousePressNode and mouseReleaseNode differ, we should fire the event at their common ancestor if there is one.
     if (&mousePressNode->document() == &mouseReleaseNode->document()) {
-        if (auto commonAncestor = commonInclusiveAncestor(*mousePressNode, *mouseReleaseNode))
+        if (auto commonAncestor = commonInclusiveAncestor<ComposedTree>(*mousePressNode, *mouseReleaseNode))
             return commonAncestor;
     }
 

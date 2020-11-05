@@ -1515,7 +1515,7 @@ RefPtr<EditingStyle> EditingStyle::styleAtSelectionStart(const VisibleSelection&
     // and find the background color of the common ancestor.
     if (shouldUseBackgroundColorInEffect && (selection.isRange() || hasTransparentBackgroundColor(style->m_mutableStyle.get()))) {
         if (auto range = selection.toNormalizedRange()) {
-            if (auto value = backgroundColorInEffect(commonInclusiveAncestor(*range).get()))
+            if (auto value = backgroundColorInEffect(commonInclusiveAncestor<ComposedTree>(*range)))
                 style->setProperty(CSSPropertyBackgroundColor, value->cssText());
         }
     }
