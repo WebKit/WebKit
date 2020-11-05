@@ -1,3 +1,10 @@
+2020-11-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, fix the build with recent SDKs.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::platformInvalidate):
+
 2020-11-05  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes, early November 2020 edition
