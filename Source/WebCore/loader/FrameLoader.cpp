@@ -1042,11 +1042,6 @@ bool FrameLoader::checkIfFormActionAllowedByCSP(const URL& url, bool didReceiveR
     return m_frame.document()->contentSecurityPolicy()->allowFormAction(url, redirectResponseReceived);
 }
 
-Frame* FrameLoader::opener()
-{
-    return m_opener;
-}
-
 void FrameLoader::setOpener(Frame* opener)
 {
     if (m_opener && !opener)

@@ -294,10 +294,14 @@ private:
 #endif
 };
 
-// As long as EmptyFrameLoaderClient exists in WebCore, this can return 0.
+// As long as EmptyFrameLoaderClient exists in WebCore, this can return nullptr.
 inline WebFrameLoaderClient* toWebFrameLoaderClient(WebCore::FrameLoaderClient& client)
 {
-    return client.isEmptyFrameLoaderClient() ? 0 : static_cast<WebFrameLoaderClient*>(&client);
+    return client.isEmptyFrameLoaderClient() ? nullptr : static_cast<WebFrameLoaderClient*>(&client);
+}
+inline const WebFrameLoaderClient* toWebFrameLoaderClient(const WebCore::FrameLoaderClient& client)
+{
+    return client.isEmptyFrameLoaderClient() ? nullptr : static_cast<const WebFrameLoaderClient*>(&client);
 }
 
 } // namespace WebKit

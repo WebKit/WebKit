@@ -158,8 +158,8 @@ public:
     Frame& mainFrame() const;
     bool isMainFrame() const { return this == static_cast<void*>(&m_mainFrame); }
 
-    Page* page() const;
-    HTMLFrameOwnerElement* ownerElement() const;
+    WEBCORE_EXPORT Page* page() const;
+    WEBCORE_EXPORT HTMLFrameOwnerElement* ownerElement() const;
 
     Document* document() const;
     FrameView* view() const;
@@ -168,7 +168,8 @@ public:
     const Editor& editor() const { return document()->editor(); }
     EventHandler& eventHandler() { return m_eventHandler; }
     const EventHandler& eventHandler() const { return m_eventHandler; }
-    FrameLoader& loader() const;
+    const FrameLoader& loader() const { return m_loader.get(); }
+    FrameLoader& loader() { return m_loader.get(); }
     NavigationScheduler& navigationScheduler() const;
     FrameSelection& selection() { return document()->selection(); }
     const FrameSelection& selection() const { return document()->selection(); }
@@ -333,13 +334,13 @@ private:
     Vector<std::pair<Ref<DOMWrapperWorld>, UniqueRef<UserScript>>> m_userScriptsAwaitingNotification;
 
     Frame& m_mainFrame;
-    Page* m_page;
+    WeakPtr<Page> m_page;
     const RefPtr<Settings> m_settings;
     mutable FrameTree m_treeNode;
-    mutable UniqueRef<FrameLoader> m_loader;
+    UniqueRef<FrameLoader> m_loader;
     mutable UniqueRef<NavigationScheduler> m_navigationScheduler;
 
-    HTMLFrameOwnerElement* m_ownerElement;
+    WeakPtr<HTMLFrameOwnerElement> m_ownerElement;
     RefPtr<FrameView> m_view;
     RefPtr<Document> m_doc;
 
@@ -379,11 +380,6 @@ private:
     UniqueRef<EventHandler> m_eventHandler;
 };
 
-inline FrameLoader& Frame::loader() const
-{
-    return m_loader.get();
-}
-
 inline NavigationScheduler& Frame::navigationScheduler() const
 {
     return m_navigationScheduler.get();
@@ -399,19 +395,9 @@ inline Document* Frame::document() const
     return m_doc.get();
 }
 
-inline HTMLFrameOwnerElement* Frame::ownerElement() const
-{
-    return m_ownerElement;
-}
-
 inline FrameTree& Frame::tree() const
 {
     return m_treeNode;
-}
-
-inline Page* Frame::page() const
-{
-    return m_page;
 }
 
 inline void Frame::detachFromPage()

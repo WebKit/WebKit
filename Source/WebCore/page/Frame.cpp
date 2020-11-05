@@ -148,12 +148,12 @@ static inline float parentTextZoomFactor(Frame* frame)
 
 Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoaderClient>&& frameLoaderClient)
     : m_mainFrame(ownerElement ? page.mainFrame() : *this)
-    , m_page(&page)
+    , m_page(makeWeakPtr(page))
     , m_settings(&page.settings())
     , m_treeNode(*this, parentFromOwnerElement(ownerElement))
     , m_loader(makeUniqueRef<FrameLoader>(*this, WTFMove(frameLoaderClient)))
     , m_navigationScheduler(makeUniqueRef<NavigationScheduler>(*this))
-    , m_ownerElement(ownerElement)
+    , m_ownerElement(makeWeakPtr(ownerElement))
     , m_script(makeUniqueRef<ScriptController>(*this))
     , m_pageZoomFactor(parentPageZoomFactor(this))
     , m_textZoomFactor(parentTextZoomFactor(this))
@@ -205,6 +205,16 @@ Frame::~Frame()
 
     if (!isMainFrame())
         m_mainFrame.selfOnlyDeref();
+}
+
+Page* Frame::page() const
+{
+    return m_page.get();
+}
+
+HTMLFrameOwnerElement* Frame::ownerElement() const
+{
+    return m_ownerElement.get();
 }
 
 void Frame::addDestructionObserver(FrameDestructionObserver* observer)
@@ -718,7 +728,7 @@ RenderView* Frame::contentRenderer() const
 
 RenderWidget* Frame::ownerRenderer() const
 {
-    auto* ownerElement = m_ownerElement;
+    auto* ownerElement = m_ownerElement.get();
     if (!ownerElement)
         return nullptr;
     auto* object = ownerElement->renderer();

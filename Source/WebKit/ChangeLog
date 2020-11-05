@@ -1,3 +1,13 @@
+2020-11-05  Alex Christensen  <achristensen@webkit.org>
+
+        Use fewer raw pointers and more const correctness in Frame.h
+        https://bugs.webkit.org/show_bug.cgi?id=218598
+
+        Reviewed by Youenn Fablet.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        (WebKit::toWebFrameLoaderClient):
+
 2020-11-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: handle surrogate pairs in keyboard actions

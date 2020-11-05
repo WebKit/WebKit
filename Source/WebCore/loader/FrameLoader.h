@@ -116,7 +116,8 @@ public:
     ResourceLoadNotifier& notifier() const { return m_notifier; }
 
     class SubframeLoader;
-    SubframeLoader& subframeLoader() const { return *m_subframeLoader; }
+    SubframeLoader& subframeLoader() { return *m_subframeLoader; }
+    const SubframeLoader& subframeLoader() const { return *m_subframeLoader; }
     MixedContentChecker& mixedContentChecker() const { return m_mixedContentChecker; }
 
     void setupForReplace();
@@ -247,7 +248,8 @@ public:
 
     bool checkIfFormActionAllowedByCSP(const URL&, bool didReceiveRedirectResponse) const;
 
-    WEBCORE_EXPORT Frame* opener();
+    Frame* opener() { return m_opener; }
+    const Frame* opener() const { return m_opener; }
     WEBCORE_EXPORT void setOpener(Frame*);
     WEBCORE_EXPORT void detachFromAllOpenedFrames();
 
