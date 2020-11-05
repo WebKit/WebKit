@@ -30,6 +30,7 @@
 #import "PlatformSpeechSynthesisUtterance.h"
 #import "PlatformSpeechSynthesisVoice.h"
 #import <AVFoundation/AVSpeechSynthesis.h>
+#import <pal/spi/cocoa/AXSpeechManagerSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RetainPtr.h>
 
@@ -265,7 +266,11 @@ void PlatformSpeechSynthesizer::initializeVoiceList()
         NSString *name = [voice name];
         
         // Only show built-in voices when requesting through WebKit to reduce fingerprinting surface area.
+#if HAVE(AVSPEECHSYNTHESIS_SYSTEMVOICE)
+        if (voice.isSystemVoice)
+#else
         if (voice.quality == AVSpeechSynthesisVoiceQualityDefault)
+#endif
             m_voiceList.append(PlatformSpeechSynthesisVoice::create(voiceURI, name, language, true, isDefault));
     }
     END_BLOCK_OBJC_EXCEPTIONS

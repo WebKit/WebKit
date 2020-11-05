@@ -23,6 +23,7 @@ list(APPEND PAL_PUBLIC_HEADERS
 
     spi/cocoa/AVFoundationSPI.h
     spi/cocoa/AVKitSPI.h
+    spi/cocoa/AXSpeechManagerSPI.h
     spi/cocoa/AccessibilitySupportSPI.h
     spi/cocoa/AccessibilitySupportSoftLink.h
     spi/cocoa/AppSSOSPI.h
