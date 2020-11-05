@@ -1944,6 +1944,22 @@ static VirtualKey normalizedVirtualKey(VirtualKey key)
         return key;
     }
 }
+
+static Optional<UChar32> pressedCharKey(const String& pressedCharKeyString)
+{
+    switch (pressedCharKeyString.length()) {
+    case 1:
+        return pressedCharKeyString.characterAt(0);
+    case 2: {
+        auto lead = pressedCharKeyString.characterAt(0);
+        auto trail = pressedCharKeyString.characterAt(1);
+        if (U16_IS_LEAD(lead) && U16_IS_TRAIL(trail))
+            return U16_GET_SUPPLEMENTARY(lead, trail);
+    }
+    }
+
+    return WTF::nullopt;
+}
 #endif // ENABLE(WEBDRIVER_ACTIONS_API)
 
 void WebAutomationSession::performInteractionSequence(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, Ref<JSON::Array>&& inputSources, Ref<JSON::Array>&& steps, Ref<WebAutomationSession::PerformInteractionSequenceCallback>&& callback)
@@ -2055,8 +2071,12 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
             SimulatedInputSourceState sourceState { };
 
             auto pressedCharKeyString = stateObject->getString("pressedCharKey"_s);
-            if (!!pressedCharKeyString)
-                sourceState.pressedCharKeys.add(pressedCharKeyString.characterAt(0));
+            if (!!pressedCharKeyString) {
+                auto charKey = pressedCharKey(pressedCharKeyString);
+                if (!charKey)
+                    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Invalid 'pressedCharKey'.");
+                sourceState.pressedCharKeys.add(*charKey);
+            }
 
             if (auto pressedVirtualKeysArray = stateObject->getArray("pressedVirtualKeys"_s)) {
                 VirtualKeyMap pressedVirtualKeys;

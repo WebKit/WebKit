@@ -447,7 +447,14 @@
         }
     },
     "imported/w3c/webdriver/tests/perform_actions/key_special_keys.py": {
-        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
+        "subtests": {
+            "test_codepoint_keys_behave_correctly[\\u0ba8\\u0bbf]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
+            },
+            "test_codepoint_keys_behave_correctly[\\u1100\\u1161\\u11a8]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
+            }
+        }
     },
 
     "imported/w3c/webdriver/tests/close_window/close.py": {

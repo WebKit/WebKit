@@ -1,3 +1,14 @@
+2020-11-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: handle surrogate pairs in keyboard actions
+        https://bugs.webkit.org/show_bug.cgi?id=218279
+
+        Reviewed by Brian Burg.
+
+        Remove expectations for tests that are now passing.
+
+        * TestExpectations.json:
+
 2020-11-03  Lauro Moura  <lmoura@igalia.com>
 
         [WebDriver] Update config.json after tools update in r269235

@@ -1,3 +1,23 @@
+2020-11-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: handle surrogate pairs in keyboard actions
+        https://bugs.webkit.org/show_bug.cgi?id=218279
+
+        Reviewed by Brian Burg.
+
+        And fail with invalid argument if the string can be represented as a single code point.
+
+        Fixes: imported/w3c/webdriver/tests/perform_actions/key_special_keys.py::test_codepoint_keys_behave_correctly[\U0001f604]
+               imported/w3c/webdriver/tests/perform_actions/key_special_keys.py::test_codepoint_keys_behave_correctly[\U0001f60d]
+               imported/w3c/webdriver/tests/perform_actions/key_special_keys.py::test_invalid_multiple_codepoint_keys_fail[fa]
+               imported/w3c/webdriver/tests/perform_actions/key_special_keys.py::test_invalid_multiple_codepoint_keys_fail[\u0ba8\u0bbfb]
+               imported/w3c/webdriver/tests/perform_actions/key_special_keys.py::test_invalid_multiple_codepoint_keys_fail[\u0ba8\u0bbf\u0ba8]
+               imported/w3c/webdriver/tests/perform_actions/key_special_keys.py::test_invalid_multiple_codepoint_keys_fail[\u1100\u1161\u11a8c]
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::pressedCharKey):
+        (WebKit::WebAutomationSession::performInteractionSequence):
+
 2020-11-05  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Determine an AAGUID for the platform authenticators
