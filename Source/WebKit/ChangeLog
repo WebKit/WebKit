@@ -1,3 +1,22 @@
+2020-11-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Remove redundant rule for shared-preference.read-write
+        https://bugs.webkit.org/show_bug.cgi?id=218594
+        <rdar://problem/66581796>
+
+        Reviewed by Per Arne Vollan.
+
+        We have long had a rule to allow shared preferences to be read and written if a
+        particular sandbox extension was granted to the process. However, we do not issue
+        this extension to any WebKit process, so the rule is unnecessary.
+
+        We should remove it to reduce confusion, and make the sandbox smaller (and quicker
+        to compile).
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-11-03  Darin Adler  <darin@apple.com>
 
         Remove more functions that implicitly use composed tree

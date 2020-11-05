@@ -383,8 +383,6 @@
            (extension "com.apple.security.exception.managed-preference.read-only"))
     (allow user-preference-read
            (extension "com.apple.security.exception.shared-preference.read-only"))
-    (allow user-preference-read user-preference-write
-           (extension "com.apple.security.exception.shared-preference.read-write"))
     (allow sysctl-read
            (extension "com.apple.security.exception.sysctl.read-only"))
     (allow sysctl-read sysctl-write
