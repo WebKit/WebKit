@@ -2414,7 +2414,7 @@ class TransferToS3(master.MasterShellCommand):
         return results == SUCCESS and self.getProperty('sensitive', False)
 
     def getResultSummary(self):
-        if self.results != SUCCESS:
+        if self.results == FAILURE:
             return {u'step': u'Failed to transfer archive to S3'}
         return super(TransferToS3, self).getResultSummary()
 
