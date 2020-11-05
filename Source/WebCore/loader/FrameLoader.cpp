@@ -386,12 +386,12 @@ Optional<FrameIdentifier> FrameLoader::frameID() const
 
 Frame* FrameLoader::opener()
 {
-    return m_opener;
+    return m_opener.get();
 }
 
 const Frame* FrameLoader::opener() const
 {
-    return m_opener;
+    return m_opener.get();
 }
 
 void FrameLoader::setDefersLoading(bool defers)
