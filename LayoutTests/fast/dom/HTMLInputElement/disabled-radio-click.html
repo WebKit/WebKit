@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+description("Make sure that the onclick handler is not called when the user clicks on a disabled radio button, or when calling click() on such element.");
+jsTestIsAsync = true;
+
+let clickHandlerCallCount = 0;
+const input = document.createElement("input");
+input.type = "radio";
+input.disabled = true;
+
+document.body.append(input);
+
+input.onclick = () => {
+  clickHandlerCallCount++;
+  testFailed("Click event handler was called");
+};
+debug("* Testing input.click()");
+input.click();
+setTimeout(() => {
+    shouldBe("clickHandlerCallCount", "0");
+    debug("* Testing user click");
+    UIHelper.activateAt(input.offsetLeft + 5, input.offsetTop + 5).then(() => {
+        shouldBe("clickHandlerCallCount", "0");
+        setTimeout(() => {
+            shouldBe("clickHandlerCallCount", "0");
+            finishJSTest();
+        }, 0);
+    });
+}, 0);
+</script>
+</body>
+</html>

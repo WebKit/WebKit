@@ -1,5 +1,20 @@
 2020-11-05  Chris Dumez  <cdumez@apple.com>
 
+        <input disabled> does not fire click events after dispatchEvent
+        https://bugs.webkit.org/show_bug.cgi?id=215461
+        <rdar://problem/67030950>
+
+        Reviewed by Darin Adler.
+
+        Extend layout test coverage.
+
+        * fast/dom/HTMLInputElement/disabled-checkbox-click-expected.txt: Added.
+        * fast/dom/HTMLInputElement/disabled-checkbox-click.html: Added.
+        * fast/dom/HTMLInputElement/disabled-radio-click-expected.txt: Added.
+        * fast/dom/HTMLInputElement/disabled-radio-click.html: Added.
+
+2020-11-05  Chris Dumez  <cdumez@apple.com>
+
         Resync web-platform-tests/html/browsers & web-platform-tests/html/dom tests from upstream
         https://bugs.webkit.org/show_bug.cgi?id=218590
 
