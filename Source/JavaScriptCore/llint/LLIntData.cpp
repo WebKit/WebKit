@@ -60,6 +60,7 @@ extern "C" void returnFromLLIntTrampoline(void);
 #endif
 
 #if ENABLE(CSS_SELECTOR_JIT) && CPU(ARM64)
+extern "C" void vmEntryToCSSJITAfter(void);
 JSC_ANNOTATE_JIT_OPERATION(_JITTarget_vmEntryToCSSJITAfter, vmEntryToCSSJITAfter);
 #endif
 

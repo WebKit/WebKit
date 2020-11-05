@@ -1,3 +1,10 @@
+2020-11-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, build fix for ARM64E
+        https://bugs.webkit.org/show_bug.cgi?id=218587
+
+        * llint/LLIntData.cpp:
+
 2020-11-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Apply JITCage to CSSJIT

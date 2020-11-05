@@ -48,7 +48,6 @@ enum class SelectorContext {
 void compileSelector(CompiledSelector&, const CSSSelector*, SelectorContext);
 
 extern "C" unsigned vmEntryToCSSJIT(uintptr_t, uintptr_t, uintptr_t, const void* codePtr);
-extern "C" void vmEntryToCSSJITAfter(void);
 
 inline unsigned ruleCollectorSimpleSelectorChecker(CompiledSelector& compiledSelector, const Element* element, unsigned* value)
 {
