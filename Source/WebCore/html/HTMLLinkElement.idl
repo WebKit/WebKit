@@ -38,6 +38,7 @@
     [CEReactions=NotNeeded] attribute DOMString? crossOrigin;
     [CEReactions=NotNeeded, Reflect, EnabledBySetting=LinkPreloadResponsiveImages] attribute DOMString imageSrcset;
     [CEReactions=NotNeeded, Reflect, EnabledBySetting=LinkPreloadResponsiveImages] attribute DOMString imageSizes;
+    [EnabledBySetting=ReferrerPolicyAttribute, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute DOMString referrerPolicy;
 
     // DOM Level 2 Style
     readonly attribute StyleSheet sheet;
