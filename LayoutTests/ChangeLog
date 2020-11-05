@@ -1,3 +1,20 @@
+2020-11-05  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] Move tests grid-columns-rows-get-set-multiple and grid-content-sized-columns-resolution to WPT folder
+        https://bugs.webkit.org/show_bug.cgi?id=218565
+        
+        These changes have been moved upstream in Chromium
+        at https://chromium-review.googlesource.com/c/chromium/src/+/2436821
+        and ported in WPT at 
+        https://github.com/web-platform-tests/wpt/commit/7a287c9e26fbc12c91e1dde91859fabed96254b6
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple-expected.txt: Removed.
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple.html: Removed.
+        * fast/css-grid-layout/grid-content-sized-columns-resolution-expected.txt: Removed.
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set-multiple.js: Removed.
+
 2020-11-05  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed test gardening. Gardened several flaky failures reported in test bot.

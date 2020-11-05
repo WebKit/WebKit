@@ -27,6 +27,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-auto-rows-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-auto-rows-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-auto-rows-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-columns-rows-get-set-multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-content-sized-columns-resolution.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-shorthand-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-shorthand-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-shorthand.html
