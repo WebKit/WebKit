@@ -1,5 +1,14 @@
 2020-11-05  Angelos Oikonomopoulos  <angelos@igalia.com>
 
+        Test that skip_validation is effective
+        https://bugs.webkit.org/show_bug.cgi?id=218611
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps_unittest.py:
+
+2020-11-05  Angelos Oikonomopoulos  <angelos@igalia.com>
+
         Test that TransferToS3 is skipped properly
         https://bugs.webkit.org/show_bug.cgi?id=218610
 

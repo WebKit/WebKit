@@ -3589,6 +3589,22 @@ class TestCreateLocalGITCommit(BuildStepMixinAdditions, unittest.TestCase):
         return rc
 
 
+class TestValidatePatch(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_skipped(self):
+        self.setupStep(ValidatePatch())
+        self.setProperty('patch_id', '1234')
+        self.setProperty('bug_id', '5678')
+        self.setProperty('skip_validation', True)
+        self.expectOutcome(result=SKIPPED, state_string='Validated patch (skipped)')
+        return self.runStep()
+
+
 class TestValidateCommiterAndReviewer(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
