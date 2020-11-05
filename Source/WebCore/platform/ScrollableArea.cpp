@@ -368,18 +368,27 @@ void ScrollableArea::setScrollbarOverlayStyle(ScrollbarOverlayStyle overlayStyle
 {
     m_scrollbarOverlayStyle = overlayStyle;
 
-    if (horizontalScrollbar()) {
-        ScrollbarTheme::theme().updateScrollbarOverlayStyle(*horizontalScrollbar());
-        horizontalScrollbar()->invalidate();
-        if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
-            scrollAnimator->invalidateScrollbarPartLayers(horizontalScrollbar());
+    if (auto* scrollbar = horizontalScrollbar())
+        ScrollbarTheme::theme().updateScrollbarOverlayStyle(*scrollbar);
+
+    if (auto* scrollbar = verticalScrollbar())
+        ScrollbarTheme::theme().updateScrollbarOverlayStyle(*scrollbar);
+
+    invalidateScrollbars();
+}
+
+void ScrollableArea::invalidateScrollbars()
+{
+    if (auto* scrollbar = horizontalScrollbar()) {
+        scrollbar->invalidate();
+        if (auto* scrollAnimator = existingScrollAnimator())
+            scrollAnimator->invalidateScrollbarPartLayers(scrollbar);
     }
-    
-    if (verticalScrollbar()) {
-        ScrollbarTheme::theme().updateScrollbarOverlayStyle(*verticalScrollbar());
-        verticalScrollbar()->invalidate();
-        if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
-            scrollAnimator->invalidateScrollbarPartLayers(verticalScrollbar());
+
+    if (auto* scrollbar = verticalScrollbar()) {
+        scrollbar->invalidate();
+        if (auto* scrollAnimator = existingScrollAnimator())
+            scrollAnimator->invalidateScrollbarPartLayers(scrollbar);
     }
 }
 

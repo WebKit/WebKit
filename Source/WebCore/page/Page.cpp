@@ -3011,6 +3011,7 @@ void Page::appearanceDidChange()
         document.styleScope().evaluateMediaQueriesForAppearanceChange();
         document.updateElementsAffectedByMediaQueries();
         document.scheduleRenderingUpdate(RenderingUpdateStep::MediaQueryEvaluation);
+        document.invalidateScrollbars();
     });
 }
 

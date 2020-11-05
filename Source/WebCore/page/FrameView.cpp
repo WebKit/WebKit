@@ -816,6 +816,15 @@ void FrameView::updateCompositingLayersAfterLayout()
     renderView->compositor().updateCompositingLayers(CompositingUpdateType::AfterLayout);
 }
 
+void FrameView::invalidateScrollbarsForAllScrollableAreas()
+{
+    if (!m_scrollableAreas)
+        return;
+
+    for (auto* scrollableArea : *m_scrollableAreas)
+        scrollableArea->invalidateScrollbars();
+}
+
 GraphicsLayer* FrameView::layerForHorizontalScrollbar() const
 {
     RenderView* renderView = this->renderView();

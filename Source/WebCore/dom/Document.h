@@ -1369,6 +1369,8 @@ public:
     void setNeedsVisualViewportScrollEvent();
     void runScrollSteps();
 
+    void invalidateScrollbars();
+
     WEBCORE_EXPORT void addAudioProducer(MediaProducer&);
     WEBCORE_EXPORT void removeAudioProducer(MediaProducer&);
     MediaProducer::MediaStateFlags mediaState() const { return m_mediaState; }

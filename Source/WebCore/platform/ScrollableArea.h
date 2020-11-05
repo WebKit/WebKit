@@ -171,6 +171,7 @@ public:
     bool hasOverlayScrollbars() const;
     WEBCORE_EXPORT virtual void setScrollbarOverlayStyle(ScrollbarOverlayStyle);
     ScrollbarOverlayStyle scrollbarOverlayStyle() const { return static_cast<ScrollbarOverlayStyle>(m_scrollbarOverlayStyle); }
+    void invalidateScrollbars();
     bool useDarkAppearanceForScrollbars() const;
 
     virtual ScrollingNodeID scrollingNodeID() const { return 0; }

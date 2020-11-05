@@ -668,6 +668,8 @@ public:
     void invalidateControlTints() { traverseForPaintInvalidation(GraphicsContext::PaintInvalidationReasons::InvalidatingControlTints); }
     void invalidateImagesWithAsyncDecodes() { traverseForPaintInvalidation(GraphicsContext::PaintInvalidationReasons::InvalidatingImagesWithAsyncDecodes); }
 
+    void invalidateScrollbarsForAllScrollableAreas();
+
     GraphicsLayer* layerForHorizontalScrollbar() const final;
     GraphicsLayer* layerForVerticalScrollbar() const final;
 

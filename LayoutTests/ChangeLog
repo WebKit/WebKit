@@ -1,3 +1,18 @@
+2020-11-05  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Toggling dark mode does not update the scrollbar appearance in overflow: scroll elements
+        https://bugs.webkit.org/show_bug.cgi?id=218538
+        <rdar://problem/68953006>
+
+        Reviewed by Simon Fraser.
+
+        Added a layout test which draws a scrollbar in the dark appearance,
+        switches to the light appearance, and draws the scrollbar again. The
+        final image should have a light appearance scrollbar.
+
+        * fast/scrolling/mac/overflow-scrollbars-toggle-dark-mode-expected.html: Added.
+        * fast/scrolling/mac/overflow-scrollbars-toggle-dark-mode.html: Added.
+
 2020-11-05  Youenn Fablet  <youenn@apple.com>
 
         Consider blocking ports 5060 and 5061

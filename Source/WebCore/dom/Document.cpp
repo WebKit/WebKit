@@ -4156,6 +4156,12 @@ void Document::runScrollSteps()
     }
 }
 
+void Document::invalidateScrollbars()
+{
+    if (auto* frameView = view())
+        frameView->invalidateScrollbarsForAllScrollableAreas();
+}
+
 void Document::addAudioProducer(MediaProducer& audioProducer)
 {
     m_audioProducers.add(audioProducer);
