@@ -1221,7 +1221,14 @@
     (allow mach-bootstrap
         (apply-message-filter
             (allow xpc-message-send (with telemetry))
-            (allow xpc-message-send (with telemetry) (message-number 206))
+            (allow xpc-message-send (message-number
+                204
+                207
+                301
+                800
+                804
+                )
+            )
         )
     )
 )
@@ -1230,10 +1237,97 @@
     (allow mach-kernel-endpoint
         (apply-message-filter
             (allow mach-message-send (with telemetry))
+            (allow mach-message-send (kernel-mig-routine
+                _mach_make_memory_entry
+                host_get_io_master
+                host_info
+                host_request_notification
+                io_connect_add_client
+                io_connect_async_method
+                io_connect_map_memory_into_task
+                io_connect_method
+                io_connect_method_var_output
+                io_connect_set_notification_port_64
+                io_iterator_is_valid
+                io_iterator_next
+                io_object_conforms_to
+                io_registry_create_iterator
+                io_registry_entry_create_iterator
+                io_registry_entry_from_path
+                io_registry_entry_get_child_iterator
+                io_registry_entry_get_name
+                io_registry_entry_get_name_in_plane
+                io_registry_entry_get_parent_iterator
+                io_registry_entry_get_properties_bin_buf
+                io_registry_entry_get_property_bin_buf
+                io_registry_entry_get_registry_entry_id
+                io_registry_get_root_entry
+                io_server_version
+                io_service_add_interest_notification_64
+                io_service_add_notification_bin_64
+                io_service_close
+                io_service_get_matching_service_bin
+                io_service_get_matching_services_bin
+                io_service_open_extended
+                mach_port_get_refs
+                mach_port_set_attributes
+                mach_vm_copy
+                mach_vm_map_external
+                mach_vm_region
+                mach_vm_remap_external
+                semaphore_create
+                semaphore_destroy
+                task_get_special_port_from_user
+                task_info_from_user
+                task_policy_set
+                task_restartable_ranges_synchronize
+                thread_get_state_to_user
+                thread_info
+                thread_policy
+                thread_policy_set
+                thread_resume
+                thread_set_exception_ports
+                thread_suspend
+                )
+            )
         )
     )
 )
 
 (when (defined? 'syscall-mach)
     (allow syscall-mach (with telemetry))
+    (allow syscall-mach (machtrap-number
+        MSC__kernelrpc_mach_port_construct_trap
+        MSC__kernelrpc_mach_port_deallocate_trap
+        MSC__kernelrpc_mach_port_destruct_trap
+        MSC__kernelrpc_mach_port_extract_member_trap
+        MSC__kernelrpc_mach_port_guard_trap
+        MSC__kernelrpc_mach_port_insert_member_trap
+        MSC__kernelrpc_mach_port_insert_right_trap
+        MSC__kernelrpc_mach_port_mod_refs_trap
+        MSC__kernelrpc_mach_port_request_notification_trap
+        MSC__kernelrpc_mach_port_type_trap
+        MSC__kernelrpc_mach_vm_allocate_trap
+        MSC__kernelrpc_mach_vm_deallocate_trap
+        MSC__kernelrpc_mach_vm_map_trap
+        MSC__kernelrpc_mach_vm_protect_trap
+        MSC__kernelrpc_mach_vm_purgable_control_trap
+        MSC_host_create_mach_voucher_trap
+        MSC_host_self_trap
+        MSC_mach_generate_activity_id
+        MSC_mach_msg_trap
+        MSC_mach_reply_port
+        MSC_mach_voucher_extract_attr_recipe_trap
+        MSC_mk_timer_arm
+        MSC_mk_timer_cancel
+        MSC_mk_timer_create
+        MSC_pid_for_task
+        MSC_semaphore_signal_trap
+        MSC_semaphore_timedwait_trap
+        MSC_semaphore_wait_trap
+        MSC_syscall_thread_switch
+        MSC_task_name_for_pid
+        MSC_thread_get_special_reply_port
+        )
+    )
 )
