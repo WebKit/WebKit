@@ -1,3 +1,21 @@
+2020-11-05  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION (r263179): CSS checkbox no longer visible in iOS 14
+        https://bugs.webkit.org/show_bug.cgi?id=216690
+        <rdar://problem/69156576>
+
+        Reviewed by Simon Fraser.
+
+        Add two new tests: one that identifies the particular regression introduced by r263179 where
+        <div style="box-shadow: 0 0 0 10px"> would render nothing at all, and another one that does
+        further hit-testing on clipped child of an element with height: 0 and box-shadow to set ink
+        overflow which was failing even after r263179.
+
+        * fast/box-shadow/box-shadow-with-zero-height-expected.html: Added.
+        * fast/box-shadow/box-shadow-with-zero-height.html: Added.
+        * fast/box-shadow/hit-test-box-shadow-on-zero-height-clipping-container-2-expected.txt: Added.
+        * fast/box-shadow/hit-test-box-shadow-on-zero-height-clipping-container-2.html: Added.
+
 2020-11-05  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Toggling dark mode does not update the scrollbar appearance in overflow: scroll elements

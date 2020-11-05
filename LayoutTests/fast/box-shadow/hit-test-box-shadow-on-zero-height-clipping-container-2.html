@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+    .box {
+        position: absolute;
+        top: 100px;
+        left: 100px;
+        width: 500px;
+        height: 500px;
+        max-height: 0;
+        overflow-y: hidden;
+        background-color: red;
+        border: 10px solid black;
+    }
+
+    .first {
+        top: 50px;
+        max-height: 300px;
+        width: 400px;
+    }
+    
+    .second {
+        box-shadow: 0 0 0 20px rgba(0, 0, 128, 0.5);
+    }
+
+    .box:hover {
+        background-color: green;
+    }
+
+    .inner {
+        padding: 24px;
+        width: 400px;
+        margin-left: 200px;
+        background-color: blue;
+        border: 1px solid black;
+    }
+    </style>
+</head>
+<body>
+    <p>Hovering over the blue shadow area under the black bar should not make green go to red, for the whole width</p>
+    <div class="first box"></div>
+    <div class="second box">
+        <div class="inner"></div>
+    </div>
+    <script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const result = document.body.appendChild(document.createElement("span"));
+const hitTestElement = document.elementFromPoint(500, 130);
+const pass = hitTestElement.className == "first box";
+result.textContent = `${pass ? "PASS" : "FAIL"}: target element class is "${hitTestElement.className}"`;
+
+    </script>
+</body>
+</html>

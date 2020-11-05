@@ -4596,16 +4596,9 @@ void RenderBox::addVisualEffectOverflow()
     if (!hasBoxShadow && !hasBorderImageOutsets && !hasOutline)
         return;
 
-    // If all we have is a box-shadow and the border box has either 0-width or 0-height,
-    // the box-shadow should not extend the visual overflow.
-    auto borderBox = borderBoxRect();
-    if (!hasBorderImageOutsets && !hasOutline && borderBox.isEmpty())
-        return;
+    addVisualOverflow(applyVisualEffectOverflow(borderBoxRect()));
 
-    addVisualOverflow(applyVisualEffectOverflow(borderBox));
-
-    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
-    if (fragmentedFlow)
+    if (auto* fragmentedFlow = enclosingFragmentedFlow())
         fragmentedFlow->addFragmentsVisualEffectOverflow(this);
 }
 
