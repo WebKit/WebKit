@@ -27,6 +27,7 @@
 #include "WebSpeechRecognitionConnection.h"
 
 #include "SpeechRecognitionServerMessages.h"
+#include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include "WebSpeechRecognitionConnectionMessages.h"
 #include <WebCore/SpeechRecognitionConnectionClient.h>

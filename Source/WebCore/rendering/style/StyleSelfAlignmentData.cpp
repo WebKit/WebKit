@@ -26,6 +26,8 @@
 #include "config.h"
 #include "StyleSelfAlignmentData.h"
 
+#include <wtf/text/TextStream.h>
+
 namespace WebCore {
 
 TextStream& operator<<(TextStream& ts, const StyleSelfAlignmentData& o)

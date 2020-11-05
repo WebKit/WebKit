@@ -55,6 +55,7 @@
 #include "LLIntEntrypoint.h"
 #include "LLIntExceptions.h"
 #include "LLIntPrototypeLoadAdaptiveStructureWatchpoint.h"
+#include "LLIntThunks.h"
 #include "ObjectConstructor.h"
 #include "ObjectPropertyConditionSet.h"
 #include "ProtoCallFrameInlines.h"

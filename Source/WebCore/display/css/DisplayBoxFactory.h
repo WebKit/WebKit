@@ -35,6 +35,7 @@ namespace WebCore {
 namespace Layout {
 class Box;
 class BoxGeometry;
+class ContainerBox;
 class InlineLineGeometry;
 class ReplacedBox;
 struct LineRun;

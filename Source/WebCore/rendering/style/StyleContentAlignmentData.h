@@ -27,6 +27,10 @@
 
 #include "RenderStyleConstants.h"
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class StyleContentAlignmentData {

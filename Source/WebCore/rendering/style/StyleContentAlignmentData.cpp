@@ -26,6 +26,8 @@
 #include "config.h"
 #include "StyleContentAlignmentData.h"
 
+#include <wtf/text/TextStream.h>
+
 namespace WebCore {
 
 TextStream& operator<<(TextStream& ts, const StyleContentAlignmentData& o)

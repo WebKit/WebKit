@@ -43,6 +43,7 @@
 #include "PluginInfoProvider.h"
 #include "ProgressTrackerClient.h"
 #include "SocketProvider.h"
+#include "SpeechRecognitionProvider.h"
 #include "SpeechSynthesisClient.h"
 #include "StorageNamespaceProvider.h"
 #include "UserContentController.h"

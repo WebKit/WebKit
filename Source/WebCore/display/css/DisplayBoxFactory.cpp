@@ -29,9 +29,11 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayBoxDecorationData.h"
+#include "DisplayContainerBox.h"
 #include "DisplayFillLayerImageGeometry.h"
 #include "DisplayImageBox.h"
 #include "DisplayTextBox.h"
+#include "InlineLineGeometry.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
 #include "LayoutReplacedBox.h"

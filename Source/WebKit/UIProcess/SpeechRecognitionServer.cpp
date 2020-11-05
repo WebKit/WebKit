@@ -40,7 +40,7 @@ SpeechRecognitionServer::SpeechRecognitionServer(Ref<IPC::Connection>&& connecti
 
 void SpeechRecognitionServer::start(WebCore::SpeechRecognitionRequestInfo&& requestInfo)
 {
-    auto request = SpeechRecognitionRequest::create(WTFMove(requestInfo));
+    auto request = WebCore::SpeechRecognitionRequest::create(WTFMove(requestInfo));
     m_pendingRequests.append(WTFMove(request));
 
     processNextPendingRequestIfNeeded();
@@ -84,12 +84,12 @@ void SpeechRecognitionServer::abort(WebCore::SpeechRecognitionConnectionClientId
 
 void SpeechRecognitionServer::removePendingRequest(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier)
 {
-    RefPtr<SpeechRecognitionRequest> takenRequest;
+    RefPtr<WebCore::SpeechRecognitionRequest> takenRequest;
     auto pendingRequests = std::exchange(m_pendingRequests, { });
     while (!pendingRequests.isEmpty()) {
         auto request = pendingRequests.takeFirst();
         if (request->clientIdentifier() == clientIdentifier) {
-            auto update = WebCore::SpeechRecognitionUpdate::create(clientIdentifier, SpeechRecognitionUpdateType::End);
+            auto update = WebCore::SpeechRecognitionUpdate::create(clientIdentifier, WebCore::SpeechRecognitionUpdateType::End);
             send(Messages::WebSpeechRecognitionConnection::DidReceiveUpdate(update), m_identifier);
             continue;
         }

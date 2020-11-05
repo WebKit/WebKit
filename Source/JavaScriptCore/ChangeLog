@@ -1,3 +1,12 @@
+2020-11-05  Don Olmstead  <don.olmstead@sony.com>
+
+        Non-unified build fixes, early November 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=218628
+
+        Unreviewed non-unified build fix.
+
+        * llint/LLIntSlowPaths.cpp:
+
 2020-11-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, build fix for ARM64E
