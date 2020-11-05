@@ -1,3 +1,10 @@
+2020-11-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, fix the build with recent SDKs.
+
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::Connection::kill):
+
 2020-11-05  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Remove redundant rule using never-granted extension
