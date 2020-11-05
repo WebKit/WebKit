@@ -166,6 +166,7 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     test->waitUntilLoadFinished();
     test->runJavaScriptAndWaitUntilFinished("window.indexedDB.open('TestDatabase');", nullptr);
     GUniquePtr<char> indexedDBDirectory(g_build_filename(Test::dataDirectory(), "indexeddb", nullptr));
+    test->waitUntilFileChanged(indexedDBDirectory.get(), G_FILE_MONITOR_EVENT_CREATED);
     g_assert_cmpstr(indexedDBDirectory.get(), ==, webkit_website_data_manager_get_indexeddb_directory(test->m_manager));
     g_assert_true(g_file_test(indexedDBDirectory.get(), G_FILE_TEST_IS_DIR));
 
@@ -190,11 +191,15 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     GUniquePtr<char> itpDirectory(g_build_filename(Test::dataDirectory(), "itp", nullptr));
     g_assert_cmpstr(itpDirectory.get(), ==, webkit_website_data_manager_get_itp_directory(test->m_manager));
 
+    test->runJavaScriptAndWaitUntilFinished("navigator.serviceWorker.register('./some-dummy.js');", nullptr);
     GUniquePtr<char> swRegistrationsDirectory(g_build_filename(Test::dataDirectory(), "serviceworkers", nullptr));
+    test->waitUntilFileChanged(swRegistrationsDirectory.get(), G_FILE_MONITOR_EVENT_CREATED);
     g_assert_cmpstr(swRegistrationsDirectory.get(), ==, webkit_website_data_manager_get_service_worker_registrations_directory(test->m_manager));
     g_assert_true(g_file_test(swRegistrationsDirectory.get(), G_FILE_TEST_IS_DIR));
 
+    test->runJavaScriptAndWaitUntilFinished("caches.open('my-cache');", nullptr);
     GUniquePtr<char> domCacheDirectory(g_build_filename(Test::dataDirectory(), "dom-cache", nullptr));
+    test->waitUntilFileChanged(domCacheDirectory.get(), G_FILE_MONITOR_EVENT_CREATED);
     g_assert_cmpstr(domCacheDirectory.get(), ==, webkit_website_data_manager_get_dom_cache_directory(test->m_manager));
     g_assert_true(g_file_test(domCacheDirectory.get(), G_FILE_TEST_IS_DIR));
 

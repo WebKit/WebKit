@@ -66,9 +66,6 @@
             "/webkit/WebKitWebsiteData/storage": {
                 "expected": { "wpe": {"status": ["PASS", "FAIL"]}}
             },
-            "/webkit/WebKitWebsiteData/configuration": {
-                "expected": {"gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/205441"}}
-            },
             "/webkit/WebKitWebsiteData/dom-cache": {
                 "expected": {
                     "gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/213785"},

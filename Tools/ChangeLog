@@ -1,3 +1,27 @@
+2020-11-05  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Test /webkit/WebKitWebsiteData/configuration is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=205441
+
+        Reviewed by Carlos Garcia Campos.
+
+        Checking the last 200 runs of gtk-release in the bots, the original
+        error from the report does not appear, but other flakies happened
+        related to checking if some directories were created (namely
+        indexeddb, service-workers and dom-cache). As they are created
+        asynchronously or lazily (i.e. requiring some operation to happen).
+        This could be seen in the WPE bots, not covered by the original
+        expectation, and also reproduced locally by running the test case
+        alone.
+
+        This commit adds some steps/wait time before each of these to make
+        sure the directories are created properly.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebsiteData.cpp:
+        (testWebsiteDataConfiguration): Add required steps before checking
+        directories
+        * TestWebKitAPI/glib/TestExpectations.json: Remove expectation
+
 2020-11-05  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Test that skip_validation is effective
