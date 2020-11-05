@@ -1,3 +1,11 @@
+2020-11-05  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed test gardening. Gardened several flaky failures reported in test bot.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-11-05  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Determine an AAGUID for the platform authenticators

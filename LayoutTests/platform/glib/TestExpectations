@@ -561,6 +561,7 @@ webkit.org/b/126523 perf/accessibility-title-ui-element.html [ Failure Pass ]
 webkit.org/b/188101 perf/append-text-nodes-without-renderers.html [ Failure Pass ]
 webkit.org/b/211837 perf/rel-list-remove.html [ Failure Pass ]
 webkit.org/b/213520 perf/htmlcollection-backwards-iteration.html [ Pass Failure ]
+webkit.org/b/218609 perf/clone-with-focus.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Perf-related bugs
@@ -891,6 +892,7 @@ webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursor
 
 webkit.org/b/210274 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/none-load-from-cache-storage.https.html [ Failure Pass ]
 webkit.org/b/210541 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-load-from-cache-storage.https.html [ Failure Pass ]
+webkit.org/b/214155 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html [ Failure Pass ]
 
 webkit.org/b/211692 imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure Pass ]
 webkit.org/b/212217 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-escape.tentative.any.html [ Failure ]
@@ -1010,6 +1012,8 @@ webkit.org/b/216358 imported/w3c/web-platform-tests/css/css-fonts/font-feature-r
 
 # Failing since r266665.
 webkit.org/b/216359 fast/text/emoji-synthesis.html [ ImageOnlyFailure ]
+
+webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transitions/parsing/transition-property-computed.html [ Crash Pass ]
 
 webkit.org/b/217414 imported/w3c/web-platform-tests/user-timing/measure-l3.any.html [ Failure Pass ]
 webkit.org/b/217414 imported/w3c/web-platform-tests/user-timing/measure-l3.any.worker.html [ Failure Pass ]

@@ -374,6 +374,8 @@ webkit.org/b/79203 fast/mediastream/MediaStream-video-element-displays-buffer.ht
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout ]
 webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element.html [ Failure Pass Timeout ]
+webkit.org/b/79203 fast/mediastream/captureStream/canvas2d-heavy-drawing.html [ Failure Pass ]
+
 # Crash is bug #176801
 webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ Timeout ImageOnlyFailure ]
 
