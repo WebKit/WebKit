@@ -83,7 +83,7 @@ gdk_event_copy(GdkEvent* event)
 static inline GdkDevice*
 gdk_event_get_source_device(const GdkEvent* event)
 {
-    return gdk_event_get_device(event);
+    return gdk_event_get_device(const_cast<GdkEvent*>(event));
 }
 
 static inline void
