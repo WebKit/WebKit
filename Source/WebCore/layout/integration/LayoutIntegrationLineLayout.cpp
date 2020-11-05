@@ -50,6 +50,7 @@
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
+#include "StringTruncator.h"
 #include "TextDecorationPainter.h"
 #include "TextPainter.h"
 
@@ -196,6 +197,7 @@ void LineLayout::constructContent()
 
     auto constructDisplayLineRuns = [&] {
         auto initialContaingBlockSize = m_layoutState.viewportSize();
+        Vector<bool> hasAdjustedTrailingLineList(lines.size(), false);
         for (auto& lineRun : m_inlineFormattingState.lineRuns()) {
             auto& layoutBox = lineRun.layoutBox();
             auto& style = layoutBox.style();
@@ -218,7 +220,8 @@ void LineLayout::constructContent()
             // Inline boxes are relative to the line box while final Runs need to be relative to the parent Box
             // FIXME: Shouldn't we just leave them be relative to the line box?
             auto lineIndex = lineRun.lineIndex();
-            auto lineBoxLogicalRect = lines[lineIndex].lineBoxLogicalRect();
+            auto& line = lines[lineIndex];
+            auto lineBoxLogicalRect = line.lineBoxLogicalRect();
             runRect.moveBy({ lineBoxLogicalRect.left(), lineBoxLogicalRect.top() });
             if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition)
                 runRect.setY(roundToInt(runRect.y()));
@@ -226,9 +229,27 @@ void LineLayout::constructContent()
             WTF::Optional<Run::TextContent> textContent;
             if (auto text = lineRun.text()) {
                 auto adjustedContentToRenderer = [&] {
-                    // FIXME: This is where we create strings with trailing hyphens and truncate/replace content with ellipsis.
+                    auto originalContent = text->content().substring(text->start(), text->length());
                     if (text->needsHyphen())
-                        return makeString(StringView(text->content()).substring(text->start(), text->length()), style.hyphenString());
+                        return makeString(originalContent, style.hyphenString());
+                    if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsTrailingContentReplacement) {
+                        // Currently it's ellipsis replacement only, but adding support for "text-overflow: string" should be relatively simple.
+                        if (hasAdjustedTrailingLineList[lineIndex]) {
+                            // This line already has adjusted trailing. Any runs after the ellipsis should render blank.
+                            return emptyString();
+                        }
+                        auto runLogicalRect = lineRun.logicalRect();
+                        auto lineLogicalRight = line.logicalRight();
+                        auto ellipsisWidth = style.fontCascade().width(WebCore::TextRun { &horizontalEllipsis });
+                        if (runLogicalRect.right() + ellipsisWidth > lineLogicalRight) {
+                            // The next run with ellipsis would surely overflow. So let's just add it to this run even if
+                            // it makes the run wider than it originally was.
+                            hasAdjustedTrailingLineList[lineIndex] = true;
+                            float resultWidth = 0;
+                            auto maxWidth = line.logicalWidth() - runLogicalRect.left();
+                            return StringTruncator::rightTruncate(originalContent, maxWidth, style.fontCascade(), resultWidth, true);
+                        }
+                    }
                     return String();
                 };
                 textContent = Run::TextContent { text->start(), text->length(), text->content(), adjustedContentToRenderer(), text->needsHyphen() };
