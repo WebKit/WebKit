@@ -1,5 +1,20 @@
 2020-11-05  Saam Barati  <sbarati@apple.com>
 
+        Add back swap() free function for RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=218454
+
+        Reviewed by Darin Adler.
+
+        Add back the swap() free function I removed in r269115. Darin's suggestion
+        of specializing only a single type of RefPtr instead of two, solved the
+        issue. I also removed some previous hack where we didn't enable this for
+        RawPtrTraits. It's now enabled for all PtrTraits.
+
+        * wtf/RefPtr.h:
+        (WTF::swap):
+
+2020-11-05  Saam Barati  <sbarati@apple.com>
+
         Change RELEASE_ASSERT to use branch+crash inside HashTable.h
         https://bugs.webkit.org/show_bug.cgi?id=218624
         <rdar://problem/70901101>

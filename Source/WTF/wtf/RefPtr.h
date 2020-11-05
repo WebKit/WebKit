@@ -193,6 +193,12 @@ inline void RefPtr<T, U, V>::swap(RefPtr<X, Y, Z>& o)
     U::swap(m_ptr, o.m_ptr);
 }
 
+template<typename T, typename U, typename V>
+inline void swap(RefPtr<T, U, V>& a, RefPtr<T, U, V>& b)
+{
+    a.swap(b);
+}
+
 template<typename T, typename U, typename V, typename X, typename Y, typename Z>
 inline bool operator==(const RefPtr<T, U, V>& a, const RefPtr<X, Y, Z>& b)
 { 
