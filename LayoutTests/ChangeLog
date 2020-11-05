@@ -1,3 +1,16 @@
+2020-11-05  Youenn Fablet  <youenn@apple.com>
+
+        WebSocket constructor should not throw in case port is blocked
+        https://bugs.webkit.org/show_bug.cgi?id=218617
+        <rdar://problem/71080398>
+
+        Reviewed by Alex Christensen.
+
+        Removing no longer valid test, correct version covered by WPT test.
+
+        * http/tests/websocket/tests/hybi/url-parsing-expected.txt:
+        * http/tests/websocket/tests/hybi/url-parsing.html:
+
 2020-11-05  Chris Dumez  <cdumez@apple.com>
 
         <input disabled> does not fire click events after dispatchEvent

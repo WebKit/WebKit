@@ -261,8 +261,8 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         else
             message = "WebSocket without port blocked"_s;
         context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, message);
-        m_state = CLOSED;
-        return Exception { SecurityError };
+        failAsynchronously();
+        return { };
     }
 
     // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
