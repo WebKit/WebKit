@@ -33,13 +33,9 @@
 #include "RemoteMediaPlayerMIMETypeCache.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
 #include "RemoteMediaPlayerProxyConfiguration.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include "WebProcessCreationParameters.h"
 #include <WebCore/MediaPlayer.h>
-#include <WebCore/NotImplemented.h>
-#include <WebCore/Settings.h>
-#include <wtf/Assertions.h>
 
 namespace WebKit {
 
@@ -263,16 +259,16 @@ void RemoteMediaPlayerManager::didReceivePlayerMessage(IPC::Connection& connecti
         player->didReceiveMessage(connection, decoder);
 }
 
-void RemoteMediaPlayerManager::updatePreferences(const Settings& settings)
+void RemoteMediaPlayerManager::setUseGPUProcess(bool useGPUProcess)
 {
     auto registerEngine = [this](MediaEngineRegistrar registrar, MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier) {
         registrar(makeUnique<MediaPlayerRemoteFactory>(remoteEngineIdentifier, *this));
     };
 
-    RemoteMediaPlayerSupport::setRegisterRemotePlayerCallback(settings.useGPUProcessForMediaEnabled() ? WTFMove(registerEngine) : RemoteMediaPlayerSupport::RegisterRemotePlayerCallback());
+    RemoteMediaPlayerSupport::setRegisterRemotePlayerCallback(useGPUProcess ? WTFMove(registerEngine) : RemoteMediaPlayerSupport::RegisterRemotePlayerCallback());
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-    if (settings.useGPUProcessForMediaEnabled()) {
+    if (useGPUProcess) {
         WebCore::SampleBufferDisplayLayer::setCreator([](auto& client) {
             return WebProcess::singleton().ensureGPUProcessConnection().sampleBufferDisplayLayerManager().createLayer(client);
         });

@@ -3263,16 +3263,6 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitGenericCueAPIEnabledKey];
 }
 
-- (BOOL)useGPUProcessForMediaEnabled
-{
-    return [self _boolValueForKey:WebKitUseGPUProcessForMediaEnabledKey];
-}
-
-- (void)setUseGPUProcessForMediaEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitUseGPUProcessForMediaEnabledKey];
-}
-
 - (BOOL)aspectRatioOfImgFromWidthAndHeightEnabled
 {
     return [self _boolValueForKey:WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey];

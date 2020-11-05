@@ -155,6 +155,8 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldCaptureVideoInGPUProcess;
     encoder << shouldCaptureDisplayInUIProcess;
     encoder << shouldRenderCanvasInGPUProcess;
+    encoder << shouldRenderDOMInGPUProcess;
+    encoder << shouldPlayMediaInGPUProcess;
     encoder << shouldEnableVP9Decoder;
     encoder << shouldEnableVP9SWDecoder;
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -492,6 +494,12 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
 
     if (!decoder.decode(parameters.shouldRenderCanvasInGPUProcess))
+        return WTF::nullopt;
+
+    if (!decoder.decode(parameters.shouldRenderDOMInGPUProcess))
+        return WTF::nullopt;
+
+    if (!decoder.decode(parameters.shouldPlayMediaInGPUProcess))
         return WTF::nullopt;
 
     if (!decoder.decode(parameters.shouldEnableVP9Decoder))

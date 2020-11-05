@@ -2013,6 +2013,16 @@ void WebProcess::sendResourceLoadStatisticsDataImmediately(CompletionHandler<voi
 #endif
 
 #if ENABLE(GPU_PROCESS)
+void WebProcess::setUseGPUProcessForCanvasRendering(bool useGPUProcessForCanvasRendering)
+{
+    m_useGPUProcessForCanvasRendering = useGPUProcessForCanvasRendering;
+}
+
+void WebProcess::setUseGPUProcessForDOMRendering(bool useGPUProcessForDOMRendering)
+{
+    m_useGPUProcessForDOMRendering = useGPUProcessForDOMRendering;
+}
+
 void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
 {
     if (useGPUProcessForMedia == m_useGPUProcessForMedia)
@@ -2050,6 +2060,21 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
     else
         LegacyCDM::resetFactories();
 #endif
+}
+
+bool WebProcess::shouldUseRemoteRenderingFor(RenderingPurpose purpose)
+{
+    switch (purpose) {
+    case RenderingPurpose::Canvas:
+        return m_useGPUProcessForCanvasRendering;
+    case RenderingPurpose::DOM:
+        return m_useGPUProcessForDOMRendering;
+    case RenderingPurpose::MediaPainting:
+        return m_useGPUProcessForMedia;
+    default:
+        break;
+    }
+    return false;
 }
 #endif
 

@@ -227,6 +227,8 @@ struct WebPageCreationParameters {
     bool shouldCaptureVideoInGPUProcess { false };
     bool shouldCaptureDisplayInUIProcess { false };
     bool shouldRenderCanvasInGPUProcess { false };
+    bool shouldRenderDOMInGPUProcess { false };
+    bool shouldPlayMediaInGPUProcess { false };
     bool shouldEnableVP9Decoder { false };
     bool shouldEnableVP9SWDecoder { false };
 #if ENABLE(APP_BOUND_DOMAINS)

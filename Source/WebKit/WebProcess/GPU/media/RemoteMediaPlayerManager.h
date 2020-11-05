@@ -28,11 +28,6 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUProcessConnection.h"
-#include "MessageReceiver.h"
-#include "RemoteMediaPlayerState.h"
-#include "RemoteMediaResourceIdentifier.h"
-#include "SharedMemory.h"
-#include "TrackPrivateRemoteIdentifier.h"
 #include "WebProcessSupplement.h"
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MediaPlayerIdentifier.h>
@@ -40,7 +35,6 @@
 
 namespace WebCore {
 class MediaPlayerPrivateInterface;
-class Settings;
 }
 
 namespace WebKit {
@@ -62,7 +56,7 @@ public:
     static const char* supplementName();
     WebProcess& parentProcess() const { return m_process; }
 
-    void updatePreferences(const WebCore::Settings&);
+    void setUseGPUProcess(bool);
 
     GPUProcessConnection& gpuProcessConnection() const;
 

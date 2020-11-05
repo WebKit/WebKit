@@ -276,7 +276,6 @@
 #define WebKitAdClickAttributionEnabledPreferenceKey @"WebKitAdClickAttributionEnabled"
 #define WebKitFetchAPIKeepAliveEnabledPreferenceKey @"WebKitFetchAPIKeepAliveEnabled"
 #define WebKitGenericCueAPIEnabledKey @"WebKitGenericCueAPIEnabled"
-#define WebKitUseGPUProcessForMediaEnabledKey @"WebKitUseGPUProcessForMediaEnabled"
 #define WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey @"WebKitAspectRatioOfImgFromWidthAndHeightEnabled"
 #define WebKitReferrerPolicyAttributeEnabledPreferenceKey @"WebKitReferrerPolicyAttributeEnabled"
 #define WebKitCoreMathMLEnabledPreferenceKey @"WebKitCoreMathMLEnabled"

@@ -1,3 +1,43 @@
+2020-11-04  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Move the internal GPU rendering flags from WebPage to WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=218549
+
+        Reviewed by Tim Horton.
+
+        Move UseGPUProcessForCanvasRendering from WebPage to WebProcess. Add a
+        new setting for UseGPUProcessForDOMRendering to WebProcess.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        Encode/decode the flags from the UI Process to the Web Process.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        Read the flags in from the preferences.
+
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::setUseGPUProcess):
+        (WebKit::RemoteMediaPlayerManager::updatePreferences): Deleted.
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.h:
+        These flags belong to WebKit so they should not be accessed through the
+        Settings. 
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createImageBuffer const):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        (WebKit::WebPage::shouldUseRemoteRenderingFor): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setUseGPUProcessForCanvasRendering):
+        (WebKit::WebProcess::setUseGPUProcessForDOMRendering):
+        (WebKit::WebProcess::shouldUseRemoteRenderingFor):
+        * WebProcess/WebProcess.h:
+        The rendering and media flags can now be accessed from the WebPorcess.
+
 2020-11-04  Aditya Keerthi  <akeerthi@apple.com>
 
         [Contact Picker API] Add support for picker UI on iOS

@@ -47,6 +47,7 @@
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/RenderingMode.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/Timer.h>
 #include <pal/HysteresisActivity.h>
@@ -344,7 +345,10 @@ public:
 #endif
 
 #if ENABLE(GPU_PROCESS)
+    void setUseGPUProcessForCanvasRendering(bool);
+    void setUseGPUProcessForDOMRendering(bool);
     void setUseGPUProcessForMedia(bool);
+    bool shouldUseRemoteRenderingFor(WebCore::RenderingPurpose);
 #endif
 
 #if ENABLE(VP9)
@@ -687,7 +691,11 @@ private:
     HashCountedSet<String> m_pendingPasteboardWriteCounts;
 #endif
 
+#if ENABLE(GPU_PROCESS)
+    bool m_useGPUProcessForCanvasRendering { false };
+    bool m_useGPUProcessForDOMRendering { false };
     bool m_useGPUProcessForMedia { false };
+#endif
 
 #if ENABLE(VP9)
     bool m_vp9DecoderEnabled { false };

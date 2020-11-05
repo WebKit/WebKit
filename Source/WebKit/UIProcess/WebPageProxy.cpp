@@ -7851,6 +7851,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.shouldCaptureVideoInUIProcess = preferences().captureVideoInUIProcessEnabled();
     parameters.shouldCaptureVideoInGPUProcess = preferences().captureVideoInGPUProcessEnabled();
     parameters.shouldRenderCanvasInGPUProcess = preferences().useGPUProcessForCanvasRenderingEnabled();
+    parameters.shouldRenderDOMInGPUProcess = preferences().useGPUProcessForDOMRenderingEnabled();
+    parameters.shouldPlayMediaInGPUProcess = preferences().useGPUProcessForMediaEnabled();
     parameters.shouldEnableVP9Decoder = preferences().vp9DecoderEnabled();
 #if ENABLE(VP9) && PLATFORM(COCOA)
     parameters.shouldEnableVP9SWDecoder = preferences().vp9DecoderEnabled() && (!WebCore::systemHasBattery() || preferences().vp9SWDecoderEnabledOnBattery());

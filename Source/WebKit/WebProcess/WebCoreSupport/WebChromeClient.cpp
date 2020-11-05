@@ -912,7 +912,7 @@ RemoteRenderingBackendProxy& WebChromeClient::ensureRemoteRenderingBackendProxy(
 
 RefPtr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, ColorSpace colorSpace) const
 {
-    if (!m_page.shouldUseRemoteRenderingFor(purpose))
+    if (!WebProcess::singleton().shouldUseRemoteRenderingFor(purpose))
         return nullptr;
 
     return ensureRemoteRenderingBackendProxy().createImageBuffer(size, renderingMode, resolutionScale, colorSpace);

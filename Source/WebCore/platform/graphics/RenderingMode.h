@@ -30,6 +30,7 @@ namespace WebCore {
 enum class RenderingPurpose : uint8_t {
     Unspecified,
     Canvas,
+    DOM,
     MediaPainting
 };
 

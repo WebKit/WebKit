@@ -77,7 +77,6 @@
 #include <WebCore/PluginData.h>
 #include <WebCore/PointerCharacteristics.h>
 #include <WebCore/PointerID.h>
-#include <WebCore/RenderingMode.h>
 #include <WebCore/SecurityPolicyViolationEvent.h>
 #include <WebCore/ShareData.h>
 #include <WebCore/SimpleRange.h>
@@ -1362,8 +1361,6 @@ public:
     bool needsInAppBrowserPrivacyQuirks() { return m_needsInAppBrowserPrivacyQuirks; }
 #endif
 
-    bool shouldUseRemoteRenderingFor(WebCore::RenderingPurpose);
-
 #if ENABLE(MEDIA_USAGE)
     void addMediaUsageManagerSession(WebCore::MediaSessionIdentifier, const String&, const URL&);
     void updateMediaUsageManagerSessionState(WebCore::MediaSessionIdentifier, const WebCore::MediaUsageInfo&);
@@ -1834,6 +1831,8 @@ private:
     bool m_alwaysShowsVerticalScroller { false };
 
     bool m_shouldRenderCanvasInGPUProcess { false };
+    bool m_shouldRenderDOMInGPUProcess { false };
+    bool m_shouldPlayMediaInGPUProcess { false };
 #if ENABLE(APP_BOUND_DOMAINS)
     bool m_needsInAppBrowserPrivacyQuirks { false };
 #endif

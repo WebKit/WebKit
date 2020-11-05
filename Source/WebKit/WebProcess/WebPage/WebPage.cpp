@@ -421,6 +421,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_alwaysShowsHorizontalScroller { parameters.alwaysShowsHorizontalScroller }
     , m_alwaysShowsVerticalScroller { parameters.alwaysShowsVerticalScroller }
     , m_shouldRenderCanvasInGPUProcess { parameters.shouldRenderCanvasInGPUProcess }
+    , m_shouldRenderDOMInGPUProcess { parameters.shouldRenderDOMInGPUProcess }
+    , m_shouldPlayMediaInGPUProcess { parameters.shouldPlayMediaInGPUProcess }
 #if ENABLE(APP_BOUND_DOMAINS)
     , m_needsInAppBrowserPrivacyQuirks { parameters.needsInAppBrowserPrivacyQuirks }
 #endif
@@ -789,7 +791,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 
 #if ENABLE(GPU_PROCESS)
-    if (m_page->settings().useGPUProcessForMediaEnabled())
+    if (m_shouldPlayMediaInGPUProcess)
         WebProcess::singleton().ensureGPUProcessConnection().updateParameters(parameters);
 #endif
 
@@ -3804,9 +3806,11 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
 #if ENABLE(GPU_PROCESS)
     // FIXME: useGPUProcessForMediaEnabled should be a RuntimeEnabledFeature since it's global.
-    static_cast<WebMediaStrategy&>(platformStrategies()->mediaStrategy()).setUseGPUProcess(settings.useGPUProcessForMediaEnabled());
-    WebProcess::singleton().supplement<RemoteMediaPlayerManager>()->updatePreferences(settings);
-    WebProcess::singleton().setUseGPUProcessForMedia(settings.useGPUProcessForMediaEnabled());
+    static_cast<WebMediaStrategy&>(platformStrategies()->mediaStrategy()).setUseGPUProcess(m_shouldPlayMediaInGPUProcess);
+    WebProcess::singleton().supplement<RemoteMediaPlayerManager>()->setUseGPUProcess(m_shouldPlayMediaInGPUProcess);
+    WebProcess::singleton().setUseGPUProcessForCanvasRendering(m_shouldRenderCanvasInGPUProcess);
+    WebProcess::singleton().setUseGPUProcessForDOMRendering(m_shouldRenderDOMInGPUProcess);
+    WebProcess::singleton().setUseGPUProcessForMedia(m_shouldPlayMediaInGPUProcess);
 #endif
 
 #if ENABLE(IPC_TESTING_API)
@@ -7221,23 +7225,6 @@ void WebPage::synchronizeCORSDisablingPatternsWithNetworkProcess()
 {
     // FIXME: We should probably have this mechanism done between UIProcess and NetworkProcess directly.
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetCORSDisablingPatterns(m_identifier, m_corsDisablingPatterns), 0);
-}
-
-bool WebPage::shouldUseRemoteRenderingFor(RenderingPurpose purpose)
-{
-#if ENABLE(GPU_PROCESS)
-    switch (purpose) {
-    case RenderingPurpose::Canvas:
-        return m_shouldRenderCanvasInGPUProcess;
-    case RenderingPurpose::MediaPainting:
-        return m_page->settings().useGPUProcessForMediaEnabled();
-    default:
-        break;
-    }
-#else
-    UNUSED_PARAM(purpose);
-#endif
-    return false;
 }
 
 #if ENABLE(MEDIA_USAGE)
