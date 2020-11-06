@@ -1,3 +1,22 @@
+2020-11-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Remove mdnsresponder access from WebKit processes
+        https://bugs.webkit.org/show_bug.cgi?id=218633
+        <rdar://problem/69133548>
+
+        Reviewed by Per Arne Vollan.
+
+        Now that all network loading (including media) happens in the Network process,
+        we can remove an old permission to open outbound connections to mdnsresponder.
+        This is also unneeded in the GPU process, for the same reason.
+
+        I noticed that the new WebAuthn process sandbox mistakenly included this,
+        and removed it there, too.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-11-05  John Wilander  <wilander@apple.com>
 
         PCM: Switch to JSON report format
