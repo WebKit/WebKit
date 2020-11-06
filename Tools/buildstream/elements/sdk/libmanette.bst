@@ -1,7 +1,7 @@
 kind: meson
 sources:
 - kind: git_tag
-  url: gitlab_gnome_org:aplazas/libmanette.git
+  url: gitlab_gnome_org:GNOME/libmanette.git
   track: master
   ref: 0.2.4-0-ge92a35af43853eee0ce255754e622dbe10e71f2a
 
