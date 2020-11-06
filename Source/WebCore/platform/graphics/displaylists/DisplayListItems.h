@@ -1328,7 +1328,7 @@ public:
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<Ref<DrawImageBuffer>> decode(Decoder&);
 
-    void apply(GraphicsContext&) const;
+    NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
 
     Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return m_destinationRect; }
@@ -2312,7 +2312,7 @@ public:
     IntPoint destPoint() const { return m_destPoint; }
     AlphaPremultiplication destFormat() const { return m_destFormat; }
 
-    void apply(GraphicsContext&) const;
+    NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
 
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
     Optional<FloatRect> globalBounds() const { return {{ m_destPoint, m_srcRect.size() }}; }
@@ -2381,7 +2381,7 @@ public:
     const FloatRect& destination() const { return m_destination; }
     MediaPlayerIdentifier identifier() const { return m_identifier; }
 
-    void apply(GraphicsContext&) const;
+    NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
 
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
     Optional<FloatRect> globalBounds() const { return { m_destination }; }
