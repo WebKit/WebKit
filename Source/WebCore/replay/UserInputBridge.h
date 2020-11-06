@@ -76,8 +76,8 @@ public:
 
     // Navigation APIs.
     WEBCORE_EXPORT void loadRequest(FrameLoadRequest&&, InputSource = InputSource::User);
-    WEBCORE_EXPORT void reloadFrame(Frame*, OptionSet<ReloadOption>, InputSource = InputSource::User);
-    WEBCORE_EXPORT void stopLoadingFrame(Frame*, InputSource = InputSource::User);
+    WEBCORE_EXPORT void reloadFrame(Frame&, OptionSet<ReloadOption>, InputSource = InputSource::User);
+    WEBCORE_EXPORT void stopLoadingFrame(Frame&, InputSource = InputSource::User);
     WEBCORE_EXPORT bool tryClosePage(InputSource = InputSource::User);
 
 private:

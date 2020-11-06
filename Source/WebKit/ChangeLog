@@ -1,3 +1,16 @@
+2020-11-05  Alex Christensen  <achristensen@webkit.org>
+
+        Add null checks effectively in UserInputBridge
+        https://bugs.webkit.org/show_bug.cgi?id=218622
+        <rdar://problem/70724960>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::stopLoadingFrame):
+        (WebKit::WebPage::stopLoading):
+        (WebKit::WebPage::reload):
+
 2020-11-05  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Remove mdnsresponder access from WebKit processes

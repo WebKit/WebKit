@@ -1708,14 +1708,20 @@ void WebPage::stopLoadingFrame(FrameIdentifier frameID)
     if (!frame)
         return;
 
-    corePage()->userInputBridge().stopLoadingFrame(frame->coreFrame());
+    auto* coreFrame = frame->coreFrame();
+    if (!coreFrame || !m_page)
+        return;
+
+    m_page->userInputBridge().stopLoadingFrame(*coreFrame);
 }
 
 void WebPage::stopLoading()
 {
-    SendStopResponsivenessTimer stopper;
+    if (!m_page || !m_mainFrame->coreFrame())
+        return;
 
-    corePage()->userInputBridge().stopLoadingFrame(m_mainFrame->coreFrame());
+    SendStopResponsivenessTimer stopper;
+    m_page->userInputBridge().stopLoadingFrame(*m_mainFrame->coreFrame());
 }
 
 bool WebPage::defersLoading() const
@@ -1736,7 +1742,10 @@ void WebPage::reload(uint64_t navigationID, uint32_t reloadOptions, SandboxExten
     m_pendingNavigationID = navigationID;
 
     m_sandboxExtensionTracker.beginReload(m_mainFrame.ptr(), WTFMove(sandboxExtensionHandle));
-    corePage()->userInputBridge().reloadFrame(m_mainFrame->coreFrame(), OptionSet<ReloadOption>::fromRaw(reloadOptions));
+    if (m_page && m_mainFrame->coreFrame())
+        m_page->userInputBridge().reloadFrame(*m_mainFrame->coreFrame(), OptionSet<ReloadOption>::fromRaw(reloadOptions));
+    else
+        ASSERT_NOT_REACHED();
 
     if (m_pendingNavigationID) {
         // This can happen if FrameLoader::reload() returns early because the document URL is empty.

@@ -117,14 +117,14 @@ void UserInputBridge::loadRequest(FrameLoadRequest&& request, InputSource)
     m_page.mainFrame().loader().load(WTFMove(request));
 }
 
-void UserInputBridge::reloadFrame(Frame* frame, OptionSet<ReloadOption> options, InputSource)
+void UserInputBridge::reloadFrame(Frame& frame, OptionSet<ReloadOption> options, InputSource)
 {
-    frame->loader().reload(options);
+    frame.loader().reload(options);
 }
 
-void UserInputBridge::stopLoadingFrame(Frame* frame, InputSource)
+void UserInputBridge::stopLoadingFrame(Frame& frame, InputSource)
 {
-    frame->loader().stopForUserCancel();
+    frame.loader().stopForUserCancel();
 }
 
 bool UserInputBridge::tryClosePage(InputSource)
