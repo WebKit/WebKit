@@ -1,0 +1,18 @@
+Make sure that event targets get cleared after dispatching in a shadow tree, even if the node gets moved out of the shadow tree by an event listener.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS undefined is undefined.
+PASS counter++ is 0
+PASS window.event is undefined.
+PASS counter++ is 1
+PASS window.event is undefined.
+PASS counter++ is 2
+PASS counter is 3
+PASS event.target is null
+PASS event.relatedTarget is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

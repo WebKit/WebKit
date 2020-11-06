@@ -78,7 +78,7 @@ MouseOrFocusEventContext::~MouseOrFocusEventContext() = default;
 void MouseOrFocusEventContext::handleLocalEvents(Event& event, EventInvokePhase phase) const
 {
     if (m_relatedTarget)
-        event.setRelatedTarget(*m_relatedTarget);
+        event.setRelatedTarget(m_relatedTarget.get());
     EventContext::handleLocalEvents(event, phase);
 }
 

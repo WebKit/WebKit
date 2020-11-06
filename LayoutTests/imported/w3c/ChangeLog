@@ -1,3 +1,15 @@
+2020-11-06  Chris Dumez  <cdumez@apple.com>
+
+        Event targets should be cleared after dispatch if target pointed to a shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=218638
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/dom/events/relatedTarget.window-expected.txt:
+        * web-platform-tests/shadow-dom/event-post-dispatch-expected.txt:
+
 2020-11-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Re-enable SharedArrayBuffer for JSC shell and Testers

@@ -41,7 +41,7 @@ function testEventTargetAfterDispatching(mode) {
         assert_array_equals(log.pathAtTargets[0], expectedPath);
         assert_array_equals(log.pathAtTargets[1], expectedPath);
 
-        assert_equals(log.event.target, nodes.A1a);
+        assert_equals(log.event.target, null);
         assert_equals(log.event.currentTarget, null);
     }, 'The event must propagate out of ' + mode + ' mode shadow boundaries when the composed flag is set 1');
 }

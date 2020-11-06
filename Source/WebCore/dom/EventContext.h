@@ -52,6 +52,8 @@ public:
     virtual bool isMouseOrFocusEventContext() const;
     virtual bool isTouchEventContext() const;
 
+    virtual Node* relatedTarget() const { return nullptr; }
+
 protected:
 #if ASSERT_ENABLED
     bool isUnreachableNode(EventTarget*) const;
@@ -69,7 +71,7 @@ public:
     MouseOrFocusEventContext(Node&, EventTarget* currentTarget, EventTarget*, int closedShadowDepth);
     virtual ~MouseOrFocusEventContext();
 
-    Node* relatedTarget() const { return m_relatedTarget.get(); }
+    Node* relatedTarget() const final { return m_relatedTarget.get(); }
     void setRelatedTarget(Node*);
 
 private:

@@ -73,6 +73,11 @@ static void callDefaultEventHandlersInBubblingOrder(Event& event, const EventPat
     }
 }
 
+static bool isInShadowTree(EventTarget* target)
+{
+    return is<Node>(target) && downcast<Node>(*target).isInShadowTree();
+}
+
 static void dispatchEventInDOM(Event& event, const EventPath& path)
 {
     // Invoke capturing event listeners in the reverse order.
@@ -134,6 +139,17 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
 
     EventPath eventPath { node, event };
 
+    Optional<bool> shouldClearTargetsAfterDispatch;
+    for (size_t i = eventPath.size(); i > 0; --i) {
+        const EventContext& eventContext = eventPath.contextAt(i - 1);
+        // FIXME: We should also set shouldClearTargetsAfterDispatch to true if an EventTarget object in eventContext's touch target list
+        // is a node and its root is a shadow root.
+        if (eventContext.target()) {
+            shouldClearTargetsAfterDispatch = isInShadowTree(eventContext.target()) || isInShadowTree(eventContext.relatedTarget());
+            break;
+        }
+    }
+
     ChildNodesLazySnapshot::takeChildNodesLazySnapshot();
 
     event.resetBeforeDispatch();
@@ -169,6 +185,12 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
         event.setTarget(EventPath::eventTargetRespectingTargetRules(node));
         callDefaultEventHandlersInBubblingOrder(event, eventPath);
         event.setTarget(finalTarget);
+    }
+
+    if (shouldClearTargetsAfterDispatch.valueOr(false)) {
+        event.setTarget(nullptr);
+        event.setRelatedTarget(nullptr);
+        // FIXME: We should also clear the event's touch target list.
     }
 }
 

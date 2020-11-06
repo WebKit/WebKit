@@ -1,0 +1,18 @@
+Make sure that event targets do not get cleared after dispatching an event at the node that was not in a shadow tree but gets moved into a shadow tree by an event listener.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.event is e
+PASS counter++ is 0
+PASS window.event is e
+PASS counter++ is 1
+PASS window.event is e
+PASS counter++ is 2
+PASS counter is 3
+PASS event.target is child
+PASS event.relatedTarget is document.body
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

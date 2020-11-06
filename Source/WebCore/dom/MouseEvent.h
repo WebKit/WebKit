@@ -104,7 +104,7 @@ private:
     bool isMouseEvent() const final;
     EventInterface eventInterface() const override;
 
-    void setRelatedTarget(EventTarget& relatedTarget) final { m_relatedTarget = &relatedTarget; }
+    void setRelatedTarget(EventTarget* relatedTarget) final { m_relatedTarget = relatedTarget; }
 
     short m_button { 0 };
     unsigned short m_buttons { 0 };
