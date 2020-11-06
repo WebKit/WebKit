@@ -33,6 +33,7 @@
 #import "SameSiteInfo.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/Optional.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/URL.h>
@@ -624,7 +625,9 @@ void NetworkStorageSession::registerCookieChangeListenersIfNecessary()
 
     m_didRegisterCookieListeners = true;
 
-    [nsCookieStorage() _setCookiesChangedHandler:^(NSArray<NSHTTPCookie*>* addedCookies, NSString* domainForChangedCookie) {
+    [nsCookieStorage() _setCookiesChangedHandler:makeBlockPtr([this, weakThis = makeWeakPtr(*this)](NSArray<NSHTTPCookie *> *addedCookies, NSString *domainForChangedCookie) {
+        if (!weakThis)
+            return;
         String host = domainForChangedCookie;
         auto it = m_cookieChangeObservers.find(host);
         if (it == m_cookieChangeObservers.end())
@@ -634,9 +637,11 @@ void NetworkStorageSession::registerCookieChangeListenersIfNecessary()
             return;
         for (auto* observer : it->value)
             observer->cookiesAdded(host, cookies);
-    } onQueue:dispatch_get_main_queue()];
+    }).get() onQueue:dispatch_get_main_queue()];
 
-    [nsCookieStorage() _setCookiesRemovedHandler:^(NSArray<NSHTTPCookie*>* removedCookies, NSString* domainForRemovedCookies, bool removeAllCookies) {
+    [nsCookieStorage() _setCookiesRemovedHandler:makeBlockPtr([this, weakThis = makeWeakPtr(*this)](NSArray<NSHTTPCookie *> *removedCookies, NSString *domainForRemovedCookies, bool removeAllCookies) {
+        if (!weakThis)
+            return;
         if (removeAllCookies) {
             for (auto& observers : m_cookieChangeObservers.values()) {
                 for (auto* observer : observers)
@@ -655,7 +660,7 @@ void NetworkStorageSession::registerCookieChangeListenersIfNecessary()
             return;
         for (auto* observer : it->value)
             observer->cookiesDeleted(host, cookies);
-    } onQueue:dispatch_get_main_queue()];
+    }).get() onQueue:dispatch_get_main_queue()];
 }
 
 void NetworkStorageSession::unregisterCookieChangeListenersIfNecessary()
