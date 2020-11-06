@@ -1,5 +1,26 @@
 2020-11-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        REGRESSION(r268930): It broke the http server of run-benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=218643
+
+        Reviewed by Jonathan Bedard.
+
+        The http server was failing to start because it is executed in a
+        subprocess and it can't find webkitpy.autoinstalled because the
+        scripts dir is not in PYTHONPATH.
+
+        Fix this and also add a check to ensure the http server is alive,
+        and if not, then raise an error with the return code and outputs
+        from the http server process.
+
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server/twisted_http_server.py:
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py:
+        (SimpleHTTPServerDriver.serve):
+        (SimpleHTTPServerDriver):
+        (SimpleHTTPServerDriver._find_http_server_port):
+
+2020-11-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         webkitpy: Add a --no-comment switch to webkit-patch land
         https://bugs.webkit.org/show_bug.cgi?id=218067
 
