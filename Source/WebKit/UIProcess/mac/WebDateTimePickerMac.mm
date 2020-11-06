@@ -34,6 +34,7 @@
 constexpr CGFloat kCalendarWidth = 139;
 constexpr CGFloat kCalendarHeight = 148;
 constexpr CGFloat kCalendarCornerRadius = 10;
+constexpr CGFloat kWindowBorderSize = 0.5;
 constexpr NSString * kDateFormatString = @"yyyy-MM-dd";
 constexpr NSString * kDateTimeFormatString = @"yyyy-MM-dd'T'HH:mm";
 constexpr NSString * kDateTimeWithSecondsFormatString = @"yyyy-MM-dd'T'HH:mm:ss";
@@ -152,11 +153,11 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
 
     [[NSColor controlBackgroundColor] setFill];
 
-    NSRect frame = self.frame;
-    NSPoint topLeft = NSMakePoint(NSMinX(frame), NSMaxY(frame));
-    NSPoint topRight = NSMakePoint(NSMaxX(frame), NSMaxY(frame));
-    NSPoint bottomRight = NSMakePoint(NSMaxX(frame), NSMinY(frame));
-    NSPoint bottomLeft = NSMakePoint(NSMinX(frame), NSMinY(frame));
+    NSRect rect = NSInsetRect(self.frame, kWindowBorderSize, 0);
+    NSPoint topLeft = NSMakePoint(NSMinX(rect), NSMaxY(rect));
+    NSPoint topRight = NSMakePoint(NSMaxX(rect), NSMaxY(rect));
+    NSPoint bottomRight = NSMakePoint(NSMaxX(rect), NSMinY(rect));
+    NSPoint bottomLeft = NSMakePoint(NSMinX(rect), NSMinY(rect));
 
     NSBezierPath *path = [NSBezierPath bezierPath];
     [path moveToPoint:topLeft];

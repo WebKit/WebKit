@@ -1,3 +1,28 @@
+2020-11-06  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Align left edge of presented calendar with left edge of date inputs
+        https://bugs.webkit.org/show_bug.cgi?id=218668
+
+        Reviewed by Tim Horton.
+
+        When a date input is activated, a calendar is presented by adding an
+        NSWindow containing an NSDatePicker to the screen. The frame of the
+        window is set to ensure proper alignment with the date input. However,
+        since the window's hasShadow is set to true, AppKit draws a thin border
+        and shadow around the window's contentView. This results in left border
+        of the window being drawn further out than the left border of the input
+        itself. If the hasShadow property is set to false, the issue is no longer
+        observed, and the calendar aligns with the input. However, this is not an
+        acceptable solution, since we lose the border and the shadow.
+
+        To ensure alignment between the border of the calendar view and the border
+        of the date input, we can inset the edges of the view. Note that the inset
+        is not applied along the y-axis, to avoid a gap between the bottom of the
+        date input and the top of the calendar view.
+
+        * UIProcess/mac/WebDateTimePickerMac.mm:
+        (-[WKDateTimePickerBackdropView drawRect:]):
+
 2020-11-06  Alex Christensen  <achristensen@webkit.org>
 
         Fix build with different unified source arrangement.
