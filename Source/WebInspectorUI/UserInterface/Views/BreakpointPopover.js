@@ -442,7 +442,7 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
 
         this._actionsContainerElement.removeChildren();
 
-        let action = new WI.BreakpointAction(WI.BreakpointAction.Type.Log);
+        let action = new WI.BreakpointAction(WI.BreakpointAction.Type.Evaluate);
         this._breakpoint?.addAction(action);
 
         let breakpointActionView = new WI.BreakpointActionView(action, this);
