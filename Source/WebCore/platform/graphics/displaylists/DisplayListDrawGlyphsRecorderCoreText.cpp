@@ -87,8 +87,9 @@ GraphicsContext DrawGlyphsRecorder::createInternalContext()
     return GraphicsContext(context.get());
 }
 
-DrawGlyphsRecorder::DrawGlyphsRecorder(Recorder& owner)
+DrawGlyphsRecorder::DrawGlyphsRecorder(Recorder& owner, DrawGlyphsDeconstruction drawGlyphsDeconstruction)
     : m_owner(owner)
+    , m_drawGlyphsDeconstruction(drawGlyphsDeconstruction)
     , m_internalContext(createInternalContext())
 {
 }
@@ -361,6 +362,12 @@ void DrawGlyphsRecorder::recordDrawImage(CGRenderingStateRef, CGGStateRef gstate
 
 void DrawGlyphsRecorder::drawGlyphs(const Font& font, const GlyphBuffer& glyphBuffer, unsigned from, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
 {
+    if (m_drawGlyphsDeconstruction == DrawGlyphsDeconstruction::DontDeconstruct) {
+        m_owner.appendItemAndUpdateExtent(DrawGlyphs::create(font, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs, startPoint, smoothingMode));
+        return;
+    }
+
+    ASSERT(m_drawGlyphsDeconstruction == DrawGlyphsDeconstruction::Deconstruct);
     prepareInternalContext(font, smoothingMode);
     FontCascade::drawGlyphs(m_internalContext, font, glyphBuffer, from, numGlyphs, startPoint, smoothingMode);
     concludeInternalContext();

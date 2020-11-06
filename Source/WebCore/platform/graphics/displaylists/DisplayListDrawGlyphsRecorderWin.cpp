@@ -36,7 +36,7 @@ namespace WebCore {
 
 namespace DisplayList {
 
-DrawGlyphsRecorder::DrawGlyphsRecorder(Recorder& owner)
+DrawGlyphsRecorder::DrawGlyphsRecorder(Recorder& owner, DrawGlyphsDeconstruction)
     : m_owner(owner)
 {
 }

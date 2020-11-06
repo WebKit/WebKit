@@ -1,3 +1,14 @@
+2020-11-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] REGRESSION(r269211): Text with emoji can trigger drawing corruption
+        https://bugs.webkit.org/show_bug.cgi?id=218636
+        <rdar://problem/71066011>
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/frequent-text-expected.html: Added.
+        * fast/text/frequent-text.html: Added.
+
 2020-11-05  Chris Dumez  <cdumez@apple.com>
 
         unreviewed, rebaseline a couple tests on iOS after r269477.

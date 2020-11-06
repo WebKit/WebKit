@@ -50,7 +50,11 @@ class Recorder;
 
 class DrawGlyphsRecorder {
 public:
-    explicit DrawGlyphsRecorder(Recorder&);
+    enum class DrawGlyphsDeconstruction {
+        Deconstruct,
+        DontDeconstruct
+    };
+    explicit DrawGlyphsRecorder(Recorder&, DrawGlyphsDeconstruction);
 
     void drawGlyphs(const Font&, const GlyphBuffer&, unsigned from, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode);
 
@@ -84,6 +88,7 @@ private:
 #endif
 
     Recorder& m_owner;
+    DrawGlyphsDeconstruction m_drawGlyphsDeconstruction;
     GraphicsContext m_internalContext;
     const Font* m_originalFont { nullptr };
     FontSmoothingMode m_smoothingMode { FontSmoothingMode::AutoSmoothing };
