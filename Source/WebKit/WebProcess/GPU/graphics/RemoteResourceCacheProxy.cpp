@@ -28,6 +28,9 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteRenderingBackendProxy.h"
+#include <WebCore/ImageBuffer.h>
+
 namespace WebKit {
 using namespace WebCore;
 

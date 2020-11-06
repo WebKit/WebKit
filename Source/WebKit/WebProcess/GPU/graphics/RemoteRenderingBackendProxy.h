@@ -33,6 +33,7 @@
 #include "MessageSender.h"
 #include "RemoteResourceCacheProxy.h"
 #include "RenderingBackendIdentifier.h"
+#include <WebCore/DisplayList.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/WeakPtr.h>
 
@@ -60,6 +61,7 @@ public:
     ~RemoteRenderingBackendProxy();
 
     RemoteResourceCacheProxy& remoteResourceCacheProxy() { return m_remoteResourceCacheProxy; }
+    WebCore::DisplayList::ItemBufferHandle createItemBuffer(size_t);
 
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const override;
@@ -86,6 +88,7 @@ private:
     void flushDisplayListWasCommitted(DisplayListFlushIdentifier, WebCore::RenderingResourceIdentifier);
 
     RemoteResourceCacheProxy m_remoteResourceCacheProxy;
+    HashMap<WebCore::DisplayList::ItemBufferIdentifier, RefPtr<SharedMemory>> m_sharedItemBuffers;
     RenderingBackendIdentifier m_renderingBackendIdentifier { RenderingBackendIdentifier::generate() };
 };
 

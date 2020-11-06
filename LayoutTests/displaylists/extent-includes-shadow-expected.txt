@@ -9,9 +9,8 @@
   (shadow-offset width=10 height=20)
   (shadows-use-legacy-radius 0))
 (fill-composited-rect
-  (extent at (43,50) size 134x137)
   (rect at (50,50) size 100x100)
   (color #0000FF)
   (composite-operation source-over)
-  (blend-mode normal))
+  (blend-mode normal) extent at (43,50) size 134x137)
 (restore)

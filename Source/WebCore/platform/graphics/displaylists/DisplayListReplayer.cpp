@@ -44,18 +44,18 @@ Replayer::Replayer(GraphicsContext& context, const DisplayList& displayList, con
 
 Replayer::~Replayer() = default;
 
-void Replayer::applyItem(Item& item)
+void Replayer::applyItem(ItemHandle item)
 {
     if (m_delegate && m_delegate->apply(item, m_context))
         return;
-    
-    if (item.type() == ItemType::DrawImageBuffer) {
-        auto& drawItem = static_cast<DrawImageBuffer&>(item);
+
+    if (item.is<DrawImageBuffer>()) {
+        auto& drawItem = item.get<DrawImageBuffer>();
         if (auto* imageBuffer = m_imageBuffers.get(drawItem.renderingResourceIdentifier()))
             drawItem.apply(m_context, *imageBuffer);
         return;
     }
-    
+
     item.apply(m_context);
 }
 
@@ -68,25 +68,25 @@ std::unique_ptr<DisplayList> Replayer::replay(const FloatRect& initialClip, bool
     if (UNLIKELY(trackReplayList))
         replayList = makeUnique<DisplayList>();
 
-    auto& items = m_displayList.list();
-    for (size_t i = 0; i < items.size(); ++i) {
-        auto& item = items[i].get();
-
-        if (!initialClip.isZero() && is<DrawingItem>(item)) {
-            const DrawingItem& drawingItem = downcast<DrawingItem>(item);
-            if (drawingItem.extentKnown() && !drawingItem.extent().intersects(initialClip)) {
-                LOG_WITH_STREAM(DisplayLists, stream << "skipping " << i << " " << item);
-                continue;
-            }
+#if !LOG_DISABLED
+    size_t i = 0;
+#endif
+    for (auto [item, extent] : m_displayList) {
+        if (!initialClip.isZero() && extent && !extent->intersects(initialClip)) {
+            LOG_WITH_STREAM(DisplayLists, stream << "skipping " << i++ << " " << item);
+            continue;
         }
 
         LOG_WITH_STREAM(DisplayLists, stream << "applying " << i << " " << item);
         applyItem(item);
 
-        if (UNLIKELY(trackReplayList))
-            replayList->appendItem(const_cast<Item&>(item));
+        if (UNLIKELY(trackReplayList)) {
+            replayList->append(item);
+            if (item.isDrawingItem())
+                replayList->addDrawingItemExtent(WTFMove(extent));
+        }
     }
-    
+
     return replayList;
 }
 

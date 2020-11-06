@@ -39,7 +39,7 @@ public:
 
     GraphicsContext& context() const { return const_cast<DrawingContext&>(*this).m_context; }
     WEBCORE_EXPORT Recorder& recorder();
-    DisplayList takeDisplayList() { return WTFMove(m_displayList); }
+    DisplayList takeDisplayList() { return std::exchange(m_displayList, { }); }
     DisplayList& displayList() { return m_displayList; }
     const DisplayList& displayList() const { return m_displayList; }
     const DisplayList* replayedDisplayList() const { return m_replayedDisplayList.get(); }

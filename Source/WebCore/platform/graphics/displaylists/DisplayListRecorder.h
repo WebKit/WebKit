@@ -27,6 +27,7 @@
 
 #include "DisplayList.h"
 #include "DisplayListDrawGlyphsRecorder.h"
+#include "DisplayListItems.h"
 #include "GraphicsContextImpl.h"
 #include "Image.h" // For Image::TileRule.
 #include "TextFlags.h"
@@ -47,8 +48,6 @@ struct GraphicsContextState;
 struct ImagePaintingOptions;
 
 namespace DisplayList {
-
-class DrawingItem;
 
 class Recorder : public GraphicsContextImpl {
     WTF_MAKE_FAST_ALLOCATED;
@@ -147,15 +146,34 @@ private:
 
     FloatRect roundToDevicePixels(const FloatRect&, GraphicsContext::RoundingMode) override;
 
-    void appendItem(Ref<Item>&&);
+    template<typename T, class... Args>
+    void append(Args&&... args)
+    {
+        willAppendItemOfType(T::itemType);
+        m_displayList.append<T>(std::forward<Args>(args)...);
+        didAppendItemOfType(T::itemType);
+
+        if (!T::isDrawingItem)
+            return;
+
+        if (LIKELY(!m_displayList.tracksDrawingItemExtents()))
+            return;
+
+        auto item = T(std::forward<Args>(args)...);
+        if (auto rect = item.localBounds(graphicsContext()))
+            m_displayList.addDrawingItemExtent(extentFromLocalBounds(*rect));
+        else if (auto rect = item.globalBounds())
+            m_displayList.addDrawingItemExtent(*rect);
+        else
+            m_displayList.addDrawingItemExtent(WTF::nullopt);
+    }
+
     void willAppendItemOfType(ItemType);
     void didAppendItemOfType(ItemType);
-    void appendItemAndUpdateExtent(Ref<DrawingItem>&&);
 
     void appendStateChangeItem(const GraphicsContextStateChange&, GraphicsContextState::StateChangeFlags);
 
     FloatRect extentFromLocalBounds(const FloatRect&) const;
-    void updateItemExtent(DrawingItem&) const;
     
     const AffineTransform& ctm() const;
     const FloatRect& clipBounds() const;

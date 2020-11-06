@@ -72,13 +72,12 @@ uint64_t RemoteRenderingBackend::messageSenderDestinationID() const
     return m_renderingBackendIdentifier.toUInt64();
 }
 
-bool RemoteRenderingBackend::applyMediaItem(const DisplayList::Item& item, GraphicsContext& context)
+bool RemoteRenderingBackend::applyMediaItem(DisplayList::ItemHandle item, GraphicsContext& context)
 {
-    if (item.type() != WebCore::DisplayList::ItemType::PaintFrameForMedia)
+    if (!item.is<DisplayList::PaintFrameForMedia>())
         return false;
 
-    auto& mediaItem = static_cast<const DisplayList::PaintFrameForMedia&>(item);
-
+    auto& mediaItem = item.get<DisplayList::PaintFrameForMedia>();
     auto process = gpuConnectionToWebProcess();
     if (!process)
         return false;
@@ -125,19 +124,45 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
     m_remoteResourceCache.cacheImageBuffer(makeRef(*imageBuffer));
 }
 
-void RemoteRenderingBackend::flushDisplayList(const DisplayList::DisplayList& displayList, RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackend::applyDisplayList(const SharedDisplayListHandle& handle, RenderingResourceIdentifier renderingResourceIdentifier, ShouldFlushContext flushContext)
 {
-    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier))
-        imageBuffer->flushDisplayList(displayList);
+    auto displayList = handle.createDisplayList([&] (WebCore::DisplayList::ItemBufferIdentifier identifier) -> uint8_t* {
+        if (auto sharedMemory = m_sharedItemBuffers.take(identifier))
+            return reinterpret_cast<uint8_t*>(sharedMemory->data());
+        return nullptr;
+    });
+
+    if (!displayList) {
+        // FIXME: Add a message check to terminate the web process.
+        return;
+    }
+
+    auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier);
+    if (!imageBuffer) {
+        // FIXME: Add a message check to terminate the web process.
+        return;
+    }
+
+    if (imageBuffer->isAccelerated())
+        displayList->setItemBufferClient(static_cast<AcceleratedRemoteImageBuffer*>(imageBuffer));
+    else
+        displayList->setItemBufferClient(static_cast<UnacceleratedRemoteImageBuffer*>(imageBuffer));
+
+    imageBuffer->flushDisplayList(*displayList);
+
+    if (flushContext == ShouldFlushContext::Yes)
+        imageBuffer->flushContext();
 }
 
-void RemoteRenderingBackend::flushDisplayListAndCommit(const DisplayList::DisplayList& displayList, DisplayListFlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackend::flushDisplayList(const SharedDisplayListHandle& handle, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier)) {
-        imageBuffer->flushDisplayList(displayList);
-        imageBuffer->flushContext();
-        flushDisplayListWasCommitted(flushIdentifier, renderingResourceIdentifier);
-    }
+    applyDisplayList(handle, renderingResourceIdentifier, ShouldFlushContext::No);
+}
+
+void RemoteRenderingBackend::flushDisplayListAndCommit(const SharedDisplayListHandle& handle, DisplayListFlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
+{
+    applyDisplayList(handle, renderingResourceIdentifier, ShouldFlushContext::Yes);
+    flushDisplayListWasCommitted(flushIdentifier, renderingResourceIdentifier);
 }
 
 void RemoteRenderingBackend::getImageData(AlphaPremultiplication outputFormat, IntRect srcRect, RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&& completionHandler)
@@ -151,6 +176,12 @@ void RemoteRenderingBackend::getImageData(AlphaPremultiplication outputFormat, I
 void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
     m_remoteResourceCache.releaseRemoteResource(renderingResourceIdentifier);
+}
+
+void RemoteRenderingBackend::didCreateSharedItemData(DisplayList::ItemBufferIdentifier identifier, const SharedMemory::IPCHandle& handle)
+{
+    if (auto sharedMemory = SharedMemory::map(handle.handle, SharedMemory::Protection::ReadOnly))
+        m_sharedItemBuffers.set(identifier, WTFMove(sharedMemory));
 }
 
 } // namespace WebKit

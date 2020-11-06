@@ -1,3 +1,63 @@
+2020-11-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Concurrent display lists] Encode display list items directly into shared memory
+        https://bugs.webkit.org/show_bug.cgi?id=218406
+
+        Reviewed by Tim Horton.
+
+        Adjust for changes to display lists and display list items in WebCore (see Source/WebCore/ChangeLog for more
+        information). In particular, we implement the reading and writing client hooks consulted by ItemBuffer, and we
+        also add a temporary mechanism that allows RemoteRenderingBackendProxy (in the web process) to send display list
+        item data through shared memory to the RemoteRenderingBackend (in the GPU process). This temporary mechanism
+        does not attempt to make any reading or writing in shared memory concurrent between the GPU and web processes,
+        and exists only to make sure that rendering with the GPU process still works using these new display list items.
+
+        In the next patch, I will add a simple concurrent reader/writer model for display list processing between the
+        web and GPU processes, and (in doing so) revert most of the changes in `RemoteRenderingBackend` and
+        `RemoteRenderingBackendProxy` below.
+
+        See comments below for more detail.
+
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        (WebKit::RemoteImageBuffer::decodeAndCreate):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::applyResourceItem):
+        (WebKit::RemoteRenderingBackend::applyMediaItem):
+
+        Refactor these to take `WebCore::DisplayList::ItemHandle`.
+
+        (WebKit::RemoteRenderingBackend::applyDisplayList):
+        (WebKit::RemoteRenderingBackend::flushDisplayList):
+        (WebKit::RemoteRenderingBackend::flushDisplayListAndCommit):
+        (WebKit::RemoteRenderingBackend::didCreateSharedItemData):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * Scripts/webkit/messages.py:
+        * Shared/SharedDisplayListHandle.cpp: Added.
+        (WebKit::SharedDisplayListHandle::SharedDisplayListHandle):
+        (WebKit::SharedDisplayListHandle::createDisplayList const):
+        * Shared/SharedDisplayListHandle.h: Added.
+
+        Add a WebKit2 helper class that represents display list data in shared memory that is propagated from the web
+        process to the GPU process. In the next patch, this class will be rewritten to support concurrent display list
+        reading and writing, with specialized subclasses in service of both the reader (i.e. the GPU process) and the
+        writer (i.e. the web process).
+
+        (WebKit::SharedDisplayListHandle::SharedDisplayListHandle):
+        (WebKit::SharedDisplayListHandle::encode const):
+        (WebKit::SharedDisplayListHandle::decode):
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::RemoteImageBufferProxy):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::flushDisplayList):
+        (WebKit::RemoteRenderingBackendProxy::flushDisplayListAndCommit):
+        (WebKit::RemoteRenderingBackendProxy::createItemBuffer):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.messages.in:
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+
 2020-11-06  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r269486.

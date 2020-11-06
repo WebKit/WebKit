@@ -334,7 +334,7 @@ void DrawGlyphsRecorder::recordDrawGlyphs(CGRenderingStateRef, CGGStateRef gstat
     updateStrokeColor(CGGStateGetStrokeColor(gstate));
     updateShadow(CGGStateGetStyle(gstate));
 
-    m_owner.appendItemAndUpdateExtent(DrawGlyphs::create(*m_originalFont, glyphs, computeAdvancesFromPositions(positions, count, currentTextMatrix).data(), count, currentTextMatrix.mapPoint(positions[0]), m_smoothingMode));
+    m_owner.append<DrawGlyphs>(*m_originalFont, glyphs, computeAdvancesFromPositions(positions, count, currentTextMatrix).data(), count, currentTextMatrix.mapPoint(positions[0]), m_smoothingMode);
 
     m_owner.concatCTM(inverseCTMFixup);
 }
@@ -353,7 +353,7 @@ void DrawGlyphsRecorder::recordDrawImage(CGRenderingStateRef, CGGStateRef gstate
     m_owner.scale(FloatSize(1, -1));
 
     auto image = BitmapImage::create(cgImage);
-    m_owner.appendItemAndUpdateExtent(DrawImage::create(image, rect, {{ }, image->size()}, { ImageOrientation::OriginTopLeft }));
+    m_owner.append<DrawImage>(image, FloatRect(rect), FloatRect {{ }, image->size()}, ImagePaintingOptions { ImageOrientation::OriginTopLeft });
 
     // Undo the above y-flip to restore the context.
     m_owner.scale(FloatSize(1, -1));
@@ -363,7 +363,7 @@ void DrawGlyphsRecorder::recordDrawImage(CGRenderingStateRef, CGGStateRef gstate
 void DrawGlyphsRecorder::drawGlyphs(const Font& font, const GlyphBuffer& glyphBuffer, unsigned from, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
 {
     if (m_drawGlyphsDeconstruction == DrawGlyphsDeconstruction::DontDeconstruct) {
-        m_owner.appendItemAndUpdateExtent(DrawGlyphs::create(font, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs, startPoint, smoothingMode));
+        m_owner.append<DrawGlyphs>(font, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs, startPoint, smoothingMode);
         return;
     }
 

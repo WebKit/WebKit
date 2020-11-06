@@ -27,6 +27,10 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "Encoder.h"
+#include "RemoteRenderingBackendProxy.h"
+#include "SharedMemory.h"
+#include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListImageBuffer.h>
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/DisplayListRecorder.h>
@@ -36,7 +40,7 @@ namespace WebKit {
 class RemoteRenderingBackend;
 
 template<typename BackendType>
-class RemoteImageBufferProxy : public WebCore::DisplayList::ImageBuffer<BackendType>, public WebCore::DisplayList::Recorder::Delegate {
+class RemoteImageBufferProxy : public WebCore::DisplayList::ImageBuffer<BackendType>, public WebCore::DisplayList::Recorder::Delegate, public WebCore::DisplayList::ItemBufferWritingClient {
     using BaseDisplayListImageBuffer = WebCore::DisplayList::ImageBuffer<BackendType>;
     using BaseDisplayListImageBuffer::m_backend;
     using BaseDisplayListImageBuffer::m_drawingContext;
@@ -76,6 +80,8 @@ protected:
         , m_remoteRenderingBackendProxy(makeWeakPtr(remoteRenderingBackendProxy))
     {
         ASSERT(m_remoteRenderingBackendProxy);
+        m_drawingContext.displayList().setItemBufferClient(this);
+        m_drawingContext.displayList().setTracksDrawingItemExtents(false);
     }
 
     bool isPendingFlush() const { return m_sentFlushIdentifier != m_receivedFlushIdentifier; }
@@ -171,6 +177,109 @@ protected:
         m_itemCountInCurrentDisplayList = 0;
         flushDisplayList(displayList);
         displayList.clear();
+    }
+
+    WebCore::DisplayList::ItemBufferHandle createItemBuffer(size_t capacity) override
+    {
+        if (m_remoteRenderingBackendProxy)
+            return m_remoteRenderingBackendProxy->createItemBuffer(capacity);
+
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    RefPtr<WebCore::SharedBuffer> encodeItem(WebCore::DisplayList::ItemHandle item) const override
+    {
+        switch (item.type()) {
+        case WebCore::DisplayList::ItemType::ClipOutToPath:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::ClipOutToPath>(item.get<WebCore::DisplayList::ClipOutToPath>());
+        case WebCore::DisplayList::ItemType::ClipPath:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::ClipPath>(item.get<WebCore::DisplayList::ClipPath>());
+        case WebCore::DisplayList::ItemType::ClipToDrawingCommands:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::ClipToDrawingCommands>(item.get<WebCore::DisplayList::ClipToDrawingCommands>());
+        case WebCore::DisplayList::ItemType::DrawFocusRingPath:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawFocusRingPath>(item.get<WebCore::DisplayList::DrawFocusRingPath>());
+        case WebCore::DisplayList::ItemType::DrawFocusRingRects:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawFocusRingRects>(item.get<WebCore::DisplayList::DrawFocusRingRects>());
+        case WebCore::DisplayList::ItemType::DrawGlyphs:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawGlyphs>(item.get<WebCore::DisplayList::DrawGlyphs>());
+        case WebCore::DisplayList::ItemType::DrawImage:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawImage>(item.get<WebCore::DisplayList::DrawImage>());
+        case WebCore::DisplayList::ItemType::DrawLinesForText:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawLinesForText>(item.get<WebCore::DisplayList::DrawLinesForText>());
+        case WebCore::DisplayList::ItemType::DrawNativeImage:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawNativeImage>(item.get<WebCore::DisplayList::DrawNativeImage>());
+        case WebCore::DisplayList::ItemType::DrawPath:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawPath>(item.get<WebCore::DisplayList::DrawPath>());
+        case WebCore::DisplayList::ItemType::DrawPattern:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawPattern>(item.get<WebCore::DisplayList::DrawPattern>());
+        case WebCore::DisplayList::ItemType::DrawTiledImage:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawTiledImage>(item.get<WebCore::DisplayList::DrawTiledImage>());
+        case WebCore::DisplayList::ItemType::DrawTiledScaledImage:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawTiledScaledImage>(item.get<WebCore::DisplayList::DrawTiledScaledImage>());
+        case WebCore::DisplayList::ItemType::FillCompositedRect:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::FillCompositedRect>(item.get<WebCore::DisplayList::FillCompositedRect>());
+        case WebCore::DisplayList::ItemType::FillPath:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::FillPath>(item.get<WebCore::DisplayList::FillPath>());
+        case WebCore::DisplayList::ItemType::FillRectWithColor:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::FillRectWithColor>(item.get<WebCore::DisplayList::FillRectWithColor>());
+        case WebCore::DisplayList::ItemType::FillRectWithGradient:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::FillRectWithGradient>(item.get<WebCore::DisplayList::FillRectWithGradient>());
+        case WebCore::DisplayList::ItemType::FillRectWithRoundedHole:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::FillRectWithRoundedHole>(item.get<WebCore::DisplayList::FillRectWithRoundedHole>());
+        case WebCore::DisplayList::ItemType::FillRoundedRect:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::FillRoundedRect>(item.get<WebCore::DisplayList::FillRoundedRect>());
+        case WebCore::DisplayList::ItemType::PutImageData:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::PutImageData>(item.get<WebCore::DisplayList::PutImageData>());
+        case WebCore::DisplayList::ItemType::SetLineDash:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::SetLineDash>(item.get<WebCore::DisplayList::SetLineDash>());
+        case WebCore::DisplayList::ItemType::SetState:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::SetState>(item.get<WebCore::DisplayList::SetState>());
+        case WebCore::DisplayList::ItemType::StrokePath:
+            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::StrokePath>(item.get<WebCore::DisplayList::StrokePath>());
+        case WebCore::DisplayList::ItemType::ApplyDeviceScaleFactor:
+#if USE(CG)
+        case WebCore::DisplayList::ItemType::ApplyFillPattern:
+        case WebCore::DisplayList::ItemType::ApplyStrokePattern:
+#endif
+        case WebCore::DisplayList::ItemType::BeginTransparencyLayer:
+        case WebCore::DisplayList::ItemType::ClearRect:
+        case WebCore::DisplayList::ItemType::ClearShadow:
+        case WebCore::DisplayList::ItemType::Clip:
+        case WebCore::DisplayList::ItemType::ClipOut:
+        case WebCore::DisplayList::ItemType::ConcatenateCTM:
+        case WebCore::DisplayList::ItemType::DrawDotsForDocumentMarker:
+        case WebCore::DisplayList::ItemType::DrawEllipse:
+        case WebCore::DisplayList::ItemType::DrawImageBuffer:
+        case WebCore::DisplayList::ItemType::DrawLine:
+        case WebCore::DisplayList::ItemType::DrawRect:
+        case WebCore::DisplayList::ItemType::EndTransparencyLayer:
+        case WebCore::DisplayList::ItemType::FillEllipse:
+#if ENABLE(INLINE_PATH_DATA)
+        case WebCore::DisplayList::ItemType::FillInlinePath:
+#endif
+        case WebCore::DisplayList::ItemType::FillRect:
+        case WebCore::DisplayList::ItemType::PaintFrameForMedia:
+        case WebCore::DisplayList::ItemType::Restore:
+        case WebCore::DisplayList::ItemType::Rotate:
+        case WebCore::DisplayList::ItemType::Save:
+        case WebCore::DisplayList::ItemType::Scale:
+        case WebCore::DisplayList::ItemType::SetCTM:
+        case WebCore::DisplayList::ItemType::SetInlineFillColor:
+        case WebCore::DisplayList::ItemType::SetInlineFillGradient:
+        case WebCore::DisplayList::ItemType::SetInlineStrokeColor:
+        case WebCore::DisplayList::ItemType::SetLineCap:
+        case WebCore::DisplayList::ItemType::SetLineJoin:
+        case WebCore::DisplayList::ItemType::SetMiterLimit:
+        case WebCore::DisplayList::ItemType::SetStrokeThickness:
+        case WebCore::DisplayList::ItemType::StrokeEllipse:
+#if ENABLE(INLINE_PATH_DATA)
+        case WebCore::DisplayList::ItemType::StrokeInlinePath:
+#endif
+        case WebCore::DisplayList::ItemType::StrokeRect:
+        case WebCore::DisplayList::ItemType::Translate:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
     }
 
     void didAppendItemOfType(WebCore::DisplayList::ItemType type) override

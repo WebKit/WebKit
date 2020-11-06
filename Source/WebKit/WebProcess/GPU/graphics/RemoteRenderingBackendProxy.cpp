@@ -34,6 +34,8 @@
 #include "PlatformRemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
+#include "SharedDisplayListHandle.h"
+#include "SharedMemory.h"
 #include "WebProcess.h"
 
 namespace WebKit {
@@ -115,13 +117,15 @@ RefPtr<ImageData> RemoteRenderingBackendProxy::getImageData(AlphaPremultiplicati
 
 void RemoteRenderingBackendProxy::flushDisplayList(const DisplayList::DisplayList& displayList, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    send(Messages::RemoteRenderingBackend::FlushDisplayList(displayList, renderingResourceIdentifier), m_renderingBackendIdentifier);
+    send(Messages::RemoteRenderingBackend::FlushDisplayList({ displayList }, renderingResourceIdentifier), m_renderingBackendIdentifier);
+    m_sharedItemBuffers.clear();
 }
 
 DisplayListFlushIdentifier RemoteRenderingBackendProxy::flushDisplayListAndCommit(const DisplayList::DisplayList& displayList, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     DisplayListFlushIdentifier sentFlushIdentifier = DisplayListFlushIdentifier::generate();
-    send(Messages::RemoteRenderingBackend::FlushDisplayListAndCommit(displayList, sentFlushIdentifier, renderingResourceIdentifier), m_renderingBackendIdentifier);
+    send(Messages::RemoteRenderingBackend::FlushDisplayListAndCommit({ displayList }, sentFlushIdentifier, renderingResourceIdentifier), m_renderingBackendIdentifier);
+    m_sharedItemBuffers.clear();
     return sentFlushIdentifier;
 }
 
@@ -153,6 +157,23 @@ void RemoteRenderingBackendProxy::flushDisplayListWasCommitted(DisplayListFlushI
         downcast<AcceleratedRemoteImageBufferProxy>(*imageBuffer).commitFlushDisplayList(flushIdentifier);
     else
         downcast<UnacceleratedRemoteImageBufferProxy>(*imageBuffer).commitFlushDisplayList(flushIdentifier);
+}
+
+DisplayList::ItemBufferHandle RemoteRenderingBackendProxy::createItemBuffer(size_t capacity)
+{
+    static constexpr size_t defaultSharedItemBufferSize = 1 << 16;
+
+    auto sharedMemory = SharedMemory::allocate(std::max(defaultSharedItemBufferSize, capacity));
+    if (!sharedMemory)
+        return { };
+
+    auto identifier = DisplayList::ItemBufferIdentifier::generate();
+    SharedMemory::Handle sharedMemoryHandle;
+    sharedMemory->createHandle(sharedMemoryHandle, SharedMemory::Protection::ReadOnly);
+    send(Messages::RemoteRenderingBackend::DidCreateSharedItemData(identifier, { WTFMove(sharedMemoryHandle), sharedMemory->size() }), m_renderingBackendIdentifier);
+    m_sharedItemBuffers.set(identifier, sharedMemory.copyRef());
+
+    return { identifier, reinterpret_cast<uint8_t*>(sharedMemory->data()), sharedMemory->size() };
 }
 
 } // namespace WebKit

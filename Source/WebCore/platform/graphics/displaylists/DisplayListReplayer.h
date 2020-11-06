@@ -50,11 +50,11 @@ public:
     class Delegate {
     public:
         virtual ~Delegate() { }
-        virtual bool apply(Item&, GraphicsContext&) { return false; }
+        virtual bool apply(ItemHandle, GraphicsContext&) { return false; }
     };
     
 private:
-    void applyItem(Item&);
+    void applyItem(ItemHandle);
     
     GraphicsContext& m_context;
     const DisplayList& m_displayList;

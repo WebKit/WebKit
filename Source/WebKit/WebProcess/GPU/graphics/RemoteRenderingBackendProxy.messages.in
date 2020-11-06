@@ -23,8 +23,8 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteRenderingBackendProxy NotRefCounted {
-    void ImageBufferBackendWasCreated(WebCore::FloatSize logicalSize, WebCore::IntSize backendSize, float resolutionScale, WebCore::ColorSpace colorSpace, WebKit::ImageBufferBackendHandle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
-    void FlushDisplayListWasCommitted(WebKit::DisplayListFlushIdentifier flushIdentifier, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
+    ImageBufferBackendWasCreated(WebCore::FloatSize logicalSize, WebCore::IntSize backendSize, float resolutionScale, WebCore::ColorSpace colorSpace, WebKit::ImageBufferBackendHandle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
+    FlushDisplayListWasCommitted(WebKit::DisplayListFlushIdentifier flushIdentifier, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
 }
 
 #endif // ENABLE(GPU_PROCESS)

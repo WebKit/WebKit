@@ -35,7 +35,9 @@
 #include "MessageSender.h"
 #include "RemoteResourceCache.h"
 #include "RenderingBackendIdentifier.h"
+#include "SharedDisplayListHandle.h"
 #include <WebCore/ColorSpace.h>
+#include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListItems.h>
 #include <wtf/WeakPtr.h>
 
@@ -64,7 +66,7 @@ public:
     RemoteResourceCache& remoteResourceCache() { return m_remoteResourceCache; }
 
     // Rendering operations.
-    bool applyMediaItem(const WebCore::DisplayList::Item&, WebCore::GraphicsContext&);
+    bool applyMediaItem(WebCore::DisplayList::ItemHandle, WebCore::GraphicsContext&);
 
     // Messages to be sent.
     void imageBufferBackendWasCreated(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle, WebCore::RenderingResourceIdentifier);
@@ -72,6 +74,9 @@ public:
 
 private:
     RemoteRenderingBackend(GPUConnectionToWebProcess&, RenderingBackendIdentifier);
+
+    enum class ShouldFlushContext : bool { No, Yes };
+    void applyDisplayList(const SharedDisplayListHandle&, WebCore::RenderingResourceIdentifier, ShouldFlushContext);
 
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const override;
@@ -83,14 +88,16 @@ private:
 
     // Messages to be received.
     void createImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace, WebCore::RenderingResourceIdentifier);
-    void flushDisplayList(const WebCore::DisplayList::DisplayList&, WebCore::RenderingResourceIdentifier);
-    void flushDisplayListAndCommit(const WebCore::DisplayList::DisplayList&, DisplayListFlushIdentifier, WebCore::RenderingResourceIdentifier);
+    void flushDisplayList(const SharedDisplayListHandle&, WebCore::RenderingResourceIdentifier);
+    void flushDisplayListAndCommit(const SharedDisplayListHandle&, DisplayListFlushIdentifier, WebCore::RenderingResourceIdentifier);
     void getImageData(WebCore::AlphaPremultiplication outputFormat, WebCore::IntRect srcRect, WebCore::RenderingResourceIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&&);
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
+    void didCreateSharedItemData(WebCore::DisplayList::ItemBufferIdentifier, const SharedMemory::IPCHandle&);
 
     RemoteResourceCache m_remoteResourceCache;
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     RenderingBackendIdentifier m_renderingBackendIdentifier;
+    HashMap<WebCore::DisplayList::ItemBufferIdentifier, RefPtr<SharedMemory>> m_sharedItemBuffers;
 };
 
 } // namespace WebKit

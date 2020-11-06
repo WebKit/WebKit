@@ -163,10 +163,10 @@ struct GraphicsContextState {
     WEBCORE_EXPORT ~GraphicsContextState();
 
     GraphicsContextState(const GraphicsContextState&);
-    GraphicsContextState(GraphicsContextState&&);
+    WEBCORE_EXPORT GraphicsContextState(GraphicsContextState&&);
 
     GraphicsContextState& operator=(const GraphicsContextState&);
-    GraphicsContextState& operator=(GraphicsContextState&&);
+    WEBCORE_EXPORT GraphicsContextState& operator=(GraphicsContextState&&);
 
     enum Change : uint32_t {
         StrokeGradientChange                    = 1 << 0,

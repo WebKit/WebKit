@@ -3,11 +3,10 @@ recorded:
   (x 0.00)
   (y 0.00))
 (fill-composited-rect
-  (extent at (412,0) size 100x100)
   (rect at (412,0) size 100x100)
   (color #0000FF)
   (composite-operation source-over)
-  (blend-mode normal))
+  (blend-mode normal) extent at (412,0) size 100x100)
 
 replayed:
 (
