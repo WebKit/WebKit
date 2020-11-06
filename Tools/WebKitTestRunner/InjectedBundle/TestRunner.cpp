@@ -644,6 +644,8 @@ enum {
     TextFieldDidEndEditingCallbackID,
     CustomMenuActionCallbackID,
     DidSetAppBoundDomainsCallbackID,
+    EnterFullscreenForElementCallbackID,
+    ExitFullscreenForElementCallbackID,
     FirstUIScriptCallbackID = 100
 };
 
@@ -747,6 +749,26 @@ void TestRunner::setAlwaysAcceptCookies(bool accept)
 void TestRunner::setOnlyAcceptFirstPartyCookies(bool accept)
 {
     postSynchronousMessage("SetOnlyAcceptFirstPartyCookies", accept);
+}
+
+void TestRunner::setEnterFullscreenForElementCallback(JSValueRef callback)
+{
+    cacheTestRunnerCallback(EnterFullscreenForElementCallbackID, callback);
+}
+
+void TestRunner::callEnterFullscreenForElementCallback()
+{
+    callTestRunnerCallback(EnterFullscreenForElementCallbackID);
+}
+
+void TestRunner::setExitFullscreenForElementCallback(JSValueRef callback)
+{
+    cacheTestRunnerCallback(ExitFullscreenForElementCallbackID, callback);
+}
+
+void TestRunner::callExitFullscreenForElementCallback()
+{
+    callTestRunnerCallback(ExitFullscreenForElementCallbackID);
 }
 
 double TestRunner::preciseTime()

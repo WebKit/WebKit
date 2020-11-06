@@ -195,6 +195,8 @@ interface TestRunner {
 
     // Control full screen behavior.
     undefined setHasCustomFullScreenBehavior(boolean value);
+    undefined setEnterFullscreenForElementCallback(object callback);
+    undefined setExitFullscreenForElementCallback(object callback);
 
     // Web notifications support
     undefined grantWebNotificationPermission(DOMString origin);

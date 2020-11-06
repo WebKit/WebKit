@@ -112,6 +112,12 @@ void FullscreenManager::requestFullscreenForElement(Element* element, Fullscreen
             return;
         }
 
+        // Don't allow fullscreen if we're inside an exitFullscreen operation.
+        if (m_pendingExitFullscreen) {
+            failedPreflights(WTFMove(element));
+            return;
+        }
+
         // Don't allow fullscreen if document is hidden.
         if (document().hidden()) {
             failedPreflights(WTFMove(element));
@@ -314,6 +320,7 @@ void FullscreenManager::exitFullscreen()
         // Only exit out of full screen window mode if there are no remaining elements in the
         // full screen stack.
         if (!newTop) {
+            m_pendingExitFullscreen = true;
             page->chrome().client().exitFullScreenForElement(fullscreenElement.get());
             return;
         }
@@ -414,6 +421,7 @@ void FullscreenManager::willExitFullscreen()
 
 void FullscreenManager::didExitFullscreen()
 {
+    m_pendingExitFullscreen = false;
     auto fullscreenElement = fullscreenOrPendingElement();
     if (!fullscreenElement)
         return;

@@ -1761,7 +1761,8 @@ void InjectedBundlePage::enterFullScreenForElement(WKBundlePageRef pageRef, WKBu
     if (!injectedBundle.testRunner()->hasCustomFullScreenBehavior()) {
         WKBundlePageWillEnterFullScreen(pageRef);
         WKBundlePageDidEnterFullScreen(pageRef);
-    }
+    } else
+        injectedBundle.testRunner()->callEnterFullscreenForElementCallback();
 }
 
 void InjectedBundlePage::exitFullScreenForElement(WKBundlePageRef pageRef, WKBundleNodeHandleRef elementRef)
@@ -1773,7 +1774,8 @@ void InjectedBundlePage::exitFullScreenForElement(WKBundlePageRef pageRef, WKBun
     if (!injectedBundle.testRunner()->hasCustomFullScreenBehavior()) {
         WKBundlePageWillExitFullScreen(pageRef);
         WKBundlePageDidExitFullScreen(pageRef);
-    }
+    } else
+        injectedBundle.testRunner()->callExitFullscreenForElementCallback();
 }
 
 void InjectedBundlePage::beganEnterFullScreen(WKBundlePageRef, WKRect, WKRect)

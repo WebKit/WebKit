@@ -275,6 +275,10 @@ public:
     // Custom full screen behavior.
     void setHasCustomFullScreenBehavior(bool value) { m_customFullScreenBehavior = value; }
     bool hasCustomFullScreenBehavior() const { return m_customFullScreenBehavior; }
+    void setEnterFullscreenForElementCallback(JSValueRef);
+    void callEnterFullscreenForElementCallback();
+    void setExitFullscreenForElementCallback(JSValueRef);
+    void callExitFullscreenForElementCallback();
 
     // Web notifications.
     static void grantWebNotificationPermission(JSStringRef origin);

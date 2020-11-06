@@ -1,0 +1,15 @@
+Enter fullscreen with target1
+RUN(target1.webkitRequestFullScreen())
+RUN(internals.webkitWillEnterFullScreenForElement(target1))
+EVENT(webkitfullscreenchange)
+RUN(internals.webkitDidEnterFullScreenForElement(target1))
+Exit fullscreen with target1
+RUN(document.webkitExitFullscreen())
+RUN(internals.webkitWillExitFullScreenForElement(target1))
+Attempt to enter fullscreen with target2
+RUN(target2.webkitRequestFullScreen())
+EVENT(webkitfullscreenchange)
+EVENT(webkitfullscreenerror)
+RUN(internals.webkitDidExitFullScreenForElement(target1))
+END OF TEST
+

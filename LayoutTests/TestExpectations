@@ -4638,3 +4638,6 @@ webkit.org/b/217054 fast/layoutformattingcontext/horizontal-sizing-with-trailing
 
 # These tests are for iOS port.
 fast/shadow-dom/ios/ [ Skip ]
+
+# Requires WK2 TestRunner
+fullscreen/full-screen-enter-while-exiting.html [ Skip ]
