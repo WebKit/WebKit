@@ -59,9 +59,12 @@ public:
     LayoutUnit lineBoxBottom() const;
 
     float y() const;
+    float logicalLeft() const;
+    float logicalRight() const;
     float logicalHeight() const;
 
     int blockDirectionPointInLine() const;
+    IntRect computeCaretRect(float logicalLeftPosition, unsigned caretWidth, LayoutUnit* extraWidthToEndOfLine) const;
 
     bool isHorizontal() const;
 
@@ -174,6 +177,20 @@ inline float PathLine::y() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.y();
+    });
+}
+
+inline float PathLine::logicalLeft() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.logicalLeft();
+    });
+}
+
+inline float PathLine::logicalRight() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.logicalRight();
     });
 }
 

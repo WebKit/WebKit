@@ -66,6 +66,7 @@ public:
     unsigned end() const { return run().textContent()->end(); }
     unsigned length() const { return run().textContent()->length(); }
 
+    // FIXME: Make a shared generic version of this.
     inline unsigned offsetForPosition(float x) const
     {
         if (isLineBreak())
@@ -79,6 +80,23 @@ public:
 
         bool includePartialGlyphs = true;
         return run().style().fontCascade().offsetForPosition(createTextRun(HyphenMode::Ignore), localX, includePartialGlyphs);
+    }
+
+    // FIXME: Make a shared generic version of this.
+    float positionForOffset(unsigned offset) const
+    {
+        ASSERT(offset >= start());
+        ASSERT(offset <= end());
+
+        if (isLineBreak())
+            return rect().x();
+
+        auto endOffset = clampedOffset(offset);
+
+        LayoutRect selectionRect = LayoutRect(rect().x(), 0, 0, 0);
+        TextRun textRun = createTextRun(HyphenMode::Ignore);
+        run().style().fontCascade().adjustSelectionRectForText(textRun, selectionRect, 0, endOffset);
+        return snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()).maxX();
     }
 
     bool isSelectable(unsigned start, unsigned end) const
@@ -105,8 +123,8 @@ public:
         LayoutRect selectionRect { logicalLeft, selectionTop, logicalWidth, selectionHeight };
 
         TextRun textRun = createTextRun(HyphenMode::Include);
-        if (clampedStart != start() || clampedEnd != textRun.length())
-            run().style().fontCascade().adjustSelectionRectForText(textRun, selectionRect, clampedStart - start(), clampedEnd - start());
+        if (clampedStart || clampedEnd != textRun.length())
+            run().style().fontCascade().adjustSelectionRectForText(textRun, selectionRect, clampedStart, clampedEnd);
 
         return snappedSelectionRect(selectionRect, logicalRight, selectionTop, selectionHeight, isHorizontal());
     }
@@ -198,9 +216,9 @@ private:
 
     unsigned clampedOffset(unsigned offset) const
     {
-        auto clampedOffset = std::max(start(), std::min(offset, end()));
+        auto clampedOffset = std::max(start(), std::min(offset, end())) - start();
         // We treat the last codepoint in this run and the hyphen as a single unit.
-        if (hasHyphen() && clampedOffset == end())
+        if (hasHyphen() && clampedOffset == length())
             clampedOffset += run().style().hyphenString().length();
 
         return clampedOffset;

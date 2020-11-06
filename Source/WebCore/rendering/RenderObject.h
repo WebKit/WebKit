@@ -75,6 +75,7 @@ class VisiblePosition;
 class SelectionRect;
 #endif
 
+struct InlineRunAndOffset;
 struct PaintInfo;
 struct SimpleRange;
 
@@ -672,13 +673,8 @@ public:
     // Whether or not a given block needs to paint selection gaps.
     virtual bool shouldPaintSelectionGaps() const { return false; }
 
-    /**
-     * Returns the local coordinates of the caret within this render object.
-     * @param caretOffset zero-based offset determining position within the render object.
-     * @param extraWidthToEndOfLine optional out arg to give extra width to end of line -
-     * useful for character range rect computations
-     */
-    virtual LayoutRect localCaretRect(InlineBox*, unsigned caretOffset, LayoutUnit* extraWidthToEndOfLine = nullptr);
+    // Returns the local coordinates of the caret within this render object.
+    virtual LayoutRect localCaretRect(const InlineRunAndOffset&, LayoutUnit* extraWidthToEndOfLine = nullptr) const;
 
     // When performing a global document tear-down, or when going into the back/forward cache, the renderer of the document is cleared.
     bool renderTreeBeingDestroyed() const;

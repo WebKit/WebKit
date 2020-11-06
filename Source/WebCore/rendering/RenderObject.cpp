@@ -1400,7 +1400,7 @@ LayoutSize RenderObject::offsetFromAncestorContainer(RenderElement& container) c
     return offset;
 }
 
-LayoutRect RenderObject::localCaretRect(InlineBox*, unsigned, LayoutUnit* extraWidthToEndOfLine)
+LayoutRect RenderObject::localCaretRect(const InlineRunAndOffset&, LayoutUnit* extraWidthToEndOfLine) const
 {
     if (extraWidthToEndOfLine)
         *extraWidthToEndOfLine = 0;

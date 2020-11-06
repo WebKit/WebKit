@@ -36,6 +36,7 @@
 #include "FrameView.h"
 #include "HTMLParserIdioms.h"
 #include "Hyphenation.h"
+#include "InlineRunAndOffset.h"
 #include "InlineTextBox.h"
 #include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationLineLayout.h"
@@ -710,14 +711,15 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, const Ren
     return createVisiblePosition(0, Affinity::Downstream);
 }
 
-LayoutRect RenderText::localCaretRect(InlineBox* inlineBox, unsigned caretOffset, LayoutUnit* extraWidthToEndOfLine)
+LayoutRect RenderText::localCaretRect(const InlineRunAndOffset& runAndOffset, LayoutUnit* extraWidthToEndOfLine) const
 {
-    if (!inlineBox)
+    if (!runAndOffset.run)
         return LayoutRect();
 
-    auto& box = downcast<InlineTextBox>(*inlineBox);
-    float left = box.positionForOffset(caretOffset);
-    return box.root().computeCaretRect(left, caretWidth, extraWidthToEndOfLine);
+    auto& textRun = downcast<LayoutIntegration::TextRunIterator>(runAndOffset.run);
+
+    float left = textRun->positionForOffset(runAndOffset.offset);
+    return textRun.line()->computeCaretRect(left, caretWidth, extraWidthToEndOfLine);
 }
 
 ALWAYS_INLINE float RenderText::widthFromCache(const FontCascade& f, unsigned start, unsigned len, float xPos, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow, const RenderStyle& style) const

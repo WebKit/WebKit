@@ -84,6 +84,7 @@
 #include "HTMLSelectElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "InlineElementBox.h"
+#include "InlineRunAndOffset.h"
 #include "MathMLElement.h"
 #include "Page.h"
 #include "Range.h"
@@ -2893,14 +2894,14 @@ LayoutRect AXObjectCache::localCaretRectForCharacterOffset(RenderObject*& render
     if (!range)
         return IntRect();
 
-    auto [inlineBox, caretOffset] = makeContainerOffsetPosition(range->start).inlineBoxAndOffset(Affinity::Downstream);
-    if (inlineBox)
-        renderer = &inlineBox->renderer();
+    auto runAndOffset = makeContainerOffsetPosition(range->start).inlineRunAndOffset(Affinity::Downstream);
+    if (runAndOffset.run)
+        renderer = const_cast<RenderObject*>(&runAndOffset.run->renderer());
 
-    if (is<RenderLineBreak>(renderer) && downcast<RenderLineBreak>(renderer)->inlineBoxWrapper() != inlineBox)
+    if (is<RenderLineBreak>(renderer) && LayoutIntegration::runFor(downcast<RenderLineBreak>(*renderer)) != runAndOffset.run)
         return IntRect();
 
-    return renderer->localCaretRect(inlineBox, caretOffset);
+    return renderer->localCaretRect(runAndOffset);
 }
 
 IntRect AXObjectCache::absoluteCaretBoundsForCharacterOffset(const CharacterOffset& characterOffset)

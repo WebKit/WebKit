@@ -66,7 +66,7 @@ private:
     int caretMinOffset() const final;
     int caretMaxOffset() const final;
     bool canBeSelectionLeaf() const final;
-    LayoutRect localCaretRect(InlineBox*, unsigned caretOffset, LayoutUnit* extraWidthToEndOfLine) final;
+    LayoutRect localCaretRect(const InlineRunAndOffset&, LayoutUnit* extraWidthToEndOfLine) const final;
     void setSelectionState(HighlightState) final;
 
     LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode) const final;

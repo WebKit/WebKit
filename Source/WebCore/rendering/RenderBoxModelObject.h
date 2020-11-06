@@ -260,7 +260,7 @@ protected:
 
     InterpolationQuality chooseInterpolationQuality(GraphicsContext&, Image&, const void*, const LayoutSize&);
 
-    LayoutRect localCaretRectForEmptyElement(LayoutUnit width, LayoutUnit textIndentOffset);
+    LayoutRect localCaretRectForEmptyElement(LayoutUnit width, LayoutUnit textIndentOffset) const;
 
     static bool shouldAntialiasLines(GraphicsContext&);
 

@@ -27,6 +27,8 @@
 #include "HTMLElement.h"
 #include "HTMLWBRElement.h"
 #include "InlineElementBox.h"
+#include "InlineRunAndOffset.h"
+#include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationRunIterator.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "RenderBlock.h"
@@ -156,24 +158,25 @@ void RenderLineBreak::setSelectionState(HighlightState state)
     m_inlineBoxWrapper->root().setHasSelectedChildren(state != HighlightState::None);
 }
 
-LayoutRect RenderLineBreak::localCaretRect(InlineBox* inlineBox, unsigned caretOffset, LayoutUnit* extraWidthToEndOfLine)
+LayoutRect RenderLineBreak::localCaretRect(const InlineRunAndOffset& runAndOffset, LayoutUnit* extraWidthToEndOfLine) const
 {
-    ASSERT_UNUSED(caretOffset, !caretOffset);
-    ASSERT_UNUSED(inlineBox, inlineBox == m_inlineBoxWrapper);
-    if (!inlineBox)
+    ASSERT(!runAndOffset.offset);
+    ASSERT(runAndOffset.run == LayoutIntegration::runFor(*this));
+
+    if (!runAndOffset.run)
         return LayoutRect();
 
-    const RootInlineBox& rootBox = inlineBox->root();
-    return rootBox.computeCaretRect(inlineBox->logicalLeft(), caretWidth, extraWidthToEndOfLine);
+    auto line = runAndOffset.run.line();
+    return line->computeCaretRect(line->logicalLeft(), caretWidth, extraWidthToEndOfLine);
 }
 
 IntRect RenderLineBreak::linesBoundingBox() const
 {
-    auto box = LayoutIntegration::runFor(*this);
-    if (!box)
+    auto run = LayoutIntegration::runFor(*this);
+    if (!run)
         return { };
 
-    return enclosingIntRect(box->rect());
+    return enclosingIntRect(run->rect());
 }
 
 void RenderLineBreak::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
@@ -209,7 +212,9 @@ void RenderLineBreak::collectSelectionRects(Vector<SelectionRect>& rects, unsign
     if (!box)
         return;
     const RootInlineBox& rootBox = box->root();
-    LayoutRect rect = rootBox.computeCaretRect(box->logicalLeft(), 0, nullptr);
+
+    LayoutRect rect = LayoutIntegration::LineIterator(&rootBox)->computeCaretRect(box->logicalLeft(), 0, nullptr);
+
     if (rootBox.isFirstAfterPageBreak()) {
         if (box->isHorizontal())
             rect.shiftYEdgeTo(rootBox.lineBoxTop());

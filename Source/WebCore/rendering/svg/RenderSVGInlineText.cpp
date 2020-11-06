@@ -27,6 +27,7 @@
 #include "CSSFontSelector.h"
 #include "FloatConversion.h"
 #include "FloatQuad.h"
+#include "InlineRunAndOffset.h"
 #include "RenderBlock.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
@@ -115,11 +116,14 @@ std::unique_ptr<InlineTextBox> RenderSVGInlineText::createTextBox()
 {
     auto box = makeUnique<SVGInlineTextBox>(*this);
     box->setHasVirtualLogicalHeight();
-    return box;
+    return box; 
 }
 
-LayoutRect RenderSVGInlineText::localCaretRect(InlineBox* box, unsigned caretOffset, LayoutUnit*)
+LayoutRect RenderSVGInlineText::localCaretRect(const InlineRunAndOffset& runAndOffset, LayoutUnit*) const
 {
+    auto* box = runAndOffset.run ? runAndOffset.run->legacyInlineBox() : nullptr;
+    auto caretOffset = runAndOffset.offset;
+
     if (!is<InlineTextBox>(box))
         return LayoutRect();
 

@@ -228,7 +228,7 @@ void RenderInline::updateAlwaysCreateLineBoxes(bool fullLayout)
     }
 }
 
-LayoutRect RenderInline::localCaretRect(InlineBox* inlineBox, unsigned, LayoutUnit* extraWidthToEndOfLine)
+LayoutRect RenderInline::localCaretRect(const InlineRunAndOffset&, LayoutUnit* extraWidthToEndOfLine) const
 {
     if (firstChild()) {
         // This condition is possible if the RenderInline is at an editing boundary,
@@ -238,8 +238,6 @@ LayoutRect RenderInline::localCaretRect(InlineBox* inlineBox, unsigned, LayoutUn
         // there are no line boxes created in the above case.
         return LayoutRect();
     }
-
-    ASSERT_UNUSED(inlineBox, !inlineBox);
 
     if (extraWidthToEndOfLine)
         *extraWidthToEndOfLine = 0;

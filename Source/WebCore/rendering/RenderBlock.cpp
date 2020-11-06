@@ -2841,11 +2841,11 @@ void RenderBlock::updateHitTestResult(HitTestResult& result, const LayoutPoint& 
     }
 }
 
-LayoutRect RenderBlock::localCaretRect(InlineBox* inlineBox, unsigned caretOffset, LayoutUnit* extraWidthToEndOfLine)
+LayoutRect RenderBlock::localCaretRect(const InlineRunAndOffset& runAndOffset, LayoutUnit* extraWidthToEndOfLine) const
 {
     // Do the normal calculation in most cases.
     if (firstChild())
-        return RenderBox::localCaretRect(inlineBox, caretOffset, extraWidthToEndOfLine);
+        return RenderBox::localCaretRect(runAndOffset, extraWidthToEndOfLine);
 
     LayoutRect caretRect = localCaretRectForEmptyElement(width(), textIndentOffset());
 

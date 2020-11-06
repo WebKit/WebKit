@@ -53,6 +53,8 @@ public:
     LayoutUnit lineBoxBottom() const { return m_rootInlineBox->lineBoxBottom(); }
 
     float y() const { return m_rootInlineBox->y(); }
+    float logicalLeft() const { return m_rootInlineBox->logicalLeft(); }
+    float logicalRight() const { return m_rootInlineBox->logicalRight(); }
     float logicalHeight() const { return m_rootInlineBox->logicalHeight(); }
     bool isHorizontal() const { return m_rootInlineBox->isHorizontal(); }
 

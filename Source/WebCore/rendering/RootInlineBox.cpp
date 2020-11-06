@@ -474,59 +474,6 @@ GapRects RootInlineBox::lineSelectionGap(RenderBlock& rootBlock, const LayoutPoi
     return result;
 }
 
-IntRect RootInlineBox::computeCaretRect(float logicalLeftPosition, unsigned caretWidth, LayoutUnit* extraWidthToEndOfLine) const
-{
-    int height = selectionHeight();
-    int top = selectionTop();
-
-    // Distribute the caret's width to either side of the offset.
-    float left = logicalLeftPosition;
-    int caretWidthLeftOfOffset = caretWidth / 2;
-    left -= caretWidthLeftOfOffset;
-    int caretWidthRightOfOffset = caretWidth - caretWidthLeftOfOffset;
-    left = roundf(left);
-
-    float rootLeft = logicalLeft();
-    float rootRight = logicalRight();
-
-    if (extraWidthToEndOfLine)
-        *extraWidthToEndOfLine = (logicalWidth() + rootLeft) - (left + caretWidth);
-
-    const RenderStyle& blockStyle = blockFlow().style();
-
-    bool rightAligned = false;
-    switch (blockStyle.textAlign()) {
-    case TextAlignMode::Right:
-    case TextAlignMode::WebKitRight:
-        rightAligned = true;
-        break;
-    case TextAlignMode::Left:
-    case TextAlignMode::WebKitLeft:
-    case TextAlignMode::Center:
-    case TextAlignMode::WebKitCenter:
-        break;
-    case TextAlignMode::Justify:
-    case TextAlignMode::Start:
-        rightAligned = !blockStyle.isLeftToRightDirection();
-        break;
-    case TextAlignMode::End:
-        rightAligned = blockStyle.isLeftToRightDirection();
-        break;
-    }
-
-    float leftEdge = std::min<float>(0, rootLeft);
-    float rightEdge = std::max<float>(blockFlow().logicalWidth(), rootRight);
-
-    if (rightAligned) {
-        left = std::max(left, leftEdge);
-        left = std::min(left, rootRight - caretWidth);
-    } else {
-        left = std::min(left, rightEdge - caretWidthRightOfOffset);
-        left = std::max(left, rootLeft);
-    }
-    return blockStyle.isHorizontalWritingMode() ? IntRect(left, top, caretWidth, height) : IntRect(top, left, height, caretWidth);
-}
-
 RenderObject::HighlightState RootInlineBox::selectionState()
 {
     // Walk over all of the selected boxes.

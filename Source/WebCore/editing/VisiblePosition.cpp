@@ -639,12 +639,12 @@ auto VisiblePosition::localCaretRect() const -> LocalCaretRect
     if (!node)
         return { };
 
-    auto [inlineBox, caretOffset] = inlineBoxAndOffset();
-    auto renderer = inlineBox ? &inlineBox->renderer() : node->renderer();
+    auto runAndOffset = inlineRunAndOffset();
+    auto renderer = runAndOffset.run ? &runAndOffset.run->renderer() : node->renderer();
     if (!renderer)
         return { };
 
-    return { renderer->localCaretRect(inlineBox, caretOffset), renderer };
+    return { renderer->localCaretRect(runAndOffset), const_cast<RenderObject*>(renderer) };
 }
 
 IntRect VisiblePosition::absoluteCaretBounds(bool* insideFixed) const

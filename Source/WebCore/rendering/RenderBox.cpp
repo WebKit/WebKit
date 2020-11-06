@@ -47,6 +47,7 @@
 #include "HTMLTextAreaElement.h"
 #include "HitTestResult.h"
 #include "InlineElementBox.h"
+#include "InlineRunAndOffset.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "Page.h"
 #include "PaintInfo.h"
@@ -4429,7 +4430,7 @@ void RenderBox::computePositionedLogicalHeightReplaced(LogicalExtentComputedValu
     computedValues.m_position = logicalTopPos;
 }
 
-LayoutRect RenderBox::localCaretRect(InlineBox* box, unsigned caretOffset, LayoutUnit* extraWidthToEndOfLine)
+LayoutRect RenderBox::localCaretRect(const InlineRunAndOffset& runAndOffset, LayoutUnit* extraWidthToEndOfLine) const
 {
     // VisiblePositions at offsets inside containers either a) refer to the positions before/after
     // those containers (tables and select elements) or b) refer to the position inside an empty block.
@@ -4437,16 +4438,16 @@ LayoutRect RenderBox::localCaretRect(InlineBox* box, unsigned caretOffset, Layou
     // FIXME: Paint the carets inside empty blocks differently than the carets before/after elements.
 
     LayoutRect rect(location(), LayoutSize(caretWidth, height()));
-    bool ltr = box ? box->isLeftToRightDirection() : style().isLeftToRightDirection();
+    bool ltr = runAndOffset.run ? runAndOffset.run->isLeftToRightDirection() : style().isLeftToRightDirection();
 
-    if ((!caretOffset) ^ ltr)
+    if ((!runAndOffset.offset) ^ ltr)
         rect.move(LayoutSize(width() - caretWidth, 0_lu));
 
-    if (box) {
-        const RootInlineBox& rootBox = box->root();
-        LayoutUnit top = rootBox.lineTop();
+    if (runAndOffset.run) {
+        auto line = runAndOffset.run.line();
+        LayoutUnit top = line->top();
         rect.setY(top);
-        rect.setHeight(rootBox.lineBottom() - top);
+        rect.setHeight(line->bottom() - top);
     }
 
     // If height of box is smaller than font height, use the latter one,

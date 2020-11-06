@@ -51,13 +51,17 @@ public:
 
     LayoutUnit top() const { return LayoutUnit::fromFloatRound(line().enclosingRect().y()); }
     LayoutUnit bottom() const { return LayoutUnit::fromFloatRound(line().enclosingRect().maxY()); }
+    LayoutUnit lineBoxTop() const { return LayoutUnit::fromFloatRound(line().rect().y()); }
+    LayoutUnit lineBoxBottom() const { return LayoutUnit::fromFloatRound(line().rect().maxY()); }
+
     // FIXME: What should these really be?
     LayoutUnit selectionTop() const { return top(); }
     LayoutUnit selectionTopForHitTesting() const { return top(); }
     LayoutUnit selectionBottom() const { return bottom(); }
-    LayoutUnit lineBoxTop() const { return LayoutUnit::fromFloatRound(line().rect().y()); }
-    LayoutUnit lineBoxBottom() const { return LayoutUnit::fromFloatRound(line().rect().maxY()); }
 
+    // FIXME: What should these be?
+    float logicalLeft() const { return line().scrollableOverflow().x(); }
+    float logicalRight() const { return line().scrollableOverflow().maxX(); }
     float y() const { return lineBoxTop(); }
     float logicalHeight() const { return line().rect().height(); }
     bool isHorizontal() const { return true; }
