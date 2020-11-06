@@ -48,7 +48,7 @@ function test()
                 });
             });
 
-            workerProxy.addEventListener("HeapSnapshot.CollectionEvent", (event) => {
+            workerProxy.addEventListener(WI.HeapSnapshotWorkerProxy.Event.Collection, (event) => {
                 InspectorTest.pass("Received HeapSnapshot.CollectionEvent.");
                 InspectorTest.expectThat(Object.keys(event.data.collectedNodes).length >= 200, "Collection should include at least 200 nodes (100 objects and 100 strings).");
                 InspectorTest.expectThat(event.data.affectedSnapshots.includes(snapshot.identifier), "Collection should affect the first snapshot.");
