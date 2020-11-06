@@ -38,6 +38,7 @@ CURRENT_HOSTNAME = socket.gethostname().strip()
 RESULTS_WEBKIT_URL = 'https://results.webkit.org'
 RESULTS_SERVER_API_KEY = 'RESULTS_SERVER_API_KEY'
 S3URL = "https://s3-us-west-2.amazonaws.com/"
+USE_BUILDBOT_VERSION2 = os.getenv('USE_BUILDBOT_VERSION2') is not None
 WithProperties = properties.WithProperties
 
 
@@ -348,7 +349,10 @@ class DownloadBuiltProduct(shell.ShellCommand):
 
     def start(self):
         if 'apple' in self.getProperty('buildername').lower():
-            self.slaveEnvironment['HTTPS_PROXY'] = APPLE_WEBKIT_AWS_PROXY  # curl env var to use a proxy
+            if USE_BUILDBOT_VERSION2:
+                self.workerEnvironment['HTTPS_PROXY'] = APPLE_WEBKIT_AWS_PROXY  # curl env var to use a proxy
+            else:
+                self.slaveEnvironment['HTTPS_PROXY'] = APPLE_WEBKIT_AWS_PROXY  # curl env var to use a proxy
         return shell.ShellCommand.start(self)
 
 
@@ -376,7 +380,10 @@ class RunJavaScriptCoreTests(TestWithFailureCount):
         TestWithFailureCount.__init__(self, *args, **kwargs)
 
     def start(self):
-        self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+        if USE_BUILDBOT_VERSION2:
+            self.workerEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+        else:
+            self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
         platform = self.getProperty('platform')
         architecture = self.getProperty("architecture")
         # Currently run-javascriptcore-test doesn't support run javascript core test binaries list below remotely
@@ -462,7 +469,10 @@ class RunWebKitTests(shell.Test):
         shell.Test.__init__(self, *args, **kwargs)
 
     def start(self):
-        self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+        if USE_BUILDBOT_VERSION2:
+            self.workerEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+        else:
+            self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
 
         platform = self.getProperty('platform')
         appendCustomTestingFlags(self, platform, self.getProperty('device_model'))
@@ -593,7 +603,10 @@ class RunAPITests(TestWithFailureCount):
         TestWithFailureCount.__init__(self, *args, **kwargs)
 
     def start(self):
-        self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+        if USE_BUILDBOT_VERSION2:
+            self.workerEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+        else:
+            self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
         appendCustomTestingFlags(self, self.getProperty('platform'), self.getProperty('device_model'))
         return shell.Test.start(self)
 
@@ -653,7 +666,10 @@ class RunWebKitPyTests(RunPythonTests):
         RunPythonTests.__init__(self, *args, **kwargs)
 
     def start(self):
-        self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+        if USE_BUILDBOT_VERSION2:
+            self.workerEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+        else:
+            self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
         return RunPythonTests.start(self)
 
 
@@ -715,7 +731,10 @@ class RunLLINTCLoopTests(TestWithFailureCount):
         TestWithFailureCount.__init__(self, *args, **kwargs)
 
     def start(self):
-        self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+        if USE_BUILDBOT_VERSION2:
+            self.workerEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+        else:
+            self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
         return shell.Test.start(self)
 
     def countFailures(self, cmd):
