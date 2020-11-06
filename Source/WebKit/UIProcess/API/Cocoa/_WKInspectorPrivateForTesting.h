@@ -27,4 +27,5 @@
 
 @interface _WKInspector (WKTesting)
 - (void)_openURLExternallyForTesting:(NSURL *)url useFrontendAPI:(BOOL)useFrontendAPI;
+- (WKWebView *)inspectorWebView;
 @end

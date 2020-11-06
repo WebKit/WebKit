@@ -31,6 +31,7 @@
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import "_WKFrameHandleInternal.h"
+#import "_WKInspectorPrivateForTesting.h"
 #import <WebCore/FrameIdentifier.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
@@ -58,13 +59,6 @@
 - (WKWebView *)webView
 {
     if (auto* page = _inspector->inspectedPage())
-        return fromWebPageProxy(*page);
-    return nil;
-}
-
-- (WKWebView *)inspectorWebView
-{
-    if (auto* page = _inspector->inspectorPage())
         return fromWebPageProxy(*page);
     return nil;
 }

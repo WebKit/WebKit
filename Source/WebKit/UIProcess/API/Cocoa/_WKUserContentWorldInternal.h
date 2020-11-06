@@ -23,7 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "WKObject.h"
 #import "_WKUserContentWorld.h"
+
+#import <wtf/RetainPtr.h>
 
 @class WKContentWorld;
 

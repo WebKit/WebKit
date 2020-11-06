@@ -1,3 +1,19 @@
+2020-11-06  Alex Christensen  <achristensen@webkit.org>
+
+        Fix build after adding files to UIProcess/API/Cocoa
+        https://bugs.webkit.org/show_bug.cgi?id=218664
+
+        There is some code that assumes that unified sources always combine sources into the same translation units.
+        inspectorWebView is used from _WKInspectorTesting.mm, but only defined in _WKInspector.mm so it should be added to a header.
+        _WKUserContentWorld also doesn't include WKObject.h or RetainPtr.h but uses both.
+
+        * UIProcess/API/Cocoa/_WKInspector.mm:
+        (-[_WKInspector inspectorWebView]): Deleted.
+        * UIProcess/API/Cocoa/_WKInspectorPrivateForTesting.h:
+        * UIProcess/API/Cocoa/_WKInspectorTesting.mm:
+        (-[_WKInspector inspectorWebView]):
+        * UIProcess/API/Cocoa/_WKUserContentWorldInternal.h:
+
 2020-11-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Encoding PutImageData should not serialize separate IPC attachments for the image data
