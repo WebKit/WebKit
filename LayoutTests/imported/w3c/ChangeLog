@@ -1,3 +1,17 @@
+2020-11-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Re-enable SharedArrayBuffer for JSC shell and Testers
+        https://bugs.webkit.org/show_bug.cgi?id=212069
+
+        Reviewed by Keith Miller.
+
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/requires-failure.https.any-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/requires-failure.https.any.serviceworker-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/requires-success.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/memory/constructor.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/memory/constructor.any.worker-expected.txt:
+        * web-platform-tests/workers/postMessage_block.https-expected.txt:
+
 2020-11-05  Chris Dumez  <cdumez@apple.com>
 
         window.event should not be affected by nodes moving post-dispatch

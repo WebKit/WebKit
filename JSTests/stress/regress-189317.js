@@ -92,7 +92,7 @@ if (typeof Atomics !== "undefined") {
         "Atomics.store",
         "Atomics.sub",
         "Atomics.wait",
-        "Atomics.wake",
+        "Atomics.notify",
         "Atomics.xor",
     ]);
 }

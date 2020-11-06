@@ -847,6 +847,30 @@ test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
+test/built-ins/SharedArrayBuffer/prototype/slice/species-constructor-is-not-object.js:
+  default: 'Test262Error: `constructor` value is null Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: `constructor` value is null Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/SharedArrayBuffer/prototype/slice/species-is-not-constructor.js:
+  default: 'Test262Error: `constructor[Symbol.species]` value is Object Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: `constructor[Symbol.species]` value is Object Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/SharedArrayBuffer/prototype/slice/species-is-not-object.js:
+  default: 'Test262Error: `constructor[Symbol.species]` value is Boolean Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: `constructor[Symbol.species]` value is Boolean Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/SharedArrayBuffer/prototype/slice/species-returns-larger-arraybuffer.js:
+  default: 'Test262Error: Expected SameValue(«8», «10») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«8», «10») to be true'
+test/built-ins/SharedArrayBuffer/prototype/slice/species-returns-not-arraybuffer.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/SharedArrayBuffer/prototype/slice/species-returns-same-arraybuffer.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/SharedArrayBuffer/prototype/slice/species-returns-smaller-arraybuffer.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/SharedArrayBuffer/prototype/slice/species.js:
+  default: 'Test262Error: Expected SameValue(«[object SharedArrayBuffer]», «undefined») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«[object SharedArrayBuffer]», «undefined») to be true'
 test/built-ins/TypedArray/prototype/every/callbackfn-detachbuffer.js:
   default: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array.)'

@@ -294,6 +294,7 @@ public:
     // Integer conversions.
     JS_EXPORT_PRIVATE double toInteger(JSGlobalObject*) const;
     JS_EXPORT_PRIVATE double toIntegerPreserveNaN(JSGlobalObject*) const;
+    double toIntegerOrInfinity(JSGlobalObject*) const;
     int32_t toInt32(JSGlobalObject*) const;
     uint32_t toUInt32(JSGlobalObject*) const;
     uint32_t toIndex(JSGlobalObject*, const char* errorName) const;

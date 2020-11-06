@@ -117,7 +117,9 @@ namespace JSC {
     macro(newTargetLocal) \
     macro(derivedConstructor) \
     macro(isTypedArrayView) \
+    macro(isSharedTypedArrayView) \
     macro(isDetached) \
+    macro(typedArrayDefaultComparator) \
     macro(isBoundFunction) \
     macro(hasInstanceBoundFunction) \
     macro(instanceOf) \

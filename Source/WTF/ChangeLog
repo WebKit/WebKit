@@ -1,3 +1,12 @@
+2020-11-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Re-enable SharedArrayBuffer for JSC shell and Testers
+        https://bugs.webkit.org/show_bug.cgi?id=212069
+
+        Reviewed by Keith Miller.
+
+        * wtf/PlatformEnable.h:
+
 2020-11-05  Saam Barati  <sbarati@apple.com>
 
         Add back swap() free function for RefPtr

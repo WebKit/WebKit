@@ -1,4 +1,3 @@
-//@ skip
 var sab = new SharedArrayBuffer(1);
 var a = new Int8Array(sab);
 var result = Atomics.store(a, 0, 1000);

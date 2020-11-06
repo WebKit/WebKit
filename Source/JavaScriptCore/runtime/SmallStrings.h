@@ -117,6 +117,9 @@ public:
     JSString* nullObjectString() const { return m_nullObjectString; }
     JSString* undefinedObjectString() const { return m_undefinedObjectString; }
     JSString* boundPrefixString() const { return m_boundPrefixString; }
+    JSString* notEqualString() const { return m_notEqualString; }
+    JSString* timedOutString() const { return m_timedOutString; }
+    JSString* okString() const { return m_okString; }
 
     bool needsToBeVisited(CollectionScope scope) const
     {
@@ -138,6 +141,9 @@ private:
     JSString* m_nullObjectString { nullptr };
     JSString* m_undefinedObjectString { nullptr };
     JSString* m_boundPrefixString { nullptr };
+    JSString* m_notEqualString { nullptr };
+    JSString* m_timedOutString { nullptr };
+    JSString* m_okString { nullptr };
     JSString* m_singleCharacterStrings[singleCharacterStringCount] { nullptr };
     bool m_needsToBeVisited { true };
     bool m_isInitialized { false };

@@ -33,7 +33,11 @@
 
 namespace JSC {
 
-SimpleTypedArrayController::SimpleTypedArrayController() { }
+SimpleTypedArrayController::SimpleTypedArrayController(bool allowAtomicsWait)
+    : m_allowAtomicsWait(allowAtomicsWait)
+{
+}
+
 SimpleTypedArrayController::~SimpleTypedArrayController() { }
 
 JSArrayBuffer* SimpleTypedArrayController::toJS(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, ArrayBuffer* native)
@@ -55,7 +59,7 @@ void SimpleTypedArrayController::registerWrapper(JSGlobalObject*, ArrayBuffer* n
 
 bool SimpleTypedArrayController::isAtomicsWaitAllowedOnCurrentThread()
 {
-    return true;
+    return m_allowAtomicsWait;
 }
 
 bool SimpleTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::SlotVisitor& visitor, const char** reason)

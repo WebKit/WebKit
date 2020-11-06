@@ -28,6 +28,7 @@
 #define JSC_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
     macro(Array) \
     macro(ArrayBuffer) \
+    macro(Atomics) \
     macro(BYTES_PER_ELEMENT) \
     macro(BigInt) \
     macro(Boolean) \

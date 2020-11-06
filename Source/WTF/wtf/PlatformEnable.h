@@ -830,7 +830,7 @@
 #endif
 
 /* Disable SharedArrayBuffers until Spectre security concerns are mitigated. */
-#define ENABLE_SHARED_ARRAY_BUFFER 0
+#define ENABLE_SHARED_ARRAY_BUFFER 1
 
 
 #if ((PLATFORM(COCOA) || PLATFORM(PLAYSTATION) || PLATFORM(WPE)) && ENABLE(ASYNC_SCROLLING)) || PLATFORM(GTK)

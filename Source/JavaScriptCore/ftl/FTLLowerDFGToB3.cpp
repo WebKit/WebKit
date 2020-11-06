@@ -4277,12 +4277,13 @@ private:
     void compileAtomicsIsLockFree()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-        if (m_node->child1().useKind() != Int32Use) {
-            setJSValue(vmCall(Int64, operationAtomicsIsLockFree, weakPointer(globalObject), lowJSValue(m_node->child1())));
+        Edge child1 = m_graph.child(m_node, 0);
+        if (child1.useKind() != Int32Use) {
+            setJSValue(vmCall(Int64, operationAtomicsIsLockFree, weakPointer(globalObject), lowJSValue(child1)));
             return;
         }
         
-        LValue bytes = lowInt32(m_node->child1());
+        LValue bytes = lowInt32(child1);
         
         LBasicBlock trueCase = m_out.newBlock();
         LBasicBlock falseCase = m_out.newBlock();

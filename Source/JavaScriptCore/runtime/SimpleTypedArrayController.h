@@ -48,7 +48,7 @@ namespace JSC {
 
 class SimpleTypedArrayController final : public TypedArrayController {
 public:
-    SimpleTypedArrayController();
+    JS_EXPORT_PRIVATE SimpleTypedArrayController(bool allowAtomicsWait = true);
     ~SimpleTypedArrayController() final;
     
     JSArrayBuffer* toJS(JSGlobalObject*, JSGlobalObject*, ArrayBuffer*) final;
@@ -63,6 +63,7 @@ private:
     };
 
     JSArrayBufferOwner m_owner;
+    bool m_allowAtomicsWait { false };
 };
 
 } // namespace JSC

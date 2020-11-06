@@ -1,3 +1,38 @@
+2020-11-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Re-enable SharedArrayBuffer for JSC shell and Testers
+        https://bugs.webkit.org/show_bug.cgi?id=212069
+
+        Reviewed by Keith Miller.
+
+        Update tests to align to the latest spec.
+
+        * stress/SharedArrayBuffer-opt.js:
+        (shouldSucceed):
+        (idx.of.string_appeared_here.a.of.arrays.m.of.atomics):
+        (string_appeared_here.a.of.arrays.m.of.atomics): Deleted.
+        * stress/SharedArrayBuffer.js:
+        (shouldSucceed):
+        (Symbol):
+        * stress/array-buffer-byte-length.js:
+        (shouldThrow):
+        (Symbol):
+        * stress/atomics-add-uint32.js:
+        * stress/atomics-known-int-use.js:
+        * stress/atomics-neg-zero.js:
+        * stress/atomics-store-return.js:
+        * stress/lars-sab-workers.js:
+        (resources):
+        (notify):
+        (wake): Deleted.
+        * stress/regress-170473.js:
+        * stress/regress-189317.js:
+        * stress/shared-array-buffer-sort-while-different-thread-is-modifying.js: Added.
+        (262.agent.waitUntil):
+        (262.agent.start.262.agent.receiveBroadcast):
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+
 2020-11-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         toLocaleDateString() resolves incorrect date for some old dates

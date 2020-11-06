@@ -25,5 +25,5 @@ FAIL Order of evaluation for descriptor (with shared) assert_array_equals: lengt
 PASS Zero initial
 PASS Non-zero initial
 FAIL Stray argument WebAssembly.Memory expects exactly one argument
-FAIL Shared memory undefined is not an object (evaluating 'bufferType.prototype')
+FAIL Shared memory assert_equals: prototype of buffer expected object "[object SharedArrayBuffer]" but got object "[object ArrayBuffer]"
 

@@ -31,6 +31,7 @@
 #include "JSArrayIterator.h"
 #include "JSCInlines.h"
 #include "JSGenericTypedArrayViewPrototypeFunctions.h"
+#include "Operations.h"
 
 namespace JSC {
 
@@ -85,11 +86,73 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsTypedArrayView, (JSGlobalObj
     return JSValue::encode(jsBoolean(value.isCell() && isTypedView(value.asCell()->classInfo(globalObject->vm())->typedArrayStorageType)));
 }
 
+JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsSharedTypedArrayView, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    JSValue value = callFrame->uncheckedArgument(0);
+    if (!value.isCell())
+        return JSValue::encode(jsBoolean(false));
+    if (!isTypedView(value.asCell()->classInfo(globalObject->vm())->typedArrayStorageType))
+        return JSValue::encode(jsBoolean(false));
+    return JSValue::encode(jsBoolean(jsCast<JSArrayBufferView*>(value)->isShared()));
+}
+
 JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsDetached, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSValue argument = callFrame->uncheckedArgument(0);
     ASSERT_UNUSED(globalObject, argument.isCell() && isTypedView(argument.asCell()->classInfo(globalObject->vm())->typedArrayStorageType));
     return JSValue::encode(jsBoolean(jsCast<JSArrayBufferView*>(argument)->isDetached()));
+}
+
+JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncDefaultComparator, (JSGlobalObject*, CallFrame* callFrame))
+{
+    // https://tc39.es/ecma262/#sec-%typedarray%.prototype.sort
+
+    JSValue x = callFrame->uncheckedArgument(0);
+    JSValue y = callFrame->uncheckedArgument(1);
+
+    if (x.isNumber()) {
+        ASSERT(y.isNumber());
+        if (x.isInt32() && y.isInt32()) {
+            int32_t xInt32 = x.asInt32();
+            int32_t yInt32 = y.asInt32();
+            if (xInt32 < yInt32)
+                return JSValue::encode(jsNumber(-1));
+            if (xInt32 > yInt32)
+                return JSValue::encode(jsNumber(1));
+            return JSValue::encode(jsNumber(0));
+        }
+
+        double xDouble = x.asNumber();
+        double yDouble = y.asNumber();
+        if (std::isnan(xDouble) && std::isnan(yDouble))
+            return JSValue::encode(jsNumber(0));
+        if (std::isnan(xDouble))
+            return JSValue::encode(jsNumber(1));
+        if (std::isnan(yDouble))
+            return JSValue::encode(jsNumber(-1));
+        if (xDouble < yDouble)
+            return JSValue::encode(jsNumber(-1));
+        if (xDouble > yDouble)
+            return JSValue::encode(jsNumber(1));
+        if (!xDouble && !yDouble) {
+            if (std::signbit(xDouble) && !std::signbit(yDouble))
+                return JSValue::encode(jsNumber(-1));
+            if (!std::signbit(xDouble) && std::signbit(yDouble))
+                return JSValue::encode(jsNumber(1));
+        }
+        return JSValue::encode(jsNumber(0));
+    }
+    ASSERT(x.isBigInt() && y.isBigInt());
+    switch (compareBigInt(x, y)) {
+    case JSBigInt::ComparisonResult::Equal:
+    case JSBigInt::ComparisonResult::Undefined:
+        return JSValue::encode(jsNumber(0));
+    case JSBigInt::ComparisonResult::GreaterThan:
+        return JSValue::encode(jsNumber(1));
+    case JSBigInt::ComparisonResult::LessThan:
+        return JSValue::encode(jsNumber(-1));
+    }
+    return JSValue::encode(jsNumber(0));
 }
 
 JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncLength, (JSGlobalObject* globalObject, CallFrame* callFrame))

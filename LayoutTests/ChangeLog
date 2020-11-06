@@ -1,3 +1,12 @@
+2020-11-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Re-enable SharedArrayBuffer for JSC shell and Testers
+        https://bugs.webkit.org/show_bug.cgi?id=212069
+
+        Reviewed by Keith Miller.
+
+        * webaudio/dom-exceptions-expected.txt:
+
 2020-11-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Concurrent display lists] Encode display list items directly into shared memory

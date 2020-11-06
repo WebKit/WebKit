@@ -261,6 +261,8 @@ const char* intrinsicName(Intrinsic intrinsic)
         return "AtomicsIsLockFreeIntrinsic";
     case AtomicsLoadIntrinsic:
         return "AtomicsLoadIntrinsic";
+    case AtomicsNotifyIntrinsic:
+        return "AtomicsNotifyIntrinsic";
     case AtomicsOrIntrinsic:
         return "AtomicsOrIntrinsic";
     case AtomicsStoreIntrinsic:
@@ -269,8 +271,6 @@ const char* intrinsicName(Intrinsic intrinsic)
         return "AtomicsSubIntrinsic";
     case AtomicsWaitIntrinsic:
         return "AtomicsWaitIntrinsic";
-    case AtomicsWakeIntrinsic:
-        return "AtomicsWakeIntrinsic";
     case AtomicsXorIntrinsic:
         return "AtomicsXorIntrinsic";
     case ParseIntIntrinsic:

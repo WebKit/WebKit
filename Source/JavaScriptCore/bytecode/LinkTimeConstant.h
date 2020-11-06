@@ -53,7 +53,9 @@ class JSGlobalObject;
     v(typedArrayGetOriginalConstructor, nullptr) \
     v(typedArraySort, nullptr) \
     v(isTypedArrayView, nullptr) \
+    v(isSharedTypedArrayView, nullptr) \
     v(isDetached, nullptr) \
+    v(typedArrayDefaultComparator, nullptr) \
     v(typedArraySubarrayCreate, nullptr) \
     v(isBoundFunction, nullptr) \
     v(hasInstanceBoundFunction, nullptr) \

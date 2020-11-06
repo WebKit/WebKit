@@ -703,6 +703,10 @@ sub getFeatureFlags {
         }
     }
 
+    if (grep $_ eq 'CanBlockIsFalse', @{$data->{flags}}) {
+        $featureFlags .= ' --can-block-is-false';
+    }
+
     return $featureFlags;
 }
 

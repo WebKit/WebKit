@@ -6,10 +6,10 @@ flags:
   class-fields-public: usePublicClassFields
   class-fields-private: usePrivateClassFields
   Intl.DateTimeFormat-dayPeriod: useIntlDateTimeFormatDayPeriod
+  SharedArrayBuffer: useSharedArrayBuffer
+  Atomics: useSharedArrayBuffer
 skip:
   features:
-    - SharedArrayBuffer
-    - Atomics
     - Atomics.waitAsync
     # https://bugs.webkit.org/show_bug.cgi?id=174931
     - regexp-lookbehind
@@ -81,6 +81,19 @@ skip:
     - test/built-ins/TypedArrayConstructors/internals/OwnPropertyKeys/BigInt
     - test/built-ins/TypedArrayConstructors/internals/Set/BigInt
     - test/built-ins/TypedArrayConstructors/of/BigInt
+
+    - test/built-ins/Atomics/add/bigint
+    - test/built-ins/Atomics/and/bigint
+    - test/built-ins/Atomics/compareExchange/bigint
+    - test/built-ins/Atomics/exchange/bigint
+    - test/built-ins/Atomics/isLockFree/bigint
+    - test/built-ins/Atomics/load/bigint
+    - test/built-ins/Atomics/notify/bigint
+    - test/built-ins/Atomics/or/bigint
+    - test/built-ins/Atomics/store/bigint
+    - test/built-ins/Atomics/sub/bigint
+    - test/built-ins/Atomics/wait/bigint
+    - test/built-ins/Atomics/xor/bigint
 
     # requires ICU APIs implementation
     # https://bugs.webkit.org/show_bug.cgi?id=213822

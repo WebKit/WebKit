@@ -253,8 +253,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case AtomicsIsLockFree:
-        if (node->child1().useKind() == Int32Use)
-            def(PureValue(node));
+        if (graph.child(node, 0).useKind() == Int32Use)
+            def(PureValue(graph, node));
         else
             clobberTop();
         return;

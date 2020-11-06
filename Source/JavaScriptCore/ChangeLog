@@ -1,3 +1,84 @@
+2020-11-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Re-enable SharedArrayBuffer for JSC shell and Testers
+        https://bugs.webkit.org/show_bug.cgi?id=212069
+
+        Reviewed by Keith Miller.
+
+        This patch revives SharedArrayBuffer and Atomics and aligning them to the latest spec.
+
+        1. SharedArrayBuffer's sort should be done in JS side. C++ sort is not safe for SharedArrayBuffer since the buffer
+           can be modified by different threads while sorting.
+        2. Atomics.wait should be renamed to Atomics.notify.
+        3. Atomics operation should be VarArgs in DFG because DFGSSALoweringPhase assumes that they are VarArgs and they can
+           have another arg for CheckInBounds dependency.
+        4. For test262, JSC shell should support "--can-block-is-false" flag. If it is true, the main thread's [[CanBlock]] becomes false.
+           This means that `Atomics.wait` cannot be used.
+
+        * builtins/BuiltinNames.h:
+        * builtins/TypedArrayPrototype.js:
+        (sort):
+        * bytecode/LinkTimeConstant.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::mustGenerate const):
+        (JSC::DFG::Node::hasVarArgs const):
+        (JSC::DFG::Node::mustGenerate): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGSSALoweringPhase.cpp:
+        (JSC::DFG::SSALoweringPhase::handleNode):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileAtomicsIsLockFree):
+        * jsc.cpp:
+        (printUsageStatement):
+        (CommandLine::parseArguments):
+        (runJSC):
+        * runtime/AtomicsObject.cpp:
+        (JSC::AtomicsObject::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/JSArrayBufferPrototype.cpp:
+        (JSC::arrayBufferSlice):
+        (JSC::arrayBufferByteLength):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSArrayBufferPrototype::finishCreation):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::toIntegerOrInfinity const):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncReverse):
+        (JSC::genericTypedArrayViewPrivateFuncSort):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSTypedArrayViewPrototype.h:
+        * runtime/OptionsList.h:
+        * runtime/SimpleTypedArrayController.cpp:
+        (JSC::SimpleTypedArrayController::SimpleTypedArrayController):
+        (JSC::SimpleTypedArrayController::isAtomicsWaitAllowedOnCurrentThread):
+        * runtime/SimpleTypedArrayController.h:
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::initializeCommonStrings):
+        (JSC::SmallStrings::visitStrongReferences):
+        * runtime/SmallStrings.h:
+        (JSC::SmallStrings::notEqualString const):
+        (JSC::SmallStrings::timedOutString const):
+        (JSC::SmallStrings::okString const):
+
 2020-11-06  Mark Lam  <mark.lam@apple.com>
 
         Use address diversified PAC to ensure the integrity of opcode maps.

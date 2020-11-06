@@ -88,6 +88,8 @@ def main(argv, stdout, stderr):
         stackSizeInBytes = int(1.5 * 1024 * 1024)
         options.additional_env_var.append('JSC_maxPerThreadStackUsage=' + str(stackSizeInBytes))
         options.additional_env_var.append('__XPC_JSC_maxPerThreadStackUsage=' + str(stackSizeInBytes))
+        options.additional_env_var.append('JSC_useSharedArrayBuffer=1')
+        options.additional_env_var.append('__XPC_JSC_useSharedArrayBuffer=1')
         run_details = run(port, options, args, stderr)
         if run_details.exit_code != -1 and run_details.skipped_all_tests:
             return run_details.exit_code

@@ -1,5 +1,3 @@
-//@ skip
-
 var sab = new SharedArrayBuffer(100 * 4);
 
 var memory = new Int32Array(sab);
@@ -14,7 +12,7 @@ function startWorker(code)
 }
 
 resources = `
-function wait(memory, index, waitCondition, wakeCondition)
+function wait(memory, index, waitCondition, notifyCondition)
 {
     while (memory[index] == waitCondition) {
         var result = Atomics.wait(memory, index, waitCondition);
@@ -28,23 +26,23 @@ function wait(memory, index, waitCondition, wakeCondition)
             break;
         }
         var value = memory[index];
-        if (value != wakeCondition) {
+        if (value != notifyCondition) {
             $.agent.report("Error: wait returned not-equal but the memory has a bad value: " + value);
             $.agent.report("error");
         }
     }
     var value = memory[index];
-    if (value != wakeCondition) {
+    if (value != notifyCondition) {
         $.agent.report("Error: done waiting but the memory has a bad value: " + value);
         $.agent.report("error");
     }
 }
 
-function wake(memory, index)
+function notify(memory, index)
 {
-    var result = Atomics.wake(memory, index, 1);
+    var result = Atomics.notify(memory, index, 1);
     if (result != 0 && result != 1) {
-        $.agent.report("Error: bad result from wake: " + result);
+        $.agent.report("Error: bad result from notify: " + result);
         $.agent.report("error");
     }
 }
@@ -66,7 +64,7 @@ startWorker(
         $.agent.report("1: It started!");
         
         memory[shouldGoIdx] = 1;
-        wake(memory, shouldGoIdx);
+        notify(memory, shouldGoIdx);
         
         wait(memory, didEndIdx, 0, 1);
         
@@ -88,12 +86,12 @@ startWorker(
         $.agent.report("2: Memory: " + memory);
         
         Atomics.store(memory, didStartIdx, 1);
-        wake(memory, didStartIdx);
+        notify(memory, didStartIdx);
         
         wait(memory, shouldGoIdx, 0, 1);
         
         Atomics.store(memory, didEndIdx, 1);
-        wake(memory, didEndIdx, 1);
+        notify(memory, didEndIdx, 1);
         
         $.agent.report("2: Memory: " + memory);
         $.agent.report("done");

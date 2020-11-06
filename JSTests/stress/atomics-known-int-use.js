@@ -1,4 +1,3 @@
-//@ skip
 // Break type inference.
 var o = {f: 42.5};
 

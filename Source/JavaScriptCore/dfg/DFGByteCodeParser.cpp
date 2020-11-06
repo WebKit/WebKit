@@ -2717,24 +2717,20 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
             
             if (static_cast<unsigned>(argumentCountIncludingThis) < 1 + numArgs)
                 return false;
+
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIndexingType)
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantCache)
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, OutOfBounds))
+                return false;
             
             insertChecks();
             
-            Vector<Node*, 3> args;
             for (unsigned i = 0; i < numArgs; ++i)
-                args.append(get(virtualRegisterForArgumentIncludingThis(1 + i, registerOffset)));
-            
-            Node* resultNode;
-            if (numArgs + 1 <= 3) {
-                while (args.size() < 3)
-                    args.append(nullptr);
-                resultNode = addToGraph(op, OpInfo(ArrayMode(Array::SelectUsingPredictions, action).asWord()), OpInfo(prediction), args[0], args[1], args[2]);
-            } else {
-                for (Node* node : args)
-                    addVarArgChild(node);
-                addVarArgChild(nullptr);
-                resultNode = addToGraph(Node::VarArg, op, OpInfo(ArrayMode(Array::SelectUsingPredictions, action).asWord()), OpInfo(prediction));
-            }
+                addVarArgChild(get(virtualRegisterForArgumentIncludingThis(1 + i, registerOffset)));
+            addVarArgChild(nullptr); // For storage edge.
+            Node* resultNode = addToGraph(Node::VarArg, op, OpInfo(ArrayMode(Array::SelectUsingPredictions, action).asWord()), OpInfo(prediction));
             
             setResult(resultNode);
             return true;

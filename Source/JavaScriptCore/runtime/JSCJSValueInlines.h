@@ -79,6 +79,19 @@ inline uint32_t JSValue::toIndex(JSGlobalObject* globalObject, const char* error
     RELEASE_AND_RETURN(scope, JSC::toInt32(d));
 }
 
+// https://tc39.es/ecma262/#sec-tointegerorinfinity
+// FIXME: We will replace toInteger with toIntegerOrInfinity. The difference is that toIntegerOrInfinity will convert -0 to +0.
+// https://bugs.webkit.org/show_bug.cgi?id=218642
+inline double JSValue::toIntegerOrInfinity(JSGlobalObject* globalObject) const
+{
+    if (isInt32())
+        return asInt32();
+    double d = toNumber(globalObject);
+    if (std::isnan(d) || !d)
+        return 0.0;
+    return trunc(d);
+}
+
 inline bool JSValue::isUInt32() const
 {
     return isInt32() && asInt32() >= 0;

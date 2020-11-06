@@ -1,4 +1,3 @@
-//@ skip
 var dv = new DataView(new SharedArrayBuffer(128));
 var i8a = new Int8Array(new SharedArrayBuffer(128));
 var i16a = new Int16Array(new SharedArrayBuffer(128));
@@ -104,6 +103,11 @@ function shouldFail(f, name)
     throw new Error(f + " succeeded!");
 }
 
+function shouldSucceed(f)
+{
+    f();
+}
+
 for (var bad of [void 0, null, false, true, 1, 0.5, Symbol(), {}, "hello", dv, u8ca, f32a, f64a]) {
     shouldFail(() => genericAtomics.get("add")(bad, 0, 0), TypeError);
     shouldFail(() => genericAtomics.get("and")(bad, 0, 0), TypeError);
@@ -116,7 +120,7 @@ for (var bad of [void 0, null, false, true, 1, 0.5, Symbol(), {}, "hello", dv, u
     shouldFail(() => genericAtomics.get("xor")(bad, 0, 0), TypeError);
 }
 
-for (var idx of [-1, -1000000000000, 10000, 10000000000000, "hello"]) {
+for (var idx of [-1, -1000000000000, 10000000000000, 10000]) {
     for (var a of arrays) {
         for (var m of [atomics.get(a), genericAtomics]) {
             shouldFail(() => m.get("add")(a, idx, 0), RangeError);
@@ -128,6 +132,22 @@ for (var idx of [-1, -1000000000000, 10000, 10000000000000, "hello"]) {
             shouldFail(() => m.get("store")(a, idx, 0), RangeError);
             shouldFail(() => m.get("sub")(a, idx, 0), RangeError);
             shouldFail(() => m.get("xor")(a, idx, 0), RangeError);
+        }
+    }
+}
+
+for (var idx of ["hello"]) {
+    for (var a of arrays) {
+        for (var m of [atomics.get(a), genericAtomics]) {
+            shouldSucceed(() => m.get("add")(a, idx, 0));
+            shouldSucceed(() => m.get("and")(a, idx, 0));
+            shouldSucceed(() => m.get("compareExchange")(a, idx, 0, 0));
+            shouldSucceed(() => m.get("exchange")(a, idx, 0));
+            shouldSucceed(() => m.get("load")(a, idx));
+            shouldSucceed(() => m.get("or")(a, idx, 0));
+            shouldSucceed(() => m.get("store")(a, idx, 0));
+            shouldSucceed(() => m.get("sub")(a, idx, 0));
+            shouldSucceed(() => m.get("xor")(a, idx, 0));
         }
     }
 }

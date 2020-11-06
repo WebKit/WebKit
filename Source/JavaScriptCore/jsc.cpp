@@ -61,6 +61,7 @@
 #include "ProfilerDatabase.h"
 #include "ReleaseHeapAccessScope.h"
 #include "SamplingProfiler.h"
+#include "SimpleTypedArrayController.h"
 #include "StackVisitor.h"
 #include "StructureInlines.h"
 #include "SuperSampler.h"
@@ -424,6 +425,7 @@ public:
     bool m_dumpMemoryFootprint { false };
     bool m_dumpSamplingProfilerData { false };
     bool m_enableRemoteDebugging { false };
+    bool m_canBlockIsFalse { false };
 
     void parseArguments(int, char**);
 };
@@ -3097,6 +3099,7 @@ static NO_RETURN void printUsageStatement(bool help = false)
     fprintf(stderr, "  --dumpOptions              Dumps all non-default JSC VM options before continuing\n");
     fprintf(stderr, "  --<jsc VM option>=<value>  Sets the specified JSC VM option\n");
     fprintf(stderr, "  --destroy-vm               Destroy VM before exiting\n");
+    fprintf(stderr, "  --can-block-is-false       Make main thread's Atomics.wait throw\n");
     fprintf(stderr, "\n");
     fprintf(stderr, "Files with a .mjs extension will always be evaluated as modules.\n");
     fprintf(stderr, "\n");
@@ -3118,6 +3121,7 @@ void CommandLine::parseArguments(int argc, char** argv)
 {
     Options::AllowUnfinalizedAccessScope scope;
     Options::initialize();
+    Options::useSharedArrayBuffer() = true;
     
 #if PLATFORM(IOS_FAMILY)
     Options::crashIfCantAllocateJITMemory() = true;
@@ -3231,6 +3235,10 @@ void CommandLine::parseArguments(int argc, char** argv)
             m_destroyVM = true;
             continue;
         }
+        if (!strcmp(arg, "--can-block-is-false")) {
+            m_canBlockIsFalse = true;
+            continue;
+        }
         if (!strcmp(arg, "--disableOptionsFreezingForTesting")) {
             Config::disableFreezingForTesting();
             continue;
@@ -3329,6 +3337,8 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
     Worker worker(Workers::singleton());
     
     VM& vm = VM::create(LargeHeap).leakRef();
+    if (!isWorker && options.m_canBlockIsFalse)
+        vm.m_typedArrayController = adoptRef(new JSC::SimpleTypedArrayController(false));
 #if ENABLE(WEBASSEMBLY)
     Wasm::enableFastMemory();
 #endif

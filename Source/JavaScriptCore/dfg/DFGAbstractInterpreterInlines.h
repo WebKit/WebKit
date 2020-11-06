@@ -826,7 +826,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case AtomicsIsLockFree: {
-        if (node->child1().useKind() != Int32Use)
+        if (m_graph.child(node, 0).useKind() != Int32Use)
             clobberWorld();
         setNonCellTypeForNode(node, SpecBoolInt32);
         break;

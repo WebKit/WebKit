@@ -1,4 +1,3 @@
-//@ skip
 // This is a basic test of SharedArrayBuffer API as we understand it.
 
 if (SharedArrayBuffer == ArrayBuffer)
@@ -35,11 +34,11 @@ checkAtomics("compareExchange", 4);
 checkAtomics("exchange", 3);
 checkAtomics("isLockFree", 1);
 checkAtomics("load", 2);
+checkAtomics("notify", 3);
 checkAtomics("or", 3);
 checkAtomics("store", 3);
 checkAtomics("sub", 3);
 checkAtomics("wait", 4);
-checkAtomics("wake", 3);
 checkAtomics("xor", 3);
 
 // These should all succeed.
@@ -66,6 +65,11 @@ function shouldFail(f, name)
     throw new Error(f + " succeeded!");
 }
 
+function shouldSucceed(f)
+{
+    f();
+}
+
 for (bad of [void 0, null, false, true, 1, 0.5, Symbol(), {}, "hello", dv, u8ca, f32a, f64a]) {
     shouldFail(() => Atomics.add(bad, 0, 0), TypeError);
     shouldFail(() => Atomics.and(bad, 0, 0), TypeError);
@@ -79,11 +83,11 @@ for (bad of [void 0, null, false, true, 1, 0.5, Symbol(), {}, "hello", dv, u8ca,
 }
 
 for (bad of [void 0, null, false, true, 1, 0.5, Symbol(), {}, "hello", dv, i8a, i16a, u8a, u8ca, u16a, u32a, f32a, f64a]) {
+    shouldFail(() => Atomics.notify(bad, 0, 0), TypeError);
     shouldFail(() => Atomics.wait(bad, 0, 0), TypeError);
-    shouldFail(() => Atomics.wake(bad, 0, 0), TypeError);
 }
 
-for (idx of [-1, -1000000000000, 10000, 10000000000000, "hello"]) {
+for (idx of [-1, -1000000000000, 10000, 10000000000000]) {
     for (a of [i8a, i16a, i32a, u8a, u16a, u32a]) {
         shouldFail(() => Atomics.add(a, idx, 0), RangeError);
         shouldFail(() => Atomics.and(a, idx, 0), RangeError);
@@ -95,8 +99,24 @@ for (idx of [-1, -1000000000000, 10000, 10000000000000, "hello"]) {
         shouldFail(() => Atomics.sub(a, idx, 0), RangeError);
         shouldFail(() => Atomics.xor(a, idx, 0), RangeError);
     }
+    shouldFail(() => Atomics.notify(i32a, idx, 0), RangeError);
     shouldFail(() => Atomics.wait(i32a, idx, 0), RangeError);
-    shouldFail(() => Atomics.wake(i32a, idx, 0), RangeError);
+}
+
+for (idx of ["hello"]) {
+    for (a of [i8a, i16a, i32a, u8a, u16a, u32a]) {
+        shouldSucceed(() => Atomics.add(a, idx, 0));
+        shouldSucceed(() => Atomics.and(a, idx, 0));
+        shouldSucceed(() => Atomics.compareExchange(a, idx, 0, 0));
+        shouldSucceed(() => Atomics.exchange(a, idx, 0));
+        shouldSucceed(() => Atomics.load(a, idx));
+        shouldSucceed(() => Atomics.or(a, idx, 0));
+        shouldSucceed(() => Atomics.store(a, idx, 0));
+        shouldSucceed(() => Atomics.sub(a, idx, 0));
+        shouldSucceed(() => Atomics.xor(a, idx, 0));
+    }
+    shouldSucceed(() => Atomics.notify(i32a, idx, 0));
+    shouldSucceed(() => Atomics.wait(i32a, idx, 0, 1));
 }
 
 function runAtomic(array, index, init, name, args, expectedResult, expectedOutcome)

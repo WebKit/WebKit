@@ -3430,8 +3430,9 @@ void SpeculativeJIT::compile(Node* node)
     }
         
     case AtomicsIsLockFree: {
-        if (node->child1().useKind() != Int32Use) {
-            JSValueOperand operand(this, node->child1());
+        Edge child1 = m_graph.child(node, 0);
+        if (child1.useKind() != Int32Use) {
+            JSValueOperand operand(this, child1);
             GPRReg operandGPR = operand.gpr();
             flushRegisters();
             GPRFlushedCallResult result(this);
@@ -3442,7 +3443,7 @@ void SpeculativeJIT::compile(Node* node)
             break;
         }
 
-        SpeculateInt32Operand operand(this, node->child1());
+        SpeculateInt32Operand operand(this, child1);
         GPRTemporary result(this);
         GPRReg operandGPR = operand.gpr();
         GPRReg resultGPR = result.gpr();

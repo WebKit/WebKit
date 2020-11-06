@@ -1,4 +1,3 @@
-//@ skip
 function shouldBe(actual, expected)
 {
     if (actual !== expected)
@@ -42,25 +41,25 @@ function shouldThrow(func, errorMessage)
 
     shouldThrow(() => {
         Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, 'byteLength').get.call(sharedArrayBuffer);
-    }, `TypeError: Receiver should not be a shared array buffer`);
+    }, `TypeError: Receiver must be ArrayBuffer`);
 
     shouldThrow(() => {
         Object.getOwnPropertyDescriptor(SharedArrayBuffer.prototype, 'byteLength').get.call(arrayBuffer);
-    }, `TypeError: Receiver should be a shared array buffer`);
+    }, `TypeError: Receiver must be SharedArrayBuffer`);
 
     for (let value of [ 0, true, "Cocoa", null, undefined, Symbol("Cappuccino") ]) {
         shouldThrow(() => {
             Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, 'byteLength').get.call(value);
-        }, `TypeError: Receiver should be an array buffer but was not an object`);
+        }, `TypeError: Receiver must be ArrayBuffer`);
         shouldThrow(() => {
             Object.getOwnPropertyDescriptor(SharedArrayBuffer.prototype, 'byteLength').get.call(value);
-        }, `TypeError: Receiver should be an array buffer but was not an object`);
+        }, `TypeError: Receiver must be SharedArrayBuffer`);
     }
 
     shouldThrow(() => {
         Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, 'byteLength').get.call({});
-    }, `TypeError: Receiver should be an array buffer`);
+    }, `TypeError: Receiver must be ArrayBuffer`);
     shouldThrow(() => {
         Object.getOwnPropertyDescriptor(SharedArrayBuffer.prototype, 'byteLength').get.call({});
-    }, `TypeError: Receiver should be an array buffer`);
+    }, `TypeError: Receiver must be SharedArrayBuffer`);
 }

@@ -146,11 +146,11 @@ enum Intrinsic : uint8_t {
     AtomicsExchangeIntrinsic,
     AtomicsIsLockFreeIntrinsic,
     AtomicsLoadIntrinsic,
+    AtomicsNotifyIntrinsic,
     AtomicsOrIntrinsic,
     AtomicsStoreIntrinsic,
     AtomicsSubIntrinsic,
     AtomicsWaitIntrinsic,
-    AtomicsWakeIntrinsic,
     AtomicsXorIntrinsic,
     ParseIntIntrinsic,
 

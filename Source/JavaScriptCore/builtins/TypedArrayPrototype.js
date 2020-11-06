@@ -238,9 +238,13 @@ function sort(comparator)
     if (length < 2)
         return;
 
-    if (comparator !== @undefined)
+    // typedArraySort is not safe when the other thread is modifying content. So if |this| is SharedArrayBuffer,
+    // use JS-implemented sorting.
+    if (comparator !== @undefined || @isSharedTypedArrayView(this)) {
+        if (comparator === @undefined)
+            comparator = @typedArrayDefaultComparator;
         @typedArrayMergeSort(this, length, comparator);
-    else
+    } else
         @typedArraySort(this);
 
     return this;
