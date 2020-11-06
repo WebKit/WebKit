@@ -637,7 +637,7 @@ override;
     bool canHaveOutsideFragmentRange() const { return !isInFlowRenderFragmentedFlow(); }
     virtual bool needsLayoutAfterFragmentRangeChange() const { return false; }
 
-    const RenderBox* findEnclosingScrollableContainer() const;
+    const RenderBox* findEnclosingScrollableContainerForSnapping() const;
     
     bool isGridItem() const { return parent() && parent()->isRenderGrid() && !isExcludedFromNormalLayout(); }
     bool isFlexItem() const { return parent() && parent()->isFlexibleBox() && !isExcludedFromNormalLayout(); }

@@ -160,13 +160,12 @@ static void computeAxisProximitySnapOffsetRanges(const Vector<LayoutUnit>& snapO
     }
 }
 
-void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, HTMLElement& scrollingElement, const RenderBox& scrollingElementBox, const RenderStyle& scrollingElementStyle)
+void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const RenderBox& scrollingElementBox, const RenderStyle& scrollingElementStyle, LayoutRect viewportRectInBorderBoxCoordinates)
 {
-    auto* scrollContainer = scrollingElement.renderer();
     auto scrollSnapType = scrollingElementStyle.scrollSnapType();
-    if (!scrollContainer || scrollSnapType.strictness == ScrollSnapStrictness::None || scrollContainer->view().boxesWithScrollSnapPositions().isEmpty()) {
-        scrollableArea.clearHorizontalSnapOffsets();
-        scrollableArea.clearVerticalSnapOffsets();
+    const auto& boxesWithScrollSnapPositions = scrollingElementBox.view().boxesWithScrollSnapPositions();
+    if (scrollSnapType.strictness == ScrollSnapStrictness::None || boxesWithScrollSnapPositions.isEmpty()) {
+        scrollableArea.clearSnapOffsets();
         return;
     }
 
@@ -184,16 +183,16 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, HTMLElem
     bool scrollerIsRTL = !scrollingElementBox.style().isLeftToRightDirection();
 
     // The bounds of the scrolling container's snap port, where the top left of the scrolling container's border box is the origin.
-    auto scrollSnapPort = computeScrollSnapPortOrAreaRect(scrollingElementBox.paddingBoxRect(), scrollingElementStyle.scrollPadding(), InsetOrOutset::Inset);
+    auto scrollSnapPort = computeScrollSnapPortOrAreaRect(viewportRectInBorderBoxCoordinates, scrollingElementStyle.scrollPadding(), InsetOrOutset::Inset);
     LOG_WITH_STREAM(ScrollSnap, stream << "Computing scroll snap offsets for " << scrollableArea << " in snap port " << scrollSnapPort);
-    for (auto* child : scrollContainer->view().boxesWithScrollSnapPositions()) {
-        if (child->enclosingScrollableContainerForSnapping() != scrollContainer)
+    for (auto* child : boxesWithScrollSnapPositions) {
+        if (child->enclosingScrollableContainerForSnapping() != &scrollingElementBox)
             continue;
 
         // The bounds of the child element's snap area, where the top left of the scrolling container's border box is the origin.
         // The snap area is the bounding box of the child element's border box, after applying transformations.
         // FIXME: For now, just consider whether the scroller is RTL. The behavior of LTR boxes inside a RTL scroller is poorly defined: https://github.com/w3c/csswg-drafts/issues/5361.
-        auto scrollSnapArea = LayoutRect(child->localToContainerQuad(FloatQuad(child->borderBoundingBox()), scrollingElement.renderBox()).boundingBox());
+        auto scrollSnapArea = LayoutRect(child->localToContainerQuad(FloatQuad(child->borderBoundingBox()), &scrollingElementBox).boundingBox());
 
         // localToContainerQuad will transform the scroll snap area by the scroll position, except in the case that this position is
         // coming from a ScrollView. We want the transformed area, but without scroll position taken into account.

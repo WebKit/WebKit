@@ -27,6 +27,7 @@
 
 #if ENABLE(CSS_SCROLL_SNAP)
 
+#include "LayoutRect.h"
 #include "LayoutUnit.h"
 #include "ScrollSnapOffsetsInfo.h"
 #include "ScrollTypes.h"
@@ -39,7 +40,10 @@ class RenderBox;
 class RenderStyle;
 class ScrollableArea;
 
-void updateSnapOffsetsForScrollableArea(ScrollableArea&, HTMLElement& scrollingElement, const RenderBox& scrollingElementBox, const RenderStyle& scrollingElementStyle);
+// Update the snap offsets for this scrollable area, given the RenderBox of the scroll container, the RenderStyle
+// which defines the scroll-snap properties, and the viewport rectangle with the origin at the top left of
+// the scrolling container's border box.
+void updateSnapOffsetsForScrollableArea(ScrollableArea&, const RenderBox& scrollingElementBox, const RenderStyle& scrollingElementStyle, LayoutRect viewportRectInBorderBoxCoordinates);
 
 const unsigned invalidSnapOffsetIndex = UINT_MAX;
 WEBCORE_EXPORT LayoutUnit closestSnapOffset(const Vector<LayoutUnit>& snapOffsets, const Vector<ScrollOffsetRange<LayoutUnit>>& snapOffsetRanges, LayoutUnit scrollDestination, float velocity, unsigned& activeSnapIndex);

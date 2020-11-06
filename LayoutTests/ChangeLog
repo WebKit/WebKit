@@ -1,3 +1,29 @@
+2020-11-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Scroll snap specified on :root doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=210469
+        <rdar://problem/61746676>
+
+        Reviewed by Simon Fraser.
+
+        Modified main frame scroll snap tests to reflect the specification and add a
+        few more tests to test the legacy behavior which this change maintains for
+        backwards compatibility.
+
+        * css3/scroll-snap/scroll-snap-positions-mainframe.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-horizontal-legacy-expected.txt: Added.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-horizontal-legacy.html: Copied from LayoutTests/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-horizontal.html.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-horizontal.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-slow-horizontal.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-slow-vertical.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical-legacy-expected.txt: Added.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical-legacy.html: Copied from LayoutTests/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical.html.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical-then-horizontal.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-proximity-mainframe-legacy-expected.txt: Added.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-proximity-mainframe-legacy.html: Copied from LayoutTests/tiled-drawing/scrolling/scroll-snap/scroll-snap-proximity-mainframe.html.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-proximity-mainframe.html:
+
 2020-11-05  Alex Christensen  <achristensen@webkit.org>
 
         Align GBK and gb18030 encoder and decoder with specification and other browsers

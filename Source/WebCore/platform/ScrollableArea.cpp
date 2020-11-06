@@ -530,6 +530,12 @@ void ScrollableArea::setVerticalSnapOffsetRanges(const Vector<ScrollOffsetRange<
     ensureSnapOffsetsInfo().verticalSnapOffsetRanges = verticalRanges;
 }
 
+void ScrollableArea::clearSnapOffsets()
+{
+    clearHorizontalSnapOffsets();
+    clearVerticalSnapOffsets();
+}
+
 void ScrollableArea::clearHorizontalSnapOffsets()
 {
     if (!m_snapOffsetsInfo)

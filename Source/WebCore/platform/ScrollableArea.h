@@ -96,6 +96,7 @@ public:
     void setVerticalSnapOffsets(const Vector<LayoutUnit>&);
     void setHorizontalSnapOffsetRanges(const Vector<ScrollOffsetRange<LayoutUnit>>&);
     void setVerticalSnapOffsetRanges(const Vector<ScrollOffsetRange<LayoutUnit>>&);
+    void clearSnapOffsets();
     void clearHorizontalSnapOffsets();
     void clearVerticalSnapOffsets();
     unsigned currentHorizontalSnapPointIndex() const { return m_currentHorizontalSnapPointIndex; }

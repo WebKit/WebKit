@@ -455,12 +455,12 @@ RenderBoxModelObject& RenderObject::enclosingBoxModelObject() const
 const RenderBox* RenderObject::enclosingScrollableContainerForSnapping() const
 {
     auto& renderBox = enclosingBox();
-    if (auto* scrollableContainer = renderBox.findEnclosingScrollableContainer()) {
+    if (auto* scrollableContainer = renderBox.findEnclosingScrollableContainerForSnapping()) {
         // The scrollable container for snapping cannot be the node itself.
         if (scrollableContainer != this)
             return scrollableContainer;
         if (renderBox.parentBox())
-            return renderBox.parentBox()->findEnclosingScrollableContainer();
+            return renderBox.parentBox()->findEnclosingScrollableContainerForSnapping();
     }
     return nullptr;
 }

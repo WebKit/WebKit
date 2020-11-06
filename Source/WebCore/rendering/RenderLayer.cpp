@@ -3592,7 +3592,7 @@ void RenderLayer::updateSnapOffsets()
         return;
 
     RenderBox* box = enclosingElement()->renderBox();
-    updateSnapOffsetsForScrollableArea(*this, *downcast<HTMLElement>(enclosingElement()), *box, box->style());
+    updateSnapOffsetsForScrollableArea(*this, *box, box->style(), box->paddingBoxRect());
 }
 
 bool RenderLayer::isScrollSnapInProgress() const

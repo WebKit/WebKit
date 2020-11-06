@@ -2,6 +2,9 @@
 <html>
     <head>
         <style>
+            html {
+                scroll-snap-type: y proximity;
+            }
             body {
                 margin: 0;
                 width: 100%;
@@ -9,9 +12,6 @@
                 overflow-x: none;
                 overflow-y: scroll;
                 position: absolute;
-                scroll-snap-type: y proximity;
-                -webkit-scroll-snap-type: proximity;
-                scroll-snap-type: proximity;
             }
 
             .area {
@@ -20,8 +20,6 @@
                 float: left;
                 opacity: 0.5;
                 scroll-snap-align: start;
-                -webkit-scroll-snap-coordinate: 0 0;
-                scroll-snap-coordinate: 0 0;
             }
 
             #output {
