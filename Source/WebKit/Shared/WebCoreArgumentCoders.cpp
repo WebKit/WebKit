@@ -3188,28 +3188,30 @@ Optional<WebCore::CDMInstanceSession::KeyStatusVector> ArgumentCoder<WebCore::CD
 
 void ArgumentCoder<Ref<WebCore::ImageData>>::encode(Encoder& encoder, const Ref<WebCore::ImageData>& imageData)
 {
-    // FIXME: Copying from the ImageData to the SharedBuffer is slow. Invent some way for the SharedBuffer to be populated directly.
-    auto sharedBuffer = WebCore::SharedBuffer::create(imageData->data()->data(), imageData->data()->byteLength());
     encoder << imageData->size();
-    encoder << sharedBuffer;
+
+    auto rawData = imageData->data();
+    encoder << static_cast<uint64_t>(rawData->byteLength());
+    encoder.encodeFixedLengthData(rawData->data(), rawData->byteLength(), 1);
 }
 
 Optional<Ref<WebCore::ImageData>> ArgumentCoder<Ref<WebCore::ImageData>>::decode(Decoder& decoder)
 {
     Optional<IntSize> imageDataSize;
-    Optional<Ref<SharedBuffer>> data;
-
     decoder >> imageDataSize;
     if (!imageDataSize)
         return WTF::nullopt;
 
-    decoder >> data;
-    if (!data)
+    Optional<uint64_t> dataLength;
+    decoder >> dataLength;
+    if (!dataLength)
         return WTF::nullopt;
 
-    // FIXME: Copying from the SharedBuffer into the ImageData is slow. Invent some way for the ImageData to simply just retain the SharedBuffer, and use it internally.
-    // Alternatively, we could create an overload for putImageData() which operates on the SharedBuffer directly.
-    auto imageData = ImageData::create(*imageDataSize, Uint8ClampedArray::create(reinterpret_cast<const uint8_t*>((*data)->data()), (*data)->size()));
+    auto rawData = Uint8ClampedArray::createUninitialized(*dataLength);
+    if (!decoder.decodeFixedLengthData(rawData->data(), rawData->length(), 1))
+        return WTF::nullopt;
+
+    auto imageData = ImageData::create(*imageDataSize, WTFMove(rawData));
     if (!imageData)
         return WTF::nullopt;
 

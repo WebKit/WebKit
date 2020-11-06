@@ -1,5 +1,26 @@
 2020-11-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Encoding PutImageData should not serialize separate IPC attachments for the image data
+        https://bugs.webkit.org/show_bug.cgi?id=218649
+
+        Reviewed by Simon Fraser.
+
+        The argument coder for `WebCore::ImageData` currently sends its image data by allocating a separate shared
+        memory buffer and sending it over to the GPU process via a separate `IPC::Attachment`. This isn't compatible
+        with the new "concurrent display list" model for processing display list items, wherein all out-of-line items
+        are encoded as raw bytes directly into reusable shared memory buffers and decoded from the corresponding buffer
+        in the GPU process.
+
+        Instead, encode and decode image data directly into and out of the main IPC data buffer. This also addresses a
+        couple of existing FIXMEs in the ImageData coder methods by avoiding the need for redundant copies to and from
+        temporary `WebCore::SharedBuffer`s.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<Ref<WebCore::ImageData>>::encode):
+        (IPC::ArgumentCoder<Ref<WebCore::ImageData>>::decode):
+
+2020-11-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [Concurrent display lists] Encode display list items directly into shared memory
         https://bugs.webkit.org/show_bug.cgi?id=218406
 
