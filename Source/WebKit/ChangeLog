@@ -1,3 +1,27 @@
+2020-11-06  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] dlopen libWPEBackend-fdo-1.0.so.1 instead of libWPEBackend-fdo-1.0.so
+        https://bugs.webkit.org/show_bug.cgi?id=218584
+
+        Reviewed by Carlos Garcia Campos.
+
+        wpe_loader_init() tries to dlopen a development symlink, but these will not usually be
+        installed. It only works in the GNOME flatpak runtime because we don't use devel split
+        rules in the GNOME runtime, but we really ought to, and freedesktop-sdk already does, so
+        it's going to break upstream too once that gets implemented. It's easier for everyone if
+        we tackle this now. Since all major distros except Arch Linux use devel split, this patch
+        is really required for almost every distro to use WPE renderer.
+
+        The downside is that this makes it harder to update the wpebackend-fdo library version,
+        since minor changes there will now unnecessarily break WebKit. This is not good, but it's
+        better than forcing distros to apply this same patch downstream. I considered trying a bunch
+        of different library versions in a loop in order to maximize the chance of success in case
+        the wpebackend-fdo library version increases in the future, but it's probably nicer to just
+        be careful about not changing its library version until we find a better solution for this.
+
+        * UIProcess/glib/WebProcessPoolGLib.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+
 2020-11-05  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Use the Ref counting of ImageBuffer to control its life cycle in Web Process and GPU Process
