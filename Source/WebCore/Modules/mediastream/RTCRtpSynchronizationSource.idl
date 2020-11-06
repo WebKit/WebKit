@@ -28,7 +28,7 @@ typedef double DOMHighResTimeStamp;
 [
     Conditional=WEB_RTC,
     EnabledAtRuntime=PeerConnection,
-    JSGenerateToJSObject,
+    JSGenerateToJSObject
 ] dictionary RTCRtpSynchronizationSource : RTCRtpContributingSource {
     boolean voiceActivityFlag;
 };
