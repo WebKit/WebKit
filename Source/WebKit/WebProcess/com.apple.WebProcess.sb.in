@@ -426,6 +426,9 @@
     (iokit-property "dpm")
 #endif
     (iokit-property "IOGVAH264EncodeCapabilities") ;; <rdar://problem/49498040>
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED > 101500
+    (iokit-property "IOAVDHEVCDecodeCapabilities") ;; <rdar://problem/71100188>
+#endif
 )
 
 ;; <rdar://problem/60088861>

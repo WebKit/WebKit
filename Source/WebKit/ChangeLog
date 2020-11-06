@@ -1,3 +1,17 @@
+2020-11-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Allow IOAVDHEVCDecodeCapabilities on Intel
+        https://bugs.webkit.org/show_bug.cgi?id=218639
+        <rdar://problem/71100188>
+
+        Reviewed by Eric Carlson.
+
+        The current rule for IOAVDHEVCDecodeCapabilities is incorrect for macOS 11. We should
+        allow this access on Intel, too.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-11-06  Milan Crha  <mcrha@redhat.com>
 
         [GTK] Application cannot override drag&drop callbacks
