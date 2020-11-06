@@ -220,13 +220,12 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
             if (!trailingContent->runIndex && trailingContent->hasOverflow) {
                 // We tried to break the content but the available space can't even accommodate the first character.
                 // 1. Wrap the content over to the next line when we've got content on the line already.
-                // 2. Keep the first character on the empty line (or keep the whole run if it has only one character).
+                // 2. Keep the first character on the empty line (or keep the whole run if it has only one character/completely empty).
                 if (!lineStatus.isEmpty)
                     return { Result::Action::Wrap, IsEndOfLine::Yes };
                 auto leadingTextRunIndex = *firstTextRunIndex(continuousContent);
                 auto& inlineTextItem = downcast<InlineTextItem>(continuousContent.runs()[leadingTextRunIndex].inlineItem);
-                ASSERT(inlineTextItem.length());
-                if (inlineTextItem.length() == 1)
+                if (inlineTextItem.length() <= 1)
                     return Result { Result::Action::Keep, IsEndOfLine::Yes };
                 auto firstCharacterWidth = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + 1);
                 auto firstCharacterRun = PartialRun { 1, firstCharacterWidth };
@@ -343,6 +342,10 @@ Optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakingText
 
     auto breakRule = wordBreakBehavior(style);
     if (breakRule == WordBreakRule::AtArbitraryPosition) {
+        if (!inlineTextItem.length()) {
+            // Empty text runs may be breakable based on style, but in practice we can't really split them any further.
+            return PartialRun { };
+        }
         if (findLastBreakablePosition) {
             // When the run can be split at arbitrary position,
             // let's just return the entire run when it is intended to fit on the line.

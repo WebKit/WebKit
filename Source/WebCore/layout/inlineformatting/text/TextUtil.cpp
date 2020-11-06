@@ -83,6 +83,7 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, unsigned fr
 
 InlineLayoutUnit TextUtil::fixedPitchWidth(const StringView& text, const RenderStyle& style, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft)
 {
+    RELEASE_ASSERT(to <= text.length());
     auto& font = style.fontCascade();
     auto monospaceCharacterWidth = font.spaceWidth();
     float width = 0;
@@ -96,12 +97,12 @@ InlineLayoutUnit TextUtil::fixedPitchWidth(const StringView& text, const RenderS
         if (i > from && (character == ' ' || character == '\t' || character == '\n'))
             width += font.wordSpacing();
     }
-
     return std::max<InlineLayoutUnit>(0, InlineLayoutUnit(width));
 }
 
 TextUtil::SplitData TextUtil::split(const InlineTextBox& inlineTextBox, unsigned startPosition, unsigned length, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft)
 {
+    ASSERT(length);
     ASSERT(availableWidth >= 0);
     auto left = startPosition;
     // Pathological case of (extremely)long string and narrow lines.
