@@ -170,7 +170,7 @@ imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-contro
 imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration.html [ Pass ]
 
 # Passing since added in r258661.
-imported/w3c/web-platform-tests/css/css-writing-modes/background-position-vrl-022.xht [ Pass ]
+webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/background-position-vrl-022.xht [ ImageOnlyFailure Pass ]
 imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-007.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-008.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-001.html [ Pass ]
@@ -195,7 +195,8 @@ webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_requestAnima
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/ar-module/idlharness.https.window.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/ar-module/xrDevice_isSessionSupported_immersive-ar.https.html [ Pass ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/ar-module/xrDevice_requestSession_immersive-ar.https.html [ Pass ]
+# Sometimes the test reports Syntax Error: Can't create duplicate variable isChromiumBased.
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/ar-module/xrDevice_requestSession_immersive-ar.https.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_constructor.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_sameObject.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/navigator_xr_sameObject.https.html [ Pass ]
@@ -238,7 +239,7 @@ webkit.org/b/217815 imported/w3c/web-platform-tests/css/css-masking/clip-path/cl
 webkit.org/b/217815 imported/w3c/web-platform-tests/css/css-masking/clip-path/reference-mutated.html [ ImageOnlyFailure ]
 
 # CSS3
-webkit.org/b/213829 css3/calc/background-position-parsing.html [ ImageOnlyFailure ]
+webkit.org/b/213829 css3/calc/background-position-parsing.html [ ImageOnlyFailure Pass ]
 
 # Flexbox layout
 webkit.org/b/215502 fast/flexbox/image-percent-max-height.html [ Failure Pass ImageOnlyFailure ]
@@ -325,7 +326,6 @@ webkit.org/b/215299 [ Release ] imported/w3c/web-platform-tests/css/css-logical/
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # The webrtc implementation is not fully completed yet
-webkit.org/b/191009 webrtc/video-mute-vp8.html [ Timeout ]
 webkit.org/b/187064 webrtc/audio-peer-connection-g722.html
 webkit.org/b/187064 webrtc/captureCanvas-webrtc.html
 webkit.org/b/187064 webrtc/video-remote-mute.html
@@ -335,7 +335,6 @@ webkit.org/b/187064 webrtc/video.html
 webkit.org/b/187064 webrtc/multi-video.html
 webkit.org/b/187064 webrtc/video-addTrack.html
 webkit.org/b/187064 webrtc/video-rotation.html
-webkit.org/b/187064 webrtc/video-rotation-no-cvo.html [ Failure ]
 webkit.org/b/187064 webrtc/video-mute.html
 webkit.org/b/187064 webrtc/video-disabled-black.html
 webkit.org/b/187064 webrtc/video-replace-track.html
@@ -663,7 +662,6 @@ fast/text/variations/optical-sizing-trak-2.html [ Skip ]
 
 webkit.org/b/201259 http/wpt/beacon/cors/crossorigin-arraybufferview-no-preflight.html [ Failure ]
 
-webkit.org/b/201267 webrtc/video-h264.html [ Failure ]
 
 webkit.org/b/202225 accessibility/misspelling-range.html [ Failure ]
 
@@ -680,9 +678,6 @@ webkit.org/b/206002 http/wpt/css/css-highlight-api/highlight-text.html [ ImageOn
 
 webkit.org/b/206454 fast/events/mouse-cursor-change.html [ Failure ]
 webkit.org/b/206454 fast/events/mouse-cursor-no-mousemove.html [ Failure ]
-
-webkit.org/b/206464 webrtc/peerconnection-page-cache-long.html [ Failure ]
-webkit.org/b/206464 webrtc/peerconnection-page-cache.html [ Failure Pass ]
 
 # Remote-playback tests.
 webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/cancel-watch-availability.html [ Failure ]
@@ -800,8 +795,6 @@ webkit.org/b/208992 imported/w3c/web-platform-tests/html/semantics/forms/constra
 # SMOOTH_SCROLLING is disabled by default for WPE
 fast/events/drag-smooth-scroll-element.html [ Failure ]
 
-webkit.org/b/209163 webrtc/audio-video-element-playing.html [ Failure ]
-
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-local/attachment-local-positioning-5.html [ ImageOnlyFailure Pass ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-backgrounds/background-image-cover-zoomed-1.html [ ImageOnlyFailure Pass ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/background-position-vrl-018.xht [ ImageOnlyFailure Pass ]
@@ -881,6 +874,8 @@ webkit.org/b/213203 webgl/1.0.3/conformance/rendering/multisample-corruption.htm
 
 webkit.org/b/213235 imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-changed-1.html [ Failure Pass ]
 webkit.org/b/213235 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_005.htm [ Failure Pass ]
+webkit.org/b/218650 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/move-back-createHTMLDocument-parse-error-external-classic.html [ Failure Pass ]
+webkit.org/b/218651 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/move-back-createHTMLDocument-success-external-classic.html [ Failure Pass ]
 
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/font-language-override-01.html [ Pass ]
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/font-language-override-03.html [ ImageOnlyFailure ]
@@ -1097,8 +1092,6 @@ webkit.org/b/208368 imported/w3c/web-platform-tests/wasm/jsapi/constructor/insta
 
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/sync-start-times.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/208125 webrtc/peerconnection-new-candidate-page-cache.html [ Failure Timeout ]
-
 webkit.org/b/208139 http/tests/cache/link-prefetch-main-resource.html [ Failure Pass ]
 
 webkit.org/b/208126 http/tests/cookies/document-cookie-after-showModalDialog.html [ Failure Pass ]
@@ -1222,7 +1215,7 @@ webkit.org/b/208000 http/tests/inspector/network/contentextensions/blocked-webso
 webkit.org/b/208921 fast/events/touch/basic-single-touch-events.html [ Timeout ]
 webkit.org/b/208921 fast/events/touch/multi-touch-inside-iframes.html [ Timeout ]
 
-webkit.org/b/208932 scrollbars/scroll-rtl-or-bt-layer.html [ Timeout ]
+webkit.org/b/208932 scrollbars/scroll-rtl-or-bt-layer.html [ Timeout Pass ]
 
 webkit.org/b/210385 fast/mediastream/getUserMedia-default.html [ Crash Slow ]
 
@@ -1587,8 +1580,6 @@ Bug(WPE) storage/storageinfo-query-usage.html [ Failure ]
 Bug(WPE) storage/storageinfo-request-quota.html [ Failure ]
 Bug(WPE) storage/storagequota-query-usage.html [ Failure ]
 Bug(WPE) storage/storagequota-request-quota.html [ Failure ]
-Bug(WPE) storage/websql/quota-tracking.html [ Failure ]
-Bug(WPE) storage/websql/sql-error-codes.html [ Failure ]
 
 Bug(WPE) css3/background/background-repeat-round-auto1.html [ ImageOnlyFailure Pass ]
 Bug(WPE) css3/background/background-repeat-space-border.html [ ImageOnlyFailure ]
@@ -1805,7 +1796,6 @@ webkit.org/b/188977 fast/css/read-only-read-write-input-basics.html [ ImageOnlyF
 webkit.org/b/188979 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 webkit.org/b/188980 fast/css/vertical-align-block-elements.html [ ImageOnlyFailure ]
 
-webkit.org/b/191006 webrtc/simulcast-h264.html [ Failure ]
 
 webkit.org/b/190707 css-custom-properties-api/length2.html [ Failure ]
 
@@ -1845,10 +1835,6 @@ webkit.org/b/191886 fast/mediastream/MediaStream-video-element-remove-track.html
 
 webkit.org/b/193323 http/wpt/cache-storage/cache-quota.any.html [ Failure ]
 
-webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
-
-webkit.org/b/193641 webrtc/video-setDirection.html [ Failure ]
-
 webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/load-events-networkState.html [ Failure ]
 webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-control.html [ Failure ]
 webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-insert-br.html [ Failure ]
@@ -1858,8 +1844,6 @@ webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source.html [ Failure ]
 webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-text.html [ Failure ]
 
-webkit.org/b/200301 storage/websql/alter-to-info-table.html [ Failure ]
-webkit.org/b/200301 storage/websql/test-authorizer.html [ Failure ]
 
 webkit.org/b/200302 accessibility/media-with-aria-label.html [ Failure ]
 

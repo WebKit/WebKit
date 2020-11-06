@@ -1,3 +1,13 @@
+2020-11-06  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed test gardening. Gardened several flaky failures reported by the bot.
+
+        Also promoted several common failures (WebRTC, WebSQL) happening in GTK to GLIB.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-11-06  Martin Robinson  <mrobinson@igalia.com>
 
         Scroll snap specified on :root doesn't work

@@ -37,6 +37,7 @@
 # * WebAudio
 # * WebGL
 # * WebRTC
+# * WebSQL
 # * WebSocket
 # * WPT
 # * XHR
@@ -388,6 +389,9 @@ webkit.org/b/217829 media/video-orientation-canvas.html [ Failure ]
 
 webkit.org/b/217845 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-stereopanner-interface/no-dezippering.html [ Failure ]
 webkit.org/b/218321 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https.html [ Pass Timeout Failure ]
+# Needs to process results in order.
+webkit.org/b/218652 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/realtimeanalyser-fft-scaling.html [ Failure Pass ]
+webkit.org/b/218653 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-distance-clamping.html [ Failure Pass ]
 
 webkit.org/b/218580 fast/mediastream/captureStream/canvas2d.html [ Failure Timeout ]
 
@@ -805,7 +809,15 @@ webkit.org/b/218318 fast/canvas/webgl/webgl-clear-composited-notshowing.html [ F
 # WebRTC-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+webkit.org/b/191006 webrtc/simulcast-h264.html [ Failure ]
+
+webkit.org/b/193641 webrtc/video-setDirection.html [ Failure ]
+
+webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
+
 webkit.org/b/198830 webkit.org/b/211765 [ Release ] webrtc/video-autoplay.html [ Pass Timeout Crash ]
+
+webkit.org/b/201267 webrtc/video-h264.html [ Failure ]
 
 webkit.org/b/212809 webrtc/datachannel/gather-candidates-networkprocess-crash.html [ Timeout Pass ]
 
@@ -816,14 +828,43 @@ webkit.org/b/215005 webrtc/h264-baseline.html [ Crash ]
 webkit.org/b/215007 [ Release ] webrtc/h264-high.html [ Timeout ]
 webkit.org/b/215007 [ Debug ] webrtc/h264-high.html [ Slow Failure ]
 
+webkit.org/b/187064 webrtc/video-rotation-no-cvo.html [ Failure Crash ]
+
+webkit.org/b/216777 webkit.org/b/191009 webrtc/video-mute-vp8.html [ Crash Timeout Pass ]
+
+webkit.org/b/206464 webrtc/peerconnection-page-cache-long.html [ Failure Pass ]
+webkit.org/b/206464 webrtc/peerconnection-page-cache.html [ Failure Pass ]
+
 webkit.org/b/206583 [ Release ] webrtc/video-gpuProcess.html [ Failure ]
 webkit.org/b/206583 [ Debug ] webrtc/video-gpuProcess.html [ Timeout ]
+
+webkit.org/b/208125 webrtc/peerconnection-new-candidate-page-cache.html [ Failure Timeout ]
+
+webkit.org/b/209163 webrtc/audio-video-element-playing.html [ Crash Failure Pass ]
 
 webkit.org/b/216538 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Failure ]
 
 webkit.org/b/216763 webrtc/captureCanvas-webrtc-software-h264-high.html [ Crash Failure ]
 
 webkit.org/b/218221 webrtc/vp9-profile2.html [ Failure ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of WebRTC-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# WebSQL-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/94119  storage/websql/database-lock-after-reload.html [ Failure Pass ]
+
+webkit.org/b/118416 storage/websql/sql-error-codes.html [ Failure ]
+
+webkit.org/b/163827 storage/websql/quota-tracking.html [ Failure ]
+
+webkit.org/b/200301 storage/websql/alter-to-info-table.html [ Failure ]
+
+webkit.org/b/200301 storage/websql/test-authorizer.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
@@ -908,6 +949,7 @@ webkit.org/b/212745 imported/w3c/web-platform-tests/css/css-writing-modes/bidi-p
 
 webkit.org/b/212812 imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.animated.gif.html [ Failure Pass ]
 
+webkit.org/b/191685 http/wpt/css/css-animations/set-animation-play-state-to-paused-001.html [ ImageOnlyFailure Timeout Pass ]
 webkit.org/b/212963 imported/w3c/web-platform-tests/css/css-animations/animation-delay-010.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/213331 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Failure Pass ]
