@@ -1,3 +1,15 @@
+2020-11-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Remove mdnsresponder access from WebKit processes
+        https://bugs.webkit.org/show_bug.cgi?id=218633
+        <rdar://problem/69133548>
+
+        Unreviewed follow-up: Make the sandbox rule conditional on recent macOS to
+        avoid breaking STP use on older macOS releases.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-11-05  Alex Christensen  <achristensen@webkit.org>
 
         Add null checks effectively in UserInputBridge
