@@ -1,3 +1,23 @@
+2020-11-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Concurrent display lists] Add API tests for WebCore::DisplayList::DisplayList and related classes
+        https://bugs.webkit.org/show_bug.cgi?id=218425
+
+        Reviewed by Tim Horton.
+
+        Add two new API tests:
+        -   One that covers basic display list functionality (i.e. appending items, checking whether a display list is
+            empty, clearing a display list and iterating over items).
+        -   Another that exercises the item buffer client hooks to provide data for writing and encode and decode out-
+            of-line display list items. This test uses toy Reader/Writer classes that know how to "encode" and "decode"
+            `StrokePath` items by storing and reading 8-byte indices into a shared `Vector<StrokePath>`.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/DisplayListTests.cpp: Added.
+        (TestWebKitAPI::createGradient):
+        (TestWebKitAPI::createComplexPath):
+        (TestWebKitAPI::TEST):
+
 2020-11-06  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Use workerEnvironment instead of slaveEnvironment for new Buildbot
