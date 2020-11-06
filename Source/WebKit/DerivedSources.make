@@ -184,6 +184,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/UserContent/WebUserContentController \
 	WebProcess/Inspector/WebInspectorInterruptDispatcher \
 	WebProcess/Inspector/WebInspectorUI \
+	WebProcess/Inspector/WebInspectorUIExtensionController \
 	WebProcess/Inspector/WebInspector \
 	WebProcess/Inspector/RemoteWebInspectorUI \
 	WebProcess/Plugins/PluginProcessConnectionManager \

@@ -1,3 +1,132 @@
+2020-11-05  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Inspector Extensions: Add _WKInspectorExtension and related plumbing
+        https://bugs.webkit.org/show_bug.cgi?id=217783
+        <rdar://problem/69968787>
+
+        Reviewed by Devin Rousso.
+
+        _WKInspectorExtension is new SPI that represents a Web Extension that uses the 'devtools'
+        API to interact with Web Inspector. An extension is associated with its _WKInspectorExtensionHost.
+        A WebKit client that supports Web Extensions can use this class to implement 'devtools' extension APIs.
+
+        Add _WKInspectorExtensionHost methods to register and unregister an extension.
+        Add plumbing so that the extension in registered in the frontend with WI.InspectorExtensionController.
+
+        Later patches will flesh out the needed functionality to implement rest of the 'devtools' API.
+
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * WebKit.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * Scripts/webkit/messages.py: If a message includes InspectorExtensionError,
+        then generate an include for InspectorExtensionTypes.h where it is declared.
+
+        * Shared/API/APIObject.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        New API object type.
+
+        * Shared/InspectorExtensionTypes.h: Added error code enum and useful type aliases.
+        * Shared/InspectorExtensionTypes.cpp:
+        (WebKit::inspectorExtensionErrorToString):
+
+        * UIProcess/API/APIInspectorExtension.h:
+        * UIProcess/API/APIInspectorExtension.cpp:
+        (API::InspectorExtension::create):
+        (API::InspectorExtension::InspectorExtension):
+        (API::InspectorExtension::~InspectorExtension):
+        Added. This is a placeholder object that's used for the wrapper system,
+        since we don't have single C++ objects for each extension to back the API object.
+
+        * UIProcess/API/Cocoa/_WKInspector.h:
+        * UIProcess/API/Cocoa/_WKInspector.mm:
+        (-[_WKInspector registerExtensionWithID:displayName:completionHandler:]):
+        (-[_WKInspector unregisterExtension:completionHandler:]):
+        Implement new _WKInspectorExtensionHost methods. Send IPC to the Inspector web process.
+
+        * UIProcess/API/Cocoa/_WKInspectorExtension.h:
+        * UIProcess/API/Cocoa/_WKInspectorExtension.mm:
+        (-[_WKInspectorExtension initWithIdentifier:]):
+        (-[_WKInspectorExtension dealloc]):
+        (-[_WKInspectorExtension _apiObject]):
+        (-[_WKInspectorExtension extensionID]):
+        Added. This is a data object that's also used as a token to unregister the extension.
+
+        * UIProcess/API/Cocoa/_WKInspectorExtensionHost.h: Add new SPI.
+        * UIProcess/API/Cocoa/_WKInspectorExtensionInternal.h:
+
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.h:
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm:
+        (-[_WKRemoteWebInspectorViewController registerExtensionWithID:displayName:completionHandler:]):
+        (-[_WKRemoteWebInspectorViewController unregisterExtension:completionHandler:]):
+        Implement new _WKInspectorExtensionHost methods. Send IPC to the Inspector web process.
+
+        * UIProcess/Inspector/RemoteWebInspectorProxy.h:
+        * UIProcess/Inspector/RemoteWebInspectorProxy.messages.in: Add FrontendLoaded.
+        (WebKit::RemoteWebInspectorProxy::extensionController const): Added.
+        * UIProcess/Inspector/RemoteWebInspectorProxy.cpp:
+        (WebKit::RemoteWebInspectorProxy::frontendLoaded):
+        (WebKit::RemoteWebInspectorProxy::createFrontendPageAndWindow):
+        Set up the extension controller object after the frontend has been created.
+        Hook up the FrontendLoaded event sent from Inspector web process so that the
+        extension controller can be notified of when it's safe to message the frontend.
+
+        * UIProcess/Inspector/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::createFrontendPage):
+        (WebKit::WebInspectorProxy::closeFrontendPageAndWindow):
+        (WebKit::WebInspectorProxy::frontendLoaded):
+        Set up the extension controller object after the frontend has been created.
+
+        * UIProcess/Inspector/WebInspectorProxy.h:
+        (WebKit::WebInspectorProxy::extensionController const): Added.
+
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.h:
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp: Added.
+        (WebKit::WebInspectorUIExtensionControllerProxy::WebInspectorUIExtensionControllerProxy):
+        (WebKit::WebInspectorUIExtensionControllerProxy::~WebInspectorUIExtensionControllerProxy):
+        (WebKit::WebInspectorUIExtensionControllerProxy::whenFrontendHasLoaded):
+        (WebKit::WebInspectorUIExtensionControllerProxy::inspectorFrontendLoaded):
+        (WebKit::WebInspectorUIExtensionControllerProxy::registerExtension):
+        (WebKit::WebInspectorUIExtensionControllerProxy::unregisterExtension):
+        Added. Forward API requests to the Web Inspector's web process to be evaluated in the frontend.
+
+        * WebProcess/Inspector/WebInspectorFrontendAPIDispatcher.h:
+        * WebProcess/Inspector/WebInspectorFrontendAPIDispatcher.cpp:
+        (WebKit::WebInspectorFrontendAPIDispatcher::dispatchCommand):
+        Add a more generic way to encode values to be passed as arguments to InspectorFrontendAPI.dispatch.
+
+        * WebProcess/Inspector/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::establishConnection):
+        (WebKit::WebInspectorUI::closeWindow):
+        * WebProcess/Inspector/WebInspectorUI.h:
+        (WebKit::WebInspectorUI::frontendPage const): Added.
+        (WebKit::WebInspectorUI::frontendAPIDispatcher): Added.
+
+        * WebProcess/Inspector/WebInspectorUIExtensionController.h:
+        * WebProcess/Inspector/WebInspectorUIExtensionController.messages.in: Added.
+        * WebProcess/Inspector/WebInspectorUIExtensionController.cpp: Added.
+        (WebKit::WebInspectorUIExtensionController::WebInspectorUIExtensionController):
+        (WebKit::WebInspectorUIExtensionController::~WebInspectorUIExtensionController):
+        (WebKit::WebInspectorUIExtensionController::registerExtension):
+        (WebKit::WebInspectorUIExtensionController::unregisterExtension):
+        (WebKit::WebInspectorUIExtensionController::parseInspectorExtensionErrorFromResult):
+        Handle incoming messages by forwarding the associated command to WI.WebExtensionController
+        via InspectorFrontendAPI evaluations.
+
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.h:
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.mm:
+        Fallout from unified build chunking shifts.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticatorInternal::getExistingCredentials):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterUserVerification):
+        Fallout from unified build chunking shifts, but more.
+
 2020-11-05  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Update message filters in the WebContent sandbox

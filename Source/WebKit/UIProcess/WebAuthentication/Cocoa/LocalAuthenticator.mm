@@ -148,14 +148,14 @@ static Optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCredenti
         }
         auto& responseMap = decodedResponse->getMap();
 
-        auto it = responseMap.find(CBOR(kEntityIdMapKey));
+        auto it = responseMap.find(CBOR(fido::kEntityIdMapKey));
         if (it == responseMap.end() || !it->second.isByteString()) {
             ASSERT_NOT_REACHED();
             return WTF::nullopt;
         }
         auto& userHandle = it->second.getByteString();
 
-        it = responseMap.find(CBOR(kEntityNameMapKey));
+        it = responseMap.find(CBOR(fido::kEntityNameMapKey));
         if (it == responseMap.end() || !it->second.isString()) {
             ASSERT_NOT_REACHED();
             return WTF::nullopt;
@@ -299,8 +299,8 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
     const auto& secAttrLabel = creationOptions.rp.id;
 
     cbor::CBORValue::MapValue userEntityMap;
-    userEntityMap[cbor::CBORValue(kEntityIdMapKey)] = cbor::CBORValue(creationOptions.user.idVector);
-    userEntityMap[cbor::CBORValue(kEntityNameMapKey)] = cbor::CBORValue(creationOptions.user.name);
+    userEntityMap[cbor::CBORValue(fido::kEntityIdMapKey)] = cbor::CBORValue(creationOptions.user.idVector);
+    userEntityMap[cbor::CBORValue(fido::kEntityNameMapKey)] = cbor::CBORValue(creationOptions.user.name);
     auto userEntity = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(userEntityMap)));
     ASSERT(userEntity);
     auto secAttrApplicationTag = toNSData(*userEntity);

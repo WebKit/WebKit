@@ -39,11 +39,16 @@ class FloatRect;
 
 namespace WebKit {
 
+class WebInspectorUIExtensionController;
 class WebPage;
 
-class RemoteWebInspectorUI final : public RefCounted<RemoteWebInspectorUI>, public IPC::MessageReceiver, public WebCore::InspectorFrontendClient {
+class RemoteWebInspectorUI final
+    : public RefCounted<RemoteWebInspectorUI>
+    , public IPC::MessageReceiver
+    , public WebCore::InspectorFrontendClient {
 public:
     static Ref<RemoteWebInspectorUI> create(WebPage&);
+    ~RemoteWebInspectorUI();
 
     // Implemented in generated RemoteWebInspectorUIMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -97,6 +102,7 @@ public:
     void showCertificate(const WebCore::CertificateInfo&) override;
     void sendMessageToBackend(const String&) override;
     WebCore::InspectorFrontendAPIDispatcher& frontendAPIDispatcher() override { return m_frontendAPIDispatcher; }
+    WebCore::Page* frontendPage() final;
 
 #if ENABLE(INSPECTOR_TELEMETRY)
     bool supportsDiagnosticLogging() override;
@@ -117,6 +123,10 @@ private:
     WebPage& m_page;
     Ref<WebCore::InspectorFrontendAPIDispatcher> m_frontendAPIDispatcher;
     RefPtr<WebCore::InspectorFrontendHost> m_frontendHost;
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    std::unique_ptr<WebInspectorUIExtensionController> m_extensionController;
+#endif
+
     DebuggableInfoData m_debuggableInfo;
     String m_backendCommandsURL;
 

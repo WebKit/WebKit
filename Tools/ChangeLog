@@ -1,3 +1,19 @@
+2020-11-05  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Inspector Extensions: Add _WKInspectorExtension and related plumbing
+        https://bugs.webkit.org/show_bug.cgi?id=217783
+        <rdar://problem/69968787>
+
+        Reviewed by Devin Rousso.
+
+        Add API tests to exercise new methods of the _WKInspectorExtensionHost protocol.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: New test file.
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorExtensionHost.mm: Added.
+        (resetGlobalState):
+        (-[UIDelegateForTestingInspectorExtensionHost _webView:didAttachLocalInspector:]):
+        (TEST):
+
 2020-11-05  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Rename BUILD_WEBKIT_URL to CURRENT_HOSTNAME

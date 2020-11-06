@@ -196,5 +196,17 @@ InspectorFrontendAPI = {
             InspectorFrontendAPI.dispatch(InspectorFrontendAPI._pendingCommands[i]);
 
         delete InspectorFrontendAPI._pendingCommands;
-    }
+    },
+
+    // Returns a WI.WebInspectorExtension.ErrorCode if an error occurred, otherwise nothing.
+    registerExtension(extensionID, displayName)
+    {
+        return WI.sharedApp.extensionController.registerExtension(extensionID, displayName);
+    },
+
+    // Returns a WI.WebInspectorExtension.ErrorCode if an error occurred, otherwise nothing.
+    unregisterExtension(extensionID)
+    {
+        return WI.sharedApp.extensionController.unregisterExtension(extensionID);
+    },
 };
