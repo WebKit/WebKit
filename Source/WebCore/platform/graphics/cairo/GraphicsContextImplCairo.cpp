@@ -279,9 +279,12 @@ ImageDrawResult GraphicsContextImplCairo::drawTiledImage(Image& image, const Flo
     return GraphicsContextImpl::drawTiledImageImpl(graphicsContext(), image, destination, source, tileScaleFactor, hRule, vRule, imagePaintingOptions);
 }
 
-void GraphicsContextImplCairo::drawImageBuffer(ImageBuffer&, const FloatRect&, const FloatRect&, const ImagePaintingOptions&)
+void GraphicsContextImplCairo::drawImageBuffer(ImageBuffer& image, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    // FIXME: Not implemented.
+    if (auto nativeImage = image.copyNativeImage(DontCopyBackingStore)) {
+        auto& state = graphicsContext().state();
+        Cairo::drawNativeImage(m_platformContext, nativeImage.get(), destRect, srcRect, { options, state.imageInterpolationQuality }, state.alpha, Cairo::ShadowState(state));
+    }
 }
 
 void GraphicsContextImplCairo::drawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
