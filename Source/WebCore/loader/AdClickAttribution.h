@@ -28,6 +28,7 @@
 #include "RegistrableDomain.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
+#include <wtf/JSONValues.h>
 #include <wtf/Optional.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
@@ -243,9 +244,8 @@ public:
     WEBCORE_EXPORT static Expected<Conversion, String> parseConversionRequest(const URL& redirectURL);
     WEBCORE_EXPORT Optional<Seconds> convertAndGetEarliestTimeToSend(Conversion&&);
     WEBCORE_EXPORT bool hasHigherPriorityThan(const AdClickAttribution&) const;
-    WEBCORE_EXPORT URL url() const;
-    WEBCORE_EXPORT URL urlForTesting(const URL& baseURLForTesting) const;
-    WEBCORE_EXPORT URL referrer() const;
+    WEBCORE_EXPORT URL reportURL() const;
+    WEBCORE_EXPORT Ref<JSON::Object> json() const;
     const Source& source() const { return m_source; };
     const Destination& destination() const { return m_destination; };
     Optional<WallTime> earliestTimeToSend() const { return m_earliestTimeToSend; };

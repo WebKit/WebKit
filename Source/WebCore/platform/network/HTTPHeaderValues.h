@@ -32,8 +32,9 @@ namespace HTTPHeaderValues {
 
 const String& textPlainContentType();
 const String& formURLEncodedContentType();
+WEBCORE_EXPORT const String& applicationJSONContentType();
 const String& noCache();
-const String& maxAge0();
+WEBCORE_EXPORT const String& maxAge0();
 }
 
 }

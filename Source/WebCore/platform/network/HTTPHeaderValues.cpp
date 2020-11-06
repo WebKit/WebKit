@@ -44,6 +44,13 @@ const String& formURLEncodedContentType()
     return contentType;
 }
 
+const String& applicationJSONContentType()
+{
+    // The default encoding is UTF-8: https://www.ietf.org/rfc/rfc4627.txt.
+    static NeverDestroyed<const String> contentType(MAKE_STATIC_STRING_IMPL("application/json"));
+    return contentType;
+}
+
 const String& noCache()
 {
     static NeverDestroyed<const String> value(MAKE_STATIC_STRING_IMPL("no-cache"));

@@ -8,7 +8,7 @@ foreach ($httpHeaders as $name => $value) {
     if ($name === "HTTP_HOST") {
         fwrite($conversionFile, "$name: $value\n");
     } else if ($name === "REQUEST_URI") {
-        $positionOfNonce = strpos($value, "&nonce=");
+        $positionOfNonce = strpos($value, "?nonce=");
         if ($positionOfNonce === false)
             $outputURL = $value;
         else
@@ -17,11 +17,17 @@ foreach ($httpHeaders as $name => $value) {
     } else if ($name === "HTTP_COOKIE") {
         fwrite($conversionFile, "Cookies in conversion request: $value\n");
         $cookiesFound = true;
+    } else if ($name === "CONTENT_TYPE") {
+        fwrite($conversionFile, "Content type: $value\n");
     }
 }
 if (!$cookiesFound) {
     fwrite($conversionFile, "No cookies in conversion request.\n");
 }
+
+$requestBody = file_get_contents('php://input');
+fwrite($conversionFile, "Request body:\n$requestBody\n");
+
 fclose($conversionFile);
 rename($conversionFilePath . ".tmp", $conversionFilePath);
 

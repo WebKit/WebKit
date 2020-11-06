@@ -46,11 +46,11 @@ TEST(AdClickAttribution, ValidMinValues)
     AdClickAttribution attribution { AdClickAttribution::Campaign(min6BitValue), AdClickAttribution::Source { webKitURL }, AdClickAttribution::Destination { exampleURL } };
     attribution.convertAndGetEarliestTimeToSend(AdClickAttribution::Conversion(min6BitValue, AdClickAttribution::Priority(min6BitValue)));
 
-    auto attributionURL = attribution.url();
-    auto referrerURL = attribution.referrer();
+    auto attributionURL = attribution.reportURL();
     
-    ASSERT_EQ(attributionURL.string(), "https://webkit.org/.well-known/ad-click-attribution/0/0");
-    ASSERT_EQ(referrerURL.string(), "https://example.com/");
+    ASSERT_EQ(attributionURL.string(), "https://webkit.org/.well-known/ad-click-attribution/");
+
+    ASSERT_EQ(attribution.json()->toJSONString(), "{\"content-type\":\"click\",\"content-site\":\"webkit.org\",\"content-id\":0,\"conversion-site\":\"example.com\",\"conversion-data\":0,\"report-version\":1}");
 }
 
 TEST(AdClickAttribution, ValidMidValues)
@@ -58,11 +58,11 @@ TEST(AdClickAttribution, ValidMidValues)
     AdClickAttribution attribution { AdClickAttribution::Campaign((uint32_t)12), AdClickAttribution::Source { webKitURL }, AdClickAttribution::Destination { exampleURL } };
     attribution.convertAndGetEarliestTimeToSend(AdClickAttribution::Conversion((uint32_t)44, AdClickAttribution::Priority((uint32_t)22)));
 
-    auto attributionURL = attribution.url();
-    auto referrerURL = attribution.referrer();
+    auto attributionURL = attribution.reportURL();
+    
+    ASSERT_EQ(attributionURL.string(), "https://webkit.org/.well-known/ad-click-attribution/");
 
-    ASSERT_EQ(attributionURL.string(), "https://webkit.org/.well-known/ad-click-attribution/44/12");
-    ASSERT_EQ(referrerURL.string(), "https://example.com/");
+    ASSERT_EQ(attribution.json()->toJSONString(), "{\"content-type\":\"click\",\"content-site\":\"webkit.org\",\"content-id\":12,\"conversion-site\":\"example.com\",\"conversion-data\":44,\"report-version\":1}");
 }
 
 TEST(AdClickAttribution, ValidMaxValues)
@@ -70,11 +70,11 @@ TEST(AdClickAttribution, ValidMaxValues)
     AdClickAttribution attribution { AdClickAttribution::Campaign(AdClickAttribution::MaxEntropy), AdClickAttribution::Source { webKitURL }, AdClickAttribution::Destination { exampleURL } };
     attribution.convertAndGetEarliestTimeToSend(AdClickAttribution::Conversion(AdClickAttribution::MaxEntropy, AdClickAttribution::Priority(AdClickAttribution::MaxEntropy)));
 
-    auto attributionURL = attribution.url();
-    auto referrerURL = attribution.referrer();
+    auto attributionURL = attribution.reportURL();
+    
+    ASSERT_EQ(attributionURL.string(), "https://webkit.org/.well-known/ad-click-attribution/");
 
-    ASSERT_EQ(attributionURL.string(), "https://webkit.org/.well-known/ad-click-attribution/63/63");
-    ASSERT_EQ(referrerURL.string(), "https://example.com/");
+    ASSERT_EQ(attribution.json()->toJSONString(), "{\"content-type\":\"click\",\"content-site\":\"webkit.org\",\"content-id\":63,\"conversion-site\":\"example.com\",\"conversion-data\":63,\"report-version\":1}");
 }
 
 TEST(AdClickAttribution, EarliestTimeToSendAttributionMinimumDelay)
@@ -130,11 +130,7 @@ TEST(AdClickAttribution, InvalidCampaignId)
     AdClickAttribution attribution { AdClickAttribution::Campaign(AdClickAttribution::MaxEntropy + 1), AdClickAttribution::Source { webKitURL }, AdClickAttribution::Destination { exampleURL } };
     attribution.convertAndGetEarliestTimeToSend(AdClickAttribution::Conversion(AdClickAttribution::MaxEntropy, AdClickAttribution::Priority(AdClickAttribution::MaxEntropy)));
 
-    auto attributionURL = attribution.url();
-    auto referrerURL = attribution.referrer();
-
-    ASSERT_TRUE(attributionURL.string().isEmpty());
-    ASSERT_TRUE(referrerURL.string().isEmpty());
+    ASSERT_TRUE(attribution.reportURL().isEmpty());
 }
 
 TEST(AdClickAttribution, InvalidSourceHost)
@@ -142,11 +138,7 @@ TEST(AdClickAttribution, InvalidSourceHost)
     AdClickAttribution attribution { AdClickAttribution::Campaign(AdClickAttribution::MaxEntropy), AdClickAttribution::Source { emptyURL }, AdClickAttribution::Destination { exampleURL } };
     attribution.convertAndGetEarliestTimeToSend(AdClickAttribution::Conversion(AdClickAttribution::MaxEntropy, AdClickAttribution::Priority(AdClickAttribution::MaxEntropy)));
 
-    auto attributionURL = attribution.url();
-    auto referrerURL = attribution.referrer();
-
-    ASSERT_TRUE(attributionURL.string().isEmpty());
-    ASSERT_TRUE(referrerURL.string().isEmpty());
+    ASSERT_TRUE(attribution.reportURL().isEmpty());
 }
 
 TEST(AdClickAttribution, InvalidDestinationHost)
@@ -154,11 +146,7 @@ TEST(AdClickAttribution, InvalidDestinationHost)
     AdClickAttribution attribution { AdClickAttribution::Campaign(AdClickAttribution::MaxEntropy + 1), AdClickAttribution::Source { webKitURL }, AdClickAttribution::Destination { emptyURL } };
     attribution.convertAndGetEarliestTimeToSend(AdClickAttribution::Conversion(AdClickAttribution::MaxEntropy, AdClickAttribution::Priority(AdClickAttribution::MaxEntropy)));
 
-    auto attributionURL = attribution.url();
-    auto referrerURL = attribution.referrer();
-
-    ASSERT_TRUE(attributionURL.string().isEmpty());
-    ASSERT_TRUE(referrerURL.string().isEmpty());
+    ASSERT_TRUE(attribution.reportURL().isEmpty());
 }
 
 TEST(AdClickAttribution, InvalidConversionData)
@@ -166,11 +154,7 @@ TEST(AdClickAttribution, InvalidConversionData)
     AdClickAttribution attribution { AdClickAttribution::Campaign(AdClickAttribution::MaxEntropy), AdClickAttribution::Source { webKitURL }, AdClickAttribution::Destination { exampleURL } };
     attribution.convertAndGetEarliestTimeToSend(AdClickAttribution::Conversion((AdClickAttribution::MaxEntropy + 1), AdClickAttribution::Priority(AdClickAttribution::MaxEntropy)));
 
-    auto attributionURL = attribution.url();
-    auto referrerURL = attribution.referrer();
-
-    ASSERT_TRUE(attributionURL.string().isEmpty());
-    ASSERT_TRUE(referrerURL.string().isEmpty());
+    ASSERT_TRUE(attribution.reportURL().isEmpty());
 }
 
 TEST(AdClickAttribution, InvalidPriority)
@@ -178,22 +162,14 @@ TEST(AdClickAttribution, InvalidPriority)
     AdClickAttribution attribution { AdClickAttribution::Campaign(AdClickAttribution::MaxEntropy), AdClickAttribution::Source { webKitURL }, AdClickAttribution::Destination { exampleURL } };
     attribution.convertAndGetEarliestTimeToSend(AdClickAttribution::Conversion(AdClickAttribution::MaxEntropy, AdClickAttribution::Priority(AdClickAttribution::MaxEntropy + 1)));
 
-    auto attributionURL = attribution.url();
-    auto referrerURL = attribution.referrer();
-
-    ASSERT_TRUE(attributionURL.string().isEmpty());
-    ASSERT_TRUE(referrerURL.string().isEmpty());
+    ASSERT_TRUE(attribution.reportURL().isEmpty());
 }
 
 TEST(AdClickAttribution, InvalidMissingConversion)
 {
     AdClickAttribution attribution { AdClickAttribution::Campaign(AdClickAttribution::MaxEntropy), AdClickAttribution::Source { webKitURL }, AdClickAttribution::Destination { exampleURL } };
 
-    auto attributionURL = attribution.url();
-    auto referrerURL = attribution.referrer();
-
-    ASSERT_TRUE(attributionURL.string().isEmpty());
-    ASSERT_TRUE(referrerURL.string().isEmpty());
+    ASSERT_TRUE(attribution.reportURL().isEmpty());
     ASSERT_FALSE(attribution.earliestTimeToSend());
 }
 

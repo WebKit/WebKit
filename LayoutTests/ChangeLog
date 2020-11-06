@@ -1,3 +1,18 @@
+2020-11-05  John Wilander  <wilander@apple.com>
+
+        PCM: Switch to JSON report format
+        https://bugs.webkit.org/show_bug.cgi?id=218634
+        <rdar://problem/70469923>
+
+        Reviewed by Brent Fulgham.
+
+        The standards conversation has landed in attribution reports in a JSON
+        format as opposed to the currently implemented URL format. Discussion
+        here: https://github.com/privacycg/private-click-measurement/issues/30
+
+        * http/tests/adClickAttribution/resources/conversionReport.php:
+        * http/tests/adClickAttribution/send-attribution-conversion-request-expected.txt:
+
 2020-11-05  Chris Dumez  <cdumez@apple.com>
 
         Expose referrerPolicy attribute on HTMLLinkElement and HTMLAreaElement

@@ -147,7 +147,7 @@ bool AdClickAttribution::hasHigherPriorityThan(const AdClickAttribution& other) 
     return m_conversion->priority > other.m_conversion->priority;
 }
 
-URL AdClickAttribution::url() const
+URL AdClickAttribution::reportURL() const
 {
     if (!isValid())
         return URL();
@@ -156,9 +156,6 @@ URL AdClickAttribution::url() const
     builder.appendLiteral("https://");
     builder.append(m_source.registrableDomain.string());
     builder.appendLiteral(adClickAttributionPathPrefix);
-    builder.appendNumber(m_conversion.value().data);
-    builder.append('/');
-    builder.appendNumber(m_campaign.id);
 
     URL url { URL(), builder.toString() };
     if (url.isValid())
@@ -167,34 +164,19 @@ URL AdClickAttribution::url() const
     return URL();
 }
 
-URL AdClickAttribution::referrer() const
+Ref<JSON::Object> AdClickAttribution::json() const
 {
-    if (!isValid())
-        return URL();
+    auto reportDetails = JSON::Object::create();
+    if (!m_conversion)
+        return reportDetails;
 
-    StringBuilder builder;
-    builder.appendLiteral("https://");
-    builder.append(m_destination.registrableDomain.string());
-    builder.append('/');
-
-    URL url { URL(), builder.toString() };
-    if (url.isValid())
-        return url;
-    
-    return URL();
-}
-
-URL AdClickAttribution::urlForTesting(const URL& baseURL) const
-{
-    auto host = m_source.registrableDomain.string();
-    if (host != "localhost" && host != "127.0.0.1")
-        return URL();
-    String relativeURL;
-    if (!baseURL.hasQuery())
-        relativeURL = makeString("?conversion=", m_conversion.value().data, "&campaign=", m_campaign.id);
-    else
-        relativeURL = makeString("?conversion=", m_conversion.value().data, "&campaign=", m_campaign.id, '&', baseURL.query());
-    return URL(baseURL, relativeURL);
+    reportDetails->setString("content-type"_s, "click"_s);
+    reportDetails->setString("content-site"_s, m_source.registrableDomain.string());
+    reportDetails->setInteger("content-id"_s, m_campaign.id);
+    reportDetails->setString("conversion-site"_s, m_destination.registrableDomain.string());
+    reportDetails->setInteger("conversion-data"_s, m_conversion->data);
+    reportDetails->setInteger("report-version"_s, 1);
+    return reportDetails;
 }
 
 void AdClickAttribution::markConversionAsSent()

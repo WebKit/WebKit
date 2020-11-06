@@ -30,6 +30,7 @@
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/FetchOptions.h>
 #include <WebCore/FormData.h>
+#include <WebCore/HTTPHeaderValues.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -171,19 +172,17 @@ void AdClickAttributionManager::convert(const Source& source, const Destination&
 
 void AdClickAttributionManager::fireConversionRequest(const AdClickAttribution& attribution)
 {
-    auto conversionURL = m_conversionBaseURLForTesting ? attribution.urlForTesting(*m_conversionBaseURLForTesting) : attribution.url();
+    auto conversionURL = m_conversionBaseURLForTesting ? *m_conversionBaseURLForTesting : attribution.reportURL();
     if (conversionURL.isEmpty() || !conversionURL.isValid())
         return;
 
-    auto conversionReferrerURL = attribution.referrer();
-    if (conversionReferrerURL.isEmpty() || !conversionReferrerURL.isValid())
-        return;
-
-    ResourceRequest request { conversionURL };
+    ResourceRequest request { WTFMove(conversionURL) };
     
     request.setHTTPMethod("POST"_s);
-    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "max-age=0"_s);
-    request.setHTTPReferrer(conversionReferrerURL.string());
+    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, WebCore::HTTPHeaderValues::maxAge0());
+
+    request.setHTTPContentType(WebCore::HTTPHeaderValues::applicationJSONContentType());
+    request.setHTTPBody(WebCore::FormData::create(attribution.json()->toJSONString().utf8().data()));
 
     FetchOptions options;
     options.credentials = FetchOptions::Credentials::Omit;
@@ -194,16 +193,11 @@ void AdClickAttributionManager::fireConversionRequest(const AdClickAttribution& 
     NetworkResourceLoadParameters loadParameters;
     loadParameters.identifier = ++identifier;
     loadParameters.request = request;
-    loadParameters.sourceOrigin = SecurityOrigin::create(conversionReferrerURL);
     loadParameters.parentPID = presentingApplicationPID();
     loadParameters.storedCredentialsPolicy = StoredCredentialsPolicy::EphemeralStateless;
     loadParameters.options = options;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = true;
     loadParameters.shouldRestrictHTTPResponseAccess = false;
-
-#if ENABLE(CONTENT_EXTENSIONS)
-    loadParameters.mainDocumentURL = WTFMove(conversionReferrerURL);
-#endif
 
     if (UNLIKELY(debugModeEnabled())) {
         RELEASE_LOG_INFO(AdClickAttribution, "About to fire an attribution request for a conversion.");

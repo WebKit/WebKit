@@ -521,7 +521,7 @@ void HTMLAnchorElement::handleClick(Event& event)
     auto adClickAttribution = parseAdClickAttribution();
     // A matching conversion event needs to happen before the complete ad click attributionURL can be
     // created. Thus, it should be empty for now.
-    ASSERT(!adClickAttribution || adClickAttribution->url().isNull());
+    ASSERT(!adClickAttribution || adClickAttribution->reportURL().isNull());
     
     frame->loader().changeLocation(completedURL, effectiveTarget, &event, LockHistory::No, LockBackForwardList::No, referrerPolicy, document().shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, systemPreviewInfo, WTFMove(adClickAttribution));
 
