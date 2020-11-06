@@ -1,3 +1,22 @@
+2020-11-05  Alex Christensen  <achristensen@webkit.org>
+
+        Align GBK and gb18030 encoder and decoder with specification and other browsers
+        https://bugs.webkit.org/show_bug.cgi?id=218380
+
+        Reviewed by David Kilzer.
+
+        * web-platform-tests/encoding/gb18030-encoder-expected.txt: Removed.
+        * web-platform-tests/encoding/gb18030-encoder.html: Removed.
+        * web-platform-tests/encoding/legacy-mb-schinese/gb18030/gb18030-decoder-expected.txt: Added.
+        * web-platform-tests/encoding/legacy-mb-schinese/gb18030/gb18030-decoder.html: Added.
+        * web-platform-tests/encoding/legacy-mb-schinese/gb18030/gb18030-encoder-expected.txt: Added.
+        * web-platform-tests/encoding/legacy-mb-schinese/gb18030/gb18030-encoder.html: Added.
+        * web-platform-tests/encoding/legacy-mb-schinese/gb18030/resources/ranges.js: Added.
+        * web-platform-tests/encoding/legacy-mb-schinese/gbk/gbk-encoder-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/encoding/gbk-encoder-expected.txt.
+        * web-platform-tests/encoding/legacy-mb-schinese/gbk/gbk-encoder.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encoding/gbk-encoder.html.
+        * web-platform-tests/encoding/legacy-mb-schinese/gbk/gbk-decoder-expected.txt: Added.
+        * web-platform-tests/encoding/legacy-mb-schinese/gbk/gbk-decoder.html: Added.
+
 2020-11-05  Chris Dumez  <cdumez@apple.com>
 
         Add implementation for Object.getOwnPropertyNames() on HTMLDocument

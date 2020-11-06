@@ -47,15 +47,12 @@ private:
 
     void createICUConverter() const;
     void releaseICUConverter() const;
-    bool needsGBKFallbacks() const { return m_needsGBKFallbacks; }
-    void setNeedsGBKFallbacks(bool needsFallbacks) { m_needsGBKFallbacks = needsFallbacks; }
 
     int decodeToBuffer(UChar* buffer, UChar* bufferLimit, const char*& source, const char* sourceLimit, int32_t* offsets, bool flush, UErrorCode&);
 
     const char* const m_encodingName;
     const char* const m_canonicalConverterName;
     mutable ICUConverterPtr m_converter { nullptr, ucnv_close };
-    mutable bool m_needsGBKFallbacks { false };
 };
 
 struct ICUConverterWrapper {

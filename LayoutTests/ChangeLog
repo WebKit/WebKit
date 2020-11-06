@@ -1,3 +1,13 @@
+2020-11-05  Alex Christensen  <achristensen@webkit.org>
+
+        Align GBK and gb18030 encoder and decoder with specification and other browsers
+        https://bugs.webkit.org/show_bug.cgi?id=218380
+
+        Reviewed by David Kilzer.
+
+        * fast/encoding/char-encoding-expected.txt:
+        * fast/encoding/char-encoding.html:
+
 2020-11-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] REGRESSION(r269211): Text with emoji can trigger drawing corruption

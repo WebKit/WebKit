@@ -62,8 +62,6 @@ DECLARE_ALIASES(windows_1254, "winturkish", "cp1254", "csisolatin5", "iso-8859-9
 DECLARE_ALIASES(windows_1256, "winarabic", "cp1256", "x-cp1256");
 DECLARE_ALIASES(windows_1258, "winvietnamese", "cp1258", "x-cp1258");
 DECLARE_ALIASES(x_mac_cyrillic, "maccyrillic", "x-mac-ukrainian", "windows-10007", "mac-cyrillic", "maccy", "x-MacCyrillic", "x-MacUkraine");
-DECLARE_ALIASES(GBK, "cn-gb", "csgb231280", "x-euc-cn", "chinese", "csgb2312", "csiso58gb231280", "gb2312", "gb_2312", "gb_2312-80", "iso-ir-58", "x-gbk", "euc-cn", "cp936", "ms936", "gb2312-1980", "windows-936", "windows-936-2000");
-DECLARE_ALIASES(gb18030, "ibm-1392", "windows-54936");
 // Encodings below are not in the standard.
 DECLARE_ALIASES(x_mac_greek, "windows-10006", "macgr", "x-MacGreek");
 DECLARE_ALIASES(x_mac_centraleurroman, "windows-10029", "x-mac-ce", "macce", "maccentraleurope", "x-MacCentralEurope");
@@ -96,8 +94,6 @@ static const struct EncodingName {
     DECLARE_ENCODING_NAME("windows-1256", windows_1256),
     DECLARE_ENCODING_NAME("windows-1258", windows_1258),
     DECLARE_ENCODING_NAME("x-mac-cyrillic", x_mac_cyrillic),
-    DECLARE_ENCODING_NAME("GBK", GBK),
-    DECLARE_ENCODING_NAME("gb18030", gb18030),
     // Encodings below are not in the standard.
     DECLARE_ENCODING_NAME("x-mac-greek", x_mac_greek),
     DECLARE_ENCODING_NAME("x-mac-centraleurroman", x_mac_centraleurroman),
@@ -178,8 +174,6 @@ TextCodecICU::~TextCodecICU()
 void TextCodecICU::createICUConverter() const
 {
     ASSERT(!m_converter);
-
-    m_needsGBKFallbacks = !strcmp(m_encodingName, "GBK");
 
     auto& cachedConverter = threadGlobalData().cachedConverterICU().converter;
     if (cachedConverter) {
@@ -275,28 +269,7 @@ String TextCodecICU::decode(const char* bytes, size_t length, bool flush, bool s
 
     String resultString = result.toString();
 
-    // Simplified Chinese pages use the code A3A0 to mean "full-width space", but ICU decodes it as U+E5E5.
-    if (!strcmp(m_encodingName, "GBK") || equalLettersIgnoringASCIICase(m_encodingName, "gb18030"))
-        resultString.replace(0xE5E5, ideographicSpace);
-
     return resultString;
-}
-
-// We need to apply these fallbacks ourselves as they are not currently supported by ICU and
-// they were provided by the Mac TEC encoding path. Needed to fix <rdar://problem/4708689>.
-static UChar fallbackForGBK(UChar32 character)
-{
-    switch (character) {
-    case 0x01F9:
-        return 0xE7C8;
-    case 0x1E3F:
-        return 0xE7C7;
-    case 0x22EF:
-        return 0x2026;
-    case 0x301C:
-        return 0xFF5E;
-    }
-    return 0;
 }
 
 // Invalid character handler when writing escaped entities for unrepresentable
@@ -311,50 +284,6 @@ static void urlEscapedEntityCallback(const void* context, UConverterFromUnicodeA
         ucnv_cbFromUWriteBytes(fromUArgs, entity.data(), entityLen, 0, error);
     } else
         UCNV_FROM_U_CALLBACK_ESCAPE(context, fromUArgs, codeUnits, length, codePoint, reason, error);
-}
-
-// Substitutes special GBK characters, escaping all other unassigned entities.
-static void gbkCallbackEscape(const void* context, UConverterFromUnicodeArgs* fromUArgs, const UChar* codeUnits, int32_t length,
-    UChar32 codePoint, UConverterCallbackReason reason, UErrorCode* error)
-{
-    UChar outChar;
-    if (reason == UCNV_UNASSIGNED && (outChar = fallbackForGBK(codePoint))) {
-        const UChar* source = &outChar;
-        *error = U_ZERO_ERROR;
-        ucnv_cbFromUWriteUChars(fromUArgs, &source, source + 1, 0, error);
-        return;
-    }
-    UCNV_FROM_U_CALLBACK_ESCAPE(context, fromUArgs, codeUnits, length, codePoint, reason, error);
-}
-
-// Combines both gbkUrlEscapedEntityCallback and GBK character substitution.
-static void gbkUrlEscapedEntityCallack(const void* context, UConverterFromUnicodeArgs* fromUArgs, const UChar* codeUnits, int32_t length,
-    UChar32 codePoint, UConverterCallbackReason reason, UErrorCode* error)
-{
-    if (reason == UCNV_UNASSIGNED) {
-        if (UChar outChar = fallbackForGBK(codePoint)) {
-            const UChar* source = &outChar;
-            *error = U_ZERO_ERROR;
-            ucnv_cbFromUWriteUChars(fromUArgs, &source, source + 1, 0, error);
-            return;
-        }
-        urlEscapedEntityCallback(context, fromUArgs, codeUnits, length, codePoint, reason, error);
-        return;
-    }
-    UCNV_FROM_U_CALLBACK_ESCAPE(context, fromUArgs, codeUnits, length, codePoint, reason, error);
-}
-
-static void gbkCallbackSubstitute(const void* context, UConverterFromUnicodeArgs* fromUArgs, const UChar* codeUnits, int32_t length,
-    UChar32 codePoint, UConverterCallbackReason reason, UErrorCode* error)
-{
-    UChar outChar;
-    if (reason == UCNV_UNASSIGNED && (outChar = fallbackForGBK(codePoint))) {
-        const UChar* source = &outChar;
-        *error = U_ZERO_ERROR;
-        ucnv_cbFromUWriteUChars(fromUArgs, &source, source + 1, 0, error);
-        return;
-    }
-    UCNV_FROM_U_CALLBACK_SUBSTITUTE(context, fromUArgs, codeUnits, length, codePoint, reason, error);
 }
 
 Vector<uint8_t> TextCodecICU::encode(StringView string, UnencodableHandling handling) const
@@ -386,19 +315,19 @@ Vector<uint8_t> TextCodecICU::encode(StringView string, UnencodableHandling hand
         if (U_FAILURE(error))
             return { };
         error = U_ZERO_ERROR;
-        ucnv_setFromUCallBack(m_converter.get(), m_needsGBKFallbacks ? gbkCallbackSubstitute : UCNV_FROM_U_CALLBACK_SUBSTITUTE, 0, 0, 0, &error);
+        ucnv_setFromUCallBack(m_converter.get(), UCNV_FROM_U_CALLBACK_SUBSTITUTE, 0, 0, 0, &error);
         if (U_FAILURE(error))
             return { };
         break;
     case UnencodableHandling::Entities:
         error = U_ZERO_ERROR;
-        ucnv_setFromUCallBack(m_converter.get(), m_needsGBKFallbacks ? gbkCallbackEscape : UCNV_FROM_U_CALLBACK_ESCAPE, UCNV_ESCAPE_XML_DEC, 0, 0, &error);
+        ucnv_setFromUCallBack(m_converter.get(), UCNV_FROM_U_CALLBACK_ESCAPE, UCNV_ESCAPE_XML_DEC, 0, 0, &error);
         if (U_FAILURE(error))
             return { };
         break;
     case UnencodableHandling::URLEncodedEntities:
         error = U_ZERO_ERROR;
-        ucnv_setFromUCallBack(m_converter.get(), m_needsGBKFallbacks ? gbkUrlEscapedEntityCallack : urlEscapedEntityCallback, 0, 0, 0, &error);
+        ucnv_setFromUCallBack(m_converter.get(), urlEscapedEntityCallback, 0, 0, 0, &error);
         if (U_FAILURE(error))
             return { };
         break;

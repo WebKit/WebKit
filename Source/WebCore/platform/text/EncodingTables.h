@@ -38,6 +38,7 @@ const std::array<std::pair<uint16_t, UChar>, 7724>& jis0208();
 const std::array<std::pair<uint16_t, UChar>, 6067>& jis0212();
 const std::array<std::pair<uint16_t, UChar32>, 18590>& big5();
 const std::array<std::pair<uint16_t, UChar>, 17048>& eucKR();
+const std::array<UChar, 23940>& gb18030();
 
 void checkEncodingTableInvariants();
 
@@ -68,10 +69,25 @@ struct EqualFirst {
     }
 };
 
+struct CompareSecond {
+    template<typename TypeA, typename TypeB> bool operator()(const TypeA& a, const TypeB& b)
+    {
+        return a.second < b.second;
+    }
+};
+
 template<typename T> struct FirstAdapter {
     const T& first;
 };
 template<typename T> FirstAdapter<T> makeFirstAdapter(const T& value)
+{
+    return { value };
+}
+
+template<typename T> struct SecondAdapter {
+    const T& second;
+};
+template<typename T> SecondAdapter<T> makeSecondAdapter(const T& value)
 {
     return { value };
 }
