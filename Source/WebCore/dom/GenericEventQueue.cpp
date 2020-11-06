@@ -64,15 +64,15 @@ void MainThreadGenericEventQueue::dispatchOneEvent()
 {
     ASSERT(!m_pendingEvents.isEmpty());
 
-    SetForScope<bool> eventFiringScope(m_isFiringEvent, true);
     Ref<EventTarget> protect(m_owner);
+    SetForScope<bool> eventFiringScope(m_isFiringEvent, true);
 
     RefPtr<Event> event = m_pendingEvents.takeFirst();
-    EventTarget& target = event->target() ? *event->target() : m_owner;
-    ASSERT_WITH_MESSAGE(!target.scriptExecutionContext()->activeDOMObjectsAreStopped(),
+    Ref<EventTarget> target = event->target() ? *event->target() : m_owner;
+    ASSERT_WITH_MESSAGE(!target->scriptExecutionContext()->activeDOMObjectsAreStopped(),
         "An attempt to dispatch an event on a stopped target by EventTargetInterface=%d (nodeName=%s target=%p owner=%p)",
-        m_owner.eventTargetInterface(), m_owner.isNode() ? static_cast<Node&>(m_owner).nodeName().ascii().data() : "", &target, &m_owner);
-    target.dispatchEvent(*event);
+        m_owner.eventTargetInterface(), m_owner.isNode() ? static_cast<Node&>(m_owner).nodeName().ascii().data() : "", target.ptr(), &m_owner);
+    target->dispatchEvent(*event);
 }
 
 void MainThreadGenericEventQueue::close()
