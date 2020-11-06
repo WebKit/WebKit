@@ -1,3 +1,9 @@
+2020-11-06  Alex Christensen  <achristensen@webkit.org>
+
+        Fix build with different unified source arrangement.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+
 2020-11-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Move DisplayListFlushIdentifier into WebCore as DisplayList::FlushIdentifier

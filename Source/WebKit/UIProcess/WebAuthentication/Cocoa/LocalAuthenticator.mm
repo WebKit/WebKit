@@ -48,6 +48,7 @@
 #import <wtf/text/StringHash.h>
 
 namespace WebKit {
+using namespace fido;
 using namespace WebCore;
 using CBOR = cbor::CBORValue;
 
