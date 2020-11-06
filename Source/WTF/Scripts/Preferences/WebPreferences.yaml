@@ -162,9 +162,8 @@ AllowsInlineMediaPlayback:
       "PLATFORM(IOS_FAMILY)": false
       default: true
     WebCore:
+      "PLATFORM(IOS_FAMILY)": false
       default: true
-    WebCore:
-      default: defaultAllowsInlineMediaPlayback
 
 AllowsInlineMediaPlaybackAfterFullscreen:
   type: bool
@@ -234,7 +233,8 @@ ApplePayEnabled:
       "ENABLE(APPLE_PAY_REMOTE_UI)": true
       default: false
     WebCore:
-      default: defaultApplePayEnabled
+      "ENABLE(APPLE_PAY_REMOTE_UI)": true
+      default: false
 
 ArtificialPluginInitializationDelayEnabled:
   type: bool
@@ -401,7 +401,8 @@ ContentChangeObserverEnabled:
     WebKit:
       default: true
     WebCore:
-      default: defaultContentChangeObserverEnabled()
+      "PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)": true
+      default: false
 
 # FIXME: This is handled via WebView SPI rather than WebPreferences for WebKitLegacy. We should change the SPI to lookup the WebPreferences value instead.
 CookieEnabled:
@@ -882,7 +883,8 @@ InlineMediaPlaybackRequiresPlaysInlineAttribute:
       "PLATFORM(IOS_FAMILY)": true
       default: false
     WebCore:
-      default: defaultInlineMediaPlaybackRequiresPlaysInlineAttribute
+      "PLATFORM(IOS_FAMILY)": true
+      default: false
 
 InputEventsEnabled:
   type: bool
@@ -1289,7 +1291,8 @@ MediaDataLoadsAutomatically:
       "PLATFORM(IOS_FAMILY)": false
       default: true
     WebCore:
-      default: defaultMediaDataLoadsAutomatically
+      "PLATFORM(IOS_FAMILY)": false
+      default: true
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
 MediaDevicesEnabled:
@@ -1312,7 +1315,7 @@ MediaEnabled:
     WebKit:
       default: true
     WebCore:
-      default: defaultMediaEnabled
+      default: true
 
 MediaPreloadingEnabled:
   type: bool
@@ -1335,7 +1338,9 @@ MediaSourceEnabled:
       "PLATFORM(COCOA) && !PLATFORM(MAC)": false
       default: true
     WebCore:
-      default: platformDefaultMediaSourceEnabled()
+      "PLATFORM(COCOA) && PLATFORM(MAC)": true
+      "PLATFORM(COCOA) && !PLATFORM(MAC)": false
+      default: true
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
 # FIXME: Seems to be unused. Remove once verified.
@@ -1402,7 +1407,8 @@ MinimumZoomFontSize:
       "PLATFORM(WATCHOS)": 30
       default: 15
     WebCore:
-      default: defaultMinimumZoomFontSize()
+      "PLATFORM(WATCHOS)": 30
+      default: 15
 
 MockCaptureDevicesPromptEnabled:
   type: bool
@@ -1671,8 +1677,9 @@ RequiresUserGestureToLoadVideo:
     WebKit:
       default: false
     WebCore:
-      default: defaultRequiresUserGestureToLoadVideo
-  
+      "PLATFORM(IOS_FAMILY)": true
+      default: false
+
 SafeBrowsingEnabled:
   type: bool
   webcoreBinding: none
@@ -1878,7 +1885,8 @@ ShouldRespectImageOrientation:
       "PLATFORM(IOS_FAMILY)": true
       default: false
     WebCore:
-      default: defaultShouldRespectImageOrientation
+      "PLATFORM(IOS_FAMILY)": true
+      default: false
 
 ShouldRestrictBaseURLSchemes:
   type: bool
@@ -2120,7 +2128,8 @@ TextAutosizingEnabled:
       "PLATFORM(IOS_FAMILY)": true
       default: false
     WebCore:
-      default: defaultTextAutosizingEnabled()
+      "PLATFORM(IOS_FAMILY)": true
+      default: false
 
 ThreadedScrollingEnabled:
   type: bool

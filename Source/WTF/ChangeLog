@@ -1,3 +1,14 @@
+2020-11-06  Sam Weinig  <weinig@apple.com>
+
+        Further progress towards merging Settings.yaml into WebPreferences.yaml
+        https://bugs.webkit.org/show_bug.cgi?id=218663
+
+        Reviewed by Tim Horton.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+        Replace some use of WebCore constants with the inlined values of those constants
+        as this was the only user and it is clearer for the values to be here too.
+
 2020-11-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Re-enable SharedArrayBuffer for JSC shell and Testers

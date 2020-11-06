@@ -76,59 +76,20 @@ SettingsBase::SettingsBase(Page* page)
 
 SettingsBase::~SettingsBase() = default;
 
-float SettingsBase::defaultMinimumZoomFontSize()
-{
-#if PLATFORM(WATCHOS)
-    return 30;
-#else
-    return 15;
-#endif
-}
-
-#if !PLATFORM(IOS_FAMILY)
-bool SettingsBase::defaultTextAutosizingEnabled()
-{
-    return false;
-}
-#endif
-
-bool SettingsBase::defaultDownloadableBinaryFontsEnabled()
-{
-#if PLATFORM(WATCHOS)
-    return false;
-#else
-    return true;
-#endif
-}
-
-bool SettingsBase::defaultContentChangeObserverEnabled()
-{
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
-    return true;
-#else
-    return false;
-#endif
-}
-
 #if !PLATFORM(COCOA)
-const String& SettingsBase::defaultMediaContentTypesRequiringHardwareSupport()
-{
-    return emptyString();
-}
-#endif
 
-#if !PLATFORM(COCOA)
 void SettingsBase::initializeDefaultFontFamilies()
 {
     // Other platforms can set up fonts from a client, but on Mac, we want it in WebCore to share code between WebKit1 and WebKit2.
 }
-#endif
 
-#if ENABLE(MEDIA_SOURCE) && !PLATFORM(COCOA)
+#if ENABLE(MEDIA_SOURCE)
 bool SettingsBase::platformDefaultMediaSourceEnabled()
 {
     return true;
 }
+#endif
+
 #endif
 
 const AtomString& SettingsBase::standardFontFamily(UScriptCode script) const
@@ -333,6 +294,7 @@ void SettingsBase::shouldEnableTextAutosizingBoostChanged()
 #endif
 
 #if ENABLE(MEDIA_STREAM)
+
 void SettingsBase::mockCaptureDevicesEnabledChanged()
 {
     bool enabled = false;
@@ -341,6 +303,7 @@ void SettingsBase::mockCaptureDevicesEnabledChanged()
 
     MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(enabled);
 }
+
 #endif
 
 void SettingsBase::userStyleSheetLocationChanged()

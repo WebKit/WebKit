@@ -216,7 +216,7 @@ macro(GENERATE_SETTINGS_MACROS _infile _outfile)
         OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/${_outfile} ${_extra_output}
         MAIN_DEPENDENCY ${_infile}
         DEPENDS ${NAMES_GENERATOR} ${GENERATE_SETTINGS_SCRIPTS} ${SCRIPTS_BINDINGS} ${WTF_WEB_PREFERENCES} WTF_CopyPreferences
-        COMMAND ${RUBY_EXECUTABLE} ${NAMES_GENERATOR} --additionalSettings ${_infile} --base ${WTF_SCRIPTS_DIR}/Preferences/WebPreferences.yaml --debug ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml --experimental ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml --internal ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml --outputDir ${WebCore_DERIVED_SOURCES_DIR}
+        COMMAND ${RUBY_EXECUTABLE} ${NAMES_GENERATOR} --additionalSettings ${_infile} --base ${WTF_SCRIPTS_DIR}/Preferences/WebPreferences.yaml --debug ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml --experimental ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml --internal ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml --outputDir ${WebCore_DERIVED_SOURCES_DIR} --template ${WEBCORE_DIR}/Scripts/SettingsTemplates/InternalSettingsGenerated.cpp.erb --template ${WEBCORE_DIR}/Scripts/SettingsTemplates/InternalSettingsGenerated.idl.erb --template ${WEBCORE_DIR}/Scripts/SettingsTemplates/InternalSettingsGenerated.h.erb --template ${WEBCORE_DIR}/Scripts/SettingsTemplates/Settings.cpp.erb --template ${WEBCORE_DIR}/Scripts/SettingsTemplates/Settings.h.erb
         VERBATIM ${_args})
 endmacro()
 

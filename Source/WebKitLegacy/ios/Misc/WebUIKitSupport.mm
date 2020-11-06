@@ -30,6 +30,7 @@
 #import "WebDatabaseManagerInternal.h"
 #import "WebLocalizableStringsInternal.h"
 #import "WebPlatformStrategies.h"
+#import "WebPreferencesDefinitions.h"
 #import "WebViewPrivate.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/BreakLines.h>
@@ -88,7 +89,7 @@ void WebKitSetIsClassic(BOOL flag)
 
 float WebKitGetMinimumZoomFontSize(void)
 {
-    return WebCore::Settings::defaultMinimumZoomFontSize();
+    return DEFAULT_VALUE_FOR_MinimumZoomFontSize;
 }
 
 int WebKitGetLastLineBreakInBuffer(UChar *characters, int position, int length)

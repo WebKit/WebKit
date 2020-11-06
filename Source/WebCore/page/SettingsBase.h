@@ -34,12 +34,12 @@
 #include "StorageMap.h"
 #include "TextFlags.h"
 #include "Timer.h"
-#include <wtf/URL.h>
 #include "WritingMode.h"
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <unicode/uscript.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/URL.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -103,21 +103,9 @@ public:
 
     void pageDestroyed() { m_page = nullptr; }
 
-    enum class FontLoadTimingOverride { None, Block, Swap, Failure };
+    enum class FontLoadTimingOverride : uint8_t { None, Block, Swap, Failure };
     enum class ParserScriptingFlagPolicy : uint8_t { OnlyIfScriptIsEnabled, Enabled };
-
-    // FIXME: Move these default values to SettingsDefaultValues.h
-
-    enum class ForcedAccessibilityValue { System, On, Off };
-    static const SettingsBase::ForcedAccessibilityValue defaultForcedColorsAreInvertedAccessibilityValue = ForcedAccessibilityValue::System;
-    static const SettingsBase::ForcedAccessibilityValue defaultForcedDisplayIsMonochromeAccessibilityValue = ForcedAccessibilityValue::System;
-    static const SettingsBase::ForcedAccessibilityValue defaultForcedPrefersReducedMotionAccessibilityValue = ForcedAccessibilityValue::System;
-    static const SettingsBase::ForcedAccessibilityValue defaultForcedSupportsHighDynamicRangeValue = ForcedAccessibilityValue::System;
-
-    WEBCORE_EXPORT static bool defaultTextAutosizingEnabled();
-    WEBCORE_EXPORT static float defaultMinimumZoomFontSize();
-    WEBCORE_EXPORT static bool defaultDownloadableBinaryFontsEnabled();
-    WEBCORE_EXPORT static bool defaultContentChangeObserverEnabled();
+    enum class ForcedAccessibilityValue : uint8_t { System, On, Off };
 
 #if ENABLE(MEDIA_SOURCE)
     WEBCORE_EXPORT static bool platformDefaultMediaSourceEnabled();
@@ -125,15 +113,6 @@ public:
 
     static const unsigned defaultMaximumHTMLParserDOMTreeDepth = 512;
     static const unsigned defaultMaximumRenderTreeDepth = 512;
-
-#if ENABLE(TEXT_AUTOSIZING)
-    constexpr static const float boostedOneLineTextMultiplierCoefficient = 2.23125f;
-    constexpr static const float boostedMultiLineTextMultiplierCoefficient = 2.48125f;
-    constexpr static const float boostedMaxTextAutosizingScaleIncrease = 5.0f;
-    constexpr static const float defaultOneLineTextMultiplierCoefficient = 1.7f;
-    constexpr static const float defaultMultiLineTextMultiplierCoefficient = 1.95f;
-    constexpr static const float defaultMaxTextAutosizingScaleIncrease = 1.7f;
-#endif
 
     WEBCORE_EXPORT void setStandardFontFamily(const AtomString&, UScriptCode = USCRIPT_COMMON);
     WEBCORE_EXPORT const AtomString& standardFontFamily(UScriptCode = USCRIPT_COMMON) const;
@@ -165,7 +144,6 @@ public:
     float maxTextAutosizingScaleIncrease() const { return m_maxTextAutosizingScaleIncrease; }
 #endif
 
-    WEBCORE_EXPORT static const String& defaultMediaContentTypesRequiringHardwareSupport();
     WEBCORE_EXPORT void setMediaContentTypesRequiringHardwareSupport(const Vector<ContentType>&);
     WEBCORE_EXPORT void setMediaContentTypesRequiringHardwareSupport(const String&);
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const { return m_mediaContentTypesRequiringHardwareSupport; }
@@ -210,6 +188,13 @@ protected:
     Vector<ContentType> m_mediaContentTypesRequiringHardwareSupport;
 
 #if ENABLE(TEXT_AUTOSIZING)
+    static constexpr const float boostedOneLineTextMultiplierCoefficient = 2.23125f;
+    static constexpr const float boostedMultiLineTextMultiplierCoefficient = 2.48125f;
+    static constexpr const float boostedMaxTextAutosizingScaleIncrease = 5.0f;
+    static constexpr const float defaultOneLineTextMultiplierCoefficient = 1.7f;
+    static constexpr const float defaultMultiLineTextMultiplierCoefficient = 1.95f;
+    static constexpr const float defaultMaxTextAutosizingScaleIncrease = 1.7f;
+
     float m_oneLineTextMultiplierCoefficient { defaultOneLineTextMultiplierCoefficient };
     float m_multiLineTextMultiplierCoefficient { defaultMultiLineTextMultiplierCoefficient };
     float m_maxTextAutosizingScaleIncrease { defaultMaxTextAutosizingScaleIncrease };

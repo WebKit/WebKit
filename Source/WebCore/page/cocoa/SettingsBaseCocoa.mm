@@ -74,11 +74,6 @@ void SettingsBase::initializeDefaultFontFamilies()
     setSansSerifFontFamily("Helvetica", USCRIPT_COMMON);
 }
 
-bool SettingsBase::defaultTextAutosizingEnabled()
-{
-    return true;
-}
-
 #if ENABLE(MEDIA_SOURCE)
 
 bool SettingsBase::platformDefaultMediaSourceEnabled()
@@ -89,10 +84,5 @@ bool SettingsBase::platformDefaultMediaSourceEnabled()
 #endif
 
 #endif
-
-const String& SettingsBase::defaultMediaContentTypesRequiringHardwareSupport()
-{
-    return emptyString();
-}
 
 } // namespace WebCore

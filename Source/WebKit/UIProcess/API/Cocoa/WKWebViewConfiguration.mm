@@ -257,7 +257,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _shouldDecidePolicyBeforeLoadingQuickLookPreview = defaultShouldDecidePolicyBeforeLoadingQuickLookPreview();
 #endif // PLATFORM(IOS_FAMILY)
 
-    _mediaContentTypesRequiringHardwareSupport = WebCore::Settings::defaultMediaContentTypesRequiringHardwareSupport();
+    _mediaContentTypesRequiringHardwareSupport = @"";
     _allowMediaContentTypesRequiringHardwareSupportAsFallback = YES;
 
     _colorFilterEnabled = NO;

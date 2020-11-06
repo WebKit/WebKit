@@ -1,3 +1,15 @@
+2020-11-06  Sam Weinig  <weinig@apple.com>
+
+        Further progress towards merging Settings.yaml into WebPreferences.yaml
+        https://bugs.webkit.org/show_bug.cgi?id=218663
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        Replace call to WebCore::Settings::defaultMediaContentTypesRequiringHardwareSupport() which always returned
+        the empty string with a literal empty string. This was the only caller so the function is really no needed. 
+
 2020-11-06  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Align left edge of presented calendar with left edge of date inputs

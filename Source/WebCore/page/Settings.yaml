@@ -33,7 +33,8 @@ AcceleratedCompositingForFixedPositionEnabled:
   type: bool
   defaultValue:
     WebCore:
-      default: defaultAcceleratedCompositingForFixedPositionEnabled
+      PLATFORM(IOS_FAMILY): true
+      default: false
 
 AcceleratedFiltersEnabled:
   type: bool
@@ -75,7 +76,8 @@ AudioPlaybackRequiresUserGesture:
   type: bool
   defaultValue:
     WebCore:
-      default: defaultAudioPlaybackRequiresUserGesture
+      PLATFORM(IOS_FAMILY): true
+      default: false
 
 AutoscrollForDragAndDropEnabled:
   type: bool
@@ -158,7 +160,8 @@ DownloadableBinaryFontsEnabled:
   type: bool
   defaultValue:
     WebCore:
-      default: defaultDownloadableBinaryFontsEnabled()
+      PLATFORM(WATCHOS): false
+      default: true
 
 EditableLinkBehavior:
   type: uint32_t
@@ -172,7 +175,11 @@ EditingBehaviorType:
   refinedType: EditingBehaviorType
   defaultValue:
     WebCore:
-      default: editingBehaviorTypeForPlatform()
+      PLATFORM(IOS_FAMILY): EditingIOSBehavior
+      OS(DARWIN): EditingMacBehavior
+      OS(WINDOWS): EditingWindowsBehavior
+      OS(UNIX): EditingUnixBehavior
+      default: EditingMacBehavior
 
 EnforceCSSMIMETypeInNoQuirksMode:
   type: bool
@@ -190,7 +197,8 @@ FixedBackgroundsPaintRelativeToDocument:
   type: bool
   defaultValue:
     WebCore:
-      default: defaultFixedBackgroundsPaintRelativeToDocument
+      PLATFORM(IOS_FAMILY): true
+      default: false
 
 FixedElementsLayoutRelativeToFrame:
   type: bool
@@ -243,21 +251,21 @@ ForcedColorsAreInvertedAccessibilityValue:
   refinedType: ForcedAccessibilityValue
   defaultValue:
     WebCore:
-      default: defaultForcedColorsAreInvertedAccessibilityValue
+      default: ForcedAccessibilityValue::System
 
 ForcedDisplayIsMonochromeAccessibilityValue:
   type: uint32_t
   refinedType: ForcedAccessibilityValue
   defaultValue:
     WebCore:
-      default: defaultForcedDisplayIsMonochromeAccessibilityValue
+      default: ForcedAccessibilityValue::System
 
 ForcedPrefersReducedMotionAccessibilityValue:
   type: uint32_t
   refinedType: ForcedAccessibilityValue
   defaultValue:
     WebCore:
-      default: defaultForcedPrefersReducedMotionAccessibilityValue
+      default: ForcedAccessibilityValue::System
 
 ForcedSupportsHighDynamicRangeValue:
   type: uint32_t
@@ -265,7 +273,7 @@ ForcedSupportsHighDynamicRangeValue:
   webcoreOnChange: setNeedsRecalcStyleInAllFrames
   defaultValue:
     WebCore:
-      default: defaultForcedSupportsHighDynamicRangeValue
+      default: ForcedAccessibilityValue::System
 
 FrameFlattening:
   type: uint32_t
@@ -292,7 +300,8 @@ ImageSubsamplingEnabled:
   type: bool
   defaultValue:
     WebCore:
-      default: defaultImageSubsamplingEnabled
+      PLATFORM(IOS_FAMILY): true
+      default: false
 
 ImagesEnabled:
   type: bool
@@ -313,31 +322,36 @@ IsPerActivityStateCPUUsageMeasurementEnabled:
   type: bool
   defaultValue:
     WebCore:
-      default: defaultPerActivityStateCPUUsageMeasurementEnabled
+      PLATFORM(MAC): true
+      default: false
 
 IsPostBackgroundingCPUUsageMeasurementEnabled:
   type: bool
   defaultValue:
     WebCore:
-      default: defaultPostBackgroundingCPUUsageMeasurementEnabled
+      PLATFORM(MAC): true
+      default: false
 
 IsPostBackgroundingMemoryUsageMeasurementEnabled:
   type: bool
   defaultValue:
     WebCore:
-      default: defaultPostBackgroundingMemoryUsageMeasurementEnabled
+      PLATFORM(MAC): true
+      default: false
 
 IsPostLoadCPUUsageMeasurementEnabled:
   type: bool
   defaultValue:
     WebCore:
-      default: defaultPostLoadCPUUsageMeasurementEnabled
+      PLATFORM(COCOA): true
+      default: false
 
 IsPostLoadMemoryUsageMeasurementEnabled:
   type: bool
   defaultValue:
     WebCore:
-      default: defaultPostLoadMemoryUsageMeasurementEnabled
+      PLATFORM(COCOA): true
+      default: false
 
 JavaScriptRuntimeFlags:
   type: uint32_t
@@ -519,7 +533,8 @@ QuickTimePluginReplacementEnabled:
   type: bool
   defaultValue:
     WebCore:
-      default: defaultQuickTimePluginReplacementEnabled
+      PLATFORM(IOS_FAMILY): true
+      default: false
 
 RepaintOutsideLayoutEnabled:
   type: bool
@@ -551,7 +566,8 @@ ScrollingTreeIncludesFrames:
   type: bool
   defaultValue:
     WebCore:
-      default: defaultScrollingTreeIncludesFrames
+      PLATFORM(IOS_FAMILY): true
+      default: false
 
 SessionStorageQuota:
   comment: >-
@@ -679,7 +695,8 @@ UnifiedTextCheckerEnabled:
   type: bool
   defaultValue:
     WebCore:
-      default: defaultUnifiedTextCheckerEnabled
+      USE(UNIFIED_TEXT_CHECKING): true
+      default: false
 
 UseAnonymousModeWhenFetchingMaskImages:
   type: bool
@@ -735,7 +752,8 @@ VideoPlaybackRequiresUserGesture:
   type: bool
   defaultValue:
     WebCore:
-      default: defaultVideoPlaybackRequiresUserGesture
+      PLATFORM(IOS_FAMILY): true
+      default: false
 
 VisualViewportEnabled:
   type: bool
@@ -777,4 +795,5 @@ YouTubeFlashPluginReplacementEnabled:
   type: bool
   defaultValue:
     WebCore:
-      default: defaultYouTubeFlashPluginReplacementEnabled
+      PLATFORM(COCOA): true
+      default: false

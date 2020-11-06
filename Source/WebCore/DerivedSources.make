@@ -1651,21 +1651,21 @@ WEB_PREFERENCES_INPUT_FILES = \
     ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml \
     ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml \
     ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml \
+    ${WebCore}/page/Settings.yaml \
 #
 
-GENERATE_SETTINGS_TEMPLATES = \
-    $(WebCore)/Scripts/SettingsTemplates/InternalSettingsGenerated.cpp.erb \
-    $(WebCore)/Scripts/SettingsTemplates/InternalSettingsGenerated.idl.erb \
-    $(WebCore)/Scripts/SettingsTemplates/InternalSettingsGenerated.h.erb \
-    $(WebCore)/Scripts/SettingsTemplates/Settings.cpp.erb \
-    $(WebCore)/Scripts/SettingsTemplates/Settings.h.erb \
+GENERATE_SETTINGS = \
+    InternalSettingsGenerated.cpp \
+    InternalSettingsGenerated.idl \
+    InternalSettingsGenerated.h \
+    Settings.cpp \
+    Settings.h \
 #
-GENERATE_SETTINGS_FILES = $(call get_bare_name,$(GENERATE_SETTINGS_TEMPLATES))
-GENERATE_SETTINGS_PATTERNS = $(subst .,%,$(GENERATE_SETTINGS_FILES))
 
-all : $(GENERATE_SETTINGS_FILES)
-$(GENERATE_SETTINGS_PATTERNS) : $(WebCore)/Scripts/GenerateSettings.rb $(GENERATE_SETTINGS_TEMPLATES) $(WEB_PREFERENCES_INPUT_FILES) $(WebCore)/page/Settings.yaml
-	$(RUBY) $< --additionalSettings $(WebCore)/page/Settings.yaml --base ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferences.yaml --debug ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml --experimental ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml --internal ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml
+all : $(GENERATE_SETTINGS)
+
+$(GENERATE_SETTINGS) : % : $(WebCore)/Scripts/SettingsTemplates/%.erb $(WEB_PREFERENCES_INPUT_FILES) $(WebCore)/Scripts/GenerateSettings.rb
+	$(RUBY) $(WebCore)/Scripts/GenerateSettings.rb --base ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferences.yaml --debug ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml --experimental ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml --internal ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml --additionalSettings $(WebCore)/page/Settings.yaml --template $<
 
 # --------
 

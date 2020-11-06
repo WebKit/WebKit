@@ -34,7 +34,8 @@ options = {
   :debugPreferences => nil,
   :experimentalPreferences => nil,
   :internalPreferences => nil,
-  :outputDirectory => nil
+  :outputDirectory => nil,
+  :templates => []
 }
 optparse = OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename($0)} --input file"
@@ -47,6 +48,7 @@ optparse = OptionParser.new do |opts|
   opts.on("--internal input", "file to generate internal settings from") { |internalPreferences| options[:internalPreferences] = internalPreferences }
   opts.on("--additionalSettings input", "file to generate settings from") { |additionalSettings| options[:additionalSettings] = additionalSettings }
   opts.on("--outputDir output", "directory to generate file in") { |output| options[:outputDirectory] = output }
+  opts.on("--template input", "template to use for generation (may be specified multiple times)") { |template| options[:templates] << template }
 end
 
 optparse.parse!
@@ -271,8 +273,8 @@ class Settings
     @allSettingsSet = SettingSet.new(settings)
   end
 
-  def renderToFile(template, file)
-    template = File.join(File.dirname(__FILE__), template)
+  def renderTemplate(template, outputDirectory)
+    file = File.join(outputDirectory, File.basename(template, ".erb"))
 
     output = ERB.new(File.read(template), 0, "-").result(binding)
     File.open(file, "w+") do |f|
@@ -282,8 +284,7 @@ class Settings
 end
 
 settings = Settings.new(parsedSettings, parsedPreferences)
-settings.renderToFile("SettingsTemplates/Settings.h.erb", File.join(options[:outputDirectory], "Settings.h"))
-settings.renderToFile("SettingsTemplates/Settings.cpp.erb", File.join(options[:outputDirectory], "Settings.cpp"))
-settings.renderToFile("SettingsTemplates/InternalSettingsGenerated.idl.erb", File.join(options[:outputDirectory], "InternalSettingsGenerated.idl"))
-settings.renderToFile("SettingsTemplates/InternalSettingsGenerated.h.erb", File.join(options[:outputDirectory], "InternalSettingsGenerated.h"))
-settings.renderToFile("SettingsTemplates/InternalSettingsGenerated.cpp.erb", File.join(options[:outputDirectory], "InternalSettingsGenerated.cpp"))
+
+options[:templates].each do |template|
+  settings.renderTemplate(template, options[:outputDirectory])
+end
