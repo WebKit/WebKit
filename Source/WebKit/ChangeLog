@@ -1,3 +1,16 @@
+2020-11-06  Milan Crha  <mcrha@redhat.com>
+
+        [GTK] Application cannot override drag&drop callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=218562
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/API/gtk/DropTargetGtk3.cpp:
+        (WebKit::DropTarget::DropTarget): Use g_signal_connect_after(), thus
+        any descendants can override the callbacks.
+        (WebKit::DropTarget::didPerformAction): Always call gdk_drag_status(),
+        to have gtk+ notified about drag progress.
+
 2020-11-06  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] dlopen libWPEBackend-fdo-1.0.so.1 instead of libWPEBackend-fdo-1.0.so
