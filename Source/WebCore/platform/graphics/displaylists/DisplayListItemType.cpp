@@ -245,7 +245,6 @@ bool isInlineItem(ItemType type)
     case ItemType::DrawFocusRingRects:
     case ItemType::DrawGlyphs:
     case ItemType::DrawImage:
-    case ItemType::DrawImageBuffer:
     case ItemType::DrawLinesForText:
     case ItemType::DrawNativeImage:
     case ItemType::DrawPath:
@@ -276,6 +275,7 @@ bool isInlineItem(ItemType type)
     case ItemType::ConcatenateCTM:
     case ItemType::DrawDotsForDocumentMarker:
     case ItemType::DrawEllipse:
+    case ItemType::DrawImageBuffer:
     case ItemType::DrawLine:
     case ItemType::DrawRect:
     case ItemType::EndTransparencyLayer:

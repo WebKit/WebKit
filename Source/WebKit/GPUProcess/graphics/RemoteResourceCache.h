@@ -42,14 +42,14 @@ class RemoteResourceCache {
 public:
     RemoteResourceCache() = default;
 
-    void cacheImageBuffer(WebCore::RenderingResourceIdentifier, RefPtr<WebCore::ImageBuffer>&&);
+    void cacheImageBuffer(Ref<WebCore::ImageBuffer>&&);
     WebCore::ImageBuffer* cachedImageBuffer(WebCore::RenderingResourceIdentifier);
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
+    
+    const WebCore::ImageBufferHashMap& imageBuffers() const { return m_imageBuffers; }
 
 private:
-    using RemoteImageBufferHashMap = HashMap<WebCore::RenderingResourceIdentifier, RefPtr<WebCore::ImageBuffer>>;
-
-    RemoteImageBufferHashMap m_imageBuffers;
+    WebCore::ImageBufferHashMap m_imageBuffers;
 };
 
 } // namespace WebKit

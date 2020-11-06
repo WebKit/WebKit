@@ -185,13 +185,11 @@ ImageDrawResult Recorder::drawTiledImage(Image& image, const FloatRect& destinat
     return ImageDrawResult::DidRecord;
 }
 
-bool Recorder::drawImageBuffer(WebCore::ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void Recorder::drawImageBuffer(WebCore::ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    if (!m_delegate || !m_delegate->lockRemoteImageBuffer(imageBuffer))
-        return false;
-
+    imageBuffer.flushDrawingContext();
+    m_displayList.cacheImageBuffer(makeRef(imageBuffer));
     appendItemAndUpdateExtent(DrawImageBuffer::create(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options));
-    return true;
 }
 
 void Recorder::drawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)

@@ -34,14 +34,30 @@
 namespace WebCore {
 namespace DisplayList {
 
-Replayer::Replayer(GraphicsContext& context, const DisplayList& displayList, Delegate* delegate)
-    : m_displayList(displayList)
-    , m_context(context)
+Replayer::Replayer(GraphicsContext& context, const DisplayList& displayList, const ImageBufferHashMap* imageBuffers, Delegate* delegate)
+    : m_context(context)
+    , m_displayList(displayList)
+    , m_imageBuffers(imageBuffers ? *imageBuffers : m_displayList.imageBuffers())
     , m_delegate(delegate)
 {
 }
 
 Replayer::~Replayer() = default;
+
+void Replayer::applyItem(Item& item)
+{
+    if (m_delegate && m_delegate->apply(item, m_context))
+        return;
+    
+    if (item.type() == ItemType::DrawImageBuffer) {
+        auto& drawItem = static_cast<DrawImageBuffer&>(item);
+        if (auto* imageBuffer = m_imageBuffers.get(drawItem.renderingResourceIdentifier()))
+            drawItem.apply(m_context, *imageBuffer);
+        return;
+    }
+    
+    item.apply(m_context);
+}
 
 std::unique_ptr<DisplayList> Replayer::replay(const FloatRect& initialClip, bool trackReplayList)
 {
@@ -65,8 +81,7 @@ std::unique_ptr<DisplayList> Replayer::replay(const FloatRect& initialClip, bool
         }
 
         LOG_WITH_STREAM(DisplayLists, stream << "applying " << i << " " << item);
-        if (!m_delegate || !m_delegate->apply(item, m_context))
-            item.apply(m_context);
+        applyItem(item);
 
         if (UNLIKELY(trackReplayList))
             replayList->appendItem(const_cast<Item&>(item));

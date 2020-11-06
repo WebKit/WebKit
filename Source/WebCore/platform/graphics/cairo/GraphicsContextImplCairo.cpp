@@ -279,10 +279,9 @@ ImageDrawResult GraphicsContextImplCairo::drawTiledImage(Image& image, const Flo
     return GraphicsContextImpl::drawTiledImageImpl(graphicsContext(), image, destination, source, tileScaleFactor, hRule, vRule, imagePaintingOptions);
 }
 
-bool GraphicsContextImplCairo::drawImageBuffer(ImageBuffer&, const FloatRect&, const FloatRect&, const ImagePaintingOptions&)
+void GraphicsContextImplCairo::drawImageBuffer(ImageBuffer&, const FloatRect&, const FloatRect&, const ImagePaintingOptions&)
 {
     // FIXME: Not implemented.
-    return false;
 }
 
 void GraphicsContextImplCairo::drawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)

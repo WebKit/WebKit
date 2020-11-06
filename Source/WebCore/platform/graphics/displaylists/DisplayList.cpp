@@ -51,6 +51,7 @@ void DisplayList::dump() const
 void DisplayList::clear()
 {
     m_list.clear();
+    m_imageBuffers.clear();
 }
 
 bool DisplayList::shouldDumpForFlags(AsTextFlags flags, const Item& item)

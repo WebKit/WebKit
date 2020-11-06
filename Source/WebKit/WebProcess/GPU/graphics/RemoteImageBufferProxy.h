@@ -40,6 +40,7 @@ class RemoteImageBufferProxy : public WebCore::DisplayList::ImageBuffer<BackendT
     using BaseDisplayListImageBuffer = WebCore::DisplayList::ImageBuffer<BackendType>;
     using BaseDisplayListImageBuffer::m_backend;
     using BaseDisplayListImageBuffer::m_drawingContext;
+    using BaseDisplayListImageBuffer::m_renderingResourceIdentifier;
 
 public:
     static RefPtr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, float resolutionScale, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
@@ -55,10 +56,8 @@ public:
         if (!m_remoteRenderingBackendProxy)
             return;
         flushDrawingContext();
-        m_remoteRenderingBackendProxy->remoteResourceCacheProxy().releaseImageBuffer(m_renderingResourceIdentifier);
+        m_remoteRenderingBackendProxy->releaseRemoteResource(m_renderingResourceIdentifier);
     }
-
-    WebCore::RenderingResourceIdentifier renderingResourceIdentifier() const override { return m_renderingResourceIdentifier; }
 
     void createBackend(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace colorSpace, ImageBufferBackendHandle handle)
     {
@@ -149,7 +148,6 @@ protected:
 
         TraceScope tracingScope(FlushRemoteImageBufferStart, FlushRemoteImageBufferEnd, 1);
         m_sentFlushIdentifier = m_remoteRenderingBackendProxy->flushDisplayListAndCommit(displayList, m_renderingResourceIdentifier);
-        m_remoteRenderingBackendProxy->remoteResourceCacheProxy().unlockRemoteResourcesForRemoteClient(m_renderingResourceIdentifier);
         m_itemCountInCurrentDisplayList = 0;
         displayList.clear();
     }
@@ -161,17 +159,6 @@ protected:
 
         TraceScope tracingScope(FlushRemoteImageBufferStart, FlushRemoteImageBufferEnd);
         m_remoteRenderingBackendProxy->flushDisplayList(displayList, m_renderingResourceIdentifier);
-        m_remoteRenderingBackendProxy->remoteResourceCacheProxy().unlockRemoteResourcesForRemoteClient(m_renderingResourceIdentifier);
-    }
-
-    bool lockRemoteImageBuffer(WebCore::ImageBuffer& imageBuffer) override
-    {
-        if (!m_remoteRenderingBackendProxy)
-            return false;
-        if (!m_remoteRenderingBackendProxy->remoteResourceCacheProxy().lockRemoteImageBufferForRemoteClient(imageBuffer, m_renderingResourceIdentifier))
-            return false;
-        imageBuffer.flushDrawingContext();
-        return true;
     }
 
     void willAppendItemOfType(WebCore::DisplayList::ItemType) override
@@ -194,7 +181,6 @@ protected:
 
     DisplayListFlushIdentifier m_sentFlushIdentifier;
     DisplayListFlushIdentifier m_receivedFlushIdentifier;
-    WebCore::RenderingResourceIdentifier m_renderingResourceIdentifier { WebCore::RenderingResourceIdentifier::generate() };
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     size_t m_itemCountInCurrentDisplayList { 0 };
 };

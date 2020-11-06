@@ -1,3 +1,46 @@
+2020-11-05  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Use the Ref counting of ImageBuffer to control its life cycle in Web Process and GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=218529
+
+        Reviewed by Simon Fraser.
+
+        When a DrawImageBuffer item is appended to DisplayList, a Ref<ImageBuffer>
+        will be cached till the DisplayList items list is cleared. So no need to
+        lock the remote resource in RemoteResourceCacheProxy.
+
+        All we need to is to pass the ImageBufferHashMap which is maintained by
+        the DisplayList or by RemoteResourceCache to the DisplayList::Replayer.
+        It is going to be used to resolve the RenderingResourceIdentifer to an
+        ImageBuffer so the DrawImageBuffer can be applied.
+
+        No need to special-case DrawImageBuffer::apply() in the RemoteImageBuffer.
+
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        (WebKit::RemoteImageBuffer::RemoteImageBuffer):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::createImageBuffer):
+        (WebKit::RemoteRenderingBackend::applyResourceItem): Deleted.
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        (WebKit::RemoteRenderingBackend::remoteResourceCache):
+        * GPUProcess/graphics/RemoteResourceCache.cpp:
+        (WebKit::RemoteResourceCache::cacheImageBuffer):
+        * GPUProcess/graphics/RemoteResourceCache.h:
+        (WebKit::RemoteResourceCache::imageBuffers const):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::~RemoteImageBufferProxy):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::releaseRemoteResource):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+        (WebKit::RemoteResourceCacheProxy::releaseImageBuffer):
+        (WebKit::RemoteResourceCacheProxy::RemoteResourceCacheProxy): Deleted.
+        (WebKit::RemoteResourceCacheProxy::lockRemoteImageBufferForRemoteClient): Deleted.
+        (WebKit::RemoteResourceCacheProxy::lockRemoteResourceForRemoteClient): Deleted.
+        (WebKit::RemoteResourceCacheProxy::releaseRemoteResource): Deleted.
+        (WebKit::RemoteResourceCacheProxy::unlockRemoteResourcesForRemoteClient): Deleted.
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.h:
+
 2020-11-05  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Remove mdnsresponder access from WebKit processes

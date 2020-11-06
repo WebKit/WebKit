@@ -28,6 +28,7 @@
 
 #include "DisplayListReplayer.h"
 #include "FontCascade.h"
+#include "ImageBuffer.h"
 #include "ImageData.h"
 #include "MediaPlayer.h"
 #include "SharedBuffer.h"
@@ -839,14 +840,19 @@ DrawImageBuffer::DrawImageBuffer(RenderingResourceIdentifier renderingResourceId
     , m_srcRect(srcRect)
     , m_options(options)
 {
+    ASSERT(m_renderingResourceIdentifier);
 }
 
 DrawImageBuffer::~DrawImageBuffer() = default;
 
 void DrawImageBuffer::apply(GraphicsContext&) const
 {
-    // Should be handled by the delegate.
     ASSERT_NOT_REACHED();
+}
+
+void DrawImageBuffer::apply(GraphicsContext& context, WebCore::ImageBuffer& imageBuffer) const
+{
+    context.drawImageBuffer(imageBuffer, m_destinationRect, m_srcRect, m_options);
 }
 
 static TextStream& operator<<(TextStream& ts, const DrawImageBuffer& item)

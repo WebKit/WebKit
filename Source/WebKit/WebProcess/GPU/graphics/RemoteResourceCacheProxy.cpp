@@ -28,15 +28,8 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "RemoteRenderingBackendProxy.h"
-
 namespace WebKit {
 using namespace WebCore;
-
-RemoteResourceCacheProxy::RemoteResourceCacheProxy(RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
-    : m_remoteRenderingBackendProxy(remoteRenderingBackendProxy)
-{
-}
 
 void RemoteResourceCacheProxy::cacheImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier, WebCore::ImageBuffer* imageBuffer)
 {
@@ -53,75 +46,6 @@ void RemoteResourceCacheProxy::releaseImageBuffer(RenderingResourceIdentifier re
 {
     bool found = m_imageBuffers.remove(renderingResourceIdentifier);
     ASSERT_UNUSED(found, found);
-
-    // Tell the GPU process to remove this resource unless it's pending replaying back.
-    releaseRemoteResource(renderingResourceIdentifier);
-}
-
-bool RemoteResourceCacheProxy::lockRemoteImageBufferForRemoteClient(ImageBuffer& imageBuffer, RenderingResourceIdentifier remoteClientIdentifier)
-{
-    if (!imageBuffer.renderingResourceIdentifier())
-        return false;
-
-    if (cachedImageBuffer(imageBuffer.renderingResourceIdentifier()) != &imageBuffer) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-
-    lockRemoteResourceForRemoteClient(imageBuffer.renderingResourceIdentifier(), remoteClientIdentifier);
-    return true;
-}
-
-void RemoteResourceCacheProxy::lockRemoteResourceForRemoteClient(RenderingResourceIdentifier renderingResourceIdentifier, RenderingResourceIdentifier remoteClientIdentifier)
-{
-    // Add the "resource -> client" dependency in m_lockedRemoteResourceForRemoteClients.
-    auto& clients = m_lockedRemoteResourceForRemoteClients.ensure(renderingResourceIdentifier, [&] {
-        return RemoteClientsHashSet();
-    }).iterator->value;
-
-    clients.add(remoteClientIdentifier);
-}
-
-void RemoteResourceCacheProxy::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
-{
-    ASSERT(!m_pendingUnlockRemoteResourceForRemoteClients.contains(renderingResourceIdentifier));
-
-    // If we have recorded resource -> client dependency before in m_lockedRemoteResourceForRemoteClients, move this
-    // dependency to m_pendingUnlockRemoteResourceForRemoteClients. Otherwise remove the resource in the GPU Process.
-    if (m_lockedRemoteResourceForRemoteClients.contains(renderingResourceIdentifier))
-        m_pendingUnlockRemoteResourceForRemoteClients.add(renderingResourceIdentifier, m_lockedRemoteResourceForRemoteClients.take(renderingResourceIdentifier));
-    else
-        m_remoteRenderingBackendProxy.releaseRemoteResource(renderingResourceIdentifier);
-}
-
-void RemoteResourceCacheProxy::unlockRemoteResourcesForRemoteClient(RenderingResourceIdentifier remoteClientIdentifier)
-{
-    auto removeRemoteClient = [&](RemoteResourceClientsHashMap& remoteResourceForRemoteClients, RenderingResourceIdentifier remoteClientIdentifier) {
-        Vector<RenderingResourceIdentifier> remoteResourceClientsToBeRemoved;
-
-        // Remove all the resource -> client dependencies from remoteResourceClientsHashMap.
-        for (auto& pair : remoteResourceForRemoteClients) {
-            pair.value.remove(remoteClientIdentifier);
-            if (pair.value.isEmpty())
-                remoteResourceClientsToBeRemoved.append(pair.key);
-        }
-
-        // Return a list of the unreferenced resources.
-        return remoteResourceClientsToBeRemoved;
-    };
-
-    // Remove all the resource -> client dependencies from m_lockedRemoteResourceForRemoteClients.
-    for (auto renderingResourceIdentifier : removeRemoteClient(m_lockedRemoteResourceForRemoteClients, remoteClientIdentifier))
-        m_lockedRemoteResourceForRemoteClients.remove(renderingResourceIdentifier);
-
-    // Remove all the resource -> client dependencies from m_pendingUnlockRemoteResourceForRemoteClients.
-    for (auto renderingResourceIdentifier : removeRemoteClient(m_pendingUnlockRemoteResourceForRemoteClients, remoteClientIdentifier)) {
-        // Remove the unreferenced resources from m_remoteResourceClientsPendingReleaseHashMap.
-        m_pendingUnlockRemoteResourceForRemoteClients.remove(renderingResourceIdentifier);
-
-        // Tell the GPU process to remove this resource.
-        m_remoteRenderingBackendProxy.releaseRemoteResource(renderingResourceIdentifier);
-    }
 }
 
 } // namespace WebKit

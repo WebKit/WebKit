@@ -61,9 +61,9 @@ public:
     virtual ~RemoteRenderingBackend();
 
     GPUConnectionToWebProcess* gpuConnectionToWebProcess() const;
+    RemoteResourceCache& remoteResourceCache() { return m_remoteResourceCache; }
 
     // Rendering operations.
-    bool applyResourceItem(const WebCore::DisplayList::Item&, WebCore::GraphicsContext&);
     bool applyMediaItem(const WebCore::DisplayList::Item&, WebCore::GraphicsContext&);
 
     // Messages to be sent.

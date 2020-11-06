@@ -54,14 +54,15 @@ public:
     bool isAccelerated() const override { return BackendType::isAccelerated; }
 
 protected:
-    ConcreteImageBuffer(std::unique_ptr<BackendType>&& backend)
+    ConcreteImageBuffer(std::unique_ptr<BackendType>&& backend = nullptr, RenderingResourceIdentifier renderingResourceIdentifier = RenderingResourceIdentifier::generate())
         : m_backend(WTFMove(backend))
+        , m_renderingResourceIdentifier(renderingResourceIdentifier)
     {
     }
 
-    ConcreteImageBuffer() = default;
-
     virtual BackendType* ensureBackendCreated() const { return m_backend.get(); }
+
+    RenderingResourceIdentifier renderingResourceIdentifier() const override { return m_renderingResourceIdentifier; }
 
     GraphicsContext& context() const override
     {
@@ -250,6 +251,7 @@ protected:
     }
 
     std::unique_ptr<BackendType> m_backend;
+    RenderingResourceIdentifier m_renderingResourceIdentifier;
 };
 
 } // namespace WebCore

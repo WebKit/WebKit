@@ -28,7 +28,9 @@
 #include "DisplayListItemType.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include <wtf/FastMalloc.h>
+#include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
@@ -101,6 +103,8 @@ public:
     
     String asText(AsTextFlags) const;
 
+    const ImageBufferHashMap& imageBuffers() const { return m_imageBuffers; }
+
 #if !defined(NDEBUG) || !LOG_DISABLED
     WTF::CString description() const;
     WEBCORE_EXPORT void dump() const;
@@ -108,7 +112,6 @@ public:
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<DisplayList> decode(Decoder&);
-
 
 private:
     Item& append(Ref<Item>&& item)
@@ -123,11 +126,17 @@ private:
         m_list.append(item);
     }
 
+    void cacheImageBuffer(Ref<WebCore::ImageBuffer>&& imageBuffer)
+    {
+        m_imageBuffers.add(imageBuffer->renderingResourceIdentifier(), WTFMove(imageBuffer));
+    }
+
     static bool shouldDumpForFlags(AsTextFlags, const Item&);
 
     Vector<Ref<Item>>& list() { return m_list; }
 
     Vector<Ref<Item>> m_list;
+    ImageBufferHashMap m_imageBuffers;
 };
 
 

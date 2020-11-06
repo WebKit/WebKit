@@ -1648,6 +1648,8 @@ public:
     FloatRect destinationRect() const { return m_destinationRect; }
     ImagePaintingOptions options() const { return m_options; }
 
+    void apply(GraphicsContext&, WebCore::ImageBuffer&) const;
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<Ref<DrawImageBuffer>> decode(Decoder&);
 

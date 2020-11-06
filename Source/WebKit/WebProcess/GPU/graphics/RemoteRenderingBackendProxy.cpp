@@ -127,6 +127,7 @@ DisplayListFlushIdentifier RemoteRenderingBackendProxy::flushDisplayListAndCommi
 
 void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
+    m_remoteResourceCacheProxy.releaseImageBuffer(renderingResourceIdentifier);
     send(Messages::RemoteRenderingBackend::ReleaseRemoteResource(renderingResourceIdentifier), m_renderingBackendIdentifier);
 }
 

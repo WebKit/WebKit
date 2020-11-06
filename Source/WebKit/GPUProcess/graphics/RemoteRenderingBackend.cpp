@@ -72,21 +72,6 @@ uint64_t RemoteRenderingBackend::messageSenderDestinationID() const
     return m_renderingBackendIdentifier.toUInt64();
 }
 
-bool RemoteRenderingBackend::applyResourceItem(const DisplayList::Item& item, GraphicsContext& context)
-{
-    if (item.type() == DisplayList::ItemType::DrawImageBuffer) {
-        auto& drawItem = static_cast<const DisplayList::DrawImageBuffer&>(item);
-        auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(drawItem.renderingResourceIdentifier());
-        if (!imageBuffer)
-            return false;
-
-        imageBuffer->draw(context, drawItem.destinationRect(), drawItem.source(), drawItem.options());
-        return true;
-    }
-
-    return false;
-}
-
 bool RemoteRenderingBackend::applyMediaItem(const DisplayList::Item& item, GraphicsContext& context)
 {
     if (item.type() != WebCore::DisplayList::ItemType::PaintFrameForMedia)
@@ -124,20 +109,20 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
 {
     ASSERT(renderingMode == RenderingMode::Accelerated || renderingMode == RenderingMode::Unaccelerated);
 
-    RefPtr<ImageBuffer> image;
+    RefPtr<ImageBuffer> imageBuffer;
 
     if (renderingMode == RenderingMode::Accelerated)
-        image = AcceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, *this, renderingResourceIdentifier);
+        imageBuffer = AcceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, *this, renderingResourceIdentifier);
 
-    if (!image)
-        image = UnacceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, *this, renderingResourceIdentifier);
+    if (!imageBuffer)
+        imageBuffer = UnacceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, *this, renderingResourceIdentifier);
 
-    if (image) {
-        m_remoteResourceCache.cacheImageBuffer(renderingResourceIdentifier, WTFMove(image));
+    if (!imageBuffer) {
+        ASSERT_NOT_REACHED();
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    m_remoteResourceCache.cacheImageBuffer(makeRef(*imageBuffer));
 }
 
 void RemoteRenderingBackend::flushDisplayList(const DisplayList::DisplayList& displayList, RenderingResourceIdentifier renderingResourceIdentifier)

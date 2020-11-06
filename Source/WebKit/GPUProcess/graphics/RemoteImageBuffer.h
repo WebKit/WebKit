@@ -47,7 +47,7 @@ public:
     }
 
     RemoteImageBuffer(std::unique_ptr<BackendType>&& backend, RemoteRenderingBackend& remoteRenderingBackend, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
-        : BaseConcreteImageBuffer(WTFMove(backend))
+        : BaseConcreteImageBuffer(WTFMove(backend), renderingResourceIdentifier)
         , m_remoteRenderingBackend(remoteRenderingBackend)
     {
         m_remoteRenderingBackend.imageBufferBackendWasCreated(m_backend->logicalSize(), m_backend->backendSize(), m_backend->resolutionScale(), m_backend->colorSpace(), m_backend->createImageBufferBackendHandle(), renderingResourceIdentifier);
@@ -65,7 +65,8 @@ private:
     void flushDisplayList(const WebCore::DisplayList::DisplayList& displayList) override
     {
         if (!displayList.isEmpty()) {
-            WebCore::DisplayList::Replayer replayer(BaseConcreteImageBuffer::context(), displayList, this);
+            const auto& imageBuffers = m_remoteRenderingBackend.remoteResourceCache().imageBuffers();
+            WebCore::DisplayList::Replayer replayer { BaseConcreteImageBuffer::context(), displayList, &imageBuffers, this };
             replayer.replay();
         }
     }
@@ -77,9 +78,6 @@ private:
             putImageData(putImageDataItem.inputFormat(), putImageDataItem.imageData(), putImageDataItem.srcRect(), putImageDataItem.destPoint(), putImageDataItem.destFormat());
             return true;
         }
-
-        if (m_remoteRenderingBackend.applyResourceItem(item, context))
-            return true;
 
         return m_remoteRenderingBackend.applyMediaItem(item, context);
     }
