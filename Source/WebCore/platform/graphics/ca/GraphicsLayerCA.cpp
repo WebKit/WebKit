@@ -3001,15 +3001,15 @@ void GraphicsLayerCA::updateAnimations()
         else
             addBaseValueTransformAnimation(AnimatedPropertyTranslate);
 
-        if (scaleAnimation)
-            addAnimation(*scaleAnimation);
-        else
-            addBaseValueTransformAnimation(AnimatedPropertyScale);
-
         if (rotateAnimation)
             addAnimation(*rotateAnimation);
         else
             addBaseValueTransformAnimation(AnimatedPropertyRotate);
+
+        if (scaleAnimation)
+            addAnimation(*scaleAnimation);
+        else
+            addBaseValueTransformAnimation(AnimatedPropertyScale);
 
         for (auto* animation : transformAnimations)
             addAnimation(*animation);
@@ -3021,15 +3021,15 @@ void GraphicsLayerCA::updateAnimations()
         if (transformAnimations.isEmpty())
             addBaseValueTransformAnimation(AnimatedPropertyTransform);
 
-        if (rotateAnimation)
-            addAnimation(*rotateAnimation);
-        else
-            addBaseValueTransformAnimation(AnimatedPropertyRotate);
-
         if (scaleAnimation)
             addAnimation(*scaleAnimation);
         else
             addBaseValueTransformAnimation(AnimatedPropertyScale);
+
+        if (rotateAnimation)
+            addAnimation(*rotateAnimation);
+        else
+            addBaseValueTransformAnimation(AnimatedPropertyRotate);
 
         if (translateAnimation)
             addAnimation(*translateAnimation);
