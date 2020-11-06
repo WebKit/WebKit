@@ -69,7 +69,7 @@ public:
         m_backend = BackendType::create(logicalSize, backendSize, resolutionScale, colorSpace, WTFMove(handle));
     }
 
-    void commitFlushDisplayList(DisplayListFlushIdentifier flushIdentifier)
+    void commitFlushDisplayList(WebCore::DisplayList::FlushIdentifier flushIdentifier)
     {
         m_receivedFlushIdentifier = flushIdentifier;
     }
@@ -288,8 +288,8 @@ protected:
             flushDrawingContext();
     }
 
-    DisplayListFlushIdentifier m_sentFlushIdentifier;
-    DisplayListFlushIdentifier m_receivedFlushIdentifier;
+    WebCore::DisplayList::FlushIdentifier m_sentFlushIdentifier;
+    WebCore::DisplayList::FlushIdentifier m_receivedFlushIdentifier;
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     size_t m_itemCountInCurrentDisplayList { 0 };
 };

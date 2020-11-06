@@ -45,6 +45,9 @@ namespace WebCore {
 
 namespace DisplayList {
 
+enum FlushIdentifierType { };
+using FlushIdentifier = ObjectIdentifier<FlushIdentifierType>;
+
 enum AsTextFlag {
     None                            = 0,
     IncludesPlatformOperations      = 1 << 0,

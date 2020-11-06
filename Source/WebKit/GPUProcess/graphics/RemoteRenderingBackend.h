@@ -28,7 +28,6 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "Connection.h"
-#include "DisplayListFlushIdentifier.h"
 #include "ImageBufferBackendHandle.h"
 #include "ImageDataReference.h"
 #include "MessageReceiver.h"
@@ -70,7 +69,7 @@ public:
 
     // Messages to be sent.
     void imageBufferBackendWasCreated(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle, WebCore::RenderingResourceIdentifier);
-    void flushDisplayListWasCommitted(DisplayListFlushIdentifier, WebCore::RenderingResourceIdentifier);
+    void flushDisplayListWasCommitted(WebCore::DisplayList::FlushIdentifier, WebCore::RenderingResourceIdentifier);
 
 private:
     RemoteRenderingBackend(GPUConnectionToWebProcess&, RenderingBackendIdentifier);
@@ -89,7 +88,7 @@ private:
     // Messages to be received.
     void createImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace, WebCore::RenderingResourceIdentifier);
     void flushDisplayList(const SharedDisplayListHandle&, WebCore::RenderingResourceIdentifier);
-    void flushDisplayListAndCommit(const SharedDisplayListHandle&, DisplayListFlushIdentifier, WebCore::RenderingResourceIdentifier);
+    void flushDisplayListAndCommit(const SharedDisplayListHandle&, WebCore::DisplayList::FlushIdentifier, WebCore::RenderingResourceIdentifier);
     void getImageData(WebCore::AlphaPremultiplication outputFormat, WebCore::IntRect srcRect, WebCore::RenderingResourceIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&&);
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
     void didCreateSharedItemData(WebCore::DisplayList::ItemBufferIdentifier, const SharedMemory::IPCHandle&);

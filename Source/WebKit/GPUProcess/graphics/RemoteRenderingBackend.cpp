@@ -99,7 +99,7 @@ void RemoteRenderingBackend::imageBufferBackendWasCreated(const FloatSize& logic
     send(Messages::RemoteRenderingBackendProxy::ImageBufferBackendWasCreated(logicalSize, backendSize, resolutionScale, colorSpace, WTFMove(handle), renderingResourceIdentifier), m_renderingBackendIdentifier);
 }
 
-void RemoteRenderingBackend::flushDisplayListWasCommitted(DisplayListFlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackend::flushDisplayListWasCommitted(DisplayList::FlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     send(Messages::RemoteRenderingBackendProxy::FlushDisplayListWasCommitted(flushIdentifier, renderingResourceIdentifier), m_renderingBackendIdentifier);
 }
@@ -159,7 +159,7 @@ void RemoteRenderingBackend::flushDisplayList(const SharedDisplayListHandle& han
     applyDisplayList(handle, renderingResourceIdentifier, ShouldFlushContext::No);
 }
 
-void RemoteRenderingBackend::flushDisplayListAndCommit(const SharedDisplayListHandle& handle, DisplayListFlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackend::flushDisplayListAndCommit(const SharedDisplayListHandle& handle, DisplayList::FlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     applyDisplayList(handle, renderingResourceIdentifier, ShouldFlushContext::Yes);
     flushDisplayListWasCommitted(flushIdentifier, renderingResourceIdentifier);

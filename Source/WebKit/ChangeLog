@@ -1,3 +1,32 @@
+2020-11-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Move DisplayListFlushIdentifier into WebCore as DisplayList::FlushIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=218586
+
+        Reviewed by Simon Fraser.
+
+        In preparation for adding a display list item to represent flushing the graphics context, move WebKit's
+        `DisplayListFlushIdentifier` to the `DisplayList` namespace in WebCore, and rename it to
+        `DisplayList::FlushIdentifier`.
+
+        No change in behavior.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::flushDisplayListWasCommitted):
+        (WebKit::RemoteRenderingBackend::flushDisplayListAndCommit):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * Scripts/webkit/messages.py:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/DisplayListFlushIdentifier.h: Removed.
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::commitFlushDisplayList):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::flushDisplayListAndCommit):
+        (WebKit::RemoteRenderingBackendProxy::flushDisplayListWasCommitted):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.messages.in:
+
 2020-11-06  Alex Christensen  <achristensen@webkit.org>
 
         Fix build after adding files to UIProcess/API/Cocoa

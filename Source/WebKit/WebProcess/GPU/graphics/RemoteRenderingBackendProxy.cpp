@@ -121,9 +121,9 @@ void RemoteRenderingBackendProxy::flushDisplayList(const DisplayList::DisplayLis
     m_sharedItemBuffers.clear();
 }
 
-DisplayListFlushIdentifier RemoteRenderingBackendProxy::flushDisplayListAndCommit(const DisplayList::DisplayList& displayList, RenderingResourceIdentifier renderingResourceIdentifier)
+DisplayList::FlushIdentifier RemoteRenderingBackendProxy::flushDisplayListAndCommit(const DisplayList::DisplayList& displayList, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    DisplayListFlushIdentifier sentFlushIdentifier = DisplayListFlushIdentifier::generate();
+    auto sentFlushIdentifier = DisplayList::FlushIdentifier::generate();
     send(Messages::RemoteRenderingBackend::FlushDisplayListAndCommit({ displayList }, sentFlushIdentifier, renderingResourceIdentifier), m_renderingBackendIdentifier);
     m_sharedItemBuffers.clear();
     return sentFlushIdentifier;
@@ -147,7 +147,7 @@ void RemoteRenderingBackendProxy::imageBufferBackendWasCreated(const FloatSize& 
         downcast<UnacceleratedRemoteImageBufferProxy>(*imageBuffer).createBackend(logicalSize, backendSize, resolutionScale, colorSpace, WTFMove(handle));
 }
 
-void RemoteRenderingBackendProxy::flushDisplayListWasCommitted(DisplayListFlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackendProxy::flushDisplayListWasCommitted(DisplayList::FlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(renderingResourceIdentifier);
     if (!imageBuffer)
