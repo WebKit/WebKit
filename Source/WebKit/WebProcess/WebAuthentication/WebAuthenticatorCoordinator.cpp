@@ -34,10 +34,12 @@
 #include "WebAuthnProcessConnection.h"
 #include "WebFrame.h"
 #include "WebPage.h"
+#include "WebProcess.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/AuthenticatorResponseData.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/PublicKeyCredentialRequestOptions.h>
+#include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/UserGestureIndicator.h>
 

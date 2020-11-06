@@ -1,3 +1,14 @@
+2020-11-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add some missing header includes in WebAuthenticatorCoordinator.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=218661
+
+        Reviewed by Simon Fraser.
+
+        Add the missing headers.
+
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+
 2020-11-06  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Allow IOAVDHEVCDecodeCapabilities on Intel
