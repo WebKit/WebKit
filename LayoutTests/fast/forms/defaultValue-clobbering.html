@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test-pre.js"></script>
+<input type=number id=numberinput>
+<script>
+numberinput.focus();
+eventSender.keyDown('1');
+eventSender.keyDown('2');
+shouldBeTrue('numberinput.value == "12"');
+eventSender.keyDown('e');
+shouldBeTrue('numberinput.value == ""');
+
+shouldBeFalse('numberinput.validity.valid');
+numberinput.defaultValue = '12345';
+shouldBeFalse('numberinput.validity.valid');
+</script>
+<script src="../../resources/js-test-post.js"></script>

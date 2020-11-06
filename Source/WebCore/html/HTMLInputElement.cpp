@@ -764,8 +764,8 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomStrin
         if (!hasDirtyValue()) {
             updatePlaceholderVisibility();
             invalidateStyleForSubtree();
+            setFormControlValueMatchesRenderer(false);
         }
-        setFormControlValueMatchesRenderer(false);
         updateValidity();
         m_valueAttributeWasUpdatedAfterParsing = !m_parsingInProgress;
     } else if (name == checkedAttr) {
