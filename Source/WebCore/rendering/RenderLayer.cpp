@@ -364,9 +364,11 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
 
     if (Element* element = renderer().element()) {
         // We save and restore only the scrollOffset as the other scroll values are recalculated.
-        m_scrollPosition = element->savedLayerScrollPosition();
-        if (!m_scrollPosition.isZero())
-            scrollAnimator().setCurrentPosition(m_scrollPosition);
+        if (renderBox()) {
+            m_scrollPosition = element->savedLayerScrollPosition();
+            if (!m_scrollPosition.isZero())
+                scrollAnimator().setCurrentPosition(m_scrollPosition);
+        }
         element->setSavedLayerScrollPosition(IntPoint());
     }
 }
