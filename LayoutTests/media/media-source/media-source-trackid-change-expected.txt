@@ -1,0 +1,43 @@
+This tests the ability of the SourceBuffer to change trackIds when a single videoTrack with a different trackId is appended.
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(source.duration = loader.duration())
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+Get the current buffered range
+RUN(initialBufferedEnd = sourceBuffer.buffered.end(0))
+Modify an Init Segment to have a different trackID
+RUN(modifiedInitSegment = loader.initSegment().slice(0))
+RUN(initSegmentView = new DataView(modifiedInitSegment))
+EXPECTED (initSegmentView.getInt32(180) == '1') OK
+RUN(initSegmentView.setInt32(180, 3))
+EXPECTED (initSegmentView.getInt32(693) == '2') OK
+RUN(initSegmentView.setInt32(693, 4))
+EXPECTED (initSegmentView.getInt32(1109) == '1') OK
+RUN(initSegmentView.setInt32(1109, 3))
+EXPECTED (initSegmentView.getInt32(1141) == '2') OK
+RUN(initSegmentView.setInt32(1141, 4))
+Append the modified Init Segment
+RUN(sourceBuffer.appendBuffer(modifiedInitSegment))
+EVENT(update)
+EXPECTED (video.videoTracks[0].id == '3') OK
+EXPECTED (video.audioTracks[0].id == '4') OK
+Modify a Media Segment to have a different trackID
+RUN(modifiedMediaSegment = loader.mediaSegment(0).slice(0))
+RUN(mediaSegmentView = new DataView(modifiedMediaSegment))
+EXPECTED (mediaSegmentView.getInt32(44) == '1') OK
+RUN(mediaSegmentView.setInt32(44, 3))
+EXPECTED (mediaSegmentView.getInt32(324) == '2') OK
+RUN(mediaSegmentView.setInt32(324, 4))
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(0))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(modifiedMediaSegment))
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.end(0) > '1') OK
+END OF TEST
+

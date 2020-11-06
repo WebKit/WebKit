@@ -104,6 +104,7 @@ void AudioTrack::setPrivate(AudioTrackPrivate& trackPrivate)
 #endif
 
     updateKindFromPrivate();
+    setId(m_private->id());
 }
 
 bool AudioTrack::isValidKind(const AtomString& value) const

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-trackid-change</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var modifiedInitSegment;
+    var modifiedMediaSegment;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+            loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+            await loaderPromise(loader);
+
+            source = new MediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            await waitFor(source, 'sourceopen');
+            waitFor(source, 'error').then(endTest);
+            waitForEventAndFail('error');
+
+            run('source.duration = loader.duration()');
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+
+            await waitFor(sourceBuffer, 'update');
+
+            consoleWrite('Append a media segment.')
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+
+            await waitFor(sourceBuffer, 'update');
+
+            consoleWrite('Get the current buffered range');
+            run('initialBufferedEnd = sourceBuffer.buffered.end(0)');
+
+            consoleWrite('Modify an Init Segment to have a different trackID');
+            run('modifiedInitSegment = loader.initSegment().slice(0)');
+            run('initSegmentView = new DataView(modifiedInitSegment)');
+            testExpected('initSegmentView.getInt32(180)', 1);
+            run('initSegmentView.setInt32(180, 3)');
+            testExpected('initSegmentView.getInt32(693)', 2);
+            run('initSegmentView.setInt32(693, 4)');
+            testExpected('initSegmentView.getInt32(1109)', 1);
+            run('initSegmentView.setInt32(1109, 3)');
+            testExpected('initSegmentView.getInt32(1141)', 2);
+            run('initSegmentView.setInt32(1141, 4)');
+
+            consoleWrite('Append the modified Init Segment')
+            run('sourceBuffer.appendBuffer(modifiedInitSegment)');
+            await waitFor(sourceBuffer, 'update');
+
+            testExpected('video.videoTracks[0].id', 3);
+            testExpected('video.audioTracks[0].id', 4);
+
+            consoleWrite('Modify a Media Segment to have a different trackID');
+            run('modifiedMediaSegment = loader.mediaSegment(0).slice(0)');
+            run('mediaSegmentView = new DataView(modifiedMediaSegment)');
+            testExpected('mediaSegmentView.getInt32(44)', 1);
+            run('mediaSegmentView.setInt32(44, 3)');
+            testExpected('mediaSegmentView.getInt32(324)', 2);
+            run('mediaSegmentView.setInt32(324, 4)');
+
+            run('sourceBuffer.timestampOffset = sourceBuffer.buffered.end(0)');
+
+            consoleWrite('Append a media segment.')
+            run('sourceBuffer.appendBuffer(modifiedMediaSegment)');
+
+            await waitFor(sourceBuffer, 'update');
+
+            testExpected('sourceBuffer.buffered.end(0)', initialBufferedEnd, '>');
+
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <div>
+        This tests the ability of the SourceBuffer to change trackIds when a single videoTrack with a different trackId is appended.
+    </div>
+    <video controls></video>
+</body>
+</html>
