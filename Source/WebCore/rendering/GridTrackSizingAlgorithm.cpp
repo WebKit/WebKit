@@ -972,14 +972,15 @@ double IndefiniteSizeStrategy::findUsedFlexFraction(Vector<unsigned>& flexibleSi
     if (!grid.hasGridItems())
         return flexFraction;
 
-    for (unsigned i = 0; i < flexibleSizedTracksIndex.size(); ++i) {
-        GridIterator iterator(grid, direction, flexibleSizedTracksIndex[i]);
+    HashSet<RenderBox*> itemsSet;
+    for (const auto& trackIndex : flexibleSizedTracksIndex) {
+        GridIterator iterator(grid, direction, trackIndex);
         while (auto* gridItem = iterator.nextGridItem()) {
-            const GridSpan& span = grid.gridItemSpan(*gridItem, direction);
-
             // Do not include already processed items.
-            if (i > 0 && span.startLine() <= flexibleSizedTracksIndex[i - 1])
+            if (!itemsSet.add(gridItem).isNewEntry)
                 continue;
+
+            const GridSpan& span = grid.gridItemSpan(*gridItem, direction);
 
             // Removing gutters from the max-content contribution of the item, so they are not taken into account in FindFrUnitSize().
             LayoutUnit leftOverSpace = maxContentForChild(*gridItem) - renderGrid()->guttersSize(m_algorithm.grid(), direction, span.startLine(), span.integerSpan(), availableSpace());
