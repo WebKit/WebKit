@@ -50,6 +50,7 @@ ALWAYS_INLINE Event::Event(MonotonicTime createTime, const AtomString& type, IsT
     , m_isDefaultEventHandlerIgnored { false }
     , m_isTrusted { isTrusted == IsTrusted::Yes }
     , m_isExecutingPassiveEventListener { false }
+    , m_currentTargetIsInShadowTree { false }
     , m_eventPhase { NONE }
     , m_type { type }
     , m_createTime { createTime }
@@ -127,9 +128,10 @@ void Event::setTarget(RefPtr<EventTarget>&& target)
         receivedTarget();
 }
 
-void Event::setCurrentTarget(EventTarget* currentTarget)
+void Event::setCurrentTarget(EventTarget* currentTarget, Optional<bool> isInShadowTree)
 {
     m_currentTarget = currentTarget;
+    m_currentTargetIsInShadowTree = isInShadowTree ? *isInShadowTree : (is<Node>(currentTarget) && downcast<Node>(*currentTarget).isInShadowTree());
 }
 
 Vector<EventTarget*> Event::composedPath() const
@@ -171,7 +173,7 @@ void Event::resetBeforeDispatch()
 void Event::resetAfterDispatch()
 {
     m_eventPath = nullptr;
-    m_currentTarget = nullptr;
+    setCurrentTarget(nullptr);
     m_eventPhase = NONE;
     m_propagationStopped = false;
     m_immediatePropagationStopped = false;

@@ -169,8 +169,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
         savedEvent = jsFunctionWindow->currentEvent();
 
         // window.event should not be set when the target is inside a shadow tree, as per the DOM specification.
-        bool isTargetInsideShadowTree = is<Node>(event.currentTarget()) && downcast<Node>(*event.currentTarget()).isInShadowTree();
-        if (!isTargetInsideShadowTree)
+        if (!event.currentTargetIsInShadowTree())
             jsFunctionWindow->setCurrentEvent(&event);
     }
 

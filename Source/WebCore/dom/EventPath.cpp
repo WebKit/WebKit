@@ -50,7 +50,7 @@ inline WindowEventContext::WindowEventContext(Node& node, DOMWindow& currentTarg
 void WindowEventContext::handleLocalEvents(Event& event, EventInvokePhase phase) const
 {
     event.setTarget(m_target.get());
-    event.setCurrentTarget(m_currentTarget.get());
+    event.setCurrentTarget(m_currentTarget.get(), m_currentTargetIsInShadowTree);
     m_currentTarget->fireEventListeners(event, phase);
 }
 

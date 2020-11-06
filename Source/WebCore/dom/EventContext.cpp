@@ -40,6 +40,7 @@ EventContext::EventContext(Node* node, EventTarget* currentTarget, EventTarget* 
     , m_currentTarget { currentTarget }
     , m_target { target }
     , m_closedShadowDepth { closedShadowDepth }
+    , m_currentTargetIsInShadowTree { is<Node>(currentTarget) && downcast<Node>(*currentTarget).isInShadowTree() }
 {
     ASSERT(!isUnreachableNode(m_target.get()));
 }
@@ -49,7 +50,7 @@ EventContext::~EventContext() = default;
 void EventContext::handleLocalEvents(Event& event, EventInvokePhase phase) const
 {
     event.setTarget(m_target.get());
-    event.setCurrentTarget(m_currentTarget.get());
+    event.setCurrentTarget(m_currentTarget.get(), m_currentTargetIsInShadowTree);
     // FIXME: Consider merging handleLocalEvents and fireEventListeners.
     if (m_node)
         m_node->handleLocalEvents(event, phase);
