@@ -36,10 +36,6 @@
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/NotImplemented.h>
 
-#if ENABLE(INSPECTOR_EXTENSIONS)
-#include "WebInspectorUIExtensionControllerProxy.h"
-#endif
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -97,13 +93,6 @@ void RemoteWebInspectorProxy::show()
 void RemoteWebInspectorProxy::sendMessageToFrontend(const String& message)
 {
     m_inspectorPage->send(Messages::RemoteWebInspectorUI::SendMessageToFrontend(message));
-}
-
-void RemoteWebInspectorProxy::frontendLoaded()
-{
-#if ENABLE(INSPECTOR_EXTENSIONS)
-    m_extensionController->inspectorFrontendLoaded();
-#endif
 }
 
 void RemoteWebInspectorProxy::frontendDidClose()
@@ -186,10 +175,6 @@ void RemoteWebInspectorProxy::createFrontendPageAndWindow()
 
     m_inspectorPage->process().addMessageReceiver(Messages::RemoteWebInspectorProxy::messageReceiverName(), m_inspectorPage->webPageID(), *this);
     m_inspectorPage->process().assumeReadAccessToBaseURL(*m_inspectorPage, WebInspectorProxy::inspectorBaseURL());
-
-#if ENABLE(INSPECTOR_EXTENSIONS)
-    m_extensionController = makeUnique<WebInspectorUIExtensionControllerProxy>(*m_inspectorPage);
-#endif
 }
 
 void RemoteWebInspectorProxy::closeFrontendPageAndWindow()

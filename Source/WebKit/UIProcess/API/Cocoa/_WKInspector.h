@@ -25,14 +25,16 @@
 
 #import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
-#import <WebKit/_WKInspectorExtensionHost.h>
-
-NS_ASSUME_NONNULL_BEGIN
 
 @class WKWebView;
 @class _WKFrameHandle;
-@class _WKInspectorExtension;
 @protocol _WKInspectorDelegate;
+
+NS_ASSUME_NONNULL_BEGIN
+
+@protocol _WKInspectorExtensionHost
+- (void)close;
+@end
 
 WK_CLASS_AVAILABLE(macos(10.14.4), ios(12.2))
 @interface _WKInspector : NSObject <_WKInspectorExtensionHost>
@@ -50,7 +52,6 @@ WK_CLASS_AVAILABLE(macos(10.14.4), ios(12.2))
 
 - (void)connect;
 - (void)show;
-- (void)close;
 - (void)hide;
 - (void)showConsole;
 - (void)showResources;

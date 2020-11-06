@@ -41,14 +41,11 @@ WI.AppControllerBase = class AppControllerBase
     constructor()
     {
         this._initialized = false;
-
-        this._extensionController = new WI.WebInspectorExtensionController;
     }
 
     // Public
 
     get debuggableType() { throw WI.NotImplementedError.subclassMustOverride(); }
-    get extensionController() { return this._extensionController; }
 
     // Since various members of the app controller depend on the global singleton to exist,
     // some initialization needs to happen after the app controller has been constructed.

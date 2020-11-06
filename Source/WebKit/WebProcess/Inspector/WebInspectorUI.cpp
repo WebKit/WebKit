@@ -36,14 +36,9 @@
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/InspectorController.h>
-#include <WebCore/InspectorFrontendHost.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/Settings.h>
-
-#if ENABLE(INSPECTOR_EXTENSIONS)
-#include "WebInspectorUIExtensionController.h"
-#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -70,8 +65,6 @@ WebInspectorUI::WebInspectorUI(WebPage& page)
     WebInspectorUI::enableFrontendFeatures();
 }
 
-WebInspectorUI::~WebInspectorUI() = default;
-
 void WebInspectorUI::establishConnection(WebPageProxyIdentifier inspectedPageIdentifier, const DebuggableInfoData& debuggableInfo, bool underTest, unsigned inspectionLevel)
 {
     m_inspectedPageIdentifier = inspectedPageIdentifier;
@@ -79,11 +72,8 @@ void WebInspectorUI::establishConnection(WebPageProxyIdentifier inspectedPageIde
     m_underTest = underTest;
     m_inspectionLevel = inspectionLevel;
 
-#if ENABLE(INSPECTOR_EXTENSIONS)
-    m_extensionController = makeUnique<WebInspectorUIExtensionController>(*this);
-#endif
-
     m_frontendAPIDispatcher->reset();
+
     m_frontendController = &m_page.corePage()->inspectorController();
     m_frontendController->setInspectorFrontendClient(this);
 
@@ -175,10 +165,6 @@ void WebInspectorUI::closeWindow()
 
     m_inspectedPageIdentifier = { };
     m_underTest = false;
-    
-#if ENABLE(INSPECTOR_EXTENSIONS)
-    m_extensionController = nullptr;
-#endif
 }
 
 void WebInspectorUI::reopen()
@@ -425,12 +411,6 @@ String WebInspectorUI::targetProductVersion() const
 {
     return m_debuggableInfo.targetProductVersion;
 }
-
-WebCore::Page* WebInspectorUI::frontendPage()
-{
-    return m_page.corePage();
-}
-
 
 #if !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(WIN)
 bool WebInspectorUI::canSave()

@@ -27,7 +27,6 @@
 #import "_WKInspectorInternal.h"
 
 #import "InspectorDelegate.h"
-#import "WKError.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
@@ -37,13 +36,6 @@
 #import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
-
-#if ENABLE(INSPECTOR_EXTENSIONS)
-#import "APIInspectorExtension.h"
-#import "WebInspectorUIExtensionControllerProxy.h"
-#import "_WKInspectorExtensionInternal.h"
-#import <wtf/BlockPtr.h>
-#endif
 
 @implementation _WKInspector
 
@@ -200,40 +192,6 @@
 - (API::Object&)_apiObject
 {
     return *_inspector;
-}
-
-// MARK: _WKInspectorExtensionHost methods
-
-- (void)registerExtensionWithID:(NSString *)extensionID displayName:(NSString *)displayName completionHandler:(void(^)(NSError *, _WKInspectorExtension *))completionHandler
-{
-#if ENABLE(INSPECTOR_EXTENSIONS)
-    _inspector->extensionController().registerExtension(extensionID, displayName, [protectedExtensionID = retainPtr(extensionID), protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<bool, WebKit::InspectorExtensionError> result) mutable {
-        if (!result) {
-            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: inspectorExtensionErrorToString(result.error())}], nil);
-            return;
-        }
-
-        capturedBlock(nil, [[wrapper(API::InspectorExtension::create(protectedExtensionID.get())) retain] autorelease]);
-    });
-#else
-    completionHandler([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil], nil);
-#endif
-}
-
-- (void)unregisterExtension:(_WKInspectorExtension *)extension completionHandler:(void(^)(NSError *))completionHandler
-{
-#if ENABLE(INSPECTOR_EXTENSIONS)
-    _inspector->extensionController().unregisterExtension(extension.extensionID, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<bool, WebKit::InspectorExtensionError> result) mutable {
-        if (!result) {
-            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: inspectorExtensionErrorToString(result.error())}]);
-            return;
-        }
-
-        capturedBlock(nil);
-    });
-#else
-    completionHandler([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
-#endif
 }
 
 @end

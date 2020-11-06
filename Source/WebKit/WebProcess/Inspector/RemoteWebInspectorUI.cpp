@@ -39,10 +39,6 @@
 #include <WebCore/InspectorController.h>
 #include <WebCore/Settings.h>
 
-#if ENABLE(INSPECTOR_EXTENSIONS)
-#include "WebInspectorUIExtensionController.h"
-#endif
-
 #if !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(WIN)
 #include <WebCore/NotImplemented.h>
 #endif
@@ -62,14 +58,8 @@ RemoteWebInspectorUI::RemoteWebInspectorUI(WebPage& page)
     WebInspectorUI::enableFrontendFeatures();
 }
 
-RemoteWebInspectorUI::~RemoteWebInspectorUI() = default;
-
 void RemoteWebInspectorUI::initialize(DebuggableInfoData&& debuggableInfo, const String& backendCommandsURL)
 {
-#if ENABLE(INSPECTOR_EXTENSIONS)
-    m_extensionController = makeUnique<WebInspectorUIExtensionController>(*this);
-#endif
-
     m_debuggableInfo = WTFMove(debuggableInfo);
     m_backendCommandsURL = backendCommandsURL;
 
@@ -118,8 +108,6 @@ void RemoteWebInspectorUI::frontendLoaded()
     m_frontendAPIDispatcher->frontendLoaded();
 
     m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setIsVisible"_s, { JSON::Value::create(true) });
-
-    WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorProxy::FrontendLoaded(), m_page.identifier());
 
     bringToFront();
 }
@@ -186,10 +174,6 @@ void RemoteWebInspectorUI::closeWindow()
 {
     m_page.corePage()->inspectorController().setInspectorFrontendClient(nullptr);
 
-#if ENABLE(INSPECTOR_EXTENSIONS)
-    m_extensionController = nullptr;
-#endif
-    
     WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorProxy::FrontendDidClose(), m_page.identifier());
 }
 
@@ -273,12 +257,6 @@ void RemoteWebInspectorUI::setDiagnosticLoggingAvailable(bool available)
     m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDiagnosticLoggingAvailable"_s, { JSON::Value::create(m_diagnosticLoggingAvailable) });
 }
 #endif
-
-WebCore::Page* RemoteWebInspectorUI::frontendPage()
-{
-    return m_page.corePage();
-}
-
 
 #if !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(WIN)
 String RemoteWebInspectorUI::localizedStringsURL() const

@@ -348,9 +348,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebIDBConnectionToServerMessagesRep
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebIDBServerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebIDBServerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebIDBServerMessagesReplies.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorUIExtensionControllerMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorUIExtensionControllerMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorUIExtensionControllerMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorInterruptDispatcherMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorInterruptDispatcherMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorInterruptDispatcherMessagesReplies.h

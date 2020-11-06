@@ -37,7 +37,6 @@
 #include "WebInspectorInterruptDispatcherMessages.h"
 #include "WebInspectorMessages.h"
 #include "WebInspectorProxyMessages.h"
-#include "WebInspectorUIExtensionControllerProxy.h"
 #include "WebInspectorUIMessages.h"
 #include "WebPageGroup.h"
 #include "WebPageInspectorController.h"
@@ -422,10 +421,6 @@ void WebInspectorProxy::createFrontendPage()
 
     m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->identifier(), *this);
     m_inspectorPage->process().assumeReadAccessToBaseURL(*m_inspectorPage, WebInspectorProxy::inspectorBaseURL());
-
-#if ENABLE(INSPECTOR_EXTENSIONS)
-    m_extensionController = makeUnique<WebInspectorUIExtensionControllerProxy>(*m_inspectorPage);
-#endif
 }
 
 void WebInspectorProxy::openLocalInspectorFrontend(bool canAttach, bool underTest)
@@ -551,10 +546,6 @@ void WebInspectorProxy::closeFrontendPageAndWindow()
     if (m_isAttached)
         platformDetach();
 
-#if ENABLE(INSPECTOR_EXTENSIONS)
-    m_extensionController = nullptr;
-#endif
-    
     // Null out m_inspectorPage after platformDetach(), so the views can be cleaned up correctly.
     m_inspectorPage = nullptr;
 
@@ -580,10 +571,6 @@ void WebInspectorProxy::frontendLoaded()
 
     if (auto* automationSession = m_inspectedPage->process().processPool().automationSession())
         automationSession->inspectorFrontendLoaded(*m_inspectedPage);
-    
-#if ENABLE(INSPECTOR_EXTENSIONS)
-    m_extensionController->inspectorFrontendLoaded();
-#endif
 }
 
 void WebInspectorProxy::bringToFront()

@@ -24,7 +24,6 @@
  */
 
 #import <WebKit/WKFoundation.h>
-#import <WebKit/_WKInspectorExtensionHost.h>
 
 #if !TARGET_OS_IPHONE
 
@@ -45,7 +44,7 @@ typedef NS_ENUM(NSInteger, WKRemoteWebInspectorDebuggableType) {
 } WK_API_AVAILABLE(macos(10.12.3), ios(10.3));
 
 WK_CLASS_AVAILABLE(macos(10.12.3), ios(10.3))
-@interface _WKRemoteWebInspectorViewController : NSObject <_WKInspectorExtensionHost>
+@interface _WKRemoteWebInspectorViewController : NSObject
 
 @property (nonatomic, assign) id <_WKRemoteWebInspectorViewControllerDelegate> delegate;
 

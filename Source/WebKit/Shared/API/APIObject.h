@@ -137,9 +137,6 @@ public:
         IconDatabase,
         Inspector,
         InspectorConfiguration,
-#if ENABLE(INSPECTOR_EXTENSIONS)
-        InspectorExtension,
-#endif
         KeyValueStorageManager,
         MediaCacheManager,
         MessageListener,
@@ -385,9 +382,6 @@ template<> struct EnumTraits<API::Object::Type> {
         API::Object::Type::IconDatabase,
         API::Object::Type::Inspector,
         API::Object::Type::InspectorConfiguration,
-#if ENABLE(INSPECTOR_EXTENSIONS)
-        API::Object::Type::InspectorExtension,
-#endif
         API::Object::Type::KeyValueStorageManager,
         API::Object::Type::MediaCacheManager,
         API::Object::Type::MessageListener,
