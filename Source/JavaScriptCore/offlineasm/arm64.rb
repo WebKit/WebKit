@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2020 Apple Inc. All rights reserved.
 # Copyright (C) 2014 University of Szeged. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -305,9 +305,11 @@ def arm64LowerLabelReferences(list)
             when "loadi", "loadis", "loadp", "loadq", "loadb", "loadbsi", "loadbsq", "loadh", "loadhsi", "loadhsq", "leap"
                 labelRef = node.operands[0]
                 if labelRef.is_a? LabelReference
-                    tmp = Tmp.new(node.codeOrigin, :gpr)
-                    newList << Instruction.new(codeOrigin, "globaladdr", [LabelReference.new(node.codeOrigin, labelRef.label), tmp])
-                    newList << Instruction.new(codeOrigin, node.opcode, [Address.new(node.codeOrigin, tmp, Immediate.new(node.codeOrigin, labelRef.offset)), node.operands[1]])
+                    dest = node.operands[1]
+                    newList << Instruction.new(codeOrigin, "globaladdr", [LabelReference.new(node.codeOrigin, labelRef.label), dest])
+                    if node.opcode != "leap" or labelRef.offset != 0
+                        newList << Instruction.new(codeOrigin, node.opcode, [Address.new(node.codeOrigin, dest, Immediate.new(node.codeOrigin, labelRef.offset)), dest])
+                    end
                 else
                     newList << node
                 end

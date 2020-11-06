@@ -41,6 +41,10 @@ namespace JSC {
 
 namespace LLInt {
 
+Opcode g_opcodeMap[numOpcodeIDs + numWasmOpcodeIDs] = { };
+Opcode g_opcodeMapWide16[numOpcodeIDs + numWasmOpcodeIDs] = { };
+Opcode g_opcodeMapWide32[numOpcodeIDs + numWasmOpcodeIDs] = { };
+
 #if !ENABLE(C_LOOP)
 extern "C" void llint_entry(void*, void*, void*);
 
@@ -71,19 +75,14 @@ void initialize()
 
 #else // !ENABLE(C_LOOP)
 
-    llint_entry(&g_jscConfig.llint.opcodeMap, &g_jscConfig.llint.opcodeMapWide16, &g_jscConfig.llint.opcodeMapWide32);
+    llint_entry(&g_opcodeMap, &g_opcodeMapWide16, &g_opcodeMapWide32);
 
 #if ENABLE(WEBASSEMBLY)
-    wasm_entry(&g_jscConfig.llint.opcodeMap[numOpcodeIDs], &g_jscConfig.llint.opcodeMapWide16[numOpcodeIDs], &g_jscConfig.llint.opcodeMapWide32[numOpcodeIDs]);
+    wasm_entry(&g_opcodeMap[numOpcodeIDs], &g_opcodeMapWide16[numOpcodeIDs], &g_opcodeMapWide32[numOpcodeIDs]);
 #endif // ENABLE(WEBASSEMBLY)
 
-    for (int i = 0; i < numOpcodeIDs + numWasmOpcodeIDs; ++i) {
-        g_jscConfig.llint.opcodeMap[i] = tagCodePtr<BytecodePtrTag>(g_jscConfig.llint.opcodeMap[i]);
-        g_jscConfig.llint.opcodeMapWide16[i] = tagCodePtr<BytecodePtrTag>(g_jscConfig.llint.opcodeMapWide16[i]);
-        g_jscConfig.llint.opcodeMapWide32[i] = tagCodePtr<BytecodePtrTag>(g_jscConfig.llint.opcodeMapWide32[i]);
-    }
-
-    ASSERT(llint_throw_from_slow_path_trampoline < UINT8_MAX);
+    static_assert(llint_throw_from_slow_path_trampoline < UINT8_MAX);
+    static_assert(wasm_throw_from_slow_path_trampoline < UINT8_MAX);
     for (unsigned i = 0; i < maxOpcodeLength + 1; ++i) {
         g_jscConfig.llint.exceptionInstructions[i] = llint_throw_from_slow_path_trampoline;
         g_jscConfig.llint.wasmExceptionInstructions[i] = wasm_throw_from_slow_path_trampoline;

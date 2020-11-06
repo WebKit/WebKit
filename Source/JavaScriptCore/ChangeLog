@@ -1,3 +1,75 @@
+2020-11-06  Mark Lam  <mark.lam@apple.com>
+
+        Use address diversified PAC to ensure the integrity of opcode maps.
+        https://bugs.webkit.org/show_bug.cgi?id=218646
+
+        Reviewed by Yusuke Suzuki.
+
+        One reason for doing this is because space in the JSCConfig is limited, and may
+        hurt RAMification scores if we need to expand it when adding new opcodes.
+        By putting the opcode maps in dirty global memory, we still use less memory
+        because dirty global memory does not incur internal fragmentation like the
+        JSCConfig does.
+
+        In this patch, we move g_jscConfig.llint.opcodeMap, g_jscConfig.llint.opcodeMapWide16,
+        and g_jscConfig.llint.opcodeMapWide32 back to global arrays g_opcodeMap, g_opcodeMapWide16,
+        and g_opcodeMapWide32.
+
+        * interpreter/InterpreterInlines.h:
+        (JSC::Interpreter::getOpcodeID):
+        - Since this function is only used debugging purposes during development, and is
+          currently unused, we can just strip the PAC bits from the opcode when computing
+          the opcodeID.  The alternative to doing this requires that we know how the
+          Opcode is signed by the client.  Since this function is currently unused, we
+          have no clients to study / fix up for now.
+
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        - Changed an ASSERT for llint_throw_from_slow_path_trampoline to static_assert,
+          and add a second one as well for wasm_throw_from_slow_path_trampoline.
+        - Moved the signing of the Opcode pointers into llint_entry() and wasm_entry()
+          instead.  Now, non-ARM64E ports don't need to execute this no-op assignment loop
+          (assuming it wasn't already elided by the compiler).
+
+        * llint/LLIntData.h:
+        (JSC::LLInt::opcodeMap):
+        (JSC::LLInt::opcodeMapWide16):
+        (JSC::LLInt::opcodeMapWide32):
+        (JSC::LLInt::getOpcode):
+        (JSC::LLInt::getOpcodeWide16):
+        (JSC::LLInt::getOpcodeWide32):
+        - Change getOpcode(), getOpcodeWide16(), and getOpcodeWide32() to return a reference
+          to the entry in the corresponding opcode map.  This is needed because we need to
+          be able to compute the address of the Opcode entry in order to retag the Opcode.
+
+        (JSC::LLInt::getCodePtrImpl):
+        (JSC::LLInt::getCodePtr):
+        (JSC::LLInt::getWide16CodePtr):
+        (JSC::LLInt::getWide32CodePtr):
+
+        * llint/LowLevelInterpreter.asm:
+        * llint/WebAssembly.asm:
+        - Changed the bytecode dispatch `jmp`s to use address diversification when
+          authenticating the Opcode pointer.
+        - Changed llint_entry and wasm_entry to also tag the Opcode pointers for ARM64E.
+        - Changed llint_entry and wasm_entry to validate that they are only called during
+          system initialization.
+
+        * offlineasm/arm64.rb:
+        - Optimize `leap` code generation to elide an add instruction if it's only adding
+          0 to a global address.
+
+        * offlineasm/arm64e.rb:
+        * offlineasm/ast.rb:
+        * offlineasm/instructions.rb:
+        - Added support for jmp or call using address diversified pointers.
+        - Added a tagCodePtr instruction that also supports signing address diversified pointers.
+
+        * runtime/JSCConfig.h:
+        * runtime/JSCPtrTag.h:
+        (JSC::untagAddressDiversifiedCodePtr):
+        - Added untagAddressDiversifiedCodePtr() so that we can retag the Opcode pointers.
+
 2020-11-05  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes, early November 2020 edition

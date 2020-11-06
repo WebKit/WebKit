@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -42,8 +42,21 @@ class Instruction
             codeOrigin = node.codeOrigin
             case node.opcode
             when "jmp", "call"
-                if node.operands.size > 1
-                    if node.operands[1].is_a? RegisterID
+                if node.operands.size == 3
+                    raise unless node.operands[2].value == 1
+                    raise unless node.operands[1].immediate? and node.operands[1].value <= 0xffff
+                    raise unless node.operands[0].address?
+                    address = Tmp.new(codeOrigin, :gpr)
+                    target = Tmp.new(codeOrigin, :gpr)
+                    newList << Instruction.new(codeOrigin, "leap", [node.operands[0], address], annotation)
+                    newList << Instruction.new(codeOrigin, "loadp", [Address.new(codeOrigin, address, Immediate.new(codeOrigin, 0)), target], annotation)
+                    tag = Tmp.new(codeOrigin, :gpr)
+                    newList << Instruction.new(codeOrigin, "move", [Immediate.new(codeOrigin, node.operands[1].value << 48), tag], annotation)
+                    newList << Instruction.new(codeOrigin, "xorp", [address, tag], annotation)
+                    newList << node.cloneWithNewOperands([target, tag])
+                    wasHandled = true
+                elsif node.operands.size > 1
+                    if node.operands[1].is_a? RegisterID or node.operands[1].is_a? Tmp
                         tag = riscLowerOperandToRegister(node, newList, postInstructions, 1, "p", false)
                     else
                         tag = Tmp.new(codeOrigin, :gpr)
@@ -54,6 +67,23 @@ class Instruction
                         tag
                     ]
                     newList << node.cloneWithNewOperands(operands)
+                    wasHandled = true
+                end
+            when "tagCodePtr"
+                raise if node.operands.size < 1 or not node.operands[0].is_a? RegisterID
+                if node.operands.size == 4
+                    raise unless node.operands[3].register?
+                    raise unless node.operands[2].immediate? and node.operands[2].value == 1
+                    raise unless node.operands[1].immediate? and node.operands[1].value <= 0xffff
+                    address = node.operands[3]
+                    if node.operands[1].immediate?
+                        tag = Tmp.new(codeOrigin, :gpr)
+                        newList << Instruction.new(codeOrigin, "move", [Immediate.new(codeOrigin, node.operands[1].value << 48), tag], annotation)
+                    elsif operands[1].register?
+                        tag = node.operands[1]
+                    end
+                    newList << Instruction.new(codeOrigin, "xorp", [address, tag], annotation)
+                    newList << node.cloneWithNewOperands([node.operands[0], tag])
                     wasHandled = true
                 end
             when "untagArrayPtr"
@@ -91,6 +121,11 @@ class Instruction
             else
                 emitARM64Unflipped("brab", operands, :ptr)
             end
+        when "tagCodePtr"
+            raise if operands.size > 2
+            raise unless operands[0].register?
+            raise unless operands[1].register?
+            emitARM64Unflipped("pacib", operands, :ptr)
         when "tagReturnAddress"
             raise if operands.size < 1 or not operands[0].is_a? RegisterID
             if operands[0].is_a? RegisterID and operands[0].name == "sp"

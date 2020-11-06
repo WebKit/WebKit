@@ -201,6 +201,20 @@ inline PtrType untagCodePtrWithStackPointerForJITCall(PtrType ptr, const void* s
 #endif
 }
 
+template<PtrTag tag, typename PtrType>
+inline PtrType untagAddressDiversifiedCodePtr(PtrType ptr, const void* ptrAddress)
+{
+    UNUSED_PARAM(ptrAddress);
+#if CPU(ARM64E)
+    uint64_t address = bitwise_cast<uint64_t>(ptrAddress);
+    uint64_t tagBits = static_cast<uint64_t>(tag) << 48;
+    uint64_t addressDiversifiedTag = tagBits ^ address;
+    return __builtin_ptrauth_auth(ptr, ptrauth_key_process_dependent_code, addressDiversifiedTag);
+#else
+    return ptr;
+#endif
+}
+
 #if CPU(ARM64E) && ENABLE(PTRTAG_DEBUGGING)
 void initializePtrTagLookup();
 #else

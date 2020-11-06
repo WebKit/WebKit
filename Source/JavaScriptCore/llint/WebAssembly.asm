@@ -95,20 +95,20 @@ end
 
 macro wasmNextInstruction()
     loadb [PB, PC, 1], t0
-    leap JSCConfig + constexpr JSC::offsetOfJSCConfigOpcodeMap, t1
-    jmp NumberOfJSOpcodeIDs * PtrSize[t1, t0, PtrSize], BytecodePtrTag
+    leap _g_opcodeMap, t1
+    jmp NumberOfJSOpcodeIDs * PtrSize[t1, t0, PtrSize], BytecodePtrTag, AddressDiversified
 end
 
 macro wasmNextInstructionWide16()
     loadb OpcodeIDNarrowSize[PB, PC, 1], t0
-    leap JSCConfig + constexpr JSC::offsetOfJSCConfigOpcodeMapWide16, t1
-    jmp NumberOfJSOpcodeIDs * PtrSize[t1, t0, PtrSize], BytecodePtrTag
+    leap _g_opcodeMapWide16, t1
+    jmp NumberOfJSOpcodeIDs * PtrSize[t1, t0, PtrSize], BytecodePtrTag, AddressDiversified
 end
 
 macro wasmNextInstructionWide32()
     loadb OpcodeIDNarrowSize[PB, PC, 1], t0
-    leap JSCConfig + constexpr JSC::offsetOfJSCConfigOpcodeMapWide32, t1
-    jmp NumberOfJSOpcodeIDs * PtrSize[t1, t0, PtrSize], BytecodePtrTag
+    leap _g_opcodeMapWide32, t1
+    jmp NumberOfJSOpcodeIDs * PtrSize[t1, t0, PtrSize], BytecodePtrTag, AddressDiversified
 end
 
 macro checkSwitchToJIT(increment, action)

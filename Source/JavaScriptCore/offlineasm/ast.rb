@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -699,7 +699,10 @@ class FPRegisterID < NoChildren
 end
 
 class SpecialRegister < NoChildren
+    attr_reader :name
+
     def initialize(name)
+        super(codeOrigin)
         @name = name
     end
     
@@ -942,7 +945,7 @@ class Instruction < Node
             $asm.putGlobalAnnotation
         when "emit"
             $asm.puts "#{operands[0].dump}"
-        when "tagReturnAddress", "untagReturnAddress", "removeCodePtrTag", "untagArrayPtr"
+        when "tagCodePtr", "tagReturnAddress", "untagReturnAddress", "removeCodePtrTag", "untagArrayPtr"
         else
             raise "Unhandled opcode #{opcode} at #{codeOriginString}"
         end
