@@ -1,3 +1,29 @@
+2020-11-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        webkitpy: Add a --no-comment switch to webkit-patch land
+        https://bugs.webkit.org/show_bug.cgi?id=218067
+
+        Reviewed by Ryosuke Niwa.
+
+        Add an optional --no-comment switch to webkit-patch land.
+        This is useful when landing gardening, build-fixes or follow-up patches
+        on a bug and you don't want the tool to automatically add a comment with
+        the revision landed because you preffer to later add a comment manually.
+
+        Note that it will still close the bug, if you don't want the bug to
+        be closed you need to pass also --no-close.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_mock.py:
+        (MockBugzilla.close_bug_as_fixed):
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        (DownloadCommandsTest._default_options):
+        (test_land_no_close):
+        * Scripts/webkitpy/tool/steps/closebugforlanddiff.py:
+        (CloseBugForLandDiff.options):
+        (CloseBugForLandDiff.run):
+        * Scripts/webkitpy/tool/steps/options.py:
+        (Options):
+
 2020-11-05  John Wilander  <wilander@apple.com>
 
         PCM: Switch to JSON report format

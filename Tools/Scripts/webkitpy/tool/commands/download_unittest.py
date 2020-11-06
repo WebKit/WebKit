@@ -84,6 +84,7 @@ class DownloadCommandsTest(CommandsTest):
         options.check_style_filter = None
         options.clean = True
         options.close_bug = True
+        options.comment_bug = True
         options.force_clean = False
         options.non_interactive = False
         options.parent_command = 'MOCK parent command'
@@ -148,7 +149,7 @@ Running Perl unit tests
 Running JavaScriptCore tests
 Running run-webkit-tests
 Committed r49824: <https://trac.webkit.org/changeset/49824>
-Updating bug 50000
+Adding comment and closing bug 50000
 """
         mock_tool = MockTool()
         mock_tool.scm().create_patch = Mock(return_value="Patch1\nMockPatch\n")
@@ -191,7 +192,7 @@ Running Perl unit tests
 Running JavaScriptCore tests
 Running run-webkit-tests
 Committed r49824: <https://trac.webkit.org/changeset/49824>
-Updating bug 50000
+Adding comment and closing bug 50000
 """
         mock_tool = MockTool()
         mock_tool.buildbot.light_tree_on_fire()
@@ -274,6 +275,51 @@ Committed r49824: <https://trac.webkit.org/changeset/49824>
 Not closing bug 50000 as attachment 10000 has review=+.  Assuming there are more patches to land from this bug.
 """
         self.assert_execute_outputs(LandFromURL(), ["https://bugs.webkit.org/show_bug.cgi?id=50000"], options=self._default_options(), expected_logs=expected_logs)
+
+    def test_land_no_comment(self):
+        expected_logs = """Building WebKit
+Running Python unit tests
+Running Perl unit tests
+Running JavaScriptCore tests
+Running run-webkit-tests
+Committed r49824: <https://trac.webkit.org/changeset/49824>
+Not updating bug 50000
+"""
+        options = self._default_options()
+        options.comment_bug = False
+        self.assert_execute_outputs(Land(), [50000], options=options, expected_logs=expected_logs)
+
+    def test_land_no_close(self):
+        expected_logs = """Building WebKit
+Running Python unit tests
+Running Perl unit tests
+Running JavaScriptCore tests
+Running run-webkit-tests
+Committed r49824: <https://trac.webkit.org/changeset/49824>
+Commenting without closing bug 50000
+MOCK bug comment: bug_id=50000, cc=None, see_also=None
+--- Begin comment ---
+Committed r49824: <https://trac.webkit.org/changeset/49824>
+--- End comment ---
+
+"""
+        options = self._default_options()
+        options.close_bug = False
+        self.assert_execute_outputs(Land(), [50000], options=options, expected_logs=expected_logs)
+
+    def test_land_no_comment_no_close(self):
+        expected_logs = """Building WebKit
+Running Python unit tests
+Running Perl unit tests
+Running JavaScriptCore tests
+Running run-webkit-tests
+Committed r49824: <https://trac.webkit.org/changeset/49824>
+Not updating bug 50000
+"""
+        options = self._default_options()
+        options.comment_bug = False
+        options.close_bug = False
+        self.assert_execute_outputs(Land(), [50000], options=options, expected_logs=expected_logs)
 
     def test_prepare_revert(self):
         expected_logs = "Preparing revert for bug 50000.\nUpdating working directory\n"

@@ -40,6 +40,7 @@ class CloseBugForLandDiff(AbstractStep):
     def options(cls):
         return AbstractStep.options() + [
             Options.close_bug,
+            Options.comment_bug,
         ]
 
     def run(self, state):
@@ -49,13 +50,15 @@ class CloseBugForLandDiff(AbstractStep):
             bug_id = state.get("patch").bug_id()
 
         if bug_id:
-            _log.info("Updating bug %s" % bug_id)
-            if self._options.close_bug:
-                self._tool.bugs.close_bug_as_fixed(bug_id, comment_text)
+            if self._options.comment_bug:
+                if self._options.close_bug:
+                    _log.info("Adding comment and closing bug %s" % bug_id)
+                    self._tool.bugs.close_bug_as_fixed(bug_id, comment_text)
+                else:
+                    _log.info("Commenting without closing bug %s" % bug_id)
+                    self._tool.bugs.post_comment_to_bug(bug_id, comment_text)
             else:
-                # FIXME: We should a smart way to figure out if the patch is attached
-                # to the bug, and if so obsolete it.
-                self._tool.bugs.post_comment_to_bug(bug_id, comment_text)
+                _log.info("Not updating bug %s" % bug_id)
         else:
             _log.info(comment_text)
             _log.info("No bug id provided.")
