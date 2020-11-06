@@ -1,3 +1,17 @@
+2020-11-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        toLocaleDateString() resolves incorrect date for some old dates
+        https://bugs.webkit.org/show_bug.cgi?id=161623
+
+        Reviewed by Ryosuke Niwa.
+
+        The issue is that timezone offset in old Warsaw date was broken because `localtime_r`'s tzdata is broken.
+        The issue itself was fixed in r218348. This patch adds another test case to ensure this is fixed.
+
+        * complex.yaml:
+        * complex/timezone-offset-and-dst-in-warsaw.js: Added.
+        (shouldBe):
+
 2020-11-03  Saam Barati  <sbarati@apple.com>
 
         Add back the removed assertion from r269338 and add a test
