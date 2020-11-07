@@ -589,8 +589,6 @@ static VisiblePosition createVisiblePositionForBox(const LayoutIntegration::RunI
 
 static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const LayoutIntegration::TextRunIterator& run, unsigned offset, ShouldAffinityBeDownstream shouldAffinityBeDownstream)
 {
-    ASSERT(offset >= 0);
-
     if (offset && offset < run->length())
         return createVisiblePositionForBox(run, run->start() + offset, shouldAffinityBeDownstream);
 
