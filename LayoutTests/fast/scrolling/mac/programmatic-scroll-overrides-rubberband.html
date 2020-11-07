@@ -1,0 +1,90 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 3000px;
+            background-image: repeating-linear-gradient(white, silver 200px);
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        var windowScrollEventCount = 0;
+
+        async function resetScrollPositions()
+        {
+            windowScrollEventCount = 0;
+        }
+        
+        async function doMouseWheelScroll()
+        {
+            eventSender.mouseMoveTo(100, 100);
+
+            // Trigger rubberbanding at the top.
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none', true);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'changed', 'none', true);
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -5, 'changed', 'none', true);
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 5, 'changed', 'none', true);
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 10, 'changed', 'none', true);
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 10, 'changed', 'none', true);
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none', true);
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 10, 'none', 'begin', true);
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 10, 'none', 'continue', true);
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end', true);
+
+            await UIHelper.renderingUpdate();
+        }
+        
+        async function scrollTest()
+        {
+            debug('');
+            debug('Test that rubberbanding is canceled when the page does a programmatic scroll');
+            await resetScrollPositions();
+            await doMouseWheelScroll();
+            
+            debug('Waiting for rubberband...');
+            await UIHelper.waitForCondition(() => {
+                if (window.scrollY != 0) {
+                    window.scrollTo(0, 1000);
+                    return true;
+                }
+                return false;
+            });
+            
+            // Wait for a rendering update with no scroll events firing to detect stabilization.
+            while (true) {
+                let currentScrollEventCount = windowScrollEventCount;
+                await UIHelper.renderingUpdate();
+                if (windowScrollEventCount == currentScrollEventCount)
+                    break;
+            }
+
+            shouldBe('window.scrollY', '1000');
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            window.addEventListener('scroll', () => {
+                ++windowScrollEventCount;
+            }, false);
+
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

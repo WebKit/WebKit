@@ -1,3 +1,13 @@
+2020-11-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Programmatic scrolls need updated scrolling geometry
+        https://bugs.webkit.org/show_bug.cgi?id=218676
+
+        Reviewed by Tim Horton.
+
+        * fast/scrolling/mac/programmatic-scroll-overrides-rubberband-expected.txt: Added.
+        * fast/scrolling/mac/programmatic-scroll-overrides-rubberband.html: Added.
+
 2020-11-06  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for LayoutTests/accessibility/Mac/accesskey.html in isolated tree mode.

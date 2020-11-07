@@ -265,6 +265,8 @@ bool AsyncScrollingCoordinator::requestScrollPositionUpdate(ScrollableArea& scro
     if (!coordinatesScrollingForFrameView(*frameView))
         return false;
 
+    setScrollingNodeScrollableAreaGeometry(scrollingNodeID, scrollableArea);
+
     bool inBackForwardCache = frameView->frame().document()->backForwardCacheState() != Document::NotInBackForwardCache;
     bool inProgrammaticScroll = scrollableArea.currentScrollType() == ScrollType::Programmatic;
     if (inProgrammaticScroll || inBackForwardCache)
@@ -287,7 +289,9 @@ bool AsyncScrollingCoordinator::requestScrollPositionUpdate(ScrollableArea& scro
         m_page->wheelEventTestMonitor()->deferForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(scrollingNodeID), WheelEventTestMonitor::RequestedScrollPosition);
     }
 #endif
+
     stateNode->setRequestedScrollData({ scrollPosition, scrollType, clamping });
+    commitTreeStateIfNeeded();
     return true;
 }
 
