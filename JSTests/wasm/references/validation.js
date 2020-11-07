@@ -19,7 +19,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: ref.is_null to type I32 expected Anyref, in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')");
+    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: ref.is_null to type I32 expected Externref, in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')");
 }
 
 {
@@ -57,7 +57,7 @@ import Builder from '../Builder.js';
           .Function("j")
       .End()
       .Code()
-        .Function("j", { params: ["anyref"], ret: "void" })
+        .Function("j", { params: ["externref"], ret: "void" })
             .I32Const(0)
             .GetLocal(0)
             .TableSet(0)
@@ -67,14 +67,14 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: table.set value to type Anyref expected Funcref, in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')");
+    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: table.set value to type Externref expected Funcref, in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')");
 }
 
 {
     const builder = (new Builder())
       .Type().End()
       .Import()
-            .Table("imp", "tbl", {initial: 2, element: "anyref"})
+            .Table("imp", "tbl", {initial: 2, element: "externref"})
       .End()
       .Function().End()
       .Export()
@@ -90,9 +90,9 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Anyref is not a subtype of Funcref, in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')");
+    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Externref is not a subtype of Funcref, in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')");
 }
 
 {
-    assert.throws(() => new WebAssembly.Table({initial:2, element:"i32"}), TypeError, "WebAssembly.Table expects its 'element' field to be the string 'funcref' or 'anyref'");
+    assert.throws(() => new WebAssembly.Table({initial:2, element:"i32"}), TypeError, "WebAssembly.Table expects its 'element' field to be the string 'funcref' or 'externref'");
 }

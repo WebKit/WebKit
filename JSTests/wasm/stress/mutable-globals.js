@@ -12,7 +12,7 @@ import * as assert from '../assert.js'
             .I64(0, "mutable")
             .F32(0, "mutable")
             .F64(0, "mutable")
-            .RefNull("anyref", "mutable")
+            .RefNull("externref", "mutable")
             .RefNull("funcref", "mutable")
         .End()
         .Export()
@@ -20,7 +20,7 @@ import * as assert from '../assert.js'
             .Global("i64", 1)
             .Global("f32", 2)
             .Global("f64", 3)
-            .Global("anyref", 4)
+            .Global("externref", 4)
             .Global("funcref", 5)
             .Function("getI32")
             .Function("setI32")
@@ -30,8 +30,8 @@ import * as assert from '../assert.js'
             .Function("setF32")
             .Function("getF64")
             .Function("setF64")
-            .Function("getAnyref")
-            .Function("setAnyref")
+            .Function("getExternref")
+            .Function("setExternref")
             .Function("getFuncref")
             .Function("setFuncref")
         .End()
@@ -74,11 +74,11 @@ import * as assert from '../assert.js'
                 .SetGlobal(3)
                 .Return()
             .End()
-            .Function("getAnyref", { params: [], ret: "anyref" }, [])
+            .Function("getExternref", { params: [], ret: "externref" }, [])
                 .GetGlobal(4)
                 .Return()
             .End()
-            .Function("setAnyref", { params: ["anyref"], ret: "void" }, [])
+            .Function("setExternref", { params: ["externref"], ret: "void" }, [])
                 .GetLocal(0)
                 .SetGlobal(4)
                 .Return()
@@ -145,9 +145,9 @@ import * as assert from '../assert.js'
             instance.exports.setI32AsI64(0);
         }
         {
-            let binding = instance.exports.anyref;
+            let binding = instance.exports.externref;
             assert.eq(binding.value, null);
-            assert.eq(instance.exports.getAnyref(), null);
+            assert.eq(instance.exports.getExternref(), null);
 
             let list = [
                 undefined,
@@ -163,11 +163,11 @@ import * as assert from '../assert.js'
             for (let value of list) {
                 binding.value = value;
                 assert.eq(binding.value, value);
-                assert.eq(instance.exports.getAnyref(), value);
-                instance.exports.setAnyref(null);
-                assert.eq(instance.exports.getAnyref(), null);
-                instance.exports.setAnyref(value);
-                assert.eq(instance.exports.getAnyref(), value);
+                assert.eq(instance.exports.getExternref(), value);
+                instance.exports.setExternref(null);
+                assert.eq(instance.exports.getExternref(), null);
+                instance.exports.setExternref(value);
+                assert.eq(instance.exports.getExternref(), value);
             }
             binding.value = null;
         }

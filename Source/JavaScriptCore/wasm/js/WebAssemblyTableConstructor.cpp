@@ -72,10 +72,10 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         if (elementString == "funcref" || elementString == "anyfunc")
             type = Wasm::TableElementType::Funcref;
-        else if (elementString == "anyref")
-            type = Wasm::TableElementType::Anyref;
+        else if (elementString == "externref")
+            type = Wasm::TableElementType::Externref;
         else
-            return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Table expects its 'element' field to be the string 'funcref' or 'anyref'"_s)));
+            return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Table expects its 'element' field to be the string 'funcref' or 'externref'"_s)));
     }
 
     Identifier initialIdent = Identifier::fromString(vm, "initial");

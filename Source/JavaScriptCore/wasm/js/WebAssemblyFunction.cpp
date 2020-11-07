@@ -88,7 +88,7 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
                 return JSValue::encode(throwException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function")));
             break;
         }
-        case Wasm::Anyref:
+        case Wasm::Externref:
             break;
         case Wasm::I64:
             arg = JSValue();
@@ -287,7 +287,7 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
             isNull.link(&jit);
             FALLTHROUGH;
         }
-        case Wasm::Anyref: {
+        case Wasm::Externref: {
             if (isStack) {
                 jit.load64(jsParam, scratchGPR);
                 jit.store64(scratchGPR, calleeFrame.withOffset(wasmCallInfo.params[i].offsetFromSP()));

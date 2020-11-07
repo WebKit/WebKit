@@ -97,7 +97,7 @@ JSValue JSWebAssemblyTable::get(uint32_t index)
 void JSWebAssemblyTable::set(uint32_t index, JSValue value)
 {
     RELEASE_ASSERT(index < length());
-    RELEASE_ASSERT(m_table->isAnyrefTable());
+    RELEASE_ASSERT(m_table->isExternrefTable());
     m_table->set(index, value);
 }
 

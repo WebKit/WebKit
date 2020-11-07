@@ -72,7 +72,7 @@ RefPtr<Table> Table::tryCreate(uint32_t initial, Optional<uint32_t> maximum, Tab
     switch (type) {
     case TableElementType::Funcref:
         return adoptRef(new FuncRefTable(initial, maximum));
-    case TableElementType::Anyref:
+    case TableElementType::Externref:
         return adoptRef(new Table(initial, maximum));
     }
 
@@ -145,7 +145,7 @@ void Table::clear(uint32_t index)
 void Table::set(uint32_t index, JSValue value)
 {
     RELEASE_ASSERT(index < length());
-    RELEASE_ASSERT(isAnyrefTable());
+    RELEASE_ASSERT(isExternrefTable());
     RELEASE_ASSERT(m_owner);
     clear(index);
     m_jsValues.get()[index & m_mask].set(m_owner->vm(), m_owner, value);

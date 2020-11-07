@@ -379,7 +379,7 @@ private:
 
     TypedTmp g32() { return { newTmp(B3::GP), Type::I32 }; }
     TypedTmp g64() { return { newTmp(B3::GP), Type::I64 }; }
-    TypedTmp gAnyref() { return { newTmp(B3::GP), Type::Anyref }; }
+    TypedTmp gExternref() { return { newTmp(B3::GP), Type::Externref }; }
     TypedTmp gFuncref() { return { newTmp(B3::GP), Type::Funcref }; }
     TypedTmp f32() { return { newTmp(B3::FP), Type::F32 }; }
     TypedTmp f64() { return { newTmp(B3::FP), Type::F64 }; }
@@ -393,8 +393,8 @@ private:
             return g64();
         case Type::Funcref:
             return gFuncref();
-        case Type::Anyref:
-            return gAnyref();
+        case Type::Externref:
+            return gExternref();
         case Type::F32:
             return f32();
         case Type::F64:
@@ -567,7 +567,7 @@ private:
                 resultType = B3::Int32;
                 break;
             case Type::I64:
-            case Type::Anyref:
+            case Type::Externref:
             case Type::Funcref:
                 resultType = B3::Int64;
                 break;
@@ -616,7 +616,7 @@ private:
         case Type::I32:
             return Move32;
         case Type::I64:
-        case Type::Anyref:
+        case Type::Externref:
         case Type::Funcref:
             return Move;
         case Type::F32:
@@ -878,7 +878,7 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
             append(Move32, arg, m_locals[i]);
             break;
         case Type::I64:
-        case Type::Anyref:
+        case Type::Externref:
         case Type::Funcref:
             append(Move, arg, m_locals[i]);
             break;
@@ -981,7 +981,7 @@ auto AirIRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
         auto local = tmpForType(type);
         m_locals.uncheckedAppend(local);
         switch (type) {
-        case Type::Anyref:
+        case Type::Externref:
         case Type::Funcref:
             append(Move, Arg::imm(JSValue::encode(jsNull())), local);
             break;
@@ -1016,7 +1016,7 @@ auto AirIRGenerator::addConstant(BasicBlock* block, Type type, uint64_t value) -
     switch (type) {
     case Type::I32:
     case Type::I64:
-    case Type::Anyref:
+    case Type::Externref:
     case Type::Funcref:
         append(block, Move, Arg::bigImm(value), result);
         break;
@@ -1262,7 +1262,7 @@ auto AirIRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialR
             append(Add64, temp2, temp, temp);
             append(moveOpForValueType(type), value, Arg::addr(temp));
         }
-        if (isSubtype(type, Anyref))
+        if (isSubtype(type, Externref))
             emitWriteBarrierForJSWrapper();
         break;
     case Wasm::GlobalInformation::BindingMode::Portable:
@@ -1277,7 +1277,7 @@ auto AirIRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialR
         }
         append(moveOpForValueType(type), value, Arg::addr(temp));
         // We emit a write-barrier onto JSWebAssemblyGlobal, not JSWebAssemblyInstance.
-        if (isSubtype(type, Anyref)) {
+        if (isSubtype(type, Externref)) {
             auto cell = g64();
             auto vm = g64();
             auto cellState = g32();

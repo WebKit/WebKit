@@ -539,7 +539,7 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, I
                     return;
                 }
                 FALLTHROUGH;
-            case Anyref:
+            case Externref:
                 unboxedValue = bitwise_cast<uint64_t>(value);
                 RELEASE_ASSERT(Options::useWebAssemblyReferences());
                 break;
@@ -659,7 +659,7 @@ static bool setWasmTableElement(Instance* instance, unsigned tableIndex, int32_t
         return false;
 
     JSValue value = JSValue::decode(encValue);
-    if (instance->table(tableIndex)->type() == Wasm::TableElementType::Anyref)
+    if (instance->table(tableIndex)->type() == Wasm::TableElementType::Externref)
         instance->table(tableIndex)->set(index, value);
     else if (instance->table(tableIndex)->type() == Wasm::TableElementType::Funcref) {
         WebAssemblyFunction* wasmFunction;

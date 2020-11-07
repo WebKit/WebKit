@@ -200,7 +200,7 @@ auto SectionParser::parseTableHelper(bool isImport) -> PartialResult
 
     int8_t type;
     WASM_PARSER_FAIL_IF(!parseInt7(type), "can't parse Table type");
-    WASM_PARSER_FAIL_IF(type != Wasm::Funcref && type != Wasm::Anyref, "Table type should be funcref or anyref, got ", type);
+    WASM_PARSER_FAIL_IF(type != Wasm::Funcref && type != Wasm::Externref, "Table type should be funcref or anyref, got ", type);
 
     uint32_t initial;
     Optional<uint32_t> maximum;
@@ -211,7 +211,7 @@ auto SectionParser::parseTableHelper(bool isImport) -> PartialResult
 
     ASSERT(!maximum || *maximum >= initial);
 
-    TableElementType tableType = type == Wasm::Funcref ? TableElementType::Funcref : TableElementType::Anyref;
+    TableElementType tableType = type == Wasm::Funcref ? TableElementType::Funcref : TableElementType::Externref;
     m_info->tables.append(TableInformation(initial, maximum, isImport, tableType));
 
     return { };

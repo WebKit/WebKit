@@ -99,7 +99,7 @@ let kWasmI64 = 0x7e;
 let kWasmF32 = 0x7d;
 let kWasmF64 = 0x7c;
 let kWasmS128 = 0x7b;
-let kWasmAnyRef = 0x6f;
+let kWasmExternRef = 0x6f;
 let kWasmAnyFunc = 0x70;
 let kWasmExnRef = 0x68;
 
@@ -149,16 +149,16 @@ let kSig_v_f = makeSig([kWasmF32], []);
 let kSig_f_f = makeSig([kWasmF32], [kWasmF32]);
 let kSig_f_d = makeSig([kWasmF64], [kWasmF32]);
 let kSig_d_d = makeSig([kWasmF64], [kWasmF64]);
-let kSig_r_r = makeSig([kWasmAnyRef], [kWasmAnyRef]);
+let kSig_r_r = makeSig([kWasmExternRef], [kWasmExternRef]);
 let kSig_a_a = makeSig([kWasmAnyFunc], [kWasmAnyFunc]);
 let kSig_e_e = makeSig([kWasmExnRef], [kWasmExnRef]);
-let kSig_i_r = makeSig([kWasmAnyRef], [kWasmI32]);
-let kSig_v_r = makeSig([kWasmAnyRef], []);
+let kSig_i_r = makeSig([kWasmExternRef], [kWasmI32]);
+let kSig_v_r = makeSig([kWasmExternRef], []);
 let kSig_v_a = makeSig([kWasmAnyFunc], []);
 let kSig_v_e = makeSig([kWasmExnRef], []);
-let kSig_v_rr = makeSig([kWasmAnyRef, kWasmAnyRef], []);
+let kSig_v_rr = makeSig([kWasmExternRef, kWasmExternRef], []);
 let kSig_v_aa = makeSig([kWasmAnyFunc, kWasmAnyFunc], []);
-let kSig_r_v = makeSig([], [kWasmAnyRef]);
+let kSig_r_v = makeSig([], [kWasmExternRef]);
 let kSig_a_v = makeSig([], [kWasmAnyFunc]);
 let kSig_a_i = makeSig([kWasmI32], [kWasmAnyFunc]);
 let kSig_e_v = makeSig([], [kWasmExnRef]);
@@ -748,9 +748,9 @@ class WasmModuleBuilder {
   }
 
   addTable(type, initial_size, max_size = undefined) {
-    if (type != kWasmAnyRef && type != kWasmAnyFunc && type != kWasmExnRef) {
+    if (type != kWasmExternRef && type != kWasmAnyFunc && type != kWasmExnRef) {
       throw new Error(
-          'Tables must be of type kWasmAnyRef, kWasmAnyFunc, or kWasmExnRef');
+          'Tables must be of type kWasmExternRef, kWasmAnyFunc, or kWasmExnRef');
     }
     let table = new WasmTableBuilder(this, type, initial_size, max_size);
     table.index = this.tables.length + this.num_imported_tables;
@@ -1027,7 +1027,7 @@ class WasmModuleBuilder {
               section.emit_bytes(f64_bytes_view);
               break;
             case kWasmAnyFunc:
-            case kWasmAnyRef:
+            case kWasmExternRef:
               if (global.function_index !== undefined) {
                 section.emit_u8(kExprRefFunc);
                 section.emit_u32v(global.function_index);
@@ -1173,8 +1173,8 @@ class WasmModuleBuilder {
             if (l.s128_count > 0) {
               local_decls.push({count: l.s128_count, type: kWasmS128});
             }
-            if (l.anyref_count > 0) {
-              local_decls.push({count: l.anyref_count, type: kWasmAnyRef});
+            if (l.externref_count > 0) {
+              local_decls.push({count: l.externref_count, type: kWasmExternRef});
             }
             if (l.anyfunc_count > 0) {
               local_decls.push({count: l.anyfunc_count, type: kWasmAnyFunc});

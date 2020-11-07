@@ -4,12 +4,12 @@ import Builder from '../Builder.js';
 
 {
     function makeImport() {
-        const tbl = new WebAssembly.Table({initial:2, element:"anyref"});
+        const tbl = new WebAssembly.Table({initial:2, element:"externref"});
 
         const $1 = new WebAssembly.Instance(new WebAssembly.Module((new Builder())
           .Type().End()
           .Import()
-                .Table("imp", "tbl", {initial: 2, element: "anyref"})
+                .Table("imp", "tbl", {initial: 2, element: "externref"})
           .End()
           .Function().End()
           .Export()
@@ -20,13 +20,13 @@ import Builder from '../Builder.js';
               .Table("tbl", 0)
           .End()
           .Code()
-            .Function("set_tbl", { params: ["anyref"], ret: "void" })
+            .Function("set_tbl", { params: ["externref"], ret: "void" })
               .I32Const(0)
               .GetLocal(0)
               .TableSet(0)
             .End()
 
-            .Function("get_tbl", { params: [], ret: "anyref" })
+            .Function("get_tbl", { params: [], ret: "externref" })
               .I32Const(0)
               .TableGet(0)
             .End()
@@ -75,7 +75,7 @@ import Builder from '../Builder.js';
         const $1 = new WebAssembly.Instance(new WebAssembly.Module((new Builder())
           .Type().End()
           .Import()
-                .Table("imp", "tbl", {initial: 2, element: "anyref"})
+                .Table("imp", "tbl", {initial: 2, element: "externref"})
           .End()
           .Function().End()
           .Export()
@@ -86,13 +86,13 @@ import Builder from '../Builder.js';
               .Table("tbl", 0)
           .End()
           .Code()
-            .Function("set_tbl", { params: ["anyref"], ret: "void" })
+            .Function("set_tbl", { params: ["externref"], ret: "void" })
               .I32Const(0)
               .GetLocal(0)
               .TableSet(0)
             .End()
 
-            .Function("get_tbl", { params: [], ret: "anyref" })
+            .Function("get_tbl", { params: [], ret: "externref" })
               .I32Const(0)
               .TableGet(0)
             .End()
@@ -106,7 +106,7 @@ import Builder from '../Builder.js';
                 .RefNull()
                 .Call(0)
             .End()
-          .End().WebAssembly().get()), { imp: { tbl: new WebAssembly.Table({initial:2, element:"anyref"}) }});
+          .End().WebAssembly().get()), { imp: { tbl: new WebAssembly.Table({initial:2, element:"externref"}) }});
         fullGC()
 
         $1.exports.tbl.set(0, { test: "test" });
@@ -114,7 +114,7 @@ import Builder from '../Builder.js';
         const $2 = new WebAssembly.Instance(new WebAssembly.Module((new Builder())
           .Type().End()
           .Import()
-                .Table("imp", "tbl", {initial: 2, element: "anyref"})
+                .Table("imp", "tbl", {initial: 2, element: "externref"})
           .End()
           .Function().End()
           .Export()
@@ -125,13 +125,13 @@ import Builder from '../Builder.js';
               .Table("tbl", 0)
           .End()
           .Code()
-            .Function("set_tbl", { params: ["anyref"], ret: "void" })
+            .Function("set_tbl", { params: ["externref"], ret: "void" })
               .I32Const(0)
               .GetLocal(0)
               .TableSet(0)
             .End()
 
-            .Function("get_tbl", { params: [], ret: "anyref" })
+            .Function("get_tbl", { params: [], ret: "externref" })
               .I32Const(0)
               .TableGet(0)
             .End()
@@ -177,7 +177,7 @@ import Builder from '../Builder.js';
 }
 
 {
-    let tbl = new WebAssembly.Table({initial:1, element:"anyref"});
+    let tbl = new WebAssembly.Table({initial:1, element:"externref"});
 
     function doSet(i, v) {
         tbl.set(i, { test: v });
@@ -194,7 +194,7 @@ import Builder from '../Builder.js';
 
     for (let iter=0; iter<5; ++iter) {
         for (let k=0; k<100; ++k)
-            tbl = new WebAssembly.Table({initial:100, element:"anyref"})
+            tbl = new WebAssembly.Table({initial:100, element:"externref"})
 
         for (let i=1; i<20; ++i) {
             const len = tbl.length;
@@ -216,7 +216,7 @@ import Builder from '../Builder.js';
     const mod = new WebAssembly.Module((new Builder())
       .Type().End()
       .Import()
-            .Table("imp", "tbl", {initial: 2, element: "anyref"})
+            .Table("imp", "tbl", {initial: 2, element: "externref"})
       .End()
       .Function().End()
       .Export()
@@ -233,7 +233,7 @@ import Builder from '../Builder.js';
     const mod = new WebAssembly.Module((new Builder())
       .Type().End()
       .Import()
-            .Table("imp", "tbl", {initial: 2, element: "anyref"})
+            .Table("imp", "tbl", {initial: 2, element: "externref"})
       .End()
       .Function().End()
       .Export()

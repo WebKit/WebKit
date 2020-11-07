@@ -276,7 +276,7 @@ private:
             m_jsNullConstant = VirtualRegister(FirstConstantRegisterIndex + m_codeBlock->m_constants.size());
             m_codeBlock->m_constants.append(JSValue::encode(jsNull()));
             if (UNLIKELY(Options::dumpGeneratedWasmBytecodes()))
-                m_codeBlock->m_constantTypes.append(Type::Anyref);
+                m_codeBlock->m_constantTypes.append(Type::Externref);
         }
         return m_jsNullConstant;
     }
@@ -518,7 +518,7 @@ auto LLIntGenerator::callInformationForCaller(const Signature& signature) -> LLI
         switch (type) {
         case Type::I32:
         case Type::I64:
-        case Type::Anyref:
+        case Type::Externref:
         case Type::Funcref:
             if (gprIndex < gprCount)
                 ++gprIndex;
@@ -573,7 +573,7 @@ auto LLIntGenerator::callInformationForCaller(const Signature& signature) -> LLI
         switch (signature.argument(i)) {
         case Type::I32:
         case Type::I64:
-        case Type::Anyref:
+        case Type::Externref:
         case Type::Funcref:
             if (gprIndex > gprLimit)
                 arguments[i] = virtualRegisterForLocal(--gprIndex);
@@ -600,7 +600,7 @@ auto LLIntGenerator::callInformationForCaller(const Signature& signature) -> LLI
         switch (signature.returnType(i)) {
         case Type::I32:
         case Type::I64:
-        case Type::Anyref:
+        case Type::Externref:
         case Type::Funcref:
             if (gprIndex > gprLimit)
                 temporaryResults[i] = virtualRegisterForLocal(--gprIndex);
@@ -655,7 +655,7 @@ auto LLIntGenerator::callInformationForCallee(const Signature& signature) -> Vec
         switch (signature.returnType(i)) {
         case Type::I32:
         case Type::I64:
-        case Type::Anyref:
+        case Type::Externref:
         case Type::Funcref:
             if (gprIndex < maxGPRIndex)
                 m_results.append(virtualRegisterForLocal(numberOfLLIntCalleeSaveRegisters + gprIndex++));
@@ -709,7 +709,7 @@ auto LLIntGenerator::addArguments(const Signature& signature) -> PartialResult
         switch (signature.argument(i)) {
         case Type::I32:
         case Type::I64:
-        case Type::Anyref:
+        case Type::Externref:
         case Type::Funcref:
             addArgument(i, gprIndex, maxGPRIndex);
             break;
@@ -734,7 +734,7 @@ auto LLIntGenerator::addLocal(Type type, uint32_t count) -> PartialResult
 
     m_codeBlock->m_numVars += count;
     switch (type) {
-    case Type::Anyref:
+    case Type::Externref:
     case Type::Funcref:
         while (count--)
             m_unitializedLocals.append(push(NoConsistencyCheck));
@@ -826,13 +826,13 @@ auto LLIntGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialR
     Type type = global.type;
     switch (global.bindingMode) {
     case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance:
-        if (isSubtype(type, Anyref))
+        if (isSubtype(type, Externref))
             WasmSetGlobalRef::emit(this, index, value);
         else
             WasmSetGlobal::emit(this, index, value);
         break;
     case Wasm::GlobalInformation::BindingMode::Portable:
-        if (isSubtype(type, Anyref))
+        if (isSubtype(type, Externref))
             WasmSetGlobalRefPortableBinding::emit(this, index, value);
         else
             WasmSetGlobalPortableBinding::emit(this, index, value);

@@ -182,13 +182,13 @@ const WASM_JSON = `
         "f32":     { "type": "varint7", "value":  -3, "b3type": "B3::Float" },
         "f64":     { "type": "varint7", "value":  -4, "b3type": "B3::Double" },
         "funcref": { "type": "varint7", "value": -16, "b3type": "B3::Int64" },
-        "anyref":  { "type": "varint7", "value": -17, "b3type": "B3::Int64" },
+        "externref":  { "type": "varint7", "value": -17, "b3type": "B3::Int64" },
         "func":    { "type": "varint7", "value": -32, "b3type": "B3::Void" },
         "void":    { "type": "varint7", "value": -64, "b3type": "B3::Void" }
     },
-    "value_type": ["i32", "i64", "f32", "f64", "anyref", "funcref"],
-    "block_type": ["i32", "i64", "f32", "f64", "void", "anyref", "funcref"],
-    "elem_type": ["funcref","anyref"],
+    "value_type": ["i32", "i64", "f32", "f64", "externref", "funcref"],
+    "block_type": ["i32", "i64", "f32", "f64", "void", "externref", "funcref"],
+    "elem_type": ["funcref","externref"],
     "external_kind": {
         "Function": { "type": "uint8", "value": 0 },
         "Table":    { "type": "uint8", "value": 1 },
@@ -230,18 +230,18 @@ const WASM_JSON = `
         "f64.const":           { "category": "special",    "value":  68, "return": ["f64"],      "parameter": [],                       "immediate": [{"name": "value",          "type": "double"}],                                               "description": "a constant value interpreted as f64" },
         "f32.const":           { "category": "special",    "value":  67, "return": ["f32"],      "parameter": [],                       "immediate": [{"name": "value",          "type": "float"}],                                                "description": "a constant value interpreted as f32" },
         "ref.null":            { "category": "special",    "value": 208, "return": ["funcref"],  "parameter": [],                       "immediate": [],                                                                                           "description": "a constant null reference" },
-        "ref.is_null":         { "category": "special",    "value": 209, "return": ["i32"],      "parameter": ["anyref"],               "immediate": [],                                                                                           "description": "determine if a reference is null" },
+        "ref.is_null":         { "category": "special",    "value": 209, "return": ["i32"],      "parameter": ["externref"],               "immediate": [],                                                                                           "description": "determine if a reference is null" },
         "ref.func":            { "category": "special",    "value": 210, "return": ["funcref"],  "parameter": [],                       "immediate": [{"name": "function_index",  "type": "varuint32"}],                                           "description": "return a reference to the function at the given index" },
         "get_local":           { "category": "special",    "value":  32, "return": ["any"],      "parameter": [],                       "immediate": [{"name": "local_index",    "type": "varuint32"}],                                            "description": "read a local variable or parameter" },
         "set_local":           { "category": "special",    "value":  33, "return": [],           "parameter": ["any"],                  "immediate": [{"name": "local_index",    "type": "varuint32"}],                                            "description": "write a local variable or parameter" },
         "tee_local":           { "category": "special",    "value":  34, "return": ["any"],      "parameter": ["any"],                  "immediate": [{"name": "local_index",    "type": "varuint32"}],                                            "description": "write a local variable or parameter and return the same value" },
         "get_global":          { "category": "special",    "value":  35, "return": ["any"],      "parameter": [],                       "immediate": [{"name": "global_index",   "type": "varuint32"}],                                            "description": "read a global variable" },
         "set_global":          { "category": "special",    "value":  36, "return": [],           "parameter": ["any"],                  "immediate": [{"name": "global_index",   "type": "varuint32"}],                                            "description": "write a global variable" },
-        "table.get":           { "category": "special",    "value":  37, "return": ["anyref"],   "parameter": ["i32"],                  "immediate": [{"name": "table_index",    "type": "varuint32"}],                                            "description": "get a table value" },
-        "table.set":           { "category": "special",    "value":  38, "return": [],           "parameter": ["i32", "anyref"],        "immediate": [{"name": "table_index",    "type": "varuint32"}],                                            "description": "set a table value" },
+        "table.get":           { "category": "special",    "value":  37, "return": ["externref"],   "parameter": ["i32"],                  "immediate": [{"name": "table_index",    "type": "varuint32"}],                                            "description": "get a table value" },
+        "table.set":           { "category": "special",    "value":  38, "return": [],           "parameter": ["i32", "externref"],        "immediate": [{"name": "table_index",    "type": "varuint32"}],                                            "description": "set a table value" },
         "table.size":          { "category": "exttable",   "value":  252, "return": ["i32"],     "parameter": [],                       "immediate": [{"name": "global_index",   "type": "varuint32"}],                                            "description": "get the size of a table", "extendedOp": 15 },
-        "table.grow":          { "category": "exttable",   "value":  252, "return": ["i32"],     "parameter": ["anyref", "i32"],        "immediate": [{"name": "global_index",   "type": "varuint32"}],                                            "description": "grow a table by the given delta and return the previous size, or -1 if enough space cannot be allocated", "extendedOp": 16 },
-        "table.fill":          { "category": "exttable",   "value":  252, "return": ["i32"],     "parameter": ["i32", "anyref", "i32"], "immediate": [{"name": "global_index",   "type": "varuint32"}],                                            "description": "fill entries [i,i+n) with the given value", "extendedOp": 17 },
+        "table.grow":          { "category": "exttable",   "value":  252, "return": ["i32"],     "parameter": ["externref", "i32"],        "immediate": [{"name": "global_index",   "type": "varuint32"}],                                            "description": "grow a table by the given delta and return the previous size, or -1 if enough space cannot be allocated", "extendedOp": 16 },
+        "table.fill":          { "category": "exttable",   "value":  252, "return": ["i32"],     "parameter": ["i32", "externref", "i32"], "immediate": [{"name": "global_index",   "type": "varuint32"}],                                            "description": "fill entries [i,i+n) with the given value", "extendedOp": 17 },
         "call":                { "category": "call",       "value":  16, "return": ["call"],     "parameter": ["call"],                 "immediate": [{"name": "function_index", "type": "varuint32"}],                                            "description": "call a function by its index" },
         "call_indirect":       { "category": "call",       "value":  17, "return": ["call"],     "parameter": ["call"],                 "immediate": [{"name": "type_index",     "type": "varuint32"}, {"name": "table_index","type": "varuint32"}],"description": "call a function indirect with an expected signature" },
         "i32.load8_s":         { "category": "memory",     "value":  44, "return": ["i32"],      "parameter": ["addr"],                 "immediate": [{"name": "flags",          "type": "varuint32"}, {"name": "offset",   "type": "varuint32"}], "description": "load from memory" },
@@ -1072,7 +1072,7 @@ const _isValidValue = (value, type) => {
     switch (type) {
     // We allow both signed and unsigned numbers.
     case "i32": return Math.round(value) === value && LLB.varint32Min <= value && value <= LLB.varuint32Max;
-    case "anyref": return true;
+    case "externref": return true;
     case "i64": return true; // FIXME https://bugs.webkit.org/show_bug.cgi?id=163420 64-bit values
     case "f32": return typeof(value) === "number" && isFinite(value);
     case "f64": return typeof(value) === "number" && isFinite(value);
@@ -1844,8 +1844,8 @@ function runTest() {
           .Type().End()
           .Function().End()
           .Table()
-                .Table({initial: 0, maximum: 0, element: "anyref"})
-                .Table({initial: 20, maximum: 30, element: "anyref"})
+                .Table({initial: 0, maximum: 0, element: "externref"})
+                .Table({initial: 20, maximum: 30, element: "externref"})
           .End()
           .Export()
               .Function("tbl_size")
@@ -1863,7 +1863,7 @@ function runTest() {
                 .GetLocal(0)
                 .TableGrow(1)
             .End()
-            .Function("tbl_fill", { params: ["i32", "anyref", "i32"], ret: "void" })
+            .Function("tbl_fill", { params: ["i32", "externref", "i32"], ret: "void" })
                 .GetLocal(0)
                 .GetLocal(1)
                 .GetLocal(2)

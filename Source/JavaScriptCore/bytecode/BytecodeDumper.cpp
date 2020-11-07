@@ -388,7 +388,7 @@ CString BytecodeDumper::formatConstant(Type type, uint64_t constant) const
     case Type::F64:
         return toCString(bitwise_cast<double>(constant));
         break;
-    case Type::Anyref:
+    case Type::Externref:
     case Type::Funcref:
         if (JSValue::decode(constant) == jsNull())
             return "null";

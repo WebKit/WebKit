@@ -131,7 +131,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             case Func:
             case I64:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
-            case Anyref:
+            case Externref:
             case Funcref:
             case I32: {
                 GPRReg gprReg;
@@ -203,7 +203,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             case Func:
             case I64:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
-            case Anyref:
+            case Externref:
             case Funcref:
             case I32:
                 // Skipped: handled above.
@@ -311,7 +311,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             break;
         }
         case Funcref:
-        case Anyref:
+        case Externref:
             jit.move(GPRInfo::returnValueGPR, wasmCallInfo.results[0].gpr());
             break;
         case F32: {

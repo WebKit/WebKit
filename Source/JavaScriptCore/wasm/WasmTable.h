@@ -66,7 +66,7 @@ public:
     }
 
     TableElementType type() const { return m_type; }
-    bool isAnyrefTable() const { return m_type == TableElementType::Anyref; }
+    bool isExternrefTable() const { return m_type == TableElementType::Externref; }
     FuncRefTable* asFuncrefTable();
 
     static bool isValidLength(uint32_t length) { return length < maxTableEntries; }
@@ -80,7 +80,7 @@ public:
     void visitAggregate(SlotVisitor&);
 
 protected:
-    Table(uint32_t initial, Optional<uint32_t> maximum, TableElementType = TableElementType::Anyref);
+    Table(uint32_t initial, Optional<uint32_t> maximum, TableElementType = TableElementType::Externref);
 
     void setLength(uint32_t);
 

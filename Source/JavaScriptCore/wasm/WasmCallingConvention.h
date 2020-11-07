@@ -114,7 +114,7 @@ private:
         case I32:
         case I64:
         case Funcref:
-        case Anyref:
+        case Externref:
             return marshallLocationImpl(role, gprArgs, gpArgumentCount, stackOffset);
         case F32:
         case F64:
@@ -202,7 +202,7 @@ private:
         case I32:
         case I64:
         case Funcref:
-        case Anyref:
+        case Externref:
             return marshallLocationImpl(role, gprArgs, gpArgumentCount, stackOffset);
         case F32:
         case F64:

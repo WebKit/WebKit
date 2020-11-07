@@ -62,7 +62,7 @@ Instance::Instance(Context* context, Ref<Module>&& module, EntryFrame** pointerT
         if (global.bindingMode == Wasm::GlobalInformation::BindingMode::Portable) {
             // This is kept alive by JSWebAssemblyInstance -> JSWebAssemblyGlobal -> binding.
             m_globalsToBinding.set(i);
-        } else if (isSubtype(global.type, Anyref)) {
+        } else if (isSubtype(global.type, Externref)) {
             // This is kept alive by JSWebAssemblyInstance -> binding.
             m_globalsToMark.set(i);
         }
@@ -89,11 +89,11 @@ void Instance::setGlobal(unsigned i, JSValue value)
         Wasm::Global* global = getGlobalBinding(i);
         if (!global)
             return;
-        global->valuePointer()->m_anyref.set(owner<JSWebAssemblyInstance>()->vm(), global->owner<JSWebAssemblyGlobal>(), value);
+        global->valuePointer()->m_externref.set(owner<JSWebAssemblyInstance>()->vm(), global->owner<JSWebAssemblyGlobal>(), value);
         return;
     }
     ASSERT(m_owner);
-    slot->m_anyref.set(owner<JSWebAssemblyInstance>()->vm(), owner<JSWebAssemblyInstance>(), value);
+    slot->m_externref.set(owner<JSWebAssemblyInstance>()->vm(), owner<JSWebAssemblyInstance>(), value);
 }
 
 JSValue Instance::getFunctionWrapper(unsigned i) const

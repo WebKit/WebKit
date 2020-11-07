@@ -242,7 +242,7 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
                             return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a wasm exported function or null")));
                         m_instance->instance().setGlobal(import.kindIndex, value);
                         break;
-                    case Wasm::Anyref:
+                    case Wasm::Externref:
                         value = globalValue->global()->get();
                         m_instance->instance().setGlobal(import.kindIndex, value);
                         break;
@@ -259,7 +259,7 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
                     // ii. If the global_type of i is i64 or Type(v) is not Number, throw a WebAssembly.LinkError.
                     if (moduleInformation.globals[import.kindIndex].type == Wasm::I64)
                         return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "cannot be an i64")));
-                    if (!isSubtype(moduleInformation.globals[import.kindIndex].type, Wasm::Anyref) && !value.isNumber())
+                    if (!isSubtype(moduleInformation.globals[import.kindIndex].type, Wasm::Externref) && !value.isNumber())
                         return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a number")));
 
                     // iii. Append ToWebAssemblyValue(v) to imports.
@@ -269,7 +269,7 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
                             return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a wasm exported function or null")));
                         m_instance->instance().setGlobal(import.kindIndex, value);
                         break;
-                    case Wasm::Anyref:
+                    case Wasm::Externref:
                         m_instance->instance().setGlobal(import.kindIndex, value);
                         break;
                     case Wasm::I32:
@@ -461,7 +461,7 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
         case Wasm::ExternalKind::Global: {
             const Wasm::GlobalInformation& global = moduleInformation.globals[exp.kindIndex];
             switch (global.type) {
-            case Wasm::Anyref:
+            case Wasm::Externref:
             case Wasm::Funcref:
             case Wasm::I32:
             case Wasm::I64:

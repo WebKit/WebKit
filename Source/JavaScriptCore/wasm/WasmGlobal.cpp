@@ -44,9 +44,9 @@ JSValue Global::get() const
         return jsNumber(purifyNaN(static_cast<double>(bitwise_cast<float>(static_cast<uint32_t>(m_value.m_primitive)))));
     case Wasm::Type::F64:
         return jsNumber(purifyNaN(bitwise_cast<double>(m_value.m_primitive)));
-    case Wasm::Anyref:
+    case Wasm::Externref:
     case Wasm::Funcref:
-        return m_value.m_anyref.get();
+        return m_value.m_externref.get();
     default:
         return jsUndefined();
     }
@@ -76,9 +76,9 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
         m_value.m_primitive = bitwise_cast<uint64_t>(value);
         break;
     }
-    case Wasm::Anyref: {
+    case Wasm::Externref: {
         RELEASE_ASSERT(m_owner);
-        m_value.m_anyref.set(m_owner->vm(), m_owner, argument);
+        m_value.m_externref.set(m_owner->vm(), m_owner, argument);
         break;
     }
     case Wasm::Funcref: {
@@ -87,7 +87,7 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
             throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"));
             return;
         }
-        m_value.m_anyref.set(m_owner->vm(), m_owner, argument);
+        m_value.m_externref.set(m_owner->vm(), m_owner, argument);
         break;
     }
     default:
@@ -98,10 +98,10 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
 void Global::visitAggregate(SlotVisitor& visitor)
 {
     switch (m_type) {
-    case Wasm::Type::Anyref:
+    case Wasm::Type::Externref:
     case Wasm::Type::Funcref: {
         RELEASE_ASSERT(m_owner);
-        visitor.append(m_value.m_anyref);
+        visitor.append(m_value.m_externref);
         break;
     }
     default:

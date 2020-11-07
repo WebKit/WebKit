@@ -43,7 +43,7 @@ class Global final : public ThreadSafeRefCounted<Global> {
 public:
     union Value {
         uint64_t m_primitive;
-        WriteBarrierBase<Unknown> m_anyref;
+        WriteBarrierBase<Unknown> m_externref;
         Value* m_pointer;
     };
 

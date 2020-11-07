@@ -12,7 +12,7 @@ import * as assert from '../assert.js'
             .I64(0, "immutable")
             .F32(0, "immutable")
             .F64(0, "immutable")
-            .RefNull("anyref", "immutable")
+            .RefNull("externref", "immutable")
             .RefNull("funcref", "immutable")
         .End()
         .Export()
@@ -20,13 +20,13 @@ import * as assert from '../assert.js'
             .Global("i64", 1)
             .Global("f32", 2)
             .Global("f64", 3)
-            .Global("anyref", 4)
+            .Global("externref", 4)
             .Global("funcref", 5)
             .Function("getI32")
             .Function("getI64AsI32")
             .Function("getF32")
             .Function("getF64")
-            .Function("getAnyref")
+            .Function("getExternref")
             .Function("getFuncref")
         .End()
         .Code()
@@ -47,7 +47,7 @@ import * as assert from '../assert.js'
                 .GetGlobal(3)
                 .Return()
             .End()
-            .Function("getAnyref", { params: [], ret: "anyref" }, [])
+            .Function("getExternref", { params: [], ret: "externref" }, [])
                 .GetGlobal(4)
                 .Return()
             .End()
@@ -93,9 +93,9 @@ import * as assert from '../assert.js'
             assert.eq(instance.exports.getI64AsI32(), 0);
         }
         {
-            let binding = instance.exports.anyref;
+            let binding = instance.exports.externref;
             assert.eq(binding.value, null);
-            assert.eq(instance.exports.getAnyref(), null);
+            assert.eq(instance.exports.getExternref(), null);
 
             let list = [
                 undefined,

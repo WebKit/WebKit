@@ -57,7 +57,7 @@ struct ModuleInformation;
 using BlockSignature = const Signature*;
 
 enum class TableElementType : uint8_t {
-    Anyref,
+    Externref,
     Funcref
 };
 
@@ -69,7 +69,7 @@ inline bool isValueType(Type type)
     case F32:
     case F64:
         return true;
-    case Anyref:
+    case Externref:
     case Funcref:
         return Options::useWebAssemblyReferences();
     default:
@@ -82,7 +82,7 @@ inline bool isSubtype(Type sub, Type parent)
 {
     if (sub == parent)
         return true;
-    return sub == Funcref && parent == Anyref;
+    return sub == Funcref && parent == Externref;
 }
     
 enum class ExternalKind : uint8_t {
@@ -261,7 +261,7 @@ public:
     uint32_t initial() const { return m_initial; }
     Optional<uint32_t> maximum() const { return m_maximum; }
     TableElementType type() const { return m_type; }
-    Wasm::Type wasmType() const { return m_type == TableElementType::Funcref ? Type::Funcref : Type::Anyref; }
+    Wasm::Type wasmType() const { return m_type == TableElementType::Funcref ? Type::Funcref : Type::Externref; }
 
 private:
     uint32_t m_initial;

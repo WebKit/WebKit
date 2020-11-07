@@ -44,7 +44,7 @@ inline void boxWasmResult(CCallHelpers& jit, Wasm::Type type, Reg src, JSValueRe
     case Wasm::Void:
         jit.moveTrustedValue(jsUndefined(), dst);
         break;
-    case Wasm::Anyref:
+    case Wasm::Externref:
     case Wasm::Funcref:
         jit.move(src.gpr(), dst.payloadGPR());
         break;

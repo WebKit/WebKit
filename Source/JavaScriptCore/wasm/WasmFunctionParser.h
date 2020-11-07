@@ -437,7 +437,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_VALIDATOR_FAIL_IF(I32 != index.type(), "table.set index to type ", index.type(), " expected ", I32);
         Type type = m_info.tables[tableIndex].wasmType();
         WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), type), "table.set value to type ", value.type(), " expected ", type);
-        RELEASE_ASSERT(m_info.tables[tableIndex].type() == TableElementType::Anyref || m_info.tables[tableIndex].type() == TableElementType::Funcref);
+        RELEASE_ASSERT(m_info.tables[tableIndex].type() == TableElementType::Externref || m_info.tables[tableIndex].type() == TableElementType::Funcref);
         WASM_TRY_ADD_TO_CONTEXT(addTableSet(tableIndex, index, value));
         return { };
     }
@@ -501,7 +501,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
         TypedExpression value;
         WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "ref.is_null");
-        WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), Anyref), "ref.is_null to type ", value.type(), " expected ", Anyref);
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), Externref), "ref.is_null to type ", value.type(), " expected ", Externref);
         ExpressionType result;
         WASM_TRY_ADD_TO_CONTEXT(addRefIsNull(value, result));
         m_expressionStack.constructAndAppend(I32, result);

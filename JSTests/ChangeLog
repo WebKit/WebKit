@@ -1,3 +1,39 @@
+2020-11-06  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-References] Rename anyref to externref
+        https://bugs.webkit.org/show_bug.cgi?id=218331
+
+        Reviewed by Keith Miller.
+
+        * wasm/Builder.js:
+        (const._isValidValue):
+        * wasm/references/externref_globals.js: Renamed from JSTests/wasm/references/anyref_globals.js.
+        * wasm/references/externref_modules.js: Renamed from JSTests/wasm/references/anyref_modules.js.
+        * wasm/references/externref_table.js: Renamed from JSTests/wasm/references/anyref_table.js.
+        * wasm/references/externref_table_import.js: Renamed from JSTests/wasm/references/anyref_table_import.js.
+        (makeImport):
+        (string_appeared_here.fullGC.assert.eq.1.exports.get_tbl.makeImport):
+        (string_appeared_here.fullGC.assert.eq.1.exports.get_tbl):
+        (fullGC.assert.eq):
+        (doSet):
+        (assert.throws):
+        * wasm/references/func_ref.js:
+        * wasm/references/is_null.js:
+        * wasm/references/multitable.js:
+        (assert.throws.1.exports.set_tbl0):
+        (assert.throws):
+        (string_appeared_here.vm.isMemoryLimited.tableInsanity):
+        * wasm/references/table_misc.js:
+        (TableSize.0.End.End.WebAssembly):
+        (GetLocal.0.GetLocal.1.TableGrow.0.End.End.WebAssembly):
+        * wasm/references/validation.js:
+        (assert.throws):
+        * wasm/stress/immutable-globals.js:
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.i.assert.eq):
+        * wasm/stress/mutable-globals.js:
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.i.instance.exports.setI32AsI64):
+        * wasm/wasm.json:
+
 2020-11-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Re-enable SharedArrayBuffer for JSC shell and Testers

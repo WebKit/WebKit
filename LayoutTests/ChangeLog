@@ -1,3 +1,12 @@
+2020-11-06  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-References] Rename anyref to externref
+        https://bugs.webkit.org/show_bug.cgi?id=218331
+
+        Reviewed by Keith Miller.
+
+        * workers/wasm-references/test.js:
+
 2020-11-06  Joey Arhar  <jarhar@chromium.org>
 
         Text gets clobbered when assigning to input.defaultValue
