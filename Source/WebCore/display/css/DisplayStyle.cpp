@@ -67,21 +67,6 @@ Style::Style(const RenderStyle& style)
     m_backgroundColor = style.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
     m_backgroundLayers = deepCopy(style.backgroundLayers());
 
-    const auto& borderData = style.border();
-    
-    auto borderValueWithResolvedColor = [&style](const BorderValue& value, CSSPropertyID colorPropertyID) {
-        auto resolvedValue = value;
-        resolvedValue.setColor(style.visitedDependentColorWithColorFilter(colorPropertyID));
-        return resolvedValue;
-    };
-    
-    m_border.left = borderValueWithResolvedColor(borderData.left(), CSSPropertyBorderLeftColor);
-    m_border.right = borderValueWithResolvedColor(borderData.right(), CSSPropertyBorderRightColor);
-    m_border.top = borderValueWithResolvedColor(borderData.top(), CSSPropertyBorderTopColor);
-    m_border.bottom = borderValueWithResolvedColor(borderData.bottom(), CSSPropertyBorderBottomColor);
-
-    m_border.image = borderData.image();
-
     if (!style.hasAutoUsedZIndex())
         m_zIndex = style.usedZIndex();
 
@@ -97,12 +82,6 @@ bool Style::hasBackground() const
 bool Style::hasBackgroundImage() const
 {
     return m_backgroundLayers && m_backgroundLayers->hasImage();
-}
-
-bool Style::hasVisibleBorder() const
-{
-    bool haveImage = m_border.image.hasImage();
-    return m_border.left.isVisible(!haveImage) || m_border.right.isVisible(!haveImage) || m_border.top.isVisible(!haveImage) || m_border.bottom.isVisible(!haveImage);
 }
 
 bool Style::autoWrap() const

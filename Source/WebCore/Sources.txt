@@ -818,6 +818,7 @@ css/typedom/TypedOMCSSUnparsedValue.cpp
 cssjit/SelectorCompiler.cpp
 display/css/DisplayBox.cpp
 display/css/DisplayBoxDecorationData.cpp
+display/css/DisplayBoxDecorationPainter.cpp
 display/css/DisplayBoxFactory.cpp
 display/css/DisplayBoxModelBox.cpp
 display/css/DisplayBoxPainter.cpp

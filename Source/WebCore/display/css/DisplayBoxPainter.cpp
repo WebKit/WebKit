@@ -31,6 +31,7 @@
 #include "CachedImage.h"
 #include "Color.h"
 #include "DisplayBoxDecorationData.h"
+#include "DisplayBoxDecorationPainter.h"
 #include "DisplayContainerBox.h"
 #include "DisplayFillLayerImageGeometry.h"
 #include "DisplayImageBox.h"
@@ -38,7 +39,6 @@
 #include "DisplayStyle.h"
 #include "DisplayTextBox.h"
 #include "DisplayTree.h"
-#include "FillLayer.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "LayoutPoint.h"
@@ -47,143 +47,9 @@
 namespace WebCore {
 namespace Display {
 
-void BoxPainter::paintFillLayer(const BoxModelBox& box, const FillLayer& layer, const FillLayerImageGeometry& geometry, PaintingContext& paintingContext)
-{
-    GraphicsContextStateSaver stateSaver(paintingContext.context, false);
-
-    auto clipRectForLayer = [](const BoxModelBox& box, const FillLayer& layer) {
-        switch (layer.clip()) {
-        case FillBox::Border:
-            return box.absoluteBorderBoxRect();
-        case FillBox::Padding:
-            return box.absolutePaddingBoxRect();
-        case FillBox::Content:
-            return box.absoluteContentBoxRect();
-        case FillBox::Text:
-            break;
-        }
-        return AbsoluteFloatRect();
-    };
-
-    switch (layer.clip()) {
-    case FillBox::Border:
-    case FillBox::Padding:
-    case FillBox::Content: {
-        stateSaver.save();
-        paintingContext.context.clip(clipRectForLayer(box, layer));
-        break;
-    }
-    case FillBox::Text:
-        break;
-    }
-
-    // FIXME: Handle background compositing modes.
-
-    auto* backgroundImage = layer.image();
-    CompositeOperator op = CompositeOperator::SourceOver;
-
-    if (geometry.destRect().isEmpty())
-        return;
-
-    auto image = backgroundImage->image(nullptr, geometry.tileSize());
-    if (!image)
-        return;
-
-    // FIXME: call image->updateFromSettings().
-
-    ImagePaintingOptions options = {
-        op == CompositeOperator::SourceOver ? layer.composite() : op,
-        layer.blendMode(),
-        DecodingMode::Synchronous,
-        ImageOrientation::FromImage,
-        InterpolationQuality::Default
-    };
-
-    paintingContext.context.drawTiledImage(*image, geometry.destRect(), toFloatPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), options);
-}
-
-void BoxPainter::paintBackgroundImages(const BoxModelBox& box, PaintingContext& paintingContext)
-{
-    const auto& style = box.style();
-
-    Vector<const FillLayer*, 8> layers;
-
-    for (auto* layer = style.backgroundLayers(); layer; layer = layer->next())
-        layers.append(layer);
-
-    auto* boxDecorationData = box.boxDecorationData();
-    ASSERT(boxDecorationData);
-
-    auto& layerGeometryList = boxDecorationData->backgroundImageGeometry();
-
-    for (int i = layers.size() - 1; i >=0; --i) {
-        const auto* layer = layers[i];
-        const auto& geometry = layerGeometryList[i];
-        paintFillLayer(box, *layer, geometry, paintingContext);
-    }
-}
-
 void BoxPainter::paintBoxDecorations(const BoxModelBox& box, PaintingContext& paintingContext)
 {
-    // FIXME: Table decoration painting is special.
-
-    auto borderBoxRect = box.absoluteBorderBoxRect();
-
-    const auto& style = box.style();
-
-    // Background color
-    if (style.hasBackground()) {
-        paintingContext.context.fillRect(borderBoxRect, style.backgroundColor());
-        if (style.hasBackgroundImage())
-            paintBackgroundImages(box, paintingContext);
-    }
-
-    // Border
-    if (style.hasVisibleBorder()) {
-        auto drawBorderSide = [&](auto start, auto end, const auto& borderStyle) {
-            if (!borderStyle.width())
-                return;
-            if (borderStyle.style() == BorderStyle::None || borderStyle.style() == BorderStyle::Hidden)
-                return;
-            paintingContext.context.setStrokeColor(borderStyle.color());
-            paintingContext.context.setStrokeThickness(borderStyle.width());
-            paintingContext.context.drawLine(start, end);
-        };
-
-        paintingContext.context.setFillColor(Color::transparentBlack);
-
-        // Top
-        {
-            auto borderWidth = style.borderTop().width();
-            auto start = borderBoxRect.minXMinYCorner();
-            auto end = FloatPoint { borderBoxRect.maxX(), start.y() + borderWidth };
-            drawBorderSide(start, end, style.borderTop());
-        }
-
-        // Right
-        {
-            auto borderWidth = style.borderRight().width();
-            auto start = FloatPoint { borderBoxRect.maxX() - borderWidth, borderBoxRect.y() };
-            auto end = FloatPoint { start.x() + borderWidth, borderBoxRect.maxY() };
-            drawBorderSide(start, end, style.borderRight());
-        }
-
-        // Bottom
-        {
-            auto borderWidth = style.borderBottom().width();
-            auto start = FloatPoint { borderBoxRect.x(), borderBoxRect.maxY() - borderWidth };
-            auto end = FloatPoint { borderBoxRect.maxX(), start.y() + borderWidth };
-            drawBorderSide(start, end, style.borderBottom());
-        }
-
-        // Left
-        {
-            auto borderWidth = style.borderLeft().width();
-            auto start = borderBoxRect.minXMinYCorner();
-            auto end = FloatPoint { start.x() + borderWidth, borderBoxRect.maxY() };
-            drawBorderSide(start, end, style.borderLeft());
-        }
-    }
+    BoxDecorationPainter::paintBackgroundAndBorders(box, paintingContext);
 }
 
 void BoxPainter::paintBoxContent(const Box& box, PaintingContext& paintingContext)

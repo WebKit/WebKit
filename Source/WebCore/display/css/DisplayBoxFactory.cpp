@@ -130,12 +130,26 @@ void BoxFactory::setupBoxGeometry(BoxModelBox& box, const Layout::Box&, const La
 
 std::unique_ptr<BoxDecorationData> BoxFactory::constructBoxDecorationData(const Layout::Box& layoutBox, const Layout::BoxGeometry& layoutGeometry, LayoutSize offsetFromRoot) const
 {
-    auto backgroundImageGeometry = calculateFillLayerImageGeometry(layoutBox, layoutGeometry, offsetFromRoot, m_pixelSnappingFactor);
-
     auto boxDecorationData = makeUnique<BoxDecorationData>();
-    boxDecorationData->setBackgroundImageGeometry(backgroundImageGeometry);
 
-    // FIXME: Compute rounded border rect.
+    auto backgroundImageGeometry = calculateFillLayerImageGeometry(layoutBox, layoutGeometry, offsetFromRoot, m_pixelSnappingFactor);
+    boxDecorationData->setBackgroundImageGeometry(WTFMove(backgroundImageGeometry));
+
+    bool includeLogicalLeftEdge = true; // FIXME.
+    bool includeLogicalRightEdge = true; // FIXME.
+    auto borderEdges = calculateBorderEdges(layoutBox.style(), m_pixelSnappingFactor, includeLogicalLeftEdge, includeLogicalRightEdge);
+    boxDecorationData->setBorderEdges(WTFMove(borderEdges));
+
+    auto& renderStyle = layoutBox.style();
+
+    if (renderStyle.hasBorderRadius()) {
+        auto borderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(layoutGeometry) };
+        auto borderRoundedRect = renderStyle.getRoundedBorderFor(borderBoxRect, includeLogicalLeftEdge, includeLogicalRightEdge);
+        auto snappedRoundedRect = borderRoundedRect.pixelSnappedRoundedRectForPainting(m_pixelSnappingFactor);
+
+        auto borderRadii = makeUnique<FloatRoundedRect::Radii>(snappedRoundedRect.radii());
+        boxDecorationData->setBorderRadii(WTFMove(borderRadii));
+    }
 
     return boxDecorationData;
 }
@@ -144,14 +158,13 @@ void BoxFactory::setupBoxModelBox(BoxModelBox& box, const Layout::Box& layoutBox
 {
     setupBoxGeometry(box, layoutBox, layoutGeometry, offsetFromRoot);
 
-    // FIXME: Check for rounded borders when supported.
-    if (!box.style().hasBackground())
+    auto& renderStyle = layoutBox.style();
+    if (!renderStyle.hasBackground() && !renderStyle.hasBorder())
         return;
 
     auto boxDecorationData = constructBoxDecorationData(layoutBox, layoutGeometry, offsetFromRoot);
     box.setBoxDecorationData(WTFMove(boxDecorationData));
 }
-
 
 
 } // namespace Display

@@ -67,12 +67,6 @@ public:
 
     const FillLayer* backgroundLayers() const { return m_backgroundLayers.get(); }
 
-    bool hasVisibleBorder() const;
-    const BorderValue& borderLeft() const { return m_border.left; }
-    const BorderValue& borderRight() const { return m_border.right; }
-    const BorderValue& borderTop() const { return m_border.top; }
-    const BorderValue& borderBottom() const { return m_border.bottom; }
-
     Optional<int> zIndex() const { return m_zIndex; }
     bool isStackingContext() const { return m_zIndex.hasValue(); }
     
@@ -99,15 +93,6 @@ private:
     Color m_backgroundColor;
 
     RefPtr<FillLayer> m_backgroundLayers;
-
-    struct {
-        BorderValue left;
-        BorderValue right;
-        BorderValue top;
-        BorderValue bottom;
-
-        NinePieceImage image;
-    } m_border;
 
     FontCascade m_fontCascade;
     WhiteSpace m_whiteSpace;

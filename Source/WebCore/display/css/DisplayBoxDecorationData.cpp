@@ -28,11 +28,72 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "LayoutBox.h"
-#include "LayoutBoxGeometry.h"
+#include "RenderStyle.h"
 
 namespace WebCore {
 namespace Display {
+
+BorderEdge::BorderEdge(float width, float innerWidth, float outerWidth, Color color, BorderStyle style, bool isTransparent, bool isPresent)
+    : m_color(color)
+    , m_width(width)
+    , m_innerWidth(innerWidth)
+    , m_outerWidth(outerWidth)
+    , m_style(style)
+    , m_isTransparent(isTransparent)
+    , m_isPresent(isPresent)
+{
+}
+
+bool BorderEdge::obscuresBackground() const
+{
+    if (!m_isPresent || m_isTransparent || !m_color.isOpaque() || m_style == BorderStyle::Hidden)
+        return false;
+
+    if (m_style == BorderStyle::Dotted || m_style == BorderStyle::Dashed || m_style == BorderStyle::Double)
+        return false;
+
+    return true;
+}
+
+RectEdges<BorderEdge> calculateBorderEdges(const RenderStyle& style, float pixelSnappingFactor, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
+{
+    bool horizontal = style.isHorizontalWritingMode();
+
+    auto constructBorderEdge = [&](float width, CSSPropertyID colorProperty, BorderStyle borderStyle, bool isTransparent, bool isPresent) ->BorderEdge {
+        float innerWidth = 0.f;
+        float outerWidth = 0.f;
+
+        if (borderStyle == BorderStyle::Double) {
+            if (borderStyle == BorderStyle::Double && width < floorToDevicePixel(3, pixelSnappingFactor))
+                borderStyle = BorderStyle::Solid;
+            else {
+                innerWidth = ceilToDevicePixel(width * 2 / 3, pixelSnappingFactor);
+                outerWidth = floorToDevicePixel(width / 3, pixelSnappingFactor);
+            }
+        }
+
+        float snappedWidth = floorToDevicePixel(width, pixelSnappingFactor);
+        return { snappedWidth, innerWidth, outerWidth, style.visitedDependentColorWithColorFilter(colorProperty), borderStyle, isTransparent, isPresent };
+    };
+
+    return {
+        constructBorderEdge(style.borderTopWidth(), CSSPropertyBorderTopColor, style.borderTopStyle(), style.borderTopIsTransparent(), !horizontal || includeLogicalRightEdge),
+        constructBorderEdge(style.borderRightWidth(), CSSPropertyBorderRightColor, style.borderRightStyle(), style.borderRightIsTransparent(), !horizontal || includeLogicalRightEdge),
+        constructBorderEdge(style.borderBottomWidth(), CSSPropertyBorderBottomColor, style.borderBottomStyle(), style.borderBottomIsTransparent(), horizontal || includeLogicalRightEdge),
+        constructBorderEdge(style.borderLeftWidth(), CSSPropertyBorderLeftColor, style.borderLeftStyle(), style.borderLeftIsTransparent(), !horizontal || includeLogicalLeftEdge)
+    };
+}
+
+std::pair<BoxSide, BoxSide> adjacentSidesForSide(BoxSide side)
+{
+    switch (side) {
+    case BoxSide::Top: return { BoxSide::Left, BoxSide::Right };
+    case BoxSide::Bottom: return { BoxSide::Left, BoxSide::Right };
+    case BoxSide::Left: return { BoxSide::Top, BoxSide::Bottom };
+    case BoxSide::Right: return { BoxSide::Top, BoxSide::Bottom };
+    }
+    return { BoxSide::Left, BoxSide::Right };
+}
 
 BoxDecorationData::BoxDecorationData() = default;
 

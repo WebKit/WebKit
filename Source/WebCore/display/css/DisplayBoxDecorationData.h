@@ -29,9 +29,13 @@
 
 #include "DisplayFillLayerImageGeometry.h"
 #include "FloatRoundedRect.h"
+#include "RectEdges.h"
+#include <utility>
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
+
+class RenderStyle;
 
 namespace Layout {
 class Box;
@@ -40,6 +44,42 @@ class BoxGeometry;
 
 namespace Display {
 
+// Pixel-snapped border edge.
+class BorderEdge {
+public:
+    BorderEdge() = default;
+    BorderEdge(float width, float innerWidth, float outerWidth, Color, BorderStyle, bool isTransparent, bool isPresent);
+
+    float width() const { return m_width; }
+    BorderStyle style() const { return m_style; }
+    const Color& color() const { return m_color; }
+    bool isTransparent() const { return m_isTransparent; }
+    bool isPresent() const { return m_isPresent; }
+
+    bool hasVisibleColorAndStyle() const { return m_style > BorderStyle::Hidden && !m_isTransparent; }
+    bool shouldRender() const { return widthForPainting() && hasVisibleColorAndStyle(); }
+    bool presentButInvisible() const { return widthForPainting() && !hasVisibleColorAndStyle(); }
+    float widthForPainting() const { return m_isPresent ? m_width : 0; }
+
+    float innerWidth() const { return m_innerWidth; }
+    float outerWidth() const { return m_outerWidth; }
+
+    bool obscuresBackground() const;
+
+private:
+    Color m_color;
+    float m_width { 0 };
+    float m_innerWidth { 0 }; // Only used for double borders.
+    float m_outerWidth { 0 }; // Only used for double borders.
+    BorderStyle m_style { BorderStyle::Hidden };
+    bool m_isTransparent { false };
+    bool m_isPresent { false };
+};
+
+RectEdges<BorderEdge> calculateBorderEdges(const RenderStyle&, float pixelSnappingFactor, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
+
+std::pair<BoxSide, BoxSide> adjacentSidesForSide(BoxSide);
+
 // Per-box data with pixel-snapped geometry for background images and border-radius.
 class BoxDecorationData {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BoxDecorationData);
@@ -47,14 +87,20 @@ public:
     BoxDecorationData();
 
     const Vector<FillLayerImageGeometry, 1> backgroundImageGeometry() const { return m_backgroundImageGeometry; }
-    void setBackgroundImageGeometry(const Vector<FillLayerImageGeometry, 1>& geometry) { m_backgroundImageGeometry = geometry; }
+    void setBackgroundImageGeometry(Vector<FillLayerImageGeometry, 1>&& geometry) { m_backgroundImageGeometry = WTFMove(geometry); }
 
-    const FloatRoundedRect& roundedBorderRect() const { return m_roundedBorderRect; }
-    void setRoundedBorderRect(const FloatRoundedRect& roundedRect) { m_roundedBorderRect = roundedRect; }
+    const RectEdges<BorderEdge>& borderEdges() const { return m_borderEdges; }
+    void setBorderEdges(RectEdges<BorderEdge>&& edges) { m_borderEdges = WTFMove(edges); }
+
+    const FloatRoundedRect::Radii* borderRadii() const { return m_borderRadii.get(); }
+    void setBorderRadii(std::unique_ptr<FloatRoundedRect::Radii>&& radii) { m_borderRadii = WTFMove(radii); }
+
+    bool hasBorderImage() const { return false; } // FIXME: Implement border-image.
 
 private:
     Vector<FillLayerImageGeometry, 1> m_backgroundImageGeometry;
-    FloatRoundedRect m_roundedBorderRect;
+    RectEdges<BorderEdge> m_borderEdges;
+    std::unique_ptr<FloatRoundedRect::Radii> m_borderRadii;
 };
 
 } // namespace Display
