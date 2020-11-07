@@ -104,7 +104,7 @@ void RemoteRenderingBackend::flushDisplayListWasCommitted(DisplayList::FlushIden
     send(Messages::RemoteRenderingBackendProxy::FlushDisplayListWasCommitted(flushIdentifier, renderingResourceIdentifier), m_renderingBackendIdentifier);
 }
 
-void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     ASSERT(renderingMode == RenderingMode::Accelerated || renderingMode == RenderingMode::Unaccelerated);
 
@@ -126,7 +126,7 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
 
 void RemoteRenderingBackend::applyDisplayList(const SharedDisplayListHandle& handle, RenderingResourceIdentifier renderingResourceIdentifier, ShouldFlushContext flushContext)
 {
-    auto displayList = handle.createDisplayList([&] (WebCore::DisplayList::ItemBufferIdentifier identifier) -> uint8_t* {
+    auto displayList = handle.createDisplayList([&] (DisplayList::ItemBufferIdentifier identifier) -> uint8_t* {
         if (auto sharedMemory = m_sharedItemBuffers.take(identifier))
             return reinterpret_cast<uint8_t*>(sharedMemory->data());
         return nullptr;
@@ -143,11 +143,7 @@ void RemoteRenderingBackend::applyDisplayList(const SharedDisplayListHandle& han
         return;
     }
 
-    if (imageBuffer->isAccelerated())
-        displayList->setItemBufferClient(static_cast<AcceleratedRemoteImageBuffer*>(imageBuffer));
-    else
-        displayList->setItemBufferClient(static_cast<UnacceleratedRemoteImageBuffer*>(imageBuffer));
-
+    displayList->setItemBufferClient(this);
     imageBuffer->flushDisplayList(*displayList);
 
     if (flushContext == ShouldFlushContext::Yes)
@@ -182,6 +178,107 @@ void RemoteRenderingBackend::didCreateSharedItemData(DisplayList::ItemBufferIden
 {
     if (auto sharedMemory = SharedMemory::map(handle.handle, SharedMemory::Protection::ReadOnly))
         m_sharedItemBuffers.set(identifier, WTFMove(sharedMemory));
+}
+
+Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::decodeItem(const uint8_t* data, size_t length, DisplayList::ItemType type, uint8_t* handleLocation)
+{
+    switch (type) {
+    case DisplayList::ItemType::ClipOutToPath:
+        return decodeAndCreate<DisplayList::ClipOutToPath>(data, length, handleLocation);
+    case DisplayList::ItemType::ClipPath:
+        return decodeAndCreate<DisplayList::ClipPath>(data, length, handleLocation);
+    case DisplayList::ItemType::ClipToDrawingCommands:
+        return decodeAndCreate<DisplayList::ClipToDrawingCommands>(data, length, handleLocation);
+    case DisplayList::ItemType::DrawFocusRingPath:
+        return decodeAndCreate<DisplayList::DrawFocusRingPath>(data, length, handleLocation);
+    case DisplayList::ItemType::DrawFocusRingRects:
+        return decodeAndCreate<DisplayList::DrawFocusRingRects>(data, length, handleLocation);
+    case DisplayList::ItemType::DrawGlyphs:
+        return decodeAndCreate<DisplayList::DrawGlyphs>(data, length, handleLocation);
+    case DisplayList::ItemType::DrawImage:
+        return decodeAndCreate<DisplayList::DrawImage>(data, length, handleLocation);
+    case DisplayList::ItemType::DrawLinesForText:
+        return decodeAndCreate<DisplayList::DrawLinesForText>(data, length, handleLocation);
+    case DisplayList::ItemType::DrawNativeImage:
+        return decodeAndCreate<DisplayList::DrawNativeImage>(data, length, handleLocation);
+    case DisplayList::ItemType::DrawPath:
+        return decodeAndCreate<DisplayList::DrawPath>(data, length, handleLocation);
+    case DisplayList::ItemType::DrawPattern:
+        return decodeAndCreate<DisplayList::DrawPattern>(data, length, handleLocation);
+    case DisplayList::ItemType::DrawTiledImage:
+        return decodeAndCreate<DisplayList::DrawTiledImage>(data, length, handleLocation);
+    case DisplayList::ItemType::DrawTiledScaledImage:
+        return decodeAndCreate<DisplayList::DrawTiledScaledImage>(data, length, handleLocation);
+    case DisplayList::ItemType::FillCompositedRect:
+        return decodeAndCreate<DisplayList::FillCompositedRect>(data, length, handleLocation);
+    case DisplayList::ItemType::FillPath:
+        return decodeAndCreate<DisplayList::FillPath>(data, length, handleLocation);
+    case DisplayList::ItemType::FillRectWithColor:
+        return decodeAndCreate<DisplayList::FillRectWithColor>(data, length, handleLocation);
+    case DisplayList::ItemType::FillRectWithGradient:
+        return decodeAndCreate<DisplayList::FillRectWithGradient>(data, length, handleLocation);
+    case DisplayList::ItemType::FillRectWithRoundedHole:
+        return decodeAndCreate<DisplayList::FillRectWithRoundedHole>(data, length, handleLocation);
+    case DisplayList::ItemType::FillRoundedRect:
+        return decodeAndCreate<DisplayList::FillRoundedRect>(data, length, handleLocation);
+    case DisplayList::ItemType::PutImageData:
+        return decodeAndCreate<DisplayList::PutImageData>(data, length, handleLocation);
+    case DisplayList::ItemType::SetLineDash:
+        return decodeAndCreate<DisplayList::SetLineDash>(data, length, handleLocation);
+    case DisplayList::ItemType::SetState:
+        return decodeAndCreate<DisplayList::SetState>(data, length, handleLocation);
+    case DisplayList::ItemType::StrokePath:
+        return decodeAndCreate<DisplayList::StrokePath>(data, length, handleLocation);
+    case DisplayList::ItemType::ApplyDeviceScaleFactor:
+#if USE(CG)
+    case DisplayList::ItemType::ApplyFillPattern:
+    case DisplayList::ItemType::ApplyStrokePattern:
+#endif
+    case DisplayList::ItemType::BeginTransparencyLayer:
+    case DisplayList::ItemType::ClearRect:
+    case DisplayList::ItemType::ClearShadow:
+    case DisplayList::ItemType::Clip:
+    case DisplayList::ItemType::ClipOut:
+    case DisplayList::ItemType::ConcatenateCTM:
+    case DisplayList::ItemType::DrawDotsForDocumentMarker:
+    case DisplayList::ItemType::DrawEllipse:
+    case DisplayList::ItemType::DrawImageBuffer:
+    case DisplayList::ItemType::DrawLine:
+    case DisplayList::ItemType::DrawRect:
+    case DisplayList::ItemType::EndTransparencyLayer:
+    case DisplayList::ItemType::FillEllipse:
+#if ENABLE(INLINE_PATH_DATA)
+    case DisplayList::ItemType::FillInlinePath:
+#endif
+    case DisplayList::ItemType::FillRect:
+    case DisplayList::ItemType::FlushContext:
+    case DisplayList::ItemType::MetaCommandSwitchTo:
+    case DisplayList::ItemType::PaintFrameForMedia:
+    case DisplayList::ItemType::Restore:
+    case DisplayList::ItemType::Rotate:
+    case DisplayList::ItemType::Save:
+    case DisplayList::ItemType::Scale:
+    case DisplayList::ItemType::SetCTM:
+    case DisplayList::ItemType::SetInlineFillColor:
+    case DisplayList::ItemType::SetInlineFillGradient:
+    case DisplayList::ItemType::SetInlineStrokeColor:
+    case DisplayList::ItemType::SetLineCap:
+    case DisplayList::ItemType::SetLineJoin:
+    case DisplayList::ItemType::SetMiterLimit:
+    case DisplayList::ItemType::SetStrokeThickness:
+    case DisplayList::ItemType::StrokeEllipse:
+#if ENABLE(INLINE_PATH_DATA)
+    case DisplayList::ItemType::StrokeInlinePath:
+#endif
+    case DisplayList::ItemType::StrokeRect:
+    case DisplayList::ItemType::StrokeLine:
+    case DisplayList::ItemType::Translate: {
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    }
+    ASSERT_NOT_REACHED();
+    return WTF::nullopt;
 }
 
 } // namespace WebKit

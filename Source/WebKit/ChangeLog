@@ -1,3 +1,32 @@
+2020-11-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Clean up some logic in RemoteImageBuffer and RemoteRenderingBackend
+        https://bugs.webkit.org/show_bug.cgi?id=218689
+
+        Reviewed by Tim Horton.
+
+        Move the implementation of `decodeItem` out of `RemoteImageBuffer`, and into `RemoteRenderingBackend`. This
+        allows us to avoid `static_cast`-ing image buffers to their unaccelerated or accelerated versions when setting
+        the display list's item buffer client in the GPU process.
+
+        No change in behavior.
+
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        (WebKit::RemoteImageBuffer::decodeAndCreate): Deleted.
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::createImageBuffer):
+        (WebKit::RemoteRenderingBackend::applyDisplayList):
+
+        Also, remove a couple of unnecessary `WebCore::` namespace prefixes while we're here.
+
+        (WebKit::RemoteRenderingBackend::decodeItem):
+
+        Move `decodeItem` into the rendering backend. This also has the added bonus of letting us put the method
+        definition in the implementation file instead of a header (i.e. `RemoteRenderingBackend.cpp`).
+
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        (WebKit::RemoteRenderingBackend::decodeAndCreate):
+
 2020-11-06  Peng Liu  <peng.liu6@apple.com>
 
         PiP return to element full screen is not smooth on some websites

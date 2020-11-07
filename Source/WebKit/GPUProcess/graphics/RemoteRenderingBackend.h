@@ -56,7 +56,8 @@ class GPUConnectionToWebProcess;
 
 class RemoteRenderingBackend
     : public IPC::MessageSender
-    , private IPC::MessageReceiver {
+    , private IPC::MessageReceiver
+    , public WebCore::DisplayList::ItemBufferReadingClient {
 public:
     static std::unique_ptr<RemoteRenderingBackend> create(GPUConnectionToWebProcess&, RenderingBackendIdentifier);
     virtual ~RemoteRenderingBackend();
@@ -76,6 +77,18 @@ private:
 
     enum class ShouldFlushContext : bool { No, Yes };
     void applyDisplayList(const SharedDisplayListHandle&, WebCore::RenderingResourceIdentifier, ShouldFlushContext);
+
+    Optional<WebCore::DisplayList::ItemHandle> WARN_UNUSED_RETURN decodeItem(const uint8_t* data, size_t length, WebCore::DisplayList::ItemType, uint8_t* handleLocation) override;
+
+    template<typename T>
+    Optional<WebCore::DisplayList::ItemHandle> WARN_UNUSED_RETURN decodeAndCreate(const uint8_t* data, size_t length, uint8_t* handleLocation)
+    {
+        if (auto item = IPC::Decoder::decodeSingleObject<T>(data, length)) {
+            new (handleLocation + sizeof(WebCore::DisplayList::ItemType)) T(WTFMove(*item));
+            return {{ handleLocation }};
+        }
+        return WTF::nullopt;
+    }
 
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const override;
