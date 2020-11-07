@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <style>
+        body {
+            height: 2000px;
+        }
+
+        .box {
+            width: 3000px;
+            height: 100px;
+            margin: 50px;
+            background-color: silver;
+        }
+    
+        .composited {
+            transform: translateZ(0);
+        }
+        
+        body.changed .box {
+            background-image: linear-gradient(silver, gray);
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        let windowScrollEventCount = 0;
+
+        async function resetScrollPositions()
+        {
+            window.scrollTo(0, 0);
+            
+            // Wait for scroll events to fire.
+            await UIHelper.renderingUpdate();
+
+            windowScrollEventCount = 0;
+        }
+
+        async function testScroll()
+        {
+            await resetScrollPositions();
+            await UIHelper.mouseWheelScrollAt(100, 100);
+            shouldBe('windowScrollEventCount', '0');
+        }
+
+        async function scrollTest()
+        {
+            debug('');
+            debug('Test that scroll over box does not scroll page');
+            await testScroll();
+            
+            document.body.classList.add('changed');
+
+            debug('');
+            debug('Test that scroll over box does not scroll page after switch to tiled layer');
+            await testScroll();
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+
+            for (let active of document.querySelectorAll('.active')) {
+                active.addEventListener('wheel', (event) => {
+                    event.preventDefault();
+                }, { passive: false });
+            }
+
+            window.addEventListener('scroll', () => {
+                ++windowScrollEventCount;
+            }, false);
+
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+<body>
+    <div class="active composited box"></div>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
+

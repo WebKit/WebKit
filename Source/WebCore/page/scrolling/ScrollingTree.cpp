@@ -76,35 +76,40 @@ OptionSet<WheelEventProcessingSteps> ScrollingTree::determineWheelEventProcessin
 
     m_latchingController.receivedWheelEvent(wheelEvent, m_allowLatching);
 
-    if (!m_rootNode)
-        return { WheelEventProcessingSteps::ScrollingThread };
+    auto processingSteps = [&]() -> OptionSet<WheelEventProcessingSteps> {
+        if (!m_rootNode)
+            return { WheelEventProcessingSteps::ScrollingThread };
 
-    FloatPoint position = wheelEvent.position();
-    position.move(m_rootNode->viewToContentsOffset(m_treeState.mainFrameScrollPosition));
+        FloatPoint position = wheelEvent.position();
+        position.move(m_rootNode->viewToContentsOffset(m_treeState.mainFrameScrollPosition));
 
-    if (!m_treeState.eventTrackingRegions.isEmpty()) {
-        const EventNames& names = eventNames();
-        IntPoint roundedPosition = roundedIntPoint(position);
+        if (!m_treeState.eventTrackingRegions.isEmpty()) {
+            const EventNames& names = eventNames();
+            IntPoint roundedPosition = roundedIntPoint(position);
 
-        // Event regions are affected by page scale, so no need to map through scale.
-        bool isSynchronousDispatchRegion = m_treeState.eventTrackingRegions.trackingTypeForPoint(names.wheelEvent, roundedPosition) == TrackingType::Synchronous
-            || m_treeState.eventTrackingRegions.trackingTypeForPoint(names.mousewheelEvent, roundedPosition) == TrackingType::Synchronous;
-        LOG_WITH_STREAM(Scrolling, stream << "\n\nScrollingTree::shouldHandleWheelEventSynchronously: wheelEvent " << wheelEvent << " mapped to content point " << position << ", in non-fast region " << isSynchronousDispatchRegion);
+            // Event regions are affected by page scale, so no need to map through scale.
+            bool isSynchronousDispatchRegion = m_treeState.eventTrackingRegions.trackingTypeForPoint(names.wheelEvent, roundedPosition) == TrackingType::Synchronous
+                || m_treeState.eventTrackingRegions.trackingTypeForPoint(names.mousewheelEvent, roundedPosition) == TrackingType::Synchronous;
+            LOG_WITH_STREAM(Scrolling, stream << "\nScrollingTree::determineWheelEventProcessing: wheelEvent " << wheelEvent << " mapped to content point " << position << ", in non-fast region " << isSynchronousDispatchRegion);
 
-        if (isSynchronousDispatchRegion)
-            return { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForDOMEventDispatch };
-    }
+            if (isSynchronousDispatchRegion)
+                return { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForDOMEventDispatch };
+        }
 
 #if ENABLE(WHEEL_EVENT_REGIONS)
-    auto eventListenerTypes = eventListenerRegionTypesForPoint(position);
-    if (eventListenerTypes.contains(EventListenerRegionType::NonPassiveWheel))
-        return { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForDOMEventDispatch };
+        auto eventListenerTypes = eventListenerRegionTypesForPoint(position);
+        if (eventListenerTypes.contains(EventListenerRegionType::NonPassiveWheel))
+            return { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForDOMEventDispatch };
 
-    if (eventListenerTypes.contains(EventListenerRegionType::Wheel))
-        return { WheelEventProcessingSteps::ScrollingThread, WheelEventProcessingSteps::MainThreadForDOMEventDispatch };
+        if (eventListenerTypes.contains(EventListenerRegionType::Wheel))
+            return { WheelEventProcessingSteps::ScrollingThread, WheelEventProcessingSteps::MainThreadForDOMEventDispatch };
 #endif
+        return { WheelEventProcessingSteps::ScrollingThread };
+    }();
 
-    return { WheelEventProcessingSteps::ScrollingThread };
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::determineWheelEventProcessing: processingSteps " << processingSteps);
+
+    return processingSteps;
 }
 
 WheelEventHandlingResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps)

@@ -3965,6 +3965,7 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
         | BackdropFiltersChanged
         | MaskLayerChanged
         | OpacityChanged
+        | EventRegionChanged
         | NameChanged
         | DebugIndicatorsChanged);
     
