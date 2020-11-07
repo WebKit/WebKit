@@ -38,6 +38,7 @@
 #include "InvalidationState.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationCoverage.h"
+#include "LayoutIntegrationInlineContentBuilder.h"
 #include "LayoutIntegrationPagination.h"
 #include "LayoutReplacedBox.h"
 #include "LayoutTreeBuilder.h"
@@ -50,7 +51,6 @@
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
-#include "StringTruncator.h"
 #include "TextDecorationPainter.h"
 #include "TextPainter.h"
 
@@ -140,179 +140,26 @@ void LineLayout::layout()
     constructContent();
 }
 
-inline static float lineOverflowWidth(const RenderBlockFlow& flow, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit lineBoxLogicalWidth)
-{
-    // FIXME: It's the copy of the lets-adjust-overflow-for-the-caret behavior from ComplexLineLayout::addOverflowFromInlineChildren.
-    auto endPadding = flow.hasOverflowClip() ? flow.paddingEnd() : 0_lu;
-    if (!endPadding)
-        endPadding = flow.endPaddingWidthForCaret();
-    if (flow.hasOverflowClip() && !endPadding && flow.element() && flow.element()->isRootEditableElement())
-        endPadding = 1;
-    lineBoxLogicalWidth += endPadding;
-    return std::max(lineLogicalWidth, lineBoxLogicalWidth);
-}
-
 void LineLayout::constructContent()
 {
-    auto& displayInlineContent = ensureInlineContent();
-    auto& lines = m_inlineFormattingState.lines();
+    auto inlineContentBuilder = InlineContentBuilder { m_layoutState, flow() };
+    inlineContentBuilder.build(ensureInlineContent(), m_inlineFormattingState);
+    ASSERT(m_inlineContent);
 
-    struct LineLevelVisualAdjustmentsForRuns {
-        bool needsIntegralPosition { false };
-        // It's only 'text-overflow: ellipsis' for now.
-        bool needsTrailingContentReplacement { false };
-    };
-    Vector<LineLevelVisualAdjustmentsForRuns> lineLevelVisualAdjustmentsForRuns(lines.size());
+    for (auto& run : m_inlineContent->runs) {
+        auto& layoutBox = run.layoutBox();
+        if (!layoutBox.isReplacedBox())
+            continue;
 
-    auto computeLineLevelVisualAdjustmentsForRuns = [&] {
-        auto& rootStyle = rootLayoutBox().style();
-        auto shouldCheckHorizontalOverflowForContentReplacement = rootStyle.overflowX() == Overflow::Hidden && rootStyle.textOverflow() != TextOverflow::Clip;
+        auto& runRect = run.rect();
+        auto& renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
+        auto& boxGeometry = m_layoutState.geometryForBox(layoutBox);
+        auto borderBoxLocation = FloatPoint { runRect.x() + std::max(boxGeometry.marginStart(), 0_lu), runRect.y() + boxGeometry.marginBefore() };
+        renderer.setLocation(flooredLayoutPoint(borderBoxLocation));
+    }
 
-        for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
-            auto lineNeedsLegacyIntegralVerticalPosition = [&] {
-                // InlineTree rounds y position to integral value for certain content (see InlineFlowBox::placeBoxesInBlockDirection).
-                auto inlineLevelBoxList = m_inlineFormattingState.lineBoxes()[lineIndex].inlineLevelBoxList();
-                if (inlineLevelBoxList.size() == 1) {
-                    // This is text content only with root inline box.
-                    return true;
-                }
-                // Text + <br> (or just <br> or text<span></span><br>) behaves like text.
-                for (auto& inlineLevelBox : inlineLevelBoxList) {
-                    if (inlineLevelBox->isAtomicInlineLevelBox()) {
-                        // Content like text<img> prevents legacy snapping.
-                        return false;
-                    }
-                }
-                return true;
-            };
-            lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition = lineNeedsLegacyIntegralVerticalPosition();
-            if (shouldCheckHorizontalOverflowForContentReplacement) {
-                auto& line = lines[lineIndex];
-                auto overflowWidth = lineOverflowWidth(flow(), line.logicalWidth(), line.lineBoxLogicalRect().width());
-                lineLevelVisualAdjustmentsForRuns[lineIndex].needsTrailingContentReplacement = overflowWidth > line.logicalWidth();
-            }
-        }
-    };
-    computeLineLevelVisualAdjustmentsForRuns();
-
-    auto constructDisplayLineRuns = [&] {
-        auto initialContaingBlockSize = m_layoutState.viewportSize();
-        Vector<bool> hasAdjustedTrailingLineList(lines.size(), false);
-        for (auto& lineRun : m_inlineFormattingState.lineRuns()) {
-            auto& layoutBox = lineRun.layoutBox();
-            auto& style = layoutBox.style();
-            auto computedInkOverflow = [&] (auto runRect) {
-                // FIXME: Add support for non-text ink overflow.
-                if (!lineRun.text())
-                    return runRect;
-                auto inkOverflow = runRect;
-                auto strokeOverflow = std::ceil(style.computedStrokeWidth(ceiledIntSize(initialContaingBlockSize)));
-                inkOverflow.inflate(strokeOverflow);
-
-                auto letterSpacing = style.fontCascade().letterSpacing();
-                if (letterSpacing < 0) {
-                    // Last letter's negative spacing shrinks logical rect. Push it to ink overflow.
-                    inkOverflow.expand(-letterSpacing, { });
-                }
-                return inkOverflow;
-            };
-            auto runRect = FloatRect { lineRun.logicalRect() };
-            // Inline boxes are relative to the line box while final Runs need to be relative to the parent Box
-            // FIXME: Shouldn't we just leave them be relative to the line box?
-            auto lineIndex = lineRun.lineIndex();
-            auto& line = lines[lineIndex];
-            auto lineBoxLogicalRect = line.lineBoxLogicalRect();
-            runRect.moveBy({ lineBoxLogicalRect.left(), lineBoxLogicalRect.top() });
-            if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition)
-                runRect.setY(roundToInt(runRect.y()));
-
-            WTF::Optional<Run::TextContent> textContent;
-            if (auto text = lineRun.text()) {
-                auto adjustedContentToRenderer = [&] {
-                    auto originalContent = text->content().substring(text->start(), text->length());
-                    if (text->needsHyphen())
-                        return makeString(originalContent, style.hyphenString());
-                    if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsTrailingContentReplacement) {
-                        // Currently it's ellipsis replacement only, but adding support for "text-overflow: string" should be relatively simple.
-                        if (hasAdjustedTrailingLineList[lineIndex]) {
-                            // This line already has adjusted trailing. Any runs after the ellipsis should render blank.
-                            return emptyString();
-                        }
-                        auto runLogicalRect = lineRun.logicalRect();
-                        auto lineLogicalRight = line.logicalRight();
-                        auto ellipsisWidth = style.fontCascade().width(WebCore::TextRun { &horizontalEllipsis });
-                        if (runLogicalRect.right() + ellipsisWidth > lineLogicalRight) {
-                            // The next run with ellipsis would surely overflow. So let's just add it to this run even if
-                            // it makes the run wider than it originally was.
-                            hasAdjustedTrailingLineList[lineIndex] = true;
-                            float resultWidth = 0;
-                            auto maxWidth = line.logicalWidth() - runLogicalRect.left();
-                            return StringTruncator::rightTruncate(originalContent, maxWidth, style.fontCascade(), resultWidth, true);
-                        }
-                    }
-                    return String();
-                };
-                textContent = Run::TextContent { text->start(), text->length(), text->content(), adjustedContentToRenderer(), text->needsHyphen() };
-            }
-            auto expansion = Run::Expansion { lineRun.expansion().behavior, lineRun.expansion().horizontalExpansion };
-            auto displayRun = Run { lineIndex, layoutBox, runRect, computedInkOverflow(runRect), expansion, textContent };
-            displayInlineContent.runs.append(displayRun);
-
-            if (layoutBox.isReplacedBox()) {
-                auto& renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
-                auto& boxGeometry = m_layoutState.geometryForBox(layoutBox);
-                auto borderBoxLocation = FloatPoint { runRect.x() + std::max(boxGeometry.marginStart(), 0_lu), runRect.y() + boxGeometry.marginBefore() };
-                renderer.setLocation(flooredLayoutPoint(borderBoxLocation));
-            }
-        }
-    };
-    constructDisplayLineRuns();
-
-    auto constructDisplayLines = [&] {
-        auto& lineBoxes = m_inlineFormattingState.lineBoxes();
-        auto& runs = displayInlineContent.runs;
-        size_t runIndex = 0;
-        for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
-            auto& line = lines[lineIndex];
-            auto lineBoxLogicalRect = line.lineBoxLogicalRect();
-            // FIXME: This is where the logical to physical translate should happen.
-            auto lineBoxLogicalBottom = (lineBoxLogicalRect.top() - line.logicalTop()) + lineBoxLogicalRect.height();
-            auto overflowHeight = std::max(line.logicalHeight(), lineBoxLogicalBottom);
-            auto scrollableOverflowRect = FloatRect { line.logicalLeft(), line.logicalTop(), lineOverflowWidth(flow(), line.logicalWidth(), lineBoxLogicalRect.width()), overflowHeight };
-
-            auto firstRunIndex = runIndex;
-            auto lineInkOverflowRect = scrollableOverflowRect;
-            while (runIndex < runs.size() && runs[runIndex].lineIndex() == lineIndex)
-                lineInkOverflowRect.unite(runs[runIndex++].inkOverflow());
-            auto runCount = runIndex - firstRunIndex;
-            auto lineRect = FloatRect { line.logicalRect() };
-            // Painting code (specifically TextRun's xPos) needs the line box offset to be able to compute tab positions.
-            lineRect.setX(lineBoxLogicalRect.left());
-            auto enclosingLineRect = [&] {
-                // Let's (vertically)enclose all the inline level boxes.
-                // This mostly matches 'lineRect', unless line-height triggers line box overflow (not to be confused with ink or scroll overflow).
-                auto enclosingRect = lineRect;
-                auto& lineBox = lineBoxes[lineIndex];
-                for (auto& inlineLevelBox : lineBox.inlineLevelBoxList()) {
-                    auto inlineLevelBoxLogicalRect = lineBox.logicalRectForInlineLevelBox(inlineLevelBox->layoutBox());
-                    // inlineLevelBoxLogicalRect is relative to the line.
-                    inlineLevelBoxLogicalRect.moveBy(lineRect.location());
-                    enclosingRect.setY(std::min(enclosingRect.y(), inlineLevelBoxLogicalRect.top()));
-                    enclosingRect.shiftMaxYEdgeTo(std::max(enclosingRect.maxY(), inlineLevelBoxLogicalRect.bottom()));
-                }
-                return enclosingRect;
-            }();
-            if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition) {
-                lineRect.setY(roundToInt(lineRect.y()));
-                enclosingLineRect.setY(roundToInt(enclosingLineRect.y()));
-            }
-            displayInlineContent.lines.append({ firstRunIndex, runCount, lineRect, enclosingLineRect, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.horizontalAlignmentOffset() });
-        }
-    };
-    constructDisplayLines();
-
-    displayInlineContent.clearGapAfterLastLine = m_inlineFormattingState.clearGapAfterLastLine();
-    displayInlineContent.shrinkToFit();
+    m_inlineContent->clearGapAfterLastLine = m_inlineFormattingState.clearGapAfterLastLine();
+    m_inlineContent->shrinkToFit();
     m_inlineFormattingState.shrinkToFit();
 }
 
