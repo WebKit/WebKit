@@ -171,6 +171,7 @@ function runTestAsync()
     [uiWebView loadHTMLString:testHtml baseURL:nil];
 
     Util::run(&didFinishLoad);
+    WebThreadLock();
 
     RetainPtr<JSContext> jsContext = [uiWebView valueForKeyPath:@"documentView.webView.mainFrame.javaScriptContext"];
     RetainPtr<JSVirtualMachine> jsVM = [jsContext virtualMachine];

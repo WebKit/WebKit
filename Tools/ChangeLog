@@ -1,3 +1,17 @@
+2020-11-06  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r269435): [iOS Debug] ASSERTION FAILED: !m_impl || Thread::mayBeGCThread() || m_impl->wasConstructedOnMainThread() == isMainThread()
+        https://bugs.webkit.org/show_bug.cgi?id=218662
+
+        Reviewed by Chris Dumez.
+
+        We were missing a few WebThreadLock calls, which changes the return value of isMainThread() in UIWebView.
+
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/WebGLNoCrashOnOtherThreadAccess.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/WebGLPrepareDisplayOnWebThread.mm:
+        (TestWebKitAPI::TEST):
+
 2020-11-06  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Speed up ews status bubble loading speed

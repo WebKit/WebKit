@@ -86,6 +86,8 @@ TEST(WebKitLegacy, WebGLPrepareDisplayOnWebThread)
     Util::run(&didFinishLoad);
     Util::run(&isReady);
 
+    WebThreadLock();
+
     RetainPtr<JSContext> jsContext = [uiWebView valueForKeyPath:@"documentView.webView.mainFrame.javaScriptContext"];
 
     EXPECT_TRUE(!!jsContext.get());
