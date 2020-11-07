@@ -80,6 +80,7 @@ enum class ItemType : uint8_t {
     PutImageData,
     PaintFrameForMedia,
     StrokeRect,
+    StrokeLine,
 #if ENABLE(INLINE_PATH_DATA)
     StrokeInlinePath,
 #endif

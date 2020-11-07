@@ -174,6 +174,7 @@ private:
         case WebCore::DisplayList::ItemType::StrokeInlinePath:
 #endif
         case WebCore::DisplayList::ItemType::StrokeRect:
+        case WebCore::DisplayList::ItemType::StrokeLine:
         case WebCore::DisplayList::ItemType::Translate: {
             ASSERT_NOT_REACHED();
             break;

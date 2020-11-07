@@ -2416,6 +2416,31 @@ private:
     float m_lineWidth;
 };
 
+class StrokeLine {
+public:
+    static constexpr ItemType itemType = ItemType::StrokeLine;
+    static constexpr bool isInlineItem = true;
+    static constexpr bool isDrawingItem = true;
+
+    StrokeLine(const FloatPoint& start, const FloatPoint& end)
+        : m_start(start)
+        , m_end(end)
+    {
+    }
+
+    FloatPoint start() const { return m_start; }
+    FloatPoint end() const { return m_end; }
+
+    void apply(GraphicsContext&) const;
+
+    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> localBounds(const GraphicsContext&) const;
+
+private:
+    FloatPoint m_start;
+    FloatPoint m_end;
+};
+
 #if ENABLE(INLINE_PATH_DATA)
 
 class StrokeInlinePath {
@@ -2644,6 +2669,7 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::PutImageData,
     WebCore::DisplayList::ItemType::PaintFrameForMedia,
     WebCore::DisplayList::ItemType::StrokeRect,
+    WebCore::DisplayList::ItemType::StrokeLine,
 #if ENABLE(INLINE_PATH_DATA)
     WebCore::DisplayList::ItemType::StrokeInlinePath,
 #endif

@@ -242,6 +242,10 @@ void ItemHandle::apply(GraphicsContext& context)
         get<StrokeRect>().apply(context);
         return;
     }
+    case ItemType::StrokeLine: {
+        get<StrokeLine>().apply(context);
+        return;
+    }
 #if ENABLE(INLINE_PATH_DATA)
     case ItemType::StrokeInlinePath: {
         get<StrokeInlinePath>().apply(context);
@@ -522,6 +526,10 @@ void ItemHandle::destroy()
         static_assert(std::is_trivially_destructible<StrokeRect>::value);
         return;
     }
+    case ItemType::StrokeLine: {
+        static_assert(std::is_trivially_destructible<StrokeLine>::value);
+        return;
+    }
     case ItemType::Translate: {
         static_assert(std::is_trivially_destructible<Translate>::value);
         return;
@@ -766,6 +774,10 @@ void ItemHandle::copyTo(ItemHandle destination) const
 #endif
     case ItemType::StrokeRect: {
         new (destination.data + sizeof(ItemType)) StrokeRect(get<StrokeRect>());
+        return;
+    }
+    case ItemType::StrokeLine: {
+        new (destination.data + sizeof(ItemType)) StrokeLine(get<StrokeLine>());
         return;
     }
     case ItemType::Translate: {

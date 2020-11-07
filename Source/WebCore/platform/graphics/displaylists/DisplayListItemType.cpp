@@ -134,6 +134,8 @@ size_t sizeOfItemInBytes(ItemType type)
         return sizeof(PaintFrameForMedia);
     case ItemType::StrokeRect:
         return sizeof(StrokeRect);
+    case ItemType::StrokeLine:
+        return sizeof(StrokeLine);
 #if ENABLE(INLINE_PATH_DATA)
     case ItemType::StrokeInlinePath:
         return sizeof(StrokeInlinePath);
@@ -229,6 +231,7 @@ bool isDrawingItem(ItemType type)
 #endif
     case ItemType::StrokePath:
     case ItemType::StrokeRect:
+    case ItemType::StrokeLine:
         return true;
     }
     ASSERT_NOT_REACHED();
@@ -302,6 +305,7 @@ bool isInlineItem(ItemType type)
     case ItemType::StrokeInlinePath:
 #endif
     case ItemType::StrokeRect:
+    case ItemType::StrokeLine:
     case ItemType::Translate:
         return true;
     }

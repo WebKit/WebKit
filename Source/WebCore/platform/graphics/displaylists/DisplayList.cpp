@@ -283,6 +283,8 @@ void DisplayList::append(ItemHandle item)
         return append<PaintFrameForMedia>(item.get<PaintFrameForMedia>());
     case ItemType::StrokeRect:
         return append<StrokeRect>(item.get<StrokeRect>());
+    case ItemType::StrokeLine:
+        return append<StrokeLine>(item.get<StrokeLine>());
 #if ENABLE(INLINE_PATH_DATA)
     case ItemType::StrokeInlinePath:
         return append<StrokeInlinePath>(item.get<StrokeInlinePath>());

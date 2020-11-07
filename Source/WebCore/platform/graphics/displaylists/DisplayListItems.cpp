@@ -907,6 +907,35 @@ static TextStream& operator<<(TextStream& ts, const StrokeEllipse& item)
     return ts;
 }
 
+Optional<FloatRect> StrokeLine::localBounds(const GraphicsContext& context) const
+{
+    float strokeThickness = context.strokeThickness();
+
+    FloatRect bounds;
+    bounds.fitToPoints(start(), end());
+    bounds.expand(strokeThickness, strokeThickness);
+    return bounds;
+}
+
+void StrokeLine::apply(GraphicsContext& context) const
+{
+#if ENABLE(INLINE_PATH_DATA)
+    auto path = Path::from(InlinePathData { LineData { start(), end() } });
+#else
+    Path path;
+    path.moveTo(start());
+    path.addLineTo(end());
+#endif
+    context.strokePath(path);
+}
+
+static TextStream& operator<<(TextStream& ts, const StrokeLine& item)
+{
+    ts.dumpProperty("start", item.start());
+    ts.dumpProperty("end", item.end());
+    return ts;
+}
+
 #if ENABLE(INLINE_PATH_DATA)
 
 Optional<FloatRect> StrokeInlinePath::localBounds(const GraphicsContext& context) const
@@ -1036,6 +1065,7 @@ static TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::PutImageData: ts << "put-image-data"; break;
     case ItemType::PaintFrameForMedia: ts << "paint-frame-for-media"; break;
     case ItemType::StrokeRect: ts << "stroke-rect"; break;
+    case ItemType::StrokeLine: ts << "stroke-line"; break;
 #if ENABLE(INLINE_PATH_DATA)
     case ItemType::StrokeInlinePath: ts << "stroke-inline-path"; break;
 #endif
@@ -1198,6 +1228,9 @@ TextStream& operator<<(TextStream& ts, ItemHandle item)
         break;
     case ItemType::StrokeRect:
         ts << item.get<StrokeRect>();
+        break;
+    case ItemType::StrokeLine:
+        ts << item.get<StrokeLine>();
         break;
 #if ENABLE(INLINE_PATH_DATA)
     case ItemType::StrokeInlinePath:

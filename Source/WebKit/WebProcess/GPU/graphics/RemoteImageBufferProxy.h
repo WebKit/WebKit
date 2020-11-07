@@ -277,6 +277,7 @@ protected:
         case WebCore::DisplayList::ItemType::StrokeInlinePath:
 #endif
         case WebCore::DisplayList::ItemType::StrokeRect:
+        case WebCore::DisplayList::ItemType::StrokeLine:
         case WebCore::DisplayList::ItemType::Translate:
             RELEASE_ASSERT_NOT_REACHED();
         }

@@ -365,6 +365,12 @@ void Recorder::strokeRect(const FloatRect& rect, float lineWidth)
 void Recorder::strokePath(const Path& path)
 {
 #if ENABLE(INLINE_PATH_DATA)
+    if (path.hasInlineData<LineData>()) {
+        auto& lineData = path.inlineData<LineData>();
+        append<StrokeLine>(lineData.start, lineData.end);
+        return;
+    }
+
     if (path.hasInlineData()) {
         append<StrokeInlinePath>(path.inlineData());
         return;
