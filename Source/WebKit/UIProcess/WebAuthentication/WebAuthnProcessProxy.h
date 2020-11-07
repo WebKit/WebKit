@@ -71,7 +71,7 @@ private:
     void webAuthnProcessCrashed();
 
     // ProcessThrottlerClient
-    void sendPrepareToSuspend(IsSuspensionImminent, CompletionHandler<void()>&&) final { }
+    void sendPrepareToSuspend(IsSuspensionImminent, CompletionHandler<void()>&& completionHandler) final { completionHandler(); }
 
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;

@@ -1158,6 +1158,7 @@
 		57DCEDCB214F4E420016B847 /* MockAuthenticatorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCEDC9214F4E420016B847 /* MockAuthenticatorManager.h */; };
 		57EB2E3A21E1983E00B89CDF /* U2fAuthenticator.h in Headers */ = {isa = PBXBuildFile; fileRef = 57EB2E3821E1983E00B89CDF /* U2fAuthenticator.h */; };
 		57EBE26A234676C5008D8AF9 /* APIWebAuthenticationPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 57EBE268234676C5008D8AF9 /* APIWebAuthenticationPanel.h */; };
+		57EFC77E2550EB8600F9477D /* com.apple.WebKit.WebAuthn.sb in CopyFiles */ = {isa = PBXBuildFile; fileRef = 57EFC77D2550EB8500F9477D /* com.apple.WebKit.WebAuthn.sb */; };
 		57FD318022B35158008D0E8B /* NavigationSOAuthorizationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317822B35149008D0E8B /* NavigationSOAuthorizationSession.h */; };
 		57FD318122B3515B008D0E8B /* PopUpSOAuthorizationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317022B35148008D0E8B /* PopUpSOAuthorizationSession.h */; };
 		57FD318222B3515E008D0E8B /* RedirectSOAuthorizationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317422B35149008D0E8B /* RedirectSOAuthorizationSession.h */; };
@@ -2170,6 +2171,7 @@
 			files = (
 				2DB96053239886C100102791 /* com.apple.WebKit.GPU.sb in CopyFiles */,
 				A78CCDDB193AC9F8005ECC25 /* com.apple.WebKit.Networking.sb in CopyFiles */,
+				57EFC77E2550EB8600F9477D /* com.apple.WebKit.WebAuthn.sb in CopyFiles */,
 				A78CCDDC193AC9FB005ECC25 /* com.apple.WebKit.WebContent.sb in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4044,6 +4046,7 @@
 		57EB2E3921E1983E00B89CDF /* U2fAuthenticator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = U2fAuthenticator.cpp; sourceTree = "<group>"; };
 		57EBE268234676C5008D8AF9 /* APIWebAuthenticationPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIWebAuthenticationPanel.h; sourceTree = "<group>"; };
 		57EBE269234676C5008D8AF9 /* APIWebAuthenticationPanel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = APIWebAuthenticationPanel.cpp; sourceTree = "<group>"; };
+		57EFC77D2550EB8500F9477D /* com.apple.WebKit.WebAuthn.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.WebAuthn.sb; sourceTree = "<group>"; };
 		57FD317022B35148008D0E8B /* PopUpSOAuthorizationSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopUpSOAuthorizationSession.h; sourceTree = "<group>"; };
 		57FD317122B35148008D0E8B /* WKSOAuthorizationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSOAuthorizationDelegate.h; sourceTree = "<group>"; };
 		57FD317222B35148008D0E8B /* SOAuthorizationCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SOAuthorizationCoordinator.h; sourceTree = "<group>"; };
@@ -8931,6 +8934,7 @@
 			children = (
 				2DB96052239886B900102791 /* com.apple.WebKit.GPU.sb */,
 				A78CCDD8193AC9E3005ECC25 /* com.apple.WebKit.Networking.sb */,
+				57EFC77D2550EB8500F9477D /* com.apple.WebKit.WebAuthn.sb */,
 				A78CCDD9193AC9E3005ECC25 /* com.apple.WebKit.WebContent.sb */,
 			);
 			path = ios;
@@ -12639,6 +12643,7 @@
 				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb",
 				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb",
 				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb",
+				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb",
 			);
 			name = "Copy iOS Sandbox Profiles for Manual Sandboxing";
 			outputPaths = (

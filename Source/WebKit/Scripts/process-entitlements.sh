@@ -221,6 +221,9 @@ function ios_family_process_gpu_entitlements()
 
 function ios_family_process_webauthn_entitlements()
 {
+    plistbuddy Add :com.apple.private.memorystatus bool YES
+    plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
+
     plistbuddy Add :com.apple.security.device.usb bool YES
 
     plistbuddy Add :com.apple.private.tcc.allow array
@@ -228,9 +231,6 @@ function ios_family_process_webauthn_entitlements()
 
     plistbuddy Add :com.apple.security.application-groups array
     plistbuddy Add :com.apple.security.application-groups:0 string group.com.apple.webkit
-
-    plistbuddy Add :com.apple.security.exception.mach-lookup.global-name array
-    plistbuddy Add :com.apple.security.exception.mach-lookup.global-name:0 string com.apple.nfcd.hwmanager
 
     plistbuddy Add :com.apple.nfcd.hwmanager bool YES
     plistbuddy Add :com.apple.nfcd.session.reader.internal bool YES
@@ -250,6 +250,9 @@ function ios_family_process_webauthn_entitlements()
     plistbuddy Add :com.apple.keystore.sik.access bool YES
     plistbuddy Add :com.apple.appattest.spi bool YES
     plistbuddy Add :com.apple.mobileactivationd.spi bool YES
+
+    plistbuddy Add :seatbelt-profiles array
+    plistbuddy Add :seatbelt-profiles:0 string com.apple.WebKit.WebAuthn
 }
 
 function ios_family_process_network_entitlements()
