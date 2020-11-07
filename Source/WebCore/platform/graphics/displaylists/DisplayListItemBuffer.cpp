@@ -230,6 +230,12 @@ void ItemHandle::apply(GraphicsContext& context)
         get<FillEllipse>().apply(context);
         return;
     }
+    case ItemType::FlushContext: {
+        get<FlushContext>().apply(context);
+        return;
+    }
+    case ItemType::MetaCommandSwitchTo:
+        return;
     case ItemType::PutImageData: {
         get<PutImageData>().apply(context);
         return;
@@ -458,6 +464,14 @@ void ItemHandle::destroy()
 #endif
     case ItemType::FillRect: {
         static_assert(std::is_trivially_destructible<FillRect>::value);
+        return;
+    }
+    case ItemType::FlushContext: {
+        static_assert(std::is_trivially_destructible<FlushContext>::value);
+        return;
+    }
+    case ItemType::MetaCommandSwitchTo: {
+        static_assert(std::is_trivially_destructible<MetaCommandSwitchTo>::value);
         return;
     }
     case ItemType::PaintFrameForMedia: {
@@ -710,6 +724,14 @@ void ItemHandle::copyTo(ItemHandle destination) const
         new (destination.data + sizeof(ItemType)) FillRect(get<FillRect>());
         return;
     }
+    case ItemType::FlushContext: {
+        new (destination.data + sizeof(ItemType)) FlushContext(get<FlushContext>());
+        return;
+    }
+    case ItemType::MetaCommandSwitchTo: {
+        new (destination.data + sizeof(ItemType)) MetaCommandSwitchTo(get<MetaCommandSwitchTo>());
+        return;
+    }
     case ItemType::PaintFrameForMedia: {
         new (destination.data + sizeof(ItemType)) PaintFrameForMedia(get<PaintFrameForMedia>());
         return;
@@ -861,11 +883,14 @@ void ItemBuffer::clear()
 
 void ItemBuffer::swapWritableBufferIfNeeded(size_t numberOfBytes)
 {
-    if (m_writtenNumberOfBytes + numberOfBytes <= m_writableBuffer.capacity)
+    constexpr auto sizeForBufferSwitchItem = sizeof(ItemType) + sizeof(MetaCommandSwitchTo);
+    if (m_writtenNumberOfBytes + numberOfBytes + sizeForBufferSwitchItem <= m_writableBuffer.capacity)
         return;
 
-    auto nextBuffer = createItemBuffer(numberOfBytes);
+    auto nextBuffer = createItemBuffer(numberOfBytes + sizeForBufferSwitchItem);
     bool hadPreviousBuffer = m_writableBuffer;
+    if (hadPreviousBuffer)
+        uncheckedAppend<MetaCommandSwitchTo>(nextBuffer.identifier);
     auto previousBuffer = std::exchange(m_writableBuffer, { });
     previousBuffer.capacity = std::exchange(m_writtenNumberOfBytes, 0);
     if (hadPreviousBuffer)

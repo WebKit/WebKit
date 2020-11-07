@@ -259,6 +259,8 @@ protected:
         case WebCore::DisplayList::ItemType::FillInlinePath:
 #endif
         case WebCore::DisplayList::ItemType::FillRect:
+        case WebCore::DisplayList::ItemType::FlushContext:
+        case WebCore::DisplayList::ItemType::MetaCommandSwitchTo:
         case WebCore::DisplayList::ItemType::PaintFrameForMedia:
         case WebCore::DisplayList::ItemType::Restore:
         case WebCore::DisplayList::ItemType::Rotate:

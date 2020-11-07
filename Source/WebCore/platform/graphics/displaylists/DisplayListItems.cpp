@@ -1012,6 +1012,23 @@ static TextStream& operator<<(TextStream& ts, const ApplyDeviceScaleFactor& item
     return ts;
 }
 
+void FlushContext::apply(GraphicsContext&) const
+{
+    // Handled by client.
+}
+
+static TextStream& operator<<(TextStream& ts, const FlushContext& item)
+{
+    ts.dumpProperty("identifier", item.identifier());
+    return ts;
+}
+
+static TextStream& operator<<(TextStream& ts, const MetaCommandSwitchTo& item)
+{
+    ts.dumpProperty("identifier", item.identifier());
+    return ts;
+}
+
 static TextStream& operator<<(TextStream& ts, ItemType type)
 {
     switch (type) {
@@ -1062,6 +1079,8 @@ static TextStream& operator<<(TextStream& ts, ItemType type)
 #endif
     case ItemType::FillPath: ts << "fill-path"; break;
     case ItemType::FillEllipse: ts << "fill-ellipse"; break;
+    case ItemType::FlushContext: ts << "flush-context"; break;
+    case ItemType::MetaCommandSwitchTo: ts << "meta-command-switch-to"; break;
     case ItemType::PutImageData: ts << "put-image-data"; break;
     case ItemType::PaintFrameForMedia: ts << "paint-frame-for-media"; break;
     case ItemType::StrokeRect: ts << "stroke-rect"; break;
@@ -1219,6 +1238,12 @@ TextStream& operator<<(TextStream& ts, ItemHandle item)
         break;
     case ItemType::FillEllipse:
         ts << item.get<FillEllipse>();
+        break;
+    case ItemType::FlushContext:
+        ts << item.get<FlushContext>();
+        break;
+    case ItemType::MetaCommandSwitchTo:
+        ts << item.get<MetaCommandSwitchTo>();
         break;
     case ItemType::PutImageData:
         ts << item.get<PutImageData>();

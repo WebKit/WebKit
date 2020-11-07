@@ -121,6 +121,8 @@ TEST(DisplayListTests, AppendItems)
             break;
         }
 #endif
+        case ItemType::MetaCommandSwitchTo:
+            break;
         default: {
             observedUnexpectedItem = true;
             break;

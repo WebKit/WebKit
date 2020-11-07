@@ -82,6 +82,16 @@ private:
             return true;
         }
 
+        if (item.is<WebCore::DisplayList::FlushContext>()) {
+            // FIXME: Not implemented yet.
+            return true;
+        }
+
+        if (item.is<WebCore::DisplayList::MetaCommandSwitchTo>()) {
+            // FIXME: Not implemented yet.
+            return true;
+        }
+
         return m_remoteRenderingBackend.applyMediaItem(item, context);
     }
 
@@ -156,6 +166,8 @@ private:
         case WebCore::DisplayList::ItemType::FillInlinePath:
 #endif
         case WebCore::DisplayList::ItemType::FillRect:
+        case WebCore::DisplayList::ItemType::FlushContext:
+        case WebCore::DisplayList::ItemType::MetaCommandSwitchTo:
         case WebCore::DisplayList::ItemType::PaintFrameForMedia:
         case WebCore::DisplayList::ItemType::Restore:
         case WebCore::DisplayList::ItemType::Rotate:

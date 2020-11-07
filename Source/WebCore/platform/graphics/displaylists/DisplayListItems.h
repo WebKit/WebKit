@@ -2608,6 +2608,50 @@ private:
     float m_scaleFactor { 1 };
 };
 
+class FlushContext {
+public:
+    static constexpr ItemType itemType = ItemType::FlushContext;
+    static constexpr bool isInlineItem = true;
+    static constexpr bool isDrawingItem = false;
+
+    FlushContext(FlushIdentifier identifier)
+        : m_identifier(identifier)
+    {
+    }
+
+    FlushIdentifier identifier() const { return m_identifier; }
+
+    void apply(GraphicsContext&) const;
+
+    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+
+private:
+    FlushIdentifier m_identifier;
+};
+
+// FIXME: This should be refactored so that the command to "switch to the next item buffer"
+// is not itself a drawing item.
+class MetaCommandSwitchTo {
+public:
+    static constexpr ItemType itemType = ItemType::MetaCommandSwitchTo;
+    static constexpr bool isInlineItem = true;
+    static constexpr bool isDrawingItem = false;
+
+    MetaCommandSwitchTo(ItemBufferIdentifier identifier)
+        : m_identifier(identifier)
+    {
+    }
+
+    ItemBufferIdentifier identifier() const { return m_identifier; }
+
+    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+
+private:
+    ItemBufferIdentifier m_identifier;
+};
+
 TextStream& operator<<(TextStream&, ItemHandle);
 
 } // namespace DisplayList
@@ -2666,6 +2710,8 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
 #endif
     WebCore::DisplayList::ItemType::FillPath,
     WebCore::DisplayList::ItemType::FillEllipse,
+    WebCore::DisplayList::ItemType::FlushContext,
+    WebCore::DisplayList::ItemType::MetaCommandSwitchTo,
     WebCore::DisplayList::ItemType::PutImageData,
     WebCore::DisplayList::ItemType::PaintFrameForMedia,
     WebCore::DisplayList::ItemType::StrokeRect,
