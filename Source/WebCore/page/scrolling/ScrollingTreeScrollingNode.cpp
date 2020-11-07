@@ -207,18 +207,6 @@ RectEdges<bool> ScrollingTreeScrollingNode::edgePinnedState() const
     };
 }
 
-bool ScrollingTreeScrollingNode::isRubberBanding() const
-{
-    auto scrollPosition = currentScrollPosition();
-    auto minScrollPosition = minimumScrollPosition();
-    auto maxScrollPosition = maximumScrollPosition();
-
-    return scrollPosition.x() < minScrollPosition.x()
-        || scrollPosition.x() > maxScrollPosition.x()
-        || scrollPosition.y() < minScrollPosition.y()
-        || scrollPosition.y() > maxScrollPosition.y();
-}
-
 bool ScrollingTreeScrollingNode::isUserScrollProgress() const
 {
     return scrollingTree().isUserScrollInProgressForNode(scrollingNodeID());
@@ -258,6 +246,9 @@ void ScrollingTreeScrollingNode::scrollTo(const FloatPoint& position, ScrollType
         return;
 
     scrollingTree().setIsHandlingProgrammaticScroll(scrollType == ScrollType::Programmatic);
+
+    if (scrollType == ScrollType::Programmatic)
+        willDoProgrammaticScroll(position);
 
     m_currentScrollPosition = adjustedScrollPosition(position, clamp);
     

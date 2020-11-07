@@ -235,7 +235,7 @@ void ScrollAnimator::notifyPositionChanged(const FloatSize& delta)
     m_scrollableArea.setScrollOffsetFromAnimation(m_scrollableArea.scrollOffsetFromPosition(roundedIntPoint(currentPosition())));
 
 #if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
-    m_scrollController.scrollPositionChanged(ScrollType::Programmatic);
+    m_scrollController.scrollPositionChanged();
 #endif
 }
 

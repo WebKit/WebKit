@@ -66,7 +66,6 @@ public:
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
 
     RectEdges<bool> edgePinnedState() const;
-    bool isRubberBanding() const;
 
     bool isUserScrollProgress() const;
     void setUserScrollInProgress(bool);
@@ -124,6 +123,8 @@ protected:
     virtual FloatPoint maximumScrollPosition() const;
 
     FloatPoint clampScrollPosition(const FloatPoint&) const;
+    
+    virtual void willDoProgrammaticScroll(const FloatPoint&) { }
     
     virtual FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped) const;
 

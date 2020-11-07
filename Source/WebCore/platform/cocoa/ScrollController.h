@@ -145,13 +145,19 @@ public:
     bool handleWheelEvent(const PlatformWheelEvent&);
 #endif
 
+    void stopRubberbanding();
+
     bool usesScrollSnap() const;
 
     bool isUserScrollInProgress() const;
     bool isRubberBandInProgress() const;
     bool isScrollSnapInProgress() const;
     
-    void scrollPositionChanged(ScrollType);
+#if ENABLE(RUBBER_BANDING)
+    RectEdges<bool> rubberBandingEdges() const { return m_rubberBandingEdges; }
+#endif
+
+    void scrollPositionChanged();
 
 #if ENABLE(CSS_SCROLL_SNAP)
     void updateScrollSnapPoints(ScrollEventAxis, const Vector<LayoutUnit>&, const Vector<ScrollOffsetRange<LayoutUnit>>&);
@@ -178,8 +184,6 @@ public:
 
 private:
 #if ENABLE(RUBBER_BANDING)
-    void stopRubberbanding();
-
     void startSnapRubberbandTimer();
     void stopSnapRubberbandTimer();
     void snapRubberBand();
@@ -191,8 +195,6 @@ private:
     bool isRubberBandInProgressInternal() const;
     void updateRubberBandingState();
     void updateRubberBandingEdges(IntSize clientStretch);
-    
-    bool scrolledToRubberbandingEdge() const;
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)

@@ -133,6 +133,11 @@ WheelEventHandlingResult ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(co
     return WheelEventHandlingResult::result(handled);
 }
 
+void ScrollingTreeFrameScrollingNodeMac::willDoProgrammaticScroll(const FloatPoint& targetScrollPosition)
+{
+    m_delegate.willDoProgrammaticScroll(targetScrollPosition);
+}
+
 FloatPoint ScrollingTreeFrameScrollingNodeMac::adjustedScrollPosition(const FloatPoint& position, ScrollClamping clamp) const
 {
     FloatPoint scrollPosition(roundf(position.x()), roundf(position.y()));
@@ -143,7 +148,7 @@ void ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged(ScrollType
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFrameScrollingNodeMac " << scrollingNodeID() << " currentScrollPositionChanged to " << currentScrollPosition() << " min: " << minimumScrollPosition() << " max: " << maximumScrollPosition() << " sync: " << hasSynchronousScrollingReasons());
 
-    m_delegate.currentScrollPositionChanged(scrollType);
+    m_delegate.currentScrollPositionChanged();
 
     if (isRootNode())
         updateMainFramePinAndRubberbandState();

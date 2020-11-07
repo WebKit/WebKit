@@ -160,9 +160,57 @@ bool ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent(const PlatformWheel
     return handled;
 }
 
-void ScrollingTreeScrollingNodeDelegateMac::currentScrollPositionChanged(ScrollType scrollType)
+void ScrollingTreeScrollingNodeDelegateMac::willDoProgrammaticScroll(const FloatPoint& targetPosition)
 {
-    m_scrollController.scrollPositionChanged(scrollType);
+    if (scrollPositionIsNotRubberbandingEdge(targetPosition)) {
+        LOG(Scrolling, "ScrollingTreeScrollingNodeDelegateMac::willDoProgrammaticScroll() - scrolling away from rubberbanding edge so stopping rubberbanding");
+        m_scrollController.stopRubberbanding();
+    }
+}
+
+bool ScrollingTreeScrollingNodeDelegateMac::scrollPositionIsNotRubberbandingEdge(const FloatPoint& targetPosition) const
+{
+#if ENABLE(RUBBER_BANDING)
+    if (!m_scrollController.isRubberBandInProgress())
+        return false;
+
+    auto rubberbandingEdges = m_scrollController.rubberBandingEdges();
+
+    auto minimumScrollPosition = this->minimumScrollPosition();
+    auto maximumScrollPosition = this->maximumScrollPosition();
+
+    for (auto side : allBoxSides) {
+        if (!rubberbandingEdges[side])
+            continue;
+
+        switch (side) {
+        case BoxSide::Top:
+            if (targetPosition.y() != minimumScrollPosition.y())
+                return true;
+            break;
+        case BoxSide::Right:
+            if (targetPosition.x() != maximumScrollPosition.x())
+                return true;
+            break;
+        case BoxSide::Bottom:
+            if (targetPosition.y() != maximumScrollPosition.y())
+                return true;
+            break;
+        case BoxSide::Left:
+            if (targetPosition.x() != minimumScrollPosition.x())
+                return true;
+            break;
+        }
+    }
+#else
+    UNUSED_PARAM(targetPosition);
+#endif
+    return false;
+}
+
+void ScrollingTreeScrollingNodeDelegateMac::currentScrollPositionChanged()
+{
+    m_scrollController.scrollPositionChanged();
 }
 
 bool ScrollingTreeScrollingNodeDelegateMac::isRubberBandInProgress() const

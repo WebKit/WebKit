@@ -51,7 +51,8 @@ public:
 
     bool handleWheelEvent(const PlatformWheelEvent&);
     
-    void currentScrollPositionChanged(ScrollType);
+    void willDoProgrammaticScroll(const FloatPoint&);
+    void currentScrollPositionChanged();
 
 #if ENABLE(CSS_SCROLL_SNAP)
     void updateScrollSnapPoints(ScrollEventAxis, const Vector<LayoutUnit>&, const Vector<ScrollOffsetRange<LayoutUnit>>&);
@@ -87,6 +88,8 @@ private:
     void didStopRubberbandSnapAnimation() final;
     void rubberBandingStateChanged(bool) final;
     void adjustScrollPositionToBoundsIfNecessary() final;
+
+    bool scrollPositionIsNotRubberbandingEdge(const FloatPoint&) const;
 
 #if ENABLE(CSS_SCROLL_SNAP)
     FloatPoint scrollOffset() const override;

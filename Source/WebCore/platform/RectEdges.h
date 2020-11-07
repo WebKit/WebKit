@@ -28,6 +28,7 @@
 #include "WritingMode.h"
 #include <array>
 #include <wtf/OptionSet.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -90,5 +91,13 @@ public:
 private:
     std::array<T, 4> m_sides { };
 };
+
+
+template<typename T>
+TextStream& operator<<(TextStream& ts, const RectEdges<T>& edges)
+{
+    ts << "[top " << edges.top() << " right " << edges.right() << " bottom " << edges.bottom() << " left " << edges.left() << "]";
+    return ts;
+}
 
 }
