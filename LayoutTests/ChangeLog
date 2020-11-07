@@ -1,3 +1,15 @@
+2020-11-06  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for LayoutTests/accessibility/Mac/accesskey.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=218669
+
+        Reviewed by Chris Fleizach.
+
+        Re-wrote this test to work in both isolated tree mode on and off.
+
+        * accessibility/mac/accesskey-expected.txt:
+        * accessibility/mac/accesskey.html:
+
 2020-11-06  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-References] Rename anyref to externref
