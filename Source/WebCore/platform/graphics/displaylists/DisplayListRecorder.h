@@ -153,19 +153,18 @@ private:
         m_displayList.append<T>(std::forward<Args>(args)...);
         didAppendItemOfType(T::itemType);
 
-        if (!T::isDrawingItem)
-            return;
+        if constexpr (T::isDrawingItem) {
+            if (LIKELY(!m_displayList.tracksDrawingItemExtents()))
+                return;
 
-        if (LIKELY(!m_displayList.tracksDrawingItemExtents()))
-            return;
-
-        auto item = T(std::forward<Args>(args)...);
-        if (auto rect = item.localBounds(graphicsContext()))
-            m_displayList.addDrawingItemExtent(extentFromLocalBounds(*rect));
-        else if (auto rect = item.globalBounds())
-            m_displayList.addDrawingItemExtent(*rect);
-        else
-            m_displayList.addDrawingItemExtent(WTF::nullopt);
+            auto item = T(std::forward<Args>(args)...);
+            if (auto rect = item.localBounds(graphicsContext()))
+                m_displayList.addDrawingItemExtent(extentFromLocalBounds(*rect));
+            else if (auto rect = item.globalBounds())
+                m_displayList.addDrawingItemExtent(*rect);
+            else
+                m_displayList.addDrawingItemExtent(WTF::nullopt);
+        }
     }
 
     void willAppendItemOfType(ItemType);

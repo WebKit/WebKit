@@ -58,9 +58,6 @@ public:
     static constexpr bool isDrawingItem = false;
 
     void apply(GraphicsContext&) const;
-
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
 };
 
 class Restore {
@@ -70,9 +67,6 @@ public:
     static constexpr bool isDrawingItem = false;
 
     void apply(GraphicsContext&) const;
-
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
 };
 
 class Translate {
@@ -91,9 +85,6 @@ public:
     float y() const { return m_y; }
 
     void apply(GraphicsContext&) const;
-
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
 
 private:
     float m_x { 0 };
@@ -115,9 +106,6 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
-
 private:
     float m_angle { 0 }; // In radians.
 };
@@ -136,9 +124,6 @@ public:
     const FloatSize& amount() const { return m_size; }
 
     void apply(GraphicsContext&) const;
-
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
 
 private:
     FloatSize m_size;
@@ -159,9 +144,6 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
-
 private:
     AffineTransform m_transform;
 };
@@ -180,9 +162,6 @@ public:
     const AffineTransform& transform() const { return m_transform; }
 
     void apply(GraphicsContext&) const;
-
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
 
 private:
     AffineTransform m_transform;
@@ -203,9 +182,6 @@ public:
     Ref<Gradient> gradient() const;
 
     void apply(GraphicsContext&) const;
-
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
 
 private:
     float m_offsets[maxColorStopCount];
@@ -230,9 +206,6 @@ public:
     Color color() const { return { m_colorData }; }
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
-
 private:
     SRGBA<uint8_t> m_colorData;
 };
@@ -252,9 +225,6 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
-
 private:
     SRGBA<uint8_t> m_colorData;
 };
@@ -273,9 +243,6 @@ public:
     float thickness() const { return m_thickness; }
 
     void apply(GraphicsContext&) const;
-
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
 
 private:
     float m_thickness { 0 };
@@ -300,9 +267,6 @@ public:
     template<class Decoder> static Optional<SetState> decode(Decoder&);
 
     void apply(GraphicsContext&) const;
-
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
 
 private:
     GraphicsContextStateChange m_state;
@@ -638,9 +602,6 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
-
 private:
     LineCap m_lineCap;
 };
@@ -661,9 +622,6 @@ public:
     float dashOffset() const { return m_dashOffset; }
 
     void apply(GraphicsContext&) const;
-
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<SetLineDash> decode(Decoder&);
@@ -711,9 +669,6 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
-
 private:
     LineJoin m_lineJoin;
 };
@@ -733,9 +688,6 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
-
 private:
     float m_miterLimit;
 };
@@ -747,9 +699,6 @@ public:
     static constexpr bool isDrawingItem = false;
 
     void apply(GraphicsContext&) const;
-
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
 };
 
 // FIXME: treat as drawing item?
@@ -767,9 +716,6 @@ public:
     const FloatRect& rect() const { return m_rect; }
 
     void apply(GraphicsContext&) const;
-
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
 
 private:
     FloatRect m_rect;
@@ -789,9 +735,6 @@ public:
     const FloatRect& rect() const { return m_rect; }
 
     void apply(GraphicsContext&) const;
-
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
 
 private:
     FloatRect m_rect;
@@ -819,9 +762,6 @@ public:
     template<class Decoder> static Optional<ClipOutToPath> decode(Decoder&);
 
     void apply(GraphicsContext&) const;
-
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
 
 private:
     Path m_path;
@@ -866,9 +806,6 @@ public:
     WindRule windRule() const { return m_windRule; }
 
     void apply(GraphicsContext&) const;
-
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<ClipPath> decode(Decoder&);
@@ -937,9 +874,6 @@ public:
     template<class Decoder> static Optional<ClipToDrawingCommands> decode(Decoder&);
 
     void apply(GraphicsContext&) const;
-
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
 
 private:
     FloatRect m_destination;
@@ -2567,9 +2501,6 @@ public:
     static constexpr bool isDrawingItem = false;
 
     void apply(GraphicsContext&) const;
-
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
 };
 
 class ApplyFillPattern {
@@ -2579,9 +2510,6 @@ public:
     static constexpr bool isDrawingItem = false;
 
     void apply(GraphicsContext&) const;
-
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
 };
 
 #endif
@@ -2600,9 +2528,6 @@ public:
     float scaleFactor() const { return m_scaleFactor; }
 
     void apply(GraphicsContext&) const;
-
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
 
 private:
     float m_scaleFactor { 1 };
@@ -2623,9 +2548,6 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
-
 private:
     FlushIdentifier m_identifier;
 };
@@ -2644,9 +2566,6 @@ public:
     }
 
     ItemBufferIdentifier identifier() const { return m_identifier; }
-
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
 
 private:
     ItemBufferIdentifier m_identifier;
