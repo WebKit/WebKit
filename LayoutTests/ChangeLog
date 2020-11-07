@@ -1,3 +1,15 @@
+2020-11-06  Joey Arhar  <jarhar@chromium.org>
+
+        Text gets clobbered when assigning to input.defaultValue
+        https://bugs.webkit.org/show_bug.cgi?id=217156
+
+        Disabling fast/forms/defaultValue-clobbering.html since it fails on
+        iOS
+
+        Reviewed by Darin Adler.
+
+        * platform/ios/TestExpectations:
+
 2020-11-06  Chris Dumez  <cdumez@apple.com>
 
         Event targets should be cleared after dispatch if target pointed to a shadow tree
