@@ -1,3 +1,89 @@
+2020-11-06  Peng Liu  <peng.liu6@apple.com>
+
+        PiP return to element full screen is not smooth on some websites
+        https://bugs.webkit.org/show_bug.cgi?id=218419
+
+        Reviewed by Jer Noble.
+
+        In r265562, VideoFullscreenInterfaceAVKit uses `fullscreenMayReturnToInline()`
+        to request the observer (WKFullScreenWindowController) to enter element fullscreen
+        before exiting picture-in-picture, and calls `fullscreenWillReturnToInline()` to
+        proceed returning to inline or element fullscreen after WKFullScreenWindowController
+        is ready.
+
+        In this patch, VideoFullscreenInterfaceAVKit will directly enter a temporary
+        video fullscreen from picture-in-picture, so the preparation step (entering element
+        fullscreen) is not needed.
+
+        Some important points regarding edge cases:
+        1) A video enters picture-in-picture and exits picture-in-picture immediately
+        before WKFullScreenWindowController is notified to exit element fullscreen.
+        In this case, WKFullScreenWindowController will do nothing when it is notified
+        that the video has exited picture-in-picture. It will directly tell
+        VideoFullscreenInterfaceAVKit to enter standby.
+
+        2) A video exits picture-in-picture when WKFullScreenWindowController is exiting
+        element fullscreen but not complete yet. In this case, WKFullScreenWindowController
+        needs to hold the enter element fullscreen request and exits element fullscreen
+        first before entering element fullscreen.
+
+        3) The ancestor element of the video element exits fullscreen and asks the video
+        element to exit standby (in web process) while the video is entering picture-in-picture
+        (in UI process). In this case, VideoFullscreenInterfaceAVKit (in UI process) should
+        ignore the request to exit standby and tell the web process the request is rejected.
+
+        4) A user may try to enter picture-in-picture when the video is exiting picture-in-picture
+        and returning to element fullscreen. In this case, VideoFullscreenInterfaceAVKit
+        (in UI process) should temporarily disable the picture-in-picture support.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.messages.in:
+        Remove the message `EnterFullscreen` for the iOS port because the UI process can enter
+        fullscreen/picture-in-picture directly.
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::exitFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::preparedToReturnToInline):
+        We need to call `m_page->fullscreenMayReturnToInline()` in this function after
+        removing `fullscreenWillReturnToInline()`.
+        (WebKit::VideoFullscreenManagerProxy::didSetupFullscreen):
+        For the iOS port, we should enter fullscreen directly.
+        (WebKit::VideoFullscreenManagerProxy::didCleanupFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::fullscreenMayReturnToInline):
+        (WebKit::VideoFullscreenModelContext::fullscreenWillReturnToInline): Deleted.
+        (WebKit::VideoFullscreenManagerProxy::fullscreenWillReturnToInline): Deleted.
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController requestEnterFullScreen]):
+        (-[WKFullScreenWindowController exitFullScreen]):
+        (-[WKFullScreenWindowController _completedExitFullScreen]):
+        (-[WKFullScreenWindowController didEnterPictureInPicture]):
+        (-[WKFullScreenWindowController didExitPictureInPicture]):
+        (-[WKFullScreenWindowController _exitFullscreenImmediately]):
+        We should force to exit fullscreen because the current exiting fullscreen process
+        might be stuck.
+        (-[WKFullScreenWindowController prepareToExitPictureInPicture]): Deleted.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::exitVideoFullscreenForVideoElement):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
+        * WebProcess/cocoa/VideoFullscreenManager.h:
+        (WebKit::VideoFullscreenManager::exitVideoFullscreenForVideoElement):
+        * WebProcess/cocoa/VideoFullscreenManager.messages.in:
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::enterVideoFullscreenForVideoElement):
+        (WebKit::VideoFullscreenManager::exitVideoFullscreenForVideoElement):
+        The request to exit fullscreen (standby) may be rejected.
+        (WebKit::VideoFullscreenManager::didSetupFullscreen):
+        Only the macOS port needs to implement this function.
+        (WebKit::VideoFullscreenManager::didEnterFullscreen):
+        (WebKit::VideoFullscreenManager::didExitFullscreen):
+        (WebKit::VideoFullscreenManager::fullscreenMayReturnToInline):
+        (WebKit::VideoFullscreenManager::fullscreenWillReturnToInline): Deleted.
+
 2020-11-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] [iOS] WebAuthn process doesn't start on iOS devices

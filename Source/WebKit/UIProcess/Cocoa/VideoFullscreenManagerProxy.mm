@@ -274,12 +274,6 @@ void VideoFullscreenModelContext::fullscreenMayReturnToInline()
         m_manager->fullscreenMayReturnToInline(m_contextId);
 }
 
-void VideoFullscreenModelContext::fullscreenWillReturnToInline()
-{
-    if (m_manager)
-        m_manager->fullscreenWillReturnToInline(m_contextId);
-}
-
 void VideoFullscreenModelContext::requestRouteSharingPolicyAndContextUID(CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&& completionHandler)
 {
     if (m_manager)
@@ -607,11 +601,13 @@ void VideoFullscreenManagerProxy::enterFullscreen(PlaybackSessionContextIdentifi
     }
 }
 
-void VideoFullscreenManagerProxy::exitFullscreen(PlaybackSessionContextIdentifier contextId, WebCore::IntRect finalRect)
+void VideoFullscreenManagerProxy::exitFullscreen(PlaybackSessionContextIdentifier contextId, WebCore::IntRect finalRect, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(m_contextMap.contains(contextId));
-    if (!m_contextMap.contains(contextId))
+    if (!m_contextMap.contains(contextId)) {
+        completionHandler(false);
         return;
+    }
 
 #if !PLATFORM(IOS_FAMILY)
     IntRect finalWindowRect;
@@ -624,13 +620,14 @@ void VideoFullscreenManagerProxy::exitFullscreen(PlaybackSessionContextIdentifie
 #else
         didExitFullscreen(contextId);
 #endif
+        completionHandler(true);
         return;
     }
 
 #if PLATFORM(IOS_FAMILY)
-    ensureInterface(contextId).exitFullscreen(finalRect);
+    completionHandler(ensureInterface(contextId).exitFullscreen(finalRect));
 #else
-    ensureInterface(contextId).exitFullscreen(finalWindowRect, m_page->platformWindow());
+    completionHandler(ensureInterface(contextId).exitFullscreen(finalWindowRect, m_page->platformWindow()));
 #endif
 }
 
@@ -702,6 +699,8 @@ void VideoFullscreenManagerProxy::cleanupFullscreen(PlaybackSessionContextIdenti
 
 void VideoFullscreenManagerProxy::preparedToReturnToInline(PlaybackSessionContextIdentifier contextId, bool visible, WebCore::IntRect inlineRect)
 {
+    m_page->fullscreenMayReturnToInline();
+
 #if !PLATFORM(IOS_FAMILY)
     IntRect inlineWindowRect;
     m_page->rootViewToWindow(inlineRect, inlineWindowRect);
@@ -749,7 +748,11 @@ void VideoFullscreenManagerProxy::returnVideoContentLayer(PlaybackSessionContext
 
 void VideoFullscreenManagerProxy::didSetupFullscreen(PlaybackSessionContextIdentifier contextId)
 {
+#if PLATFORM(IOS_FAMILY)
+    enterFullscreen(contextId);
+#else
     m_page->send(Messages::VideoFullscreenManager::DidSetupFullscreen(contextId));
+#endif
 }
 
 void VideoFullscreenManagerProxy::willExitFullscreen(PlaybackSessionContextIdentifier contextId)
@@ -782,7 +785,7 @@ void VideoFullscreenManagerProxy::didCleanupFullscreen(PlaybackSessionContextIde
     model->setLayerHostView(nullptr);
     m_page->send(Messages::VideoFullscreenManager::DidCleanupFullscreen(contextId));
 
-    interface->setMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
+    interface->setMode(HTMLMediaElementEnums::VideoFullscreenModeNone, false);
     removeClientForContext(contextId);
 }
 
@@ -811,15 +814,7 @@ void VideoFullscreenManagerProxy::fullscreenModeChanged(PlaybackSessionContextId
 
 void VideoFullscreenManagerProxy::fullscreenMayReturnToInline(PlaybackSessionContextIdentifier contextId)
 {
-    m_page->fullscreenMayReturnToInline();
-    if (m_client)
-        m_client->fullscreenMayReturnToInline();
-}
-
-void VideoFullscreenManagerProxy::fullscreenWillReturnToInline(PlaybackSessionContextIdentifier contextId)
-{
-    bool isViewVisible = m_page->isViewVisible();
-    m_page->send(Messages::VideoFullscreenManager::FullscreenWillReturnToInline(contextId, isViewVisible));
+    m_page->send(Messages::VideoFullscreenManager::FullscreenMayReturnToInline(contextId, m_page->isViewVisible()));
 }
 
 #endif

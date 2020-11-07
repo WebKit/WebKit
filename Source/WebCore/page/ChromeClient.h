@@ -386,7 +386,7 @@ public:
     virtual void removeMediaUsageManagerSession(MediaSessionIdentifier) { }
 #endif
 
-    virtual void exitVideoFullscreenForVideoElement(HTMLVideoElement&) { }
+    virtual void exitVideoFullscreenForVideoElement(HTMLVideoElement&, WTF::CompletionHandler<void(bool)>&& completionHandler = [](bool) { }) { completionHandler(true); }
     virtual void exitVideoFullscreenToModeWithoutAnimation(HTMLVideoElement&, HTMLMediaElementEnums::VideoFullscreenMode) { }
     virtual bool requiresFullscreenForVideoPlayback() { return false; } 
 

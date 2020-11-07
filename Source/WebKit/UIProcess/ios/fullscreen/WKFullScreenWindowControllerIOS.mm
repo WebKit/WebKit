@@ -429,7 +429,6 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
 @interface WKFullScreenWindowController (VideoFullscreenManagerProxyClient)
 - (void)didEnterPictureInPicture;
-- (void)prepareToExitPictureInPicture;
 - (void)didExitPictureInPicture;
 @end
 
@@ -439,11 +438,6 @@ public:
     void setParent(WKFullScreenWindowController *parent) { m_parent = parent; }
 
 private:
-    void fullscreenMayReturnToInline() final
-    {
-        [m_parent prepareToExitPictureInPicture];
-    }
-
     void hasVideoInPictureInPictureDidChange(bool value) final
     {
         if (value)
@@ -475,7 +469,7 @@ private:
     RetainPtr<WKFullScreenInteractiveTransition> _interactiveDismissTransitionCoordinator;
 
     WKFullScreenWindowControllerVideoFullscreenManagerProxyClient _videoFullscreenManagerProxyClient;
-    BOOL _inPictureInPicture;
+    BOOL _shouldReturnToFullscreenFromPictureInPicture;
     BOOL _enterFullscreenNeedsExitPictureInPicture;
     BOOL _returnToFullscreenFromPictureInPicture;
 
@@ -697,13 +691,12 @@ private:
             page->setSuppressVisibilityUpdates(false);
 
             if (auto* videoFullscreenManager = self._videoFullscreenManager) {
-                ASSERT(videoFullscreenManager->client() == nullptr);
                 videoFullscreenManager->setClient(&_videoFullscreenManagerProxyClient);
-                auto* videoFullscreenInterface = videoFullscreenManager ? videoFullscreenManager->controlsManagerInterface() : nullptr;
-                if (videoFullscreenInterface) {
+
+                if (auto* videoFullscreenInterface = videoFullscreenManager ? videoFullscreenManager->controlsManagerInterface() : nullptr) {
                     if (_returnToFullscreenFromPictureInPicture)
-                        videoFullscreenInterface->setReadyToStopPictureInPicture(YES);
-                    else if (_inPictureInPicture) {
+                        videoFullscreenInterface->preparedToReturnToStandby();
+                    else if (videoFullscreenInterface->inPictureInPicture()) {
                         if (auto* model = videoFullscreenInterface->videoFullscreenModel()) {
                             _enterFullscreenNeedsExitPictureInPicture = YES;
                             model->requestFullscreenMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeNone);
@@ -726,6 +719,10 @@ private:
 {
     if (_fullScreenState != WebKit::NotInFullScreen)
         return;
+
+    // Switch the active tab if needed
+    if (auto* page = [self._webView _page].get())
+        page->fullscreenMayReturnToInline();
 
     if (auto* manager = self._manager) {
         manager->requestEnterFullScreen();
@@ -759,6 +756,7 @@ private:
         return;
     }
     _fullScreenState = WebKit::WaitingToExitFullScreen;
+    _exitingFullScreen = YES;
 
     if (auto* manager = self._manager) {
         manager->setAnimatingFullScreen(true);
@@ -829,12 +827,8 @@ private:
         manager->didExitFullScreen();
     }
 
-    if (!_inPictureInPicture) {
-        if (auto* videoFullscreenManager = self._videoFullscreenManager) {
-            ASSERT(videoFullscreenManager->client() == &_videoFullscreenManagerProxyClient || videoFullscreenManager->client() == nullptr);
-            videoFullscreenManager->setClient(nullptr);
-        }
-    }
+    auto* videoFullscreenInterface = self._videoFullscreenManager ? self._videoFullscreenManager->controlsManagerInterface() : nullptr;
+    _shouldReturnToFullscreenFromPictureInPicture = videoFullscreenInterface && videoFullscreenInterface->inPictureInPicture();
 
     [_window setHidden:YES];
     _window = nil;
@@ -862,7 +856,8 @@ private:
         }
     });
 
-    if (auto page = [self._webView _page])
+    auto* page = [self._webView _page].get();
+    if (page && page->isViewFocused())
         page->forceRepaint(_repaintCallback.copyRef());
     else
         _repaintCallback->performCallback();
@@ -902,39 +897,30 @@ private:
 
 - (void)didEnterPictureInPicture
 {
-    _inPictureInPicture = YES;
-    [self requestExitFullScreen];
-}
-
-- (void)prepareToExitPictureInPicture
-{
-    if (_enterFullscreenNeedsExitPictureInPicture)
-        return;
-
-    auto* videoFullscreenInterface = self._videoFullscreenManager ? self._videoFullscreenManager->controlsManagerInterface() : nullptr;
-
-    if (!videoFullscreenInterface)
-        return;
-
-    videoFullscreenInterface->setReadyToStopPictureInPicture(NO);
-    _returnToFullscreenFromPictureInPicture = YES;
-
-    if (!_exitingFullScreen)
-        [self requestEnterFullScreen];
-    else
-        _enterRequested = YES;
+    _shouldReturnToFullscreenFromPictureInPicture = YES;
+    if (_fullScreenState == WebKit::InFullScreen)
+        [self requestExitFullScreen];
 }
 
 - (void)didExitPictureInPicture
 {
-    _inPictureInPicture = NO;
-    _enterFullscreenNeedsExitPictureInPicture = NO;
-    if (![self isFullScreen]) {
-        if (auto* videoFullscreenManager = self._videoFullscreenManager) {
-            ASSERT(videoFullscreenManager->client() == &_videoFullscreenManagerProxyClient);
-            videoFullscreenManager->setClient(nullptr);
+    if (!_enterFullscreenNeedsExitPictureInPicture && _shouldReturnToFullscreenFromPictureInPicture) {
+        auto* videoFullscreenInterface = self._videoFullscreenManager ? self._videoFullscreenManager->controlsManagerInterface() : nullptr;
+        if (videoFullscreenInterface && videoFullscreenInterface->returningToStandby()) {
+            if (!_exitingFullScreen) {
+                if (_fullScreenState == WebKit::InFullScreen)
+                    videoFullscreenInterface->preparedToReturnToStandby();
+                else
+                    [self requestEnterFullScreen];
+            } else
+                _enterRequested = YES;
+
+            _returnToFullscreenFromPictureInPicture = YES;
+            return;
         }
     }
+
+    _enterFullscreenNeedsExitPictureInPicture = NO;
 }
 
 #pragma mark -
@@ -1001,8 +987,10 @@ private:
 
 - (void)_exitFullscreenImmediately
 {
-    if (![self isFullScreen])
+    if (_fullScreenState == WebKit::NotInFullScreen)
         return;
+
+    _shouldReturnToFullscreenFromPictureInPicture = false;
 
     auto* manager = self._manager;
     if (manager)

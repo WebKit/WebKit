@@ -64,10 +64,6 @@ public:
     void setParent(WKFullScreenWindowController *parent) { m_parent = parent; }
 
 private:
-    void fullscreenMayReturnToInline() final
-    {
-    }
-
     void hasVideoInPictureInPictureDidChange(bool value) final
     {
         if (value)

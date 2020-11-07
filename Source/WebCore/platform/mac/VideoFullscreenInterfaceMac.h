@@ -73,7 +73,7 @@ public:
 
     WEBCORE_EXPORT void setupFullscreen(NSView& layerHostedView, const IntRect& initialRect, NSWindow *parentWindow, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback);
     WEBCORE_EXPORT void enterFullscreen();
-    WEBCORE_EXPORT void exitFullscreen(const IntRect& finalRect, NSWindow *parentWindow);
+    WEBCORE_EXPORT bool exitFullscreen(const IntRect& finalRect, NSWindow *parentWindow);
     WEBCORE_EXPORT void exitFullscreenWithoutAnimationToMode(HTMLMediaElementEnums::VideoFullscreenMode);
     WEBCORE_EXPORT void cleanupFullscreen();
     WEBCORE_EXPORT void invalidate();
@@ -84,7 +84,7 @@ public:
     HTMLMediaElementEnums::VideoFullscreenMode mode() const { return m_mode; }
     bool hasMode(HTMLMediaElementEnums::VideoFullscreenMode mode) const { return m_mode & mode; }
     bool isMode(HTMLMediaElementEnums::VideoFullscreenMode mode) const { return m_mode == mode; }
-    WEBCORE_EXPORT void setMode(HTMLMediaElementEnums::VideoFullscreenMode);
+    WEBCORE_EXPORT void setMode(HTMLMediaElementEnums::VideoFullscreenMode, bool);
     void clearMode(HTMLMediaElementEnums::VideoFullscreenMode);
 
     WEBCORE_EXPORT bool isPlayingVideoInEnhancedFullscreen() const;

@@ -142,8 +142,8 @@ private:
     unsigned m_lastReportedVideoHeight { 0 };
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    bool m_isEnteringPictureInPicture { false };
-    bool m_isExitingPictureInPicture { false };
+    bool m_enteringPictureInPicture { false };
+    bool m_exitingPictureInPicture { false };
 #endif
 
 #if ENABLE(PICTURE_IN_PICTURE_API)

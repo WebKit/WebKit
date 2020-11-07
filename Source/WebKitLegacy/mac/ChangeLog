@@ -1,3 +1,15 @@
+2020-11-06  Peng Liu  <peng.liu6@apple.com>
+
+        PiP return to element full screen is not smooth on some websites
+        https://bugs.webkit.org/show_bug.cgi?id=218419
+
+        Reviewed by Jer Noble.
+
+        * WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient::exitVideoFullscreenForVideoElement):
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::exitVideoFullscreenForVideoElement):
+
 2020-11-04  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Move the internal GPU rendering flags from WebPage to WebProcess

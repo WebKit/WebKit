@@ -405,7 +405,7 @@ void VideoFullscreenInterfaceMac::setVideoFullscreenChangeObserver(VideoFullscre
     m_fullscreenChangeObserver = makeWeakPtr(observer);
 }
 
-void VideoFullscreenInterfaceMac::setMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
+void VideoFullscreenInterfaceMac::setMode(HTMLMediaElementEnums::VideoFullscreenMode mode, bool)
 {
     HTMLMediaElementEnums::VideoFullscreenMode newMode = m_mode | mode;
     if (m_mode == newMode)
@@ -477,7 +477,7 @@ void VideoFullscreenInterfaceMac::enterFullscreen()
     }
 }
 
-void VideoFullscreenInterfaceMac::exitFullscreen(const IntRect& finalRect, NSWindow *parentWindow)
+bool VideoFullscreenInterfaceMac::exitFullscreen(const IntRect& finalRect, NSWindow *parentWindow)
 {
     LOG(Fullscreen, "VideoFullscreenInterfaceMac::exitFullscreen(%p), finalRect:{%d, %d, %d, %d}, parentWindow:%p", this, finalRect.x(), finalRect.y(), finalRect.width(), finalRect.height(), parentWindow);
 
@@ -489,6 +489,8 @@ void VideoFullscreenInterfaceMac::exitFullscreen(const IntRect& finalRect, NSWin
         [m_webVideoFullscreenInterfaceObjC exitPIP];
     else
         [m_webVideoFullscreenInterfaceObjC exitPIPAnimatingToRect:finalRect inWindow:parentWindow];
+
+    return true;
 }
 
 void VideoFullscreenInterfaceMac::exitFullscreenWithoutAnimationToMode(HTMLMediaElementEnums::VideoFullscreenMode mode)

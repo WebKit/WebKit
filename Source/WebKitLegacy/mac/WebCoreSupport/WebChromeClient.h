@@ -205,7 +205,7 @@ private:
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     void setMockVideoPresentationModeEnabled(bool) final;
     void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool standby) final;
-    void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&) final;
+    void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WTF::CompletionHandler<void(bool)>&& = [](bool) { }) final;
     void exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode) final;
 #endif
 #endif

@@ -993,14 +993,15 @@ void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement& vide
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void WebChromeClient::exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement& videoElement)
+void WebChromeClient::exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement& videoElement, CompletionHandler<void(bool)>&& completionHandler)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (m_mockVideoPresentationModeEnabled)
         videoElement.didStopBeingFullscreenElement();
     else
         [m_webView _exitVideoFullscreen];
-    END_BLOCK_OBJC_EXCEPTIONS    
+    END_BLOCK_OBJC_EXCEPTIONS
+    completionHandler(true);
 }
 
 void WebChromeClient::exitVideoFullscreenToModeWithoutAnimation(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode targetMode)

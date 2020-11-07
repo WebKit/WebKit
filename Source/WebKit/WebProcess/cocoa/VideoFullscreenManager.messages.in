@@ -26,7 +26,9 @@ messages -> VideoFullscreenManager {
     RequestUpdateInlineRect(WebKit::PlaybackSessionContextIdentifier contextId)
     RequestVideoContentLayer(WebKit::PlaybackSessionContextIdentifier contextId)
     ReturnVideoContentLayer(WebKit::PlaybackSessionContextIdentifier contextId)
+#if !PLATFORM(IOS_FAMILY)
     DidSetupFullscreen(WebKit::PlaybackSessionContextIdentifier contextId)
+#endif
     WillExitFullscreen(WebKit::PlaybackSessionContextIdentifier contextId)
     DidExitFullscreen(WebKit::PlaybackSessionContextIdentifier contextId)
     DidEnterFullscreen(WebKit::PlaybackSessionContextIdentifier contextId, Optional<WebCore::FloatSize> size)
@@ -34,7 +36,7 @@ messages -> VideoFullscreenManager {
     SetVideoLayerFrameFenced(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::FloatRect bounds, MachSendRight machSendRight)
     SetVideoLayerGravityEnum(WebKit::PlaybackSessionContextIdentifier contextId, unsigned gravity)
     FullscreenModeChanged(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode)
-    FullscreenWillReturnToInline(WebKit::PlaybackSessionContextIdentifier contextId, bool isPageVisible)
+    FullscreenMayReturnToInline(WebKit::PlaybackSessionContextIdentifier contextId, bool isPageVisible)
     RequestRouteSharingPolicyAndContextUID(WebKit::PlaybackSessionContextIdentifier contextId) -> (enum:uint8_t WebCore::RouteSharingPolicy routeSharingPolicy, String routingContextUID) Async
 }
 #endif

@@ -275,7 +275,7 @@ private:
     bool supportsVideoFullscreenStandby() final;
     void setMockVideoPresentationModeEnabled(bool) final;
     void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool standby) final;
-    void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&) final;
+    void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WTF::CompletionHandler<void(bool)>&& = [](bool) { }) final;
     void setUpPlaybackControlsManager(WebCore::HTMLMediaElement&) final;
     void clearPlaybackControlsManager() final;
     void playbackControlsMediaEngineChanged() final;

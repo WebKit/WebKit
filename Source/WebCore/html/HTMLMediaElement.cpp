@@ -5972,7 +5972,6 @@ void HTMLMediaElement::exitFullscreen()
 
     if (document().activeDOMObjectsAreSuspended() || document().activeDOMObjectsAreStopped()) {
         setFullscreenMode(VideoFullscreenModeNone);
-        m_changingVideoFullscreenMode = true;
         document().page()->chrome().client().exitVideoFullscreenToModeWithoutAnimation(downcast<HTMLVideoElement>(*this), VideoFullscreenModeNone);
     } else if (document().page()->chrome().client().supportsVideoFullscreen(oldVideoFullscreenMode)) {
         if (m_videoFullscreenStandby) {
@@ -6032,7 +6031,9 @@ WEBCORE_EXPORT void HTMLMediaElement::setVideoFullscreenStandby(bool value)
     if (m_videoFullscreenStandby)
         document().page()->chrome().client().enterVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this), VideoFullscreenModeNone, m_videoFullscreenStandby);
     else
-        document().page()->chrome().client().exitVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this));
+        document().page()->chrome().client().exitVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this), [this, protectedThis = makeRef(*this)](auto success) mutable {
+            m_videoFullscreenStandby = !success;
+        });
 }
 
 void HTMLMediaElement::willBecomeFullscreenElement()

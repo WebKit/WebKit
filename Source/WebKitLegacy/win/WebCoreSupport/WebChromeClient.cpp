@@ -776,9 +776,10 @@ void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement& vide
     m_webView->enterVideoFullscreenForVideoElement(videoElement);
 }
 
-void WebChromeClient::exitVideoFullscreenForVideoElement(HTMLVideoElement& videoElement)
+void WebChromeClient::exitVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, CompletionHandler<void(bool)>&& completionHandler)
 {
     m_webView->exitVideoFullscreenForVideoElement(videoElement);
+    completionHandler(true);
 }
 
 #endif

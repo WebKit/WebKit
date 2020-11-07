@@ -467,12 +467,13 @@ HTMLVideoElement::VideoPresentationMode HTMLVideoElement::toPresentationMode(HTM
 void HTMLVideoElement::webkitSetPresentationMode(VideoPresentationMode mode)
 {
     INFO_LOG(LOGIDENTIFIER, ", mode = ",  mode);
-    setPresentationMode(mode);
+    if (!isChangingVideoFullscreenMode())
+        setPresentationMode(mode);
 }
 
 void HTMLVideoElement::setPresentationMode(VideoPresentationMode mode)
 {
-    if (isChangingVideoFullscreenMode() || toPresentationMode(fullscreenMode()) == mode)
+    if (toPresentationMode(fullscreenMode()) == mode)
         return;
 
     auto videoFullscreenMode = toFullscreenMode(mode);
@@ -481,7 +482,7 @@ void HTMLVideoElement::setPresentationMode(VideoPresentationMode mode)
     if (videoFullscreenMode == VideoFullscreenModeNone) {
         if (isFullscreen()) {
             if (toPresentationMode(fullscreenMode()) == VideoPresentationMode::PictureInPicture)
-                m_isExitingPictureInPicture = true;
+                m_exitingPictureInPicture = true;
 
             exitFullscreen();
         }
@@ -493,9 +494,9 @@ void HTMLVideoElement::setPresentationMode(VideoPresentationMode mode)
         return;
 
     if (videoFullscreenMode == VideoFullscreenModePictureInPicture)
-        m_isEnteringPictureInPicture = true;
+        m_enteringPictureInPicture = true;
     else if (fullscreenMode() == VideoFullscreenModePictureInPicture)
-        m_isExitingPictureInPicture = true;
+        m_exitingPictureInPicture = true;
 
     enterFullscreen(videoFullscreenMode);
 }
@@ -507,8 +508,8 @@ auto HTMLVideoElement::webkitPresentationMode() const -> VideoPresentationMode
 
 void HTMLVideoElement::didEnterFullscreenOrPictureInPicture(const FloatSize& size)
 {
-    if (m_isEnteringPictureInPicture) {
-        m_isEnteringPictureInPicture = false;
+    if (m_enteringPictureInPicture) {
+        m_enteringPictureInPicture = false;
         setChangingVideoFullscreenMode(false);
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
@@ -520,8 +521,8 @@ void HTMLVideoElement::didEnterFullscreenOrPictureInPicture(const FloatSize& siz
         return;
     }
 
-    if (m_isExitingPictureInPicture) {
-        m_isExitingPictureInPicture = false;
+    if (m_exitingPictureInPicture) {
+        m_exitingPictureInPicture = false;
 #if ENABLE(PICTURE_IN_PICTURE_API)
         if (m_pictureInPictureObserver)
             m_pictureInPictureObserver->didExitPictureInPicture();
@@ -533,8 +534,8 @@ void HTMLVideoElement::didEnterFullscreenOrPictureInPicture(const FloatSize& siz
 
 void HTMLVideoElement::didExitFullscreenOrPictureInPicture()
 {
-    if (m_isExitingPictureInPicture) {
-        m_isExitingPictureInPicture = false;
+    if (m_exitingPictureInPicture) {
+        m_exitingPictureInPicture = false;
         setChangingVideoFullscreenMode(false);
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
@@ -560,7 +561,7 @@ void HTMLVideoElement::setVideoFullscreenFrame(const FloatRect& frame)
         return;
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
-    if (!m_isEnteringPictureInPicture && !m_isExitingPictureInPicture && m_pictureInPictureObserver)
+    if (!m_enteringPictureInPicture && !m_exitingPictureInPicture && m_pictureInPictureObserver)
         m_pictureInPictureObserver->pictureInPictureWindowResized(IntSize(frame.size()));
 #endif
 }

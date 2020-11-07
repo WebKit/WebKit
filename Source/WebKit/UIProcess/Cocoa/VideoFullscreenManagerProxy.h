@@ -112,7 +112,6 @@ private:
     void didExitFullscreen() final;
     void didCleanupFullscreen() final;
     void fullscreenMayReturnToInline() final;
-    void fullscreenWillReturnToInline() final;
 
     VideoFullscreenManagerProxy* m_manager;
     Ref<PlaybackSessionModelContext> m_playbackSessionModel;
@@ -127,7 +126,6 @@ class VideoFullscreenManagerProxyClient : public CanMakeWeakPtr<VideoFullscreenM
 public:
     virtual ~VideoFullscreenManagerProxyClient() { };
 
-    virtual void fullscreenMayReturnToInline() = 0;
     virtual void hasVideoInPictureInPictureDidChange(bool value) = 0;
 };
 
@@ -181,7 +179,7 @@ private:
     void setHasVideo(PlaybackSessionContextIdentifier, bool);
     void setVideoDimensions(PlaybackSessionContextIdentifier, const WebCore::FloatSize&);
     void enterFullscreen(PlaybackSessionContextIdentifier);
-    void exitFullscreen(PlaybackSessionContextIdentifier, WebCore::IntRect finalRect);
+    void exitFullscreen(PlaybackSessionContextIdentifier, WebCore::IntRect finalRect, CompletionHandler<void(bool)>&&);
     void cleanupFullscreen(PlaybackSessionContextIdentifier);
     void preparedToReturnToInline(PlaybackSessionContextIdentifier, bool visible, WebCore::IntRect inlineRect);
     void preparedToExitFullscreen(PlaybackSessionContextIdentifier);
@@ -201,7 +199,6 @@ private:
     void setVideoLayerGravity(PlaybackSessionContextIdentifier, WebCore::MediaPlayerEnums::VideoGravity);
     void fullscreenModeChanged(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void fullscreenMayReturnToInline(PlaybackSessionContextIdentifier);
-    void fullscreenWillReturnToInline(PlaybackSessionContextIdentifier);
 
     bool m_mockVideoPresentationModeEnabled { false };
     WebCore::FloatSize m_mockPictureInPictureWindowSize { DefaultMockPictureInPictureWindowWidth, DefaultMockPictureInPictureWindowHeight };

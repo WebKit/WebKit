@@ -35,6 +35,7 @@
 #include <WebCore/HTMLMediaElementEnums.h>
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/VideoFullscreenModelVideoElement.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -103,7 +104,7 @@ private:
     VideoFullscreenManager* m_manager;
     PlaybackSessionContextIdentifier m_contextId;
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
-    AnimationType m_animationType { false };
+    AnimationType m_animationType { AnimationType::None };
     bool m_targetIsFullscreen { false };
     WebCore::HTMLMediaElementEnums::VideoFullscreenMode m_fullscreenMode { WebCore::HTMLMediaElementEnums::VideoFullscreenModeNone };
     bool m_fullscreenStandby { false };
@@ -123,7 +124,7 @@ public:
     bool supportsVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const;
     bool supportsVideoFullscreenStandby() const;
     void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool standby);
-    void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&);
+    void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WTF::CompletionHandler<void(bool)>&& = [](bool) { });
     void exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
 
 protected:
@@ -149,7 +150,9 @@ protected:
     void requestUpdateInlineRect(PlaybackSessionContextIdentifier);
     void requestVideoContentLayer(PlaybackSessionContextIdentifier);
     void returnVideoContentLayer(PlaybackSessionContextIdentifier);
+#if !PLATFORM(IOS_FAMILY)
     void didSetupFullscreen(PlaybackSessionContextIdentifier);
+#endif
     void willExitFullscreen(PlaybackSessionContextIdentifier);
     void didExitFullscreen(PlaybackSessionContextIdentifier);
     void didEnterFullscreen(PlaybackSessionContextIdentifier, Optional<WebCore::FloatSize>);
@@ -157,7 +160,7 @@ protected:
     void setVideoLayerFrameFenced(PlaybackSessionContextIdentifier, WebCore::FloatRect bounds, const WTF::MachSendRight&);
     void setVideoLayerGravityEnum(PlaybackSessionContextIdentifier, unsigned gravity);
     void fullscreenModeChanged(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
-    void fullscreenWillReturnToInline(PlaybackSessionContextIdentifier, bool isPageVisible);
+    void fullscreenMayReturnToInline(PlaybackSessionContextIdentifier, bool isPageVisible);
     void requestRouteSharingPolicyAndContextUID(PlaybackSessionContextIdentifier, Messages::VideoFullscreenManager::RequestRouteSharingPolicyAndContextUIDAsyncReply&&);
 
     WebPage* m_page;

@@ -1009,9 +1009,9 @@ void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement& vide
     m_page.videoFullscreenManager().enterVideoFullscreenForVideoElement(videoElement, mode, standby);
 }
 
-void WebChromeClient::exitVideoFullscreenForVideoElement(HTMLVideoElement& videoElement)
+void WebChromeClient::exitVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, CompletionHandler<void(bool)>&& completionHandler)
 {
-    m_page.videoFullscreenManager().exitVideoFullscreenForVideoElement(videoElement);
+    m_page.videoFullscreenManager().exitVideoFullscreenForVideoElement(videoElement, WTFMove(completionHandler));
 }
 
 void WebChromeClient::setUpPlaybackControlsManager(HTMLMediaElement& mediaElement)

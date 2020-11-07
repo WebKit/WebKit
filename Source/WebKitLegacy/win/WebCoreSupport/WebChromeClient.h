@@ -149,7 +149,7 @@ public:
 #if ENABLE(VIDEO)
     bool supportsVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) final;
     void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool) final;
-    void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&) final;
+    void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WTF::CompletionHandler<void(bool)>&& = [](bool) { }) final;
 #endif
 
 #if ENABLE(NOTIFICATIONS)

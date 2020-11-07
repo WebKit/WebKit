@@ -81,7 +81,6 @@ public:
     virtual void willEnterPictureInPicture() { }
     virtual void didEnterPictureInPicture() { }
     virtual void failedToEnterPictureInPicture() { }
-    virtual void prepareToExitPictureInPicture() { }
     virtual void willExitPictureInPicture() { }
     virtual void didExitPictureInPicture() { }
     virtual void modelDestroyed() { }
