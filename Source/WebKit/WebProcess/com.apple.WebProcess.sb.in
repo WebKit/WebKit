@@ -111,13 +111,61 @@
 #endif
     ;; OpenCL
     (allow iokit-open
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-        (with telemetry-backtrace)
-#endif
         (iokit-connection "IOAccelerator")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+        (with telemetry-backtrace)
+        (apply-message-filter
+            (allow
+                iokit-async-external-method
+                iokit-external-method
+            )
+            (allow (with telemetry)
+                iokit-external-trap
+            )
+        )
+#endif
+    )
+    (allow iokit-open
         (iokit-registry-entry-class "IOAccelerationUserClient")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+        (with telemetry-backtrace)
+        (apply-message-filter
+            (allow (with telemetry)
+                iokit-async-external-method
+                iokit-external-trap
+                iokit-external-method
+            )
+        )
+#endif
+    )
+    (allow iokit-open
         (iokit-registry-entry-class "IOSurfaceRootUserClient")
-        (iokit-registry-entry-class "IOSurfaceSendRight"))
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+        (with telemetry-backtrace)
+        (apply-message-filter
+            (allow
+                iokit-async-external-method
+                iokit-external-method
+            )
+            (allow (with telemetry)
+                iokit-external-trap
+            )
+        )
+#endif
+    )
+    (allow iokit-open
+        (iokit-registry-entry-class "IOSurfaceSendRight")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+        (with telemetry-backtrace)
+        (apply-message-filter
+            (allow (with telemetry)
+                iokit-async-external-method
+                iokit-external-trap
+                iokit-external-method
+            )
+        )
+#endif
+    )
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
     ;; CoreVideo CVCGDisplayLink
     (allow iokit-open
@@ -125,25 +173,91 @@
 #endif
     ;; H.264 Acceleration
     (allow iokit-open
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-        (with telemetry-backtrace)
-#endif
         (iokit-registry-entry-class "AppleIntelMEUserClient")
-        (iokit-registry-entry-class "AppleSNBFBUserClient"))
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+        (with telemetry-backtrace)
+        (apply-message-filter
+            (allow
+                iokit-external-method
+            )
+            (allow (with telemetry)
+                iokit-async-external-method
+                iokit-external-trap
+            )
+        )
+#endif
+    )
+    (allow iokit-open
+        (iokit-registry-entry-class "AppleSNBFBUserClient")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+        (with telemetry-backtrace)
+        (apply-message-filter
+            (allow
+                iokit-external-method
+            )
+            (allow (with telemetry)
+                iokit-async-external-method
+                iokit-external-trap
+            )
+        )
+#endif
+    )
     ;; QuartzCore
     (allow iokit-open
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-        (with telemetry-backtrace)
-#endif
         (iokit-registry-entry-class "AGPMClient")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+        (with telemetry-backtrace)
+        (apply-message-filter
+            (allow (with telemetry)
+                iokit-async-external-method
+                iokit-external-trap
+                iokit-external-method
+            )
+        )
+#endif
+    )
+    (allow iokit-open
         (iokit-registry-entry-class "AppleGraphicsControlClient")
-        (iokit-registry-entry-class "AppleGraphicsPolicyClient"))
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+        (with telemetry-backtrace)
+        (apply-message-filter
+            (allow
+                iokit-async-external-method
+                iokit-external-method
+            )
+            (allow (with telemetry)
+                iokit-external-trap
+            )
+        )
+#endif
+    )
+    (allow iokit-open
+        (iokit-registry-entry-class "AppleGraphicsPolicyClient")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+        (with telemetry-backtrace)
+        (apply-message-filter
+            (allow (with telemetry)
+                iokit-async-external-method
+                iokit-external-trap
+                iokit-external-method
+            )
+        )
+#endif
+    )
     ;; OpenGL
     (allow iokit-open
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+        (iokit-registry-entry-class "AppleMGPUPowerControlClient")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
         (with telemetry-backtrace)
+        (apply-message-filter
+            (allow (with telemetry)
+                iokit-async-external-method
+                iokit-external-trap
+                iokit-external-method
+            )
+        )
 #endif
-        (iokit-registry-entry-class "AppleMGPUPowerControlClient"))
+    )
     ;; GPU bundles
     (allow file-read*
         (subpath "/Library/GPUBundles"))
@@ -165,6 +279,7 @@
 (deny process-info*)
 (allow process-info-pidinfo)
 (allow process-info-setcontrol (target self))
+(allow process-info-dirtycontrol (target self))
 (allow process-codesigning-status*)
 
 (deny sysctl*)
@@ -174,6 +289,7 @@
         "hw.busfrequency_max"
         "hw.cpufamily" ;; <rdar://problem/58416475>
         "hw.cputype"
+        "hw.cputhreadtype"
         "hw.logicalcpu"
         "hw.machine"
         "hw.memsize"
@@ -259,6 +375,7 @@
     (iokit-property "GPURawCounterPluginClassName")
     (iokit-property "HEVCSupported")
     (iokit-property "HIDPointerAccelerationType")
+    (iokit-property "HwCtxCacheUpdate")
     (iokit-property-regex #"^IOAccel(DisplayPipeCapabilities|Index|Types|Revision)")
     (iokit-property-regex #"^IO(Class|MatchCategory|NameMatch)")
     (iokit-property-regex #"^IOAudioControl(ChannelID|ID|SubType|Usage|Value)")
@@ -687,14 +804,73 @@
 #endif
 
 (allow iokit-open
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-    (with telemetry-backtrace)
-#endif
     (iokit-user-client-class "AppleUpstreamUserClient")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+    (with telemetry-backtrace)
+    (apply-message-filter
+        (allow (with telemetry)
+            iokit-async-external-method
+            iokit-external-trap
+            iokit-external-method
+        )
+    )
+#endif
+)
+
+(allow iokit-open
     (iokit-user-client-class "RootDomainUserClient") ;; Needed by WebCore::PerformanceMonitor
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+    (with telemetry-backtrace)
+    (apply-message-filter
+        (allow (with telemetry)
+            iokit-async-external-method
+            iokit-external-trap
+            iokit-external-method
+        )
+    )
+#endif
+)
+
+(allow iokit-open
     (iokit-user-client-class "AudioAUUC") ;; <rdar://problem/10427451> && <rdar://problem/10808817>
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+    (with telemetry-backtrace)
+    (apply-message-filter
+        (allow (with telemetry)
+            iokit-async-external-method
+            iokit-external-trap
+            iokit-external-method
+        )
+    )
+#endif
+)
+
+(allow iokit-open
     (iokit-user-client-class "IOAudioControlUserClient")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+    (with telemetry-backtrace)
+    (apply-message-filter
+        (allow (with telemetry)
+            iokit-async-external-method
+            iokit-external-trap
+            iokit-external-method
+        )
+    )
+#endif
+)
+
+(allow iokit-open
     (iokit-user-client-class "IOAudioEngineUserClient")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+    (with telemetry-backtrace)
+    (apply-message-filter
+        (allow (with telemetry)
+            iokit-async-external-method
+            iokit-external-trap
+            iokit-external-method
+        )
+    )
+#endif
 )
 
 ;; <rdar://problem/60088861>
@@ -980,12 +1156,32 @@
             (global-name "com.apple.applecamerad")
         ))
     (allow iokit-open
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
-        (with report) (with telemetry)
-#endif
         ;; QuickTimeUSBVDCDigitizer
         (iokit-user-client-class "IOUSBDeviceUserClientV2")
-        (iokit-user-client-class "IOUSBInterfaceUserClientV2"))
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+        (with telemetry-backtrace)
+        (apply-message-filter
+            (allow (with telemetry)
+                iokit-async-external-method
+                iokit-external-trap
+                iokit-external-method
+            )
+        )
+#endif
+    )
+    (allow iokit-open
+        (iokit-user-client-class "IOUSBInterfaceUserClientV2")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+        (with telemetry-backtrace)
+        (apply-message-filter
+            (allow (with telemetry)
+                iokit-async-external-method
+                iokit-external-trap
+                iokit-external-method
+            )
+        )
+#endif
+    )
     (allow device-camera))
 #endif // PLATFORM(MAC)
 
