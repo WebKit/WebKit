@@ -1,3 +1,13 @@
+2020-11-08  Darin Adler  <darin@apple.com>
+
+        Remove another function that implicitly uses the composed tree (documentOrder on nodes and boundary points)
+        https://bugs.webkit.org/show_bug.cgi?id=218673
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/treeOrderBoundaryPoint-expected.txt: Added.
+        * fast/dom/treeOrderBoundaryPoint.html: Added.
+
 2020-11-08  Rob Buis  <rbuis@igalia.com>
 
         Add testcase for r269537

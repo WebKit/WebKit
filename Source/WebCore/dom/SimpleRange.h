@@ -88,17 +88,10 @@ OffsetRange characterDataOffsetRange(const SimpleRange&, const Node&);
 
 // FIXME: Start of functions that are deprecated since they silently default to ComposedTree.
 
-template<typename TreeType> bool intersects(const SimpleRange&, const SimpleRange&);
 WEBCORE_EXPORT bool intersects(const SimpleRange&, const SimpleRange&);
 WEBCORE_EXPORT bool intersects(const SimpleRange&, const Node&);
 WEBCORE_EXPORT SimpleRange unionRange(const SimpleRange&, const SimpleRange&);
 WEBCORE_EXPORT Optional<SimpleRange> intersection(const Optional<SimpleRange>&, const Optional<SimpleRange>&);
-
-template<typename TreeType> bool intersects(const SimpleRange&, const Node&);
-WEBCORE_EXPORT bool intersects(const SimpleRange&, const Node&);
-
-WEBCORE_EXPORT PartialOrdering documentOrder(const SimpleRange&, const BoundaryPoint&);
-WEBCORE_EXPORT PartialOrdering documentOrder(const BoundaryPoint&, const SimpleRange&);
 
 class IntersectingNodeRange;
 IntersectingNodeRange intersectingNodes(const SimpleRange&);

@@ -95,6 +95,7 @@ static PartialOrdering order(unsigned a, unsigned b)
     return PartialOrdering::equivalent;
 }
 
+// FIXME: Create BoundaryPoint.cpp and move this there.
 template<TreeType treeType> PartialOrdering treeOrder(const BoundaryPoint& a, const BoundaryPoint& b)
 {
     if (a.container.ptr() == b.container.ptr())
@@ -117,9 +118,19 @@ template<TreeType treeType> PartialOrdering treeOrder(const BoundaryPoint& a, co
     return treeOrder<treeType>(a.container, b.container);
 }
 
-PartialOrdering documentOrder(const BoundaryPoint& a, const BoundaryPoint& b)
+// FIXME: Create BoundaryPoint.cpp and move this there.
+PartialOrdering treeOrderForTesting(TreeType type, const BoundaryPoint& a, const BoundaryPoint& b)
 {
-    return treeOrder<ComposedTree>(a, b);
+    switch (type) {
+    case Tree:
+        return treeOrder<Tree>(a, b);
+    case ShadowIncludingTree:
+        return treeOrder<ShadowIncludingTree>(a, b);
+    case ComposedTree:
+        return treeOrder<ComposedTree>(a, b);
+    }
+    ASSERT_NOT_REACHED();
+    return PartialOrdering::unordered;
 }
 
 Optional<SimpleRange> makeRangeSelectingNode(Node& node)
@@ -249,16 +260,6 @@ template<TreeType treeType> PartialOrdering treeOrder(const BoundaryPoint& point
 template PartialOrdering treeOrder<Tree>(const SimpleRange&, const BoundaryPoint&);
 template PartialOrdering treeOrder<Tree>(const BoundaryPoint&, const SimpleRange&);
 
-PartialOrdering documentOrder(const SimpleRange& range, const BoundaryPoint& point)
-{
-    return treeOrder<ComposedTree>(range, point);
-}
-
-PartialOrdering documentOrder(const BoundaryPoint& point, const SimpleRange& range)
-{
-    return treeOrder<ComposedTree>(point, range);
-}
-
 template<TreeType treeType> bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange)
 {
     return is_lteq(treeOrder<treeType>(outerRange.start, innerRange.start)) && is_gteq(treeOrder<treeType>(outerRange.end, innerRange.end));
@@ -293,22 +294,22 @@ bool intersects(const SimpleRange& a, const SimpleRange& b)
     return intersects<ComposedTree>(a, b);
 }
 
-static bool compareByDocumentOrder(const BoundaryPoint& a, const BoundaryPoint& b)
+static bool compareByComposedTreeOrder(const BoundaryPoint& a, const BoundaryPoint& b)
 {
-    return is_lt(documentOrder(a, b));
+    return is_lt(treeOrder<ComposedTree>(a, b));
 }
 
 SimpleRange unionRange(const SimpleRange& a, const SimpleRange& b)
 {
-    return { std::min(a.start, b.start, compareByDocumentOrder), std::max(a.end, b.end, compareByDocumentOrder) };
+    return { std::min(a.start, b.start, compareByComposedTreeOrder), std::max(a.end, b.end, compareByComposedTreeOrder) };
 }
 
 Optional<SimpleRange> intersection(const Optional<SimpleRange>& a, const Optional<SimpleRange>& b)
 {
-    // FIXME: Can this be done with fewer calls to documentOrder?
+    // FIXME: Can this be done more efficiently, with fewer calls to treeOrder?
     if (!a || !b || !intersects(*a, *b))
         return WTF::nullopt;
-    return { { std::max(a->start, b->start, compareByDocumentOrder), std::min(a->end, b->end, compareByDocumentOrder) } };
+    return { { std::max(a->start, b->start, compareByComposedTreeOrder), std::min(a->end, b->end, compareByComposedTreeOrder) } };
 }
 
 template<TreeType treeType> bool contains(const SimpleRange& range, const Node& node)

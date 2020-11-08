@@ -42,12 +42,13 @@ bool operator==(const BoundaryPoint&, const BoundaryPoint&);
 bool operator!=(const BoundaryPoint&, const BoundaryPoint&);
 
 template<TreeType = Tree> PartialOrdering treeOrder(const BoundaryPoint&, const BoundaryPoint&);
-WEBCORE_EXPORT PartialOrdering documentOrder(const BoundaryPoint&, const BoundaryPoint&);
 
 WEBCORE_EXPORT Optional<BoundaryPoint> makeBoundaryPointBeforeNode(Node&);
 WEBCORE_EXPORT Optional<BoundaryPoint> makeBoundaryPointAfterNode(Node&);
 BoundaryPoint makeBoundaryPointBeforeNodeContents(Node&);
 BoundaryPoint makeBoundaryPointAfterNodeContents(Node&);
+
+WEBCORE_EXPORT PartialOrdering treeOrderForTesting(TreeType, const BoundaryPoint&, const BoundaryPoint&);
 
 inline BoundaryPoint::BoundaryPoint(Ref<Node>&& container, unsigned offset)
     : container(WTFMove(container))

@@ -301,13 +301,13 @@ Optional<SimpleRange> AccessibilityObject::misspellingRange(const SimpleRange& s
     if (direction == AccessibilitySearchDirection::Next) {
         for (auto& misspelling : misspellings) {
             auto misspellingRange = editor.rangeForTextCheckingResult(misspelling);
-            if (misspellingRange && is_gt(documentOrder(misspellingRange->end, start.end)))
+            if (misspellingRange && is_gt(treeOrder<ComposedTree>(misspellingRange->end, start.end)))
                 return *misspellingRange;
         }
     } else {
         for (auto& misspelling : makeReversedRange(misspellings)) {
             auto misspellingRange = editor.rangeForTextCheckingResult(misspelling);
-            if (misspellingRange && is_lt(documentOrder(misspellingRange->start, start.start)))
+            if (misspellingRange && is_lt(treeOrder<ComposedTree>(misspellingRange->start, start.start)))
                 return *misspellingRange;
         }
     }
@@ -584,8 +584,8 @@ Optional<SimpleRange> AccessibilityObject::rangeOfStringClosestToRangeInDirectio
                 foundStringIsCloser = true;
             else {
                 foundStringIsCloser = isBackwardSearch
-                    ? is_gt(documentOrder(foundStringRange->end, closestStringRange->end))
-                    : is_lt(documentOrder(foundStringRange->start, closestStringRange->start));
+                    ? is_gt(treeOrder<ComposedTree>(foundStringRange->end, closestStringRange->end))
+                    : is_lt(treeOrder<ComposedTree>(foundStringRange->start, closestStringRange->start));
             }
             if (foundStringIsCloser)
                 closestStringRange = *foundStringRange;

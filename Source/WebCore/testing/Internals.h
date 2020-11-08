@@ -1066,6 +1066,7 @@ public:
 
     enum TreeType : uint8_t { Tree, ShadowIncludingTree, ComposedTree };
     String treeOrder(Node&, Node&, TreeType);
+    String treeOrderBoundaryPoints(Node& containerA, unsigned offsetA, Node& containerB, unsigned offsetB, TreeType);
     bool rangeContainsNode(const AbstractRange&, Node&, TreeType);
     bool rangeContainsRange(const AbstractRange&, const AbstractRange&, TreeType);
 

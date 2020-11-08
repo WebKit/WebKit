@@ -2047,7 +2047,8 @@ static bool isReplacedNodeOrBR(Node* node)
 
 static bool characterOffsetsInOrder(const CharacterOffset& characterOffset1, const CharacterOffset& characterOffset2)
 {
-    // FIXME: Should just be able to call documentOrder without accessibility-specific logic. Not clear why we need CharacterOffset instead of Position or BoundaryPoint.
+    // FIXME: Should just be able to call treeOrder without accessibility-specific logic.
+    // FIXME: Not clear why CharacterOffset needs to exist at all; we have both Position and BoundaryPoint to choose from.
 
     if (characterOffset1.isNull() || characterOffset2.isNull())
         return false;
@@ -2066,7 +2067,7 @@ static bool characterOffsetsInOrder(const CharacterOffset& characterOffset1, con
     
     auto range1 = AXObjectCache::rangeForNodeContents(*node1);
     auto range2 = AXObjectCache::rangeForNodeContents(*node2);
-    return is_lteq(documentOrder(range1.start, range2.start));
+    return is_lteq(treeOrder<ComposedTree>(range1.start, range2.start));
 }
 
 static Node* resetNodeAndOffsetForReplacedNode(Node& replacedNode, int& offset, int characterCount)

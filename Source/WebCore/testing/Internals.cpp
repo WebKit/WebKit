@@ -6031,6 +6031,11 @@ String Internals::treeOrder(Node& a, Node& b, TreeType type)
     return string(treeOrderForTesting(convertType(type), a, b));
 }
 
+String Internals::treeOrderBoundaryPoints(Node& containerA, unsigned offsetA, Node& containerB, unsigned offsetB, TreeType type)
+{
+    return string(treeOrderForTesting(convertType(type), { containerA, offsetA }, { containerB, offsetB }));
+}
+
 bool Internals::rangeContainsNode(const AbstractRange& range, Node& node, TreeType type)
 {
     return containsForTesting(convertType(type), makeSimpleRange(range), node);

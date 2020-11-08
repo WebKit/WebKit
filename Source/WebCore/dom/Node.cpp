@@ -1637,7 +1637,7 @@ bool connectedInSameTreeScope(const Node* a, const Node* b)
     return a && b && a->isConnected() == b->isConnected() && &a->treeScope() == &b->treeScope();
 }
 
-// FIXME: Refactor this so it calls documentOrder, except for any exotic inefficient things that are needed only here.
+// FIXME: Refactor so this calls treeOrder, with additional code for any exotic inefficient things that are needed only here.
 unsigned short Node::compareDocumentPosition(Node& otherNode)
 {
     if (&otherNode == this)

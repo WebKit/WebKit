@@ -2331,7 +2331,7 @@ size_t SearchBuffer::length() const
 uint64_t characterCount(const SimpleRange& range, TextIteratorBehavior behavior)
 {
     auto adjustedRange = range;
-    auto ordering = documentOrder(range.start, range.end);
+    auto ordering = treeOrder<ComposedTree>(range.start, range.end);
     if (is_gt(ordering))
         std::swap(adjustedRange.start, adjustedRange.end);
     else if (!is_lt(ordering))

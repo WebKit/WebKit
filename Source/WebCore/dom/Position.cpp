@@ -1652,7 +1652,7 @@ PartialOrdering documentOrder(const Position& a, const Position& b)
 
     // FIXME: Avoid computing node offset for cases where we don't need to.
 
-    return documentOrder(*makeBoundaryPoint(a), *makeBoundaryPoint(b));
+    return treeOrder<ComposedTree>(*makeBoundaryPoint(a), *makeBoundaryPoint(b));
 }
 
 } // namespace WebCore
