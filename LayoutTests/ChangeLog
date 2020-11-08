@@ -1,3 +1,13 @@
+2020-11-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        TextureMapperLayer::computeOverlapRegions: Accumulate nested replica transform matrices recursively
+        https://bugs.webkit.org/show_bug.cgi?id=218364
+
+        Reviewed by Don Olmstead.
+
+        * compositing/reflections/nested-reflection-opacity2-expected.html: Added.
+        * compositing/reflections/nested-reflection-opacity2.html: Added.
+
 2020-11-08  Darin Adler  <darin@apple.com>
 
         Remove another function that implicitly uses the composed tree (documentOrder on nodes and boundary points)

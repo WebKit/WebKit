@@ -123,11 +123,17 @@ private:
     void removeFromParent();
     void removeAllChildren();
 
-    enum ResolveSelfOverlapMode {
-        ResolveSelfOverlapAlways = 0,
-        ResolveSelfOverlapIfNeeded
+    enum class ComputeOverlapRegionMode : uint8_t {
+        Intersection,
+        Union
     };
-    void computeOverlapRegions(const TextureMapperPaintOptions&, Region& overlapRegion, Region& nonOverlapRegion, ResolveSelfOverlapMode);
+    struct ComputeOverlapRegionData {
+        ComputeOverlapRegionMode mode;
+        IntRect clipBounds;
+        Region& overlapRegion;
+        Region& nonOverlapRegion;
+    };
+    void computeOverlapRegions(ComputeOverlapRegionData&, const TransformationMatrix&, bool includesReplica = true);
 
     void paintRecursive(const TextureMapperPaintOptions&);
     void paintUsingOverlapRegions(const TextureMapperPaintOptions&);

@@ -315,17 +315,19 @@ TransformationMatrix TextureMapperLayer::replicaTransform()
         .multiply(m_layerTransforms.combined.inverse().valueOr(TransformationMatrix()));
 }
 
-static void resolveOverlaps(Region& newRegion, Region& overlapRegion, Region& nonOverlapRegion)
+static void resolveOverlaps(const IntRect& newRegion, Region& overlapRegion, Region& nonOverlapRegion)
 {
     Region newOverlapRegion(newRegion);
     newOverlapRegion.intersect(nonOverlapRegion);
     nonOverlapRegion.subtract(newOverlapRegion);
     overlapRegion.unite(newOverlapRegion);
-    newRegion.subtract(overlapRegion);
-    nonOverlapRegion.unite(newRegion);
+
+    Region newNonOverlapRegion(newRegion);
+    newNonOverlapRegion.subtract(overlapRegion);
+    nonOverlapRegion.unite(newNonOverlapRegion);
 }
 
-void TextureMapperLayer::computeOverlapRegions(const TextureMapperPaintOptions& options, Region& overlapRegion, Region& nonOverlapRegion, ResolveSelfOverlapMode mode)
+void TextureMapperLayer::computeOverlapRegions(ComputeOverlapRegionData& data, const TransformationMatrix& accumulatedReplicaTransform, bool includesReplica)
 {
     if (!m_state.visible || !m_state.contentsVisible)
         return;
@@ -344,58 +346,46 @@ void TextureMapperLayer::computeOverlapRegions(const TextureMapperPaintOptions& 
         localBoundingRect.unite(unfilteredTargetRect);
     }
 
-    TransformationMatrix transform;
-    transform.multiply(options.transform);
+    TransformationMatrix transform(accumulatedReplicaTransform);
     transform.multiply(m_layerTransforms.combined);
 
-    TransformationMatrix replicaMatrix;
-    if (m_state.replicaLayer) {
-        replicaMatrix = replicaTransform();
-        localBoundingRect.unite(replicaMatrix.mapRect(localBoundingRect));
-    }
-
-    IntRect clipBounds(options.textureMapper.clipBounds());
-    clipBounds.move(-options.offset);
-
     IntRect viewportBoundingRect = enclosingIntRect(transform.mapRect(localBoundingRect));
-    viewportBoundingRect.intersect(clipBounds);
+    viewportBoundingRect.intersect(data.clipBounds);
 
-    // Count all masks and filters as overlap layers.
-    if (hasFilters() || m_state.maskLayer || (m_state.replicaLayer && m_state.replicaLayer->m_state.maskLayer)) {
-        Region newOverlapRegion(viewportBoundingRect);
-        nonOverlapRegion.subtract(newOverlapRegion);
-        overlapRegion.unite(newOverlapRegion);
-        return;
+    switch (data.mode) {
+    case ComputeOverlapRegionMode::Intersection:
+        resolveOverlaps(viewportBoundingRect, data.overlapRegion, data.nonOverlapRegion);
+        break;
+    case ComputeOverlapRegionMode::Union:
+        data.overlapRegion.unite(viewportBoundingRect);
+        break;
     }
 
-    Region newOverlapRegion;
-    Region newNonOverlapRegion(viewportBoundingRect);
+    if (m_state.replicaLayer && includesReplica) {
+        TransformationMatrix newReplicaTransform(accumulatedReplicaTransform);
+        newReplicaTransform.multiply(replicaTransform());
+        computeOverlapRegions(data, newReplicaTransform, false);
+    }
 
     if (!m_state.masksToBounds) {
         for (auto* child : m_children)
-            child->computeOverlapRegions(options, newOverlapRegion, newNonOverlapRegion, ResolveSelfOverlapIfNeeded);
+            child->computeOverlapRegions(data, accumulatedReplicaTransform);
     }
-
-    if (m_state.replicaLayer) {
-        newOverlapRegion.unite(replicaMatrix.mapRect(newOverlapRegion.bounds()));
-        Region replicaRegion(replicaMatrix.mapRect(newNonOverlapRegion.bounds()));
-        resolveOverlaps(replicaRegion, newOverlapRegion, newNonOverlapRegion);
-    }
-
-    if ((mode != ResolveSelfOverlapAlways) && shouldBlend()) {
-        newNonOverlapRegion.unite(newOverlapRegion);
-        newOverlapRegion = Region();
-    }
-
-    overlapRegion.unite(newOverlapRegion);
-    resolveOverlaps(newNonOverlapRegion, overlapRegion, nonOverlapRegion);
 }
 
 void TextureMapperLayer::paintUsingOverlapRegions(const TextureMapperPaintOptions& options)
 {
     Region overlapRegion;
     Region nonOverlapRegion;
-    computeOverlapRegions(options, overlapRegion, nonOverlapRegion, ResolveSelfOverlapAlways);
+    bool needsUnion = hasFilters() || m_state.maskLayer || (m_state.replicaLayer && m_state.replicaLayer->m_state.maskLayer);
+    ComputeOverlapRegionData data {
+        needsUnion ? ComputeOverlapRegionMode::Union : ComputeOverlapRegionMode::Intersection,
+        options.textureMapper.clipBounds(),
+        overlapRegion,
+        nonOverlapRegion
+    };
+    data.clipBounds.move(-options.offset);
+    computeOverlapRegions(data, options.transform);
     if (overlapRegion.isEmpty()) {
         paintSelfAndChildrenWithReplica(options);
         return;
