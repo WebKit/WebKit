@@ -35,11 +35,12 @@ namespace LayoutIntegration {
 class Line {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Line(size_t firstRunIndex, size_t runCount, const FloatRect& rect, const FloatRect& enclosingRect, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, float horizontalAlignmentOffset)
+    Line(size_t firstRunIndex, size_t runCount, const FloatRect& lineRect, float lineBoxWidth, const FloatRect& enclosingContentRect, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, float horizontalAlignmentOffset)
         : m_firstRunIndex(firstRunIndex)
         , m_runCount(runCount)
-        , m_rect(rect)
-        , m_enclosingRect(enclosingRect)
+        , m_lineRect(lineRect)
+        , m_lineBoxWidth(lineBoxWidth)
+        , m_enclosingContentRect(enclosingContentRect)
         , m_scrollableOverflow(scrollableOverflow)
         , m_inkOverflow(inkOverflow)
         , m_baseline(baseline)
@@ -49,8 +50,9 @@ public:
 
     size_t firstRunIndex() const { return m_firstRunIndex; }
     size_t runCount() const { return m_runCount; }
-    const FloatRect& rect() const { return m_rect; }
-    const FloatRect& enclosingRect() const { return m_enclosingRect; }
+    const FloatRect& rect() const { return m_lineRect; }
+    float lineBoxWidth() const { return m_lineBoxWidth; }
+    const FloatRect& enclosingContentRect() const { return m_enclosingContentRect; }
     const FloatRect& scrollableOverflow() const { return m_scrollableOverflow; }
     const FloatRect& inkOverflow() const { return m_inkOverflow; }
     float baseline() const { return m_baseline; }
@@ -59,9 +61,13 @@ public:
 private:
     size_t m_firstRunIndex { 0 };
     size_t m_runCount { 0 };
-    FloatRect m_rect;
-    // Enclosing rect fully encloses all the inline level boxes on the line.
-    FloatRect m_enclosingRect;
+    // Line is always as tall as the line box is. However they may differ in width.
+    // While line box encloses all the inline level boxes on the line horizontally, the line itself may be shorter (and trigger horizontal overflow).
+    // Enclosing content rect includes all inline level boxes both vertically and horizontally. In certain cases (see line-height property)
+    // the line (and the line box) is not as tall as the inline level boxes on the line.
+    FloatRect m_lineRect;
+    float m_lineBoxWidth { 0 };
+    FloatRect m_enclosingContentRect;
     FloatRect m_scrollableOverflow;
     FloatRect m_inkOverflow;
     float m_baseline { 0 };

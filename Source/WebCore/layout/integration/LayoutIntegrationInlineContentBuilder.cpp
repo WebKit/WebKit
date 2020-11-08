@@ -99,7 +99,7 @@ InlineContentBuilder::LineLevelVisualAdjustmentsForRunsList InlineContentBuilder
         lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition = lineNeedsLegacyIntegralVerticalPosition();
         if (shouldCheckHorizontalOverflowForContentReplacement) {
             auto& line = lines[lineIndex];
-            auto overflowWidth = lineOverflowWidth(m_blockFlow, line.logicalWidth(), line.lineBoxLogicalRect().width());
+            auto overflowWidth = lineOverflowWidth(m_blockFlow, line.logicalWidth(), line.lineBoxLogicalSize().width());
             lineLevelVisualAdjustmentsForRuns[lineIndex].needsTrailingContentReplacement = overflowWidth > line.logicalWidth();
         }
     }
@@ -134,8 +134,7 @@ void InlineContentBuilder::constructDisplayLineRuns(InlineContent& inlineContent
         // FIXME: Shouldn't we just leave them be relative to the line box?
         auto lineIndex = lineRun.lineIndex();
         auto& line = lines[lineIndex];
-        auto lineBoxLogicalRect = line.lineBoxLogicalRect();
-        runRect.moveBy({ lineBoxLogicalRect.left(), lineBoxLogicalRect.top() });
+        runRect.moveBy({ line.logicalLeft(), line.logicalTop() });
         if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition)
             runRect.setY(roundToInt(runRect.y()));
 
@@ -181,11 +180,9 @@ void InlineContentBuilder::constructDisplayLines(InlineContent& inlineContent, c
     size_t runIndex = 0;
     for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
         auto& line = lines[lineIndex];
-        auto lineBoxLogicalRect = line.lineBoxLogicalRect();
+        auto lineBoxLogicalSize = line.lineBoxLogicalSize();
         // FIXME: This is where the logical to physical translate should happen.
-        auto lineBoxLogicalBottom = (lineBoxLogicalRect.top() - line.logicalTop()) + lineBoxLogicalRect.height();
-        auto overflowHeight = std::max(line.logicalHeight(), lineBoxLogicalBottom);
-        auto scrollableOverflowRect = FloatRect { line.logicalLeft(), line.logicalTop(), lineOverflowWidth(m_blockFlow, line.logicalWidth(), lineBoxLogicalRect.width()), overflowHeight };
+        auto scrollableOverflowRect = FloatRect { line.logicalLeft(), line.logicalTop(), lineOverflowWidth(m_blockFlow, line.logicalWidth(), lineBoxLogicalSize.width()), line.logicalHeight() };
 
         auto firstRunIndex = runIndex;
         auto lineInkOverflowRect = scrollableOverflowRect;
@@ -193,12 +190,10 @@ void InlineContentBuilder::constructDisplayLines(InlineContent& inlineContent, c
             lineInkOverflowRect.unite(runs[runIndex++].inkOverflow());
         auto runCount = runIndex - firstRunIndex;
         auto lineRect = FloatRect { line.logicalRect() };
-        // Painting code (specifically TextRun's xPos) needs the line box offset to be able to compute tab positions.
-        lineRect.setX(lineBoxLogicalRect.left());
-        auto enclosingLineRect = [&] {
+        auto enclosingContentRect = [&] {
             // Let's (vertically)enclose all the inline level boxes.
             // This mostly matches 'lineRect', unless line-height triggers line box overflow (not to be confused with ink or scroll overflow).
-            auto enclosingRect = lineRect;
+            auto enclosingRect = FloatRect { lineRect.location(), lineBoxLogicalSize };
             auto& lineBox = lineBoxes[lineIndex];
             for (auto& inlineLevelBox : lineBox.inlineLevelBoxList()) {
                 auto inlineLevelBoxLogicalRect = lineBox.logicalRectForInlineLevelBox(inlineLevelBox->layoutBox());
@@ -211,9 +206,9 @@ void InlineContentBuilder::constructDisplayLines(InlineContent& inlineContent, c
         }();
         if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition) {
             lineRect.setY(roundToInt(lineRect.y()));
-            enclosingLineRect.setY(roundToInt(enclosingLineRect.y()));
+            enclosingContentRect.setY(roundToInt(enclosingContentRect.y()));
         }
-        inlineContent.lines.append({ firstRunIndex, runCount, lineRect, enclosingLineRect, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.horizontalAlignmentOffset() });
+        inlineContent.lines.append({ firstRunIndex, runCount, lineRect, lineBoxLogicalSize.width(), enclosingContentRect, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.horizontalAlignmentOffset() });
     }
 }
 

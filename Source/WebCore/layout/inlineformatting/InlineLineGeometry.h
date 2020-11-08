@@ -35,7 +35,7 @@ namespace Layout {
 class InlineLineGeometry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InlineLineGeometry(const InlineRect& lineLogicalRect, const InlineRect& lineBoxLogicalRect, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit horizontalAlignmentOffset);
+    InlineLineGeometry(const InlineRect& lineLogicalRect, const InlineLayoutSize& lineBoxLogicalSize, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit horizontalAlignmentOffset);
 
     InlineLayoutUnit logicalLeft() const { return logicalRect().left(); };
     InlineLayoutUnit logicalRight() const { return logicalRect().right(); };
@@ -47,7 +47,7 @@ public:
     InlineLayoutUnit logicalHeight() const { return logicalRect().height(); };
 
     const InlineRect& logicalRect() const { return m_logicalRect; }
-    const InlineRect& lineBoxLogicalRect() const { return m_lineBoxLogicalRect; }
+    const InlineLayoutSize& lineBoxLogicalSize() const { return m_lineBoxLogicalSize; }
 
     InlineLayoutUnit baseline() const { return m_aligmentBaseline; }
     InlineLayoutUnit horizontalAlignmentOffset() const { return m_horizontalAlignmentOffset; }
@@ -56,14 +56,14 @@ public:
 
 private:
     InlineRect m_logicalRect;
-    InlineRect m_lineBoxLogicalRect;
+    InlineLayoutSize m_lineBoxLogicalSize;
     InlineLayoutUnit m_aligmentBaseline { 0 };
     InlineLayoutUnit m_horizontalAlignmentOffset { 0 };
 };
 
-inline InlineLineGeometry::InlineLineGeometry(const InlineRect& lineLogicalRect, const InlineRect& lineBoxLogicalRect, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit horizontalAlignmentOffset)
+inline InlineLineGeometry::InlineLineGeometry(const InlineRect& lineLogicalRect, const InlineLayoutSize& lineBoxLogicalSize, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit horizontalAlignmentOffset)
     : m_logicalRect(lineLogicalRect)
-    , m_lineBoxLogicalRect(lineBoxLogicalRect)
+    , m_lineBoxLogicalSize(lineBoxLogicalSize)
     , m_aligmentBaseline(aligmentBaseline)
     , m_horizontalAlignmentOffset(horizontalAlignmentOffset)
 {
