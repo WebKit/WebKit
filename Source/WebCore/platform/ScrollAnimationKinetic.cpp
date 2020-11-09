@@ -65,11 +65,14 @@
  *   f2(x) = t exp(-mx / 2)
  */
 
-static const double decelFriction = 4;
-static const double frameRate = 60;
-static const Seconds tickTime = 1_s / frameRate;
-static const Seconds minimumTimerInterval { 1_ms };
-static const Seconds scrollCaptureThreshold { 150_ms };
+static constexpr double decelFriction = 4;
+static constexpr double frameRate = 60;
+static constexpr double velocityAccumulationFloor = 0.33;
+static constexpr double velocityAccumulationCeil = 1.0;
+static constexpr double velocityAccumulationMax = 6.0;
+static constexpr Seconds tickTime = 1_s / frameRate;
+static constexpr Seconds minimumTimerInterval { 1_ms };
+static constexpr Seconds scrollCaptureThreshold { 150_ms };
 
 namespace WebCore {
 
@@ -124,8 +127,6 @@ ScrollAnimationKinetic::~ScrollAnimationKinetic() = default;
 void ScrollAnimationKinetic::stop()
 {
     m_animationTimer.stop();
-    m_horizontalData = WTF::nullopt;
-    m_verticalData = WTF::nullopt;
 }
 
 bool ScrollAnimationKinetic::isActive() const
@@ -171,46 +172,74 @@ void ScrollAnimationKinetic::start(const FloatPoint& initialPosition, const Floa
 {
     stop();
 
-    m_position = initialPosition;
-
-    if (!velocity.x() && !velocity.y())
+    if (!velocity.x() && !velocity.y()) {
+        m_position = initialPosition;
+        m_horizontalData = WTF::nullopt;
+        m_verticalData = WTF::nullopt;
         return;
+    }
 
+    auto delta = deltaToNextFrame();
     auto extents = m_scrollExtentsFunction();
+
+    auto accumulateVelocity = [&](double velocity, Optional<PerAxisData> axisData) -> double {
+        if (axisData && axisData.value().animateScroll(delta)) {
+            double lastVelocity = axisData.value().velocity();
+            if ((std::signbit(lastVelocity) == std::signbit(velocity))
+                && (std::abs(velocity) >= std::abs(lastVelocity * velocityAccumulationFloor))) {
+                double minVelocity = lastVelocity * velocityAccumulationFloor;
+                double maxVelocity = lastVelocity * velocityAccumulationCeil;
+                double accumulationMultiplier = (velocity - minVelocity) / (maxVelocity - minVelocity);
+                velocity += lastVelocity * std::min(accumulationMultiplier, velocityAccumulationMax);
+            }
+        }
+
+        return velocity;
+    };
+
     if (mayHScroll) {
         m_horizontalData = PerAxisData(extents.minimumScrollPosition.x(),
             extents.maximumScrollPosition.x(),
-            initialPosition.x(), velocity.x());
-    }
+            initialPosition.x(), accumulateVelocity(velocity.x(), m_horizontalData));
+    } else
+        m_horizontalData = WTF::nullopt;
+
     if (mayVScroll) {
         m_verticalData = PerAxisData(extents.minimumScrollPosition.y(),
             extents.maximumScrollPosition.y(),
-            initialPosition.y(), velocity.y());
-    }
+            initialPosition.y(), accumulateVelocity(velocity.y(), m_verticalData));
+    } else
+        m_verticalData = WTF::nullopt;
 
+    m_position = initialPosition;
     m_startTime = MonotonicTime::now() - tickTime / 2.;
     animationTimerFired();
 }
 
 void ScrollAnimationKinetic::animationTimerFired()
 {
-    MonotonicTime currentTime = MonotonicTime::now();
-    Seconds deltaToNextFrame = 1_s * ceil((currentTime - m_startTime).value() * frameRate) / frameRate - (currentTime - m_startTime);
+    auto delta = deltaToNextFrame();
 
-    if (m_horizontalData && !m_horizontalData.value().animateScroll(deltaToNextFrame))
+    if (m_horizontalData && !m_horizontalData.value().animateScroll(delta))
         m_horizontalData = WTF::nullopt;
 
-    if (m_verticalData && !m_verticalData.value().animateScroll(deltaToNextFrame))
+    if (m_verticalData && !m_verticalData.value().animateScroll(delta))
         m_verticalData = WTF::nullopt;
 
     // If one of the axes didn't finish its animation we must continue it.
     if (m_horizontalData || m_verticalData)
-        m_animationTimer.startOneShot(std::max(minimumTimerInterval, deltaToNextFrame));
+        m_animationTimer.startOneShot(std::max(minimumTimerInterval, delta));
 
     double x = m_horizontalData ? m_horizontalData.value().position() : m_position.x();
     double y = m_verticalData ? m_verticalData.value().position() : m_position.y();
     m_position = FloatPoint(x, y);
     m_notifyPositionChangedFunction(FloatPoint(m_position));
+}
+
+Seconds ScrollAnimationKinetic::deltaToNextFrame()
+{
+    MonotonicTime currentTime = MonotonicTime::now();
+    return 1_s * ceil((currentTime - m_startTime).value() * frameRate) / frameRate - (currentTime - m_startTime);
 }
 
 } // namespace WebCore

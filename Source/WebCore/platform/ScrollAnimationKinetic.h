@@ -42,6 +42,7 @@ private:
         PerAxisData(double lower, double upper, double initialPosition, double initialVelocity);
 
         double position() { return m_position; }
+        double velocity() { return m_velocity; }
 
         bool animateScroll(Seconds timeDelta);
 
@@ -74,6 +75,7 @@ public:
 
 private:
     void animationTimerFired();
+    Seconds deltaToNextFrame();
 
     ScrollExtentsCallback m_scrollExtentsFunction;
     NotifyPositionChangedCallback m_notifyPositionChangedFunction;
