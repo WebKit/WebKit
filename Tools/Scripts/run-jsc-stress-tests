@@ -728,13 +728,19 @@ def runDefault(*optionalTestSpecificOptions)
     run("default", *(FTL_OPTIONS + optionalTestSpecificOptions))
 end
 
+# FIXME: need to fix https://bugs.webkit.org/show_bug.cgi?id=218703 to enable this on Linux/MIPS.
 def runBytecodeCacheImpl(optionalTestSpecificOptions, *additionalEnv)
-    unless $hostOS == "darwin"
+    if ($hostOS == "darwin")
+        fileTemplate = "bytecode-cache"
+    elsif ($hostOS == "linux" && $architecture != "mips")
+        fileTemplate = "bytecode-cacheXXX"
+    else
         skip
         return
     end
+
     options = BASE_OPTIONS + $testSpecificRequiredOptions + FTL_OPTIONS + optionalTestSpecificOptions
-    addRunCommand("bytecode-cache", ["sh", (pathToHelpers + "bytecode-cache-test-helper.sh").to_s, pathToVM.to_s, $benchmark.to_s] + options, silentOutputHandler, simpleErrorHandler, *additionalEnv)
+    addRunCommand("bytecode-cache", ["sh", (pathToHelpers + "bytecode-cache-test-helper.sh").to_s, pathToVM.to_s, $benchmark.to_s, fileTemplate.to_s] + options, silentOutputHandler, simpleErrorHandler, *additionalEnv)
 end
 
 def runBytecodeCache(*optionalTestSpecificOptions)

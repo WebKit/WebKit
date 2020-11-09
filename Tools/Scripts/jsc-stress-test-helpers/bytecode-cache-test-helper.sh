@@ -37,16 +37,18 @@ pathToVM=$1
 shift
 inputFile=$1
 shift
-extraOptions=( "$@" )
-diskCachePath=$(mktemp -d -t "bytecode-cache")
+fileTemplate=$1
+shift
+extraOptions="$@"
+diskCachePath=$(mktemp -d -t "$fileTemplate")
 
 _trap_exit() { rm -rf "$diskCachePath"; }
 trap _trap_exit EXIT
 
 export JSC_diskCachePath=$diskCachePath
-mysys "$pathToVM" "$inputFile" "${extraOptions[@]}"
+mysys "$pathToVM" "$inputFile" "$extraOptions"
 
 if [ -z "$JSC_forceDiskCache" ]; then
     export JSC_forceDiskCache=true
 fi
-mysys "$pathToVM" "$inputFile" "${extraOptions[@]}"
+mysys "$pathToVM" "$inputFile" "$extraOptions"

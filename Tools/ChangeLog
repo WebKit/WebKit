@@ -1,3 +1,26 @@
+2020-11-09  Xan López  <xan@igalia.com>
+
+        [JSC] Enable bytecode cache testing in stress tests for Linux
+        https://bugs.webkit.org/show_bug.cgi?id=218072
+
+        Reviewed by Yusuke Suzuki.
+
+        We only need to tweak how we define the temporary dir for the
+        bytecode cache in order for stress tests to support bytecode cache
+        testing on Linux.
+
+        This is skipped on Linux/MIPS for now, since the bots are already
+        slow enough and we have one blocker bug with incorrect parameter
+        quoting on some tests. See bug #218703.
+
+        * Scripts/jsc-stress-test-helpers/bytecode-cache-test-helper.sh:
+        receive the temporary dir template as an argument. Also tweak the
+        script a bit so that it does not use arrays, that way it will work
+        in any POSIX shell.
+        * Scripts/run-jsc-stress-tests: pass a different temporary dir
+        template for Darwin and Linux, since mktemp works differently
+        there.
+
 2020-11-09  Alan Bujtas  <zalan@apple.com>
 
         Unreviewed, reverting r269603.
