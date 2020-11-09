@@ -76,6 +76,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.closePath.empty.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.closePath.newline.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.closePath.nextpoint.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.ellipse.basics.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.fill.closed.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.fill.closed.unaffected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.fill.overlap.html

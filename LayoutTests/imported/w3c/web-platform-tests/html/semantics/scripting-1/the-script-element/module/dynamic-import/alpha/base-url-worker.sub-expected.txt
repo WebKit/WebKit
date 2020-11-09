@@ -1,0 +1,4 @@
+
+FAIL Relative URL-like from worker top-level script promise_test: Unhandled rejection with value: object "Error: Could not import the module './import.js?pipe=header(Access-Control-Allow-Origin,*)&label=relative-worker top-level script'."
+FAIL Absolute URL-like from worker top-level script promise_test: Unhandled rejection with value: object "Error: Could not import the module 'http://127.0.0.1:8800/html/semantics/scripting-1/the-script-element/module/dynamic-import/gamma/import.js?pipe=header(Access-Control-Allow-Origin,*)&label=absolute-worker top-level script'."
+

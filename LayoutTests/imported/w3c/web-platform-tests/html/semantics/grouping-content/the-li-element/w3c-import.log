@@ -20,6 +20,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-002.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-003.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-004.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-005.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-display-list-item-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-display-list-item.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-menu-expected.html

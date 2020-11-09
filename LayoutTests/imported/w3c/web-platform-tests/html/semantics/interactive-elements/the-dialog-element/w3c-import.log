@@ -31,4 +31,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-showModal.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-does-not-match-disabled-selector.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-node-is-unfocusable.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/remove-dialog-should-unblock-document.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/show-modal-focusing-steps.html

@@ -288,6 +288,9 @@ imported/w3c/web-platform-tests/referrer-policy/generic/unsupported-csp-referrer
 imported/w3c/web-platform-tests/selection/collapse-30.html [ Skip ]
 imported/w3c/web-platform-tests/selection/dir-manual.html [ Skip ]
 
+# This test has been crashing in Debug since its import.
+webkit.org/b/218671 [ Debug ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.ellipse.basics.html [ Crash ]
+
 # Newly imported service worker tests that are timing out.
 imported/w3c/web-platform-tests/service-workers/service-worker/dedicated-worker-service-worker-interception.https.html [ Skip ]
 webkit.org/b/201665 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video.https.html [ Skip ]
@@ -435,7 +438,6 @@ imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/select-e
 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setRangeText.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-submit-remove-children.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-form-submission.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/no-active-script-manual-module.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-no-referrer.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-origin-when-cross-origin.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-origin.sub.html [ Skip ]

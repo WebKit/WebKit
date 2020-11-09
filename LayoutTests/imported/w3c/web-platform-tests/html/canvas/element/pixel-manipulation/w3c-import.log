@@ -52,6 +52,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.object.clamp.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.object.ctor.array.bounds.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.object.ctor.array.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.object.ctor.basics.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.object.ctor.size.bounds.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.object.ctor.size.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.object.nan.html

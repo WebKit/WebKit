@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Error: error
+
+FAIL Test evaluation order of modules assert_array_equals: expected property 4 to be "microtask-2.2" but got "script-load" (expected array ["step-2.2-1", "step-2.2-2", "global-error", "error", "microtask-2.2", "script-load", "global-load"] got ["step-2.2-1", "step-2.2-2", "global-error", "error", "script-load", "global-load", "microtask-2.2"])
+

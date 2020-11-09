@@ -32,7 +32,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-eager.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-base-url-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-base-url.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-in-script-disabled-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-load-event.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-multiple-queued-navigations.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-multiple-times.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-referrerpolicy-change.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-to-eager.html

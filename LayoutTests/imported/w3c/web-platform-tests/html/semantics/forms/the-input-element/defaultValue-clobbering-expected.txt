@@ -1,0 +1,6 @@
+email with leading whitespace:
+number with trailing incomplete exponent:
+
+FAIL Visible value and validity should not be affected when assigning to the defaultValue property for type=email. assert_false: "  user" should not be a valid value for type=email. expected false got true
+FAIL Visible value and validity should not be affected when assigning to the defaultValue property for type=number. assert_false: "123e" should not be a valid value for type=number. expected false got true
+

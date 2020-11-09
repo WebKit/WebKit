@@ -14,13 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/dynamic-imports-credentials-setTimeout.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/dynamic-imports-credentials.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/dynamic-imports-fetch-error.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/dynamic-imports-script-error.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/dynamic-imports.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/inline-event-handler.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/no-active-script-manual-classic.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/no-active-script-manual-module.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/propagate-nonce-external-classic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/propagate-nonce-external-module.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/propagate-nonce-external.js

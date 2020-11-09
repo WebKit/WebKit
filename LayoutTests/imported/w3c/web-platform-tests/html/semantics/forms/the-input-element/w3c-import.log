@@ -24,7 +24,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/date.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-local.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/defaultValue-clobbering-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/defaultValue-clobbering.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/email.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/files.html
@@ -44,6 +43,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-stepup.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-button.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-checkbox.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-types.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-validationmessage.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-validity.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-value-invalidstateerr.html
@@ -69,6 +69,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/number.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/password.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/pattern_attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-double-activate-pseudo.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-groupname-case.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-input-cancel.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio.html
@@ -81,6 +82,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/required_attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/reset.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/search_input.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection-pointer.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/telephone.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/text.html

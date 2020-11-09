@@ -1,0 +1,16 @@
+
+
+  Clickable
+
+PASS <input type="checkbox"> click()
+PASS <input type="radio"> click()
+FAIL <input type="text"> typing promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'e.bubbles')"
+FAIL <input type="search"> typing promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'e.bubbles')"
+FAIL <input type="tel"> typing promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'e.bubbles')"
+FAIL <input type="url"> typing promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'e.bubbles')"
+FAIL <input type="email"> typing promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'e.bubbles')"
+FAIL <input type="password"> typing promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'e.bubbles')"
+FAIL <input type="number"> typing promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'e.bubbles')"
+FAIL <textarea></textarea> typing promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'e.bubbles')"
+FAIL <select> pressing down arrow promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'e.bubbles')"
+

@@ -221,6 +221,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.parse.transparent-1.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.parse.transparent-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.parse.transparent-2.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.conic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.empty.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.interpolate.alpha.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.interpolate.alpha.png

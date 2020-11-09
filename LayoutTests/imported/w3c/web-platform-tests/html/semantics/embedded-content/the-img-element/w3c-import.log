@@ -40,6 +40,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-base-url.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-compositing-change-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-compositing-change.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-compositing-large-scale-change-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-compositing-large-scale-change.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-eager.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-base-url-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-base-url.html
@@ -49,7 +51,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-cross-origin-iframe-002.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-script-disabled-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-viewport-dynamic.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-load-event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-move-document.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-move-into-script-disabled-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-multicol.html

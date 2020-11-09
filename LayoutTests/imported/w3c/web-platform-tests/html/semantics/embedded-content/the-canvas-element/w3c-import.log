@@ -14,10 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.canvas.context.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.canvas.readonly.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.canvas.reference.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.getcontext.exists.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.getcontext.extraargs.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.getcontext.invalid.args.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.getcontext.shared.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.getcontext.unique.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.scaled.png

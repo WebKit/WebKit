@@ -2475,6 +2475,7 @@
         "web-platform-tests/html/semantics/embedded-content/the-object-element/test2.html",
         "web-platform-tests/html/semantics/embedded-content/the-video-element/video-import-to-inactive-document-crash.html",
         "web-platform-tests/html/semantics/forms/attributes-common-to-form-controls/dirname-ltr-iframe.html",
+        "web-platform-tests/html/semantics/forms/constraints/number-input-lang-validationMessage-crash.html",
         "web-platform-tests/html/semantics/forms/form-submission-0/form-data-set-usv-form.html",
         "web-platform-tests/html/semantics/forms/resetting-a-form/reset-form-event-realm-support.html",
         "web-platform-tests/html/semantics/forms/resetting-a-form/support/reset-form-event-realm.html",

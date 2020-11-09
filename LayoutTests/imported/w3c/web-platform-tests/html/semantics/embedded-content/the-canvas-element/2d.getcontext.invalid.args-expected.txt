@@ -1,0 +1,6 @@
+2d.getcontext.invalid.args
+Calling getContext with invalid arguments.
+Actual output:
+
+PASS Calling getContext with invalid arguments.
+

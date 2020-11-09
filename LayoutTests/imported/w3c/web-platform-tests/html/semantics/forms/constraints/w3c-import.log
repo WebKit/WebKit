@@ -33,4 +33,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/input-number-validity-dynamic-value-no-change.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/input-pattern-dynamic-value.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/inputwillvalidate.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/number-input-lang-validationMessage-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/radio-valueMissing.html

@@ -29,6 +29,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/data-url.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/defer.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/emptyish-script-elements.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/evaluation-order-1-nothrow-sharedworker.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/evaluation-order-1-nothrow-worker-setup.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/evaluation-order-1-nothrow-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/evaluation-order-1-nothrow.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/evaluation-order-1-sharedworker.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/evaluation-order-1-worker-setup.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/evaluation-order-1-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/evaluation-order-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/external-script-utf8.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/external-script-windows1250.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/historical.html

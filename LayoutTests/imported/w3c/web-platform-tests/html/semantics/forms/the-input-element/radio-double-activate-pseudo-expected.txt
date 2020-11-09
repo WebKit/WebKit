@@ -1,0 +1,4 @@
+
+
+PASS <input type=radio> shouldn't have the :active pseudo element after pressing the spacebar twice.
+

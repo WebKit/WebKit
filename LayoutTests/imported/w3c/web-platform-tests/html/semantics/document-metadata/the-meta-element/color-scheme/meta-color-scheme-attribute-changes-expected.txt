@@ -1,0 +1,9 @@
+
+FAIL Meta color-scheme initially 'dark'. assert_equals: expected "dark" but got "auto"
+FAIL Removed name attribute from meta color-scheme. assert_equals: expected "normal" but got "auto"
+FAIL Set meta name to color-scheme. assert_equals: expected "dark" but got "auto"
+FAIL Set content attribute of meta color-scheme to empty string. assert_equals: expected "normal" but got "auto"
+FAIL Set content attribute of meta color-scheme to an invalid value. assert_equals: expected "normal" but got "auto"
+FAIL Set content attribute of meta color-scheme to 'light'. assert_equals: expected "light" but got "auto"
+FAIL Removed the content attribute of meta color-scheme. assert_equals: expected "normal" but got "auto"
+

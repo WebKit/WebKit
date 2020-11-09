@@ -19,7 +19,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/resources/check-cookie.py
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/resources/credentials-iframe.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/resources/delayed-modulescript.py
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/resources/dynamic-import-credentials-helper.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/resources/dynamic-import-credentials-iframe.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/resources/dynamic-import-credentials-setTimeout-iframe.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/resources/fast-module.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/resources/import-non-utf8-with-charset-header.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/resources/import-non-utf8.js

@@ -57,7 +57,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/networkState_initial.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/paused_false_during_play.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/paused_true_during_pause.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/pitch-detector.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/preload_reflects_none_autoplay.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/preserves-pitch.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_canplay.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_canplaythrough.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_loadeddata.html

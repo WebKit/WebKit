@@ -38,10 +38,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.draw.space.collapse.nonspace.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.draw.stroke.basic.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.draw.stroke.unaffected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.drawing.style.fontKerning.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.drawing.style.fontKerning.with.uppercase.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.drawing.style.fontVariant.settings.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.drawing.style.spacing.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.drawing.style.spacing.measure.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.measure.actualBoundingBox.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.measure.advances.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.measure.baselines.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.measure.emHeights.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.measure.fontBoundingBox.ahem.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.measure.fontBoundingBox.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.measure.width.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.measure.width.empty.html
