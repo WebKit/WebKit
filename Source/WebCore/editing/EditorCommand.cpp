@@ -56,12 +56,12 @@
 #include "Scrollbar.h"
 #include "Settings.h"
 #include "StyleProperties.h"
+#include "SystemSoundManager.h"
 #include "TypingCommand.h"
 #include "UnlinkCommand.h"
 #include "UserGestureIndicator.h"
 #include "UserTypingGestureIndicator.h"
 #include "markup.h"
-#include <pal/system/Sound.h>
 #include <pal/text/KillRing.h>
 #include <wtf/text/AtomString.h>
 
@@ -1043,7 +1043,7 @@ static bool executeSelectToMark(Frame& frame, Event*, EditorCommandSource, const
     auto markRange = editor.mark().toNormalizedRange();
     auto selectionRange = selection.selection().toNormalizedRange();
     if (!markRange || !selectionRange) {
-        PAL::systemBeep();
+        SystemSoundManager::singleton().systemBeep();
         return false;
     }
     selection.setSelectedRange(unionRange(*markRange, *selectionRange), Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes);
@@ -1103,7 +1103,7 @@ static bool executeSwapWithMark(Frame& frame, Event*, EditorCommandSource, const
     const VisibleSelection& mark = frame.editor().mark();
     const VisibleSelection& selection = frame.selection().selection();
     if (mark.isNone() || selection.isNone()) {
-        PAL::systemBeep();
+        SystemSoundManager::singleton().systemBeep();
         return false;
     }
     frame.selection().setSelection(mark);

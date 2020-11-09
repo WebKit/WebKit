@@ -103,6 +103,7 @@
 #include "SpellingCorrectionCommand.h"
 #include "StaticPasteboard.h"
 #include "StyleProperties.h"
+#include "SystemSoundManager.h"
 #include "TelephoneNumberDetector.h"
 #include "Text.h"
 #include "TextCheckerClient.h"
@@ -115,7 +116,6 @@
 #include "VisibleUnits.h"
 #include "markup.h"
 #include <pal/FileSizeFormatter.h>
-#include <pal/system/Sound.h>
 #include <pal/text/KillRing.h>
 #include <wtf/SetForScope.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -1366,7 +1366,7 @@ void Editor::cut(FromMenuOrKeyBinding fromMenuOrKeyBinding)
     if (tryDHTMLCut())
         return; // DHTML did the whole operation
     if (!canCut()) {
-        PAL::systemBeep();
+        SystemSoundManager::singleton().systemBeep();
         return;
     }
 
@@ -1379,7 +1379,7 @@ void Editor::copy(FromMenuOrKeyBinding fromMenuOrKeyBinding)
     if (tryDHTMLCopy())
         return; // DHTML did the whole operation
     if (!canCopy()) {
-        PAL::systemBeep();
+        SystemSoundManager::singleton().systemBeep();
         return;
     }
 
@@ -1516,7 +1516,7 @@ void Editor::quoteFragmentForPasting(DocumentFragment& fragment)
 void Editor::performDelete()
 {
     if (!canDelete()) {
-        PAL::systemBeep();
+        SystemSoundManager::singleton().systemBeep();
         return;
     }
 

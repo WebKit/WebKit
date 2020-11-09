@@ -1820,6 +1820,7 @@ platform/SharedBufferChunkReader.cpp
 platform/SharedStringHash.cpp
 platform/SleepDisabler.cpp
 platform/SleepDisablerClient.cpp
+platform/SystemSoundManager.cpp
 platform/StaticPasteboard.cpp
 platform/Theme.cpp
 platform/ThemeTypes.cpp

@@ -1057,6 +1057,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/SleepDisablerIdentifier.h
     platform/SuddenTermination.h
     platform/Supplementable.h
+    platform/SystemSoundDelegate.h
     platform/ThemeTypes.h
     platform/ThreadCheck.h
     platform/ThreadGlobalData.h

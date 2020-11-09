@@ -53,12 +53,12 @@
 #import "RenderElement.h"
 #import "RenderStyle.h"
 #import "Settings.h"
+#import "SystemSoundManager.h"
 #import "Text.h"
 #import "UTIUtilities.h"
 #import "WebContentReader.h"
 #import "markup.h"
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
-#import <pal/system/Sound.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/cocoa/NSURLExtras.h>
 
@@ -239,7 +239,7 @@ RefPtr<DocumentFragment> Editor::webContentFromPasteboard(Pasteboard& pasteboard
 void Editor::takeFindStringFromSelection()
 {
     if (!canCopyExcludingStandaloneImages()) {
-        PAL::systemBeep();
+        SystemSoundManager::singleton().systemBeep();
         return;
     }
 

@@ -46,6 +46,7 @@
 #import "WebProcessMessages.h"
 #import "WebProcessProxyMessages.h"
 #import "WebSleepDisablerClient.h"
+#import "WebSystemSoundDelegate.h"
 #import "WebsiteDataStoreParameters.h"
 #import <JavaScriptCore/ConfigFile.h>
 #import <JavaScriptCore/Options.h>
@@ -67,6 +68,7 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SWContextManager.h>
 #import <WebCore/SystemBattery.h>
+#import <WebCore/SystemSoundManager.h>
 #import <WebCore/UTIUtilities.h>
 #import <WebCore/VersionChecks.h>
 #import <algorithm>
@@ -361,6 +363,8 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
     updateProcessName();
+    
+    SystemSoundManager::singleton().setSystemSoundDelegate(makeUnique<WebSystemSoundDelegate>());
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&& parameters)

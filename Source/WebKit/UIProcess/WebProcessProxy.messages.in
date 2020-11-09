@@ -90,4 +90,6 @@ messages -> WebProcessProxy LegacyReceiver {
 
     CreateSpeechRecognitionServer(WebCore::PageIdentifier identifier)
     DestroySpeechRecognitionServer(WebCore::PageIdentifier identifier)
+
+    SystemBeep()
 }

@@ -490,6 +490,7 @@ WebAuthnProcess/WebAuthnProcessCreationParameters.cpp
 WebProcess/WebConnectionToUIProcess.cpp
 WebProcess/WebProcess.cpp
 WebProcess/WebSleepDisablerClient.cpp
+WebProcess/WebSystemSoundDelegate.cpp
 
 // FIXME(206266): AutomationProtocolObjects.h's "namespace Protocol" conflicts with objc/runtime.h's "typedef struct objc_object Protocol"
 WebProcess/Automation/WebAutomationSessionProxy.cpp @no-unify

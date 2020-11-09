@@ -1,5 +1,27 @@
 2020-11-09  Per Arne Vollan  <pvollan@apple.com>
 
+        [macOS] System sounds should be played in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=218405
+        <rdar://problem/70898846>
+
+        Reviewed by Darin Adler.
+
+        Subclass SystemSoundDelegate, which will forward system sound requests to the UI process.
+
+        * Sources.txt:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::systemBeep):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebSystemSoundDelegate.cpp: Added.
+        (WebKit::WebSystemSoundDelegate::systemBeep):
+        * WebProcess/WebSystemSoundDelegate.h: Added.
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
+2020-11-09  Per Arne Vollan  <pvollan@apple.com>
+
         [Cocoa] Diagnostic service sandbox violation loading any webpage
         https://bugs.webkit.org/show_bug.cgi?id=218710
         <rdar://problem/71124931>

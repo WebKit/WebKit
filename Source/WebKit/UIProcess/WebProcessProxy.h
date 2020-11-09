@@ -508,6 +508,8 @@ private:
     void createSpeechRecognitionServer(SpeechRecognitionServerIdentifier);
     void destroySpeechRecognitionServer(SpeechRecognitionServerIdentifier);
 
+    void systemBeep();
+    
     enum class IsWeak { No, Yes };
     template<typename T> class WeakOrStrongPtr {
     public:

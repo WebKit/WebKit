@@ -1070,6 +1070,8 @@ public:
     bool rangeContainsNode(const AbstractRange&, Node&, TreeType);
     bool rangeContainsRange(const AbstractRange&, const AbstractRange&, TreeType);
 
+    void systemBeep();
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

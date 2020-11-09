@@ -66,6 +66,7 @@
 #include <WebCore/PrewarmInformation.h>
 #include <WebCore/PublicSuffix.h>
 #include <WebCore/SuddenTermination.h>
+#include <pal/system/Sound.h>
 #include <stdio.h>
 #include <wtf/Algorithms.h>
 #include <wtf/NeverDestroyed.h>
@@ -1899,6 +1900,11 @@ void WebProcessProxy::didDestroySleepDisabler(SleepDisablerIdentifier identifier
 bool WebProcessProxy::hasSleepDisabler() const
 {
     return !m_sleepDisablers.isEmpty();
+}
+
+void WebProcessProxy::systemBeep()
+{
+    PAL::systemBeep();
 }
 
 } // namespace WebKit

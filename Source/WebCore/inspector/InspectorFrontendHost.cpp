@@ -56,6 +56,7 @@
 #include "Pasteboard.h"
 #include "ScriptState.h"
 #include "Settings.h"
+#include "SystemSoundManager.h"
 #include "UserGestureIndicator.h"
 #include <JavaScriptCore/ScriptFunctionCall.h>
 #include <pal/system/Sound.h>
@@ -555,7 +556,7 @@ void InspectorFrontendHost::unbufferedLog(const String& message)
 
 void InspectorFrontendHost::beep()
 {
-    PAL::systemBeep();
+    SystemSoundManager::singleton().systemBeep();
 }
 
 void InspectorFrontendHost::inspectInspector()

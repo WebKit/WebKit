@@ -192,6 +192,7 @@
 #include "StyleRule.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
+#include "SystemSoundManager.h"
 #include "TextIterator.h"
 #include "TextPlaceholderElement.h"
 #include "TreeScope.h"
@@ -4729,6 +4730,10 @@ ExceptionOr<String> Internals::pathStringWithShrinkWrappedRects(const Vector<dou
     return builder.result();
 }
 
+void Internals::systemBeep()
+{
+    SystemSoundManager::singleton().systemBeep();
+}
 
 String Internals::getCurrentMediaControlsStatusForElement(HTMLMediaElement& mediaElement)
 {

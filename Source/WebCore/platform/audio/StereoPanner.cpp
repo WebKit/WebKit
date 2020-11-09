@@ -29,6 +29,7 @@
 
 #if ENABLE(WEB_AUDIO)
 
+#include "SharedBuffer.h"
 #include "VectorMath.h"
 #include <wtf/MathExtras.h>
 
