@@ -51,3 +51,5 @@ webaudio/BiquadFilter/tail-time-peaking.html [ Failure ]
 webaudio/IIRFilter/iir-tail-time.html [ Failure ]
 webaudio/Oscillator/no-dezippering.html [ Failure ]
 webaudio/convolution-mono-mono.html [ Failure ]
+
+webkit.org/b/218725 inspector/debugger/tail-deleted-frames/tail-deleted-frames-intermediate-frames.html [ Pass Timeout ]
