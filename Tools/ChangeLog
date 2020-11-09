@@ -1,3 +1,12 @@
+2020-11-09  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] remove unused imports from loadConfig.py
+        https://bugs.webkit.org/show_bug.cgi?id=218718
+
+        Reviewed by Dewei Zhu.
+
+        * CISupport/build-webkit-org/loadConfig.py:
+
 2020-11-09  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] System sounds should be played in the UI process

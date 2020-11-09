@@ -38,8 +38,6 @@ import re
 import json
 import operator
 
-from committer_auth import CommitterAuth
-import make_passwords_json
 import wkbuild
 
 trunk_filter = ChangeFilter(branch=["trunk", None])
