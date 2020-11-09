@@ -499,7 +499,6 @@ JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectM
     , m_stringIteratorProtocolWatchpointSet(IsWatched)
     , m_mapSetWatchpointSet(IsWatched)
     , m_setAddWatchpointSet(IsWatched)
-    , m_arraySpeciesWatchpointSet(ClearWatchpoint)
     , m_arrayJoinWatchpointSet(IsWatched)
     , m_numberToStringWatchpointSet(IsWatched)
     , m_runtimeFlags()
@@ -830,12 +829,14 @@ void JSGlobalObject::init(VM& vm)
             init.set(JSFunction::create(init.vm, init.owner, 1, init.vm.propertyNames->parseFloat.string(), globalFuncParseFloat, NoIntrinsic));
         });
 
-#if ENABLE(SHARED_ARRAY_BUFFER)
     if (Options::useSharedArrayBuffer()) {
-        m_sharedArrayBufferPrototype.set(vm, this, JSArrayBufferPrototype::create(vm, this, JSArrayBufferPrototype::createStructure(vm, this, m_objectPrototype.get()), ArrayBufferSharingMode::Shared));
-        m_sharedArrayBufferStructure.set(vm, this, JSArrayBuffer::createStructure(vm, this, m_sharedArrayBufferPrototype.get()));
+        m_sharedArrayBufferStructure.initLater(
+            [] (LazyClassStructure::Initializer& init) {
+                init.setPrototype(JSArrayBufferPrototype::create(init.vm, init.global, JSArrayBufferPrototype::createStructure(init.vm, init.global, init.global->m_objectPrototype.get()), ArrayBufferSharingMode::Shared));
+                init.setStructure(JSArrayBuffer::createStructure(init.vm, init.global, init.prototype));
+                init.setConstructor(JSSharedArrayBufferConstructor::create(init.vm, JSSharedArrayBufferConstructor::createStructure(init.vm, init.global, init.global->m_functionPrototype.get()), jsCast<JSArrayBufferPrototype*>(init.prototype), init.global->m_speciesGetterSetter.get()));
+            });
     }
-#endif
 
     m_iteratorPrototype.set(vm, this, IteratorPrototype::create(vm, this, IteratorPrototype::createStructure(vm, this, m_objectPrototype.get())));
     m_asyncIteratorPrototype.set(vm, this, AsyncIteratorPrototype::create(vm, this, AsyncIteratorPrototype::createStructure(vm, this, m_objectPrototype.get())));
@@ -900,16 +901,9 @@ void JSGlobalObject::init(VM& vm)
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::RegExp)].set(vm, this, regExpConstructor);
     m_regExpGlobalData.cachedResult().record(vm, this, nullptr, jsEmptyString(vm), MatchResult(0, 0));
     
-#if ENABLE(SHARED_ARRAY_BUFFER)
-    JSSharedArrayBufferConstructor* sharedArrayBufferConstructor = nullptr;
     AtomicsObject* atomicsObject = nullptr;
-    if (Options::useSharedArrayBuffer()) {
-        sharedArrayBufferConstructor = JSSharedArrayBufferConstructor::create(vm, JSSharedArrayBufferConstructor::createStructure(vm, this, m_functionPrototype.get()), m_sharedArrayBufferPrototype.get(), m_speciesGetterSetter.get());
-        m_sharedArrayBufferPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, sharedArrayBufferConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
-
+    if (Options::useSharedArrayBuffer())
         atomicsObject = AtomicsObject::create(vm, this, AtomicsObject::createStructure(vm, this, m_objectPrototype.get()));
-    }
-#endif
 
 #define CREATE_CONSTRUCTOR_FOR_SIMPLE_TYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase, featureFlag) \
 capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName ## Constructor::create(vm, capitalName ## Constructor::createStructure(vm, this, m_functionPrototype.get()), m_ ## lowerName ## Prototype.get(), m_speciesGetterSetter.get()) : nullptr; \
@@ -987,12 +981,10 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     putDirectWithoutTransition(vm, vm.propertyNames->Array, arrayConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->RegExp, regExpConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-#if ENABLE(SHARED_ARRAY_BUFFER)
     if (Options::useSharedArrayBuffer()) {
-        putDirectWithoutTransition(vm, vm.propertyNames->SharedArrayBuffer, sharedArrayBufferConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
+        putDirectWithoutTransition(vm, vm.propertyNames->SharedArrayBuffer, m_sharedArrayBufferStructure.constructor(this), static_cast<unsigned>(PropertyAttribute::DontEnum));
         putDirectWithoutTransition(vm, vm.propertyNames->Atomics, atomicsObject, static_cast<unsigned>(PropertyAttribute::DontEnum));
     }
-#endif
 
 #define PUT_CONSTRUCTOR_FOR_SIMPLE_TYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase, featureFlag) \
     if (featureFlag) \
@@ -2033,14 +2025,10 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     thisObject->m_proxyObjectStructure.visit(visitor);
     thisObject->m_callableProxyObjectStructure.visit(visitor);
     thisObject->m_proxyRevokeStructure.visit(visitor);
+    thisObject->m_sharedArrayBufferStructure.visit(visitor);
 
     for (auto& property : thisObject->m_linkTimeConstants)
         property.visit(visitor);
-    
-#if ENABLE(SHARED_ARRAY_BUFFER)
-    visitor.append(thisObject->m_sharedArrayBufferPrototype);
-    visitor.append(thisObject->m_sharedArrayBufferStructure);
-#endif
 
 #define VISIT_SIMPLE_TYPE(CapitalName, lowerName, properName, instanceType, jsName, prototypeBase, featureFlag) if (featureFlag) { \
         visitor.append(thisObject->m_ ## lowerName ## Prototype); \
@@ -2136,48 +2124,45 @@ void JSGlobalObject::clearRareData(JSCell* cell)
     jsCast<JSGlobalObject*>(cell)->m_rareData = nullptr;
 }
 
-void JSGlobalObject::tryInstallArraySpeciesWatchpoint()
+void JSGlobalObject::tryInstallSpeciesWatchpoint(JSObject* prototype, JSObject* constructor, std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>& constructorWatchpoint, std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>& speciesWatchpoint, InlineWatchpointSet& speciesWatchpointSet)
 {
-    RELEASE_ASSERT(!m_arrayPrototypeConstructorWatchpoint);
-    RELEASE_ASSERT(!m_arrayConstructorSpeciesWatchpoint);
+    RELEASE_ASSERT(!constructorWatchpoint);
+    RELEASE_ASSERT(!speciesWatchpoint);
 
     VM& vm = this->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // First we need to make sure that the Array.prototype.constructor property points to Array
-    // and that Array[Symbol.species] is the primordial GetterSetter.
-    ArrayPrototype* arrayPrototype = this->arrayPrototype();
+    // First we need to make sure that the %prototype%.constructor property points to a %constructor%
+    // and that %constructor%[Symbol.species] is the primordial GetterSetter.
 
     // We only initialize once so flattening the structures does not have any real cost.
-    Structure* prototypeStructure = arrayPrototype->structure(vm);
+    Structure* prototypeStructure = prototype->structure(vm);
     if (prototypeStructure->isDictionary())
-        prototypeStructure = prototypeStructure->flattenDictionaryStructure(vm, arrayPrototype);
+        prototypeStructure = prototypeStructure->flattenDictionaryStructure(vm, prototype);
     RELEASE_ASSERT(!prototypeStructure->isDictionary());
 
-    ArrayConstructor* arrayConstructor = this->arrayConstructor();
-
     auto invalidateWatchpoint = [&] {
-        m_arraySpeciesWatchpointSet.invalidate(vm, StringFireDetail("Was not able to set up array species watchpoint."));
+        speciesWatchpointSet.invalidate(vm, StringFireDetail("Was not able to set up species watchpoint."));
     };
 
-    PropertySlot constructorSlot(arrayPrototype, PropertySlot::InternalMethodType::VMInquiry, &vm);
-    arrayPrototype->getOwnPropertySlot(arrayPrototype, this, vm.propertyNames->constructor, constructorSlot);
+    PropertySlot constructorSlot(prototype, PropertySlot::InternalMethodType::VMInquiry, &vm);
+    prototype->getOwnPropertySlot(prototype, this, vm.propertyNames->constructor, constructorSlot);
     scope.assertNoException();
-    if (constructorSlot.slotBase() != arrayPrototype
+    if (constructorSlot.slotBase() != prototype
         || !constructorSlot.isCacheableValue()
-        || constructorSlot.getValue(this, vm.propertyNames->constructor) != arrayConstructor) {
+        || constructorSlot.getValue(this, vm.propertyNames->constructor) != constructor) {
         invalidateWatchpoint();
         return;
     }
 
-    Structure* constructorStructure = arrayConstructor->structure(vm);
+    Structure* constructorStructure = constructor->structure(vm);
     if (constructorStructure->isDictionary())
-        constructorStructure = constructorStructure->flattenDictionaryStructure(vm, arrayConstructor);
+        constructorStructure = constructorStructure->flattenDictionaryStructure(vm, constructor);
 
-    PropertySlot speciesSlot(arrayConstructor, PropertySlot::InternalMethodType::VMInquiry, &vm);
-    arrayConstructor->getOwnPropertySlot(arrayConstructor, this, vm.propertyNames->speciesSymbol, speciesSlot);
+    PropertySlot speciesSlot(constructor, PropertySlot::InternalMethodType::VMInquiry, &vm);
+    constructor->getOwnPropertySlot(constructor, this, vm.propertyNames->speciesSymbol, speciesSlot);
     scope.assertNoException();
-    if (speciesSlot.slotBase() != arrayConstructor
+    if (speciesSlot.slotBase() != constructor
         || !speciesSlot.isCacheableGetter()
         || speciesSlot.getterSetter() != speciesGetterSetter()) {
         invalidateWatchpoint();
@@ -2188,8 +2173,8 @@ void JSGlobalObject::tryInstallArraySpeciesWatchpoint()
     prototypeStructure->startWatchingPropertyForReplacements(vm, constructorSlot.cachedOffset());
     constructorStructure->startWatchingPropertyForReplacements(vm, speciesSlot.cachedOffset());
 
-    ObjectPropertyCondition constructorCondition = ObjectPropertyCondition::equivalence(vm, arrayPrototype, arrayPrototype, vm.propertyNames->constructor.impl(), arrayConstructor);
-    ObjectPropertyCondition speciesCondition = ObjectPropertyCondition::equivalence(vm, arrayPrototype, arrayConstructor, vm.propertyNames->speciesSymbol.impl(), speciesGetterSetter());
+    ObjectPropertyCondition constructorCondition = ObjectPropertyCondition::equivalence(vm, prototype, prototype, vm.propertyNames->constructor.impl(), constructor);
+    ObjectPropertyCondition speciesCondition = ObjectPropertyCondition::equivalence(vm, prototype, constructor, vm.propertyNames->speciesSymbol.impl(), speciesGetterSetter());
 
     if (!constructorCondition.isWatchable() || !speciesCondition.isWatchable()) {
         invalidateWatchpoint();
@@ -2197,14 +2182,30 @@ void JSGlobalObject::tryInstallArraySpeciesWatchpoint()
     }
 
     // We only watch this from the DFG, and the DFG makes sure to only start watching if the watchpoint is in the IsWatched state.
-    RELEASE_ASSERT(!m_arraySpeciesWatchpointSet.isBeingWatched());
-    m_arraySpeciesWatchpointSet.touch(vm, "Set up array species watchpoint.");
+    RELEASE_ASSERT(!speciesWatchpointSet.isBeingWatched());
+    speciesWatchpointSet.touch(vm, "Set up species watchpoint.");
 
-    m_arrayPrototypeConstructorWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, constructorCondition, m_arraySpeciesWatchpointSet);
-    m_arrayPrototypeConstructorWatchpoint->install(vm);
+    constructorWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, constructorCondition, speciesWatchpointSet);
+    constructorWatchpoint->install(vm);
 
-    m_arrayConstructorSpeciesWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, speciesCondition, m_arraySpeciesWatchpointSet);
-    m_arrayConstructorSpeciesWatchpoint->install(vm);
+    speciesWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, speciesCondition, speciesWatchpointSet);
+    speciesWatchpoint->install(vm);
+}
+
+void JSGlobalObject::tryInstallArraySpeciesWatchpoint()
+{
+    RELEASE_ASSERT(!m_arrayPrototypeConstructorWatchpoint);
+    RELEASE_ASSERT(!m_arrayConstructorSpeciesWatchpoint);
+
+    tryInstallSpeciesWatchpoint(arrayPrototype(), arrayConstructor(), m_arrayPrototypeConstructorWatchpoint, m_arrayConstructorSpeciesWatchpoint, m_arraySpeciesWatchpointSet);
+}
+
+void JSGlobalObject::tryInstallArrayBufferSpeciesWatchpoint(ArrayBufferSharingMode sharingMode)
+{
+    static_assert(static_cast<unsigned>(ArrayBufferSharingMode::Default) == 0);
+    static_assert(static_cast<unsigned>(ArrayBufferSharingMode::Shared) == 1);
+    unsigned index = static_cast<unsigned>(sharingMode);
+    tryInstallSpeciesWatchpoint(arrayBufferPrototype(sharingMode), arrayBufferConstructor(sharingMode), m_arrayBufferPrototypeConstructorWatchpoints[index], m_arrayBufferConstructorSpeciesWatchpoints[index], arrayBufferSpeciesWatchpointSet(sharingMode));
 }
 
 void JSGlobalObject::installNumberPrototypeWatchpoint(NumberPrototype* numberPrototype)

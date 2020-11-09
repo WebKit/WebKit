@@ -1,3 +1,40 @@
+2020-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Support @@species in ArrayBuffer / SharedArrayBuffer slice
+        https://bugs.webkit.org/show_bug.cgi?id=218697
+
+        Reviewed by Ross Kirsling.
+
+        This patch adds support for @@species in ArrayBuffer/SharedArrayBuffer.prototype.slice.
+        We leverage the mechanism similar to Array's @@species handling: adding fast path with watchpoint.
+        When we found that some of critical properties (e.g. %Prototype%.constructor, %Constructor%[@@species])
+        are modified, watchpoint is fired and we go to the slow path. Until that, we use fast path that is
+        basically the same to the code before this patch.
+
+        * runtime/ArrayBuffer.cpp:
+        (JSC::ArrayBuffer::slice const):
+        (JSC::ArrayBuffer::sliceWithClampedIndex const):
+        (JSC::ArrayBuffer::sliceImpl const): Deleted.
+        * runtime/ArrayBuffer.h:
+        * runtime/ArrayBufferSharingMode.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::speciesWatchpointIsValid):
+        * runtime/JSArrayBufferPrototype.cpp:
+        (JSC::speciesWatchpointIsValid):
+        (JSC::arrayBufferSlice):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        (JSC::JSGlobalObject::tryInstallSpeciesWatchpoint):
+        (JSC::JSGlobalObject::tryInstallArraySpeciesWatchpoint):
+        (JSC::JSGlobalObject::tryInstallArrayBufferSpeciesWatchpoint):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::arrayBufferSpeciesWatchpointSet):
+        (JSC::JSGlobalObject::arrayBufferPrototype const):
+        (JSC::JSGlobalObject::arrayBufferStructure const):
+        (JSC::JSGlobalObject::arrayBufferConstructor const):
+
 2020-11-06  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-References] Rename anyref to externref

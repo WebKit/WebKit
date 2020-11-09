@@ -30,48 +30,202 @@
 #include "JSCInlines.h"
 
 namespace JSC {
+namespace JSArrayBufferPrototypeInternal {
+static constexpr bool verbose = false;
+};
 
 static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoFuncSlice);
 static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoGetterFuncByteLength);
 static JSC_DECLARE_HOST_FUNCTION(sharedArrayBufferProtoFuncSlice);
 static JSC_DECLARE_HOST_FUNCTION(sharedArrayBufferProtoGetterFuncByteLength);
 
-static EncodedJSValue arrayBufferSlice(JSGlobalObject* globalObject, JSValue arrayBufferValue, JSValue startValue, JSValue endValue, ArrayBufferSharingMode mode)
+
+static ALWAYS_INLINE bool speciesWatchpointIsValid(VM& vm, JSObject* thisObject, ArrayBufferSharingMode mode)
 {
+    JSGlobalObject* globalObject = thisObject->globalObject(vm);
+    auto* prototype = globalObject->arrayBufferPrototype(mode);
+
+    if (globalObject->arrayBufferSpeciesWatchpointSet(mode).stateOnJSThread() == ClearWatchpoint) {
+        dataLogLnIf(JSArrayBufferPrototypeInternal::verbose, "Initializing ArrayBuffer species watchpoints for ArrayBuffer.prototype: ", pointerDump(prototype), " with structure: ", pointerDump(prototype->structure(vm)), "\nand ArrayBuffer: ", pointerDump(globalObject->arrayBufferConstructor(mode)), " with structure: ", pointerDump(globalObject->arrayBufferConstructor(mode)->structure(vm)));
+        globalObject->tryInstallArrayBufferSpeciesWatchpoint(mode);
+        ASSERT(globalObject->arrayBufferSpeciesWatchpointSet(mode).stateOnJSThread() != ClearWatchpoint);
+    }
+
+    return !thisObject->hasCustomProperties(vm)
+        && prototype == thisObject->getPrototypeDirect(vm)
+        && globalObject->arrayBufferSpeciesWatchpointSet(mode).stateOnJSThread() == IsWatched;
+}
+
+enum class SpeciesConstructResult : uint8_t {
+    FastPath,
+    Exception,
+    CreatedObject
+};
+
+static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSArrayBuffer*> speciesConstructArrayBuffer(JSGlobalObject* globalObject, JSArrayBuffer* thisObject, unsigned length, ArrayBufferSharingMode mode)
+{
+    // This is optimized way of SpeciesConstruct invoked from {ArrayBuffer,SharedArrayBuffer}.prototype.slice.
+    // https://tc39.es/ecma262/#sec-arraybuffer.prototype.slice
+    // https://tc39.es/ecma262/#sec-sharedarraybuffer.prototype.slice
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    auto exceptionResult = [] () {
+        return std::make_pair(SpeciesConstructResult::Exception, nullptr);
+    };
+
+    // Fast path in the normal case where the user has not set an own constructor and the ArrayBuffer.prototype.constructor is normal.
+    // We need prototype check for subclasses of ArrayBuffer, which are ArrayBuffer objects but have a different prototype by default.
+    bool isValid = speciesWatchpointIsValid(vm, thisObject, mode);
+    scope.assertNoException();
+    if (LIKELY(isValid))
+        return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
+
+    JSValue constructor = thisObject->get(globalObject, vm.propertyNames->constructor);
+    RETURN_IF_EXCEPTION(scope, exceptionResult());
+    if (constructor.isConstructor(vm)) {
+        JSObject* constructorObject = jsCast<JSObject*>(constructor);
+        JSGlobalObject* globalObjectFromConstructor = constructorObject->globalObject(vm);
+        bool isArrayBufferConstructorFromAnotherRealm = globalObject != globalObjectFromConstructor
+            && constructorObject == globalObjectFromConstructor->arrayBufferConstructor(mode);
+        if (isArrayBufferConstructorFromAnotherRealm)
+            return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
+    }
+    if (constructor.isObject()) {
+        constructor = constructor.get(globalObject, vm.propertyNames->speciesSymbol);
+        RETURN_IF_EXCEPTION(scope, exceptionResult());
+        if (constructor.isNull())
+            return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
+    }
+
+    if (constructor.isUndefined())
+        return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
+
+    // 16. Let new be ? Construct(ctor, « 𝔽(newLen) »).
+    MarkedArgumentBuffer args;
+    args.append(jsNumber(length));
+    ASSERT(!args.hasOverflowed());
+    JSObject* newObject = construct(globalObject, constructor, args, "Species construction did not get a valid constructor");
+    RETURN_IF_EXCEPTION(scope, exceptionResult());
+
+    // 17. Perform ? RequireInternalSlot(new, [[ArrayBufferData]]).
+    JSArrayBuffer* result = jsDynamicCast<JSArrayBuffer*>(vm, newObject);
+    if (UNLIKELY(!result)) {
+        throwTypeError(globalObject, scope, "Species construction does not create ArrayBuffer"_s);
+        return exceptionResult();
+    }
+
+    if (mode == ArrayBufferSharingMode::Default) {
+        // 18. If IsSharedArrayBuffer(new) is true, throw a TypeError exception.
+        if (result->isShared()) {
+            throwTypeError(globalObject, scope, "ArrayBuffer.prototype.slice creates SharedArrayBuffer"_s);
+            return exceptionResult();
+        }
+        // 19. If IsDetachedBuffer(new) is true, throw a TypeError exception.
+        if (result->impl()->isDetached()) {
+            throwVMTypeError(globalObject, scope, "Created ArrayBuffer is detached"_s);
+            return exceptionResult();
+        }
+    } else {
+        // 17. If IsSharedArrayBuffer(new) is false, throw a TypeError exception.
+        if (!result->isShared()) {
+            throwTypeError(globalObject, scope, "SharedArrayBuffer.prototype.slice creates non-shared ArrayBuffer"_s);
+            return exceptionResult();
+        }
+    }
+
+    // 20. If SameValue(new, O) is true, throw a TypeError exception.
+    if (result == thisObject) {
+        throwVMTypeError(globalObject, scope, "Species construction returns same ArrayBuffer to a receiver"_s);
+        return exceptionResult();
+    }
+
+    // 21. If new.[[ArrayBufferByteLength]] < newLen, throw a TypeError exception.
+    if (result->impl()->byteLength() < length) {
+        throwVMTypeError(globalObject, scope, "Species construction returns ArrayBuffer which byteLength is less than requested"_s);
+        return exceptionResult();
+    }
+
+    return std::make_pair(SpeciesConstructResult::CreatedObject, result);
+}
+
+
+static EncodedJSValue arrayBufferSlice(JSGlobalObject* globalObject, JSValue arrayBufferValue, JSValue startValue, JSValue endValue, ArrayBufferSharingMode mode)
+{
+    // https://tc39.es/ecma262/#sec-arraybuffer.prototype.slice
+    // https://tc39.es/ecma262/#sec-sharedarraybuffer.prototype.slice
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // 2. Perform ? RequireInternalSlot(O, [[ArrayBufferData]]).
+    // 3. If IsSharedArrayBuffer(O) is true, throw a TypeError exception.
     JSArrayBuffer* thisObject = jsDynamicCast<JSArrayBuffer*>(vm, arrayBufferValue);
     if (!thisObject || (mode != thisObject->impl()->sharingMode()))
         return throwVMTypeError(globalObject, scope, makeString("Receiver must be "_s, mode == ArrayBufferSharingMode::Default ? "ArrayBuffer"_s : "SharedArrayBuffer"_s));
 
+    // 4. If IsDetachedBuffer(O) is true, throw a TypeError exception.
     if (mode == ArrayBufferSharingMode::Default && thisObject->impl()->isDetached())
         return throwVMTypeError(globalObject, scope, "Receiver is detached"_s);
 
-    double begin = startValue.toIntegerOrInfinity(globalObject);
+    // 5. Let len be O.[[ArrayBufferByteLength]].
+    unsigned byteLength = thisObject->impl()->byteLength();
+    unsigned firstIndex = 0;
+    double relativeStart = startValue.toIntegerOrInfinity(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    if (relativeStart < 0)
+        firstIndex = static_cast<unsigned>(std::max<double>(byteLength + relativeStart, 0));
+    else
+        firstIndex = static_cast<unsigned>(std::min<double>(relativeStart, byteLength));
+    ASSERT(firstIndex >= 0);
+    ASSERT(firstIndex <= byteLength);
 
-    double end;
+    unsigned finalIndex = 0;
     if (!endValue.isUndefined()) {
-        end = endValue.toIntegerOrInfinity(globalObject);
+        double relativeEnd = endValue.toIntegerOrInfinity(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        if (relativeEnd < 0)
+            finalIndex = static_cast<unsigned>(std::max<double>(byteLength + relativeEnd, 0));
+        else
+            finalIndex = static_cast<unsigned>(std::min<double>(relativeEnd, byteLength));
     } else
-        end = thisObject->impl()->byteLength();
+        finalIndex = thisObject->impl()->byteLength();
+    ASSERT(finalIndex >= 0);
+    ASSERT(finalIndex <= byteLength);
+
+    // 14. Let newLen be max(final - first, 0).
+    unsigned newLength = (finalIndex >= firstIndex) ? finalIndex - firstIndex : 0;
+
+    // 15. Let ctor be ? SpeciesConstructor(O, %ArrayBuffer%).
+    auto speciesResult = speciesConstructArrayBuffer(globalObject, thisObject, newLength, mode);
+    // We can only get an exception if we call some user function.
+    EXCEPTION_ASSERT(!!scope.exception() == (speciesResult.first == SpeciesConstructResult::Exception));
+    if (UNLIKELY(speciesResult.first == SpeciesConstructResult::Exception))
+        return { };
 
     // 23. If IsDetachedBuffer(O) is true, throw a TypeError exception.
-    // Check detach status again since toIntegerOrInfinity can have side effect.
     if (mode == ArrayBufferSharingMode::Default && thisObject->impl()->isDetached())
         return throwVMTypeError(globalObject, scope, "Receiver is detached"_s);
 
-    auto newBuffer = thisObject->impl()->slice(begin, end);
-    if (!newBuffer)
-        return JSValue::encode(throwOutOfMemoryError(globalObject, scope));
+    if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath)) {
+        ASSERT(!thisObject->impl()->isDetached());
+        auto newBuffer = thisObject->impl()->sliceWithClampedIndex(firstIndex, finalIndex);
+        if (!newBuffer)
+            return JSValue::encode(throwOutOfMemoryError(globalObject, scope));
+        Structure* structure = globalObject->arrayBufferStructure(newBuffer->sharingMode());
+        JSArrayBuffer* result = JSArrayBuffer::create(vm, structure, WTFMove(newBuffer));
+        return JSValue::encode(result);
+    }
 
-    Structure* structure = globalObject->arrayBufferStructure(newBuffer->sharingMode());
-
-    JSArrayBuffer* result = JSArrayBuffer::create(vm, structure, WTFMove(newBuffer));
-
-    return JSValue::encode(result);
+    // 24. Let fromBuf be O.[[ArrayBufferData]].
+    // 25. Let toBuf be new.[[ArrayBufferData]].
+    // 26. Perform CopyDataBlockBytes(toBuf, 0, fromBuf, first, newLen).
+    JSArrayBuffer* newObject = speciesResult.second;
+    ASSERT(!thisObject->impl()->isDetached());
+    ASSERT(!newObject->impl()->isDetached());
+    ASSERT(newObject->impl()->byteLength() >= newLength);
+    memcpy(newObject->impl()->data(), static_cast<const char*>(thisObject->impl()->data()) + firstIndex, newLength);
+    return JSValue::encode(newObject);
 }
 
 static EncodedJSValue arrayBufferByteLength(JSGlobalObject* globalObject, JSValue arrayBufferValue, ArrayBufferSharingMode mode)

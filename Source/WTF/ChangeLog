@@ -1,3 +1,14 @@
+2020-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Support @@species in ArrayBuffer / SharedArrayBuffer slice
+        https://bugs.webkit.org/show_bug.cgi?id=218697
+
+        Reviewed by Ross Kirsling.
+
+        Remove ENABLE(SHARED_ARRAY_BUFFER) flag. We use Options::useSharedArrayBuffer() runtime flag instead.
+
+        * wtf/PlatformEnable.h:
+
 2020-11-06  Sam Weinig  <weinig@apple.com>
 
         Further progress towards merging Settings.yaml into WebPreferences.yaml

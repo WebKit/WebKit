@@ -603,30 +603,6 @@ test/annexB/language/global-code/switch-dflt-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/global-code/switch-dflt-global-skip-early-err.js:
   default: "SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'f' in strict mode."
-test/built-ins/ArrayBuffer/prototype/slice/species-constructor-is-not-object.js:
-  default: 'Test262Error: `constructor` value is null Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: `constructor` value is null Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/ArrayBuffer/prototype/slice/species-is-not-constructor.js:
-  default: 'Test262Error: `constructor[Symbol.species]` value is Object Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: `constructor[Symbol.species]` value is Object Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/ArrayBuffer/prototype/slice/species-is-not-object.js:
-  default: 'Test262Error: `constructor[Symbol.species]` value is Boolean Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: `constructor[Symbol.species]` value is Boolean Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/ArrayBuffer/prototype/slice/species-returns-larger-arraybuffer.js:
-  default: 'Test262Error: Expected SameValue(«8», «10») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«8», «10») to be true'
-test/built-ins/ArrayBuffer/prototype/slice/species-returns-not-arraybuffer.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/ArrayBuffer/prototype/slice/species-returns-same-arraybuffer.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/ArrayBuffer/prototype/slice/species-returns-smaller-arraybuffer.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/ArrayBuffer/prototype/slice/species.js:
-  default: 'Test262Error: Expected SameValue(«[object ArrayBuffer]», «undefined») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«[object ArrayBuffer]», «undefined») to be true'
 test/built-ins/Date/UTC/fp-evaluation-order.js:
   default: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
   strict mode: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
@@ -847,30 +823,6 @@ test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
-test/built-ins/SharedArrayBuffer/prototype/slice/species-constructor-is-not-object.js:
-  default: 'Test262Error: `constructor` value is null Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: `constructor` value is null Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/SharedArrayBuffer/prototype/slice/species-is-not-constructor.js:
-  default: 'Test262Error: `constructor[Symbol.species]` value is Object Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: `constructor[Symbol.species]` value is Object Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/SharedArrayBuffer/prototype/slice/species-is-not-object.js:
-  default: 'Test262Error: `constructor[Symbol.species]` value is Boolean Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: `constructor[Symbol.species]` value is Boolean Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/SharedArrayBuffer/prototype/slice/species-returns-larger-arraybuffer.js:
-  default: 'Test262Error: Expected SameValue(«8», «10») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«8», «10») to be true'
-test/built-ins/SharedArrayBuffer/prototype/slice/species-returns-not-arraybuffer.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/SharedArrayBuffer/prototype/slice/species-returns-same-arraybuffer.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/SharedArrayBuffer/prototype/slice/species-returns-smaller-arraybuffer.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/SharedArrayBuffer/prototype/slice/species.js:
-  default: 'Test262Error: Expected SameValue(«[object SharedArrayBuffer]», «undefined») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«[object SharedArrayBuffer]», «undefined») to be true'
 test/built-ins/TypedArray/prototype/every/callbackfn-detachbuffer.js:
   default: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array.)'
@@ -2745,9 +2697,6 @@ test/language/statements/class/method/forbidden-ext/b2/cls-decl-meth-forbidden-e
   default: 'TypeError: Function.caller used to retrieve strict caller'
 test/language/statements/class/method/forbidden-ext/b2/cls-decl-meth-forbidden-ext-indirect-access-prop-caller.js:
   default: 'TypeError: Function.caller used to retrieve strict caller'
-test/language/statements/class/subclass/builtin-objects/ArrayBuffer/regular-subclassing.js:
-  default: 'Test262Error: Expected true but got false'
-  strict mode: 'Test262Error: Expected true but got false'
 test/language/statements/const/dstr/ary-init-iter-get-err-array-prototype.js:
   default: 'TypeError: Spread syntax requires ...iterable[Symbol.iterator] to be a function'
   strict mode: 'TypeError: Spread syntax requires ...iterable[Symbol.iterator] to be a function'

@@ -311,15 +311,15 @@ unsigned ArrayBuffer::clampIndex(double index) const
 
 RefPtr<ArrayBuffer> ArrayBuffer::slice(double begin, double end) const
 {
-    return sliceImpl(clampIndex(begin), clampIndex(end));
+    return sliceWithClampedIndex(clampIndex(begin), clampIndex(end));
 }
 
 RefPtr<ArrayBuffer> ArrayBuffer::slice(double begin) const
 {
-    return sliceImpl(clampIndex(begin), byteLength());
+    return sliceWithClampedIndex(clampIndex(begin), byteLength());
 }
 
-RefPtr<ArrayBuffer> ArrayBuffer::sliceImpl(unsigned begin, unsigned end) const
+RefPtr<ArrayBuffer> ArrayBuffer::sliceWithClampedIndex(unsigned begin, unsigned end) const
 {
     unsigned size = begin <= end ? end - begin : 0;
     auto result = ArrayBuffer::tryCreate(static_cast<const char*>(data()) + begin, size);

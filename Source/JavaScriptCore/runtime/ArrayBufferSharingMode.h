@@ -30,8 +30,8 @@
 
 namespace JSC {
 
-enum class ArrayBufferSharingMode {
-    Default,
+enum class ArrayBufferSharingMode : uint8_t {
+    Default = 0,
     Shared
 };
 

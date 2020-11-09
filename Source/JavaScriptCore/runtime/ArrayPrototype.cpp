@@ -186,7 +186,7 @@ namespace ArrayPrototypeInternal {
 static bool verbose = false;
 }
 
-ALWAYS_INLINE bool speciesWatchpointIsValid(VM& vm, JSObject* thisObject)
+static ALWAYS_INLINE bool speciesWatchpointIsValid(VM& vm, JSObject* thisObject)
 {
     JSGlobalObject* globalObject = thisObject->globalObject(vm);
     ArrayPrototype* arrayPrototype = globalObject->arrayPrototype();

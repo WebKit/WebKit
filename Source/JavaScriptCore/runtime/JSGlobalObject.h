@@ -420,10 +420,7 @@ public:
     LazyProperty<JSGlobalObject, Structure> m_proxyObjectStructure;
     LazyProperty<JSGlobalObject, Structure> m_callableProxyObjectStructure;
     LazyProperty<JSGlobalObject, Structure> m_proxyRevokeStructure;
-#if ENABLE(SHARED_ARRAY_BUFFER)
-    WriteBarrier<JSArrayBufferPrototype> m_sharedArrayBufferPrototype;
-    WriteBarrier<Structure> m_sharedArrayBufferStructure;
-#endif
+    LazyClassStructure m_sharedArrayBufferStructure;
 
 #define DEFINE_STORAGE_FOR_SIMPLE_TYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase, featureFlag) \
     WriteBarrier<capitalName ## Prototype> m_ ## lowerName ## Prototype; \
@@ -487,9 +484,11 @@ public:
     InlineWatchpointSet m_stringIteratorProtocolWatchpointSet;
     InlineWatchpointSet m_mapSetWatchpointSet;
     InlineWatchpointSet m_setAddWatchpointSet;
-    InlineWatchpointSet m_arraySpeciesWatchpointSet;
+    InlineWatchpointSet m_arraySpeciesWatchpointSet { ClearWatchpoint };
     InlineWatchpointSet m_arrayJoinWatchpointSet;
     InlineWatchpointSet m_numberToStringWatchpointSet;
+    InlineWatchpointSet m_arrayBufferSpeciesWatchpointSet { ClearWatchpoint };
+    InlineWatchpointSet m_sharedArrayBufferSpeciesWatchpointSet { ClearWatchpoint };
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_arrayConstructorSpeciesWatchpoint;
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_arrayPrototypeConstructorWatchpoint;
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_arrayPrototypeSymbolIteratorWatchpoint;
@@ -504,6 +503,8 @@ public:
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_mapPrototypeSetWatchpoint;
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_setPrototypeAddWatchpoint;
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_numberPrototypeToStringWatchpoint;
+    std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_arrayBufferConstructorSpeciesWatchpoints[2];
+    std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_arrayBufferPrototypeConstructorWatchpoints[2];
 
 public:
     JSCallee* stackOverflowFrameCallee() const { return m_stackOverflowFrameCallee.get(); }
@@ -520,6 +521,17 @@ public:
     {
         RELEASE_ASSERT(Options::useJIT());
         return m_numberToStringWatchpointSet;
+    }
+    InlineWatchpointSet& arrayBufferSpeciesWatchpointSet(ArrayBufferSharingMode sharingMode)
+    {
+        switch (sharingMode) {
+        case ArrayBufferSharingMode::Default:
+            return m_arrayBufferSpeciesWatchpointSet;
+        case ArrayBufferSharingMode::Shared:
+            return m_sharedArrayBufferSpeciesWatchpointSet;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return m_arrayBufferSpeciesWatchpointSet;
     }
 
     bool isArrayPrototypeIteratorProtocolFastAndNonObservable();
@@ -871,38 +883,40 @@ public:
     static JSObject* currentScriptExecutionOwner(JSGlobalObject* global) { return global; }
     static ScriptExecutionStatus scriptExecutionStatus(JSGlobalObject*, JSObject*) { return ScriptExecutionStatus::Running; }
 
-    JSObject* arrayBufferConstructor() const { return m_arrayBufferStructure.constructor(this); }
-
     JSObject* arrayBufferPrototype(ArrayBufferSharingMode sharingMode) const
     {
         switch (sharingMode) {
         case ArrayBufferSharingMode::Default:
             return m_arrayBufferStructure.prototype(this);
-#if ENABLE(SHARED_ARRAY_BUFFER)
         case ArrayBufferSharingMode::Shared:
-            return m_sharedArrayBufferPrototype.get();
-#else
-        default:
-            return m_arrayBufferStructure.prototype(this);
-#endif
+            return m_sharedArrayBufferStructure.prototype(this);
         }
+        RELEASE_ASSERT_NOT_REACHED();
+        return nullptr;
     }
     Structure* arrayBufferStructure(ArrayBufferSharingMode sharingMode) const
     {
         switch (sharingMode) {
         case ArrayBufferSharingMode::Default:
             return m_arrayBufferStructure.get(this);
-#if ENABLE(SHARED_ARRAY_BUFFER)
         case ArrayBufferSharingMode::Shared:
-            return m_sharedArrayBufferStructure.get();
-#else
-        default:
-            return m_arrayBufferStructure.get(this);
-#endif
+            return m_sharedArrayBufferStructure.get(this);
         }
         RELEASE_ASSERT_NOT_REACHED();
         return nullptr;
     }
+    JSObject* arrayBufferConstructor(ArrayBufferSharingMode sharingMode) const
+    {
+        switch (sharingMode) {
+        case ArrayBufferSharingMode::Default:
+            return m_arrayBufferStructure.constructor(this);
+        case ArrayBufferSharingMode::Shared:
+            return m_sharedArrayBufferStructure.constructor(this);
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
 
 #define DEFINE_ACCESSORS_FOR_SIMPLE_TYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase, featureFlag) \
     Structure* properName ## Structure() { return m_ ## properName ## Structure.get(); }
@@ -1078,8 +1092,11 @@ public:
     void installNumberPrototypeWatchpoint(NumberPrototype*);
     void installMapPrototypeWatchpoint(MapPrototype*);
     void installSetPrototypeWatchpoint(SetPrototype*);
+    void tryInstallArrayBufferSpeciesWatchpoint(ArrayBufferSharingMode);
 
 protected:
+    void tryInstallSpeciesWatchpoint(JSObject* prototype, JSObject* constructor, std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>& constructorWatchpoint, std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>& speciesWatchpoint, InlineWatchpointSet& speciesWatchpointSet);
+
     struct GlobalPropertyInfo {
         GlobalPropertyInfo(const Identifier& i, JSValue v, unsigned a)
             : identifier(i)

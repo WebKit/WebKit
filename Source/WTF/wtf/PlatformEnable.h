@@ -829,10 +829,6 @@
 #define ENABLE_INLINE_PATH_DATA 1
 #endif
 
-/* Disable SharedArrayBuffers until Spectre security concerns are mitigated. */
-#define ENABLE_SHARED_ARRAY_BUFFER 1
-
-
 #if ((PLATFORM(COCOA) || PLATFORM(PLAYSTATION) || PLATFORM(WPE)) && ENABLE(ASYNC_SCROLLING)) || PLATFORM(GTK)
 #define ENABLE_KINETIC_SCROLLING 1
 #endif
