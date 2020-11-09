@@ -1259,9 +1259,6 @@ public:
 
     void apply(GraphicsContext&, WebCore::ImageBuffer&) const;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<Ref<DrawImageBuffer>> decode(Decoder&);
-
     NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
 
     Optional<FloatRect> globalBounds() const { return WTF::nullopt; }

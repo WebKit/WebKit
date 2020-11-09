@@ -77,7 +77,7 @@ std::unique_ptr<DisplayList> Replayer::replay(const FloatRect& initialClip, bool
             continue;
         }
 
-        LOG_WITH_STREAM(DisplayLists, stream << "applying " << i << " " << item);
+        LOG_WITH_STREAM(DisplayLists, stream << "applying " << i++ << " " << item);
         applyItem(item);
 
         if (UNLIKELY(trackReplayList)) {
