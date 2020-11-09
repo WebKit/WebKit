@@ -198,12 +198,6 @@ webkit.org/b/217801 accessibility/text-element-path.html [ Failure ]
 # Cairo-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/218654 canvas/philip/tests/2d.drawImage.self.2.html [ Failure ]
-webkit.org/b/218654 imported/w3c/canvas/2d.drawImage.self.2.html  [ Failure ]
-webkit.org/b/218654 imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.self.2.html [ Failure ]
-webkit.org/b/218654 imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.self.2.html [ Failure ]
-webkit.org/b/218654 imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.self.2.worker.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Cairo-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

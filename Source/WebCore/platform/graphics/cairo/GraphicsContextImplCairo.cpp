@@ -281,10 +281,7 @@ ImageDrawResult GraphicsContextImplCairo::drawTiledImage(Image& image, const Flo
 
 void GraphicsContextImplCairo::drawImageBuffer(ImageBuffer& image, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    if (auto nativeImage = image.copyNativeImage(DontCopyBackingStore)) {
-        auto& state = graphicsContext().state();
-        Cairo::drawNativeImage(m_platformContext, nativeImage.get(), destRect, srcRect, { options, state.imageInterpolationQuality }, state.alpha, Cairo::ShadowState(state));
-    }
+    image.draw(graphicsContext(), destRect, srcRect, options);
 }
 
 void GraphicsContextImplCairo::drawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)

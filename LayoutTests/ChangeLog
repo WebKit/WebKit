@@ -1,3 +1,15 @@
+2020-11-09  Chris Lord  <clord@igalia.com>
+
+        REGRESSION(r269503): [GTK][WPE] >200 tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=218654
+        <rdar://problem/71116949>
+
+        Reviewed by Žan Doberšek.
+
+        Mark 5 canvas tests as passing.
+
+        * platform/glib/TestExpectations:
+
 2020-11-08  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Rebaseline and gardening
