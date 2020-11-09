@@ -42,7 +42,7 @@ static NSString * const UseWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault
 static NSString * const CreateEditorByDefaultPreferenceKey = @"CreateEditorByDefault";
 static NSString * const LayerBordersVisiblePreferenceKey = @"LayerBordersVisible";
 static NSString * const SimpleLineLayoutEnabledPreferenceKey = @"SimpleLineLayoutEnabled";
-static NSString * const SimpleLineLayoutDebugBordersEnabledPreferenceKey = @"SimpleLineLayoutDebugBordersEnabled";
+static NSString * const LegacyLineLayoutVisualCoverageEnabledPreferenceKey = @"LegacyLineLayoutVisualCoverageEnabled";
 static NSString * const TiledScrollingIndicatorVisiblePreferenceKey = @"TiledScrollingIndicatorVisible";
 static NSString * const ReserveSpaceForBannersPreferenceKey = @"ReserveSpaceForBanners";
 static NSString * const WebViewFillsWindowKey = @"WebViewFillsWindow";
@@ -161,7 +161,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     [self _addItemWithTitle:@"Use Paginated Mode" action:@selector(toggleUsePaginatedMode:) indented:NO];
     [self _addItemWithTitle:@"Show Layer Borders" action:@selector(toggleShowLayerBorders:) indented:NO];
     [self _addItemWithTitle:@"Disable Simple Line Layout" action:@selector(toggleSimpleLineLayoutEnabled:) indented:NO];
-    [self _addItemWithTitle:@"Show Simple Line Layout Borders" action:@selector(toggleSimpleLineLayoutDebugBordersEnabled:) indented:NO];
+    [self _addItemWithTitle:@"Enable Legacy Line Layout Visual Coverage" action:@selector(toggleLegacyLineLayoutVisualCoverageEnabled:) indented:NO];
     [self _addItemWithTitle:@"Suppress Incremental Rendering in New Windows" action:@selector(toggleIncrementalRenderingSuppressed:) indented:NO];
     [self _addItemWithTitle:@"Enable Accelerated Drawing" action:@selector(toggleAcceleratedDrawingEnabled:) indented:NO];
     [self _addItemWithTitle:@"Enable Display List Drawing" action:@selector(toggleDisplayListDrawingEnabled:) indented:NO];
@@ -346,8 +346,8 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         [menuItem setState:[self layerBordersVisible] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleSimpleLineLayoutEnabled:))
         [menuItem setState:[self simpleLineLayoutEnabled] ? NSControlStateValueOff : NSControlStateValueOn];
-    else if (action == @selector(toggleSimpleLineLayoutDebugBordersEnabled:))
-        [menuItem setState:[self simpleLineLayoutDebugBordersEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
+    else if (action == @selector(toggleLegacyLineLayoutVisualCoverageEnabled:))
+        [menuItem setState:[self legacyLineLayoutVisualCoverageEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleIncrementalRenderingSuppressed:))
         [menuItem setState:[self incrementalRenderingSuppressed] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleAcceleratedDrawingEnabled:))
@@ -523,14 +523,14 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     return [[NSUserDefaults standardUserDefaults] boolForKey:SimpleLineLayoutEnabledPreferenceKey];
 }
 
-- (void)toggleSimpleLineLayoutDebugBordersEnabled:(id)sender
+- (void)toggleLegacyLineLayoutVisualCoverageEnabled:(id)sender
 {
-    [self _toggleBooleanDefault:SimpleLineLayoutDebugBordersEnabledPreferenceKey];
+    [self _toggleBooleanDefault:LegacyLineLayoutVisualCoverageEnabledPreferenceKey];
 }
 
-- (BOOL)simpleLineLayoutDebugBordersEnabled
+- (BOOL)legacyLineLayoutVisualCoverageEnabled
 {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:SimpleLineLayoutDebugBordersEnabledPreferenceKey];
+    return [[NSUserDefaults standardUserDefaults] boolForKey:LegacyLineLayoutVisualCoverageEnabledPreferenceKey];
 }
 
 - (void)toggleAcceleratedDrawingEnabled:(id)sender

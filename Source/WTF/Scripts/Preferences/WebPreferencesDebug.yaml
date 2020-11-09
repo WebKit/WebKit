@@ -105,6 +105,17 @@ ForceAlwaysUserScalable:
     WebKit:
       default: false
 
+LegacyLineLayoutVisualCoverageEnabled:
+  type: bool
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 LogsPageMessagesToSystemConsoleEnabled:
   type: bool
   defaultValue:
@@ -133,17 +144,6 @@ ResourceUsageOverlayVisible:
   type: bool
   condition: ENABLE(RESOURCE_USAGE)
   webcoreOnChange: resourceUsageOverlayVisibleChanged
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
-SimpleLineLayoutDebugBordersEnabled:
-  type: bool
-  webcoreOnChange: setNeedsRecalcStyleInAllFrames
   defaultValue:
     WebKitLegacy:
       default: false

@@ -1279,14 +1279,14 @@ bool WKPreferencesGetSimpleLineLayoutEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->simpleLineLayoutEnabled();
 }
 
-void WKPreferencesSetSimpleLineLayoutDebugBordersEnabled(WKPreferencesRef preferencesRef, bool flag)
+void WKPreferencesSetLegacyLineLayoutVisualCoverageEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
-    toImpl(preferencesRef)->setSimpleLineLayoutDebugBordersEnabled(flag);
+    toImpl(preferencesRef)->setLegacyLineLayoutVisualCoverageEnabled(flag);
 }
 
-bool WKPreferencesGetSimpleLineLayoutDebugBordersEnabled(WKPreferencesRef preferencesRef)
+bool WKPreferencesGetLegacyLineLayoutVisualCoverageEnabled(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->simpleLineLayoutDebugBordersEnabled();
+    return toImpl(preferencesRef)->legacyLineLayoutVisualCoverageEnabled();
 }
 
 void WKPreferencesSetContentChangeObserverEnabled(WKPreferencesRef preferencesRef, bool flag)

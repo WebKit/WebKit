@@ -1,3 +1,23 @@
+2020-11-09  Zalan Bujtas  <zalan@apple.com>
+
+        Show legacy line layout visual coverage instead of "simple line" layout.
+        https://bugs.webkit.org/show_bug.cgi?id=218695
+
+        Reviewed by Antti Koivisto.
+
+        * MiniBrowser/mac/SettingsController.h:
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _populateMenu]):
+        (-[SettingsController validateMenuItem:]):
+        (-[SettingsController toggleLegacyLineLayoutVisualCoverageEnabled:]):
+        (-[SettingsController legacyLineLayoutVisualCoverageEnabled]):
+        (-[SettingsController toggleSimpleLineLayoutDebugBordersEnabled:]): Deleted.
+        (-[SettingsController simpleLineLayoutDebugBordersEnabled]): Deleted.
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController didChangeSettings]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController didChangeSettings]):
+
 2020-11-09  Diego Pino Garcia  <dpino@igalia.com>
 
         [webkitpy] When platform is GTK or WPE, make lint-test-expectations lint GLIB too

@@ -37,7 +37,7 @@ extern NSString * const kUserAgentChangedNotificationName;
 @property (nonatomic, readonly) BOOL usePaginatedMode;
 @property (nonatomic, readonly) BOOL layerBordersVisible;
 @property (nonatomic, readonly) BOOL simpleLineLayoutEnabled;
-@property (nonatomic, readonly) BOOL simpleLineLayoutDebugBordersEnabled;
+@property (nonatomic, readonly) BOOL legacyLineLayoutVisualCoverageEnabled;
 @property (nonatomic, readonly) BOOL incrementalRenderingSuppressed;
 @property (nonatomic, readonly) BOOL tiledScrollingIndicatorVisible;
 @property (nonatomic, readonly, getter=isSpaceReservedForBanners) BOOL spaceReservedForBanners;

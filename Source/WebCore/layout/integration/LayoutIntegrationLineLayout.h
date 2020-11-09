@@ -106,7 +106,6 @@ private:
 
     const Layout::ContainerBox& rootLayoutBox() const;
     Layout::ContainerBox& rootLayoutBox();
-    ShadowData* debugTextShadow();
     void releaseInlineItemCache();
 
     BoxTree m_boxTree;

@@ -1,3 +1,18 @@
+2020-11-09  Zalan Bujtas  <zalan@apple.com>
+
+        Show legacy line layout visual coverage instead of "simple line" layout.
+        https://bugs.webkit.org/show_bug.cgi?id=218695
+
+        Reviewed by Antti Koivisto.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences legacyLineLayoutVisualCoverageEnabled]):
+        (-[WebPreferences setLegacyLineLayoutVisualCoverageEnabled:]):
+        (-[WebPreferences simpleLineLayoutDebugBordersEnabled]): Deleted.
+        (-[WebPreferences setSimpleLineLayoutDebugBordersEnabled:]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+
 2020-11-06  Peng Liu  <peng.liu6@apple.com>
 
         PiP return to element full screen is not smooth on some websites

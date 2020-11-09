@@ -1,3 +1,12 @@
+2020-11-09  Zalan Bujtas  <zalan@apple.com>
+
+        Show legacy line layout visual coverage instead of "simple line" layout.
+        https://bugs.webkit.org/show_bug.cgi?id=218695
+
+        Reviewed by Antti Koivisto.
+
+        * Scripts/Preferences/WebPreferencesDebug.yaml:
+
 2020-11-09  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Set preference for overridden languages in the WebContent process after entering the sandbox.
