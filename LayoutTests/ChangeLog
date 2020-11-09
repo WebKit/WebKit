@@ -1,3 +1,15 @@
+2020-11-09  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Enable inline image support
+        https://bugs.webkit.org/show_bug.cgi?id=217874
+
+        Combination of different issues:
+        1. Do not retain the whitespace (new line) after the replaced content.
+        2. Do not treat images+text as unbreakable content (neither FF nor Chrome does)
+        3. Rounding differences.
+
+        Reviewed by Antti Koivisto.
+
 2020-11-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [TextureMapper] backdrop-filter should use the identity transform to render the root layer

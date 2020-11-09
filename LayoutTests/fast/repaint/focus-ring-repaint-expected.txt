@@ -8,7 +8,7 @@
 (repaint rects
   (rect 5 457 106 70)
   (rect 5 457 106 70)
-  (rect 5 542 106 70)
+  (rect 5 542 106 66)
   (rect 15 62 36 40)
   (rect 18 65 30 34)
   (rect 5 92 56 10)

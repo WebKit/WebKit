@@ -12,8 +12,7 @@ layer at (0,0) size 800x600
       RenderImage {IMG} at (328,0) size 160x90
       RenderText {#text} at (488,75) size 4x19
         text run at (488,75) width 4: " "
-      RenderText {#text} at (652,75) size 4x19
-        text run at (652,75) width 4: " "
+      RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (160,170) size 4x19
         text run at (160,170) width 4: " "
       RenderText {#text} at (324,170) size 4x19

@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,18) size 770x18
             RenderTableCell {TD} at (131,27) size 281x18 [bgcolor=#800080] [r=1 c=2 rs=2 cs=1]
               RenderImage {IMG} at (0,0) size 280x0
-              RenderBR {BR} at (280,-14) size 0x18
+              RenderBR {BR} at (280,-5) size 0x18
               RenderText {#text} at (0,0) size 8x18
                 text run at (0,0) width 8: "3"
             RenderTableCell {TD} at (411,27) size 10x18 [bgcolor=#0000FF] [r=1 c=3 rs=2 cs=1]
