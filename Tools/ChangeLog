@@ -1,5 +1,17 @@
 2020-11-09  Aakash Jain  <aakash_jain@apple.com>
 
+        [build.webkit.org] Use workersrc instead of slavesrc for new Buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=218717
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/steps.py:
+        (UploadBuiltProduct.__init__): Used workersrc instead of slavesrc.
+        (UploadTestResults.__init__): Ditto.
+        (Run32bitJSCTests.start): Drive-by fix to use workerEnvironment instead of slaveEnvironment.
+
+2020-11-09  Aakash Jain  <aakash_jain@apple.com>
+
         [build.webkit.org] remove unused imports from loadConfig.py
         https://bugs.webkit.org/show_bug.cgi?id=218718
 

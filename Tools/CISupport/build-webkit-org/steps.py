@@ -325,7 +325,10 @@ class UploadBuiltProduct(transfer.FileUpload):
     haltOnFailure = True
 
     def __init__(self, **kwargs):
-        kwargs['slavesrc'] = self.workersrc
+        if USE_BUILDBOT_VERSION2:
+            kwargs['workersrc'] = self.workersrc
+        else:
+            kwargs['slavesrc'] = self.workersrc
         kwargs['masterdest'] = self.masterdest
         kwargs['mode'] = 0o644
         kwargs['blocksize'] = 1024 * 256
@@ -774,7 +777,10 @@ class Run32bitJSCTests(TestWithFailureCount):
         TestWithFailureCount.__init__(self, *args, **kwargs)
 
     def start(self):
-        self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+        if USE_BUILDBOT_VERSION2:
+            self.workerEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+        else:
+            self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
         return shell.Test.start(self)
 
     def countFailures(self, cmd):
@@ -1034,7 +1040,10 @@ class UploadTestResults(transfer.FileUpload):
     masterdest = WithProperties("public_html/results/%(buildername)s/r%(got_revision)s (%(buildnumber)s).zip")
 
     def __init__(self, **kwargs):
-        kwargs['slavesrc'] = self.workersrc
+        if USE_BUILDBOT_VERSION2:
+            kwargs['workersrc'] = self.workersrc
+        else:
+            kwargs['slavesrc'] = self.workersrc
         kwargs['masterdest'] = self.masterdest
         kwargs['mode'] = 0o644
         kwargs['blocksize'] = 1024 * 256
