@@ -1,3 +1,15 @@
+2020-11-09  Rob Buis  <rbuis@igalia.com>
+
+        Add testcase for r269538
+        https://bugs.webkit.org/show_bug.cgi?id=218502
+
+        Reviewed by Simon Fraser.
+
+        I forgot to add a testcase in r269538.
+
+        * fast/css/marquee-with-layer-display-inline-crash-expected.txt: Added.
+        * fast/css/marquee-with-layer-display-inline-crash.html: Added.
+
 2020-11-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [TextureMapper] The top and left sides of drop-shadow are clipped
