@@ -321,7 +321,7 @@ void InsertListCommand::unlistifyParagraph(const VisiblePosition& originalStart,
         // in listNode that comes before listChildNode, as listChildNode could have ancestors
         // between it and listNode. So, we split up to listNode before inserting the placeholder
         // where we're about to move listChildNode to.
-        if (listChildNode->parentNode() != listNode)
+        if (auto listChildNodeParentNode = makeRefPtr(listChildNode->parentNode()); listChildNodeParentNode && listChildNodeParentNode != listNode)
             splitElement(*listNode, *splitTreeToNode(*listChildNode, *listNode).get());
         insertNodeBefore(nodeToInsert.releaseNonNull(), *listNode);
     } else

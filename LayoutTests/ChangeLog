@@ -1,3 +1,16 @@
+2020-11-09  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Null dereference in CompositeEditCommand::splitTreeToNode() due to not checking for top of DOM tree
+        https://bugs.webkit.org/show_bug.cgi?id=218215
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test that catches crash during insertion of a list inside an iframe
+        (that itself is inside of a list).
+
+        * editing/inserting/insert-list-in-iframe-in-list-expected.txt: Added.
+        * editing/inserting/insert-list-in-iframe-in-list.html: Added.
+
 2020-11-09  Truitt Savell  <tsavell@apple.com>
 
         REGRESSION: [ Mac ] media/video-buffering-allowed.html is flaky timeout

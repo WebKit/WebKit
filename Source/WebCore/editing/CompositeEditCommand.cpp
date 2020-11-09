@@ -1714,7 +1714,7 @@ RefPtr<Node> CompositeEditCommand::splitTreeToNode(Node& start, Node& end, bool 
     ASSERT(adjustedEnd);
     RefPtr<Node> node;
     for (node = &start; node && node->parentNode() != adjustedEnd; node = node->parentNode()) {
-        if (!is<Element>(*node->parentNode()))
+        if (!node->parentNode() || !is<Element>(*node->parentNode()))
             break;
         // Do not split a node when doing so introduces an empty node.
         VisiblePosition positionInParent = firstPositionInNode(node->parentNode());
