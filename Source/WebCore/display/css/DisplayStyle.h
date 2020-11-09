@@ -66,6 +66,7 @@ public:
     bool hasBackgroundImage() const;
 
     const FillLayer* backgroundLayers() const { return m_backgroundLayers.get(); }
+    bool backgroundHasOpaqueTopLayer() const;
 
     Optional<int> zIndex() const { return m_zIndex; }
     bool isStackingContext() const { return m_zIndex.hasValue(); }

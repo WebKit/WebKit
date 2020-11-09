@@ -55,6 +55,20 @@ bool BorderEdge::obscuresBackground() const
     return true;
 }
 
+bool BorderEdge::obscuresBackgroundEdge(float scale) const
+{
+    if (!m_isPresent || m_isTransparent || (m_width * scale) < floorToDevicePixel(2, scale) || !m_color.isOpaque() || m_style == BorderStyle::Hidden)
+        return false;
+
+    if (m_style == BorderStyle::Dotted || m_style == BorderStyle::Dashed)
+        return false;
+
+    if (m_style == BorderStyle::Double)
+        return m_width >= scale * floorToDevicePixel(5, scale); // The outer band needs to be >= 2px wide at unit scale.
+
+    return true;
+}
+
 RectEdges<BorderEdge> calculateBorderEdges(const RenderStyle& style, float pixelSnappingFactor, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
     bool horizontal = style.isHorizontalWritingMode();
@@ -97,6 +111,53 @@ std::pair<BoxSide, BoxSide> adjacentSidesForSide(BoxSide side)
 
 BoxDecorationData::BoxDecorationData() = default;
 
+bool BoxDecorationData::hasBorder() const
+{
+    // FIXME: There's a tricky interaction between borders and border-image here: webkit.org/b/217900.
+    if (hasBorderImage())
+        return true;
+
+    for (auto side : allBoxSides) {
+        auto& edge = m_borderEdges[side];
+        if (edge.style() != BorderStyle::None && edge.width())
+            return true;
+    }
+    return false;
+}
+
+bool BoxDecorationData::hasBorderRadius() const
+{
+    return m_borderRadii && !m_borderRadii->isZero();
+}
+
+bool BoxDecorationData::borderObscuresBackground() const
+{
+    if (!hasBorder())
+        return false;
+
+    // Bail if we have any border-image for now. We could look at the image alpha to improve this.
+    // FIXME: Check border-image.
+
+    for (auto side : allBoxSides) {
+        if (!m_borderEdges.at(side).obscuresBackground())
+            return false;
+    }
+
+    return true;
+}
+
+bool BoxDecorationData::borderObscuresBackgroundEdge(const FloatSize& contextScale) const
+{
+    for (auto side : allBoxSides) {
+        auto& currEdge = m_borderEdges.at(side);
+        // FIXME: for vertical text
+        float axisScale = (side == BoxSide::Top || side == BoxSide::Bottom) ? contextScale.height() : contextScale.width();
+        if (!currEdge.obscuresBackgroundEdge(axisScale))
+            return false;
+    }
+
+    return true;
+}
 
 } // namespace Display
 } // namespace WebCore

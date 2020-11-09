@@ -84,6 +84,27 @@ bool Style::hasBackgroundImage() const
     return m_backgroundLayers && m_backgroundLayers->hasImage();
 }
 
+bool Style::backgroundHasOpaqueTopLayer() const
+{
+    auto* fillLayer = backgroundLayers();
+    if (!fillLayer)
+        return false;
+
+    if (fillLayer->clip() != FillBox::Border)
+        return false;
+
+    // FIXME: Check for overflow clip and local attachment.
+    // FIXME: Check for repeated, opaque and renderable image.
+
+    // If there is only one layer and no image, check whether the background color is opaque.
+    if (!fillLayer->next() && !fillLayer->hasImage()) {
+        if (backgroundColor().isOpaque())
+            return true;
+    }
+
+    return false;
+}
+
 bool Style::autoWrap() const
 {
     return RenderStyle::autoWrap(whiteSpace());

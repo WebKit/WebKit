@@ -65,6 +65,7 @@ public:
     float outerWidth() const { return m_outerWidth; }
 
     bool obscuresBackground() const;
+    bool obscuresBackgroundEdge(float scale) const;
 
 private:
     Color m_color;
@@ -79,6 +80,16 @@ private:
 RectEdges<BorderEdge> calculateBorderEdges(const RenderStyle&, float pixelSnappingFactor, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
 
 std::pair<BoxSide, BoxSide> adjacentSidesForSide(BoxSide);
+
+inline RectEdges<float> borderWidths(const RectEdges<BorderEdge>& edges)
+{
+    return {
+        edges.top().width(),
+        edges.right().width(),
+        edges.bottom().width(),
+        edges.left().width()
+    };
+}
 
 // Per-box data with pixel-snapped geometry for background images and border-radius.
 class BoxDecorationData {
@@ -96,6 +107,11 @@ public:
     void setBorderRadii(std::unique_ptr<FloatRoundedRect::Radii>&& radii) { m_borderRadii = WTFMove(radii); }
 
     bool hasBorderImage() const { return false; } // FIXME: Implement border-image.
+    bool hasBorder() const;
+    bool hasBorderRadius() const;
+
+    bool borderObscuresBackground() const;
+    bool borderObscuresBackgroundEdge(const FloatSize& contextScale) const;
 
 private:
     Vector<FillLayerImageGeometry, 1> m_backgroundImageGeometry;

@@ -49,7 +49,8 @@ namespace Display {
 
 void BoxPainter::paintBoxDecorations(const BoxModelBox& box, PaintingContext& paintingContext)
 {
-    BoxDecorationPainter::paintBackgroundAndBorders(box, paintingContext);
+    BoxDecorationPainter painter(box, paintingContext);
+    painter.paintBackgroundAndBorders(paintingContext);
 }
 
 void BoxPainter::paintBoxContent(const Box& box, PaintingContext& paintingContext)

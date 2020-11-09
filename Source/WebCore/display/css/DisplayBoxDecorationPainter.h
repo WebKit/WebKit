@@ -27,23 +27,58 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FloatRoundedRect.h"
+
 namespace WebCore {
 
+class FillLayer;
 class GraphicsContext;
 
 namespace Display {
 
 class BoxModelBox;
+class FillLayerImageGeometry;
 struct PaintingContext;
+enum class BackgroundBleedAvoidance;
+
+enum class BackgroundBleedAvoidance {
+    None,
+    ShrinkBackground,
+    UseTransparencyLayer,
+    BackgroundOverBorder
+};
 
 class BoxDecorationPainter {
 public:
-    static void paintBackgroundAndBorders(const BoxModelBox&, PaintingContext&);
+    BoxDecorationPainter(const BoxModelBox&, PaintingContext&, bool includeLeftEdge = true, bool includeRightEdge = true);
+    void paintBackgroundAndBorders(PaintingContext&) const;
 
 private:
-    static void paintBorders(const BoxModelBox&, PaintingContext&, bool includeLeftEdge = true, bool includeRightEdge = true);
-    static void paintBackground(const BoxModelBox&, PaintingContext&);
-    static void paintBackgroundImages(const BoxModelBox&, PaintingContext&);
+    friend class BorderPainter;
+
+    static BackgroundBleedAvoidance determineBackgroundBleedAvoidance(const BoxModelBox&, PaintingContext&);
+    static FloatRoundedRect computeBorderRect(const BoxModelBox&);
+
+    void computeBorderRect();
+
+    void paintBorders(PaintingContext&) const;
+    void paintBackground(PaintingContext&) const;
+    void paintBackgroundImages(PaintingContext&) const;
+
+    void paintFillLayer(PaintingContext&, const FillLayer&, const FillLayerImageGeometry&) const;
+    
+    FloatRoundedRect borderRoundedRect() const { return m_borderRect; }
+    
+    FloatRoundedRect backgroundRoundedRectAdjustedForBleedAvoidance(const PaintingContext&) const;
+
+    bool includeLeftEdge() const { return m_includeLeftEdge; }
+    bool includeRightEdge() const { return m_includeRightEdge; }
+
+    const BoxModelBox& m_box;
+    const FloatRoundedRect m_borderRect;
+    const BackgroundBleedAvoidance m_bleedAvoidance { BackgroundBleedAvoidance::None };
+    bool m_includeLeftEdge { true };
+    bool m_includeRightEdge { true };
 };
 
 } // namespace Display
