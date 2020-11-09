@@ -39,7 +39,6 @@ public:
     float opacity { 1 };
     IntSize offset;
     TextureMapperLayer* backdropLayer { nullptr };
-    bool isReplica { false };
 };
 
 TextureMapperLayer::TextureMapperLayer() = default;
@@ -299,10 +298,7 @@ void TextureMapperLayer::paintSelfAndChildrenWithReplica(const TextureMapperPain
 {
     if (m_state.replicaLayer) {
         TextureMapperPaintOptions replicaOptions(options);
-        replicaOptions.isReplica = true;
-        replicaOptions.transform
-            .multiply(m_state.replicaLayer->m_layerTransforms.combined)
-            .multiply(m_layerTransforms.combined.inverse().valueOr(TransformationMatrix()));
+        replicaOptions.transform.multiply(replicaTransform());
         paintSelfAndChildren(replicaOptions);
     }
 
@@ -437,6 +433,7 @@ void TextureMapperLayer::paintIntoSurface(TextureMapperPaintOptions& options)
     options.textureMapper.bindSurface(options.surface.get());
     if (m_isBackdrop) {
         TextureMapperPaintOptions paintOptions(options);
+        paintOptions.transform = TransformationMatrix();
         paintOptions.backdropLayer = this;
         rootLayer().paintSelfAndChildren(paintOptions);
     } else
@@ -462,17 +459,12 @@ void TextureMapperLayer::paintWithIntermediateSurface(const TextureMapperPaintOp
     paintOptions.offset = -toIntSize(rect.location());
     paintOptions.opacity = 1;
     if (m_state.replicaLayer) {
-        paintOptions.isReplica = true;
         paintOptions.transform.multiply(replicaTransform());
         paintIntoSurface(paintOptions);
-        paintOptions.isReplica = false;
         paintOptions.transform = options.transform;
         if (m_state.replicaLayer->m_state.maskLayer)
             m_state.replicaLayer->m_state.maskLayer->applyMask(paintOptions);
     }
-
-    if (m_isBackdrop && m_effectTarget->m_state.replicaLayer && options.isReplica)
-        paintOptions.transform = m_effectTarget->replicaTransform();
 
     paintIntoSurface(paintOptions);
 

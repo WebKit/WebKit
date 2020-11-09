@@ -1,3 +1,14 @@
+2020-11-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [TextureMapper] backdrop-filter should use the identity transform to render the root layer
+        https://bugs.webkit.org/show_bug.cgi?id=218699
+
+        Reviewed by Don Olmstead.
+
+        * platform/glib/TestExpectations: Unmarked
+        css3/filters/backdrop/{backdrop-filter-with-reflection-add-backdrop.html,
+        backdrop-filter-with-reflection-value-change.html,backdrop-filter-with-reflection.html}
+
 2020-11-09  Aditya Keerthi  <akeerthi@apple.com>
 
         Remove experimental: and internal: prefixes from recently added tests
