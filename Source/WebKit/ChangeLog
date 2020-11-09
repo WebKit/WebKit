@@ -1,3 +1,20 @@
+2020-11-08  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] REGRESSION(r267250) API test /webkit/WebKitWebView/usermedia-enumeratedevices-permission-check is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=216727
+
+        Reviewed by Carlos Garcia Campos.
+
+        Coverered by existing tests.
+
+        In some cases, like in TestWebKitAPI, a message can arrive to the
+        GeolocationProvider and it would try to access a WebGeolocationManager
+        that could already had been deleted.
+
+        * UIProcess/API/glib/WebKitGeolocationManager.cpp:
+        (webkitGeolocationManagerDispose): Added. Removes the provider.
+        (webkit_geolocation_manager_class_init): Register dispose callback.
+
 2020-11-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Clean up some logic in RemoteImageBuffer and RemoteRenderingBackend

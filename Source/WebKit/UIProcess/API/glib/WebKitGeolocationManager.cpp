@@ -329,10 +329,18 @@ static void webkitGeolocationManagerGetProperty(GObject* object, guint propId, G
     }
 }
 
+static void webkitGeolocationManagerDispose(GObject *object)
+{
+    WebKitGeolocationManager* manager = WEBKIT_GEOLOCATION_MANAGER(object);
+    manager->priv->manager->setProvider(nullptr);
+    G_OBJECT_CLASS(webkit_geolocation_manager_parent_class)->dispose(object);
+}
+
 static void webkit_geolocation_manager_class_init(WebKitGeolocationManagerClass* geolocationManagerClass)
 {
     GObjectClass* gObjectClass = G_OBJECT_CLASS(geolocationManagerClass);
     gObjectClass->get_property = webkitGeolocationManagerGetProperty;
+    gObjectClass->dispose = webkitGeolocationManagerDispose;
 
     /**
      * WebKitGeolocationManager:enable-high-accuracy:

@@ -1,3 +1,12 @@
+2020-11-08  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] REGRESSION(r267250) API test /webkit/WebKitWebView/usermedia-enumeratedevices-permission-check is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=216727
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/glib/TestExpectations.json: Remove expectations
+
 2020-11-08  Darin Adler  <darin@apple.com>
 
         Remove another function that implicitly uses the composed tree (documentOrder on nodes and boundary points)
