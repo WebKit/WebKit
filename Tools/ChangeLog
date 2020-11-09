@@ -1,3 +1,18 @@
+2020-11-09  Diego Pino Garcia  <dpino@igalia.com>
+
+        [webkitpy] When platform is GTK or WPE, make lint-test-expectations lint GLIB too
+        https://bugs.webkit.org/show_bug.cgi?id=218691
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        In the test expectations hierarchy, both GTK and WPE share a common
+        root, GLIB. It's not possible to lint GLIB test expectations as it's 
+        not a platform with a builder associated. Thus, make lint-test-expectations
+        lint GLIB test expectations when linting GLIB or WPE.
+
+        * Scripts/webkitpy/layout_tests/lint_test_expectations.py:
+        (lint):
+
 2020-11-09  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Use workersrc instead of slavesrc for new Buildbot
