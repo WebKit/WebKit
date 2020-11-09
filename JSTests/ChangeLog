@@ -1,3 +1,22 @@
+2020-11-09  Keith Miller  <keith_miller@apple.com>
+
+        Add microbenchmark for FinalizationRegistry basic usage
+        https://bugs.webkit.org/show_bug.cgi?id=218667
+
+        Reviewed by Yusuke Suzuki.
+
+        The no unregister token benchmark runs in ~40ms and the unregister
+        token in ~25ms on my Mac Pro. Interestingly, it also shows that
+        using an unregister token make FinalizationRegistry ~4x slower
+        (total time is longer because the number of objects is 10x bigger
+        in the test). This is because we have to store all the data in a
+        HashMap<UnregisterToken, JSObject> rather than a Vector<JSObject>.
+
+        * microbenchmarks/finalizationRegistryCleanup.js: Added.
+        (async callback):
+        * microbenchmarks/finalizationRegistryCleanupWithUnregisterToken.js: Added.
+        (async callback):
+
 2020-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add TimeZone range cache over ICU TimeZone API
