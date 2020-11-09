@@ -476,15 +476,15 @@ bool HTMLInputElement::isTextFormControlMouseFocusable() const
 void HTMLInputElement::updateFocusAppearance(SelectionRestorationMode restorationMode, SelectionRevealMode revealMode)
 {
     if (isTextField()) {
-        if (restorationMode == SelectionRestorationMode::SetDefault || !hasCachedSelection())
-            setDefaultSelectionAfterFocus(revealMode);
-        else
+        if (restorationMode == SelectionRestorationMode::RestoreOrSelectAll && hasCachedSelection())
             restoreCachedSelection(revealMode);
+        else
+            setDefaultSelectionAfterFocus(restorationMode, revealMode);
     } else
         HTMLTextFormControlElement::updateFocusAppearance(restorationMode, revealMode);
 }
 
-void HTMLInputElement::setDefaultSelectionAfterFocus(SelectionRevealMode revealMode)
+void HTMLInputElement::setDefaultSelectionAfterFocus(SelectionRestorationMode restorationMode, SelectionRevealMode revealMode)
 {
     ASSERT(isTextField());
     int start = 0;
@@ -494,7 +494,8 @@ void HTMLInputElement::setDefaultSelectionAfterFocus(SelectionRevealMode revealM
         start = std::numeric_limits<int>::max();
         direction = SelectionHasForwardDirection;
     }
-    setSelectionRange(start, std::numeric_limits<int>::max(), direction, revealMode, Element::defaultFocusTextStateChangeIntent());
+    int end = restorationMode == SelectionRestorationMode::PlaceCaretAtStart ? start : std::numeric_limits<int>::max();
+    setSelectionRange(start, end, direction, revealMode, Element::defaultFocusTextStateChangeIntent());
 }
 
 void HTMLInputElement::endEditing()
@@ -618,7 +619,7 @@ inline void HTMLInputElement::runPostTypeUpdateTasks()
         invalidateStyleAndRenderersForSubtree();
 
     if (document().focusedElement() == this)
-        updateFocusAppearance(SelectionRestorationMode::Restore, SelectionRevealMode::Reveal);
+        updateFocusAppearance(SelectionRestorationMode::RestoreOrSelectAll, SelectionRevealMode::Reveal);
 
     setChangedSinceLastFormControlChangeEvent(false);
 
@@ -866,7 +867,7 @@ void HTMLInputElement::didAttachRenderers()
 
     if (document().focusedElement() == this) {
         document().view()->queuePostLayoutCallback([protectedThis = makeRef(*this)] {
-            protectedThis->updateFocusAppearance(SelectionRestorationMode::Restore, SelectionRevealMode::Reveal);
+            protectedThis->updateFocusAppearance(SelectionRestorationMode::RestoreOrSelectAll, SelectionRevealMode::Reveal);
         });
     }
 }

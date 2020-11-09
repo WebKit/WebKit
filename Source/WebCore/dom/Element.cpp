@@ -2993,7 +2993,7 @@ static RefPtr<Element> findFirstProgramaticallyFocusableElementInComposedTree(El
     return nullptr;
 }
 
-void Element::focus(bool restorePreviousSelection, FocusDirection direction)
+void Element::focus(SelectionRestorationMode restorationMode, FocusDirection direction)
 {
     if (!isConnected())
         return;
@@ -3041,7 +3041,7 @@ void Element::focus(bool restorePreviousSelection, FocusDirection direction)
             return;
     }
 
-    newTarget->revealFocusedElement(restorePreviousSelection ? SelectionRestorationMode::Restore : SelectionRestorationMode::SetDefault);
+    newTarget->revealFocusedElement(restorationMode);
 }
 
 void Element::revealFocusedElement(SelectionRestorationMode selectionMode)

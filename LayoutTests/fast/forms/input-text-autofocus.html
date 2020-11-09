@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<input id="input" type="text" value="foo" autofocus>
+
+<script>
+
+// iOS places the caret at the end of the input field.
+if (window.internals)
+    internals.settings.setEditingBehavior("mac");
+
+description("Test for &lt;input autofocus&gt;");
+
+jsTestIsAsync = true;
+
+inputFocusCount = 0;
+input.addEventListener("focus", (event) => {
+    ++inputFocusCount;
+});
+
+requestAnimationFrame(() => {
+    shouldBe("inputFocusCount", "1");
+    shouldBe("input.selectionStart", "0");
+    shouldBe("input.selectionEnd", "0");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

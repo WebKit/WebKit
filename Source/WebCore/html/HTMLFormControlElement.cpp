@@ -254,11 +254,11 @@ void HTMLFormControlElement::didAttachRenderers()
         auto frameView = makeRefPtr(document().view());
         if (frameView && frameView->layoutContext().isInLayout()) {
             frameView->queuePostLayoutCallback([element] {
-                element->focus();
+                element->focus(SelectionRestorationMode::PlaceCaretAtStart);
             });
         } else {
             Style::queuePostResolutionCallback([element] {
-                element->focus();
+                element->focus(SelectionRestorationMode::PlaceCaretAtStart);
             });
         }
     }

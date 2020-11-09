@@ -19,7 +19,7 @@ function test()
         eventSender.keyDown("l");
         eventSender.keyDown("l");
         eventSender.keyDown("o");
-        document.execCommand("selectAll"); // Does selectAll for aligning the @autofocus attribute on the expectation.
+        target.blur();
         testRunner.notifyDone();
     }
 }

@@ -400,7 +400,7 @@ public:
     virtual String target() const { return String(); }
 
     static AXTextStateChangeIntent defaultFocusTextStateChangeIntent() { return AXTextStateChangeIntent(AXTextStateChangeTypeSelectionMove, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown, true }); }
-    virtual void focus(bool restorePreviousSelection = true, FocusDirection = FocusDirection::None);
+    virtual void focus(SelectionRestorationMode = SelectionRestorationMode::RestoreOrSelectAll, FocusDirection = FocusDirection::None);
     void revealFocusedElement(SelectionRestorationMode);
     virtual RefPtr<Element> focusAppearanceUpdateTarget();
     virtual void updateFocusAppearance(SelectionRestorationMode, SelectionRevealMode = SelectionRevealMode::Reveal);

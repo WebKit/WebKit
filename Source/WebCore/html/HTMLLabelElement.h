@@ -51,7 +51,7 @@ private:
     // Overridden to either click() or focus() the corresponding control.
     void defaultEventHandler(Event&) final;
 
-    void focus(bool restorePreviousSelection, FocusDirection) final;
+    void focus(SelectionRestorationMode, FocusDirection) final;
 
     bool isInteractiveContent() const final { return true; }
 };

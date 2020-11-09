@@ -145,7 +145,7 @@ void CachedPage::restore(Page& page)
             frameView->setProhibitsScrolling(true);
         }
 #endif
-        element->updateFocusAppearance(SelectionRestorationMode::Restore);
+        element->updateFocusAppearance(SelectionRestorationMode::RestoreOrSelectAll);
 #if PLATFORM(IOS_FAMILY)
         if (frameView)
             frameView->setProhibitsScrolling(hadProhibitsScrolling);

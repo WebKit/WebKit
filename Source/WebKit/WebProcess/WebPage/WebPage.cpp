@@ -4570,7 +4570,7 @@ void WebPage::restoreSelectionInFocusedEditableElement()
 
     if (auto document = frame.document()) {
         if (auto element = document->focusedElement())
-            element->updateFocusAppearance(SelectionRestorationMode::Restore, SelectionRevealMode::DoNotReveal);
+            element->updateFocusAppearance(SelectionRestorationMode::RestoreOrSelectAll, SelectionRevealMode::DoNotReveal);
     }
 }
 

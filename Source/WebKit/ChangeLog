@@ -1,3 +1,19 @@
+2020-11-09  Devin Rousso  <drousso@apple.com>
+
+        autofocus of text input should not select text
+        https://bugs.webkit.org/show_bug.cgi?id=218585
+        <rdar://problem/60130704>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::restoreSelectionInFocusedEditableElement):
+        Slightly rework `SelectionRestorationMode` to replace `SetDefault` with two new values:
+         - `PlaceCaretAtStart` puts the caret at the start, regardless of any cached selection
+         - `SelectAll` selects all text, regardless of any cached selection (existing behavior)
+        In order to preserve existing behavior, the default `Restore` will have the same effect as
+        `SelectAll` if there is no cached selection (and is renamed to `RestoreOrSelectAll` as such).
+
 2020-11-09  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Set preference for overridden languages in the WebContent process after entering the sandbox.

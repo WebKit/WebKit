@@ -455,7 +455,7 @@ private:
     void addToRadioButtonGroup();
     void removeFromRadioButtonGroup();
 
-    void setDefaultSelectionAfterFocus(SelectionRevealMode);
+    void setDefaultSelectionAfterFocus(SelectionRestorationMode, SelectionRevealMode);
 
     AtomString m_name;
     String m_valueIfDirty;

@@ -288,7 +288,11 @@ enum class DocumentCompatibilityMode : unsigned char {
 
 enum DimensionsCheck { WidthDimensionsCheck = 1 << 0, HeightDimensionsCheck = 1 << 1, AllDimensionsCheck = 1 << 2 };
 
-enum class SelectionRestorationMode { Restore, SetDefault };
+enum class SelectionRestorationMode : uint8_t {
+    RestoreOrSelectAll,
+    SelectAll,
+    PlaceCaretAtStart,
+};
 
 enum class HttpEquivPolicy {
     Enabled,
