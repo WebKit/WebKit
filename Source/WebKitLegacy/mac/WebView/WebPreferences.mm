@@ -1809,14 +1809,14 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:enabled forKey:WebKitSimpleLineLayoutEnabledPreferenceKey];
 }
 
-- (BOOL)legacyLineLayoutVisualCoverageEnabled
+- (BOOL)simpleLineLayoutDebugBordersEnabled
 {
-    return [self _boolValueForKey:WebKitLegacyLineLayoutVisualCoverageEnabledPreferenceKey];
+    return [self _boolValueForKey:WebKitSimpleLineLayoutDebugBordersEnabledPreferenceKey];
 }
 
-- (void)setLegacyLineLayoutVisualCoverageEnabled:(BOOL)enabled
+- (void)setSimpleLineLayoutDebugBordersEnabled:(BOOL)enabled
 {
-    [self _setBoolValue:enabled forKey:WebKitLegacyLineLayoutVisualCoverageEnabledPreferenceKey];
+    [self _setBoolValue:enabled forKey:WebKitSimpleLineLayoutDebugBordersEnabledPreferenceKey];
 }
 
 - (BOOL)showRepaintCounter

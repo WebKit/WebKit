@@ -305,14 +305,14 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setSimpleLineLayoutEnabled(simpleLineLayoutEnabled);
 }
 
-- (BOOL)_legacyLineLayoutVisualCoverageEnabled
+- (BOOL)_simpleLineLayoutDebugBordersEnabled
 {
-    return _preferences->legacyLineLayoutVisualCoverageEnabled();
+    return _preferences->simpleLineLayoutDebugBordersEnabled();
 }
 
-- (void)_setLegacyLineLayoutVisualCoverageEnabled:(BOOL)legacyLineLayoutVisualCoverageEnabled
+- (void)_setSimpleLineLayoutDebugBordersEnabled:(BOOL)simpleLineLayoutDebugBordersEnabled
 {
-    _preferences->setLegacyLineLayoutVisualCoverageEnabled(legacyLineLayoutVisualCoverageEnabled);
+    _preferences->setSimpleLineLayoutDebugBordersEnabled(simpleLineLayoutDebugBordersEnabled);
 }
 
 - (BOOL)_contentChangeObserverEnabled
