@@ -340,10 +340,8 @@ void TextureMapperLayer::computeOverlapRegions(ComputeOverlapRegionData& data, c
 
     if (m_currentFilters.hasOutsets()) {
         auto outsets = m_currentFilters.outsets();
-        IntRect unfilteredTargetRect(localBoundingRect);
-        localBoundingRect.move(std::max(0, -outsets.left()), std::max(0, -outsets.top()));
+        localBoundingRect.move(-outsets.left(), -outsets.top());
         localBoundingRect.expand(outsets.left() + outsets.right(), outsets.top() + outsets.bottom());
-        localBoundingRect.unite(unfilteredTargetRect);
     }
 
     TransformationMatrix transform(accumulatedReplicaTransform);
