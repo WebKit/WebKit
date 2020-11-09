@@ -300,8 +300,10 @@ void VideoFullscreenManager::exitVideoFullscreenForVideoElement(WebCore::HTMLVid
 
     auto contextId = m_videoElements.get(&videoElement);
     auto& interface = ensureInterface(contextId);
-    if (interface.animationState() != VideoFullscreenInterfaceContext::AnimationType::None)
+    if (interface.animationState() != VideoFullscreenInterfaceContext::AnimationType::None) {
+        completionHandler(false);
         return;
+    }
 
     m_page->sendWithAsyncReply(Messages::VideoFullscreenManagerProxy::ExitFullscreen(contextId, inlineVideoFrame(videoElement)), [protectedThis = makeRefPtr(this), this, contextId, completionHandler = WTFMove(completionHandler)](auto success) mutable {
         if (!success) {

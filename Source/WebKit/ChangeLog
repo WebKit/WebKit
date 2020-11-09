@@ -1,3 +1,15 @@
+2020-11-09  Peng Liu  <peng.liu6@apple.com>
+
+        REGRESSION (r269557): ASSERTION FAILED: Completion handler should always be called under WebCore::HTMLMediaElement::exitFullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=218722
+
+        Reviewed by Eric Carlson.
+
+        No new tests, covered by an existing test that is crashing on the bots.
+
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::exitVideoFullscreenForVideoElement):
+
 2020-11-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Rename ImageBuffer::flushDisplayList to ImageBuffer::submitDisplayList
