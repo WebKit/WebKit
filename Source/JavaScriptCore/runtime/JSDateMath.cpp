@@ -99,9 +99,9 @@ void OpaqueICUTimeZoneDeleter::operator()(OpaqueICUTimeZone* timeZone)
 // NOTE: The implementation relies on the fact that no time zones have
 // more than one daylight savings offset change per month.
 // If this function is called with NaN it returns NaN.
-static LocalTimeOffset localTimeOffset(DateCache& dateCache, double millisecondsFromEpoch, WTF::TimeType inputTimeType = WTF::UTCTime)
+LocalTimeOffset DateCache::calculateLocalTimeOffset(double millisecondsFromEpoch, WTF::TimeType inputTimeType)
 {
-    auto& timeZoneCache = *bitwise_cast<icu::TimeZone*>(dateCache.timeZoneCache());
+    auto& timeZoneCache = *bitwise_cast<icu::TimeZone*>(this->timeZoneCache());
     int32_t rawOffset = 0;
     int32_t dstOffset = 0;
     UErrorCode status = U_ZERO_ERROR;
@@ -120,6 +120,105 @@ static LocalTimeOffset localTimeOffset(DateCache& dateCache, double milliseconds
     return { !!dstOffset, rawOffset + dstOffset };
 }
 
+LocalTimeOffset DateCache::localTimeOffset(double millisecondsFromEpoch, WTF::TimeType inputTimeType)
+{
+    LocalTimeOffsetCache& cache = inputTimeType == WTF::LocalTime ? m_localTimeOffsetCache : m_utcTimeOffsetCache;
+
+    double start = cache.start;
+    double end = cache.end;
+
+    auto resetCache = [&]() {
+        // Compute the DST offset for the time and shrink the cache interval
+        // to only contain the time. This allows fast repeated DST offset
+        // computations for the same time.
+        LocalTimeOffset offset = calculateLocalTimeOffset(millisecondsFromEpoch, inputTimeType);
+        cache.offset = offset;
+        cache.start = millisecondsFromEpoch;
+        cache.end = millisecondsFromEpoch;
+        cache.incrementStart = WTF::msPerMonth;
+        cache.incrementEnd = WTF::msPerMonth;
+        return offset;
+    };
+
+    // If the time fits in the cached interval, return the cached offset.
+    if (start <= millisecondsFromEpoch && millisecondsFromEpoch <= end)
+        return cache.offset;
+
+    if (start <= millisecondsFromEpoch) {
+        // Compute a possible new interval end.
+        double newEnd = end + cache.incrementEnd;
+        if (!(millisecondsFromEpoch <= newEnd))
+            return resetCache();
+
+        LocalTimeOffset endOffset = calculateLocalTimeOffset(newEnd, inputTimeType);
+        if (cache.offset == endOffset) {
+            // If the offset at the end of the new interval still matches
+            // the offset in the cache, we grow the cached time interval
+            // and return the offset.
+            cache.end = newEnd;
+            cache.incrementStart = WTF::msPerMonth;
+            cache.incrementEnd = WTF::msPerMonth;
+            return endOffset;
+        }
+        LocalTimeOffset offset = calculateLocalTimeOffset(millisecondsFromEpoch, inputTimeType);
+        if (offset == endOffset) {
+            // The offset at the given time is equal to the offset at the
+            // new end of the interval, so that means that we've just skipped
+            // the point in time where the DST offset change occurred. Update
+            // the interval to reflect this and reset the increment.
+            cache.start = millisecondsFromEpoch;
+            cache.end = newEnd;
+            cache.incrementStart = WTF::msPerMonth;
+            cache.incrementEnd = WTF::msPerMonth;
+        } else {
+            // The interval contains a DST offset change and the given time is
+            // before it. Adjust the increment to avoid a linear search for
+            // the offset change point and change the end of the interval.
+            cache.incrementEnd /= 3;
+            cache.end = millisecondsFromEpoch;
+        }
+        // Update the offset in the cache and return it.
+        cache.offset = offset;
+        return offset;
+    }
+
+    // Compute a possible new interval start.
+    double newStart = start - cache.incrementStart;
+    if (!(newStart <= millisecondsFromEpoch))
+        return resetCache();
+
+    LocalTimeOffset startOffset = calculateLocalTimeOffset(newStart, inputTimeType);
+    if (cache.offset == startOffset) {
+        // If the offset at the start of the new interval still matches
+        // the offset in the cache, we grow the cached time interval
+        // and return the offset.
+        cache.start = newStart;
+        cache.incrementStart = WTF::msPerMonth;
+        cache.incrementEnd = WTF::msPerMonth;
+        return startOffset;
+    }
+    LocalTimeOffset offset = calculateLocalTimeOffset(millisecondsFromEpoch, inputTimeType);
+    if (offset == startOffset) {
+        // The offset at the given time is equal to the offset at the
+        // new start of the interval, so that means that we've just skipped
+        // the point in time where the DST offset change occurred. Update
+        // the interval to reflect this and reset the increment.
+        cache.start = newStart;
+        cache.end = millisecondsFromEpoch;
+        cache.incrementStart = WTF::msPerMonth;
+        cache.incrementEnd = WTF::msPerMonth;
+    } else {
+        // The interval contains a DST offset change and the given time is
+        // before it. Adjust the increment to avoid a linear search for
+        // the offset change point and change the end of the interval.
+        cache.incrementStart /= 3;
+        cache.start = millisecondsFromEpoch;
+    }
+    // Update the offset in the cache and return it.
+    cache.offset = offset;
+    return offset;
+}
+
 static inline double timeToMS(double hour, double min, double sec, double ms)
 {
     return (((hour * WTF::minutesPerHour + min) * WTF::secondsPerMinute + sec) * WTF::msPerSecond + ms);
@@ -131,8 +230,7 @@ double DateCache::gregorianDateTimeToMS(const GregorianDateTime& t, double milli
     double ms = timeToMS(t.hour(), t.minute(), t.second(), milliseconds);
     double localTimeResult = (day * WTF::msPerDay) + ms;
 
-    double localToUTCTimeOffset = inputTimeType == WTF::LocalTime
-        ? localTimeOffset(*this, localTimeResult, inputTimeType).offset : 0;
+    double localToUTCTimeOffset = inputTimeType == WTF::LocalTime ? localTimeOffset(localTimeResult, inputTimeType).offset : 0;
 
     return localTimeResult - localToUTCTimeOffset;
 }
@@ -142,7 +240,7 @@ void DateCache::msToGregorianDateTime(double millisecondsFromEpoch, WTF::TimeTyp
 {
     LocalTimeOffset localTime;
     if (outputTimeType == WTF::LocalTime) {
-        localTime = localTimeOffset(*this, millisecondsFromEpoch);
+        localTime = localTimeOffset(millisecondsFromEpoch);
         millisecondsFromEpoch += localTime.offset;
     }
     tm = GregorianDateTime(millisecondsFromEpoch, localTime);
@@ -171,7 +269,7 @@ double DateCache::parseDate(JSGlobalObject* globalObject, VM& vm, const String& 
             value = WTF::parseDateFromNullTerminatedCharacters(dateString, isLocalTime);
 
         if (isLocalTime)
-            value -= localTimeOffset(*this, value, WTF::LocalTime).offset;
+            value -= localTimeOffset(value, WTF::LocalTime).offset;
 
         return value;
     };
@@ -223,6 +321,8 @@ void DateCache::timeZoneCacheSlow()
 void DateCache::reset()
 {
     m_timeZoneCache.reset();
+    m_utcTimeOffsetCache = LocalTimeOffsetCache();
+    m_localTimeOffsetCache = LocalTimeOffsetCache();
     m_cachedDateString = String();
     m_cachedDateStringValue = std::numeric_limits<double>::quiet_NaN();
     m_dateInstanceCache.reset();

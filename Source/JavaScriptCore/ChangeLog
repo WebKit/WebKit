@@ -1,5 +1,32 @@
 2020-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Add TimeZone range cache over ICU TimeZone API
+        https://bugs.webkit.org/show_bug.cgi?id=218681
+
+        Reviewed by Ross Kirsling.
+
+        icu::TimeZone is more accurate and faster than localtime_r. But still, it is slower than returning cached data!
+        We saw 10% regression in JetStream2/date-format-xparb-SP with icu::TimeZone switching.
+        In this patch, we put one-depth timezone cache back over icu::TimeZone API, and recover the performance.
+        In addition, new version of timezone cache includes "start" side extension (while old one only extends "end" of the range).
+        The test covers all cases in the added cache.
+
+        * runtime/JSDateMath.cpp:
+        (JSC::DateCache::calculateLocalTimeOffset):
+        (JSC::DateCache::localTimeOffset):
+        (JSC::DateCache::gregorianDateTimeToMS):
+        (JSC::DateCache::msToGregorianDateTime):
+        (JSC::DateCache::parseDate):
+        (JSC::DateCache::reset):
+        (JSC::localTimeOffset): Deleted.
+        * runtime/JSDateMath.h:
+        (JSC::DateCache::timeZoneCache):
+        * runtime/VM.h:
+        (JSC::LocalTimeOffsetCache::LocalTimeOffsetCache): Deleted.
+        (JSC::LocalTimeOffsetCache::reset): Deleted.
+
+2020-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Support @@species in ArrayBuffer / SharedArrayBuffer slice
         https://bugs.webkit.org/show_bug.cgi?id=218697
 

@@ -221,28 +221,6 @@ struct HashTable;
 struct Instruction;
 struct ValueProfile;
 
-struct LocalTimeOffsetCache {
-    LocalTimeOffsetCache()
-        : start(0.0)
-        , end(-1.0)
-        , increment(0.0)
-    {
-    }
-
-    void reset()
-    {
-        offset = LocalTimeOffset();
-        start = 0.0;
-        end = -1.0;
-        increment = 0.0;
-    }
-
-    LocalTimeOffset offset;
-    double start;
-    double end;
-    double increment;
-};
-
 class QueuedTask {
     WTF_MAKE_NONCOPYABLE(QueuedTask);
     WTF_MAKE_FAST_ALLOCATED;

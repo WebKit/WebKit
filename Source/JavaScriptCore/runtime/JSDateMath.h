@@ -58,6 +58,16 @@ struct OpaqueICUTimeZoneDeleter {
     JS_EXPORT_PRIVATE void operator()(OpaqueICUTimeZone*);
 };
 
+struct LocalTimeOffsetCache {
+    LocalTimeOffsetCache() = default;
+
+    LocalTimeOffset offset;
+    double start { 0.0 };
+    double end { -1.0 };
+    double incrementStart { 0.0 };
+    double incrementEnd { 0.0 };
+};
+
 class DateCache {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(DateCache);
@@ -69,13 +79,6 @@ public:
 
     String defaultTimeZone();
 
-    OpaqueICUTimeZone* timeZoneCache()
-    {
-        if (!m_timeZoneCache)
-            timeZoneCacheSlow();
-        return m_timeZoneCache.get();
-    }
-
     Ref<DateInstanceData> cachedDateInstanceData(double millisecondsFromEpoch);
 
     void msToGregorianDateTime(double millisecondsFromEpoch, WTF::TimeType outputTimeType, GregorianDateTime&);
@@ -84,8 +87,19 @@ public:
 
 private:
     void timeZoneCacheSlow();
+    LocalTimeOffset localTimeOffset(double millisecondsFromEpoch, WTF::TimeType inputTimeType = WTF::UTCTime);
+    LocalTimeOffset calculateLocalTimeOffset(double millisecondsFromEpoch, WTF::TimeType inputTimeType);
+
+    OpaqueICUTimeZone* timeZoneCache()
+    {
+        if (!m_timeZoneCache)
+            timeZoneCacheSlow();
+        return m_timeZoneCache.get();
+    }
 
     std::unique_ptr<OpaqueICUTimeZone, OpaqueICUTimeZoneDeleter> m_timeZoneCache;
+    LocalTimeOffsetCache m_utcTimeOffsetCache;
+    LocalTimeOffsetCache m_localTimeOffsetCache;
     String m_cachedDateString;
     double m_cachedDateStringValue;
     DateInstanceCache m_dateInstanceCache;
