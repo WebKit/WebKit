@@ -1,3 +1,28 @@
+2020-11-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] ScrollGestureController should only handle complete touch interactions
+        https://bugs.webkit.org/show_bug.cgi?id=218329
+
+        Reviewed by Carlos Garcia Campos.
+
+        ScrollGestureController's purpose is to handle otherwise-unhandled
+        touch events and translate those into a scrolling gesture.
+
+        Until now, it was possible for a touch motion event to trigger that
+        gesture even when the corresponding touch down event was not handled
+        by the ScrollGestureController, e.g. it was not produced due to the
+        touch interaction being started somewhere else, or the Web content
+        actually handled that event.
+
+        A flag is added to ScrollGestureController to track that an unhandled
+        touch down event was confronted, before allowing subsequent unhandled
+        touch motion events to trigger the scrolling gesture when conditions
+        are met. The flag is reset upon the touch up event.
+
+        * UIProcess/API/wpe/ScrollGestureController.cpp:
+        (WebKit::ScrollGestureController::handleEvent):
+        * UIProcess/API/wpe/ScrollGestureController.h:
+
 2020-11-08  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] REGRESSION(r267250) API test /webkit/WebKitWebView/usermedia-enumeratedevices-permission-check is crashing

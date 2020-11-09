@@ -42,6 +42,7 @@ bool ScrollGestureController::handleEvent(const struct wpe_input_touch_event_raw
 {
     switch (touchPoint->type) {
     case wpe_input_touch_event_type_down:
+        m_start.active = true;
         m_start.time = touchPoint->time;
         m_start.x = touchPoint->x;
         m_start.y = touchPoint->y;
@@ -51,7 +52,7 @@ bool ScrollGestureController::handleEvent(const struct wpe_input_touch_event_raw
         m_yAxisLockBroken = false;
         return false;
     case wpe_input_touch_event_type_motion:
-        if (!m_handling) {
+        if (m_start.active && !m_handling) {
             int32_t deltaX = touchPoint->x - m_start.x;
             int32_t deltaY = touchPoint->y - m_start.y;
             uint32_t deltaTime = touchPoint->time - m_start.time;
@@ -99,6 +100,7 @@ bool ScrollGestureController::handleEvent(const struct wpe_input_touch_event_raw
         return false;
     case wpe_input_touch_event_type_up:
         if (m_handling) {
+            m_start.active = false;
             m_handling = false;
 #if WPE_CHECK_VERSION(1, 5, 0)
             m_axisEvent.base = {

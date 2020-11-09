@@ -51,6 +51,7 @@ public:
 
 private:
     struct {
+        bool active { false };
         uint32_t time { 0 };
         int32_t x { 0 };
         int32_t y { 0 };
