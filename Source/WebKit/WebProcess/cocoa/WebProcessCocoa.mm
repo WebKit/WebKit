@@ -174,6 +174,8 @@ static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
+    SandboxExtension::consumePermanently(parameters.diagnosticsExtensionHandles);
+
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
     if (canLoad_UIKit__UIApplicationCatalystRequestViewServiceIdiomAndScaleFactor()) {
         auto [overrideUserInterfaceIdiom, overrideScaleFactor] = parameters.overrideUserInterfaceIdiomAndScale;
@@ -327,7 +329,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     if (parameters.containerManagerExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.containerManagerExtensionHandle);
     
-    SandboxExtension::consumePermanently(parameters.diagnosticsExtensionHandles);
 #if PLATFORM(IOS_FAMILY)
     SandboxExtension::consumePermanently(parameters.dynamicMachExtensionHandles);
     SandboxExtension::consumePermanently(parameters.dynamicIOKitExtensionHandles);
