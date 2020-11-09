@@ -601,6 +601,14 @@
 )
 #endif
 
+#if !ENABLE(CFPREFS_DIRECT_MODE)
+(allow mach-lookup
+    (global-name "com.apple.cfprefsd.agent")
+    (global-name "com.apple.cfprefsd.daemon")
+)
+#endif
+
+
 ;; Utility functions for home directory relative path filters
 (define (home-regex home-relative-regex)
   (regex (string-append "^" (regex-quote (param "HOME_DIR")) home-relative-regex)))

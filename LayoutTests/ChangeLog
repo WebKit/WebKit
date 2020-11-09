@@ -1,3 +1,22 @@
+2020-11-09  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Set preference for overridden languages in the WebContent process after entering the sandbox.
+        https://bugs.webkit.org/show_bug.cgi?id=218097
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add test for sandbox access to cfprefsd.daemon, and mark cfprefsd tests as failing for Mojave and Catalina, since CFPrefs
+        direct mode is not enabled on those versions of macOS.
+
+        * fast/sandbox/mac/sandbox-mach-lookup-expected.txt:
+        * fast/sandbox/mac/sandbox-mach-lookup.html:
+        * platform/mac-catalina/fast/sandbox: Added.
+        * platform/mac-catalina/fast/sandbox/mac: Added.
+        * platform/mac-catalina/fast/sandbox/mac/sandbox-mach-lookup-expected.txt: Added.
+        * platform/mac-mojave/fast/sandbox: Added.
+        * platform/mac-mojave/fast/sandbox/mac: Added.
+        * platform/mac-mojave/fast/sandbox/mac/sandbox-mach-lookup-expected.txt: Added.
+
 2020-11-09  Chris Lord  <clord@igalia.com>
 
         REGRESSION(r269503): [GTK][WPE] >200 tests are failing

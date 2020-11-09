@@ -1,3 +1,17 @@
+2020-11-09  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Set preference for overridden languages in the WebContent process after entering the sandbox.
+        https://bugs.webkit.org/show_bug.cgi?id=218097
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/AccessibilityReduceMotion.mm:
+        * TestWebKitAPI/Tests/WebKit/EnableAccessibility.mm:
+        * TestWebKitAPI/Tests/WebKit/OverrideAppleLanguagesPreference.mm: Added.
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit/PreferenceChanges.mm:
+
 2020-11-09  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Add python 3 support - part 3

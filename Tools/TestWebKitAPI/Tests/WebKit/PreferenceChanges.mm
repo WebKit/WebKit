@@ -381,6 +381,7 @@ TEST(WebKit, PreferenceChangesNil)
     CLEAR_DEFAULTS();
 }
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
 static IMP sharedInstanceMethodOriginal = nil;
 static bool sharedInstanceCalled = false;
 
@@ -410,5 +411,6 @@ TEST(WebKit, PreferenceObserverStartedOnActivation)
 
     TestWebKitAPI::Util::run(&sharedInstanceCalled);
 }
+#endif
 
 #endif // WK_HAVE_C_SPI

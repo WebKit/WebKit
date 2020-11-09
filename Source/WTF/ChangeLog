@@ -1,3 +1,15 @@
+2020-11-09  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Set preference for overridden languages in the WebContent process after entering the sandbox.
+        https://bugs.webkit.org/show_bug.cgi?id=218097
+
+        Reviewed by Alexey Proskuryakov.
+
+        Disable CFPrefs direct mode for older versions of macOS. In practice, it was already disabled since a mach connection to cfprefsd
+        was established before entering the sandbox on older versions on macOS, but that is fixed in this patch.
+
+        * wtf/PlatformEnableCocoa.h:
+
 2020-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add TimeZone range cache over ICU TimeZone API

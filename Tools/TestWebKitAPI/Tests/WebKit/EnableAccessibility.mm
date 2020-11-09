@@ -76,6 +76,7 @@ TEST(WebKit, AccessibilityHasPreferencesServiceAccess)
     [NSApp accessibilitySetEnhancedUserInterfaceAttribute:@(NO)];
 }
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
 TEST(WebKit, AccessibilityHasNoPreferencesServiceAccessWhenPostingNotification)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -95,6 +96,7 @@ TEST(WebKit, AccessibilityHasNoPreferencesServiceAccessWhenPostingNotification)
 
     ASSERT_TRUE(!sandboxAccess());
 }
+#endif
 
 #if PLATFORM(IOS_FAMILY)
 TEST(WebKit, AccessibilityHasFrontboardServiceAccess)

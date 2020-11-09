@@ -1,3 +1,23 @@
+2020-11-09  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Set preference for overridden languages in the WebContent process after entering the sandbox.
+        https://bugs.webkit.org/show_bug.cgi?id=218097
+        <rdar://problem/70586545>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Currently, the preference for overridden languages in the WebContent process is set before entering the sandbox,
+        which leaves behind an open connection to opendirectoryd. This preference should be set after entering the
+        sandbox to avoid this. This patch sets the preference after the initialization function has been executed.
+
+        API test: WebKit.OverrideAppleLanguagesPreference
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::setAppleLanguagesPreference):
+        (WebKit::XPCServiceEventHandler):
+        (WebKit::XPCServiceMain):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-11-09  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Fix the build warning below since r269525.

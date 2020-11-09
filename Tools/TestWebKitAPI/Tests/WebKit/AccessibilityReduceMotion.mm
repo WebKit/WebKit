@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if WK_HAVE_C_SPI
+#if WK_HAVE_C_SPI && ENABLE(CFPREFS_DIRECT_MODE)
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"

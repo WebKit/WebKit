@@ -7,6 +7,7 @@ description('Regression tests for mach lookup sandbox changes on macOS');
 
 if (window.internals) {
     shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.cfprefsd.agent\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.cfprefsd.daemon\")");
     shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.nehelper\")");
     shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.nesessionmanager\")");
     shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.nesessionmanager.content-filter\")");
