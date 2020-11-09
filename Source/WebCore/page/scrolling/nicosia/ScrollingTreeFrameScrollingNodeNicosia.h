@@ -47,6 +47,8 @@ public:
     static Ref<ScrollingTreeFrameScrollingNode> create(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
     virtual ~ScrollingTreeFrameScrollingNodeNicosia();
 
+    RefPtr<Nicosia::CompositionLayer> rootContentsLayer() const { return m_rootContentsLayer; }
+
 private:
     ScrollingTreeFrameScrollingNodeNicosia(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
 

@@ -37,6 +37,7 @@
 #include "NicosiaAnimatedBackingStoreClient.h"
 #include "NicosiaAnimation.h"
 #include "NicosiaSceneIntegration.h"
+#include "ScrollTypes.h"
 #include "TransformationMatrix.h"
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
@@ -134,6 +135,7 @@ public:
                     bool animatedBackingStoreClientChanged : 1;
                     bool repaintCounterChanged : 1;
                     bool debugBorderChanged : 1;
+                    bool scrollingNodeChanged : 1;
                 };
                 uint32_t value { 0 };
             };
@@ -198,6 +200,8 @@ public:
             float width { 0 };
             bool visible { false };
         } debugBorder;
+
+        WebCore::ScrollingNodeID scrollingNodeID { 0 };
     };
 
     template<typename T>
@@ -266,6 +270,9 @@ public:
         if (pending.delta.debugBorderChanged)
             staging.debugBorder = pending.debugBorder;
 
+        if (pending.delta.scrollingNodeChanged)
+            staging.scrollingNodeID = pending.scrollingNodeID;
+
         if (pending.delta.backingStoreChanged)
             staging.backingStore = pending.backingStore;
         if (pending.delta.contentLayerChanged)
@@ -288,6 +295,13 @@ public:
         m_state.staging.delta = { };
 
         functor(m_state.committed);
+    }
+
+    template<typename T>
+    void accessPending(const T& functor)
+    {
+        LockHolder locker(PlatformLayer::m_state.lock);
+        functor(m_state.pending);
     }
 
     template<typename T>

@@ -77,6 +77,8 @@ protected:
     void reportExposedUnfilledArea(MonotonicTime, unsigned unfilledArea) override;
     void reportSynchronousScrollingReasonsChanged(MonotonicTime, OptionSet<SynchronousScrollingReason>) override;
 
+    RefPtr<AsyncScrollingCoordinator> m_scrollingCoordinator;
+
 private:
     bool isThreadedScrollingTree() const override { return true; }
     void propagateSynchronousScrollingReasons(const HashSet<ScrollingNodeID>&) override;
@@ -90,8 +92,6 @@ private:
     void delayedRenderingUpdateDetectionTimerFired();
 
     Seconds maxAllowableRenderingUpdateDurationForSynchronization();
-
-    RefPtr<AsyncScrollingCoordinator> m_scrollingCoordinator;
 
     enum class SynchronizationState : uint8_t {
         Idle,

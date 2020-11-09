@@ -89,6 +89,16 @@ void ScrollingTreeFrameScrollingNodeNicosia::commitStateBeforeChildren(const Scr
         auto* layer = static_cast<Nicosia::PlatformLayer*>(scrollingStateNode.footerLayer());
         m_footerLayer = downcast<Nicosia::CompositionLayer>(layer);
     }
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer)) {
+        auto* scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrolledContentsLayer());
+        ASSERT(scrollLayer);
+        auto& compositionLayer = downcast<Nicosia::CompositionLayer>(*scrollLayer);
+        auto updateScope = compositionLayer.createUpdateScope();
+        compositionLayer.updateState([nodeID = scrollingNodeID()](Nicosia::CompositionLayer::LayerState& state) {
+            state.scrollingNodeID = nodeID;
+            state.delta.scrollingNodeChanged = true;
+        });
+    }
 }
 
 void ScrollingTreeFrameScrollingNodeNicosia::commitStateAfterChildren(const ScrollingStateNode& stateNode)
