@@ -1063,6 +1063,8 @@ class TransferToS3(master.MasterShellCommand):
 
     def __init__(self, **kwargs):
         kwargs['command'] = self.command
+        if USE_BUILDBOT_VERSION2:
+            kwargs['logEnviron'] = False
         master.MasterShellCommand.__init__(self, **kwargs)
 
     def start(self):
@@ -1079,6 +1081,8 @@ class ExtractTestResults(master.MasterShellCommand):
 
     def __init__(self, **kwargs):
         kwargs['command'] = ""
+        if USE_BUILDBOT_VERSION2:
+            kwargs['logEnviron'] = False
         master.MasterShellCommand.__init__(self, **kwargs)
 
     def resultDirectoryURL(self):
