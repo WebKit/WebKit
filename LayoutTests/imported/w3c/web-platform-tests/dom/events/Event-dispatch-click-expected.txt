@@ -3,7 +3,7 @@ PASS basic with click()
 PASS basic with dispatchEvent()
 PASS basic with wrong event class
 PASS look at parents only when event bubbles
-FAIL look at parents when event bubbles assert_true: expected true got false
+PASS look at parents when event bubbles
 PASS pick the first with activation behavior <input type=checkbox>
 PASS pick the first with activation behavior <a href>
 PASS event state during post-click handling

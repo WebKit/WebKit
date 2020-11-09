@@ -128,6 +128,17 @@ static bool shouldSuppressEventDispatchInDOM(Node& node, Event& event)
     return is<CompositionEvent>(event) || is<InputEvent>(event) || is<KeyboardEvent>(event);
 }
 
+static HTMLInputElement* findInputElementInEventPath(const EventPath& path)
+{
+    size_t size = path.size();
+    for (size_t i = 0; i < size; ++i) {
+        const EventContext& eventContext = path.contextAt(i);
+        if (is<HTMLInputElement>(eventContext.currentTarget()))
+            return downcast<HTMLInputElement>(eventContext.currentTarget());
+    }
+    return nullptr;
+}
+
 void EventDispatcher::dispatchEvent(Node& node, Event& event)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(node));
@@ -159,8 +170,13 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
         return;
 
     InputElementClickState clickHandlingState;
-    if (is<HTMLInputElement>(node))
-        downcast<HTMLInputElement>(node).willDispatchEvent(event, clickHandlingState);
+
+    bool isActivationEvent = event.type() == eventNames().clickEvent;
+    RefPtr<HTMLInputElement> inputForLegacyPreActivationBehavior = is<HTMLInputElement>(node) ? &downcast<HTMLInputElement>(node) : nullptr;
+    if (!inputForLegacyPreActivationBehavior && isActivationEvent && event.bubbles())
+        inputForLegacyPreActivationBehavior = findInputElementInEventPath(eventPath);
+    if (inputForLegacyPreActivationBehavior)
+        inputForLegacyPreActivationBehavior->willDispatchEvent(event, clickHandlingState);
 
     if (shouldSuppressEventDispatchInDOM(node, event))
         event.stopPropagation();
@@ -173,7 +189,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
     event.resetAfterDispatch();
 
     if (clickHandlingState.stateful)
-        downcast<HTMLInputElement>(node).didDispatchClickEvent(event, clickHandlingState);
+        inputForLegacyPreActivationBehavior->didDispatchClickEvent(event, clickHandlingState);
 
     // Call default event handlers. While the DOM does have a concept of preventing
     // default handling, the detail of which handlers are called is an internal
