@@ -1,3 +1,19 @@
+2020-11-09  Aditya Keerthi  <akeerthi@apple.com>
+
+        Remove experimental: and internal: prefixes from recently added tests
+        https://bugs.webkit.org/show_bug.cgi?id=218658
+
+        Reviewed by Devin Rousso.
+
+        The tests below were written before r269360. Since the experimental:
+        and internal: prefixes are no longer needed, they should be removed.
+
+        * contact-picker/contacts-select-after-dismissing-picker.html:
+        * contact-picker/contacts-select-while-presenting-picker.html:
+        * contact-picker/contacts-select.html:
+        * fast/scrolling/mac/overflow-scrollbars-toggle-dark-mode-expected.html:
+        * fast/scrolling/mac/overflow-scrollbars-toggle-dark-mode.html:
+
 2020-11-09  Rob Buis  <rbuis@igalia.com>
 
         Add testcase for r269538
