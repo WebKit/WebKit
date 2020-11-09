@@ -506,7 +506,7 @@ PASS HTMLLinkElement interface: attribute type
 PASS HTMLLinkElement interface: attribute sizes
 PASS HTMLLinkElement interface: attribute imageSrcset
 PASS HTMLLinkElement interface: attribute imageSizes
-FAIL HTMLLinkElement interface: attribute referrerPolicy assert_true: The prototype object must have a property "referrerPolicy" expected true got false
+PASS HTMLLinkElement interface: attribute referrerPolicy
 PASS HTMLLinkElement interface: attribute disabled
 PASS HTMLLinkElement interface: attribute charset
 PASS HTMLLinkElement interface: attribute rev
@@ -525,7 +525,7 @@ PASS HTMLLinkElement interface: document.createElement("link") must inherit prop
 PASS HTMLLinkElement interface: document.createElement("link") must inherit property "sizes" with the proper type
 PASS HTMLLinkElement interface: document.createElement("link") must inherit property "imageSrcset" with the proper type
 PASS HTMLLinkElement interface: document.createElement("link") must inherit property "imageSizes" with the proper type
-FAIL HTMLLinkElement interface: document.createElement("link") must inherit property "referrerPolicy" with the proper type assert_inherits: property "referrerPolicy" not found in prototype chain
+PASS HTMLLinkElement interface: document.createElement("link") must inherit property "referrerPolicy" with the proper type
 PASS HTMLLinkElement interface: document.createElement("link") must inherit property "disabled" with the proper type
 PASS HTMLLinkElement interface: document.createElement("link") must inherit property "charset" with the proper type
 PASS HTMLLinkElement interface: document.createElement("link") must inherit property "rev" with the proper type
@@ -1565,7 +1565,7 @@ FAIL HTMLAreaElement interface: attribute download assert_true: The prototype ob
 PASS HTMLAreaElement interface: attribute ping
 PASS HTMLAreaElement interface: attribute rel
 PASS HTMLAreaElement interface: attribute relList
-FAIL HTMLAreaElement interface: attribute referrerPolicy assert_true: The prototype object must have a property "referrerPolicy" expected true got false
+PASS HTMLAreaElement interface: attribute referrerPolicy
 PASS HTMLAreaElement interface: attribute noHref
 PASS HTMLAreaElement interface: attribute href
 PASS HTMLAreaElement interface: stringifier
@@ -1589,7 +1589,7 @@ FAIL HTMLAreaElement interface: document.createElement("area") must inherit prop
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "ping" with the proper type
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "rel" with the proper type
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "relList" with the proper type
-FAIL HTMLAreaElement interface: document.createElement("area") must inherit property "referrerPolicy" with the proper type assert_inherits: property "referrerPolicy" not found in prototype chain
+PASS HTMLAreaElement interface: document.createElement("area") must inherit property "referrerPolicy" with the proper type
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "noHref" with the proper type
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "href" with the proper type
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "origin" with the proper type

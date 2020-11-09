@@ -160,15 +160,15 @@ PASS HTMLAllCollection interface: existence and properties of interface object
 PASS HTMLFormControlsCollection interface: existence and properties of interface object
 PASS RadioNodeList interface: existence and properties of interface object
 PASS HTMLOptionsCollection interface: existence and properties of interface object
-FAIL DOMStringList interface: existence and properties of interface object assert_own_property: self does not have own property "DOMStringList" expected property "DOMStringList" missing
-FAIL DOMStringList interface object length assert_own_property: self does not have own property "DOMStringList" expected property "DOMStringList" missing
-FAIL DOMStringList interface object name assert_own_property: self does not have own property "DOMStringList" expected property "DOMStringList" missing
-FAIL DOMStringList interface: existence and properties of interface prototype object assert_own_property: self does not have own property "DOMStringList" expected property "DOMStringList" missing
-FAIL DOMStringList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "DOMStringList" expected property "DOMStringList" missing
-FAIL DOMStringList interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "DOMStringList" expected property "DOMStringList" missing
-FAIL DOMStringList interface: attribute length assert_own_property: self does not have own property "DOMStringList" expected property "DOMStringList" missing
-FAIL DOMStringList interface: operation item(unsigned long) assert_own_property: self does not have own property "DOMStringList" expected property "DOMStringList" missing
-FAIL DOMStringList interface: operation contains(DOMString) assert_own_property: self does not have own property "DOMStringList" expected property "DOMStringList" missing
+PASS DOMStringList interface: existence and properties of interface object
+PASS DOMStringList interface object length
+PASS DOMStringList interface object name
+PASS DOMStringList interface: existence and properties of interface prototype object
+PASS DOMStringList interface: existence and properties of interface prototype object's "constructor" property
+PASS DOMStringList interface: existence and properties of interface prototype object's @@unscopables property
+PASS DOMStringList interface: attribute length
+PASS DOMStringList interface: operation item(unsigned long)
+PASS DOMStringList interface: operation contains(DOMString)
 PASS HTMLElement interface: existence and properties of interface object
 PASS HTMLUnknownElement interface: existence and properties of interface object
 PASS DOMStringMap interface: existence and properties of interface object
@@ -265,24 +265,24 @@ PASS CanvasPattern interface: existence and properties of interface prototype ob
 PASS CanvasPattern interface: existence and properties of interface prototype object's "constructor" property
 PASS CanvasPattern interface: existence and properties of interface prototype object's @@unscopables property
 PASS CanvasPattern interface: operation setTransform(optional DOMMatrix2DInit)
-FAIL TextMetrics interface: existence and properties of interface object assert_own_property: self does not have own property "TextMetrics" expected property "TextMetrics" missing
-FAIL TextMetrics interface object length assert_own_property: self does not have own property "TextMetrics" expected property "TextMetrics" missing
-FAIL TextMetrics interface object name assert_own_property: self does not have own property "TextMetrics" expected property "TextMetrics" missing
-FAIL TextMetrics interface: existence and properties of interface prototype object assert_own_property: self does not have own property "TextMetrics" expected property "TextMetrics" missing
-FAIL TextMetrics interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "TextMetrics" expected property "TextMetrics" missing
-FAIL TextMetrics interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "TextMetrics" expected property "TextMetrics" missing
-FAIL TextMetrics interface: attribute width assert_own_property: self does not have own property "TextMetrics" expected property "TextMetrics" missing
-FAIL TextMetrics interface: attribute actualBoundingBoxLeft assert_own_property: self does not have own property "TextMetrics" expected property "TextMetrics" missing
-FAIL TextMetrics interface: attribute actualBoundingBoxRight assert_own_property: self does not have own property "TextMetrics" expected property "TextMetrics" missing
-FAIL TextMetrics interface: attribute fontBoundingBoxAscent assert_own_property: self does not have own property "TextMetrics" expected property "TextMetrics" missing
-FAIL TextMetrics interface: attribute fontBoundingBoxDescent assert_own_property: self does not have own property "TextMetrics" expected property "TextMetrics" missing
-FAIL TextMetrics interface: attribute actualBoundingBoxAscent assert_own_property: self does not have own property "TextMetrics" expected property "TextMetrics" missing
-FAIL TextMetrics interface: attribute actualBoundingBoxDescent assert_own_property: self does not have own property "TextMetrics" expected property "TextMetrics" missing
-FAIL TextMetrics interface: attribute emHeightAscent assert_own_property: self does not have own property "TextMetrics" expected property "TextMetrics" missing
-FAIL TextMetrics interface: attribute emHeightDescent assert_own_property: self does not have own property "TextMetrics" expected property "TextMetrics" missing
-FAIL TextMetrics interface: attribute hangingBaseline assert_own_property: self does not have own property "TextMetrics" expected property "TextMetrics" missing
-FAIL TextMetrics interface: attribute alphabeticBaseline assert_own_property: self does not have own property "TextMetrics" expected property "TextMetrics" missing
-FAIL TextMetrics interface: attribute ideographicBaseline assert_own_property: self does not have own property "TextMetrics" expected property "TextMetrics" missing
+PASS TextMetrics interface: existence and properties of interface object
+PASS TextMetrics interface object length
+PASS TextMetrics interface object name
+PASS TextMetrics interface: existence and properties of interface prototype object
+PASS TextMetrics interface: existence and properties of interface prototype object's "constructor" property
+PASS TextMetrics interface: existence and properties of interface prototype object's @@unscopables property
+PASS TextMetrics interface: attribute width
+PASS TextMetrics interface: attribute actualBoundingBoxLeft
+PASS TextMetrics interface: attribute actualBoundingBoxRight
+PASS TextMetrics interface: attribute fontBoundingBoxAscent
+PASS TextMetrics interface: attribute fontBoundingBoxDescent
+PASS TextMetrics interface: attribute actualBoundingBoxAscent
+PASS TextMetrics interface: attribute actualBoundingBoxDescent
+PASS TextMetrics interface: attribute emHeightAscent
+PASS TextMetrics interface: attribute emHeightDescent
+PASS TextMetrics interface: attribute hangingBaseline
+PASS TextMetrics interface: attribute alphabeticBaseline
+PASS TextMetrics interface: attribute ideographicBaseline
 PASS ImageData interface: existence and properties of interface object
 PASS ImageData interface object length
 PASS ImageData interface object name
@@ -308,14 +308,14 @@ PASS Path2D interface: operation arcTo(unrestricted double, unrestricted double,
 PASS Path2D interface: operation rect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS Path2D interface: operation arc(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)
 PASS Path2D interface: operation ellipse(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)
-FAIL ImageBitmapRenderingContext interface: existence and properties of interface object assert_own_property: self does not have own property "ImageBitmapRenderingContext" expected property "ImageBitmapRenderingContext" missing
-FAIL ImageBitmapRenderingContext interface object length assert_own_property: self does not have own property "ImageBitmapRenderingContext" expected property "ImageBitmapRenderingContext" missing
-FAIL ImageBitmapRenderingContext interface object name assert_own_property: self does not have own property "ImageBitmapRenderingContext" expected property "ImageBitmapRenderingContext" missing
-FAIL ImageBitmapRenderingContext interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ImageBitmapRenderingContext" expected property "ImageBitmapRenderingContext" missing
-FAIL ImageBitmapRenderingContext interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ImageBitmapRenderingContext" expected property "ImageBitmapRenderingContext" missing
-FAIL ImageBitmapRenderingContext interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ImageBitmapRenderingContext" expected property "ImageBitmapRenderingContext" missing
-FAIL ImageBitmapRenderingContext interface: attribute canvas assert_own_property: self does not have own property "ImageBitmapRenderingContext" expected property "ImageBitmapRenderingContext" missing
-FAIL ImageBitmapRenderingContext interface: operation transferFromImageBitmap(ImageBitmap?) assert_own_property: self does not have own property "ImageBitmapRenderingContext" expected property "ImageBitmapRenderingContext" missing
+PASS ImageBitmapRenderingContext interface: existence and properties of interface object
+PASS ImageBitmapRenderingContext interface object length
+PASS ImageBitmapRenderingContext interface object name
+PASS ImageBitmapRenderingContext interface: existence and properties of interface prototype object
+PASS ImageBitmapRenderingContext interface: existence and properties of interface prototype object's "constructor" property
+PASS ImageBitmapRenderingContext interface: existence and properties of interface prototype object's @@unscopables property
+PASS ImageBitmapRenderingContext interface: attribute canvas
+PASS ImageBitmapRenderingContext interface: operation transferFromImageBitmap(ImageBitmap?)
 PASS OffscreenCanvas interface: existence and properties of interface object
 PASS OffscreenCanvas interface object length
 PASS OffscreenCanvas interface object name

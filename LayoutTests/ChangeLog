@@ -1,5 +1,19 @@
 2020-11-08  Lauro Moura  <lmoura@igalia.com>
 
+        [GLIB] Rebaseline and gardening
+
+        Unreviewed test gardening.
+
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt: r269477
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.worker-expected.txt: r269477
+        * platform/wpe/TestExpectations: Add bug for imported/blink/fast/forms/textarea-placeholder-visibility-3.html
+        * platform/wpe/fast/multicol/pagination/LeftToRight-tb-hittest-expected.txt: r269477
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt: r269477
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.worker-expected.txt: r269477
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/reflection-embedded-expected.txt: r269439-r269459
+
+2020-11-08  Lauro Moura  <lmoura@igalia.com>
+
         [GLIB] Gardening canvas failures while patch is reviewed
 
         Unreviewed test gardening.
