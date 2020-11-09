@@ -112,7 +112,7 @@ protected:
         auto& mutableThis = const_cast<RemoteImageBufferProxy&>(*this);
         auto& displayList = mutableThis.m_drawingContext.displayList();
         if (!displayList.isEmpty()) {
-            mutableThis.flushDisplayList(displayList);
+            mutableThis.submitDisplayList(displayList);
             mutableThis.m_itemCountInCurrentDisplayList = 0;
             displayList.clear();
         }
@@ -158,13 +158,13 @@ protected:
         displayList.clear();
     }
 
-    void flushDisplayList(const WebCore::DisplayList::DisplayList& displayList) override
+    void submitDisplayList(const WebCore::DisplayList::DisplayList& displayList) override
     {
         if (!m_remoteRenderingBackendProxy || displayList.isEmpty())
             return;
 
         TraceScope tracingScope(FlushRemoteImageBufferStart, FlushRemoteImageBufferEnd);
-        m_remoteRenderingBackendProxy->flushDisplayList(displayList, m_renderingResourceIdentifier);
+        m_remoteRenderingBackendProxy->submitDisplayList(displayList, m_renderingResourceIdentifier);
     }
 
     void willAppendItemOfType(WebCore::DisplayList::ItemType) override
@@ -175,7 +175,7 @@ protected:
             return;
 
         m_itemCountInCurrentDisplayList = 0;
-        flushDisplayList(displayList);
+        submitDisplayList(displayList);
         displayList.clear();
     }
 

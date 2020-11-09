@@ -144,13 +144,13 @@ void RemoteRenderingBackend::applyDisplayList(const SharedDisplayListHandle& han
     }
 
     displayList->setItemBufferClient(this);
-    imageBuffer->flushDisplayList(*displayList);
+    imageBuffer->submitDisplayList(*displayList);
 
     if (flushContext == ShouldFlushContext::Yes)
         imageBuffer->flushContext();
 }
 
-void RemoteRenderingBackend::flushDisplayList(const SharedDisplayListHandle& handle, RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackend::submitDisplayList(const SharedDisplayListHandle& handle, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     applyDisplayList(handle, renderingResourceIdentifier, ShouldFlushContext::No);
 }

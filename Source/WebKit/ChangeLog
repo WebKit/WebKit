@@ -1,3 +1,29 @@
+2020-11-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Rename ImageBuffer::flushDisplayList to ImageBuffer::submitDisplayList
+        https://bugs.webkit.org/show_bug.cgi?id=218720
+
+        Reviewed by Tim Horton.
+
+        See Source/WebCore/ChangeLog for more details.
+
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::applyDisplayList):
+        (WebKit::RemoteRenderingBackend::submitDisplayList):
+        (WebKit::RemoteRenderingBackend::flushDisplayList): Deleted.
+
+        Additionally rename `flushDisplayList` on `RemoteRenderingBackend`, since this IPC message doesn't actually
+        perform a context flush.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::submitDisplayList):
+        (WebKit::RemoteRenderingBackendProxy::flushDisplayList): Deleted.
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+
 2020-11-09  Alan Bujtas  <zalan@apple.com>
 
         Unreviewed, reverting r269603.

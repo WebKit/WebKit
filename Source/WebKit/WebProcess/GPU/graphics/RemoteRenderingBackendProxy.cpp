@@ -115,9 +115,9 @@ RefPtr<ImageData> RemoteRenderingBackendProxy::getImageData(AlphaPremultiplicati
     return imageDataReference.buffer();
 }
 
-void RemoteRenderingBackendProxy::flushDisplayList(const DisplayList::DisplayList& displayList, RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackendProxy::submitDisplayList(const DisplayList::DisplayList& displayList, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    send(Messages::RemoteRenderingBackend::FlushDisplayList({ displayList }, renderingResourceIdentifier), m_renderingBackendIdentifier);
+    send(Messages::RemoteRenderingBackend::SubmitDisplayList({ displayList }, renderingResourceIdentifier), m_renderingBackendIdentifier);
     m_sharedItemBuffers.clear();
 }
 

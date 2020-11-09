@@ -65,7 +65,7 @@ public:
     }
 
 private:
-    void flushDisplayList(const WebCore::DisplayList::DisplayList& displayList) override
+    void submitDisplayList(const WebCore::DisplayList::DisplayList& displayList) override
     {
         if (!displayList.isEmpty()) {
             const auto& imageBuffers = m_remoteRenderingBackend.remoteResourceCache().imageBuffers();

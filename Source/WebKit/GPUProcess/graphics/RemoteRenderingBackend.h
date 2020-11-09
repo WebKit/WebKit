@@ -100,7 +100,7 @@ private:
 
     // Messages to be received.
     void createImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace, WebCore::RenderingResourceIdentifier);
-    void flushDisplayList(const SharedDisplayListHandle&, WebCore::RenderingResourceIdentifier);
+    void submitDisplayList(const SharedDisplayListHandle&, WebCore::RenderingResourceIdentifier);
     void flushDisplayListAndCommit(const SharedDisplayListHandle&, WebCore::DisplayList::FlushIdentifier, WebCore::RenderingResourceIdentifier);
     void getImageData(WebCore::AlphaPremultiplication outputFormat, WebCore::IntRect srcRect, WebCore::RenderingResourceIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&&);
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
