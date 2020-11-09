@@ -1,3 +1,11 @@
+2020-11-08  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening canvas failures while patch is reviewed
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2020-11-08  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         TextureMapperLayer::computeOverlapRegions: Accumulate nested replica transform matrices recursively
