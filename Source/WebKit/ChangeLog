@@ -1,3 +1,12 @@
+2020-11-09  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Fix the build warning below since r269525.
+        warning: control reaches end of non-void function [-Wreturn-type]
+
+        No new tests, no new behaviors.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+
 2020-11-09  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] ScrollGestureController should only handle complete touch interactions

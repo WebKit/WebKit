@@ -282,6 +282,10 @@ protected:
         case WebCore::DisplayList::ItemType::StrokeLine:
         case WebCore::DisplayList::ItemType::Translate:
             RELEASE_ASSERT_NOT_REACHED();
+            return nullptr;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return nullptr;
         }
     }
 
