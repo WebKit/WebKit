@@ -1,3 +1,16 @@
+2020-11-09  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Add python 3 support - part 3
+        https://bugs.webkit.org/show_bug.cgi?id=218706
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/Shared/transfer-archive-to-s3: Updated print method to be both python 2 and 3 compatible.
+        * CISupport/built-product-archive: Ditto.
+        * CISupport/delete-stale-build-files: Ditto.
+        * CISupport/build-webkit-org/loadConfig.py: Removed unnecessary filter method.
+        * CISupport/ews-build/loadConfig.py: Ditto.
+
 2020-11-08  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] REGRESSION(r267250) API test /webkit/WebKitWebView/usermedia-enumeratedevices-permission-check is crashing
