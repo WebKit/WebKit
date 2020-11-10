@@ -767,7 +767,7 @@ void UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs() const
 
 #if ENABLE(GPU_PROCESS)
     if (m_page.preferences().captureAudioInGPUProcessEnabled() || m_page.preferences().captureVideoInGPUProcessEnabled())
-        GPUProcessProxy::singleton().setUseMockCaptureDevices(mockDevicesEnabled);
+        m_page.process().processPool().ensureGPUProcess().setUseMockCaptureDevices(mockDevicesEnabled);
 #endif
 
     if (MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled() == mockDevicesEnabled)

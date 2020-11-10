@@ -83,43 +83,27 @@ static inline bool shouldCreateMicrophoneSandboxExtension()
     return true;
 }
 
-GPUProcessProxy* GPUProcessProxy::m_singleton = nullptr;
+static WeakPtr<GPUProcessProxy>& singleton()
+{
+    static NeverDestroyed<WeakPtr<GPUProcessProxy>> singleton;
+    return singleton;
+}
 
-GPUProcessProxy& GPUProcessProxy::singleton()
+Ref<GPUProcessProxy> GPUProcessProxy::getOrCreate()
 {
     ASSERT(RunLoop::isMain());
+    if (auto& existingGPUProcess = singleton()) {
+        ASSERT(existingGPUProcess->state() != State::Terminated);
+        return *existingGPUProcess;
+    }
+    auto gpuProcess = adoptRef(*new GPUProcessProxy);
+    singleton() = makeWeakPtr(gpuProcess.get());
+    return gpuProcess;
+}
 
-    static std::once_flag onceFlag;
-    static LazyNeverDestroyed<GPUProcessProxy> gpuProcess;
-
-    std::call_once(onceFlag, [] {
-        gpuProcess.construct();
-
-        GPUProcessCreationParameters parameters;
-#if ENABLE(MEDIA_STREAM)
-        parameters.useMockCaptureDevices = gpuProcess->m_useMockCaptureDevices;
-
-        bool needsCameraSandboxExtension = shouldCreateCameraSandboxExtension();
-        bool needsMicrophoneSandboxExtension = shouldCreateMicrophoneSandboxExtension();
-        if (needsCameraSandboxExtension)
-            SandboxExtension::createHandleForGenericExtension("com.apple.webkit.camera"_s, parameters.cameraSandboxExtensionHandle);
-        if (needsMicrophoneSandboxExtension)
-            SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone"_s, parameters.microphoneSandboxExtensionHandle);
-#if PLATFORM(IOS)
-        if (needsCameraSandboxExtension || needsMicrophoneSandboxExtension)
-            SandboxExtension::createHandleForMachLookup("com.apple.tccd"_s, WTF::nullopt, parameters.tccSandboxExtensionHandle);
-#endif
-#endif
-        parameters.parentPID = getCurrentProcessID();
-
-        // Initialize the GPU process.
-        gpuProcess->send(Messages::GPUProcess::InitializeGPUProcess(parameters), 0);
-        gpuProcess->updateProcessAssertion();
-
-        m_singleton = &gpuProcess.get();
-    });
-
-    return gpuProcess.get();
+GPUProcessProxy* GPUProcessProxy::singletonIfCreated()
+{
+    return singleton().get();
 }
 
 GPUProcessProxy::GPUProcessProxy()
@@ -130,6 +114,27 @@ GPUProcessProxy::GPUProcessProxy()
 #endif
 {
     connect();
+
+    GPUProcessCreationParameters parameters;
+#if ENABLE(MEDIA_STREAM)
+    parameters.useMockCaptureDevices = m_useMockCaptureDevices;
+
+    bool needsCameraSandboxExtension = shouldCreateCameraSandboxExtension();
+    bool needsMicrophoneSandboxExtension = shouldCreateMicrophoneSandboxExtension();
+    if (needsCameraSandboxExtension)
+        SandboxExtension::createHandleForGenericExtension("com.apple.webkit.camera"_s, parameters.cameraSandboxExtensionHandle);
+    if (needsMicrophoneSandboxExtension)
+        SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone"_s, parameters.microphoneSandboxExtensionHandle);
+#if PLATFORM(IOS)
+    if (needsCameraSandboxExtension || needsMicrophoneSandboxExtension)
+        SandboxExtension::createHandleForMachLookup("com.apple.tccd"_s, WTF::nullopt, parameters.tccSandboxExtensionHandle);
+#endif
+#endif
+    parameters.parentPID = getCurrentProcessID();
+
+    // Initialize the GPU process.
+    send(Messages::GPUProcess::InitializeGPUProcess(parameters), 0);
+    updateProcessAssertion();
 }
 
 GPUProcessProxy::~GPUProcessProxy() = default;
@@ -170,6 +175,8 @@ void GPUProcessProxy::connectionWillOpen(IPC::Connection&)
 void GPUProcessProxy::processWillShutDown(IPC::Connection& connection)
 {
     ASSERT_UNUSED(connection, this->connection() == &connection);
+    if (singleton() == this)
+        singleton() = nullptr;
 }
 
 void GPUProcessProxy::getGPUProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetGPUProcessConnection::DelayedReply&& reply)
@@ -208,6 +215,9 @@ void GPUProcessProxy::getGPUProcessConnection(WebProcessProxy& webProcessProxy, 
 
 void GPUProcessProxy::gpuProcessCrashed()
 {
+    if (singleton() == this)
+        singleton() = nullptr;
+
     for (auto& processPool : WebProcessPool::allProcessPools())
         processPool->gpuProcessCrashed(processIdentifier());
 }

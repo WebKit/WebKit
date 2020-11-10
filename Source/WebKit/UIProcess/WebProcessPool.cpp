@@ -479,21 +479,32 @@ void WebProcessPool::serviceWorkerProcessCrashed(WebProcessProxy& proxy)
 }
 
 #if ENABLE(GPU_PROCESS)
+GPUProcessProxy& WebProcessPool::ensureGPUProcess()
+{
+    if (!m_gpuProcess)
+        m_gpuProcess = GPUProcessProxy::getOrCreate();
+    return *m_gpuProcess;
+}
+
 void WebProcessPool::gpuProcessCrashed(ProcessID identifier)
 {
+    m_gpuProcess = nullptr;
+
     m_client.gpuProcessDidCrash(this, identifier);
     Vector<RefPtr<WebProcessProxy>> processes = m_processes;
     for (auto& process : processes)
         process->gpuProcessCrashed();
+
+    // FIXME: We should avoid terminating all WebProcesses whenever the GPUProcess crashes.
     terminateAllWebContentProcesses();
 }
 
 void WebProcessPool::getGPUProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetGPUProcessConnection::DelayedReply&& reply)
 {
-    GPUProcessProxy::singleton().getGPUProcessConnection(webProcessProxy, [this, weakThis = makeWeakPtr(*this), webProcessProxy = makeWeakPtr(webProcessProxy), reply = WTFMove(reply)] (auto& connectionInfo) mutable {
+    ensureGPUProcess().getGPUProcessConnection(webProcessProxy, [this, weakThis = makeWeakPtr(*this), webProcessProxy = makeWeakPtr(webProcessProxy), reply = WTFMove(reply)] (auto& connectionInfo) mutable {
         if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()) && webProcessProxy && weakThis)) {
             WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "getGPUProcessConnection: Failed first attempt, retrying");
-            GPUProcessProxy::singleton().getGPUProcessConnection(*webProcessProxy, WTFMove(reply));
+            ensureGPUProcess().getGPUProcessConnection(*webProcessProxy, WTFMove(reply));
             return;
         }
         reply(connectionInfo);
@@ -2022,7 +2033,7 @@ void WebProcessPool::updateAudibleMediaAssertions()
     m_audibleMediaActivity = AudibleMediaActivity {
         makeUniqueRef<ProcessAssertion>(getCurrentProcessID(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback)
 #if ENABLE(GPU_PROCESS)
-        , GPUProcessProxy::singletonIfCreated() ? makeUnique<ProcessAssertion>(GPUProcessProxy::singleton().processIdentifier(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback) : nullptr
+        , gpuProcess() ? makeUnique<ProcessAssertion>(gpuProcess()->processIdentifier(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback) : nullptr
 #endif
     };
 }

@@ -436,6 +436,16 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     return _processPool->processes().size();
 }
 
+- (pid_t)_gpuProcessIdentifier
+{
+#if ENABLE(GPU_PROCESS)
+    auto* gpuProcess = _processPool->gpuProcess();
+    return gpuProcess ? gpuProcess->processIdentifier() : 0;
+#else
+    return 0;
+#endif
+}
+
 - (void)_makeNextWebProcessLaunchFailForTesting
 {
     _processPool->setShouldMakeNextWebProcessLaunchFailForTesting(true);

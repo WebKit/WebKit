@@ -1,3 +1,44 @@
+2020-11-10  Chris Dumez  <cdumez@apple.com>
+
+        GPUProcess does not properly get relaunched after crashing
+        https://bugs.webkit.org/show_bug.cgi?id=218769
+
+        Reviewed by Tim Horton.
+
+        After the GPUProcess crashes, we need to make sure we construct a new GPUProcessProxy
+        so that a new process gets relaunched. Previously, this wasn't possible because
+        the GPUProcessProxy was a "never destroyed" singleton.
+
+        The GPUProcessProxy is now kept alive by the WebProcessPool objects refing it.
+        Upon crashing, all WebProcessPools clear their GPUProcessProxy RefPtr so that the
+        old GPUProcessProxy gets destroyed. The next time a GPUProcessProxy is needed, a new
+        one gets constructed. We still make sure that all WebProcessPool objects share the
+        same GPUProcessProxy, as before this patch.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _gpuProcessIdentifier]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::getOrCreate):
+        (WebKit::GPUProcessProxy::GPUProcessProxy):
+        (WebKit::GPUProcessProxy::~GPUProcessProxy):
+        (WebKit::GPUProcessProxy::processWillShutDown):
+        (WebKit::GPUProcessProxy::gpuProcessCrashed):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::willStartCapture):
+        (WebKit::WebPageProxy::setOrientationForMediaCapture):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureGPUProcess):
+        (WebKit::WebProcessPool::gpuProcessCrashed):
+        (WebKit::WebProcessPool::getGPUProcessConnection):
+        (WebKit::WebProcessPool::updateAudibleMediaAssertions):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _setupVisibilityPropagationViewForGPUProcess]):
+
 2020-11-10  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Allow IOGLESBundleName for Apple Silicon Macs

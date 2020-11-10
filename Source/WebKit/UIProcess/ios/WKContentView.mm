@@ -236,10 +236,11 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
 - (void)_setupVisibilityPropagationViewForGPUProcess
 {
-    if (!WebKit::GPUProcessProxy::singletonIfCreated())
+    auto* gpuProcess = _page->process().processPool().gpuProcess();
+    if (!gpuProcess)
         return;
-    auto processIdentifier = WebKit::GPUProcessProxy::singleton().processIdentifier();
-    auto contextID = WebKit::GPUProcessProxy::singleton().contextIDForVisibilityPropagation();
+    auto processIdentifier = gpuProcess->processIdentifier();
+    auto contextID = gpuProcess->contextIDForVisibilityPropagation();
     if (!processIdentifier || !contextID)
         return;
 

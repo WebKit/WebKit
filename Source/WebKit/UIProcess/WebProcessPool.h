@@ -356,6 +356,9 @@ public:
 #if ENABLE(GPU_PROCESS)
     void gpuProcessCrashed(ProcessID);
     void getGPUProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);
+
+    GPUProcessProxy& ensureGPUProcess();
+    GPUProcessProxy* gpuProcess() const { return m_gpuProcess.get(); }
 #endif
 
 #if ENABLE(WEB_AUTHN)
@@ -592,6 +595,10 @@ private:
     String m_serviceWorkerUserAgent;
     Optional<WebPreferencesStore> m_serviceWorkerPreferences;
     Optional<UserContentControllerIdentifier> m_userContentControllerIDForServiceWorker;
+#endif
+
+#if ENABLE(GPU_PROCESS)
+    RefPtr<GPUProcessProxy> m_gpuProcess;
 #endif
 
     Ref<WebPageGroup> m_defaultPageGroup;

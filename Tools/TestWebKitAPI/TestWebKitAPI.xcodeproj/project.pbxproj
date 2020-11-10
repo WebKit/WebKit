@@ -250,6 +250,7 @@
 		46397B951DC2C850009A78AE /* DOMNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46397B941DC2C850009A78AE /* DOMNode.mm */; };
 		4647B1261EBA3B850041D7EF /* ProcessDidTerminate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4647B1251EBA3B730041D7EF /* ProcessDidTerminate.cpp */; };
 		464C764D230DF85C00AFB020 /* BadServiceWorkerRegistrations-4.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 464C764C230DF83200AFB020 /* BadServiceWorkerRegistrations-4.sqlite3 */; };
+		465E2807255B2A6A0063A787 /* GPUProcess.mm in Sources */ = {isa = PBXBuildFile; fileRef = 465E2806255B2A690063A787 /* GPUProcess.mm */; };
 		466C3843210637DE006A88DE /* notify-resourceLoadObserver.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 466C3842210637CE006A88DE /* notify-resourceLoadObserver.html */; };
 		467C565321B5ED130057516D /* GetSessionCookie.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 467C565121B5ECDF0057516D /* GetSessionCookie.html */; };
 		467C565421B5ED130057516D /* SetSessionCookie.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 467C565221B5ECDF0057516D /* SetSessionCookie.html */; };
@@ -266,6 +267,7 @@
 		46E66A901F0D75590026D83C /* WKWebViewDiagnosticLogging.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46E66A8F1F0D75590026D83C /* WKWebViewDiagnosticLogging.mm */; };
 		46E816F81E79E29C00375ADC /* RestoreStateAfterTermination.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46E816F71E79E29100375ADC /* RestoreStateAfterTermination.mm */; };
 		46EBD8472372320F00223A6E /* RestoreScrollPosition.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46EBD846237231E600223A6E /* RestoreScrollPosition.mm */; };
+		46F03C1C255B2D5A00AA51C5 /* audio-context-playing.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 46F03C1B255B2D3600AA51C5 /* audio-context-playing.html */; };
 		46FA2FEE23846CA5000CCB0C /* HTTPHeaderMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46FA2FED23846C9A000CCB0C /* HTTPHeaderMap.cpp */; };
 		46FACF7423E8842300A9EBC6 /* beforeunload-slow.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 46FACF7323E883EE00A9EBC6 /* beforeunload-slow.html */; };
 		4909EE3A2D09480C88982D56 /* Markable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EC79F168BE454E579E417B05 /* Markable.cpp */; };
@@ -1309,6 +1311,7 @@
 				F42BD7D9245CC508001E207A /* attributedStringNewlineAtEndOfDocument.html in Copy Resources */,
 				7C9ED98B17A19F4B00E4DC33 /* attributedStringStrikethrough.html in Copy Resources */,
 				37137E4B21124D01002BEEA4 /* AttrStyle.html in Copy Resources */,
+				46F03C1C255B2D5A00AA51C5 /* audio-context-playing.html in Copy Resources */,
 				CD9E292E1C90C33F000BB800 /* audio-only.html in Copy Resources */,
 				C944160021430E8900B1EDDA /* audio-with-controls.html in Copy Resources */,
 				C9C9A91B21DED28700FDE96E /* audio-with-play-button.html in Copy Resources */,
@@ -1972,6 +1975,7 @@
 		4647B1251EBA3B730041D7EF /* ProcessDidTerminate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessDidTerminate.cpp; sourceTree = "<group>"; };
 		464C764C230DF83200AFB020 /* BadServiceWorkerRegistrations-4.sqlite3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "BadServiceWorkerRegistrations-4.sqlite3"; sourceTree = "<group>"; };
 		4656A75720F9054F0002E21F /* SimpleServiceWorkerRegistrations-4.sqlite3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SimpleServiceWorkerRegistrations-4.sqlite3"; sourceTree = "<group>"; };
+		465E2806255B2A690063A787 /* GPUProcess.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUProcess.mm; sourceTree = "<group>"; };
 		466C3842210637CE006A88DE /* notify-resourceLoadObserver.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "notify-resourceLoadObserver.html"; sourceTree = "<group>"; };
 		467C565121B5ECDF0057516D /* GetSessionCookie.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = GetSessionCookie.html; sourceTree = "<group>"; };
 		467C565221B5ECDF0057516D /* SetSessionCookie.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = SetSessionCookie.html; sourceTree = "<group>"; };
@@ -1987,6 +1991,7 @@
 		46E66A8F1F0D75590026D83C /* WKWebViewDiagnosticLogging.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewDiagnosticLogging.mm; sourceTree = "<group>"; };
 		46E816F71E79E29100375ADC /* RestoreStateAfterTermination.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RestoreStateAfterTermination.mm; sourceTree = "<group>"; };
 		46EBD846237231E600223A6E /* RestoreScrollPosition.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RestoreScrollPosition.mm; sourceTree = "<group>"; };
+		46F03C1B255B2D3600AA51C5 /* audio-context-playing.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "audio-context-playing.html"; sourceTree = "<group>"; };
 		46FA2FED23846C9A000CCB0C /* HTTPHeaderMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPHeaderMap.cpp; sourceTree = "<group>"; };
 		46FACF7323E883EE00A9EBC6 /* beforeunload-slow.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "beforeunload-slow.html"; sourceTree = "<group>"; };
 		4971B1172451F2780096994D /* incorrectCreateTableSchema.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = incorrectCreateTableSchema.db; sourceTree = "<group>"; };
@@ -3263,6 +3268,7 @@
 				631EFFF51E7B5E8D00D2EBB8 /* Geolocation.mm */,
 				07E1F6A01FFC3A080096C7EC /* GetDisplayMedia.mm */,
 				2DADF26221CB8F32003D3E3A /* GetResourceData.mm */,
+				465E2806255B2A690063A787 /* GPUProcess.mm */,
 				51AF23DE1EF1A3720072F281 /* IconLoadingDelegate.mm */,
 				EB230D3E245E726300C66AD1 /* IDBCheckpointWAL.mm */,
 				510477751D298E03009747EB /* IDBDeleteRecovery.mm */,
@@ -3712,6 +3718,7 @@
 				5C9E59401D3EB1DE00E3C62E /* ApplicationCache.db-wal */,
 				F4856CA21E6498A8009D7EE7 /* attachment-element.html */,
 				3760C4F221124BD000233ACC /* AttrStyle.html */,
+				46F03C1B255B2D3600AA51C5 /* audio-context-playing.html */,
 				C94415FF21430B6700B1EDDA /* audio-with-controls.html */,
 				CD57779A211CE6B7001B371E /* audio-with-web-audio.html */,
 				F41AB9981EF4692C0083FA08 /* autofocus-contenteditable.html */,
@@ -5210,6 +5217,7 @@
 				07CE1CF31F06A7E000BF89F5 /* GetUserMediaNavigation.mm in Sources */,
 				07E499911F9E56DF002F1EF3 /* GetUserMediaReprompt.mm in Sources */,
 				510A921424D615B400BFD89C /* GoogleStadia.mm in Sources */,
+				465E2807255B2A6A0063A787 /* GPUProcess.mm in Sources */,
 				E394AE6F23F2303E005B4936 /* GrantAccessToMobileAssets.mm in Sources */,
 				E34A6D192412DE390012AB6E /* GrantAccessToPreferencesService.mm in Sources */,
 				8E4A85371E1D1AB200F53B0F /* GridPosition.cpp in Sources */,
