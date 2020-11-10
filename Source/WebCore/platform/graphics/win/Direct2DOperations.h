@@ -128,8 +128,8 @@ void clearRect(PlatformContextDirect2D&, const FloatRect&);
 
 void drawGlyphs(PlatformContextDirect2D&, const FillSource&, const StrokeSource&, const ShadowState&, const FloatPoint&, const Font&, double, const Vector<unsigned short>& glyphs, const Vector<float>& horizontalAdvances, const Vector<DWRITE_GLYPH_OFFSET>&, float, TextDrawingModeFlags, float, const FloatSize&, const Color&);
 
-void drawNativeImage(PlatformContextDirect2D&, IWICBitmap*, const FloatSize& imageSize, const FloatRect&, const FloatRect&, const ImagePaintingOptions& options, float, const ShadowState&);
-void drawNativeImage(PlatformContextDirect2D&, ID2D1Bitmap*, const FloatSize& imageSize, const FloatRect&, const FloatRect&, const ImagePaintingOptions& options, float, const ShadowState&);
+void drawPlatformImage(PlatformContextDirect2D&, IWICBitmap*, const FloatSize& imageSize, const FloatRect&, const FloatRect&, const ImagePaintingOptions&, float, const ShadowState&);
+void drawPlatformImage(PlatformContextDirect2D&, ID2D1Bitmap*, const FloatSize& imageSize, const FloatRect&, const FloatRect&, const ImagePaintingOptions&, float, const ShadowState&);
 void drawPath(PlatformContextDirect2D&, const Path&, const StrokeSource&, const ShadowState&);
 void drawPattern(PlatformContextDirect2D&, COMPtr<ID2D1Bitmap>&&, const IntSize&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, CompositeOperator, BlendMode);
 

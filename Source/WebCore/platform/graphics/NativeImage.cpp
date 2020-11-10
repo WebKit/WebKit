@@ -1,8 +1,4 @@
 /*
- * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) 2007 Holger Hans Peter Freyther <zecke@selfish.org>
- * Copyright (C) 2008, 2009 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  * Copyright (C) 2020 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,36 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "NativeImage.h"
 
-#if USE(CAIRO)
-
-#include "ImageBufferCairoBackend.h"
-#include "PlatformContextCairo.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-class ImageBufferCairoSurfaceBackend : public ImageBufferCairoBackend {
-public:
-    GraphicsContext& context() const override;
+RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& platformImage)
+{
+    if (!platformImage)
+        return nullptr;
+    return adoptRef(*new NativeImage(WTFMove(platformImage)));
+}
 
-    RefPtr<NativeImage> copyNativeImage(BackingStoreCopy) const override;
-
-    Vector<uint8_t> toBGRAData() const override;
-    RefPtr<ImageData> getImageData(AlphaPremultiplication outputFormat, const IntRect&) const override;
-    void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
-
-protected:
-    ImageBufferCairoSurfaceBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace, RefPtr<cairo_surface_t>&&);
-
-    RefPtr<NativeImage> cairoSurfaceCoerceToImage() const;
-    unsigned bytesPerRow() const override;
-
-    mutable RefPtr<cairo_surface_t> m_surface;
-    PlatformContextCairo m_platformContext { nullptr };
-    std::unique_ptr<GraphicsContext> m_context;
-};
+NativeImage::NativeImage(PlatformImagePtr&& platformImage)
+    : m_platformImage(WTFMove(platformImage))
+{
+}
 
 } // namespace WebCore
-
-#endif // USE(CAIRO)

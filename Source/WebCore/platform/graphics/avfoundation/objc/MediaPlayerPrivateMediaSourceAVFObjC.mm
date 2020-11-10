@@ -564,10 +564,10 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::didLoadingProgress() const
     return loadingProgressed;
 }
 
-NativeImagePtr MediaPlayerPrivateMediaSourceAVFObjC::nativeImageForCurrentTime()
+RefPtr<NativeImage> MediaPlayerPrivateMediaSourceAVFObjC::nativeImageForCurrentTime()
 {
     updateLastImage();
-    return m_lastImage.get();
+    return m_lastImage;
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastPixelBuffer()
@@ -607,7 +607,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastImage()
         m_rgbConformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)attributes);
     }
 
-    m_lastImage = m_rgbConformer->createImageFromPixelBuffer(m_lastPixelBuffer.get());
+    m_lastImage = NativeImage::create(m_rgbConformer->createImageFromPixelBuffer(m_lastPixelBuffer.get()));
     return true;
 }
 
@@ -626,8 +626,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::paintCurrentFrameInContext(GraphicsCo
         return;
 
     GraphicsContextStateSaver stateSaver(context);
-    FloatRect imageRect(0, 0, CGImageGetWidth(image.get()), CGImageGetHeight(image.get()));
-    context.drawNativeImage(image, imageRect.size(), outputRect, imageRect);
+    FloatRect imageRect { FloatPoint::zero(), image->size() };
+    context.drawNativeImage(*image, imageRect.size(), outputRect, imageRect);
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::copyVideoTextureToPlatformTexture(GraphicsContextGLOpenGL* context, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
@@ -1219,7 +1219,7 @@ RetainPtr<PlatformLayer> MediaPlayerPrivateMediaSourceAVFObjC::createVideoFullsc
 void MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, WTF::Function<void()>&& completionHandler)
 {
     updateLastImage();
-    m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_lastImage);
+    m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_lastImage ? m_lastImage->platformImage() : nullptr);
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenFrame(FloatRect frame)

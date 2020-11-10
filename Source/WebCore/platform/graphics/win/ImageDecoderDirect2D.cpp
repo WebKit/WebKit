@@ -240,7 +240,7 @@ void ImageDecoderDirect2D::setTargetContext(ID2D1RenderTarget* renderTarget)
     m_renderTarget = renderTarget;
 }
 
-NativeImagePtr ImageDecoderDirect2D::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions&)
+PlatformImagePtr ImageDecoderDirect2D::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions&)
 {
     if (!m_nativeDecoder)
         return nullptr;

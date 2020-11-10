@@ -74,17 +74,17 @@ static RetainPtr<CGImageRef> createCroppedImageIfNecessary(CGImageRef image, con
     return image;
 }
 
-static RefPtr<Image> createBitmapImageAfterScalingIfNeeded(RetainPtr<CGImageRef>&& image, const IntSize& logicalSize, const IntSize& backendSize, float resolutionScale, PreserveResolution preserveResolution)
+static RefPtr<Image> createBitmapImageAfterScalingIfNeeded(RefPtr<NativeImage>&& image, const IntSize& logicalSize, const IntSize& backendSize, float resolutionScale, PreserveResolution preserveResolution)
 {
     if (resolutionScale == 1 || preserveResolution == PreserveResolution::Yes)
-        image = createCroppedImageIfNecessary(image.get(), backendSize);
+        image = NativeImage::create(createCroppedImageIfNecessary(image->platformImage().get(), backendSize));
     else {
         auto context = adoptCF(CGBitmapContextCreate(0, logicalSize.width(), logicalSize.height(), 8, 4 * logicalSize.width(), sRGBColorSpaceRef(), kCGImageAlphaPremultipliedLast));
         CGContextSetBlendMode(context.get(), kCGBlendModeCopy);
         CGContextClipToRect(context.get(), FloatRect(FloatPoint::zero(), logicalSize));
         FloatSize imageSizeInUserSpace = logicalSize;
-        CGContextDrawImage(context.get(), FloatRect(FloatPoint::zero(), imageSizeInUserSpace), image.get());
-        image = adoptCF(CGBitmapContextCreateImage(context.get()));
+        CGContextDrawImage(context.get(), FloatRect(FloatPoint::zero(), imageSizeInUserSpace), image->platformImage().get());
+        image = NativeImage::create(adoptCF(CGBitmapContextCreateImage(context.get())));
     }
 
     if (!image)
@@ -95,7 +95,7 @@ static RefPtr<Image> createBitmapImageAfterScalingIfNeeded(RetainPtr<CGImageRef>
 
 RefPtr<Image> ImageBufferCGBackend::copyImage(BackingStoreCopy copyBehavior, PreserveResolution preserveResolution) const
 {
-    NativeImagePtr image;
+    RefPtr<NativeImage> image;
     if (m_resolutionScale == 1 || preserveResolution == PreserveResolution::Yes)
         image = copyNativeImage(copyBehavior);
     else
@@ -114,7 +114,7 @@ void ImageBufferCGBackend::draw(GraphicsContext& destContext, const FloatRect& d
     srcRectScaled.scale(m_resolutionScale);
 
     if (auto image = copyNativeImage(&destContext == &context() ? CopyBackingStore : DontCopyBackingStore))
-        destContext.drawNativeImage(image.get(), m_backendSize, destRect, srcRectScaled, options);
+        destContext.drawNativeImage(*image, m_backendSize, destRect, srcRectScaled, options);
 }
 
 void ImageBufferCGBackend::drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
@@ -138,7 +138,7 @@ RetainPtr<CFDataRef> ImageBufferCGBackend::toCFData(const String& mimeType, Opti
     auto uti = utiFromImageBufferMIMEType(mimeType);
     ASSERT(uti);
 
-    RetainPtr<CGImageRef> image;
+    PlatformImagePtr image;
     RefPtr<Uint8ClampedArray> protectedPixelArray;
 
     if (CFEqual(uti.get(), jpegUTI())) {
@@ -158,10 +158,10 @@ RetainPtr<CFDataRef> ImageBufferCGBackend::toCFData(const String& mimeType, Opti
 
         image = adoptCF(CGImageCreate(pixelArrayDimensions.width(), pixelArrayDimensions.height(), 8, 32, 4 * pixelArrayDimensions.width(), sRGBColorSpaceRef(), kCGBitmapByteOrderDefault | kCGImageAlphaNoneSkipLast, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
     } else if (m_resolutionScale == 1 || preserveResolution == PreserveResolution::Yes) {
-        image = copyNativeImage(CopyBackingStore);
+        image = copyNativeImage(CopyBackingStore)->platformImage();
         image = createCroppedImageIfNecessary(image.get(), backendSize());
     } else {
-        image = copyNativeImage(DontCopyBackingStore);
+        image = copyNativeImage(DontCopyBackingStore)->platformImage();
         auto context = adoptCF(CGBitmapContextCreate(0, backendSize().width(), backendSize().height(), 8, 4 * backendSize().width(), sRGBColorSpaceRef(), kCGImageAlphaPremultipliedLast));
         CGContextSetBlendMode(context.get(), kCGBlendModeCopy);
         CGContextClipToRect(context.get(), CGRectMake(0, 0, backendSize().width(), backendSize().height()));

@@ -161,7 +161,7 @@ static bool indicatorWantsManualAnimation(const TextIndicator& indicator)
 
     FloatSize contentsImageLogicalSize = _textIndicator->contentImage()->size();
     contentsImageLogicalSize.scale(1 / _textIndicator->contentImageScaleFactor());
-    RetainPtr<CGImageRef> contentsImage;
+    RefPtr<NativeImage> contentsImage;
     if (indicatorWantsContentCrossfade(*_textIndicator))
         contentsImage = _textIndicator->contentImageWithHighlight()->nativeImage();
     else
@@ -229,7 +229,7 @@ static bool indicatorWantsManualAnimation(const TextIndicator& indicator)
         [textLayer setBorderColor:borderColor.get()];
         [textLayer setBorderWidth:borderWidth];
         [textLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
-        [textLayer setContents:(__bridge id)contentsImage.get()];
+        [textLayer setContents:(__bridge id)contentsImage->platformImage().get()];
 
         RetainPtr<CAShapeLayer> maskLayer = adoptNS([[CAShapeLayer alloc] init]);
         [maskLayer setPath:translatedPath.platformPath()];
@@ -266,8 +266,8 @@ static RetainPtr<CAKeyframeAnimation> createBounceAnimation(CFTimeInterval durat
 static RetainPtr<CABasicAnimation> createContentCrossfadeAnimation(CFTimeInterval duration, TextIndicator& textIndicator)
 {
     RetainPtr<CABasicAnimation> crossfadeAnimation = [CABasicAnimation animationWithKeyPath:@"contents"];
-    RetainPtr<CGImageRef> contentsImage = textIndicator.contentImage()->nativeImage();
-    [crossfadeAnimation setToValue:(__bridge id)contentsImage.get()];
+    auto contentsImage = textIndicator.contentImage()->nativeImage();
+    [crossfadeAnimation setToValue:(__bridge id)contentsImage->platformImage().get()];
     [crossfadeAnimation setFillMode:kCAFillModeForwards];
     [crossfadeAnimation setRemovedOnCompletion:NO];
     [crossfadeAnimation setDuration:duration];

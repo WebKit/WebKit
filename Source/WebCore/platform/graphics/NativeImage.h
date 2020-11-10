@@ -27,16 +27,30 @@
 
 #pragma once
 
-#include "NativeImagePtr.h"
+#include "Color.h"
+#include "IntSize.h"
+#include "PlatformImage.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class Color;
-class IntSize;
+class NativeImage : public RefCounted<NativeImage> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static WEBCORE_EXPORT RefPtr<NativeImage> create(PlatformImagePtr&&);
 
-WEBCORE_EXPORT IntSize nativeImageSize(const NativeImagePtr&);
-bool nativeImageHasAlpha(const NativeImagePtr&);
-Color nativeImageSinglePixelSolidColor(const NativeImagePtr&);
-void clearNativeImageSubimages(const NativeImagePtr&);
+    const PlatformImagePtr& platformImage() const { return m_platformImage; }
 
-}
+    WEBCORE_EXPORT IntSize size() const;
+    bool hasAlpha() const;
+    Color singlePixelSolidColor() const;
+
+    void clearSubimages();
+
+private:
+    NativeImage(PlatformImagePtr&&);
+
+    PlatformImagePtr m_platformImage;
+};
+
+} // namespace WebCore

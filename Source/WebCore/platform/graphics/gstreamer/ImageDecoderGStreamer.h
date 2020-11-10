@@ -67,7 +67,7 @@ public:
     bool frameAllowSubsamplingAtIndex(size_t index) const final { return index <= m_sampleData.size(); }
     unsigned frameBytesAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const final;
 
-    NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingOptions(DecodingMode::Synchronous)) final;
+    PlatformImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingOptions(DecodingMode::Synchronous)) final;
 
     void setExpectedContentSize(long long) final { }
     void setData(SharedBuffer&, bool allDataReceived) final;

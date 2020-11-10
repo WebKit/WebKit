@@ -277,7 +277,7 @@ void GraphicsContext::restorePlatformState()
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContext::platformDrawNativeImage(const RetainPtr<CGImageRef>& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void GraphicsContext::drawPlatformImage(const PlatformImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     if (paintingDisabled())
         return;
@@ -444,23 +444,23 @@ void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const
 
     auto tileImage = image.preTransformedNativeImageForCurrentFrame(options.orientation() == ImageOrientation::FromImage);
 
-    float h = CGImageGetHeight(tileImage.get());
+    float h = CGImageGetHeight(tileImage->platformImage().get());
 
     RetainPtr<CGImageRef> subImage;
     FloatSize imageSize = image.size();
     if (tileRect.size() == imageSize)
-        subImage = tileImage;
+        subImage = tileImage->platformImage();
     else {
         // Copying a sub-image out of a partially-decoded image stops the decoding of the original image. It should never happen
         // because sub-images are only used for border-image, which only renders when the image is fully decoded.
         ASSERT(h == image.height());
-        subImage = adoptCF(CGImageCreateWithImageInRect(tileImage.get(), tileRect));
+        subImage = adoptCF(CGImageCreateWithImageInRect(tileImage->platformImage().get(), tileRect));
     }
 
     // If we need to paint gaps between tiles because we have a partially loaded image or non-zero spacing,
     // fall back to the less efficient CGPattern-based mechanism.
     float scaledTileWidth = tileRect.width() * narrowPrecisionToFloat(patternTransform.a());
-    float w = CGImageGetWidth(tileImage.get());
+    float w = CGImageGetWidth(tileImage->platformImage().get());
     if (w == image.size().width() && h == image.size().height() && !spacing.width() && !spacing.height()) {
         // FIXME: CG seems to snap the images to integral sizes. When we care (e.g. with border-image-repeat: round),
         // we should tile all but the last, and stetch the last image to fit.
@@ -509,7 +509,8 @@ void GraphicsContext::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& de
     }
 
     FloatSize bufferDestinationSize = destinationRect.size();
-    RetainPtr<CGImageRef> image = buffer.copyNativeImage(DontCopyBackingStore);
+    auto nativeImage = buffer.copyNativeImage(DontCopyBackingStore);
+    auto image = nativeImage ? nativeImage->platformImage() : nullptr;
 
     CGContextRef context = platformContext();
     // FIXME: This image needs to be grayscale to be used as an alpha mask here.

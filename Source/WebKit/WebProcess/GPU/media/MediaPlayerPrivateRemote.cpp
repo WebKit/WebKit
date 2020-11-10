@@ -811,7 +811,7 @@ bool MediaPlayerPrivateRemote::copyVideoTextureToPlatformTexture(GraphicsContext
     return false;
 }
 
-NativeImagePtr MediaPlayerPrivateRemote::nativeImageForCurrentTime()
+RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
 {
     notImplemented();
     return nullptr;

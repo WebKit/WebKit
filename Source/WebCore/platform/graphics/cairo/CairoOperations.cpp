@@ -45,6 +45,7 @@
 #include "GraphicsContextPlatformPrivateCairo.h"
 #include "Image.h"
 #include "ImageBuffer.h"
+#include "NativeImage.h"
 #include "Path.h"
 #include "PlatformContextCairo.h"
 #include "ShadowBlur.h"
@@ -174,16 +175,16 @@ enum PathDrawingStyle {
 
 static void drawShadowLayerBuffer(PlatformContextCairo& platformContext, ImageBuffer& layerImage, const FloatPoint& layerOrigin, const FloatSize& layerSize, const ShadowState& shadowState)
 {
-    if (auto surface = layerImage.copyNativeImage(DontCopyBackingStore)) {
-        drawNativeImage(platformContext, surface.get(), FloatRect(roundedIntPoint(layerOrigin), layerSize), FloatRect(FloatPoint(), layerSize), { shadowState.globalCompositeOperator }, shadowState.globalAlpha, ShadowState());
+    if (auto nativeImage = layerImage.copyNativeImage(DontCopyBackingStore)) {
+        drawPlatformImage(platformContext, nativeImage->platformImage().get(), FloatRect(roundedIntPoint(layerOrigin), layerSize), FloatRect(FloatPoint(), layerSize), { shadowState.globalCompositeOperator }, shadowState.globalAlpha, ShadowState());
     }
 }
 
 // FIXME: This is mostly same as drawShadowLayerBuffer, so we should merge two.
 static void drawShadowImage(PlatformContextCairo& platformContext, ImageBuffer& layerImage, const FloatRect& destRect, const FloatRect& srcRect, const ShadowState& shadowState)
 {
-    if (auto surface = layerImage.copyNativeImage(DontCopyBackingStore)) {
-        drawNativeImage(platformContext, surface.get(), destRect, srcRect, { shadowState.globalCompositeOperator }, shadowState.globalAlpha, ShadowState());
+    if (auto nativeImage = layerImage.copyNativeImage(DontCopyBackingStore)) {
+        drawPlatformImage(platformContext, nativeImage->platformImage().get(), destRect, srcRect, { shadowState.globalCompositeOperator }, shadowState.globalAlpha, ShadowState());
     }
 }
 
@@ -191,8 +192,8 @@ static void fillShadowBuffer(PlatformContextCairo& platformContext, ImageBuffer&
 {
     save(platformContext);
 
-    if (auto surface = layerImage.copyNativeImage(DontCopyBackingStore))
-        clipToImageBuffer(platformContext, surface.get(), FloatRect(layerOrigin, expandedIntSize(layerSize)));
+    if (auto nativeImage = layerImage.copyNativeImage(DontCopyBackingStore))
+        clipToImageBuffer(platformContext, nativeImage->platformImage().get(), FloatRect(layerOrigin, expandedIntSize(layerSize)));
 
     FillSource fillSource;
     fillSource.globalAlpha = shadowState.globalAlpha;
@@ -860,7 +861,7 @@ void drawGlyphs(PlatformContextCairo& platformContext, const FillSource& fillSou
     cairo_restore(cr);
 }
 
-void drawNativeImage(PlatformContextCairo& platformContext, cairo_surface_t* surface, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options, float globalAlpha, const ShadowState& shadowState)
+void drawPlatformImage(PlatformContextCairo& platformContext, cairo_surface_t* surface, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options, float globalAlpha, const ShadowState& shadowState)
 {
     platformContext.save();
 

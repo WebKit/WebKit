@@ -543,7 +543,7 @@ void IconDatabase::checkIconURLAndSetPageURLIfNeeded(const String& iconURL, cons
     });
 }
 
-void IconDatabase::loadIconForPageURL(const String& pageURL, AllowDatabaseWrite allowDatabaseWrite, CompletionHandler<void(NativeImagePtr&&)>&& completionHandler)
+void IconDatabase::loadIconForPageURL(const String& pageURL, AllowDatabaseWrite allowDatabaseWrite, CompletionHandler<void(PlatformImagePtr&&)>&& completionHandler)
 {
     ASSERT(isMainThread());
 
@@ -562,7 +562,7 @@ void IconDatabase::loadIconForPageURL(const String& pageURL, AllowDatabaseWrite 
                 LockHolder lockHolder(m_loadedIconsLock);
                 if (!m_loadedIcons.contains(iconURL)) {
                     iconData = this->iconData(iconID.value());
-                    m_loadedIcons.set(iconURL, std::make_pair<NativeImagePtr, MonotonicTime>(nullptr, { }));
+                    m_loadedIcons.set(iconURL, std::make_pair<PlatformImagePtr, MonotonicTime>(nullptr, { }));
                 }
             }
             bool canWriteToDatabase = m_allowDatabaseWrite == AllowDatabaseWrite::Yes && allowDatabaseWrite == AllowDatabaseWrite::Yes;
@@ -587,14 +587,14 @@ void IconDatabase::loadIconForPageURL(const String& pageURL, AllowDatabaseWrite 
                 return;
             }
 
-            auto addResult = m_loadedIcons.set(iconURL, std::make_pair<NativeImagePtr, MonotonicTime>(nullptr, MonotonicTime::now()));
+            auto addResult = m_loadedIcons.set(iconURL, std::make_pair<PlatformImagePtr, MonotonicTime>(nullptr, MonotonicTime::now()));
             if (!iconData.isEmpty()) {
                 auto image = BitmapImage::create();
                 if (image->setData(SharedBuffer::create(WTFMove(iconData)), true) < EncodedDataStatus::SizeAvailable) {
                     completionHandler(nullptr);
                     return;
                 }
-                addResult.iterator->value.first = image->nativeImageForCurrentFrame();
+                addResult.iterator->value.first = image->nativeImageForCurrentFrame()->platformImage();
             }
 
             auto icon = addResult.iterator->value.first;
@@ -622,13 +622,13 @@ void IconDatabase::setIconForPageURL(const String& iconURL, const unsigned char*
         bool result = true;
         {
             LockHolder lockHolder(m_loadedIconsLock);
-            auto addResult = m_loadedIcons.set(iconURL, std::make_pair<NativeImagePtr, MonotonicTime>(nullptr, { }));
+            auto addResult = m_loadedIcons.set(iconURL, std::make_pair<PlatformImagePtr, MonotonicTime>(nullptr, { }));
             if (iconDataSize) {
                 auto image = BitmapImage::create();
                 if (image->setData(SharedBuffer::create(iconData, iconDataSize), true) < EncodedDataStatus::SizeAvailable)
                     result = false;
                 else
-                    addResult.iterator->value.first = image->nativeImageForCurrentFrame();
+                    addResult.iterator->value.first = image->nativeImageForCurrentFrame()->platformImage();
             }
         }
         startClearLoadedIconsTimer();

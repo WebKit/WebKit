@@ -45,7 +45,7 @@ void SVGImageForContainer::drawPattern(GraphicsContext& context, const FloatRect
     m_image->drawPatternForContainer(context, m_containerSize, m_containerZoom, m_initialFragmentURL, srcRect, patternTransform, phase, spacing, dstRect, options);
 }
 
-NativeImagePtr SVGImageForContainer::nativeImageForCurrentFrame(const GraphicsContext* targetContext)
+RefPtr<NativeImage> SVGImageForContainer::nativeImageForCurrentFrame(const GraphicsContext* targetContext)
 {
     return m_image->nativeImageForCurrentFrame(targetContext);
 }

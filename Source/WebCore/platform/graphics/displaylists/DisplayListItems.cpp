@@ -463,7 +463,7 @@ static TextStream& operator<<(TextStream& ts, const DrawImageBuffer& item)
     return ts;
 }
 
-DrawNativeImage::DrawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+DrawNativeImage::DrawNativeImage(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
     : m_image(image)
     , m_imageSize(imageSize)
     , m_destinationRect(destRect)

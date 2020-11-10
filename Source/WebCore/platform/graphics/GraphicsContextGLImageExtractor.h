@@ -59,8 +59,6 @@ private:
 #if USE(CAIRO)
     RefPtr<cairo_surface_t> m_imageSurface;
 #elif USE(CG)
-    RetainPtr<CGImageRef> m_cgImage;
-    RetainPtr<CGImageRef> m_decodedImage;
     RetainPtr<CFDataRef> m_pixelData;
     UniqueArray<uint8_t> m_formalizedRGBA8Data;
 #endif

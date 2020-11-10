@@ -1277,7 +1277,7 @@ public:
     static constexpr bool isInlineItem = false;
     static constexpr bool isDrawingItem = true;
 
-    WEBCORE_EXPORT DrawNativeImage(const NativeImagePtr&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&);
+    WEBCORE_EXPORT DrawNativeImage(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&);
 
     const FloatRect& source() const { return m_srcRect; }
     const FloatRect& destinationRect() const { return m_destinationRect; }
@@ -1291,7 +1291,7 @@ public:
     template<class Decoder> static Optional<DrawNativeImage> decode(Decoder&);
 
 private:
-    NativeImagePtr m_image;
+    Ref<NativeImage> m_image;
     FloatSize m_imageSize;
     FloatRect m_destinationRect;
     FloatRect m_srcRect;
@@ -1311,7 +1311,7 @@ void DrawNativeImage::encode(Encoder& encoder) const
 template<class Decoder>
 Optional<DrawNativeImage> DrawNativeImage::decode(Decoder& decoder)
 {
-    Optional<NativeImagePtr> image;
+    Optional<Ref<NativeImage>> image;
     decoder >> image;
     if (!image)
         return WTF::nullopt;

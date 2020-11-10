@@ -46,11 +46,11 @@ public:
         return adoptRef(*new ImageDecoderGStreamerSample(WTFMove(sample), presentationSize));
     }
 
-    NativeImagePtr image() const
+    PlatformImagePtr image() const
     {
         if (!m_image)
             return nullptr;
-        return m_image->image().nativeImage();
+        return m_image->image().nativeImage()->platformImage();
     }
     void dropImage() { m_image = nullptr; }
 
@@ -179,7 +179,7 @@ unsigned ImageDecoderGStreamer::frameBytesAtIndex(size_t index, SubsamplingLevel
     return (frameSize.area() * 4).unsafeGet();
 }
 
-NativeImagePtr ImageDecoderGStreamer::createFrameImageAtIndex(size_t index, SubsamplingLevel, const DecodingOptions&)
+PlatformImagePtr ImageDecoderGStreamer::createFrameImageAtIndex(size_t index, SubsamplingLevel, const DecodingOptions&)
 {
     LockHolder holder { m_sampleGeneratorLock };
 

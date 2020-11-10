@@ -731,7 +731,7 @@ void GraphicsContext::drawBidiText(const FontCascade& font, const TextRun& run, 
     bidiRuns.clear();
 }
 
-void GraphicsContext::drawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void GraphicsContext::drawNativeImage(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     if (paintingDisabled())
         return;
@@ -741,7 +741,7 @@ void GraphicsContext::drawNativeImage(const NativeImagePtr& image, const FloatSi
         return;
     }
 
-    platformDrawNativeImage(image, imageSize, destRect, srcRect, options);
+    drawPlatformImage(image.platformImage(), imageSize, destRect, srcRect, options);
 }
 
 ImageDrawResult GraphicsContext::drawImage(Image& image, const FloatPoint& destination, const ImagePaintingOptions& imagePaintingOptions)

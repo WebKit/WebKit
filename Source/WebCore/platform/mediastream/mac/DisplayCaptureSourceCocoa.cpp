@@ -239,11 +239,11 @@ void DisplayCaptureSourceCocoa::emitFrame()
 
             return IntSize(IOSurfaceGetWidth(surface.get()), IOSurfaceGetHeight(surface.get()));
         },
-        [](RetainPtr<CGImageRef> image) -> IntSize {
+        [](RefPtr<NativeImage> image) -> IntSize {
             if (!image)
                 return { };
 
-            return IntSize(CGImageGetWidth(image.get()), CGImageGetHeight(image.get()));
+            return image->size();
         }
     );
 
@@ -263,11 +263,11 @@ void DisplayCaptureSourceCocoa::emitFrame()
 
             return m_imageTransferSession->createMediaSample(surface.get(), sampleTime, size());
         },
-        [this, sampleTime](RetainPtr<CGImageRef> image) -> RefPtr<MediaSample> {
+        [this, sampleTime](RefPtr<NativeImage> image) -> RefPtr<MediaSample> {
             if (!image)
                 return nullptr;
 
-            return m_imageTransferSession->createMediaSample(image.get(), sampleTime, size());
+            return m_imageTransferSession->createMediaSample(image->platformImage().get(), sampleTime, size());
         }
     );
 

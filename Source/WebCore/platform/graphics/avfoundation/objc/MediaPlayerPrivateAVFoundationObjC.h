@@ -252,7 +252,7 @@ private:
     bool updateLastPixelBuffer();
     bool videoOutputHasAvailableFrame();
     void paintWithVideoOutput(GraphicsContext&, const FloatRect&);
-    NativeImagePtr nativeImageForCurrentTime() final;
+    RefPtr<NativeImage> nativeImageForCurrentTime() final;
     void waitForVideoOutputMediaDataWillChange();
 
     bool copyVideoTextureToPlatformTexture(GraphicsContextGLOpenGL*, PlatformGLObject, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
@@ -343,7 +343,7 @@ private:
     RetainPtr<AVPlayerItemVideoOutput> m_videoOutput;
     RetainPtr<WebCoreAVFPullDelegate> m_videoOutputDelegate;
     RetainPtr<CVPixelBufferRef> m_lastPixelBuffer;
-    RetainPtr<CGImageRef> m_lastImage;
+    RefPtr<NativeImage> m_lastImage;
     std::unique_ptr<ImageRotationSessionVT> m_imageRotationSession;
     std::unique_ptr<VideoTextureCopierCV> m_videoTextureCopier;
     std::unique_ptr<PixelBufferConformerCV> m_pixelBufferConformer;

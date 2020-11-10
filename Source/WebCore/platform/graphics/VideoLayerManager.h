@@ -44,10 +44,10 @@ public:
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     virtual PlatformLayer* videoFullscreenLayer() const = 0;
-    virtual void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler, NativeImagePtr) = 0;
+    virtual void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler, PlatformImagePtr) = 0;
     virtual FloatRect videoFullscreenFrame() const = 0;
     virtual void setVideoFullscreenFrame(FloatRect) = 0;
-    virtual void updateVideoFullscreenInlineImage(NativeImagePtr) = 0;
+    virtual void updateVideoFullscreenInlineImage(PlatformImagePtr) = 0;
 #endif
 
     virtual bool requiresTextTrackRepresentation() const = 0;

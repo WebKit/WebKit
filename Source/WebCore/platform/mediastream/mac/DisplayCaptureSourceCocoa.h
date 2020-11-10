@@ -52,7 +52,7 @@ class PixelBufferConformerCV;
 
 class DisplayCaptureSourceCocoa final : public RealtimeMediaSource {
 public:
-    using DisplayFrameType = WTF::Variant<RetainPtr<CGImageRef>, RetainPtr<IOSurfaceRef>>;
+    using DisplayFrameType = WTF::Variant<RefPtr<NativeImage>, RetainPtr<IOSurfaceRef>>;
     class Capturer
 #if !RELEASE_LOG_DISABLED
         : public LoggerHelper

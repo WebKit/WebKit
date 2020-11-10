@@ -17,14 +17,14 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef GraphicsLayerTextureMapper_h
-#define GraphicsLayerTextureMapper_h
+#pragma once
 
 #if !USE(COORDINATED_GRAPHICS)
 
 #include "GraphicsLayer.h"
 #include "GraphicsLayerClient.h"
 #include "Image.h"
+#include "NativeImage.h"
 #include "TextureMapperLayer.h"
 #include "TextureMapperPlatformLayer.h"
 #include "TextureMapperTiledBackingStore.h"
@@ -155,7 +155,7 @@ private:
     TextureMapperLayer m_layer;
     std::unique_ptr<TextureMapperLayer> m_backdropLayer;
     RefPtr<TextureMapperTiledBackingStore> m_compositedImage;
-    NativeImagePtr m_compositedNativeImagePtr;
+    RefPtr<NativeImage> m_compositedNativeImage;
     RefPtr<TextureMapperTiledBackingStore> m_backingStore;
 
     int m_changeMask;
@@ -175,6 +175,4 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_GRAPHICSLAYER(WebCore::GraphicsLayerTextureMapper, isGraphicsLayerTextureMapper())
 
-#endif
-
-#endif // GraphicsLayerTextureMapper_h
+#endif // !USE(COORDINATED_GRAPHICS)

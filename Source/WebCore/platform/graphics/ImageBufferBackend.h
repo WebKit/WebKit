@@ -31,7 +31,6 @@
 #include "GraphicsTypesGL.h"
 #include "ImagePaintingOptions.h"
 #include "IntRect.h"
-#include "NativeImagePtr.h"
 #include "PlatformLayer.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -43,6 +42,7 @@ class GraphicsContextGLOpenGL;
 class HostWindow;
 class Image;
 class ImageData;
+class NativeImage;
 
 enum BackingStoreCopy {
     CopyBackingStore, // Guarantee subsequent draws don't affect the copy.
@@ -77,13 +77,13 @@ public:
     virtual size_t memoryCost() const { return 4 * m_backendSize.area().unsafeGet(); }
     virtual size_t externalMemoryCost() const { return 0; }
 
-    virtual NativeImagePtr copyNativeImage(BackingStoreCopy) const = 0;
+    virtual RefPtr<NativeImage> copyNativeImage(BackingStoreCopy) const = 0;
     virtual RefPtr<Image> copyImage(BackingStoreCopy, PreserveResolution) const = 0;
 
     WEBCORE_EXPORT virtual void draw(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) = 0;
     WEBCORE_EXPORT virtual void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions&) = 0;
 
-    WEBCORE_EXPORT virtual NativeImagePtr sinkIntoNativeImage();
+    WEBCORE_EXPORT virtual RefPtr<NativeImage> sinkIntoNativeImage();
     WEBCORE_EXPORT virtual RefPtr<Image> sinkIntoImage(PreserveResolution);
     WEBCORE_EXPORT virtual void drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&);
 

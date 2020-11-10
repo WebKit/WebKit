@@ -1216,13 +1216,13 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/MediaPlayerPrivate.h
     platform/graphics/MediaUsageInfo.h
     platform/graphics/NativeImage.h
-    platform/graphics/NativeImagePtr.h
     platform/graphics/OpenGLESShims.h
     platform/graphics/OpenGLShims.h
     platform/graphics/Path.h
     platform/graphics/PathUtilities.h
     platform/graphics/Pattern.h
     platform/graphics/PlatformDisplay.h
+    platform/graphics/PlatformImage.h
     platform/graphics/PlatformImageBuffer.h
     platform/graphics/PlatformImageBufferBackend.h
     platform/graphics/PlatformLayer.h

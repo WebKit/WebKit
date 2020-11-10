@@ -804,7 +804,7 @@ void drawGlyphs(PlatformContextDirect2D& platformContext, const FillSource& fill
 }
 
 
-void drawNativeImage(PlatformContextDirect2D& platformContext, IWICBitmap* image, const FloatSize& originalImageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options, float globalAlpha, const ShadowState& shadowState)
+void drawPlatformImage(PlatformContextDirect2D& platformContext, IWICBitmap* image, const FloatSize& originalImageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options, float globalAlpha, const ShadowState& shadowState)
 {
     auto nativeImageSize = bitmapSize(image);
     COMPtr<ID2D1Bitmap> deviceBitmap;
@@ -813,10 +813,10 @@ void drawNativeImage(PlatformContextDirect2D& platformContext, IWICBitmap* image
         return;
 
     auto imageSize = bitmapSize(deviceBitmap.get());
-    drawNativeImage(platformContext, deviceBitmap.get(), imageSize, destRect, srcRect, options, globalAlpha, shadowState);
+    drawPlatformImage(platformContext, deviceBitmap.get(), imageSize, destRect, srcRect, options, globalAlpha, shadowState);
 }
 
-void drawNativeImage(PlatformContextDirect2D& platformContext, ID2D1Bitmap* image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options, float globalAlpha, const ShadowState& shadowState)
+void drawPlatformImage(PlatformContextDirect2D& platformContext, ID2D1Bitmap* image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options, float globalAlpha, const ShadowState& shadowState)
 {
     auto bitmapSize = image->GetSize();
 

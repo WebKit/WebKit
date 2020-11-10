@@ -131,7 +131,7 @@ void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const I
     auto& platformContext = *context.platformContext();
 
     ImagePaintingOptions options { state.compositeOperator, state.blendMode, ImageOrientation(), state.imageInterpolationQuality };
-    Direct2D::drawNativeImage(platformContext, surface.get(), m_size, destRect, srcRectScaled, options, state.alpha, Direct2D::ShadowState(state));
+    Direct2D::drawPlatformImage(platformContext, surface.get(), m_size, destRect, srcRectScaled, options, state.alpha, Direct2D::ShadowState(state));
 }
 
 COMPtr<ID2D1Bitmap> ShareableBitmap::createDirect2DSurface(ID3D11Device1* directXDevice, ID2D1RenderTarget* renderTarget)

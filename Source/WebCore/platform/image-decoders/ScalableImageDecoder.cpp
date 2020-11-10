@@ -204,7 +204,7 @@ Seconds ScalableImageDecoder::frameDurationAtIndex(size_t index) const
     return duration;
 }
 
-NativeImagePtr ScalableImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLevel, const DecodingOptions&)
+PlatformImagePtr ScalableImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLevel, const DecodingOptions&)
 {
     LockHolder lockHolder(m_mutex);
     // Zero-height images can cause problems for some ports. If we have an empty image dimension, just bail.

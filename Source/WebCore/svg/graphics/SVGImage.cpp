@@ -209,9 +209,9 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Float
 }
 
 #if USE(CAIRO)
-// Passes ownership of the native image to the caller so NativeImagePtr needs
+// Passes ownership of the native image to the caller so NativeImage needs
 // to be a smart pointer type.
-NativeImagePtr SVGImage::nativeImageForCurrentFrame(const GraphicsContext*)
+RefPtr<NativeImage> SVGImage::nativeImageForCurrentFrame(const GraphicsContext*)
 {
     if (!m_page)
         return nullptr;
@@ -229,7 +229,7 @@ NativeImagePtr SVGImage::nativeImageForCurrentFrame(const GraphicsContext*)
 #endif
 
 #if USE(DIRECT2D)
-NativeImagePtr SVGImage::nativeImage(const GraphicsContext* targetContext)
+RefPtr<NativeImage> SVGImage::nativeImage(const GraphicsContext* targetContext)
 {
     ASSERT(targetContext);
     if (!m_page || !targetContext)

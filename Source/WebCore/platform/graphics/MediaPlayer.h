@@ -430,7 +430,7 @@ public:
 
     bool copyVideoTextureToPlatformTexture(GraphicsContextGLOpenGL*, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY);
 
-    NativeImagePtr nativeImageForCurrentTime();
+    RefPtr<NativeImage> nativeImageForCurrentTime();
 
     using MediaPlayerEnums::NetworkState;
     NetworkState networkState();

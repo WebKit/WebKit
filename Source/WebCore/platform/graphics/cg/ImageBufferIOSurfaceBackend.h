@@ -51,8 +51,8 @@ public:
     size_t memoryCost() const override;
     size_t externalMemoryCost() const override;
 
-    NativeImagePtr copyNativeImage(BackingStoreCopy = CopyBackingStore) const override;
-    NativeImagePtr sinkIntoNativeImage() override;
+    RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const override;
+    RefPtr<NativeImage> sinkIntoNativeImage() override;
 
     void drawConsuming(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) override;
 

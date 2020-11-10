@@ -138,7 +138,6 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(Type layerType, GraphicsLayer
     , m_pendingVisibleRectAdjustment(false)
     , m_shouldUpdatePlatformLayer(false)
     , m_coordinator(0)
-    , m_compositedNativeImagePtr(0)
     , m_animationStartedTimer(*this, &CoordinatedGraphicsLayer::animationStartedTimerFired)
     , m_requestPendingTileCreationTimer(RunLoop::main(), this, &CoordinatedGraphicsLayer::requestPendingTileCreationTimerFired)
 {
@@ -585,12 +584,12 @@ void CoordinatedGraphicsLayer::setShowRepaintCounter(bool show)
 
 void CoordinatedGraphicsLayer::setContentsToImage(Image* image)
 {
-    NativeImagePtr nativeImagePtr = image ? image->nativeImageForCurrentFrame() : nullptr;
-    if (m_compositedImage == image && m_compositedNativeImagePtr == nativeImagePtr)
+    auto nativeImage = image ? image->nativeImageForCurrentFrame() : nullptr;
+    if (m_compositedImage == image && m_compositedNativeImage == nativeImage)
         return;
 
     m_compositedImage = image;
-    m_compositedNativeImagePtr = nativeImagePtr;
+    m_compositedNativeImage = nativeImage;
 
     GraphicsLayer::setContentsToImage(image);
     notifyFlushRequired();
@@ -849,11 +848,11 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
     m_nicosia.delta.animatedBackingStoreClientChanged = true;
 
     // Determine image backing presence according to the composited image source.
-    if (m_compositedNativeImagePtr) {
+    if (m_compositedNativeImage) {
         ASSERT(m_compositedImage);
         auto& image = *m_compositedImage;
         uintptr_t imageID = reinterpret_cast<uintptr_t>(&image);
-        uintptr_t nativeImageID = reinterpret_cast<uintptr_t>(m_compositedNativeImagePtr.get());
+        uintptr_t nativeImageID = reinterpret_cast<uintptr_t>(m_compositedNativeImage->platformImage().get());
 
         // Respawn the ImageBacking object if the underlying image changed.
         if (m_nicosia.imageBacking) {

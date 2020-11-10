@@ -76,7 +76,7 @@ public:
     ImageDrawResult drawTiledImage(Image&, const FloatRect&, const FloatRect&, const FloatSize&, Image::TileRule, Image::TileRule, const ImagePaintingOptions&) override;
     
     void drawImageBuffer(ImageBuffer&, const FloatRect&, const FloatRect&, const ImagePaintingOptions&) override;
-    void drawNativeImage(const NativeImagePtr&, const FloatSize&, const FloatRect&, const FloatRect&, const ImagePaintingOptions&) override;
+    void drawNativeImage(NativeImage&, const FloatSize&, const FloatRect&, const FloatRect&, const ImagePaintingOptions&) override;
     void drawPattern(Image&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, const ImagePaintingOptions&) override;
 
     void drawRect(const FloatRect&, float) override;

@@ -567,7 +567,7 @@ unsigned ImageDecoderAVFObjC::frameBytesAtIndex(size_t index, SubsamplingLevel s
     return (frameSize.area() * 4).unsafeGet();
 }
 
-NativeImagePtr ImageDecoderAVFObjC::createFrameImageAtIndex(size_t index, SubsamplingLevel, const DecodingOptions&)
+PlatformImagePtr ImageDecoderAVFObjC::createFrameImageAtIndex(size_t index, SubsamplingLevel, const DecodingOptions&)
 {
     LockHolder holder { m_sampleGeneratorLock };
 

@@ -58,7 +58,7 @@ IntSize ImageBufferBackend::calculateBackendSize(const FloatSize& size, float re
     return backendSize;
 }
 
-NativeImagePtr ImageBufferBackend::sinkIntoNativeImage()
+RefPtr<NativeImage> ImageBufferBackend::sinkIntoNativeImage()
 {
     return copyNativeImage(DontCopyBackingStore);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,34 +35,29 @@
 
 namespace WebCore {
 
-IntSize nativeImageSize(const NativeImagePtr& image)
+IntSize NativeImage::size() const
 {
-    return image ? cairoSurfaceSize(image.get()) : IntSize();
+    return cairoSurfaceSize(m_platformImage.get());
 }
 
-bool nativeImageHasAlpha(const NativeImagePtr& image)
+bool NativeImage::hasAlpha() const
 {
-    return !image || cairo_surface_get_content(image.get()) != CAIRO_CONTENT_COLOR;
+    return cairo_surface_get_content(m_platformImage.get()) != CAIRO_CONTENT_COLOR;
 }
 
-Color nativeImageSinglePixelSolidColor(const NativeImagePtr& image)
+Color NativeImage::singlePixelSolidColor() const
 {
-    if (!image || nativeImageSize(image) != IntSize(1, 1))
+    if (size() != IntSize(1, 1))
         return Color();
 
-    if (cairo_surface_get_type(image.get()) != CAIRO_SURFACE_TYPE_IMAGE)
+    if (cairo_surface_get_type(m_platformImage.get()) != CAIRO_SURFACE_TYPE_IMAGE)
         return Color();
 
-    unsigned* pixel = reinterpret_cast_ptr<unsigned*>(cairo_image_surface_get_data(image.get()));
+    unsigned* pixel = reinterpret_cast_ptr<unsigned*>(cairo_image_surface_get_data(m_platformImage.get()));
     return unpremultiplied(asSRGBA(PackedColor::ARGB { *pixel }));
 }
 
-void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& imageSize, const ImagePaintingOptions& options)
-{
-    context.drawNativeImage(image, imageSize, destRect, srcRect, options);
-}
-
-void clearNativeImageSubimages(const NativeImagePtr&)
+void NativeImage::clearSubimages()
 {
 }
 

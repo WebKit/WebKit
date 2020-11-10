@@ -30,7 +30,7 @@
 #include "ImageTypes.h"
 #include "IntPoint.h"
 #include "IntSize.h"
-#include "NativeImage.h"
+#include "PlatformImage.h"
 #include <wtf/Optional.h>
 #include <wtf/Seconds.h>
 #include <wtf/text/WTFString.h>
@@ -74,7 +74,7 @@ public:
     virtual bool frameAllowSubsamplingAtIndex(size_t) const = 0;
     virtual unsigned frameBytesAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const = 0;
 
-    virtual NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingOptions(DecodingMode::Synchronous)) = 0;
+    virtual PlatformImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingOptions(DecodingMode::Synchronous)) = 0;
 
     virtual void setExpectedContentSize(long long) { }
     virtual void setData(SharedBuffer&, bool allDataReceived) = 0;

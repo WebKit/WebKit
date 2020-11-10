@@ -64,7 +64,7 @@ std::unique_ptr<ImageBufferDirect2DBackend> ImageBufferDirect2DBackend::create(c
     if (!bitmapContext)
         return;
 
-    NativeImagePtr bitmap;
+    PlatformImagePtr bitmap;
     HRESULT hr = bitmapContext->GetBitmap(&bitmap);
     if (!SUCCEEDED(hr))
         return;
@@ -90,7 +90,7 @@ std::unique_ptr<ImageBufferDirect2DBackend> ImageBufferDirect2DBackend::create(c
     return ImageBufferDirect2DBackend::create(size, 1, ColorSpace::SRGB, nullptr);
 }
 
-ImageBufferDirect2DBackend::ImageBufferDirect2DBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, std::unique_ptr<PlatformContextDirect2D>&& platformContext, std::unique_ptr<GraphicsContext>&& context, NativeImagePtr&& bitmap)
+ImageBufferDirect2DBackend::ImageBufferDirect2DBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, std::unique_ptr<PlatformContextDirect2D>&& platformContext, std::unique_ptr<GraphicsContext>&& context, PlatformImagePtr&& bitmap)
     : ImageBufferCGBackend(logicalSize, backendSize, resolutionScale, colorSpace)
     , m_platformContext(WTFMove(platformContext))
     , m_context(WTFMove(context))
@@ -108,7 +108,7 @@ void ImageBufferDirect2DBackend::flushContext()
     context().flush();
 }
 
-NativeImagePtr ImageBufferDirect2DBackend::copyNativeImage(BackingStoreCopy copyBehavior) const
+RefPtr<NativeImage> ImageBufferDirect2DBackend::copyNativeImage(BackingStoreCopy copyBehavior) const
 {
     COMPtr<ID2D1BitmapRenderTarget> bitmapTarget;
     HRESULT hr = context().platformContext()->renderTarget()->QueryInterface(&bitmapTarget);
@@ -133,10 +133,10 @@ NativeImagePtr ImageBufferDirect2DBackend::copyNativeImage(BackingStoreCopy copy
 
     }
 
-    return image;
+    return NativeImage::create(WTFMove(image));
 }
 
-static NativeImagePtr createCroppedImageIfNecessary(ID2D1BitmapRenderTarget* bitmapTarget, ID2D1Bitmap* image, const IntSize& bounds)
+static PlatformImagePtr createCroppedImageIfNecessary(ID2D1BitmapRenderTarget* bitmapTarget, ID2D1Bitmap* image, const IntSize& bounds)
 {
     FloatSize imageSize = image ? nativeImageSize(image) : FloatSize();
 
@@ -170,11 +170,11 @@ static RefPtr<Image> createBitmapImageAfterScalingIfNeeded(ID2D1BitmapRenderTarg
 
 RefPtr<Image> ImageBufferDirect2DBackend::copyImage(BackingStoreCopy copyBehavior, PreserveResolution preserveResolution) const
 {
-    NativeImagePtr image;
+    PlatformImagePtr image;
     if (m_resolutionScale == 1 || preserveResolution == PreserveResolution::Yes)
-        image = copyNativeImage(copyBehavior);
+        image = copyNativeImage(copyBehavior)->platformImage();
     else
-        image = copyNativeImage(DontCopyBackingStore);
+        image = copyNativeImage(DontCopyBackingStore)->platformImage();
 
     auto bitmapTarget = reinterpret_cast<ID2D1BitmapRenderTarget*>(context().platformContext());
     return createBitmapImageAfterScalingIfNeeded(bitmapTarget, WTFMove(image), internalSize(), resolutionScale(), preserveResolution);
@@ -187,11 +187,11 @@ RefPtr<Image> ImageBufferDirect2DBackend::sinkIntoImage(PreserveResolution prese
     if (!SUCCEEDED(hr))
         return nullptr;
 
-    NativeImagePtr image = copyNativeImage(DontCopyBackingStore);
+    PlatformImagePtr image = copyNativeImage(DontCopyBackingStore)->platformImage();
     return createBitmapImageAfterScalingIfNeeded(bitmapTarget.get(), WTFMove(image), internalSize(), resolutionScale(), preserveResolution);
 }
 
-NativeImagePtr ImageBufferDirect2DBackend::compatibleBitmap(ID2D1RenderTarget* renderTarget)
+PlatformImagePtr ImageBufferDirect2DBackend::compatibleBitmap(ID2D1RenderTarget* renderTarget)
 {
     loadDataToBitmapIfNeeded();
 

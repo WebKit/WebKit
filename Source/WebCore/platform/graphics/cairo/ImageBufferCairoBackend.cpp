@@ -66,7 +66,7 @@ void ImageBufferCairoBackend::draw(GraphicsContext& destContext, const FloatRect
     const auto& destinationContextState = destContext.state();
 
     if (auto image = copyNativeImage(&destContext == &context() ? CopyBackingStore : DontCopyBackingStore))
-        drawNativeImage(*destContext.platformContext(), image.get(), destRect, srcRect, { options, destinationContextState.imageInterpolationQuality }, destinationContextState.alpha, WebCore::Cairo::ShadowState(destinationContextState));
+        drawPlatformImage(*destContext.platformContext(), image->platformImage().get(), destRect, srcRect, { options, destinationContextState.imageInterpolationQuality }, destinationContextState.alpha, WebCore::Cairo::ShadowState(destinationContextState));
 }
 
 void ImageBufferCairoBackend::drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
@@ -80,7 +80,7 @@ void ImageBufferCairoBackend::drawPattern(GraphicsContext& destContext, const Fl
     }
 
     if (auto image = copyNativeImage(&destContext == &context() ? CopyBackingStore : DontCopyBackingStore))
-        Cairo::drawPattern(*destContext.platformContext(), image.get(), m_logicalSize, destRect, srcRect, patternTransform, phase, options);
+        Cairo::drawPattern(*destContext.platformContext(), image->platformImage().get(), m_logicalSize, destRect, srcRect, patternTransform, phase, options);
 }
 
 void ImageBufferCairoBackend::transformColorSpace(ColorSpace srcColorSpace, ColorSpace destColorSpace)

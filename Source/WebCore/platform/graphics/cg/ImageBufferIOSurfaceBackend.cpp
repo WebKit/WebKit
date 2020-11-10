@@ -135,14 +135,14 @@ ColorFormat ImageBufferIOSurfaceBackend::backendColorFormat() const
     return ColorFormat::BGRA;
 }
 
-NativeImagePtr ImageBufferIOSurfaceBackend::copyNativeImage(BackingStoreCopy) const
+RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImage(BackingStoreCopy) const
 {
-    return m_surface->createImage();
+    return NativeImage::create(m_surface->createImage());
 }
 
-NativeImagePtr ImageBufferIOSurfaceBackend::sinkIntoNativeImage()
+RefPtr<NativeImage> ImageBufferIOSurfaceBackend::sinkIntoNativeImage()
 {
-    return IOSurface::sinkIntoImage(WTFMove(m_surface));
+    return NativeImage::create(IOSurface::sinkIntoImage(WTFMove(m_surface)));
 }
 
 void ImageBufferIOSurfaceBackend::drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
@@ -151,7 +151,7 @@ void ImageBufferIOSurfaceBackend::drawConsuming(GraphicsContext& destContext, co
     adjustedSrcRect.scale(m_resolutionScale);
 
     if (auto image = sinkIntoNativeImage())
-        destContext.drawNativeImage(image.get(), m_backendSize, destRect, adjustedSrcRect, options);
+        destContext.drawNativeImage(*image, m_backendSize, destRect, adjustedSrcRect, options);
 }
 
 RetainPtr<CFDataRef> ImageBufferIOSurfaceBackend::toCFData(const String& mimeType, Optional<double> quality, PreserveResolution preserveResolution) const

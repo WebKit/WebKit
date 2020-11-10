@@ -1943,6 +1943,7 @@ platform/graphics/LayoutSize.cpp
 platform/graphics/MIMETypeCache.cpp
 platform/graphics/MediaPlayer.cpp
 platform/graphics/NamedImageGeneratedImage.cpp
+platform/graphics/NativeImage.cpp
 platform/graphics/Path.cpp
 platform/graphics/PathTraversalState.cpp
 platform/graphics/PathUtilities.cpp

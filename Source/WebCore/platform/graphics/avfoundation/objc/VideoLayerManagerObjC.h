@@ -63,10 +63,10 @@ public:
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     WEBCORE_EXPORT PlatformLayer* videoFullscreenLayer() const final;
-    WEBCORE_EXPORT void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler, NativeImagePtr) final;
+    WEBCORE_EXPORT void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler, PlatformImagePtr) final;
     WEBCORE_EXPORT FloatRect videoFullscreenFrame() const final;
     WEBCORE_EXPORT void setVideoFullscreenFrame(FloatRect) final;
-    WEBCORE_EXPORT void updateVideoFullscreenInlineImage(NativeImagePtr) final;
+    WEBCORE_EXPORT void updateVideoFullscreenInlineImage(PlatformImagePtr) final;
 #endif
 
     WEBCORE_EXPORT bool requiresTextTrackRepresentation() const final;

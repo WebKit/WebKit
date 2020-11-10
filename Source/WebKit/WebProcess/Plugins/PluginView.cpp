@@ -1683,7 +1683,7 @@ void PluginView::didFailLoad(WebFrame* webFrame, bool wasCancelled)
 #if PLATFORM(COCOA)
 static bool isAlmostSolidColor(BitmapImage* bitmap)
 {
-    CGImageRef image = bitmap->nativeImage().get();
+    CGImageRef image = bitmap->nativeImage()->platformImage().get();
     ASSERT(CGImageGetBitsPerComponent(image) == 8);
 
     CGBitmapInfo imageInfo = CGImageGetBitmapInfo(image);

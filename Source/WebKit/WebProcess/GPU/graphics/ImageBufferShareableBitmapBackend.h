@@ -52,7 +52,7 @@ public:
 
     WebCore::GraphicsContext& context() const override { return *m_context; }
 
-    WebCore::NativeImagePtr copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const override;
+    RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const override;
     RefPtr<WebCore::Image> copyImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore, WebCore::PreserveResolution = WebCore::PreserveResolution::No) const override;
 
     Vector<uint8_t> toBGRAData() const override;

@@ -107,17 +107,17 @@ GraphicsContext& ImageBufferCGBitmapBackend::context() const
     return *m_context;
 }
 
-NativeImagePtr ImageBufferCGBitmapBackend::copyNativeImage(BackingStoreCopy copyBehavior) const
+RefPtr<NativeImage> ImageBufferCGBitmapBackend::copyNativeImage(BackingStoreCopy copyBehavior) const
 {
     switch (copyBehavior) {
     case CopyBackingStore:
-        return adoptCF(CGBitmapContextCreateImage(context().platformContext()));
+        return NativeImage::create(adoptCF(CGBitmapContextCreateImage(context().platformContext())));
 
     case DontCopyBackingStore:
-        return adoptCF(CGImageCreate(
+        return NativeImage::create(adoptCF(CGImageCreate(
             m_backendSize.width(), m_backendSize.height(), 8, 32, bytesPerRow(),
             cachedCGColorSpace(m_colorSpace), DefaultBitmapInfo, m_dataProvider.get(),
-            0, true, kCGRenderingIntentDefault));
+            0, true, kCGRenderingIntentDefault)));
     }
 
     ASSERT_NOT_REACHED();

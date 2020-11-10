@@ -188,7 +188,7 @@ RefPtr<ImageBuffer> ImageBuffer::copyRectToBuffer(const FloatRect& rect, ColorSp
     return buffer;
 }
 
-NativeImagePtr ImageBuffer::sinkIntoNativeImage(RefPtr<ImageBuffer> imageBuffer)
+RefPtr<NativeImage> ImageBuffer::sinkIntoNativeImage(RefPtr<ImageBuffer> imageBuffer)
 {
     return imageBuffer->sinkIntoNativeImage();
 }

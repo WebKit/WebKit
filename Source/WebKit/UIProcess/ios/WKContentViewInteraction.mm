@@ -7546,7 +7546,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     if (!_dropAnimationCount)
         return;
 
-    auto unselectedContentImageForEditDrag = adoptNS([[UIImage alloc] initWithCGImage:unselectedSnapshotImage.get() scale:_page->deviceScaleFactor() orientation:UIImageOrientationUp]);
+    auto unselectedContentImageForEditDrag = adoptNS([[UIImage alloc] initWithCGImage:unselectedSnapshotImage->platformImage().get() scale:_page->deviceScaleFactor() orientation:UIImageOrientationUp]);
     _unselectedContentSnapshot = adoptNS([[UIImageView alloc] initWithImage:unselectedContentImageForEditDrag.get()]);
     [_unselectedContentSnapshot setFrame:data->contentImageWithoutSelectionRectInRootViewCoordinates];
 
@@ -7769,11 +7769,11 @@ static RetainPtr<UIImage> uiImageForImage(WebCore::Image* image)
     if (!image)
         return nil;
 
-    auto cgImage = image->nativeImage();
-    if (!cgImage)
+    auto nativeImage = image->nativeImage();
+    if (!nativeImage)
         return nil;
 
-    return adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
+    return adoptNS([[UIImage alloc] initWithCGImage:nativeImage->platformImage().get()]);
 }
 
 // FIXME: This should be merged with createTargetedDragPreview in DragDropInteractionState.
@@ -8034,7 +8034,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
             return;
         }
 
-        auto unselectedContentImageForEditDrag = adoptNS([[UIImage alloc] initWithCGImage:unselectedSnapshotImage.get() scale:protectedSelf->_page->deviceScaleFactor() orientation:UIImageOrientationUp]);
+        auto unselectedContentImageForEditDrag = adoptNS([[UIImage alloc] initWithCGImage:unselectedSnapshotImage->platformImage().get() scale:protectedSelf->_page->deviceScaleFactor() orientation:UIImageOrientationUp]);
         auto snapshotView = adoptNS([[UIImageView alloc] initWithImage:unselectedContentImageForEditDrag.get()]);
         [snapshotView setFrame:data->contentImageWithoutSelectionRectInRootViewCoordinates];
         [protectedSelf addSubview:snapshotView.get()];
@@ -10085,7 +10085,12 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 {
     if (!_positionInformation.linkIndicator.contentImage)
         return nullptr;
-    return [[[UIImage alloc] initWithCGImage:_positionInformation.linkIndicator.contentImage->nativeImage().get()] autorelease];
+
+    auto nativeImage = _positionInformation.linkIndicator.contentImage->nativeImage();
+    if (!nativeImage)
+        return nullptr;
+
+    return [[[UIImage alloc] initWithCGImage:nativeImage->platformImage().get()] autorelease];
 }
 
 - (NSArray *)_presentationRectsForPreviewItemController:(UIPreviewItemController *)controller

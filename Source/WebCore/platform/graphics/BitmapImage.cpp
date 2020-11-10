@@ -52,7 +52,7 @@ BitmapImage::BitmapImage(ImageObserver* observer)
 {
 }
 
-BitmapImage::BitmapImage(NativeImagePtr&& image, ImageObserver* observer)
+BitmapImage::BitmapImage(RefPtr<NativeImage>&& image, ImageObserver* observer)
     : Image(observer)
     , m_source(ImageSource::create(WTFMove(image)))
 {
@@ -128,7 +128,7 @@ void BitmapImage::setCurrentFrameDecodingStatusIfNecessary(DecodingStatus decodi
     m_currentFrameDecodingStatus = decodingStatus;
 }
 
-NativeImagePtr BitmapImage::frameImageAtIndexCacheIfNeeded(size_t index, SubsamplingLevel subsamplingLevel, const GraphicsContext* targetContext)
+RefPtr<NativeImage> BitmapImage::frameImageAtIndexCacheIfNeeded(size_t index, SubsamplingLevel subsamplingLevel, const GraphicsContext* targetContext)
 {
     if (!frameHasFullSizeNativeImageAtIndex(index, subsamplingLevel)) {
         LOG(Images, "BitmapImage::%s - %p - url: %s [subsamplingLevel was %d, resampling]", __FUNCTION__, this, sourceURL().string().utf8().data(), static_cast<int>(frameSubsamplingLevelAtIndex(index)));
@@ -142,17 +142,17 @@ NativeImagePtr BitmapImage::frameImageAtIndexCacheIfNeeded(size_t index, Subsamp
     return m_source->frameImageAtIndexCacheIfNeeded(index, subsamplingLevel);
 }
 
-NativeImagePtr BitmapImage::nativeImage(const GraphicsContext* targetContext)
+RefPtr<NativeImage> BitmapImage::nativeImage(const GraphicsContext* targetContext)
 {
     return frameImageAtIndexCacheIfNeeded(0, SubsamplingLevel::Default, targetContext);
 }
 
-NativeImagePtr BitmapImage::nativeImageForCurrentFrame(const GraphicsContext* targetContext)
+RefPtr<NativeImage> BitmapImage::nativeImageForCurrentFrame(const GraphicsContext* targetContext)
 {
     return frameImageAtIndexCacheIfNeeded(m_currentFrame, SubsamplingLevel::Default, targetContext);
 }
 
-NativeImagePtr BitmapImage::preTransformedNativeImageForCurrentFrame(bool respectOrientation, const GraphicsContext* targetContext)
+RefPtr<NativeImage> BitmapImage::preTransformedNativeImageForCurrentFrame(bool respectOrientation, const GraphicsContext* targetContext)
 {
     auto image = nativeImageForCurrentFrame(targetContext);
 
@@ -171,18 +171,18 @@ NativeImagePtr BitmapImage::preTransformedNativeImageForCurrentFrame(bool respec
     FloatRect destRect(FloatPoint(), correctedSizeFloat);
     FloatRect sourceRect(FloatPoint(), sourceSize);
 
-    buffer->context().drawNativeImage(image, sourceSize, destRect, sourceRect, { orientation });
+    buffer->context().drawNativeImage(*image, sourceSize, destRect, sourceRect, { orientation });
     return ImageBuffer::sinkIntoNativeImage(WTFMove(buffer));
 }
 
 #if USE(CG)
-NativeImagePtr BitmapImage::nativeImageOfSize(const IntSize& size, const GraphicsContext* targetContext)
+RefPtr<NativeImage> BitmapImage::nativeImageOfSize(const IntSize& size, const GraphicsContext* targetContext)
 {
     size_t count = frameCount();
 
     for (size_t i = 0; i < count; ++i) {
         auto image = frameImageAtIndexCacheIfNeeded(i, SubsamplingLevel::Default, targetContext);
-        if (image && nativeImageSize(image) == size)
+        if (image && image->size() == size)
             return image;
     }
 
@@ -190,14 +190,14 @@ NativeImagePtr BitmapImage::nativeImageOfSize(const IntSize& size, const Graphic
     return frameImageAtIndexCacheIfNeeded(0, SubsamplingLevel::Default, targetContext);
 }
 
-Vector<NativeImagePtr> BitmapImage::framesNativeImages()
+Vector<Ref<NativeImage>> BitmapImage::framesNativeImages()
 {
-    Vector<NativeImagePtr> images;
+    Vector<Ref<NativeImage>> images;
     size_t count = frameCount();
 
     for (size_t i = 0; i < count; ++i) {
         if (auto image = frameImageAtIndexCacheIfNeeded(i))
-            images.append(image);
+            images.append(makeRef(*image));
     }
 
     return images;
@@ -211,10 +211,10 @@ bool BitmapImage::notSolidColor()
 }
 #endif // ASSERT_ENABLED
 
-static inline void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& srcSize, const ImagePaintingOptions& options)
+static inline void drawNativeImage(NativeImage& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& srcSize, const ImagePaintingOptions& options)
 {
     // Subsampling may have given us an image that is smaller than size().
-    IntSize subsampledImageSize = nativeImageSize(image);
+    IntSize subsampledImageSize = image.size();
     if (options.orientation().usesWidthAsHeight())
         subsampledImageSize = subsampledImageSize.transposedSize();
 
@@ -246,7 +246,7 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
     m_currentSubsamplingLevel = m_allowSubsampling ? subsamplingLevelForScaleFactor(context, scaleFactorForDrawing) : SubsamplingLevel::Default;
     LOG(Images, "BitmapImage::%s - %p - url: %s [subsamplingLevel = %d scaleFactorForDrawing = (%.4f, %.4f)]", __FUNCTION__, this, sourceURL().string().utf8().data(), static_cast<int>(m_currentSubsamplingLevel), scaleFactorForDrawing.width(), scaleFactorForDrawing.height());
 
-    NativeImagePtr image;
+    RefPtr<NativeImage> image;
     if (options.decodingMode() == DecodingMode::Asynchronous) {
         ASSERT(!canAnimate());
         ASSERT(!m_currentFrame || m_animationFinished);
@@ -322,9 +322,9 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
     auto orientation = options.orientation();
     if (orientation == ImageOrientation::FromImage) {
         orientation = frameOrientationAtIndex(m_currentFrame);
-        drawNativeImage(image, context, destRect, srcRect, IntSize(sourceSize(orientation)), { options, orientation });
+        drawNativeImage(*image, context, destRect, srcRect, IntSize(sourceSize(orientation)), { options, orientation });
     } else
-        drawNativeImage(image, context, destRect, srcRect, IntSize(sourceSize(orientation)), options);
+        drawNativeImage(*image, context, destRect, srcRect, IntSize(sourceSize(orientation)), options);
 
     m_currentFrameDecodingStatus = frameDecodingStatusAtIndex(m_currentFrame);
 

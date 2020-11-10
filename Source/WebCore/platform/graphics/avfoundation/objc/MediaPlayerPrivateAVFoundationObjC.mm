@@ -1127,7 +1127,7 @@ PlatformLayer* MediaPlayerPrivateAVFoundationObjC::platformLayer() const
 void MediaPlayerPrivateAVFoundationObjC::updateVideoFullscreenInlineImage()
 {
     updateLastImage(UpdateType::UpdateSynchronously);
-    m_videoLayerManager->updateVideoFullscreenInlineImage(m_lastImage);
+    m_videoLayerManager->updateVideoFullscreenInlineImage(m_lastImage ? m_lastImage->platformImage() : nullptr);
 }
 
 RetainPtr<PlatformLayer> MediaPlayerPrivateAVFoundationObjC::createVideoFullscreenLayer()
@@ -1139,7 +1139,7 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* 
 {
     if (videoFullscreenLayer)
         updateLastImage(UpdateType::UpdateSynchronously);
-    m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_lastImage);
+    m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_lastImage ? m_lastImage->platformImage() : nullptr);
     updateDisableExternalPlayback();
 }
 
@@ -2293,7 +2293,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
 
     MonotonicTime start = MonotonicTime::now();
 
-    m_lastImage = m_pixelBufferConformer->createImageFromPixelBuffer(m_lastPixelBuffer.get());
+    m_lastImage = NativeImage::create(m_pixelBufferConformer->createImageFromPixelBuffer(m_lastPixelBuffer.get()));
 
     INFO_LOG(LOGIDENTIFIER, "creating buffer took ", (MonotonicTime::now() - start).seconds());
 }
@@ -2314,8 +2314,8 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& c
 
     INFO_LOG(LOGIDENTIFIER);
 
-    FloatRect imageRect(0, 0, CGImageGetWidth(m_lastImage.get()), CGImageGetHeight(m_lastImage.get()));
-    context.drawNativeImage(m_lastImage.get(), imageRect.size(), outputRect, imageRect);
+    FloatRect imageRect { FloatPoint::zero(), m_lastImage->size() };
+    context.drawNativeImage(*m_lastImage, imageRect.size(), outputRect, imageRect);
 
     // If we have created an AVAssetImageGenerator in the past due to m_videoOutput not having an available
     // video frame, destroy it now that it is no longer needed.
@@ -2341,7 +2341,7 @@ bool MediaPlayerPrivateAVFoundationObjC::copyVideoTextureToPlatformTexture(Graph
     return m_videoTextureCopier->copyImageToPlatformTexture(m_lastPixelBuffer.get(), width, height, outputTexture, outputTarget, level, internalFormat, format, type, premultiplyAlpha, flipY);
 }
 
-NativeImagePtr MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTime()
+RefPtr<NativeImage> MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTime()
 {
     updateLastImage();
     return m_lastImage;

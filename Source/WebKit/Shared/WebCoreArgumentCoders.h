@@ -34,7 +34,7 @@
 #include <WebCore/IndexedDB.h>
 #include <WebCore/InputMode.h>
 #include <WebCore/MediaSelectionOption.h>
-#include <WebCore/NativeImagePtr.h>
+#include <WebCore/NativeImage.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/NotificationDirection.h>
 #include <WebCore/RealtimeMediaSource.h>
@@ -419,9 +419,9 @@ template<> struct ArgumentCoder<WebCore::ImageHandle> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ImageHandle&);
 };
 
-template<> struct ArgumentCoder<WebCore::NativeImagePtr> {
-    static void encode(Encoder&, const WebCore::NativeImagePtr&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::NativeImagePtr&);
+template<> struct ArgumentCoder<Ref<WebCore::NativeImage>> {
+    static void encode(Encoder&, const Ref<WebCore::NativeImage>&);
+    static Optional<Ref<WebCore::NativeImage>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::ResourceRequest> {

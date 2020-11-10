@@ -192,7 +192,7 @@ void Recorder::drawImageBuffer(WebCore::ImageBuffer& imageBuffer, const FloatRec
     append<DrawImageBuffer>(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options);
 }
 
-void Recorder::drawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void Recorder::drawNativeImage(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     append<DrawNativeImage>(image, imageSize, destRect, srcRect, options);
 }

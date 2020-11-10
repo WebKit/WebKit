@@ -53,7 +53,11 @@ class Timer;
 
 class BitmapImage final : public Image {
 public:
-    static Ref<BitmapImage> create(NativeImagePtr&& nativeImage, ImageObserver* observer = nullptr)
+    static Ref<BitmapImage> create(PlatformImagePtr&& platformImage, ImageObserver* observer = nullptr)
+    {
+        return adoptRef(*new BitmapImage(NativeImage::create(WTFMove(platformImage)), observer));
+    }
+    static Ref<BitmapImage> create(RefPtr<NativeImage>&& nativeImage, ImageObserver* observer = nullptr)
     {
         return adoptRef(*new BitmapImage(WTFMove(nativeImage), observer));
     }
@@ -135,23 +139,23 @@ public:
 #endif
 #endif
 
-    WEBCORE_EXPORT NativeImagePtr nativeImage(const GraphicsContext* = nullptr) override;
-    NativeImagePtr nativeImageForCurrentFrame(const GraphicsContext* = nullptr) override;
-    NativeImagePtr preTransformedNativeImageForCurrentFrame(bool respectOrientation, const GraphicsContext* = nullptr) override;
+    WEBCORE_EXPORT RefPtr<NativeImage> nativeImage(const GraphicsContext* = nullptr) override;
+    RefPtr<NativeImage> nativeImageForCurrentFrame(const GraphicsContext* = nullptr) override;
+    RefPtr<NativeImage> preTransformedNativeImageForCurrentFrame(bool respectOrientation, const GraphicsContext* = nullptr) override;
 #if USE(CG)
-    NativeImagePtr nativeImageOfSize(const IntSize&, const GraphicsContext* = nullptr) override;
-    Vector<NativeImagePtr> framesNativeImages();
+    RefPtr<NativeImage> nativeImageOfSize(const IntSize&, const GraphicsContext* = nullptr) override;
+    Vector<Ref<NativeImage>> framesNativeImages();
 #endif
 
     void imageFrameAvailableAtIndex(size_t);
     void decode(Function<void()>&&);
 
 private:
-    WEBCORE_EXPORT BitmapImage(NativeImagePtr&&, ImageObserver* = nullptr);
+    WEBCORE_EXPORT BitmapImage(RefPtr<NativeImage>&&, ImageObserver* = nullptr);
     WEBCORE_EXPORT BitmapImage(ImageObserver* = nullptr);
 
-    NativeImagePtr frameImageAtIndex(size_t index) { return m_source->frameImageAtIndex(index); }
-    NativeImagePtr frameImageAtIndexCacheIfNeeded(size_t, SubsamplingLevel = SubsamplingLevel::Default, const GraphicsContext* = nullptr);
+    RefPtr<NativeImage> frameImageAtIndex(size_t index) { return m_source->frameImageAtIndex(index); }
+    RefPtr<NativeImage> frameImageAtIndexCacheIfNeeded(size_t, SubsamplingLevel = SubsamplingLevel::Default, const GraphicsContext* = nullptr);
 
     // Called to invalidate cached data. When |destroyAll| is true, we wipe out
     // the entire frame buffer cache and tell the image source to destroy
@@ -198,7 +202,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    RetainPtr<CFDataRef> tiffRepresentation(const Vector<NativeImagePtr>&);
+    RetainPtr<CFDataRef> tiffRepresentation(const Vector<Ref<NativeImage>>&);
 #endif
 
     void clearTimer();

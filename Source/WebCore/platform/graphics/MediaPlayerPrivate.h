@@ -161,7 +161,7 @@ public:
 
     virtual void paintCurrentFrameInContext(GraphicsContext& c, const FloatRect& r) { paint(c, r); }
     virtual bool copyVideoTextureToPlatformTexture(GraphicsContextGLOpenGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool) { return false; }
-    virtual NativeImagePtr nativeImageForCurrentTime() { return nullptr; }
+    virtual RefPtr<NativeImage> nativeImageForCurrentTime() { return nullptr; }
 
     virtual void setPreload(MediaPlayer::Preload) { }
 

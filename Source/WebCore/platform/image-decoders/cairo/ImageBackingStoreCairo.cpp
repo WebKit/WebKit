@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-NativeImagePtr ImageBackingStore::image() const
+PlatformImagePtr ImageBackingStore::image() const
 {
     m_pixels->ref();
     RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(

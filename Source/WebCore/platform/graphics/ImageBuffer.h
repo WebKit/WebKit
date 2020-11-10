@@ -82,7 +82,7 @@ public:
     virtual size_t memoryCost() const = 0;
     virtual size_t externalMemoryCost() const = 0;
 
-    virtual NativeImagePtr copyNativeImage(BackingStoreCopy = CopyBackingStore) const = 0;
+    virtual RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const = 0;
     virtual RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, PreserveResolution = PreserveResolution::No) const = 0;
 
     // Create an image buffer compatible with the context and copy rect from this buffer into this new one.
@@ -91,7 +91,7 @@ public:
     virtual void draw(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1), const ImagePaintingOptions& = { }) = 0;
     virtual void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) = 0;
 
-    static NativeImagePtr sinkIntoNativeImage(RefPtr<ImageBuffer>);
+    static RefPtr<NativeImage> sinkIntoNativeImage(RefPtr<ImageBuffer>);
 
     WEBCORE_EXPORT static RefPtr<Image> sinkIntoImage(RefPtr<ImageBuffer>, PreserveResolution = PreserveResolution::No);
     static void drawConsuming(RefPtr<ImageBuffer>, GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1), const ImagePaintingOptions& = { });
@@ -114,7 +114,7 @@ public:
 protected:
     ImageBuffer() = default;
 
-    virtual NativeImagePtr sinkIntoNativeImage() = 0;
+    virtual RefPtr<NativeImage> sinkIntoNativeImage() = 0;
     virtual RefPtr<Image> sinkIntoImage(PreserveResolution = PreserveResolution::No) = 0;
     virtual void drawConsuming(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) = 0;
 };

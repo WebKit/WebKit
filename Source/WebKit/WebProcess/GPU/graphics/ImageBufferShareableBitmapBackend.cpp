@@ -96,14 +96,14 @@ ImageBufferBackendHandle ImageBufferShareableBitmapBackend::createImageBufferBac
     return ImageBufferBackendHandle(WTFMove(handle));
 }
 
-NativeImagePtr ImageBufferShareableBitmapBackend::copyNativeImage(BackingStoreCopy) const
+RefPtr<NativeImage> ImageBufferShareableBitmapBackend::copyNativeImage(BackingStoreCopy) const
 {
 #if USE(CG)
-    return m_bitmap->makeCGImageCopy();
+    return NativeImage::create(m_bitmap->makeCGImageCopy());
 #elif USE(DIRECT2D)
     return nullptr;
 #elif USE(CAIRO)
-    return m_bitmap->createCairoSurface();
+    return NativeImage::create(m_bitmap->createCairoSurface());
 #endif
 }
 

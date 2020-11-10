@@ -283,10 +283,10 @@ ImageDrawResult GraphicsContextImplDirect2D::drawTiledImage(Image& image, const 
     return GraphicsContextImpl::drawTiledImageImpl(graphicsContext(), image, destination, source, tileScaleFactor, hRule, vRule, imagePaintingOptions);
 }
 
-void GraphicsContextImplDirect2D::drawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void GraphicsContextImplDirect2D::drawNativeImage(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     auto& state = graphicsContext().state();
-    Direct2D::drawNativeImage(m_platformContext, image.get(), imageSize, destRect, srcRect, options, state.alpha, Direct2D::ShadowState(state));
+    Direct2D::drawNativeImage(m_platformContext, image.platformImage().get(), imageSize, destRect, srcRect, options, state.alpha, Direct2D::ShadowState(state));
 }
 
 void GraphicsContextImplDirect2D::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize&, const ImagePaintingOptions& options)

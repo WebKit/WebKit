@@ -263,7 +263,7 @@ private:
     void paint(WebCore::GraphicsContext&, const WebCore::FloatRect&) final;
     void paintCurrentFrameInContext(WebCore::GraphicsContext&, const WebCore::FloatRect&) final;
     bool copyVideoTextureToPlatformTexture(WebCore::GraphicsContextGLOpenGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool) final;
-    WebCore::NativeImagePtr nativeImageForCurrentTime() final;
+    RefPtr<WebCore::NativeImage> nativeImageForCurrentTime() final;
 
     WebCore::MediaPlayerIdentifier identifier() const final;
 

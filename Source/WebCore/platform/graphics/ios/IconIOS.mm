@@ -33,9 +33,10 @@
 
 namespace WebCore {
     
-Icon::Icon(const NativeImagePtr& image)
-    : m_cgImage(image)
+Icon::Icon(RefPtr<NativeImage>&& image)
+    : m_cgImage(WTFMove(image))
 {
+    ASSERT(m_cgImage);
 }
 
 Icon::~Icon()
@@ -47,12 +48,12 @@ RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& /*filenames*/)
     return nullptr;
 }
 
-RefPtr<Icon> Icon::createIconForImage(const RetainPtr<CGImageRef>& image)
+RefPtr<Icon> Icon::createIconForImage(PlatformImagePtr&& image)
 {
     if (!image)
         return nullptr;
 
-    return adoptRef(new Icon(image));
+    return adoptRef(new Icon(NativeImage::create(WTFMove(image))));
 }
 
 void Icon::paint(GraphicsContext& context, const FloatRect& destRect)
@@ -62,13 +63,9 @@ void Icon::paint(GraphicsContext& context, const FloatRect& destRect)
 
     GraphicsContextStateSaver stateSaver(context);
 
-    float width = CGImageGetWidth(m_cgImage.get());
-    float height = CGImageGetHeight(m_cgImage.get());
-    FloatSize size(width, height);
-    FloatRect srcRect(FloatPoint(), size);
-
+    FloatRect srcRect(FloatPoint::zero(), m_cgImage->size());
     context.setImageInterpolationQuality(InterpolationQuality::High);
-    context.drawNativeImage(m_cgImage.get(), size, destRect, srcRect);
+    context.drawNativeImage(*m_cgImage, srcRect.size(), destRect, srcRect);
 }
 
 }

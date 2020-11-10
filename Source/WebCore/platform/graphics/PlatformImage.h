@@ -37,13 +37,13 @@ typedef struct CGImage* CGImageRef;
 namespace WebCore {
 
 #if USE(CG)
-typedef RetainPtr<CGImageRef> NativeImagePtr;
+using PlatformImagePtr = RetainPtr<CGImageRef>;
 #elif USE(DIRECT2D)
-typedef COMPtr<ID2D1Bitmap> NativeImagePtr;
+using PlatformImagePtr = COMPtr<ID2D1Bitmap>;
 #elif USE(CAIRO)
-typedef RefPtr<cairo_surface_t> NativeImagePtr;
+using PlatformImagePtr = RefPtr<cairo_surface_t>;
 #elif USE(WINGDI)
-typedef RefPtr<SharedBitmap> NativeImagePtr;
+using PlatformImagePtr = RefPtr<SharedBitmap>;
 #endif
 
 }

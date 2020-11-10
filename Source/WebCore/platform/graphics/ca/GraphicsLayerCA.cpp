@@ -2593,7 +2593,7 @@ void GraphicsLayerCA::updateContentsImage()
         // FIXME: maybe only do trilinear if the image is being scaled down,
         // but then what if the layer size changes?
         m_contentsLayer->setMinificationFilter(PlatformCALayer::Trilinear);
-        m_contentsLayer->setContents(m_pendingContentsImage.get());
+        m_contentsLayer->setContents(m_pendingContentsImage->platformImage().get());
         m_pendingContentsImage = nullptr;
 
         if (m_layerClones) {

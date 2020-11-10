@@ -216,7 +216,7 @@ public:
 
 #if USE(GSTREAMER_GL)
     bool copyVideoTextureToPlatformTexture(GraphicsContextGLOpenGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool) override;
-    NativeImagePtr nativeImageForCurrentTime() override;
+    RefPtr<NativeImage> nativeImageForCurrentTime() override;
 #endif
 
     void updateEnabledVideoTrack();

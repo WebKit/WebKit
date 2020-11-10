@@ -57,7 +57,7 @@ RefPtr<BitmapImage> BitmapImage::create(HBITMAP hBitmap)
     // The BitmapImage takes ownership of this.
     RetainPtr<CGImageRef> cgImage = adoptCF(CGBitmapContextCreateImage(bitmapContext.get()));
 
-    return adoptRef(new BitmapImage(WTFMove(cgImage)));
+    return BitmapImage::create(WTFMove(cgImage));
 }
 
 bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)
@@ -91,8 +91,8 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext& ctxt, const Float
 {
     size_t frames = frameCount();
     for (size_t i = 0; i < frames; ++i) {
-        CGImageRef image = frameImageAtIndex(i).get();
-        if (image && CGImageGetHeight(image) == static_cast<size_t>(srcSize.height()) && CGImageGetWidth(image) == static_cast<size_t>(srcSize.width())) {
+        auto image = frameImageAtIndex(i);
+        if (image && image->size() == srcSize) {
             size_t currentFrame = m_currentFrame;
             m_currentFrame = i;
             draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, srcSize.width(), srcSize.height()), { compositeOp });

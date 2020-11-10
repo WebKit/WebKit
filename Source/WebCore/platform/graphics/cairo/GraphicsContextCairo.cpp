@@ -123,14 +123,14 @@ void GraphicsContext::drawRect(const FloatRect& rect, float borderThickness)
     Cairo::drawRect(*platformContext(), rect, borderThickness, state.fillColor, state.strokeStyle, state.strokeColor);
 }
 
-void GraphicsContext::platformDrawNativeImage(const NativeImagePtr& image, const FloatSize&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void GraphicsContext::drawPlatformImage(const PlatformImagePtr& image, const FloatSize&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     if (paintingDisabled())
         return;
 
     ASSERT(hasPlatformContext());
     auto& state = this->state();
-    Cairo::drawNativeImage(*platformContext(), image.get(), destRect, srcRect, { options, state.imageInterpolationQuality }, state.alpha, Cairo::ShadowState(state));
+    Cairo::drawPlatformImage(*platformContext(), image.get(), destRect, srcRect, { options, state.imageInterpolationQuality }, state.alpha, Cairo::ShadowState(state));
 }
 
 // This is only used to draw borders, so we should not draw shadows.
@@ -266,8 +266,8 @@ void GraphicsContext::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& de
     }
 
     ASSERT(hasPlatformContext());
-    if (auto surface = buffer.copyNativeImage(DontCopyBackingStore))
-        Cairo::clipToImageBuffer(*platformContext(), surface.get(), destRect);
+    if (auto nativeImage = buffer.copyNativeImage(DontCopyBackingStore))
+        Cairo::clipToImageBuffer(*platformContext(), nativeImage->platformImage().get(), destRect);
 }
 
 IntRect GraphicsContext::clipBounds() const
@@ -681,8 +681,8 @@ void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const
     }
 
     ASSERT(hasPlatformContext());
-    if (auto surface = image.nativeImageForCurrentFrame())
-        Cairo::drawPattern(*platformContext(), surface.get(), IntSize(image.size()), destRect, tileRect, patternTransform, phase, options);
+    if (auto nativeImage = image.nativeImageForCurrentFrame())
+        Cairo::drawPattern(*platformContext(), nativeImage->platformImage().get(), IntSize(image.size()), destRect, tileRect, patternTransform, phase, options);
 }
 
 void GraphicsContext::setPlatformShouldAntialias(bool enable)

@@ -177,7 +177,7 @@ RetainPtr<CIImage> FilterEffectRendererCoreImage::imageForSourceGraphic(SourceGr
     if (is<AcceleratedImageBuffer>(*sourceImage))
         return [CIImage imageWithIOSurface:downcast<AcceleratedImageBuffer>(*sourceImage).surface().surface()];
     
-    return [CIImage imageWithCGImage:sourceImage->copyNativeImage().get()];
+    return [CIImage imageWithCGImage:sourceImage->copyNativeImage()->platformImage().get()];
 }
 
 RetainPtr<CIImage> FilterEffectRendererCoreImage::imageForFEColorMatrix(const FEColorMatrix& effect, const Vector<RetainPtr<CIImage>>& inputImages)

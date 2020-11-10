@@ -554,14 +554,14 @@ void CairoOperationRecorder::drawImageBuffer(ImageBuffer&, const FloatRect&, con
     // FIXME: Not implemented.
 }
 
-void CairoOperationRecorder::drawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void CairoOperationRecorder::drawNativeImage(NativeImage& nativeImage, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     struct DrawNativeImage final : PaintingOperation, OperationData<RefPtr<cairo_surface_t>, FloatRect, FloatRect, ImagePaintingOptions, float, Cairo::ShadowState> {
         virtual ~DrawNativeImage() = default;
 
         void execute(PaintingOperationReplay& replayer) override
         {
-            Cairo::drawNativeImage(contextForReplay(replayer), arg<0>().get(), arg<1>(), arg<2>(), arg<3>(), arg<4>(), arg<5>());
+            Cairo::drawPlatformImage(contextForReplay(replayer), arg<0>().get(), arg<1>(), arg<2>(), arg<3>(), arg<4>(), arg<5>());
         }
 
         void dump(TextStream& ts) override
@@ -572,7 +572,7 @@ void CairoOperationRecorder::drawNativeImage(const NativeImagePtr& image, const 
 
     UNUSED_PARAM(imageSize);
     auto& state = graphicsContext().state();
-    append(createCommand<DrawNativeImage>(RefPtr<cairo_surface_t>(image.get()), destRect, srcRect, ImagePaintingOptions(options, state.imageInterpolationQuality), state.alpha, Cairo::ShadowState(state)));
+    append(createCommand<DrawNativeImage>(nativeImage.platformImage(), destRect, srcRect, ImagePaintingOptions(options, state.imageInterpolationQuality), state.alpha, Cairo::ShadowState(state)));
 }
 
 void CairoOperationRecorder::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
@@ -592,8 +592,8 @@ void CairoOperationRecorder::drawPattern(Image& image, const FloatRect& destRect
     };
 
     UNUSED_PARAM(spacing);
-    if (auto surface = image.nativeImageForCurrentFrame())
-        append(createCommand<DrawPattern>(WTFMove(surface), IntSize(image.size()), destRect, tileRect, patternTransform, phase, options));
+    if (auto nativeImage = image.nativeImageForCurrentFrame())
+        append(createCommand<DrawPattern>(nativeImage->platformImage(), IntSize(image.size()), destRect, tileRect, patternTransform, phase, options));
 }
 
 void CairoOperationRecorder::drawRect(const FloatRect& rect, float borderThickness)
@@ -1077,8 +1077,8 @@ void CairoOperationRecorder::clipToImageBuffer(ImageBuffer& buffer, const FloatR
     if (!image)
         return;
 
-    if (auto surface = image->nativeImageForCurrentFrame())
-        append(createCommand<ClipToImageBuffer>(RefPtr<cairo_surface_t>(surface.get()), destRect));
+    if (auto nativeImage = image->nativeImageForCurrentFrame())
+        append(createCommand<ClipToImageBuffer>(nativeImage->platformImage(), destRect));
 }
 
 void CairoOperationRecorder::applyDeviceScaleFactor(float)

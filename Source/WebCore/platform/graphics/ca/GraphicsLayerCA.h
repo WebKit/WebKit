@@ -46,6 +46,7 @@ class DisplayList;
 
 class FloatRoundedRect;
 class Image;
+class NativeImage;
 class TransformState;
 
 class GraphicsLayerCA : public GraphicsLayer, public PlatformCALayerClient {
@@ -600,8 +601,8 @@ private:
 
     Color m_contentsSolidColor;
 
-    RetainPtr<CGImageRef> m_uncorrectedContentsImage;
-    RetainPtr<CGImageRef> m_pendingContentsImage;
+    RefPtr<NativeImage> m_uncorrectedContentsImage;
+    RefPtr<NativeImage> m_pendingContentsImage;
     
     Vector<LayerPropertyAnimation> m_animations;
     Vector<LayerPropertyAnimation> m_baseValueTransformAnimations;

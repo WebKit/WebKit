@@ -74,7 +74,7 @@ Ref<Image> Image::loadPlatformResource(const char *name)
     return Image::nullImage();
 }
 
-RetainPtr<CFDataRef> BitmapImage::tiffRepresentation(const Vector<NativeImagePtr>& nativeImages)
+RetainPtr<CFDataRef> BitmapImage::tiffRepresentation(const Vector<Ref<NativeImage>>& nativeImages)
 {
     // If nativeImages.size() is zero, we know for certain this image doesn't have valid data
     // Even though the call to CGImageDestinationCreateWithData will fail and we'll handle it gracefully,
@@ -89,7 +89,7 @@ RetainPtr<CFDataRef> BitmapImage::tiffRepresentation(const Vector<NativeImagePtr
         return nullptr;
 
     for (const auto& nativeImage : nativeImages)
-        CGImageDestinationAddImage(destination.get(), nativeImage.get(), 0);
+        CGImageDestinationAddImage(destination.get(), nativeImage->platformImage().get(), 0);
 
     CGImageDestinationFinalize(destination.get());
     return data;
@@ -128,7 +128,7 @@ RetainPtr<NSImage> BitmapImage::snapshotNSImage()
     if (!nativeImage)
         return nullptr;
 
-    auto data = tiffRepresentation({ nativeImage });
+    auto data = tiffRepresentation({ makeRef(*nativeImage) });
     if (!data)
         return nullptr;
 

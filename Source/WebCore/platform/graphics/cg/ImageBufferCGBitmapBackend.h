@@ -42,7 +42,7 @@ public:
 
     GraphicsContext& context() const override;
 
-    NativeImagePtr copyNativeImage(BackingStoreCopy = CopyBackingStore) const override;
+    RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const override;
 
     Vector<uint8_t> toBGRAData() const override;
 

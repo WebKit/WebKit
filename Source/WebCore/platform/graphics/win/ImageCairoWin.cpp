@@ -93,17 +93,15 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext& ctxt, const Float
 {
     size_t frames = frameCount();
     for (size_t i = 0; i < frames; ++i) {
-        auto surface = frameImageAtIndex(i);
-        if (!surface)
+        auto nativeImage = frameImageAtIndex(i);
+        if (!nativeImage || nativeImage->size() != srcSize)
             continue;
 
-        if (cairo_image_surface_get_height(surface.get()) == static_cast<size_t>(srcSize.height()) && cairo_image_surface_get_width(surface.get()) == static_cast<size_t>(srcSize.width())) {
-            size_t currentFrame = m_currentFrame;
-            m_currentFrame = i;
-            draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, srcSize.width(), srcSize.height()), { compositeOp });
-            m_currentFrame = currentFrame;
-            return;
-        }
+        size_t currentFrame = m_currentFrame;
+        m_currentFrame = i;
+        draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, srcSize.width(), srcSize.height()), { compositeOp });
+        m_currentFrame = currentFrame;
+        return;
     }
 
     // No image of the correct size was found, fallback to drawing the current frame

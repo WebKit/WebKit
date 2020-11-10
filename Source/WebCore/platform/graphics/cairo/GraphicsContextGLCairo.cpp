@@ -56,9 +56,9 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
         source->setData(m_image->data(), true);
         if (!source->frameCount())
             return false;
-        m_imageSurface = source->createFrameImageAtIndex(0);
+        m_imageSurface = source->createFrameImageAtIndex(0)->platformImage();
     } else {
-        m_imageSurface = m_image->nativeImageForCurrentFrame();
+        m_imageSurface = m_image->nativeImageForCurrentFrame()->platformImage();
         // 1. For texImage2D with HTMLVideoElment input, assume no PremultiplyAlpha had been applied and the alpha value is 0xFF for each pixel,
         // which is true at present and may be changed in the future and needs adjustment accordingly.
         // 2. For texImage2D with HTMLCanvasElement input in which Alpha is already Premultiplied in this port, 

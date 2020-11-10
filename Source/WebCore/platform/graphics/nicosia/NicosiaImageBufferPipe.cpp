@@ -109,11 +109,14 @@ void NicosiaImageBufferPipeSource::handle(RefPtr<ImageBuffer>&& buffer)
                         return;
 
                     auto nativeImage = ImageBuffer::sinkIntoNativeImage(WTFMove(m_imageBuffer));
-                    auto size = nativeImageSize(nativeImage);
+                    if (!nativeImage)
+                        return;
 
-                    texture->reset(size, nativeImageHasAlpha(nativeImage) ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
+                    auto size = nativeImage->size();
+
+                    texture->reset(size, nativeImage->hasAlpha() ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
 #if USE(CAIRO)
-                    auto* surface = nativeImage.get();
+                    auto* surface = nativeImage->platformImage().get();
                     auto* imageData = reinterpret_cast<const char*>(cairo_image_surface_get_data(surface));
                     texture->updateContents(imageData, IntRect(IntPoint(), size), IntPoint(), cairo_image_surface_get_stride(surface));
 #else

@@ -82,7 +82,7 @@ unsigned ImageFrame::clearImage()
 
     unsigned frameBytes = this->frameBytes();
 
-    clearNativeImageSubimages(m_nativeImage);
+    m_nativeImage->clearSubimages();
     m_nativeImage = nullptr;
     m_decodingOptions = DecodingOptions();
 
@@ -121,7 +121,7 @@ Color ImageFrame::singlePixelSolidColor() const
     if (!hasNativeImage() || m_size != IntSize(1, 1))
         return Color();
 
-    return nativeImageSinglePixelSolidColor(m_nativeImage);
+    return m_nativeImage->singlePixelSolidColor();
 }
 
 }

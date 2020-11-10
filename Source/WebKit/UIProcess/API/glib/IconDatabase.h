@@ -44,7 +44,7 @@ public:
     void invalidate();
 
     void checkIconURLAndSetPageURLIfNeeded(const String& iconURL, const String& pageURL, AllowDatabaseWrite, CompletionHandler<void(bool, bool)>&&);
-    void loadIconForPageURL(const String&, AllowDatabaseWrite, CompletionHandler<void(WebCore::NativeImagePtr&&)>&&);
+    void loadIconForPageURL(const String&, AllowDatabaseWrite, CompletionHandler<void(WebCore::PlatformImagePtr&&)>&&);
     String iconURLForPageURL(const String&);
     void setIconForPageURL(const String& iconURL, const unsigned char*, size_t, const String& pageURL, AllowDatabaseWrite, CompletionHandler<void(bool)>&&);
     void clear(CompletionHandler<void()>&&);
@@ -71,7 +71,7 @@ private:
     WebCore::SQLiteDatabase m_db;
     HashMap<String, String> m_pageURLToIconURLMap;
     Lock m_pageURLToIconURLMapLock;
-    HashMap<String, std::pair<WebCore::NativeImagePtr, MonotonicTime>> m_loadedIcons;
+    HashMap<String, std::pair<WebCore::PlatformImagePtr, MonotonicTime>> m_loadedIcons;
     Lock m_loadedIconsLock;
 
     std::unique_ptr<WebCore::SQLiteStatement> m_iconIDForIconURLStatement;

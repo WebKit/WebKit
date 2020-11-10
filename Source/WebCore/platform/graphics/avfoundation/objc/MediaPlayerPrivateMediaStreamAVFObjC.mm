@@ -762,7 +762,7 @@ RetainPtr<PlatformLayer> MediaPlayerPrivateMediaStreamAVFObjC::createVideoFullsc
 void MediaPlayerPrivateMediaStreamAVFObjC::setVideoFullscreenLayer(PlatformLayer* videoFullscreenLayer, WTF::Function<void()>&& completionHandler)
 {
     updateCurrentFrameImage();
-    m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_imagePainter.cgImage);
+    m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_imagePainter.cgImage ? m_imagePainter.cgImage->platformImage() : nullptr);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setVideoFullscreenFrame(FloatRect frame)
@@ -955,7 +955,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateCurrentFrameImage()
         return;
 
     auto pixelBuffer = static_cast<CVPixelBufferRef>(CMSampleBufferGetImageBuffer(m_imagePainter.mediaSample->platformSample().sample.cmSampleBuffer));
-    m_imagePainter.cgImage = m_imagePainter.pixelBufferConformer->createImageFromPixelBuffer(pixelBuffer);
+    m_imagePainter.cgImage = NativeImage::create(m_imagePainter.pixelBufferConformer->createImageFromPixelBuffer(pixelBuffer));
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& destRect)
@@ -975,14 +975,14 @@ void MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext(GraphicsCo
     if (!m_imagePainter.cgImage || !m_imagePainter.mediaSample)
         return;
 
-    auto image = m_imagePainter.cgImage.get();
-    FloatRect imageRect(0, 0, CGImageGetWidth(image), CGImageGetHeight(image));
+    auto& image = m_imagePainter.cgImage;
+    FloatRect imageRect { FloatPoint::zero(), image->size() };
     if (!m_videoTransform)
         m_videoTransform = videoTransformationMatrix(*m_imagePainter.mediaSample);
     AffineTransform videoTransform = *m_videoTransform;
     FloatRect transformedDestRect = videoTransform.inverse().valueOr(AffineTransform()).mapRect(destRect);
     context.concatCTM(videoTransform);
-    context.drawNativeImage(image, imageRect.size(), transformedDestRect, imageRect);
+    context.drawNativeImage(*image, imageRect.size(), transformedDestRect, imageRect);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::acceleratedRenderingStateChanged()

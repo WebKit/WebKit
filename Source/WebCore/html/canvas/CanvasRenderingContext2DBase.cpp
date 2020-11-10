@@ -1635,8 +1635,8 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLVideoElement& vide
     checkOrigin(&video);
 
 #if USE(CG)
-    if (NativeImagePtr image = video.nativeImageForCurrentTime()) {
-        c->drawNativeImage(image, FloatSize(video.videoWidth(), video.videoHeight()), dstRect, srcRect);
+    if (auto image = video.nativeImageForCurrentTime()) {
+        c->drawNativeImage(*image, FloatSize(video.videoWidth(), video.videoHeight()), dstRect, srcRect);
         if (rectContainsCanvas(dstRect))
             didDrawEntireCanvas();
         else

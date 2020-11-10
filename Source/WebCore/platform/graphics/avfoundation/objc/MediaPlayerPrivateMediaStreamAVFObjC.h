@@ -232,7 +232,7 @@ private:
         CurrentFramePainter() = default;
         void reset();
 
-        RetainPtr<CGImageRef> cgImage;
+        RefPtr<NativeImage> cgImage;
         RefPtr<MediaSample> mediaSample;
         std::unique_ptr<PixelBufferConformerCV> pixelBufferConformer;
     };

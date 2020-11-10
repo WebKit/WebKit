@@ -63,10 +63,10 @@ public:
     void scheduleStartAnimation();
 
 #if USE(CAIRO)
-    NativeImagePtr nativeImageForCurrentFrame(const GraphicsContext* = nullptr) final;
+    RefPtr<NativeImage> nativeImageForCurrentFrame(const GraphicsContext* = nullptr) final;
 #endif
 #if USE(DIRECT2D)
-    NativeImagePtr nativeImage(const GraphicsContext* = nullptr) final;
+    RefPtr<NativeImage> nativeImage(const GraphicsContext* = nullptr) final;
 #endif
     
     Page* internalPage() { return m_page.get(); }

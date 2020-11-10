@@ -52,7 +52,7 @@ public:
         return std::unique_ptr<ImageBackingStore>(new ImageBackingStore(other));
     }
 
-    NativeImagePtr image() const;
+    PlatformImagePtr image() const;
 
     bool setSize(const IntSize& size)
     {

@@ -215,7 +215,7 @@ private:
 
     bool didLoadingProgress() const override;
 
-    NativeImagePtr nativeImageForCurrentTime() override;
+    RefPtr<NativeImage> nativeImageForCurrentTime() override;
     bool updateLastPixelBuffer();
     bool updateLastImage();
     void paint(GraphicsContext&, const FloatRect&) override;
@@ -301,7 +301,7 @@ private:
     RetainPtr<id> m_performTaskObserver;
     RetainPtr<AVStreamSession> m_streamSession;
     RetainPtr<CVPixelBufferRef> m_lastPixelBuffer;
-    RetainPtr<CGImageRef> m_lastImage;
+    RefPtr<NativeImage> m_lastImage;
     std::unique_ptr<PixelBufferConformerCV> m_rgbConformer;
     RefPtr<WebCoreDecompressionSession> m_decompressionSession;
     Deque<RetainPtr<id>> m_sizeChangeObservers;

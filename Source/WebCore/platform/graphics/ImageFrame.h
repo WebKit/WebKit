@@ -63,7 +63,7 @@ public:
     unsigned frameBytes() const { return hasNativeImage() ? (size().area() * sizeof(uint32_t)).unsafeGet() : 0; }
     SubsamplingLevel subsamplingLevel() const { return m_subsamplingLevel; }
 
-    NativeImagePtr nativeImage() const { return m_nativeImage; }
+    RefPtr<NativeImage> nativeImage() const { return m_nativeImage; }
 
     void setOrientation(ImageOrientation orientation) { m_orientation = orientation; };
     ImageOrientation orientation() const { return m_orientation; }
@@ -88,7 +88,7 @@ private:
     DecodingStatus m_decodingStatus { DecodingStatus::Invalid };
     IntSize m_size;
 
-    NativeImagePtr m_nativeImage;
+    RefPtr<NativeImage> m_nativeImage;
     SubsamplingLevel m_subsamplingLevel { SubsamplingLevel::Default };
     DecodingOptions m_decodingOptions;
 

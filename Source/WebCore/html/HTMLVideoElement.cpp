@@ -315,7 +315,7 @@ bool HTMLVideoElement::hasAvailableVideoFrame() const
     return player()->hasVideo() && player()->hasAvailableVideoFrame();
 }
 
-NativeImagePtr HTMLVideoElement::nativeImageForCurrentTime()
+RefPtr<NativeImage> HTMLVideoElement::nativeImageForCurrentTime()
 {
     if (!player())
         return nullptr;

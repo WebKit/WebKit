@@ -26,12 +26,8 @@
 #include "config.h"
 #include "NativeImage.h"
 
-#include "Color.h"
 #include "Direct2DOperations.h"
-#include "FloatRect.h"
 #include "GeometryUtilities.h"
-#include "GraphicsContext.h"
-#include "IntSize.h"
 #include "NotImplemented.h"
 #include "PlatformContextDirect2D.h"
 #include <d2d1.h>
@@ -50,60 +46,29 @@ static IWICImagingFactory* imagingFactory()
     return imagingFactory;
 }
 
-IntSize nativeImageSize(const NativeImagePtr& image)
+IntSize NativeImage::size() const
 {
-    UINT width = 0;
-    UINT height = 0;
-    if (!image)
-        return { };
-
-    return image->GetPixelSize();
+    return m_platformImage->GetPixelSize();
 }
 
-bool nativeImageHasAlpha(const NativeImagePtr& image)
+bool NativeImage::hasAlpha() const
 {
-    if (!image)
-        return false;
-
-    D2D1_PIXEL_FORMAT pixelFormat = image->GetPixelFormat();
+    D2D1_PIXEL_FORMAT pixelFormat = m_platformImage->GetPixelFormat();
     return pixelFormat.alphaMode != D2D1_ALPHA_MODE_IGNORE;
 }
 
-Color nativeImageSinglePixelSolidColor(const NativeImagePtr& image)
+Color NativeImage::singlePixelSolidColor() const
 {
-    if (!image || nativeImageSize(image) != IntSize(1, 1))
+    if (size() != IntSize(1, 1))
         return Color();
 
     notImplemented();
-
     return Color();
 }
 
-void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& srcSize, const ImagePaintingOptions& options)
-{
-    auto* platformContext = context.platformContext();
-
-    // Subsampling may have given us an image that is smaller than size().
-    IntSize subsampledImageSize = nativeImageSize(image);
-
-    // srcRect is in the coordinates of the unsubsampled image, so we have to map it to the subsampled image.
-    FloatRect adjustedSrcRect = srcRect;
-    if (subsampledImageSize != srcSize)
-        adjustedSrcRect = mapRect(srcRect, FloatRect({ }, srcSize), FloatRect({ }, subsampledImageSize));
-
-    auto& state = context.state();
-    Direct2D::drawNativeImage(*platformContext, image.get(), subsampledImageSize, destRect, adjustedSrcRect, options, state.alpha, Direct2D::ShadowState(state));
-}
-
-void clearNativeImageSubimages(const NativeImagePtr& image)
+void NativeImage::clearSubimages()
 {
     notImplemented();
-
-#if CACHE_SUBIMAGES
-    if (image)
-        subimageCache().clearImage(image.get());
-#endif
 }
-
 
 }

@@ -139,8 +139,10 @@ DragImageRef createDragImageFromImage(Image* img, ImageOrientation)
     CGContextSetFillColor(drawContext, white);
     CGContextFillRect(drawContext, rect);
     if (auto srcImage = img->nativeImage()) {
-        CGContextSetBlendMode(drawContext, kCGBlendModeNormal);
-        CGContextDrawImage(drawContext, rect, srcImage.get());
+        if (auto platformImage = srcImage->platformImage()) {
+            CGContextSetBlendMode(drawContext, kCGBlendModeNormal);
+            CGContextDrawImage(drawContext, rect, platformImage.get());
+        }
     }
     CGContextRelease(drawContext);
 

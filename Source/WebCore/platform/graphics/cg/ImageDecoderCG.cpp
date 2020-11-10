@@ -492,7 +492,7 @@ unsigned ImageDecoderCG::frameBytesAtIndex(size_t index, SubsamplingLevel subsam
     return (frameSize.area() * 4).unsafeGet();
 }
 
-NativeImagePtr ImageDecoderCG::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions)
+PlatformImagePtr ImageDecoderCG::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions)
 {
     LOG(Images, "ImageDecoder %p createFrameImageAtIndex %lu", this, index);
     RetainPtr<CFDictionaryRef> options;

@@ -86,11 +86,11 @@ static RetainPtr<UIImage> uiImageForImage(Image* image)
     if (!image)
         return nullptr;
 
-    auto cgImage = image->nativeImage();
-    if (!cgImage)
+    auto nativeImage = image->nativeImage();
+    if (!nativeImage)
         return nullptr;
 
-    return adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
+    return adoptNS([[UIImage alloc] initWithCGImage:nativeImage->platformImage().get()]);
 }
 
 static bool shouldUseDragImageToCreatePreviewForDragSource(const DragSourceState& source)

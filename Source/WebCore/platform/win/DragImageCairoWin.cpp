@@ -162,8 +162,8 @@ DragImageRef createDragImageFromImage(Image* img, ImageOrientation)
     cairo_set_source_rgb(cr, 1.0, 0.0, 1.0);
     cairo_fill_preserve(cr);
 
-    RefPtr<cairo_surface_t> surface = img->nativeImageForCurrentFrame();
-    if (surface) {
+    if (auto nativeImage = img->nativeImageForCurrentFrame()) {
+        auto& surface = nativeImage->platformImage();
         // Draw the image.
         cairo_set_source_surface(cr, surface.get(), 0.0, 0.0);
         cairo_paint(cr);

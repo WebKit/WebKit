@@ -103,7 +103,7 @@ PlatformLayer* VideoLayerManagerObjC::videoFullscreenLayer() const
     return m_videoFullscreenLayer.get();
 }
 
-void VideoLayerManagerObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, WTF::Function<void()>&& completionHandler, NativeImagePtr currentImage)
+void VideoLayerManagerObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, WTF::Function<void()>&& completionHandler, PlatformImagePtr currentImage)
 {
     if (m_videoFullscreenLayer == videoFullscreenLayer) {
         completionHandler();
@@ -167,7 +167,7 @@ void VideoLayerManagerObjC::setVideoFullscreenFrame(FloatRect videoFullscreenFra
     syncTextTrackBounds();
 }
 
-void VideoLayerManagerObjC::updateVideoFullscreenInlineImage(NativeImagePtr image)
+void VideoLayerManagerObjC::updateVideoFullscreenInlineImage(PlatformImagePtr image)
 {
     if (m_videoInlineLayer)
         [m_videoInlineLayer setContents:(__bridge id)image.get()];

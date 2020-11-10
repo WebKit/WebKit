@@ -1100,11 +1100,12 @@ bool ArgumentCoder<ImageHandle>::decode(Decoder& decoder, ImageHandle& imageHand
     return true;
 }
 
-static void encodeNativeImage(Encoder& encoder, const NativeImagePtr& image)
+void ArgumentCoder<Ref<NativeImage>>::encode(Encoder& encoder, const Ref<NativeImage>& image)
 {
-    auto imageSize = nativeImageSize(image);
+    auto imageSize = image->size();
     auto bitmap = ShareableBitmap::createShareable(imageSize, { });
     auto graphicsContext = bitmap->createGraphicsContext();
+
     encoder << !!graphicsContext;
     if (!graphicsContext)
         return;
@@ -1117,63 +1118,30 @@ static void encodeNativeImage(Encoder& encoder, const NativeImagePtr& image)
     encoder << handle;
 }
 
-static WARN_UNUSED_RETURN bool decodeNativeImage(Decoder& decoder, NativeImagePtr& nativeImage)
+Optional<Ref<NativeImage>> ArgumentCoder<Ref<NativeImage>>::decode(Decoder& decoder)
 {
     Optional<bool> didCreateGraphicsContext;
     decoder >> didCreateGraphicsContext;
     if (!didCreateGraphicsContext.hasValue() || !didCreateGraphicsContext.value())
-        return false;
+        return WTF::nullopt;
 
     ShareableBitmap::Handle handle;
     if (!decoder.decode(handle))
-        return false;
+        return WTF::nullopt;
 
     auto bitmap = ShareableBitmap::create(handle);
     if (!bitmap)
-        return false;
+        return WTF::nullopt;
 
     auto image = bitmap->createImage();
     if (!image)
-        return false;
+        return WTF::nullopt;
 
-    nativeImage = image->nativeImage();
+    auto nativeImage = image->nativeImage();
     if (!nativeImage)
-        return false;
+        return WTF::nullopt;
 
-    return true;
-}
-
-static void encodeOptionalNativeImage(Encoder& encoder, const NativeImagePtr& image)
-{
-    bool hasImage = !!image;
-    encoder << hasImage;
-
-    if (hasImage)
-        encodeNativeImage(encoder, image);
-}
-
-static WARN_UNUSED_RETURN bool decodeOptionalNativeImage(Decoder& decoder, NativeImagePtr& image)
-{
-    image = nullptr;
-
-    bool hasImage;
-    if (!decoder.decode(hasImage))
-        return false;
-
-    if (!hasImage)
-        return true;
-
-    return decodeNativeImage(decoder, image);
-}
-
-void ArgumentCoder<NativeImagePtr>::encode(Encoder& encoder, const NativeImagePtr& image)
-{
-    encodeOptionalNativeImage(encoder, image);
-}
-
-bool ArgumentCoder<NativeImagePtr>::decode(Decoder& decoder, NativeImagePtr& image)
-{
-    return decodeOptionalNativeImage(decoder, image);
+    return makeRef(*nativeImage);
 }
 
 void ArgumentCoder<Ref<Font>>::encode(Encoder& encoder, const Ref<WebCore::Font>& font)

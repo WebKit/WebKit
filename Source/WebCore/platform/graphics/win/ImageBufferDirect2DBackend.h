@@ -42,7 +42,7 @@ public:
     GraphicsContext& context() const override;
     void flushContext() override;
 
-    NativeImagePtr copyNativeImage(BackingStoreCopy = CopyBackingStore) const override;
+    RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const override;
     RefPtr<Image> copyImage(BackingStoreCopy, PreserveResolution) const override;
 
     RefPtr<Image> sinkIntoImage(PreserveResolution) override;
@@ -59,7 +59,7 @@ protected:
 
     std::unique_ptr<PlatformContextDirect2D> m_platformContext;
     std::unique_ptr<GraphicsContext> m_context;
-    NativeImagePtr m_bitmap;
+    PlatformImagePtr m_bitmap;
 };
 
 } // namespace WebCore

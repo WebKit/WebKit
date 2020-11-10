@@ -535,8 +535,10 @@ id <DOMEventTarget> kit(EventTarget* target)
     auto textIndicator = TextIndicator::createWithRange(makeRangeSelectingNodeContents(node), options, TextIndicatorPresentationTransition::None, FloatSize(margin, margin));
 
     if (textIndicator) {
-        if (Image* image = textIndicator->contentImage())
-            *cgImage = image->nativeImage().autorelease();
+        if (Image* image = textIndicator->contentImage()) {
+            auto contentImage = image->nativeImage()->platformImage();
+            *cgImage = contentImage.autorelease();
+        }
     }
 
     if (!*cgImage) {

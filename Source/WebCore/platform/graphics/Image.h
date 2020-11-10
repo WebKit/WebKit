@@ -34,7 +34,7 @@
 #include "ImageOrientation.h"
 #include "ImagePaintingOptions.h"
 #include "ImageTypes.h"
-#include "NativeImagePtr.h"
+#include "NativeImage.h"
 #include "Timer.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/Optional.h>
@@ -153,10 +153,10 @@ public:
 
     enum TileRule { StretchTile, RoundTile, SpaceTile, RepeatTile };
 
-    virtual NativeImagePtr nativeImage(const GraphicsContext* = nullptr) { return nullptr; }
-    virtual NativeImagePtr nativeImageForCurrentFrame(const GraphicsContext* = nullptr) { return nullptr; }
-    virtual NativeImagePtr preTransformedNativeImageForCurrentFrame(bool = true, const GraphicsContext* = nullptr) { return nullptr; }
-    virtual NativeImagePtr nativeImageOfSize(const IntSize&, const GraphicsContext* = nullptr) { return nullptr; }
+    virtual RefPtr<NativeImage> nativeImage(const GraphicsContext* = nullptr) { return nullptr; }
+    virtual RefPtr<NativeImage> nativeImageForCurrentFrame(const GraphicsContext* = nullptr) { return nullptr; }
+    virtual RefPtr<NativeImage> preTransformedNativeImageForCurrentFrame(bool = true, const GraphicsContext* = nullptr) { return nullptr; }
+    virtual RefPtr<NativeImage> nativeImageOfSize(const IntSize&, const GraphicsContext* = nullptr) { return nullptr; }
 
     // Accessors for native image formats.
 

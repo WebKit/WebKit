@@ -116,7 +116,7 @@ protected:
         return m_backend ? m_backend->externalMemoryCost() : 0;
     }
 
-    NativeImagePtr copyNativeImage(BackingStoreCopy copyBehavior = CopyBackingStore) const override
+    RefPtr<NativeImage> copyNativeImage(BackingStoreCopy copyBehavior = CopyBackingStore) const override
     {
         if (auto* backend = ensureBackendCreated()) {
             const_cast<ConcreteImageBuffer&>(*this).flushDrawingContext();
@@ -150,7 +150,7 @@ protected:
         }
     }
 
-    NativeImagePtr sinkIntoNativeImage() override
+    RefPtr<NativeImage> sinkIntoNativeImage() override
     {
         if (auto* backend = ensureBackendCreated()) {
             flushDrawingContext();
