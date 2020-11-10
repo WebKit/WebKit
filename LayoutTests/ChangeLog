@@ -1,3 +1,63 @@
+2020-11-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Rebaseline tests after r269510, r269598, r269600 and r269612.
+
+        Unreviewed GTK/WPE gardening.
+
+        * platform/gtk/editing/selection/simple-line-layout-caret-is-gone-expected.txt: Removed.
+        * platform/gtk/fast/dom/Window/window-lookup-precedence-expected.txt:
+        * platform/gtk/fast/repaint/focus-ring-repaint-expected.txt:
+        * platform/gtk/fast/table/005-expected.txt: Copied from LayoutTests/platform/glib/fast/table/005-expected.txt.
+        * platform/gtk/fast/table/unbreakable-images-quirk-expected.txt: Copied from LayoutTests/platform/glib/fast/table/unbreakable-images-quirk-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource.image-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/interfaces-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug2973-expected.txt: Renamed from LayoutTests/platform/glib/tables/mozilla/bugs/bug2973-expected.txt.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug8499-expected.txt:
+        * platform/wpe/css3/filters/effect-brightness-clamping-expected.txt:
+        * platform/wpe/css3/filters/effect-brightness-clamping-hw-expected.txt:
+        * platform/wpe/css3/filters/effect-brightness-expected.txt:
+        * platform/wpe/css3/filters/effect-brightness-hw-expected.txt:
+        * platform/wpe/css3/filters/effect-combined-expected.txt:
+        * platform/wpe/css3/filters/effect-combined-hw-expected.txt:
+        * platform/wpe/css3/filters/effect-contrast-expected.txt:
+        * platform/wpe/css3/filters/effect-contrast-hw-expected.txt:
+        * platform/wpe/css3/filters/effect-drop-shadow-expected.txt:
+        * platform/wpe/css3/filters/effect-drop-shadow-hw-expected.txt:
+        * platform/wpe/css3/filters/effect-grayscale-expected.txt:
+        * platform/wpe/css3/filters/effect-grayscale-hw-expected.txt:
+        * platform/wpe/css3/filters/effect-hue-rotate-expected.txt:
+        * platform/wpe/css3/filters/effect-hue-rotate-hw-expected.txt:
+        * platform/wpe/css3/filters/effect-invert-expected.txt:
+        * platform/wpe/css3/filters/effect-invert-hw-expected.txt:
+        * platform/wpe/css3/filters/effect-opacity-expected.txt:
+        * platform/wpe/css3/filters/effect-opacity-hw-expected.txt:
+        * platform/wpe/css3/filters/effect-saturate-expected.txt:
+        * platform/wpe/css3/filters/effect-saturate-hw-expected.txt:
+        * platform/wpe/css3/filters/effect-sepia-expected.txt:
+        * platform/wpe/css3/filters/effect-sepia-hw-expected.txt:
+        * platform/wpe/fast/table/005-expected.txt: Renamed from LayoutTests/platform/glib/fast/table/005-expected.txt.
+        * platform/wpe/fast/table/unbreakable-images-quirk-expected.txt: Renamed from LayoutTests/platform/glib/fast/table/unbreakable-images-quirk-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource.image-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/color-scheme/meta-color-scheme-attribute-changes-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/color-scheme/meta-color-scheme-empty-content-value-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/color-scheme/meta-color-scheme-first-valid-applies-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/color-scheme/meta-color-scheme-insert-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/color-scheme/meta-color-scheme-no-content-value-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/color-scheme/meta-color-scheme-presentational-hint-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/color-scheme/meta-color-scheme-remove-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/color-scheme/meta-color-scheme-remove-head-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/color-scheme/meta-color-scheme-single-value-in-body-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/color-scheme/meta-color-scheme-single-value-in-head-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/color-scheme/meta-color-scheme-single-value-in-shadow-tree-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection-pointer-expected.txt: Added.
+        * platform/wpe/tables/mozilla/bugs/bug101674-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug2973-expected.txt: Added.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug8499-expected.txt:
+
 2020-11-10  Martin Robinson  <mrobinson@igalia.com>
 
         Scroll-snap on the root aligns to the body margin edge, not the viewport edge

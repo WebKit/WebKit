@@ -1,0 +1,5 @@
+
+FAIL Initial color-scheme assert_equals: expected (string) "normal" but got (undefined) undefined
+FAIL Inserted meta color-scheme applies assert_equals: expected (string) "light" but got (undefined) undefined
+FAIL Inserted meta color-scheme before existing in head applies assert_equals: expected (string) "dark" but got (undefined) undefined
+

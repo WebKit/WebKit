@@ -1,0 +1,4 @@
+
+FAIL Meta color-scheme applies. assert_equals: expected (string) "dark" but got (undefined) undefined
+FAIL Initial value after removing head including meta color-scheme. assert_equals: expected (string) "normal" but got (undefined) undefined
+

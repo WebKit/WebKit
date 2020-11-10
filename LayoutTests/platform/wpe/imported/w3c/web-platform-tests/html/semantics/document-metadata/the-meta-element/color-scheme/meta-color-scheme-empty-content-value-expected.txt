@@ -1,0 +1,3 @@
+
+FAIL Meta color-scheme with empty content attribute has no effect. assert_equals: expected (string) "normal" but got (undefined) undefined
+
