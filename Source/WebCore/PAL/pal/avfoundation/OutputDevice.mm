@@ -59,8 +59,12 @@ uint8_t OutputDevice::deviceFeatures() const
 
 bool OutputDevice::supportsSpatialAudio() const
 {
+#if HAVE(AVOUTPUTDEVICE_SPATIALAUDIO)
     return [m_device respondsToSelector:@selector(supportsHeadTrackedSpatialAudio)]
         && [m_device supportsHeadTrackedSpatialAudio];
+#else
+    return false;
+#endif
 }
 
 }

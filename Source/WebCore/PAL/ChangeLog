@@ -1,5 +1,12 @@
 2020-11-10  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed internal macOS build-fix.
+
+        * pal/avfoundation/OutputDevice.mm:
+        (PAL::OutputDevice::supportsSpatialAudio const):
+
+2020-11-10  Jer Noble  <jer.noble@apple.com>
+
         Add support for AudioConfiguration.spatialRendering
         https://bugs.webkit.org/show_bug.cgi?id=218727
         <rdar://problem/71213348>

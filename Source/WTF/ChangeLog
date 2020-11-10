@@ -1,3 +1,9 @@
+2020-11-10  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed internal macOS build-fix.
+
+        * wtf/PlatformHave.h:
+
 2020-11-10  Rob Buis  <rbuis@igalia.com>
 
         Parse aspect-ratio CSS property
