@@ -1,3 +1,11 @@
+2020-11-09  Lauro Moura  <lmoura@igalia.com>
+
+        [WebDriver] Gardening some WPE failures
+
+        Unreviewed test gardening.
+
+        * TestExpectations.json:
+
 2020-11-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: handle surrogate pairs in keyboard actions
