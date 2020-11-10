@@ -8,6 +8,10 @@ PASS align-items (type: discrete) has testInterpolation function
 PASS align-items uses discrete animation when animating between "flex-start" and "flex-end" with linear easing
 PASS align-items uses discrete animation when animating between "flex-start" and "flex-end" with effect easing
 PASS align-items uses discrete animation when animating between "flex-start" and "flex-end" with keyframe easing
+PASS align-self (type: discrete) has testInterpolation function
+PASS align-self uses discrete animation when animating between "flex-start" and "flex-end" with linear easing
+PASS align-self uses discrete animation when animating between "flex-start" and "flex-end" with effect easing
+PASS align-self uses discrete animation when animating between "flex-start" and "flex-end" with keyframe easing
 PASS background-color (type: color) has testInterpolation function
 PASS background-color supports animating as color of rgb()
 PASS background-color supports animating as color of #RGB

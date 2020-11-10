@@ -6,6 +6,9 @@ PASS align-content: "flex-start" onto "flex-end"
 PASS align-items (type: discrete) has testAccumulation function
 PASS align-items: "flex-end" onto "flex-start"
 PASS align-items: "flex-start" onto "flex-end"
+PASS align-self (type: discrete) has testAccumulation function
+PASS align-self: "flex-end" onto "flex-start"
+PASS align-self: "flex-start" onto "flex-end"
 PASS background-color (type: color) has testAccumulation function
 FAIL background-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL background-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
