@@ -553,6 +553,7 @@
     (allow iokit-get-properties
         (iokit-property "ADSSupported")
         (iokit-property "IOAVDHEVCDecodeCapabilities")
+        (iokit-property "IOGLESBundleName") ;; <rdar://problem/67473780>
         (iokit-property "IOSurfaceAcceleratorCapabilitiesDict") ;; <rdar://problem/63696732>
         (iokit-property "acoustic-id") ;; <rdar://problem/65290967>
     ))

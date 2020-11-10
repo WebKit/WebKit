@@ -1,3 +1,17 @@
+2020-11-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Allow IOGLESBundleName for Apple Silicon Macs
+        https://bugs.webkit.org/show_bug.cgi?id=218774
+        <rdar://problem/67473780>
+
+        Reviewed by Tim Horton.
+
+        The WebContent should be able to read the IOGLESBundleName IOKit property on
+        Apple Silicon Macs. This will help the OpenGL stack make better choices about
+        which bundles to load when processing WebGL content.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-11-10  Said Abou-Hallawa  <said@apple.com>
 
         [macCatalyst] Fix various build breaks
