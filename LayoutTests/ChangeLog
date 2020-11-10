@@ -1,3 +1,14 @@
+2020-11-10  Eric Carlson  <eric.carlson@apple.com>
+
+        REGRESSION (r269407): ASSERTION FAILED: willBeComposited == needsToBeComposited(layer, queryData) in WebCore::RenderLayerCompositor::computeCompositingRequirements
+        https://bugs.webkit.org/show_bug.cgi?id=218723
+        <rdar://problem/71208603>
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Skip plugins/quicktime-plugin-replacement.html, the plug-in
+        replacement is an iOS-only feature.
+
 2020-11-10  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for LayoutTests/accessibility/mac/search-predicate.html in isolated tree mode.

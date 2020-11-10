@@ -654,7 +654,9 @@ fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Failure ]
 
 webkit.org/b/187408 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any.worker.html [ Slow ]
 
-webkit.org/b/135015 plugins/quicktime-plugin-replacement.html [ Pass Failure ]
+# This tests an iOS-only feature and the test sometimes asserts in debug macOS builds, so
+# don't run the test on macOS.
+plugins/quicktime-plugin-replacement.html [ Skip ]
 
 webkit.org/b/131477 fast/repaint/obscured-background-no-repaint.html [ Pass Failure ]
 
