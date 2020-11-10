@@ -49,13 +49,6 @@ PASS elements[1] = insertElementWithId('img', 'foo'); document.images.length is 
 PASS document.images['foo'] is elements[0]
 PASS removeTestElements(); document.images.length is 0
 
-document.applets
-PASS document.applets.length is 0
-PASS elements[0] = insertElementWithId('applet', 'foo'); document.applets.length is 1
-PASS elements[1] = insertElementWithId('applet', 'foo'); document.applets.length is 2
-PASS document.applets['foo'] is elements[0]
-PASS removeTestElements(); document.applets.length is 0
-
 document.embeds
 PASS document.embeds.length is 0
 PASS elements[0] = insertElementWithId('embed', 'foo'); document.embeds.length is 1

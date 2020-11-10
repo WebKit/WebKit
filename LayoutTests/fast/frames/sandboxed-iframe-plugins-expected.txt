@@ -5,8 +5,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 NOTE: The first sub-test will fail in DumpRenderTree, since DumpRenderTree does not support applets. That sub-test must be run in Safari instead.
 
-FAIL (self.appletFrame1.document['app'].init) != undefined should be true. Was false.
-PASS (self.appletFrame2.document['app'].init) == undefined is true
 PASS (self.embedFrame1.document.getElementById('plugin').destroyStream) != undefined is true
 PASS (self.embedFrame2.document.getElementById('plugin').destroyStream) == undefined is true
 PASS (self.objectFrame1.document.getElementById('plugin').destroyStream) != undefined is true

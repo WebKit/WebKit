@@ -32,7 +32,7 @@ namespace WebCore {
     class HTMLElement;
     class JSHTMLElement;
 
-    // JavaScript access to plug-in-exported properties for JSHTMLAppletElement, JSHTMLEmbedElement and JSHTMLObjectElement.
+    // JavaScript access to plug-in-exported properties for JSHTMLEmbedElement and JSHTMLObjectElement.
 
     JSC::Bindings::Instance* pluginInstance(HTMLElement&);
     WEBCORE_EXPORT JSC::JSObject* pluginScriptObject(JSC::JSGlobalObject*, JSHTMLElement*);

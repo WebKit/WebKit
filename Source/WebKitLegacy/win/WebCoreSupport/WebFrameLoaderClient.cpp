@@ -66,7 +66,6 @@
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameTree.h>
 #include <WebCore/FrameView.h>
-#include <WebCore/HTMLAppletElement.h>
 #include <WebCore/HTMLFrameElement.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/HTMLNames.h>
@@ -1140,36 +1139,6 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget& pluginWidget)
         m_manualLoader = toPluginView(&pluginWidget);
     else 
         m_manualLoader = static_cast<EmbeddedWidget*>(&pluginWidget);
-}
-
-RefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& pluginSize, HTMLAppletElement& element, const URL& /*baseURL*/, const Vector<String>& paramNames, const Vector<String>& paramValues)
-{
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    auto pluginView = PluginView::create(core(m_webFrame), pluginSize, &element, URL(), paramNames, paramValues, "application/x-java-applet", false);
-
-    // Check if the plugin can be loaded successfully
-    if (pluginView->plugin() && pluginView->plugin()->load())
-        return WTFMove(pluginView);
-
-    WebView* webView = m_webFrame->webView();
-    COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
-    if (FAILED(webView->resourceLoadDelegate(&resourceLoadDelegate)))
-        return WTFMove(pluginView);
-
-    COMPtr<CFDictionaryPropertyBag> userInfoBag = CFDictionaryPropertyBag::createInstance();
-
-    ResourceError resourceError(String(WebKitErrorDomain), WebKitErrorJavaUnavailable, URL(), WEB_UI_STRING("Java is unavailable", "WebKitErrorJavaUnavailable description"));
-    COMPtr<IWebError> error(AdoptCOM, WebError::createInstance(resourceError, userInfoBag.get()));
-
-    Frame* coreFrame = core(m_webFrame);
-    ASSERT(coreFrame);
-
-    resourceLoadDelegate->plugInFailedWithError(webView, error.get(), getWebDataSource(coreFrame->loader().documentLoader()));
-
-    return WTFMove(pluginView);
-#else
-    return nullptr;
-#endif
 }
 
 WebHistory* WebFrameLoaderClient::webHistory() const

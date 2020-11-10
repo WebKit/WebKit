@@ -541,11 +541,6 @@ RefPtr<Widget> EmptyFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInEl
     return nullptr;
 }
 
-RefPtr<Widget> EmptyFrameLoaderClient::createJavaAppletWidget(const IntSize&, HTMLAppletElement&, const URL&, const Vector<String>&, const Vector<String>&)
-{
-    return nullptr;
-}
-
 inline EmptyFrameNetworkingContext::EmptyFrameNetworkingContext()
     : FrameNetworkingContext { nullptr }
 {

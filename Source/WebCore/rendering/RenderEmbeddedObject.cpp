@@ -35,7 +35,6 @@
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "GraphicsContext.h"
-#include "HTMLAppletElement.h"
 #include "HTMLEmbedElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
@@ -96,13 +95,6 @@ void RenderEmbeddedObject::willBeDestroyed()
 {
     view().frameView().removeEmbeddedObjectToUpdate(*this);
     RenderWidget::willBeDestroyed();
-}
-
-RenderPtr<RenderEmbeddedObject> RenderEmbeddedObject::createForApplet(HTMLAppletElement& applet, RenderStyle&& style)
-{
-    auto renderer = createRenderer<RenderEmbeddedObject>(applet, WTFMove(style));
-    renderer->setInline(true);
-    return renderer;
 }
 
 bool RenderEmbeddedObject::requiresLayer() const

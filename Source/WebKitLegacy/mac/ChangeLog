@@ -1,3 +1,37 @@
+2020-11-09  Chris Dumez  <cdumez@apple.com>
+
+        Unexpose obsolete HTMLAppletElement interface
+        https://bugs.webkit.org/show_bug.cgi?id=218677
+
+        Reviewed by Darin Adler.
+
+        * DOM/DOMHTMLAppletElement.mm:
+        (-[DOMHTMLAppletElement align]):
+        (-[DOMHTMLAppletElement setAlign:]):
+        (-[DOMHTMLAppletElement alt]):
+        (-[DOMHTMLAppletElement setAlt:]):
+        (-[DOMHTMLAppletElement archive]):
+        (-[DOMHTMLAppletElement setArchive:]):
+        (-[DOMHTMLAppletElement code]):
+        (-[DOMHTMLAppletElement setCode:]):
+        (-[DOMHTMLAppletElement codeBase]):
+        (-[DOMHTMLAppletElement setCodeBase:]):
+        (-[DOMHTMLAppletElement height]):
+        (-[DOMHTMLAppletElement setHeight:]):
+        (-[DOMHTMLAppletElement hspace]):
+        (-[DOMHTMLAppletElement setHspace:]):
+        (-[DOMHTMLAppletElement name]):
+        (-[DOMHTMLAppletElement setName:]):
+        (-[DOMHTMLAppletElement object]):
+        (-[DOMHTMLAppletElement setObject:]):
+        (-[DOMHTMLAppletElement vspace]):
+        (-[DOMHTMLAppletElement setVspace:]):
+        (-[DOMHTMLAppletElement width]):
+        (-[DOMHTMLAppletElement setWidth:]):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::redirectDataToPlugin):
+
 2020-11-09  Alan Bujtas  <zalan@apple.com>
 
         Unreviewed, reverting r269603.

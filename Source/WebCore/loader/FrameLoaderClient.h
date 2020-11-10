@@ -79,7 +79,6 @@ class FormState;
 class Frame;
 class FrameLoader;
 class FrameNetworkingContext;
-class HTMLAppletElement;
 class HTMLFormElement;
 class HTMLFrameOwnerElement;
 class HTMLPlugInElement;
@@ -288,8 +287,6 @@ public:
     virtual RefPtr<Frame> createFrame(const String& name, HTMLFrameOwnerElement&) = 0;
     virtual RefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement&, const URL&, const Vector<String>&, const Vector<String>&, const String&, bool loadManually) = 0;
     virtual void redirectDataToPlugin(Widget&) = 0;
-
-    virtual RefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement&, const URL& baseURL, const Vector<String>& paramNames, const Vector<String>& paramValues) = 0;
 
     virtual ObjectContentType objectContentType(const URL&, const String& mimeType) = 0;
     virtual String overrideMediaType() const = 0;

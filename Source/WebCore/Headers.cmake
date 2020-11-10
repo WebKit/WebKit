@@ -591,7 +591,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/FormAssociatedElement.h
     html/FormNamedItem.h
     html/HTMLAnchorElement.h
-    html/HTMLAppletElement.h
     html/HTMLAreaElement.h
     html/HTMLAttachmentElement.h
     html/HTMLAudioElement.h

@@ -86,7 +86,6 @@ function testFirstItemReturnsFirstMatch(collection, initialLength, elementNames,
 }
 
 testFirstItemReturnsFirstMatch('document.images', 0, ['img', 'img']);
-testFirstItemReturnsFirstMatch('document.applets', 0, ['applet', 'applet']);
 testFirstItemReturnsFirstMatch('document.embeds', 0, ['embed', 'embed']);
 testFirstItemReturnsFirstMatch('document.forms', 1, ['form', 'form']);
 testFirstItemReturnsFirstMatch('document.links', 0, ['a', 'a', 'area'], {'href': 'some url'});

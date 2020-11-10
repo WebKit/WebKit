@@ -94,7 +94,6 @@
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/FrameTree.h>
 #import <WebCore/FrameView.h>
-#import <WebCore/HTMLAppletElement.h>
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLFrameElement.h>
 #import <WebCore/HTMLFrameOwnerElement.h>
@@ -2032,61 +2031,6 @@ void WebFrameLoaderClient::redirectDataToPlugin(WebCore::Widget& pluginWidget)
     }
 
     END_BLOCK_OBJC_EXCEPTIONS
-}
-    
-RefPtr<WebCore::Widget> WebFrameLoaderClient::createJavaAppletWidget(const WebCore::IntSize& size, WebCore::HTMLAppletElement& element, const URL& baseURL,
-    const Vector<String>& paramNames, const Vector<String>& paramValues)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-
-    NSView *view = nil;
-
-    NSString *MIMEType = @"application/x-java-applet";
-    
-    WebView *webView = getWebView(m_webFrame.get());
-
-    WebBasePluginPackage *pluginPackage = [webView _pluginForMIMEType:MIMEType];
-
-    int errorCode = WebKitErrorJavaUnavailable;
-
-    if (pluginPackage) {
-        if (shouldBlockPlugin(pluginPackage)) {
-            errorCode = WebKitErrorBlockedPlugInVersion;
-            if (is<WebCore::RenderEmbeddedObject>(element.renderer()))
-                downcast<WebCore::RenderEmbeddedObject>(*element.renderer()).setPluginUnavailabilityReason(WebCore::RenderEmbeddedObject::InsecurePluginVersion);
-        } else {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-            if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
-                view = [[[NETSCAPE_PLUGIN_VIEW alloc] initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
-                    pluginPackage:(WebNetscapePluginPackage *)pluginPackage
-                    URL:nil
-                    baseURL:baseURL
-                    MIMEType:MIMEType
-                    attributeKeys:createNSArray(paramNames).get()
-                    attributeValues:createNSArray(paramValues).get()
-                    loadManually:NO
-                    element:&element] autorelease];
-                if (view)
-                    return adoptRef(new NetscapePluginWidget(static_cast<WebBaseNetscapePluginView *>(view)));
-            }
-#endif
-        }
-    }
-
-    if (!view) {
-        WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(getWebView(m_webFrame.get()));
-        if (implementations->plugInFailedWithErrorFunc) {
-            NSString *pluginName = pluginPackage ? (NSString *)[pluginPackage pluginInfo].name : nil;
-            NSError *error = [[NSError alloc] _initWithPluginErrorCode:errorCode contentURL:nil pluginPageURL:nil pluginName:pluginName MIMEType:MIMEType];
-            CallResourceLoadDelegate(implementations->plugInFailedWithErrorFunc, [m_webFrame.get() webView],
-                                     @selector(webView:plugInFailedWithError:dataSource:), error, [m_webFrame.get() _dataSource]);
-            [error release];
-        }
-    }
-
-    END_BLOCK_OBJC_EXCEPTIONS
-
-    return 0;
 }
 
 void WebFrameLoaderClient::sendH2Ping(const URL& url, CompletionHandler<void(Expected<Seconds, WebCore::ResourceError>&&)>&& completionHandler)

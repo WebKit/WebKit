@@ -8,7 +8,7 @@ a interfaceName=HTMLAnchorElement
 abbr interfaceName=HTMLElement
 acronym interfaceName=HTMLElement
 address interfaceName=HTMLElement
-applet
+applet interfaceName=HTMLUnknownElement
 area
 article interfaceName=HTMLElement
 aside interfaceName=HTMLElement

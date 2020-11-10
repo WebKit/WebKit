@@ -17,7 +17,7 @@ ALERT: PASS: window.Element should be 'function Element() {    [native code]}' a
 ALERT: PASS: window.EvalError should be 'function EvalError() {    [native code]}' and is.
 ALERT: PASS: window.Event should be 'function Event() {    [native code]}' and is.
 ALERT: PASS: window.HTMLAnchorElement should be 'function HTMLAnchorElement() {    [native code]}' and is.
-ALERT: PASS: window.HTMLAppletElement should be 'function HTMLAppletElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLAppletElement should be 'undefined' and is.
 ALERT: PASS: window.HTMLAreaElement should be 'function HTMLAreaElement() {    [native code]}' and is.
 ALERT: PASS: window.HTMLBaseElement should be 'function HTMLBaseElement() {    [native code]}' and is.
 ALERT: PASS: window.HTMLBodyElement should be 'function HTMLBodyElement() {    [native code]}' and is.

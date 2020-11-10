@@ -74,7 +74,6 @@
 #include <WebCore/FrameWin.h>
 #include <WebCore/GDIObjectCounter.h>
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/HTMLAppletElement.h>
 #include <WebCore/HTMLFormControlElement.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLFrameOwnerElement.h>

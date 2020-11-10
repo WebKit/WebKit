@@ -19,11 +19,11 @@ Form by id (multiple): collection(2) FORM(id) FORM(id)
 Form by id/name mixed: collection(4) FORM(id) FORM(name) FORM(name) FORM(id)
 
 Nonexistent applet name: undefined
-Applet by name (unique): single APPLET(name)
-Applet by name (multiple): collection(2) APPLET(name) APPLET(name)
+Applet by name (unique): undefined
+Applet by name (multiple): undefined
 Applet by id (unique): single APPLET(id)
 Applet by id (multiple): collection(2) APPLET(id) APPLET(id)
-Applet by id/name mixed: collection(4) APPLET(id) APPLET(name) APPLET(name) APPLET(id)
+Applet by id/name mixed: collection(2) APPLET(id) APPLET(id)
 
 Nonexistent object name: undefined
 Object by name (unique): single OBJECT(name)
@@ -56,7 +56,7 @@ Span by id/name mixed: collection(2) SPAN(id) SPAN(id)
 Mixed by id: collection(7) IMG(id) FORM(id) APPLET(id) EMBED(id) OBJECT(id) IFRAME(id) SPAN(id)
 Mixed by name: single WINDOW
 Mixed by id (no iframe): collection(6) IMG(id) FORM(id) APPLET(id) EMBED(id) OBJECT(id) SPAN(id)
-Mixed by name (no iframe): collection(5) IMG(name) FORM(name) APPLET(name) EMBED(name) OBJECT(name)
+Mixed by name (no iframe): collection(4) IMG(name) FORM(name) EMBED(name) OBJECT(name)
 
 Numeric 0: single WINDOW
 Numeric 12: single WINDOW

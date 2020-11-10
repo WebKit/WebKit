@@ -24,16 +24,6 @@ TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAnchorElement.shape
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAnchorElement.target]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAnchorElement.type]
 
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAppletElement.align]
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAppletElement.alt]
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAppletElement.archive]
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAppletElement.code]
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAppletElement.height]
-TEST SUCCEEDED: The value was the string '0'. [tested HTMLAppletElement.hspace]
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAppletElement.name]
-TEST SUCCEEDED: The value was the string '0'. [tested HTMLAppletElement.vspace]
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAppletElement.width]
-
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAreaElement.accessKey]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAreaElement.alt]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAreaElement.coords]

@@ -915,7 +915,6 @@ set(WebCore_NON_SVG_IDL_FILES
     html/DOMURL.idl
     html/HTMLAllCollection.idl
     html/HTMLAnchorElement.idl
-    html/HTMLAppletElement.idl
     html/HTMLAreaElement.idl
     html/HTMLAttachmentElement.idl
     html/HTMLAudioElement.idl

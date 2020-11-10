@@ -25,152 +25,105 @@
 
 #import "DOMHTMLAppletElement.h"
 
-#import "DOMNodeInternal.h"
-#import "ExceptionHandlers.h"
-#import <WebCore/HTMLAppletElement.h>
-#import <WebCore/HTMLNames.h>
-#import <WebCore/JSExecState.h>
-#import <WebCore/ThreadCheck.h>
-#import <WebCore/WebScriptObjectPrivate.h>
-#import <wtf/GetPtr.h>
-#import <wtf/URL.h>
-
-#define IMPL static_cast<WebCore::HTMLAppletElement*>(reinterpret_cast<WebCore::Node*>(_internal))
-
 @implementation DOMHTMLAppletElement
 
 - (NSString *)align
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::alignAttr);
+    return nil;
 }
 
 - (void)setAlign:(NSString *)newAlign
 {
-    WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, newAlign);
 }
 
 - (NSString *)alt
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::altAttr);
+    return nil;
 }
 
 - (void)setAlt:(NSString *)newAlt
 {
-    WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::altAttr, newAlt);
 }
 
 - (NSString *)archive
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::archiveAttr);
+    return nil;
 }
 
 - (void)setArchive:(NSString *)newArchive
 {
-    WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::archiveAttr, newArchive);
 }
 
 - (NSString *)code
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::codeAttr);
+    return nil;
 }
 
 - (void)setCode:(NSString *)newCode
 {
-    WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::codeAttr, newCode);
 }
 
 - (NSString *)codeBase
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::codebaseAttr);
+    return nil;
 }
 
 - (void)setCodeBase:(NSString *)newCodeBase
 {
-    WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::codebaseAttr, newCodeBase);
 }
 
 - (NSString *)height
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::heightAttr);
+    return nil;
 }
 
 - (void)setHeight:(NSString *)newHeight
 {
-    WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::heightAttr, newHeight);
 }
 
 - (int)hspace
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->getIntegralAttribute(WebCore::HTMLNames::hspaceAttr);
+    return 0;
 }
 
 - (void)setHspace:(int)newHspace
 {
-    WebCore::JSMainThreadNullState state;
-    IMPL->setIntegralAttribute(WebCore::HTMLNames::hspaceAttr, newHspace);
 }
 
 - (NSString *)name
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->getNameAttribute();
+    return nil;
 }
 
 - (void)setName:(NSString *)newName
 {
-    WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, newName);
 }
 
 - (NSString *)object
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::objectAttr);
+    return nil;
 }
 
 - (void)setObject:(NSString *)newObject
 {
-    WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::objectAttr, newObject);
 }
 
 - (int)vspace
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->getIntegralAttribute(WebCore::HTMLNames::vspaceAttr);
+    return 0;
 }
 
 - (void)setVspace:(int)newVspace
 {
-    WebCore::JSMainThreadNullState state;
-    IMPL->setIntegralAttribute(WebCore::HTMLNames::vspaceAttr, newVspace);
 }
 
 - (NSString *)width
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::widthAttr);
+    return nil;
 }
 
 - (void)setWidth:(NSString *)newWidth
 {
-    WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::widthAttr, newWidth);
 }
 
 @end
-
-#undef IMPL

@@ -73,7 +73,6 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
-#include <WebCore/HTMLAppletElement.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HistoryController.h>
 #include <WebCore/HistoryItem.h>
@@ -1653,27 +1652,6 @@ WebCore::WebGLLoadPolicy WebFrameLoaderClient::resolveWebGLPolicyForURL(const UR
 }
 
 #endif
-
-RefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& pluginSize, HTMLAppletElement& appletElement, const URL&, const Vector<String>& paramNames, const Vector<String>& paramValues)
-{
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    auto plugin = createPlugin(pluginSize, appletElement, URL(), paramNames, paramValues, appletElement.serviceType(), false);
-    if (!plugin) {
-        if (auto* webPage = m_frame->page()) {
-            auto frameURLString = m_frame->coreFrame()->loader().documentLoader()->responseURL().string();
-            auto pageURLString = webPage->corePage()->mainFrame().loader().documentLoader()->responseURL().string();
-            webPage->send(Messages::WebPageProxy::DidFailToInitializePlugin(appletElement.serviceType(), frameURLString, pageURLString));
-        }
-    }
-    return plugin;
-#else
-    UNUSED_PARAM(pluginSize);
-    UNUSED_PARAM(appletElement);
-    UNUSED_PARAM(paramNames);
-    UNUSED_PARAM(paramValues);
-    return nullptr;
-#endif
-}
 
 static bool pluginSupportsExtension(const PluginData& pluginData, const String& extension)
 {

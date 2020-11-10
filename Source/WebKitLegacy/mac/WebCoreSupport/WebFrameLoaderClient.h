@@ -212,9 +212,6 @@ private:
     WebCore::WebGLLoadPolicy webGLPolicyForURL(const URL&) const final;
     WebCore::WebGLLoadPolicy resolveWebGLPolicyForURL(const URL&) const final;
 #endif
-
-    RefPtr<WebCore::Widget> createJavaAppletWidget(const WebCore::IntSize&, WebCore::HTMLAppletElement&, const URL& baseURL,
-        const Vector<WTF::String>& paramNames, const Vector<WTF::String>& paramValues) final;
     
     WebCore::ObjectContentType objectContentType(const URL&, const WTF::String& mimeType) final;
     WTF::String overrideMediaType() const final;

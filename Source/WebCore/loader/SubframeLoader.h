@@ -37,7 +37,6 @@ namespace WebCore {
 class Document;
 class Frame;
 class FrameLoaderClient;
-class HTMLAppletElement;
 class HTMLFrameOwnerElement;
 class HTMLMediaElement;
 class HTMLPlugInImageElement;
@@ -55,8 +54,6 @@ public:
     bool requestFrame(HTMLFrameOwnerElement&, const String& url, const AtomString& frameName, LockHistory = LockHistory::Yes, LockBackForwardList = LockBackForwardList::Yes);
     bool requestObject(HTMLPlugInImageElement&, const String& url, const AtomString& frameName,
         const String& serviceType, const Vector<String>& paramNames, const Vector<String>& paramValues);
-
-    RefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
 
     bool containsPlugins() const { return m_containsPlugins; }
     

@@ -26,7 +26,6 @@
 
 namespace WebCore {
 
-class HTMLAppletElement;
 class MouseEvent;
 class TextRun;
 
@@ -37,8 +36,6 @@ class RenderEmbeddedObject : public RenderWidget {
 public:
     RenderEmbeddedObject(HTMLFrameOwnerElement&, RenderStyle&&);
     virtual ~RenderEmbeddedObject();
-
-    static RenderPtr<RenderEmbeddedObject> createForApplet(HTMLAppletElement&, RenderStyle&&);
 
     enum PluginUnavailabilityReason {
         PluginMissing,

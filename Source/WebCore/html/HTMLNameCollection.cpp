@@ -24,7 +24,6 @@
 #include "HTMLNameCollection.h"
 
 #include "Element.h"
-#include "HTMLAppletElement.h"
 #include "HTMLEmbedElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLIFrameElement.h"
@@ -44,8 +43,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DocumentNameCollection);
 
 bool WindowNameCollection::elementMatchesIfNameAttributeMatch(const Element& element)
 {
-    return is<HTMLAppletElement>(element)
-        || is<HTMLEmbedElement>(element)
+    return is<HTMLEmbedElement>(element)
         || is<HTMLFormElement>(element)
         || is<HTMLImageElement>(element)
         || is<HTMLObjectElement>(element);
@@ -67,14 +65,12 @@ bool DocumentNameCollection::elementMatchesIfIdAttributeMatch(const Element& ele
 {
     // FIXME: We need to fix HTMLImageElement to update the hash map for us when the name attribute is removed.
     return isObjectElementForDocumentNameCollection(element)
-        || is<HTMLAppletElement>(element)
         || (is<HTMLImageElement>(element) && element.hasName() && !element.getNameAttribute().isEmpty());
 }
 
 bool DocumentNameCollection::elementMatchesIfNameAttributeMatch(const Element& element)
 {
     return isObjectElementForDocumentNameCollection(element)
-        || is<HTMLAppletElement>(element)
         || is<HTMLEmbedElement>(element)
         || is<HTMLFormElement>(element)
         || is<HTMLIFrameElement>(element)

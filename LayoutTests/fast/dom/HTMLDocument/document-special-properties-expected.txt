@@ -23,11 +23,11 @@ Form by id (multiple): undefined
 Form by id/name mixed: collection(2) FORM(name) FORM(name)
 
 Nonexistent applet name: undefined
-Applet by name (unique): single APPLET(name)
-Applet by name (multiple): collection(2) APPLET(name) APPLET(name)
-Applet by id (unique): single APPLET(id)
-Applet by id (multiple): collection(2) APPLET(id) APPLET(id)
-Applet by id/name mixed: collection(4) APPLET(id) APPLET(name) APPLET(name) APPLET(id)
+Applet by name (unique): undefined
+Applet by name (multiple): undefined
+Applet by id (unique): undefined
+Applet by id (multiple): undefined
+Applet by id/name mixed: undefined
 
 Nonexistent object name: undefined
 Object by name (unique): single OBJECT(name)
@@ -58,10 +58,10 @@ Span by id (unique): undefined
 Span by id (multiple): undefined
 Span by id/name mixed: undefined
 
-Mixed by id: collection(2) APPLET(id) OBJECT(id)
-Mixed by name: collection(6) IMG(name) FORM(name) APPLET(name) EMBED(name) OBJECT(name) IFRAME(name)
-Mixed by id (no iframe): collection(2) APPLET(id) OBJECT(id)
-Mixed by name (no iframe): collection(5) IMG(name) FORM(name) APPLET(name) EMBED(name) OBJECT(name)
+Mixed by id: single OBJECT(id)
+Mixed by name: collection(5) IMG(name) FORM(name) EMBED(name) OBJECT(name) IFRAME(name)
+Mixed by id (no iframe): single OBJECT(id)
+Mixed by name (no iframe): collection(4) IMG(name) FORM(name) EMBED(name) OBJECT(name)
 
 Numeric 0: undefined
 Numeric 12: undefined

@@ -1129,7 +1129,6 @@ html/FormController.cpp
 html/GenericCachedHTMLCollection.cpp
 html/HTMLAllCollection.cpp
 html/HTMLAnchorElement.cpp
-html/HTMLAppletElement.cpp
 html/HTMLAreaElement.cpp
 html/HTMLAttachmentElement.cpp
 html/HTMLAudioElement.cpp
@@ -2997,7 +2996,6 @@ JSGeolocationPositionError.cpp
 JSGetAnimationsOptions.cpp
 JSHTMLAllCollection.cpp
 JSHTMLAnchorElement.cpp
-JSHTMLAppletElement.cpp
 JSHTMLAreaElement.cpp
 JSHTMLAttachmentElement.cpp
 JSHTMLAudioElement.cpp

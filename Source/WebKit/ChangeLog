@@ -1,3 +1,41 @@
+2020-11-09  Chris Dumez  <cdumez@apple.com>
+
+        Unexpose obsolete HTMLAppletElement interface
+        https://bugs.webkit.org/show_bug.cgi?id=218677
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAppletElement.cpp:
+        (webkit_dom_html_applet_element_dispatch_event):
+        (webkit_dom_html_applet_element_add_event_listener):
+        (webkit_dom_html_applet_element_remove_event_listener):
+        (webkit_dom_html_applet_element_get_align):
+        (webkit_dom_html_applet_element_set_align):
+        (webkit_dom_html_applet_element_get_alt):
+        (webkit_dom_html_applet_element_set_alt):
+        (webkit_dom_html_applet_element_get_archive):
+        (webkit_dom_html_applet_element_set_archive):
+        (webkit_dom_html_applet_element_get_code):
+        (webkit_dom_html_applet_element_set_code):
+        (webkit_dom_html_applet_element_get_code_base):
+        (webkit_dom_html_applet_element_set_code_base):
+        (webkit_dom_html_applet_element_get_height):
+        (webkit_dom_html_applet_element_set_height):
+        (webkit_dom_html_applet_element_get_hspace):
+        (webkit_dom_html_applet_element_set_hspace):
+        (webkit_dom_html_applet_element_get_name):
+        (webkit_dom_html_applet_element_set_name):
+        (webkit_dom_html_applet_element_get_object):
+        (webkit_dom_html_applet_element_set_object):
+        (webkit_dom_html_applet_element_get_vspace):
+        (webkit_dom_html_applet_element_set_vspace):
+        (webkit_dom_html_applet_element_get_width):
+        (webkit_dom_html_applet_element_set_width):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAppletElementPrivate.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLPrivate.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2020-11-09  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION (r269557): ASSERTION FAILED: Completion handler should always be called under WebCore::HTMLMediaElement::exitFullscreen

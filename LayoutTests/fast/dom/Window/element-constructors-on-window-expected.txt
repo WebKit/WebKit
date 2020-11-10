@@ -4,7 +4,7 @@ HTMLElement: function HTMLElement() { [native code] }
 
 HTMLAnchorElement: function HTMLAnchorElement() { [native code] }
 
-HTMLAppletElement: function HTMLAppletElement() { [native code] }
+HTMLAppletElement: undefined
 
 HTMLAreaElement: function HTMLAreaElement() { [native code] }
 

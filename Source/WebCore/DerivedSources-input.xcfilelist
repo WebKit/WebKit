@@ -842,7 +842,6 @@ $(PROJECT_DIR)/html/DOMTokenList.idl
 $(PROJECT_DIR)/html/DOMURL.idl
 $(PROJECT_DIR)/html/HTMLAllCollection.idl
 $(PROJECT_DIR)/html/HTMLAnchorElement.idl
-$(PROJECT_DIR)/html/HTMLAppletElement.idl
 $(PROJECT_DIR)/html/HTMLAreaElement.idl
 $(PROJECT_DIR)/html/HTMLAttachmentElement.idl
 $(PROJECT_DIR)/html/HTMLAttributeNames.in

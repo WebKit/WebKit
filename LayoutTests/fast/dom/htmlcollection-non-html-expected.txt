@@ -10,8 +10,6 @@ PASS document.images.length is 0
 PASS document.images.length is 1
 PASS document.forms.length is 0
 PASS document.forms.length is 1
-PASS document.applets.length is 0
-PASS document.applets.length is 1
 PASS document.embeds.length is 0
 PASS document.embeds.length is 1
 PASS document.scripts.length is 3

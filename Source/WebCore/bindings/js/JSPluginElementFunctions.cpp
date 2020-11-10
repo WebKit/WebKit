@@ -33,7 +33,7 @@ using namespace JSC;
 using namespace Bindings;
 using namespace HTMLNames;
 
-// JavaScript access to plug-in-exported properties for JSHTMLAppletElement, JSHTMLEmbedElement and JSHTMLObjectElement.
+// JavaScript access to plug-in-exported properties for JSHTMLEmbedElement and JSHTMLObjectElement.
 
 static JSC_DECLARE_HOST_FUNCTION(callPlugin);
 static JSC_DECLARE_CUSTOM_GETTER(pluginElementPropertyGetter);

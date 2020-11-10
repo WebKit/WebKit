@@ -2,6 +2,7 @@
 align
 height
 name
+type
 width
 ----------
 OBJECT also has:
@@ -17,7 +18,6 @@ declare
 form
 hspace
 standby
-type
 useMap
 validationMessage
 validity
@@ -26,14 +26,4 @@ willValidate
 ----------
 EMBED also has:
 src
-type
-----------
-APPLET also has:
-alt
-archive
-code
-codeBase
-hspace
-object
-vspace
 

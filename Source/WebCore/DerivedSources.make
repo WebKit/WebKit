@@ -790,7 +790,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/DOMURL.idl \
     $(WebCore)/html/HTMLAllCollection.idl \
     $(WebCore)/html/HTMLAnchorElement.idl \
-    $(WebCore)/html/HTMLAppletElement.idl \
     $(WebCore)/html/HTMLAreaElement.idl \
     $(WebCore)/html/HTMLAttachmentElement.idl \
     $(WebCore)/html/HTMLAudioElement.idl \

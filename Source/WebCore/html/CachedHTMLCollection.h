@@ -106,7 +106,6 @@ static inline bool nameShouldBeVisibleInDocumentAll(HTMLElement& element)
 {
     // https://html.spec.whatwg.org/multipage/infrastructure.html#all-named-elements
     return element.hasTagName(HTMLNames::aTag)
-        || element.hasTagName(HTMLNames::appletTag)
         || element.hasTagName(HTMLNames::buttonTag)
         || element.hasTagName(HTMLNames::embedTag)
         || element.hasTagName(HTMLNames::formTag)

@@ -116,8 +116,6 @@ PASS 'function Event() {    [native code]}' is 'function Event() {    [native co
 PASS 'function Event() {    [native code]}' is 'function Event() {    [native code]}'
 PASS 'function HTMLAnchorElement() {    [native code]}' is 'function HTMLAnchorElement() {    [native code]}'
 PASS 'function HTMLAnchorElement() {    [native code]}' is 'function HTMLAnchorElement() {    [native code]}'
-PASS 'function HTMLAppletElement() {    [native code]}' is 'function HTMLAppletElement() {    [native code]}'
-PASS 'function HTMLAppletElement() {    [native code]}' is 'function HTMLAppletElement() {    [native code]}'
 PASS 'function HTMLAreaElement() {    [native code]}' is 'function HTMLAreaElement() {    [native code]}'
 PASS 'function HTMLAreaElement() {    [native code]}' is 'function HTMLAreaElement() {    [native code]}'
 PASS 'function HTMLBRElement() {    [native code]}' is 'function HTMLBRElement() {    [native code]}'

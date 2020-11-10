@@ -39,8 +39,6 @@ PASS: canGet('Event') should be 'true' and is.
 PASS: canSet('Event') should be 'true' and is.
 PASS: canGet('HTMLAnchorElement') should be 'true' and is.
 PASS: canSet('HTMLAnchorElement') should be 'true' and is.
-PASS: canGet('HTMLAppletElement') should be 'true' and is.
-PASS: canSet('HTMLAppletElement') should be 'true' and is.
 PASS: canGet('HTMLAreaElement') should be 'true' and is.
 PASS: canSet('HTMLAreaElement') should be 'true' and is.
 PASS: canGet('HTMLBRElement') should be 'true' and is.

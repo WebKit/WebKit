@@ -179,8 +179,6 @@ public:
     RefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement&, const URL&, const Vector<WTF::String>&, const Vector<WTF::String>&, const WTF::String&, bool loadManually) override;
     void redirectDataToPlugin(WebCore::Widget&) override;
 
-    RefPtr<WebCore::Widget> createJavaAppletWidget(const WebCore::IntSize&, WebCore::HTMLAppletElement&, const URL& baseURL, const Vector<WTF::String>& paramNames, const Vector<WTF::String>& paramValues) override;
-
     WebCore::ObjectContentType objectContentType(const URL&, const WTF::String& mimeType) override;
     WTF::String overrideMediaType() const override;
 

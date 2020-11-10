@@ -1,3 +1,99 @@
+2020-11-09  Chris Dumez  <cdumez@apple.com>
+
+        Unexpose obsolete HTMLAppletElement interface
+        https://bugs.webkit.org/show_bug.cgi?id=218677
+
+        Reviewed by Darin Adler.
+
+        * dom/html/level2/html/HTMLAppletElement01-expected.txt: Removed.
+        * dom/html/level2/html/HTMLAppletElement01.html: Removed.
+        * dom/html/level2/html/HTMLAppletElement01.js: Removed.
+        * dom/html/level2/html/HTMLAppletElement02-expected.txt: Removed.
+        * dom/html/level2/html/HTMLAppletElement02.html: Removed.
+        * dom/html/level2/html/HTMLAppletElement02.js: Removed.
+        * dom/html/level2/html/HTMLAppletElement03-expected.txt: Removed.
+        * dom/html/level2/html/HTMLAppletElement03.html: Removed.
+        * dom/html/level2/html/HTMLAppletElement03.js: Removed.
+        * dom/html/level2/html/HTMLAppletElement04-expected.txt: Removed.
+        * dom/html/level2/html/HTMLAppletElement04.html: Removed.
+        * dom/html/level2/html/HTMLAppletElement04.js: Removed.
+        * dom/html/level2/html/HTMLAppletElement06-expected.txt: Removed.
+        * dom/html/level2/html/HTMLAppletElement06.html: Removed.
+        * dom/html/level2/html/HTMLAppletElement06.js: Removed.
+        * dom/html/level2/html/HTMLAppletElement07-expected.txt: Removed.
+        * dom/html/level2/html/HTMLAppletElement07.html: Removed.
+        * dom/html/level2/html/HTMLAppletElement07.js: Removed.
+        * dom/html/level2/html/HTMLAppletElement08-expected.txt: Removed.
+        * dom/html/level2/html/HTMLAppletElement08.html: Removed.
+        * dom/html/level2/html/HTMLAppletElement08.js: Removed.
+        * dom/html/level2/html/HTMLAppletElement09-expected.txt: Removed.
+        * dom/html/level2/html/HTMLAppletElement09.html: Removed.
+        * dom/html/level2/html/HTMLAppletElement09.js: Removed.
+        * dom/html/level2/html/HTMLAppletElement10-expected.txt: Removed.
+        * dom/html/level2/html/HTMLAppletElement10.html: Removed.
+        * dom/html/level2/html/HTMLAppletElement10.js: Removed.
+        * dom/html/level2/html/HTMLDocument08.html: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement01-expected.txt: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement01.js: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement01.xhtml: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement02-expected.txt: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement02.js: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement02.xhtml: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement03-expected.txt: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement03.js: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement03.xhtml: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement04-expected.txt: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement04.js: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement04.xhtml: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement06-expected.txt: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement06.js: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement06.xhtml: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement07-expected.txt: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement07.js: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement07.xhtml: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement08-expected.txt: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement08.js: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement08.xhtml: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement09-expected.txt: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement09.js: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement09.xhtml: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement10-expected.txt: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement10.js: Removed.
+        * dom/xhtml/level2/html/HTMLAppletElement10.xhtml: Removed.
+        * dom/xhtml/level2/html/HTMLDocument08.xhtml: Removed.
+        Drop outdated tests.
+
+        * fast/dom/HTMLDocument/document-special-properties-expected.txt:
+        * fast/dom/Window/element-constructors-on-window-expected.txt:
+        * fast/dom/Window/get-set-properties-expected.txt:
+        * fast/dom/Window/get-set-properties.html:
+        * fast/dom/Window/resources/window-properties.js:
+        * fast/dom/Window/window-lookup-precedence-expected.txt:
+        * fast/dom/Window/window-special-properties-expected.txt:
+        * fast/dom/document-all-expected.txt:
+        * fast/dom/document-all.html:
+        * fast/dom/dom-constructors-expected.txt:
+        * fast/dom/dom-constructors.html:
+        * fast/dom/element-attribute-js-null-expected.txt:
+        * fast/dom/element-attribute-js-null.html:
+        * fast/dom/html-collections-named-getter-expected.txt:
+        * fast/dom/html-collections-named-getter.html:
+        * fast/dom/htmlcollection-non-html-expected.txt:
+        * fast/dom/htmlcollection-non-html.html:
+        * fast/dom/plugin-attributes-enumeration-expected.txt:
+        * fast/dom/wrapper-classes-expected.txt:
+        * fast/dom/wrapper-classes.html:
+        * fast/frames/sandboxed-iframe-plugins-expected.txt:
+        * fast/frames/sandboxed-iframe-plugins.html:
+        * fast/text/text-combine-crash-expected.txt:
+        * http/tests/security/cross-frame-access-put-expected.txt:
+        * platform/mac-wk2/fast/dom/Window/window-lookup-precedence-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/interfaces-expected.txt:
+        Update / rebaseline existing tests to reflect behavior change.
+
+        * platform/wk2/TestExpectations:
+        Drop outdated tests.
+
 2020-11-09  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         Null dereference in CompositeEditCommand::splitTreeToNode() due to not checking for top of DOM tree
