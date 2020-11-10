@@ -1,5 +1,24 @@
 2020-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Crash in WebKit::DropTarget::drop
+        https://bugs.webkit.org/show_bug.cgi?id=217482
+
+        Reviewed by Michael Catanzaro.
+
+        If we don't have selection data when drop is called, just return early to let leave continue. Also change
+        accept() to receive the drop context and position to be set after leaving any previous operation.
+
+        * UIProcess/API/gtk/DropTarget.h:
+        * UIProcess/API/gtk/DropTargetGtk3.cpp:
+        (WebKit::DropTarget::DropTarget):
+        (WebKit::DropTarget::accept):
+        (WebKit::DropTarget::drop):
+        * UIProcess/API/gtk/DropTargetGtk4.cpp:
+        (WebKit::DropTarget::DropTarget):
+        (WebKit::DropTarget::accept):
+
+2020-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD returned when plugins are disabled
         https://bugs.webkit.org/show_bug.cgi?id=216123
 

@@ -39,9 +39,11 @@ typedef struct _GtkWidget GtkWidget;
 
 #if USE(GTK4)
 typedef struct _GdkDrop GdkDrop;
+using PlatformDropContext = GdkDrop;
 #else
 typedef struct _GdkDragContext GdkDragContext;
 typedef struct _GtkSelectionData GtkSelectionData;
+using PlatformDropContext = GdkDragContext;
 #endif
 
 namespace WebKit {
@@ -57,7 +59,7 @@ public:
     void didPerformAction();
 
 private:
-    void accept(unsigned = 0);
+    void accept(PlatformDropContext*, Optional<WebCore::IntPoint> = WTF::nullopt, unsigned = 0);
     void enter(WebCore::IntPoint&&, unsigned = 0);
     void update(WebCore::IntPoint&&, unsigned = 0);
     void leave();
