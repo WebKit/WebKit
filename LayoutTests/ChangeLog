@@ -1,3 +1,17 @@
+2020-11-10  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Enable vertical alignment on replaced content
+        https://bugs.webkit.org/show_bug.cgi?id=218101
+
+        Reviewed by Antti Koivisto.
+
+        Combination of trailing whitespace and pixel rounding.
+
+        * platform/ios/css1/formatting_model/height_of_lines-expected.txt:
+        * platform/ios/css1/text_properties/vertical_align-expected.txt:
+        * platform/mac/css1/formatting_model/height_of_lines-expected.txt:
+        * platform/mac/css1/text_properties/vertical_align-expected.txt:
+
 2020-11-10  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for LayoutTests/accessibility/mac/search-subrole.html in isolated tree mode.
