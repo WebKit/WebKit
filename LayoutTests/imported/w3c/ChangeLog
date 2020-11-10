@@ -1,3 +1,45 @@
+2020-11-10  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flex] Import image-as-flexitem-* WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=218746
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Import the image-as-flexitem-size-* tests which are useful to test the handling of replaced elements as
+        flex items and more in general, flex items with aspect ratios. We're currently failing a bunch of subtests
+        but since we're passing most of them, I'm uploading them with failed expectations. Follow-up patches
+        will fix the failing subtests.
+
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-001-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-001.html: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-001v-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-001v.html: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-002-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-002.html: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-002v-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-002v.html: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-003-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-003.html: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-003v-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-003v.html: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-004-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-004.html: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-004v-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-004v.html: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-005-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-005.html: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-005v-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-005v.html: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-006-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-006.html: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-006v-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-006v.html: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-007-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-007.html: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-007v-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-007v.html: Added.
+        * web-platform-tests/css/css-flexbox/w3c-import.log:
+
 2020-11-10  Antoine Quint  <graouts@webkit.org>
 
         align-self should be a discrete animatable property
