@@ -1,3 +1,17 @@
+2020-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD returned when plugins are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=216123
+
+        Reviewed by Adrian Perez de Castro.
+
+        Undeprecate webkit_plugin_error_quark and WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD, and update documentation.
+
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewLoadFail):
+        * UIProcess/API/gtk/WebKitError.h:
+        * UIProcess/API/wpe/WebKitError.h:
+
 2020-11-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix crashes when mapping shared display list item data into display lists in the GPU process

@@ -81,9 +81,9 @@ typedef enum {
  * @WEBKIT_PLUGIN_ERROR_CANNOT_LOAD_PLUGIN: Load failure due to inability to load plugin. Deprecated 2.32
  * @WEBKIT_PLUGIN_ERROR_JAVA_UNAVAILABLE: Load failure due to missing Java support that is required to load plugin. Deprecated 2.32
  * @WEBKIT_PLUGIN_ERROR_CONNECTION_CANCELLED: Load failure due to connection cancellation. Deprecated 2.32
- * @WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD: Load failure since plugin handles the load. Deprecated 2.32
+ * @WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD: Preliminary load failure for media content types. A new load will be started to perform the media load.
  *
- * Enum values used to denote the various plugin errors.
+ * Enum values used to denote the various plugin and multimedia errors.
  **/
 typedef enum {
     WEBKIT_PLUGIN_ERROR_FAILED = 299,
@@ -160,7 +160,7 @@ webkit_network_error_quark             (void);
 WEBKIT_API GQuark
 webkit_policy_error_quark              (void);
 
-WEBKIT_DEPRECATED GQuark
+WEBKIT_API GQuark
 webkit_plugin_error_quark              (void);
 
 WEBKIT_API GQuark
